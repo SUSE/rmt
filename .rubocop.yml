@@ -1,0 +1,608 @@
+inherit_from: .rubocop_todo.yml
+ 
+# Check your specs
+require: rubocop-rspec
+
+# Check that gem's requirements are listed only once in a Gemfile.
+Bundler/DuplicatedGem:
+  Enabled: true
+
+# Check that gems in consecutive lines should be alphabetically sorted
+Bundler/OrderedGems:
+  Enabled: false
+
+# Enforce single space around assignment operator in default function parameters declaration
+Style/SpaceAroundEqualsInParameterDefault:
+  Enabled: true
+
+# Use `raise` when exception is meant to be captured and processes later (by our code)
+# Use `fail` in all other cases (incl. the case when exception will be captured by Rails framework code)
+# We're not enforcing this; also this can't be reliably checked in Rails environments.
+Style/SignalException:
+  Enabled: false
+
+# Don't use String-like symbol creation if avoidable
+# NB: `:_product` is a valid symbol literal
+Style/SymbolLiteral:
+  Enabled: true
+
+# Enforce single space around operators like `+` or `=>`
+Style/SpaceAroundOperators:
+  Enabled: true
+
+# Forbids unnecessary Array creation in multi-assign statements
+Style/ParallelAssignment:
+  Enabled: true
+
+# Forbids useless parentheses around logical conditions
+Style/ParenthesesAroundCondition:
+  Enabled: false
+
+# Break up numeric literals every 3 digits with '_'
+Style/NumericLiterals:
+  MinDigits: 14
+
+# Don't use 'not' for logical negation
+Style/Not:
+  Enabled: true
+
+# Use next to skip an iteration rather than enclosing actions in an if block
+Style/Next:
+  Enabled: false
+
+# This cop ensures that free-standing clone parentheses align with their opening parenthesis
+Style/ClosingParenthesisIndentation:
+  Enabled: false
+
+# This cop checks for array literals made up of word-like strings, that are not using the %w() syntax
+Style/WordArray:
+  Enabled: false
+
+# Checks for comma (,) not followed by some kind of space
+Style/SpaceAfterComma:
+  Enabled: true
+
+# Checks for spaces inside square brackets
+Style/SpaceInsideBrackets:
+  Enabled: false
+
+# Checks for spaces inside ordinary round parentheses
+Style/SpaceInsideParens:
+  Enabled: true
+
+# Checks that exactly one space is used between a method name and the first argument for method calls without parentheses
+Style/SpaceBeforeFirstArg:
+  Enabled: true
+  AllowForAlignment: false
+
+# Whether to indent operations split over multiple lines to the assignment on the first line
+Style/MultilineOperationIndentation:
+  Enabled: false
+
+# Require parentheses for method definitions which have parameters
+Style/MethodDefParentheses:
+  Enabled: true
+
+# This cop checks for unwanted parentheses in parameterless method calls.
+Style/MethodCallWithoutArgsParentheses:
+  Enabled: true
+
+# Check for the correct style of string concatenation at line ends using '\'
+Style/LineEndConcatenation:
+  Enabled: true
+
+# Enforce the single space between the hash symbol introducing a comment and the text
+Style/LeadingCommentSpace:
+  Enabled: true
+
+# Align the elements of an array literal if they span more than one line.
+Style/AlignArray:
+  Enabled: false
+
+# Check that whens are aligned relative to case keyword
+Style/AlignHash:
+  Enabled: false
+
+# Do not indent whens relative to their case keywords
+Style/CaseIndentation:
+  Enabled: true
+
+# Use guard clauses to return early from methods instead of wrapping whole body in if/end
+Style/GuardClause:
+  Enabled: false
+
+Style/HashSyntax:
+  EnforcedStyle: ruby19
+
+# Use of 'self' where it is not needed to qualify a member
+Style/RedundantSelf:
+  Enabled: true
+
+# Things deprecated in current ruby API
+Lint/DeprecatedClassMethods:
+  Enabled: true
+
+# Do not compare with nil. Use .nil? instead
+Style/NilComparison:
+  Enabled: true
+
+# Use one empty line between method definitions
+Style/EmptyLineBetweenDefs:
+  Enabled: true
+
+# There should be only one empty line in designated place
+Style/EmptyLines:
+  Enabled: false
+
+# Keep a blank line before and after private.
+Style/EmptyLinesAroundAccessModifier:
+  Enabled: true
+
+# Do not insert empty line after class definition and before closing class
+Style/EmptyLinesAroundClassBody:
+  Enabled: true
+  EnforcedStyle: empty_lines
+
+# Use hash literal {} instead of Hash.new
+Style/EmptyLiteral:
+  Enabled: true
+
+# Prefer `each` over `for i`
+Style/For:
+  Enabled: true
+
+# Wrap your assignment in condition if you mean it, otherwise it is most likely equality check
+Lint/AssignmentInCondition:
+  Enabled: true
+
+# Align blocks of code properly
+Lint/BlockAlignment:
+  Enabled: true
+
+# Do not use literal in conditions. We have it enabled for now
+Lint/LiteralInCondition:
+  Enabled: true
+
+# Prefer `Kernel#loop -> break` over `begin -> while`
+Lint/Loop:
+  Enabled: true
+
+# do not put space before arguments when they are in parentheses
+Lint/ParenthesesAsGroupedExpression:
+  Enabled: true
+
+# Do not rescue Exceptions class itself
+Lint/RescueException:
+  Enabled: true
+
+# do not shadow local variables in blocks, choose other name
+Lint/ShadowingOuterLocalVariable:
+  Enabled: false
+
+# use _ or variable_name to explicitly mark variable as unused
+Lint/UnusedBlockArgument:
+  Enabled: true
+
+# use _ or _argument_name to explicitly mark argument as unused
+Lint/UnusedMethodArgument:
+  Enabled: true
+
+# avoid useless assignment
+Lint/UselessAssignment:
+  Enabled: true
+
+# Do not use variables in void context
+Lint/Void:
+  Enabled: true
+
+# Prefer single quotes over doubled when interpolation is not needed
+Style/StringLiterals:
+  Enabled: true
+
+# Checks for ambiguous regexp literals in the first argument of a method invocation without parentheses
+# do_something /pattern/i => do_something(/pattern/i)
+Lint/AmbiguousRegexpLiteral:
+  Enabled: true
+
+# Checks for calls to debugger or pry
+Lint/Debugger:
+  Enabled: true
+
+# Checks whether the end keywords are aligned properly
+Lint/EndAlignment:
+  Enabled: true
+
+# Checks for *rescue* blocks with no body
+Lint/HandleExceptions:
+  Enabled: true
+
+# Checks for string conversion in string interpolation which is redundant
+Lint/StringConversionInInterpolation:
+  Enabled: true
+
+# Detects instances of rubocop:disable comments that can be removed without causing any offenses to be reported
+Lint/UnneededDisable:
+  Enabled: true
+
+# Enforces spaces between hash contents and braces; has --auto-correct
+Style/SpaceInsideHashLiteralBraces:
+  Enabled: true
+
+# Enforces spaces between block contents and braces; has --auto-correct
+Style/SpaceInsideBlockBraces:
+  Enabled: true
+  SpaceBeforeBlockParameters: false
+
+# Enforces spaces separating the block from the previous keyword; has --auto-correct
+Style/SpaceBeforeBlockBraces:
+  Enabled: true
+
+# Contrary to the name, denies wrapping hash parameters in brackets
+# We decided not to follow this rule
+Style/BracesAroundHashParameters:
+  Enabled: false
+
+# Forces files to end with a single black line; supports --auto-correct
+Style/TrailingBlankLines:
+  Enabled: true
+
+# Forces lines not to have spaces on the right end; supports --auto-correct
+Style/TrailingWhitespace:
+  Enabled: true
+
+# This cop checks for underscore-prefixed variables that are actually used.
+Lint/UnderscorePrefixedVariableName:
+  Enabled: true
+
+# This cop checks for access modifiers without any code.
+Lint/UselessAccessModifier:
+  Enabled: true
+
+# Checks that the ABC size of methods is not higher than the configured maximum
+Metrics/AbcSize:
+  Enabled: true
+  Max: 80
+
+# Checks if the length of a block exceeds some maximum value
+Metrics/BlockLength:
+  Enabled: false
+
+# This cop checks for excessive nesting of conditional and looping constructs.
+# Despite the cop’s name, blocks are not considered as an extra level of nesting.
+Metrics/BlockNesting:
+  Enabled: true
+  Max: 3
+
+# This cop checks if the length a class exceeds some maximum value.
+# Configuration parameters: CountComments.
+Metrics/ClassLength:
+  Enabled: true
+  Max: 160
+
+# The cyclomatic complexity is the number of linearly independent paths through a method.
+Metrics/CyclomaticComplexity:
+  Enabled: true
+  Max: 10
+
+# In comments, annotation keywords (TODOs and FIXMEs and so on) should be all
+# upper case, followed by a colon and a space, then a note describing the
+# problem.
+Style/CommentAnnotation:
+  Enabled: true
+
+# Commented lines should have the same identation (before the '#' sign), as non-
+# commented would have in the same block.
+Style/CommentIndentation:
+  Enabled: true
+
+# Hash#has_key? is deprecated in favor of Hash#key?.
+Style/PreferredHashMethods:
+  Enabled: true
+
+# Top-level classes and modules should be documented.
+# We are not doing that, as we're not writing a library (2014.12.03)
+Style/Documentation:
+  Enabled: false
+
+# Multiline method chains should have dot at the beginning of the new line
+Style/DotPosition:
+  Enabled: true
+
+Lint/AmbiguousOperator:
+  Enabled: true
+
+# Configuration parameters: AllowURI, URISchemes.
+Metrics/LineLength:
+  Enabled: true
+  Max: 160
+
+# Configuration parameters: CountComments.
+Metrics/MethodLength:
+  Enabled: true
+  Max: 50
+
+# Configuration parameters: CountKeywordArgs.
+Metrics/ParameterLists:
+  Enabled: true
+  CountKeywordArgs: false
+
+Metrics/PerceivedComplexity:
+  Enabled: true
+  Max: 12
+
+Style/Alias:
+  Enabled: true
+
+Style/AlignParameters:
+  Enabled: false
+
+Style/AndOr:
+  Enabled: false
+
+Style/AsciiComments:
+  Enabled: true
+
+# Enforce Nested Module - Class definitions instead of Module'::'Class
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+# Dis-allow !!
+Style/DoubleNegation:
+  Enabled: false
+
+Style/EmptyLinesAroundMethodBody:
+  Enabled: false
+
+Style/EmptyLinesAroundModuleBody:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: true
+
+Style/FormatString:
+  Enabled: false
+
+# Team decided to retract this rule on 8/7/16
+Style/IndentArray:
+  Enabled: false
+
+Style/IndentHash:
+  Enabled: false
+
+Style/IndentationConsistency:
+  Enabled: true
+
+Style/IndentationWidth:
+  Enabled: true
+
+Style/Lambda:
+  Enabled: true
+
+# Use %w() rather than %w{}
+Style/PercentLiteralDelimiters:
+  Enabled: true
+  PreferredDelimiters:
+    '%i': ()
+    '%w': ()
+    '%W': ()
+
+# Rename is_extension? -> extension? or has_free_slots? -> free_slots?
+Style/PredicateName:
+  Enabled: false
+
+# use fail|raise with tuple of exceptions class and message rather than palinly feed exception
+Style/RaiseArgs:
+  Enabled: false
+
+# This is Ruby - do not return when it is not needed
+Style/RedundantReturn:
+  Enabled: true
+
+# Use %r{} for Regex instances rathar than /.../ notation
+Style/RegexpLiteral:
+  Enabled: true
+
+# Avoid using rescue in its modifier form
+Style/RescueModifier:
+  Enabled: false
+
+# Do not terminate expressions with semicolon
+Style/Semicolon:
+  Enabled: true
+
+# Do not put a space between a method name and the opening parenthesis.
+Style/SpaceAfterMethodName:
+  Enabled: true
+
+# prefer (&:method_name) over {|x| x.method_name }
+Style/SymbolProc:
+  Enabled: true
+
+# No trailing comma after last item of array or hash
+Style/TrailingCommaInLiteral:
+  Enabled: true
+
+# No trailing comma after last argument of method call
+Style/TrailingCommaInArguments:
+  Enabled: true
+
+# Avoid trivial method accessors in favour of attr_accessor
+Style/TrivialAccessors:
+  Enabled: true
+
+# Check for Tab symbols presence and kill them with fire!
+Style/Tab:
+  Enabled: true
+
+# Use tr and delete instead of gsub
+Performance/StringReplacement:
+  Enabled: true
+
+# Do not drop excess spaces between statements
+Style/ExtraSpacing:
+  Enabled: true
+
+Style/NestedParenthesizedCalls:
+  Enabled: false
+
+Style/MultilineMethodCallIndentation:
+  Enabled: false
+
+Style/ConditionalAssignment:
+  Enabled: true
+
+Style/MultilineArrayBraceLayout:
+  Enabled: true
+
+Style/RedundantParentheses:
+  Enabled: true
+
+Style/MultilineMethodCallBraceLayout:
+  Enabled: true
+
+Style/MultilineHashBraceLayout:
+  Enabled: true
+
+Style/ZeroLengthPredicate:
+  Enabled: true
+
+Style/UnneededInterpolation:
+  Enabled: true
+
+Style/MutableConstant:
+  Enabled: true
+
+Style/IdenticalConditionalBranches:
+  Enabled: true
+
+Style/EmptyCaseCondition:
+  Enabled: true
+
+Style/IfInsideElse:
+  Enabled: true
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/TernaryParentheses:
+  Enabled: true
+  EnforcedStyle: require_parentheses_when_complex
+
+Lint/IneffectiveAccessModifier:
+  Enabled: true
+
+Lint/UnneededDisable:
+  Enabled: true
+
+Performance/StartWith:
+  Enabled: true
+
+Performance/RedundantMatch:
+  Enabled: true
+
+AllCops:
+  TargetRubyVersion: 2.3
+  DisplayCopNames: true
+  DisplayStyleGuide: true
+  ExtraDetails: true
+  Include:
+    - Gemfile
+    - Rakefile
+    - config.ru
+    - '**/*.rake'
+  Exclude:
+    - .bundle/**/*
+    - db/schema.rb
+    - features/**/*
+    - vendor/**/*
+    - tmp/**/*
+    - lib/locale/*
+
+Rails:
+  Enabled: true
+
+# Enforce the consistent use of action filters methods
+Rails/ActionFilter:
+  Enabled: true
+
+# Checks for the correct use of Date methods
+Rails/Date:
+  Enabled: true
+
+# Enforce the use of the 'delegate' method
+Rails/Delegate:
+  Enabled: true
+
+# Use find_by instead of where.first
+Rails/FindBy:
+  Enabled: true
+
+# Use 'find_each' instead of 'all.each'
+Rails/FindEach:
+  Enabled: true
+
+# Team decided not to take this one
+Rails/HasAndBelongsToMany:
+  Enabled: false
+
+# Check for puts and print & co.
+Rails/Output:
+  Enabled: true
+
+# Check for proper pluralization of object names
+Rails/PluralizationGrammar:
+  Enabled: true
+
+# Check for use of read_attribute,write_attribute methods
+Rails/ReadWriteAttribute:
+  Enabled: true
+
+# Check for scopes passed a method instead of a lambda
+Rails/ScopeArgs:
+  Enabled: true
+
+# Check for use of ruby Date/Time api without rails' timezone
+Rails/TimeZone:
+  Enabled: true
+
+Rails/Validation:
+  Enabled: true
+
+Rails/OutputSafety:
+  Enabled: true
+
+# Disabled for performance reasons:
+#   Prefer the use of uniq before pluck
+Rails/UniqBeforePluck:
+  Enabled: false
+
+# Enforce var1 instead of var_1
+# Possible bug: If you have a multiword variable name, you're not allowed to end it with number at all.
+# So use `another_production_repo` instead of `production_repo_2`
+Style/VariableNumber:
+  Enabled: true
+  EnforcedStyle: normalcase
+
+Style/NumericLiteralPrefix:
+  Enabled: true
+
+RSpec/BeEql:
+  Enabled: true
+
+RSpec/DescribeClass:
+  Enabled: true
+
+RSpec/DescribeSymbol:
+  Enabled: true
+
+# Configuration parameters: SkipBlocks, EnforcedStyle, SupportedStyles.
+# SupportedStyles: described_class, explicit
+RSpec/DescribedClass:
+  Enabled: true
+
+# Configuration parameters: CustomIncludeMethods.
+RSpec/EmptyExampleGroup:
+  Enabled: false
+
+# Hello Commander!
+# All todo-rules now live in .rubocop_todo.yml

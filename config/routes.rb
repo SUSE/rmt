@@ -5,7 +5,6 @@ Rails.application.routes.draw do
     api_version(module: 'V4', header: { name: 'Accept', value: 'application/vnd.scc.suse.com.v4+json' }, default: true) do
       scope :subscriptions, module: :subscriptions do
         post 'systems', to: 'systems#announce_system'
-        #resources :products, only: [:index]
       end
 
       scope :systems, module: :systems, as: 'systems' do
@@ -13,7 +12,4 @@ Rails.application.routes.draw do
       end
     end
   end
-
-
-
 end

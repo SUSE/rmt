@@ -1,0 +1,226 @@
+# TODO: These three checks are ruby 2.3-only. Let's discuss them after we've upgraded
+Rails/SafeNavigation:
+  Enabled: false
+Style/SafeNavigation:
+  Enabled: false
+Style/NumericPredicate:
+  Enabled: false
+
+# NEW RULES BELOW THIS LINE need to be discussed with the team first! ----------
+
+# (if you update rubocop and encounter a violation of a newly added rule,
+#  put the rule here first, disable it, discuss with team and decide together!)
+
+
+# Put empty method definitions on a single line
+Style/EmptyMethod:
+  Enabled: false
+
+# Checks for uses of if/unless modifiers with multiple-lines bodies.
+Style/MultilineIfModifier:
+  Enabled: false
+
+# Wrap multiline memoization blocks in `begin` and `end`
+Style/MultilineMemoization:
+  Enabled: false
+
+# Checks for spaces between -> and opening parameter brace in lambda literals.
+Style/SpaceInLambdaLiteral:
+  Enabled: false
+
+# Checks dynamic `find_by_*` methods. Use `find_by` instead of dynamic method
+Rails/DynamicFindBy:
+  Enabled: false
+
+# Identify usages of http methods like `get`, `post`, `put`, `path` without the usage of keyword arguments in your tests and change them to use keyword arguments
+Rails/HttpPositionalArguments:
+  Enabled: false
+
+# Check for no returns from an ensure block
+Lint/EnsureReturn:
+  Enabled: false
+
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+
+# Cop supports --auto-correct.
+Lint/UnneededDisable:
+  Enabled: false
+
+# Cop supports --auto-correct.
+# Configuration parameters: NilOrEmpty, NotPresent, UnlessPresent.
+Rails/Blank:
+  Enabled: false
+
+Rails/FilePath:
+  Enabled: false
+
+# Cop supports --auto-correct.
+# Configuration parameters: NotNilAndNotEmpty, NotBlank, UnlessBlank.
+Rails/Present:
+  Enabled: false
+
+# Configuration parameters: Blacklist.
+# Blacklist: decrement!, decrement_counter, increment!, increment_counter, toggle!, touch, update_all, update_attribute, update_column, update_columns, update_counters
+Rails/SkipsModelValidations:
+  Enabled: false
+
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, SingleLineConditionsOnly, IncludeTernaryExpressions.
+# SupportedStyles: assign_to_condition, assign_inside_condition
+Style/ConditionalAssignment:
+  Enabled: false
+
+# Cop supports --auto-correct.
+Style/EmptyLineAfterMagicComment:
+  Enabled: false
+
+# Cop supports --auto-correct.
+# Configuration parameters: AllowAdjacentOneLineDefs, NumberOfEmptyLines.
+Style/EmptyLineBetweenDefs:
+  Enabled: false
+
+# Cop supports --auto-correct.
+Style/EmptyLinesAroundExceptionHandlingKeywords:
+  Enabled: false
+
+# Configuration parameters: ExpectMatchingDefinition, Regex, IgnoreExecutableScripts, AllowedAcronyms.
+# AllowedAcronyms: CLI, DSL, ACL, API, ASCII, CPU, CSS, DNS, EOF, GUID, HTML, HTTP, HTTPS, ID, IP, JSON, LHS, QPS, RAM, RHS, RPC, SLA, SMTP, SQL, SSH, TCP, TLS, TTL, UDP, UI, UID, UUID, URI, URL, UTF8, VM, XML, XMPP, XSRF, XSS
+Style/FileName:
+  Enabled: false
+
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+# SupportedStyles: auto_detection, squiggly, active_support, powerpack, unindent
+Style/IndentHeredoc:
+  Enabled: false
+
+# Cop supports --auto-correct.
+# Configuration parameters: InverseMethods, InverseBlocks.
+Style/InverseMethods:
+  Enabled: false
+
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+# SupportedStyles: separated, grouped
+Style/MixinGrouping:
+  Enabled: false
+
+# Cop supports --auto-correct.
+# Configuration parameters: PreferredDelimiters.
+Style/PercentLiteralDelimiters:
+  Enabled: false
+
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SupportedStylesForEmptyBraces, SpaceBeforeBlockParameters.
+# SupportedStyles: space, no_space
+# SupportedStylesForEmptyBraces: space, no_space
+Style/SpaceInsideBlockBraces:
+  Enabled: false
+
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, ConsistentQuotesInMultiline.
+# SupportedStyles: single_quotes, double_quotes
+Style/StringLiterals:
+  Enabled: false
+
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+# SupportedStyles: percent, brackets
+Style/SymbolArray:
+  Enabled: false
+
+# New RSpec cops
+
+RSpec/AnyInstance:
+  Enabled: false
+
+RSpec/EmptyLineAfterFinalLet:
+  Enabled: false
+
+RSpec/EmptyLineAfterSubject:
+  Enabled: false
+
+# Configuration parameters: Max.
+RSpec/ExampleLength:
+  Enabled: false
+
+# Configuration parameters: CustomTransform, IgnoredWords.
+RSpec/ExampleWording:
+  Enabled: false
+
+# Configuration parameters: CustomTransform, IgnoreMethods.
+RSpec/FilePath:
+  Enabled: false
+
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+# SupportedStyles: implicit, each, example
+RSpec/HookArgument:
+  Enabled: false
+
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+# SupportedStyles: is_expected, should
+RSpec/ImplicitExpect:
+  Enabled: false
+
+# Configuration parameters: AssignmentOnly.
+RSpec/InstanceVariable:
+  Enabled: false
+
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+# SupportedStyles: it_behaves_like, it_should_behave_like
+RSpec/ItBehavesLike:
+  Enabled: false
+
+RSpec/IteratedExpectation:
+  Enabled: false
+
+RSpec/LeadingSubject:
+  Enabled: false
+
+RSpec/LetSetup:
+  Enabled: false
+
+RSpec/MessageChain:
+  Enabled: false
+
+# Configuration parameters: SupportedStyles.
+# SupportedStyles: have_received, receive
+RSpec/MessageSpies:
+  Enabled: false
+  EnforcedStyle: receive
+
+RSpec/MultipleDescribes:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+  Max: 15
+
+RSpec/NamedSubject:
+  Enabled: false
+
+# Configuration parameters: Max.
+RSpec/NestedGroups:
+  Enabled: false
+
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+# SupportedStyles: not_to, to_not
+RSpec/NotToNot:
+  Enabled: false
+
+RSpec/OverwritingSetup:
+  Enabled: false
+
+RSpec/RepeatedExample:
+  Enabled: false
+
+RSpec/ScatteredLet:
+  Enabled: false
+
+RSpec/SubjectStub:
+  Enabled: false
+
+# Configuration parameters: IgnoreSymbolicNames.
+RSpec/VerifiedDoubles:
+  Enabled: false
+
