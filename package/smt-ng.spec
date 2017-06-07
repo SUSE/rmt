@@ -10,13 +10,13 @@ Source0:        %{name}-%{version}.tar.bz2
 Source1:        smt-ng-rpmlintrc
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
-Requires:       ruby2.4
-Requires:       ruby2.4-rubygem-bundler
-Requires:       ruby2.4-rubygem-nio4r
-Requires:       ruby2.4-rubygem-nokogiri
-Requires:       ruby2.4-rubygem-puma
-Requires:       ruby2.4-rubygem-sqlite3
-Requires:       ruby2.4-rubygem-websocket-driver
+Requires(post): ruby2.4
+Requires(post): ruby2.4-rubygem-bundler
+Requires(post): ruby2.4-rubygem-nio4r
+Requires(post): ruby2.4-rubygem-nokogiri
+Requires(post): ruby2.4-rubygem-puma
+Requires(post): ruby2.4-rubygem-sqlite3
+Requires(post): ruby2.4-rubygem-websocket-driver
 
 %description
 Subscription management tool NG
