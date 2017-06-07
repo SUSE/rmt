@@ -5,15 +5,19 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'nio4r', '1.2.1'
+# Those are the gems with native extensions. The versions are locked to exact versions we have in our OBS:
+# https://build.suse.de/project/show/Devel:SCC:SMT-NG
+
+gem 'nio4r', '2.1.0'
 gem 'nokogiri', '1.6.1'
 gem 'mini_portile2', '2.1.0'
 gem 'websocket-driver', '0.6.4'
 gem 'puma', '3.6.0'
 gem 'sqlite3', '1.3.10'
 
-# downgraded rails to v5.0 due to v5.1 relying on activecable v5.1 relying on nio4r v2.0
-gem 'rails', '~> 5.0'
+# The rest of Gemfile goes as normal
+
+gem 'rails', '~> 5.1'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
