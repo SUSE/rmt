@@ -1,4 +1,6 @@
-source 'https://rubygems.org'
+protocol =  ENV['BROKEN_DOCKER_SSL'] ? 'http' : 'https'
+
+source "#{protocol}://rubygems.org"
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
