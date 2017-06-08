@@ -517,6 +517,7 @@ AllCops:
     - vendor/**/*
     - tmp/**/*
     - lib/locale/*
+    - package/*
 
 Rails:
   Enabled: true
