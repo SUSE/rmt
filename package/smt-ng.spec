@@ -27,7 +27,8 @@ Subscription management tool NG
 %build
 
 %install
-make DESTDIR=%{buildroot} install
+mkdir -p %{buildroot}%{www_base}/smt-ng/
+cp -a * %{buildroot}%{www_base}/smt-ng/
 
 %files
 %defattr(-,root,root)
