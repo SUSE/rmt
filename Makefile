@@ -5,10 +5,6 @@ WWW_BASE      = /srv/www
 all:
 	@:
 
-install:
-	mkdir -p $(DESTDIR)$(WWW_BASE)/smt-ng/
-	cp -a * $(DESTDIR)$(WWW_BASE)/smt-ng/
-
 clean:
 	rm -rf $(NAME)-$(VERSION)/
 	rm -rf package/*.tar.bz2

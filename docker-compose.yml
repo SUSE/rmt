@@ -1,0 +1,6 @@
+version: '2'
+services:
+  smt_ng:
+    build: .
+    ports:
+      - 3000:3000
