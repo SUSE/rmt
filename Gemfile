@@ -15,7 +15,7 @@ gem 'nokogiri', '1.6.1'
 gem 'mini_portile2', '2.1.0'
 gem 'websocket-driver', '0.6.4'
 gem 'puma', '3.6.0'
-gem 'sqlite3', '1.3.10'
+gem 'pg', '~> 0.21.0'
 
 # The rest of Gemfile goes as normal
 
@@ -54,3 +54,4 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'versionist'
 gem 'responders'
+gem 'typhoeus', '~> 1.1', '>= 1.1.2'
