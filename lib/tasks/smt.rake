@@ -8,6 +8,10 @@ namespace :smt do
     data = api.list_products
 
     data.each do |item|
+      product = Product.new
+      product.attributes = item.reject {|k, _| !product.attributes.keys.member?(k.to_s) }
+      product.save!
+
       repositories = []
       item[:repositories].each do |repo_item|
         begin
@@ -22,10 +26,9 @@ namespace :smt do
         repositories << repository
       end
 
-      product = Product.new
-      product.attributes = item.reject {|k, _| !product.attributes.keys.member?(k.to_s) }
-      product.repositories = repositories
-      product.save!
+      service = Service.find_or_create_by( product_id: product.id )
+      service.repositories = repositories
+      service.save!
     end
   end
 end

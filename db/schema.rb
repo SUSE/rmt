@@ -15,6 +15,13 @@ ActiveRecord::Schema.define(version: 20170619104044) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "activations", force: :cascade do |t|
+    t.integer "service_id"
+    t.integer "system_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "products", force: :cascade do |t|
     t.string "name"
     t.string "description"
@@ -34,23 +41,45 @@ ActiveRecord::Schema.define(version: 20170619104044) do
     t.string "cpe"
   end
 
-  create_table "products_repositories", force: :cascade do |t|
-    t.integer "product_id"
-    t.integer "repository_id"
-    t.index ["product_id", "repository_id"], name: "index_products_repositories_on_product_id_and_repository_id", unique: true
-  end
-
   create_table "repositories", force: :cascade do |t|
     t.string "name"
     t.string "distro_target"
     t.string "description"
-    t.boolean "enabled"
-    t.boolean "autorefresh"
-    t.boolean "installer_updates"
+    t.boolean "enabled", default: false
+    t.boolean "autorefresh", default: true
+    t.boolean "installer_updates", default: false, null: false
     t.string "external_url"
+    t.string "auth_token"
     t.index ["name", "distro_target"], name: "index_repositories_on_name_and_distro_target", unique: true
   end
 
-  add_foreign_key "products_repositories", "products", on_delete: :cascade
-  add_foreign_key "products_repositories", "repositories", on_delete: :cascade
+  create_table "repositories_services", force: :cascade do |t|
+    t.integer "repository_id"
+    t.integer "service_id"
+    t.index ["service_id", "repository_id"], name: "index_repositories_services_on_service_id_and_repository_id", unique: true
+  end
+
+  create_table "services", force: :cascade do |t|
+    t.integer "product_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_services_on_product_id", unique: true
+  end
+
+  create_table "systems", force: :cascade do |t|
+    t.string "login"
+    t.string "password"
+    t.string "guid"
+    t.string "secret"
+    t.string "hostname"
+    t.string "target"
+    t.integer "system_id"
+    t.datetime "registered_at"
+    t.datetime "last_seen_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "repositories_services", "repositories", on_delete: :cascade
+  add_foreign_key "repositories_services", "services", on_delete: :cascade
 end

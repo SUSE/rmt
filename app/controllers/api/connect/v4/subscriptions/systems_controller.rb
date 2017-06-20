@@ -1,12 +1,10 @@
-class Api::Connect::V4::Subscriptions::SystemsController < ApplicationController
-
-  respond_to :json
+class Api::Connect::V4::Subscriptions::SystemsController < Api::Connect::V4::BaseController
 
   def announce_system
-    render json: {
-        username: 'SCC_potato',
-        password: 'potato'
-    }
+    system = System.create!(hostname: params[:hostname]) # TODO: store hwinfo data
+
+    logger.info( "System '#{system.hostname}' announced" )
+    respond_with( system, serializer: ::V3::SystemSerializer, location: nil )
   end
 
 end
