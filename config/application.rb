@@ -16,7 +16,6 @@ require 'action_cable/engine'
 Bundler.require(*Rails.groups)
 
 module SmtNg
-
   class Application < Rails::Application
 
     # Initialize configuration defaults for originally generated Rails version.
@@ -37,6 +36,9 @@ module SmtNg
       g.test_framework :rspec
     end
 
-  end
+    if (Rails.env.development? or Rails.env.test?)
+      config.public_file_server.enabled = true
+    end
 
+  end
 end

@@ -29,8 +29,6 @@ class System < ApplicationRecord
     build_secure_token[0..15]
   end
 
-  private
-
   def self.build_secure_token
     SecureRandom.uuid.delete('-')
   end

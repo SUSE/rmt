@@ -1,6 +1,6 @@
 class CreateProductsAndRepositories < ActiveRecord::Migration[5.1]
 
-  def change
+  def change # rubocop:disable Metrics/MethodLength
     create_table :products do |t|
       t.string :name
       t.string :description
@@ -24,9 +24,9 @@ class CreateProductsAndRepositories < ActiveRecord::Migration[5.1]
       t.string :name
       t.string :distro_target
       t.string :description
-      t.boolean :enabled, :default => false
-      t.boolean :autorefresh, :default => true
-      t.boolean :installer_updates, :null => false, :default => false
+      t.boolean :enabled, default: false
+      t.boolean :autorefresh, default: true
+      t.boolean :installer_updates, null: false, default: false
       t.string :external_url
       t.string :auth_token
     end
@@ -60,12 +60,20 @@ class CreateProductsAndRepositories < ActiveRecord::Migration[5.1]
       t.integer :service_id
     end
 
+    create_table :products_extensions do |t|
+      t.integer :product_id
+      t.integer :extension_id
+    end
+
     add_index :repositories, [:name, :distro_target], unique: true
     add_index :repositories_services, [:service_id, :repository_id], unique: true
     add_index :services, :product_id, unique: true
 
     add_foreign_key :repositories_services, :services, on_delete: :cascade
     add_foreign_key :repositories_services, :repositories, on_delete: :cascade
+
+    add_foreign_key :products_extensions, :products, on_delete: :cascade
+    add_foreign_key :products_extensions, :products, column: :extension_id, on_delete: :cascade
 
   end
 

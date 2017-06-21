@@ -56,7 +56,7 @@ module SUSE
           break unless links[:next]
         end
 
-        return @entities
+        @entities
       end
 
     end

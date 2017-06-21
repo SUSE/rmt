@@ -41,6 +41,11 @@ ActiveRecord::Schema.define(version: 20170619104044) do
     t.string "cpe"
   end
 
+  create_table "products_extensions", force: :cascade do |t|
+    t.integer "product_id"
+    t.integer "extension_id"
+  end
+
   create_table "repositories", force: :cascade do |t|
     t.string "name"
     t.string "distro_target"
@@ -80,6 +85,8 @@ ActiveRecord::Schema.define(version: 20170619104044) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "products_extensions", "products", column: "extension_id", on_delete: :cascade
+  add_foreign_key "products_extensions", "products", on_delete: :cascade
   add_foreign_key "repositories_services", "repositories", on_delete: :cascade
   add_foreign_key "repositories_services", "services", on_delete: :cascade
 end

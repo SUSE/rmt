@@ -7,7 +7,7 @@ class V3::ServiceSerializer < ActiveModel::Serializer
   has_one :product, serializer: V3::ProductSerializer
 
   def url
-    'http://potato' # FIXME: service_url(object, credentials: object.name)
+    @instance_options[:service_url]
   end
 
   def obsoleted_service_name

@@ -12,4 +12,7 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  get 'services/:id', to: 'services#show', as: :service
+  get 'services/:id/repo/repoindex.xml', to: 'services#show'
 end
