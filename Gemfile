@@ -56,3 +56,7 @@ gem 'versionist'
 gem 'responders'
 gem 'typhoeus', '~> 1.1', '>= 1.1.2'
 gem 'active_model_serializers'
+
+# i18n
+gem 'fast_gettext'
+gem 'gettext_i18n_rails'
