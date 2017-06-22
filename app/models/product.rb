@@ -20,4 +20,6 @@ class Product < ApplicationRecord
            through: :extension_products_associations,
            source: :extension
 
+  enum product_type: { base: 'base', module: 'module', extension: 'extension' }
+
 end

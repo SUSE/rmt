@@ -1,11 +1,25 @@
 class Api::Connect::V4::Systems::ProductsController < Api::Connect::V4::BaseController
 
   before_action :authenticate_system
-  before_action :require_product, only: [:activate]
+  before_action :require_product, only: [:show, :activate]
+  before_action :check_base_product_dependencies, only: [:activate, :upgrade, :show]
 
   def activate
     create_product_activation
     render_service
+  end
+
+  def show
+    unless @system.products.include? @product
+      untranslated = N_("The requested product '%s' is not activated on this system." % @product.friendly_name)
+      respond_with_error({ message: untranslated, localized_message: _(untranslated) }) and return
+    end
+    respond_with(
+      @product,
+      serializer: ::V3::ProductSerializer,
+      uri_options: { scheme: request.scheme, host: request.host, port: request.port },
+      service_url: url_for(controller: '/services', action: :show, id: @product.service.id)
+    )
   end
 
   protected
@@ -36,6 +50,18 @@ class Api::Connect::V4::Systems::ProductsController < Api::Connect::V4::BaseCont
       system_id: @system.id,
       service_id: @product.service.id
     ).first_or_create
+  end
+
+  # Check if extension base product is already activated
+  def check_base_product_dependencies
+    # TODO: For APIv5 and future. We skip this check for second level extensions. E.g. HA-GEO
+    # To fix bnc#951189 specifically the rollback part of it.
+    return if @product.bases.any?(&:extension?)
+    return if @product.base? || !(@system.products & @product.bases).blank?
+
+    logger.info(N_("Tried to activate/upgrade to '%s' with unmet base product dependency") % @product.friendly_name)
+    untranslated = 'Unmet product dependencies, please activate one of these products first: %s' % @product.bases.map(&:friendly_name).join(', ')
+    respond_with_error({ message: untranslated, localized_message: _(untranslated) }) and return
   end
 
   def render_service
