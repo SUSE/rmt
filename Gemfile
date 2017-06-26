@@ -42,6 +42,7 @@ group :development, :test do
   gem 'rubocop-rspec'
   gem 'factory_girl_rails'
   gem 'shoulda-matchers'
+  gem 'ffaker'
 end
 
 group :development do
