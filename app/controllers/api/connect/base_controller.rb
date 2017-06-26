@@ -1,4 +1,4 @@
-class Api::Connect::V4::BaseController < ApplicationController
+class Api::Connect::BaseController < ApplicationController
 
   respond_to :json
 
