@@ -2,23 +2,12 @@ FactoryGirl.define do
   factory :product do
     sequence(:name) {|n| "Product #{n}" }
     sequence(:identifier) {|n| "product-#{n}" }
-    # sequence(:productdataid) {|n| n }
-    # sequence(:nnw_product_data) { FFaker.bothify('###?#???##?#?#????##') }
     sequence(:cpe) {|n| "cpe:/o:product:#{n}" }
     sequence(:shortname) {|n| "Product #{n}" }
     free false
     product_type :base
     sequence(:description) { FFaker::Lorem.sentence }
     release_type ''
-    # buildid 666666
-
-    # architecture
-    # product_class
-
-    #transient do
-    #  edition_version nil
-    #  architecture_name nil
-    #end
 
     trait :extension do
       product_type 'extension'

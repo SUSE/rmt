@@ -3,11 +3,11 @@ Rails.application.routes.draw do
 
   namespace :connect, module: 'api/connect', defaults: { format: 'json' } do
     api_version(module: 'V4', header: { name: 'Accept', value: 'application/vnd.scc.suse.com.v4+json' }, default: true) do
-      put 'systems', to: 'systems/systems#update'
-
       scope :subscriptions, module: :subscriptions do
         post 'systems', to: 'systems#announce_system'
       end
+
+      put 'systems', to: 'systems/systems#update'
 
       scope :systems, module: :systems, as: 'systems' do
         get 'products', to: 'products#show'

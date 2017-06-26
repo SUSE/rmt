@@ -16,8 +16,8 @@ ActiveRecord::Schema.define(version: 20170619104044) do
   enable_extension "plpgsql"
 
   create_table "activations", force: :cascade do |t|
-    t.integer "service_id"
-    t.integer "system_id"
+    t.integer "service_id", null: false
+    t.integer "system_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -42,30 +42,29 @@ ActiveRecord::Schema.define(version: 20170619104044) do
   end
 
   create_table "products_extensions", force: :cascade do |t|
-    t.integer "product_id"
-    t.integer "extension_id"
+    t.integer "product_id", null: false
+    t.integer "extension_id", null: false
   end
 
   create_table "repositories", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.string "distro_target"
     t.string "description"
-    t.boolean "enabled", default: false
-    t.boolean "autorefresh", default: true
-    t.boolean "installer_updates", default: false, null: false
+    t.boolean "enabled", default: false, null: false
+    t.boolean "autorefresh", default: true, null: false
     t.string "external_url"
     t.string "auth_token"
     t.index ["name", "distro_target"], name: "index_repositories_on_name_and_distro_target", unique: true
   end
 
   create_table "repositories_services", force: :cascade do |t|
-    t.integer "repository_id"
-    t.integer "service_id"
+    t.integer "repository_id", null: false
+    t.integer "service_id", null: false
     t.index ["service_id", "repository_id"], name: "index_repositories_services_on_service_id_and_repository_id", unique: true
   end
 
   create_table "services", force: :cascade do |t|
-    t.integer "product_id"
+    t.integer "product_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_services_on_product_id", unique: true
@@ -78,13 +77,13 @@ ActiveRecord::Schema.define(version: 20170619104044) do
     t.string "secret"
     t.string "hostname"
     t.string "target"
-    t.integer "system_id"
     t.datetime "registered_at"
     t.datetime "last_seen_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "activations", "systems", on_delete: :cascade
   add_foreign_key "products_extensions", "products", column: "extension_id", on_delete: :cascade
   add_foreign_key "products_extensions", "products", on_delete: :cascade
   add_foreign_key "repositories_services", "repositories", on_delete: :cascade

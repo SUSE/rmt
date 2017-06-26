@@ -22,4 +22,8 @@ class Product < ApplicationRecord
 
   enum product_type: { base: 'base', module: 'module', extension: 'extension' }
 
+  def has_extension?
+    ProductsExtensionsAssociation.exists?(product_id: id).present?
+  end
+
 end

@@ -4,7 +4,7 @@ FactoryGirl.define do
 
     factory :service_with_repositories do
       after :create do |service|
-        name_prefix = "#{service.product.name}"
+        name_prefix = service.product.name
 
         service.repositories << [
             FactoryGirl.create(:repository, name: "#{name_prefix}-Base"),

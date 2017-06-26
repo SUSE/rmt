@@ -21,12 +21,11 @@ class CreateProductsAndRepositories < ActiveRecord::Migration[5.1]
     end
 
     create_table :repositories do |t|
-      t.string :name
+      t.string :name, null: false
       t.string :distro_target
       t.string :description
-      t.boolean :enabled, default: false
-      t.boolean :autorefresh, default: true
-      t.boolean :installer_updates, null: false, default: false
+      t.boolean :enabled, null: false, default: false
+      t.boolean :autorefresh, null: false, default: true
       t.string :external_url
       t.string :auth_token
     end
@@ -38,36 +37,37 @@ class CreateProductsAndRepositories < ActiveRecord::Migration[5.1]
       t.string :secret
       t.string :hostname
       t.string :target
-      t.integer :system_id
       t.datetime :registered_at
       t.datetime :last_seen_at
       t.timestamps
     end
 
     create_table :activations do |t|
-      t.integer :service_id
-      t.integer :system_id
+      t.integer :service_id, null: false
+      t.integer :system_id, null: false
       t.timestamps
     end
 
     create_table :services do |t|
-      t.integer :product_id
+      t.integer :product_id, null: false
       t.timestamps
     end
 
     create_table :repositories_services do |t|
-      t.integer :repository_id
-      t.integer :service_id
+      t.integer :repository_id, null: false
+      t.integer :service_id, null: false
     end
 
     create_table :products_extensions do |t|
-      t.integer :product_id
-      t.integer :extension_id
+      t.integer :product_id, null: false
+      t.integer :extension_id, null: false
     end
 
     add_index :repositories, [:name, :distro_target], unique: true
     add_index :repositories_services, [:service_id, :repository_id], unique: true
     add_index :services, :product_id, unique: true
+
+    add_foreign_key :activations, :systems, on_delete: :cascade
 
     add_foreign_key :repositories_services, :services, on_delete: :cascade
     add_foreign_key :repositories_services, :repositories, on_delete: :cascade
