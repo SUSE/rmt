@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :activation do
     association :system
-    association :service, factory: :service_with_repositories
+    association :service, factory: [:service, :with_repositories]
 
     factory :activation_free_product do
       after :build do |activation, _evaluator|

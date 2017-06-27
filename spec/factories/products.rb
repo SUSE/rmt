@@ -14,7 +14,7 @@ FactoryGirl.define do
       product_type 'extension'
     end
 
-    factory :module do
+    trait :module do
       product_type 'module'
     end
 
@@ -55,7 +55,7 @@ FactoryGirl.define do
     trait :with_repositories do
       after :create do |product, _evaluator|
         unless Service.find_by(product_id: product.id)
-          FactoryGirl.create(:service_with_repositories, product: product)
+          FactoryGirl.create(:service, :with_repositories, product: product)
         end
       end
     end

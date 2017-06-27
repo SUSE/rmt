@@ -1,7 +1,7 @@
 class V3::ProductSerializer < ActiveModel::Serializer
 
   def product_type
-    object.product_type ? object.product_type : ''
+    object.product_type.to_s
   end
 
   def repositories

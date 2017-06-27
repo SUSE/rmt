@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe ServicesController, type: [:request, :controller] do
   let(:service) do
-    FactoryGirl.create(:service_with_repositories)
+    FactoryGirl.create(:service, :with_repositories)
   end
 
   before(:each) do

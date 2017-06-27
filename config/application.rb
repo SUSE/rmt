@@ -36,9 +36,5 @@ module SmtNg
       g.test_framework :rspec
     end
 
-    if (Rails.env.development? or Rails.env.test?)
-      config.public_file_server.enabled = true
-    end
-
   end
 end

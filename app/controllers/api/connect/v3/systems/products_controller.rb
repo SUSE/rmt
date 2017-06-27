@@ -75,7 +75,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
       uri_options: { scheme: request.scheme, host: request.host, port: request.port },
       obsoleted_service_name: @obsoleted_service_name,
       status: status,
-      service_url: url_for(controller: '/services', action: :show, id: @product.service.id)
+      service_url: service_url(@product.service)
     )
   end
 
