@@ -4,6 +4,7 @@ FactoryGirl.define do
     sequence(:identifier) {|n| "product-#{n}" }
     sequence(:cpe) {|n| "cpe:/o:product:#{n}" }
     sequence(:shortname) {|n| "Product #{n}" }
+    sequence(:friendly_name) {|n| "Product #{n}" }
     free false
     product_type :base
     sequence(:description) { FFaker::Lorem.sentence }
