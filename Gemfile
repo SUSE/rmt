@@ -1,4 +1,4 @@
-protocol =  ENV['BROKEN_DOCKER_SSL'] ? 'http' : 'https'
+protocol = (ENV['BROKEN_DOCKER_SSL']) ? 'http' : 'https'
 
 source "#{protocol}://rubygems.org"
 
@@ -15,7 +15,7 @@ gem 'nokogiri', '1.6.1'
 gem 'mini_portile2', '2.1.0'
 gem 'websocket-driver', '0.6.4'
 gem 'puma', '3.6.0'
-gem 'sqlite3', '1.3.10'
+gem 'pg', '~> 0.21.0'
 
 # The rest of Gemfile goes as normal
 
@@ -40,6 +40,10 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.5'
   gem 'rubocop', '~> 0.48.1', require: false
   gem 'rubocop-rspec'
+  gem 'factory_girl_rails'
+  gem 'shoulda-matchers'
+  gem 'ffaker'
+  gem 'rspec-its'
 end
 
 group :development do
@@ -54,3 +58,9 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'versionist'
 gem 'responders'
+gem 'typhoeus', '~> 1.1', '>= 1.1.2'
+gem 'active_model_serializers'
+
+# i18n
+gem 'fast_gettext'
+gem 'gettext_i18n_rails'
