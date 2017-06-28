@@ -1,4 +1,6 @@
 namespace :smt do
+  # FIXME: !!! this is temporary task to populate the DB !!!
+  # FIXME: !!! has to be replaced with a standalone binary with full test coverage !!!
   desc 'Sync products from SCC'
   task :sync, [:username, :password] => :environment do |_, args|
     Product.delete_all
