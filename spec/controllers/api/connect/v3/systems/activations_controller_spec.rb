@@ -5,23 +5,32 @@ RSpec.describe Api::Connect::V3::Systems::ActivationsController, type: [:request
   let(:auth_mech) { ActionController::HttpAuthentication::Basic }
 
   describe '#index' do
-    subject { connect_systems_activations_url(format: :json) }
+    let(:url) { connect_systems_activations_url(format: :json) }
     let(:system) { FactoryGirl.create :system_with_activated_base_product }
-    let(:header) do
+    let(:unauthenticated_headers) { version_header }
+    let(:authenticated_headers) do
       { 'HTTP_AUTHORIZATION' => auth_mech.encode_credentials(system.login, system.password) }.merge(version_header)
     end
 
-    it 'returns code 200' do
-      get subject, headers: header
+    context 'when authenticated' do
+      before { get url, headers: unauthenticated_headers }
+      subject { response }
 
-      expect(response.code).to eq('200')
+      its(:code) { is_expected.to eq '401' }
     end
 
-    it 'has valid JSON structure' do # TODO: JSON schema tests
-      get subject, headers: header
+    context 'when authenticated' do
+      before { get url, headers: authenticated_headers }
+      subject { response }
 
-      json_response.each do |element|
-        expect(element).to have_key(:service)
+      its(:code) { is_expected.to eq '200' }
+
+      describe 'JSON structure' do
+        it 'has valid JSON structure' do # TODO: JSON schema tests
+          json_response.each do |element|
+            expect(element).to have_key(:service)
+          end
+        end
       end
     end
   end
