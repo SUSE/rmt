@@ -25,8 +25,8 @@ RSpec.describe Api::Connect::V3::Systems::ActivationsController, type: [:request
 
       its(:code) { is_expected.to eq '200' }
 
-      describe 'JSON structure' do
-        it 'has valid JSON structure' do # TODO: JSON schema tests
+      describe 'JSON in response' do
+        it 'has valid structure' do # TODO: JSON schema tests
           json_response.each do |element|
             expect(element).to have_key(:service)
           end
