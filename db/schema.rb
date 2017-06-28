@@ -52,7 +52,7 @@ ActiveRecord::Schema.define(version: 20170619104044) do
     t.string "description"
     t.boolean "enabled", default: false, null: false
     t.boolean "autorefresh", default: true, null: false
-    t.string "external_url"
+    t.string "external_url", null: false
     t.string "auth_token"
     t.index ["name", "distro_target"], name: "index_repositories_on_name_and_distro_target", unique: true
   end

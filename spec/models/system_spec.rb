@@ -9,30 +9,30 @@ RSpec.describe System, type: :model do
   it { should have_many(:services).through(:activations) }
   it { should have_many(:repositories).through(:services) }
 
-  it 'generates secure and unique SCC token' do
-    login = described_class.generate_secure_login
-    expect(login).to include 'SCC_'
-    expect(login.length).to eq 36
-    expect(System.find_by_login(login)).to be nil
+  let(:login) { described_class.generate_secure_login }
+  let(:password) { described_class.generate_secure_password }
+
+  describe 'login' do
+    subject { login }
+
+    it { is_expected.to include 'SCC_' }
+    its(:length) { is_expected.to eq 36 }
   end
 
-  it 'generates secure password' do
-    password = described_class.generate_secure_password
-    expect(password.length).to eq 16
+  describe 'password' do
+    subject { password }
+
+    its(:length) { is_expected.to eq 16 }
   end
 
-  it 'can be found via login and password' do
-    subject.password = 'password'
-    subject.save!
-    ret = System.find_by_login_and_password(subject.login, subject.password)
-    expect(subject.login).to eq ret.login
-    expect(subject.password).to eq ret.password
-  end
+  context 'when system is deleted' do
+    let(:activation) do
+      activation = create(:activation)
+      activation.system.destroy
+    end
 
-  it 'deletes associated activations on system destroy' do
-    activation = create(:activation)
-    activation.system.destroy
-
-    expect { activation.reload }.to raise_error ActiveRecord::RecordNotFound
+    it 'activation is also deleted' do
+      expect { activation.reload }.to raise_error ActiveRecord::RecordNotFound
+    end
   end
 end

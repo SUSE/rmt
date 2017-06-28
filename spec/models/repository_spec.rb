@@ -9,20 +9,9 @@ RSpec.describe Repository, type: :model do
   it { should have_many :systems }
   it { should have_many :repositories_services_associations }
 
+  it { should validate_presence_of(:name) }
+  it { should validate_presence_of(:external_url) }
+
   it { should have_db_column(:name).of_type(:string).with_options(null: false) }
-
-  it 'responds to needed attributes' do
-    expected_attributes = %i(
-      id
-      name
-      external_url
-      enabled
-      autorefresh
-      distro_target
-      auth_token
-      description
-    )
-
-    expect(subject.attributes.keys.map(&:to_sym)).to match_array expected_attributes
-  end
+  it { should have_db_column(:external_url).of_type(:string).with_options(null: false) }
 end

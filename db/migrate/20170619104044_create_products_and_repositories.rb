@@ -26,7 +26,7 @@ class CreateProductsAndRepositories < ActiveRecord::Migration[5.1]
       t.string :description
       t.boolean :enabled, null: false, default: false
       t.boolean :autorefresh, null: false, default: true
-      t.string :external_url
+      t.string :external_url, null: false
       t.string :auth_token
     end
 

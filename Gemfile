@@ -43,6 +43,7 @@ group :development, :test do
   gem 'factory_girl_rails'
   gem 'shoulda-matchers'
   gem 'ffaker'
+  gem 'rspec-its'
 end
 
 group :development do

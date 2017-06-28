@@ -11,14 +11,16 @@ RSpec.describe Service, type: :model do
   it { should have_many(:systems).through(:activations) }
   it { should validate_presence_of :product_id }
 
-  it 'has enabled/disabled repositories' do
-    enabled_repository = FactoryGirl.create(:repository)
-    disabled_repository = FactoryGirl.create(:repository, enabled: false)
+  context 'when has enabled and disabled repos' do
+    let(:enabled_repository) { FactoryGirl.create(:repository) }
+    let(:disabled_repository) { FactoryGirl.create(:repository, enabled: false) }
 
-    subject.repositories << enabled_repository
-    subject.repositories << disabled_repository
+    before do
+      subject.repositories << enabled_repository
+      subject.repositories << disabled_repository
+    end
 
-    expect(subject.enabled_repositories).to include enabled_repository
-    expect(subject.enabled_repositories).to_not include disabled_repository
+    its(:enabled_repositories) { is_expected.to include enabled_repository }
+    its(:enabled_repositories) { is_expected.to_not include disabled_repository }
   end
 end
