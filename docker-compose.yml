@@ -1,6 +1,26 @@
 version: '2'
+volumes:
+  cache:
+    driver: local
+  db_storage:
+    driver: local
+
 services:
+  db:
+    image: registry.scc.suse.de/postgresql:9.4
+    volumes:
+      - db_storage:/var/lib/pgsql/data
+    environment:
+      - POSTGRES_DB=smtng_test
+      - POSTGRES_USER=smtng
+      - POSTGRES_PASSWORD=smtng
+      - PGDATA=/var/lib/pgsql/data
+
   smt_ng:
     build: .
     ports:
-      - 3000:3000
+      - 3001:3000
+    depends_on:
+      - db
+    links:
+      - db

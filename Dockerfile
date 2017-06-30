@@ -9,6 +9,8 @@ ruby2.4-rubygem-puma ruby2.4-rubygem-sqlite3 ruby2.4-rubygem-websocket-driver ru
 ADD . /srv/www/smt-ng/
 WORKDIR /srv/www/smt-ng/
 
+RUN sed -i 's/host: localhost/host: db/g' config/database.yml
+
 ENV RAILS_ENV=test
 ENV BROKEN_DOCKER_SSL=true
 
