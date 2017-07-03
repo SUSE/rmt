@@ -11,7 +11,7 @@ node('scc-jenkins-node-chucker-v2') {
 
     stage('run tests') {
         dir('smt-ng') {
-            sh 'docker-compose run smt_ng bash -c "rails db:migrate && rspec"'
+            sh 'docker-compose run smt_ng bash -c "bundler.ruby2.4 && rails db:migrate && rspec"'
         }
     }
 }

@@ -9,27 +9,22 @@ default: &default
   timeout: 5000
   adapter: postgresql
   encoding: unicode
-  host: localhost
+  host: <%= ENV.fetch('POSTGRES_HOST') { 'localhost' } %>
   port: 5432
+  username: <%= ENV.fetch('POSTGRES_USER') { 'smtng' } %>
+  password: <%= ENV.fetch('POSTGRES_PASSWORD') { 'smtng' } %>
 
 development:
   <<: *default
-  database: smtng
-  username: smtng
-  password: smtng
+  password: <%= ENV.fetch('POSTGRES_PASSWORD') { 'smtng' } %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: smtng_test
-  username: smtng
-  password: smtng
-
+  database: <%= ENV.fetch('POSTGRES_DB') { 'smtng_test' } %>
 
 production:
   <<: *default
-  database: smtng_prod
-  username: smtng
-  password: smtng
+  database: <%= ENV.fetch('POSTGRES_DB') { 'smtng_prod' } %>

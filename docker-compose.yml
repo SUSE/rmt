@@ -7,20 +7,25 @@ volumes:
 
 services:
   db:
+    extends:
+      service: base
+      file: docker-compose-base.yml
     image: registry.scc.suse.de/postgresql:9.4
     volumes:
       - db_storage:/var/lib/pgsql/data
-    environment:
-      - POSTGRES_DB=smtng_test
-      - POSTGRES_USER=smtng
-      - POSTGRES_PASSWORD=smtng
-      - PGDATA=/var/lib/pgsql/data
 
   smt_ng:
+    extends:
+      service: base
+      file: docker-compose-base.yml
     build: .
+    environment:
+      - RAILS_ENV=test
+      - BROKEN_DOCKER_SSL=true
+      - POSTGRES_HOST=db
+    volumes:
+      - ./:/srv/www/smt-ng
     ports:
       - 3001:3000
     depends_on:
-      - db
-    links:
       - db
