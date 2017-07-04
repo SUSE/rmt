@@ -1,6 +1,29 @@
 version: '2'
+volumes:
+  db_storage:
+    driver: local
+
 services:
+  db:
+    extends:
+      service: base
+      file: docker-compose-base.yml
+    image: registry.scc.suse.de/postgresql:9.4
+    volumes:
+      - db_storage:/var/lib/pgsql/data
+
   smt_ng:
+    extends:
+      service: base
+      file: docker-compose-base.yml
     build: .
+    environment:
+      - RAILS_ENV=test
+      - BROKEN_DOCKER_SSL=true
+      - POSTGRES_HOST=db
+    volumes:
+      - ./:/srv/www/smt-ng
     ports:
-      - 3000:3000
+      - 3001:3000
+    depends_on:
+      - db
