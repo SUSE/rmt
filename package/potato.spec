@@ -1,13 +1,13 @@
 %define www_base        /srv/www
 
-Name:           smt-ng
+Name:           potato
 Version:        0.0.1
 Release:        0
-Summary:        SMT NG
+Summary:        Codename Potato
 License:        GPL-2.0+
 Group:          Productivity/Networking/Web/Proxy
 Source0:        %{name}-%{version}.tar.bz2
-Source1:        smt-ng-rpmlintrc
+Source1:        potato-rpmlintrc
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
 Requires(post): ruby2.4
@@ -27,14 +27,14 @@ Subscription management tool NG
 %build
 
 %install
-mkdir -p %{buildroot}%{www_base}/smt-ng/
-cp -a * %{buildroot}%{www_base}/smt-ng/
+mkdir -p %{buildroot}%{www_base}/potato/
+cp -a * %{buildroot}%{www_base}/potato/
 
 %files
 %defattr(-,root,root)
-%{www_base}/smt-ng/
+%{www_base}/potato/
 
 %post
-cd /srv/www/smt-ng/ && bundle.ruby2.4 --without=test:development
+cd /srv/www/potato/ && bundle.ruby2.4 --without=test:development
 
 %changelog

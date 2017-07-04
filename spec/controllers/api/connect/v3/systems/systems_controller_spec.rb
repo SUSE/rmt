@@ -36,7 +36,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController, type: [:request, :c
         system.reload
       end
 
-      its(:hostname) { is_expected.to eq 'Not provided' } # FIXME: SMT should detect the hostname instead
+      its(:hostname) { is_expected.to eq 'Not provided' } # FIXME: should detect the hostname instead
 
       describe 'HTTP response' do
         subject { response }

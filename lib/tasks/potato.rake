@@ -1,4 +1,4 @@
-namespace :smt do
+namespace :potato do
   # FIXME: !!! this is temporary task to populate the DB !!!
   # FIXME: !!! has to be replaced with a standalone binary with full test coverage !!!
   desc 'Sync products from SCC'
