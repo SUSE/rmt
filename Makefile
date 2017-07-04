@@ -1,4 +1,4 @@
-NAME          = smt-ng
+NAME          = potato
 VERSION       = 0.0.1
 WWW_BASE      = /srv/www
 

@@ -6,7 +6,7 @@ RUN zypper --non-interactive install --no-recommend timezone \
 ruby2.4-rubygem-bundler ruby2.4-rubygem-mini_portile2 ruby2.4-rubygem-nio4r ruby2.4-rubygem-nokogiri \
 ruby2.4-rubygem-puma ruby2.4-rubygem-sqlite3 ruby2.4-rubygem-websocket-driver ruby2.4-devel ruby2.4-rubygem-pg
 
-WORKDIR /srv/www/smt-ng/
+WORKDIR /srv/www/potato/
 
 RUN ruby -e 'require "securerandom"; puts SecureRandom.hex(64)' > .secret
 

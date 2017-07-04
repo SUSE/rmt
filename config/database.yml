@@ -11,8 +11,8 @@ default: &default
   encoding: unicode
   host: <%= ENV.fetch('POSTGRES_HOST') { 'localhost' } %>
   port: 5432
-  username: <%= ENV.fetch('POSTGRES_USER') { 'smtng' } %>
-  password: <%= ENV.fetch('POSTGRES_PASSWORD') { 'smtng' } %>
+  username: <%= ENV.fetch('POSTGRES_USER') { 'potato' } %>
+  password: <%= ENV.fetch('POSTGRES_PASSWORD') { 'potato' } %>
 
 development:
   <<: *default
@@ -22,8 +22,8 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: <%= ENV.fetch('POSTGRES_DB') { 'smtng_test' } %>
+  database: <%= ENV.fetch('POSTGRES_DB') { 'potato_test' } %>
 
 production:
   <<: *default
-  database: <%= ENV.fetch('POSTGRES_DB') { 'smtng_prod' } %>
+  database: <%= ENV.fetch('POSTGRES_DB') { 'potato_prod' } %>

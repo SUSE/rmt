@@ -1,4 +1,4 @@
-xml.repoindex(ttl: 86400) do # FIXME: smt-ng config file for the options
+xml.repoindex(ttl: 86400) do # FIXME: config file for the options
   @repos.each do |repo|
     uri = SUSE::Misc.uri_replace_hostname(repo.external_url, request.scheme, request.host, request.port)
 

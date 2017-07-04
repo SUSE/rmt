@@ -12,7 +12,7 @@ services:
     volumes:
       - db_storage:/var/lib/pgsql/data
 
-  smt_ng:
+  potato:
     extends:
       service: base
       file: docker-compose-base.yml
@@ -22,7 +22,7 @@ services:
       - BROKEN_DOCKER_SSL=true
       - POSTGRES_HOST=db
     volumes:
-      - ./:/srv/www/smt-ng
+      - ./:/srv/www/potato
     ports:
       - 3001:3000
     depends_on:
