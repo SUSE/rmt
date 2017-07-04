@@ -1,4 +1,4 @@
-node('scc-jenkins-node-chucker-v2') {
+node('scc-jenkins-node-chucker') {
     stage('checkout') {
         git url: 'https://gitlab.suse.de/scc/smt-ng.git', branch: 'master'
     }
