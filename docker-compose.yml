@@ -1,7 +1,5 @@
 version: '2'
 volumes:
-  cache:
-    driver: local
   db_storage:
     driver: local
 
