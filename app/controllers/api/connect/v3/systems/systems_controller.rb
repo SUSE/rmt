@@ -15,4 +15,8 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
     respond_with(@system, serializer: ::V3::SystemSerializer)
   end
 
+  def deregister
+    respond_with(@system.destroy, serializer: ::V3::SystemSerializer)
+  end
+
 end
