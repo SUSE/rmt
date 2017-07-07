@@ -9,26 +9,9 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController, type: :request do
   let(:system) { FactoryGirl.create(:system) }
 
   describe '#destroy' do
-    context 'when no credentials are provided' do
-      before { delete url }
-      subject { response }
-
-      its(:code) { is_expected.to eq('401') }
-    end
-
-    context 'when required parameters are missing' do
-      it 'raises an error' do
-        expect { delete url, headers: headers }.to raise_error ActionController::ParameterMissingTranslated
-      end
-    end
-
-    context 'when product has no repos' do
-      let(:product) { FactoryGirl.create(:product) }
-      let(:payload) { { identifier: product.identifier, version: product.version, arch: product.arch } }
-
-      it 'raises an error' do
-        expect { delete url, headers: headers, params: payload }.to raise_error(/No repositories found for product/)
-      end
+    it_behaves_like 'products controller action' do
+      let(:product_with_repos) { FactoryGirl.create(:product, :with_repositories) }
+      let(:verb) { 'delete' }
     end
 
     context 'when product is base product has repos' do
@@ -39,6 +22,12 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController, type: :request do
       subject { response }
 
       its(:code) { is_expected.to eq('422') }
+
+      describe 'JSON response' do
+        subject { JSON.parse(response.body, symbolize_names: true) }
+        its([:error]) { is_expected.to match(/The product ".*?" is a base product and cannot be deactivated/) }
+      end
+
     end
 
     context 'when product has repos, is an extension' do
@@ -56,6 +45,11 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
 
         its(:code) { is_expected.to eq('422') }
+
+        describe 'JSON response' do
+          subject { JSON.parse(response.body, symbolize_names: true) }
+          its([:error]) { is_expected.to match(/is not yet activated on the system./) }
+        end
       end
 
       context 'has products depending on it and is activated' do
@@ -80,6 +74,11 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
 
         its(:code) { is_expected.to eq('422') }
+
+        describe 'JSON response' do
+          subject { JSON.parse(response.body, symbolize_names: true) }
+          its([:error]) { is_expected.to match(/Cannot deactivate the product ".*"\. Other activated products depend upon it/) }
+        end
       end
 
       context 'and is activated' do
