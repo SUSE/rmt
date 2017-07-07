@@ -87,6 +87,21 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController, type: [:controller
       end
     end
 
+    context 'when product does not exist' do
+      let(:payload) do
+        {
+            identifier: -1,
+            version: product_with_repos.version,
+            arch: product_with_repos.arch
+        }
+      end
+
+      before { get url, headers: headers, params: payload }
+      subject { response }
+
+      its(:code) { is_expected.to eq('422') }
+    end
+
     context 'when product is not activated' do
       let(:payload) do
         {

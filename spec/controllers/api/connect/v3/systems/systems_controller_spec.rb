@@ -46,5 +46,15 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController, type: [:request, :c
     end
   end
 
+  describe '#deregister' do
+    subject { system }
+
+    before { delete url, params: payload, headers: headers }
+
+    it 'system is deregistered' do
+      expect { system.reload }.to raise_error ActiveRecord::RecordNotFound
+    end
+  end
+
   # TODO: it 'updates hwinfo of an existing system' do
 end
