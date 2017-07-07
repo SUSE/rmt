@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::Connect::V3::Systems::ActivationsController, type: [:request, :controller] do
+RSpec.describe Api::Connect::V3::Systems::ActivationsController, type: :request do
   include_context 'version header', 3
   let(:auth_mech) { ActionController::HttpAuthentication::Basic }
 
