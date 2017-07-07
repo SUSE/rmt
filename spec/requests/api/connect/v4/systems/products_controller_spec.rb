@@ -27,7 +27,6 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController, type: :request do
         subject { JSON.parse(response.body, symbolize_names: true) }
         its([:error]) { is_expected.to match(/The product ".*?" is a base product and cannot be deactivated/) }
       end
-
     end
 
     context 'when product has repos, is an extension' do
