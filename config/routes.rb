@@ -31,7 +31,7 @@ Rails.application.routes.draw do
       end
 
       put 'systems', to: 'systems/systems#update'
-      delete 'systems', to: 'systems/systems#destroy'
+      delete 'systems', to: 'systems/systems#deregister'
 
       scope :systems, module: :systems, as: 'systems' do
         get 'products', to: 'products#show'

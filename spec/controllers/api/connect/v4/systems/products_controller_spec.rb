@@ -47,12 +47,36 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController, type: [:controller
       before { delete url, headers: headers, params: payload }
       subject { response }
 
-      context 'and is  not activated' do
+      context 'and is not activated' do
         let(:product) do
           product = FactoryGirl.create(:product, :with_repositories)
           product.product_type = 'extension'
           product.save!
           product
+        end
+
+        its(:code) { is_expected.to eq('422') }
+      end
+
+      context 'has products depending on it and is activated' do
+        let(:product) do
+          activation = FactoryGirl.create(:activation)
+
+          activation.system = system
+          activation.save!
+
+          activation.service.product.product_type = 'extension'
+          activation.service.product.save!
+
+          ext_activation = FactoryGirl.create(:activation)
+          ext_activation.system = system
+          ext_activation.save!
+
+          ext_activation.service.product.product_type = 'extension'
+          ext_activation.service.product.bases << activation.service.product
+          ext_activation.service.product.save!
+
+          activation.service.product
         end
 
         its(:code) { is_expected.to eq('422') }
