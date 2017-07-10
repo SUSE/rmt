@@ -47,10 +47,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   end
 
   def create_product_activation
-    Activation.where(
-      system_id: @system.id,
-      service_id: @product.service.id
-    ).first_or_create
+    @system.activations.where(service_id: @product.service.id).first_or_create
   end
 
   # Check if extension base product is already activated
