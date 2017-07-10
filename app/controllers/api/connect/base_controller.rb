@@ -2,11 +2,11 @@ class Api::Connect::BaseController < ApplicationController
 
   respond_to :json
 
-  protected
-
-  def respond_with_error(status: :unprocessable_entity, **args)
-    render json: { type: 'error', error: args[:message], localized_error: args[:localized_message] }, status: status, location: nil
+  rescue_from ActionController::TranslatedError do |error|
+    render json: { type: 'error', error: error.message, localized_error: error.localized_message }, status: error.status, location: nil
   end
+
+  protected
 
   def require_params(keys)
     payload = JSON.parse(params[:payload]) if params[:payload] && params[:payload].is_a?(String)
@@ -29,7 +29,7 @@ class Api::Connect::BaseController < ApplicationController
       else
         logger.info "Could not find system with login '#{login}' and password '#{password}'"
         untranslated = N_('Invalid system credentials')
-        respond_with_error({ message: untranslated, localized_message: _(untranslated), status: :unauthorized })
+        raise ActionController::TranslatedError.new(error: untranslated, localized_error: _(untranslated), status: :unauthorized)
       end
     end
   end
