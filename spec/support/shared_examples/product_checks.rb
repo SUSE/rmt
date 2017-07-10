@@ -1,7 +1,13 @@
 require 'set'
 
 shared_examples 'products controller action' do
+  before { send(verb, url, headers: headers, params: payload) }
+  subject { response }
+
   context 'when no credentials are provided' do
+    let(:headers) { {} }
+    let(:payload) { {} }
+
     before { send(verb, url) }
     subject { response }
 
@@ -9,8 +15,13 @@ shared_examples 'products controller action' do
   end
 
   context 'when required parameters are missing' do
-    it 'raises an error' do
-      expect { send(verb, url, headers: headers) }.to raise_error ActionController::ParameterMissingTranslated
+    let(:payload) { {} }
+
+    its(:code) { is_expected.to eq('422') }
+
+    describe 'JSON response' do
+      subject { JSON.parse(response.body, symbolize_names: true) }
+      its([:error]) { is_expected.to match(/Required parameters are missing or empty/) }
     end
   end
 
@@ -24,8 +35,11 @@ shared_examples 'products controller action' do
       }
     end
 
-    it 'raises an error' do
-      expect { send(verb, url, headers: headers, params: payload) }.to raise_error(/No repositories found for product/)
+    its(:code) { is_expected.to eq('422') }
+
+    describe 'JSON response' do
+      subject { JSON.parse(response.body, symbolize_names: true) }
+      its([:error]) { is_expected.to match(/No repositories found for product/) }
     end
   end
 
@@ -37,9 +51,6 @@ shared_examples 'products controller action' do
           arch: product_with_repos.arch
       }
     end
-
-    before { send(verb, url, headers: headers, params: payload) }
-    subject { response }
 
     its(:code) { is_expected.to eq('422') }
 
