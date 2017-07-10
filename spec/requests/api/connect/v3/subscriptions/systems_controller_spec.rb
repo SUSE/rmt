@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
+RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
   describe '#announce' do
     include_context 'version header', 3
     let(:url) { connect_systems_url(format: :json) }

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::Connect::V3::Repositories::InstallerController, type: :request do
+RSpec.describe Api::Connect::V3::Repositories::InstallerController do
   include_context 'version header', 3
 
   let(:url) { '/connect/repositories/installer' }

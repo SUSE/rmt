@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::Connect::V3::Systems::SystemsController, type: :request do
+RSpec.describe Api::Connect::V3::Systems::SystemsController do
   include_context 'auth header', :system, :login, :password
   include_context 'version header', 3
 
