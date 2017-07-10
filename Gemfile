@@ -44,6 +44,9 @@ group :development, :test do
   gem 'shoulda-matchers'
   gem 'ffaker'
   gem 'rspec-its'
+  gem 'gettext', require: false # needed for gettext_i18n_rails tasks
+  gem 'ruby_parser', require: false # needed for gettext_i18n_rails tasks
+  gem 'gettext_test_log'
 end
 
 group :development do
