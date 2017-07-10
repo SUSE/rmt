@@ -18,8 +18,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
         service_url: url_for(controller: '/services', action: :show, id: @product.service.id)
       )
     else
-      untranslated = N_("The requested product '%s' is not activated on this system." % @product.friendly_name)
-      raise ActionController::TranslatedError.new(error: untranslated, localized_error: _(untranslated))
+      raise ActionController::TranslatedError.new(N_("The requested product '%s' is not activated on this system."), @product.friendly_name)
     end
   end
 
@@ -31,18 +30,14 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     @product = Product.where(identifier: params[:identifier], version: params[:version], arch: params[:arch]).first
 
     unless @product
-      message = N_('No product found')
-      raise ActionController::TranslatedError.new(error: message, localized_error: _(message))
+      raise ActionController::TranslatedError.new(N_('No product found'))
     end
     check_product_service_and_repositories
   end
 
   def check_product_service_and_repositories
     unless @product.service && @product.repositories.present?
-      fail ActionController::TranslatedError.new(
-        error:          N_('No repositories found for product: %s') % @product.friendly_name,
-        localized_error: _('No repositories found for product: %s') % @product.friendly_name
-      )
+      fail ActionController::TranslatedError.new(N_('No repositories found for product: %s'),@product.friendly_name)
     end
   end
 
@@ -57,9 +52,11 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     return if @product.bases.any?(&:extension?)
     return if @product.base? || !(@system.products & @product.bases).blank?
 
-    logger.info(N_("Tried to activate/upgrade to '%s' with unmet base product dependency") % @product.friendly_name)
-    untranslated = 'Unmet product dependencies, please activate one of these products first: %s' % @product.bases.map(&:friendly_name).join(', ')
-    raise ActionController::TranslatedError.new(error: untranslated, localized_error: _(untranslated))
+    logger.info("Tried to activate/upgrade to '#{@product.friendly_name}' with unmet base product dependency")
+    raise ActionController::TranslatedError.new(
+      N_('Unmet product dependencies, please activate one of these products first: %s'),
+      @product.bases.map(&:friendly_name).join(', ')
+    )
   end
 
   def render_service

@@ -28,8 +28,9 @@ class Api::Connect::BaseController < ApplicationController
         @system.touch(:last_seen_at)
       else
         logger.info "Could not find system with login '#{login}' and password '#{password}'"
-        untranslated = N_('Invalid system credentials')
-        raise ActionController::TranslatedError.new(error: untranslated, localized_error: _(untranslated), status: :unauthorized)
+        error = ActionController::TranslatedError.new('Invalid system credentials')
+        error.status = :unauthorized
+        raise error
       end
     end
   end
