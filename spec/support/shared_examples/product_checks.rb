@@ -29,9 +29,9 @@ shared_examples 'products controller action' do
     let(:product_without_repos) { FactoryGirl.create(:product) }
     let(:payload) do
       {
-          identifier: product_without_repos.identifier,
-          version: product_without_repos.version,
-          arch: product_without_repos.arch
+        identifier: product_without_repos.identifier,
+        version: product_without_repos.version,
+        arch: product_without_repos.arch
       }
     end
 
@@ -46,9 +46,9 @@ shared_examples 'products controller action' do
   context 'when product does not exist' do
     let(:payload) do
       {
-          identifier: -1,
-          version: product_with_repos.version,
-          arch: product_with_repos.arch
+        identifier: -1,
+        version: product_with_repos.version,
+        arch: product_with_repos.arch
       }
     end
 

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ServicesController, type: :request do
+RSpec.describe ServicesController do
   describe '#show' do
     let(:service) { FactoryGirl.create(:service, :with_repositories) }
 
