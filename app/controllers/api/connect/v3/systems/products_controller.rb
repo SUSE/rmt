@@ -10,16 +10,17 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   end
 
   def show
-    unless @system.products.include? @product
+    if @system.products.include? @product
+      respond_with(
+        @product,
+        serializer: ::V3::ProductSerializer,
+        uri_options: { scheme: request.scheme, host: request.host, port: request.port },
+        service_url: url_for(controller: '/services', action: :show, id: @product.service.id)
+      )
+    else
       untranslated = N_("The requested product '%s' is not activated on this system." % @product.friendly_name)
-      respond_with_error({ message: untranslated, localized_message: _(untranslated) }) and return
+      raise ActionController::TranslatedError.new(error: untranslated, localized_error: _(untranslated))
     end
-    respond_with(
-      @product,
-      serializer: ::V3::ProductSerializer,
-      uri_options: { scheme: request.scheme, host: request.host, port: request.port },
-      service_url: url_for(controller: '/services', action: :show, id: @product.service.id)
-    )
   end
 
   protected
@@ -31,7 +32,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
     unless @product
       message = N_('No product found')
-      respond_with_error({ message: message, localized_message: _(message) }) and return
+      raise ActionController::TranslatedError.new(error: message, localized_error: _(message))
     end
     check_product_service_and_repositories
   end
@@ -61,7 +62,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
     logger.info(N_("Tried to activate/upgrade to '%s' with unmet base product dependency") % @product.friendly_name)
     untranslated = 'Unmet product dependencies, please activate one of these products first: %s' % @product.bases.map(&:friendly_name).join(', ')
-    respond_with_error({ message: untranslated, localized_message: _(untranslated) }) and return
+    raise ActionController::TranslatedError.new(error: untranslated, localized_error: _(untranslated))
   end
 
   def render_service
