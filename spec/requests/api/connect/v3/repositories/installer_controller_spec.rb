@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::Connect::V3::Repositories::InstallerController do
   include_context 'version header', 3
 
-  let(:url) { '/connect/repositories/installer' }
+  let(:url) { connect_default_repositories_installer_url }
 
   describe '#show' do
     before { get url }
