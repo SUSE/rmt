@@ -29,7 +29,7 @@ RSpec.describe ServicesController do
 
       let(:model_urls) do
         service.repositories.map do |repo|
-          SUSE::Misc.uri_replace_hostname(repo.external_url, request.scheme, request.host, request.port).to_s
+          SUSE::Misc.uri_replace_hostname(repo.external_url, 'http://www.example.com').to_s
         end
       end
 

@@ -1,4 +1,4 @@
-class V3::ActivationSerializer < ActiveModel::Serializer
+class V3::ActivationSerializer < ApplicationSerializer
 
   attributes :id, :system_id, :service
 

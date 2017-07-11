@@ -68,12 +68,10 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController do
         let(:system) { FactoryGirl.create(:system) }
         let(:product) { FactoryGirl.create(:product, :extension, :with_repositories, :activated, system: system) }
         let(:serialized_json) do
-          ActiveModelSerializers::SerializableResource.new(
+          V3::ServiceSerializer.new(
             product.service,
-            serializer: ::V3::ServiceSerializer,
-            uri_options: { scheme: request.scheme, host: request.host, port: request.port },
-            status: status,
-            service_url: service_url(product.service)
+            base_url: 'http://www.example.com',
+            status: status
           ).to_json
         end
 

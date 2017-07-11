@@ -1,4 +1,4 @@
-class V3::ProductSerializer < ActiveModel::Serializer
+class V3::ProductSerializer < ApplicationSerializer
 
   def product_type
     object.product_type.to_s
@@ -6,7 +6,7 @@ class V3::ProductSerializer < ActiveModel::Serializer
 
   def repositories
     object.repositories.map do |repository|
-      V3::RepositorySerializer.new(repository, @instance_options[:uri_options])
+      V3::RepositorySerializer.new(repository, base_url: base_url)
     end
   end
 
@@ -21,8 +21,7 @@ class V3::ProductSerializer < ActiveModel::Serializer
 
   def eula_url
     if object.eula_url
-      options = @instance_options[:uri_options]
-      uri = SUSE::Misc.uri_replace_hostname(object.eula_url, options[:scheme], options[:host], options[:port])
+      uri = SUSE::Misc.uri_replace_hostname(object.eula_url, base_url)
       uri.to_s
     else
       ''
