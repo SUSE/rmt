@@ -8,6 +8,7 @@ class ServicesController < ActionController::Base
     @service    = Service.find(params[:id])
     @repos      = @service.repositories
     @expires_at = nil
+    @base_url   = request.base_url
 
     render :xml, template: 'services/show.xml.builder'
 

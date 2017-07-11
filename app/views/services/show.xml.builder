@@ -1,6 +1,6 @@
 xml.repoindex(ttl: 86400) do # FIXME: config file for the options
   @repos.each do |repo|
-    uri = SUSE::Misc.uri_replace_hostname(repo.external_url, request.scheme, request.host, request.port)
+    uri = SUSE::Misc.uri_replace_hostname(repo.external_url, @base_url)
 
     attributes = {
       url: uri.to_s,

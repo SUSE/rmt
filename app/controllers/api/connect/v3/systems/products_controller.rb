@@ -14,8 +14,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
       respond_with(
         @product,
         serializer: ::V3::ProductSerializer,
-        uri_options: { scheme: request.scheme, host: request.host, port: request.port },
-        service_url: url_for(controller: '/services', action: :show, id: @product.service.id)
+        base_url: request.base_url
       )
     else
       raise ActionController::TranslatedError.new(N_("The requested product '%s' is not activated on this system."), @product.friendly_name)
@@ -67,10 +66,9 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     respond_with(
       @product.service,
       serializer: ::V3::ServiceSerializer,
-      uri_options: { scheme: request.scheme, host: request.host, port: request.port },
+      base_url: request.base_url,
       obsoleted_service_name: @obsoleted_service_name,
-      status: status,
-      service_url: service_url(@product.service)
+      status: status
     )
   end
 

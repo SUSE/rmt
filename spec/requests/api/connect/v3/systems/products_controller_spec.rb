@@ -23,12 +23,10 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
         }
       end
       let(:serialized_json) do
-        ActiveModelSerializers::SerializableResource.new(
+        V3::ServiceSerializer.new(
           product_with_repos.service,
-          serializer: ::V3::ServiceSerializer,
-          uri_options: { scheme: request.scheme, host: request.host, port: request.port },
-          status: status,
-          service_url: service_url(product_with_repos.service)
+          base_url: 'http://www.example.com',
+          status: status
         ).to_json
       end
 
@@ -82,10 +80,9 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
         }
       end
       let(:serialized_json) do
-        ActiveModelSerializers::SerializableResource.new(
+        V3::ProductSerializer.new(
           activation.service.product,
-          serializer: ::V3::ProductSerializer,
-          uri_options: { scheme: request.scheme, host: request.host, port: request.port }
+          base_url: 'http://www.example.com'
         ).to_json
       end
 

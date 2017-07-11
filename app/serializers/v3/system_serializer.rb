@@ -1,4 +1,4 @@
-class V3::SystemSerializer < ActiveModel::Serializer
+class V3::SystemSerializer < ApplicationSerializer
 
   attributes :id, :login, :password
 
