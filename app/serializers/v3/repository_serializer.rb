@@ -1,9 +1,9 @@
-class V3::RepositorySerializer < ActiveModel::Serializer
+class V3::RepositorySerializer < ApplicationSerializer
 
   attributes :id, :name, :url, :distro_target, :description, :enabled, :autorefresh
 
   def url
-    uri = SUSE::Misc.uri_replace_hostname(object.external_url, @instance_options[:scheme], @instance_options[:host], @instance_options[:port])
+    uri = SUSE::Misc.uri_replace_hostname(object.external_url, base_url)
     uri.to_s
   end
 

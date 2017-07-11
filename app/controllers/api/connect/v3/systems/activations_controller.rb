@@ -3,7 +3,7 @@ class Api::Connect::V3::Systems::ActivationsController < Api::Connect::BaseContr
   before_action :authenticate_system
 
   def index
-    respond_with(@system.activations, each_serializer: ::V3::ActivationSerializer)
+    respond_with(@system.activations, each_serializer: ::V3::ActivationSerializer, base_url: request.base_url)
   end
 
 end
