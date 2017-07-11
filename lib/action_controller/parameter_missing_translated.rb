@@ -7,4 +7,3 @@ module ActionController
 
   end
 end
-

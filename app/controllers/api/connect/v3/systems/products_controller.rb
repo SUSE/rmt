@@ -37,7 +37,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
   def check_product_service_and_repositories
     unless @product.service && @product.repositories.present?
-      fail ActionController::TranslatedError.new(N_('No repositories found for product: %s'),@product.friendly_name)
+      fail ActionController::TranslatedError.new(N_('No repositories found for product: %s'), @product.friendly_name)
     end
   end
 
