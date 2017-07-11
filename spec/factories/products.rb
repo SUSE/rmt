@@ -70,7 +70,6 @@ FactoryGirl.define do
     trait :activated do
       transient do
         system nil
-        subscription nil
       end
 
       after :create do |product, evaluator|
@@ -78,13 +77,8 @@ FactoryGirl.define do
           unless evaluator.system.activations.map(&:product).flatten.include?(product)
             evaluator.system.activations << FactoryGirl.create(:activation, system: evaluator.system, service: product.service)
           end
-          evaluator.system.subscriptions << if evaluator.subscription
-                                              evaluator.subscription
-                                            else
-                                              FactoryGirl.create(:subscription, product_classes: [product.product_class])
-                                            end
         else
-          fail 'product_enabled_on_system requires both a system and a subscription'
+          fail 'product_enabled_on_system requires a system'
         end
       end
     end

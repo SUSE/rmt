@@ -36,12 +36,7 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController do
       subject { response }
 
       context 'and is not activated' do
-        let(:product) do
-          product = FactoryGirl.create(:product, :with_repositories)
-          product.product_type = 'extension'
-          product.save!
-          product
-        end
+        let(:product) { FactoryGirl.create(:product, :extension, :with_repositories) }
 
         its(:code) { is_expected.to eq('422') }
 
@@ -53,23 +48,12 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController do
 
       context 'has products depending on it and is activated' do
         let(:product) do
-          activation = FactoryGirl.create(:activation)
+          product = FactoryGirl.create(:product, :extension, :with_repositories, :activated, system: system)
+          ext_product = FactoryGirl.create(:product, :extension, :with_repositories, :activated, system: system)
+          ext_product.bases << product
+          ext_product.save!
 
-          activation.system = system
-          activation.save!
-
-          activation.service.product.product_type = 'extension'
-          activation.service.product.save!
-
-          ext_activation = FactoryGirl.create(:activation)
-          ext_activation.system = system
-          ext_activation.save!
-
-          ext_activation.service.product.product_type = 'extension'
-          ext_activation.service.product.bases << activation.service.product
-          ext_activation.service.product.save!
-
-          activation.service.product
+          product
         end
 
         its(:code) { is_expected.to eq('422') }
@@ -81,16 +65,8 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController do
       end
 
       context 'and is activated' do
-        let(:product) do
-          activation = FactoryGirl.create(:activation)
-
-          activation.system = system
-          activation.save!
-
-          activation.service.product.product_type = 'extension'
-          activation.service.product.save!
-          activation.service.product
-        end
+        let(:system) { FactoryGirl.create(:system) }
+        let(:product) { FactoryGirl.create(:product, :extension, :with_repositories, :activated, system: system) }
         let(:serialized_json) do
           ActiveModelSerializers::SerializableResource.new(
             product.service,
