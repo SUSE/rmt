@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+require_relative '../config/boot'
+require 'nokogiri'
+require 'typhoeus'
+require 'pp'
+require 'pathname'
+require 'memory_profiler'
+
+require_relative '../lib/rmt/parser.rb'
+
+downloader = RMT::Downloader.new(
+  'http://download.suse.de/ibs/SUSE/Updates/SLE-Module-Toolchain/12/x86_64/update/',
+  './temp'
+)
+
+rpmmd_fn = downloader.download('repodata/repomd.xml')
+metadata = RMT::Parser.parse_repomd(rpmmd_fn)
+
+primary_files = []
+
+metadata.each do |type, items|
+  items.each do |data|
+    downloader.download(data[:location][:href], data[:checksum][:type], data[:checksum][:value])
+    primary_files << data[:location][:href] if (type == :primary)
+  end
+end
+
+primary_files.each do |primary_file|
+  primary_fn = downloader.download(primary_file)
+  primary_doc = RMT::Parser.parse_primary(primary_fn)
+  downloader.download_bunch(primary_doc.result)
+end
