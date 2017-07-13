@@ -47,6 +47,7 @@ group :development, :test do
   gem 'gettext', require: false # needed for gettext_i18n_rails tasks
   gem 'ruby_parser', require: false # needed for gettext_i18n_rails tasks
   gem 'gettext_test_log'
+  gem 'memory_profiler'
 end
 
 group :development do
