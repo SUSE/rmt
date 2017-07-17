@@ -1,4 +1,9 @@
-class RMT::Rpm::Parser::PrimaryXmlDocument < RMT::Rpm::Parser::BaseSaxDocument
+class RMT::Rpm::Parser::PrimaryXml < RMT::Rpm::Parser::Base
+
+  def initialize(filename, mirror_src = false)
+    super(filename)
+    @mirror_src = mirror_src
+  end
 
   def start_element(name, attrs = [])
     @current_node = name.to_sym
@@ -22,22 +27,13 @@ class RMT::Rpm::Parser::PrimaryXmlDocument < RMT::Rpm::Parser::BaseSaxDocument
 
   def end_element(name)
     if (name == 'package')
-      @packages << RMT::Rpm::FileEntry.new(
+      @referenced_files << RMT::Rpm::FileEntry.new(
         @package[:location],
         @package[:checksum_type],
         @package[:checksum],
         :rpm
-      )
+      ) unless (@package[:arch] == 'src' and not @mirror_src)
     end
-  end
-
-end
-
-class RMT::Rpm::Parser::PrimaryXml < RMT::Rpm::Parser::Base
-
-  def parse
-    document = parse_document(@filename, RMT::Rpm::Parser::PrimaryXmlDocument)
-    @referenced_files = document.packages
   end
 
 end
