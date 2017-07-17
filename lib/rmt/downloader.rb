@@ -1,13 +1,17 @@
 module RMT
 end
 
+require 'typhoeus'
+require 'tempfile'
+require 'fileutils'
+
 class RMT::Downloader
 
   KNOWN_HASH_FUNCTIONS = %i(MD5 SHA1 SHA256 SHA384 SHA512).freeze
 
-  attr_accessor :concurrency
+  attr_accessor :repository_url, :local_path, :concurrency, :logger
 
-  def initialize(repository_url, local_path, logger)
+  def initialize(repository_url, local_path, logger = nil)
     @repository_url = repository_url
     @local_path = local_path
     @concurrency = 4
@@ -23,19 +27,12 @@ class RMT::Downloader
     digest = Digest.const_get(hash_function).file(filename)
 
     raise 'Checksum doesn\'t match!' unless (checksum_value == digest.to_s)
-
-    @logger.debug("D #{File.basename(filename)} - OK!")
   end
 
   def download(remote_file, checksum_type = nil, checksum_value = nil)
-    filename = make_path(remote_file)
-    make_request(remote_file, filename).run
-
-    if (checksum_type and checksum_value)
-      verify_checksum(filename, checksum_type, checksum_value)
-    end
-
-    filename
+    local_file = make_local_path(remote_file)
+    make_request(remote_file, local_file, checksum_type, checksum_value).run
+    local_file
   end
 
   def download_multi(files)
@@ -50,22 +47,25 @@ class RMT::Downloader
   protected
 
   def download_one
-    queue_item = @queue.shift
-    return unless queue_item
+    begin
+      queue_item = @queue.shift
+      return unless queue_item
 
-    remote_file = queue_item.location
-    filename = make_path(remote_file)
+      remote_file = queue_item.location
+      local_file = make_local_path(remote_file)
+
+      already_downloaded = File.exist?(local_file)
+    end while (already_downloaded)
 
     klass = self
-    request = make_request(remote_file, filename) do
-      klass.verify_checksum(filename, queue_item.checksum_type, queue_item.checksum)
+    request = make_request(remote_file, local_file,queue_item[:checksum_type], queue_item[:checksum]) do
       klass.download_one
     end
 
     @hydra.queue(request)
   end
 
-  def make_path(remote_file)
+  def make_local_path(remote_file)
     filename = File.join(@local_path, remote_file)
     dirname = File.dirname(filename)
 
@@ -74,19 +74,34 @@ class RMT::Downloader
     filename
   end
 
-  def make_request(remote_file, filename, &complete_callback)
+  def make_request(remote_file, local_file, checksum_type, checksum_value, &complete_callback)
     uri = URI.join(@repository_url, remote_file).to_s
-    downloaded_file = File.open(filename, 'wb')
+    downloaded_file = Tempfile.new('rmt')
 
     request = Typhoeus::Request.new(uri, followlocation: true)
     request.on_headers do |response|
-      raise 'Request failed' if response.code != 200
+      if (response.code != 200)
+        downloaded_file.unlink
+        raise 'Request failed'
+      end
     end
+
     request.on_body do |chunk|
       downloaded_file.write(chunk)
     end
+
     request.on_complete do
       downloaded_file.close
+
+      begin
+        verify_checksum(downloaded_file.path, checksum_type, checksum_value) if (checksum_type and checksum_value)
+        FileUtils.mv(downloaded_file.path, local_file)
+      ensure
+        downloaded_file.unlink
+      end
+
+      @logger.info("D #{File.basename(local_file)}")
+
       yield if complete_callback
     end
     request

@@ -1,0 +1,4 @@
+mirroring:
+  base_dir: /srv/www/repos/
+  mirror_src: false
+  verify_rpm_checksums: false

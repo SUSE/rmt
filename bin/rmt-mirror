@@ -1,44 +1,23 @@
 #!/usr/bin/env ruby
 
 require_relative '../config/boot'
-require 'nokogiri'
-require 'typhoeus'
-require 'pp'
 require 'pathname'
-require 'memory_profiler'
+require 'config'
+require 'pp'
 
-logger = Logger.new(STDOUT)
-
+require_relative '../lib/rmt/mirror'
 require_relative '../lib/rmt/rpm'
 require_relative '../lib/rmt/downloader'
 
-downloader = RMT::Downloader.new(
-  'http://download.suse.de/ibs/SUSE/Updates/SLE-Module-Toolchain/12/x86_64/update/',
-  './temp',
-  logger
+Config.load_and_set_settings(
+  File.join( File.dirname(__FILE__), "../config/rmt.yml"),
+  File.join( File.dirname(__FILE__), "../config/rmt.local.yml")
 )
 
-local_filename = downloader.download('repodata/repomd.xml')
-rpmmd_parser = RMT::Rpm::Parser::RpmmdXml.new(local_filename)
-rpmmd_parser.parse
-
-primary_files = []
-deltainfo_files = []
-
-rpmmd_parser.referenced_files.each do |reference|
-  local_filename = downloader.download(reference.location, reference.checksum_type, reference.checksum)
-  primary_files << local_filename if (reference.type == :primary)
-  deltainfo_files << local_filename if (reference.type == :deltainfo)
-end
-
-deltainfo_files.each do |filename|
-  parser = RMT::Rpm::Parser::DeltainfoXml.new(filename)
-  parser.parse
-  downloader.download_multi(parser.referenced_files)
-end
-
-primary_files.each do |filename|
-  parser = RMT::Rpm::Parser::PrimaryXml.new(filename)
-  parser.parse
-  downloader.download_multi(parser.referenced_files)
-end
+RMT::Mirror.new(
+  Settings.mirroring.base_dir,
+  'http://download.suse.de/ibs/SUSE/Updates/SLE-SERVER/12-SP2/x86_64/update/',
+  '/SLE-SERVER',
+  false,
+  Logger.new(STDOUT)
+).mirror
