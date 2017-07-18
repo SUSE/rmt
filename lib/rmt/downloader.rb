@@ -7,11 +7,15 @@ require 'fileutils'
 
 class RMT::Downloader
 
+  class Exception < RuntimeError
+  end
+
   KNOWN_HASH_FUNCTIONS = %i(MD5 SHA1 SHA256 SHA384 SHA512).freeze
 
   attr_accessor :repository_url, :local_path, :concurrency, :logger
 
   def initialize(repository_url, local_path, logger = nil)
+    Typhoeus::Config.user_agent = "RMT/#{RMT::VERSION}"
     @repository_url = repository_url
     @local_path = local_path
     @concurrency = 4
@@ -21,12 +25,12 @@ class RMT::Downloader
   def verify_checksum(filename, checksum_type, checksum_value)
     hash_function = checksum_type.gsub(/\W/, '').upcase.to_sym
     unless (KNOWN_HASH_FUNCTIONS.include? hash_function)
-      raise "Unknown hash function #{checksum_type}"
+      raise Exception.new("Unknown hash function #{checksum_type}")
     end
 
     digest = Digest.const_get(hash_function).file(filename)
 
-    raise 'Checksum doesn\'t match!' unless (checksum_value == digest.to_s)
+    raise Exception.new('Checksum doesn\'t match') unless (checksum_value == digest.to_s)
   end
 
   def download(remote_file, checksum_type = nil, checksum_value = nil)
@@ -47,7 +51,7 @@ class RMT::Downloader
   protected
 
   def download_one
-    remote_file = local_file = nil
+    remote_file = local_file = queue_item = nil
 
     loop do
       queue_item = @queue.shift
@@ -85,7 +89,7 @@ class RMT::Downloader
     request.on_headers do |response|
       if (response.code != 200)
         downloaded_file.unlink
-        raise 'Request failed'
+        raise Exception.new("HTTP request failed with code #{response.code}")
       end
     end
 
