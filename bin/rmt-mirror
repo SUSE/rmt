@@ -10,8 +10,8 @@ require_relative '../lib/rmt/rpm'
 require_relative '../lib/rmt/downloader'
 
 Config.load_and_set_settings(
-  File.join( File.dirname(__FILE__), "../config/rmt.yml"),
-  File.join( File.dirname(__FILE__), "../config/rmt.local.yml")
+  File.join(File.dirname(__FILE__), '../config/rmt.yml'),
+  File.join(File.dirname(__FILE__), '../config/rmt.local.yml')
 )
 
 RMT::Mirror.new(

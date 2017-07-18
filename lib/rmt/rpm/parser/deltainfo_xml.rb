@@ -36,7 +36,7 @@ class RMT::Rpm::Parser::DeltainfoXml < RMT::Rpm::Parser::Base
         @delta[:checksum_type],
         @delta[:checksum],
         :drpm
-      ) unless (@package[:arch] == 'src' and not @mirror_src)
+      ) unless (@package[:arch] == 'src' and !@mirror_src)
     end
   end
 

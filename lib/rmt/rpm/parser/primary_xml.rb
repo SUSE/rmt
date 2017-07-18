@@ -32,7 +32,7 @@ class RMT::Rpm::Parser::PrimaryXml < RMT::Rpm::Parser::Base
         @package[:checksum_type],
         @package[:checksum],
         :rpm
-      ) unless (@package[:arch] == 'src' and not @mirror_src)
+      ) unless (@package[:arch] == 'src' and !@mirror_src)
     end
   end
 
