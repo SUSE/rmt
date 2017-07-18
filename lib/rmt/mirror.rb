@@ -30,6 +30,12 @@ class RMT::Mirror
     )
 
     begin
+      @downloader.download('repodata/repomd.xml.key')
+      @downloader.download('repodata/repomd.xml.asc')
+    rescue RMT::Downloader::Exception
+    end
+
+    begin
       local_filename = @downloader.download('repodata/repomd.xml')
       rpmmd_parser = RMT::Rpm::Parser::RpmmdXml.new(local_filename)
       rpmmd_parser.parse

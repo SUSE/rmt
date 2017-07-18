@@ -5,6 +5,7 @@ require 'pathname'
 require 'config'
 require 'pp'
 
+require_relative '../lib/rmt'
 require_relative '../lib/rmt/mirror'
 require_relative '../lib/rmt/rpm'
 require_relative '../lib/rmt/downloader'

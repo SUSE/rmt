@@ -45,7 +45,17 @@ class RMT::Downloader
 
     @concurrency.times { download_one }
 
-    @hydra.run
+    loop do
+      error = false
+      begin
+        @hydra.run
+      rescue RMT::Downloader::Exception => e
+        @logger.info("E #{e}")
+        download_one
+        error = true
+      end
+      break unless (error)
+    end
   end
 
   protected
@@ -89,7 +99,7 @@ class RMT::Downloader
     request.on_headers do |response|
       if (response.code != 200)
         downloaded_file.unlink
-        raise Exception.new("HTTP request failed with code #{response.code}")
+        raise Exception.new("#{remote_file} - HTTP request failed with code #{response.code}")
       end
     end
 
@@ -97,7 +107,9 @@ class RMT::Downloader
       downloaded_file.write(chunk)
     end
 
-    request.on_complete do
+    request.on_complete do |response|
+      next unless (response.return_code == :ok)
+
       downloaded_file.close
 
       begin
