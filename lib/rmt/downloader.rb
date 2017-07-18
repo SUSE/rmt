@@ -47,7 +47,9 @@ class RMT::Downloader
   protected
 
   def download_one
-    begin
+    remote_file = local_file = nil
+
+    loop do
       queue_item = @queue.shift
       return unless queue_item
 
@@ -55,10 +57,11 @@ class RMT::Downloader
       local_file = make_local_path(remote_file)
 
       already_downloaded = File.exist?(local_file)
-    end while (already_downloaded)
+      break unless already_downloaded
+    end
 
     klass = self
-    request = make_request(remote_file, local_file,queue_item[:checksum_type], queue_item[:checksum]) do
+    request = make_request(remote_file, local_file, queue_item[:checksum_type], queue_item[:checksum]) do
       klass.download_one
     end
 

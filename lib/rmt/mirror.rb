@@ -44,8 +44,8 @@ class RMT::Mirror
       repodata = File.join(@mirroring_base_dir, @local_path, 'repodata')
       new_repodata = File.join(temp_dir.to_s, 'repodata')
 
-      FileUtils.remove_entry(old_repodata) if (Dir.exists?(old_repodata))
-      FileUtils.mv(repodata, old_repodata) if (Dir.exists?(repodata))
+      FileUtils.remove_entry(old_repodata) if Dir.exist?(old_repodata)
+      FileUtils.mv(repodata, old_repodata) if Dir.exist?(repodata)
       FileUtils.mv(new_repodata, repodata)
     ensure
       FileUtils.remove_entry(temp_dir)
@@ -73,4 +73,5 @@ class RMT::Mirror
       @downloader.download_multi(parser.referenced_files)
     end
   end
+
 end
