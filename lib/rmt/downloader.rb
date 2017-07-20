@@ -54,7 +54,7 @@ class RMT::Downloader
         download_one
         error = true
       end
-      break unless (error)
+      break unless error
     end
   end
 
@@ -92,12 +92,12 @@ class RMT::Downloader
   end
 
   def make_request(remote_file, local_file, checksum_type, checksum_value, &complete_callback)
-    uri = URI.join(@repository_url, remote_file).to_s
+    uri = URI.join(@repository_url, remote_file)
     downloaded_file = Tempfile.new('rmt')
 
-    request = Typhoeus::Request.new(uri, followlocation: true)
+    request = Typhoeus::Request.new(uri.to_s, followlocation: true)
     request.on_headers do |response|
-      if (response.code != 200)
+      if (URI(uri).scheme != 'file' and response.code != 200)
         downloaded_file.unlink
         raise Exception.new("#{remote_file} - HTTP request failed with code #{response.code}")
       end
@@ -108,7 +108,7 @@ class RMT::Downloader
     end
 
     request.on_complete do |response|
-      next unless (response.return_code == :ok)
+      next if (response.return_code and response.return_code != :ok)
 
       downloaded_file.close
 

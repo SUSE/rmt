@@ -9,15 +9,15 @@ RSpec.describe RMT::Downloader do
   describe '#download' do
     context 'when HTTP code is not 200' do
       before do
-        stub_request(:get, 'http://example.com/rpmmd.xml')
+        stub_request(:get, 'http://example.com/repomd.xml')
           .with(headers: headers)
           .to_return(status: 404, body: '', headers: {})
       end
 
       it 'raises an exception' do
         expect do
-          downloader.download('/rpmmd.xml')
-        end.to raise_error(RMT::Downloader::Exception, 'HTTP request failed with code 404')
+          downloader.download('/repomd.xml')
+        end.to raise_error(RMT::Downloader::Exception, '/repomd.xml - HTTP request failed with code 404')
       end
     end
 
@@ -27,7 +27,7 @@ RSpec.describe RMT::Downloader do
       let(:checksum) { Digest.const_get(checksum_type).hexdigest(content) }
 
       before do
-        stub_request(:get, 'http://example.com/rpmmd.xml')
+        stub_request(:get, 'http://example.com/repomd.xml')
           .with(headers: headers)
           .to_return(status: 200, body: 'test', headers: {})
       end
@@ -35,7 +35,7 @@ RSpec.describe RMT::Downloader do
       context 'and hash function is unknown' do
         it 'raises an exception' do
           expect do
-            downloader.download('/rpmmd.xml', 'CHUNKYBACON42', '0xDEADBEEF')
+            downloader.download('/repomd.xml', 'CHUNKYBACON42', '0xDEADBEEF')
           end.to raise_error(RMT::Downloader::Exception, 'Unknown hash function CHUNKYBACON42')
         end
       end
@@ -43,13 +43,13 @@ RSpec.describe RMT::Downloader do
       context 'and checksum is wrong' do
         it 'raises an exception' do
           expect do
-            downloader.download('/rpmmd.xml', 'SHA256', '0xDEADBEEF')
+            downloader.download('/repomd.xml', 'SHA256', '0xDEADBEEF')
           end.to raise_error(RMT::Downloader::Exception, 'Checksum doesn\'t match')
         end
       end
 
       context 'and checksum is correct' do
-        subject { downloader.download('/rpmmd.xml', checksum_type, checksum) }
+        subject { downloader.download('/repomd.xml', checksum_type, checksum) }
 
         it('has correct content') { expect(File.read(subject)).to eq(content) }
       end
@@ -95,5 +95,4 @@ RSpec.describe RMT::Downloader do
       end
     end
   end
-
 end

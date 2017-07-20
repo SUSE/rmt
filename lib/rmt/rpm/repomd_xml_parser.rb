@@ -1,4 +1,4 @@
-class RMT::Rpm::Parser::RpmmdXml < RMT::Rpm::Parser::Base
+class RMT::Rpm::RepomdXmlParser < RMT::Rpm::BaseParser
 
   def parse
     xml = Nokogiri::XML(File.open(@filename))

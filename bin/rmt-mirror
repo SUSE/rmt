@@ -10,6 +10,14 @@ require_relative '../lib/rmt/mirror'
 require_relative '../lib/rmt/rpm'
 require_relative '../lib/rmt/downloader'
 
+repository_url = ARGV[0]
+local_path = ARGV[1]
+
+unless (repository_url and local_path)
+  STDERR.puts "Usage: rmt-mirror [repository_url] [local_path]"
+  exit 1
+end
+
 Config.load_and_set_settings(
   File.join(File.dirname(__FILE__), '../config/rmt.yml'),
   File.join(File.dirname(__FILE__), '../config/rmt.local.yml')
@@ -17,8 +25,8 @@ Config.load_and_set_settings(
 
 RMT::Mirror.new(
   Settings.mirroring.base_dir,
-  'http://download.suse.de/ibs/SUSE/Updates/SLE-SERVER/12-SP2/x86_64/update/',
-  '/SLE-SERVER',
+  repository_url,
+  local_path,
   false,
   Logger.new(STDOUT)
 ).mirror
