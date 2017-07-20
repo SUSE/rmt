@@ -1,4 +1,4 @@
-class RMT::Rpm::Parser::DeltainfoXml < RMT::Rpm::Parser::Base
+class RMT::Rpm::DeltainfoXmlParser < RMT::Rpm::BaseParser
 
   def initialize(filename, mirror_src = false)
     super(filename)

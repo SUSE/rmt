@@ -32,22 +32,25 @@ class RMT::Mirror
     begin
       @downloader.download('repodata/repomd.xml.key')
       @downloader.download('repodata/repomd.xml.asc')
-    rescue RMT::Downloader::Exception
+    rescue RMT::Downloader::Exception # rubocop:disable Lint/HandleExceptions
     end
 
     begin
       local_filename = @downloader.download('repodata/repomd.xml')
-      rpmmd_parser = RMT::Rpm::Parser::RpmmdXml.new(local_filename)
-      rpmmd_parser.parse
+      repomd_parser = RMT::Rpm::RepomdXmlParser.new(local_filename)
+      repomd_parser.parse
 
-      rpmmd_parser.referenced_files.each do |reference|
+      repomd_parser.referenced_files.each do |reference|
         @downloader.download(reference.location, reference.checksum_type, reference.checksum)
         @primary_files << reference.location if (reference.type == :primary)
         @deltainfo_files << reference.location if (reference.type == :deltainfo)
       end
 
-      old_repodata = File.join(@mirroring_base_dir, @local_path, '.old_repodata')
-      repodata = File.join(@mirroring_base_dir, @local_path, 'repodata')
+      local_repo_dir = File.join(@mirroring_base_dir, @local_path)
+      FileUtils.mkpath(local_repo_dir) unless Dir.exist?(local_repo_dir)
+
+      old_repodata = File.join(local_repo_dir, '.old_repodata')
+      repodata = File.join(local_repo_dir, 'repodata')
       new_repodata = File.join(temp_dir.to_s, 'repodata')
 
       FileUtils.remove_entry(old_repodata) if Dir.exist?(old_repodata)
@@ -62,7 +65,7 @@ class RMT::Mirror
     @downloader.local_path = File.join(@mirroring_base_dir, @local_path)
 
     @deltainfo_files.each do |filename|
-      parser = RMT::Rpm::Parser::DeltainfoXml.new(
+      parser = RMT::Rpm::DeltainfoXmlParser.new(
         File.join(@mirroring_base_dir, @local_path, filename),
         @mirror_src
       )
@@ -71,7 +74,7 @@ class RMT::Mirror
     end
 
     @primary_files.each do |filename|
-      parser = RMT::Rpm::Parser::PrimaryXml.new(
+      parser = RMT::Rpm::PrimaryXmlParser.new(
         File.join(@mirroring_base_dir, @local_path, filename),
         @mirror_src
       )

@@ -1,6 +1,6 @@
 require 'nokogiri'
 
-class RMT::Rpm::Parser::Base < Nokogiri::XML::SAX::Document
+class RMT::Rpm::BaseParser < Nokogiri::XML::SAX::Document
 
   attr_reader :referenced_files
 

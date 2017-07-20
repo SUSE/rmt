@@ -1,4 +1,4 @@
-class RMT::Rpm::Parser::PrimaryXml < RMT::Rpm::Parser::Base
+class RMT::Rpm::PrimaryXmlParser < RMT::Rpm::BaseParser
 
   def initialize(filename, mirror_src = false)
     super(filename)
