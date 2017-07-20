@@ -95,4 +95,43 @@ RSpec.describe RMT::Downloader do
       end
     end
   end
+
+  describe '#download_multi handles exceptions properly' do
+    let(:files) { %w(package1 package2 package3) }
+    let(:checksum_type) { 'SHA256' }
+    let(:queue) do
+      queue = []
+      files.each do |file|
+        queue << RMT::Rpm::FileEntry.new(
+          file,
+          checksum_type,
+          Digest.const_get(checksum_type).hexdigest(file),
+          :rpm
+        )
+      end
+      queue
+    end
+
+    before do
+      files.each do |file|
+        stub_request(:get, "http://example.com/#{file}").with(headers: headers)
+          .to_return(status: 404, body: file, headers: {})
+      end
+      downloader.download_multi(queue)
+    end
+
+    it 'requested all files' do
+      files.each do |file|
+        expect(WebMock).to(
+          have_requested(:get, "http://example.com/#{file}").with(headers: headers)
+        )
+      end
+    end
+
+    it 'saved all files' do
+      files.each do |file|
+        expect(File.exist?(File.join(dir, file))).to eq(false)
+      end
+    end
+  end
 end
