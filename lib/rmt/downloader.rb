@@ -50,32 +50,31 @@ class RMT::Downloader
     @queue = files
     @hydra = Typhoeus::Hydra.new(max_concurrency: @concurrency)
 
-    iterator_fiber = Fiber.new do
-      @queue.each do |queue_item|
-        request_fiber = Fiber.new do
-          begin
-            remote_file = queue_item.location
-            local_file = make_local_path(remote_file)
-            make_request(remote_file, local_file, request_fiber, queue_item[:checksum_type], queue_item[:checksum])
-          rescue RMT::Downloader::Exception => e
-            @logger.info("E #{File.basename(local_file)} - #{e}")
-          ensure
-            iterator_fiber.resume if iterator_fiber.alive?
-          end
-        end
-
-        @hydra.queue(request_fiber.resume)
-        Fiber.yield
-      end
-      Fiber.yield
-    end
-
-    @concurrency.times { iterator_fiber.resume }
+    @concurrency.times { process_queue }
 
     @hydra.run
   end
 
   protected
+
+  def process_queue
+    queue_item = @queue.shift
+    return unless queue_item
+
+    request_fiber = Fiber.new do
+      begin
+        remote_file = queue_item.location
+        local_file = make_local_path(remote_file)
+        make_request(remote_file, local_file, request_fiber, queue_item[:checksum_type], queue_item[:checksum])
+      rescue RMT::Downloader::Exception => e
+        @logger.info("E #{File.basename(local_file)} - #{e}")
+      ensure
+        process_queue()
+      end
+    end
+
+    @hydra.queue(request_fiber.resume)
+  end
 
   def make_request(remote_file, local_file, request_fiber, checksum_type = nil, checksum_value = nil)
     uri = URI.join(@repository_url, remote_file)
