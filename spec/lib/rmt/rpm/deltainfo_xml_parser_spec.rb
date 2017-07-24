@@ -25,5 +25,3 @@ RSpec.describe RMT::Rpm::DeltainfoXmlParser do
     ]
   end
 end
-
-
