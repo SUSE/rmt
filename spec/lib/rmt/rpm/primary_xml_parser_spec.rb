@@ -38,4 +38,3 @@ RSpec.describe RMT::Rpm::PrimaryXmlParser do
     ]
   end
 end
-

@@ -4,6 +4,7 @@ end
 require 'typhoeus'
 require 'tempfile'
 require 'fileutils'
+require 'fiber'
 
 class RMT::Downloader
 
@@ -35,7 +36,13 @@ class RMT::Downloader
 
   def download(remote_file, checksum_type = nil, checksum_value = nil)
     local_file = make_local_path(remote_file)
-    make_request(remote_file, local_file, checksum_type, checksum_value).run
+
+    request_fiber = Fiber.new do
+      make_request(remote_file, local_file, request_fiber, checksum_type, checksum_value)
+    end
+
+    request_fiber.resume.run
+
     local_file
   end
 
@@ -43,43 +50,70 @@ class RMT::Downloader
     @queue = files
     @hydra = Typhoeus::Hydra.new(max_concurrency: @concurrency)
 
-    @concurrency.times { download_one }
+    iterator_fiber = Fiber.new do
+      @queue.each do |queue_item|
+        request_fiber = Fiber.new do
+          begin
+            remote_file = queue_item.location
+            local_file = make_local_path(remote_file)
+            make_request(remote_file, local_file, request_fiber, queue_item[:checksum_type], queue_item[:checksum])
+          rescue RMT::Downloader::Exception => e
+            @logger.info("E #{File.basename(local_file)} - #{e}")
+          ensure
+            iterator_fiber.resume if iterator_fiber.alive?
+          end
+        end
 
-    loop do
-      error = false
-      begin
-        @hydra.run
-      rescue RMT::Downloader::Exception => e
-        @logger.info("E #{e}")
-        download_one
-        error = true
+        @hydra.queue(request_fiber.resume)
+        Fiber.yield
       end
-      break unless error
+      Fiber.yield
     end
+
+    @concurrency.times { iterator_fiber.resume }
+
+    @hydra.run
   end
 
   protected
 
-  def download_one
-    remote_file = local_file = queue_item = nil
+  def make_request(remote_file, local_file, request_fiber, checksum_type = nil, checksum_value = nil)
+    uri = URI.join(@repository_url, remote_file)
+    downloaded_file = Tempfile.new('rmt')
 
-    loop do
-      queue_item = @queue.shift
-      return unless queue_item
-
-      remote_file = queue_item.location
-      local_file = make_local_path(remote_file)
-
-      already_downloaded = File.exist?(local_file)
-      break unless already_downloaded
+    request = Typhoeus::Request.new(uri.to_s, followlocation: true)
+    request.on_headers {|response| request_fiber.resume(response) }
+    request.on_body do |chunk|
+      next :abort if downloaded_file.closed?
+      downloaded_file.write(chunk)
+    end
+    request.on_complete do |response|
+      request_fiber.resume(response) if request_fiber.alive?
     end
 
-    klass = self
-    request = make_request(remote_file, local_file, queue_item[:checksum_type], queue_item[:checksum]) do
-      klass.download_one
+    response = Fiber.yield(request)
+
+    begin
+      if (URI(uri).scheme != 'file' and response.code != 200)
+        raise RMT::Downloader::Exception.new("#{remote_file} - HTTP request failed with code #{response.code}")
+      end
+
+      response = Fiber.yield
+      if (response.return_code and response.return_code != :ok)
+        raise RMT::Downloader::Exception.new("#{remote_file} - return code #{response.return_code}")
+      end
+
+      downloaded_file.close
+
+      verify_checksum(downloaded_file.path, checksum_type, checksum_value) if (checksum_type and checksum_value)
+    rescue StandardError => e
+      downloaded_file.unlink
+      raise e
     end
 
-    @hydra.queue(request)
+    FileUtils.mv(downloaded_file.path, local_file)
+
+    @logger.info("D #{File.basename(local_file)}")
   end
 
   def make_local_path(remote_file)
@@ -89,41 +123,6 @@ class RMT::Downloader
     FileUtils.mkdir_p(dirname)
 
     filename
-  end
-
-  def make_request(remote_file, local_file, checksum_type, checksum_value, &complete_callback)
-    uri = URI.join(@repository_url, remote_file)
-    downloaded_file = Tempfile.new('rmt')
-
-    request = Typhoeus::Request.new(uri.to_s, followlocation: true)
-    request.on_headers do |response|
-      if (URI(uri).scheme != 'file' and response.code != 200)
-        downloaded_file.unlink
-        raise Exception.new("#{remote_file} - HTTP request failed with code #{response.code}")
-      end
-    end
-
-    request.on_body do |chunk|
-      downloaded_file.write(chunk)
-    end
-
-    request.on_complete do |response|
-      next if (response.return_code and response.return_code != :ok)
-
-      downloaded_file.close
-
-      begin
-        verify_checksum(downloaded_file.path, checksum_type, checksum_value) if (checksum_type and checksum_value)
-        FileUtils.mv(downloaded_file.path, local_file)
-      ensure
-        downloaded_file.unlink
-      end
-
-      @logger.info("D #{File.basename(local_file)}")
-
-      yield if complete_callback
-    end
-    request
   end
 
 end
