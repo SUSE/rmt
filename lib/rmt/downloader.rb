@@ -26,12 +26,12 @@ class RMT::Downloader
   def verify_checksum(filename, checksum_type, checksum_value)
     hash_function = checksum_type.gsub(/\W/, '').upcase.to_sym
     unless (KNOWN_HASH_FUNCTIONS.include? hash_function)
-      raise Exception.new("Unknown hash function #{checksum_type}")
+      raise RMT::Downloader::Exception.new("Unknown hash function #{checksum_type}")
     end
 
     digest = Digest.const_get(hash_function).file(filename)
 
-    raise Exception.new('Checksum doesn\'t match') unless (checksum_value == digest.to_s)
+    raise RMT::Downloader::Exception.new('Checksum doesn\'t match') unless (checksum_value == digest.to_s)
   end
 
   def download(remote_file, checksum_type = nil, checksum_value = nil)
@@ -58,19 +58,14 @@ class RMT::Downloader
   protected
 
   def process_queue
-    queue_item = remote_file = local_file = nil
-
-    loop do
+    # Skip over files that already exist
+    begin
       queue_item = @queue.shift
       return unless queue_item
 
       remote_file = queue_item.location
       local_file = make_local_path(remote_file)
-
-      # Skip over files that already exist
-      next if File.exist?(local_file)
-      break
-    end
+    end while File.exist?(local_file) # rubocop:disable Lint/Loop
 
     # The request is wrapped into a fiber for exception handling
     request_fiber = Fiber.new do
@@ -79,7 +74,7 @@ class RMT::Downloader
       rescue RMT::Downloader::Exception => e
         @logger.info("E #{File.basename(local_file)} - #{e}")
       ensure
-        process_queue()
+        process_queue
       end
     end
 
