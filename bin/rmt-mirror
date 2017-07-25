@@ -27,6 +27,6 @@ RMT::Mirror.new(
   Settings.mirroring.base_dir,
   repository_url,
   local_path,
-  false,
+  Settings.mirroring.mirror_src,
   Logger.new(STDOUT)
 ).mirror
