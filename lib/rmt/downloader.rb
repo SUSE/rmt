@@ -58,13 +58,23 @@ class RMT::Downloader
   protected
 
   def process_queue
-    queue_item = @queue.shift
-    return unless queue_item
+    queue_item = remote_file = local_file = nil
 
+    loop do
+      queue_item = @queue.shift
+      return unless queue_item
+
+      remote_file = queue_item.location
+      local_file = make_local_path(remote_file)
+
+      # Skip over files that already exist
+      next if File.exist?(local_file)
+      break
+    end
+
+    # The request is wrapped into a fiber for exception handling
     request_fiber = Fiber.new do
       begin
-        remote_file = queue_item.location
-        local_file = make_local_path(remote_file)
         make_request(remote_file, local_file, request_fiber, queue_item[:checksum_type], queue_item[:checksum])
       rescue RMT::Downloader::Exception => e
         @logger.info("E #{File.basename(local_file)} - #{e}")
@@ -90,14 +100,14 @@ class RMT::Downloader
       request_fiber.resume(response) if request_fiber.alive?
     end
 
-    response = Fiber.yield(request)
+    response = Fiber.yield(request) # yields headers
 
     begin
       if (URI(uri).scheme != 'file' and response.code != 200)
         raise RMT::Downloader::Exception.new("#{remote_file} - HTTP request failed with code #{response.code}")
       end
 
-      response = Fiber.yield
+      response = Fiber.yield # yields when the request is complete
       if (response.return_code and response.return_code != :ok)
         raise RMT::Downloader::Exception.new("#{remote_file} - return code #{response.return_code}")
       end
