@@ -1,9 +1,10 @@
-module RMT
-end
-
 class RMT::Mirror
 
-  def initialize(mirroring_base_dir, repository_url, local_path, mirror_src = false, logger = nil)
+  class RMT::Mirror::Exception < RuntimeError
+
+  end
+
+  def initialize(mirroring_base_dir:, repository_url:, local_path:, mirror_src: false, logger: nil)
     @mirroring_base_dir = mirroring_base_dir
     @repository_url = repository_url
     @local_path = local_path
@@ -21,18 +22,30 @@ class RMT::Mirror
   protected
 
   def mirror_metadata
-    temp_dir = Dir.mktmpdir
+    begin
+      local_repo_dir = File.join(@mirroring_base_dir, @local_path)
+      FileUtils.mkpath(local_repo_dir) unless Dir.exist?(local_repo_dir)
+    rescue StandardError => e
+      raise RMT::Mirror::Exception.new("Can not create a local repository directory: #{e}")
+    end
+
+    begin
+      temp_dir = Dir.mktmpdir
+    rescue StandardError => e
+      raise RMT::Mirror::Exception.new("Can not create a temporary directory: #{e}")
+    end
 
     @downloader = RMT::Downloader.new(
-      @repository_url,
-      temp_dir.to_s,
-      @logger
+      repository_url: @repository_url,
+      local_path: temp_dir.to_s,
+      logger: @logger
     )
 
     begin
       @downloader.download('repodata/repomd.xml.key')
       @downloader.download('repodata/repomd.xml.asc')
-    rescue RMT::Downloader::Exception # rubocop:disable Lint/HandleExceptions
+    rescue RMT::Downloader::Exception
+      @logger.info('Repository metadata signatures are missing')
     end
 
     begin
@@ -45,9 +58,6 @@ class RMT::Mirror
         @primary_files << reference.location if (reference.type == :primary)
         @deltainfo_files << reference.location if (reference.type == :deltainfo)
       end
-
-      local_repo_dir = File.join(@mirroring_base_dir, @local_path)
-      FileUtils.mkpath(local_repo_dir) unless Dir.exist?(local_repo_dir)
 
       old_repodata = File.join(local_repo_dir, '.old_repodata')
       repodata = File.join(local_repo_dir, 'repodata')

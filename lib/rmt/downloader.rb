@@ -1,6 +1,3 @@
-module RMT
-end
-
 require 'typhoeus'
 require 'tempfile'
 require 'fileutils'
@@ -15,23 +12,12 @@ class RMT::Downloader
 
   attr_accessor :repository_url, :local_path, :concurrency, :logger
 
-  def initialize(repository_url, local_path, logger = nil)
+  def initialize(repository_url:, local_path:, logger: nil)
     Typhoeus::Config.user_agent = "RMT/#{RMT::VERSION}"
     @repository_url = repository_url
     @local_path = local_path
     @concurrency = 4
     @logger = logger || Logger.new('/dev/null')
-  end
-
-  def verify_checksum(filename, checksum_type, checksum_value)
-    hash_function = checksum_type.gsub(/\W/, '').upcase.to_sym
-    unless (KNOWN_HASH_FUNCTIONS.include? hash_function)
-      raise RMT::Downloader::Exception.new("Unknown hash function #{checksum_type}")
-    end
-
-    digest = Digest.const_get(hash_function).file(filename)
-
-    raise RMT::Downloader::Exception.new('Checksum doesn\'t match') unless (checksum_value == digest.to_s)
   end
 
   def download(remote_file, checksum_type = nil, checksum_value = nil)
@@ -72,13 +58,24 @@ class RMT::Downloader
       begin
         make_request(remote_file, local_file, request_fiber, queue_item[:checksum_type], queue_item[:checksum])
       rescue RMT::Downloader::Exception => e
-        @logger.info("E #{File.basename(local_file)} - #{e}")
+        @logger.warn("× #{File.basename(local_file)} - #{e}")
       ensure
         process_queue
       end
     end
 
     @hydra.queue(request_fiber.resume)
+  end
+
+  def verify_checksum(filename, checksum_type, checksum_value)
+    hash_function = checksum_type.gsub(/\W/, '').upcase.to_sym
+    unless (KNOWN_HASH_FUNCTIONS.include? hash_function)
+      raise RMT::Downloader::Exception.new("Unknown hash function #{checksum_type}")
+    end
+
+    digest = Digest.const_get(hash_function).file(filename)
+
+    raise RMT::Downloader::Exception.new('Checksum doesn\'t match') unless (checksum_value == digest.to_s)
   end
 
   def make_request(remote_file, local_file, request_fiber, checksum_type = nil, checksum_value = nil)
@@ -117,7 +114,7 @@ class RMT::Downloader
 
     FileUtils.mv(downloaded_file.path, local_file)
 
-    @logger.info("D #{File.basename(local_file)}")
+    @logger.info("↓ #{File.basename(local_file)}")
   end
 
   def make_local_path(remote_file)

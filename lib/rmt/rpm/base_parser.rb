@@ -27,6 +27,4 @@ class RMT::Rpm::BaseParser < Nokogiri::XML::SAX::Document
     attributes.select {|e| e[0] == name }.first[1]
   end
 
-
-
 end

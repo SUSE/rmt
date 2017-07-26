@@ -3,7 +3,6 @@
 require_relative '../config/boot'
 require 'pathname'
 require 'config'
-require 'pp'
 
 require_relative '../lib/rmt'
 require_relative '../lib/rmt/mirror'
@@ -23,10 +22,15 @@ Config.load_and_set_settings(
   File.join(File.dirname(__FILE__), '../config/rmt.local.yml')
 )
 
-RMT::Mirror.new(
-  Settings.mirroring.base_dir,
-  repository_url,
-  local_path,
-  Settings.mirroring.mirror_src,
-  Logger.new(STDOUT)
-).mirror
+begin
+  RMT::Mirror.new(
+    mirroring_base_dir: Settings.mirroring.base_dir,
+    repository_url: repository_url,
+    local_path: local_path,
+    mirror_src: Settings.mirroring.mirror_src,
+    logger: Logger.new(STDOUT)
+  ).mirror
+rescue RMT::Mirror::Exception => e
+  warn e.to_s
+  exit 1
+end
