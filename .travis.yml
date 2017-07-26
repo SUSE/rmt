@@ -1,0 +1,15 @@
+language: ruby
+rvm:
+  # The version used at SLE12
+  - 2.1.2
+
+  # Stable versions
+  - 2.2.7
+  - 2.3.4
+  - 2.4.1
+
+  # Future versions
+  - ruby-head
+script:
+  - 'bundle exec rspec spec'
+  - 'bundle exec rubocop'
