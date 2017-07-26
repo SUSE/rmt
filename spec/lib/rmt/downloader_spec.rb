@@ -3,7 +3,7 @@ require 'webmock/rspec'
 
 RSpec.describe RMT::Downloader do
   let(:dir) { Dir.mktmpdir }
-  let(:downloader) { described_class.new('http://example.com', dir) }
+  let(:downloader) { described_class.new(repository_url: 'http://example.com', local_path: dir) }
   let(:headers) { { 'User-Agent' => "RMT/#{RMT::VERSION}" } }
 
   describe '#download' do
@@ -60,16 +60,14 @@ RSpec.describe RMT::Downloader do
     let(:files) { %w(package1 package2 package3) }
     let(:checksum_type) { 'SHA256' }
     let(:queue) do
-      queue = []
-      files.each do |file|
-        queue << RMT::Rpm::FileEntry.new(
+      files.map do |file|
+        RMT::Rpm::FileEntry.new(
           file,
           checksum_type,
           Digest.const_get(checksum_type).hexdigest(file),
           :rpm
         )
       end
-      queue
     end
 
     before do
@@ -100,16 +98,14 @@ RSpec.describe RMT::Downloader do
     let(:files) { %w(package1 package2 package3) }
     let(:checksum_type) { 'SHA256' }
     let(:queue) do
-      queue = []
-      files.each do |file|
-        queue << RMT::Rpm::FileEntry.new(
+      files.map do |file|
+        RMT::Rpm::FileEntry.new(
           file,
           checksum_type,
           Digest.const_get(checksum_type).hexdigest(file),
           :rpm
         )
       end
-      queue
     end
 
     before do
@@ -128,7 +124,7 @@ RSpec.describe RMT::Downloader do
       end
     end
 
-    it 'saved all files' do
+    it 'but no files were actually saved' do
       files.each do |file|
         expect(File.exist?(File.join(dir, file))).to eq(false)
       end
