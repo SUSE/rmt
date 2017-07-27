@@ -10,4 +10,4 @@ WORKDIR /srv/www/potato/
 
 RUN ruby -e 'require "securerandom"; puts SecureRandom.hex(64)' > .secret
 
-CMD tail -f /dev/null
+CMD bash -c 'bundler.ruby2.4 --system --without with_c_extensions && rm -rf .bundle/config && rails db:migrate && rails s -P /tmp/rmt.pid'
