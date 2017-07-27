@@ -8,3 +8,9 @@ rvm:
 script:
   - 'bundle exec rspec spec'
   - 'bundle exec rubocop'
+services:
+  - postgresql
+before_script:
+  - psql -c "CREATE DATABASE potato;" -U postgres
+  - psql -c "CREATE USER potato WITH PASSWORD 'potato';" -U postgres
+  
