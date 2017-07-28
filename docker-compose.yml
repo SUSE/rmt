@@ -21,7 +21,7 @@ services:
       - RAILS_ENV=test
       - POSTGRES_HOST=db
     volumes:
-      - ./:/srv/www/potato
+      - ./:/srv/www/rmt
     depends_on:
       - db
     command: bash -c 'bundle exec rails db:migrate && bundle exec rails s'
