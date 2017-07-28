@@ -12,10 +12,7 @@ RSpec.describe RMT::HttpRequest do
     options.each {|key, value| Settings.http_client.send("#{key}=", value) }
     options
   end
-  let(:request) do
-    request = described_class.new('http://example.com')
-    request
-  end
+  let(:request) { described_class.new('http://example.com') }
 
   before { options }
 
