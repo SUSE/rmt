@@ -1,14 +1,22 @@
-namespace :potato do
-  # FIXME: !!! this is temporary task to populate the DB !!!
-  # FIXME: !!! has to be replaced with a standalone binary with full test coverage !!!
-  desc 'Sync products from SCC'
-  task :sync, [:username, :password] => :environment do |_, args|
+require 'suse/connect/api'
+require 'rmt/config'
+
+class RMT::SCCSync
+
+  def initialize(logger = nil)
+    @logger = logger || Logger.new(nil)
+  end
+
+  def sync
+    @logger.info('Cleaning up the database')
     Product.delete_all
     Repository.delete_all
 
-    api = SUSE::Connect::Api.new(args[:username], args[:password])
+    @logger.info('Downloading data from SCC')
+    api = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
     data = api.list_products
 
+    @logger.info('Updating the database')
     data.each do |item|
       extensions = []
       repositories = []
@@ -55,5 +63,8 @@ namespace :potato do
       service.repositories = repositories
       service.save!
     end
+
+    @logger.info('Done!')
   end
+
 end
