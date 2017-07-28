@@ -6,8 +6,8 @@ ruby2.4-rubygem-bundler ruby2.4-rubygem-mini_portile2 ruby2.4-rubygem-nio4r ruby
 ruby2.4-rubygem-puma ruby2.4-rubygem-sqlite3 ruby2.4-rubygem-websocket-driver ruby2.4-devel ruby2.4-rubygem-pg \
 ruby2.4-rubygem-byebug
 
-COPY . /srv/www/potato/
-WORKDIR /srv/www/potato/
+COPY . /srv/www/rmt/
+WORKDIR /srv/www/rmt/
 
 RUN ruby -e 'require "securerandom"; puts SecureRandom.hex(64)' > .secret
 RUN bundler.ruby2.4

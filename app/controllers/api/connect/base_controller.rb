@@ -21,7 +21,7 @@ class Api::Connect::BaseController < ApplicationController
   end
 
   def authenticate_system
-    authenticate_or_request_with_http_basic('Potato API') do |login, password|
+    authenticate_or_request_with_http_basic('RMT API') do |login, password|
       @system = System.find_by(login: login, password: password)
       if @system
         logger.info "Authenticated system with login '#{login}'"

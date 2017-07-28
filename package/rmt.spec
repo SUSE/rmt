@@ -1,13 +1,13 @@
 %define www_base        /srv/www
 
-Name:           potato
+Name:           rmt
 Version:        0.0.1
 Release:        0
-Summary:        Codename Potato
+Summary:        Repository Mirroring Tool
 License:        GPL-2.0+
 Group:          Productivity/Networking/Web/Proxy
 Source0:        %{name}-%{version}.tar.bz2
-Source1:        potato-rpmlintrc
+Source1:        rmt-rpmlintrc
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
 Requires(post): ruby2.4
@@ -27,14 +27,14 @@ Subscription management tool NG
 %build
 
 %install
-mkdir -p %{buildroot}%{www_base}/potato/
-cp -a * %{buildroot}%{www_base}/potato/
+mkdir -p %{buildroot}%{www_base}/rmt/
+cp -a * %{buildroot}%{www_base}/rmt/
 
 %files
 %defattr(-,root,root)
-%{www_base}/potato/
+%{www_base}/rmt/
 
 %post
-cd /srv/www/potato/ && bundle.ruby2.4 --without=test:development
+cd /srv/www/rmt/ && bundle.ruby2.4 --without=test:development
 
 %changelog
