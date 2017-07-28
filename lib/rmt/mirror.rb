@@ -1,8 +1,9 @@
+require 'rmt/downloader'
+require 'rmt/rpm'
+
 class RMT::Mirror
 
-  class RMT::Mirror::Exception < RuntimeError
-
-  end
+  class RMT::Mirror::Exception < RuntimeError; end
 
   def initialize(mirroring_base_dir:, repository_url:, local_path:, mirror_src: false, logger: nil)
     @mirroring_base_dir = mirroring_base_dir
@@ -42,6 +43,12 @@ class RMT::Mirror
     )
 
     begin
+      local_filename = @downloader.download('repodata/repomd.xml')
+    rescue RMT::Downloader::Exception => e
+      raise RMT::Mirror::Exception.new("Repodata download failed: #{e}")
+    end
+
+    begin
       @downloader.download('repodata/repomd.xml.key')
       @downloader.download('repodata/repomd.xml.asc')
     rescue RMT::Downloader::Exception
@@ -49,7 +56,6 @@ class RMT::Mirror
     end
 
     begin
-      local_filename = @downloader.download('repodata/repomd.xml')
       repomd_parser = RMT::Rpm::RepomdXmlParser.new(local_filename)
       repomd_parser.parse
 

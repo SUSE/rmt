@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+require_relative '../config/boot'
+$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), '../lib/'))
+
+require 'rmt'
+require 'rmt/scc_sync'
+require 'active_record'
+
+require_relative '../app/models/application_record.rb'
+
+Dir.glob(File.join(File.dirname(__FILE__), '../app/models')).each do |folder|
+  Dir.glob(folder + '/*.rb').each do |file|
+    require File.expand_path(file)
+  end
+end
+
+db_config_path = File.join(File.dirname(__FILE__), '../config/database.yml')
+db_config = YAML.safe_load(ERB.new(File.read(db_config_path)).result)
+
+ActiveRecord::Base.establish_connection(db_config['development'])
+
+scc_sync = RMT::SCCSync.new(Logger.new(STDOUT))
+scc_sync.sync

@@ -1,3 +1,5 @@
+require 'rmt/http_request'
+
 module SUSE
   module Connect
     class Api
@@ -26,10 +28,7 @@ module SUSE
         options[:method] = method
         options[:accept_encoding] = %w(gzip deflate)
 
-        options[:headers] ||= {}
-        options[:headers][:user_agent] = 'Potato' # TODO: add version
-
-        response = Typhoeus::Request.new(url, options).run
+        response = RMT::HttpRequest.new(url, options).run
         raise response.body unless (response.code >= 200 and response.code < 300)
 
         response
