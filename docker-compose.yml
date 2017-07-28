@@ -19,12 +19,12 @@ services:
     build: .
     environment:
       - RAILS_ENV=test
-      - BROKEN_DOCKER_SSL=true
       - POSTGRES_HOST=db
     volumes:
       - ./:/srv/www/potato
     depends_on:
       - db
+    command: bash -c 'bundle exec rails db:migrate && bundle exec rails s'
 
   nginx:
     image: nginx
