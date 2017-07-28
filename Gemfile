@@ -1,6 +1,4 @@
-protocol = (ENV['BROKEN_DOCKER_SSL']) ? 'http' : 'https'
-
-source "#{protocol}://rubygems.org"
+source "https://rubygems.org"
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
@@ -10,14 +8,12 @@ end
 # Those are the gems with native extensions. The versions are locked to exact versions we have in our OBS:
 # https://build.suse.de/project/show/Devel:SCC:SMT-NG
 
-group :with_c_extensions do
-  gem 'nio4r', '2.1.0'
-  gem 'nokogiri', '1.6.1'
-  gem 'mini_portile2', '2.1.0'
-  gem 'websocket-driver', '0.6.4'
-  gem 'puma', '3.6.0'
-  gem 'pg', '0.18.3'
-end
+gem 'nio4r', '2.1.0'
+gem 'nokogiri', '1.6.1'
+gem 'mini_portile2', '2.1.0'
+gem 'websocket-driver', '0.6.4'
+gem 'puma', '3.6.0'
+gem 'pg', '0.18.3'
 
 # The rest of Gemfile goes as normal
 
