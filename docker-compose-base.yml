@@ -3,7 +3,7 @@ version: '2'
 services:
   base:
     environment:
-      - POSTGRES_DB=potato_test
-      - POSTGRES_USER=potato
-      - POSTGRES_PASSWORD=potato
+      - POSTGRES_DB=rmt_test
+      - POSTGRES_USER=rmt
+      - POSTGRES_PASSWORD=rmt
       - PGDATA=/var/lib/pgsql/data
