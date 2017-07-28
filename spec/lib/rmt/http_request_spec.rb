@@ -1,9 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe RMT::HttpRequest do
-  let(:downloader) { described_class.new(repository_url: 'http://example.com', local_path: dir) }
-  let(:headers) { { 'User-Agent' => "RMT/#{RMT::VERSION}" } }
-
   let(:options) do
     options = {
       verbose: true,
