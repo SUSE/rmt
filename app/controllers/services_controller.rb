@@ -11,7 +11,6 @@ class ServicesController < ActionController::Base
     @base_url   = request.base_url
 
     render :xml, template: 'services/show.xml.builder'
-
   rescue ActiveRecord::RecordNotFound
     untranslated = N_('Requested service not found')
     render(xml: { error: untranslated, localized_error: _(untranslated) }, status: 404) and return

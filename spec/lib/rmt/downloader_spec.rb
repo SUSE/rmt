@@ -49,15 +49,15 @@ RSpec.describe RMT::Downloader do
       end
 
       context 'and checksum is correct' do
-        subject { downloader.download('/repomd.xml', checksum_type, checksum) }
+        let(:filename) { downloader.download('/repomd.xml', checksum_type, checksum) }
 
-        it('has correct content') { expect(File.read(subject)).to eq(content) }
+        it('has correct content') { expect(File.read(filename)).to eq(content) }
       end
     end
   end
 
   describe '#download_multi' do
-    let(:files) { %w(package1 package2 package3) }
+    let(:files) { %w[package1 package2 package3] }
     let(:checksum_type) { 'SHA256' }
     let(:queue) do
       files.map do |file|
@@ -95,7 +95,7 @@ RSpec.describe RMT::Downloader do
   end
 
   describe '#download_multi handles exceptions properly' do
-    let(:files) { %w(package1 package2 package3) }
+    let(:files) { %w[package1 package2 package3] }
     let(:checksum_type) { 'SHA256' }
     let(:queue) do
       files.map do |file|

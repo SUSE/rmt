@@ -1,8 +1,8 @@
 class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseController
 
   before_action :authenticate_system
-  before_action :require_product, only: [:show, :activate, :destroy]
-  before_action :check_base_product_dependencies, only: [:activate, :upgrade, :show]
+  before_action :require_product, only: %i[show activate destroy]
+  before_action :check_base_product_dependencies, only: %i[activate upgrade show]
 
   def activate
     create_product_activation
@@ -24,7 +24,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   protected
 
   def require_product
-    require_params([:identifier, :version, :arch])
+    require_params(%i[identifier version arch])
 
     @product = Product.where(identifier: params[:identifier], version: params[:version], arch: params[:arch]).first
 
@@ -49,7 +49,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     # TODO: For APIv5 and future. We skip this check for second level extensions. E.g. HA-GEO
     # To fix bnc#951189 specifically the rollback part of it.
     return if @product.bases.any?(&:extension?)
-    return if @product.base? || !(@system.products & @product.bases).blank?
+    return if @product.base? || (@system.products & @product.bases).present?
 
     logger.info("Tried to activate/upgrade to '#{@product.friendly_name}' with unmet base product dependency")
     raise ActionController::TranslatedError.new(

@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe RMT::Rpm::RepomdXmlParser do
   let(:parser) { described_class.new(file_fixture('dummy_repo/repodata/repomd.xml')) }
+
   before { parser.parse }
 
   it 'references repodata files' do

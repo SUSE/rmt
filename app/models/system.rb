@@ -17,7 +17,7 @@ class System < ApplicationRecord
   def self.generate_secure_login
     generated_login = nil
     # Generate a new login as long as it is not in use.
-    while !generated_login || System.find_by_login(generated_login)
+    while !generated_login || System.find_by(login: generated_login)
       # The login credentials has to have the prefix "SCC_" in order to recognize SCC authentication
       generated_login = "SCC_#{build_secure_token}"
     end

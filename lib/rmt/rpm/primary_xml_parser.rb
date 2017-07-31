@@ -19,7 +19,7 @@ class RMT::Rpm::PrimaryXmlParser < RMT::Rpm::BaseParser
   end
 
   def characters(string)
-    if (%i(name arch checksum).include? @current_node)
+    if (%i[name arch checksum].include? @current_node)
       @package[@current_node] ||= ''
       @package[@current_node] += string.strip
     end
@@ -27,12 +27,14 @@ class RMT::Rpm::PrimaryXmlParser < RMT::Rpm::BaseParser
 
   def end_element(name)
     if (name == 'package')
-      @referenced_files << RMT::Rpm::FileEntry.new(
-        @package[:location],
-        @package[:checksum_type],
-        @package[:checksum],
-        :rpm
-      ) unless (@package[:arch] == 'src' and !@mirror_src)
+      unless (@package[:arch] == 'src' && !@mirror_src)
+        @referenced_files << RMT::Rpm::FileEntry.new(
+          @package[:location],
+          @package[:checksum_type],
+          @package[:checksum],
+          :rpm
+        )
+      end
     end
   end
 

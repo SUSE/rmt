@@ -24,7 +24,7 @@ class RMT::Rpm::BaseParser < Nokogiri::XML::SAX::Document
   protected
 
   def get_attribute(attributes, name)
-    attributes.select {|e| e[0] == name }.first[1]
+    attributes.select { |e| e[0] == name }.first[1]
   end
 
 end

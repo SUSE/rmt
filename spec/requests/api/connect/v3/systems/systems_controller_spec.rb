@@ -22,6 +22,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
       describe 'HTTP response' do
         subject { response }
+
         its(:body) { is_expected.to be_empty }
         its(:status) { is_expected.to eq 204 }
       end
@@ -29,6 +30,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
     context 'when hostname is not provided' do
       subject { system }
+
       let(:payload) { { hwinfo: { arch: 'x86_64' } } }
 
       before do
@@ -40,6 +42,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
       describe 'HTTP response' do
         subject { response }
+
         its(:body) { is_expected.to be_empty }
         its(:status) { is_expected.to eq 204 }
       end

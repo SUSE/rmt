@@ -15,26 +15,27 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController do
     end
 
     context 'when product is base product has repos' do
+      subject { response }
+
       let(:product) { FactoryGirl.create(:product, :with_repositories) }
       let(:payload) { { identifier: product.identifier, version: product.version, arch: product.arch } }
 
       before { delete url, headers: headers, params: payload }
-      subject { response }
-
       its(:code) { is_expected.to eq('422') }
 
       describe 'JSON response' do
         subject { JSON.parse(response.body, symbolize_names: true) }
+
         its([:error]) { is_expected.to match(/The product ".*?" is a base product and cannot be deactivated/) }
       end
     end
 
     context 'when product has repos, is an extension' do
+      subject { response }
+
       let(:payload) { { identifier: product.identifier, version: product.version, arch: product.arch } }
 
       before { delete url, headers: headers, params: payload }
-      subject { response }
-
       context 'and is not activated' do
         let(:product) { FactoryGirl.create(:product, :extension, :with_repositories) }
 
@@ -42,6 +43,7 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController do
 
         describe 'JSON response' do
           subject { JSON.parse(response.body, symbolize_names: true) }
+
           its([:error]) { is_expected.to match(/is not yet activated on the system./) }
         end
       end
@@ -60,6 +62,7 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController do
 
         describe 'JSON response' do
           subject { JSON.parse(response.body, symbolize_names: true) }
+
           its([:error]) { is_expected.to match(/Cannot deactivate the product ".*"\. Other activated products depend upon it/) }
         end
       end

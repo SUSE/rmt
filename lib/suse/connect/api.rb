@@ -26,10 +26,10 @@ module SUSE
       def make_request(method, url, options)
         options[:userpwd] = "#{@username}:#{@password}" unless options[:userpwd]
         options[:method] = method
-        options[:accept_encoding] = %w(gzip deflate)
+        options[:accept_encoding] = %w[gzip deflate]
 
         response = RMT::HttpRequest.new(url, options).run
-        raise response.body unless (response.code >= 200 and response.code < 300)
+        raise response.body unless (response.code >= 200 && response.code < 300)
 
         response
       end
