@@ -5,8 +5,16 @@ inherit_gem:
 inherit_from: .rubocop_todo.yml
 
 AllCops:
+  Include:
+    - Gemfile
+    - Rakefile
+    - config.ru
+    - '**/*.rake'
   Exclude:
     - .bundle/**/*
-    - vendor/
-    - package/**/*
     - db/schema.rb
+    - features/**/*
+    - vendor/**/*
+    - tmp/**/*
+    - lib/locale/*
+    - package/*
