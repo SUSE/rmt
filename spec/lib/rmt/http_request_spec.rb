@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe RMT::HttpRequest do
-  let(:options) do
+  let!(:options) do
     options = {
       verbose: true,
       proxy: 'http://localhost:3128',
@@ -13,8 +13,6 @@ RSpec.describe RMT::HttpRequest do
     options
   end
   let(:request) { described_class.new('http://example.com') }
-
-  before { options }
 
   describe 'request options' do
     subject { request.options }
