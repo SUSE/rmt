@@ -7,5 +7,6 @@ inherit_from: .rubocop_todo.yml
 AllCops:
   Exclude:
     - .bundle/**/*
+    - vendor/
     - package/**/*
     - db/schema.rb
