@@ -9,7 +9,7 @@ RSpec.describe RMT::HttpRequest do
       proxy_user: 'login',
       proxy_password: 'password'
     }
-    options.each {|key, value| Settings.http_client.send("#{key}=", value) }
+    options.each { |key, value| Settings.http_client.send("#{key}=", value) }
     options
   end
   let(:request) { described_class.new('http://example.com') }
@@ -23,7 +23,7 @@ RSpec.describe RMT::HttpRequest do
     its([:proxyuserpwd]) { is_expected.to eq("#{options[:proxy_user]}:#{options[:proxy_password]}") }
 
     it 'has correct User-Agent' do
-      expect(subject[:headers]['User-Agent']).to eq("RMT/#{RMT::VERSION}")
+      expect(request.options[:headers]['User-Agent']).to eq("RMT/#{RMT::VERSION}")
     end
   end
 end
