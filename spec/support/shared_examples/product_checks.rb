@@ -5,12 +5,12 @@ shared_examples 'products controller action' do
   subject { response }
 
   context 'when no credentials are provided' do
+    subject { response }
+
     let(:headers) { {} }
     let(:payload) { {} }
 
     before { send(verb, url) }
-    subject { response }
-
     its(:code) { is_expected.to eq '401' }
   end
 
@@ -21,6 +21,7 @@ shared_examples 'products controller action' do
 
     describe 'JSON response' do
       subject { JSON.parse(response.body, symbolize_names: true) }
+
       its([:error]) { is_expected.to match(/Required parameters are missing or empty/) }
     end
   end
@@ -39,6 +40,7 @@ shared_examples 'products controller action' do
 
     describe 'JSON response' do
       subject { JSON.parse(response.body, symbolize_names: true) }
+
       its([:error]) { is_expected.to match(/No repositories found for product/) }
     end
   end
@@ -56,6 +58,7 @@ shared_examples 'products controller action' do
 
     describe 'JSON response' do
       subject { JSON.parse(response.body, symbolize_names: true) }
+
       its([:error]) { is_expected.to eq('No product found') }
     end
   end

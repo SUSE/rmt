@@ -15,6 +15,8 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
     end
 
     context 'when product has repos' do
+      subject { response }
+
       let(:payload) do
         {
           identifier: product_with_repos.identifier,
@@ -31,13 +33,12 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       end
 
       before { post url, headers: headers, params: payload }
-      subject { response }
-
       its(:code) { is_expected.to eq('201') }
       its(:body) { is_expected.to eq(serialized_json) }
 
       describe 'JSON response' do
         subject { JSON.parse(response.body, symbolize_names: true) }
+
         it { is_expected.to include :id, :name, :product, :url, :obsoleted_service_name }
       end
     end
@@ -51,6 +52,8 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
     end
 
     context 'when product is not activated' do
+      subject { response }
+
       let(:payload) do
         {
           identifier: product_with_repos.identifier,
@@ -60,17 +63,18 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       end
 
       before { get url, headers: headers, params: payload }
-      subject { response }
-
       its(:code) { is_expected.to eq('422') }
 
       describe 'JSON response' do
         subject { JSON.parse(response.body, symbolize_names: true) }
+
         its([:error]) { is_expected.to match(/The requested product '.*' is not activated on this system/) }
       end
     end
 
     context 'when product is activated' do
+      subject { response }
+
       let(:system) { activation.system }
       let(:payload) do
         {
@@ -87,8 +91,6 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       end
 
       before { get url, headers: headers, params: payload }
-      subject { response }
-
       its(:code) { is_expected.to eq('200') }
       its(:body) { is_expected.to eq(serialized_json) }
     end

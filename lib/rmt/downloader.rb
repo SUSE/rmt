@@ -9,7 +9,7 @@ class RMT::Downloader
   class Exception < RuntimeError
   end
 
-  KNOWN_HASH_FUNCTIONS = %i(MD5 SHA1 SHA256 SHA384 SHA512).freeze
+  KNOWN_HASH_FUNCTIONS = %i[MD5 SHA1 SHA256 SHA384 SHA512].freeze
 
   attr_accessor :repository_url, :local_path, :concurrency, :logger
 
@@ -84,7 +84,7 @@ class RMT::Downloader
     downloaded_file = Tempfile.new('rmt')
 
     request = RMT::HttpRequest.new(uri.to_s, followlocation: true)
-    request.on_headers {|response| request_fiber.resume(response) }
+    request.on_headers { |response| request_fiber.resume(response) }
     request.on_body do |chunk|
       next :abort if downloaded_file.closed?
       downloaded_file.write(chunk)
@@ -96,18 +96,18 @@ class RMT::Downloader
     response = Fiber.yield(request) # yields headers
 
     begin
-      if (URI(uri).scheme != 'file' and response.code != 200)
+      if (URI(uri).scheme != 'file' && response.code != 200)
         raise RMT::Downloader::Exception.new("#{remote_file} - HTTP request failed with code #{response.code}")
       end
 
       response = Fiber.yield # yields when the request is complete
-      if (response.return_code and response.return_code != :ok)
+      if (response.return_code && response.return_code != :ok)
         raise RMT::Downloader::Exception.new("#{remote_file} - return code #{response.return_code}")
       end
 
       downloaded_file.close
 
-      verify_checksum(downloaded_file.path, checksum_type, checksum_value) if (checksum_type and checksum_value)
+      verify_checksum(downloaded_file.path, checksum_type, checksum_value) if (checksum_type && checksum_value)
     rescue StandardError => e
       downloaded_file.unlink
       raise e

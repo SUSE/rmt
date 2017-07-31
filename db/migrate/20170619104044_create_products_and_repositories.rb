@@ -63,8 +63,8 @@ class CreateProductsAndRepositories < ActiveRecord::Migration[5.1]
       t.integer :extension_id, null: false
     end
 
-    add_index :repositories, [:name, :distro_target], unique: true
-    add_index :repositories_services, [:service_id, :repository_id], unique: true
+    add_index :repositories, %i[name distro_target], unique: true
+    add_index :repositories_services, %i[service_id repository_id], unique: true
     add_index :services, :product_id, unique: true
 
     add_foreign_key :activations, :systems, on_delete: :cascade

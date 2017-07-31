@@ -6,6 +6,7 @@ RSpec.describe RMT::Rpm::DeltainfoXmlParser do
       file_fixture('dummy_repo/repodata/a546b430098b8a3fb7d65493a9ce608fafcb32f451d0ce8bf85410191f347cc3-deltainfo.xml.gz')
     )
   end
+
   before { parser.parse }
 
   it 'references drpm files' do

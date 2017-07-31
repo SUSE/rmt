@@ -31,12 +31,14 @@ class RMT::Rpm::DeltainfoXmlParser < RMT::Rpm::BaseParser
 
   def end_element(name)
     if (name == 'delta')
-      @referenced_files << RMT::Rpm::FileEntry.new(
-        @delta[:location],
-        @delta[:checksum_type],
-        @delta[:checksum],
-        :drpm
-      ) unless (@package[:arch] == 'src' and !@mirror_src)
+      unless (@package[:arch] == 'src' && !@mirror_src)
+        @referenced_files << RMT::Rpm::FileEntry.new(
+          @delta[:location],
+          @delta[:checksum_type],
+          @delta[:checksum],
+          :drpm
+        )
+      end
     end
   end
 

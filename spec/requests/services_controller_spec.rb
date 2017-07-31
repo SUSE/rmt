@@ -21,10 +21,12 @@ RSpec.describe ServicesController do
     describe 'response XML URLs' do
       before { get "/services/#{service.id}" }
 
+      subject { xml_urls }
+
       let(:xml_urls) do
         doc = Nokogiri::XML::Document.parse(response.body)
         repo_items = doc.xpath('/repoindex/repo')
-        repo_items.map {|r| r.attr(:url) }
+        repo_items.map { |r| r.attr(:url) }
       end
 
       let(:model_urls) do
@@ -32,8 +34,6 @@ RSpec.describe ServicesController do
           SUSE::Misc.uri_replace_hostname(repo.external_url, 'http://www.example.com').to_s
         end
       end
-
-      subject { xml_urls }
 
       its(:length) { is_expected.to eq(service.repositories.length) }
       it { is_expected.to eq(model_urls) }

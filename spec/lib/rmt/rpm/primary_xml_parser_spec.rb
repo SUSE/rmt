@@ -6,11 +6,8 @@ RSpec.describe RMT::Rpm::PrimaryXmlParser do
       file_fixture('dummy_repo/repodata/abf421e45af5cd686f050bab3d2a98e0a60d1b5ca3b07c86cb948fc1abfa675e-primary.xml.gz')
     )
   end
-
-  before { parser.parse }
-
-  it 'references rpm files' do
-    expect(parser.referenced_files).to eq [
+  let(:expected_result) do
+    [
       RMT::Rpm::FileEntry.new(
         'apples-0.1-0.x86_64.rpm',
         'sha256',
@@ -36,5 +33,11 @@ RSpec.describe RMT::Rpm::PrimaryXmlParser do
         :rpm
       )
     ]
+  end
+
+  before { parser.parse }
+
+  it 'references rpm files' do
+    expect(parser.referenced_files).to eq(expected_result)
   end
 end

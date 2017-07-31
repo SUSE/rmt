@@ -10,7 +10,7 @@ require 'rmt/config'
 repository_url = ARGV[0]
 local_path = ARGV[1]
 
-unless (repository_url and local_path)
+unless (repository_url && local_path)
   STDERR.puts 'Usage: rmt-mirror [repository_url] [local_path]'
   exit 1
 end

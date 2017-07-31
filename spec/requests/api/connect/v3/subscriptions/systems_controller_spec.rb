@@ -14,6 +14,7 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
 
       describe 'JSON response' do
         subject { json_response }
+
         its([:login]) { is_expected.to start_with 'SCC_' }
         its(:keys) { is_expected.to include :password }
       end
@@ -28,6 +29,7 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
 
       describe 'JSON response' do
         subject { json_response }
+
         its([:login]) { is_expected.to start_with 'SCC_' }
         its(:keys) { is_expected.to include :password }
       end
@@ -43,11 +45,13 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
       end
 
       subject { System }
+
       its(:count) { is_expected.to eq(3) }
 
       describe 'hostnames' do
         subject { System.pluck(:hostname) }
-        it { is_expected.to match_array(%w(testhost0 testhost1 testhost2)) }
+
+        it { is_expected.to match_array(%w[testhost0 testhost1 testhost2]) }
       end
     end
   end
