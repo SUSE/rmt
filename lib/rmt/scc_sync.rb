@@ -26,7 +26,7 @@ class RMT::SCCSync
           extension = Product.find(ext_item[:id])
         rescue
           extension = Product.new
-          extension.attributes = ext_item.reject {|k, _| !extension.attributes.keys.member?(k.to_s) }
+          extension.attributes = ext_item.select { |k, _| extension.attributes.keys.member?(k.to_s) }
           extension.save!
         end
         extensions << extension
@@ -34,7 +34,7 @@ class RMT::SCCSync
 
       begin
         product = Product.new
-        product.attributes = item.reject {|k, _| !product.attributes.keys.member?(k.to_s) }
+        product.attributes = item.select { |k, _| product.attributes.keys.member?(k.to_s) }
         product.save!
       rescue ActiveRecord::RecordNotUnique # rubocop:disable Lint/HandleExceptions
       end
@@ -49,7 +49,7 @@ class RMT::SCCSync
       item[:repositories].each do |repo_item|
         begin
           repository = Repository.new
-          repository.attributes = repo_item.reject {|k, _| !repository.attributes.keys.member?(k.to_s) }
+          repository.attributes = repo_item.select { |k, _| repository.attributes.keys.member?(k.to_s) }
           repository.external_url = repo_item[:url]
           repository.save!
         rescue ActiveRecord::RecordNotUnique
