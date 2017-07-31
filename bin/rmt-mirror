@@ -1,13 +1,11 @@
 #!/usr/bin/env ruby
 
 require_relative '../config/boot'
-require 'pathname'
-require 'config'
+$LOAD_PATH.unshift File.expand_path(File.join(__dir__, '../lib/'))
 
-require_relative '../lib/rmt'
-require_relative '../lib/rmt/mirror'
-require_relative '../lib/rmt/rpm'
-require_relative '../lib/rmt/downloader'
+require 'rmt'
+require 'rmt/mirror'
+require 'rmt/config'
 
 repository_url = ARGV[0]
 local_path = ARGV[1]
@@ -16,11 +14,6 @@ unless (repository_url and local_path)
   STDERR.puts 'Usage: rmt-mirror [repository_url] [local_path]'
   exit 1
 end
-
-Config.load_and_set_settings(
-  File.join(File.dirname(__FILE__), '../config/rmt.yml'),
-  File.join(File.dirname(__FILE__), '../config/rmt.local.yml')
-)
 
 begin
   RMT::Mirror.new(

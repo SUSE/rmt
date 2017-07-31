@@ -2,6 +2,7 @@ require 'typhoeus'
 require 'tempfile'
 require 'fileutils'
 require 'fiber'
+require 'rmt/http_request'
 
 class RMT::Downloader
 
@@ -82,7 +83,7 @@ class RMT::Downloader
     uri = URI.join(@repository_url, remote_file)
     downloaded_file = Tempfile.new('rmt')
 
-    request = Typhoeus::Request.new(uri.to_s, followlocation: true)
+    request = RMT::HttpRequest.new(uri.to_s, followlocation: true)
     request.on_headers {|response| request_fiber.resume(response) }
     request.on_body do |chunk|
       next :abort if downloaded_file.closed?
