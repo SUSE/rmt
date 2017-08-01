@@ -57,6 +57,7 @@ GEM
       deep_merge (~> 1.1.1)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
+    database_cleaner (1.6.1)
     deep_merge (1.1.1)
     diff-lcs (1.3)
     docile (1.1.5)
@@ -230,6 +231,7 @@ DEPENDENCIES
   active_model_serializers
   byebug
   config (~> 1.0)
+  database_cleaner (~> 1.6.0)
   factory_girl_rails
   fast_gettext
   ffaker
