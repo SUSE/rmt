@@ -12,11 +12,12 @@ class RMT::SCCSync
     clean_up
 
     @logger.info('Downloading data from SCC')
-    api = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
-    data = api.list_products
+    scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
+    data = scc_api_client.list_products
 
     @logger.info('Updating the database')
     data.each do |item|
+      @logger.debug("Adding product #{item[:name]}")
       product = create_product(item)
       create_service(item, product)
     end
@@ -42,6 +43,8 @@ class RMT::SCCSync
         extension.attributes = ext_item.select { |k, _| extension.attributes.keys.member?(k.to_s) }
         extension.save!
       end
+
+      create_service(ext_item, extension)
       extensions << extension
     end
 
