@@ -2,7 +2,6 @@ require 'rails_helper'
 require 'webmock/rspec'
 
 RSpec.describe RMT::Mirror do
-
   let(:downloader_double) { double 'RMT::Downloader double' }
   let(:repomd_double) { double 'RMT::Rpm::RepomdXmlParser double' }
   let(:primaryxml_double) { double 'RMT::Rpm::PrimaryXmlParser double' }
@@ -10,7 +9,7 @@ RSpec.describe RMT::Mirror do
   let(:referenced_metadata) do
     [
       RMT::Rpm::FileEntry.new('repodata/primary.xml', 'SHA256', 'dummy_checksum_1', :primary),
-      RMT::Rpm::FileEntry.new('repodata/deltainfo.xml', 'SHA256', 'dummy_checksum_2', :deltainfo),
+      RMT::Rpm::FileEntry.new('repodata/deltainfo.xml', 'SHA256', 'dummy_checksum_2', :deltainfo)
     ]
   end
   let(:referenced_rpms) { [ RMT::Rpm::FileEntry.new('dummy.rpm', 'SHA256', 'dummy_checksum_3', :rpm) ] }
