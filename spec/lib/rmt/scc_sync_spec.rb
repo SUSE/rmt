@@ -74,9 +74,9 @@ RSpec.describe RMT::SCCSync do
     end
 
     let(:all_repositories) { [product, extension].map(&->(i) { i[:repositories] }).flatten(1) }
+    let(:api_double) { double }
 
     it 'calls list_products API method' do
-      api_double = double
       expect(SUSE::Connect::Api).to receive(:new) { api_double }
       expect(api_double).to receive(:list_products) { [ product ] }
 
