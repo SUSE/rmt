@@ -87,7 +87,7 @@ class RMT::Downloader
     request.on_headers { |response| request_fiber.resume(response) }
     request.on_body do |chunk|
       next :abort if downloaded_file.closed?
-      downloaded_file.write(chunk)
+      IO.binwrite(downloaded_file, chunk)
     end
     request.on_complete do |response|
       request_fiber.resume(response) if request_fiber.alive?
@@ -99,7 +99,13 @@ class RMT::Downloader
       if (URI(uri).scheme != 'file' && response.code != 200)
         raise RMT::Downloader::Exception.new("#{remote_file} - HTTP request failed with code #{response.code}")
       end
+    rescue StandardError => e
+      downloaded_file.unlink
+      Fiber.yield # yield, so that on_body callback can be invoked
+      raise e
+    end
 
+    begin
       response = Fiber.yield # yields when the request is complete
       if (response.return_code && response.return_code != :ok)
         raise RMT::Downloader::Exception.new("#{remote_file} - return code #{response.return_code}")
