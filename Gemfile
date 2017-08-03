@@ -46,7 +46,7 @@ group :development, :test do
   gem 'gettext_test_log'
   gem 'memory_profiler'
   gem 'webmock'
-  gem 'database_cleaner', '~> 1.6.0'
+  gem 'vcr'
 end
 
 group :development do
