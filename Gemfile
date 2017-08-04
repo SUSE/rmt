@@ -46,7 +46,10 @@ group :development, :test do
   gem 'gettext_test_log'
   gem 'memory_profiler'
   gem 'webmock'
-  gem 'vcr'
+
+  # Branch that contains fixes for recording and playing back Typhoeus requests with on_headers and on_body callbacks
+  # Hopefully it will get merged some time soon :-)
+  gem 'vcr', github: 'ikapelyukhin/vcr', branch: 'issue_509'
 end
 
 group :development do
