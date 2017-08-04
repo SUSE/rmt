@@ -4,15 +4,15 @@ require 'webmock/rspec'
 RSpec.describe RMT::Mirror do
   describe '#mirror' do
     let(:rmt_mirror) do
-      RMT::Mirror.new(
+      described_class.new(
         mirroring_base_dir: @tmp_dir,
         repository_url: 'http://localhost/dummy_repo/',
         local_path: '/dummy_repo',
-        mirror_src: false,
+        mirror_src: false
       )
     end
 
-    before(:each) do
+    before do
       @tmp_dir = Dir.mktmpdir('rmt')
 
       # The cassette can be recorded with :typhoeus vcr adapter from this pull request:
@@ -22,7 +22,7 @@ RSpec.describe RMT::Mirror do
         rmt_mirror.mirror
       end
     end
-    after(:each) { FileUtils.remove_entry(@tmp_dir) }
+    after { FileUtils.remove_entry(@tmp_dir) }
 
     it 'downloads rpm files' do
       rpm_entries = Dir.entries(File.join(@tmp_dir, 'dummy_repo')).select { |entry| entry =~ /\.rpm$/ }

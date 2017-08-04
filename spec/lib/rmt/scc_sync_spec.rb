@@ -4,13 +4,13 @@ require 'webmock/rspec'
 RSpec.describe RMT::SCCSync do
   describe '#sync', type: :no_transactional do
     let(:product) do
-      JSON.parse(file_fixture("products/dummy_product.json").read, symbolize_names: true)
+      JSON.parse(file_fixture('products/dummy_product.json').read, symbolize_names: true)
     end
     let(:extension) { product[:extensions][0] }
-    let(:all_repositories) { [product, extension].map { |item| item[:repositories] }.flatten(1) }
+    let(:all_repositories) { [product, extension].flat_map { |item| item[:repositories] } }
     let(:api_double) { double }
 
-    before(:each) do
+    before do
       expect(SUSE::Connect::Api).to receive(:new) { api_double }
       expect(api_double).to receive(:list_products) { [ product ] }
       sync = described_class.new
