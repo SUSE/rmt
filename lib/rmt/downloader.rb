@@ -2,6 +2,7 @@ require 'typhoeus'
 require 'tempfile'
 require 'fileutils'
 require 'fiber'
+require 'rmt'
 require 'rmt/http_request'
 
 class RMT::Downloader
