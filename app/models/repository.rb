@@ -7,5 +7,10 @@ class Repository < ApplicationRecord
 
   validates :name, presence: true
   validates :external_url, presence: true
+  validates :local_path, presence: true
+
+  def make_local_path(url)
+    URI(url).path.to_s.gsub(/^\/repo/, '')
+  end
 
 end
