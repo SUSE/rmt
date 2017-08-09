@@ -17,7 +17,7 @@ class RMT::SCCSync
 
     @logger.info('Updating the database')
     data.each do |item|
-      @logger.debug("Adding product #{item[:name]}")
+      @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
       product = create_product(item)
       create_service(item, product)
     end
@@ -65,25 +65,25 @@ class RMT::SCCSync
     product
   end
 
+  def make_local_path(url)
+    URI(url).path.to_s.gsub(/^\/repo/, '')
+  end
+
   def create_service(item, product)
-    repositories = []
+    service = Service.find_or_create_by(product_id: product.id)
 
     item[:repositories].each do |repo_item|
-      begin
-        repository = Repository.new
-        repository.attributes = repo_item.select { |k, _| repository.attributes.keys.member?(k.to_s) }
-        repository.external_url = repo_item[:url]
-        repository.save!
-      rescue ActiveRecord::RecordNotUnique
-        repository = Repository.where(name: repo_item[:name], distro_target: repo_item[:distro_target]).first
-      end
+      repository = Repository.find_or_initialize_by(external_url: repo_item[:url])
+      repository.attributes = repo_item.select { |k, _| repository.attributes.keys.member?(k.to_s) }
+      repository.external_url = repo_item[:url]
+      repository.local_path = make_local_path(repo_item[:url])
+      repository.save!
 
-      repositories << repository
+      RepositoriesServicesAssociation.find_or_create_by(
+        service_id: service.id,
+        repository_id: repository.id
+      )
     end
-
-    service = Service.find_or_create_by(product_id: product.id)
-    service.repositories = repositories
-    service.save!
   end
 
 end
