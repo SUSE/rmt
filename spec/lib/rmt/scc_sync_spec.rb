@@ -30,7 +30,7 @@ RSpec.describe RMT::SCCSync do
       all_repositories.map.each do |repository|
         db_repository = Repository.find(repository[:id])
 
-        (db_repository.attributes.keys - %w[external_url mirroring_enabled]).each do |key|
+        (db_repository.attributes.keys - %w[external_url mirroring_enabled local_path]).each do |key|
           expect(db_repository[key]).to eq(repository[key.to_sym])
         end
       end

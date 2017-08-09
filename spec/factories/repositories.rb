@@ -7,6 +7,10 @@ FactoryGirl.define do
     sequence(:enabled) { true }
     sequence(:autorefresh) { true }
 
+    after(:build) do |obj|
+      obj.local_path = obj.make_local_path(obj.external_url)
+    end
+
     trait :authenticated do
       sequence(:url) { "/#{FFaker.letterify('?????')}" }
     end
