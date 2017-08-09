@@ -65,10 +65,6 @@ class RMT::SCCSync
     product
   end
 
-  def make_local_path(url)
-    URI(url).path.to_s.gsub(/^\/repo/, '')
-  end
-
   def create_service(item, product)
     service = Service.find_or_create_by(product_id: product.id)
 
@@ -76,7 +72,7 @@ class RMT::SCCSync
       repository = Repository.find_or_initialize_by(external_url: repo_item[:url])
       repository.attributes = repo_item.select { |k, _| repository.attributes.keys.member?(k.to_s) }
       repository.external_url = repo_item[:url]
-      repository.local_path = make_local_path(repo_item[:url])
+      repository.local_path = repository.make_local_path(repo_item[:url])
       repository.save!
 
       RepositoriesServicesAssociation.find_or_create_by(
