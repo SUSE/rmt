@@ -9,14 +9,15 @@ end
 # https://build.suse.de/project/show/Devel:SCC:SMT-NG
 
 gem 'nio4r', '2.1.0'
-gem 'nokogiri', '1.6.1'
-gem 'mini_portile2', '2.1.0'
+# gem 'nokogiri', '1.6.1'
+# gem 'mini_portile2', '2.1.0'
 gem 'websocket-driver', '0.6.4'
 gem 'puma', '3.6.0'
 gem 'pg', '0.18.3'
 
 # The rest of Gemfile goes as normal
 
+gem 'nokogiri', '~> 1.8.0'
 gem 'rails', '~> 5.1'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -74,3 +75,4 @@ gem 'fast_gettext'
 gem 'gettext_i18n_rails'
 
 gem 'config', '~> 1.0'
+gem 'terminal-table', '~> 1.8'

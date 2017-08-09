@@ -1,4 +1,6 @@
+require 'rmt'
 require 'rmt/http_request'
+require 'json'
 
 module SUSE
   module Connect
@@ -11,6 +13,10 @@ module SUSE
 
       def list_products
         make_paginated_request(:get, 'https://scc.suse.com/connect/organizations/products')
+      end
+
+      def list_repositories
+        make_paginated_request(:get, 'https://scc.suse.com/connect/organizations/repositories')
       end
 
       protected
@@ -26,7 +32,7 @@ module SUSE
       def make_request(method, url, options)
         options[:userpwd] = "#{@username}:#{@password}" unless options[:userpwd]
         options[:method] = method
-        options[:accept_encoding] = %w[gzip deflate]
+        options[:accept_encoding] = 'gzip, deflate'
 
         response = RMT::HttpRequest.new(url, options).run
         raise response.body unless (response.code >= 200 && response.code < 300)
