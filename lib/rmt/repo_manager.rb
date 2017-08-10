@@ -94,7 +94,7 @@ class RMT::RepoManager
     products = Product.where(conditions).all
     products.each do |product|
       conditions = {}
-      conditions[:enabled] = false if (@options[:exclude_optional])
+      conditions[:enabled] = true if (@options[:exclude_optional])
       @affected_repos += product.repositories.where(conditions).update_all(mirroring_enabled: mirroring_enabled)
     end
   end

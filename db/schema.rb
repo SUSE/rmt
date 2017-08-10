@@ -50,10 +50,10 @@ ActiveRecord::Schema.define(version: 20170808080710) do
     t.string "name", null: false
     t.string "distro_target"
     t.string "description"
+    t.boolean "enabled", default: false, null: false
     t.boolean "autorefresh", default: true, null: false
     t.string "external_url", null: false
     t.string "auth_token"
-    t.boolean "enabled", default: false, null: false
     t.boolean "installer_updates", default: false, null: false
     t.boolean "mirroring_enabled", default: false, null: false
     t.string "local_path", null: false
