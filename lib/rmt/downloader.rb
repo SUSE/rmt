@@ -82,13 +82,13 @@ class RMT::Downloader
 
   def make_request(remote_file, local_file, request_fiber, checksum_type = nil, checksum_value = nil)
     uri = URI.join(@repository_url, remote_file)
-    downloaded_file = Tempfile.new('rmt')
+    downloaded_file = Tempfile.new('rmt', Dir.tmpdir, mode: File::BINARY, encoding: 'ascii-8bit')
 
     request = RMT::HttpRequest.new(uri.to_s, followlocation: true)
     request.on_headers { |response| request_fiber.resume(response) }
     request.on_body do |chunk|
       next :abort if downloaded_file.closed?
-      IO.binwrite(downloaded_file, chunk)
+      downloaded_file.write(chunk)
     end
     request.on_complete do |response|
       request_fiber.resume(response) if request_fiber.alive?
