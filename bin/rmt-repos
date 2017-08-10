@@ -20,5 +20,5 @@ db_config = YAML.safe_load(ERB.new(File.read(db_config_path)).result, [], [], tr
 
 ActiveRecord::Base.establish_connection(db_config['development'])
 
-repo_manager = RMT::RepoManager.new(ARGV)
+repo_manager = RMT::RepoManager.new(ARGV, STDOUT)
 repo_manager.execute!

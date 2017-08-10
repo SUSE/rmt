@@ -6,6 +6,7 @@ FactoryGirl.define do
     sequence(:distro_target) { |n| "i586-#{n}" }
     sequence(:enabled) { true }
     sequence(:autorefresh) { true }
+    mirroring_enabled false
 
     after(:build) do |obj|
       obj.local_path = obj.make_local_path(obj.external_url)
@@ -26,5 +27,7 @@ FactoryGirl.define do
         end
       end
     end
+
+    trait(:mirroring_enabled) { mirroring_enabled true }
   end
 end

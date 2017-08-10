@@ -9,6 +9,8 @@ FactoryGirl.define do
     product_type :base
     sequence(:description) { FFaker::Lorem.sentence }
     release_type ''
+    version 42
+    arch 'x86_64'
 
     trait :extension do
       product_type 'extension'
