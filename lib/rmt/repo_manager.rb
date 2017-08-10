@@ -3,10 +3,11 @@ require 'optparse'
 
 class RMT::RepoManager
 
-  def initialize(argv)
+  def initialize(argv, out = nil)
     @argv = argv
     @options = {}
     @affected_repos = 0
+    @out = out || StringIO.new
   end
 
   def parse_options
@@ -16,12 +17,12 @@ class RMT::RepoManager
       opts.separator ''
 
       opts.on_tail('-h', '--help', 'Show this message') do
-        puts opts
+        @out.puts opts
         exit
       end
 
       opts.on_tail('-v', '--version', 'Show version') do
-        puts RMT::VERSION
+        @out.puts RMT::VERSION
         exit
       end
 
@@ -71,7 +72,7 @@ class RMT::RepoManager
         raise 'Need to specify which repository to enable/disable!'
       end
 
-      puts "#{@affected_repos} repo(s) successfully #{mirroring_enabled ? 'enabled' : 'disabled'}"
+      @out.puts "#{@affected_repos} repo(s) successfully #{mirroring_enabled ? 'enabled' : 'disabled'}"
     else
       list_repositories
     end
@@ -108,7 +109,7 @@ class RMT::RepoManager
       rows << [ repository.id, repository.name, repository.distro_target, repository.description, repository.mirroring_enabled ]
     end
 
-    puts Terminal::Table.new headings: %w[ID Name Target Description Mirror?], rows: rows
+    @out.puts Terminal::Table.new headings: %w[ID Name Target Description Mirror?], rows: rows
   end
 
 end
