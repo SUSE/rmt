@@ -38,6 +38,13 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     unless @product.service && @product.repositories.present?
       fail ActionController::TranslatedError.new(N_('No repositories found for product: %s'), @product.friendly_name)
     end
+
+    mandatory_repos = @product.repositories.where({enabled: true})
+    mirrored_repos = @product.repositories.where({enabled: true, mirroring_enabled: true})
+
+    unless (mandatory_repos.size == mirrored_repos.size)
+      fail ActionController::TranslatedError.new(N_('Not all mandatory repositories are mirrored for product %s'), @product.friendly_name)
+    end
   end
 
   def create_product_activation
