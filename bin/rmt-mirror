@@ -32,5 +32,3 @@ Repository.where(mirroring_enabled: true).each do |repository|
     exit 1
   end
 end
-
-
