@@ -21,8 +21,7 @@ class V3::ProductSerializer < ApplicationSerializer
 
   def eula_url
     if object.eula_url
-      uri = SUSE::Misc.uri_replace_hostname(object.eula_url, base_url)
-      uri.to_s
+      RMT::Misc.make_repo_url(base_url, object.eula_url)
     else
       ''
     end

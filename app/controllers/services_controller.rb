@@ -1,3 +1,6 @@
+require 'rmt'
+require 'rmt/misc'
+
 class ServicesController < ActionController::Base
 
   include ActionController::MimeResponds

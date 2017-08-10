@@ -22,6 +22,12 @@ class RMT::SCCSync
       create_service(item, product)
     end
 
+    @logger.info('Updating repositories')
+    data = scc_api_client.list_repositories
+    data.each do |item|
+      update_auth_token(item)
+    end
+
     @logger.info('Done!')
   end
 
@@ -80,6 +86,15 @@ class RMT::SCCSync
         repository_id: repository.id
       )
     end
+  end
+
+  def update_auth_token(item)
+    uri = URI(item[:url])
+    auth_token = uri.query
+
+    repository = Repository.find(item[:id])
+    repository.auth_token = auth_token
+    repository.save!
   end
 
 end

@@ -31,7 +31,7 @@ RSpec.describe ServicesController do
 
       let(:model_urls) do
         service.repositories.map do |repo|
-          SUSE::Misc.uri_replace_hostname(repo.external_url, 'http://www.example.com').to_s
+          RMT::Misc::make_repo_url('http://www.example.com', repo.local_path)
         end
       end
 
