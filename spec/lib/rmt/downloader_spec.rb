@@ -54,6 +54,23 @@ RSpec.describe RMT::Downloader do
         it('has correct content') { expect(File.read(filename)).to eq(content) }
       end
     end
+
+    context 'with auth_token' do
+      let(:downloader) { described_class.new(repository_url: 'http://example.com', local_path: dir, auth_token: 'repo_auth_token') }
+      let(:content) { 'test' }
+
+      before do
+        stub_request(:get, 'http://example.com/repomd.xml?repo_auth_token')
+          .with(headers: headers)
+          .to_return(status: 200, body: content, headers: {})
+      end
+
+      context 'and checksum is correct' do
+        let(:filename) { downloader.download('/repomd.xml') }
+
+        it('has correct content') { expect(File.read(filename)).to eq(content) }
+      end
+    end
   end
 
   describe '#download_multi' do
