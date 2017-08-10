@@ -10,7 +10,7 @@ class Repository < ApplicationRecord
   validates :local_path, presence: true
 
   def make_local_path(url)
-    URI(url).path.to_s.gsub(/^\/repo/, '')
+    URI(url).path.to_s.gsub(%r{^/repo}, '')
   end
 
 end
