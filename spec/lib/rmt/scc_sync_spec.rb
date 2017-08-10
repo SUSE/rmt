@@ -13,6 +13,8 @@ RSpec.describe RMT::SCCSync do
     before do
       expect(SUSE::Connect::Api).to receive(:new) { api_double }
       expect(api_double).to receive(:list_products) { [ product ] }
+      expect(api_double).to receive(:list_repositories) { all_repositories }
+
       sync = described_class.new
       sync.sync
     end
