@@ -33,5 +33,3 @@ repositories.each do |repository|
     exit 1
   end
 end
-
-
