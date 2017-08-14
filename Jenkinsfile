@@ -7,7 +7,6 @@ node('scc-jenkins-node-chucker') {
         stage('build and push the image') {
             sh 'docker build -t registry.scc.suse.de/rmt:latest .'
             sh 'docker push registry.scc.suse.de/rmt:latest'
-          }
         }
 
         stage('staging deploy') {
