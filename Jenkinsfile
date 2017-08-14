@@ -3,15 +3,15 @@ node('scc-jenkins-node-chucker') {
         git url: 'https://github.com/suse/rmt.git', branch: 'master'
     }
 
-    stage('docker-compose build') {
-        dir('rmt') {
-            sh 'docker-compose build'
+    dir('rmt') {
+        stage('build and push the image') {
+            sh 'docker build -t registry.scc.suse.de/rmt:latest .'
+            sh 'docker push registry.scc.suse.de/rmt:latest'
+          }
         }
-    }
 
-    stage('run tests') {
-        dir('rmt') {
-            sh 'docker-compose run rmt bash -c "bundler.ruby2.4 && rails db:migrate && rspec"'
+        stage('staging deploy') {
+            sh 'ssh root@10.162.213.12 -t "docker pull registry.scc.suse.de/rmt:latest && docker stop rmt && docker rm rmt && docker run -d --name rmt -e RAILS_ENV=production -p 3000:3000 registry.scc.suse.de/rmt"'
         }
     }
 }

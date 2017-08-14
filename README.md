@@ -1,26 +1,12 @@
-# README
+# Repository Mirroring Tool
 ![Kartoha](https://travis-ci.org/SUSE/rmt.svg?branch=master)
 
+This tool allows you to mirror RPM update repositories in your own private network. Registered organization credentials are required to mirror SUSE repositories.
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+You can run the application locally using the docker-compose:
 
-Things you may want to cover:
+```bash
+docker-compose up
+```
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+And it will be accessible at http://localhost:8080/ .
