@@ -1,7 +1,7 @@
 GIT
-  remote: https://github.com/ikapelyukhin/vcr.git
-  revision: 5554d5d5b8741cd10b421669b7fbd72d11c53701
-  branch: issue_509
+  remote: https://github.com/vcr/vcr.git
+  revision: 0ce29d08d492792ffecbec468e70a638e9e9f140
+  ref: 0ce29d08d492792ffecbec468e70a638e9e9f140
   specs:
     vcr (3.0.3)
 
