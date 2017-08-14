@@ -9,8 +9,6 @@ end
 # https://build.suse.de/project/show/Devel:SCC:SMT-NG
 
 gem 'nio4r', '2.1.0'
-# gem 'nokogiri', '1.6.1'
-# gem 'mini_portile2', '2.1.0'
 gem 'websocket-driver', '0.6.4'
 gem 'puma', '3.6.0'
 gem 'pg', '0.18.3'
