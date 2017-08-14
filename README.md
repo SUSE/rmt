@@ -10,3 +10,7 @@ docker-compose up
 ```
 
 And it will be accessible at http://localhost:8080/ .
+
+## Dependencies
+
+The application is tested only on ruby 2.4.1 and newer. Support of older MRI is not intended.

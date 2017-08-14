@@ -49,7 +49,7 @@ group :development, :test do
 
   # Branch that contains fixes for recording and playing back Typhoeus requests with on_headers and on_body callbacks
   # Hopefully it will get merged some time soon :-)
-  gem 'vcr', github: 'ikapelyukhin/vcr', branch: 'issue_509'
+  gem 'vcr', github: 'vcr/vcr', ref: '0ce29d08d492792ffecbec468e70a638e9e9f140'
 end
 
 group :development do
