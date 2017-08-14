@@ -14,6 +14,9 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       let(:verb) { 'post' }
     end
 
+    context 'when product mandatory repos aren\'t mirrored' do
+    end
+
     context 'when product has repos' do
       subject { response }
 
