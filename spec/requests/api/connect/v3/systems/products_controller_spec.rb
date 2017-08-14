@@ -8,6 +8,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
   let(:headers) { auth_header.merge(version_header) }
   let(:system) { FactoryGirl.create(:system) }
   let(:product_with_repos) { FactoryGirl.create(:product, :with_mirrored_repositories) }
+  let(:product_not_mirrored) { FactoryGirl.create(:product, :with_not_mirrored_repositories) }
 
   describe '#activate' do
     it_behaves_like 'products controller action' do
@@ -15,6 +16,27 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
     end
 
     context 'when product mandatory repos aren\'t mirrored' do
+      subject { response }
+
+      let(:payload) do
+        {
+          identifier: product_not_mirrored.identifier,
+          version: product_not_mirrored.version,
+          arch: product_not_mirrored.arch
+        }
+      end
+
+      let(:error_json) do
+        {
+          'type' => 'error',
+          'error' => "Not all mandatory repositories are mirrored for product #{product_not_mirrored.name}",
+          'localized_error' => "Not all mandatory repositories are mirrored for product #{product_not_mirrored.name}"
+        }.to_json
+      end
+
+      before { post url, headers: headers, params: payload }
+      its(:code) { is_expected.to eq('422') }
+      its(:body) { is_expected.to eq(error_json) }
     end
 
     context 'when product has repos' do
