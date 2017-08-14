@@ -10,14 +10,14 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController do
 
   describe '#destroy' do
     it_behaves_like 'products controller action' do
-      let(:product_with_repos) { FactoryGirl.create(:product, :with_repositories) }
+      let(:product_with_repos) { FactoryGirl.create(:product, :with_mirrored_repositories) }
       let(:verb) { 'delete' }
     end
 
     context 'when product is base product has repos' do
       subject { response }
 
-      let(:product) { FactoryGirl.create(:product, :with_repositories) }
+      let(:product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
       let(:payload) { { identifier: product.identifier, version: product.version, arch: product.arch } }
 
       before { delete url, headers: headers, params: payload }
@@ -37,7 +37,7 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController do
 
       before { delete url, headers: headers, params: payload }
       context 'and is not activated' do
-        let(:product) { FactoryGirl.create(:product, :extension, :with_repositories) }
+        let(:product) { FactoryGirl.create(:product, :extension, :with_mirrored_repositories) }
 
         its(:code) { is_expected.to eq('422') }
 
@@ -50,8 +50,8 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController do
 
       context 'has products depending on it and is activated' do
         let(:product) do
-          product = FactoryGirl.create(:product, :extension, :with_repositories, :activated, system: system)
-          ext_product = FactoryGirl.create(:product, :extension, :with_repositories, :activated, system: system)
+          product = FactoryGirl.create(:product, :extension, :with_mirrored_repositories, :activated, system: system)
+          ext_product = FactoryGirl.create(:product, :extension, :with_mirrored_repositories, :activated, system: system)
           ext_product.bases << product
           ext_product.save!
 
@@ -69,7 +69,7 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController do
 
       context 'and is activated' do
         let(:system) { FactoryGirl.create(:system) }
-        let(:product) { FactoryGirl.create(:product, :extension, :with_repositories, :activated, system: system) }
+        let(:product) { FactoryGirl.create(:product, :extension, :with_mirrored_repositories, :activated, system: system) }
         let(:serialized_json) do
           V3::ServiceSerializer.new(
             product.service,
