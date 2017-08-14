@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Repository, type: :model do
   subject { build(:repository) }
 
-  let(:product) { create(:product, :with_repositories) }
+  let(:product) { create(:product, :with_mirrored_repositories) }
 
   it { is_expected.to have_many :products }
   it { is_expected.to have_many :services }

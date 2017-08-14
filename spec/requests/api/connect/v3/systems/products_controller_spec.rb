@@ -7,7 +7,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
   let(:url) { connect_systems_products_url }
   let(:headers) { auth_header.merge(version_header) }
   let(:system) { FactoryGirl.create(:system) }
-  let(:product_with_repos) { FactoryGirl.create(:product, :with_repositories) }
+  let(:product_with_repos) { FactoryGirl.create(:product, :with_mirrored_repositories) }
 
   describe '#activate' do
     it_behaves_like 'products controller action' do
@@ -45,7 +45,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
   end
 
   describe '#show' do
-    let(:activation) { FactoryGirl.create(:activation) }
+    let(:activation) { FactoryGirl.create(:activation, :with_mirrored_product) }
 
     it_behaves_like 'products controller action' do
       let(:verb) { 'get' }
