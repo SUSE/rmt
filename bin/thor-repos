@@ -42,13 +42,14 @@ class MyCLI < Thor
   end
 
   desc "enable TARGET", "Enable a repository or product"
+  option 'exclude-optional', aliases: '-x', default: true, type: :boolean
   def enable(target)
     repo_id = Integer(target, 10) rescue nil # Is the user input an Integer?
     if repo_id
       RMT::RepoManager.new(ARGV, STDOUT).change_repository_mirroring(true, repo_id)
     else
       identifier, version, arch = target.split('/')
-      RMT::RepoManager.new(ARGV, STDOUT).change_product_mirroring(true, identifier, version, arch)
+      RMT::RepoManager.new(ARGV, STDOUT).change_product_mirroring(true, identifier, version, arch, exclude_optional: options['exclude-optional'])
     end
   end
 
