@@ -261,6 +261,7 @@ DEPENDENCIES
   spring
   spring-watcher-listen (~> 2.0.0)
   terminal-table (~> 1.8)
+  thor
   typhoeus (~> 1.1, >= 1.1.2)
   tzinfo-data
   vcr!
