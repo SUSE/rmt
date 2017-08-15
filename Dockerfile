@@ -6,10 +6,11 @@ ruby2.4-rubygem-bundler ruby2.4-rubygem-mini_portile2 ruby2.4-rubygem-nio4r ruby
 ruby2.4-rubygem-puma ruby2.4-rubygem-sqlite3 ruby2.4-rubygem-websocket-driver ruby2.4-devel ruby2.4-rubygem-pg \
 ruby2.4-rubygem-byebug git-core
 
+ENV RAILS_ENV production
+
 COPY . /srv/www/rmt/
 WORKDIR /srv/www/rmt/
 
-RUN bundle exec rails secrets:setup
 RUN bundler.ruby2.4
 
 CMD bundle exec rails s

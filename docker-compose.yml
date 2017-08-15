@@ -21,7 +21,9 @@ services:
     build: .
     environment:
       - POSTGRES_HOST=db
-      - RAILS_ENV=production
+      - SECRET_KEY_BASE=8ea53ad3bc6c03923e376c8bdd85059c1885524947a7efe53d5e9c9d4e39861106ffd6a2ece82b803072ed701e6c960bade91644979e679416c5f255007237ae
+    volumes:
+      - ./public:/var/www/
     depends_on:
       - db
     command: bash -c 'bundle exec rails db:migrate && bundle exec rails s -b rmt'
