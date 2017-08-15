@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+require "thor"
+
+$LOAD_PATH.unshift File.expand_path(File.join(__dir__, '../lib/'))
+require 'rmt'
+
+
+class MyCLI < Thor
+  desc "version", "Show version"
+  def version
+    puts RMT::VERSION
+  end
+end
+
+MyCLI.start(ARGV)
