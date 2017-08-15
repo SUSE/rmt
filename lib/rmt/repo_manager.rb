@@ -78,7 +78,7 @@ class RMT::RepoManager
     end
   end
 
-  protected
+  # protected
 
   def change_repository_mirroring(mirroring_enabled, repository_id)
     repository = Repository.find(repository_id)
@@ -99,9 +99,9 @@ class RMT::RepoManager
     end
   end
 
-  def list_repositories
+  def list_repositories(scope: :enabled)
     conditions = {}
-    conditions[:mirroring_enabled] = true unless (@options[:all])
+    conditions[:mirroring_enabled] = true unless (scope == :all)
 
     rows = []
     repositories = Repository.where(conditions)
