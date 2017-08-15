@@ -87,14 +87,14 @@ class RMT::RepoManager
     @affected_repos += 1
   end
 
-  def change_product_mirroring(mirroring_enabled, identifier, version, arch = nil)
+  def change_product_mirroring(mirroring_enabled, identifier, version, arch, options = {})
     conditions = { identifier: identifier, version: version }
     conditions[:arch] = arch if arch
 
     products = Product.where(conditions).all
     products.each do |product|
       conditions = {}
-      conditions[:enabled] = true if (@options[:exclude_optional])
+      conditions[:enabled] = true if (options[:exclude_optional])
       @affected_repos += product.repositories.where(conditions).update_all(mirroring_enabled: mirroring_enabled)
     end
   end
