@@ -21,4 +21,4 @@ test:
 
 production:
   <<: *default
-  database: <%= ENV.fetch('POSTGRES_DB') { 'rmt_prod' } %>
+  database: <%= ENV.fetch('POSTGRES_DB') { 'rmt' } %>

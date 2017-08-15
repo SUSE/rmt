@@ -9,7 +9,6 @@ ruby2.4-rubygem-byebug git-core
 COPY . /srv/www/rmt/
 WORKDIR /srv/www/rmt/
 
-RUN bundle exec rails secrets:setup
 RUN bundler.ruby2.4
 
 CMD bundle exec rails s
