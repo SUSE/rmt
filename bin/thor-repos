@@ -32,7 +32,13 @@ class MyCLI < Thor
 
   desc "disable TARGET", "Disable a repository or product"
   def disable(target)
-    # TODO
+    repo_id = Integer(target, 10) rescue nil # Is the user input an Integer?
+    if repo_id
+      RMT::RepoManager.new(ARGV, STDOUT).change_repository_mirroring(false, repo_id)
+    else
+      identifier, version, arch = target.split('/')
+      RMT::RepoManager.new(ARGV, STDOUT).change_product_mirroring(false, identifier, version, arch)
+    end
   end
 
   desc "enable TARGET", "Enable a repository or product"
