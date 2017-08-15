@@ -3,16 +3,17 @@ require 'optparse'
 require 'thor'
 
 class RMT::RepoManager < Thor
+
   # class_option :verbose, type: :boolean
 
-  desc "list", "List all repositories"
+  desc 'list', 'List all repositories'
   option :all, type: :boolean
   def list
     scope = options[:all] ? :all : :enabled
     list_repositories(scope: scope)
   end
 
-  desc "disable TARGET", "Disable a repository or product"
+  desc 'disable TARGET', 'Disable a repository or product'
   def disable(target)
     repo_id = Integer(target, 10) rescue nil
     if repo_id
@@ -23,7 +24,7 @@ class RMT::RepoManager < Thor
     end
   end
 
-  desc "enable TARGET", "Enable a repository or product"
+  desc 'enable TARGET', 'Enable a repository or product'
   option 'exclude-optional', aliases: '-x', default: true, type: :boolean
   def enable(target)
     repo_id = Integer(target, 10) rescue nil
@@ -35,7 +36,7 @@ class RMT::RepoManager < Thor
     end
   end
 
-  desc "version", "Show version"
+  desc 'version', 'Show version'
   def version
     puts RMT::VERSION
   end
