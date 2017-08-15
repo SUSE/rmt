@@ -17,6 +17,7 @@ gem 'pg', '0.18.3'
 
 gem 'nokogiri', '~> 1.8.0'
 gem 'rails', '~> 5.1'
+gem 'thor'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
