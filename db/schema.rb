@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170808080710) do
+ActiveRecord::Schema.define(version: 20170816095520) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -48,7 +48,6 @@ ActiveRecord::Schema.define(version: 20170808080710) do
 
   create_table "repositories", force: :cascade do |t|
     t.string "name", null: false
-    t.string "distro_target"
     t.string "description"
     t.boolean "enabled", default: false, null: false
     t.boolean "autorefresh", default: true, null: false
