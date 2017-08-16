@@ -8,7 +8,6 @@ xml.repoindex(ttl: 86400) do # FIXME: config file for the options
       enabled: repo.enabled
     }
 
-    attributes[:distro_target] = repo.distro_target if repo.distro_target
     xml.repo attributes
   end
 end
