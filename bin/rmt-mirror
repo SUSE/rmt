@@ -17,8 +17,7 @@ db_config = YAML.safe_load(ERB.new(File.read(db_config_path)).result, [], [], tr
 
 ActiveRecord::Base.establish_connection(db_config['development'])
 
-repositories = Repository.where(mirroring_enabled: true).all
-repositories.each do |repository|
+Repository.where(mirroring_enabled: true).each do |repository|
   begin
     RMT::Mirror.new(
       mirroring_base_dir: Settings.mirroring.base_dir,

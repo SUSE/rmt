@@ -9,7 +9,7 @@ class RMT::SCCSync
 
   def sync
     @logger.info('Cleaning up the database')
-    clean_up
+    Product.delete_all
 
     @logger.info('Downloading data from SCC')
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
@@ -32,11 +32,6 @@ class RMT::SCCSync
   end
 
   protected
-
-  def clean_up
-    Product.delete_all
-    Repository.delete_all
-  end
 
   def create_product(item)
     extensions = []
