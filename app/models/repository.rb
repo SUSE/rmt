@@ -9,8 +9,12 @@ class Repository < ApplicationRecord
   validates :external_url, presence: true
   validates :local_path, presence: true
 
-  def make_local_path(url)
-    URI(url).path.to_s.gsub(%r{^/repo}, '')
+  # Mangles remote repo URL to make a nicer local path, see specs for examples
+  def self.make_local_path(url)
+    uri = URI(url)
+    path = uri.path.to_s
+    path.gsub!(%r{^/repo}, '') if (uri.hostname == 'updates.suse.com')
+    path
   end
 
 end

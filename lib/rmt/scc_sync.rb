@@ -78,7 +78,7 @@ class RMT::SCCSync
       repository = Repository.find_or_initialize_by(external_url: repo_item[:url])
       repository.attributes = repo_item.select { |k, _| repository.attributes.keys.member?(k.to_s) }
       repository.external_url = repo_item[:url]
-      repository.local_path = repository.make_local_path(repo_item[:url])
+      repository.local_path = Repository.make_local_path(repo_item[:url])
       repository.save!
 
       RepositoriesServicesAssociation.find_or_create_by(

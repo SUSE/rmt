@@ -3,8 +3,7 @@ class V3::RepositorySerializer < ApplicationSerializer
   attributes :id, :name, :url, :distro_target, :description, :enabled, :autorefresh
 
   def url
-    uri = RMT::Misc.make_repo_url(base_url, object.local_path)
-    uri.to_s
+    RMT::Misc.make_repo_url(base_url, object.local_path)
   end
 
   def enabled
