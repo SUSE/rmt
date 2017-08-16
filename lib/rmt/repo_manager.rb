@@ -1,5 +1,4 @@
 require 'rmt'
-require 'optparse'
 require 'thor'
 
 # rubocop:disable Rails/Output
