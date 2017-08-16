@@ -2,6 +2,8 @@ require 'rmt'
 require 'optparse'
 require 'thor'
 
+# rubocop:disable Rails/Output
+
 class RMT::RepoManager < Thor
 
   # class_option :verbose, type: :boolean
