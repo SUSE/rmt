@@ -106,10 +106,10 @@ class RMT::RepoManager
     rows = []
     repositories = Repository.where(conditions)
     repositories.all.each do |repository|
-      rows << [ repository.id, repository.name, repository.distro_target, repository.description, repository.mirroring_enabled ]
+      rows << [ repository.id, repository.name, repository.description, repository.mirroring_enabled ]
     end
 
-    @out.puts Terminal::Table.new headings: %w[ID Name Target Description Mirror?], rows: rows
+    @out.puts Terminal::Table.new headings: %w[ID Name Description Mirror?], rows: rows
   end
 
 end

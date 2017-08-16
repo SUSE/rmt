@@ -3,7 +3,6 @@ FactoryGirl.define do
     sequence(:name) { |n| "Repository #{n}" }
 
     sequence(:external_url) { |n| "https://updates.suse.com/suse/repository_#{n}" }
-    sequence(:distro_target) { |n| "i586-#{n}" }
     sequence(:enabled) { true }
     sequence(:autorefresh) { true }
     mirroring_enabled false
