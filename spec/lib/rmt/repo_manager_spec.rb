@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe RMT::RepoManager do
   describe '#execute!' do
     before do
-      described_class.new(argv).execute!
+      described_class.start(argv)
       repository.reload
     end
 
@@ -17,21 +17,21 @@ RSpec.describe RMT::RepoManager do
       end
 
       context 'by repo id' do
-        let(:argv) { ['-e', '-r', repository.id.to_s] }
+        let(:argv) { ['enable', repository.id.to_s] }
 
         its(:mirroring_enabled) { is_expected.to be(true) }
       end
 
       context 'by product without arch' do
         let(:product) { repository.services.first.product }
-        let(:argv) { ['-e', '-p', "#{product.identifier}/#{product.version}"] }
+        let(:argv) { ['enable', "#{product.identifier}/#{product.version}"] }
 
         its(:mirroring_enabled) { is_expected.to be(true) }
       end
 
       context 'by product with arch' do
         let(:product) { repository.services.first.product }
-        let(:argv) { ['-e', '-p', "#{product.identifier}/#{product.version}/#{product.arch}"] }
+        let(:argv) { ['enable', "#{product.identifier}/#{product.version}/#{product.arch}"] }
 
         its(:mirroring_enabled) { is_expected.to be(true) }
       end
@@ -47,21 +47,21 @@ RSpec.describe RMT::RepoManager do
       end
 
       context 'by repo id' do
-        let(:argv) { ['-d', '-r', repository.id.to_s] }
+        let(:argv) { ['disable', repository.id.to_s] }
 
         its(:mirroring_enabled) { is_expected.to be(false) }
       end
 
       context 'by product without arch' do
         let(:product) { repository.services.first.product }
-        let(:argv) { ['-d', '-p', "#{product.identifier}/#{product.version}"] }
+        let(:argv) { ['disable', "#{product.identifier}/#{product.version}"] }
 
         its(:mirroring_enabled) { is_expected.to be(false) }
       end
 
       context 'by product with arch' do
         let(:product) { repository.services.first.product }
-        let(:argv) { ['-d', '-p', "#{product.identifier}/#{product.version}/#{product.arch}"] }
+        let(:argv) { ['disable', "#{product.identifier}/#{product.version}/#{product.arch}"] }
 
         its(:mirroring_enabled) { is_expected.to be(false) }
       end
