@@ -1,9 +1,7 @@
 xml.repoindex(ttl: 86400) do # FIXME: config file for the options
   @repos.each do |repo|
-    uri = RMT::Misc.make_repo_url(@base_url, repo.local_path)
-
     attributes = {
-      url: uri.to_s,
+      url: RMT::Misc.make_repo_url(@base_url, repo.local_path),
       alias: repo.name,
       name: repo.name,
       autorefresh: repo.autorefresh,

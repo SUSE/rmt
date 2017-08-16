@@ -9,7 +9,7 @@ FactoryGirl.define do
     mirroring_enabled false
 
     after(:build) do |obj|
-      obj.local_path = obj.make_local_path(obj.external_url)
+      obj.local_path = Repository.make_local_path(obj.external_url)
     end
 
     trait :authenticated do
