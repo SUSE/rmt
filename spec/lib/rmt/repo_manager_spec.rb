@@ -3,6 +3,10 @@ require 'rails_helper'
 RSpec.describe RMT::RepoManager do
   describe '#execute!' do
     before do
+      # disable output to stdout while running specs
+      allow(STDOUT).to receive(:puts)
+      allow(STDOUT).to receive(:print)
+
       described_class.start(argv)
       repository.reload
     end
