@@ -1,13 +1,22 @@
 require 'suse/connect/api'
 require 'rmt/config'
+require 'rmt/cli'
 
-class RMT::SCCSync
+class RMT::SCCSync < RMT::CLI
 
-  def initialize(logger = nil)
-    @logger = logger || Logger.new(nil)
+  def initialize(args = [], local_options = {}, config = {})
+    super
+    @logger = Logger.new(STDOUT)
+    @logger.level = options[:verbose] ? 0 : 1
   end
 
+  class_option :verbose, aliases: '-v', type: :boolean
+  default_task :sync
+
+  desc 'sync', 'Synchronize database with SCC'
   def sync
+
+
     unless (Settings.scc.username && Settings.scc.password)
       puts 'SCC credentials not set.'
       exit 1
