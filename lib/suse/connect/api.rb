@@ -1,10 +1,13 @@
 require 'rmt'
 require 'rmt/http_request'
 require 'json'
+require 'byebug'
 
 module SUSE
   module Connect
     class Api
+
+      class InvalidCredentialsError < StandardError; end
 
       def initialize(username, password)
         @username = username
@@ -35,6 +38,7 @@ module SUSE
         options[:accept_encoding] = 'gzip, deflate'
 
         response = RMT::HttpRequest.new(url, options).run
+        raise InvalidCredentialsError if (response.code == 401)
         raise response.body unless (response.code >= 200 && response.code < 300)
 
         response
