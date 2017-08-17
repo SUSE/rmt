@@ -34,6 +34,8 @@ class RMT::SCCSync
     end
 
     @logger.info('Done!')
+  rescue SUSE::Connect::Api::InvalidCredentialsError => e
+      @logger.error('SCC credentials not valid.')
   end
 
   protected
