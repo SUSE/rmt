@@ -8,6 +8,11 @@ class RMT::SCCSync
   end
 
   def sync
+    unless (Settings.scc.username && Settings.scc.password)
+      puts 'SCC credentials not set.'
+      exit 1
+    end
+
     @logger.info('Cleaning up the database')
     Product.delete_all
 
