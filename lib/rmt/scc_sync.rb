@@ -11,7 +11,6 @@ class RMT::SCCSync < RMT::CLI
   end
 
   class_option :verbose, aliases: '-v', type: :boolean
-  default_task :sync
 
   desc 'sync', 'Synchronize database with SCC'
   def sync
