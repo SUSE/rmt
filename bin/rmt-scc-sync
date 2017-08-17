@@ -16,5 +16,4 @@ db_config = YAML.safe_load(ERB.new(File.read(db_config_path)).result, [], [], tr
 
 ActiveRecord::Base.establish_connection(db_config['development'])
 
-scc_sync = RMT::SCCSync.new(Logger.new(STDOUT))
-scc_sync.sync
+scc_sync = RMT::SCCSync.start(ARGV)
