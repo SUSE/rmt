@@ -1,7 +1,6 @@
 require 'rmt'
 require 'rmt/http_request'
 require 'json'
-require 'byebug'
 
 module SUSE
   module Connect
