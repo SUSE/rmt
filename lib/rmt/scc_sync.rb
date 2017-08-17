@@ -45,6 +45,8 @@ class RMT::SCCSync < RMT::CLI
     @logger.info('Done!')
   rescue SUSE::Connect::Api::InvalidCredentialsError
     @logger.error('SCC credentials not valid.')
+  rescue Interrupt
+    puts 'Aborting! You need to rerun this command to have a consistent state.'
   end
 
   desc 'version', 'Show version'
