@@ -33,7 +33,7 @@ class RMT::RepoManager < Thor
   end
 
   desc 'list', 'List all repositories'
-  option :all, type: :boolean
+  option :all, aliases: '-a', type: :boolean
   def list
     scope = options[:all] ? :all : :enabled
     list_repositories(scope: scope)
