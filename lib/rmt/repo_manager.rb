@@ -40,7 +40,7 @@ class RMT::RepoManager < Thor
   end
 
   desc 'enable TARGET', 'Enable a repository or product'
-  option 'exclude-optional', aliases: '-x', default: true, type: :boolean
+  option 'exclude-optional', aliases: '-x', type: :boolean
   def enable(target)
     repo_id = Integer(target, 10) rescue nil
     if repo_id
