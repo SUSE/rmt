@@ -20,7 +20,7 @@ Rails.application.routes.draw do
         resources :activations, only: [ :index ]
       end
 
-      get 'repositories/installer', to: 'repositories/installer#show'
+      get 'repositories/installer', to: 'repositories/installer#index'
     end
   end
 
@@ -41,8 +41,6 @@ Rails.application.routes.draw do
       resource :systems, only: [], module: :systems do
         resources :activations, only: [ :index ]
       end
-
-      get 'repositories/installer', to: 'repositories/installer#show'
     end
   end
 
