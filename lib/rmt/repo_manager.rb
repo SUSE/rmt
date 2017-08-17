@@ -37,17 +37,6 @@ class RMT::RepoManager < Thor
     list_repositories(scope: scope)
   end
 
-  desc 'disable TARGET', 'Disable a repository or product'
-  def disable(target)
-    repo_id = Integer(target, 10) rescue nil
-    if repo_id
-      change_repository_mirroring(false, repo_id)
-    else
-      identifier, version, arch = target.split('/')
-      change_product_mirroring(false, identifier, version, arch)
-    end
-  end
-
   desc 'enable TARGET', 'Enable a repository or product'
   option 'exclude-optional', aliases: '-x', default: true, type: :boolean
   def enable(target)
@@ -57,6 +46,17 @@ class RMT::RepoManager < Thor
     else
       identifier, version, arch = target.split('/')
       change_product_mirroring(true, identifier, version, arch, exclude_optional: options['exclude-optional'])
+    end
+  end
+
+  desc 'disable TARGET', 'Disable a repository or product'
+  def disable(target)
+    repo_id = Integer(target, 10) rescue nil
+    if repo_id
+      change_repository_mirroring(false, repo_id)
+    else
+      identifier, version, arch = target.split('/')
+      change_product_mirroring(false, identifier, version, arch)
     end
   end
 
