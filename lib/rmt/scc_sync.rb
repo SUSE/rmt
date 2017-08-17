@@ -2,6 +2,9 @@ require 'suse/connect/api'
 require 'rmt/config'
 require 'rmt/cli'
 
+# rubocop:disable Rails/Exit
+# rubocop:disable Rails/Output
+
 class RMT::SCCSync < RMT::CLI
 
   def initialize(args = [], local_options = {}, config = {})
@@ -42,8 +45,8 @@ class RMT::SCCSync < RMT::CLI
     end
 
     @logger.info('Done!')
-  rescue SUSE::Connect::Api::InvalidCredentialsError => e
-      @logger.error('SCC credentials not valid.')
+  rescue SUSE::Connect::Api::InvalidCredentialsError
+    @logger.error('SCC credentials not valid.')
   end
 
   protected
