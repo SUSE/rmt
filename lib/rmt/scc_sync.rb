@@ -17,8 +17,6 @@ class RMT::SCCSync < RMT::CLI
 
   desc 'sync', 'Synchronize database with SCC'
   def sync
-
-
     unless (Settings.scc.username && Settings.scc.password)
       puts 'SCC credentials not set.'
       exit 1
@@ -48,6 +46,12 @@ class RMT::SCCSync < RMT::CLI
   rescue SUSE::Connect::Api::InvalidCredentialsError
     @logger.error('SCC credentials not valid.')
   end
+
+  desc 'version', 'Show version'
+  def version
+    puts RMT::VERSION
+  end
+
 
   protected
 
