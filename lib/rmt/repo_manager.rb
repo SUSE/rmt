@@ -27,7 +27,7 @@ class RMT::RepoManager < Thor
       shell.say
       class_options_help(shell)
 
-      shell.say 'All commands can be run with -h (or --help) for more information.'
+      shell.say "Run '#{basename} help COMMAND' for more information on a command."
     end
 
   end
