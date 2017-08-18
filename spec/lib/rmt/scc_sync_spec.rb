@@ -47,7 +47,7 @@ RSpec.describe RMT::SCCSync do
       end
 
       it 'exits with an error message' do
-        expect { begin described_class.new.sync; rescue SystemExit; end }.to output("SCC credentials not set.\n").to_stdout
+        expect { described_class.new.sync }.to raise_error RMT::SCCSync::CredentialsError
       end
     end
   end
