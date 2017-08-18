@@ -19,6 +19,7 @@ class RMT::Mirror
   def mirror
     mirror_metadata
     mirror_data
+    replace_metadata
   end
 
   protected
@@ -32,14 +33,14 @@ class RMT::Mirror
     end
 
     begin
-      temp_dir = Dir.mktmpdir
+      @repodata_dir = Dir.mktmpdir
     rescue StandardError => e
       raise RMT::Mirror::Exception.new("Can not create a temporary directory: #{e}")
     end
 
     @downloader = RMT::Downloader.new(
       repository_url: @repository_url,
-      local_path: temp_dir.to_s,
+      local_path: @repodata_dir.to_s,
       logger: @logger,
       auth_token: @auth_token
     )
@@ -66,16 +67,9 @@ class RMT::Mirror
         @primary_files << reference.location if (reference.type == :primary)
         @deltainfo_files << reference.location if (reference.type == :deltainfo)
       end
-
-      old_repodata = File.join(local_repo_dir, '.old_repodata')
-      repodata = File.join(local_repo_dir, 'repodata')
-      new_repodata = File.join(temp_dir.to_s, 'repodata')
-
-      FileUtils.remove_entry(old_repodata) if Dir.exist?(old_repodata)
-      FileUtils.mv(repodata, old_repodata) if Dir.exist?(repodata)
-      FileUtils.mv(new_repodata, repodata)
-    ensure
-      FileUtils.remove_entry(temp_dir)
+    rescue RuntimeError => e
+      FileUtils.remove_entry(@repodata_dir)
+      raise e
     end
   end
 
@@ -84,7 +78,7 @@ class RMT::Mirror
 
     @deltainfo_files.each do |filename|
       parser = RMT::Rpm::DeltainfoXmlParser.new(
-        File.join(@mirroring_base_dir, @local_path, filename),
+        File.join(@repodata_dir, filename),
         @mirror_src
       )
       parser.parse
@@ -93,12 +87,25 @@ class RMT::Mirror
 
     @primary_files.each do |filename|
       parser = RMT::Rpm::PrimaryXmlParser.new(
-        File.join(@mirroring_base_dir, @local_path, filename),
+        File.join(@repodata_dir, filename),
         @mirror_src
       )
       parser.parse
       @downloader.download_multi(parser.referenced_files)
     end
+  end
+
+  def replace_metadata
+    local_repo_dir = File.join(@mirroring_base_dir, @local_path)
+    old_repodata = File.join(local_repo_dir, '.old_repodata')
+    repodata = File.join(local_repo_dir, 'repodata')
+    new_repodata = File.join(@repodata_dir.to_s, 'repodata')
+
+    FileUtils.remove_entry(old_repodata) if Dir.exist?(old_repodata)
+    FileUtils.mv(repodata, old_repodata) if Dir.exist?(repodata)
+    FileUtils.mv(new_repodata, repodata)
+  ensure
+    FileUtils.remove_entry(@repodata_dir)
   end
 
 end
