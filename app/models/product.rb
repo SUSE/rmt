@@ -30,8 +30,15 @@ class Product < ApplicationRecord
     distinct.joins(:repositories).where('repositories.enabled = true').group(:id).having('count(*)=count(CASE WHEN mirroring_enabled THEN 1 END)')
   }
 
+  scope :published, ->() { where(release_stage: 'released') }
+
   def has_extension?
     ProductsExtensionsAssociation.exists?(product_id: id)
+  end
+
+  def mirrored
+    return false if repositories.empty?
+    repositories.all? { |r| r.enabled && r.mirroring_enabled }
   end
 
 end
