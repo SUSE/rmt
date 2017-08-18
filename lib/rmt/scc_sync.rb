@@ -2,10 +2,11 @@ require 'suse/connect/api'
 require 'rmt/config'
 require 'rmt/cli'
 
-# rubocop:disable Rails/Exit
 # rubocop:disable Rails/Output
 
 class RMT::SCCSync < RMT::CLI
+
+  class CredentialsError < RuntimeError; end
 
   def initialize(args = [], local_options = {}, config = {})
     super
@@ -17,10 +18,7 @@ class RMT::SCCSync < RMT::CLI
 
   desc 'sync', 'Synchronize database with SCC'
   def sync
-    unless (Settings.scc.username && Settings.scc.password)
-      puts 'SCC credentials not set.'
-      exit 1
-    end
+    raise CredentialsError, 'SCC credentials not set.' unless (Settings.scc.username && Settings.scc.password)
 
     @logger.info('Cleaning up the database')
     Product.delete_all
@@ -44,7 +42,7 @@ class RMT::SCCSync < RMT::CLI
 
     @logger.info('Done!')
   rescue SUSE::Connect::Api::InvalidCredentialsError
-    @logger.error('SCC credentials not valid.')
+    raise CredentialsError, 'SCC credentials not valid.'
   rescue Interrupt
     @logger.error('Interrupted! You need to rerun this command to have a consistent state.')
   end
