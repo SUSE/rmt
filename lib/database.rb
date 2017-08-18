@@ -1,4 +1,5 @@
 require 'active_record'
+require 'erb'
 
 require_relative '../app/models/application_record.rb'
 

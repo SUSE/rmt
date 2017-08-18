@@ -21,4 +21,37 @@ RSpec.describe Product, type: :model do
       it { is_expected.to eq true }
     end
   end
+
+  describe 'published' do
+    before do
+      create :product, release_stage: 'released'
+      create :product, release_stage: 'beta'
+    end
+
+    subject { Product.published.count }
+
+    it { is_expected.to eq 1 }
+  end
+
+  describe '#mirrored' do
+    subject { product.mirrored }
+
+    context 'without any repositories' do
+      let(:product) { create :product }
+
+      it { is_expected.to be false }
+    end
+
+    context 'with_not_mirrored_repositories' do
+      let(:product) { create :product, :with_not_mirrored_repositories }
+
+      it { is_expected.to be false }
+    end
+
+    context 'with_mirrored_repositories' do
+      let(:product) { create :product, :with_mirrored_repositories }
+
+      it { is_expected.to be true }
+    end
+  end
 end
