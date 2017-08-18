@@ -7,4 +7,8 @@ require 'rmt'
 require 'rmt/scc_sync'
 require 'database'
 
-RMT::SCCSync.start(ARGV)
+begin
+  RMT::SCCSync.start(ARGV)
+rescue RMT::SCCSync::CredentialsError => e
+  abort e.to_s
+end
