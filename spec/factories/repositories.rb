@@ -3,9 +3,13 @@ FactoryGirl.define do
     sequence(:name) { |n| "Repository #{n}" }
 
     sequence(:external_url) { |n| "https://updates.suse.com/suse/repository_#{n}" }
-    sequence(:distro_target) { |n| "i586-#{n}" }
     sequence(:enabled) { true }
     sequence(:autorefresh) { true }
+    mirroring_enabled false
+
+    after(:build) do |obj|
+      obj.local_path = Repository.make_local_path(obj.external_url)
+    end
 
     trait :authenticated do
       sequence(:url) { "/#{FFaker.letterify('?????')}" }
@@ -22,5 +26,7 @@ FactoryGirl.define do
         end
       end
     end
+
+    trait(:mirroring_enabled) { mirroring_enabled true }
   end
 end

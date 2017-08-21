@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+require_relative '../config/boot'
+$LOAD_PATH.unshift File.expand_path(File.join(__dir__, '../lib/'))
+
+require 'rmt'
+require 'rmt/scc_sync'
+require 'database'
+
+begin
+  RMT::SCCSync.start(ARGV)
+rescue RMT::SCCSync::CredentialsError => e
+  abort e.to_s
+end

@@ -20,7 +20,15 @@ class Product < ApplicationRecord
            through: :extension_products_associations,
            source: :extension
 
+  has_many :mirrored_extensions, -> { mirrored },
+    through: :extension_products_associations,
+    source: :extension
+
   enum product_type: { base: 'base', module: 'module', extension: 'extension' }
+
+  scope :mirrored, lambda {
+    distinct.joins(:repositories).where('repositories.enabled = true').group(:id).having('count(*)=count(CASE WHEN mirroring_enabled THEN 1 END)')
+  }
 
   def has_extension?
     ProductsExtensionsAssociation.exists?(product_id: id)

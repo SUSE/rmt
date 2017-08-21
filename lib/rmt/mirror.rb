@@ -5,7 +5,7 @@ class RMT::Mirror
 
   class RMT::Mirror::Exception < RuntimeError; end
 
-  def initialize(mirroring_base_dir:, repository_url:, local_path:, mirror_src: false, logger: nil)
+  def initialize(mirroring_base_dir:, repository_url:, local_path:, mirror_src: false, auth_token: nil, logger: nil)
     @mirroring_base_dir = mirroring_base_dir
     @repository_url = repository_url
     @local_path = local_path
@@ -13,6 +13,7 @@ class RMT::Mirror
     @logger = logger || Logger.new('/dev/null')
     @primary_files = []
     @deltainfo_files = []
+    @auth_token = auth_token
   end
 
   def mirror
@@ -39,7 +40,8 @@ class RMT::Mirror
     @downloader = RMT::Downloader.new(
       repository_url: @repository_url,
       local_path: temp_dir.to_s,
-      logger: @logger
+      logger: @logger,
+      auth_token: @auth_token
     )
 
     begin

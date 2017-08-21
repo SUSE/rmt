@@ -12,13 +12,14 @@ class RMT::Downloader
 
   KNOWN_HASH_FUNCTIONS = %i[MD5 SHA1 SHA256 SHA384 SHA512].freeze
 
-  attr_accessor :repository_url, :local_path, :concurrency, :logger
+  attr_accessor :repository_url, :local_path, :concurrency, :logger, :auth_token
 
-  def initialize(repository_url:, local_path:, logger: nil)
+  def initialize(repository_url:, local_path:, auth_token: nil, logger: nil)
     Typhoeus::Config.user_agent = "RMT/#{RMT::VERSION}"
     @repository_url = repository_url
     @local_path = local_path
     @concurrency = 4
+    @auth_token = auth_token
     @logger = logger || Logger.new('/dev/null')
   end
 
@@ -82,6 +83,8 @@ class RMT::Downloader
 
   def make_request(remote_file, local_file, request_fiber, checksum_type = nil, checksum_value = nil)
     uri = URI.join(@repository_url, remote_file)
+    uri.query = @auth_token if @auth_token
+
     downloaded_file = Tempfile.new('rmt', Dir.tmpdir, mode: File::BINARY, encoding: 'ascii-8bit')
 
     request = RMT::HttpRequest.new(uri.to_s, followlocation: true)

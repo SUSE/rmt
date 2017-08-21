@@ -9,6 +9,8 @@ FactoryGirl.define do
     product_type :base
     sequence(:description) { FFaker::Lorem.sentence }
     release_type ''
+    version 42
+    arch 'x86_64'
 
     trait :extension do
       product_type 'extension'
@@ -52,10 +54,18 @@ FactoryGirl.define do
       end
     end
 
-    trait :with_repositories do
+    trait :with_mirrored_repositories do
       after :create do |product, _evaluator|
         unless Service.find_by(product_id: product.id)
-          FactoryGirl.create(:service, :with_repositories, product: product)
+          FactoryGirl.create(:service, :with_repositories, product: product, mirroring_enabled: true)
+        end
+      end
+    end
+
+    trait :with_not_mirrored_repositories do
+      after :create do |product, _evaluator|
+        unless Service.find_by(product_id: product.id)
+          FactoryGirl.create(:service, :with_repositories, product: product, mirroring_enabled: false)
         end
       end
     end

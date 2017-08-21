@@ -1,10 +1,9 @@
 class V3::RepositorySerializer < ApplicationSerializer
 
-  attributes :id, :name, :url, :distro_target, :description, :enabled, :autorefresh
+  attributes :id, :name, :url, :description, :enabled, :autorefresh
 
   def url
-    uri = SUSE::Misc.uri_replace_hostname(object.external_url, base_url)
-    uri.to_s
+    RMT::Misc.make_repo_url(base_url, object.local_path)
   end
 
   def enabled

@@ -1,15 +1,27 @@
 require 'suse/connect/api'
 require 'rmt/config'
+require 'rmt/cli'
 
-class RMT::SCCSync
+# rubocop:disable Rails/Output
 
-  def initialize(logger = nil)
-    @logger = logger || Logger.new(nil)
+class RMT::SCCSync < RMT::CLI
+
+  class CredentialsError < RuntimeError; end
+
+  def initialize(args = [], local_options = {}, config = {})
+    super
+    @logger = Logger.new(STDOUT)
+    @logger.level = options[:verbose] ? 0 : 1
   end
 
+  class_option :verbose, aliases: '-v', type: :boolean
+
+  desc 'sync', 'Synchronize database with SCC'
   def sync
+    raise CredentialsError, 'SCC credentials not set.' unless (Settings.scc.username && Settings.scc.password)
+
     @logger.info('Cleaning up the database')
-    clean_up
+    Product.delete_all
 
     @logger.info('Downloading data from SCC')
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
@@ -17,20 +29,31 @@ class RMT::SCCSync
 
     @logger.info('Updating the database')
     data.each do |item|
-      @logger.debug("Adding product #{item[:name]}")
+      @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
       product = create_product(item)
       create_service(item, product)
     end
 
+    @logger.info('Updating repositories')
+    data = scc_api_client.list_repositories
+    data.each do |item|
+      update_auth_token(item)
+    end
+
     @logger.info('Done!')
+  rescue SUSE::Connect::Api::InvalidCredentialsError
+    raise CredentialsError, 'SCC credentials not valid.'
+  rescue Interrupt
+    @logger.error('Interrupted! You need to rerun this command to have a consistent state.')
   end
+
+  desc 'version', 'Show version'
+  def version
+    puts RMT::VERSION
+  end
+
 
   protected
-
-  def clean_up
-    Product.delete_all
-    Repository.delete_all
-  end
 
   def create_product(item)
     extensions = []
@@ -66,24 +89,29 @@ class RMT::SCCSync
   end
 
   def create_service(item, product)
-    repositories = []
+    service = Service.find_or_create_by(product_id: product.id)
 
     item[:repositories].each do |repo_item|
-      begin
-        repository = Repository.new
-        repository.attributes = repo_item.select { |k, _| repository.attributes.keys.member?(k.to_s) }
-        repository.external_url = repo_item[:url]
-        repository.save!
-      rescue ActiveRecord::RecordNotUnique
-        repository = Repository.where(name: repo_item[:name], distro_target: repo_item[:distro_target]).first
-      end
+      repository = Repository.find_or_initialize_by(external_url: repo_item[:url])
+      repository.attributes = repo_item.select { |k, _| repository.attributes.keys.member?(k.to_s) }
+      repository.external_url = repo_item[:url]
+      repository.local_path = Repository.make_local_path(repo_item[:url])
+      repository.save!
 
-      repositories << repository
+      RepositoriesServicesAssociation.find_or_create_by(
+        service_id: service.id,
+        repository_id: repository.id
+      )
     end
+  end
 
-    service = Service.find_or_create_by(product_id: product.id)
-    service.repositories = repositories
-    service.save!
+  def update_auth_token(item)
+    uri = URI(item[:url])
+    auth_token = uri.query
+
+    repository = Repository.find(item[:id])
+    repository.auth_token = auth_token
+    repository.save!
   end
 
 end

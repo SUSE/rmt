@@ -1,10 +1,3 @@
-#!/usr/bin/env ruby
-
-require_relative '../config/boot'
-$LOAD_PATH.unshift File.expand_path(File.join(__dir__, '../lib/'))
-
-require 'rmt'
-require 'rmt/scc_sync'
 require 'active_record'
 
 require_relative '../app/models/application_record.rb'
@@ -15,6 +8,3 @@ db_config_path = File.join(__dir__, '../config/database.yml')
 db_config = YAML.safe_load(ERB.new(File.read(db_config_path)).result, [], [], true)
 
 ActiveRecord::Base.establish_connection(db_config['development'])
-
-scc_sync = RMT::SCCSync.new(Logger.new(STDOUT))
-scc_sync.sync
