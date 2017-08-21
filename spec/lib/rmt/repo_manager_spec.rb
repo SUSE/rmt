@@ -42,7 +42,7 @@ RSpec.describe RMT::RepoManager do
     end
 
     describe 'disable' do
-      subject(:repository) { FactoryGirl.create :repository, :with_products, :mirroring_enabled }
+      subject(:repository) { FactoryGirl.create :repository, :with_products, mirroring_enabled: true }
 
       context 'without parameters' do
         let(:argv) { [] }

@@ -5,7 +5,8 @@ FactoryGirl.define do
     sequence(:external_url) { |n| "https://updates.suse.com/suse/repository_#{n}" }
     sequence(:enabled) { true }
     sequence(:autorefresh) { true }
-    mirroring_enabled false
+    sequence(:mirroring_enabled) { false }
+    sequence(:installer_updates) { false }
 
     after(:build) do |obj|
       obj.local_path = Repository.make_local_path(obj.external_url)
@@ -26,7 +27,5 @@ FactoryGirl.define do
         end
       end
     end
-
-    trait(:mirroring_enabled) { mirroring_enabled true }
   end
 end

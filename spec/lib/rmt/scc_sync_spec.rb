@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'webmock/rspec'
 
 RSpec.describe RMT::SCCSync do
-  describe '#sync', type: :no_transactional do
+  describe '#sync' do
     context 'with SCC credentials' do
       let(:product) do
         JSON.parse(file_fixture('products/dummy_product.json').read, symbolize_names: true)
@@ -17,6 +17,10 @@ RSpec.describe RMT::SCCSync do
         expect(SUSE::Connect::Api).to receive(:new) { api_double }
         expect(api_double).to receive(:list_products) { [ product ] }
         expect(api_double).to receive(:list_repositories) { all_repositories }
+
+        # disable output to stdout while running specs
+        allow(STDOUT).to receive(:puts)
+        allow(STDOUT).to receive(:write)
 
         described_class.new.sync
       end
