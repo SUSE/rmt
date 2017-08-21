@@ -1,6 +1,6 @@
 node('scc-jenkins-node-chucker') {
     stage('checkout') {
-        git url: 'https://github.com/suse/rmt.git', branch: 'master'
+        git url: 'https://github.com/suse/rmt.git', branch: 'docker-pipeline-with-reference-host'
     }
 
     stage('build and push the image') {
