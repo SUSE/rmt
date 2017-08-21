@@ -10,7 +10,7 @@ default: &default
 
 development:
   <<: *default
-  database: <%= ENV.fetch('POSTGRES_DB') { 'rmt' } %>
+  database: <%= ENV.fetch('POSTGRES_DB') { 'rmt_development' } %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
