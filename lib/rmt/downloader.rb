@@ -72,6 +72,8 @@ class RMT::Downloader
 
   def verify_checksum(filename, checksum_type, checksum_value)
     hash_function = checksum_type.gsub(/\W/, '').upcase.to_sym
+    hash_function = :SHA1 if (hash_function == :SHA)
+
     unless (KNOWN_HASH_FUNCTIONS.include? hash_function)
       raise RMT::Downloader::Exception.new("Unknown hash function #{checksum_type}")
     end
