@@ -22,12 +22,13 @@ class RMT::SCCSync < RMT::CLI
 
     @logger.info('Cleaning up the database')
     Product.delete_all
+    Subscription.delete_all
 
     @logger.info('Downloading data from SCC')
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
     data = scc_api_client.list_products
 
-    @logger.info('Updating the database')
+    @logger.info('Updating products')
     data.each do |item|
       @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
       product = create_product(item)
@@ -38,6 +39,12 @@ class RMT::SCCSync < RMT::CLI
     data = scc_api_client.list_repositories
     data.each do |item|
       update_auth_token(item)
+    end
+
+    @logger.info('Updating subscriptions')
+    data = scc_api_client.list_subscriptions
+    data.each do |item|
+      create_subscription(item)
     end
 
     @logger.info('Done!')
@@ -110,6 +117,19 @@ class RMT::SCCSync < RMT::CLI
     auth_token = uri.query
 
     Repository.find(item[:id]).update! auth_token: auth_token
+  end
+
+  def create_subscription(item)
+    subscription = Subscription.new
+    subscription.attributes = item.select { |k, _| subscription.attributes.keys.member?(k.to_s) }
+    subscription.save!
+
+    item[:product_classes].each do |item_class|
+      subscription_product_class = SubscriptionProductClass.new
+      subscription_product_class.subscription_id = subscription.id
+      subscription_product_class.product_class = item_class
+      subscription_product_class.save!
+    end
   end
 
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170816095520) do
+ActiveRecord::Schema.define(version: 20170822151044) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,6 +72,26 @@ ActiveRecord::Schema.define(version: 20170816095520) do
     t.index ["product_id"], name: "index_services_on_product_id", unique: true
   end
 
+  create_table "subscription_product_classes", force: :cascade do |t|
+    t.integer "subscription_id"
+    t.string "product_class"
+    t.index ["subscription_id", "product_class"], name: "index_product_class_unique", unique: true
+  end
+
+  create_table "subscriptions", force: :cascade do |t|
+    t.string "regcode", null: false
+    t.string "name", null: false
+    t.string "type", null: false
+    t.string "status", null: false
+    t.datetime "starts_at"
+    t.datetime "expires_at"
+    t.integer "system_limit", null: false
+    t.integer "systems_count", null: false
+    t.integer "virtual_count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "systems", force: :cascade do |t|
     t.string "login"
     t.string "password"
@@ -90,4 +110,5 @@ ActiveRecord::Schema.define(version: 20170816095520) do
   add_foreign_key "products_extensions", "products", on_delete: :cascade
   add_foreign_key "repositories_services", "repositories", on_delete: :cascade
   add_foreign_key "repositories_services", "services", on_delete: :cascade
+  add_foreign_key "subscription_product_classes", "subscriptions", on_delete: :cascade
 end

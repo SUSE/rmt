@@ -1,0 +1,2 @@
+class ProductClassesSubscription < ApplicationRecord
+end
