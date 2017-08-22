@@ -22,3 +22,4 @@ package/*.tar.bz2
 
 vendor/
 coverage/
+/.secret
