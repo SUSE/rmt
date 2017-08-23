@@ -10,5 +10,10 @@ class Subscription < ApplicationRecord
   validates :system_limit, presence: true
 
   has_many :product_classes, foreign_key: 'subscription_id', class_name: 'SubscriptionProductClass'
+  has_many :products, through: :product_classes
+
+  def expired?
+    !!(expires_at < Time.zone.now.beginning_of_day if expires_at)
+  end
 
 end

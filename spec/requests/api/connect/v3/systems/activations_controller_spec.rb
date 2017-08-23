@@ -12,7 +12,7 @@ RSpec.describe Api::Connect::V3::Systems::ActivationsController do
       { 'HTTP_AUTHORIZATION' => auth_mech.encode_credentials(system.login, system.password) }.merge(version_header)
     end
 
-    context 'when authenticated' do
+    context 'when not authenticated' do
       before { get url, headers: unauthenticated_headers }
       subject { response }
 
