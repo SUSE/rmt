@@ -17,6 +17,5 @@ node('scc-jenkins-node-chucker') {
         ${ssh} "docker run -d --name rmt_production --network=rmt_network -e POSTGRES_HOST=postgres -e SECRET_KEY_BASE=$SECRET_KEY_BASE -v rmt_public_volume:/srv/www/rmt/public/ registry.scc.suse.de/rmt && \
         docker exec -e POSTGRES_HOST=postgres rmt_production bundle exec rails db:migrate"
         '''
-        }
     }
 }
