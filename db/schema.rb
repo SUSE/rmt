@@ -73,15 +73,15 @@ ActiveRecord::Schema.define(version: 20170822151044) do
   end
 
   create_table "subscription_product_classes", force: :cascade do |t|
-    t.integer "subscription_id"
-    t.string "product_class"
+    t.integer "subscription_id", null: false
+    t.string "product_class", null: false
     t.index ["subscription_id", "product_class"], name: "index_product_class_unique", unique: true
   end
 
   create_table "subscriptions", force: :cascade do |t|
     t.string "regcode", null: false
     t.string "name", null: false
-    t.string "type", null: false
+    t.string "kind", null: false
     t.string "status", null: false
     t.datetime "starts_at"
     t.datetime "expires_at"

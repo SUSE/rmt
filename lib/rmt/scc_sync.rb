@@ -122,6 +122,7 @@ class RMT::SCCSync < RMT::CLI
   def create_subscription(item)
     subscription = Subscription.new
     subscription.attributes = item.select { |k, _| subscription.attributes.keys.member?(k.to_s) }
+    subscription.kind = item[:type]
     subscription.save!
 
     item[:product_classes].each do |item_class|

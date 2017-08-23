@@ -1,11 +1,16 @@
 require 'rails_helper'
 require 'webmock/rspec'
 
+# rubocop:disable RSpec/MultipleExpectations
+
 RSpec.describe RMT::SCCSync do
   describe '#sync' do
     context 'with SCC credentials' do
       let(:product) do
         JSON.parse(file_fixture('products/dummy_product.json').read, symbolize_names: true)
+      end
+      let(:subscriptions) do
+        JSON.parse(file_fixture('subscriptions/dummy_subscriptions.json').read, symbolize_names: true)
       end
       let(:extension) { product[:extensions][0] }
       let(:all_repositories) { [product, extension].flat_map { |item| item[:repositories] } }
@@ -17,6 +22,7 @@ RSpec.describe RMT::SCCSync do
         expect(SUSE::Connect::Api).to receive(:new) { api_double }
         expect(api_double).to receive(:list_products) { [ product ] }
         expect(api_double).to receive(:list_repositories) { all_repositories }
+        expect(api_double).to receive(:list_subscriptions) { subscriptions }
 
         # disable output to stdout while running specs
         allow(STDOUT).to receive(:puts)
@@ -41,6 +47,19 @@ RSpec.describe RMT::SCCSync do
           (db_repository.attributes.keys - %w[external_url mirroring_enabled local_path]).each do |key|
             expect(db_repository[key]).to eq(repository[key.to_sym])
           end
+        end
+      end
+
+      it 'saves subscriptions to the DB' do
+        subscriptions.map.each do |subscription|
+          db_subscription = Subscription.find(subscription[:id])
+
+          (db_subscription.attributes.keys - %w[kind status created_at updated_at]).each do |key|
+            expect(db_subscription[key]).to eq(subscription[key.to_sym])
+          end
+
+          expect(db_subscription[:kind]).to eq(subscription[:type])
+          expect(Subscription.statuses[db_subscription.status]).to eq(subscription[:status])
         end
       end
     end

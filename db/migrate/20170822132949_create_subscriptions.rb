@@ -4,7 +4,7 @@ class CreateSubscriptions < ActiveRecord::Migration[5.1]
     create_table :subscriptions do |t|
       t.string :regcode, null: false
       t.string :name, null: false
-      t.string :type, null: false
+      t.string :kind, null: false
       t.string :status, null: false
 
       t.datetime :starts_at
