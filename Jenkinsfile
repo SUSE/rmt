@@ -1,3 +1,5 @@
+def ssh = 'ssh root@rmt.scc.suse.de -t'
+
 node('scc-jenkins-node-chucker') {
     stage('checkout') {
         git url: 'https://github.com/suse/rmt.git', branch: 'docker-pipeline-with-reference-host'
@@ -9,9 +11,13 @@ node('scc-jenkins-node-chucker') {
     }
 
     stage('staging deploy') {
-        sh 'ssh root@rmt.scc.suse.de -t "docker pull registry.scc.suse.de/rmt:latest && \
-                docker stop rmt && docker rm rmt && \
-                docker run -d --name rmt_production --network=rmt_network -e POSTGRES_HOST=postgres -e SECRET_KEY_BASE=$SECRET_KEY_BASE -v rmt_public_volume:/srv/www/rmt/public/ registry.scc.suse.de/rmt && \
-                docker exec -e POSTGRES_HOST=postgres rmt_production bundle exec rails db:migrate"'
+        try {
+            sh '${ssh} "docker pull registry.scc.suse.de/rmt:latest && \
+                        docker stop rmt_production && docker rm rmt_production"'
+        }
+        finally {
+            sh '${ssh} "docker run -d --name rmt_production --network=rmt_network -e POSTGRES_HOST=postgres -e SECRET_KEY_BASE=$SECRET_KEY_BASE -v rmt_public_volume:/srv/www/rmt/public/ registry.scc.suse.de/rmt && \
+                        docker exec -e POSTGRES_HOST=postgres rmt_production bundle exec rails db:migrate"'
+        }
     }
 }
