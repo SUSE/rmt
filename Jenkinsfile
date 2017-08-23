@@ -11,7 +11,7 @@ node('scc-jenkins-node-chucker') {
     }
 
     stage('staging deploy') {
-        sh '${ssh} "docker pull registry.scc.suse.de/rmt:latest"'
+        sh 'ssh root@rmt.scc.suse.de -t "docker pull registry.scc.suse.de/rmt:latest"'
         try {
             sh 'ssh root@rmt.scc.suse.de -t "docker stop rmt_production"'
             sh 'ssh root@rmt.scc.suse.de -t "docker rm rmt_production"'
