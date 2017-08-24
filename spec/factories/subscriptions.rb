@@ -12,5 +12,14 @@ FactoryGirl.define do
     trait :expired do
       expires_at Time.zone.now - 2.days
     end
+
+    trait :with_products do
+      after :create do |subscription, _evaluator|
+        2.times do
+          product_class = FactoryGirl.create(:subscription_product_class, subscription_id: subscription.id)
+          FactoryGirl.create(:product, :with_mirrored_repositories, product_class: product_class.product_class)
+        end
+      end
+    end
   end
 end

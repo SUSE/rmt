@@ -43,22 +43,19 @@ class Api::Connect::BaseController < ApplicationController
       @subscription = Subscription.find_by(regcode: token)
       if !@subscription
         logger.info "Token authentication with invalid regcode: '#{token}'"
-        error = ActionController::TranslatedError.new(N_('Unknown Registration Code.'))
-        error.status = :unauthorized
-        raise error
+        error_message = N_('Unknown Registration Code.')
       elsif !@subscription.active?
         logger.info "Token authentication with not activated regcode: '#{token}'"
-        error = ActionController::TranslatedError.new(N_('Not yet activated Registration Code. Please visit https://scc.suse.com to activate it.'))
-        error.status = :unauthorized
-        raise error
-      elsif @subscription.expired?
-        logger.info "Token authentication with expired regcode: '#{token}'"
-        error = ActionController::TranslatedError.new(N_('Expired Registration Code.'))
-        error.status = :unauthorized
-        raise error
-      else
-        logger.info "Authenticated with token '#{token}'"
+        error_message = N_('Not yet activated Registration Code. Please visit https://scc.suse.com to activate it.')
       end
+
+      if error_message
+        error = ActionController::TranslatedError.new(error_message)
+        error.status = :unauthorized
+        raise error
+      end
+
+      logger.info "Authenticated with token '#{token}'"
     end
   end
 
