@@ -1,7 +1,7 @@
 class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseController
 
   before_action :authenticate_system
-  before_action :require_product, only: %i[show activate destroy]
+  before_action :require_product, only: %i[show activate upgrade destroy]
   before_action :check_base_product_dependencies, only: %i[activate upgrade show]
 
   def activate
@@ -19,6 +19,29 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     else
       raise ActionController::TranslatedError.new(N_("The requested product '%s' is not activated on this system."), @product.friendly_name)
     end
+  end
+
+  def migrations
+    require_params([:installed_products])
+
+    installed_products = params[:installed_products].map { |hash| product_from_hash(hash) rescue nil }.compact
+
+    begin
+      upgrade_paths = MigrationEngine.new(@system, installed_products).generate
+
+      render json: upgrade_paths.reject(&:empty?).map do |item|
+        ActiveModel::Serializer::CollectionSerializer.new(item, serializer: ::V3::UpgradePathItemSerializer)
+      end
+    rescue MigrationEngine::ProductsNotActivated => e
+      raise ActionController::TranslatedError.new(
+        N_("The requested products '%s' are not activated on the system."),
+        e.products.map(&:friendly_name).join(', ')
+      )
+    end
+  end
+
+  def upgrade
+    # FIXME: needs implementation
   end
 
   protected
@@ -77,6 +100,14 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
       obsoleted_service_name: @obsoleted_service_name,
       status: status
     )
+  end
+
+  def product_search_params(product_hash)
+    product_hash.permit(:identifier, :version, :arch, :release_type).to_h.symbolize_keys
+  end
+
+  def product_from_hash(product_hash)
+    Product.find_by(product_search_params(product_hash))
   end
 
 end

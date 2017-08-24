@@ -85,6 +85,11 @@ class RMT::SCCSync < RMT::CLI
     rescue ActiveRecord::RecordNotUnique # rubocop:disable Lint/HandleExceptions
     end
 
+    ProductPredecessorAssociation.where(product_id: product.id).destroy_all
+    item[:predecessor_ids].each do |predecessor_id|
+      ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor_id)
+    end
+
     extensions.each do |extension|
       association = ProductsExtensionsAssociation.new
       association.product_id = product.id

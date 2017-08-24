@@ -14,7 +14,9 @@ Rails.application.routes.draw do
       scope :systems, module: :systems, as: 'systems' do
         get 'products', to: 'products#show'
         post 'products', to: 'products#activate'
+        put 'products', to: 'products#upgrade'
         delete 'products', to: 'products#destroy'
+        post 'products/migrations', to: 'products#migrations'
       end
 
       resource :systems, only: [], module: :systems do
@@ -37,6 +39,8 @@ Rails.application.routes.draw do
       scope :systems, module: :systems, as: 'systems' do
         get 'products', to: 'products#show'
         post 'products', to: 'products#activate'
+        put 'products', to: 'products#upgrade'
+        post 'products/migrations', to: 'products#migrations'
       end
 
       resource :systems, only: [], module: :systems do
