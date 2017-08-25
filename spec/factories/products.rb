@@ -93,5 +93,19 @@ FactoryGirl.define do
         end
       end
     end
+
+    trait :with_predecessor do
+      transient do
+        predecessor nil
+      end
+
+      after :create do |product, evaluator|
+        if evaluator.predecessor
+          product.predecessors << evaluator.predecessor
+        else
+          fail 'predecessor is required'
+        end
+      end
+    end
   end
 end

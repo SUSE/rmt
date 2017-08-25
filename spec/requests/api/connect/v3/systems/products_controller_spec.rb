@@ -52,8 +52,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       let(:serialized_json) do
         V3::ServiceSerializer.new(
           product_with_repos.service,
-          base_url: 'http://www.example.com',
-          status: status
+          base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
         ).to_json
       end
 
@@ -103,21 +102,82 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       let(:system) { activation.system }
       let(:payload) do
         {
-          identifier: activation.service.product.identifier,
-          version: activation.service.product.version,
-          arch: activation.service.product.arch
+          identifier: activation.product.identifier,
+          version: activation.product.version,
+          arch: activation.product.arch
         }
       end
       let(:serialized_json) do
         V3::ProductSerializer.new(
           activation.service.product,
-          base_url: 'http://www.example.com'
+          base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
         ).to_json
       end
 
       before { get url, headers: headers, params: payload }
       its(:code) { is_expected.to eq('200') }
       its(:body) { is_expected.to eq(serialized_json) }
+    end
+  end
+
+  describe '#upgrade' do
+    it_behaves_like 'products controller action' do
+      let(:verb) { 'put' }
+    end
+
+    before { put url, headers: headers, params: payload }
+    subject { response }
+
+    context 'with not activated product' do
+      let(:product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
+      let(:payload) do
+        {
+          identifier: product.identifier,
+          version: product.version,
+          arch: product.arch
+        }
+      end
+
+      let(:error_response) do
+        {
+          type: 'error',
+          error: "No activation with product '#{product.name}' was found.",
+          localized_error: "No activation with product '#{product.name}' was found."
+        }
+      end
+
+
+      its(:code) { is_expected.to eq('422') }
+      its(:body) { is_expected.to eq(error_response.to_json) }
+    end
+
+    context 'with activated product' do
+      let(:old_product) { FactoryGirl.create(:product, :with_mirrored_repositories, :activated, system: system) }
+      let(:new_product) { FactoryGirl.create(:product, :with_mirrored_repositories, :with_predecessor, predecessor: old_product) }
+      let!(:activation_id) { system.activations.first.id }
+
+      let(:payload) do
+        {
+          identifier: new_product.identifier,
+          version: new_product.version,
+          arch: new_product.arch
+        }
+      end
+
+      let(:serialized_json) do
+        V3::ServiceSerializer.new(
+          new_product.service,
+          base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
+        ).to_json
+      end
+
+      its(:code) { is_expected.to eq('201') }
+      its(:body) { is_expected.to eq(serialized_json) }
+      it 'updates the activation' do
+        activation = Activation.find(activation_id)
+
+        expect(activation.product.id).to eq(new_product.id)
+      end
     end
   end
 end

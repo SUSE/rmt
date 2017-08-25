@@ -41,7 +41,19 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   end
 
   def upgrade
-    # FIXME: needs implementation
+    activation = @system.activations.joins(:service).find_by('services.product_id': [@product.id, @product.predecessor_ids, @product.successor_ids].flatten)
+
+    unless activation
+      raise ActionController::TranslatedError.new(
+        N_("No activation with product '%s' was found."),
+        @product.friendly_name
+      )
+    end
+
+    activation.service = @product.service
+    activation.save!
+
+    render_service
   end
 
   protected

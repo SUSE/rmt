@@ -73,7 +73,7 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController do
         let(:serialized_json) do
           V3::ServiceSerializer.new(
             product.service,
-            base_url: 'http://www.example.com',
+            base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s,
             status: status
           ).to_json
         end
