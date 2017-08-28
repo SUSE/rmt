@@ -8,6 +8,10 @@ class V3::UpgradePathItemSerializer < ActiveModel::Serializer
     object.shortname ? object.shortname : ''
   end
 
-  attributes :friendly_name, :shortname, :identifier, :version, :arch, :release_type, :base, :product_type, :free, :release_stage
+  def available
+    object.is_mirrored
+  end
+
+  attributes :friendly_name, :shortname, :identifier, :version, :arch, :release_type, :base, :product_type, :free, :release_stage, :available
 
 end

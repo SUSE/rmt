@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170824112223) do
+ActiveRecord::Schema.define(version: 20170825145600) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,7 +43,6 @@ ActiveRecord::Schema.define(version: 20170824112223) do
     t.string "arch"
     t.string "eula_url"
     t.boolean "free"
-    t.boolean "available"
     t.string "cpe"
   end
 

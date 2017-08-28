@@ -1,12 +1,12 @@
 class MigrationEngine
 
-  class ProductsNotActivated < StandardError
+  class MigrationEngineError < StandardError
 
-    attr_accessor :products
+    attr_accessor :data
 
-    def initialize(message, products)
+    def initialize(message, data = nil)
       super(message)
-      @products = products
+      @data = data
     end
 
   end
@@ -19,7 +19,13 @@ class MigrationEngine
   def generate
     # check for migration attempt using products that have not been activated
     not_activated_products = @installed_products - @system.products
-    raise ProductsNotActivated.new('Products were not activated', not_activated_products) if not_activated_products.present?
+
+    if not_activated_products.present?
+      raise MigrationEngineError.new(
+        N_("The requested products '%s' are not activated on the system."),
+        not_activated_products.map(&:friendly_name).join(', ')
+      )
+    end
 
     combinations = remove_incompatible_combinations(migration_targets)
     # NB: It's possible to migrate to any product that's available on RMT, entitlement checks not needed.
@@ -33,8 +39,8 @@ class MigrationEngine
   def base_product
     return @base_product if @base_product
     bases = @installed_products.select(&:base?)
-    raise "Multiple base products found: #{bases.map(&:friendly_name)}" if bases.size > 1
-    raise 'No base product found' if bases.empty?
+    raise MigrationEngineError.new(N_("Multiple base products found: '%s'."), bases.map(&:friendly_name).join(', ')) if bases.size > 1
+    raise MigrationEngineError.new(N_('No base product found.')) if bases.empty?
     @base_product = bases.first
   end
 

@@ -6,7 +6,7 @@ class CreateProductPredecessors < ActiveRecord::Migration[5.1]
       t.integer 'predecessor_id'
     end
 
-    add_foreign_key :product_predecessors, :products, on_delete: :cascade
+    add_foreign_key :product_predecessors, :products, column: :product_id, primary_key: :id, on_delete: :cascade
     add_index 'product_predecessors', %i[product_id predecessor_id], name: 'index_product_predecessors_on_product_id_and_predecessor_id', unique: true
   end
 

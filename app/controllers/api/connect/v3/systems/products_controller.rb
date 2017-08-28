@@ -29,14 +29,16 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     begin
       upgrade_paths = MigrationEngine.new(@system, installed_products).generate
 
-      render json: upgrade_paths.reject(&:empty?).map do |item|
-        ActiveModel::Serializer::CollectionSerializer.new(item, serializer: ::V3::UpgradePathItemSerializer)
-      end
-    rescue MigrationEngine::ProductsNotActivated => e
-      raise ActionController::TranslatedError.new(
-        N_("The requested products '%s' are not activated on the system."),
-        e.products.map(&:friendly_name).join(', ')
-      )
+      render json: (
+        upgrade_paths.reject(&:empty?).map do |item|
+          ActiveModelSerializers::SerializableResource.new(
+            item,
+            each_serializer: ::V3::UpgradePathItemSerializer
+          )
+        end
+      ).to_json
+    rescue MigrationEngine::MigrationEngineError => e
+      raise ActionController::TranslatedError.new(e.message, *e.data)
     end
   end
 

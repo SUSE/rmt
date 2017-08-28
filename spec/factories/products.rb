@@ -46,7 +46,7 @@ FactoryGirl.define do
       after :build do |product, evaluator|
         if evaluator.from
           product.identifier = evaluator.from.identifier
-          product.architecture = evaluator.from.architecture
+          product.arch = evaluator.from.arch
           product.product_class = evaluator.from.product_class
           product.product_type = evaluator.from.product_type
         else
@@ -89,7 +89,7 @@ FactoryGirl.define do
             evaluator.system.activations << FactoryGirl.create(:activation, system: evaluator.system, service: product.service)
           end
         else
-          fail 'product_enabled_on_system requires a system'
+          fail 'activated requires a system'
         end
       end
     end

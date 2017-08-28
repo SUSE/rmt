@@ -42,9 +42,10 @@ class Product < ApplicationRecord
     ProductsExtensionsAssociation.exists?(product_id: id)
   end
 
-  def mirrored
-    return false if repositories.empty?
-    repositories.all? { |r| r.enabled && r.mirroring_enabled }
+  def is_mirrored
+    repositories.where(enabled: true).group('product_id')
+      .select('count(*)=count(CASE WHEN mirroring_enabled THEN 1 END) as is_mirrored')
+      .order('product_id').first.is_mirrored
   end
 
 end
