@@ -70,6 +70,14 @@ RSpec.describe RMT::Downloader do
 
         it('has correct content') { expect(File.read(filename)).to eq(content) }
       end
+
+      context 'and checksum type is SHA and it is is correct' do
+        let(:filename) { downloader.download('/repomd.xml') }
+        let(:checksum_type) { 'sha' }
+        let(:checksum) { Digest.const_get('SHA1').hexdigest(content) }
+
+        it('has correct content') { expect(File.read(filename)).to eq(content) }
+      end
     end
   end
 
