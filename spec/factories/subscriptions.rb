@@ -13,6 +13,18 @@ FactoryGirl.define do
       expires_at Time.zone.now - 2.days
     end
 
+    transient do
+      product_classes nil
+    end
+
+    after :create do |subscription, evaluator|
+      if evaluator.product_classes
+        evaluator.product_classes.each do |product_class|
+          FactoryGirl.create(:subscription_product_class, product_class: product_class, subscription_id: subscription.id)
+        end
+      end
+    end
+
     trait :with_products do
       after :create do |subscription, _evaluator|
         2.times do

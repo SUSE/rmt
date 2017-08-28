@@ -13,6 +13,18 @@ FactoryGirl.define do
     version 42
     arch 'x86_64'
 
+    transient do
+      base_products nil
+    end
+
+    after :create do |product, evaluator|
+      if evaluator.base_products.present?
+        evaluator.base_products.each do |base_product|
+          product.product_extensions_associations << ProductsExtensionsAssociation.create(product: base_product)
+        end
+      end
+    end
+
     trait :extension do
       product_type 'extension'
     end

@@ -1,6 +1,6 @@
 class MigrationEngine
 
-  class MigrationEngineError < StandardError
+  class MigrationEngineError < RuntimeError
 
     attr_accessor :data
 

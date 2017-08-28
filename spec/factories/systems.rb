@@ -10,5 +10,10 @@ FactoryGirl.define do
         FactoryGirl.create(:activation, system: system, service: service)
       end
     end
+
+    transient do
+      subscriptions nil
+    end
+
   end
 end

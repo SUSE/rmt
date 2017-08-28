@@ -4,6 +4,10 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
   include_context 'auth header', :system, :login, :password
   include_context 'version header', 3
 
+  before(:all) do
+    Product.delete_all
+  end
+
   let(:url) { connect_systems_products_url }
   let(:headers) { auth_header.merge(version_header) }
   let(:system) { FactoryGirl.create(:system) }
@@ -29,8 +33,8 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       let(:error_json) do
         {
           'type' => 'error',
-          'error' => "Not all mandatory repositories are mirrored for product #{product_not_mirrored.name}",
-          'localized_error' => "Not all mandatory repositories are mirrored for product #{product_not_mirrored.name}"
+          'error' => "Not all mandatory repositories are mirrored for product #{product_not_mirrored.friendly_name}",
+          'localized_error' => "Not all mandatory repositories are mirrored for product #{product_not_mirrored.friendly_name}"
         }.to_json
       end
 
@@ -141,8 +145,8 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       let(:error_response) do
         {
           type: 'error',
-          error: "No activation with product '#{product.name}' was found.",
-          localized_error: "No activation with product '#{product.name}' was found."
+          error: "No activation with product '#{product.friendly_name}' was found.",
+          localized_error: "No activation with product '#{product.friendly_name}' was found."
         }
       end
 
