@@ -27,8 +27,6 @@ services:
     depends_on:
       - db
     command: bash -c 'bundle exec rails db:migrate && bundle exec rails s -b rmt'
-    ports:
-      - 3000:3000
 
   nginx:
     image: nginx
