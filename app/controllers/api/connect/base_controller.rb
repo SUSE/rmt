@@ -1,5 +1,8 @@
 class Api::Connect::BaseController < ApplicationController
 
+  include ActionController::HttpAuthentication::Basic::ControllerMethods
+  include ActionController::HttpAuthentication::Token::ControllerMethods
+
   respond_to :json
 
   rescue_from ActionController::TranslatedError do |error|
