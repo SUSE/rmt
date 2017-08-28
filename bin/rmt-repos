@@ -1,13 +1,11 @@
 #!/usr/bin/env ruby
 
-require_relative '../config/boot'
-$LOAD_PATH.unshift File.expand_path(File.join(__dir__, '../lib/'))
+require_relative '../config/environment'
 
 require 'rmt'
 require 'rmt/mirror'
 require 'rmt/config'
 require 'rmt/repo_manager'
-require 'database'
 
 require 'terminal-table'
 
