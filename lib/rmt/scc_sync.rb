@@ -109,9 +109,7 @@ class RMT::SCCSync < RMT::CLI
     uri = URI(item[:url])
     auth_token = uri.query
 
-    repository = Repository.find(item[:id])
-    repository.auth_token = auth_token
-    repository.save!
+    Repository.find(item[:id]).update! auth_token: auth_token
   end
 
 end

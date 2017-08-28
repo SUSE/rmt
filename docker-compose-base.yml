@@ -6,4 +6,3 @@ services:
       - POSTGRES_DB=rmt_test
       - POSTGRES_USER=rmt
       - POSTGRES_PASSWORD=rmt
-      - PGDATA=/var/lib/pgsql/data
