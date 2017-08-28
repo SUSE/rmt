@@ -6,7 +6,7 @@ RSpec.describe Api::Connect::V3::Systems::ActivationsController do
 
   describe '#index' do
     let(:url) { connect_systems_activations_url(format: :json) }
-    let(:system) { FactoryGirl.create :system_with_activated_base_product }
+    let(:system) { FactoryGirl.create(:system, :with_activated_base_product) }
     let(:unauthenticated_headers) { version_header }
     let(:authenticated_headers) do
       { 'HTTP_AUTHORIZATION' => auth_mech.encode_credentials(system.login, system.password) }.merge(version_header)

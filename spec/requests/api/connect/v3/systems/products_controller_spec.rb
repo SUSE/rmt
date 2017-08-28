@@ -4,10 +4,6 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
   include_context 'auth header', :system, :login, :password
   include_context 'version header', 3
 
-  before(:all) do
-    Product.delete_all
-  end
-
   let(:url) { connect_systems_products_url }
   let(:headers) { auth_header.merge(version_header) }
   let(:system) { FactoryGirl.create(:system) }
@@ -244,8 +240,18 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       let(:payload) do
         {
           'installed_products': [
-            { 'identifier': first_product.identifier, 'version': first_product.version, 'arch': first_product.arch, 'release_type': first_product.release_type },
-            { 'identifier': second_product.identifier, 'version': second_product.version, 'arch': second_product.arch, 'release_type': second_product.release_type }
+            {
+              'identifier': first_product.identifier,
+              'version': first_product.version,
+              'arch': first_product.arch,
+              'release_type': first_product.release_type
+            },
+            {
+              'identifier': second_product.identifier,
+              'version': second_product.version,
+              'arch': second_product.arch,
+              'release_type': second_product.release_type
+            }
           ]
         }
       end

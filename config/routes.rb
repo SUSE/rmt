@@ -17,6 +17,7 @@ Rails.application.routes.draw do
         put 'products', to: 'products#upgrade'
         delete 'products', to: 'products#destroy'
         post 'products/migrations', to: 'products#migrations'
+        post 'products/synchronize', to: 'products#synchronize'
       end
 
       resource :systems, only: [], module: :systems do

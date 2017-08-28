@@ -1,6 +1,10 @@
 require 'spec_helper'
 require 'rails_helper'
 
+# rubocop:disable RSpec/NestedGroups
+# rubocop:disable RSpec/MultipleExpectations
+# rubocop:disable RSpec/LetSetup
+
 describe MigrationEngine do
   # Using product_with_mirrored_repositories because it initializes service, needed for activations
   let(:sle12) { create :product, :with_mirrored_repositories, version: '12', name: 'sle12' }
@@ -8,10 +12,10 @@ describe MigrationEngine do
   let(:engine) { described_class.new(system, installed_products) }
 
   describe '#generate' do
-    subject { engine.generate }
+    subject(:migrations) { engine.generate }
 
     let(:sle12sub) { create(:subscription, product_classes: [sle12.product_class]) }
-    let(:system) { create :system_with_activated_base_product, subscriptions: [sle12sub] }
+    let(:system) { FactoryGirl.create(:system, :with_activated_base_product, subscriptions: [sle12sub]) }
     let!(:activation) { create :activation, system: system, service: sle12.service }
 
     context 'error handling' do
@@ -23,7 +27,7 @@ describe MigrationEngine do
         let(:installed_products) { [sle12, sle12sp1] }
 
         it 'raises' do
-          expect { subject }.to raise_error(RuntimeError, /Multiple base products found/)
+          expect { migrations }.to raise_error(RuntimeError, /Multiple base products found/)
         end
       end
 
@@ -35,7 +39,7 @@ describe MigrationEngine do
         let(:installed_products) { [sdk12] }
 
         it 'raises' do
-          expect { subject }.to raise_error(RuntimeError, /No base product found/)
+          expect { migrations }.to raise_error(RuntimeError, /No base product found/)
         end
       end
 
@@ -44,7 +48,7 @@ describe MigrationEngine do
         let(:installed_products) { [sle12, cloud7] }
 
         it 'raises' do
-          expect { subject }.to raise_error do |error|
+          expect { migrations }.to raise_error do |error|
             expect(error).to be_a(MigrationEngine::MigrationEngineError)
             expect(error.data).to eq(cloud7.friendly_name)
           end
@@ -55,7 +59,7 @@ describe MigrationEngine do
     context 'with no upgradeable products' do
       let!(:slepos) { create(:product, :with_mirrored_repositories, name: 'SLEPOS') }
       let!(:slepossub) { create(:subscription, product_classes: [slepos.product_class]) }
-      let!(:system) { create :system_with_activated_base_product, subscriptions: [slepossub] }
+      let!(:system) { FactoryGirl.create(:system, :with_activated_base_product, subscriptions: [slepossub]) }
       let!(:activation) { create :activation, system: system, service: slepos.service }
       let(:installed_products) { [slepos] }
 
@@ -105,7 +109,12 @@ describe MigrationEngine do
         create :product, :with_mirrored_repositories, :cloned, from: sdk12, name: 'sdk12sp1', base_products: [sle12sp1],
           predecessors: [sdk12], product_type: 'extension'
       end
-      let(:sleha12) { create :product, :with_mirrored_repositories, :activated, system: system, base_products: [sle12], name: 'sleha12', product_type: 'extension' }
+      let(:sleha12) do
+        create(
+          :product, :with_mirrored_repositories, :activated,
+          system: system, base_products: [sle12], name: 'sleha12', product_type: 'extension'
+        )
+      end
       let!(:sleha12sp1) do
         create :product, :with_mirrored_repositories, :cloned, from: sleha12, name: 'sleha12sp1', base_products: [sle12sp1],
           predecessors: [sleha12], product_type: 'extension'
@@ -156,7 +165,10 @@ describe MigrationEngine do
           create :product, :with_mirrored_repositories, :cloned, from: sle12, name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
         end
         let!(:docker_module) do
-          create :product, :with_mirrored_repositories, :activated, system: system, name: 'docker', base_products: [sle12, sle12sp1, sle12sp2], product_type: 'extension'
+          create(
+            :product, :with_mirrored_repositories, :activated,
+            system: system, name: 'docker', base_products: [sle12, sle12sp1, sle12sp2], product_type: 'extension'
+          )
         end
         let!(:machinery_module) do
           create :product, :with_mirrored_repositories, :activated, system: system, name: 'machinery',
@@ -172,7 +184,10 @@ describe MigrationEngine do
           create :product, :with_mirrored_repositories, :cloned, from: sle12, name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
         end
         let!(:docker_module) do
-          create :product, :with_mirrored_repositories, :activated, system: system, name: 'docker', base_products: [sle12, sle12sp1, sle12sp2], product_type: 'extension'
+          create(
+            :product, :with_mirrored_repositories, :activated,
+            system: system, name: 'docker', base_products: [sle12, sle12sp1, sle12sp2], product_type: 'extension'
+          )
         end
         let(:installed_products) { [sle12, docker_module, sdk12] }
 
@@ -180,7 +195,12 @@ describe MigrationEngine do
       end
 
       context 'when not all products are upgradeable' do
-        let(:slewe12) { create :product, :with_mirrored_repositories, :activated, system: system, base_products: [sle12], name: 'slewe12', product_type: 'extension' }
+        let(:slewe12) do
+          create(
+            :product, :with_mirrored_repositories, :activated,
+            system: system, base_products: [sle12], name: 'slewe12', product_type: 'extension'
+          )
+        end
         let(:installed_products) { [sle12, slewe12] }
 
         it { is_expected.to be_empty }
@@ -202,7 +222,10 @@ describe MigrationEngine do
           create :product, :with_mirrored_repositories, :cloned, from: sle12, name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
         end
         let!(:docker_module) do
-          create :product, :with_mirrored_repositories, :activated, system: system, name: 'docker', base_products: [sle12, sle12sp1, sle12sp2], product_type: 'extension'
+          create(
+            :product, :with_mirrored_repositories, :activated,
+            system: system, name: 'docker', base_products: [sle12, sle12sp1, sle12sp2], product_type: 'extension'
+          )
         end
         let(:installed_products) { [docker_module, sle12] }
 
