@@ -8,9 +8,11 @@ services:
     extends:
       service: base
       file: docker-compose-base.yml
-    image: registry.scc.suse.de/postgresql:9.4
+    image: postgres
     volumes:
-      - db_storage:/var/lib/pgsql/data
+      - db_storage:/var/lib/postgresql/data
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
 
   rmt:
     extends:
@@ -18,24 +20,20 @@ services:
       file: docker-compose-base.yml
     build: .
     environment:
-      - RAILS_ENV=test
       - POSTGRES_HOST=db
+      - SECRET_KEY_BASE=8ea53ad3bc6c03923e376c8bdd85059c1885524947a7efe53d5e9c9d4e39861106ffd6a2ece82b803072ed701e6c960bade91644979e679416c5f255007237ae
     volumes:
-      - ./:/srv/www/rmt
+      - ./public:/srv/www/repo/public/
     depends_on:
       - db
-    command: bash -c 'bundle exec rails db:migrate && bundle exec rails s'
+    command: bash -c 'bundle exec rails db:migrate && bundle exec rails s -b rmt'
 
   nginx:
     image: nginx
     volumes:
       - ./public:/var/www/
-      - ./nginx/ca.pem:/var/www/rmt.pem
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./nginx/nginx.crt:/etc/nginx/ssl/nginx.crt
-      - ./nginx/nginx.key:/etc/nginx/ssl/nginx.key
     ports:
       - 8080:80
-      - 443:443
     depends_on:
       - rmt

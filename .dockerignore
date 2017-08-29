@@ -1,0 +1,7 @@
+tmp/*
+log/*
+.git
+Dockerfile
+Jenkinsfile
+.codeclimate.yml
+.travis.yml

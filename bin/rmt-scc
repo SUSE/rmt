@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 
-require_relative '../config/boot'
-$LOAD_PATH.unshift File.expand_path(File.join(__dir__, '../lib/'))
+ENV['RAILS_EXECUTABLE'] = 'true'
+
+require_relative '../config/environment'
 
 require 'rmt'
 require 'rmt/scc_sync'
-require 'database'
 
 begin
   RMT::SCCSync.start(ARGV)

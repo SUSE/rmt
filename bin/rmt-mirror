@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 
-require_relative '../config/boot'
-$LOAD_PATH.unshift File.expand_path(File.join(__dir__, '../lib/'))
+ENV['RAILS_EXECUTABLE'] = 'true'
+
+require_relative '../config/environment'
 
 require 'rmt'
 require 'rmt/mirror'
 require 'rmt/config'
-require 'database'
 
 Repository.where(mirroring_enabled: true).each do |repository|
   begin
