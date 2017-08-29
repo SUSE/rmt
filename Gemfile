@@ -15,12 +15,12 @@ gem 'pg', '0.18.3'
 
 gem 'nokogiri', '~> 1.8.0'
 gem 'thor'
-gem 'activesupport'
-gem 'actionpack'
-gem 'actionview'
-gem 'activemodel'
-gem 'activerecord'
-gem 'railties'
+gem 'activesupport', '~> 5.1.3'
+gem 'actionpack', '~> 5.1.3'
+gem 'actionview', '~> 5.1.3'
+gem 'activemodel', '~> 5.1.3'
+gem 'activerecord', '~> 5.1.3'
+gem 'railties', '~> 5.1.3'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
