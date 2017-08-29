@@ -8,16 +8,6 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    actioncable (5.1.1)
-      actionpack (= 5.1.1)
-      nio4r (~> 2.0)
-      websocket-driver (~> 0.6.1)
-    actionmailer (5.1.1)
-      actionpack (= 5.1.1)
-      actionview (= 5.1.1)
-      activejob (= 5.1.1)
-      mail (~> 2.5, >= 2.5.4)
-      rails-dom-testing (~> 2.0)
     actionpack (5.1.1)
       actionview (= 5.1.1)
       activesupport (= 5.1.1)
@@ -36,9 +26,6 @@ GEM
       activemodel (>= 4.1, < 6)
       case_transform (>= 0.2)
       jsonapi-renderer (>= 0.1.1.beta1, < 0.2)
-    activejob (5.1.1)
-      activesupport (= 5.1.1)
-      globalid (>= 0.3.6)
     activemodel (5.1.1)
       activesupport (= 5.1.1)
     activerecord (5.1.1)
@@ -84,8 +71,6 @@ GEM
     gettext_i18n_rails (1.8.0)
       fast_gettext (>= 0.9.0)
     gettext_test_log (0.2.1)
-    globalid (0.4.0)
-      activesupport (>= 4.2.0)
     hashdiff (0.3.2)
     i18n (0.8.4)
     json (2.0.3)
@@ -97,16 +82,10 @@ GEM
     locale (2.1.2)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
-    mail (2.6.5)
-      mime-types (>= 1.16, < 4)
     memory_profiler (0.9.8)
     method_source (0.8.2)
-    mime-types (3.1)
-      mime-types-data (~> 3.2015)
-    mime-types-data (3.2016.0521)
     mini_portile2 (2.2.0)
     minitest (5.10.2)
-    nio4r (2.1.0)
     nokogiri (1.8.0)
       mini_portile2 (~> 2.2.0)
     parallel (1.12.0)
@@ -119,18 +98,6 @@ GEM
     rack (2.0.3)
     rack-test (0.6.3)
       rack (>= 1.0)
-    rails (5.1.1)
-      actioncable (= 5.1.1)
-      actionmailer (= 5.1.1)
-      actionpack (= 5.1.1)
-      actionview (= 5.1.1)
-      activejob (= 5.1.1)
-      activemodel (= 5.1.1)
-      activerecord (= 5.1.1)
-      activesupport (= 5.1.1)
-      bundler (>= 1.3.0, < 2.0)
-      railties (= 5.1.1)
-      sprockets-rails (>= 2.0.0)
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
@@ -201,13 +168,6 @@ GEM
     spring-watcher-listen (2.0.1)
       listen (>= 2.7, < 4.0)
       spring (>= 1.2, < 3.0)
-    sprockets (3.7.1)
-      concurrent-ruby (~> 1.0)
-      rack (> 1, < 3)
-    sprockets-rails (3.2.0)
-      actionpack (>= 4.0)
-      activesupport (>= 4.0)
-      sprockets (>= 3.0.0)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
     text (1.3.1)
@@ -226,16 +186,18 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff
-    websocket-driver (0.6.4)
-      websocket-extensions (>= 0.1.0)
-    websocket-extensions (0.1.2)
     yard (0.9.9)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  actionpack
+  actionview
   active_model_serializers
+  activemodel
+  activerecord
+  activesupport
   byebug
   config (~> 1.0)
   factory_girl_rails
@@ -246,11 +208,10 @@ DEPENDENCIES
   gettext_test_log
   listen (>= 3.0.5, < 3.2)
   memory_profiler
-  nio4r (= 2.1.0)
   nokogiri (~> 1.8.0)
   pg (= 0.18.3)
   puma (= 3.6.0)
-  rails (~> 5.1)
+  railties
   responders
   rspec-its
   rspec-rails (~> 3.5)
@@ -267,7 +228,6 @@ DEPENDENCIES
   vcr!
   versionist
   webmock
-  websocket-driver (= 0.6.4)
 
 BUNDLED WITH
    1.15.3

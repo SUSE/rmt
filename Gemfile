@@ -8,16 +8,19 @@ end
 # Those are the gems with native extensions. The versions are locked to exact versions we have in our OBS:
 # https://build.suse.de/project/show/Devel:SCC:SMT-NG
 
-gem 'nio4r', '2.1.0'
-gem 'websocket-driver', '0.6.4'
 gem 'puma', '3.6.0'
 gem 'pg', '0.18.3'
 
 # The rest of Gemfile goes as normal
 
 gem 'nokogiri', '~> 1.8.0'
-gem 'rails', '~> 5.1'
 gem 'thor'
+gem 'activesupport'
+gem 'actionpack'
+gem 'actionview'
+gem 'activemodel'
+gem 'activerecord'
+gem 'railties'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
