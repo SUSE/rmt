@@ -46,7 +46,7 @@ class MigrationEngine
 
   # returns the possible migration targets for @installed_products by grouping successor products
   def migration_targets
-    installed_extensions = @installed_products - [base_product]
+    installed_extensions = @installed_products.reject { |product| product == base_product }
     base_successors = [base_product] + base_product.successors
     extension_successors = installed_extensions.map { |e| [e] + e.successors }
     # full set of combinations
@@ -57,17 +57,11 @@ class MigrationEngine
 
   # removes product combinations that include incompatible base-extension combinations
   def remove_incompatible_combinations(migrations)
-    migrations.clone.each do |combination|
-      combination_base_product = combination.first
-      (combination - [combination_base_product]).each do |product|
-        # remove combination if it includes no valid base product for the current product
-        if (product.bases & combination).empty?
-          migrations.delete(combination)
-          break
-        end
+    migrations.reject do |combination|
+      combination[1..-1].any? do |product|
+        (product.bases & combination).empty?
       end
     end
-    migrations
   end
 
 end
