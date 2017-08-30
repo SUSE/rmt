@@ -21,7 +21,6 @@ class RMT::SCCSync < RMT::CLI
     raise CredentialsError, 'SCC credentials not set.' unless (Settings.scc.username && Settings.scc.password)
 
     @logger.info('Cleaning up the database')
-    Product.delete_all
     Subscription.delete_all
 
     @logger.info('Downloading data from SCC')
@@ -66,24 +65,17 @@ class RMT::SCCSync < RMT::CLI
     extensions = []
 
     item[:extensions].each do |ext_item|
-      begin
-        extension = Product.find(ext_item[:id])
-      rescue
-        extension = Product.new
-        extension.attributes = ext_item.select { |k, _| extension.attributes.keys.member?(k.to_s) }
-        extension.save!
-      end
+      extension = Product.find_or_create_by(id: ext_item[:id])
+      extension.attributes = ext_item.select { |k, _| extension.attributes.keys.member?(k.to_s) }
+      extension.save!
 
       create_service(ext_item, extension)
       extensions << extension
     end
 
-    begin
-      product = Product.new
-      product.attributes = item.select { |k, _| product.attributes.keys.member?(k.to_s) }
-      product.save!
-    rescue ActiveRecord::RecordNotUnique # rubocop:disable Lint/HandleExceptions
-    end
+    product = Product.find_or_create_by(id: item[:id])
+    product.attributes = item.select { |k, _| product.attributes.keys.member?(k.to_s) }
+    product.save!
 
     ProductPredecessorAssociation.where(product_id: product.id).destroy_all
     item[:predecessor_ids].each do |predecessor_id|
