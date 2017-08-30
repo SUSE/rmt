@@ -33,8 +33,8 @@ RSpec.describe Product, type: :model do
     it { is_expected.to eq 1 }
   end
 
-  describe '#is_mirrored' do
-    subject { product.is_mirrored }
+  describe '#mirrored?' do
+    subject { product.mirrored? }
 
     context 'without any repositories' do
       let(:product) { create :product }

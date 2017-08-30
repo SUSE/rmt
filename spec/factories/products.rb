@@ -15,12 +15,15 @@ FactoryGirl.define do
 
     transient do
       base_products []
+      predecessor nil
     end
 
     after :create do |product, evaluator|
       evaluator.base_products.each do |base_product|
         product.product_extensions_associations << ProductsExtensionsAssociation.create(product: base_product)
       end
+
+      product.predecessors << evaluator.predecessor if evaluator.predecessor
     end
 
     trait :extension do
@@ -102,14 +105,6 @@ FactoryGirl.define do
           fail 'activated requires a system'
         end
       end
-    end
-
-    transient do
-      predecessor nil
-    end
-
-    after :create do |product, evaluator|
-      product.predecessors << evaluator.predecessor if evaluator.predecessor
     end
   end
 end

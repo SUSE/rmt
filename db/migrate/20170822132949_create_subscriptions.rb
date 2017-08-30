@@ -2,7 +2,7 @@ class CreateSubscriptions < ActiveRecord::Migration[5.1]
 
   def change
     create_table :subscriptions do |t|
-      t.string :regcode, null: false
+      t.string :regcode, null: false, index: true
       t.string :name, null: false
       t.string :kind, null: false
       t.string :status, null: false
@@ -16,8 +16,6 @@ class CreateSubscriptions < ActiveRecord::Migration[5.1]
 
       t.timestamps
     end
-
-    add_index :subscriptions, :regcode
   end
 
 end

@@ -42,7 +42,7 @@ class Product < ApplicationRecord
     ProductsExtensionsAssociation.exists?(product_id: id)
   end
 
-  def is_mirrored
+  def mirrored?
     repositories.where(enabled: true, mirroring_enabled: false).empty?
   end
 
