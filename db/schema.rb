@@ -10,16 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170816095520) do
+ActiveRecord::Schema.define(version: 20170825145600) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "activations", force: :cascade do |t|
     t.integer "service_id", null: false
-    t.integer "system_id", null: false
+    t.bigint "system_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["system_id"], name: "index_activations_on_system_id"
+  end
+
+  create_table "product_predecessors", force: :cascade do |t|
+    t.bigint "product_id", null: false
+    t.integer "predecessor_id"
+    t.index ["product_id", "predecessor_id"], name: "index_product_predecessors_on_product_id_and_predecessor_id", unique: true
+    t.index ["product_id"], name: "index_product_predecessors_on_product_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -37,13 +45,14 @@ ActiveRecord::Schema.define(version: 20170816095520) do
     t.string "arch"
     t.string "eula_url"
     t.boolean "free"
-    t.boolean "available"
     t.string "cpe"
   end
 
   create_table "products_extensions", force: :cascade do |t|
-    t.integer "product_id", null: false
-    t.integer "extension_id", null: false
+    t.bigint "product_id", null: false
+    t.bigint "extension_id", null: false
+    t.index ["extension_id"], name: "index_products_extensions_on_extension_id"
+    t.index ["product_id"], name: "index_products_extensions_on_product_id"
   end
 
   create_table "repositories", force: :cascade do |t|
@@ -60,9 +69,11 @@ ActiveRecord::Schema.define(version: 20170816095520) do
   end
 
   create_table "repositories_services", force: :cascade do |t|
-    t.integer "repository_id", null: false
-    t.integer "service_id", null: false
+    t.bigint "repository_id", null: false
+    t.bigint "service_id", null: false
+    t.index ["repository_id"], name: "index_repositories_services_on_repository_id"
     t.index ["service_id", "repository_id"], name: "index_repositories_services_on_service_id_and_repository_id", unique: true
+    t.index ["service_id"], name: "index_repositories_services_on_service_id"
   end
 
   create_table "services", force: :cascade do |t|
@@ -70,6 +81,28 @@ ActiveRecord::Schema.define(version: 20170816095520) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_services_on_product_id", unique: true
+  end
+
+  create_table "subscription_product_classes", force: :cascade do |t|
+    t.bigint "subscription_id", null: false
+    t.string "product_class", null: false
+    t.index ["subscription_id", "product_class"], name: "index_product_class_unique", unique: true
+    t.index ["subscription_id"], name: "index_subscription_product_classes_on_subscription_id"
+  end
+
+  create_table "subscriptions", force: :cascade do |t|
+    t.string "regcode", null: false
+    t.string "name", null: false
+    t.string "kind", null: false
+    t.string "status", null: false
+    t.datetime "starts_at"
+    t.datetime "expires_at"
+    t.integer "system_limit", null: false
+    t.integer "systems_count", null: false
+    t.integer "virtual_count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["regcode"], name: "index_subscriptions_on_regcode"
   end
 
   create_table "systems", force: :cascade do |t|
@@ -86,8 +119,10 @@ ActiveRecord::Schema.define(version: 20170816095520) do
   end
 
   add_foreign_key "activations", "systems", on_delete: :cascade
+  add_foreign_key "product_predecessors", "products", on_delete: :cascade
   add_foreign_key "products_extensions", "products", column: "extension_id", on_delete: :cascade
   add_foreign_key "products_extensions", "products", on_delete: :cascade
   add_foreign_key "repositories_services", "repositories", on_delete: :cascade
   add_foreign_key "repositories_services", "services", on_delete: :cascade
+  add_foreign_key "subscription_product_classes", "subscriptions", on_delete: :cascade
 end

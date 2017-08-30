@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     api_version(module: 'V4', header: { name: 'Accept', value: 'application/vnd.scc.suse.com.v4+json' }, default: true) do
       scope :subscriptions, module: :subscriptions do
         post 'systems', to: 'systems#announce_system'
+        resources :products, only: [:index]
       end
 
       put 'systems', to: 'systems/systems#update'
@@ -13,14 +14,17 @@ Rails.application.routes.draw do
       scope :systems, module: :systems, as: 'systems' do
         get 'products', to: 'products#show'
         post 'products', to: 'products#activate'
+        put 'products', to: 'products#upgrade'
         delete 'products', to: 'products#destroy'
+        post 'products/migrations', to: 'products#migrations'
+        post 'products/synchronize', to: 'products#synchronize'
       end
 
       resource :systems, only: [], module: :systems do
         resources :activations, only: [ :index ]
       end
 
-      get 'repositories/installer', to: 'repositories/installer#show'
+      get 'repositories/installer', to: 'repositories/installer#index'
     end
   end
 
@@ -36,13 +40,13 @@ Rails.application.routes.draw do
       scope :systems, module: :systems, as: 'systems' do
         get 'products', to: 'products#show'
         post 'products', to: 'products#activate'
+        put 'products', to: 'products#upgrade'
+        post 'products/migrations', to: 'products#migrations'
       end
 
       resource :systems, only: [], module: :systems do
         resources :activations, only: [ :index ]
       end
-
-      get 'repositories/installer', to: 'repositories/installer#show'
     end
   end
 

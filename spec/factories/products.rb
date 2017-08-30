@@ -5,12 +5,26 @@ FactoryGirl.define do
     sequence(:cpe) { |n| "cpe:/o:product:#{n}" }
     sequence(:shortname) { |n| "Product #{n}" }
     sequence(:friendly_name) { |n| "Product #{n}" }
+    sequence(:product_class) { |n| n.to_s.ljust(5, 'A') }
     free false
     product_type :base
     sequence(:description) { FFaker::Lorem.sentence }
     release_type ''
     version 42
     arch 'x86_64'
+
+    transient do
+      base_products []
+      predecessor nil
+    end
+
+    after :create do |product, evaluator|
+      evaluator.base_products.each do |base_product|
+        product.product_extensions_associations << ProductsExtensionsAssociation.create(product: base_product)
+      end
+
+      product.predecessors << evaluator.predecessor if evaluator.predecessor
+    end
 
     trait :extension do
       product_type 'extension'
@@ -45,7 +59,7 @@ FactoryGirl.define do
       after :build do |product, evaluator|
         if evaluator.from
           product.identifier = evaluator.from.identifier
-          product.architecture = evaluator.from.architecture
+          product.arch = evaluator.from.arch
           product.product_class = evaluator.from.product_class
           product.product_type = evaluator.from.product_type
         else
@@ -88,7 +102,7 @@ FactoryGirl.define do
             evaluator.system.activations << FactoryGirl.create(:activation, system: evaluator.system, service: product.service)
           end
         else
-          fail 'product_enabled_on_system requires a system'
+          fail 'activated requires a system'
         end
       end
     end
