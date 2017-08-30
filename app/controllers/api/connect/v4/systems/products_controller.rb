@@ -24,10 +24,9 @@ class Api::Connect::V4::Systems::ProductsController < Api::Connect::V3::Systems:
       )
     end
 
-    (@system.products - products).each do |product|
-      ActiveRecord::Base.transaction do
-        activation = @system.activations.includes(:service).find_by('services.product_id' => product.id)
-        activation.destroy
+    ActiveRecord::Base.transaction do
+      (@system.products - products).each do |product|
+        @system.activations.includes(:service).find_by('services.product_id' => product.id).destroy
         logger.info("Product '%s' de-activated on system %s" % [product.friendly_name, @system.id])
       end
     end

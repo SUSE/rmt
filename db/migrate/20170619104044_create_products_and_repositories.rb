@@ -1,6 +1,7 @@
 class CreateProductsAndRepositories < ActiveRecord::Migration[5.1]
 
-  def change # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength
+  def change
     create_table :products do |t|
       t.string :name
       t.string :description
@@ -44,7 +45,7 @@ class CreateProductsAndRepositories < ActiveRecord::Migration[5.1]
 
     create_table :activations do |t|
       t.integer :service_id, null: false
-      t.integer :system_id, null: false
+      t.references :system, foreign_key: { on_delete: :cascade }, null: false
       t.timestamps
     end
 
@@ -54,27 +55,18 @@ class CreateProductsAndRepositories < ActiveRecord::Migration[5.1]
     end
 
     create_table :repositories_services do |t|
-      t.integer :repository_id, null: false
-      t.integer :service_id, null: false
+      t.references :repository, foreign_key: { on_delete: :cascade }, null: false
+      t.references :service, foreign_key: { on_delete: :cascade }, null: false
     end
 
     create_table :products_extensions do |t|
-      t.integer :product_id, null: false
-      t.integer :extension_id, null: false
+      t.references :product, foreign_key: { on_delete: :cascade }, null: false
+      t.references :extension, foreign_key: { to_table: :products, on_delete: :cascade }, null: false
     end
 
     add_index :repositories, %i[name distro_target], unique: true
     add_index :repositories_services, %i[service_id repository_id], unique: true
     add_index :services, :product_id, unique: true
-
-    add_foreign_key :activations, :systems, on_delete: :cascade
-
-    add_foreign_key :repositories_services, :services, on_delete: :cascade
-    add_foreign_key :repositories_services, :repositories, on_delete: :cascade
-
-    add_foreign_key :products_extensions, :products, on_delete: :cascade
-    add_foreign_key :products_extensions, :products, column: :extension_id, on_delete: :cascade
-
   end
 
 end

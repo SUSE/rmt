@@ -15,7 +15,7 @@ describe MigrationEngine do
     subject(:migrations) { engine.generate }
 
     let(:sle12sub) { create(:subscription, product_classes: [sle12.product_class]) }
-    let(:system) { FactoryGirl.create(:system, :with_activated_base_product, subscriptions: [sle12sub]) }
+    let(:system) { FactoryGirl.create(:system, :with_activated_base_product) }
     let!(:activation) { create :activation, system: system, service: sle12.service }
 
     context 'error handling' do
@@ -59,7 +59,7 @@ describe MigrationEngine do
     context 'with no upgradeable products' do
       let!(:slepos) { create(:product, :with_mirrored_repositories, name: 'SLEPOS') }
       let!(:slepossub) { create(:subscription, product_classes: [slepos.product_class]) }
-      let!(:system) { FactoryGirl.create(:system, :with_activated_base_product, subscriptions: [slepossub]) }
+      let!(:system) { FactoryGirl.create(:system, :with_activated_base_product) }
       let!(:activation) { create :activation, system: system, service: slepos.service }
       let(:installed_products) { [slepos] }
 

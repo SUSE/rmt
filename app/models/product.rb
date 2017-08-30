@@ -43,12 +43,12 @@ class Product < ApplicationRecord
   end
 
   def is_mirrored
-    repos = repositories.where(enabled: true).group('product_id')
-      .select('count(*)=count(CASE WHEN mirroring_enabled THEN 1 END) as is_mirrored')
-      .order('product_id').first
+    repositories.where(enabled: true, mirroring_enabled: false).empty?
+  end
 
-    return true unless repos # No mandatory repos
-    repos.is_mirrored
+  def self.clean_up_version(version)
+    return unless version
+    version.tr('-', '.').chomp('.0')
   end
 
 end

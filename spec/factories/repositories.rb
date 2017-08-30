@@ -1,12 +1,11 @@
 FactoryGirl.define do
   factory :repository do
     sequence(:name) { |n| "Repository #{n}" }
-
     sequence(:external_url) { |n| "https://updates.suse.com/suse/repository_#{n}" }
-    sequence(:enabled) { true }
-    sequence(:autorefresh) { true }
-    sequence(:mirroring_enabled) { false }
-    sequence(:installer_updates) { false }
+    enabled true
+    autorefresh true
+    mirroring_enabled false
+    installer_updates false
 
     after(:build) do |obj|
       obj.local_path = Repository.make_local_path(obj.external_url)

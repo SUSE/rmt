@@ -153,7 +153,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
 
     context 'with activated product' do
       let(:old_product) { FactoryGirl.create(:product, :with_mirrored_repositories, :activated, system: system) }
-      let(:new_product) { FactoryGirl.create(:product, :with_mirrored_repositories, :with_predecessor, predecessor: old_product) }
+      let(:new_product) { FactoryGirl.create(:product, :with_mirrored_repositories, predecessor: old_product) }
       let!(:activation_id) { system.activations.first.id }
 
       let(:payload) do
@@ -273,7 +273,6 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
         FactoryGirl.create(
           :product,
           :with_mirrored_repositories,
-          :with_predecessor,
           product_type: 'base',
           predecessor: first_product
         )

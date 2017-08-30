@@ -17,10 +17,10 @@ class Api::Connect::V4::Subscriptions::ProductsController < Api::Connect::BaseCo
   def product_query_params
     {
       identifier: product_params[:identifier],
-      version: product_params[:version] ? product_params[:version].tr('-', '.').chomp('.0') : nil,
+      version: Product.clean_up_version(product_params[:version]),
       arch: product_params[:arch],
       release_type: product_params[:release_type]
-    }.keep_if { |_k, v| !v.nil? }
+    }.compact
   end
 
   def product_params

@@ -14,14 +14,12 @@ FactoryGirl.define do
     arch 'x86_64'
 
     transient do
-      base_products nil
+      base_products []
     end
 
     after :create do |product, evaluator|
-      if evaluator.base_products.present?
-        evaluator.base_products.each do |base_product|
-          product.product_extensions_associations << ProductsExtensionsAssociation.create(product: base_product)
-        end
+      evaluator.base_products.each do |base_product|
+        product.product_extensions_associations << ProductsExtensionsAssociation.create(product: base_product)
       end
     end
 
@@ -106,18 +104,12 @@ FactoryGirl.define do
       end
     end
 
-    trait :with_predecessor do
-      transient do
-        predecessor nil
-      end
+    transient do
+      predecessor nil
+    end
 
-      after :create do |product, evaluator|
-        if evaluator.predecessor
-          product.predecessors << evaluator.predecessor
-        else
-          fail 'predecessor is required'
-        end
-      end
+    after :create do |product, evaluator|
+      product.predecessors << evaluator.predecessor if evaluator.predecessor
     end
   end
 end

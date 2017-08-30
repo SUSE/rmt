@@ -17,15 +17,17 @@ ActiveRecord::Schema.define(version: 20170825145600) do
 
   create_table "activations", force: :cascade do |t|
     t.integer "service_id", null: false
-    t.integer "system_id", null: false
+    t.bigint "system_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["system_id"], name: "index_activations_on_system_id"
   end
 
   create_table "product_predecessors", force: :cascade do |t|
-    t.integer "product_id"
+    t.bigint "product_id", null: false
     t.integer "predecessor_id"
     t.index ["product_id", "predecessor_id"], name: "index_product_predecessors_on_product_id_and_predecessor_id", unique: true
+    t.index ["product_id"], name: "index_product_predecessors_on_product_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -47,8 +49,10 @@ ActiveRecord::Schema.define(version: 20170825145600) do
   end
 
   create_table "products_extensions", force: :cascade do |t|
-    t.integer "product_id", null: false
-    t.integer "extension_id", null: false
+    t.bigint "product_id", null: false
+    t.bigint "extension_id", null: false
+    t.index ["extension_id"], name: "index_products_extensions_on_extension_id"
+    t.index ["product_id"], name: "index_products_extensions_on_product_id"
   end
 
   create_table "repositories", force: :cascade do |t|
@@ -65,9 +69,11 @@ ActiveRecord::Schema.define(version: 20170825145600) do
   end
 
   create_table "repositories_services", force: :cascade do |t|
-    t.integer "repository_id", null: false
-    t.integer "service_id", null: false
+    t.bigint "repository_id", null: false
+    t.bigint "service_id", null: false
+    t.index ["repository_id"], name: "index_repositories_services_on_repository_id"
     t.index ["service_id", "repository_id"], name: "index_repositories_services_on_service_id_and_repository_id", unique: true
+    t.index ["service_id"], name: "index_repositories_services_on_service_id"
   end
 
   create_table "services", force: :cascade do |t|
@@ -78,9 +84,10 @@ ActiveRecord::Schema.define(version: 20170825145600) do
   end
 
   create_table "subscription_product_classes", force: :cascade do |t|
-    t.integer "subscription_id", null: false
+    t.bigint "subscription_id", null: false
     t.string "product_class", null: false
     t.index ["subscription_id", "product_class"], name: "index_product_class_unique", unique: true
+    t.index ["subscription_id"], name: "index_subscription_product_classes_on_subscription_id"
   end
 
   create_table "subscriptions", force: :cascade do |t|
@@ -95,6 +102,7 @@ ActiveRecord::Schema.define(version: 20170825145600) do
     t.integer "virtual_count"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["regcode"], name: "index_subscriptions_on_regcode"
   end
 
   create_table "systems", force: :cascade do |t|

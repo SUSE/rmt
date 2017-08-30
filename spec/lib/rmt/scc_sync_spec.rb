@@ -6,21 +6,25 @@ require 'webmock/rspec'
 RSpec.describe RMT::SCCSync do
   describe '#sync' do
     context 'with SCC credentials' do
-      let(:product) do
-        JSON.parse(file_fixture('products/dummy_product.json').read, symbolize_names: true)
+      let(:products) do
+        JSON.parse(file_fixture('products/dummy_products.json').read, symbolize_names: true)
       end
       let(:subscriptions) do
         JSON.parse(file_fixture('subscriptions/dummy_subscriptions.json').read, symbolize_names: true)
       end
       let(:extension) { product[:extensions][0] }
-      let(:all_repositories) { [product, extension].flat_map { |item| item[:repositories] } }
+      let(:all_repositories) do
+        products.flat_map do |product|
+          [product, product[:extensions][0]].flat_map { |item| item[:repositories] }
+        end
+      end
       let(:api_double) { double }
 
       before do
         allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
 
         expect(SUSE::Connect::Api).to receive(:new) { api_double }
-        expect(api_double).to receive(:list_products) { [ product ] }
+        expect(api_double).to receive(:list_products) { products }
         expect(api_double).to receive(:list_repositories) { all_repositories }
         expect(api_double).to receive(:list_subscriptions) { subscriptions }
 
@@ -32,10 +36,14 @@ RSpec.describe RMT::SCCSync do
       end
 
       it 'saves products to the DB' do
-        [product, extension].each do |product|
-          db_product = Product.find(product[:id])
-          db_product.attributes.each do |key, value|
-            expect(value).to eq(product[key.to_sym])
+        products.each do |product|
+          extension = product[:extensions][0]
+
+          [product, extension].each do |product|
+            db_product = Product.find(product[:id])
+            db_product.attributes.each do |key, value|
+              expect(value).to eq(product[key.to_sym])
+            end
           end
         end
       end
