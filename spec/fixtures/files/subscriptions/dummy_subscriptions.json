@@ -1,0 +1,40 @@
+[
+  {
+    "id": 1,
+    "regcode": "00112233445566",
+    "name": "Dummy Product Subscription",
+    "type": "full",
+    "status": "ACTIVE",
+    "starts_at": "2011-01-28T00:00:00.000Z",
+    "expires_at": "2099-04-16T00:00:00.000Z",
+    "system_limit": 1000,
+    "systems_count": 1,
+    "virtual_count": null,
+    "product_classes": [
+      "0000",
+      "DTP"
+    ],
+    "product_ids": [100000],
+    "skus": [],
+    "systems": []
+  },
+  {
+    "id": 2,
+    "regcode": "778899AABBCCDD",
+    "name": "Dummy Module Subscription",
+    "type": "full",
+    "status": "ACTIVE",
+    "starts_at": "2011-01-28T00:00:00.000Z",
+    "expires_at": "2099-04-16T00:00:00.000Z",
+    "system_limit": 1000,
+    "systems_count": 1,
+    "virtual_count": null,
+    "product_classes": [
+      "0001",
+      "DTM"
+    ],
+    "product_ids": [100001],
+    "skus": [],
+    "systems": []
+  }
+]

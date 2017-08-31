@@ -21,6 +21,10 @@ module SUSE
         make_paginated_request(:get, 'https://scc.suse.com/connect/organizations/repositories')
       end
 
+      def list_subscriptions
+        make_paginated_request(:get, 'https://scc.suse.com/connect/organizations/subscriptions')
+      end
+
       protected
 
       def process_rels(response)

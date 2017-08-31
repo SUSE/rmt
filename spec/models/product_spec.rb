@@ -33,13 +33,13 @@ RSpec.describe Product, type: :model do
     it { is_expected.to eq 1 }
   end
 
-  describe '#mirrored' do
-    subject { product.mirrored }
+  describe '#mirrored?' do
+    subject { product.mirrored? }
 
     context 'without any repositories' do
       let(:product) { create :product }
 
-      it { is_expected.to be false }
+      it { is_expected.to be true }
     end
 
     context 'with_not_mirrored_repositories' do
@@ -52,6 +52,28 @@ RSpec.describe Product, type: :model do
       let(:product) { create :product, :with_mirrored_repositories }
 
       it { is_expected.to be true }
+    end
+  end
+
+  describe '.clean_up_version' do
+    subject { described_class.clean_up_version(version) }
+
+    context 'without special symbols' do
+      let(:version) { '42' }
+
+      it { is_expected.to eq('42') }
+    end
+
+    context 'with a dot' do
+      let(:version) { '42.0' }
+
+      it { is_expected.to eq('42') }
+    end
+
+    context 'with dashes' do
+      let(:version) { '42-0' }
+
+      it { is_expected.to eq('42') }
     end
   end
 end

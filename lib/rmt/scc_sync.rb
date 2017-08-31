@@ -21,13 +21,13 @@ class RMT::SCCSync < RMT::CLI
     raise CredentialsError, 'SCC credentials not set.' unless (Settings.scc.username && Settings.scc.password)
 
     @logger.info('Cleaning up the database')
-    Product.delete_all
+    Subscription.delete_all
 
     @logger.info('Downloading data from SCC')
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
     data = scc_api_client.list_products
 
-    @logger.info('Updating the database')
+    @logger.info('Updating products')
     data.each do |item|
       @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
       product = create_product(item)
@@ -38,6 +38,12 @@ class RMT::SCCSync < RMT::CLI
     data = scc_api_client.list_repositories
     data.each do |item|
       update_auth_token(item)
+    end
+
+    @logger.info('Updating subscriptions')
+    data = scc_api_client.list_subscriptions
+    data.each do |item|
+      create_subscription(item)
     end
 
     @logger.info('Done!')
@@ -59,23 +65,21 @@ class RMT::SCCSync < RMT::CLI
     extensions = []
 
     item[:extensions].each do |ext_item|
-      begin
-        extension = Product.find(ext_item[:id])
-      rescue
-        extension = Product.new
-        extension.attributes = ext_item.select { |k, _| extension.attributes.keys.member?(k.to_s) }
-        extension.save!
-      end
+      extension = Product.find_or_create_by(id: ext_item[:id])
+      extension.attributes = ext_item.select { |k, _| extension.attributes.keys.member?(k.to_s) }
+      extension.save!
 
       create_service(ext_item, extension)
       extensions << extension
     end
 
-    begin
-      product = Product.new
-      product.attributes = item.select { |k, _| product.attributes.keys.member?(k.to_s) }
-      product.save!
-    rescue ActiveRecord::RecordNotUnique # rubocop:disable Lint/HandleExceptions
+    product = Product.find_or_create_by(id: item[:id])
+    product.attributes = item.select { |k, _| product.attributes.keys.member?(k.to_s) }
+    product.save!
+
+    ProductPredecessorAssociation.where(product_id: product.id).destroy_all
+    item[:predecessor_ids].each do |predecessor_id|
+      ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor_id)
     end
 
     extensions.each do |extension|
@@ -110,6 +114,20 @@ class RMT::SCCSync < RMT::CLI
     auth_token = uri.query
 
     Repository.find(item[:id]).update! auth_token: auth_token
+  end
+
+  def create_subscription(item)
+    subscription = Subscription.new
+    subscription.attributes = item.select { |k, _| subscription.attributes.keys.member?(k.to_s) }
+    subscription.kind = item[:type]
+    subscription.save!
+
+    item[:product_classes].each do |item_class|
+      subscription_product_class = SubscriptionProductClass.new
+      subscription_product_class.subscription_id = subscription.id
+      subscription_product_class.product_class = item_class
+      subscription_product_class.save!
+    end
   end
 
 end

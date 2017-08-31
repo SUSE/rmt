@@ -13,14 +13,14 @@ class RMT::RepoManager < RMT::CLI
   end
 
   desc 'enable TARGET', 'Enable a repository or product'
-  option 'exclude-optional', aliases: '-x', type: :boolean
+  option 'include-non-mandatory', aliases: '-i', type: :boolean
   def enable(target)
     repo_id = Integer(target, 10) rescue nil
     if repo_id
       change_repository_mirroring(true, repo_id)
     else
       identifier, version, arch = target.split('/')
-      change_product_mirroring(true, identifier, version, arch, exclude_optional: options['exclude-optional'])
+      change_product_mirroring(true, identifier, version, arch, include_non_mandatory: options['include-non-mandatory'])
     end
   end
 
@@ -54,14 +54,22 @@ class RMT::RepoManager < RMT::CLI
     conditions = { identifier: identifier, version: version }
     conditions[:arch] = arch if arch
     repo_count = 0
+    non_mandatory_count = 0
 
     products = Product.where(conditions).all
     products.each do |product|
       conditions = { mirroring_enabled: !mirroring_enabled } # to only update the repos which need change
-      conditions[:enabled] = true if (options[:exclude_optional])
+      conditions[:enabled] = true if (mirroring_enabled && !options[:include_non_mandatory])
       repo_count += product.repositories.where(conditions).update_all(mirroring_enabled: mirroring_enabled)
+
+      unless (options[:include_non_mandatory])
+        non_mandatory_count += product.repositories.where(conditions.merge(enabled: false)).count
+      end
     end
     puts "#{repo_count} repo(s) successfully #{mirroring_enabled ? 'enabled' : 'disabled'}."
+    if (non_mandatory_count > 0)
+      puts "#{non_mandatory_count} non-mandatory repos were not enabled. Use -i (--include-non-mandatory) flag to enable them."
+    end
   end
 
   def list_repositories(scope: :enabled)

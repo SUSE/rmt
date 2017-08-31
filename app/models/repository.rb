@@ -5,6 +5,9 @@ class Repository < ApplicationRecord
   has_many :systems, through: :services
   has_many :products, -> { distinct }, through: :services
 
+  scope :only_installer_updates, -> { unscope(where: :installer_updates).where(installer_updates: true) }
+  scope :only_mirrored, -> { where(mirroring_enabled: true) }
+
   validates :name, presence: true
   validates :external_url, presence: true
   validates :local_path, presence: true

@@ -33,7 +33,23 @@ RSpec.describe SUSE::Connect::Api do
       .with(headers: expected_request_headers)
       .to_return(
         status: 200,
-        body: [ response_data ].to_json,
+        body: [ { endpoint: 'organizations/products' } ].to_json,
+        headers: {}
+      )
+
+    stub_request(:get, 'https://scc.suse.com/connect/organizations/repositories?page=1')
+      .with(headers: expected_request_headers)
+      .to_return(
+        status: 200,
+        body: [ { endpoint: 'organizations/repositories' } ].to_json,
+        headers: {}
+      )
+
+    stub_request(:get, 'https://scc.suse.com/connect/organizations/subscriptions?page=1')
+      .with(headers: expected_request_headers)
+      .to_return(
+        status: 200,
+        body: [ { endpoint: 'organizations/subscriptions' } ].to_json,
         headers: {}
       )
   end
@@ -65,6 +81,18 @@ RSpec.describe SUSE::Connect::Api do
   describe '#list_products' do
     subject { api_client.list_products }
 
-    it { is_expected.to eq([ response_data ]) }
+    it { is_expected.to eq([ { endpoint: 'organizations/products' } ]) }
+  end
+
+  describe '#list_repositories' do
+    subject { api_client.list_repositories }
+
+    it { is_expected.to eq([ { endpoint: 'organizations/repositories' } ]) }
+  end
+
+  describe '#list_subscriptions' do
+    subject { api_client.list_subscriptions }
+
+    it { is_expected.to eq([ { endpoint: 'organizations/subscriptions' } ]) }
   end
 end
