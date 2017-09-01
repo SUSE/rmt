@@ -131,7 +131,7 @@ class RMT::Downloader
   end
 
   def make_local_path(remote_file)
-    filename = File.join(@local_path, remote_file)
+    filename = File.join(@local_path, remote_file.gsub(/\.\./, '__'))
     dirname = File.dirname(filename)
 
     FileUtils.mkdir_p(dirname)

@@ -10,10 +10,16 @@ class V3::ProductSerializer < ApplicationSerializer
     end
   end
 
-  has_many :mirrored_extensions, key: 'extensions', serializer: V3::ProductSerializer
-
   attributes :id, :name, :identifier, :former_identifier, :version, :release_type, :arch,
              :friendly_name, :product_class, :cpe, :free, :description, :eula_url, :repositories, :product_type, :extensions
+
+  attributes :id, :name, :mirrored_extensions
+
+  def extensions
+    object.mirrored_extensions.map do |extension|
+      ::V3::ProductSerializer.new(extension, base_url: base_url).attributes
+    end
+  end
 
   def arch
     (object.arch == 'unknown') ? nil : object.arch
@@ -21,7 +27,7 @@ class V3::ProductSerializer < ApplicationSerializer
 
   def eula_url
     if object.eula_url
-      RMT::Misc.make_repo_url(base_url, object.eula_url)
+      RMT::Misc.replace_uri_parts(object.eula_url, base_url + Settings.mirroring.mirror_url_prefix)
     else
       ''
     end

@@ -18,6 +18,7 @@ class RMT::Mirror
 
   def mirror
     mirror_metadata
+    mirror_license
     mirror_data
     replace_metadata
   end
@@ -73,7 +74,26 @@ class RMT::Mirror
     end
   end
 
+  def mirror_license
+    @downloader.repository_url = URI.join(@repository_url, '../product.license/')
+    @downloader.local_path = File.join(@mirroring_base_dir, @local_path, '../product.license/')
+
+    begin
+      directory_yast = @downloader.download('directory.yast')
+    rescue RMT::Downloader::Exception
+      @logger.info('No product license found')
+      return
+    end
+
+    File.open(directory_yast).each_line do |filename|
+      filename.strip!
+      next if filename == 'directory.yast'
+      @downloader.download(filename)
+    end
+  end
+
   def mirror_data
+    @downloader.repository_url = @repository_url
     @downloader.local_path = File.join(@mirroring_base_dir, @local_path)
 
     @deltainfo_files.each do |filename|
