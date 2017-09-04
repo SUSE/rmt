@@ -33,4 +33,10 @@ class V3::ProductSerializer < ApplicationSerializer
     end
   end
 
+  def free
+    # Everything is free on RMT :-)
+    # Otherwise Yast and SUSEConnect will request a regcode when activating an extension
+    true
+  end
+
 end
