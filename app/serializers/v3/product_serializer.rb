@@ -13,8 +13,6 @@ class V3::ProductSerializer < ApplicationSerializer
   attributes :id, :name, :identifier, :former_identifier, :version, :release_type, :arch,
              :friendly_name, :product_class, :cpe, :free, :description, :eula_url, :repositories, :product_type, :extensions
 
-  attributes :id, :name, :mirrored_extensions
-
   def extensions
     object.mirrored_extensions.map do |extension|
       ::V3::ProductSerializer.new(extension, base_url: base_url).attributes
