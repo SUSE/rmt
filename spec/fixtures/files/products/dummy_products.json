@@ -13,10 +13,10 @@
 		"free": false,
 		"description": null,
 		"release_stage": "released",
-		"eula_url": "",
+		"eula_url": "https://example.com/dummy/dtp/dummy-test-product-42-x86_64/eula.txt",
 		"repositories": [{
 			"id": 200000,
-			"url": "https://example.com/repo/dtp/dummy-test-product-42-x86_64/",
+			"url": "https://example.com/dummy/dtp/dummy-test-product-42-x86_64/",
 			"name": "DTP Updates",
 			"description": "DTP Updates",
 			"enabled": true,
@@ -40,10 +40,10 @@
 			"free": true,
 			"description": null,
 			"release_stage": "released",
-			"eula_url": "",
+			"eula_url": "https://example.com/dummy/dtp/dummy-test-module-42-x86_64/eula.txt",
 			"repositories": [{
 				"id": 200001,
-				"url": "https://example.com/repo/dtp/dummy-test-module-42-x86_64/",
+				"url": "https://example.com/dummy/dtp/dummy-test-module-42-x86_64/",
 				"name": "DTM Updates",
 				"description": "DTM Updates",
 				"enabled": true,
@@ -74,7 +74,7 @@
 		"repositories": [
 			{
 				"id": 200002,
-				"url": "https://example.com/repo/dtp/dummy-test-product-42.1-x86_64/",
+				"url": "https://example.com/dummy/dtp/dummy-test-product-42.1-x86_64/",
 				"name": "DTP Updates",
 				"description": "DTP Updates",
 				"enabled": true,
@@ -106,7 +106,7 @@
 				"repositories": [
 					{
 						"id": 200003,
-						"url": "https://example.com/repo/dtp/dummy-test-module-42.1-x86_64/",
+						"url": "https://example.com/dummy/dtp/dummy-test-module-42.1-x86_64/",
 						"name": "DTM Updates",
 						"description": "DTM Updates",
 						"enabled": true,

@@ -14,18 +14,27 @@ class RMT::Mirror
     @primary_files = []
     @deltainfo_files = []
     @auth_token = auth_token
+
+    @downloader = RMT::Downloader.new(
+      repository_url: @repository_url,
+      local_path: @repodata_dir.to_s,
+      logger: @logger
+    )
   end
 
   def mirror
-    mirror_metadata
+    create_directories
     mirror_license
+    # downloading license doesn't require an auth token
+    @downloader.auth_token = @auth_token
+    mirror_metadata
     mirror_data
     replace_metadata
   end
 
   protected
 
-  def mirror_metadata
+  def create_directories
     begin
       local_repo_dir = File.join(@mirroring_base_dir, @local_path)
       FileUtils.mkpath(local_repo_dir) unless Dir.exist?(local_repo_dir)
@@ -38,13 +47,11 @@ class RMT::Mirror
     rescue StandardError => e
       raise RMT::Mirror::Exception.new("Can not create a temporary directory: #{e}")
     end
+  end
 
-    @downloader = RMT::Downloader.new(
-      repository_url: @repository_url,
-      local_path: @repodata_dir.to_s,
-      logger: @logger,
-      auth_token: @auth_token
-    )
+  def mirror_metadata
+    @downloader.repository_url = URI.join(@repository_url)
+    @downloader.local_path = File.join(@repodata_dir.to_s)
 
     begin
       local_filename = @downloader.download('repodata/repomd.xml')
