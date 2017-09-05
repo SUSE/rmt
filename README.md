@@ -1,21 +1,23 @@
 # Repository Mirroring Tool
 ![Kartoha](https://travis-ci.org/SUSE/rmt.svg?branch=master)
 
-This tool allows you to mirror RPM repositories in your own private network. Registered organization (mirroring) credentials are required to mirror SUSE repositories.
+This tool allows you to mirror RPM repositories in your own private network.
+Organization (mirroring) credentials are required to mirror SUSE repositories.
 
 ## Usage
 
 ### SUSE products
 
-1. Run `rmt-scc sync` to download available products and repositories data from SCC
-2. Use the `rmt-repos` command to choose which repositories to mirror, for example:
-    ```
-    rmt-repos enable SLES/12.2/x86_64
-    ```
-    The above command would enable mandatory SLES 12 SP2 repositories.
-3. Run `rmt-mirror` to mirror selected repositories and make their content available through RMT
-4. Register client against RMT by running `SUSEConnect --url https://rmt_hostname`
-    After successful registration the repositories from RMT will be used by `zypper` on the client machine.
+* Run `rmt-scc sync` to download available products and repositories data for your organization from SCC
+* Run `rmt-products list` to see the list of products that are available for your organization
+* Use the `rmt-repos` command to choose which product repositories to mirror, for example:
+  ```
+  rmt-repos enable SLES/12.2/x86_64
+  ```
+  The above command would select the mandatory (`pool`, `updates`) SLES 12 SP2 repositories to be mirrored.
+* Run `rmt-mirror` to mirror selected repositories and make their content available through RMT
+* Register client against RMT by running `SUSEConnect --url https://rmt_hostname`
+  After successful registration the repositories from RMT will be used by `zypper` on the client machine.
 
 ## Configuration
 
