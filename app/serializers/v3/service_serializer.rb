@@ -5,7 +5,8 @@ class V3::ServiceSerializer < ApplicationSerializer
   has_one :product, serializer: V3::ProductSerializer
 
   def url
-    service_url(object, host: base_url)
+    # credentials parameter is required by Yast, it dies without it
+    service_url(object, host: base_url, credentials: "RMT-#{base_url.gsub(/\W/, '_').gsub(/_+/, '_')}")
   end
 
   def obsoleted_service_name

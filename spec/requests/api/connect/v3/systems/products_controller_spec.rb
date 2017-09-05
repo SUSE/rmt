@@ -1,5 +1,7 @@
 require 'rails_helper'
 
+# rubocop:disable RSpec/MultipleExpectations
+
 RSpec.describe Api::Connect::V3::Systems::ProductsController do
   include_context 'auth header', :system, :login, :password
   include_context 'version header', 3
@@ -117,6 +119,43 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       before { get url, headers: headers, params: payload }
       its(:code) { is_expected.to eq('200') }
       its(:body) { is_expected.to eq(serialized_json) }
+    end
+
+    context 'with eula_url' do
+      subject { response }
+
+      let(:system) { activation.system }
+      let(:payload) do
+        {
+          identifier: activation.product.identifier,
+          version: activation.product.version,
+          arch: activation.product.arch
+        }
+      end
+      let(:serialized_json) do
+        V3::ProductSerializer.new(
+          activation.product,
+          base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
+        ).to_json
+      end
+
+      before do
+        activation.product.eula_url = 'http://example.com/dummy/eula.txt'
+        activation.product.save!
+
+        get url, headers: headers, params: payload
+      end
+      its(:code) { is_expected.to eq('200') }
+      its(:body) { is_expected.to eq(serialized_json) }
+      it 'has correct eula_url' do
+        product = JSON.parse(serialized_json, symbolize_names: true)
+        expect(product[:eula_url]).to eq('http://www.example.com/repo/dummy/eula.txt')
+
+        replacement_url = URI::HTTP.build({ scheme: request.scheme, host: request.host, path: Settings.mirroring.mirror_url_prefix }).to_s
+        expect(product[:eula_url]).to eq(
+          RMT::Misc.replace_uri_parts(activation.product.eula_url, replacement_url)
+        )
+      end
     end
   end
 

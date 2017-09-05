@@ -22,7 +22,10 @@ package/*.tar.bz2
 
 vendor/
 coverage/
+.idea/
 
 # Ignore encrypted secrets key file.
 config/secrets.yml.key
 config/secrets.yml.enc
+config/rmt.local.yml
+
