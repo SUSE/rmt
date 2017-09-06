@@ -1,24 +1,23 @@
 default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
-  adapter: postgresql
-  encoding: unicode
-  host: <%= ENV.fetch('POSTGRES_HOST') { 'localhost' } %>
-  port: 5432
-  username: <%= ENV.fetch('POSTGRES_USER') { 'rmt' } %>
-  password: <%= ENV.fetch('POSTGRES_PASSWORD') { 'rmt' } %>
+  adapter: mysql2
+  encoding: utf8
+  host: localhost
+  username: rmt
+  password: rmt
 
 development:
   <<: *default
-  database: <%= ENV.fetch('POSTGRES_DB') { 'rmt_development' } %>
+  database: rmt_development
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: <%= ENV.fetch('POSTGRES_DB') { 'rmt_test' } %>
+  database: rmt_test
 
 production:
   <<: *default
-  database: <%= ENV.fetch('POSTGRES_DB') { 'rmt' } %>
+  database: rmt
