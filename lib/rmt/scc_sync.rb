@@ -4,7 +4,7 @@ require 'rmt/cli'
 
 # rubocop:disable Rails/Output
 
-class RMT::SCCSync < RMT::CLI
+class RMT::SCCSync < Thor
 
   class CredentialsError < RuntimeError; end
 
@@ -13,8 +13,6 @@ class RMT::SCCSync < RMT::CLI
     @logger = Logger.new(STDOUT)
     @logger.level = options[:verbose] ? 0 : 1
   end
-
-  class_option :verbose, aliases: '-v', type: :boolean
 
   desc 'sync', 'Synchronize database with SCC'
   def sync
@@ -52,12 +50,6 @@ class RMT::SCCSync < RMT::CLI
   rescue Interrupt
     @logger.error('Interrupted! You need to rerun this command to have a consistent state.')
   end
-
-  desc 'version', 'Show version'
-  def version
-    puts RMT::VERSION
-  end
-
 
   protected
 

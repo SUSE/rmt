@@ -1,10 +1,17 @@
 require 'thor'
 
+require 'rmt'
+require 'rmt/products'
+require 'rmt/repo_manager'
+require 'rmt/products'
+require 'rmt/scc_sync'
+require 'terminal-table'
+
 class RMT::CLI < Thor
 
   class << self
 
-    # monkey patch for the output of the help command
+    # custom output of the help command
     # (removes the alphabetical sorting and adds some custom behavior)
     def help(shell, subcommand = false)
       list = printable_commands(true, subcommand)
@@ -28,5 +35,17 @@ class RMT::CLI < Thor
     end
 
   end
+
+  class_option :debug, desc: 'Enable debug output', aliases: '-d', required: false
+
+  desc 'products', 'List and modify products'
+  subcommand 'products', RMT::Products
+
+  desc 'repos', 'List and modify repositories'
+  subcommand 'repos', RMT::RepoManager
+
+  desc 'scc', 'SUSE customer center commands'
+  subcommand 'scc', RMT::SCCSync
+
 
 end

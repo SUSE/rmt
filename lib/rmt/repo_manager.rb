@@ -3,7 +3,7 @@ require 'rmt/cli'
 
 # rubocop:disable Rails/Output
 
-class RMT::RepoManager < RMT::CLI
+class RMT::RepoManager < Thor
 
   desc 'list', 'List all repositories'
   option :all, aliases: '-a', type: :boolean
@@ -34,12 +34,6 @@ class RMT::RepoManager < RMT::CLI
       change_product_mirroring(false, identifier, version, arch)
     end
   end
-
-  desc 'version', 'Show version'
-  def version
-    puts RMT::VERSION
-  end
-
 
   protected
 

@@ -1,25 +1,18 @@
 require 'rmt'
-require 'rmt/cli'
 
 # rubocop:disable Rails/Output
 
-class RMT::Products < RMT::CLI
+class RMT::Products < Thor
 
   desc 'list', 'List all products'
-  option :all, aliases: '-a', type: :boolean
-  option :repository_status, aliases: '-r', type: :boolean
+
   def list
-    attributes = %i[id name version release_stage]
-    headings = ['ID', 'Name', 'Version', 'State']
+    attributes = %i[id name version release_stage mirrored?]
+    headings = ['ID', 'Name', 'Version', 'Release stage', 'Mirrored?']
 
-    if options['repository_status']
-      attributes.push(:mirrored)
-      headings.push('Repository Status')
-    end
+    conditions = {}
 
-    scope = options['all'] ? :all : :published
-
-    rows = Product.public_send(scope).map do |product|
+    rows = Product.where(conditions).map do |product|
       attributes.map { |a| product.public_send(a) }
     end
 
