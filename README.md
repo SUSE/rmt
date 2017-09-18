@@ -68,25 +68,15 @@ Supported Ruby versions are 2.4.1 and newer.
 
 ## Development setup
 
-* Setup PostgreSQL:
+* Setup MySQL/MariaDB:
 
-ensure that your local /var/lib/pgsql/data/pg_hba.conf looks like
-
-```
-local   all             all                                    peer
-host    all             all             127.0.0.1/32            md5
-host    all             all             ::1/128                 md5
-```
-
-That is needed to allow glue user authenticate via md5 password. The file is created on first postgres start.
 Allow the rmt user from `config/database.yml` to login to your postgresql server:
 
 ```
-read -d '' DBS_QUERY <<EOFF
-CREATE USER rmt WITH PASSWORD 'rmt';
-ALTER ROLE glue with CREATEDB LOGIN;
+mysql -u root -p <<EOFF
+GRANT ALL PRIVILEGES ON \`rmt\_%\`.* TO rmt@localhost identified by 'rmt';
+FLUSH PRIVILEGES;
 EOFF
-sudo -u postgres psql template1 -c "$DBS_QUERY"
 ```
 
 * Install the dependencies by running `bundle install`
