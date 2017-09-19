@@ -2,10 +2,9 @@ require 'rmt'
 
 # rubocop:disable Rails/Output
 
-class RMT::Products < Thor
+class RMT::Products < RMT::Thor
 
   desc 'list', 'List all products'
-
   def list
     attributes = %i[id name version release_stage mirrored?]
     headings = ['ID', 'Name', 'Version', 'Release stage', 'Mirrored?']

@@ -4,12 +4,7 @@ ENV['RAILS_EXECUTABLE'] = 'true'
 
 require_relative '../config/environment'
 
-
 require 'rmt/cli'
 
 
-
 RMT::CLI.start(ARGV)
-
-
-#RMT::Products.start(ARGV)

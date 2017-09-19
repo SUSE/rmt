@@ -2,9 +2,7 @@ require 'suse/connect/api'
 require 'rmt/config'
 require 'rmt/cli'
 
-# rubocop:disable Rails/Output
-
-class RMT::SCCSync < Thor
+class RMT::SCCSync < RMT::Thor
 
   class CredentialsError < RuntimeError; end
 
