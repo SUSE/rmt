@@ -15,9 +15,9 @@ node('scc-jenkins-node-chucker') {
             sh 'ssh root@rmt.scc.suse.de -t "docker stop rmt_cron && docker rm rmt_cron || true"'
         }
         finally {
-            sh 'ssh root@rmt.scc.suse.de -t "docker run --restart=always -d --name rmt_production --network=rmt_network -e POSTGRES_HOST=postgres -e SECRET_KEY_BASE=\\$SECRET_KEY_BASE -e RMT_ORGANIZATION_USERNAME=\\$RMT_ORGANIZATION_USERNAME -e RMT_ORGANIZATION_PASSWORD=\\$RMT_ORGANIZATION_PASSWORD -v /media/rmt-data/:/srv/www/rmt/public/ registry.scc.suse.de/rmt"'
-            sh 'ssh root@rmt.scc.suse.de -t "docker exec -e POSTGRES_HOST=postgres rmt_production bundle exec rails db:migrate"'
-            sh 'ssh root@rmt.scc.suse.de -t "docker run --restart=always -d --name rmt_cron --network=rmt_network -e POSTGRES_HOST=postgres -e SECRET_KEY_BASE=\\$SECRET_KEY_BASE -e RMT_ORGANIZATION_USERNAME=\\$RMT_ORGANIZATION_USERNAME -e RMT_ORGANIZATION_PASSWORD=\\$RMT_ORGANIZATION_PASSWORD -v /media/rmt-data/:/srv/www/rmt/public/ -v /var/www/rmt/shared/config/crontab:/etc/config/crontab registry.scc.suse.de/rmt cron -n /etc/config/crontab"'
+            sh 'ssh root@rmt.scc.suse.de -t "docker run --restart=always -d --name rmt_production --network=rmt_network -e SECRET_KEY_BASE=\\$SECRET_KEY_BASE -e RMT_ORGANIZATION_USERNAME=\\$RMT_ORGANIZATION_USERNAME -e RMT_ORGANIZATION_PASSWORD=\\$RMT_ORGANIZATION_PASSWORD -v /media/rmt-data/:/srv/www/rmt/public/ -v /var/run/mysql/mysql.sock:/var/run/mysql/mysql.sock registry.scc.suse.de/rmt"'
+            sh 'ssh root@rmt.scc.suse.de -t "docker exec rmt_production bundle exec rails db:migrate"'
+            sh 'ssh root@rmt.scc.suse.de -t "docker run --restart=always -d --name rmt_cron --network=rmt_network -e SECRET_KEY_BASE=\\$SECRET_KEY_BASE -e RMT_ORGANIZATION_USERNAME=\\$RMT_ORGANIZATION_USERNAME -e RMT_ORGANIZATION_PASSWORD=\\$RMT_ORGANIZATION_PASSWORD -v /media/rmt-data/:/srv/www/rmt/public/ -v /var/www/rmt/shared/config/crontab:/etc/config/crontab -v /var/run/mysql/mysql.sock:/var/run/mysql/mysql.sock registry.scc.suse.de/rmt cron -n /etc/config/crontab"'
         }
     }
 }

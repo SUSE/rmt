@@ -9,7 +9,7 @@ end
 # https://build.suse.de/project/show/Devel:SCC:SMT-NG
 
 gem 'puma', '3.6.0'
-gem 'pg', '0.18.3'
+gem 'mysql2', '~> 0.4.9'
 
 # The rest of Gemfile goes as normal
 
