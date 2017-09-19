@@ -1,4 +1,5 @@
 class RMT::CLI < RMT::Thor
+
   class_option :debug, desc: 'Enable debug output', aliases: '-d', required: false
 
   desc 'products', 'List and modify products'
@@ -17,6 +18,7 @@ class RMT::CLI < RMT::Thor
   desc 'version', 'Show RMT version'
   def version
     require 'rmt'
-    puts RMT::VERSION  # rubocop:disable Rails/Output
+    puts RMT::VERSION # rubocop:disable Rails/Output
   end
+
 end
