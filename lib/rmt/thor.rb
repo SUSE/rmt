@@ -1,12 +1,3 @@
-# require 'thor'
-#
-# require 'rmt'
-# require 'rmt/products'
-# require 'rmt/repo_manager'
-# require 'rmt/products'
-# require 'rmt/scc_sync'
-# require 'terminal-table'
-
 class RMT::Thor < Thor
 
   class << self

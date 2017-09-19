@@ -1,5 +1,5 @@
-require 'rmt'
-require 'rmt/cli'
+# require 'rmt'
+# require 'rmt/cli'
 
 # rubocop:disable Rails/Output
 

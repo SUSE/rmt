@@ -1,6 +1,4 @@
-require 'suse/connect/api'
 require 'rmt/config'
-require 'rmt/cli'
 
 class RMT::SCCSync < RMT::Thor
 
