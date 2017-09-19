@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170825145600) do
+ActiveRecord::Schema.define(version: 20170919123818) do
 
   create_table "activations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "service_id", null: false
@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 20170825145600) do
 
   create_table "products", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "name"
-    t.string "description"
+    t.text "description"
     t.string "friendly_name"
     t.string "shortname"
     t.string "former_identifier"
