@@ -15,4 +15,13 @@ class RMT::Products < RMT::Thor
     puts Terminal::Table.new headings: headings, rows: rows # rubocop:disable Rails/Output
   end
 
+  desc 'enable', 'Enable a product'
+  def enable
+    # TODO: should behave the same as 'repos enable [product_identifier]'
+  end
+
+  desc 'disable', 'Disable a product'
+  def enable
+    # TODO: should behave the same as 'repos disable [product_identifier]'
+  end
 end
