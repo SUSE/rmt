@@ -22,17 +22,6 @@ RSpec.describe Product, type: :model do
     end
   end
 
-  describe 'published' do
-    before do
-      create :product, release_stage: 'released'
-      create :product, release_stage: 'beta'
-    end
-
-    subject { Product.published.count }
-
-    it { is_expected.to eq 1 }
-  end
-
   describe '#mirrored?' do
     subject { product.mirrored? }
 
