@@ -1,10 +1,12 @@
+# rubocop:disable Rails/Output
+
 class RMT::CLI::Products < RMT::CLI::Base
 
   desc 'list', 'List all products'
-  option :release_stage, aliases: '-r', type: :string
+  option :release_stage, aliases: '-r', type: :string, desc: 'beta, released'
   def list
-    attributes = %i[id name version release_stage mirrored?]
-    headings = ['ID', 'Name', 'Version', 'Release stage', 'Mirrored?']
+    attributes = %i[id name version arch product_string release_stage mirror? last_mirrored_at]
+    headings = ['ID', 'Name', 'Version', 'Architecture', 'Product string', 'Release stage', 'Mirror?']
 
     conditions = options[:release_stage] ? { release_stage: options[:release_stage] } : {}
 
@@ -12,7 +14,7 @@ class RMT::CLI::Products < RMT::CLI::Base
       attributes.map { |a| product.public_send(a) }
     end
 
-    puts Terminal::Table.new headings: headings, rows: rows # rubocop:disable Rails/Output
+    puts Terminal::Table.new headings: headings, rows: rows
   end
 
   desc 'enable', 'Enable a product'
@@ -24,4 +26,5 @@ class RMT::CLI::Products < RMT::CLI::Base
   def enable
     # TODO: should behave the same as 'repos disable [product_identifier]'
   end
+
 end

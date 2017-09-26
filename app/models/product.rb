@@ -40,13 +40,21 @@ class Product < ApplicationRecord
     ProductsExtensionsAssociation.exists?(product_id: id)
   end
 
-  def mirrored?
+  def mirror?
     repositories.where(enabled: true, mirroring_enabled: false).empty?
+  end
+
+  def last_mirrored_at
+    repositories.where(mirroring_enabled: true).maximum(:last_mirrored_at)
   end
 
   def self.clean_up_version(version)
     return unless version
     version.tr('-', '.').chomp('.0')
+  end
+
+  def product_string
+    [identifier, version, arch].join('/')
   end
 
 end

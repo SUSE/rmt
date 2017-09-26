@@ -1,4 +1,4 @@
 module RMT
-    module CLI
-    end
+  module CLI
+  end
 end

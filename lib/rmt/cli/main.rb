@@ -13,6 +13,7 @@ class RMT::CLI::Main < RMT::CLI::Base
 
   desc 'mirror', 'Mirror all enabled repositories'
   def mirror
+    RMT::CLI::Mirror.mirror
   end
 
   desc 'version', 'Show RMT version'
