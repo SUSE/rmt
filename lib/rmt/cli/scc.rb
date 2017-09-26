@@ -1,6 +1,6 @@
 require 'rmt/config'
 
-class RMT::SCCSync < RMT::Thor
+class RMT::CLI::SCC < RMT::CLI::Base
 
   class CredentialsError < RuntimeError; end
 

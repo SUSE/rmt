@@ -1,9 +1,6 @@
-# require 'rmt'
-# require 'rmt/cli'
-
 # rubocop:disable Rails/Output
 
-class RMT::RepoManager < RMT::Thor
+class RMT::CLI::Repos < RMT::CLI::Base
 
   desc 'list', 'List all repositories'
   option :all, aliases: '-a', type: :boolean

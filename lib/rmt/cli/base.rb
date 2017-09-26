@@ -1,4 +1,4 @@
-class RMT::Thor < Thor
+class RMT::CLI::Base < Thor
 
   class << self
 

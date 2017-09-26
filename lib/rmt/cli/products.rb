@@ -1,4 +1,4 @@
-class RMT::Products < RMT::Thor
+class RMT::CLI::Products < RMT::CLI::Base
 
   desc 'list', 'List all products'
   option :release_stage, aliases: '-r', type: :string
