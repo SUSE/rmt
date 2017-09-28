@@ -16,7 +16,7 @@ class RMT::CLI::Repos < RMT::CLI::Base
       change_repository_mirroring(true, repo_id)
     else
       identifier, version, arch = target.split('/')
-      change_product_mirroring(true, identifier, version, arch)
+      self.class.change_product_mirroring(true, identifier, version, arch)
     end
   end
 
@@ -27,7 +27,26 @@ class RMT::CLI::Repos < RMT::CLI::Base
       change_repository_mirroring(false, repo_id)
     else
       identifier, version, arch = target.split('/')
-      change_product_mirroring(false, identifier, version, arch)
+      self.class.change_product_mirroring(false, identifier, version, arch)
+    end
+  end
+
+  no_commands do
+    def self.change_product_mirroring(mirroring_enabled, identifier, version, arch)
+      conditions = { identifier: identifier, version: version }
+      conditions[:arch] = arch if arch
+      repo_count = 0
+
+      products = Product.where(conditions).all
+      products.each do |product|
+        conditions = { mirroring_enabled: !mirroring_enabled } # to only update the repos which need change
+        conditions[:enabled] = true if mirroring_enabled
+        repo_count += product.repositories.where(conditions).update_all(mirroring_enabled: mirroring_enabled)
+      end
+
+      raise RMT::CLI::Error, 'No repositories were modified.' unless (repo_count > 0)
+
+      puts "#{repo_count} repo(s) successfully #{mirroring_enabled ? 'enabled' : 'disabled'}."
     end
   end
 
@@ -37,21 +56,7 @@ class RMT::CLI::Repos < RMT::CLI::Base
     repository = Repository.find(repository_id)
     repository.mirroring_enabled = mirroring_enabled
     repository.save!
-    puts "Repo successfully #{mirroring_enabled ? 'enabled' : 'disabled'}."
-  end
-
-  def change_product_mirroring(mirroring_enabled, identifier, version, arch)
-    conditions = { identifier: identifier, version: version }
-    conditions[:arch] = arch if arch
-    repo_count = 0
-
-    products = Product.where(conditions).all
-    products.each do |product|
-      conditions = { mirroring_enabled: !mirroring_enabled } # to only update the repos which need change
-      conditions[:enabled] = true if mirroring_enabled
-      repo_count += product.repositories.where(conditions).update_all(mirroring_enabled: mirroring_enabled)
-    end
-    puts "#{repo_count} repo(s) successfully #{mirroring_enabled ? 'enabled' : 'disabled'}."
+    puts "Repository successfully #{mirroring_enabled ? 'enabled' : 'disabled'}."
   end
 
   def list_repositories(scope: :enabled)
