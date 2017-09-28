@@ -1,3 +1,5 @@
+# rubocop:disable Rails/Exit
+
 class RMT::CLI::Base < Thor
 
   class << self
@@ -23,6 +25,17 @@ class RMT::CLI::Base < Thor
       class_options_help(shell)
 
       shell.say "Run '#{basename} COMMAND help [SUBCOMMAND]' for more information on a command."
+    end
+
+    def dispatch(command, given_args, given_opts, config)
+      super(command, given_args, given_opts, config)
+    rescue RMT::CLI::Error => e
+      warn e.to_s
+      if (config[:class_options] && config[:class_options]['debug'])
+        warn e.cause ? e.cause.inspect : e.inspect
+        warn e.cause ? e.cause.backtrace : e.backtrace
+      end
+      exit 1
     end
 
   end

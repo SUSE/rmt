@@ -20,7 +20,6 @@ module RMT::CLI::Mirror
         repository.save!
       rescue RMT::Mirror::Exception => e
         warn e.to_s
-        exit 1
       end
     end
   end

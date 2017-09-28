@@ -1,6 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe RMT::RepoManager do
+# rubocop:disable RSpec/NestedGroups
+
+RSpec.describe RMT::CLI::Repos do
   describe '#execute!' do
     before do
       # disable output to stdout while running specs

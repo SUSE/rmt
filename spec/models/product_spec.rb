@@ -22,8 +22,8 @@ RSpec.describe Product, type: :model do
     end
   end
 
-  describe '#mirrored?' do
-    subject { product.mirrored? }
+  describe '#mirror?' do
+    subject { product.mirror? }
 
     context 'without any repositories' do
       let(:product) { create :product }

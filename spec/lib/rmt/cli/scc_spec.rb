@@ -3,7 +3,7 @@ require 'webmock/rspec'
 
 # rubocop:disable RSpec/MultipleExpectations
 
-RSpec.describe RMT::SCCSync do
+RSpec.describe RMT::CLI::SCC do
   describe '#sync' do
     context 'with SCC credentials' do
       let(:products) do
@@ -21,6 +21,12 @@ RSpec.describe RMT::SCCSync do
       let(:api_double) { double }
 
       before do
+        # HACK: to prevent 'does not implement' verifying doubles error
+        Settings.class_eval do
+          def scc
+          end
+        end
+
         allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
 
         expect(SUSE::Connect::Api).to receive(:new) { api_double }
@@ -78,7 +84,7 @@ RSpec.describe RMT::SCCSync do
       end
 
       it 'exits with an error message' do
-        expect { described_class.new.sync }.to raise_error RMT::SCCSync::CredentialsError
+        expect { described_class.new.sync }.to raise_error RMT::CLI::Error, 'SCC credentials not set.'
       end
     end
   end

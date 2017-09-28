@@ -7,6 +7,10 @@ class RMT::CLI::SCC < RMT::CLI::Base
 
     scc = RMT::SCC.new(options)
     scc.sync
+  rescue RMT::SCC::CredentialsError, SUSE::Connect::Api::InvalidCredentialsError => e
+    raise RMT::CLI::Error, e.to_s
+  rescue Interrupt
+    raise RMT::CLI::Error, 'Interrupted! You need to rerun this command to have a consistent state.'
   end
 
 end

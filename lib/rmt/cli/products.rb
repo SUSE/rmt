@@ -23,7 +23,7 @@ class RMT::CLI::Products < RMT::CLI::Base
   end
 
   desc 'disable', 'Disable a product'
-  def enable
+  def disable
     # TODO: should behave the same as 'repos disable [product_identifier]'
   end
 

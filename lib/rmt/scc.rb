@@ -6,7 +6,7 @@ class RMT::SCC
 
   def initialize(options = {})
     @logger = Logger.new(STDOUT)
-    @logger.level = options[:debug] ? Logger::DEBUG : Logger::INFO
+    @logger.level = (options[:debug]) ? Logger::DEBUG : Logger::INFO
   end
 
   def sync
@@ -39,10 +39,6 @@ class RMT::SCC
     end
 
     @logger.info('Done!')
-  rescue SUSE::Connect::Api::InvalidCredentialsError
-    raise CredentialsError, 'SCC credentials not valid.'
-  rescue Interrupt
-    @logger.error('Interrupted! You need to rerun this command to have a consistent state.')
   end
 
   protected
