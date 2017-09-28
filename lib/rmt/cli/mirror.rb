@@ -1,7 +1,6 @@
 module RMT::CLI::Mirror
 
   def self.mirror
-    require 'rmt'
     require 'rmt/mirror'
     require 'rmt/config'
 

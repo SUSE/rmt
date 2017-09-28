@@ -5,10 +5,8 @@ require 'rails'
 require 'active_model/railtie'
 require 'active_record/railtie'
 
-unless ENV['RAILS_EXECUTABLE']
-  require 'action_controller/railtie'
-  require 'action_view/railtie'
-end
+require 'action_controller/railtie'
+require 'action_view/railtie'
 
 # require 'action_mailer/railtie'
 # require 'active_job/railtie'

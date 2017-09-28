@@ -1,6 +1,16 @@
+require 'thor'
+require 'rmt'
+require 'rmt/cli'
+require 'rmt/cli/base'
+require 'rmt/cli/mirror'
+require 'rmt/cli/products'
+require 'rmt/cli/repos'
+require 'rmt/cli/scc'
+require 'terminal-table'
+
 class RMT::CLI::Main < RMT::CLI::Base
 
-  class_option :debug, desc: 'Enable debug output', aliases: '-d', required: false
+  class_option :debug, desc: 'Enable debug output', type: :boolean, aliases: '-d', required: false
 
   desc 'products', 'List and modify products'
   subcommand 'products', RMT::CLI::Products
