@@ -4,7 +4,14 @@ module RMT::CLI::Mirror
     require 'rmt/mirror'
     require 'rmt/config'
 
-    Repository.where(mirroring_enabled: true).each do |repository|
+    repositories = Repository.where(mirroring_enabled: true)
+
+    if repositories.empty?
+      warn 'There are no repositories marked for mirroring.'
+      return
+    end
+
+    repositories.each do |repository|
       begin
         RMT::Mirror.new(
           mirroring_base_dir: Settings.mirroring.base_dir,
