@@ -76,10 +76,10 @@ class RMT::CLI::Repos < RMT::CLI::Base
       ]
     end
 
-    if (rows.count > 0)
-      puts Terminal::Table.new headings: ['ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'], rows: rows
+    if rows.empty?
+      warn 'No repositories enabled.'
     else
-      puts 'No repositories enabled.'
+      puts Terminal::Table.new headings: ['ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'], rows: rows
     end
   end
 

@@ -8,7 +8,7 @@ class RMT::CLI::Products < RMT::CLI::Base
   option :release_stage, aliases: '-r', type: :string, desc: 'beta, released'
   def list
     attributes = %i[id name version arch product_string release_stage mirror? last_mirrored_at]
-    headings = ['ID', 'Name', 'Version', 'Architecture', 'Product string', 'Release stage', 'Mirror?']
+    headings = ['ID', 'Name', 'Version', 'Architecture', 'Product string', 'Release stage', 'Mirror?', 'Last mirrored']
 
     conditions = options[:release_stage] ? { release_stage: options[:release_stage] } : {}
 
@@ -16,7 +16,11 @@ class RMT::CLI::Products < RMT::CLI::Base
       attributes.map { |a| product.public_send(a) }
     end
 
-    puts Terminal::Table.new headings: headings, rows: rows
+    if rows.empty?
+      warn 'No products found in the DB. Please run "rmt-cli scc sync" to synchronize with SUSE Customer Center first.'
+    else
+      puts Terminal::Table.new headings: headings, rows: rows
+    end
   end
 
   desc 'enable', 'Enable mirroring of product repositories by product ID or product string'

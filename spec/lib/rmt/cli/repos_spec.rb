@@ -108,7 +108,7 @@ RSpec.describe RMT::CLI::Repos do
       end
 
       it 'outputs success message' do
-        expect(stdout.string).to eq("No repositories enabled.\n")
+        expect(stderr.string).to eq("No repositories enabled.\n")
       end
     end
 
