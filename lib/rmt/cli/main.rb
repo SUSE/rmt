@@ -1,8 +1,12 @@
 require 'thor'
 require 'terminal-table'
 
+# rubocop:disable Rails/Output
+
 class RMT::CLI::Main < RMT::CLI::Base
 
+  class_option :help, desc: 'Show this help', type: :boolean, aliases: '-h', required: false
+  class_option :version, desc: 'Show RMT version', type: :boolean, aliases: '-v', required: false
   class_option :debug, desc: 'Enable debug output', type: :boolean, aliases: '-d', required: false
 
   desc 'products', 'List and modify products'
@@ -21,7 +25,9 @@ class RMT::CLI::Main < RMT::CLI::Base
 
   desc 'version', 'Show RMT version'
   def version
-    puts RMT::VERSION # rubocop:disable Rails/Output
+    puts RMT::VERSION
   end
+
+  map %w[--version -v] => :version
 
 end

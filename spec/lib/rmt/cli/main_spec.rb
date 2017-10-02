@@ -12,8 +12,24 @@ RSpec.describe RMT::CLI::Main do
       end
     end
 
-    context 'version' do
+    context 'version argument' do
       let(:argv) { ['version'] }
+
+      it 'displays version' do
+        expect { command }.to output("#{RMT::VERSION}\n").to_stdout
+      end
+    end
+
+    context 'version -v option' do
+      let(:argv) { ['-v'] }
+
+      it 'displays version' do
+        expect { command }.to output("#{RMT::VERSION}\n").to_stdout
+      end
+    end
+
+    context 'version --version option' do
+      let(:argv) { ['--version'] }
 
       it 'displays version' do
         expect { command }.to output("#{RMT::VERSION}\n").to_stdout
