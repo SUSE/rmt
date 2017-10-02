@@ -1,11 +1,4 @@
 require 'thor'
-require 'rmt'
-require 'rmt/cli'
-require 'rmt/cli/base'
-require 'rmt/cli/mirror'
-require 'rmt/cli/products'
-require 'rmt/cli/repos'
-require 'rmt/cli/scc'
 require 'terminal-table'
 
 class RMT::CLI::Main < RMT::CLI::Base
@@ -28,7 +21,6 @@ class RMT::CLI::Main < RMT::CLI::Base
 
   desc 'version', 'Show RMT version'
   def version
-    require 'rmt'
     puts RMT::VERSION # rubocop:disable Rails/Output
   end
 
