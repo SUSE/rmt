@@ -8,14 +8,14 @@ Organization (mirroring) credentials are required to mirror SUSE repositories.
 
 ### SUSE products
 
-* Run `rmt-scc sync` to download available products and repositories data for your organization from SCC
-* Run `rmt-products list` to see the list of products that are available for your organization
-* Use the `rmt-repos` command to choose which product repositories to mirror, for example:
+* Run `rmt-cli scc sync` to download available products and repositories data for your organization from SCC
+* Run `rmt-cli products list` to see the list of products that are available for your organization
+* Use the `rmt-cli repos` command to choose which product repositories to mirror, for example:
   ```
   rmt-repos enable SLES/12.2/x86_64
   ```
   The above command would select the mandatory (`pool`, `updates`) SLES 12 SP2 repositories to be mirrored.
-* Run `rmt-mirror` to mirror selected repositories and make their content available through RMT
+* Run `rmt-cli mirror` to mirror selected repositories and make their content available through RMT
 * Register client against RMT by running `SUSEConnect --url https://rmt_hostname`
   After successful registration the repositories from RMT will be used by `zypper` on the client machine.
 
