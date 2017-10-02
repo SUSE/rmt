@@ -1,22 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe RMT::CLI::Products do
-  include_context 'console output'
-
   describe '#list' do
     let(:argv) { ['list'] }
 
     context 'with empty database' do
-      before do
-        described_class.start(argv)
-      end
+      subject(:command) { described_class.start(argv) }
 
       it 'stdout is empty' do
-        expect(stdout.string).to be_empty
-      end
-
-      it 'stderr contains warning' do
-        expect(stderr.string).to eq("No products found in the DB. Please run \"rmt-cli scc sync\" to synchronize with SUSE Customer Center first.\n")
+        expect { described_class.start(argv) }.to output('').to_stdout.and output(
+          "No products found in the DB. Please run \"rmt-cli scc sync\" to synchronize with SUSE Customer Center first.\n"
+        ).to_stderr
       end
     end
 
@@ -40,26 +34,17 @@ RSpec.describe RMT::CLI::Products do
         ).to_s + "\n"
       end
 
-      before do
-        described_class.start(argv)
-      end
-
       it 'stdout contains products table' do
-        expect(stdout.string).to eq(expected_output)
-      end
-
-      it 'stderr is empty' do
-        expect(stderr.string).to be_empty
+        expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
       end
     end
   end
 
   describe '#enable' do
     let(:product) { FactoryGirl.create :product, :with_not_mirrored_repositories }
+    let(:expected_output) { "#{product.repositories.where(enabled: true).count} repo(s) successfully enabled.\n" }
 
-    before do
-      described_class.start(argv)
-    end
+    before { expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr }
 
     context 'by product ID' do
       let(:argv) { ['enable', product.id.to_s] }
@@ -68,14 +53,6 @@ RSpec.describe RMT::CLI::Products do
         product.repositories.each do |repository|
           expect(repository.mirroring_enabled).to eq(repository.enabled)
         end
-      end
-
-      it 'stdout contains success message' do
-        expect(stdout.string).to eq("#{product.repositories.where(enabled: true).count} repo(s) successfully enabled.\n")
-      end
-
-      it 'stderr is empty' do
-        expect(stderr.string).to be_empty
       end
     end
 
@@ -87,57 +64,34 @@ RSpec.describe RMT::CLI::Products do
           expect(repository.mirroring_enabled).to eq(repository.enabled)
         end
       end
-
-      it 'stdout contains success message' do
-        expect(stdout.string).to eq("#{product.repositories.where(enabled: true).count} repo(s) successfully enabled.\n")
-      end
-
-      it 'stderr is empty' do
-        expect(stderr.string).to be_empty
-      end
     end
   end
 
   describe '#disable' do
     let(:product) { FactoryGirl.create :product, :with_mirrored_repositories }
+    let(:expected_output) { "#{product.repositories.count} repo(s) successfully disabled.\n" }
 
     before do
-      described_class.start(argv)
+      expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
     end
 
     context 'by product ID' do
       let(:argv) { ['disable', product.id.to_s] }
 
-      it 'enables the mandatory product repositories' do
+      it 'disabled the mandatory product repositories' do
         product.repositories.each do |repository|
           expect(repository.mirroring_enabled).to eq(false)
         end
-      end
-
-      it 'stdout contains success message' do
-        expect(stdout.string).to eq("#{product.repositories.count} repo(s) successfully disabled.\n")
-      end
-
-      it 'stderr is empty' do
-        expect(stderr.string).to be_empty
       end
     end
 
     context 'by product string' do
       let(:argv) { ['disable', product.product_string] }
 
-      it 'enables the mandatory product repositories' do
+      it 'disabled the mandatory product repositories' do
         product.repositories.each do |repository|
           expect(repository.mirroring_enabled).to eq(false)
         end
-      end
-
-      it 'stdout contains success message' do
-        expect(stdout.string).to eq("#{product.repositories.count} repo(s) successfully disabled.\n")
-      end
-
-      it 'stderr is empty' do
-        expect(stderr.string).to be_empty
       end
     end
   end
