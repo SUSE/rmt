@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'webmock/rspec'
 
 # rubocop:disable RSpec/MultipleExpectations
 
@@ -21,7 +20,7 @@ RSpec.describe RMT::CLI::SCC do
       let(:api_double) { double }
 
       before do
-        # HACK: to prevent 'does not implement' verifying doubles error
+        # to prevent 'does not implement' verifying doubles error
         Settings.class_eval do
           def scc
           end
@@ -85,6 +84,20 @@ RSpec.describe RMT::CLI::SCC do
 
       it 'exits with an error message' do
         expect { described_class.new.sync }.to raise_error RMT::CLI::Error, 'SCC credentials not set.'
+      end
+    end
+
+    context 'with an interrupt' do
+      before do
+        Settings.class_eval do
+          def scc
+          end
+        end
+        allow(Settings).to receive(:scc) { raise Interrupt }
+      end
+
+      it 'exits with an error message' do
+        expect { described_class.new.sync }.to raise_error RMT::CLI::Error, 'Interrupted! You need to rerun this command to have a consistent state.'
       end
     end
   end
