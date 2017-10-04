@@ -32,6 +32,8 @@ class RMT::SCC
       update_auth_token(item)
     end
 
+    remove_suse_repos_without_tokens
+
     @logger.info('Updating subscriptions')
     data = scc_api_client.list_subscriptions
     data.each do |item|
@@ -110,6 +112,10 @@ class RMT::SCC
       subscription_product_class.product_class = item_class
       subscription_product_class.save!
     end
+  end
+
+  def remove_suse_repos_without_tokens
+    Repository.where(auth_token: nil).where('external_url LIKE ?', 'https://updates.suse.com%').delete_all
   end
 
 end
