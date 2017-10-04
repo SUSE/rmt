@@ -76,59 +76,59 @@ RSpec.describe RMT::SCC do
         end
       end
     end
+  end
 
-    context 'removes SUSE repositories without auth tokens' do
-      let(:api_double) { double }
-      let!(:suse_repo_with_token) { FactoryGirl.create(:repository, :with_products, auth_token: 'auth_token') }
-      let!(:suse_repo_without_token) do
-        FactoryGirl.create(
-          :repository,
-          :with_products,
-          auth_token: nil,
-          external_url: 'https://updates.suse.com/repos/dummy/'
-        )
-      end
-      let!(:other_repo_without_token) do
-        FactoryGirl.create(
-          :repository,
-          :with_products,
-          auth_token: nil,
-          external_url: 'https://example.com/repos/not/updates.suse.com/'
-        )
-      end
+  describe '#remove_suse_repos_without_tokens' do
+    let(:api_double) { double }
+    let!(:suse_repo_with_token) { FactoryGirl.create(:repository, :with_products, auth_token: 'auth_token') }
+    let!(:suse_repo_without_token) do
+      FactoryGirl.create(
+        :repository,
+        :with_products,
+        auth_token: nil,
+        external_url: 'https://updates.suse.com/repos/dummy/'
+      )
+    end
+    let!(:other_repo_without_token) do
+      FactoryGirl.create(
+        :repository,
+        :with_products,
+        auth_token: nil,
+        external_url: 'https://example.com/repos/not/updates.suse.com/'
+      )
+    end
 
-      before do
-        # to prevent 'does not implement' verifying doubles error
-        Settings.class_eval do
-          def scc
-          end
+    before do
+      # to prevent 'does not implement' verifying doubles error
+      Settings.class_eval do
+        def scc
         end
-
-        allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
-
-        expect(SUSE::Connect::Api).to receive(:new) { api_double }
-        expect(api_double).to receive(:list_products) { [] }
-        expect(api_double).to receive(:list_repositories) { [] }
-        expect(api_double).to receive(:list_subscriptions) { [] }
-
-        # disable output to stdout while running specs
-        allow(STDOUT).to receive(:puts)
-        allow(STDOUT).to receive(:write)
-
-        described_class.new.sync
       end
 
-      it 'SUSE repos with auth_tokens persist' do
-        expect { suse_repo_with_token.reload }.not_to raise_error
-      end
+      allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
 
-      it 'SUSE repos without auth_tokens are removed' do
-        expect { suse_repo_without_token.reload }.to raise_error(ActiveRecord::RecordNotFound)
-      end
+      expect(SUSE::Connect::Api).to receive(:new) { api_double }
+      expect(api_double).to receive(:list_products) { [] }
+      expect(api_double).to receive(:list_repositories) { [] }
+      expect(api_double).to receive(:list_subscriptions) { [] }
 
-      it 'other repos without auth_tokens persist' do
-        expect { other_repo_without_token.reload }.not_to raise_error
-      end
+      # disable output to stdout while running specs
+      allow(STDOUT).to receive(:puts)
+      allow(STDOUT).to receive(:write)
+
+      described_class.new.sync
+    end
+
+    it 'SUSE repos with auth_tokens persist' do
+      expect { suse_repo_with_token.reload }.not_to raise_error
+    end
+
+    it 'SUSE repos without auth_tokens are removed' do
+      expect { suse_repo_without_token.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'other repos without auth_tokens persist' do
+      expect { other_repo_without_token.reload }.not_to raise_error
     end
   end
 end
