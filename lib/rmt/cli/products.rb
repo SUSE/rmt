@@ -10,9 +10,7 @@ class RMT::CLI::Products < RMT::CLI::Base
     attributes = %i[id name version arch product_string release_stage mirror? last_mirrored_at]
     headings = ['ID', 'Name', 'Version', 'Architecture', 'Product string', 'Release stage', 'Mirror?', 'Last mirrored']
 
-    conditions = options[:release_stage] ? { release_stage: options[:release_stage] } : {}
-
-    rows = Product.where(conditions).map do |product|
+    rows = Product.with_release_stage(options[:release_stage]).map do |product|
       attributes.map { |a| product.public_send(a) }
     end
 
@@ -25,34 +23,31 @@ class RMT::CLI::Products < RMT::CLI::Base
 
   desc 'enable', 'Enable mirroring of product repositories by product ID or product string'
   def enable(target)
-    repo_id = Integer(target, 10) rescue nil
-    if repo_id
-      change_product_mirroring_by_id(repo_id, true)
-    else
-      identifier, version, arch = target.split('/')
-      RMT::CLI::Repos.change_product_mirroring(true, identifier, version, arch)
-    end
+    change_product(target, true)
   end
 
   desc 'disable', 'Disable mirroring of product repositories by product ID or product string'
   def disable(target)
-    repo_id = Integer(target, 10) rescue nil
-    if repo_id
-      change_product_mirroring_by_id(repo_id, false)
-    else
-      identifier, version, arch = target.split('/')
-      RMT::CLI::Repos.change_product_mirroring(false, identifier, version, arch)
-    end
+    change_product(target, false)
   end
 
   protected
+
+  def change_product(target, set_enabled)
+    repo_id = Integer(target, 10) rescue nil
+    if repo_id
+      change_product_mirroring_by_id(repo_id, set_enabled)
+    else
+      identifier, version, arch = target.split('/')
+      RMT::CLI::Repos.change_product_mirroring(set_enabled, identifier, version, arch)
+    end
+  end
 
   def change_product_mirroring_by_id(id, mirroring_enabled)
     conditions = { mirroring_enabled: !mirroring_enabled } # to only update the repos which need change
     conditions[:enabled] = true if mirroring_enabled
 
-    product = Product.find(id)
-    repo_count = product.repositories.where(conditions).update_all(mirroring_enabled: mirroring_enabled)
+    repo_count = Product.find(id).change_repositories_mirroring!(conditions, mirroring_enabled)
 
     raise RMT::CLI::Error, 'No repositories were modified.' unless (repo_count > 0)
 

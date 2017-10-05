@@ -20,4 +20,14 @@ class Repository < ApplicationRecord
     path
   end
 
+  def refresh_timestamp!
+    self.last_mirrored_at = DateTime.now.utc
+    save!
+  end
+
+  def change_mirroring!(mirroring_enabled)
+    self.mirroring_enabled = mirroring_enabled
+    save!
+  end
+
 end

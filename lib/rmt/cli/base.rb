@@ -24,7 +24,7 @@ class RMT::CLI::Base < Thor
       super(command, given_args, given_opts, config)
     rescue RMT::CLI::Error => e
       warn e.to_s
-      if (config[:shell]&.base&.options&.[]('debug'))
+      if config[:shell]&.base&.options&.[]('debug')
         warn e.cause ? e.cause.inspect : e.inspect
         warn e.cause ? e.cause.backtrace : e.backtrace
       end

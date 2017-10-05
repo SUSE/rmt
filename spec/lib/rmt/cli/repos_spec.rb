@@ -3,6 +3,8 @@ require 'rails_helper'
 # rubocop:disable RSpec/NestedGroups
 
 RSpec.describe RMT::CLI::Repos do
+  before { allow(described_class).to receive(:exit) { raise 'Called exit unexpectedly' } }
+
   describe '#enable' do
     subject(:repository) { FactoryGirl.create :repository, :with_products }
 

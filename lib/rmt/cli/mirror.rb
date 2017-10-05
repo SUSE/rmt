@@ -22,8 +22,7 @@ module RMT::CLI::Mirror
           logger: Logger.new(STDOUT)
         ).mirror
 
-        repository.last_mirrored_at = DateTime.now.utc
-        repository.save!
+        repository.refresh_timestamp!
       rescue RMT::Mirror::Exception => e
         warn e.to_s
       end
