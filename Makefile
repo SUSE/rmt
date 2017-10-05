@@ -6,16 +6,14 @@ all:
 	@:
 
 clean:
-	rm -rf $(NAME)-$(VERSION)/
 	rm -rf package/*.tar.bz2
 	rm -rf vendor/cache vendor/bundle
-	rm -rf .bundle
 
 dist: clean
 	@mkdir -p $(NAME)-$(VERSION)/
 
-	bundle.ruby2.4 --without=test:development install
-	bundle.ruby2.4 package
+	cp .bundle/config_packaging .bundle/config
+	bundler package --all
 
 	@cp -r app $(NAME)-$(VERSION)/
 	@cp -r bin $(NAME)-$(VERSION)/
@@ -26,16 +24,21 @@ dist: clean
 	@cp -r Gemfile.lock $(NAME)-$(VERSION)/
 	@cp -r lib $(NAME)-$(VERSION)/
 	@cp -r log/.keep $(NAME)-$(VERSION)/
-	@cp -r Makefile $(NAME)-$(VERSION)/
-	@cp -r public $(NAME)-$(VERSION)/
 	@cp -r Rakefile $(NAME)-$(VERSION)/
 	@cp -r README.md $(NAME)-$(VERSION)/
 	@cp -r tmp/.keep $(NAME)-$(VERSION)/
 	@cp -r vendor $(NAME)-$(VERSION)/
 	@cp -r .bundle $(NAME)-$(VERSION)/
+	@cp -r locale $(NAME)-$(VERSION)/
 
-	# Don't want to fetch anything from rubygems.org, install from vendor/cache only
-	sed -i '/rubygems\.org/d' $(NAME)-$(VERSION)/Gemfile
-	sed -i '/rubygems\.org/d' $(NAME)-$(VERSION)/Gemfile.lock
+	rm -rf $(NAME)-$(VERSION)/vendor/bundle
+	rm -rf $(NAME)-$(VERSION)/config/rmt.local.yml
+	rm -rf $(NAME)-$(VERSION)/config/database.yml
+
+	sed -i '/github:/d' $(NAME)-$(VERSION)/Gemfile
+	sed -i '/github:/d' $(NAME)-$(VERSION)/Gemfile.lock
+
 	tar cfvj package/$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)/
+	rm -rf $(NAME)-$(VERSION)/
+	rm .bundle/config
 

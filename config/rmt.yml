@@ -1,3 +1,16 @@
+database:
+  host: localhost
+  username: rmt
+  password:
+  adapter: mysql2
+  encoding: utf8
+  timeout: 5000
+  pool: 5
+
+scc:
+  username:
+  password:
+
 mirroring:
   base_dir: /srv/www/rmt/public/repo/
   mirror_url_prefix: /repo/
@@ -11,6 +24,3 @@ http_client:
   proxy_user:
   proxy_password:
 
-scc:
-  username: <%= ENV['RMT_ORGANIZATION_USERNAME'] %>
-  password: <%= ENV['RMT_ORGANIZATION_PASSWORD'] %>

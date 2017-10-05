@@ -18,6 +18,34 @@ require 'action_view/railtie'
 Bundler.require(*Rails.groups)
 
 module RMT
+  class CustomConfiguration < Rails::Application::Configuration
+
+    def database_configuration
+      # Load standard Rails DB config in development
+      return super unless Rails.env == 'production'
+
+      require 'rmt/config'
+      {
+        Rails.env => {
+          'host'     => Settings.database.host,
+          'username' => Settings.database.username,
+          'password' => Settings.database.password,
+          'adapter'  => Settings.database.adapter,
+          'encoding' => Settings.database.encoding,
+          'timeout'  => Settings.database.timeout,
+          'pool'     => Settings.database.pool
+        }
+      }
+    end
+
+  end
+
+  Rails::Application.class_eval do
+    def config
+      @config ||= RMT::CustomConfiguration.new(self.class.find_root(self.class.called_from))
+    end
+  end
+
   class Application < Rails::Application
 
     # Initialize configuration defaults for originally generated Rails version.

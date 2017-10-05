@@ -1,4 +1,4 @@
-%define www_base        /srv/www
+%define www_base        /srv/www/rmt/
 
 Name:           rmt
 Version:        0.0.1
@@ -10,31 +10,35 @@ Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-rpmlintrc
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
-Requires(post): ruby2.4
-Requires(post): ruby2.4-rubygem-bundler
-Requires(post): ruby2.4-rubygem-nio4r
-Requires(post): ruby2.4-rubygem-nokogiri
-Requires(post): ruby2.4-rubygem-puma
-Requires(post): ruby2.4-rubygem-sqlite3
-Requires(post): ruby2.4-rubygem-websocket-driver
+Requires: ruby ruby2.4-rubygem-bundler mariadb
+Requires(pre): ruby2.4-rubygem-bundler
+
+BuildRequires: gcc ruby-devel libffi-devel libmysqlclient-devel libxml2-devel libxslt-devel
 
 %description
-Subscription management tool NG
+This tool allows you to mirror RPM repositories in your own private network.
 
 %prep
 %setup
 
 %build
+bundle.ruby2.4 install --local --without test development
 
 %install
-mkdir -p %{buildroot}%{www_base}/rmt/
-cp -a * %{buildroot}%{www_base}/rmt/
+mkdir -p %{buildroot}%{www_base}
+cp -ar . %{buildroot}%{www_base}
+find %{buildroot}%{www_base} -name '*.c' -exec rm {} \;
+find %{buildroot}%{www_base} -name '*.h' -exec rm {} \;
+
+mkdir %{buildroot}/etc/
+mv %{buildroot}%{www_base}/config/rmt.yml %{buildroot}/etc/rmt.conf
+rm -rf %{buildroot}%{www_base}/vendor/cache
 
 %files
 %defattr(-,root,root)
-%{www_base}/rmt/
+%{www_base}
+/etc/rmt.conf
 
 %post
-cd /srv/www/rmt/ && bundle.ruby2.4 --without=test:development
 
 %changelog
