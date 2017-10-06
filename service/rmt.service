@@ -1,0 +1,16 @@
+[Unit]
+Description=RMT API server
+Requires=mysql.service
+After=rmt-migration.service
+
+[Service]
+Type=forking
+User=rmt
+WorkingDirectory=/srv/www/rmt
+ExecStart=/srv/www/rmt/bin/rails server -e production --daemon
+ExecStop=/usr/bin/kill -INT cat$(/srv/www/rmt/tmp/pids/server.pid)
+PIDFile=/srv/www/rmt/tmp/pids/server.pid
+Restart=always
+
+[Install]
+WantedBy=rmt.target
