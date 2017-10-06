@@ -10,10 +10,9 @@ Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-rpmlintrc
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
-Requires: ruby ruby2.4-rubygem-bundler mariadb
-Requires(pre): ruby2.4-rubygem-bundler
+BuildRequires: ruby2.4 ruby2.4-devel ruby2.4-rubygem-bundler gcc libffi-devel libmysqlclient-devel libxml2-devel libxslt-devel
 
-BuildRequires: gcc ruby-devel libffi-devel libmysqlclient-devel libxml2-devel libxslt-devel
+Requires: ruby2.4 mariadb
 
 %description
 This tool allows you to mirror RPM repositories in your own private network.
