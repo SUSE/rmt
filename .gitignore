@@ -19,6 +19,7 @@
 
 .byebug_history
 package/*.tar.bz2
+package/.osc
 
 vendor/
 coverage/

@@ -4,6 +4,18 @@
 This tool allows you to mirror RPM repositories in your own private network.
 Organization (mirroring) credentials are required to mirror SUSE repositories.
 
+## Installation
+
+RMT currently gets build for these distributions: `SLE_12_SP2`, `SLE_12_SP3`, `openSUSE_Leap_42.2`, `openSUSE_Leap_42.3`, `openSUSE_Tumbleweed`.
+To add the repository, please call: (replace `<dist>` with your distribution)
+
+`zypper ar -f https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/<dist>/systemsmanagement:SCC:RMT.repo`
+
+Please note that on SLES 12 and openSUSE Leap 42.2 you will need to add another repository which provides ruby 2.4, like:
+`https://download.opensuse.org/repositories/OBS:/Server:/Unstable/SLE_12_SP3/OBS:Server:Unstable.repo`
+
+To install rmt, please run: `zypper in rmt`
+
 ## Usage
 
 ### SUSE products
@@ -86,6 +98,14 @@ EOFF
 * Add your organization credentials to `config/rmt.yml`
 * Run `rails server` to run the web-server
 
+### Packaging
+
+The package is build in the OBS at: https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT/rmt
+To initialize the package directory go to `package/` and run: `osc co systemsmanagement:SCC:RMT rmt -o .`
+
+To build the package with updated sources, call `make dist` and then build for your distribution with:
+
+`osc build <dist> x86_64 --no-verify` where <dist> can be one of: `SLE_12_SP2`, `SLE_12_SP3`, `openSUSE_Leap_42.2`, `openSUSE_Leap_42.3`, `openSUSE_Tumbleweed`
 
 ### With docker-compose
 
@@ -96,4 +116,3 @@ docker-compose up
 ```
 
 And it will be accessible at http://localhost:8080/ .
-
