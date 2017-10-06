@@ -12,7 +12,7 @@ To add the repository, please call: (replace `<dist>` with your distribution)
 `zypper ar -f https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/<dist>/systemsmanagement:SCC:RMT.repo`
 
 Please note that on SLES 12 and openSUSE Leap 42.2 you will need to add another repository which provides ruby 2.4, like:
-`https://download.opensuse.org/repositories/OBS:/Server:/Unstable/SLE_12_SP2/`
+`https://download.opensuse.org/repositories/OBS:/Server:/Unstable/SLE_12_SP3/OBS:Server:Unstable.repo`
 
 To install rmt, please run: `zypper in rmt`
 
@@ -98,6 +98,10 @@ EOFF
 * Add your organization credentials to `config/rmt.yml`
 * Run `rails server` to run the web-server
 
+### Packaging
+
+The package is build in the OBS at: https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT/rmt
+To initialize the package directory go to package/ and run: `osc co systemsmanagement:SCC:RMT rmt -o .`
 
 ### With docker-compose
 

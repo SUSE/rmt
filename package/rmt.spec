@@ -6,19 +6,24 @@ Release:        0
 Summary:        Repository Mirroring Tool
 License:        GPL-2.0+
 Group:          Productivity/Networking/Web/Proxy
+Url:            https://software.opensuse.org/package/rmt
+
 Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-rpmlintrc
+Patch0:         use-ruby-2.4-in-rmt-cli.patch
+
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
 BuildRequires: ruby2.4 ruby2.4-devel ruby2.4-rubygem-bundler gcc libffi-devel libmysqlclient-devel libxml2-devel libxslt-devel
 
-Requires: ruby2.4 mariadb
+Requires: ruby2.4 ruby2.4-rubygem-bundler mariadb
 
 %description
 This tool allows you to mirror RPM repositories in your own private network.
 
 %prep
 %setup
+%patch0 -p1
 
 %build
 bundle.ruby2.4 install --local --without test development
