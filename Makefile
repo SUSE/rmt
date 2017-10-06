@@ -30,6 +30,7 @@ dist: clean
 	@cp -r vendor $(NAME)-$(VERSION)/
 	@cp -r .bundle $(NAME)-$(VERSION)/
 	@cp -r locale $(NAME)-$(VERSION)/
+	@cp -r service $(NAME)-$(VERSION)/
 
 	rm -rf $(NAME)-$(VERSION)/vendor/bundle
 	rm -rf $(NAME)-$(VERSION)/config/rmt.local.yml

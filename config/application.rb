@@ -30,6 +30,7 @@ module RMT
           'host'     => Settings.database.host,
           'username' => Settings.database.username,
           'password' => Settings.database.password,
+          'database' => Settings.database.database,
           'adapter'  => Settings.database.adapter,
           'encoding' => Settings.database.encoding,
           'timeout'  => Settings.database.timeout,
