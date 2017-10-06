@@ -16,17 +16,20 @@ dist: clean
 	bundler package --all
 
 	@cp -r app $(NAME)-$(VERSION)/
-	@cp -r bin/rails bin/rmt-cli $(NAME)-$(VERSION)/
+	@mkdir $(NAME)-$(VERSION)/bin
+	@cp -r bin/rails bin/rmt-cli $(NAME)-$(VERSION)/bin
 	@cp -r config $(NAME)-$(VERSION)/
 	@cp -r config.ru $(NAME)-$(VERSION)/
 	@cp -r db $(NAME)-$(VERSION)/
 	@cp -r Gemfile $(NAME)-$(VERSION)/
 	@cp -r Gemfile.lock $(NAME)-$(VERSION)/
 	@cp -r lib $(NAME)-$(VERSION)/
-	@cp -r log/.keep $(NAME)-$(VERSION)/
+	@mkdir $(NAME)-$(VERSION)/log
+	@cp -r log/.keep $(NAME)-$(VERSION)/log
 	@cp -r Rakefile $(NAME)-$(VERSION)/
 	@cp -r README.md $(NAME)-$(VERSION)/
-	@cp -r tmp/.keep $(NAME)-$(VERSION)/
+	@mkdir $(NAME)-$(VERSION)/tmp
+	@cp -r tmp/.keep $(NAME)-$(VERSION)/tmp
 	@cp -r vendor $(NAME)-$(VERSION)/
 	@cp -r .bundle $(NAME)-$(VERSION)/
 	@cp -r locale $(NAME)-$(VERSION)/
@@ -42,4 +45,3 @@ dist: clean
 	tar cfvj package/$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)/
 	rm -rf $(NAME)-$(VERSION)/
 	rm .bundle/config
-
