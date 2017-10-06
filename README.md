@@ -101,7 +101,11 @@ EOFF
 ### Packaging
 
 The package is build in the OBS at: https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT/rmt
-To initialize the package directory go to package/ and run: `osc co systemsmanagement:SCC:RMT rmt -o .`
+To initialize the package directory go to `package/` and run: `osc co systemsmanagement:SCC:RMT rmt -o .`
+
+To build the package with updated sources, call `make dist` and then build for your distribution with:
+
+`osc build <dist> x86_64 --no-verify` where <dist> can be one of: `SLE_12_SP2`, `SLE_12_SP3`, `openSUSE_Leap_42.2`, `openSUSE_Leap_42.3`, `openSUSE_Tumbleweed`
 
 ### With docker-compose
 

@@ -16,7 +16,7 @@ dist: clean
 	bundler package --all
 
 	@cp -r app $(NAME)-$(VERSION)/
-	@cp -r bin $(NAME)-$(VERSION)/
+	@cp -r bin/rails bin/rmt-cli $(NAME)-$(VERSION)/
 	@cp -r config $(NAME)-$(VERSION)/
 	@cp -r config.ru $(NAME)-$(VERSION)/
 	@cp -r db $(NAME)-$(VERSION)/
