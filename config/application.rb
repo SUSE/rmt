@@ -25,18 +25,7 @@ module RMT
       return super unless Rails.env == 'production'
 
       require 'rmt/config'
-      {
-        Rails.env => {
-          'host'     => Settings.database.host,
-          'username' => Settings.database.username,
-          'password' => Settings.database.password,
-          'database' => Settings.database.database,
-          'adapter'  => Settings.database.adapter,
-          'encoding' => Settings.database.encoding,
-          'timeout'  => Settings.database.timeout,
-          'pool'     => Settings.database.pool
-        }
-      }
+      { Rails.env => RMT::Config.get_db_config }
     end
 
   end
