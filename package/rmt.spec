@@ -36,8 +36,14 @@ bundle.ruby2.4 install --local --without test development
 %install
 mkdir -p %{buildroot}%{www_base}
 cp -ar . %{buildroot}%{www_base}
+mkdir -p %{buildroot}%{_bindir}
+ln -s %{www_base}/bin/rmt-cli %{buildroot}%{_bindir}
+
+# cleanup unneeded files
+rm -r %{buildroot}%{www_base}/vendor/bundle/ruby/2.4.0/cache
 find %{buildroot}%{www_base} -name '*.c' -exec rm {} \;
 find %{buildroot}%{www_base} -name '*.h' -exec rm {} \;
+
 mkdir -p %{buildroot}%{systemd_dir}
 install -m 444 service/rmt.target %{buildroot}%{systemd_dir}
 install -m 444 service/rmt.service %{buildroot}%{systemd_dir}
@@ -51,6 +57,7 @@ rm -rf %{buildroot}%{www_base}/vendor/cache
 %defattr(-,root,root)
 %attr(750,%{rmt_user},%{rmt_group}) %{www_base}
 %config(noreplace) /etc/rmt.conf
+%{_bindir}/rmt-cli
 %{_libexecdir}/systemd/system/rmt.target
 %{_libexecdir}/systemd/system/rmt.service
 %{_libexecdir}/systemd/system/rmt-migration.service
