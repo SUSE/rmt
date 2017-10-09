@@ -6,5 +6,5 @@ index 8e9c41d..16481f5 100755
 -#!/usr/bin/env ruby
 +#!/usr/bin/env ruby.ruby2.4
  
- require_relative '../config/boot'
- $LOAD_PATH.unshift File.expand_path(File.join(__dir__, '../lib/'))
+ # don't run as root
+ if Process.euid == 0
