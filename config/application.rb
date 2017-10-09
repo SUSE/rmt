@@ -25,7 +25,7 @@ module RMT
       return super unless Rails.env == 'production'
 
       require 'rmt/config'
-      { Rails.env => RMT::Config.get_db_config }
+      { Rails.env => RMT::Config.db_config }
     end
 
   end
