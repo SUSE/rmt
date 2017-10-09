@@ -88,7 +88,7 @@ Allow the rmt user from `config/database.yml` to login to your MySQL/MariaDB ser
 
 ```
 mysql -u root -p <<EOFF
-GRANT ALL PRIVILEGES ON \`rmt\_%\`.* TO rmt@localhost identified by 'rmt';
+GRANT ALL PRIVILEGES ON \`rmt\%\`.* TO rmt@localhost identified by 'rmt';
 FLUSH PRIVILEGES;
 EOFF
 ```
