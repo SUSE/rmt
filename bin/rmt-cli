@@ -1,7 +1,15 @@
 #!/usr/bin/env ruby
 
+# don't run as root
+if Process.euid == 0
+  require 'etc'
+  Process::UID.change_privilege(Etc.getpwnam('rmt').uid)
+end
+
+rmt_path = File.expand_path(File.join(File.dirname(File.realpath(__FILE__)), '..'))
+
 require_relative '../config/boot'
-$LOAD_PATH.unshift File.expand_path(File.join(__dir__, '../lib/'))
+$LOAD_PATH.unshift File.join(rmt_path, 'lib')
 
 require 'active_support'
 require 'active_record'
@@ -9,7 +17,7 @@ require 'erb'
 require 'yaml'
 require 'rmt/config'
 
-relative_load_paths = %w[lib lib/rmt app/models]
+relative_load_paths = %w[lib lib/rmt app/models].map { |dir| File.join(rmt_path, dir) }
 ActiveSupport::Dependencies.autoload_paths += relative_load_paths
 
 db_config = RMT::Config.db_config
