@@ -84,7 +84,7 @@ Supported Ruby versions are 2.4.1 and newer.
 
 * Setup MySQL/MariaDB:
 
-Allow the rmt user from `config/database.yml` to login to your MySQL/MariaDB server:
+Allow the rmt user from `config/rmt-local.yml` to login to your MySQL/MariaDB server:
 
 ```
 mysql -u root -p <<EOFF
