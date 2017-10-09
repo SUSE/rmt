@@ -32,6 +32,8 @@ class RMT::SCC
       update_auth_token(item)
     end
 
+    Repository.remove_suse_repos_without_tokens!
+
     @logger.info('Updating subscriptions')
     data = scc_api_client.list_subscriptions
     data.each do |item|

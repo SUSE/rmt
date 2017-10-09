@@ -30,4 +30,8 @@ class Repository < ApplicationRecord
     save!
   end
 
+  def self.remove_suse_repos_without_tokens!
+    where(auth_token: nil).where('external_url LIKE ?', 'https://updates.suse.com%').delete_all
+  end
+
 end
