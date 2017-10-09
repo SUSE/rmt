@@ -1,6 +1,7 @@
 [Unit]
 Description=RMT API server
 Requires=mysql.service
+Requires=rmt-migration.service
 After=rmt-migration.service
 
 [Service]

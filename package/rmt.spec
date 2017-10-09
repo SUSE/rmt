@@ -18,9 +18,10 @@ Patch1:         use-ruby-2.4-in-rails.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
-BuildRequires: ruby2.4 ruby2.4-devel ruby2.4-rubygem-bundler gcc libffi-devel libmysqlclient-devel libxml2-devel libxslt-devel
+BuildRequires: ruby2.4 ruby2.4-devel ruby2.4-rubygem-bundler gcc libffi-devel libmysqlclient-devel libxml2-devel libxslt-devel libcurl-devel
 
-Requires: ruby2.4 ruby2.4-rubygem-bundler mariadb timezone
+Requires: ruby2.4 ruby2.4-rubygem-bundler mariadb
+Requires(post): timezone
 
 %description
 This tool allows you to mirror RPM repositories in your own private network.
@@ -73,6 +74,8 @@ rm -rf %{buildroot}%{www_base}/vendor/cache
 %service_add_post rmt.target
 %service_add_post rmt.service
 %service_add_post rmt-migration.service
+cd /srv/www/rmt && bin/rails secrets:setup >/dev/null
+cd /srv/www/rmt && bin/rails runner -e production "Rails::Secrets.write({'production' => {'secret_key_base' => SecureRandom.hex(64)}}.to_yaml)"
 
 %preun
 %service_del_preun rmt-migration.service
