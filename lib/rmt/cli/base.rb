@@ -34,6 +34,11 @@ class RMT::CLI::Base < Thor
       warn 'Database error:'
       warn e.to_s
       exit 2
+    rescue ActiveRecord::NoDatabaseError => e
+      warn "The RMT database has not yet been initialized. Please run 'systemctl start rmt-migration' to setup the database."
+      warn 'Database error:'
+      warn e.to_s
+      exit 2
     end
 
   end
