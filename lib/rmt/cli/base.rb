@@ -39,6 +39,11 @@ class RMT::CLI::Base < Thor
       warn 'Database error:'
       warn e.to_s
       exit 2
+    rescue RMT::SCC::CredentialsError, ::SUSE::Connect::Api::InvalidCredentialsError => e
+      warn "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization."
+      warn 'Credentials error:'
+      warn e.to_s
+      exit 3
     end
 
   end
