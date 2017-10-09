@@ -7,7 +7,6 @@ require 'active_record/railtie'
 
 require 'action_controller/railtie'
 require 'action_view/railtie'
-
 # require 'action_mailer/railtie'
 # require 'active_job/railtie'
 # require 'action_cable/engine'
@@ -21,11 +20,10 @@ module RMT
   class CustomConfiguration < Rails::Application::Configuration
 
     def database_configuration
-      # Load standard Rails DB config in development
-      return super unless Rails.env.production?
-
       require 'rmt/config'
-      { Rails.env => RMT::Config.db_config }
+      key_name = Rails.env.production? ? 'database' : "database_#{Rails.env}"
+
+      { Rails.env => RMT::Config.db_config(key_name) }
     end
 
   end

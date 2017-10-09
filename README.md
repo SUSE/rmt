@@ -88,14 +88,35 @@ Allow the rmt user from `config/database.yml` to login to your MySQL/MariaDB ser
 
 ```
 mysql -u root -p <<EOFF
-GRANT ALL PRIVILEGES ON \`rmt\_%\`.* TO rmt@localhost identified by 'rmt';
+GRANT ALL PRIVILEGES ON \`rmt%\`.* TO rmt@localhost identified by 'rmt';
 FLUSH PRIVILEGES;
 EOFF
 ```
 
 * Install the dependencies by running `bundle install`
 * Create databases by running `rails db:create db:migrate`
-* Add your organization credentials to `config/rmt.yml`
+* Override the default settings in `config/rmt.local.yml`:
+    * Add your organization credentials to `scc` section
+    * Modify database settings, i.e.:
+    ```yaml
+    database: &database
+      host: localhost
+      username: rmt
+      password: rmt
+      database: rmt_development
+      adapter: mysql2
+      encoding: utf8
+      timeout: 5000
+      pool: 5
+
+    database_development:
+      <<: *database
+      database: rmt_development
+
+    database_test:
+      <<: *database
+      database: rmt_test
+    ```
 * Run `rails server` to run the web-server
 
 ### Packaging

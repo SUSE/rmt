@@ -8,16 +8,16 @@ Config.load_and_set_settings(
 )
 
 module RMT::Config
-  def self.db_config
+  def self.db_config(key = 'database')
     {
-      'host'     => Settings.database.host,
-      'username' => Settings.database.username,
-      'password' => Settings.database.password,
-      'database' => Settings.database.database,
-      'adapter'  => Settings.database.adapter,
-      'encoding' => Settings.database.encoding,
-      'timeout'  => Settings.database.timeout,
-      'pool'     => Settings.database.pool
+      'host'     => Settings[key].host,
+      'username' => Settings[key].username,
+      'password' => Settings[key].password,
+      'database' => Settings[key].database,
+      'adapter'  => Settings[key].adapter,
+      'encoding' => Settings[key].encoding,
+      'timeout'  => Settings[key].timeout,
+      'pool'     => Settings[key].pool
     }
   end
 end

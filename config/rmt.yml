@@ -1,4 +1,4 @@
-database:
+database: &database
   host: localhost
   database: rmt
   username: rmt
