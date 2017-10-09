@@ -29,6 +29,11 @@ class RMT::CLI::Base < Thor
         warn e.cause ? e.cause.backtrace : e.backtrace
       end
       exit 1
+    rescue Mysql2::Error => e
+      warn "Cannot connect to database server. Please make sure it is running and configured in '/etc/rmt.conf'."
+      warn 'Database error:'
+      warn e.to_s
+      exit 2
     end
 
   end
