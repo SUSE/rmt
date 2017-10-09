@@ -20,7 +20,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
 BuildRequires: ruby2.4 ruby2.4-devel ruby2.4-rubygem-bundler gcc libffi-devel libmysqlclient-devel libxml2-devel libxslt-devel
 
-Requires: ruby2.4 ruby2.4-rubygem-bundler mariadb
+Requires: ruby2.4 ruby2.4-rubygem-bundler mariadb timezone
 
 %description
 This tool allows you to mirror RPM repositories in your own private network.
