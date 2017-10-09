@@ -22,7 +22,7 @@ module RMT
 
     def database_configuration
       # Load standard Rails DB config in development
-      return super unless Rails.env == 'production'
+      return super unless Rails.env.production?
 
       require 'rmt/config'
       { Rails.env => RMT::Config.db_config }
