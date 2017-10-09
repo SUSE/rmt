@@ -36,19 +36,37 @@ class Product < ApplicationRecord
     distinct.joins(:repositories).where('repositories.enabled = true').group(:id).having('count(*)=count(CASE WHEN mirroring_enabled THEN 1 END)')
   }
 
-  scope :published, ->() { where(release_stage: 'released') }
+  scope :with_release_stage, lambda { |release_stage|
+    if release_stage
+      where(release_stage: release_stage)
+    else
+      all
+    end
+  }
 
   def has_extension?
     ProductsExtensionsAssociation.exists?(product_id: id)
   end
 
-  def mirrored?
+  def mirror?
     repositories.where(enabled: true, mirroring_enabled: false).empty?
+  end
+
+  def last_mirrored_at
+    repositories.where(mirroring_enabled: true).maximum(:last_mirrored_at)
   end
 
   def self.clean_up_version(version)
     return unless version
     version.tr('-', '.').chomp('.0')
+  end
+
+  def product_string
+    [identifier, version, arch].join('/')
+  end
+
+  def change_repositories_mirroring!(conditions, mirroring_enabled)
+    repositories.where(conditions).update_all(mirroring_enabled: mirroring_enabled)
   end
 
 end

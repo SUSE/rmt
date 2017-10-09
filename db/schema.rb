@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170919123818) do
+
+ActiveRecord::Schema.define(version: 20170926104853) do
 
   create_table "activations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "service_id", null: false
@@ -62,6 +63,7 @@ ActiveRecord::Schema.define(version: 20170919123818) do
     t.boolean "installer_updates", default: false, null: false
     t.boolean "mirroring_enabled", default: false, null: false
     t.string "local_path", null: false
+    t.datetime "last_mirrored_at"
     t.index ["external_url"], name: "index_repositories_on_external_url", unique: true
   end
 
