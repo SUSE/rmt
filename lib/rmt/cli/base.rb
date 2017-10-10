@@ -21,29 +21,40 @@ class RMT::CLI::Base < Thor
     end
 
     def dispatch(command, given_args, given_opts, config)
-      super(command, given_args, given_opts, config)
+      handle_exceptions { super(command, given_args, given_opts, config) }
     rescue RMT::CLI::Error => e
       warn e.to_s
       if config[:shell]&.base&.options&.[]('debug')
         warn e.cause ? e.cause.inspect : e.inspect
         warn e.cause ? e.cause.backtrace : e.backtrace
       end
-      exit 1
+      exit e.exit_code
+    end
+
+    protected
+
+    def handle_exceptions
+      yield
     rescue Mysql2::Error => e
-      warn "Cannot connect to database server. Please make sure it is running and configured in '/etc/rmt.conf'."
-      warn 'Database error:'
-      warn e.to_s
-      exit 2
-    rescue ActiveRecord::NoDatabaseError => e
-      warn "The RMT database has not yet been initialized. Please run 'systemctl start rmt-migration' to setup the database."
-      warn 'Database error:'
-      warn e.to_s
-      exit 2
-    rescue RMT::SCC::CredentialsError, ::SUSE::Connect::Api::InvalidCredentialsError => e
-      warn "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization."
-      warn 'Credentials error:'
-      warn e.to_s
-      exit 3
+      if e.message =~ /^Access denied/
+        raise RMT::CLI::Error.new(
+          "Cannot connect to database server. Please make sure it is running and configured in '/etc/rmt.conf'.",
+          RMT::CLI::Error::ERROR_DB
+        )
+      else
+        # Unexpected DB error, not handling it
+        raise e
+      end
+    rescue ActiveRecord::NoDatabaseError
+      raise RMT::CLI::Error.new(
+        "The RMT database has not yet been initialized. Please run 'systemctl start rmt-migration' to setup the database.",
+        RMT::CLI::Error::ERROR_DB
+      )
+    rescue RMT::SCC::CredentialsError, ::SUSE::Connect::Api::InvalidCredentialsError
+      raise RMT::CLI::Error.new(
+        "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization.",
+        RMT::CLI::Error::ERROR_SCC
+      )
     end
 
   end
