@@ -75,7 +75,8 @@ install -m 444 service/rmt.target %{buildroot}%{systemd_dir}
 install -m 444 service/rmt.service %{buildroot}%{systemd_dir}
 install -m 444 service/rmt-migration.service %{buildroot}%{systemd_dir}
 
-mv %{_builddir}/rmt.conf  %{buildroot}%{_sysconfdir}/rmt.conf
+mkdir -p %{buildroot}%{_sysconfdir}
+mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 rm -rf %{buildroot}%{www_base}/vendor/cache
 
 %files
