@@ -57,7 +57,7 @@ cp -p %SOURCE2 .
 %patch1 -p1
 
 %build
-bundle.ruby2.4 install --local --without test development
+bundle.ruby2.4 install %{?jobs:--jobs %jobs} --local --without test development
 
 %install
 mkdir -p %{buildroot}%{www_base}
