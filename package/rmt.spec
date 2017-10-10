@@ -41,6 +41,7 @@ BuildRequires:  libxslt-devel
 BuildRequires:  ruby2.4
 BuildRequires:  ruby2.4-devel
 BuildRequires:  ruby2.4-rubygem-bundler
+BuildRequires:  fdupes
 Requires:       mariadb
 Requires:       ruby2.4
 Requires:       ruby2.4-rubygem-bundler
@@ -84,6 +85,7 @@ rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/samples
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/test
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/ports
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/ext
+%fdupes %{buildroot}
 
 %files
 %defattr(-,root,root)
