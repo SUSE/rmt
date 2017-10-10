@@ -18,7 +18,7 @@
 
 %define www_base    /srv/www/rmt/
 %define systemd_dir %{_prefix}/lib/systemd/system/
-%define rmt_user    rmt
+%define rmt_user    _rmt
 %define rmt_group   nginx
 Name:           rmt
 Version:        0.0.1

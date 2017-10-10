@@ -6,7 +6,7 @@ Before=rmt.service
 
 [Service]
 Type=oneshot
-User=rmt
+User=_rmt
 WorkingDirectory=/srv/www/rmt
 ExecStart=/srv/www/rmt/bin/rails db:create db:migrate RAILS_ENV=production
 

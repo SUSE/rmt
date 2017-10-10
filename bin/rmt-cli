@@ -3,7 +3,7 @@
 # don't run as root
 if Process.euid == 0
   require 'etc'
-  Process::UID.change_privilege(Etc.getpwnam('rmt').uid)
+  Process::UID.change_privilege(Etc.getpwnam('_rmt').uid)
 end
 
 rmt_path = File.expand_path(File.join(File.dirname(File.realpath(__FILE__)), '..'))
