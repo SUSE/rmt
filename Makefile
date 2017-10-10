@@ -41,9 +41,6 @@ dist: clean
 	rm -rf $(NAME)-$(VERSION)/config/database.yml
 	rm -rf $(NAME)-$(VERSION)/config/secrets.yml.*
 
-	sed -i '/github:/d' $(NAME)-$(VERSION)/Gemfile
-	sed -i '/github:/d' $(NAME)-$(VERSION)/Gemfile.lock
-
 	tar cfvj package/$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)/
 	rm -rf $(NAME)-$(VERSION)/
 	rm .bundle/config
