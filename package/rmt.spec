@@ -1,27 +1,49 @@
+#
+# spec file for package rmt
+#
+# Copyright (c) 2017 SUSE LINUX GmbH, Nuernberg, Germany.
+#
+# All modifications and additions to the file contributed by third parties
+# remain the property of their copyright owners, unless otherwise agreed
+# upon. The license for this file, and modifications and additions to the
+# file, is the same license as for the pristine package itself (unless the
+# license for the pristine package is not an Open Source License, in which
+# case the license is the MIT License). An "Open Source License" is a
+# license that conforms to the Open Source Definition (Version 1.9)
+# published by the Open Source Initiative.
+
+# Please submit bugfixes or comments via http://bugs.opensuse.org/
+#
+
+
 %define www_base    /srv/www/rmt/
-%define systemd_dir /usr/lib/systemd/system/
+%define systemd_dir %{_prefix}/lib/systemd/system/
 %define rmt_user    rmt
 %define rmt_group   nginx
-
 Name:           rmt
 Version:        0.0.1
 Release:        0
 Summary:        Repository Mirroring Tool
 License:        GPL-2.0+
 Group:          Productivity/Networking/Web/Proxy
-Url:            https://software.opensuse.org/package/rmt
-
+URL:            https://software.opensuse.org/package/rmt
 Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-rpmlintrc
 Source2:        rmt.conf
 Patch0:         use-ruby-2.4-in-rmt-cli.patch
 Patch1:         use-ruby-2.4-in-rails.patch
-
-BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-
-BuildRequires: ruby2.4 ruby2.4-devel ruby2.4-rubygem-bundler gcc libffi-devel libmysqlclient-devel libxml2-devel libxslt-devel libcurl-devel
-
-Requires: ruby2.4 ruby2.4-rubygem-bundler mariadb
+BuildRequires:  gcc
+BuildRequires:  libcurl-devel
+BuildRequires:  libffi-devel
+BuildRequires:  libmysqlclient-devel
+BuildRequires:  libxml2-devel
+BuildRequires:  libxslt-devel
+BuildRequires:  ruby2.4
+BuildRequires:  ruby2.4-devel
+BuildRequires:  ruby2.4-rubygem-bundler
+Requires:       mariadb
+Requires:       ruby2.4
+Requires:       ruby2.4-rubygem-bundler
 Requires(post): timezone
 
 %description
@@ -30,7 +52,7 @@ This tool allows you to mirror RPM repositories in your own private network.
 %prep
 cp -p %SOURCE2 .
 
-%setup
+%setup -q
 %patch0 -p1
 %patch1 -p1
 
@@ -53,14 +75,13 @@ install -m 444 service/rmt.target %{buildroot}%{systemd_dir}
 install -m 444 service/rmt.service %{buildroot}%{systemd_dir}
 install -m 444 service/rmt-migration.service %{buildroot}%{systemd_dir}
 
-mkdir %{buildroot}/etc/
-mv %{_builddir}/rmt.conf  %{buildroot}/etc/rmt.conf
+mv %{_builddir}/rmt.conf  %{buildroot}%{_sysconfdir}/rmt.conf
 rm -rf %{buildroot}%{www_base}/vendor/cache
 
 %files
 %defattr(-,root,root)
-%attr(750,%{rmt_user},%{rmt_group}) %{www_base}
-%config(noreplace) /etc/rmt.conf
+%attr(755,%{rmt_user},%{rmt_group}) %{www_base}
+%config(noreplace) %{_sysconfdir}/rmt.conf
 %{_bindir}/rmt-cli
 %{_libexecdir}/systemd/system/rmt.target
 %{_libexecdir}/systemd/system/rmt.service
