@@ -78,6 +78,12 @@ install -m 444 service/rmt-migration.service %{buildroot}%{systemd_dir}
 mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 rm -rf %{buildroot}%{www_base}/vendor/cache
+rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/doc
+rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/examples
+rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/samples
+rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/test
+rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/ports
+rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/ext
 
 %files
 %defattr(-,root,root)
