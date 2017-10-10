@@ -36,8 +36,10 @@ dist: clean
 	@cp -r service $(NAME)-$(VERSION)/
 
 	rm -rf $(NAME)-$(VERSION)/vendor/bundle
+	rm -rf $(NAME)-$(VERSION)/config/rmt.yml
 	rm -rf $(NAME)-$(VERSION)/config/rmt.local.yml
 	rm -rf $(NAME)-$(VERSION)/config/database.yml
+	rm -rf $(NAME)-$(VERSION)/config/secrets.yml.*
 
 	sed -i '/github:/d' $(NAME)-$(VERSION)/Gemfile
 	sed -i '/github:/d' $(NAME)-$(VERSION)/Gemfile.lock

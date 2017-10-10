@@ -13,6 +13,7 @@ Url:            https://software.opensuse.org/package/rmt
 
 Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-rpmlintrc
+Source2:        rmt.conf
 Patch0:         use-ruby-2.4-in-rmt-cli.patch
 Patch1:         use-ruby-2.4-in-rails.patch
 
@@ -27,6 +28,8 @@ Requires(post): timezone
 This tool allows you to mirror RPM repositories in your own private network.
 
 %prep
+cp -p %SOURCE2 .
+
 %setup
 %patch0 -p1
 %patch1 -p1
@@ -51,7 +54,7 @@ install -m 444 service/rmt.service %{buildroot}%{systemd_dir}
 install -m 444 service/rmt-migration.service %{buildroot}%{systemd_dir}
 
 mkdir %{buildroot}/etc/
-mv %{buildroot}%{www_base}/config/rmt.yml %{buildroot}/etc/rmt.conf
+mv %{_builddir}/rmt.conf  %{buildroot}/etc/rmt.conf
 rm -rf %{buildroot}%{www_base}/vendor/cache
 
 %files
