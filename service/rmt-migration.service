@@ -1,5 +1,5 @@
 [Unit]
-Description=RMT DB migration
+Description=RMT database setup
 Requires=mysql.service
 After=mysql.service
 Before=rmt.service

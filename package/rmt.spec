@@ -66,18 +66,24 @@ cp -ar . %{buildroot}%{www_base}
 mkdir -p %{buildroot}%{_bindir}
 ln -s %{www_base}/bin/rmt-cli %{buildroot}%{_bindir}
 
-# cleanup unneeded files
-rm -r %{buildroot}%{www_base}/vendor/bundle/ruby/2.4.0/cache
-find %{buildroot}%{www_base} -name '*.c' -exec rm {} \;
-find %{buildroot}%{www_base} -name '*.h' -exec rm {} \;
-
+# systemd
 mkdir -p %{buildroot}%{systemd_dir}
 install -m 444 service/rmt.target %{buildroot}%{systemd_dir}
 install -m 444 service/rmt.service %{buildroot}%{systemd_dir}
 install -m 444 service/rmt-migration.service %{buildroot}%{systemd_dir}
+mkdir -p %{buildroot}%{_sbindir}
+%{__ln_s} -f %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt
+%{__ln_s} -f %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-migration
 
 mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
+
+# cleanup unneeded files
+rm -r %{buildroot}%{www_base}/service
+rm -r %{buildroot}%{www_base}/vendor/bundle/ruby/2.4.0/cache
+find %{buildroot}%{www_base}/vendor -name '*.c' -exec rm {} \;
+find %{buildroot}%{www_base}/vendor -name '*.h' -exec rm {} \;
+find %{buildroot}%{www_base} -name '.keep' -exec rm {} \;
 rm -rf %{buildroot}%{www_base}/vendor/cache
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/doc
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/examples
@@ -85,6 +91,11 @@ rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/samples
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/test
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/ports
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/ext
+rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/bin
+rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/spec
+rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/.gitignore
+ls -l %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/unicode-display_width-1.3.0/data/
+
 %fdupes %{buildroot}
 
 %files
@@ -92,6 +103,8 @@ rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/ext
 %attr(755,%{rmt_user},%{rmt_group}) %{www_base}
 %config(noreplace) %{_sysconfdir}/rmt.conf
 %{_bindir}/rmt-cli
+%{_sbindir}/rcrmt
+%{_sbindir}/rcrmt-migration
 %{_libexecdir}/systemd/system/rmt.target
 %{_libexecdir}/systemd/system/rmt.service
 %{_libexecdir}/systemd/system/rmt-migration.service
@@ -111,10 +124,13 @@ cd /srv/www/rmt && bin/rails secrets:setup >/dev/null
 cd /srv/www/rmt && bin/rails runner -e production "Rails::Secrets.write({'production' => {'secret_key_base' => SecureRandom.hex(64)}}.to_yaml)"
 
 %preun
+%service_del_preun rmt.target
+%service_del_preun rmt.service
 %service_del_preun rmt-migration.service
 
-# no postun service handling for target or schema-upgrade, we don't want them to be restarted on upgrade
 %postun
+%service_del_postun rmt.target
 %service_del_postun rmt.service
+%service_del_postun rmt-migration.service
 
 %changelog
