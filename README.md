@@ -4,7 +4,7 @@
 This tool allows you to mirror RPM repositories in your own private network.
 Organization (mirroring) credentials are required to mirror SUSE repositories.
 
-## Installation
+## Installation and configuration
 
 RMT currently gets build for these distributions: `SLE_12_SP2`, `SLE_12_SP3`, `openSUSE_Leap_42.2`, `openSUSE_Leap_42.3`, `openSUSE_Tumbleweed`.
 To add the repository, please call: (replace `<dist>` with your distribution)
@@ -15,6 +15,18 @@ Please note that on SLES 12 and openSUSE Leap 42.2 you will need to add another 
 `https://download.opensuse.org/repositories/OBS:/Server:/Unstable/SLE_12_SP3/OBS:Server:Unstable.repo`
 
 To install rmt, please run: `zypper in rmt`
+
+After installation please configure your RMT instance:
+
+* Create a MySQL/MariaDB user with the following command:
+```
+mysql -u root -p <<EOFF
+GRANT ALL PRIVILEGES ON \`rmt\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
+FLUSH PRIVILEGES;
+EOFF
+```
+* Add your DB and SUSE Customer Center credentials to `database` and `scc` sections respectively of `/etc/rmt.conf` config file 
+* Start RMT by running `systemctl start rmt`
 
 ## Usage
 
