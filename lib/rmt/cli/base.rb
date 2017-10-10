@@ -31,8 +31,6 @@ class RMT::CLI::Base < Thor
       exit e.exit_code
     end
 
-    protected
-
     def handle_exceptions
       yield
     rescue Mysql2::Error => e
@@ -52,7 +50,7 @@ class RMT::CLI::Base < Thor
       )
     rescue RMT::SCC::CredentialsError, ::SUSE::Connect::Api::InvalidCredentialsError
       raise RMT::CLI::Error.new(
-        "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization.",
+        "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization",
         RMT::CLI::Error::ERROR_SCC
       )
     end

@@ -1,5 +1,7 @@
 require 'rails_helper'
 
+# rubocop:disable RSpec/NestedGroups
+
 RSpec.describe RMT::CLI::Main do
   subject(:command) { described_class.start(argv) }
 
@@ -53,7 +55,7 @@ RSpec.describe RMT::CLI::Main do
         expect(described_class).to receive(:exit)
       end
 
-      it 'calls RMT::CLI::Mirror' do
+      it 'prints exception short message' do
         expect { command }.to output("Dummy exception\n").to_stderr
       end
     end
@@ -66,8 +68,75 @@ RSpec.describe RMT::CLI::Main do
         expect(described_class).to receive(:exit)
       end
 
-      it 'calls RMT::CLI::Mirror' do
+      it 'prints exception details' do
         expect { command }.to output(/#<RMT::CLI::Error: Dummy exception>/).to_stderr
+      end
+    end
+
+    describe '.handle_exceptions' do
+      let(:argv) { ['mirror'] }
+      let(:error_message) { 'Dummy error' }
+
+      context do
+        before do
+          expect(RMT::CLI::Mirror).to receive(:mirror) { raise exception_class, error_message }
+          expect(described_class).to receive(:exit)
+        end
+
+        context 'Mysql2::Error with access denied error' do
+          let(:exception_class) { Mysql2::Error }
+          let(:error_message) { 'Access denied for user `rmt`@`localhost`' }
+
+          it 'outputs custom error message' do
+            expect { command }.to output(
+              "Cannot connect to database server. Please make sure it is running and configured in '/etc/rmt.conf'.\n"
+            ).to_stderr
+          end
+        end
+
+        context 'ActiveRecord::NoDatabaseError with access denied error' do
+          let(:exception_class) { ActiveRecord::NoDatabaseError }
+
+          it 'outputs custom error message' do
+            expect { command }.to output(
+              "The RMT database has not yet been initialized. Please run 'systemctl start rmt-migration' to setup the database.\n"
+            ).to_stderr
+          end
+        end
+
+        context 'RMT::SCC::CredentialsError with access denied error' do
+          let(:exception_class) { RMT::SCC::CredentialsError }
+
+          it 'outputs custom error message' do
+            expect { command }.to output(
+              "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization\n"
+            ).to_stderr
+          end
+        end
+
+        context 'SUSE::Connect::Api::InvalidCredentialsError with access denied error' do
+          let(:exception_class) { SUSE::Connect::Api::InvalidCredentialsError }
+
+          it 'outputs custom error message' do
+            expect { command }.to output(
+              "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization\n"
+            ).to_stderr
+          end
+        end
+      end
+
+      context 'Mysql2::Error with other error messages' do
+        let(:exception_class) { Mysql2::Error }
+        let(:error_message) { 'Error in SQL query' }
+
+        before do
+          expect(RMT::CLI::Mirror).to receive(:mirror) { raise exception_class, error_message }
+          allow(described_class).to receive(:exit) { raise 'Called exit' }
+        end
+
+        it 'raises an exception' do
+          expect { command }.to raise_exception(Mysql2::Error)
+        end
       end
     end
   end
