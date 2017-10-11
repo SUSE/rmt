@@ -94,13 +94,12 @@ rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/ext
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/bin
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/spec
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/.gitignore
-ls -l %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/unicode-display_width-1.3.0/data/
 
 %fdupes %{buildroot}
 
 %files
 %defattr(-,root,root)
-%attr(755,%{rmt_user},%{rmt_group}) %{www_base}
+%attr(-,%{rmt_user},%{rmt_group}) %{www_base}
 %config(noreplace) %{_sysconfdir}/rmt.conf
 %{_bindir}/rmt-cli
 %{_sbindir}/rcrmt
