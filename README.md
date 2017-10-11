@@ -26,7 +26,7 @@ FLUSH PRIVILEGES;
 EOFF
 ```
 * Add your DB and SUSE Customer Center credentials to `database` and `scc` sections respectively of `/etc/rmt.conf` config file
-* Start RMT by running `systemctl start rmt`
+* Start RMT by running `systemctl start rmt`. This will start the RMT server at http://localhost:4224.
 
 ## Usage
 
@@ -52,7 +52,7 @@ To mirror repositories that are not delivered via SCC, you can run for example:
 `rmt-cli mirror https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/openSUSE_Leap_42.3/ foo/bar`
 
 This will mirror the repository content to `mirroring.base_dir`/`foo/bar` and make it available at
-http://hostname/`mirroring.mirror_url_prefix`/foo/bar.
+http://hostname:4224/`mirroring.mirror_url_prefix`/foo/bar.
 
 ## Configuration
 
@@ -77,7 +77,7 @@ The file `SUSE/Updates/SLE-SERVER/12/x86_64/update/x86_64/package-42.0.x86_64.rp
 
 And accessible at the following URL:
 
-`http://hostname/my_rmt_mirror/SUSE/Updates/SLE-SERVER/12/x86_64/update/x86_64/package-42.0.x86_64.rpm`
+`http://hostname:4224/my_rmt_mirror/SUSE/Updates/SLE-SERVER/12/x86_64/update/x86_64/package-42.0.x86_64.rpm`
 
 ##### HTTP client settings
 
