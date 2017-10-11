@@ -47,6 +47,7 @@ Requires(post): ruby2.4
 Requires(post): ruby2.4-rubygem-bundler
 Requires(post): timezone
 Requires(post): util-linux
+Requires(post): shadow
 
 %description
 This tool allows you to mirror RPM repositories in your own private network.
@@ -110,8 +111,8 @@ rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/.gitignore
 %{_libexecdir}/systemd/system/rmt-migration.service
 
 %pre
-%{_sbindir}/groupadd -r %{rmt_group} &>/dev/null ||:
-%{_sbindir}/useradd -g %{rmt_group} -s /bin/false -r -c "user for RMT" -d %{www_base} %{rmt_user} &>/dev/null ||:
+%{_sbindir}/groupadd -r %{rmt_group} ||:
+%{_sbindir}/useradd -g %{rmt_group} -s /bin/false -r -c "user for RMT" -d %{www_base} %{rmt_user} ||:
 %service_add_pre rmt.target
 %service_add_pre rmt.service
 %service_add_pre rmt-migration.service
