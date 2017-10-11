@@ -25,7 +25,7 @@ GRANT ALL PRIVILEGES ON \`rmt\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
 FLUSH PRIVILEGES;
 EOFF
 ```
-* Add your DB and SUSE Customer Center credentials to `database` and `scc` sections respectively of `/etc/rmt.conf` config file 
+* Add your DB and SUSE Customer Center credentials to `database` and `scc` sections respectively of `/etc/rmt.conf` config file
 * Start RMT by running `systemctl start rmt`
 
 ## Usage
@@ -44,6 +44,15 @@ EOFF
 * Run `rmt-cli mirror` to mirror selected repositories and make their content available through RMT
 * Register client against RMT by running `SUSEConnect --url https://rmt_hostname`
   After successful registration the repositories from RMT will be used by `zypper` on the client machine.
+
+### openSUSE and other RPM based products
+
+To mirror repositories that are not delivered via SCC, you can run for example:
+
+`rmt-cli mirror https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/openSUSE_Leap_42.3/ foo/bar`
+
+This will mirror the repository content to `mirroring.base_dir`/`foo/bar` and make it available at
+http://hostname/`mirroring.mirror_url_prefix`/foo/bar.
 
 ## Configuration
 
