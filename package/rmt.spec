@@ -30,6 +30,7 @@ URL:            https://software.opensuse.org/package/rmt
 Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-rpmlintrc
 Source2:        rmt.conf
+Source3:        rmt.8.gz
 Patch0:         use-ruby-2.4-in-rmt-cli.patch
 Patch1:         use-ruby-2.4-in-rails.patch
 BuildRequires:  gcc
@@ -67,6 +68,7 @@ mkdir -p %{buildroot}%{www_base}
 cp -ar . %{buildroot}%{www_base}
 mkdir -p %{buildroot}%{_bindir}
 ln -s %{www_base}/bin/rmt-cli %{buildroot}%{_bindir}
+install -D -m 644 %_sourcedir/rmt.8.gz %{buildroot}%_mandir/man8/rmt.8.gz
 
 # systemd
 mkdir -p %{buildroot}%{systemd_dir}
@@ -103,6 +105,7 @@ rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/.gitignore
 %defattr(-,root,root)
 %attr(-,%{rmt_user},%{rmt_group}) %{www_base}
 %config(noreplace) %{_sysconfdir}/rmt.conf
+%doc %{_mandir}/man8/rmt.8.gz
 %{_bindir}/rmt-cli
 %{_sbindir}/rcrmt
 %{_sbindir}/rcrmt-migration

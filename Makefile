@@ -6,10 +6,15 @@ all:
 	@:
 
 clean:
+	rm -f rmt.8*
 	rm -rf package/*.tar.bz2
 	rm -rf $(NAME)-$(VERSION)/
 
-dist: clean
+man:
+	ronn --roff --pipe --manual RMT README.md > rmt.8 && gzip -f rmt.8
+	mv rmt.8.gz package/
+
+dist: clean man
 	@mkdir -p $(NAME)-$(VERSION)/
 
 	@cp -r app $(NAME)-$(VERSION)/

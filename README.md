@@ -58,7 +58,7 @@ http://hostname:4224/`mirroring.mirror_url_prefix`/foo/bar.
 
 Available configuration options can be found in `config/rmt.yml` file.
 
-##### Mirroring settings
+### Mirroring settings
 
 - `mirroring.mirror_src` - whether to mirror source (arch = `src`) repos or not.
 - `mirroring.base_dir` - a directory where mirrored files will be stored. HTTP server should be configured to serve files from this directory under `mirroring.mirror_url_prefix`.
@@ -79,7 +79,7 @@ And accessible at the following URL:
 
 `http://hostname:4224/my_rmt_mirror/SUSE/Updates/SLE-SERVER/12/x86_64/update/x86_64/package-42.0.x86_64.rpm`
 
-##### HTTP client settings
+### HTTP client settings
 
 `http_client` section defines RMT's global HTTP connection settings.
 
@@ -92,7 +92,7 @@ And accessible at the following URL:
     * `digest_ie`
     * `ntlm_wb`
 
-##### SCC settings for accessing SUSE repositories
+### SCC settings for accessing SUSE repositories
 
 The `scc` section contains your organization credentials for mirroring SUSE repositories.
 Your organization credentials can be obtained at [SUSE Customer Center](https://scc.suse.com).
