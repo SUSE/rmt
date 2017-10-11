@@ -1,9 +1,11 @@
 #!/usr/bin/env ruby
 
+require 'etc'
+
 # don't run as root
 if Process.euid == 0
-  require 'etc'
-  Process::UID.change_privilege(Etc.getpwnam('_rmt').uid)
+  Process::Sys.setegid(Etc.getgrnam('nginx').gid)
+  Process::Sys.seteuid(Etc.getpwnam('_rmt').uid)
 end
 
 rmt_path = File.expand_path(File.join(File.dirname(File.realpath(__FILE__)), '..'))
@@ -19,6 +21,12 @@ require 'rmt/config'
 
 relative_load_paths = %w[lib lib/rmt app/models].map { |dir| File.join(rmt_path, dir) }
 ActiveSupport::Dependencies.autoload_paths += relative_load_paths
+
+unless File.writable?(Settings.mirroring.base_dir)
+  warn "Mirroring base directory (#{Settings.mirroring.base_dir}) is not writable by user '#{Etc.getpwuid(Process.euid).name}'"
+  warn 'Please try running as root or adjust the permissions.'
+  exit RMT::CLI::Error::ERROR_OTHER
+end
 
 db_config = RMT::Config.db_config
 ActiveRecord::Base.establish_connection(db_config)
