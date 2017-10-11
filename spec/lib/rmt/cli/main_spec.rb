@@ -47,6 +47,27 @@ RSpec.describe RMT::CLI::Main do
       end
     end
 
+    context 'with repo_url as parameter' do
+      let(:repo_url) { 'http://example.com/repo/' }
+      let(:argv) { ['mirror', repo_url] }
+
+      it 'calls RMT::CLI::Mirror' do
+        expect(RMT::CLI::Mirror).to receive(:mirror_one_repo).with(repo_url, '/repo/').at_least(:once)
+        command
+      end
+    end
+
+    context 'with repo_url and local_path as parameters' do
+      let(:repo_url) { 'http://example.com/repo/' }
+      let(:local_path) { 'custom/dummy/repo/' }
+      let(:argv) { ['mirror', repo_url, local_path] }
+
+      it 'calls RMT::CLI::Mirror' do
+        expect(RMT::CLI::Mirror).to receive(:mirror_one_repo).with(repo_url, local_path).at_least(:once)
+        command
+      end
+    end
+
     context 'handles exceptions without --debug' do
       let(:argv) { ['mirror'] }
 
