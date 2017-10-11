@@ -43,9 +43,10 @@ BuildRequires:  ruby2.4-devel
 BuildRequires:  ruby2.4-rubygem-bundler
 BuildRequires:  fdupes
 Requires:       mariadb
-Requires:       ruby2.4
-Requires:       ruby2.4-rubygem-bundler
+Requires(post): ruby2.4
+Requires(post): ruby2.4-rubygem-bundler
 Requires(post): timezone
+Requires(post): util-linux
 
 %description
 This tool allows you to mirror RPM repositories in your own private network.
@@ -119,8 +120,8 @@ rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/.gitignore
 %service_add_post rmt.target
 %service_add_post rmt.service
 %service_add_post rmt-migration.service
-cd /srv/www/rmt && bin/rails secrets:setup >/dev/null
-cd /srv/www/rmt && bin/rails runner -e production "Rails::Secrets.write({'production' => {'secret_key_base' => SecureRandom.hex(64)}}.to_yaml)"
+cd /srv/www/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails secrets:setup >/dev/null
+cd /srv/www/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails runner -e production "Rails::Secrets.write({'production' => {'secret_key_base' => SecureRandom.hex(64)}}.to_yaml)"
 
 %preun
 %service_del_preun rmt.target
