@@ -6,7 +6,7 @@ Organization (mirroring) credentials are required to mirror SUSE repositories.
 
 ## Installation and configuration
 
-RMT currently gets build for these distributions: `SLE_12_SP2`, `SLE_12_SP3`, `openSUSE_Leap_42.2`, `openSUSE_Leap_42.3`, `openSUSE_Tumbleweed`.
+RMT currently gets built for these distributions: `SLE_12_SP2`, `SLE_12_SP3`, `openSUSE_Leap_42.2`, `openSUSE_Leap_42.3`, `openSUSE_Tumbleweed`.
 To add the repository, call: (replace `<dist>` with your distribution)
 
 `zypper ar -f https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/<dist>/systemsmanagement:SCC:RMT.repo`
@@ -14,18 +14,18 @@ To add the repository, call: (replace `<dist>` with your distribution)
 Note that on SLES 12 and openSUSE Leap 42.2 you will need to add another repository which provides ruby 2.4, like:
 `https://download.opensuse.org/repositories/OBS:/Server:/Unstable/SLE_12_SP3/OBS:Server:Unstable.repo`
 
-To install rmt, run: `zypper in rmt`
+To install RMT, run: `zypper in rmt`
 
 After installation configure your RMT instance:
 
-* Create a MySQL/MariaDB user with the following command:
+* You can create a MySQL/MariaDB user with the following command:
 ```
 mysql -u root -p <<EOFF
 GRANT ALL PRIVILEGES ON \`rmt\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
 FLUSH PRIVILEGES;
 EOFF
 ```
-* Add your DB and SUSE Customer Center credentials to `database` and `scc` sections respectively of `/etc/rmt.conf` config file
+* See the "Configuration" section for how to configure the options in `/etc/rmt.conf`.
 * Start RMT by running `systemctl start rmt`. This will start the RMT server at http://localhost:4224.
 
 ## Usage
@@ -56,12 +56,12 @@ http://hostname:4224/`mirroring.mirror_url_prefix`/foo/bar.
 
 ## Configuration
 
-Available configuration options can be found in `config/rmt.yml` file.
+Available configuration options can be found in the `etc/rmt.conf` file.
 
 ### Mirroring settings
 
 - `mirroring.mirror_src` - whether to mirror source (arch = `src`) repos or not.
-- `mirroring.base_dir` - a directory where mirrored files will be stored. HTTP server should be configured to serve files from this directory under `mirroring.mirror_url_prefix`.
+- `mirroring.base_dir` - a directory where mirrored files will be stored. The HTTP server should be configured to serve files from this directory under `mirroring.mirror_url_prefix`.
 - `mirroring.mirror_url_prefix` - URL path that will be used to access mirrored files on the HTTP server.
 
 For example, for a given configuration values:
@@ -95,7 +95,7 @@ And accessible at the following URL:
 ### SCC settings for accessing SUSE repositories
 
 The `scc` section contains your organization credentials for mirroring SUSE repositories.
-Your organization credentials can be obtained at [SUSE Customer Center](https://scc.suse.com).
+Your organization credentials can be obtained from the [SUSE Customer Center](https://scc.suse.com/organization).
 
 ## Dependencies
 
