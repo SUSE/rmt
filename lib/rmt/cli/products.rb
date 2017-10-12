@@ -15,7 +15,7 @@ class RMT::CLI::Products < RMT::CLI::Base
     end
 
     if rows.empty?
-      warn 'No products found in the DB. Please run "rmt-cli scc sync" to synchronize with SUSE Customer Center first.'
+      warn 'No products found in the DB. Run "rmt-cli scc sync" to synchronize with your SUSE Customer Center data first.'
     else
       puts Terminal::Table.new headings: headings, rows: rows
     end

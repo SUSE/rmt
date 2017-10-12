@@ -24,7 +24,7 @@ ActiveSupport::Dependencies.autoload_paths += relative_load_paths
 
 unless File.writable?(Settings.mirroring.base_dir)
   warn "Mirroring base directory (#{Settings.mirroring.base_dir}) is not writable by user '#{Etc.getpwuid(Process.euid).name}'"
-  warn 'Please try running as root or adjust the permissions.'
+  warn 'Run as root or adjust the permissions.'
   exit RMT::CLI::Error::ERROR_OTHER
 end
 

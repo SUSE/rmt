@@ -7,16 +7,16 @@ Organization (mirroring) credentials are required to mirror SUSE repositories.
 ## Installation and configuration
 
 RMT currently gets build for these distributions: `SLE_12_SP2`, `SLE_12_SP3`, `openSUSE_Leap_42.2`, `openSUSE_Leap_42.3`, `openSUSE_Tumbleweed`.
-To add the repository, please call: (replace `<dist>` with your distribution)
+To add the repository, call: (replace `<dist>` with your distribution)
 
 `zypper ar -f https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/<dist>/systemsmanagement:SCC:RMT.repo`
 
-Please note that on SLES 12 and openSUSE Leap 42.2 you will need to add another repository which provides ruby 2.4, like:
+Note that on SLES 12 and openSUSE Leap 42.2 you will need to add another repository which provides ruby 2.4, like:
 `https://download.opensuse.org/repositories/OBS:/Server:/Unstable/SLE_12_SP3/OBS:Server:Unstable.repo`
 
-To install rmt, please run: `zypper in rmt`
+To install rmt, run: `zypper in rmt`
 
-After installation please configure your RMT instance:
+After installation configure your RMT instance:
 
 * Create a MySQL/MariaDB user with the following command:
 ```

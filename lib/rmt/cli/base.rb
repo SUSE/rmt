@@ -36,7 +36,7 @@ class RMT::CLI::Base < Thor
     rescue Mysql2::Error => e
       if e.message =~ /^Access denied/
         raise RMT::CLI::Error.new(
-          "Cannot connect to database server. Please make sure it is running and configured in '/etc/rmt.conf'.",
+          "Cannot connect to database server. Make sure it is running and configured in '/etc/rmt.conf'.",
           RMT::CLI::Error::ERROR_DB
         )
       else
@@ -45,7 +45,7 @@ class RMT::CLI::Base < Thor
       end
     rescue ActiveRecord::NoDatabaseError
       raise RMT::CLI::Error.new(
-        "The RMT database has not yet been initialized. Please run 'systemctl start rmt-migration' to setup the database.",
+        "The RMT database has not yet been initialized. Run 'systemctl start rmt-migration' to setup the database.",
         RMT::CLI::Error::ERROR_DB
       )
     rescue RMT::SCC::CredentialsError, ::SUSE::Connect::Api::InvalidCredentialsError

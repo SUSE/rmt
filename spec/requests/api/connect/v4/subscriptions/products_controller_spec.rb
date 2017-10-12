@@ -49,8 +49,8 @@ RSpec.describe Api::Connect::V4::Subscriptions::ProductsController, type: :reque
         let(:error_reponse) do
           {
             type: 'error',
-            error: 'Not yet activated Registration Code. Please visit https://scc.suse.com to activate it.',
-            localized_error: 'Not yet activated Registration Code. Please visit https://scc.suse.com to activate it.'
+            error: 'Not yet activated Registration Code. Visit https://scc.suse.com to activate it.',
+            localized_error: 'Not yet activated Registration Code. Visit https://scc.suse.com to activate it.'
           }
         end
 

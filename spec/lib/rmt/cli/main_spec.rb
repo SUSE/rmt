@@ -110,7 +110,7 @@ RSpec.describe RMT::CLI::Main do
 
           it 'outputs custom error message' do
             expect { command }.to output(
-              "Cannot connect to database server. Please make sure it is running and configured in '/etc/rmt.conf'.\n"
+              "Cannot connect to database server. Make sure it is running and configured in '/etc/rmt.conf'.\n"
             ).to_stderr
           end
         end
@@ -120,7 +120,7 @@ RSpec.describe RMT::CLI::Main do
 
           it 'outputs custom error message' do
             expect { command }.to output(
-              "The RMT database has not yet been initialized. Please run 'systemctl start rmt-migration' to setup the database.\n"
+              "The RMT database has not yet been initialized. Run 'systemctl start rmt-migration' to setup the database.\n"
             ).to_stderr
           end
         end

@@ -9,7 +9,7 @@ RSpec.describe RMT::CLI::Products do
 
       it 'stdout is empty' do
         expect { described_class.start(argv) }.to output('').to_stdout.and output(
-          "No products found in the DB. Please run \"rmt-cli scc sync\" to synchronize with SUSE Customer Center first.\n"
+          "No products found in the DB. Run \"rmt-cli scc sync\" to synchronize with your SUSE Customer Center data first.\n"
         ).to_stderr
       end
     end
