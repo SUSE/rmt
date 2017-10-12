@@ -1,0 +1,8 @@
+[Unit]
+Description=Repository Mirroring Tool
+Requires=mysql.service
+Requires=rmt-migration.service
+Requires=rmt.service
+
+[Install]
+WantedBy=multi-user.target

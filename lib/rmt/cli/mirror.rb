@@ -1,8 +1,14 @@
 module RMT::CLI::Mirror
 
-  def self.mirror
+  def self.mirror(repository_url = nil, local_path = nil)
     require 'rmt/mirror'
     require 'rmt/config'
+
+    if repository_url
+      local_path ||= Repository.make_local_path(repository_url)
+      mirror_one_repo(repository_url, local_path)
+      return
+    end
 
     repositories = Repository.where(mirroring_enabled: true)
 
@@ -13,20 +19,23 @@ module RMT::CLI::Mirror
 
     repositories.each do |repository|
       begin
-        RMT::Mirror.new(
-          mirroring_base_dir: Settings.mirroring.base_dir,
-          mirror_src: Settings.mirroring.mirror_src,
-          repository_url: repository.external_url,
-          local_path: repository.local_path,
-          auth_token: repository.auth_token,
-          logger: Logger.new(STDOUT)
-        ).mirror
-
+        mirror_one_repo(repository.external_url, repository.local_path, repository.auth_token)
         repository.refresh_timestamp!
       rescue RMT::Mirror::Exception => e
         warn e.to_s
       end
     end
+  end
+
+  def self.mirror_one_repo(repository_url, local_path, auth_token = nil)
+    RMT::Mirror.new(
+      mirroring_base_dir: Settings.mirroring.base_dir,
+      mirror_src: Settings.mirroring.mirror_src,
+      repository_url: repository_url,
+      local_path: local_path,
+      auth_token: auth_token,
+      logger: Logger.new(STDOUT)
+    ).mirror
   end
 
 end

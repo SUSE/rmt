@@ -46,7 +46,7 @@ class Api::Connect::BaseController < ApplicationController
         error_message = N_('Unknown Registration Code.')
       elsif !@subscription.active?
         logger.info "Token authentication with not activated regcode: '#{token}'"
-        error_message = N_('Not yet activated Registration Code. Please visit https://scc.suse.com to activate it.')
+        error_message = N_('Not yet activated Registration Code. Visit https://scc.suse.com to activate it.')
       end
 
       if error_message

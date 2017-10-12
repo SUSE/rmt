@@ -4,6 +4,30 @@
 This tool allows you to mirror RPM repositories in your own private network.
 Organization (mirroring) credentials are required to mirror SUSE repositories.
 
+## Installation and configuration
+
+RMT currently gets built for these distributions: `SLE_12_SP2`, `SLE_12_SP3`, `openSUSE_Leap_42.2`, `openSUSE_Leap_42.3`, `openSUSE_Tumbleweed`.
+To add the repository, call: (replace `<dist>` with your distribution)
+
+`zypper ar -f https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/<dist>/systemsmanagement:SCC:RMT.repo`
+
+Note that on SLES 12 and openSUSE Leap 42.2 you will need to add another repository which provides ruby 2.4, like:
+`https://download.opensuse.org/repositories/OBS:/Server:/Unstable/SLE_12_SP3/OBS:Server:Unstable.repo`
+
+To install RMT, run: `zypper in rmt`
+
+After installation configure your RMT instance:
+
+* You can create a MySQL/MariaDB user with the following command:
+```
+mysql -u root -p <<EOFF
+GRANT ALL PRIVILEGES ON \`rmt\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
+FLUSH PRIVILEGES;
+EOFF
+```
+* See the "Configuration" section for how to configure the options in `/etc/rmt.conf`.
+* Start RMT by running `systemctl start rmt`. This will start the RMT server at http://localhost:4224.
+
 ## Usage
 
 ### SUSE products
@@ -21,14 +45,23 @@ Organization (mirroring) credentials are required to mirror SUSE repositories.
 * Register client against RMT by running `SUSEConnect --url https://rmt_hostname`
   After successful registration the repositories from RMT will be used by `zypper` on the client machine.
 
+### openSUSE and other RPM based products
+
+To mirror repositories that are not delivered via SCC, you can run for example:
+
+`rmt-cli mirror https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/openSUSE_Leap_42.3/ foo/bar`
+
+This will mirror the repository content to `mirroring.base_dir`/`foo/bar` and make it available at
+http://hostname:4224/`mirroring.mirror_url_prefix`/foo/bar.
+
 ## Configuration
 
-Available configuration options can be found in `config/rmt.yml` file.
+Available configuration options can be found in the `etc/rmt.conf` file.
 
-##### Mirroring settings
+### Mirroring settings
 
 - `mirroring.mirror_src` - whether to mirror source (arch = `src`) repos or not.
-- `mirroring.base_dir` - a directory where mirrored files will be stored. HTTP server should be configured to serve files from this directory under `mirroring.mirror_url_prefix`.
+- `mirroring.base_dir` - a directory where mirrored files will be stored. The HTTP server should be configured to serve files from this directory under `mirroring.mirror_url_prefix`.
 - `mirroring.mirror_url_prefix` - URL path that will be used to access mirrored files on the HTTP server.
 
 For example, for a given configuration values:
@@ -44,9 +77,9 @@ The file `SUSE/Updates/SLE-SERVER/12/x86_64/update/x86_64/package-42.0.x86_64.rp
 
 And accessible at the following URL:
 
-`http://hostname/my_rmt_mirror/SUSE/Updates/SLE-SERVER/12/x86_64/update/x86_64/package-42.0.x86_64.rpm`
+`http://hostname:4224/my_rmt_mirror/SUSE/Updates/SLE-SERVER/12/x86_64/update/x86_64/package-42.0.x86_64.rpm`
 
-##### HTTP client settings
+### HTTP client settings
 
 `http_client` section defines RMT's global HTTP connection settings.
 
@@ -59,10 +92,10 @@ And accessible at the following URL:
     * `digest_ie`
     * `ntlm_wb`
 
-##### SCC settings for accessing SUSE repositories
+### SCC settings for accessing SUSE repositories
 
 The `scc` section contains your organization credentials for mirroring SUSE repositories.
-Your organization credentials can be obtained at [SUSE Customer Center](https://scc.suse.com).
+Your organization credentials can be obtained from the [SUSE Customer Center](https://scc.suse.com/organization).
 
 ## Dependencies
 
@@ -72,20 +105,49 @@ Supported Ruby versions are 2.4.1 and newer.
 
 * Setup MySQL/MariaDB:
 
-Allow the rmt user from `config/database.yml` to login to your MySQL/MariaDB server:
+Allow the rmt user from `config/rmt.local.yml` to login to your MySQL/MariaDB server:
 
 ```
 mysql -u root -p <<EOFF
-GRANT ALL PRIVILEGES ON \`rmt\_%\`.* TO rmt@localhost identified by 'rmt';
+GRANT ALL PRIVILEGES ON \`rmt%\`.* TO rmt@localhost identified by 'rmt';
 FLUSH PRIVILEGES;
 EOFF
 ```
 
 * Install the dependencies by running `bundle install`
 * Create databases by running `rails db:create db:migrate`
-* Add your organization credentials to `config/rmt.yml`
+* Override the default settings in `config/rmt.local.yml`:
+    * Add your organization credentials to `scc` section
+    * Modify database settings, i.e.:
+    ```yaml
+    database: &database
+      host: localhost
+      username: rmt
+      password: rmt
+      database: rmt_development
+      adapter: mysql2
+      encoding: utf8
+      timeout: 5000
+      pool: 5
+
+    database_development:
+      <<: *database
+      database: rmt_development
+
+    database_test:
+      <<: *database
+      database: rmt_test
+    ```
 * Run `rails server` to run the web-server
 
+### Packaging
+
+The package is build in the OBS at: https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT/rmt
+To initialize the package directory go to `package/` and run: `osc co systemsmanagement:SCC:RMT rmt -o .`
+
+To build the package with updated sources, call `make dist` and then build for your distribution with:
+
+`osc build <dist> x86_64 --no-verify` where <dist> can be one of: `SLE_12_SP2`, `SLE_12_SP3`, `openSUSE_Leap_42.2`, `openSUSE_Leap_42.3`, `openSUSE_Tumbleweed`
 
 ### With docker-compose
 
@@ -96,4 +158,3 @@ docker-compose up
 ```
 
 And it will be accessible at http://localhost:8080/ .
-

@@ -97,7 +97,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
     logger.info("Tried to activate/upgrade to '#{@product.friendly_name}' with unmet base product dependency")
     raise ActionController::TranslatedError.new(
-      N_('Unmet product dependencies, please activate one of these products first: %s'),
+      N_('Unmet product dependencies, activate one of these products first: %s'),
       @product.bases.map(&:friendly_name).join(', ')
     )
   end

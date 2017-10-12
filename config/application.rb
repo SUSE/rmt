@@ -7,7 +7,6 @@ require 'active_record/railtie'
 
 require 'action_controller/railtie'
 require 'action_view/railtie'
-
 # require 'action_mailer/railtie'
 # require 'active_job/railtie'
 # require 'action_cable/engine'
@@ -18,6 +17,23 @@ require 'action_view/railtie'
 Bundler.require(*Rails.groups)
 
 module RMT
+  class CustomConfiguration < Rails::Application::Configuration
+
+    def database_configuration
+      require 'rmt/config'
+      key_name = Rails.env.production? ? 'database' : "database_#{Rails.env}"
+
+      { Rails.env => RMT::Config.db_config(key_name) }
+    end
+
+  end
+
+  Rails::Application.class_eval do
+    def config
+      @config ||= RMT::CustomConfiguration.new(self.class.find_root(self.class.called_from))
+    end
+  end
+
   class Application < Rails::Application
 
     # Initialize configuration defaults for originally generated Rails version.

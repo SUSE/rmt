@@ -1,3 +1,29 @@
+# This is development configuration.
+# Production configuration that is shipped in the RPM package can be found in /package/rmt.conf.
+# You can create rmt.local.yml to override settings in this file.
+
+database: &database
+  host: localhost
+  database: rmt
+  username: rmt
+  password: rmt
+  adapter: mysql2
+  encoding: utf8
+  timeout: 5000
+  pool: 5
+
+database_development:
+  <<: *database
+  database: rmt_development
+
+database_test:
+  <<: *database
+  database: rmt_test
+
+scc:
+  username:
+  password:
+
 mirroring:
   base_dir: /srv/www/rmt/public/repo/
   mirror_url_prefix: /repo/
@@ -11,6 +37,3 @@ http_client:
   proxy_user:
   proxy_password:
 
-scc:
-  username: <%= ENV['RMT_ORGANIZATION_USERNAME'] %>
-  password: <%= ENV['RMT_ORGANIZATION_PASSWORD'] %>

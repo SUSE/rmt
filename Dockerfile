@@ -14,6 +14,6 @@ WORKDIR /srv/www/rmt/
 
 RUN bundler.ruby2.4
 
-EXPOSE 3000
+EXPOSE 4224
 
-CMD bundle exec rails s -b 0.0.0.0
+CMD bundle exec rails s -b 0.0.0.0 -p 4224

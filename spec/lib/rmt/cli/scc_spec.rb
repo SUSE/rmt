@@ -8,7 +8,7 @@ RSpec.describe RMT::CLI::SCC do
       end
 
       it 'exits with an error message' do
-        expect { described_class.new.sync }.to raise_error RMT::CLI::Error, 'SCC credentials not set.'
+        expect { described_class.new.sync }.to raise_error RMT::SCC::CredentialsError, 'SCC credentials not set.'
       end
     end
 
