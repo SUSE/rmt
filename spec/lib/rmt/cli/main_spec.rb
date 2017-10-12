@@ -110,7 +110,18 @@ RSpec.describe RMT::CLI::Main do
 
           it 'outputs custom error message' do
             expect { command }.to output(
-              "Cannot connect to database server. Make sure it is running and configured in '/etc/rmt.conf'.\n"
+              "Cannot connect to database server. Make sure its credentials are configured in '/etc/rmt.conf'.\n"
+            ).to_stderr
+          end
+        end
+
+        context 'Mysql2::Error with cannot connect error' do
+          let(:exception_class) { Mysql2::Error }
+          let(:error_message) { "Can't connect to local MySQL server through socket '/var/run/mysql/mysql.sock'" }
+
+          it 'outputs custom error message' do
+            expect { command }.to output(
+              "Cannot connect to database server. Make sure it is running and its credentials are configured in '/etc/rmt.conf'.\n"
             ).to_stderr
           end
         end

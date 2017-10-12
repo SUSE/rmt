@@ -36,7 +36,12 @@ class RMT::CLI::Base < Thor
     rescue Mysql2::Error => e
       if e.message =~ /^Access denied/
         raise RMT::CLI::Error.new(
-          "Cannot connect to database server. Make sure it is running and configured in '/etc/rmt.conf'.",
+          "Cannot connect to database server. Make sure its credentials are configured in '/etc/rmt.conf'.",
+          RMT::CLI::Error::ERROR_DB
+        )
+      elsif e.message =~ /^Can't connect/
+        raise RMT::CLI::Error.new(
+          "Cannot connect to database server. Make sure it is running and its credentials are configured in '/etc/rmt.conf'.",
           RMT::CLI::Error::ERROR_DB
         )
       else
