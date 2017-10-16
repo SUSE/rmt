@@ -23,7 +23,7 @@
 Name:           rmt
 Version:        0.0.1
 Release:        0
-Summary:        Repository Mirroring Tool
+Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0+
 Group:          Productivity/Networking/Web/Proxy
 URL:            https://software.opensuse.org/package/rmt
@@ -51,7 +51,17 @@ Requires(post): util-linux
 Requires(post): shadow
 
 %description
-This tool allows mirroring RPM repositories in a private network.
+This package provides a mirroring tool for RPM repositories and a registration
+proxy for the SUSE Customer Center (SCC).
+
+As registration is required for SUSE products, the registration proxy allows
+one to register SUSE products within a private network.
+
+It's possible to mirror SUSE, as well as openSUSE and other RPM repositories.
+SCC organization credentials are required to synchronize SUSE products,
+subscription information, and to mirror SUSE repositories.
+
+RMT superseeds the main functionality of SMT in SLES 15.
 
 %prep
 cp -p %SOURCE2 .
@@ -85,7 +95,7 @@ mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 # cleanup unneeded files
 rm -r %{buildroot}%{www_base}/service
 rm -r %{buildroot}%{www_base}/vendor/bundle/ruby/2.4.0/cache
-find %{buildroot}%{www_base}/vendor "(" -name "*.c" -o -name "*.h" -o -name .keep ")" -delete
+find %{buildroot}%{www_base} "(" -name "*.c" -o -name "*.h" -o -name .keep ")" -delete
 rm -rf %{buildroot}%{www_base}/vendor/cache
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/doc
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/examples
