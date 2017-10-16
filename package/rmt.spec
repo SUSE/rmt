@@ -23,7 +23,7 @@
 Name:           rmt
 Version:        0.0.1
 Release:        0
-Summary:        Repository Mirroring Tool
+Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0+
 Group:          Productivity/Networking/Web/Proxy
 URL:            https://software.opensuse.org/package/rmt
@@ -51,7 +51,17 @@ Requires(post): util-linux
 Requires(post): shadow
 
 %description
-This tool allows you to mirror RPM repositories in your own private network.
+This package provides a mirroring tool for RPM repositories and a registration
+proxy for the SUSE Customer Center (SCC).
+
+As registration is required for SUSE products, the registration proxy allows
+one to register SUSE products within a private network.
+
+It's possible to mirror SUSE, as well as openSUSE and other RPM repositories.
+SCC organization credentials are required to synchronize SUSE products,
+subscription information, and to mirror SUSE repositories.
+
+RMT superseeds the main functionality of SMT in SLES 15.
 
 %prep
 cp -p %SOURCE2 .
@@ -76,8 +86,8 @@ install -m 444 service/rmt.target %{buildroot}%{systemd_dir}
 install -m 444 service/rmt.service %{buildroot}%{systemd_dir}
 install -m 444 service/rmt-migration.service %{buildroot}%{systemd_dir}
 mkdir -p %{buildroot}%{_sbindir}
-%{__ln_s} -f %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt
-%{__ln_s} -f %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-migration
+ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt
+ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-migration
 
 mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
@@ -85,9 +95,7 @@ mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 # cleanup unneeded files
 rm -r %{buildroot}%{www_base}/service
 rm -r %{buildroot}%{www_base}/vendor/bundle/ruby/2.4.0/cache
-find %{buildroot}%{www_base}/vendor -name '*.c' -exec rm {} \;
-find %{buildroot}%{www_base}/vendor -name '*.h' -exec rm {} \;
-find %{buildroot}%{www_base} -name '.keep' -exec rm {} \;
+find %{buildroot}%{www_base} "(" -name "*.c" -o -name "*.h" -o -name .keep ")" -delete
 rm -rf %{buildroot}%{www_base}/vendor/cache
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/doc
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/examples
@@ -99,7 +107,8 @@ rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/bin
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/spec
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/.gitignore
 
-%fdupes %{buildroot}
+%fdupes %{buildroot}/%{_prefix}
+%fdupes %{buildroot}/srv
 
 %files
 %defattr(-,root,root)
@@ -114,27 +123,21 @@ rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/.gitignore
 %{_libexecdir}/systemd/system/rmt-migration.service
 
 %pre
-%{_sbindir}/groupadd -r %{rmt_group} ||:
-%{_sbindir}/useradd -g %{rmt_group} -s /bin/false -r -c "user for RMT" -d %{www_base} %{rmt_user} ||:
-%service_add_pre rmt.target
-%service_add_pre rmt.service
-%service_add_pre rmt-migration.service
+getent group %{rmt_group} >/dev/null || %{_sbindir}/groupadd -r %{rmt_group}
+getent passwd %{rmt_user} >/dev/null || \
+	%{_sbindir}/useradd -g %{rmt_group} -s /bin/false -r \
+	-c "user for RMT" -d %{www_base} %{rmt_user}
+%service_add_pre rmt.target rmt.service rmt-migration.service
 
 %post
-%service_add_post rmt.target
-%service_add_post rmt.service
-%service_add_post rmt-migration.service
+%service_add_post rmt.target rmt.service rmt-migration.service
 cd /srv/www/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails secrets:setup >/dev/null
 cd /srv/www/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails runner -e production "Rails::Secrets.write({'production' => {'secret_key_base' => SecureRandom.hex(64)}}.to_yaml)"
 
 %preun
-%service_del_preun rmt.target
-%service_del_preun rmt.service
-%service_del_preun rmt-migration.service
+%service_del_preun rmt.target rmt.service rmt-migration.service
 
 %postun
-%service_del_postun rmt.target
-%service_del_postun rmt.service
-%service_del_postun rmt-migration.service
+%service_del_postun rmt.target rmt.service rmt-migration.service
 
 %changelog

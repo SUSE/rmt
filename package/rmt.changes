@@ -1,4 +1,20 @@
 -------------------------------------------------------------------
+Mon Oct 16 11:16:02 UTC 2017 - ikapelyukhin@suse.com
+
+- Update summary and description
+- Fix 'env-script-interpreter' rpmlint error
+- Ignore 'env-script-interpreter' for bundled scripts
+- Remove leftover .keep files
+
+-------------------------------------------------------------------
+Thu Oct 12 18:41:49 UTC 2017 - jengelh@inai.de
+
+- Replace %__-type macro indirections.
+- Do not ignore errors from useradd/groupadd.
+- Avoid running fdupes over partition boundaries.
+- Compact description, find-delete calls and %systemd_* calls.
+
+-------------------------------------------------------------------
 Tue Jun  6 09:43:04 UTC 2017 - ikapelyukhin@suse.com
 
 - Initial version 0.0.1 
