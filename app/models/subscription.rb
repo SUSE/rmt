@@ -1,6 +1,6 @@
 class Subscription < ApplicationRecord
 
-  enum kind: { test: 'test', full: 'full', evaluation: 'evaluation', oem: 'oem', provisional: 'provisional' }
+  enum kind: { test: 'test', full: 'full', evaluation: 'evaluation', oem: 'oem', provisional: 'provisional', internal: 'internal' }
   enum status: { expired: 'EXPIRED', active: 'ACTIVE', notactivated: 'NOTACTIVATED' }
 
   validates :regcode, presence: true
