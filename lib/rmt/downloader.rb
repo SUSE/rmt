@@ -126,6 +126,7 @@ class RMT::Downloader
     end
 
     FileUtils.mv(downloaded_file.path, local_file)
+    File.chmod(0o644, local_file)
 
     @logger.info("↓ #{File.basename(local_file)}")
   end
