@@ -9,7 +9,7 @@ Type=forking
 User=_rmt
 WorkingDirectory=/srv/www/rmt
 ExecStart=/srv/www/rmt/bin/rails server -e production --daemon
-ExecStop=/usr/bin/kill -INT cat$(/srv/www/rmt/tmp/pids/server.pid)
+ExecStop=/usr/bin/kill -15 $MAINPID
 PIDFile=/srv/www/rmt/tmp/pids/server.pid
 Restart=always
 

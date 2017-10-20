@@ -1,5 +1,5 @@
 require 'config'
-require 'rmt'
+require_relative '../rmt'
 
 Config.load_and_set_settings(
   '/etc/rmt.conf',
