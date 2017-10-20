@@ -4,5 +4,5 @@ index 8e9c41d..16481f5 100755
 +++ b/bin/rmt-cli
 @@ -1,2 +1,2 @@
 -#!/usr/bin/env ruby
-+#!/usr/bin/ruby.ruby2.4
++#!/usr/bin/ruby.ruby2.5
 

@@ -31,21 +31,20 @@ Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-rpmlintrc
 Source2:        rmt.conf
 Source3:        rmt.8.gz
-Patch0:         use-ruby-2.4-in-rmt-cli.patch
-Patch1:         use-ruby-2.4-in-rails.patch
+Patch0:         use-ruby-2.5-in-rmt-cli.patch
+Patch1:         use-ruby-2.5-in-rails.patch
 BuildRequires:  gcc
 BuildRequires:  libcurl-devel
 BuildRequires:  libffi-devel
 BuildRequires:  libmysqlclient-devel
 BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
-BuildRequires:  ruby2.4
-BuildRequires:  ruby2.4-devel
-BuildRequires:  ruby2.4-rubygem-bundler
+BuildRequires:  ruby2.5
+BuildRequires:  ruby2.5-devel
+BuildRequires:  ruby2.5-stdlib
 BuildRequires:  fdupes
 Requires:       mariadb
-Requires(post): ruby2.4
-Requires(post): ruby2.4-rubygem-bundler
+Requires(post): ruby2.5
 Requires(post): timezone
 Requires(post): util-linux
 Requires(post): shadow
@@ -71,7 +70,7 @@ cp -p %SOURCE2 .
 %patch1 -p1
 
 %build
-bundle.ruby2.4 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
+bundle.ruby.ruby2.5 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
 
 %install
 mkdir -p %{buildroot}%{www_base}
@@ -94,7 +93,7 @@ mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
 # cleanup unneeded files
 rm -r %{buildroot}%{www_base}/service
-rm -r %{buildroot}%{www_base}/vendor/bundle/ruby/2.4.0/cache
+rm -r %{buildroot}%{www_base}/vendor/bundle/ruby/2.5.0/cache
 find %{buildroot}%{www_base} "(" -name "*.c" -o -name "*.h" -o -name .keep ")" -delete
 rm -rf %{buildroot}%{www_base}/vendor/cache
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/doc
