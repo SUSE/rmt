@@ -8,13 +8,13 @@ end
 # Those are the gems with native extensions. The versions are locked to exact versions we have in our OBS:
 # https://build.suse.de/project/show/Devel:SCC:SMT-NG
 
-gem 'puma', '3.10.0'
+gem 'puma', '~> 3.10.0'
 gem 'mysql2', '~> 0.4.9'
 
 # The rest of Gemfile goes as normal
 
 gem 'nokogiri', '~> 1.8.0'
-gem 'thor'
+gem 'thor', '~> 0.2'
 gem 'activesupport', '~> 5.1.3'
 gem 'actionpack', '~> 5.1.3'
 gem 'actionview', '~> 5.1.3'
@@ -68,14 +68,14 @@ gem 'simplecov', require: false, group: :test
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
-gem 'versionist'
-gem 'responders'
+gem 'versionist', '~> 1.5'
+gem 'responders', '~> 2.4'
 gem 'typhoeus', '~> 1.1', '>= 1.1.2'
-gem 'active_model_serializers'
+gem 'active_model_serializers', '~> 0.10.6'
 
 # i18n
-gem 'fast_gettext'
-gem 'gettext_i18n_rails'
+gem 'fast_gettext', '~> 1.4.1'
+gem 'gettext_i18n_rails', '~> 1.8.0'
 
 gem 'config', '~> 1.0'
 gem 'terminal-table', '~> 1.8'
