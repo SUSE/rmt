@@ -1,0 +1,10 @@
+diff --git a/bin/rails b/bin/rails
+index 5badb2f..2936967 100755
+--- a/bin/rails
++++ b/bin/rails
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env ruby
++#!/usr/bin/ruby.ruby2.4
+ begin
+   load File.expand_path('../spring', __FILE__)
+ rescue LoadError => e

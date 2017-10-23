@@ -15,6 +15,9 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
+%if (0%{?suse_version} > 0 && 0%{?suse_version} <= 1320) || (0%{?sle_version} > 0 && 0%{?sle_version} <= 120300)
+%define use_ruby_2_4 1
+%endif
 
 %define www_base    /srv/www/rmt/
 %define systemd_dir %{_prefix}/lib/systemd/system/
@@ -31,20 +34,36 @@ Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-rpmlintrc
 Source2:        rmt.conf
 Source3:        rmt.8.gz
+%if 0%{?use_ruby_2_4}
+Patch0:         use-ruby-2.4-in-rmt-cli.patch
+Patch1:         use-ruby-2.4-in-rails.patch
+%else
 Patch0:         use-ruby-2.5-in-rmt-cli.patch
 Patch1:         use-ruby-2.5-in-rails.patch
+%endif
 BuildRequires:  gcc
 BuildRequires:  libcurl-devel
 BuildRequires:  libffi-devel
 BuildRequires:  libmysqlclient-devel
 BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
+%if 0%{?use_ruby_2_4}
+BuildRequires:  ruby2.4
+BuildRequires:  ruby2.4-devel
+BuildRequires:  ruby2.4-rubygem-bundler
+%else
 BuildRequires:  ruby2.5
 BuildRequires:  ruby2.5-devel
 BuildRequires:  ruby2.5-stdlib
+%endif
 BuildRequires:  fdupes
 Requires:       mariadb
+%if 0%{?use_ruby_2_4}
+Requires(post): ruby2.4
+Requires(post): ruby2.4-rubygem-bundler
+%else
 Requires(post): ruby2.5
+%endif
 Requires(post): timezone
 Requires(post): util-linux
 Requires(post): shadow
@@ -70,7 +89,12 @@ cp -p %SOURCE2 .
 %patch1 -p1
 
 %build
+%if 0%{?use_ruby_2_4}
+bundle.ruby2.4 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
+%else
 bundle.ruby.ruby2.5 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
+%endif
+
 
 %install
 mkdir -p %{buildroot}%{www_base}
@@ -93,7 +117,7 @@ mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
 # cleanup unneeded files
 rm -r %{buildroot}%{www_base}/service
-rm -r %{buildroot}%{www_base}/vendor/bundle/ruby/2.5.0/cache
+rm -r %{buildroot}%{www_base}/vendor/bundle/ruby/2.*.0/cache
 find %{buildroot}%{www_base} "(" -name "*.c" -o -name "*.h" -o -name .keep ")" -delete
 rm -rf %{buildroot}%{www_base}/vendor/cache
 rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/doc
