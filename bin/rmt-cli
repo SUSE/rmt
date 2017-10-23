@@ -2,12 +2,6 @@
 
 require 'etc'
 
-# don't run as root
-if Process.euid == 0
-  Process::Sys.setegid(Etc.getgrnam('nginx').gid)
-  Process::Sys.seteuid(Etc.getpwnam('_rmt').uid)
-end
-
 rmt_path = File.expand_path(File.join(File.dirname(File.realpath(__FILE__)), '..'))
 
 require_relative '../config/boot'
@@ -18,6 +12,16 @@ require 'active_record'
 require 'erb'
 require 'yaml'
 require 'rmt/config'
+
+# don't run as root
+if Process.euid == 0
+
+  group = Settings&.[](:cli)&.[](:group) || 'nginx'
+  user = Settings&.[](:cli)&.[](:user) || '_rmt'
+
+  Process::Sys.setegid(Etc.getgrnam(group).gid)
+  Process::Sys.seteuid(Etc.getpwnam(user).uid)
+end
 
 relative_load_paths = %w[lib lib/rmt app/models].map { |dir| File.join(rmt_path, dir) }
 ActiveSupport::Dependencies.autoload_paths += relative_load_paths
