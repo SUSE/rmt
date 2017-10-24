@@ -9,8 +9,15 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
   let(:url) { connect_systems_products_url }
   let(:headers) { auth_header.merge(version_header) }
   let(:system) { FactoryGirl.create(:system) }
-  let(:product_with_repos) { FactoryGirl.create(:product, :with_mirrored_repositories, :with_mirrored_extensions) }
-  let(:product_not_mirrored) { FactoryGirl.create(:product, :with_not_mirrored_repositories) }
+  let(:product) { FactoryGirl.create(:product, :with_mirrored_repositories, :with_mirrored_extensions) }
+
+  let(:payload) do
+    {
+      identifier: product.identifier,
+      version: product.version,
+      arch: product.arch
+    }
+  end
 
   describe '#activate' do
     it_behaves_like 'products controller action' do
@@ -20,19 +27,12 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
     context 'when product mandatory repos aren\'t mirrored' do
       subject { response }
 
-      let(:payload) do
-        {
-          identifier: product_not_mirrored.identifier,
-          version: product_not_mirrored.version,
-          arch: product_not_mirrored.arch
-        }
-      end
-
+      let(:product) { FactoryGirl.create(:product, :with_not_mirrored_repositories) }
       let(:error_json) do
         {
           'type' => 'error',
-          'error' => "Not all mandatory repositories are mirrored for product #{product_not_mirrored.friendly_name}",
-          'localized_error' => "Not all mandatory repositories are mirrored for product #{product_not_mirrored.friendly_name}"
+          'error' => "Not all mandatory repositories are mirrored for product #{product.friendly_name}",
+          'localized_error' => "Not all mandatory repositories are mirrored for product #{product.friendly_name}"
         }.to_json
       end
 
@@ -44,16 +44,9 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
     context 'when product has repos' do
       subject { response }
 
-      let(:payload) do
-        {
-          identifier: product_with_repos.identifier,
-          version: product_with_repos.version,
-          arch: product_with_repos.arch
-        }
-      end
       let(:serialized_json) do
         V3::ServiceSerializer.new(
-          product_with_repos.service,
+          product.service,
           base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
         ).to_json
       end
@@ -82,14 +75,6 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
 
     context 'when product is not activated' do
       subject { response }
-
-      let(:payload) do
-        {
-          identifier: product_with_repos.identifier,
-          version: product_with_repos.version,
-          arch: product_with_repos.arch
-        }
-      end
 
       before { get url, headers: headers, params: payload }
       its(:code) { is_expected.to eq('422') }
