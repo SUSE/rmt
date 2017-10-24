@@ -41,6 +41,24 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       its(:body) { is_expected.to eq(error_json) }
     end
 
+    context 'when product has unmet dependencies' do
+      subject { response }
+
+      let(:base_product) { FactoryGirl.create(:product, :with_not_mirrored_repositories, :with_mirrored_extensions) }
+      let(:product) { base_product.extensions[0] }
+      let(:error_json) do
+        {
+          'type' => 'error',
+          'error' => "Unmet product dependencies, activate one of these products first: #{base_product.friendly_name}",
+          'localized_error' => "Unmet product dependencies, activate one of these products first: #{base_product.friendly_name}"
+        }.to_json
+      end
+
+      before { post url, headers: headers, params: payload }
+      its(:code) { is_expected.to eq('422') }
+      its(:body) { is_expected.to eq(error_json) }
+    end
+
     context 'when product has repos' do
       subject { response }
 

@@ -12,6 +12,7 @@ FactoryGirl.define do
     release_type ''
     version 42
     arch 'x86_64'
+    release_stage 'released'
 
     transient do
       base_products []
