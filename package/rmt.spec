@@ -19,7 +19,9 @@
 %define use_ruby_2_4 1
 %endif
 
-%define www_base    /srv/www/rmt/
+%define app_dir /usr/share/rmt/
+%define lib_dir %{_libdir}/rmt/
+%define data_dir /var/lib/rmt/
 %define systemd_dir %{_prefix}/lib/systemd/system/
 %define rmt_user    _rmt
 %define rmt_group   nginx
@@ -97,10 +99,21 @@ bundle.ruby.ruby2.5 install %{?jobs:--jobs %jobs} --without test development --d
 
 
 %install
-mkdir -p %{buildroot}%{www_base}
-cp -ar . %{buildroot}%{www_base}
+mkdir -p %{buildroot}%{data_dir}
+mkdir -p %{buildroot}%{lib_dir}
+mkdir -p %{buildroot}%{app_dir}
+
+mv log %{buildroot}%{data_dir}
+mv tmp %{buildroot}%{data_dir}
+mv public %{buildroot}%{data_dir}
+mv vendor %{buildroot}%{lib_dir}
+
+cp -ar . %{buildroot}%{app_dir}
+ln -s %{data_dir}/log %{buildroot}%{app_dir}/log
+ln -s %{data_dir}/tmp %{buildroot}%{app_dir}/tmp
+ln -s %{data_dir}/public %{buildroot}%{app_dir}/public
 mkdir -p %{buildroot}%{_bindir}
-ln -s %{www_base}/bin/rmt-cli %{buildroot}%{_bindir}
+ln -s %{app_dir}/bin/rmt-cli %{buildroot}%{_bindir}
 install -D -m 644 %_sourcedir/rmt.8.gz %{buildroot}%_mandir/man8/rmt.8.gz
 
 # systemd
@@ -115,27 +128,31 @@ ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-migration
 mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
-# cleanup unneeded files
-rm -r %{buildroot}%{www_base}/service
-rm -r %{buildroot}%{www_base}/vendor/bundle/ruby/2.*.0/cache
-find %{buildroot}%{www_base} "(" -name "*.c" -o -name "*.h" -o -name .keep ")" -delete
-rm -rf %{buildroot}%{www_base}/vendor/cache
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/doc
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/examples
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/samples
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/test
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/ports
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/ext
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/bin
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/spec
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/.gitignore
+sed -i '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"' %{buildroot}%{app_dir}/.bundle/config
 
-%fdupes %{buildroot}/%{_prefix}
-%fdupes %{buildroot}/srv
+# cleanup unneeded files
+rm -r %{buildroot}%{app_dir}/service
+find %{buildroot}%{lib_dir} "(" -name "*.c" -o -name "*.h" -o -name .keep ")" -delete
+find %{buildroot}%{app_dir} -name .keep -delete
+find %{buildroot}%{data_dir} -name .keep -delete
+rm -r  %{buildroot}%{lib_dir}/vendor/bundle/ruby/2.*.0/cache
+rm -rf %{buildroot}%{lib_dir}/vendor/cache
+rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/doc
+rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/examples
+rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/samples
+rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/test
+rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/ports
+rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/ext
+rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/bin
+rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/spec
+rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/.gitignore
+
+%fdupes %{buildroot}/%{lib_dir}
 
 %files
 %defattr(-,root,root)
-%attr(-,%{rmt_user},%{rmt_group}) %{www_base}
+%attr(-,%{rmt_user},%{rmt_group}) %{app_dir}
+%attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
 %config(noreplace) %{_sysconfdir}/rmt.conf
 %doc %{_mandir}/man8/rmt.8.gz
 %{_bindir}/rmt-cli
@@ -144,18 +161,19 @@ rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/.gitignore
 %{_libexecdir}/systemd/system/rmt.target
 %{_libexecdir}/systemd/system/rmt.service
 %{_libexecdir}/systemd/system/rmt-migration.service
+%{_libdir}/rmt
 
 %pre
 getent group %{rmt_group} >/dev/null || %{_sbindir}/groupadd -r %{rmt_group}
 getent passwd %{rmt_user} >/dev/null || \
 	%{_sbindir}/useradd -g %{rmt_group} -s /bin/false -r \
-	-c "user for RMT" -d %{www_base} %{rmt_user}
+	-c "user for RMT" -d %{app_dir} %{rmt_user}
 %service_add_pre rmt.target rmt.service rmt-migration.service
 
 %post
 %service_add_post rmt.target rmt.service rmt-migration.service
-cd /srv/www/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails secrets:setup >/dev/null
-cd /srv/www/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails runner -e production "Rails::Secrets.write({'production' => {'secret_key_base' => SecureRandom.hex(64)}}.to_yaml)"
+cd /usr/share/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails secrets:setup >/dev/null
+cd /usr/share/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails runner -e production "Rails::Secrets.write({'production' => {'secret_key_base' => SecureRandom.hex(64)}}.to_yaml)"
 
 %preun
 %service_del_preun rmt.target rmt.service rmt-migration.service

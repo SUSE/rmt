@@ -7,10 +7,10 @@ After=rmt-migration.service
 [Service]
 Type=forking
 User=_rmt
-WorkingDirectory=/srv/www/rmt
-ExecStart=/srv/www/rmt/bin/rails server -e production --daemon
+WorkingDirectory=/usr/share/rmt
+ExecStart=/usr/share/rmt/bin/rails server -e production --daemon
 ExecStop=/usr/bin/kill -15 $MAINPID
-PIDFile=/srv/www/rmt/tmp/pids/server.pid
+PIDFile=/usr/share/rmt/tmp/pids/server.pid
 Restart=always
 
 [Install]
