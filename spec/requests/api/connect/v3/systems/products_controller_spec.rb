@@ -9,7 +9,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
   let(:url) { connect_systems_products_url }
   let(:headers) { auth_header.merge(version_header) }
   let(:system) { FactoryGirl.create(:system) }
-  let(:product_with_repos) { FactoryGirl.create(:product, :with_mirrored_repositories) }
+  let(:product_with_repos) { FactoryGirl.create(:product, :with_mirrored_repositories, :with_mirrored_extensions) }
   let(:product_not_mirrored) { FactoryGirl.create(:product, :with_not_mirrored_repositories) }
 
   describe '#activate' do
@@ -63,9 +63,12 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       its(:body) { is_expected.to eq(serialized_json) }
 
       describe 'JSON response' do
-        subject { JSON.parse(response.body, symbolize_names: true) }
+        subject(:json_data) { JSON.parse(response.body, symbolize_names: true) }
 
         it { is_expected.to include :id, :name, :product, :url, :obsoleted_service_name }
+        it 'has extensions' do
+          expect(json_data[:product][:extensions]).not_to be_empty
+        end
       end
     end
   end

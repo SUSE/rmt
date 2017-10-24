@@ -43,7 +43,6 @@ RSpec.describe RMT::Rpm::PrimaryXmlParser do
       it 'references rpm files' do
         expect(parser.referenced_files).to eq(expected_result)
       end
-
     end
 
     context 'plain XML' do

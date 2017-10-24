@@ -1,5 +1,8 @@
 require 'rails_helper'
 
+# rubocop:disable RSpec/NestedGroups
+# rubocop:disable RSpec/MultipleExpectations
+
 RSpec.describe RMT::Mirror do
   describe '#mirror' do
     around do |example|
@@ -117,6 +120,7 @@ RSpec.describe RMT::Mirror do
 
       context 'when mirroring_base_dir is not writable' do
         let(:mirroring_dir) { '/non/existent/path' }
+
         it 'raises exception' do
           VCR.use_cassette 'mirroring_product' do
             expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
@@ -125,7 +129,7 @@ RSpec.describe RMT::Mirror do
       end
 
       context "when can't create tmp dir" do
-        before { Dir.stub(:mktmpdir).and_raise('mktmpdir exception') }
+        before { allow(Dir).to receive(:mktmpdir).and_raise('mktmpdir exception') }
         it 'handles the exception' do
           VCR.use_cassette 'mirroring_product' do
             expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
@@ -149,12 +153,10 @@ RSpec.describe RMT::Mirror do
         it 'removes the temporary metadata directory' do
           VCR.use_cassette 'mirroring_product' do
             expect { rmt_mirror.mirror }.to raise_error(RuntimeError)
-            expect( File.exist?( rmt_mirror.instance_variable_get(:@repodata_dir) ) ).to be(false)
+            expect(File.exist?(rmt_mirror.instance_variable_get(:@repodata_dir))).to be(false)
           end
         end
       end
-
-
     end
   end
 end

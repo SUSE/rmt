@@ -43,6 +43,15 @@ FactoryGirl.define do
       end
     end
 
+    trait :with_mirrored_extensions do
+      after :create do |product, _evaluator|
+        5.times do
+          extension = create :product, :extension, :with_mirrored_repositories
+          product.extensions << extension
+        end
+      end
+    end
+
     trait :with_modules do
       after :create do |product, _evaluator|
         5.times do
