@@ -41,29 +41,36 @@ Patch1:         use-ruby-2.4-in-rails.patch
 Patch0:         use-ruby-2.5-in-rmt-cli.patch
 Patch1:         use-ruby-2.5-in-rails.patch
 %endif
-BuildRequires:  gcc
-BuildRequires:  libcurl-devel
-BuildRequires:  libffi-devel
-BuildRequires:  libmysqlclient-devel
-BuildRequires:  libxml2-devel
-BuildRequires:  libxslt-devel
-%if 0%{?use_ruby_2_4}
-BuildRequires:  ruby2.4
-BuildRequires:  ruby2.4-devel
-BuildRequires:  ruby2.4-rubygem-bundler
-%else
-BuildRequires:  ruby2.5
-BuildRequires:  ruby2.5-devel
-BuildRequires:  ruby2.5-stdlib
-%endif
-BuildRequires:  fdupes
-Requires:       mariadb
 %if 0%{?use_ruby_2_4}
 Requires(post): ruby2.4
-Requires(post): ruby2.4-rubygem-bundler
+Requires(post): ruby2.4-rubygem-puma
+Requires(post): ruby2.4-rubygem-mysql2
+Requires(post): ruby2.4-rubygem-nokogiri
+Requires(post): ruby2.4-rubygem-thor
+Requires(post): ruby2.4-rubygem-versionist
+Requires(post): ruby2.4-rubygem-responders
+Requires(post): ruby2.4-rubygem-typhoeus
+Requires(post): ruby2.4-rubygem-active_model_serializers
+Requires(post): ruby2.4-rubygem-fast_gettext
+Requires(post): ruby2.4-rubygem-gettext_i18n_rails
+Requires(post): ruby2.4-rubygem-config
+Requires(post): ruby2.4-rubygem-terminal-table
 %else
 Requires(post): ruby2.5
+Requires(post): ruby2.5-rubygem-puma
+Requires(post): ruby2.5-rubygem-mysql2
+Requires(post): ruby2.5-rubygem-nokogiri
+Requires(post): ruby2.5-rubygem-thor
+Requires(post): ruby2.5-rubygem-versionist
+Requires(post): ruby2.5-rubygem-responders
+Requires(post): ruby2.5-rubygem-typhoeus
+Requires(post): ruby2.5-rubygem-active_model_serializers
+Requires(post): ruby2.5-rubygem-fast_gettext
+Requires(post): ruby2.5-rubygem-gettext_i18n_rails
+Requires(post): ruby2.5-rubygem-config
+Requires(post): ruby2.5-rubygem-terminal-table
 %endif
+
 Requires(post): timezone
 Requires(post): util-linux
 Requires(post): shadow
@@ -89,12 +96,6 @@ cp -p %SOURCE2 .
 %patch1 -p1
 
 %build
-%if 0%{?use_ruby_2_4}
-bundle.ruby2.4 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
-%else
-bundle.ruby.ruby2.5 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
-%endif
-
 
 %install
 mkdir -p %{buildroot}%{www_base}
@@ -117,21 +118,6 @@ mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
 # cleanup unneeded files
 rm -r %{buildroot}%{www_base}/service
-rm -r %{buildroot}%{www_base}/vendor/bundle/ruby/2.*.0/cache
-find %{buildroot}%{www_base} "(" -name "*.c" -o -name "*.h" -o -name .keep ")" -delete
-rm -rf %{buildroot}%{www_base}/vendor/cache
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/doc
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/examples
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/samples
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/test
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/ports
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/ext
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/bin
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/spec
-rm -rf %{buildroot}%{www_base}/vendor/bundle/ruby/*/gems/*/.gitignore
-
-%fdupes %{buildroot}/%{_prefix}
-%fdupes %{buildroot}/srv
 
 %files
 %defattr(-,root,root)
