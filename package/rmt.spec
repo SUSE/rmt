@@ -36,13 +36,10 @@ Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-rpmlintrc
 Source2:        rmt.conf
 Source3:        rmt.8.gz
-%if 0%{?use_ruby_2_4}
 Patch0:         use-ruby-2.4-in-rmt-cli.patch
 Patch1:         use-ruby-2.4-in-rails.patch
-%else
-Patch0:         use-ruby-2.5-in-rmt-cli.patch
-Patch1:         use-ruby-2.5-in-rails.patch
-%endif
+Patch2:         use-ruby-2.5-in-rmt-cli.patch
+Patch3:         use-ruby-2.5-in-rails.patch
 BuildRequires:  gcc
 BuildRequires:  libcurl-devel
 BuildRequires:  libffi-devel
@@ -87,8 +84,14 @@ RMT superseeds the main functionality of SMT in SLES 15.
 cp -p %SOURCE2 .
 
 %setup -q
+
+%if 0%{?use_ruby_2_4}
 %patch0 -p1
 %patch1 -p1
+%else
+%patch2 -p1
+%patch3 -p1
+%endif
 
 %build
 %if 0%{?use_ruby_2_4}
