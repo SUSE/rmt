@@ -79,3 +79,5 @@ gem 'gettext_i18n_rails'
 
 gem 'config', '~> 1.0'
 gem 'terminal-table', '~> 1.8'
+
+gem 'coveralls', require: false
