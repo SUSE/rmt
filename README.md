@@ -1,5 +1,8 @@
 # Repository Mirroring Tool
-![Kartoha](https://travis-ci.org/SUSE/rmt.svg?branch=master)
+[![Build Status](https://travis-ci.org/SUSE/rmt.svg?branch=master)](https://travis-ci.org/SUSE/rmt)
+[![Dependency Status](https://gemnasium.com/SUSE/rmt.svg)](https://gemnasium.com/SUSE/rmt)
+[![Code Climate](https://codeclimate.com/github/SUSE/rmt.png)](https://codeclimate.com/github/SUSE/rmt)
+[![Coverage Status](https://coveralls.io/repos/SUSE/rmt/badge.svg?branch=master&service=github)](https://coveralls.io/github/SUSE/rmt?branch=master)
 
 This tool allows you to mirror RPM repositories in your own private network.
 Organization (mirroring) credentials are required to mirror SUSE repositories.
