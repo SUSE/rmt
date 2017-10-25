@@ -146,8 +146,6 @@ RSpec.describe RMT::Mirror do
         end
       end
 
-      #
-
       context "when can't parse metadata" do
         before { allow_any_instance_of(RMT::Rpm::RepomdXmlParser).to receive(:parse).and_raise('Parse error') }
         it 'removes the temporary metadata directory' do
