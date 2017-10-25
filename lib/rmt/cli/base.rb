@@ -1,6 +1,27 @@
 # rubocop:disable Rails/Exit
 
+require 'lockfile'
+
 class RMT::CLI::Base < Thor
+
+  def self.lock(name)
+    lock_filename = "#{name}.lock"
+    @lockfile = Lockfile.new(lock_filename, retries: 0, max_age: 12 * 60 * 60, refresh: false)
+    begin
+      @lockfile.lock
+    rescue Lockfile::LockError
+      raise RMT::CLI::Error.new(
+        "Can't obtain a lock on #{lock_filename}",
+        RMT::CLI::Error::ERROR_LOCKFILE
+      )
+    end
+  end
+
+  def self.unlock
+    return unless @lockfile
+    @lockfile.unlock
+    @lockfile = nil
+  end
 
   class << self
 
@@ -58,6 +79,12 @@ class RMT::CLI::Base < Thor
         "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization",
         RMT::CLI::Error::ERROR_SCC
       )
+    ensure
+      begin
+        unlock
+      rescue Lockfile::LockError => e
+        warn e.message if config[:shell]&.base&.options&.[]('debug')
+      end
     end
 
   end
