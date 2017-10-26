@@ -7,8 +7,8 @@ Before=rmt.service
 [Service]
 Type=oneshot
 User=_rmt
-WorkingDirectory=/srv/www/rmt
-ExecStart=/srv/www/rmt/bin/rails db:create db:migrate RAILS_ENV=production
+WorkingDirectory=/usr/share/rmt
+ExecStart=/usr/share/rmt/bin/rails db:create db:migrate RAILS_ENV=production
 
 [Install]
 WantedBy=rmt.target
