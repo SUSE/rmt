@@ -30,9 +30,9 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       let(:product) { FactoryGirl.create(:product, :with_not_mirrored_repositories) }
       let(:error_json) do
         {
-          'type' => 'error',
-          'error' => "Not all mandatory repositories are mirrored for product #{product.friendly_name}",
-          'localized_error' => "Not all mandatory repositories are mirrored for product #{product.friendly_name}"
+          type: 'error',
+          error: "Not all mandatory repositories are mirrored for product #{product.friendly_name}",
+          localized_error: "Not all mandatory repositories are mirrored for product #{product.friendly_name}"
         }.to_json
       end
 
@@ -48,9 +48,9 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       let(:product) { base_product.extensions[0] }
       let(:error_json) do
         {
-          'type' => 'error',
-          'error' => "Unmet product dependencies, activate one of these products first: #{base_product.friendly_name}",
-          'localized_error' => "Unmet product dependencies, activate one of these products first: #{base_product.friendly_name}"
+          type: 'error',
+          error: "Unmet product dependencies, activate one of these products first: #{base_product.friendly_name}",
+          localized_error: "Unmet product dependencies, activate one of these products first: #{base_product.friendly_name}"
         }.to_json
       end
 

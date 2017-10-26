@@ -22,7 +22,7 @@ RSpec.describe Api::Connect::V3::Systems::ActivationsController do
       its(:code) { is_expected.to eq '401' }
     end
 
-    context 'when not credentials are wrong' do
+    context 'when credentials are wrong' do
       before { get url, headers: wrong_credentials_headers }
       subject { response }
 
