@@ -89,19 +89,15 @@ class RMT::Downloader
 
     downloaded_file = Tempfile.new('rmt', Dir.tmpdir, mode: File::BINARY, encoding: 'ascii-8bit')
 
-    request = RMT::HttpRequest.new(uri.to_s, followlocation: true)
-    request.on_headers { |response| request_fiber.resume(response) }
-    request.on_body do |chunk|
-      next :abort if downloaded_file.closed?
-      downloaded_file.write(chunk)
-    end
-    request.on_complete do |response|
-      request_fiber.resume(response) if request_fiber.alive?
-    end
-
-    response = Fiber.yield(request) # yields headers
+    request = RMT::FiberRequest.new(
+      uri.to_s,
+      followlocation: true,
+      download_path: downloaded_file,
+      request_fiber: request_fiber
+    )
 
     begin
+      response = request.receive_headers
       if (URI(uri).scheme != 'file' && response.code != 200)
         raise RMT::Downloader::Exception.new("#{remote_file} - HTTP request failed with code #{response.code}")
       end
@@ -112,7 +108,7 @@ class RMT::Downloader
     end
 
     begin
-      response = Fiber.yield # yields when the request is complete
+      response = request.receive_body
       if (response.return_code && response.return_code != :ok)
         raise RMT::Downloader::Exception.new("#{remote_file} - return code #{response.return_code}")
       end

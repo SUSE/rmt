@@ -21,6 +21,26 @@ RSpec.describe RMT::Downloader do
       end
     end
 
+    context 'when processing response by Typhoeus failed' do
+      before do
+        stub_request(:get, 'http://example.com/repomd.xml')
+          .with(headers: headers)
+          .to_return(status: 200, body: '', headers: {})
+      end
+
+      it 'raises an exception' do
+        allow_any_instance_of(RMT::FiberRequest).to receive(:receive_body) do
+          response_double = double
+          allow(response_double).to receive(:return_code) { :error }
+          response_double
+        end
+
+        expect do
+          downloader.download('/repomd.xml')
+        end.to raise_error(RMT::Downloader::Exception, '/repomd.xml - return code error')
+      end
+    end
+
     context 'when HTTP code is 200' do
       let(:content) { 'test' }
       let(:checksum_type) { 'SHA256' }
