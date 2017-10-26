@@ -19,6 +19,7 @@ module RMT::CLI::Mirror
 
     repositories.each do |repository|
       begin
+        puts "Mirroring repository #{repository.name}"
         mirror_one_repo(repository.external_url, repository.local_path, repository.auth_token)
         repository.refresh_timestamp!
       rescue RMT::Mirror::Exception => e

@@ -32,7 +32,7 @@ RSpec.describe RMT::CLI::Mirror do
         end
 
         it 'outputs mirroring progress' do
-          expect { command }.to output("Test double\n").to_stdout.and output('').to_stderr
+          expect { command }.to output("Mirroring repository #{repository.name}\nTest double\n").to_stdout.and output('').to_stderr
         end
       end
 
@@ -40,6 +40,7 @@ RSpec.describe RMT::CLI::Mirror do
         before do
           repository
           expect_any_instance_of(RMT::Mirror).to receive(:mirror).at_least(:once)
+          allow(STDOUT).to receive(:puts)
           described_class.mirror
           repository.reload
         end
@@ -51,8 +52,10 @@ RSpec.describe RMT::CLI::Mirror do
     end
 
     context 'with exceptions during mirroring' do
+      let(:repository) { FactoryGirl.create :repository, :with_products, mirroring_enabled: true }
+
       subject(:command) do
-        FactoryGirl.create :repository, :with_products, mirroring_enabled: true
+        repository
         expect_any_instance_of(RMT::Mirror).to receive(:mirror).at_least(:once) do
           raise RMT::Mirror::Exception, 'Test double exception'
         end
@@ -60,7 +63,7 @@ RSpec.describe RMT::CLI::Mirror do
       end
 
       it 'outputs exception message' do
-        expect { command }.to output('').to_stdout.and output("Test double exception\n").to_stderr
+        expect { command }.to output("Mirroring repository #{repository.name}\n").to_stdout.and output("Test double exception\n").to_stderr
       end
     end
   end
