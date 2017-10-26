@@ -1,3 +1,5 @@
+# rubocop:disable Rails/Output
+
 module RMT::CLI::Mirror
 
   def self.mirror(repository_url = nil, local_path = nil)

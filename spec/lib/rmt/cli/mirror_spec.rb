@@ -52,8 +52,6 @@ RSpec.describe RMT::CLI::Mirror do
     end
 
     context 'with exceptions during mirroring' do
-      let(:repository) { FactoryGirl.create :repository, :with_products, mirroring_enabled: true }
-
       subject(:command) do
         repository
         expect_any_instance_of(RMT::Mirror).to receive(:mirror).at_least(:once) do
@@ -61,6 +59,8 @@ RSpec.describe RMT::CLI::Mirror do
         end
         described_class.mirror
       end
+
+      let(:repository) { FactoryGirl.create :repository, :with_products, mirroring_enabled: true }
 
       it 'outputs exception message' do
         expect { command }.to output("Mirroring repository #{repository.name}\n").to_stdout.and output("Test double exception\n").to_stderr
