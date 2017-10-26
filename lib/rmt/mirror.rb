@@ -77,7 +77,7 @@ class RMT::Mirror
       end
     rescue RuntimeError => e
       FileUtils.remove_entry(@repodata_dir)
-      raise e
+      raise RMT::Mirror::Exception.new("Error while mirroring metadata files: #{e}")
     end
   end
 
