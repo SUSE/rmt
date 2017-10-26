@@ -77,7 +77,7 @@ class RMT::Mirror
       end
     rescue RuntimeError => e
       FileUtils.remove_entry(@repodata_dir)
-      raise e
+      raise RMT::Mirror::Exception.new("Error while mirroring metadata files: #{e}")
     end
   end
 
@@ -92,10 +92,14 @@ class RMT::Mirror
       return
     end
 
-    File.open(directory_yast).each_line do |filename|
-      filename.strip!
-      next if filename == 'directory.yast'
-      @downloader.download(filename)
+    begin
+      File.open(directory_yast).each_line do |filename|
+        filename.strip!
+        next if filename == 'directory.yast'
+        @downloader.download(filename)
+      end
+    rescue RMT::Downloader::Exception => e
+      raise RMT::Mirror::Exception.new("Error during mirroring metadata: #{e.message}")
     end
   end
 

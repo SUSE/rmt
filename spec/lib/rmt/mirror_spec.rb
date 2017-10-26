@@ -146,6 +146,20 @@ RSpec.describe RMT::Mirror do
         end
       end
 
+      context "when can't download some of the license files" do
+        before do
+          allow_any_instance_of(RMT::Downloader).to receive(:download).and_wrap_original do |klass, *args|
+            raise RMT::Downloader::Exception.new unless args[0] == 'directory.yast'
+            klass.call(*args)
+          end
+        end
+        it 'handles RMT::Downloader::Exception' do
+          VCR.use_cassette 'mirroring_product' do
+            expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception, /Error during mirroring metadata:/)
+          end
+        end
+      end
+
       context "when can't parse metadata" do
         before { allow_any_instance_of(RMT::Rpm::RepomdXmlParser).to receive(:parse).and_raise('Parse error') }
         it 'removes the temporary metadata directory' do
