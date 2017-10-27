@@ -15,6 +15,7 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
+
 %if (0%{?suse_version} > 0 && 0%{?suse_version} <= 1320) || (0%{?sle_version} > 0 && 0%{?sle_version} <= 120300)
 %define use_ruby_2_4 1
 %endif
@@ -31,7 +32,7 @@ Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0+
 Group:          Productivity/Networking/Web/Proxy
-URL:            https://software.opensuse.org/package/rmt
+Url:            https://software.opensuse.org/package/rmt
 Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-rpmlintrc
 Source2:        rmt.conf
@@ -99,7 +100,6 @@ bundle.ruby2.4 install %{?jobs:--jobs %jobs} --without test development --deploy
 %else
 bundle.ruby.ruby2.5 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
 %endif
-
 
 %install
 mkdir -p %{buildroot}%{data_dir}
