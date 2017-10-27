@@ -53,6 +53,7 @@ group :development, :test do
   # Branch that contains fixes for recording and playing back Typhoeus requests with on_headers and on_body callbacks
   # Hopefully it will get merged some time soon :-)
   gem 'vcr', github: 'vcr/vcr', ref: '0ce29d08d492792ffecbec468e70a638e9e9f140'
+  gem 'coveralls', require: false
 end
 
 group :development do
@@ -79,5 +80,3 @@ gem 'gettext_i18n_rails'
 
 gem 'config', '~> 1.0'
 gem 'terminal-table', '~> 1.8'
-
-gem 'coveralls', require: false

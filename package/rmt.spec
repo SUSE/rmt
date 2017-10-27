@@ -161,9 +161,9 @@ rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/.gitignore
 %{_bindir}/rmt-cli
 %{_sbindir}/rcrmt
 %{_sbindir}/rcrmt-migration
-%{_libexecdir}/systemd/system/rmt.target
-%{_libexecdir}/systemd/system/rmt.service
-%{_libexecdir}/systemd/system/rmt-migration.service
+%{_unitdir}/rmt.target
+%{_unitdir}/rmt.service
+%{_unitdir}/rmt-migration.service
 %{_libdir}/rmt
 
 %pre
