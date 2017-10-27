@@ -12,7 +12,7 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
 
   describe '#destroy' do
     it_behaves_like 'products controller action' do
-      let(:product_with_repos) { FactoryGirl.create(:product, :with_mirrored_repositories) }
+      let(:product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
       let(:verb) { 'delete' }
     end
 

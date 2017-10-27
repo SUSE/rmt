@@ -4,6 +4,24 @@ RSpec.describe RMT::CLI::Products do
   describe '#list' do
     let(:argv) { ['list'] }
 
+    let(:expected_output) do
+      rows = []
+      rows << [
+        product.id,
+        product.name,
+        product.version,
+        product.arch,
+        product.product_string,
+        product.release_stage,
+        product.mirror?,
+        product.last_mirrored_at
+      ]
+      Terminal::Table.new(
+        headings: ['ID', 'Name', 'Version', 'Architecture', 'Product string', 'Release stage', 'Mirror?', 'Last mirrored'],
+        rows: rows
+      ).to_s + "\n"
+    end
+
     context 'with empty database' do
       subject(:command) { described_class.start(argv) }
 
@@ -15,23 +33,23 @@ RSpec.describe RMT::CLI::Products do
     end
 
     context 'with products' do
-      let!(:product) { FactoryGirl.create :product, :with_mirrored_repositories }
-      let(:expected_output) do
-        rows = []
-        rows << [
-          product.id,
-          product.name,
-          product.version,
-          product.arch,
-          product.product_string,
-          product.release_stage,
-          product.mirror?,
-          product.last_mirrored_at
-        ]
-        Terminal::Table.new(
-          headings: ['ID', 'Name', 'Version', 'Architecture', 'Product string', 'Release stage', 'Mirror?', 'Last mirrored'],
-          rows: rows
-        ).to_s + "\n"
+      let(:product) { FactoryGirl.create :product, :with_mirrored_repositories }
+
+      before { product }
+
+      it 'stdout contains products table' do
+        expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
+      end
+    end
+
+    context 'with products and --release-stage parameter' do
+      let(:argv) { ['list', '-r', 'released'] }
+      let(:product) { FactoryGirl.create :product, :with_mirrored_repositories }
+      let(:beta_product) { FactoryGirl.create :product, :with_mirrored_repositories, release_stage: 'beta' }
+
+      before do
+        product
+        beta_product
       end
 
       it 'stdout contains products table' do

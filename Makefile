@@ -1,6 +1,5 @@
 NAME          = rmt
 VERSION       = 0.0.1
-WWW_BASE      = /srv/www
 
 all:
 	@:
@@ -46,6 +45,10 @@ dist: clean man
 	@mv $(NAME)-$(VERSION)/.bundle/config_packaging $(NAME)-$(VERSION)/.bundle/config
 	cd $(NAME)-$(VERSION) && bundler package --all
 	rm -rf $(NAME)-$(VERSION)/vendor/bundle/
+
+	# bundler hacks for ruby2.5
+	sed -i '/source .*rubygems\.org/d' $(NAME)-$(VERSION)/Gemfile
+	sed -i '/remote: .*rubygems\.org/d' $(NAME)-$(VERSION)/Gemfile.lock
 
 	tar cfvj package/$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)/
 	rm -rf $(NAME)-$(VERSION)/

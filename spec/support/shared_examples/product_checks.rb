@@ -49,8 +49,8 @@ shared_examples 'products controller action' do
     let(:payload) do
       {
         identifier: -1,
-        version: product_with_repos.version,
-        arch: product_with_repos.arch
+        version: product.version,
+        arch: product.arch
       }
     end
 
