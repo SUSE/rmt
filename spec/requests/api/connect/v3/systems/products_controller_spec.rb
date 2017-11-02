@@ -157,7 +157,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
         product = JSON.parse(serialized_json, symbolize_names: true)
         expect(product[:eula_url]).to eq('http://www.example.com/repo/dummy/eula.txt')
 
-        replacement_url = URI::HTTP.build({ scheme: request.scheme, host: request.host, path: Settings.mirroring.mirror_url_prefix }).to_s
+        replacement_url = URI::HTTP.build({ scheme: request.scheme, host: request.host, path: RMT::DEFAULT_MIRROR_URL_PREFIX }).to_s
         expect(product[:eula_url]).to eq(
           RMT::Misc.replace_uri_parts(activation.product.eula_url, replacement_url)
         )
