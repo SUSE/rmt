@@ -28,6 +28,8 @@ module RMT::CLI::Mirror
         warn e.to_s
       end
     end
+  rescue Interrupt
+    raise RMT::CLI::Error, 'Interrupted.'
   end
 
   def self.mirror_one_repo(repository_url, local_path, auth_token = nil)
