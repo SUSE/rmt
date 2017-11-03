@@ -23,7 +23,6 @@
 %define app_dir /usr/share/rmt/
 %define lib_dir %{_libdir}/rmt/
 %define data_dir /var/lib/rmt/
-%define systemd_dir %{_prefix}/lib/systemd/system/
 %define rmt_user    _rmt
 %define rmt_group   nginx
 Name:           rmt
@@ -79,7 +78,7 @@ It's possible to mirror SUSE, as well as openSUSE and other RPM repositories.
 SCC organization credentials are required to synchronize SUSE products,
 subscription information, and to mirror SUSE repositories.
 
-RMT superseeds the main functionality of SMT in SLES 15.
+RMT supersedes the main functionality of SMT in SLES 15.
 
 %prep
 cp -p %SOURCE2 .
@@ -120,10 +119,10 @@ ln -s %{app_dir}/bin/rmt-cli %{buildroot}%{_bindir}
 install -D -m 644 %_sourcedir/rmt.8.gz %{buildroot}%_mandir/man8/rmt.8.gz
 
 # systemd
-mkdir -p %{buildroot}%{systemd_dir}
-install -m 444 service/rmt.target %{buildroot}%{systemd_dir}
-install -m 444 service/rmt.service %{buildroot}%{systemd_dir}
-install -m 444 service/rmt-migration.service %{buildroot}%{systemd_dir}
+mkdir -p %{buildroot}%{_unitdir}
+install -m 444 service/rmt.target %{buildroot}%{_unitdir}
+install -m 444 service/rmt.service %{buildroot}%{_unitdir}
+install -m 444 service/rmt-migration.service %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}%{_sbindir}
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-migration

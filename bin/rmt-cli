@@ -16,8 +16,8 @@ require 'rmt/config'
 # don't run as root
 if Process.euid == 0
 
-  group = Settings&.[](:cli)&.[](:group) || 'nginx'
-  user = Settings&.[](:cli)&.[](:user) || '_rmt'
+  group = Settings&.[](:cli)&.[](:group) || RMT::DEFAULT_GROUP
+  user = Settings&.[](:cli)&.[](:user) || RMT::DEFAULT_USER
 
   Process::Sys.setegid(Etc.getgrnam(group).gid)
   Process::Sys.seteuid(Etc.getpwnam(user).uid)
@@ -26,8 +26,8 @@ end
 relative_load_paths = %w[lib lib/rmt app/models].map { |dir| File.join(rmt_path, dir) }
 ActiveSupport::Dependencies.autoload_paths += relative_load_paths
 
-unless File.writable?(Settings.mirroring.base_dir)
-  warn "Mirroring base directory (#{Settings.mirroring.base_dir}) is not writable by user '#{Etc.getpwuid(Process.euid).name}'"
+unless File.writable?(RMT::DEFAULT_MIRROR_DIR)
+  warn "Mirroring base directory (#{RMT::DEFAULT_MIRROR_DIR}) is not writable by user '#{Etc.getpwuid(Process.euid).name}'"
   warn 'Run as root or adjust the permissions.'
   exit RMT::CLI::Error::ERROR_OTHER
 end

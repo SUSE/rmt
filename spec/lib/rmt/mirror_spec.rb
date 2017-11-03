@@ -164,7 +164,17 @@ RSpec.describe RMT::Mirror do
         before { allow_any_instance_of(RMT::Rpm::RepomdXmlParser).to receive(:parse).and_raise('Parse error') }
         it 'removes the temporary metadata directory' do
           VCR.use_cassette 'mirroring_product' do
-            expect { rmt_mirror.mirror }.to raise_error(RuntimeError)
+            expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
+            expect(File.exist?(rmt_mirror.instance_variable_get(:@repodata_dir))).to be(false)
+          end
+        end
+      end
+
+      context 'when Interrupt is raised' do
+        before { allow_any_instance_of(RMT::Rpm::RepomdXmlParser).to receive(:parse).and_raise(Interrupt.new) }
+        it 'removes the temporary metadata directory' do
+          VCR.use_cassette 'mirroring_product' do
+            expect { rmt_mirror.mirror }.to raise_error(Interrupt)
             expect(File.exist?(rmt_mirror.instance_variable_get(:@repodata_dir))).to be(false)
           end
         end

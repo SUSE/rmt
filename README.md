@@ -30,6 +30,9 @@ EOFF
 ```
 * See the "Configuration" section for how to configure the options in `/etc/rmt.conf`.
 * Start RMT by running `systemctl start rmt`. This will start the RMT server at http://localhost:4224.
+* By default, mirrored repositories are saved under `/usr/share/rmt/public`, which is a symlink that points to
+`/var/lib/rmt/public`. In order to change destination directory, recreate `/usr/share/rmt/public` symlink to point to the
+desired location.
 
 ## Usage
 
@@ -54,8 +57,7 @@ To mirror repositories that are not delivered via SCC, you can run for example:
 
 `rmt-cli mirror https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/openSUSE_Leap_42.3/ foo/bar`
 
-This will mirror the repository content to `mirroring.base_dir`/`foo/bar` and make it available at
-http://hostname:4224/`mirroring.mirror_url_prefix`/foo/bar.
+This will mirror the repository content to `public/repo/foo/bar` and make it available at http://hostname:4224/repo/foo/bar.
 
 ## Configuration
 
@@ -64,23 +66,6 @@ Available configuration options can be found in the `etc/rmt.conf` file.
 ### Mirroring settings
 
 - `mirroring.mirror_src` - whether to mirror source (arch = `src`) repos or not.
-- `mirroring.base_dir` - a directory where mirrored files will be stored. The HTTP server should be configured to serve files from this directory under `mirroring.mirror_url_prefix`.
-- `mirroring.mirror_url_prefix` - URL path that will be used to access mirrored files on the HTTP server.
-
-For example, for a given configuration values:
-```
-mirroring:
-    mirror_url_prefix: /my_rmt_mirror/
-    base_dir:  /var/rmt/mirrored_repos/
-```
-
-The file `SUSE/Updates/SLE-SERVER/12/x86_64/update/x86_64/package-42.0.x86_64.rpm` would be stored at:
-
-`/var/rmt/mirrored_repos/SUSE/Updates/SLE-SERVER/12/x86_64/update/x86_64/package-42.0.x86_64.rpm`
-
-And accessible at the following URL:
-
-`http://hostname:4224/my_rmt_mirror/SUSE/Updates/SLE-SERVER/12/x86_64/update/x86_64/package-42.0.x86_64.rpm`
 
 ### HTTP client settings
 
@@ -112,7 +97,7 @@ Allow the rmt user from `config/rmt.local.yml` to login to your MySQL/MariaDB se
 
 ```
 mysql -u root -p <<EOFF
-GRANT ALL PRIVILEGES ON \`rmt%\`.* TO rmt@localhost identified by 'rmt';
+GRANT ALL PRIVILEGES ON \`rmt%\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
 FLUSH PRIVILEGES;
 EOFF
 ```
