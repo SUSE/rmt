@@ -30,6 +30,9 @@ EOFF
 ```
 * See the "Configuration" section for how to configure the options in `/etc/rmt.conf`.
 * Start RMT by running `systemctl start rmt`. This will start the RMT server at http://localhost:4224.
+* By default, mirrored repositories are saved under `/usr/share/rmt/public`, which is a symlink that points to
+`/var/lib/rmt/public`. In order to change destination directory, recreate `/usr/share/rmt/public` symlink to point to the
+desired location.
 
 ## Usage
 
@@ -54,8 +57,7 @@ To mirror repositories that are not delivered via SCC, you can run for example:
 
 `rmt-cli mirror https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/openSUSE_Leap_42.3/ foo/bar`
 
-This will mirror the repository content to `/usr/share/rmt/public/repo/foo/bar` and make it available at
-http://hostname:4224/repo/foo/bar.
+This will mirror the repository content to `public/repo/foo/bar` and make it available at http://hostname:4224/repo/foo/bar.
 
 ## Configuration
 
@@ -95,7 +97,7 @@ Allow the rmt user from `config/rmt.local.yml` to login to your MySQL/MariaDB se
 
 ```
 mysql -u root -p <<EOFF
-GRANT ALL PRIVILEGES ON \`rmt%\`.* TO rmt@localhost identified by 'rmt';
+GRANT ALL PRIVILEGES ON \`rmt%\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
 FLUSH PRIVILEGES;
 EOFF
 ```
