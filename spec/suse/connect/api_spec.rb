@@ -29,6 +29,14 @@ RSpec.describe SUSE::Connect::Api do
         headers: {}
       )
 
+    stub_request(:get, 'https://scc.suse.com/connect/organizations/orders?page=1')
+      .with(headers: expected_request_headers)
+      .to_return(
+        status: 200,
+        body: [ { endpoint: 'organizations/orders' } ].to_json,
+        headers: {}
+      )
+
     stub_request(:get, 'https://scc.suse.com/connect/organizations/products?page=1')
       .with(headers: expected_request_headers)
       .to_return(
@@ -76,6 +84,12 @@ RSpec.describe SUSE::Connect::Api do
     subject { api_client.send(:make_paginated_request, 'GET', 'http://example.org/api_method') }
 
     it { is_expected.to eq([response_data, response_data]) }
+  end
+
+  describe '#list_orders' do
+    subject { api_client.list_orders }
+
+    it { is_expected.to eq([ { endpoint: 'organizations/orders' } ]) }
   end
 
   describe '#list_products' do

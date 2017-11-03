@@ -58,6 +58,9 @@ class RMT::SCC
     @logger.info('Updating subscriptions')
     File.write(File.join(sync_dir, "organizations_subscriptions.json"), scc_api_client.list_subscriptions)
 
+    @logger.info('Updating orders')
+    File.write(File.join(sync_dir, "organizations_orders.json"), scc_api_client.list_orders)
+
     @logger.info('Done!')
   end
 

@@ -13,6 +13,10 @@ module SUSE
         @password = password
       end
 
+      def list_orders
+        make_paginated_request(:get, 'https://scc.suse.com/connect/organizations/orders')
+      end
+
       def list_products
         make_paginated_request(:get, 'https://scc.suse.com/connect/organizations/products')
       end
