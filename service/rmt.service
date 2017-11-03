@@ -14,4 +14,4 @@ PIDFile=/usr/share/rmt/tmp/pids/server.pid
 Restart=always
 
 [Install]
-WantedBy=rmt.target
+WantedBy=multi-user.target
