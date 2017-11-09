@@ -33,6 +33,14 @@ class RMT::CLI::Main < RMT::CLI::Base
     puts RMT::VERSION
   end
 
+  desc 'feedback', 'How to provide feedback about RMT'
+  def feedback
+    puts <<-eof.squish
+      RMT project developers would love to hear from you! Please do not hesitate
+      to reach out to us via https://github.com/suse/rmt/issues'
+    eof
+  end
+
   map %w[--version -v] => :version
 
 end
