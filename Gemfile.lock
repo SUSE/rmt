@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/vcr/vcr.git
+  revision: 0ce29d08d492792ffecbec468e70a638e9e9f140
+  ref: 0ce29d08d492792ffecbec468e70a638e9e9f140
+  specs:
+    vcr (3.0.3)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -252,6 +259,7 @@ DEPENDENCIES
   thor (= 0.20)
   typhoeus (~> 1.1, >= 1.1.2)
   tzinfo-data
+  vcr!
   versionist (~> 1.5)
   webmock
 
