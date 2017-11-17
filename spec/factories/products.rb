@@ -12,6 +12,7 @@ FactoryGirl.define do
     release_type ''
     version 42
     arch 'x86_64'
+    release_stage 'released'
 
     transient do
       base_products []
@@ -38,6 +39,15 @@ FactoryGirl.define do
       after :create do |product, _evaluator|
         5.times do
           extension = create :product, :extension
+          product.extensions << extension
+        end
+      end
+    end
+
+    trait :with_mirrored_extensions do
+      after :create do |product, _evaluator|
+        5.times do
+          extension = create :product, :extension, :with_mirrored_repositories
           product.extensions << extension
         end
       end

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xmlns="http://linux.duke.edu/metadata/common" xmlns:suse="http://novell.com/package/metadata/suse/common" xmlns:rpm="http://linux.duke.edu/metadata/rpm" packages="4">
+<package type="rpm">
+  <name>apples</name>
+  <arch>x86_64</arch>
+  <version epoch="0" ver="0.1" rel="0"/>
+  <checksum type="sha256" pkgid="YES">5c4e3fa1624bd23251eecdda9c7fcefad045995a9eaed527d06dd8510cfe2851</checksum>
+  <summary>Apples dummy RPM</summary>
+  <description>Dummy apples RPM</description>
+  <packager></packager>
+  <url></url>
+  <time file="1500453272" build="1500453253"/>
+  <size package="1934" installed="14" archive="268"/>
+<location href="apples-0.1-0.x86_64.rpm"/>
+  <format>
+    <rpm:license>Public</rpm:license>
+    <rpm:vendor>obs://build.suse.de/Devel:SCC:rmt-dummy</rpm:vendor>
+    <rpm:group>Dummy/Apples</rpm:group>
+    <rpm:buildhost>g87</rpm:buildhost>
+    <rpm:sourcerpm>apples-0.1-0.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="280" end="1820"/>
+    <rpm:provides>
+      <rpm:entry name="apples" flags="EQ" epoch="0" ver="0.1" rel="0"/>
+      <rpm:entry name="apples(x86-64)" flags="EQ" epoch="0" ver="0.1" rel="0"/>
+    </rpm:provides>
+    <rpm:requires>
+    </rpm:requires>
+  </format>
+</package>
+<package type="rpm">
+  <name>apples</name>
+  <arch>x86_64</arch>
+  <version epoch="0" ver="0.2" rel="0"/>
+  <checksum type="sha256" pkgid="YES">a9fdc5517f48d2b12c780deb080c8a619f3d440b0b50c2c30b5c9350352db463</checksum>
+  <summary>Apples dummy RPM</summary>
+  <description>Dummy apples RPM</description>
+  <packager></packager>
+  <url></url>
+  <time file="1500453354" build="1500453344"/>
+  <size package="1950" installed="31" archive="284"/>
+<location href="apples-0.2-0.x86_64.rpm"/>
+  <format>
+    <rpm:license>Public</rpm:license>
+    <rpm:vendor>obs://build.suse.de/Devel:SCC:rmt-dummy</rpm:vendor>
+    <rpm:group>Dummy/Apples</rpm:group>
+    <rpm:buildhost>g87</rpm:buildhost>
+    <rpm:sourcerpm>apples-0.2-0.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="280" end="1820"/>
+    <rpm:provides>
+      <rpm:entry name="apples" flags="EQ" epoch="0" ver="0.2" rel="0"/>
+      <rpm:entry name="apples(x86-64)" flags="EQ" epoch="0" ver="0.2" rel="0"/>
+    </rpm:provides>
+    <rpm:requires>
+    </rpm:requires>
+  </format>
+</package>
+<package type="rpm">
+  <name>oranges</name>
+  <arch>x86_64</arch>
+  <version epoch="0" ver="0.1" rel="0"/>
+  <checksum type="sha256" pkgid="YES">a38de0c943388127b9c746e7772d694055ec255706ececd563fb55d13b01b4f3</checksum>
+  <summary>Oranges dummy RPM</summary>
+  <description>Dummy oranges RPM</description>
+  <packager></packager>
+  <url></url>
+  <time file="1500453495" build="1500453483"/>
+  <size package="1933" installed="14" archive="268"/>
+<location href="oranges-0.1-0.x86_64.rpm"/>
+  <format>
+    <rpm:license>Public</rpm:license>
+    <rpm:vendor>obs://build.suse.de/Devel:SCC:rmt-dummy</rpm:vendor>
+    <rpm:group>Dummy/Oranges</rpm:group>
+    <rpm:buildhost>g87</rpm:buildhost>
+    <rpm:sourcerpm>oranges-0.1-0.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="280" end="1820"/>
+    <rpm:provides>
+      <rpm:entry name="oranges" flags="EQ" epoch="0" ver="0.1" rel="0"/>
+      <rpm:entry name="oranges(x86-64)" flags="EQ" epoch="0" ver="0.1" rel="0"/>
+    </rpm:provides>
+    <rpm:requires>
+    </rpm:requires>
+  </format>
+</package>
+<package type="rpm">
+  <name>oranges</name>
+  <arch>x86_64</arch>
+  <version epoch="0" ver="0.2" rel="0"/>
+  <checksum type="sha256" pkgid="YES">d38a6b65326e471540ce5105677411035d437a177634a77088dfb73e34461f37</checksum>
+  <summary>Oranges dummy RPM</summary>
+  <description>Dummy oranges RPM</description>
+  <packager></packager>
+  <url></url>
+  <time file="1500453592" build="1500453559"/>
+  <size package="1949" installed="31" archive="284"/>
+<location href="oranges-0.2-0.x86_64.rpm"/>
+  <format>
+    <rpm:license>Public</rpm:license>
+    <rpm:vendor>obs://build.suse.de/Devel:SCC:rmt-dummy</rpm:vendor>
+    <rpm:group>Dummy/Oranges</rpm:group>
+    <rpm:buildhost>g87</rpm:buildhost>
+    <rpm:sourcerpm>oranges-0.2-0.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="280" end="1820"/>
+    <rpm:provides>
+      <rpm:entry name="oranges" flags="EQ" epoch="0" ver="0.2" rel="0"/>
+      <rpm:entry name="oranges(x86-64)" flags="EQ" epoch="0" ver="0.2" rel="0"/>
+    </rpm:provides>
+    <rpm:requires>
+    </rpm:requires>
+  </format>
+</package>
+</metadata>

@@ -1,5 +1,8 @@
 require 'rails_helper'
 
+# rubocop:disable RSpec/NestedGroups
+# rubocop:disable RSpec/MultipleExpectations
+
 RSpec.describe RMT::Mirror do
   describe '#mirror' do
     around do |example|
@@ -99,6 +102,81 @@ RSpec.describe RMT::Mirror do
       it 'downloads product license' do
         ['directory.yast', 'license.txt', 'license.de.txt', 'license.ru.txt'].each do |file|
           expect(File.size(File.join(@tmp_dir, 'dummy_product/product.license/', file))).to be > 0
+        end
+      end
+    end
+
+    context 'handles erroring' do
+      let(:mirroring_dir) { @tmp_dir }
+      let(:rmt_mirror) do
+        described_class.new(
+          mirroring_base_dir: mirroring_dir,
+          repository_url: 'http://localhost/dummy_product/product/',
+          local_path: '/dummy_product/product/',
+          auth_token: 'repo_auth_token',
+          mirror_src: false
+        )
+      end
+
+      context 'when mirroring_base_dir is not writable' do
+        let(:mirroring_dir) { '/non/existent/path' }
+
+        it 'raises exception' do
+          VCR.use_cassette 'mirroring_product' do
+            expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
+          end
+        end
+      end
+
+      context "when can't create tmp dir" do
+        before { allow(Dir).to receive(:mktmpdir).and_raise('mktmpdir exception') }
+        it 'handles the exception' do
+          VCR.use_cassette 'mirroring_product' do
+            expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
+          end
+        end
+      end
+
+      context "when can't download metadata" do
+        before { allow_any_instance_of(RMT::Downloader).to receive(:download).and_raise(RMT::Downloader::Exception) }
+        it 'handles RMT::Downloader::Exception' do
+          VCR.use_cassette 'mirroring_product' do
+            expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
+          end
+        end
+      end
+
+      context "when can't download some of the license files" do
+        before do
+          allow_any_instance_of(RMT::Downloader).to receive(:download).and_wrap_original do |klass, *args|
+            raise RMT::Downloader::Exception.new unless args[0] == 'directory.yast'
+            klass.call(*args)
+          end
+        end
+        it 'handles RMT::Downloader::Exception' do
+          VCR.use_cassette 'mirroring_product' do
+            expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception, /Error during mirroring metadata:/)
+          end
+        end
+      end
+
+      context "when can't parse metadata" do
+        before { allow_any_instance_of(RMT::Rpm::RepomdXmlParser).to receive(:parse).and_raise('Parse error') }
+        it 'removes the temporary metadata directory' do
+          VCR.use_cassette 'mirroring_product' do
+            expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
+            expect(File.exist?(rmt_mirror.instance_variable_get(:@repodata_dir))).to be(false)
+          end
+        end
+      end
+
+      context 'when Interrupt is raised' do
+        before { allow_any_instance_of(RMT::Rpm::RepomdXmlParser).to receive(:parse).and_raise(Interrupt.new) }
+        it 'removes the temporary metadata directory' do
+          VCR.use_cassette 'mirroring_product' do
+            expect { rmt_mirror.mirror }.to raise_error(Interrupt)
+            expect(File.exist?(rmt_mirror.instance_variable_get(:@repodata_dir))).to be(false)
+          end
         end
       end
     end
