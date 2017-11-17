@@ -58,21 +58,11 @@ BuildRequires:  ruby2.5-stdlib
 BuildRequires:  fdupes
 Requires:       mariadb
 
-%if 0%{?use_ruby_2_4}
-Requires(post): ruby2.4
-Requires(post): ruby2.4-rubygem-puma
-Requires(post): ruby2.4-rubygem-nokogiri
-Requires(post): ruby2.4-rubygem-fast_gettext
-Requires(post): ruby2.4-rubygem-gettext_i18n_rails
-Requires(post): ruby2.4-rubygem-thor
-%else
-Requires(post): ruby2.5
-Requires(post): ruby2.5-rubygem-puma = 3.10.0
-Requires(post): ruby2.5-rubygem-nokogiri = 1.8.1
-Requires(post): ruby2.5-rubygem-fast_gettext = 1.5.1
-Requires(post): ruby2.5-rubygem-gettext_i18n_rails = 1.8.0
-Requires(post): ruby2.5-rubygem-thor = 0.20.0
-%endif
+Requires(post): %{rubygem puma = 3.10.0}
+Requires(post): %{rubygem nokogiri = 1.8.1}
+Requires(post): %{rubygem fast_gettext = 1.5.1}
+Requires(post): %{rubygem gettext_i18n_rails = 1.8.0}
+Requires(post): %{rubygem thor = 0.20.0}
 
 Requires(post): timezone
 Requires(post): util-linux
