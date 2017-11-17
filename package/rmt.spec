@@ -57,12 +57,13 @@ BuildRequires:  ruby2.5-stdlib
 %endif
 BuildRequires:  fdupes
 Requires:       mariadb
-%if 0%{?use_ruby_2_4}
-Requires(post): ruby2.4
-Requires(post): ruby2.4-rubygem-bundler
-%else
-Requires(post): ruby2.5
-%endif
+
+Requires(post): %{rubygem puma = 3.10.0}
+Requires(post): %{rubygem nokogiri = 1.8.1}
+Requires(post): %{rubygem fast_gettext = 1.5.1}
+Requires(post): %{rubygem gettext_i18n_rails = 1.8.0}
+Requires(post): %{rubygem thor = 0.20.0}
+
 Requires(post): timezone
 Requires(post): util-linux
 Requires(post): shadow
@@ -95,9 +96,9 @@ cp -p %SOURCE2 .
 
 %build
 %if 0%{?use_ruby_2_4}
-bundle.ruby2.4 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
+bundle.ruby2.4 install %{?jobs:--jobs %jobs} --without test development system_gems --deployment --standalone
 %else
-bundle.ruby.ruby2.5 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
+bundle.ruby.ruby2.5 install %{?jobs:--jobs %jobs} --without test development system_gems --deployment --standalone
 %endif
 
 %install
@@ -131,6 +132,9 @@ mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
 sed -i '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"' %{buildroot}%{app_dir}/.bundle/config
+sed -i 's/BUNDLE_DISABLE_SHARED_GEMS.*/BUNDLE_DISABLE_SHARED_GEMS: "false"/' %{buildroot}%{app_dir}/.bundle/config
+sed -i 's/group :system_gems .*//' %{buildroot}%{app_dir}/Gemfile
+sed -i 's/.*# system_gems//' %{buildroot}%{app_dir}/Gemfile
 
 # cleanup unneeded files
 rm -r %{buildroot}%{app_dir}/service
