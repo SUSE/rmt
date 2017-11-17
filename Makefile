@@ -22,7 +22,7 @@ dist: clean man
 	@cp -r config $(NAME)-$(VERSION)/
 	@cp -r config.ru $(NAME)-$(VERSION)/
 	@cp -r db $(NAME)-$(VERSION)/
-	@cp -r Gemfile $(NAME)-$(VERSION)/
+	@cp -r Gemfile.packaging $(NAME)-$(VERSION)/Gemfile
 	@cp -r Gemfile.lock $(NAME)-$(VERSION)/
 	@cp -r lib $(NAME)-$(VERSION)/
 	@mkdir $(NAME)-$(VERSION)/log
