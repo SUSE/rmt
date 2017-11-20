@@ -2,13 +2,15 @@
 
 module RMT::CLI::Mirror
 
-  def self.mirror(repository_url = nil, local_path = nil)
+  def self.mirror(repository_url = nil, local_path = nil, base_dir = nil)
     require 'rmt/mirror'
     require 'rmt/config'
 
+    base_dir = base_dir || RMT::DEFAULT_MIRROR_DIR
+
     if repository_url
       local_path ||= Repository.make_local_path(repository_url)
-      mirror_one_repo(repository_url, local_path)
+      mirror_one_repo(repository_url, local_path, nil, base_dir)
       return
     end
 
@@ -22,7 +24,7 @@ module RMT::CLI::Mirror
     repositories.each do |repository|
       begin
         puts "Mirroring repository #{repository.name}"
-        mirror_one_repo(repository.external_url, repository.local_path, repository.auth_token)
+        mirror_one_repo(repository.external_url, repository.local_path, repository.auth_token, base_dir)
         repository.refresh_timestamp!
       rescue RMT::Mirror::Exception => e
         warn e.to_s
@@ -32,9 +34,9 @@ module RMT::CLI::Mirror
     raise RMT::CLI::Error, 'Interrupted.'
   end
 
-  def self.mirror_one_repo(repository_url, local_path, auth_token = nil)
+  def self.mirror_one_repo(repository_url, local_path, auth_token = nil, base_dir)
     RMT::Mirror.new(
-      mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR,
+      mirroring_base_dir: base_dir,
       mirror_src: Settings.mirroring.mirror_src,
       repository_url: repository_url,
       local_path: local_path,
