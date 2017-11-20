@@ -41,6 +41,7 @@ GEM
       public_suffix (~> 2.0, >= 2.0.2)
     arel (8.0.0)
     ast (2.3.0)
+    awesome_print (1.8.0)
     builder (3.2.3)
     byebug (9.0.6)
     case_transform (0.2)
@@ -230,6 +231,7 @@ DEPENDENCIES
   activemodel (~> 5.1.3)
   activerecord (~> 5.1.3)
   activesupport (~> 5.1.3)
+  awesome_print
   byebug
   config (~> 1.0)
   coveralls
