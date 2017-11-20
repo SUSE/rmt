@@ -11,7 +11,7 @@ class RMT::SCC
 
   def sync
     # TODO: try to DRY up the sync* methods
-    
+
     raise CredentialsError, 'SCC credentials not set.' unless (Settings.scc.username && Settings.scc.password)
 
     @logger.info('Cleaning up the database')
@@ -46,7 +46,7 @@ class RMT::SCC
   end
 
   def sync_to_dir(sync_dir:)
-    # TODO: fails when sync_dir does not exist
+    FileUtils.mkdir_p(sync_dir)
 
     raise CredentialsError, 'SCC credentials not set.' unless (Settings.scc.username && Settings.scc.password)
 
@@ -69,8 +69,6 @@ class RMT::SCC
   end
 
   def sync_from_dir(sync_dir:)
-    # TODO: fails when sync_dir or the files in it do not exist
-
     @logger.info('Cleaning up the database')
     Subscription.delete_all
 
@@ -97,6 +95,8 @@ class RMT::SCC
     end
 
     @logger.info('Done!')
+  rescue Errno::ENOENT => error
+    abort error.message
   end
 
   protected
