@@ -32,6 +32,17 @@ class RMT::Mirror
     replace_metadata
   end
 
+  def self.rsync(from_dir:, to_dir: nil)
+    to_dir = to_dir || RMT::DEFAULT_MIRROR_DIR
+
+    # guarantee a trailing slash. rsync would create a subfolder otherwise
+    to_dir += '/' unless to_dir.ends_with?('/')
+
+    puts "Mirroring #{from_dir} to #{to_dir}"
+    require 'rsync'
+    Rsync.run(from_dir, to_dir, '-r')
+  end
+
   protected
 
   def create_directories

@@ -29,8 +29,13 @@ class RMT::CLI::Main < RMT::CLI::Base
   def mirror #(repository_url = nil, local_path = nil)
     repository_url = nil
     local_path     = nil
-    RMT::CLI::Base.handle_exceptions do
-      RMT::CLI::Mirror.mirror(repository_url, local_path, options.to_dir)
+
+    if options.from_dir
+      RMT::Mirror.rsync(from_dir: options.from_dir, to_dir: options.to_dir)
+    else
+      RMT::CLI::Base.handle_exceptions do
+        RMT::CLI::Mirror.mirror(repository_url, local_path, options.to_dir)
+      end
     end
   end
 
