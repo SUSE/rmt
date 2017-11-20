@@ -3,6 +3,7 @@
 require 'rmt/cli/repos'
 
 class RMT::CLI::Products < RMT::CLI::Base
+  default_task :list
 
   desc 'list', 'List all products'
   option :release_stage, aliases: '-r', type: :string, desc: 'beta, released'
