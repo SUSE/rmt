@@ -85,9 +85,13 @@ class RMT::Downloader
 
   def make_request(remote_file, local_file, request_fiber, checksum_type = nil, checksum_value = nil)
     uri = URI.join(@repository_url, remote_file)
-    uri.query = @auth_token if @auth_token
+    uri.query = @auth_token if (@auth_token && uri.scheme != 'file')
 
     downloaded_file = Tempfile.new('rmt', Dir.tmpdir, mode: File::BINARY, encoding: 'ascii-8bit')
+
+    if (URI(uri).scheme == 'file' && !File.exists?(uri.path))
+      raise RMT::Downloader::Exception.new("#{remote_file} - File does not exist")
+    end
 
     request = RMT::FiberRequest.new(
       uri.to_s,
@@ -98,7 +102,7 @@ class RMT::Downloader
 
     begin
       response = request.receive_headers
-      if (!response.success? || (URI(uri).scheme != 'file' && response.code != 200))
+      if (URI(uri).scheme != 'file' && response.code != 200)
         raise RMT::Downloader::Exception.new("#{remote_file} - HTTP request failed with code #{response.code}")
       end
     rescue StandardError => e
