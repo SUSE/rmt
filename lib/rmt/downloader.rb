@@ -98,7 +98,7 @@ class RMT::Downloader
 
     begin
       response = request.receive_headers
-      if (URI(uri).scheme != 'file' && response.code != 200)
+      if (!response.success? || (URI(uri).scheme != 'file' && response.code != 200))
         raise RMT::Downloader::Exception.new("#{remote_file} - HTTP request failed with code #{response.code}")
       end
     rescue StandardError => e

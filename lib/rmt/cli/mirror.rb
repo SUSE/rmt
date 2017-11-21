@@ -2,7 +2,7 @@
 
 module RMT::CLI::Mirror
 
-  def self.mirror(repository_url = nil, local_path = nil, base_dir = nil)
+  def self.mirror(repository_url = nil, local_path = nil, base_dir = nil, from_dir = nil)
     require 'rmt/mirror'
     require 'rmt/config'
 
@@ -24,7 +24,9 @@ module RMT::CLI::Mirror
     repositories.each do |repository|
       begin
         puts "Mirroring repository #{repository.name}"
-        mirror_one_repo(repository.external_url, repository.local_path, repository.auth_token, base_dir)
+        repo_url = repository.external_url
+        repo_url.sub!(/.*(?=SUSE)/, "file://#{from_dir}/") if from_dir
+        mirror_one_repo(repo_url, repository.local_path, repository.auth_token, base_dir)
         repository.refresh_timestamp!
       rescue RMT::Mirror::Exception => e
         warn e.to_s
