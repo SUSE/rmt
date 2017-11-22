@@ -42,3 +42,6 @@ http_client:
   proxy_user:
   proxy_password:
 
+airgap:
+  offline: false
+  path:

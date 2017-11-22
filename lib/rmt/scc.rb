@@ -11,8 +11,6 @@ class RMT::SCC
   end
 
   def sync
-    # TODO: try to DRY up the sync* methods
-
     raise CredentialsError, 'SCC credentials not set.' unless (Settings.scc.username && Settings.scc.password)
 
     @logger.info('Cleaning up the database')
@@ -51,19 +49,20 @@ class RMT::SCC
 
     raise CredentialsError, 'SCC credentials not set.' unless (Settings.scc.username && Settings.scc.password)
 
-    @logger.info('Downloading data from SCC')
+    @logger.info("Exporting data from SCC to #{path}")
+
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
-    @logger.info('Updating products')
+    @logger.info('Exporting products')
     File.write(File.join(path, "organizations_products.json"), scc_api_client.list_products.to_json)
 
-    @logger.info('Updating repositories')
+    @logger.info('Exporting repositories')
     File.write(File.join(path, "organizations_repositories.json"), scc_api_client.list_repositories.to_json)
 
-    @logger.info('Updating subscriptions')
+    @logger.info('Exporting subscriptions')
     File.write(File.join(path, "organizations_subscriptions.json"), scc_api_client.list_subscriptions.to_json)
 
-    @logger.info('Updating orders')
+    @logger.info('Exporting orders')
     File.write(File.join(path, "organizations_orders.json"), scc_api_client.list_orders.to_json)
 
     @logger.info('Done!')
@@ -72,6 +71,8 @@ class RMT::SCC
   def import(path)
     @logger.info('Cleaning up the database')
     Subscription.delete_all
+
+    @logger.info("Importing SCC data from #{path}")
 
     @logger.info('Updating products')
     data = JSON.parse(File.read(File.join(path, "organizations_products.json")), symbolize_names: true )

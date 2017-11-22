@@ -24,16 +24,20 @@ class RMT::CLI::Main < RMT::CLI::Base
   #   If REPOSITORY_URL is given, mirrors only the repository at the specified URL.
   #   LOCAL_PATH can optionally be specified to modify mirroring directory path.
   # LONGDESC
-  option :to_dir, desc: 'Mirror to another directory'
-  option :from_dir, desc: 'Mirror from a directory instead of SCC'
-  option :repos_file, desc: 'Location of the JSON file containing Ids of repos to mirror'
-  def mirror #(repository_url = nil, local_path = nil)
-    repository_url = nil
-    local_path     = nil
 
-    repo_ids = options.repos_file ? JSON.parse(File.read(options.repos_file)) : nil
+  option :airgap, desc: 'Mirror Air Gap storage', type: :boolean
+  option :path, desc: 'Overwrite the configured path'
+  def mirror #(repository_url = nil, local_path = nil)
     RMT::CLI::Base.handle_exceptions do
-      RMT::CLI::Mirror.mirror(repository_url, local_path, options.to_dir, options.from_dir, repo_ids) # TODO: this gets out of control :D we need hash options for this method soon
+      if Settings.airgap.offline
+        RMT::CLI::Mirror.mirror(from_dir: airgap_path)
+      elsif options.airgap
+        repos_file = File.join(airgap_path, "repos.json")
+        repo_ids = options.repos_file ? JSON.parse(File.read(repos_file)) : nil
+        RMT::CLI::Mirror.mirror(base_dir: airgap_path, repo_ids: repo_ids)
+      else
+        RMT::CLI::Mirror.mirror
+      end
     end
   end
 
