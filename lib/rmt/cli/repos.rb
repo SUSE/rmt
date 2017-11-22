@@ -20,6 +20,11 @@ class RMT::CLI::Repos < RMT::CLI::Base
     change_repository_mirroring(target, false)
   end
 
+  desc 'dumpdb DIR', 'Write Ids of enabled repos to file' # TODO: rethink where this command belongs to!
+  def dumpdb(to_dir)
+    File.write(File.join(to_dir, "repo_ids.json"), Repository.only_mirrored.pluck(:id).to_json)
+  end
+
   no_commands do
     def self.change_product_mirroring(mirroring_enabled, identifier, version, arch)
       conditions = { identifier: identifier, version: version }

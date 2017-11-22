@@ -2,7 +2,7 @@
 
 module RMT::CLI::Mirror
 
-  def self.mirror(repository_url = nil, local_path = nil, base_dir = nil, from_dir = nil)
+  def self.mirror(repository_url = nil, local_path = nil, base_dir = nil, from_dir = nil, repo_ids = nil)
     require 'rmt/mirror'
     require 'rmt/config'
 
@@ -14,7 +14,11 @@ module RMT::CLI::Mirror
       return
     end
 
-    repositories = Repository.where(mirroring_enabled: true)
+    repositories = if repo_ids
+      Repository.find(repo_ids)
+    else
+      Repository.where(mirroring_enabled: true)
+    end
 
     if repositories.empty?
       warn 'There are no repositories marked for mirroring.'
