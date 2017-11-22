@@ -35,4 +35,8 @@ end
 db_config = RMT::Config.db_config
 ActiveRecord::Base.establish_connection(db_config)
 
-RMT::CLI::Main.start(ARGV)
+begin
+  RMT::CLI::Main.start(ARGV)
+rescue Interrupt
+  abort "\nInterrupted! You might need to rerun this command to have a consistent state."
+end
