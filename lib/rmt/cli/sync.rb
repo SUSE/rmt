@@ -1,7 +1,8 @@
-class RMT::CLI::SCC < RMT::CLI::Subcommand
+class RMT::CLI::Sync < RMT::CLI::Subcommand
+  default_task :scc
 
-  desc 'sync', 'Get latest SCC data'
-  def sync
+  desc 'scc', 'Sync database with SUSE Customer Center', hide: true
+  def scc
     if Settings.airgap.offline
       RMT::SCC.new(options).import(airgap_path)
     else
@@ -9,9 +10,9 @@ class RMT::CLI::SCC < RMT::CLI::Subcommand
     end
   end
 
-  desc 'export', 'Store SCC data for offline usage'
-  option :path, desc: 'Overwrite the configured path'
-  def export
+  desc 'airgap', 'Store data on Airgap storage for offline usage'
+  option :path, desc: 'Overwrite the configured path' # TODO
+  def airgap
     abort 'This RMT is in offline-mode and cannot export SCC data.' if Settings.airgap.offline
     RMT::SCC.new(options).export(airgap_path)
   end

@@ -15,7 +15,7 @@ class RMT::CLI::Mirror < RMT::CLI::Subcommand
     end
   end
 
-  desc 'airgap', 'Mirror repos on mounted Airgap storage'
+  desc 'airgap', 'Mirror repos to mounted Airgap storage'
   def airgap
     repos_file = File.join(airgap_path, 'repos.json')
     repos_ids = JSON.parse(File.read(repos_file))
