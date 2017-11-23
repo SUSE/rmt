@@ -3,24 +3,23 @@ class RMT::CLI::Mirror < RMT::CLI::Subcommand
 
   default_task :repos
 
-  desc 'repos', 'Mirror enabled repositories (default)', hide: true
+  desc 'repos', 'Mirror enabled repositories', hide: true
   long_desc "By default, mirrors the enabled online repositories.\nIf the RMT is in offline mode, it mirrors from the configured local path instead."
   def repos
-    RMT::CLI::Base.handle_exceptions do
-      if Settings.airgap.offline
-        mirror(from_dir: airgap_path)
-      else
-        mirror
-      end
-    end
+    abort 'This RMT is in offline-mode. Use `mirror airgap` if you want to mirror from a portable storage.' if Settings.airgap.offline
+    RMT::CLI::Base.handle_exceptions { mirror }
   end
 
-  desc 'airgap', 'Mirror repos to mounted Airgap storage'
+  desc 'airgap', 'Mirror repos to or from mounted Airgap storage'
   def airgap
-    repos_file = File.join(airgap_path, 'repos.json')
-    repos_ids = JSON.parse(File.read(repos_file))
-    repos = Repository.find(repos_ids)
-    mirror(base_dir: airgap_path, repos: repos)
+    if Settings.airgap.offline
+      mirror(from_dir: airgap_path)
+    else
+      repos_file = File.join(airgap_path, 'repos.json')
+      repos_ids = JSON.parse(File.read(repos_file))
+      repos = Repository.find(repos_ids)
+      mirror(base_dir: airgap_path, repos: repos)
+    end
   end
 
   desc 'custom URL', 'Mirror a custom repository URL'

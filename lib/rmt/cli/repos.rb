@@ -21,9 +21,11 @@ class RMT::CLI::Repos < RMT::CLI::Subcommand
     change_repository_mirroring(target, false)
   end
 
-  desc 'dumpdb DIR', 'Write Ids of enabled repos to file' # TODO: rethink where this command belongs to!
-  def dumpdb(to_dir)
-    File.write(File.join(to_dir, 'repo_ids.json'), Repository.only_mirrored.pluck(:id).to_json)
+  desc 'dumpdb', 'Write Ids of enabled repos to file' # TODO: rethink where this command belongs to!
+  option :path, desc: 'Overwrite the configured path'
+  def dumpdb
+    File.write(File.join(airgap_path, 'repos.json'), Repository.only_mirrored.pluck(:id).to_json)
+    puts "List of enabled repositories saved at #{airgap_path}."
   end
 
   no_commands do
