@@ -1,4 +1,4 @@
-class RMT::CLI::SCC < RMT::CLI::Base
+class RMT::CLI::SCC < RMT::CLI::Subcommand
 
   desc 'sync', 'Get latest SCC data'
   def sync

@@ -2,11 +2,11 @@
 
 require 'rmt/cli/repos'
 
-class RMT::CLI::Products < RMT::CLI::Base
+class RMT::CLI::Products < RMT::CLI::Subcommand
 
   default_task :list
 
-  desc 'list', 'List all products'
+  desc 'list', 'List all products', hide: true # TODO: do it like repos
   option :release_stage, aliases: '-r', type: :string, desc: 'beta, released'
   def list
     attributes = %i[id name version arch product_string release_stage mirror? last_mirrored_at]

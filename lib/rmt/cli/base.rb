@@ -17,7 +17,7 @@ class RMT::CLI::Base < Thor
       shell.say
       class_options_help(shell)
 
-      shell.say "Run '#{basename} COMMAND help [SUBCOMMAND]' for more information on a command."
+      shell.say "Run '#{basename} help [COMMAND]' for more information on a command and its subcommands."
     end
 
     def dispatch(command, given_args, given_opts, config)
