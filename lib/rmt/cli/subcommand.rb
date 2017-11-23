@@ -25,14 +25,7 @@ class RMT::CLI::Subcommand < RMT::CLI::Base
       shell.say
       class_options_help(shell)
 
-      shell.say "Run '#{basename} #{itself_name} help [SUBCOMMAND]' for more information on a subcommand."
-    end
-
-    def default_command_help(shell)
-    end
-
-    def itself_name
-      itself.to_s.split('::').last.downcase
+      shell.say "Run '#{basename} #{itself.to_s.split('::').last.downcase} help [SUBCOMMAND]' for more information on a subcommand."
     end
 
   end
