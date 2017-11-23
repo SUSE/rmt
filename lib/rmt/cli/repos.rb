@@ -1,6 +1,7 @@
 # rubocop:disable Rails/Output
 
 class RMT::CLI::Repos < RMT::CLI::Base
+
   default_task :list
 
   desc 'list', 'List repositories which are marked to be mirrored'
@@ -22,7 +23,7 @@ class RMT::CLI::Repos < RMT::CLI::Base
 
   desc 'dumpdb DIR', 'Write Ids of enabled repos to file' # TODO: rethink where this command belongs to!
   def dumpdb(to_dir)
-    File.write(File.join(to_dir, "repo_ids.json"), Repository.only_mirrored.pluck(:id).to_json)
+    File.write(File.join(to_dir, 'repo_ids.json'), Repository.only_mirrored.pluck(:id).to_json)
   end
 
   no_commands do

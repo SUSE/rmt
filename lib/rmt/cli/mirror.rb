@@ -6,7 +6,7 @@ module RMT::CLI::Mirror
     require 'rmt/mirror'
     require 'rmt/config'
 
-    base_dir = base_dir || RMT::DEFAULT_MIRROR_DIR
+    base_dir ||= RMT::DEFAULT_MIRROR_DIR
 
     # if repository_url
     #   local_path ||= Repository.make_local_path(repository_url)
@@ -15,10 +15,10 @@ module RMT::CLI::Mirror
     # end
 
     repositories = if repo_ids
-      Repository.find(repo_ids)
-    else
-      Repository.where(mirroring_enabled: true)
-    end
+                     Repository.find(repo_ids)
+                   else
+                     Repository.where(mirroring_enabled: true)
+                   end
 
     if repositories.empty?
       warn 'There are no repositories marked for mirroring.'

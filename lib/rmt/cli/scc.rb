@@ -1,4 +1,5 @@
 class RMT::CLI::SCC < RMT::CLI::Base
+
   desc 'sync', 'Get latest SCC data'
   def sync
     if Settings.air_gap.offline
@@ -14,4 +15,5 @@ class RMT::CLI::SCC < RMT::CLI::Base
     abort 'This RMT is in offline-mode and cannot export SCC data.' if Settings.air_gap.offline
     RMT::SCC.new(options).export(airgap_path)
   end
+
 end

@@ -89,7 +89,7 @@ class RMT::Downloader
 
     downloaded_file = Tempfile.new('rmt', Dir.tmpdir, mode: File::BINARY, encoding: 'ascii-8bit')
 
-    if (URI(uri).scheme == 'file' && !File.exists?(uri.path))
+    if (URI(uri).scheme == 'file' && !File.exist?(uri.path))
       raise RMT::Downloader::Exception.new("#{remote_file} - File does not exist")
     end
 

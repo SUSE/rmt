@@ -70,4 +70,5 @@ class RMT::CLI::Base < Thor
     abort 'You have to configure a path in your config or provide it with the --path option.' unless path
     path
   end
+
 end

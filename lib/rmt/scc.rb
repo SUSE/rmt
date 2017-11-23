@@ -54,16 +54,16 @@ class RMT::SCC
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
     @logger.info('Exporting products')
-    File.write(File.join(path, "organizations_products.json"), scc_api_client.list_products.to_json)
+    File.write(File.join(path, 'organizations_products.json'), scc_api_client.list_products.to_json)
 
     @logger.info('Exporting repositories')
-    File.write(File.join(path, "organizations_repositories.json"), scc_api_client.list_repositories.to_json)
+    File.write(File.join(path, 'organizations_repositories.json'), scc_api_client.list_repositories.to_json)
 
     @logger.info('Exporting subscriptions')
-    File.write(File.join(path, "organizations_subscriptions.json"), scc_api_client.list_subscriptions.to_json)
+    File.write(File.join(path, 'organizations_subscriptions.json'), scc_api_client.list_subscriptions.to_json)
 
     @logger.info('Exporting orders')
-    File.write(File.join(path, "organizations_orders.json"), scc_api_client.list_orders.to_json)
+    File.write(File.join(path, 'organizations_orders.json'), scc_api_client.list_orders.to_json)
 
     @logger.info('Done!')
   end
@@ -75,7 +75,7 @@ class RMT::SCC
     @logger.info("Importing SCC data from #{path}")
 
     @logger.info('Updating products')
-    data = JSON.parse(File.read(File.join(path, "organizations_products.json")), symbolize_names: true )
+    data = JSON.parse(File.read(File.join(path, 'organizations_products.json')), symbolize_names: true)
     data.each do |item|
       @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
       product = create_product(item)
@@ -83,7 +83,7 @@ class RMT::SCC
     end
 
     @logger.info('Updating repositories')
-    data = JSON.parse(File.read(File.join(path, "organizations_repositories.json")), symbolize_names: true )
+    data = JSON.parse(File.read(File.join(path, 'organizations_repositories.json')), symbolize_names: true)
     data.each do |item|
       update_auth_token(item)
     end
@@ -91,7 +91,7 @@ class RMT::SCC
     Repository.remove_suse_repos_without_tokens!
 
     @logger.info('Updating subscriptions')
-    data = JSON.parse(File.read(File.join(path, "organizations_subscriptions.json")), symbolize_names: true )
+    data = JSON.parse(File.read(File.join(path, 'organizations_subscriptions.json')), symbolize_names: true)
     data.each do |item|
       create_subscription(item)
     end

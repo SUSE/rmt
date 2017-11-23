@@ -27,12 +27,12 @@ class RMT::CLI::Main < RMT::CLI::Base
 
   option :airgap, desc: 'Mirror Air Gap storage', type: :boolean
   option :path, desc: 'Overwrite the configured path'
-  def mirror #(repository_url = nil, local_path = nil)
+  def mirror # (repository_url = nil, local_path = nil)
     RMT::CLI::Base.handle_exceptions do
       if Settings.airgap.offline
         RMT::CLI::Mirror.mirror(from_dir: airgap_path)
       elsif options.airgap
-        repos_file = File.join(airgap_path, "repos.json")
+        repos_file = File.join(airgap_path, 'repos.json')
         repo_ids = options.repos_file ? JSON.parse(File.read(repos_file)) : nil
         RMT::CLI::Mirror.mirror(base_dir: airgap_path, repo_ids: repo_ids)
       else
