@@ -6,29 +6,34 @@ class RMT::CLI::Products < RMT::CLI::Subcommand
 
   default_task :list
 
-  desc 'list', 'List all products', hide: true # TODO: do it like repos
+  desc 'list', 'List products which are marked to be mirrored.', hide: true
+  option :all, aliases: '-a', type: :boolean, desc: 'List all products, including ones which are not marked to be mirrored'
   option :release_stage, aliases: '-r', type: :string, desc: 'beta, released'
   def list
     attributes = %i[id name version arch product_string release_stage mirror? last_mirrored_at]
     headings = ['ID', 'Name', 'Version', 'Architecture', 'Product string', 'Release stage', 'Mirror?', 'Last mirrored']
 
-    rows = Product.with_release_stage(options[:release_stage]).map do |product|
+    products = options.all ? Product.all : Product.mirrored
+
+    rows = products.with_release_stage(options[:release_stage]).map do |product|
       attributes.map { |a| product.public_send(a) }
     end
 
     if rows.empty?
-      warn 'No products found in the DB. Run "rmt-cli scc sync" to synchronize with your SUSE Customer Center data first.'
+      warn 'No matching products found in the database.'
+      puts 'Run "rmt-cli scc sync" to synchronize with your SUSE Customer Center data first.' if options.all
     else
       puts Terminal::Table.new headings: headings, rows: rows
     end
+    puts "Only enabled products are shown by default. Use the `--all` option to see all products." unless options.all
   end
 
-  desc 'enable', 'Enable mirroring of product repositories by product ID or product string'
+  desc 'enable', 'Enable mirroring of product repositories by product ID or product string.'
   def enable(target)
     change_product(target, true)
   end
 
-  desc 'disable', 'Disable mirroring of product repositories by product ID or product string'
+  desc 'disable', 'Disable mirroring of product repositories by product ID or product string.'
   def disable(target)
     change_product(target, false)
   end
