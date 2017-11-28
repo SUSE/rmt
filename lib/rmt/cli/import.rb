@@ -9,4 +9,5 @@ class RMT::CLI::Import < RMT::CLI::Subcommand
   def repos(path)
     RMT::CLI::Mirror.new.mirror(from_dir: path)
   end
+
 end

@@ -1,4 +1,5 @@
 class RMT::CLI::Sync < RMT::CLI::Subcommand
+
   default_task :scc
 
   desc 'scc', 'Sync database with SUSE Customer Center', hide: true

@@ -25,7 +25,7 @@ class RMT::CLI::Products < RMT::CLI::Subcommand
     else
       puts Terminal::Table.new headings: headings, rows: rows
     end
-    puts "Only enabled products are shown by default. Use the `--all` option to see all products." unless options.all
+    puts 'Only enabled products are shown by default. Use the `--all` option to see all products.' unless options.all
   end
 
   desc 'enable', 'Enable mirroring of product repositories by product ID or product string.'

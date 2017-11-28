@@ -14,7 +14,7 @@ class RMT::CLI::Mirror < RMT::CLI::Subcommand
   option :path, desc: 'Change local path (relative to your base_dir)' # TODO: what is this actually? better description!
   def custom(url)
     path = options.path || Repository.make_local_path(url)
-    mirror_one_repo(url, path, nil, base_dir) # TODO: who owns the base_dir?
+    mirror_one_repo(url, path, base_dir)
   end
 
   no_commands do
@@ -34,7 +34,7 @@ class RMT::CLI::Mirror < RMT::CLI::Subcommand
           puts "Mirroring repository #{repository.name} from #{from_dir || 'SCC'} to #{base_dir}"
           repo_url = repository.external_url
           repo_url.sub!(/.*(?=SUSE)/, "file://#{from_dir}/") if from_dir
-          mirror_one_repo(repo_url, repository.local_path, repository.auth_token, base_dir)
+          mirror_one_repo(repo_url, repository.local_path, base_dir, repository.auth_token)
           repository.refresh_timestamp!
         rescue RMT::Mirror::Exception => e
           warn e.to_s
@@ -42,7 +42,7 @@ class RMT::CLI::Mirror < RMT::CLI::Subcommand
       end
     end
 
-    def mirror_one_repo(repository_url, local_path, auth_token = nil, base_dir)
+    def mirror_one_repo(repository_url, local_path, base_dir, auth_token = nil)
       RMT::Mirror.new(
         mirroring_base_dir: base_dir,
         mirror_src: Settings.mirroring.mirror_src,

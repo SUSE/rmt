@@ -1,3 +1,5 @@
+# rubocop:disable Rails/Output
+
 class RMT::CLI::Export < RMT::CLI::Subcommand
 
   desc 'settings PATH', 'Store repository settings at given path'
