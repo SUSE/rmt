@@ -7,14 +7,4 @@ class RMT::CLI::Sync < RMT::CLI::Subcommand
     RMT::SCC.new(options).sync
   end
 
-  desc 'airgap', 'Store or read data at Airgap storage for offline usage'
-  option :path, desc: 'Overwrite the configured path'
-  def airgap
-    if Settings.airgap.offline
-      RMT::SCC.new(options).import(airgap_path)
-    else
-      RMT::SCC.new(options).export(airgap_path)
-    end
-  end
-
 end

@@ -18,6 +18,12 @@ class RMT::CLI::Main < RMT::CLI::Base
   desc 'mirror', 'Mirror product repositories'
   subcommand 'mirror', RMT::CLI::Mirror
 
+  desc 'import', 'Import commands for offline usage' # TODO: better description
+  subcommand 'import', RMT::CLI::Import
+
+  desc 'export', 'Export commands for offline usage' # TODO: better description
+  subcommand 'export', RMT::CLI::Export
+
   desc 'version', 'Show RMT version'
   def version
     puts RMT::VERSION # rubocop:disable Rails/Output
