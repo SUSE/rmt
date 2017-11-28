@@ -15,7 +15,6 @@ gem 'mysql2', '~> 0.4.9'
 
 gem 'nokogiri', '~> 1.8.0'
 gem 'thor'
-gem 'rsync'
 gem 'activesupport', '~> 5.1.3'
 gem 'actionpack', '~> 5.1.3'
 gem 'actionview', '~> 5.1.3'
