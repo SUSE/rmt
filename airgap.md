@@ -4,35 +4,20 @@
 
 ### On the Online RMT
 
-- In the config, set airgap-offline to `false` (default) and set airgap-path to the location where the portable
-  storage will be mounted.
-- Mount the portable storage at this path.
-- `rmt-cli sync airgap`
-  In online mode, this will get the required JSON responses from SCC and save them as files at the specified airgap-path.
-  In case the user has some sort of auto-mount and the path is dynamic, it can also be specified via the `--path` option. (Same for the offline part below)
+- `rmt-cli export scc-data /mnt/usb` will get the required JSON responses from SCC and save them as files at the specified path.
 
 ### On the Offline RMT
 
-- In the config, set airgap/offline to `true` and set airgap-path to the location where the portable storage will be mounted.
-- Mount the portable storage at this path.
-- `rmt-cli sync airgap`
-  In offline mode, this will read the JSON-files from airgap-path and fill the local database.
-- Now use `repos` or `products enable` to mark repos for mirroring.
-- `rmt-cli repos dumpdb`
-  Saves your settings on the portable storage as `repo_ids.json`.
-
-  __Note:__ The name and place for this command is still a WIP to me. Any ideas?
+- `rmt-cli import scc-data /mnt/usb` will read the JSON-files from given path and fill the local database.
+- Now use `repos enable` (or `products enable`) to mark repos for mirroring.
+- `rmt-cli export settings` saves your settings at path as `repos.json`.
 
 ## Regular workflow
 
 ### On the Online RMT
 
-- Mount the portable storage at its path.
-- `rmt-cli mirror airgap`
-  In online mode, this will look for the `repo_id.json` at the airgap-path and mirror these repos directly to the portable storage.
+- `rmt-cli export repos` will look for the `repos.json` at given path and mirror these repos directly to that path.
 
 ### On the Offline RMT
 
-- Mount the portable storage at its path.
-- `rmt-cli mirror airgap`
-  In offline mode, this will mirror all repos which are enabled in the database, from the portable storage.
+- `rmt-cli import repos` will mirror all repos which are enabled in the database, from the given path.
