@@ -62,13 +62,4 @@ class RMT::CLI::Base < Thor
 
   end
 
-
-  private
-
-  def airgap_path
-    path = options.path || Settings.airgap.path
-    abort 'You have to configure a path in your config or provide it with the --path option.' unless path
-    path
-  end
-
 end
