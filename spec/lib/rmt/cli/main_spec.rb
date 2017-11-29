@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe RMT::CLI::Main do
   subject(:command) { described_class.start(argv) }
+
   let(:argv) { [] }
 
   describe '.start' do
@@ -35,8 +36,9 @@ RSpec.describe RMT::CLI::Main do
     end
 
     describe 'mirror' do
-      let!(:enabled_product) { FactoryGirl.create :product, :with_mirrored_repositories }
       let(:argv) { ['mirror'] }
+
+      before { create :product, :with_mirrored_repositories }
 
       it 'triggers mirroring of enabled repos' do
         expect_any_instance_of(RMT::CLI::Mirror).to receive(:repos)
@@ -69,7 +71,7 @@ RSpec.describe RMT::CLI::Main do
       let(:error_message) { 'Dummy error' }
 
       before do
-        expect_any_instance_of(RMT::CLI::Main).to receive(:help) { raise exception_class, error_message }
+        expect_any_instance_of(described_class).to receive(:help) { raise exception_class, error_message }
         expect(described_class).to receive(:exit)
       end
 
@@ -81,6 +83,7 @@ RSpec.describe RMT::CLI::Main do
 
       context 'with --debug' do
         let(:argv) { ['--debug'] }
+
         it 'prints exception details' do
           expect { command }.to output(/#<RMT::CLI::Error: #{error_message}>/).to_stderr
         end
@@ -143,7 +146,7 @@ RSpec.describe RMT::CLI::Main do
 
     describe 'exceptions we do not catch' do
       before do
-        expect_any_instance_of(RMT::CLI::Main).to receive(:help) { raise exception_class, error_message }
+        expect_any_instance_of(described_class).to receive(:help) { raise exception_class, error_message }
       end
 
       describe 'Mysql2::Error with other error messages' do

@@ -1,8 +1,11 @@
 require 'rails_helper'
 
+# rubocop:disable RSpec/NestedGroups
+
 RSpec.describe RMT::CLI::Products do
   describe 'list-command' do
     subject(:command) { described_class.start(argv) }
+
     let(:argv) { ['list'] }
 
     it 'mentions --all option' do
@@ -38,9 +41,9 @@ RSpec.describe RMT::CLI::Products do
     end
 
     context 'with products in database' do
-      let!(:disabled_product) { FactoryGirl.create :product }
-      let!(:enabled_product) { FactoryGirl.create :product, :with_mirrored_repositories }
-      let!(:beta_product) { FactoryGirl.create :product, release_stage: 'beta' }
+      let!(:disabled_product) { create :product } # rubocop:disable RSpec/LetSetup
+      let!(:enabled_product) { create :product, :with_mirrored_repositories }
+      let!(:beta_product) { create :product, release_stage: 'beta' }
 
       let(:expected_output) do
         Terminal::Table.new(
@@ -113,7 +116,7 @@ RSpec.describe RMT::CLI::Products do
   end
 
   describe '#enable' do
-    let(:product) { FactoryGirl.create :product, :with_not_mirrored_repositories }
+    let(:product) { create :product, :with_not_mirrored_repositories }
     let(:expected_output) { "#{product.repositories.where(enabled: true).count} repo(s) successfully enabled.\n" }
 
     before { expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr }
@@ -140,7 +143,7 @@ RSpec.describe RMT::CLI::Products do
   end
 
   describe '#disable' do
-    let(:product) { FactoryGirl.create :product, :with_mirrored_repositories }
+    let(:product) { create :product, :with_mirrored_repositories }
     let(:expected_output) { "#{product.repositories.count} repo(s) successfully disabled.\n" }
 
     before do
