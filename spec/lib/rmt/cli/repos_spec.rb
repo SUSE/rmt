@@ -15,9 +15,9 @@ RSpec.describe RMT::CLI::Repos do
     end
 
     context 'without parameters' do
-      let(:argv) { [] }
+      let(:argv) { ['enable'] }
 
-      before { expect { command }.to output(/Commands:/).to_stdout }
+      before { expect { command }.to output(/Usage:/).to_stderr }
 
       its(:mirroring_enabled) { is_expected.to be(false) }
     end
@@ -59,9 +59,9 @@ RSpec.describe RMT::CLI::Repos do
     end
 
     context 'without parameters' do
-      let(:argv) { [] }
+      let(:argv) { ['disable'] }
 
-      before { expect { command }.to output(/Commands:/).to_stdout }
+      before { expect { command }.to output(/Usage:/).to_stderr }
 
       its(:mirroring_enabled) { is_expected.to be(true) }
     end
