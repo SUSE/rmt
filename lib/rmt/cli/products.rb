@@ -14,18 +14,18 @@ class RMT::CLI::Products < RMT::CLI::Subcommand
     headings = ['ID', 'Name', 'Version', 'Architecture', 'Product string', 'Release stage', 'Mirror?', 'Last mirrored']
 
     products = options.all ? Product.all : Product.mirrored
-
     rows = products.with_release_stage(options[:release_stage]).map do |product|
       attributes.map { |a| product.public_send(a) }
     end
 
-    if rows.empty?
-      warn 'No matching products found in the database.'
-      puts 'Run "rmt-cli scc sync" to synchronize with your SUSE Customer Center data first.' if options.all
+    puts Terminal::Table.new(headings: headings, rows: rows) unless rows.empty?
+
+    if options.all
+      warn 'Run "rmt-cli sync" to synchronize with your SUSE Customer Center data first.' if rows.empty?
     else
-      puts Terminal::Table.new headings: headings, rows: rows
+      warn 'No matching products found in the database.' if rows.empty?
+      puts 'Only enabled products are shown by default. Use the `--all` option to see all products.'
     end
-    puts 'Only enabled products are shown by default. Use the `--all` option to see all products.' unless options.all
   end
 
   desc 'enable', 'Enable mirroring of product repositories by product ID or product string.'
