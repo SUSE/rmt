@@ -9,10 +9,10 @@ class RMT::CLI::Mirror < RMT::CLI::Subcommand
   end
 
   desc 'custom URL', 'Mirror a custom repository URL'
-  option :path, desc: 'Change local path (relative to your base_dir)' # TODO: what is this actually? better description!
-  def custom(url)
-    path = options.path || Repository.make_local_path(url)
-    mirror_one_repo(url, path, base_dir)
+  def custom(url, path = nil)
+    url += '/' unless url.end_with?('/')
+    path ||= Repository.make_local_path(url)
+    mirror_one_repo(url, path)
   end
 
   no_commands do
@@ -40,7 +40,7 @@ class RMT::CLI::Mirror < RMT::CLI::Subcommand
       end
     end
 
-    def mirror_one_repo(repository_url, local_path, base_dir, auth_token = nil)
+    def mirror_one_repo(repository_url, local_path, base_dir = RMT::DEFAULT_MIRROR_DIR, auth_token = nil)
       RMT::Mirror.new(
         mirroring_base_dir: base_dir,
         mirror_src: Settings.mirroring.mirror_src,
