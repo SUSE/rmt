@@ -7,7 +7,9 @@ class RMT::CLI::Main < RMT::CLI::Base
   class_option :debug, desc: 'Enable debug output', type: :boolean, aliases: '-d', required: false
 
   desc 'sync', 'Sync database with SUSE Customer Center'
-  subcommand 'sync', RMT::CLI::Sync
+  def sync
+    RMT::SCC.new(options).sync
+  end
 
   desc 'products', 'List and modify products'
   subcommand 'products', RMT::CLI::Products

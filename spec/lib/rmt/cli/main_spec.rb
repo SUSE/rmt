@@ -6,6 +6,15 @@ RSpec.describe RMT::CLI::Main do
   subject(:command) { described_class.start(argv) }
 
   describe '.start' do
+    describe 'sync' do
+      let(:argv) { ['sync'] }
+
+      it 'triggers sync' do
+        expect_any_instance_of(RMT::SCC).to receive(:sync)
+        command
+      end
+    end
+
     context 'help' do
       let(:argv) { ['help'] }
 

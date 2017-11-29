@@ -4,6 +4,16 @@ require 'rails_helper'
 
 RSpec.describe RMT::SCC do
   describe '#sync' do
+    context 'without SCC credentials' do
+      before do
+        allow(Settings).to receive(:scc).and_return OpenStruct.new
+      end
+
+      it 'exits with an error message' do
+        expect { described_class.new.sync }.to raise_error RMT::SCC::CredentialsError, 'SCC credentials not set.'
+      end
+    end
+
     context 'with SCC credentials' do
       let(:products) do
         JSON.parse(file_fixture('products/dummy_products.json').read, symbolize_names: true)
