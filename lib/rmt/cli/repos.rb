@@ -1,10 +1,10 @@
 # rubocop:disable Rails/Output
 
-class RMT::CLI::Repos < RMT::CLI::Subcommand
+class RMT::CLI::Repos < RMT::CLI::Base
 
   default_task :list
 
-  desc 'list', 'List repositories which are marked to be mirrored', hide: true
+  desc 'list', 'List repositories which are marked to be mirrored'
   option :all, aliases: '-a', type: :boolean, desc: 'List all repositories, including ones which are not marked to be mirrored'
   def list
     scope = options[:all] ? :all : :enabled

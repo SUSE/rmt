@@ -1,9 +1,9 @@
 # rubocop:disable Rails/Output
-class RMT::CLI::Mirror < RMT::CLI::Subcommand
+class RMT::CLI::Mirror < RMT::CLI::Base
 
   default_task :repos
 
-  desc 'repos', 'Mirror enabled repositories', hide: true
+  desc 'repos', 'Mirror enabled repositories'
   def repos
     RMT::CLI::Base.handle_exceptions { mirror }
   end
