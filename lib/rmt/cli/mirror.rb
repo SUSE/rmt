@@ -4,9 +4,7 @@ class RMT::CLI::Mirror < RMT::CLI::Subcommand
   default_task :repos
 
   desc 'repos', 'Mirror enabled repositories', hide: true
-  long_desc "By default, mirrors the enabled online repositories.\nIf the RMT is in offline mode, it mirrors from the configured local path instead."
   def repos
-    abort 'This RMT is in offline-mode. Use `mirror airgap` if you want to mirror from a portable storage.' if Settings.airgap.offline
     RMT::CLI::Base.handle_exceptions { mirror }
   end
 

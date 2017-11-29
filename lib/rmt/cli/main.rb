@@ -17,7 +17,7 @@ class RMT::CLI::Main < RMT::CLI::Base
   desc 'repos', 'List and modify repositories'
   subcommand 'repos', RMT::CLI::Repos
 
-  desc 'mirror', 'Mirror product repositories'
+  desc 'mirror', 'Mirror repositories'
   subcommand 'mirror', RMT::CLI::Mirror
 
   desc 'import', 'Import commands for offline usage' # TODO: better description
