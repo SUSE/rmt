@@ -4,6 +4,7 @@ require 'suse/connect/api'
 class RMT::SCC
 
   class CredentialsError < RuntimeError; end
+  class DataFilesError < RuntimeError; end
 
   def initialize(options = {})
     @logger = Logger.new(STDOUT)
@@ -69,6 +70,11 @@ class RMT::SCC
   end
 
   def import(path)
+    missing_files = %w[products repositories subscriptions]
+      .map { |data| "organizations_#{data}.json" }
+      .reject { |filename| File.exist?(File.join(path, filename)) }
+    raise DataFilesError, "Missing data files: #{missing_files.join(', ')}" if missing_files.any?
+
     @logger.info('Cleaning up the database')
     Subscription.delete_all
 
@@ -97,8 +103,6 @@ class RMT::SCC
     end
 
     @logger.info('Done!')
-  rescue Errno::ENOENT => error
-    abort error.message
   end
 
   protected

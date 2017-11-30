@@ -65,6 +65,10 @@ group :development do
   gem 'ronn'
 end
 
+group :test do
+  gem 'fakefs', require: 'fakefs/safe'
+end
+
 gem 'simplecov', require: false, group: :test
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

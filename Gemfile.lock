@@ -71,6 +71,7 @@ GEM
     factory_girl_rails (4.8.0)
       factory_girl (~> 4.8.0)
       railties (>= 3.0.0)
+    fakefs (0.11.3)
     fast_gettext (1.4.1)
     ffaker (2.5.0)
     ffi (1.9.18)
@@ -236,6 +237,7 @@ DEPENDENCIES
   config (~> 1.0)
   coveralls
   factory_girl_rails
+  fakefs
   fast_gettext
   ffaker
   gettext
