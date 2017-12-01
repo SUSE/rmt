@@ -29,7 +29,7 @@ RSpec.describe RMT::Downloader do
       end
 
       it 'raises an exception' do
-        allow_any_instance_of(RMT::FiberRequest).to receive(:receive_body) do
+        allow_any_instance_of(RMT::FiberRequest).to receive(:read_body) do
           response_double = double
           allow(response_double).to receive(:return_code) { :error }
           response_double

@@ -44,6 +44,19 @@ class RMT::Downloader
     @hydra.run
   end
 
+  def self.verify_checksum(filename, checksum_type, checksum_value)
+    hash_function = checksum_type.gsub(/\W/, '').upcase.to_sym
+    hash_function = :SHA1 if (hash_function == :SHA)
+
+    unless (KNOWN_HASH_FUNCTIONS.include? hash_function)
+      raise RMT::Downloader::Exception.new("Unknown hash function #{checksum_type}")
+    end
+
+    digest = Digest.const_get(hash_function).file(filename)
+
+    raise RMT::Downloader::Exception.new('Checksum doesn\'t match') unless (checksum_value == digest.to_s)
+  end
+
   protected
 
   def process_queue
@@ -87,38 +100,24 @@ class RMT::Downloader
     uri = URI.join(@repository_url, remote_file)
     uri.query = @auth_token if (@auth_token && uri.scheme != 'file')
 
-    downloaded_file = Tempfile.new('rmt', Dir.tmpdir, mode: File::BINARY, encoding: 'ascii-8bit')
-
     if (URI(uri).scheme == 'file' && !File.exist?(uri.path))
       raise RMT::Downloader::Exception.new("#{remote_file} - File does not exist")
     end
+
+    downloaded_file = Tempfile.new('rmt', Dir.tmpdir, mode: File::BINARY, encoding: 'ascii-8bit')
 
     request = RMT::FiberRequest.new(
       uri.to_s,
       followlocation: true,
       download_path: downloaded_file,
-      request_fiber: request_fiber
+      request_fiber: request_fiber,
+      remote_file: remote_file
     )
 
-    begin
-      response = request.receive_headers
-      if (URI(uri).scheme != 'file' && response.code != 200)
-        raise RMT::Downloader::Exception.new("#{remote_file} - HTTP request failed with code #{response.code}")
-      end
-    rescue StandardError => e
-      downloaded_file.unlink
-      Fiber.yield # yield, so that on_body callback can be invoked
-      raise e
-    end
+    request.receive_headers
 
     begin
-      response = request.receive_body
-      if (response.return_code && response.return_code != :ok)
-        raise RMT::Downloader::Exception.new("#{remote_file} - return code #{response.return_code}")
-      end
-
-      downloaded_file.close
-
+      request.receive_body
       verify_checksum(downloaded_file.path, checksum_type, checksum_value) if (checksum_type && checksum_value)
     rescue StandardError => e
       downloaded_file.unlink
