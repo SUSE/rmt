@@ -31,9 +31,9 @@ class RMT::FiberRequest < RMT::HttpRequest
       raise RMT::Downloader::Exception.new("#{@remote_file} - HTTP request failed with code #{response.code}")
     end
   rescue StandardError => e
-      @download_path.unlink
-      Fiber.yield # yield, so that on_body callback can be invoked
-      raise e
+    @download_path.unlink
+    Fiber.yield # yield, so that on_body callback can be invoked
+    raise e
   end
 
   def receive_body
