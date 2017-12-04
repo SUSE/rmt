@@ -51,6 +51,33 @@ desired location.
 * Register client against RMT by running `SUSEConnect --url https://rmt_hostname`
   After successful registration the repositories from RMT will be used by `zypper` on the client machine.
 
+### Offline Mode
+
+RMT supports disconnected setups, similiar to [how SMT does](https://www.suse.com/documentation/sles-12/book_smt/data/smt_disconnected.html). Follow these steps to set it up:
+
+#### Inital Setup
+
+##### On the Online RMT
+
+- `rmt-cli export scc-data /mnt/usb` will get the required JSON responses from SCC and save them as files at the specified path.
+
+##### On the Offline RMT
+
+- `rmt-cli import scc-data /mnt/usb` will read the JSON-files from given path and fill the local database.
+- Now use `repos enable` (or `products enable`) to mark repos for mirroring.
+- `rmt-cli export settings` saves your settings at path as `repos.json`.
+
+#### Regular workflow
+
+##### On the Online RMT
+
+- `rmt-cli export repos /mnt/usb` will look for the `repos.json` at given path and mirror these repos directly to that path.
+
+##### On the Offline RMT
+
+- `rmt-cli import repos` will mirror all repos which are enabled in the database, from the given path.
+
+
 ### openSUSE and other RPM based products
 
 To mirror repositories that are not delivered via SCC, you can run for example:
