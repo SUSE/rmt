@@ -21,8 +21,6 @@
 package/*.tar.bz2
 package/.osc
 package/rmt.8.gz
-package/_link
-package-ibs
 
 vendor/
 coverage/
