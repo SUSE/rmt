@@ -180,10 +180,13 @@ describe RMT::SCC do
 
     context 'with bad path or missing files' do
       it 'raises an error before it touches the database' do
-        expect(ApplicationRecord).not_to receive(:delete_all)
-        expect(ApplicationRecord).not_to receive(:update)
-        expect(ApplicationRecord).not_to receive(:new)
-        expect { described_class.new.import(path) }.to raise_error RMT::SCC::DataFilesError
+        FakeFS.with_fresh do
+          FakeFS::FileSystem.clone(Rails.root.join('app', 'models')) # needed for Rails auto-loading to still work
+          expect(ApplicationRecord).not_to receive(:delete_all)
+          expect(ApplicationRecord).not_to receive(:update)
+          expect(ApplicationRecord).not_to receive(:new)
+          expect { described_class.new.import(path) }.to raise_error RMT::SCC::DataFilesError
+        end
       end
     end
 
