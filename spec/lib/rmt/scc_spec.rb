@@ -143,8 +143,6 @@ describe RMT::SCC do
   end
 
   describe '#export' do
-    include FakeFS::SpecHelpers
-
     let(:path) { '/tmp/usb' }
 
     context 'without SCC credentials' do
@@ -160,7 +158,6 @@ describe RMT::SCC do
     context 'with SCC credentials' do
       before do
         allow(Settings).to receive(:scc).and_return(OpenStruct.new(username: 'me', password: 'groot'))
-        described_class.new.export(path)
       end
 
       it 'makes sure path exists' do
@@ -169,19 +166,16 @@ describe RMT::SCC do
 
       %w[orders products repositories subscriptions].each do |data|
         it "writes #{data} file to path" do
-          expect(File.exist?(File.join(path, "organizations_#{data}.json")))
+          FakeFS.with_fresh do
+            described_class.new.export(path)
+            expect(File.exist?(File.join(path, "organizations_#{data}.json")))
+          end
         end
       end
     end
   end
 
   describe '#import' do
-    include FakeFS::SpecHelpers
-
-    before do
-      FakeFS::FileSystem.clone(Rails.root) # needed for Rails auto-loading to still work
-    end
-
     let(:path) { '/tmp/usb' }
 
     context 'with bad path or missing files' do
@@ -195,12 +189,15 @@ describe RMT::SCC do
 
     context 'with good path and files' do
       before do
-        FileUtils.mkdir_p(path)
-        File.write(File.join(path, 'organizations_products.json'), products.to_json)
-        File.write(File.join(path, 'organizations_subscriptions.json'), subscriptions.to_json)
-        File.write(File.join(path, 'organizations_repositories.json'), all_repositories.to_json)
+        FakeFS.with_fresh do
+          FakeFS::FileSystem.clone(Rails.root.join('app', 'models')) # needed for Rails auto-loading to still work
+          FileUtils.mkdir_p(path)
+          File.write(File.join(path, 'organizations_products.json'), products.to_json)
+          File.write(File.join(path, 'organizations_subscriptions.json'), subscriptions.to_json)
+          File.write(File.join(path, 'organizations_repositories.json'), all_repositories.to_json)
 
-        described_class.new.import(path)
+          described_class.new.import(path)
+        end
       end
 
       include_examples 'saves in database'
