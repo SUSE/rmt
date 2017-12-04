@@ -44,19 +44,6 @@ class RMT::Downloader
     @hydra.run
   end
 
-  def self.verify_checksum(filename, checksum_type, checksum_value)
-    hash_function = checksum_type.gsub(/\W/, '').upcase.to_sym
-    hash_function = :SHA1 if (hash_function == :SHA)
-
-    unless (KNOWN_HASH_FUNCTIONS.include? hash_function)
-      raise RMT::Downloader::Exception.new("Unknown hash function #{checksum_type}")
-    end
-
-    digest = Digest.const_get(hash_function).file(filename)
-
-    raise RMT::Downloader::Exception.new('Checksum doesn\'t match') unless (checksum_value == digest.to_s)
-  end
-
   protected
 
   def process_queue
