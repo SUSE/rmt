@@ -47,11 +47,16 @@ RSpec.describe RMT::CLI::Main do
     end
 
     describe 'mirror custom' do
-      let(:repo_url) { 'http://example.com/repo/' }
+      let(:repo_url) { 'http://example.com/cool_custom_repo/' }
       let(:argv) { ['mirror', 'custom', repo_url] }
+      let(:mirror_double) do
+        double = instance_double(RMT::Mirror)
+        expect(double).to receive(:mirror)
+        double
+      end
 
       it 'triggers mirroring of a custom repo' do
-        expect_any_instance_of(RMT::CLI::Mirror).to receive(:mirror_one_repo).with(repo_url, Repository.make_local_path(repo_url)).once
+        expect(RMT::Mirror).to receive(:new).with(hash_including(repository_url: repo_url)).once { mirror_double }
         command
       end
 
@@ -60,7 +65,7 @@ RSpec.describe RMT::CLI::Main do
         let(:argv) { ['mirror', 'custom', repo_url, local_path] }
 
         it 'triggers mirroring of a custom repo to a custom path' do
-          expect_any_instance_of(RMT::CLI::Mirror).to receive(:mirror_one_repo).with(repo_url, local_path).once
+          expect(RMT::Mirror).to receive(:new).with(hash_including(repository_url: repo_url, local_path: local_path)).once { mirror_double }
           command
         end
       end

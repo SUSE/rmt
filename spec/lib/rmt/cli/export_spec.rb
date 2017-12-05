@@ -24,12 +24,18 @@ RSpec.describe RMT::CLI::Export do
     let(:repos_from_file) do
       repo_ids_from_file.map { |id| create :repository, id: id }
     end
+    let(:mirror_double) do
+      double = instance_double(RMT::Mirror)
+      expect(double).to receive(:mirror).exactly(2).times
+      double
+    end
 
     before { create :repository, id: 666, mirroring_enabled: true }
 
     it 'reads repo ids from file at path and mirrors these repos' do
       expect(File).to receive(:read).with("#{path}/repos.json").and_return repo_ids_from_file.to_json
-      expect_any_instance_of(RMT::CLI::Mirror).to receive(:mirror).with({ base_dir: path, repos: repos_from_file })
+      expect(RMT::Mirror).to receive(:new).exactly(2).times { mirror_double }
+      repos_from_file
       described_class.start(['repos', path])
     end
   end

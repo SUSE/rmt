@@ -19,7 +19,23 @@ class RMT::CLI::Export < RMT::CLI::Base
     repos_file = File.join(path, 'repos.json')
     repos_ids = JSON.parse(File.read(repos_file))
     repos = Repository.find(repos_ids)
-    RMT::CLI::Mirror.new.mirror(base_dir: path, repos: repos)
+
+    if repos.empty?
+      warn 'There are no repositories marked for mirroring.'
+      return
+    end
+
+    base_dir = RMT::DEFAULT_MIRROR_DIR
+
+    repos.each do |repository|
+      begin
+        puts "Mirroring repository #{repository.name} from #{path} to #{base_dir}"
+        RMT::Mirror.from_repo_model(repository, base_dir).mirror
+        repository.refresh_timestamp!
+      rescue RMT::Mirror::Exception => e
+        warn e.to_s
+      end
+    end
   end
 
 end
