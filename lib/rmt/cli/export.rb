@@ -25,11 +25,11 @@ class RMT::CLI::Export < RMT::CLI::Base
       return
     end
 
-    base_dir = RMT::DEFAULT_MIRROR_DIR
+    base_dir = path
 
     repos.each do |repository|
       begin
-        puts "Mirroring repository #{repository.name} from #{path} to #{base_dir}"
+        puts "Mirroring repository #{repository.name} to #{base_dir}"
         RMT::Mirror.from_repo_model(repository, base_dir).mirror
         repository.refresh_timestamp!
       rescue RMT::Mirror::Exception => e
