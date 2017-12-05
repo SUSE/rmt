@@ -37,11 +37,15 @@ RSpec.describe RMT::CLI::Main do
 
     describe 'mirror' do
       let(:argv) { ['mirror'] }
-
-      before { create :product, :with_mirrored_repositories }
+      let(:mirror_double) do
+        double = instance_double(RMT::Mirror)
+        expect(double).to receive(:mirror).exactly(product.repositories.count).times
+        double
+      end
+      let(:product) { create :product, :with_mirrored_repositories }
 
       it 'triggers mirroring of enabled repos' do
-        expect_any_instance_of(RMT::CLI::Mirror).to receive(:repos)
+        expect(RMT::Mirror).to receive(:new).with(any_args).exactly(product.repositories.count).times { mirror_double }
         command
       end
     end
@@ -151,7 +155,7 @@ RSpec.describe RMT::CLI::Main do
 
     describe 'exceptions we do not catch' do
       before do
-        expect_any_instance_of(described_class).to receive(:help) { raise exception_class, error_message }
+        expect(described_class).to receive(:help) { raise exception_class, error_message }
       end
 
       describe 'Mysql2::Error with other error messages' do

@@ -16,7 +16,7 @@ class RMT::CLI::Import < RMT::CLI::Base
     base_dir = RMT::DEFAULT_MIRROR_DIR
 
     repos.each do |repository|
-      repository.external_url.sub!(/.*(?=SUSE)/, "file://#{path}/") # FIXME this probably won't work for some repos
+      repository.external_url.sub!(/.*(?=SUSE)/, "file://#{path}/") # FIXME: this probably won't work for some repos
       begin
         puts "Mirroring repository #{repository.name} from #{path} to #{base_dir}"
         RMT::Mirror.from_repo_model(repository, base_dir).mirror

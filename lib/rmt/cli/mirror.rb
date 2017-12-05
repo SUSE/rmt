@@ -33,11 +33,11 @@ class RMT::CLI::Mirror < RMT::CLI::Base
     path ||= Repository.make_local_path(url)
 
     RMT::Mirror.new(
-        mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR,
-        repository_url: url,
-        local_path: path,
-        mirror_src: Settings.mirroring.mirror_src,
-        logger: Logger.new(STDOUT)
+      mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR,
+      repository_url: url,
+      local_path: path,
+      mirror_src: Settings.mirroring.mirror_src,
+      logger: Logger.new(STDOUT)
     ).mirror
   end
 

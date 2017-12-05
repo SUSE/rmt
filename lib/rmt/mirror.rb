@@ -33,7 +33,7 @@ class RMT::Mirror
   end
 
   def self.from_repo_model(repository, base_dir = nil)
-    base_dir ||=  RMT::DEFAULT_MIRROR_DIR
+    base_dir ||= RMT::DEFAULT_MIRROR_DIR
     RMT::Mirror.new(
       mirroring_base_dir: base_dir,
       repository_url: repository.external_url,
