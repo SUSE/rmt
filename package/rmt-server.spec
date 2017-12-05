@@ -1,5 +1,5 @@
 #
-# spec file for package rmt
+# spec file for package rmt-server
 #
 # Copyright (c) 2017 SUSE LINUX GmbH, Nuernberg, Germany.
 #
@@ -25,21 +25,25 @@
 %define data_dir /var/lib/rmt/
 %define rmt_user    _rmt
 %define rmt_group   nginx
-Name:           rmt
+
+Name:           rmt-server
 Version:        0.0.1
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0+
 Group:          Productivity/Networking/Web/Proxy
 Url:            https://software.opensuse.org/package/rmt
+
 Source0:        %{name}-%{version}.tar.bz2
-Source1:        rmt-rpmlintrc
+Source1:        rmt-server-rpmlintrc
 Source2:        rmt.conf
 Source3:        rmt.8.gz
+
 Patch0:         use-ruby-2.4-in-rmt-cli.patch
 Patch1:         use-ruby-2.4-in-rails.patch
 Patch2:         use-ruby-2.5-in-rmt-cli.patch
 Patch3:         use-ruby-2.5-in-rails.patch
+
 BuildRequires:  gcc
 BuildRequires:  libcurl-devel
 BuildRequires:  libffi-devel
@@ -56,6 +60,7 @@ BuildRequires:  ruby2.5-devel
 BuildRequires:  ruby2.5-stdlib
 %endif
 BuildRequires:  fdupes
+
 Requires:       mariadb
 %if 0%{?use_ruby_2_4}
 Requires(post): ruby2.4
