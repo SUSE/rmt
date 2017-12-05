@@ -181,7 +181,6 @@ describe RMT::SCC do
     context 'with bad path or missing files' do
       it 'raises an error before it touches the database' do
         FakeFS.with_fresh do
-          FakeFS::FileSystem.clone(Rails.root.join('app', 'models')) # needed for Rails auto-loading to still work
           expect(ApplicationRecord).not_to receive(:delete_all)
           expect(ApplicationRecord).not_to receive(:update)
           expect(ApplicationRecord).not_to receive(:new)
@@ -193,7 +192,6 @@ describe RMT::SCC do
     context 'with good path and files' do
       before do
         FakeFS.with_fresh do
-          FakeFS::FileSystem.clone(Rails.root.join('app', 'models')) # needed for Rails auto-loading to still work
           FileUtils.mkdir_p(path)
           File.write(File.join(path, 'organizations_products.json'), products.to_json)
           File.write(File.join(path, 'organizations_subscriptions.json'), subscriptions.to_json)
