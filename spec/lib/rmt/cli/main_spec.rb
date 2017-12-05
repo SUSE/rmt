@@ -76,7 +76,7 @@ RSpec.describe RMT::CLI::Main do
       let(:error_message) { 'Dummy error' }
 
       before do
-        expect_any_instance_of(described_class).to receive(:help) { raise exception_class, error_message }
+        expect(described_class).to receive(:help) { raise exception_class, error_message }
         expect(described_class).to receive(:exit)
       end
 
