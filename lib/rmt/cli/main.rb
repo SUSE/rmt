@@ -20,10 +20,10 @@ class RMT::CLI::Main < RMT::CLI::Base
   desc 'mirror', 'Mirror repositories'
   subcommand 'mirror', RMT::CLI::Mirror
 
-  desc 'import', 'Import commands for offline usage' # TODO: better description
+  desc 'import', 'Import commands for Offline Sync'
   subcommand 'import', RMT::CLI::Import
 
-  desc 'export', 'Export commands for offline usage' # TODO: better description
+  desc 'export', 'Export commands for Offline Sync'
   subcommand 'export', RMT::CLI::Export
 
   desc 'version', 'Show RMT version'
