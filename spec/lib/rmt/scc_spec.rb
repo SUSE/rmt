@@ -167,6 +167,7 @@ describe RMT::SCC do
       %w[orders products repositories subscriptions].each do |data|
         it "writes #{data} file to path" do
           FakeFS.with_fresh do
+            FileUtils.mkdir_p path
             described_class.new.export(path)
             expect(File.exist?(File.join(path, "organizations_#{data}.json")))
           end

@@ -46,8 +46,6 @@ class RMT::SCC
   end
 
   def export(path)
-    FileUtils.mkdir_p(path)
-
     raise CredentialsError, 'SCC credentials not set.' unless (Settings.scc.username && Settings.scc.password)
 
     @logger.info("Exporting data from SCC to #{path}")

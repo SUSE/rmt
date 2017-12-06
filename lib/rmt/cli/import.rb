@@ -1,3 +1,5 @@
+# rubocop:disable Rails/Output
+
 class RMT::CLI::Import < RMT::CLI::Base
 
   desc 'data PATH', 'Read SCC data from given path'
