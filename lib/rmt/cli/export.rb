@@ -4,6 +4,7 @@ class RMT::CLI::Export < RMT::CLI::Base
 
   desc 'settings PATH', 'Store repository settings at given path'
   def settings(path)
+    abort "#{path} is not a directory." unless File.directory?(path)
     File.write(File.join(path, 'repos.json'), Repository.only_mirrored.pluck(:id).to_json)
     puts "Settings saved at #{path}."
   end

@@ -4,11 +4,30 @@ RSpec.describe RMT::CLI::Export do
   let(:path) { '/mnt/usb' }
 
   describe 'settings' do
-    it 'writes ids of enabled repos to file' do
+    before do
       create :repository, mirroring_enabled: true, id: 123
       create :repository, mirroring_enabled: false
-      expect(File).to receive(:write).with("#{path}/repos.json", '[123]')
-      described_class.start(['settings', path])
+    end
+
+    context 'with non-existing path' do
+      it 'complains and exits' do
+        FakeFS.with_fresh do
+          RMT::SCC
+          expect { described_class.start(['settings', path]) }.to output("#{path} is not a directory.\n").to_stderr.and raise_error(SystemExit)
+        end
+      end
+    end
+
+    context 'with existing path' do
+      it 'writes ids of enabled repos to file' do
+        FakeFS.with_fresh do
+          FileUtils.mkdir_p path
+          described_class.start(['settings', path])
+          expected_filename = File.join(path, 'repos.json')
+          expect(File.exist?(expected_filename)).to be true
+          expect(File.read(expected_filename).chomp).to eq '[123]'
+        end
+      end
     end
   end
 
