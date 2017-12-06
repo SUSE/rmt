@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 # rubocop:disable RSpec/MultipleExpectations
+# rubocop:disable RSpec/NestedGroups
 
-RSpec.describe RMT::CLI::Export do
+describe RMT::CLI::Export do
   let(:path) { '/mnt/usb' }
 
   describe 'settings' do
@@ -44,6 +45,7 @@ RSpec.describe RMT::CLI::Export do
     include_examples 'handles non-existing path'
 
     let(:command) { described_class.start(['repos', path]) }
+    let(:mirror_double) { instance_double('RMT::Mirror') }
     let(:repo_ids) { [42, 69] }
 
     context 'with invalid repo ids' do
@@ -59,16 +61,29 @@ RSpec.describe RMT::CLI::Export do
 
     context 'with valid repo ids' do
       before { repo_ids.map { |id| create :repository, id: id } }
-      let(:mirror_double) { instance_double(RMT::Mirror) }
 
       it 'reads repo ids from file at path and mirrors these repos' do
         FakeFS.with_fresh do
           FileUtils.mkdir_p path
           File.write("#{path}/repos.json", repo_ids.to_json)
 
-          expect(mirror_double).to receive(:mirror).exactly(2).times
-          expect(RMT::Mirror).to receive(:new).exactly(2).times { mirror_double }
+          expect(mirror_double).to receive(:mirror).exactly(repo_ids.count).times
+          expect(RMT::Mirror).to receive(:from_repo_model).exactly(repo_ids.count).times.and_return(mirror_double)
           command
+        end
+      end
+
+      context 'with exceptions during mirroring' do
+        it 'outputs exception message' do
+          FakeFS.with_fresh do
+            FileUtils.mkdir_p path
+            File.write("#{path}/repos.json", repo_ids.to_json)
+
+            expect(mirror_double).to receive(:mirror)
+            expect(mirror_double).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror')
+            expect(RMT::Mirror).to receive(:from_repo_model).exactly(repo_ids.count).times.and_return(mirror_double)
+            expect { command }.to output(/black mirror/).to_stderr
+          end
         end
       end
     end

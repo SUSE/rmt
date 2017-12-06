@@ -24,6 +24,8 @@ describe RMT::CLI::Import do
     include_examples 'handles non-existing path'
 
     let(:command) { described_class.start(['repos', path]) }
+    let(:mirror_double) { instance_double 'RMT::Mirror' }
+    let(:repo) { create :repository, mirroring_enabled: true }
 
     context 'with no repos marked for mirroring' do
       it 'complains and exits' do
@@ -36,9 +38,6 @@ describe RMT::CLI::Import do
     end
 
     context 'with repos marked for mirroring' do
-      let(:repo) { create :repository, mirroring_enabled: true }
-      let(:mirror_double) { instance_double 'RMT::Mirror' }
-
       it 'triggers mirroring' do
         FakeFS.with_fresh do
           FileUtils.mkdir_p path
@@ -46,6 +45,18 @@ describe RMT::CLI::Import do
           expect(mirror_double).to receive(:mirror)
           expect(RMT::Mirror).to receive(:from_repo_model).with(repo).and_return(mirror_double)
           command
+        end
+      end
+    end
+
+    context 'with exceptions during mirroring' do
+      it 'outputs exception message' do
+        FakeFS.with_fresh do
+          FileUtils.mkdir_p path
+
+          expect(mirror_double).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror')
+          expect(RMT::Mirror).to receive(:from_repo_model).with(repo).and_return(mirror_double)
+          expect { command }.to output("black mirror\n").to_stderr
         end
       end
     end
