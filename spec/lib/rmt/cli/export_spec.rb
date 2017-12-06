@@ -54,26 +54,34 @@ RSpec.describe RMT::CLI::Export do
     include_examples 'handles non-existing path'
 
     let(:command) { described_class.start(['repos', path]) }
-
     let(:repo_ids) { [42, 69] }
-    let!(:repos) do
-      repo_ids.map { |id| create :repository, id: id }
+
+    context 'with invalid repo ids' do
+      it 'outputs warnings' do
+        FakeFS.with_fresh do
+          FileUtils.mkdir_p path
+          File.write("#{path}/repos.json", repo_ids.to_json)
+
+          expect { command }.to output("No repo with id 42 found in database.\nNo repo with id 69 found in database.\n").to_stderr
+        end
+      end
     end
-    let(:mirror_double) do
-      double = instance_double(RMT::Mirror)
-      expect(double).to receive(:mirror).exactly(2).times
-      double
-    end
 
-    before { create :repository, id: 666, mirroring_enabled: true }
+    context 'with valid repo ids' do
+      let!(:repos) do
+        repo_ids.map { |id| create :repository, id: id }
+      end
+      let(:mirror_double) { instance_double(RMT::Mirror) }
 
-    it 'reads repo ids from file at path and mirrors these repos' do
-      FakeFS.with_fresh do
-        FileUtils.mkdir_p path
-        File.write("#{path}/repos.json", repo_ids.to_json)
+      it 'reads repo ids from file at path and mirrors these repos' do
+        FakeFS.with_fresh do
+          FileUtils.mkdir_p path
+          File.write("#{path}/repos.json", repo_ids.to_json)
 
-        expect(RMT::Mirror).to receive(:new).exactly(2).times { mirror_double }
-        command
+          expect(mirror_double).to receive(:mirror).exactly(2).times
+          expect(RMT::Mirror).to receive(:new).exactly(2).times { mirror_double }
+          command
+        end
       end
     end
   end
