@@ -25,7 +25,7 @@ class RMT::CLI::Export < RMT::CLI::Base
       repos_ids = JSON.parse(File.read(repos_file))
 
       repos_ids.each do |id|
-        repository = Repository.find_by_id(id)
+        repository = Repository.find_by(id: id)
         if repository
           begin
             puts "Mirroring repository #{repository.name} to #{path}"
@@ -40,4 +40,5 @@ class RMT::CLI::Export < RMT::CLI::Base
       end
     end
   end
+
 end

@@ -1,5 +1,7 @@
 require 'rails_helper'
 
+# rubocop:disable RSpec/MultipleExpectations
+
 describe RMT::CLI::Import do
   let(:path) { '/mnt/usb' }
 

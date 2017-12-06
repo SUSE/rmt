@@ -34,7 +34,7 @@ class RMT::Mirror
 
   def self.from_repo_model(repository, base_dir = nil)
     new(
-      mirroring_base_dir: base_dir ||= RMT::DEFAULT_MIRROR_DIR,
+      mirroring_base_dir: base_dir || RMT::DEFAULT_MIRROR_DIR,
       repository_url: repository.external_url,
       local_path: repository.local_path,
       auth_token: repository.auth_token,

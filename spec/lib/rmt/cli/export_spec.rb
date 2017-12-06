@@ -58,9 +58,7 @@ RSpec.describe RMT::CLI::Export do
     end
 
     context 'with valid repo ids' do
-      let!(:repos) do
-        repo_ids.map { |id| create :repository, id: id }
-      end
+      before { repo_ids.map { |id| create :repository, id: id } }
       let(:mirror_double) { instance_double(RMT::Mirror) }
 
       it 'reads repo ids from file at path and mirrors these repos' do
