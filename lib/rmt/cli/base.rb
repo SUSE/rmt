@@ -62,4 +62,10 @@ class RMT::CLI::Base < Thor
 
   end
 
+  private
+
+  def needs_path(path)
+    File.directory?(path) ? yield : warn("#{path} is not a directory.")
+  end
+
 end

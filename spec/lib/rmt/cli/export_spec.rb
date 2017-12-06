@@ -5,16 +5,6 @@ require 'rails_helper'
 RSpec.describe RMT::CLI::Export do
   let(:path) { '/mnt/usb' }
 
-  shared_examples 'handles non-existing path' do
-    context 'with non-existing path' do
-      it 'complains and exits' do
-        FakeFS.with_fresh do
-          expect { command }.to output("#{path} is not a directory.\n").to_stderr
-        end
-      end
-    end
-  end
-
   describe 'settings' do
     include_examples 'handles non-existing path'
 
