@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Nov 30 17:32:15 UTC 2017 - tschmidt@suse.com
+
+- Change package name to `rmt-server` to not conflict with the unix tool `rmt`
+
+-------------------------------------------------------------------
 Mon Oct 16 11:16:02 UTC 2017 - ikapelyukhin@suse.com
 
 - Update summary and description
