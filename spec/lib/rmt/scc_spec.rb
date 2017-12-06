@@ -160,10 +160,6 @@ describe RMT::SCC do
         allow(Settings).to receive(:scc).and_return(OpenStruct.new(username: 'me', password: 'groot'))
       end
 
-      it 'makes sure path exists' do
-        expect(File.directory?(path)).to be true
-      end
-
       %w[orders products repositories subscriptions].each do |data|
         it "writes #{data} file to path" do
           FakeFS.with_fresh do
