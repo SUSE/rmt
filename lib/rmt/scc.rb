@@ -41,8 +41,6 @@ class RMT::SCC
     data.each do |item|
       create_subscription(item)
     end
-
-    @logger.info('Done!')
   end
 
   def export(path)
@@ -63,8 +61,6 @@ class RMT::SCC
 
     @logger.info('Exporting orders')
     File.write(File.join(path, 'organizations_orders.json'), scc_api_client.list_orders.to_json)
-
-    @logger.info('Done!')
   end
 
   def import(path)
@@ -99,8 +95,6 @@ class RMT::SCC
     data.each do |item|
       create_subscription(item)
     end
-
-    @logger.info('Done!')
   end
 
   protected
