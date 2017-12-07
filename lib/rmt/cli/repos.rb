@@ -45,6 +45,7 @@ class RMT::CLI::Repos < RMT::CLI::Base
   def change_repository_mirroring(target, mirroring_enabled)
     repo_id = Integer(target, 10) rescue nil
     if repo_id
+      # FIXME: A non-existing Id raises an ActiveRecord::RecordNotFound! Same for `products enable 123`
       Repository.find(repo_id).change_mirroring!(mirroring_enabled)
       puts "Repository successfully #{mirroring_enabled ? 'enabled' : 'disabled'}."
     else

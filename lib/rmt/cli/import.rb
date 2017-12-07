@@ -17,7 +17,8 @@ class RMT::CLI::Import < RMT::CLI::Base
       end
 
       repos.each do |repo|
-        repo.external_url.sub!(/.*(?=SUSE)/, "file://#{path}/") # FIXME: this probably won't work for some repos
+        require 'byebug'; byebug
+        repo.external_url.sub!(/.*(?=SUSE)/, "file://#{path}/") # FIXME: this won't work for some repos
         mirror(repo)
       end
     end

@@ -26,6 +26,7 @@ end
 relative_load_paths = %w[lib lib/rmt app/models].map { |dir| File.join(rmt_path, dir) }
 ActiveSupport::Dependencies.autoload_paths += relative_load_paths
 
+# FIXME: this check (or its message) is not correct. It already complains when the folder does just not exist, even-though it is perfectly writeable by my user.
 unless File.writable?(RMT::DEFAULT_MIRROR_DIR)
   warn "Mirroring base directory (#{RMT::DEFAULT_MIRROR_DIR}) is not writable by user '#{Etc.getpwuid(Process.euid).name}'"
   warn 'Run as root or adjust the permissions.'
