@@ -39,8 +39,8 @@ desired location.
 ### SUSE products
 
 * Run `rmt-cli scc sync` to download available products and repositories data for your organization from SCC
-* Run `rmt-cli products list` to see the list of products that are available for your organization
-* Run `rmt-cli repos list --all` to see the list of all repositories available
+* Run `rmt-cli products --all` to see the list of products that are available for your organization
+* Run `rmt-cli repos --all` to see the list of all repositories available
 * Use the `rmt-cli repos enable` command to choose which product repositories to mirror, for example:
   ```
   rmt-cli repos enable SLES/12.2/x86_64
@@ -64,7 +64,7 @@ RMT supports disconnected setups, similiar to [how SMT does](https://www.suse.co
 ##### On the Offline RMT
 
 - `rmt-cli import scc-data /mnt/usb` will read the JSON-files from given path and fill the local database.
-- Now use `repos enable` (or `products enable`) to mark repos for mirroring.
+- Now use `rmt-cli repos enable` to mark repos for mirroring.
 - `rmt-cli export settings` saves your settings at path as `repos.json`.
 
 #### Regular workflow
@@ -82,7 +82,7 @@ RMT supports disconnected setups, similiar to [how SMT does](https://www.suse.co
 
 To mirror repositories that are not delivered via SCC, you can run for example:
 
-`rmt-cli mirror https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/openSUSE_Leap_42.3/ foo/bar`
+`rmt-cli mirror custom https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/openSUSE_Leap_42.3/ foo/bar`
 
 This will mirror the repository content to `public/repo/foo/bar` and make it available at http://hostname:4224/repo/foo/bar.
 
