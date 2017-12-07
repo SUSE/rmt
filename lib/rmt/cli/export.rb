@@ -29,20 +29,9 @@ class RMT::CLI::Export < RMT::CLI::Base
     needs_path(path) do
       repos_file = File.join(path, 'repos.json')
       repos_ids = JSON.parse(File.read(repos_file))
-
       repos_ids.each do |id|
-        repository = Repository.find_by(id: id)
-        if repository
-          begin
-            puts "Mirroring repository #{repository.name} to #{path}"
-            RMT::Mirror.from_repo_model(repository, path).mirror
-            repository.refresh_timestamp!
-          rescue RMT::Mirror::Exception => e
-            warn e.to_s
-          end
-        else
-          warn "No repo with id #{id} found in database."
-        end
+        repo = Repository.find_by(id: id)
+        repo ? mirror(repo, to: path) : warn("No repo with id #{id} found in database.")
       end
     end
   end

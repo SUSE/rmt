@@ -1,3 +1,4 @@
+# rubocop:disable Rails/Output
 # rubocop:disable Rails/Exit
 
 class RMT::CLI::Base < Thor
@@ -66,6 +67,14 @@ class RMT::CLI::Base < Thor
 
   def needs_path(path)
     File.directory?(path) ? yield : warn("#{path} is not a directory.")
+  end
+
+  def mirror(repo, to: RMT::DEFAULT_MIRROR_DIR)
+    puts "Mirroring repository #{repo.name} to #{to}"
+    RMT::Mirror.from_repo_model(repo, to).mirror
+    repo.refresh_timestamp!
+  rescue RMT::Mirror::Exception => e
+    warn e.to_s
   end
 
 end
