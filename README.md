@@ -38,7 +38,7 @@ desired location.
 
 ### SUSE products
 
-* Run `rmt-cli scc sync` to download available products and repositories data for your organization from SCC
+* Run `rmt-cli sync` to download available products and repositories data for your organization from SCC
 * Run `rmt-cli products --all` to see the list of products that are available for your organization
 * Run `rmt-cli repos --all` to see the list of all repositories available
 * Use the `rmt-cli repos enable` command to choose which product repositories to mirror, for example:
