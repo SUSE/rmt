@@ -28,7 +28,7 @@ class RMT::CLI::Main < RMT::CLI::Base
 
   desc 'version', 'Show RMT version'
   def version
-    puts RMT::VERSION # rubocop:disable Rails/Output
+    puts RMT::VERSION
   end
 
   map %w[--version -v] => :version

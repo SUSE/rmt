@@ -1,5 +1,3 @@
-# rubocop:disable Rails/Output
-
 require 'rmt/cli/repos'
 
 class RMT::CLI::Products < RMT::CLI::Base

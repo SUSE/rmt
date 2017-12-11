@@ -18,3 +18,7 @@ AllCops:
     - tmp/**/*
     - lib/locale/*
     - package/*
+
+Rails/Output:
+  Exclude:
+    - lib/rmt/cli/**/*

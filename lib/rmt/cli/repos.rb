@@ -1,5 +1,3 @@
-# rubocop:disable Rails/Output
-
 class RMT::CLI::Repos < RMT::CLI::Base
 
   default_task :list

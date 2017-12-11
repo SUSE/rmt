@@ -1,6 +1,3 @@
-# rubocop:disable Rails/Output
-# rubocop:disable Rails/Exit
-
 class RMT::CLI::Base < Thor
 
   class << self
@@ -29,7 +26,7 @@ class RMT::CLI::Base < Thor
         warn e.cause ? e.cause.inspect : e.inspect
         warn e.cause ? e.cause.backtrace : e.backtrace
       end
-      exit e.exit_code
+      exit e.exit_code # rubocop:disable Rails/Exit
     end
 
     def handle_exceptions
