@@ -17,7 +17,10 @@ class RMT::CLI::Import < RMT::CLI::Base
       end
 
       repos.each do |repo|
+        external_url = repo.external_url
+        repo.external_url = 'file://' + path + Repository.make_local_path(repo.external_url)
         mirror(repo)
+        repo.update(external_url: external_url) # make sure we do not permanently change the URI
       end
     end
   end
