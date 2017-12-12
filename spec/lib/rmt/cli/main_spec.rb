@@ -35,46 +35,6 @@ RSpec.describe RMT::CLI::Main do
       end
     end
 
-    describe 'mirror' do
-      let(:argv) { ['mirror'] }
-      let(:mirror_double) do
-        double = instance_double(RMT::Mirror)
-        expect(double).to receive(:mirror).exactly(product.repositories.count).times
-        double
-      end
-      let(:product) { create :product, :with_mirrored_repositories }
-
-      it 'triggers mirroring of enabled repos' do
-        expect(RMT::Mirror).to receive(:new).with(any_args).exactly(product.repositories.count).times { mirror_double }
-        command
-      end
-    end
-
-    describe 'mirror custom' do
-      let(:repo_url) { 'http://example.com/cool_custom_repo/' }
-      let(:argv) { ['mirror', 'custom', repo_url] }
-      let(:mirror_double) do
-        double = instance_double(RMT::Mirror)
-        expect(double).to receive(:mirror)
-        double
-      end
-
-      it 'triggers mirroring of a custom repo' do
-        expect(RMT::Mirror).to receive(:new).with(hash_including(repository_url: repo_url)).once { mirror_double }
-        command
-      end
-
-      context 'with local_path as extra parameter' do
-        let(:local_path) { 'custom/dummy/repo/' }
-        let(:argv) { ['mirror', 'custom', repo_url, local_path] }
-
-        it 'triggers mirroring of a custom repo to a custom path' do
-          expect(RMT::Mirror).to receive(:new).with(hash_including(repository_url: repo_url, local_path: local_path)).once { mirror_double }
-          command
-        end
-      end
-    end
-
     describe 'exception handling' do
       let(:exception_class) { RMT::CLI::Error }
       let(:error_message) { 'Dummy error' }

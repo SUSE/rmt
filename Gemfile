@@ -67,6 +67,7 @@ end
 
 group :test do
   gem 'fakefs', require: 'fakefs/safe'
+  gem 'timecop'
 end
 
 gem 'simplecov', require: false, group: :test
