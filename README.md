@@ -59,13 +59,13 @@ RMT supports disconnected setups, similiar to [how SMT does](https://www.suse.co
 
 ##### On the Online RMT
 
-- `rmt-cli export scc-data /mnt/usb` will get the required JSON responses from SCC and save them as files at the specified path.
+- `rmt-cli export data /mnt/usb` will get the required JSON responses from SCC and save them as files at the specified path.
 
 ##### On the Offline RMT
 
 - `rmt-cli import scc-data /mnt/usb` will read the JSON-files from given path and fill the local database.
-- Now use `rmt-cli repos enable` to mark repos for mirroring.
-- `rmt-cli export settings` saves your settings at path as `repos.json`.
+- Now use `rmt-cli repos enable` or `rmt-cli products enable` to mark repos for mirroring.
+- `rmt-cli export settings /mnt/usb` saves your settings at given path as `repos.json`.
 
 #### Regular workflow
 
@@ -75,7 +75,7 @@ RMT supports disconnected setups, similiar to [how SMT does](https://www.suse.co
 
 ##### On the Offline RMT
 
-- `rmt-cli import repos` will mirror all repos which are enabled in the database, from the given path.
+- `rmt-cli import repos /mnt/usb` will mirror all repos which are enabled in the database, from the given path.
 
 
 ### openSUSE and other RPM based products
