@@ -98,11 +98,10 @@ Supported Ruby versions are 2.4.1 and newer.
 
 * Setup MySQL/MariaDB:
 
-Allow the database user from `config/rmt.local.yml` to login to your MySQL/MariaDB server, 
-by default:
+* Grant the just configured database user access to your database. The following command will grant access to the default user `rmt` with password `rmt` (run it as root):
 
 ```
-mysql -u root -p <<EOFF
+mysql -u root <<EOFF
 GRANT ALL PRIVILEGES ON \`rmt%\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
 FLUSH PRIVILEGES;
 EOFF
