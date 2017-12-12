@@ -91,9 +91,15 @@ Supported Ruby versions are 2.4.1 and newer.
 
 ## Development setup
 
+* Install the dependencies by running `bundle install`
+* Copy the file `config/rmt.yml` to `config/rmt.local.yml` to override the default settings:
+    * Add your organization credentials to `scc` section
+    * Add your MySQL credentials
+
 * Setup MySQL/MariaDB:
 
-Allow the rmt user from `config/rmt.local.yml` to login to your MySQL/MariaDB server:
+Allow the database user from `config/rmt.local.yml` to login to your MySQL/MariaDB server, 
+by default:
 
 ```
 mysql -u root -p <<EOFF
@@ -101,31 +107,7 @@ GRANT ALL PRIVILEGES ON \`rmt%\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
 FLUSH PRIVILEGES;
 EOFF
 ```
-
-* Install the dependencies by running `bundle install`
 * Create databases by running `rails db:create db:migrate`
-* Override the default settings in `config/rmt.local.yml`:
-    * Add your organization credentials to `scc` section
-    * Modify database settings, i.e.:
-    ```yaml
-    database: &database
-      host: localhost
-      username: rmt
-      password: rmt
-      database: rmt_development
-      adapter: mysql2
-      encoding: utf8
-      timeout: 5000
-      pool: 5
-
-    database_development:
-      <<: *database
-      database: rmt_development
-
-    database_test:
-      <<: *database
-      database: rmt_test
-    ```
 * Run `rails server` to run the web-server
 
 ### Packaging
