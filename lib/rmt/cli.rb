@@ -1,3 +1,6 @@
+require 'rmt/mirror'
+require 'rmt/scc'
+
 module RMT
   module CLI
     class Error < RuntimeError

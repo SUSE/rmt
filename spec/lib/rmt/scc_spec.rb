@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'fakefs/spec_helpers'
 
 # rubocop:disable RSpec/MultipleExpectations
 
