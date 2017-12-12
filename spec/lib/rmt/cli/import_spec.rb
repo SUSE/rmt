@@ -9,9 +9,9 @@ describe RMT::CLI::Import do
   describe 'data' do
     include_examples 'handles non-existing path'
 
-    let(:command) { described_class.start(['data', path]) }
+    subject(:command) { described_class.start(['data', path]) }
 
-    it 'calls sync with special params' do
+    it 'triggers import to path' do
       FakeFS.with_fresh do
         FileUtils.mkdir_p path
 
@@ -24,7 +24,8 @@ describe RMT::CLI::Import do
   describe 'repos' do
     include_examples 'handles non-existing path'
 
-    let(:command) { described_class.start(['repos', path]) }
+    subject(:command) { described_class.start(['repos', path]) }
+
     let(:mirror_double) { instance_double 'RMT::Mirror' }
 
     context 'with no repos marked for mirroring' do

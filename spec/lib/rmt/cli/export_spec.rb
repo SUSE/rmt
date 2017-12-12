@@ -32,9 +32,10 @@ describe RMT::CLI::Export do
 
     let(:command) { described_class.start(['data', path]) }
 
-    it 'calls sync with special params' do
+    it 'triggers export to path' do
       FakeFS.with_fresh do
         FileUtils.mkdir_p path
+
         expect_any_instance_of(RMT::SCC).to receive(:export).with(path)
         command
       end
@@ -77,8 +78,8 @@ describe RMT::CLI::Export do
           FileUtils.mkdir_p path
           File.write("#{path}/repos.json", repo_ids.to_json)
 
-          expect(mirror_double).to receive(:mirror).exactly(repo_ids.count).times
           expect(RMT::Mirror).to receive(:from_repo_model).exactly(repo_ids.count).times.and_return(mirror_double)
+          expect(mirror_double).to receive(:mirror).exactly(repo_ids.count).times
           command
         end
       end
@@ -89,9 +90,9 @@ describe RMT::CLI::Export do
             FileUtils.mkdir_p path
             File.write("#{path}/repos.json", repo_ids.to_json)
 
+            expect(RMT::Mirror).to receive(:from_repo_model).exactly(repo_ids.count).times.and_return(mirror_double)
             expect(mirror_double).to receive(:mirror)
             expect(mirror_double).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror')
-            expect(RMT::Mirror).to receive(:from_repo_model).exactly(repo_ids.count).times.and_return(mirror_double)
             expect { command }.to output(/black mirror/).to_stderr
           end
         end
