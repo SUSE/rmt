@@ -17,9 +17,9 @@ class RMT::FileUtils
     return false unless local_path
 
     if RMT::Config.deduplication_by_hardlink?
-      FileUtils.ln(local_path, destination)
+      ::FileUtils.ln(local_path, destination)
     else
-      FileUtils.cp(local_path, destination)
+      ::FileUtils.cp(local_path, destination)
     end
 
     true

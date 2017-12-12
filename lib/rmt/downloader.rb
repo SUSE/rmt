@@ -28,14 +28,13 @@ class RMT::Downloader
   def download(remote_file, checksum_type = nil, checksum_value = nil)
     local_file = make_local_path(remote_file)
     was_deduplicated = deduplicate(checksum_type, checksum_value, local_file)
+    return local_file if was_deduplicated
 
-    unless was_deduplicated
-      request_fiber = Fiber.new do
-        make_request(remote_file, local_file, request_fiber, checksum_type, checksum_value)
-      end
-
-      request_fiber.resume.run
+    request_fiber = Fiber.new do
+      make_request(remote_file, local_file, request_fiber, checksum_type, checksum_value)
     end
+
+    request_fiber.resume.run
 
     local_file
   end
@@ -62,21 +61,23 @@ class RMT::Downloader
     end while File.exist?(local_file) # rubocop:disable Lint/Loop
 
     was_deduplicated = deduplicate(queue_item[:checksum_type], queue_item[:checksum], local_file)
+    return if was_deduplicated
 
-    unless was_deduplicated
-      # The request is wrapped into a fiber for exception handling
-      request_fiber = Fiber.new do
-        begin
-          make_request(remote_file, local_file, request_fiber, queue_item[:checksum_type], queue_item[:checksum])
-        rescue RMT::Downloader::Exception => e
-          @logger.warn("× #{File.basename(local_file)} - #{e}")
-        ensure
-          process_queue
-        end
+    # The request is wrapped into a fiber for exception handling
+    request_fiber = Fiber.new do
+      begin
+        make_request(remote_file, local_file, request_fiber, queue_item[:checksum_type], queue_item[:checksum])
+      rescue RMT::Downloader::Exception => e
+        @logger.warn("× #{File.basename(local_file)} - #{e}")
+      ensure
+        process_queue
       end
-
-      @hydra.queue(request_fiber.resume)
     end
+
+    @hydra.queue(request_fiber.resume)
+  end
+
+  def process_queue_send
 
   end
 
