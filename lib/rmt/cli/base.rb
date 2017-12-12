@@ -1,5 +1,3 @@
-# rubocop:disable Rails/Exit
-
 class RMT::CLI::Base < Thor
 
   class << self
@@ -17,7 +15,7 @@ class RMT::CLI::Base < Thor
       shell.say
       class_options_help(shell)
 
-      shell.say "Run '#{basename} COMMAND help [SUBCOMMAND]' for more information on a command."
+      shell.say "Run '#{basename} help [COMMAND]' for more information on a command and its subcommands."
     end
 
     def dispatch(command, given_args, given_opts, config)
@@ -28,7 +26,7 @@ class RMT::CLI::Base < Thor
         warn e.cause ? e.cause.inspect : e.inspect
         warn e.cause ? e.cause.backtrace : e.backtrace
       end
-      exit e.exit_code
+      exit e.exit_code # rubocop:disable Rails/Exit
     end
 
     def handle_exceptions
@@ -60,6 +58,20 @@ class RMT::CLI::Base < Thor
       )
     end
 
+  end
+
+  private
+
+  def needs_path(path)
+    File.directory?(path) ? yield : warn("#{path} is not a directory.")
+  end
+
+  def mirror(repo, to: RMT::DEFAULT_MIRROR_DIR)
+    puts "Mirroring repository #{repo.name} to #{to}"
+    RMT::Mirror.from_repo_model(repo, to).mirror
+    repo.refresh_timestamp!
+  rescue RMT::Mirror::Exception => e
+    warn e.to_s
   end
 
 end

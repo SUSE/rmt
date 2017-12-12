@@ -1,44 +1,27 @@
-# rubocop:disable Rails/Output
+class RMT::CLI::Mirror < RMT::CLI::Base
 
-module RMT::CLI::Mirror
+  default_task :repos
 
-  def self.mirror(repository_url = nil, local_path = nil)
-    require 'rmt/mirror'
-    require 'rmt/config'
-
-    if repository_url
-      local_path ||= Repository.make_local_path(repository_url)
-      mirror_one_repo(repository_url, local_path)
-      return
-    end
-
-    repositories = Repository.where(mirroring_enabled: true)
-
-    if repositories.empty?
+  desc 'repos', 'Mirror enabled repositories'
+  def repos
+    repos = Repository.where(mirroring_enabled: true)
+    if repos.empty?
       warn 'There are no repositories marked for mirroring.'
       return
     end
-
-    repositories.each do |repository|
-      begin
-        puts "Mirroring repository #{repository.name}"
-        mirror_one_repo(repository.external_url, repository.local_path, repository.auth_token)
-        repository.refresh_timestamp!
-      rescue RMT::Mirror::Exception => e
-        warn e.to_s
-      end
-    end
-  rescue Interrupt
-    raise RMT::CLI::Error, 'Interrupted.'
+    repos.each { |repo| mirror(repo) }
   end
 
-  def self.mirror_one_repo(repository_url, local_path, auth_token = nil)
+  desc 'custom URL', 'Mirror a custom repository URL'
+  def custom(url, path = nil)
+    url += '/' unless url.end_with?('/')
+    path ||= Repository.make_local_path(url)
+
     RMT::Mirror.new(
       mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR,
+      repository_url: url,
+      local_path: path,
       mirror_src: Settings.mirroring.mirror_src,
-      repository_url: repository_url,
-      local_path: local_path,
-      auth_token: auth_token,
       logger: Logger.new(STDOUT)
     ).mirror
   end
