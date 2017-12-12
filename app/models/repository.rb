@@ -21,7 +21,7 @@ class Repository < ApplicationRecord
   end
 
   def refresh_timestamp!
-    update_column(:last_mirrored_at, DateTime.now.utc)
+    touch(:last_mirrored_at)
   end
 
   def change_mirroring!(mirroring_enabled)
