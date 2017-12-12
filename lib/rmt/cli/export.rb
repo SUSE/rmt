@@ -26,6 +26,10 @@ class RMT::CLI::Export < RMT::CLI::Base
   def repos(path)
     needs_path(path) do
       repos_file = File.join(path, 'repos.json')
+      unless File.exist?(repos_file)
+        warn "#{repos_file} does not exist."
+        return
+      end
       repos_ids = JSON.parse(File.read(repos_file))
       repos_ids.each do |id|
         repo = Repository.find_by(id: id)

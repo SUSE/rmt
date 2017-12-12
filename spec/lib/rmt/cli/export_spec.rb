@@ -48,6 +48,16 @@ describe RMT::CLI::Export do
     let(:mirror_double) { instance_double('RMT::Mirror') }
     let(:repo_ids) { [42, 69] }
 
+    context 'with missing repos.json file' do
+      it 'outputs a warning' do
+        FakeFS.with_fresh do
+          FileUtils.mkdir_p path
+
+          expect { command }.to output("#{File.join(path, 'repos.json')} does not exist.\n").to_stderr
+        end
+      end
+    end
+
     context 'with invalid repo ids' do
       it 'outputs warnings' do
         FakeFS.with_fresh do
