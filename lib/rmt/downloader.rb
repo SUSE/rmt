@@ -87,7 +87,7 @@ class RMT::Downloader
     uri = URI.join(@repository_url, remote_file)
     uri.query = @auth_token if (@auth_token && uri.scheme != 'file')
 
-    if (URI(uri).scheme == 'file' && !File.exist?(uri.path))
+    if URI(uri).scheme == 'file' && !File.exist?(uri.path)
       raise RMT::Downloader::Exception.new("#{remote_file} - File does not exist")
     end
 
