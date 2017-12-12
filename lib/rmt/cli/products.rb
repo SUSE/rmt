@@ -16,14 +16,16 @@ class RMT::CLI::Products < RMT::CLI::Base
       attributes.map { |a| product.public_send(a) }
     end
 
-    puts Terminal::Table.new(headings: headings, rows: rows) unless rows.empty?
-
-    if options.all
-      warn 'Run "rmt-cli sync" to synchronize with your SUSE Customer Center data first.' if rows.empty?
+    if rows.empty?
+      if options.all
+        warn 'Run "rmt-cli sync" to synchronize with your SUSE Customer Center data first.'
+      else
+        warn 'No matching products found in the database.'
+      end
     else
-      warn 'No matching products found in the database.' if rows.empty?
-      puts 'Only enabled products are shown by default. Use the `--all` option to see all products.'
+      puts Terminal::Table.new(headings: headings, rows: rows)
     end
+    puts 'Only enabled products are shown by default. Use the `--all` option to see all products.' unless options.all
   end
 
   desc 'enable', 'Enable mirroring of product repositories by product ID or product string.'
