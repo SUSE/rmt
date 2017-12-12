@@ -27,6 +27,7 @@ scc:
 mirroring:
   mirror_src: false
   verify_rpm_checksums: false
+  dedup_method: hardlink
 
 rails:
   port: 4224
@@ -42,5 +43,3 @@ http_client:
   proxy_user:
   proxy_password:
 
-mirroring:
-  dedup_method: hardlink
