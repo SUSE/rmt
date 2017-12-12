@@ -60,7 +60,7 @@ RSpec.describe RMT::Downloader do
         it 'raises an exception' do
           expect do
             downloader.download('/repomd.xml', 'CHUNKYBACON42', '0xDEADBEEF')
-          end.to raise_error(RMT::Downloader::Exception, 'Unknown hash function CHUNKYBACON42')
+          end.to raise_error(RMT::ChecksumVerifier::Exception, 'Unknown hash function CHUNKYBACON42')
         end
       end
 
@@ -68,7 +68,7 @@ RSpec.describe RMT::Downloader do
         it 'raises an exception' do
           expect do
             downloader.download('/repomd.xml', 'SHA256', '0xDEADBEEF')
-          end.to raise_error(RMT::Downloader::Exception, 'Checksum doesn\'t match')
+          end.to raise_error(RMT::ChecksumVerifier::Exception, 'Checksum doesn\'t match')
         end
       end
 
