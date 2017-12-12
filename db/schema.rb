@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170926104853) do
+ActiveRecord::Schema.define(version: 20171211143013) do
 
   create_table "activations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "service_id", null: false
@@ -18,6 +18,13 @@ ActiveRecord::Schema.define(version: 20170926104853) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["system_id"], name: "index_activations_on_system_id"
+  end
+
+  create_table "downloaded_files", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "checksum_type"
+    t.string "checksum"
+    t.string "local_path"
+    t.index ["checksum_type", "checksum"], name: "index_downloaded_files_on_checksum_type_and_checksum", unique: true
   end
 
   create_table "product_predecessors", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

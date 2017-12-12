@@ -3,7 +3,9 @@ require 'tempfile'
 require 'fileutils'
 require 'fiber'
 require 'rmt'
+require 'rmt/config'
 require 'rmt/http_request'
+require 'rmt/file_utils'
 
 class RMT::Downloader
 
@@ -25,12 +27,15 @@ class RMT::Downloader
 
   def download(remote_file, checksum_type = nil, checksum_value = nil)
     local_file = make_local_path(remote_file)
+    was_deduplicated = deduplicate(checksum_type, checksum_value, local_file)
 
-    request_fiber = Fiber.new do
-      make_request(remote_file, local_file, request_fiber, checksum_type, checksum_value)
+    unless was_deduplicated
+      request_fiber = Fiber.new do
+        make_request(remote_file, local_file, request_fiber, checksum_type, checksum_value)
+      end
+
+      request_fiber.resume.run
     end
-
-    request_fiber.resume.run
 
     local_file
   end
@@ -56,25 +61,30 @@ class RMT::Downloader
       local_file = make_local_path(remote_file)
     end while File.exist?(local_file) # rubocop:disable Lint/Loop
 
-    # The request is wrapped into a fiber for exception handling
-    request_fiber = Fiber.new do
-      begin
-        make_request(remote_file, local_file, request_fiber, queue_item[:checksum_type], queue_item[:checksum])
-      rescue RMT::Downloader::Exception => e
-        @logger.warn("× #{File.basename(local_file)} - #{e}")
-      ensure
-        process_queue
+    was_deduplicated = deduplicate(queue_item[:checksum_type], queue_item[:checksum], local_file)
+
+    unless was_deduplicated
+      # The request is wrapped into a fiber for exception handling
+      request_fiber = Fiber.new do
+        begin
+          make_request(remote_file, local_file, request_fiber, queue_item[:checksum_type], queue_item[:checksum])
+        rescue RMT::Downloader::Exception => e
+          @logger.warn("× #{File.basename(local_file)} - #{e}")
+        ensure
+          process_queue
+        end
       end
+
+      @hydra.queue(request_fiber.resume)
     end
 
-    @hydra.queue(request_fiber.resume)
   end
 
   def verify_checksum(filename, checksum_type, checksum_value)
     hash_function = checksum_type.gsub(/\W/, '').upcase.to_sym
     hash_function = :SHA1 if (hash_function == :SHA)
 
-    unless (KNOWN_HASH_FUNCTIONS.include? hash_function)
+    unless KNOWN_HASH_FUNCTIONS.include? hash_function
       raise RMT::Downloader::Exception.new("Unknown hash function #{checksum_type}")
     end
 
@@ -83,7 +93,19 @@ class RMT::Downloader
     raise RMT::Downloader::Exception.new('Checksum doesn\'t match') unless (checksum_value == digest.to_s)
   end
 
+  ##
+  # This method will try to deduplicate a file to prevent downloading an already downloaded file again.
+  #
+  # Returns:
+  #  - True if the file could be deduplicated, false if not.
+  def deduplicate(checksum_type, checksum_value, destination)
+    return false unless RMT::FileUtils.deduplicate(checksum_type, checksum_value, destination)
+    @logger.info("↓ #{File.basename(destination)}")
+    true
+  end
+
   def make_request(remote_file, local_file, request_fiber, checksum_type = nil, checksum_value = nil)
+
     uri = URI.join(@repository_url, remote_file)
     uri.query = @auth_token if @auth_token
 
@@ -98,7 +120,7 @@ class RMT::Downloader
 
     begin
       response = request.receive_headers
-      if (URI(uri).scheme != 'file' && response.code != 200)
+      if URI(uri).scheme != 'file' && response.code != 200
         raise RMT::Downloader::Exception.new("#{remote_file} - HTTP request failed with code #{response.code}")
       end
     rescue StandardError => e
@@ -109,7 +131,7 @@ class RMT::Downloader
 
     begin
       response = request.receive_body
-      if (response.return_code && response.return_code != :ok)
+      if response.return_code && response.return_code != :ok
         raise RMT::Downloader::Exception.new("#{remote_file} - return code #{response.return_code}")
       end
 
@@ -123,6 +145,7 @@ class RMT::Downloader
 
     FileUtils.mv(downloaded_file.path, local_file)
     File.chmod(0o644, local_file)
+    DownloadedFile.add_file!(checksum_type, checksum_value, local_file)
 
     @logger.info("↓ #{File.basename(local_file)}")
   end

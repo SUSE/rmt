@@ -20,4 +20,12 @@ module RMT::Config
       'pool'     => Settings[key].pool
     }
   end
+
+  ##
+  # This method checks whether or not deduplication should be done by hardlinks.
+  # If hardlinks are not used, the file will be copied instead.
+  def self.deduplication_by_hardlink?
+    Settings['mirroring'].dedup_method.to_s.to_sym != :copy
+  end
+
 end
