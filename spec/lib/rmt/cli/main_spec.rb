@@ -12,6 +12,18 @@ RSpec.describe RMT::CLI::Main do
       it 'displays help' do
         expect { command }.to output(/Commands:/).to_stdout
       end
+
+      it 'displays feedback' do
+        expect { command }.to output(/feedback/).to_stdout
+      end
+    end
+
+    context 'feedback' do
+      let(:argv) { ['feedback'] }
+
+      it 'mentions github where users can leave their feedback' do
+        expect { command }.to output(/github/).to_stdout
+      end
     end
 
     context 'version argument' do
