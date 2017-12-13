@@ -8,6 +8,8 @@ class RMT::CLI::Main < RMT::CLI::Base
   desc 'sync', 'Sync database with SUSE Customer Center'
   def sync
     RMT::SCC.new(options).sync
+  rescue RMT::ExecutionLockedError
+    puts 'Process is locked'
   end
 
   desc 'products', 'List and modify products'
@@ -24,6 +26,8 @@ class RMT::CLI::Main < RMT::CLI::Base
       return
     end
     repos.each { |repo| mirror!(repo) }
+  rescue RMT::ExecutionLockedError
+    puts 'Process is locked'
   end
 
   desc 'import', 'Import commands for Offline Sync'

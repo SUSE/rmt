@@ -36,11 +36,13 @@ class RMT::CLI::Base < Thor
     def handle_exceptions
       yield
     rescue RMT::Deduplicator::HardlinkException => e
+      RMT::Lockfile.remove_file
       raise RMT::CLI::Error.new(
         "Could not create deduplication hardlink: #{e.message}.",
         RMT::CLI::Error::ERROR_OTHER
       )
     rescue Mysql2::Error => e
+      RMT::Lockfile.remove_file
       if e.message =~ /^Access denied/
         raise RMT::CLI::Error.new(
           "Cannot connect to database server. Make sure its credentials are configured in '/etc/rmt.conf'.",
@@ -56,11 +58,13 @@ class RMT::CLI::Base < Thor
         raise e
       end
     rescue ActiveRecord::NoDatabaseError
+      RMT::Lockfile.remove_file
       raise RMT::CLI::Error.new(
         "The RMT database has not yet been initialized. Run 'systemctl start rmt-migration' to setup the database.",
         RMT::CLI::Error::ERROR_DB
       )
     rescue RMT::SCC::CredentialsError, ::SUSE::Connect::Api::InvalidCredentialsError
+      RMT::Lockfile.remove_file
       raise RMT::CLI::Error.new(
         "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization",
         RMT::CLI::Error::ERROR_SCC

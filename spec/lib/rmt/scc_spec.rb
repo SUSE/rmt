@@ -92,6 +92,8 @@ describe RMT::SCC do
     # disable Logger output while running tests
     logger = instance_double('Logger').as_null_object
     allow(Logger).to receive(:new).and_return(logger)
+    # mock as if lockfile would not exist
+    allow(File).to receive(:exist?).with(RMT::Lockfile::LOCKFILE_LOCATION.to_s).and_return(false)
   end
 
   describe '#sync' do
@@ -204,6 +206,17 @@ describe RMT::SCC do
         expect { ProductPredecessorAssociation.find(existing_association.id) }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
+
+    context 'with existing lockfile' do
+      before do
+        allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
+        allow(File).to receive(:exist?).with(RMT::Lockfile::LOCKFILE_LOCATION.to_s).and_return(true)
+      end
+
+      it 'raises exception' do
+        expect { described_class.new.sync }.to raise_error(RMT::ExecutionLockedError)
+      end
+    end
   end
 
 
@@ -294,6 +307,10 @@ describe RMT::SCC do
   describe '#import' do
     let(:path) { '/tmp/usb' }
 
+    before do
+      allow(RMT::Lockfile).to receive(:create_file).and_return(true)
+    end
+
     context 'with bad path or missing files' do
       it 'raises an error before it touches the database' do
         FakeFS.with_fresh do
@@ -318,6 +335,18 @@ describe RMT::SCC do
       end
 
       include_examples 'saves in database'
+    end
+
+    context 'with existing lockfile' do
+      before do
+        allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
+        allow(RMT::Lockfile).to receive(:create_file).and_call_original
+        allow(File).to receive(:exist?).with(RMT::Lockfile::LOCKFILE_LOCATION).and_return(true)
+      end
+
+      it 'raises an error' do
+        expect { described_class.new.sync }.to raise_error(RMT::ExecutionLockedError)
+      end
     end
   end
 

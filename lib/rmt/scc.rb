@@ -13,6 +13,7 @@ class RMT::SCC
   end
 
   def sync
+    RMT::Lockfile.create_file
     credentials_set? || (raise CredentialsError, 'SCC credentials not set.')
 
     cleanup_database
@@ -31,6 +32,7 @@ class RMT::SCC
     Repository.remove_suse_repos_without_tokens!
 
     update_subscriptions(scc_api_client.list_subscriptions)
+    RMT::Lockfile.remove_file
   end
 
   def export(path)
@@ -56,6 +58,7 @@ class RMT::SCC
   end
 
   def import(path)
+    RMT::Lockfile.create_file
     missing_files = %w[products repositories subscriptions]
       .map { |data| "organizations_#{data}.json" }
       .reject { |filename| File.exist?(File.join(path, filename)) }
@@ -78,6 +81,7 @@ class RMT::SCC
     Repository.remove_suse_repos_without_tokens!
 
     update_subscriptions(JSON.parse(File.read(File.join(path, 'organizations_subscriptions.json')), symbolize_names: true))
+    RMT::Lockfile.remove_file
   end
 
   protected

@@ -27,6 +27,7 @@ class RMT::Mirror
   end
 
   def mirror
+    RMT::Lockfile.create_file
     create_directories
     mirror_license
     # downloading license doesn't require an auth token
@@ -36,6 +37,7 @@ class RMT::Mirror
 
     replace_directory(@temp_licenses_dir, File.join(@repository_dir, '../product.license/')) if Dir.exist?(@temp_licenses_dir)
     replace_directory(File.join(@temp_metadata_dir, 'repodata'), File.join(@repository_dir, 'repodata'))
+    RMT::Lockfile.remove_file
   ensure
     remove_tmp_directories
   end
@@ -67,6 +69,7 @@ class RMT::Mirror
       @temp_licenses_dir = Dir.mktmpdir
       @temp_metadata_dir = Dir.mktmpdir
     rescue StandardError => e
+      RMT::Lockfile.remove_file
       raise RMT::Mirror::Exception.new("Can not create a temporary directory: #{e}")
     end
   end
@@ -79,6 +82,7 @@ class RMT::Mirror
     begin
       local_filename = @downloader.download('repodata/repomd.xml')
     rescue RMT::Downloader::Exception => e
+      RMT::Lockfile.remove_file
       raise RMT::Mirror::Exception.new("Repodata download failed: #{e}")
     end
 
@@ -86,6 +90,7 @@ class RMT::Mirror
       @downloader.download('repodata/repomd.xml.key')
       @downloader.download('repodata/repomd.xml.asc')
     rescue RMT::Downloader::Exception
+      RMT::Lockfile.remove_file
       @logger.info('Repository metadata signatures are missing')
     end
 
@@ -119,6 +124,7 @@ class RMT::Mirror
     rescue RMT::Downloader::Exception
       FileUtils.remove_entry(@temp_licenses_dir)
       @logger.info('No product license found')
+      RMT::Lockfile.remove_file
       return
     end
 
@@ -129,6 +135,7 @@ class RMT::Mirror
         @downloader.download(filename)
       end
     rescue RMT::Downloader::Exception => e
+      RMT::Lockfile.remove_file
       raise RMT::Mirror::Exception.new("Error during mirroring metadata: #{e.message}")
     end
   end

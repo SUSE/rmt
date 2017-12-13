@@ -11,9 +11,18 @@ RSpec.describe RMT::CLI::Main do
     describe 'sync' do
       let(:argv) { ['sync'] }
 
-      it 'triggers sync' do
-        expect_any_instance_of(RMT::SCC).to receive(:sync)
-        command
+      context 'default' do
+        it 'triggers sync' do
+          expect_any_instance_of(RMT::SCC).to receive(:sync)
+          command
+        end
+      end
+
+      context 'with execution locked exception thrown' do
+        it do
+          allow_any_instance_of(RMT::SCC).to receive(:sync).and_raise(RMT::ExecutionLockedError)
+          expect { command }.to output("Process is locked\n").to_stdout
+        end
       end
     end
 
@@ -51,6 +60,18 @@ RSpec.describe RMT::CLI::Main do
           it 'outputs exception message' do
             expect { command }.to output("black mirror\n").to_stderr.and output(/Mirroring repository #{repository.name}/).to_stdout
           end
+        end
+      end
+
+      context 'with execution locked exception thrown' do
+        let!(:repository) { create :repository, :with_products, mirroring_enabled: true } # rubocop:disable RSpec/LetSetup
+
+        before do
+          allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::ExecutionLockedError)
+        end
+
+        it do
+          expect { command }.to output(/Process is locked\n/).to_stdout
         end
       end
     end
