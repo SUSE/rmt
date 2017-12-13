@@ -6,7 +6,7 @@ RSpec.describe RMT::Downloader do
   let(:downloader) { described_class.new(repository_url: 'http://example.com', local_path: dir) }
   let(:headers) { { 'User-Agent' => "RMT/#{RMT::VERSION}" } }
 
-  describe '#download' do
+  describe '#download over http://' do
     context 'when HTTP code is not 200' do
       before do
         stub_request(:get, 'http://example.com/repomd.xml')
@@ -29,7 +29,7 @@ RSpec.describe RMT::Downloader do
       end
 
       it 'raises an exception' do
-        allow_any_instance_of(RMT::FiberRequest).to receive(:receive_body) do
+        allow_any_instance_of(RMT::FiberRequest).to receive(:read_body) do
           response_double = double
           allow(response_double).to receive(:return_code) { :error }
           response_double
@@ -97,6 +97,35 @@ RSpec.describe RMT::Downloader do
         let(:checksum) { Digest.const_get('SHA1').hexdigest(content) }
 
         it('has correct content') { expect(File.read(filename)).to eq(content) }
+      end
+    end
+  end
+
+  describe '#download over file://' do
+    subject(:download) { downloader.download('repodata/repomd.xml') }
+
+    let(:dir2) { Dir.mktmpdir }
+    let(:path) { 'file://' + File.expand_path(file_fixture('dummy_repo/')) + '/' }
+    let(:downloader) { described_class.new(repository_url: path, local_path: dir2) }
+
+    # WebMock doesn't work nicely with file://
+    around do |example|
+      WebMock.allow_net_connect!
+      example.run
+      WebMock.disable_net_connect!
+    end
+
+    it 'saves the file when it exists' do
+      expect(File.size(download)).to eq(File.size(file_fixture('dummy_repo/repodata/repomd.xml')))
+    end
+
+    context "when file doesn't exist" do
+      let(:path) { 'file://' + File.expand_path(file_fixture('.')) + '/non_existent/' }
+
+      it 'raises and exception' do
+        expect do
+          downloader.download('/repodata/repomd.xml')
+        end.to raise_error(RMT::Downloader::Exception, '/repodata/repomd.xml - File does not exist')
       end
     end
   end

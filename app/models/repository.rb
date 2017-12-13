@@ -21,13 +21,11 @@ class Repository < ApplicationRecord
   end
 
   def refresh_timestamp!
-    self.last_mirrored_at = DateTime.now.utc
-    save!
+    touch(:last_mirrored_at)
   end
 
   def change_mirroring!(mirroring_enabled)
-    self.mirroring_enabled = mirroring_enabled
-    save!
+    update_column(:mirroring_enabled, mirroring_enabled)
   end
 
   def self.remove_suse_repos_without_tokens!

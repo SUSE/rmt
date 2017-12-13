@@ -1,8 +1,10 @@
 require 'rmt/config'
+require 'suse/connect/api'
 
 class RMT::SCC
 
   class CredentialsError < RuntimeError; end
+  class DataFilesError < RuntimeError; end
 
   def initialize(options = {})
     @logger = Logger.new(STDOUT)
@@ -17,9 +19,9 @@ class RMT::SCC
 
     @logger.info('Downloading data from SCC')
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
-    data = scc_api_client.list_products
 
     @logger.info('Updating products')
+    data = scc_api_client.list_products
     data.each do |item|
       @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
       product = create_product(item)
@@ -39,8 +41,60 @@ class RMT::SCC
     data.each do |item|
       create_subscription(item)
     end
+  end
 
-    @logger.info('Done!')
+  def export(path)
+    raise CredentialsError, 'SCC credentials not set.' unless (Settings.scc.username && Settings.scc.password)
+
+    @logger.info("Exporting data from SCC to #{path}")
+
+    scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
+
+    @logger.info('Exporting products')
+    File.write(File.join(path, 'organizations_products.json'), scc_api_client.list_products.to_json)
+
+    @logger.info('Exporting repositories')
+    File.write(File.join(path, 'organizations_repositories.json'), scc_api_client.list_repositories.to_json)
+
+    @logger.info('Exporting subscriptions')
+    File.write(File.join(path, 'organizations_subscriptions.json'), scc_api_client.list_subscriptions.to_json)
+
+    @logger.info('Exporting orders')
+    File.write(File.join(path, 'organizations_orders.json'), scc_api_client.list_orders.to_json)
+  end
+
+  def import(path)
+    missing_files = %w[products repositories subscriptions]
+      .map { |data| "organizations_#{data}.json" }
+      .reject { |filename| File.exist?(File.join(path, filename)) }
+    raise DataFilesError, "Missing data files: #{missing_files.join(', ')}" if missing_files.any?
+
+    @logger.info('Cleaning up the database')
+    Subscription.delete_all
+
+    @logger.info("Importing SCC data from #{path}")
+
+    @logger.info('Updating products')
+    data = JSON.parse(File.read(File.join(path, 'organizations_products.json')), symbolize_names: true)
+    data.each do |item|
+      @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
+      product = create_product(item)
+      create_service(item, product)
+    end
+
+    @logger.info('Updating repositories')
+    data = JSON.parse(File.read(File.join(path, 'organizations_repositories.json')), symbolize_names: true)
+    data.each do |item|
+      update_auth_token(item)
+    end
+
+    Repository.remove_suse_repos_without_tokens!
+
+    @logger.info('Updating subscriptions')
+    data = JSON.parse(File.read(File.join(path, 'organizations_subscriptions.json')), symbolize_names: true)
+    data.each do |item|
+      create_subscription(item)
+    end
   end
 
   protected

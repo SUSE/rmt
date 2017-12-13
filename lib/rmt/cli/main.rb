@@ -1,12 +1,15 @@
 require 'thor'
 require 'terminal-table'
 
-# rubocop:disable Rails/Output
-
 class RMT::CLI::Main < RMT::CLI::Base
 
   class_option :version, desc: 'Show RMT version', type: :boolean, aliases: '-v', required: false
   class_option :debug, desc: 'Enable debug output', type: :boolean, aliases: '-d', required: false
+
+  desc 'sync', 'Sync database with SUSE Customer Center'
+  def sync
+    RMT::SCC.new(options).sync
+  end
 
   desc 'products', 'List and modify products'
   subcommand 'products', RMT::CLI::Products
@@ -14,19 +17,14 @@ class RMT::CLI::Main < RMT::CLI::Base
   desc 'repos', 'List and modify repositories'
   subcommand 'repos', RMT::CLI::Repos
 
-  desc 'scc', 'SUSE Customer Center commands'
-  subcommand 'scc', RMT::CLI::SCC
+  desc 'mirror', 'Mirror repositories'
+  subcommand 'mirror', RMT::CLI::Mirror
 
-  desc 'mirror [REPOSITORY_URL [LOCAL_PATH]]', 'Mirror repositories'
-  long_desc <<-LONGDESC
-    If no REPOSITORY_URL is given, will mirror all repositories that are marked for mirroring in the DB.
+  desc 'import', 'Import commands for Offline Sync'
+  subcommand 'import', RMT::CLI::Import
 
-    If REPOSITORY_URL is given, mirrors only the repository at the specified URL.
-    LOCAL_PATH can optionally be specified to modify mirroring directory path.
-  LONGDESC
-  def mirror(repository_url = nil, local_path = nil)
-    RMT::CLI::Base.handle_exceptions { RMT::CLI::Mirror.mirror(repository_url, local_path) }
-  end
+  desc 'export', 'Export commands for Offline Sync'
+  subcommand 'export', RMT::CLI::Export
 
   desc 'version', 'Show RMT version'
   def version
