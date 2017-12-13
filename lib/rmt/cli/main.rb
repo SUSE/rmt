@@ -25,7 +25,11 @@ class RMT::CLI::Main < RMT::CLI::Base
     LOCAL_PATH can optionally be specified to modify mirroring directory path.
   LONGDESC
   def mirror(repository_url = nil, local_path = nil)
-    RMT::CLI::Base.handle_exceptions { RMT::CLI::Mirror.mirror(repository_url, local_path) }
+    self.class.lock('mirror')
+    RMT::CLI::Base.handle_exceptions do
+      RMT::CLI::Mirror.mirror(repository_url, local_path)
+    end
+    self.class.unlock
   end
 
   desc 'version', 'Show RMT version'
