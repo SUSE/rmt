@@ -75,11 +75,6 @@ class RMT::Downloader
     @hydra.queue(request_fiber.resume)
   end
 
-  ##
-  # This method will try to deduplicate a file to prevent downloading an already downloaded file again.
-  #
-  # Returns:
-  #  - True if the file could be deduplicated, false if not.
   def deduplicate(checksum_type, checksum_value, destination)
     return false unless RMT::FileUtils.deduplicate(checksum_type, checksum_value, destination)
     @logger.info("↓ #{File.basename(destination)}")
