@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171211143013) do
+ActiveRecord::Schema.define(version: 20171214093115) do
 
   create_table "activations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "service_id", null: false
@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 20171211143013) do
     t.string "checksum_type"
     t.string "checksum"
     t.string "local_path"
+    t.bigint "file_size", unsigned: true
     t.index ["checksum_type", "checksum"], name: "index_downloaded_files_on_checksum_type_and_checksum", unique: true
   end
 

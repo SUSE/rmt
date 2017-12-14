@@ -106,71 +106,95 @@ RSpec.describe RMT::Downloader do
   end
 
   describe '#download_multi deduplication' do
-    context 'handles non-duplicated files' do
+    context 'non-duplicated files' do
       let(:checksum_type) { 'SHA256' }
-      let(:content1) { 'foo' }
-      let(:content1_checksum) { '2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae' }
-      let(:content2) { 'foobar' }
-      let(:content2_checksum) { 'c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2' }
+      let(:rpm_content1) { 'foo' }
+      let(:rpm_content1_checksum) { '2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae' }
+      let(:rpm_content2) { 'foobar' }
+      let(:rpm_content2_checksum) { 'c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2' }
+      let(:drpm_content1) { 'dfoo' }
+      let(:drpm_content1_checksum) { 'cebb0b202c71540e3300b551ec49b0e962c4931eb36ad25e4f1e277b9e767692' }
+      let(:drpm_content2) { 'dfoobar' }
+      let(:drpm_content2_checksum) { '8c6db37ef2d52d5c6ccf58c14386f027bd17faa7fabda4cb61d4e74957b76cf4' }
       let(:filenames) do
-        { file_1: downloader.download('/repo1/foo.file', checksum_type, content1_checksum),
-          file_2: downloader.download('/repo2/foo.file', checksum_type, content2_checksum) }
+        { rpm_file_1: downloader.download('/repo1/foo.rpm', checksum_type, rpm_content1_checksum),
+          rpm_file_2: downloader.download('/repo2/foo.rpm', checksum_type, rpm_content2_checksum),
+          drpm_file_1: downloader.download('/repo1/foo.drpm', checksum_type, drpm_content1_checksum),
+          drpm_file_2: downloader.download('/repo2/foo.drpm', checksum_type, drpm_content2_checksum) }
       end
 
       before do
-        stub_request(:get, 'http://example.com/repo1/foo.file')
+        stub_request(:get, 'http://example.com/repo1/foo.rpm')
           .with(headers: headers)
-          .to_return(status: 200, body: content1, headers: {})
-        stub_request(:get, 'http://example.com/repo2/foo.file')
+          .to_return(status: 200, body: rpm_content1, headers: {})
+        stub_request(:get, 'http://example.com/repo2/foo.rpm')
           .with(headers: headers)
-          .to_return(status: 200, body: content2, headers: {})
+          .to_return(status: 200, body: rpm_content2, headers: {})
+        stub_request(:get, 'http://example.com/repo1/foo.drpm')
+          .with(headers: headers)
+          .to_return(status: 200, body: drpm_content1, headers: {})
+        stub_request(:get, 'http://example.com/repo2/foo.drpm')
+          .with(headers: headers)
+          .to_return(status: 200, body: drpm_content2, headers: {})
       end
 
-      it('creates file from repo1') { expect(File.read(filenames[:file_1])).to eq(content1) }
-      it('creates file from repo2') { expect(File.read(filenames[:file_2])).to eq(content2) }
-      it('does not duplicate files') { expect(File.read(filenames[:file_1])).not_to eq(File.read(filenames[:file_2])) }
+      it('creates rpm file from repo1') { expect(File.read(filenames[:rpm_file_1])).to eq(rpm_content1) }
+      it('creates rpm file from repo2') { expect(File.read(filenames[:rpm_file_2])).to eq(rpm_content2) }
+      it('does not duplicate rpm files') { expect(File.read(filenames[:rpm_file_1])).not_to eq(File.read(filenames[:rpm_file_2])) }
+      it('creates drpm file from repo1') { expect(File.read(filenames[:drpm_file_1])).to eq(drpm_content1) }
+      it('creates drpm file from repo2') { expect(File.read(filenames[:drpm_file_2])).to eq(drpm_content2) }
+      it('does not duplicate drpm files') { expect(File.read(filenames[:drpm_file_1])).not_to eq(File.read(filenames[:drpm_file_2])) }
     end
 
-    context 'handles duplicated files by copy' do
+    context 'duplicated files' do
       let(:checksum_type) { 'SHA256' }
-      let(:content) { 'foo' }
-      let(:content_checksum) { '2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae' }
+      let(:rpm_content) { 'foo' }
+      let(:rpm_content_checksum) { '2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae' }
+      let(:drpm_content) { 'dfoo' }
+      let(:drpm_content_checksum) { 'cebb0b202c71540e3300b551ec49b0e962c4931eb36ad25e4f1e277b9e767692' }
       let(:filenames) do
-        { file_1: downloader.download('/repo1/foo.file', checksum_type, content_checksum),
-          file_2: downloader.download('/repo2/foo.file', checksum_type, content_checksum) }
+        { rpm_file_1: downloader.download('/repo1/foo.rpm', checksum_type, rpm_content_checksum),
+          rpm_file_2: downloader.download('/repo2/foo.rpm', checksum_type, rpm_content_checksum),
+          drpm_file_1: downloader.download('/repo1/foo.drpm', checksum_type, drpm_content_checksum),
+          drpm_file_2: downloader.download('/repo2/foo.drpm', checksum_type, drpm_content_checksum) }
       end
 
       before do
-        deduplication_method(:copy)
-        stub_request(:get, 'http://example.com/repo1/foo.file')
+        stub_request(:get, 'http://example.com/repo1/foo.rpm')
           .with(headers: headers)
-          .to_return(status: 200, body: content, headers: {})
-      end
-
-      it('creates file from repo1') { expect(File.read(filenames[:file_1])).to eq(content) }
-      it('duplicates files') { expect(File.read(filenames[:file_2])).to eq(content) }
-      it('is not hardlinked') { expect(File.stat(filenames[:file_1]).nlink).to eq(1) }
-    end
-
-    context 'handles duplicated files by hardlink' do
-      let(:checksum_type) { 'SHA256' }
-      let(:content) { 'foo' }
-      let(:content_checksum) { '2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae' }
-      let(:filenames) do
-        { file_1: downloader.download('/repo1/foo.file', checksum_type, content_checksum),
-          file_2: downloader.download('/repo2/foo.file', checksum_type, content_checksum) }
-      end
-
-      before do
-        deduplication_method(:hardlink)
-        stub_request(:get, 'http://example.com/repo1/foo.file')
+          .to_return(status: 200, body: rpm_content, headers: {})
+        stub_request(:get, 'http://example.com/repo1/foo.drpm')
           .with(headers: headers)
-          .to_return(status: 200, body: content, headers: {})
+          .to_return(status: 200, body: drpm_content, headers: {})
       end
 
-      it('creates file from repo1') { expect(File.read(filenames[:file_1])).to eq(content) }
-      it('duplicates files') { expect(File.read(filenames[:file_2])).to eq(content) }
-      it('is hardlinked') { expect(File.stat(filenames[:file_1]).nlink).to eq(2) }
+      context 'handles duplicated files by copy' do
+        before do
+          deduplication_method(:copy)
+        end
+
+        it('creates rpm file from repo1') { expect(File.read(filenames[:rpm_file_1])).to eq(rpm_content) }
+        it('duplicates rpm files') { expect(File.read(filenames[:rpm_file_2])).to eq(rpm_content) }
+        it('rpm is not hardlinked') { expect(File.stat(filenames[:rpm_file_1]).nlink).to eq(1) }
+        it('creates drpm file from repo1') { expect(File.read(filenames[:drpm_file_1])).to eq(drpm_content) }
+        it('duplicates drpm files') { expect(File.read(filenames[:drpm_file_2])).to eq(drpm_content) }
+        it('drpm is not hardlinked') { expect(File.stat(filenames[:drpm_file_1]).nlink).to eq(1) }
+        it('handles rpm and drpm') { expect(File.read(filenames[:drpm_file_2])).not_to eq(File.read(filenames[:rpm_file_2])) }
+      end
+
+      context 'handles duplicated files by hardlink' do
+        before do
+          deduplication_method(:hardlink)
+        end
+
+        it('creates rpm file from repo1') { expect(File.read(filenames[:rpm_file_1])).to eq(rpm_content) }
+        it('duplicates rpm files') { expect(File.read(filenames[:rpm_file_2])).to eq(rpm_content) }
+        it('rpm is hardlinked') { expect(File.stat(filenames[:rpm_file_1]).nlink).to eq(2) }
+        it('creates drpm file from repo1') { expect(File.read(filenames[:drpm_file_1])).to eq(drpm_content) }
+        it('duplicates drpm files') { expect(File.read(filenames[:drpm_file_2])).to eq(drpm_content) }
+        it('drpm is hardlinked') { expect(File.stat(filenames[:drpm_file_1]).nlink).to eq(2) }
+        it('handles rpm and drpm') { expect(File.read(filenames[:drpm_file_2])).not_to eq(File.read(filenames[:rpm_file_2])) }
+      end
     end
   end
 
@@ -242,20 +266,29 @@ RSpec.describe RMT::Downloader do
   end
 
   describe '#download_multi deduplication' do
+    let(:checksum_type) { 'SHA256' }
+    let(:rpm_file1_path) { File.join(dir, 'repo1/foo.rpm') }
+    let(:rpm_file2_path) { File.join(dir, 'repo2/foo.rpm') }
+    let(:drpm_file1_path) { File.join(dir, 'repo1/foo.drpm') }
+    let(:drpm_file2_path) { File.join(dir, 'repo2/foo.drpm') }
+
     context 'handles non-duplicated files' do
-      let(:checksum_type) { 'SHA256' }
-      let(:file1_path) { File.join(dir, 'repo1/foo.file') }
-      let(:file2_path) { File.join(dir, 'repo2/foo.file') }
-      let(:content1) { 'foo' }
-      let(:content1_checksum) { '2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae' }
-      let(:content2) { 'foobar' }
-      let(:content2_checksum) { 'c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2' }
+      let(:rpm_content1) { 'foo' }
+      let(:rpm_content2) { 'foobar' }
+      let(:drpm_content1) { 'dfoo' }
+      let(:drpm_content2) { 'dfoobar' }
       let(:queue1) do
         [
           RMT::Rpm::FileEntry.new(
-            'repo1/foo.file',
+            'repo1/foo.rpm',
             checksum_type,
-            Digest.const_get(checksum_type).hexdigest(content1),
+            Digest.const_get(checksum_type).hexdigest(rpm_content1),
+            :rpm
+          ),
+          RMT::Rpm::FileEntry.new(
+            'repo1/foo.drpm',
+            checksum_type,
+            Digest.const_get(checksum_type).hexdigest(drpm_content1),
             :rpm
           )
         ]
@@ -263,9 +296,15 @@ RSpec.describe RMT::Downloader do
       let(:queue2) do
         [
           RMT::Rpm::FileEntry.new(
-            'repo2/foo.file',
+            'repo2/foo.rpm',
             checksum_type,
-            Digest.const_get(checksum_type).hexdigest(content2),
+            Digest.const_get(checksum_type).hexdigest(rpm_content2),
+            :rpm
+          ),
+          RMT::Rpm::FileEntry.new(
+            'repo2/foo.drpm',
+            checksum_type,
+            Digest.const_get(checksum_type).hexdigest(drpm_content2),
             :rpm
           )
         ]
@@ -273,33 +312,46 @@ RSpec.describe RMT::Downloader do
 
       before do
         deduplication_method(:hardlink)
-        stub_request(:get, 'http://example.com/repo1/foo.file')
+        stub_request(:get, 'http://example.com/repo1/foo.rpm')
           .with(headers: headers)
-          .to_return(status: 200, body: content1, headers: {})
-        stub_request(:get, 'http://example.com/repo2/foo.file')
+          .to_return(status: 200, body: rpm_content1, headers: {})
+        stub_request(:get, 'http://example.com/repo2/foo.rpm')
           .with(headers: headers)
-          .to_return(status: 200, body: content2, headers: {})
+          .to_return(status: 200, body: rpm_content2, headers: {})
+        stub_request(:get, 'http://example.com/repo1/foo.drpm')
+          .with(headers: headers)
+          .to_return(status: 200, body: drpm_content1, headers: {})
+        stub_request(:get, 'http://example.com/repo2/foo.drpm')
+          .with(headers: headers)
+          .to_return(status: 200, body: drpm_content2, headers: {})
         downloader.download_multi(queue1)
         downloader.download_multi(queue2)
       end
 
-      it('creates file from repo1') { expect(File.read(file1_path)).to eq(content1) }
-      it('creates file from repo2') { expect(File.read(file2_path)).to eq(content2) }
-      it('does not duplicate files') { expect(File.read(file1_path)).not_to eq(file2_path) }
+      it('creates rpm file from repo1') { expect(File.read(rpm_file1_path)).to eq(rpm_content1) }
+      it('creates rpm file from repo2') { expect(File.read(rpm_file2_path)).to eq(rpm_content2) }
+      it('does not duplicate rpm files') { expect(File.read(rpm_file1_path)).not_to eq(rpm_file2_path) }
+      it('creates drpm file from repo1') { expect(File.read(drpm_file1_path)).to eq(drpm_content1) }
+      it('creates drpm file from repo2') { expect(File.read(drpm_file2_path)).to eq(drpm_content2) }
+      it('does not duplicate drpm files') { expect(File.read(drpm_file1_path)).not_to eq(drpm_file2_path) }
+      it('handles rpm and drpm') { expect(File.read(rpm_file2_path)).not_to eq(drpm_file2_path) }
     end
 
-    context 'handles duplicated files by copy' do
-      let(:checksum_type) { 'SHA256' }
-      let(:file1_path) { File.join(dir, 'repo1/foo.file') }
-      let(:file2_path) { File.join(dir, 'repo2/foo.file') }
-      let(:content) { 'foo' }
-      let(:content_checksum) { '2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae' }
+    context 'handles duplicated files' do
+      let(:rpm_content) { 'foo' }
+      let(:drpm_content) { 'dfoo' }
       let(:queue1) do
         [
           RMT::Rpm::FileEntry.new(
-            'repo1/foo.file',
+            'repo1/foo.rpm',
             checksum_type,
-            Digest.const_get(checksum_type).hexdigest(content),
+            Digest.const_get(checksum_type).hexdigest(rpm_content),
+            :rpm
+          ),
+          RMT::Rpm::FileEntry.new(
+            'repo1/foo.drpm',
+            checksum_type,
+            Digest.const_get(checksum_type).hexdigest(drpm_content),
             :rpm
           )
         ]
@@ -307,67 +359,60 @@ RSpec.describe RMT::Downloader do
       let(:queue2) do
         [
           RMT::Rpm::FileEntry.new(
-            'repo2/foo.file',
+            'repo2/foo.rpm',
             checksum_type,
-            Digest.const_get(checksum_type).hexdigest(content),
+            Digest.const_get(checksum_type).hexdigest(rpm_content),
+            :rpm
+          ),
+          RMT::Rpm::FileEntry.new(
+            'repo2/foo.drpm',
+            checksum_type,
+            Digest.const_get(checksum_type).hexdigest(drpm_content),
             :rpm
           )
         ]
       end
 
       before do
-        deduplication_method(:copy)
-        stub_request(:get, 'http://example.com/repo1/foo.file')
+        stub_request(:get, 'http://example.com/repo1/foo.rpm')
           .with(headers: headers)
-          .to_return(status: 200, body: content, headers: {})
-        downloader.download_multi(queue1)
-        downloader.download_multi(queue2)
-      end
-
-      it('creates file from repo1') { expect(File.read(file1_path)).to eq(content) }
-      it('duplicates files') { expect(File.read(file2_path)).to eq(content) }
-      it('is not hardlinked') { expect(File.stat(file1_path).nlink).to eq(1) }
-    end
-
-    context 'handles duplicated files by hardlink' do
-      let(:checksum_type) { 'SHA256' }
-      let(:file1_path) { File.join(dir, 'repo1/foo.file') }
-      let(:file2_path) { File.join(dir, 'repo2/foo.file') }
-      let(:content) { 'foo' }
-      let(:content_checksum) { '2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae' }
-      let(:queue1) do
-        [
-          RMT::Rpm::FileEntry.new(
-            'repo1/foo.file',
-            checksum_type,
-            Digest.const_get(checksum_type).hexdigest(content),
-            :rpm
-          )
-        ]
-      end
-      let(:queue2) do
-        [
-          RMT::Rpm::FileEntry.new(
-            'repo2/foo.file',
-            checksum_type,
-            Digest.const_get(checksum_type).hexdigest(content),
-            :rpm
-          )
-        ]
-      end
-
-      before do
-        deduplication_method(:hardlink)
-        stub_request(:get, 'http://example.com/repo1/foo.file')
+          .to_return(status: 200, body: rpm_content, headers: {})
+        stub_request(:get, 'http://example.com/repo1/foo.drpm')
           .with(headers: headers)
-          .to_return(status: 200, body: content, headers: {})
-        downloader.download_multi(queue1)
-        downloader.download_multi(queue2)
+          .to_return(status: 200, body: drpm_content, headers: {})
       end
 
-      it('creates file from repo1') { expect(File.read(file1_path)).to eq(content) }
-      it('duplicates files') { expect(File.read(file2_path)).to eq(content) }
-      it('is hardlinked') { expect(File.stat(file1_path).nlink).to eq(2) }
+      context 'handles duplicated files by copy' do
+        before do
+          deduplication_method(:copy)
+          downloader.download_multi(queue1)
+          downloader.download_multi(queue2)
+        end
+
+        it('creates rpm file from repo1') { expect(File.read(rpm_file1_path)).to eq(rpm_content) }
+        it('duplicates rpm files') { expect(File.read(rpm_file2_path)).to eq(rpm_content) }
+        it('rpm is not hardlinked') { expect(File.stat(rpm_file1_path).nlink).to eq(1) }
+        it('creates drpm file from repo1') { expect(File.read(drpm_file1_path)).to eq(drpm_content) }
+        it('duplicates drpm files') { expect(File.read(drpm_file2_path)).to eq(drpm_content) }
+        it('drpm is not hardlinked') { expect(File.stat(drpm_file1_path).nlink).to eq(1) }
+        it('handles rpm and drpm') { expect(File.read(rpm_file2_path)).not_to eq(drpm_file2_path) }
+      end
+
+      context 'handles duplicated files by hardlink' do
+        before do
+          deduplication_method(:hardlink)
+          downloader.download_multi(queue1)
+          downloader.download_multi(queue2)
+        end
+
+        it('creates rpm file from repo1') { expect(File.read(rpm_file1_path)).to eq(rpm_content) }
+        it('duplicates rpm files') { expect(File.read(rpm_file2_path)).to eq(rpm_content) }
+        it('rpm is hardlinked') { expect(File.stat(rpm_file1_path).nlink).to eq(2) }
+        it('creates drpm file from repo1') { expect(File.read(drpm_file1_path)).to eq(drpm_content) }
+        it('duplicates drpm files') { expect(File.read(drpm_file2_path)).to eq(drpm_content) }
+        it('drpm is hardlinked') { expect(File.stat(drpm_file1_path).nlink).to eq(2) }
+        it('handles rpm and drpm') { expect(File.read(rpm_file2_path)).not_to eq(drpm_file2_path) }
+      end
     end
   end
 
