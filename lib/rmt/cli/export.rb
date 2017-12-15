@@ -1,17 +1,17 @@
 class RMT::CLI::Export < RMT::CLI::Base
 
+  desc 'data PATH', 'Store SCC data in files at given path'
+  def data(path)
+    needs_path(path) do
+      RMT::SCC.new(options).export(path)
+    end
+  end
+
   desc 'settings PATH', 'Store repository settings at given path'
   def settings(path)
     needs_path(path) do
       File.write(File.join(path, 'repos.json'), Repository.only_mirrored.pluck(:id).to_json)
       puts "Settings saved at #{path}."
-    end
-  end
-
-  desc 'data PATH', 'Store SCC data in files at given path'
-  def data(path)
-    needs_path(path) do
-      RMT::SCC.new(options).export(path)
     end
   end
 
