@@ -3,8 +3,8 @@ require 'rails_helper'
 # rubocop:disable Metrics/LineLength
 
 RSpec.describe RMT::ChecksumVerifier do
-  let(:test_file_path) { fixture_file_path('checksum_verifier/file') }
-  let(:test_file_content) { fixture_file('checksum_verifier/file') }
+  let(:test_file_path) { file_fixture('checksum_verifier/file') }
+  let(:test_file_content) { file_fixture('checksum_verifier/file').read }
 
   it('has the content foobar') { expect(test_file_content).to eq('foobar') }
 
