@@ -11,19 +11,19 @@ class DownloadedFile < ApplicationRecord
                             file_size: file_size })
   rescue StandardError => e
     # de-duplication is not critical, just move on
-    logger.error e.message
-    logger.error e.backtrace.each { |line| logger.error line }
+    ::Rails.logger.debug e.message
+    ::Rails.logger.debug e.backtrace.each { |line| ::Rails.logger.debug line }
   end
 
   def self.get_local_path_by_checksum(checksum_type, checksum)
     file = DownloadedFile.find_by({ checksum_type: checksum_type,
                                     checksum: checksum })
-    return nil if file.nil? || file.file_size != File.size(file.local_path)
+    return nil if file.nil? || !File.exist?(file.local_path) || (file.file_size != File.size(file.local_path))
     file.local_path
   rescue StandardError => e
     # de-duplication is not critical, just return nil to download again
-    logger.error e.message
-    logger.error e.backtrace.each { |line| logger.error line }
+    ::Rails.logger.debug e.message
+    ::Rails.logger.debug e.backtrace.each { |line| ::Rails.logger.debug line }
     nil
   end
 
