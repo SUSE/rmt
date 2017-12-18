@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Sat Dec 16 08:36:05 UTC 2017 - bwiedemann@suse.com
+
+- Dont package build logs to make build reproducible
+
+-------------------------------------------------------------------
 Wed Dec  6 10:31:02 UTC 2017 - dimstar@opensuse.org
 
 - Exclude Build for i586: does not build and is not supported on

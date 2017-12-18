@@ -137,7 +137,9 @@ ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-migration
 mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
-sed -i '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"' %{buildroot}%{app_dir}/.bundle/config
+sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"' \
+    -e 's/^BUNDLE_JOBS: .*/BUNDLE_JOBS: "1"/' \
+    %{buildroot}%{app_dir}/.bundle/config
 
 # cleanup unneeded files
 rm -r %{buildroot}%{app_dir}/service
@@ -154,7 +156,9 @@ rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/ports
 rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/ext
 rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/bin
 rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/spec
-rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/.gitignore
+rm -f %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/.gitignore
+rm -f %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/*/gem_make.out
+rm -f %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/*/mkmf.log
 
 %fdupes %{buildroot}/%{lib_dir}
 
