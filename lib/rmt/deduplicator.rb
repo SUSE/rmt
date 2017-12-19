@@ -14,7 +14,7 @@ class RMT::Deduplicator
     if src.nil?
       return false
     elsif !File.exist?(src.local_path) || (src.file_size != File.size(src.local_path))
-      raise MismatchException
+      raise MismatchException.new(src.local_path)
     end
 
     if RMT::Config.deduplication_by_hardlink?

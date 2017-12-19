@@ -105,7 +105,7 @@ RSpec.describe RMT::Downloader do
     end
   end
 
-  describe '#download_multi deduplication' do
+  describe '#download deduplication' do
     context 'non-duplicated files' do
       let(:checksum_type) { 'SHA256' }
       let(:rpm_content1) { 'foo' }
@@ -166,6 +166,32 @@ RSpec.describe RMT::Downloader do
         stub_request(:get, 'http://example.com/repo1/foo.drpm')
           .with(headers: headers)
           .to_return(status: 200, body: drpm_content, headers: {})
+      end
+
+      context 'handles mismatch error and still downloads' do
+
+        before do
+          stub_request(:get, 'http://example.com/repo3/foo.drpm')
+            .with(headers: headers)
+            .to_return(status: 200, body: drpm_content, headers: {})
+          stub_request(:get, 'http://example.com/repo3/foo.rpm')
+            .with(headers: headers)
+            .to_return(status: 200, body: rpm_content, headers: {})
+          filenames
+        end
+
+        it('creates drpm file from repo3') do
+          DownloadedFile.update(file_size: 10)
+          new_file = downloader.download('/repo3/foo.drpm', checksum_type, drpm_content_checksum)
+          expect(File.read(new_file)).to eq(drpm_content)
+        end
+
+        it('creates rpm file from repo3') do
+          DownloadedFile.update(file_size: 10)
+          new_file = downloader.download('/repo3/foo.rpm', checksum_type, rpm_content_checksum)
+          expect(File.read(new_file)).to eq(rpm_content)
+        end
+
       end
 
       context 'handles duplicated files by copy' do

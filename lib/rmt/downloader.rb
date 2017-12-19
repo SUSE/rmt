@@ -79,8 +79,9 @@ class RMT::Downloader
     return false unless ::RMT::Deduplicator.deduplicate(checksum_type, checksum_value, destination)
     @logger.info("→ #{File.basename(destination)}")
     true
-  rescue ::RMT::Deduplicator::MismatchException
-    @logger.debug("x File #{src.local_path} does not exist or has wrong filesize, deduplication ignored.")
+  rescue ::RMT::Deduplicator::MismatchException => e
+    @logger.debug("× File does not exist or has wrong filesize, deduplication ignored #{e.message}.")
+    false
   end
 
   def make_request(remote_file, local_file, request_fiber, checksum_type = nil, checksum_value = nil)
