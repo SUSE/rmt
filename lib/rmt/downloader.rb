@@ -5,7 +5,7 @@ require 'fiber'
 require 'rmt'
 require 'rmt/config'
 require 'rmt/http_request'
-require 'rmt/file_utils'
+require 'rmt/deduplicator'
 
 class RMT::Downloader
 
@@ -76,9 +76,11 @@ class RMT::Downloader
   end
 
   def deduplicate(checksum_type, checksum_value, destination)
-    return false unless RMT::FileUtils.deduplicate(checksum_type, checksum_value, destination)
-    @logger.info("↓ #{File.basename(destination)}")
+    return false unless ::RMT::Deduplicator.deduplicate(checksum_type, checksum_value, destination)
+    @logger.info("→ #{File.basename(destination)}")
     true
+  rescue ::RMT::Deduplicator::MismatchException
+    @logger.debug("x File #{src.local_path} does not exist or has wrong filesize, deduplication ignored.")
   end
 
   def make_request(remote_file, local_file, request_fiber, checksum_type = nil, checksum_value = nil)
@@ -106,7 +108,15 @@ class RMT::Downloader
 
     FileUtils.mv(downloaded_file.path, local_file)
     File.chmod(0o644, local_file)
-    DownloadedFile.add_file!(checksum_type, checksum_value, local_file)
+
+    begin
+      file_size = File.size(local_file)
+      DownloadedFile.add_file!(checksum_type, checksum_value, file_size, local_file)
+    rescue StandardError => e
+      # we don't really care whether or not this goes to the database.
+      @logger.debug e.message
+      e.backtrace.each { |line| @logger.debug line }
+    end
 
     @logger.info("↓ #{File.basename(local_file)}")
   end
