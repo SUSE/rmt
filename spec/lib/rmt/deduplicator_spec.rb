@@ -52,6 +52,17 @@ RSpec.describe RMT::Deduplicator do
       it('duplicated file with copy') { expect(File.stat(source_path).nlink).to eq(2) }
     end
 
+    context 'hardlink not supported' do
+      before do
+        deduplication_method(:hardlink)
+        add_downloaded_file(checksum_type, checksum, source_path)
+        allow(::FileUtils).to receive(:ln).and_raise(StandardError)
+      end
+
+      it('throws hardlink exception') do
+        expect { deduplicate(checksum_type, checksum, dest_path) }.to raise_error(::RMT::Deduplicator::HardlinkException)
+      end
+    end
 
     context 'hardlink with changed file' do
       before do

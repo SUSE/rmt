@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe RMT::Config do
   describe '#mirroring dedup_method' do
-
     context 'defaults' do
       [nil, ''].each do |dedup_method|
         before { deduplication_method(dedup_method) }
