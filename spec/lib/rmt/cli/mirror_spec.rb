@@ -27,6 +27,7 @@ describe RMT::CLI::Mirror do
       it 'updates repository mirroring timestamp' do
         Timecop.freeze(Time.utc(2018)) do
           expect { command }.to change { repository.reload.last_mirrored_at }.to(DateTime.now.utc)
+                                  .and output(/Mirroring repository #{repository.name}/).to_stdout
         end
       end
 
@@ -34,7 +35,7 @@ describe RMT::CLI::Mirror do
         before { allow_any_instance_of(RMT::Mirror).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror') }
 
         it 'outputs exception message' do
-          expect { command }.to output("black mirror\n").to_stderr
+          expect { command }.to output("black mirror\n").to_stderr.and output(/Mirroring repository #{repository.name}/).to_stdout
         end
       end
     end
