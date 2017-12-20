@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Sat Dec 16 08:36:05 UTC 2017 - bwiedemann@suse.com
+
+- Dont package build logs to make build reproducible
+
+-------------------------------------------------------------------
+Wed Dec  6 10:31:02 UTC 2017 - dimstar@opensuse.org
+
+- Exclude Build for i586: does not build and is not supported on
+  32bit intel archs.
+
+-------------------------------------------------------------------
 Thu Nov 30 17:32:15 UTC 2017 - tschmidt@suse.com
 
 - Change package name to `rmt-server` to not conflict with the unix tool `rmt`
@@ -22,4 +33,4 @@ Thu Oct 12 18:41:49 UTC 2017 - jengelh@inai.de
 -------------------------------------------------------------------
 Tue Jun  6 09:43:04 UTC 2017 - ikapelyukhin@suse.com
 
-- Initial version 0.0.1 
+- Initial version 0.0.1
