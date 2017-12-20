@@ -19,7 +19,7 @@ describe RMT::CLI::Export do
     it 'writes ids of enabled repos to file' do
       FakeFS.with_fresh do
         FileUtils.mkdir_p path
-        command
+        expect { command }.to output(/Settings saved/).to_stdout
         expected_filename = File.join(path, 'repos.json')
         expect(File.exist?(expected_filename)).to be true
         expect(File.read(expected_filename).chomp).to eq '[123]'
@@ -80,7 +80,7 @@ describe RMT::CLI::Export do
 
           expect(RMT::Mirror).to receive(:from_repo_model).exactly(repo_ids.count).times.and_return(mirror_double)
           expect(mirror_double).to receive(:mirror).exactly(repo_ids.count).times
-          command
+          expect { command }.to output(/Mirroring repository/).to_stdout
         end
       end
 
@@ -93,7 +93,7 @@ describe RMT::CLI::Export do
             expect(RMT::Mirror).to receive(:from_repo_model).exactly(repo_ids.count).times.and_return(mirror_double)
             expect(mirror_double).to receive(:mirror)
             expect(mirror_double).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror')
-            expect { command }.to output(/black mirror/).to_stderr
+            expect { command }.to output(/black mirror/).to_stderr.and output(/Mirroring repository/).to_stdout
           end
         end
       end

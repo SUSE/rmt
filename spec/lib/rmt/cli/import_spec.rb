@@ -47,7 +47,7 @@ describe RMT::CLI::Import do
 
           expect(mirror_double).to receive(:mirror)
           expect(RMT::Mirror).to receive(:from_repo_model).with(repo, RMT::DEFAULT_MIRROR_DIR).and_return(mirror_double)
-          command
+          expect { command }.to output(/Mirroring repository #{repo.name}/).to_stdout
         end
       end
 
@@ -58,7 +58,7 @@ describe RMT::CLI::Import do
 
             expect(mirror_double).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror')
             expect(RMT::Mirror).to receive(:from_repo_model).and_return(mirror_double)
-            expect { command }.to output("black mirror\n").to_stderr
+            expect { command }.to output("black mirror\n").to_stderr.and output(/Mirroring repository #{repo.name}/).to_stdout
           end
         end
       end

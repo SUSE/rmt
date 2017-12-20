@@ -11,7 +11,7 @@ RSpec.describe RMT::CLI::Products do
     it 'mentions --all option' do
       expect { described_class.start(argv) }.to output(
         "Only enabled products are shown by default. Use the `--all` option to see all products.\n"
-      ).to_stdout
+      ).to_stdout.and output(/No matching products found/).to_stderr
     end
 
     context 'with empty database' do
@@ -19,7 +19,7 @@ RSpec.describe RMT::CLI::Products do
         it 'warns about no matches' do
           expect { described_class.start(argv) }.to output(
             "No matching products found in the database.\n"
-          ).to_stderr
+          ).to_stderr.and output(/Only enabled products are shown/).to_stdout
         end
       end
 
@@ -33,9 +33,7 @@ RSpec.describe RMT::CLI::Products do
         end
 
         it 'does not mention --all option' do
-          expect { described_class.start(argv) }.not_to output(
-            "Only enabled products are shown by default. Use the `--all` option to see all products.\n"
-          ).to_stdout
+          expect { described_class.start(argv) }.to output('').to_stdout.and output(/rmt-cli sync/).to_stderr
         end
       end
     end
