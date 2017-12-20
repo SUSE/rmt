@@ -52,16 +52,7 @@ class RMT::FiberRequest < RMT::HttpRequest
   end
 
   def verify_checksum(checksum_type, checksum_value)
-    hash_function = checksum_type.gsub(/\W/, '').upcase.to_sym
-    hash_function = :SHA1 if (hash_function == :SHA)
-
-    unless (KNOWN_HASH_FUNCTIONS.include? hash_function)
-      raise RMT::Downloader::Exception.new("Unknown hash function #{checksum_type}")
-    end
-
-    digest = Digest.const_get(hash_function).file(@download_path)
-
-    raise RMT::Downloader::Exception.new('Checksum doesn\'t match') unless (checksum_value == digest.to_s)
+    RMT::ChecksumVerifier.verify_checksum(checksum_type, checksum_value, @download_path)
   rescue StandardError => e
     @download_path.unlink
     raise e
