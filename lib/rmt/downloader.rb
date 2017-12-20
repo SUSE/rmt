@@ -58,8 +58,7 @@ class RMT::Downloader
       local_file = make_local_path(remote_file)
     end while File.exist?(local_file) # rubocop:disable Lint/Loop
 
-    was_deduplicated = deduplicate(queue_item[:checksum_type], queue_item[:checksum], local_file)
-    return if was_deduplicated
+    return if deduplicate(queue_item[:checksum_type], queue_item[:checksum], local_file)
 
     # The request is wrapped into a fiber for exception handling
     request_fiber = Fiber.new do
@@ -85,7 +84,6 @@ class RMT::Downloader
   end
 
   def make_request(remote_file, local_file, request_fiber, checksum_type = nil, checksum_value = nil)
-
     uri = URI.join(@repository_url, remote_file)
     uri.query = @auth_token if (@auth_token && uri.scheme != 'file')
 
@@ -110,16 +108,17 @@ class RMT::Downloader
     FileUtils.mv(downloaded_file.path, local_file)
     File.chmod(0o644, local_file)
 
-    begin
-      file_size = File.size(local_file)
-      DownloadedFile.add_file!(checksum_type, checksum_value, file_size, local_file)
-    rescue StandardError => e
-      # we don't really care whether or not this goes to the database.
-      @logger.debug e.message
-      e.backtrace.each { |line| @logger.debug line }
-    end
+    add_local_to_deduplicator(local_file, checksum_type, checksum_value)
 
     @logger.info("↓ #{File.basename(local_file)}")
+  end
+
+  def add_local_to_deduplicator(path, checksum_type, checksum)
+    ::RMT::Deduplicator.add_local(path, checksum_type, checksum)
+  rescue StandardError => e
+    # we don't really care whether or not this goes to the database.
+    @logger.debug e.message
+    e.backtrace.each { |line| @logger.debug line }
   end
 
   def make_local_path(remote_file)
