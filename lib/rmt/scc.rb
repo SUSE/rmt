@@ -52,6 +52,8 @@ class RMT::SCC
 
     @logger.info('Exporting products')
     File.write(File.join(path, 'organizations_products.json'), scc_api_client.list_products.to_json)
+    # For SUMA, we also export the unscoped products.
+    File.write(File.join(path, 'organizations_products_unscoped.json'), scc_api_client.list_products_unscoped.to_json)
 
     @logger.info('Exporting repositories')
     File.write(File.join(path, 'organizations_repositories.json'), scc_api_client.list_repositories.to_json)
