@@ -169,7 +169,6 @@ RSpec.describe RMT::Downloader do
       end
 
       context 'handles mismatch error and still downloads' do
-
         before do
           stub_request(:get, 'http://example.com/repo3/foo.drpm')
             .with(headers: headers)
@@ -191,7 +190,6 @@ RSpec.describe RMT::Downloader do
           new_file = downloader.download('/repo3/foo.rpm', checksum_type, rpm_content_checksum)
           expect(File.read(new_file)).to eq(rpm_content)
         end
-
       end
 
       context 'handles duplicated files by copy' do
