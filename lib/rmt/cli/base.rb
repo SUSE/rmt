@@ -31,6 +31,11 @@ class RMT::CLI::Base < Thor
 
     def handle_exceptions
       yield
+    rescue RMT::Deduplicator::HardlinkException => e
+      raise RMT::CLI::Error.new(
+        "Could not create deduplication hardlink: #{e.message}.",
+        RMT::CLI::Error::ERROR_OTHER
+      )
     rescue Mysql2::Error => e
       if e.message =~ /^Access denied/
         raise RMT::CLI::Error.new(

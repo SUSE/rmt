@@ -59,6 +59,16 @@ RSpec.describe RMT::CLI::Main do
       end
 
       describe 'error cases' do
+        describe 'RMT::Deduplicator::HardlinkException' do
+          let(:exception_class) { ::RMT::Deduplicator::HardlinkException }
+          let(:error_message) { 'foo' }
+
+          it 'outputs custom error message' do
+            expect { command }.to output(
+              "Could not create deduplication hardlink: foo.\n"
+            ).to_stderr
+          end
+        end
         describe 'Mysql2::Error with access denied error' do
           let(:exception_class) { Mysql2::Error }
           let(:error_message) { 'Access denied for user `rmt`@`localhost`' }
