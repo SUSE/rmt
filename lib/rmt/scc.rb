@@ -51,9 +51,9 @@ class RMT::SCC
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
     @logger.info('Exporting products')
-    File.write(File.join(path, 'organizations_products.json'), scc_api_client.list_products.to_json)
-    # For SUMA, we also export the unscoped products.
-    File.write(File.join(path, 'organizations_products_unscoped.json'), scc_api_client.list_products_unscoped.to_json)
+    File.write(File.join(path, 'organizations_products_scoped.json'), scc_api_client.list_products.to_json)
+    # For SUMA, we also export the unscoped products with the filename it expects.
+    File.write(File.join(path, 'organizations_products.json'), scc_api_client.list_products_unscoped.to_json)
 
     @logger.info('Exporting repositories')
     File.write(File.join(path, 'organizations_repositories.json'), scc_api_client.list_repositories.to_json)
@@ -66,7 +66,7 @@ class RMT::SCC
   end
 
   def import(path)
-    missing_files = %w[products repositories subscriptions]
+    missing_files = %w[products_scoped repositories subscriptions]
       .map { |data| "organizations_#{data}.json" }
       .reject { |filename| File.exist?(File.join(path, filename)) }
     raise DataFilesError, "Missing data files: #{missing_files.join(', ')}" if missing_files.any?
@@ -77,7 +77,7 @@ class RMT::SCC
     @logger.info("Importing SCC data from #{path}")
 
     @logger.info('Updating products')
-    data = JSON.parse(File.read(File.join(path, 'organizations_products.json')), symbolize_names: true)
+    data = JSON.parse(File.read(File.join(path, 'organizations_products_scoped.json')), symbolize_names: true)
     data.each do |item|
       @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
       product = create_product(item)
