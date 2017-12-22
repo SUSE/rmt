@@ -45,6 +45,14 @@ RSpec.describe SUSE::Connect::Api do
         headers: {}
       )
 
+    stub_request(:get, 'https://scc.suse.com/connect/organizations/products/unscoped?page=1')
+      .with(headers: expected_request_headers)
+      .to_return(
+        status: 200,
+        body: [ { endpoint: 'organizations/products/unscoped' } ].to_json,
+        headers: {}
+      )
+
     stub_request(:get, 'https://scc.suse.com/connect/organizations/repositories?page=1')
       .with(headers: expected_request_headers)
       .to_return(
@@ -96,6 +104,12 @@ RSpec.describe SUSE::Connect::Api do
     subject { api_client.list_products }
 
     it { is_expected.to eq([ { endpoint: 'organizations/products' } ]) }
+  end
+
+  describe '#list_products_unscoped' do
+    subject { api_client.list_products_unscoped }
+
+    it { is_expected.to eq([ { endpoint: 'organizations/products/unscoped' } ]) }
   end
 
   describe '#list_repositories' do

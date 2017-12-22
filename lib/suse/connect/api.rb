@@ -21,6 +21,10 @@ module SUSE
         make_paginated_request(:get, 'https://scc.suse.com/connect/organizations/products')
       end
 
+      def list_products_unscoped
+        make_paginated_request(:get, 'https://scc.suse.com/connect/organizations/products/unscoped')
+      end
+
       def list_repositories
         make_paginated_request(:get, 'https://scc.suse.com/connect/organizations/repositories')
       end
