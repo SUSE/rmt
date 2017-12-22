@@ -102,6 +102,16 @@ RSpec.describe RMT::CLI::Repos do
       it 'outputs success message' do
         expect { command }.to output("No repositories enabled.\n").to_stderr
       end
+
+      context 'with --all option' do
+        let(:argv) { ['list', '--all'] }
+
+        it 'warns about running sync command first' do
+          expect { described_class.start(argv) }.to output(
+            "Run \"rmt-cli sync\" to synchronize with your SUSE Customer Center data first.\n"
+          ).to_stderr
+        end
+      end
     end
 
     context 'with enabled repositories' do
