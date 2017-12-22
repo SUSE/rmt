@@ -67,6 +67,7 @@ end
 
 group :test do
   gem 'fakefs', require: 'fakefs/safe'
+  gem 'fuubar'
   gem 'timecop'
 end
 
