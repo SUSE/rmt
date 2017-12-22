@@ -68,7 +68,11 @@ class RMT::CLI::Repos < RMT::CLI::Base
     end
 
     if rows.empty?
-      warn 'No repositories enabled.'
+      if options.all
+        warn 'Run "rmt-cli sync" to synchronize with your SUSE Customer Center data first.'
+      else
+        warn 'No repositories enabled.'
+      end
     else
       puts Terminal::Table.new headings: ['ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'], rows: rows
     end
