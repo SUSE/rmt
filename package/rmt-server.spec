@@ -159,6 +159,7 @@ rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/spec
 rm -f %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/.gitignore
 rm -f %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/*/gem_make.out
 rm -f %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/*/mkmf.log
+find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod 644 -- {} +
 
 %fdupes %{buildroot}/%{lib_dir}
 
