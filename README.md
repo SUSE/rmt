@@ -139,7 +139,14 @@ EOFF
 ### Packaging
 
 The package is build in the OBS at: https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT/rmt-server
-To initialize the package directory go to `package/` and run: `osc co systemsmanagement:SCC:RMT rmt-server -o .`
+
+To initialize the package directory please run:
+
+```
+make init
+```
+
+If your `package/` directory already is initialized as an obs project dir, a simple `osc up` is enough.
 
 To build the package with updated sources, call `make dist` and then build for your distribution with:
 
