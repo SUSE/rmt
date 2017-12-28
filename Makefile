@@ -10,7 +10,7 @@ clean:
 	rm -rf $(NAME)-$(VERSION)/
 
 man:
-	ronn --roff --pipe --manual RMT README.md > rmt.8 && gzip -f rmt.8
+	bundle exec ronn --roff --pipe --manual RMT README.md > rmt.8 && gzip -f rmt.8
 	mv rmt.8.gz package/
 
 dist: clean man
