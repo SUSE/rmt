@@ -56,9 +56,7 @@ class RMT::Downloader
 
       remote_file = queue_item.location
       local_file = make_local_path(remote_file)
-    end while File.exist?(local_file) # rubocop:disable Lint/Loop
-
-    return if deduplicate(queue_item[:checksum_type], queue_item[:checksum], local_file)
+    end while (File.exist?(local_file) || deduplicate(queue_item[:checksum_type], queue_item[:checksum], local_file)) # rubocop:disable Lint/Loop
 
     # The request is wrapped into a fiber for exception handling
     request_fiber = Fiber.new do
