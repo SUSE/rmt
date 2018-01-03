@@ -64,7 +64,7 @@ The supported scenarios are shown in the table below:
 | RMT    | RMT          |
 | RMT    | SUSE Manager |
 
-Connecting a SMT with a RMT this way is not supported.
+Connecting an SMT with an RMT this way is not supported.
 
 #### Inital Setup
 
