@@ -126,6 +126,7 @@ class RMT::SCC
       association = ProductsExtensionsAssociation.new
       association.product_id = product.id
       association.extension_id = extension.id
+      association.root_product_id = product.id # FIXME: correct root_product_id !!!
       association.save!
     end
 

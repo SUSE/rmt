@@ -16,13 +16,21 @@ class Product < ApplicationRecord
            class_name: 'ProductsExtensionsAssociation',
            foreign_key: :product_id
 
-  has_many :extensions,
-           through: :extension_products_associations,
-           source: :extension
+  has_many :extensions, -> { distinct },
+    through: :extension_products_associations,
+    source: :extension do
+    def for_root_product(root_product)
+      where('products_extensions.root_product_id = %s', root_product.id)
+    end
+  end
 
   has_many :mirrored_extensions, -> { mirrored },
     through: :extension_products_associations,
-    source: :extension
+    source: :extension do
+    def for_root_product(root_product)
+      where('products_extensions.root_product_id = %s', root_product.id)
+    end
+  end
 
   has_and_belongs_to_many :predecessors, class_name: 'Product', join_table: :product_predecessors,
     association_foreign_key: :predecessor_id

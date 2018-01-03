@@ -14,7 +14,7 @@ class V3::ProductSerializer < ApplicationSerializer
              :friendly_name, :product_class, :cpe, :free, :description, :eula_url, :repositories, :product_type, :extensions
 
   def extensions
-    object.mirrored_extensions.map do |extension|
+    object.mirrored_extensions.for_root_product(root_product).map do |extension|
       ::V3::ProductSerializer.new(extension, base_url: base_url).attributes
     end
   end
@@ -35,6 +35,10 @@ class V3::ProductSerializer < ApplicationSerializer
     # Everything is free on RMT :-)
     # Otherwise Yast and SUSEConnect will request a regcode when activating an extension
     true
+  end
+
+  def root_product
+    @instance_options[:root_product] ||= object
   end
 
 end
