@@ -27,7 +27,7 @@
 %define rmt_group   nginx
 
 Name:           rmt-server
-Version:        0.0.1
+Version:        0.0.2
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0+
@@ -141,6 +141,20 @@ sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"'
     -e 's/^BUNDLE_JOBS: .*/BUNDLE_JOBS: "1"/' \
     %{buildroot}%{app_dir}/.bundle/config
 
+# cleanup of /usr/bin/env commands
+%if 0%{?use_ruby_2_4}
+grep -rl '\/usr\/bin\/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
+    sed -i -e's@\/usr\/bin\/env ruby.ruby2\.4@\/usr\/bin\/ruby\.ruby2\.4@g' \
+    -e 's@\/usr\/bin\/env ruby@\/usr\/bin\/ruby\.ruby2\.4@g'
+%else
+grep -rl '\/usr\/bin\/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
+    sed -i -e 's@\/usr\/bin\/env ruby.ruby2\.5@\/usr\/bin\/ruby\.ruby2\.5@g' \
+    -e 's@\/usr\/bin\/env ruby@\/usr\/bin\/ruby\.ruby2\.5@g'
+%endif
+
+grep -rl '\/usr\/bin\/env bash' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
+    sed -i -e 's@\/usr\/bin\/env bash@\/bin\/bash@g' \
+
 # cleanup unneeded files
 rm -r %{buildroot}%{app_dir}/service
 find %{buildroot}%{lib_dir} "(" -name "*.c" -o -name "*.h" -o -name .keep ")" -delete
@@ -159,6 +173,7 @@ rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/spec
 rm -f %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/.gitignore
 rm -f %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/*/gem_make.out
 rm -f %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/*/mkmf.log
+find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod 644 -- {} +
 
 %fdupes %{buildroot}/%{lib_dir}
 
