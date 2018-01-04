@@ -38,22 +38,11 @@ gem 'railties', '~> 5.1.3'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
-  gem 'rspec-rails', '~> 3.5'
   gem 'scc-codestyle'
-  gem 'factory_girl_rails'
-  gem 'shoulda-matchers'
-  gem 'ffaker'
-  gem 'rspec-its'
   gem 'gettext', require: false # needed for gettext_i18n_rails tasks
   gem 'ruby_parser', require: false # needed for gettext_i18n_rails tasks
   gem 'gettext_test_log'
   gem 'memory_profiler'
-  gem 'webmock'
-
-  # Branch that contains fixes for recording and playing back Typhoeus requests with on_headers and on_body callbacks
-  # Hopefully it will get merged some time soon :-)
-  gem 'vcr', github: 'vcr/vcr', ref: '0ce29d08d492792ffecbec468e70a638e9e9f140'
-  gem 'coveralls', require: false
 end
 
 group :development do
@@ -66,9 +55,20 @@ group :development do
 end
 
 group :test do
+  gem 'rspec-rails', '~> 3.5'
+  gem 'factory_girl_rails'
+  gem 'ffaker'
+  gem 'rspec-its'
   gem 'fakefs', require: 'fakefs/safe'
+  gem 'shoulda-matchers'
+  gem 'webmock'
   gem 'fuubar'
   gem 'timecop'
+
+  # Branch that contains fixes for recording and playing back Typhoeus requests with on_headers and on_body callbacks
+  # Hopefully it will get merged some time soon :-)
+  gem 'vcr', github: 'vcr/vcr', ref: '0ce29d08d492792ffecbec468e70a638e9e9f140'
+  gem 'coveralls', require: false
 end
 
 gem 'simplecov', require: false, group: :test

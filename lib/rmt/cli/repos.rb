@@ -1,6 +1,9 @@
 class RMT::CLI::Repos < RMT::CLI::Base
 
-  default_task :list
+  include ::RMT::CLI::RepoPrintable
+
+  desc 'custom', 'Custom Repositories'
+  subcommand 'custom', RMT::CLI::CustomRepos
 
   desc 'list', 'List repositories which are marked to be mirrored'
   option :all, aliases: '-a', type: :boolean, desc: 'List all repositories, including ones which are not marked to be mirrored'
@@ -8,6 +11,7 @@ class RMT::CLI::Repos < RMT::CLI::Base
     scope = options[:all] ? :all : :enabled
     list_repositories(scope: scope)
   end
+  map ls: :list
 
   desc 'enable TARGET', 'Enable mirroring of repositories by repository ID or product string'
   def enable(target)
@@ -55,26 +59,14 @@ class RMT::CLI::Repos < RMT::CLI::Base
   def list_repositories(scope: :enabled)
     repositories = (scope == :all) ? Repository.all : Repository.only_mirrored
 
-    rows = []
-    repositories.all.each do |repository|
-      rows << [
-        repository.id,
-        repository.name,
-        repository.description,
-        repository.enabled,
-        repository.mirroring_enabled,
-        repository.last_mirrored_at
-      ]
-    end
-
-    if rows.empty?
+    if repositories.empty?
       if options.all
         warn 'Run "rmt-cli sync" to synchronize with your SUSE Customer Center data first.'
       else
         warn 'No repositories enabled.'
       end
     else
-      puts Terminal::Table.new headings: ['ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'], rows: rows
+      puts repositories_to_table(repositories)
     end
   end
 

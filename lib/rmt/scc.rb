@@ -9,6 +9,8 @@ class RMT::SCC
   def initialize(options = {})
     @logger = Logger.new(STDOUT)
     @logger.level = (options[:debug]) ? Logger::DEBUG : Logger::INFO
+    @repository_service = RepositoryService.new
+    @product_service = ProductService.new
   end
 
   def sync
@@ -133,26 +135,16 @@ class RMT::SCC
   end
 
   def create_service(item, product)
-    service = Service.find_or_create_by(product_id: product.id)
+    service = @product_service.get_service(product)
 
     item[:repositories].each do |repo_item|
-      repository = Repository.find_or_initialize_by(external_url: repo_item[:url])
-      repository.attributes = repo_item.select { |k, _| repository.attributes.keys.member?(k.to_s) }
-      repository.external_url = repo_item[:url]
-      repository.local_path = Repository.make_local_path(repo_item[:url])
-      repository.save!
-
-      RepositoriesServicesAssociation.find_or_create_by(
-        service_id: service.id,
-        repository_id: repository.id
-      )
+      @repository_service.create_repository(service, repo_item[:url], repo_item, false)
     end
   end
 
   def update_auth_token(item)
     uri = URI(item[:url])
     auth_token = uri.query
-
     Repository.find(item[:id]).update! auth_token: auth_token
   end
 

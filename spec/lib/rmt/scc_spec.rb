@@ -31,8 +31,8 @@ describe RMT::SCC do
       all_repositories.map.each do |repository|
         db_repository = Repository.find(repository[:id])
 
-        (db_repository.attributes.keys - %w[external_url mirroring_enabled local_path]).each do |key|
-          expect(db_repository[key]).to eq(repository[key.to_sym])
+        (db_repository.attributes.keys - %w[external_url mirroring_enabled local_path is_custom]).each do |key|
+          expect(db_repository[key].to_s).to eq(repository[key.to_sym].to_s)
         end
       end
     end

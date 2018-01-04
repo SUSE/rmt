@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171214093115) do
+ActiveRecord::Schema.define(version: 20180103150147) do
 
   create_table "activations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "service_id", null: false
@@ -60,7 +60,7 @@ ActiveRecord::Schema.define(version: 20171214093115) do
     t.index ["product_id"], name: "index_products_extensions_on_product_id"
   end
 
-  create_table "repositories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "repositories", id: :string, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "name", null: false
     t.string "description"
     t.boolean "enabled", default: false, null: false
@@ -71,11 +71,12 @@ ActiveRecord::Schema.define(version: 20171214093115) do
     t.boolean "mirroring_enabled", default: false, null: false
     t.string "local_path", null: false
     t.datetime "last_mirrored_at"
+    t.boolean "is_custom", default: false
     t.index ["external_url"], name: "index_repositories_on_external_url", unique: true
   end
 
   create_table "repositories_services", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.bigint "repository_id", null: false
+    t.string "repository_id", null: false
     t.bigint "service_id", null: false
     t.index ["repository_id"], name: "index_repositories_services_on_repository_id"
     t.index ["service_id", "repository_id"], name: "index_repositories_services_on_service_id_and_repository_id", unique: true
