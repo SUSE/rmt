@@ -77,4 +77,8 @@ class Product < ApplicationRecord
     repositories.where(conditions).update_all(mirroring_enabled: mirroring_enabled)
   end
 
+  def recommended_for?(root_product)
+    product_extensions_associations.where(recommended: true).where(root_product: root_product).present?
+  end
+
 end

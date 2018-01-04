@@ -24,8 +24,7 @@ class RMT::SCC
     data = scc_api_client.list_products
     data.each do |item|
       @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
-      product = create_product(item)
-      create_service(item, product)
+      create_product(item) if (item[:product_type] == 'base')
     end
 
     @logger.info('Updating repositories')
@@ -80,8 +79,7 @@ class RMT::SCC
     data = JSON.parse(File.read(File.join(path, 'organizations_products_scoped.json')), symbolize_names: true)
     data.each do |item|
       @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
-      product = create_product(item)
-      create_service(item, product)
+      create_product(item)
     end
 
     @logger.info('Updating repositories')
@@ -101,18 +99,7 @@ class RMT::SCC
 
   protected
 
-  def create_product(item)
-    extensions = []
-
-    item[:extensions].each do |ext_item|
-      extension = Product.find_or_create_by(id: ext_item[:id])
-      extension.attributes = ext_item.select { |k, _| extension.attributes.keys.member?(k.to_s) }
-      extension.save!
-
-      create_service(ext_item, extension)
-      extensions << extension
-    end
-
+  def create_product(item, root_product_id = nil, base_product = nil)
     product = Product.find_or_create_by(id: item[:id])
     product.attributes = item.select { |k, _| product.attributes.keys.member?(k.to_s) }
     product.save!
@@ -122,15 +109,21 @@ class RMT::SCC
       ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor_id)
     end
 
-    extensions.each do |extension|
-      association = ProductsExtensionsAssociation.new
-      association.product_id = product.id
-      association.extension_id = extension.id
-      association.root_product_id = product.id # FIXME: correct root_product_id !!!
-      association.save!
+    create_service(item, product)
+
+    if root_product_id
+      ProductsExtensionsAssociation.create(
+        product_id: base_product,
+        extension_id: product.id,
+        root_product_id: root_product_id
+      )
+    else
+      root_product_id = product.id
     end
 
-    product
+    item[:extensions].each do |ext_item|
+      create_product(ext_item, root_product_id, product.id)
+    end
   end
 
   def create_service(item, product)

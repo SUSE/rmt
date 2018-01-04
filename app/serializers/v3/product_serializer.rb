@@ -11,11 +11,12 @@ class V3::ProductSerializer < ApplicationSerializer
   end
 
   attributes :id, :name, :identifier, :former_identifier, :version, :release_type, :arch,
-             :friendly_name, :product_class, :cpe, :free, :description, :eula_url, :repositories, :product_type, :extensions
+             :friendly_name, :product_class, :cpe, :free, :description, :eula_url, :repositories, :product_type,
+             :extensions, :recommended
 
   def extensions
-    object.mirrored_extensions.for_root_product(root_product).map do |extension|
-      ::V3::ProductSerializer.new(extension, base_url: base_url).attributes
+    object.extensions.for_root_product(root_product).map do |extension|
+      ::V3::ProductSerializer.new(extension, base_url: base_url, root_product: root_product).attributes
     end
   end
 
@@ -39,6 +40,10 @@ class V3::ProductSerializer < ApplicationSerializer
 
   def root_product
     @instance_options[:root_product] ||= object
+  end
+
+  def recommended
+    object.recommended_for? root_product
   end
 
 end
