@@ -12,7 +12,7 @@ class V3::ProductSerializer < ApplicationSerializer
 
   attributes :id, :name, :identifier, :former_identifier, :version, :release_type, :arch,
              :friendly_name, :product_class, :cpe, :free, :description, :eula_url, :repositories, :product_type,
-             :extensions, :recommended
+             :extensions, :recommended, :available
 
   def extensions
     object.extensions.for_root_product(root_product).map do |extension|
@@ -44,6 +44,11 @@ class V3::ProductSerializer < ApplicationSerializer
 
   def recommended
     object.recommended_for? root_product
+  end
+
+  # This attribute is added by SMT as well, indicating whether the product is mirrored or not
+  def available
+    object.mirror?
   end
 
 end

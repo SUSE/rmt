@@ -99,7 +99,7 @@ class RMT::SCC
 
   protected
 
-  def create_product(item, root_product_id = nil, base_product = nil)
+  def create_product(item, root_product_id = nil, base_product = nil, recommended = false)
     product = Product.find_or_create_by(id: item[:id])
     product.attributes = item.select { |k, _| product.attributes.keys.member?(k.to_s) }
     product.save!
@@ -115,14 +115,16 @@ class RMT::SCC
       ProductsExtensionsAssociation.create(
         product_id: base_product,
         extension_id: product.id,
-        root_product_id: root_product_id
+        root_product_id: root_product_id,
+        recommended: recommended
       )
     else
       root_product_id = product.id
+      ProductsExtensionsAssociation.where(root_product_id: root_product_id).destroy_all
     end
 
     item[:extensions].each do |ext_item|
-      create_product(ext_item, root_product_id, product.id)
+      create_product(ext_item, root_product_id, product.id, ext_item[:recommended])
     end
   end
 
