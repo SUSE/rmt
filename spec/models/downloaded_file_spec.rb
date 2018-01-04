@@ -24,6 +24,12 @@ describe DownloadedFile, type: :model do
       add_downloaded_file('foo', 'bar', test_file_2_path)
       expect(DownloadedFile.find_by(checksum_type: 'foo', checksum: 'bar').local_path).to eq(test_file_1_path)
     end
+
+    it 'returns error on duplicate' do
+      expect do
+        DownloadedFile.add_file!('foo', 'bar', File.size(test_file_2_path), test_file_2_path)
+      end.to raise_error(ActiveRecord::RecordNotUnique)
+    end
   end
 
   describe '#get_local_path_by_checksum' do
