@@ -1,5 +1,3 @@
-require 'rmt/checksum_verifier'
-
 class DownloadedFile < ApplicationRecord
 
   def self.add_file!(checksum_type, checksum, file_size, local_path)
