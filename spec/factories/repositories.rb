@@ -7,7 +7,7 @@ FactoryGirl.define do
     autorefresh true
     mirroring_enabled false
     installer_updates false
-    is_custom false
+    custom false
 
     after(:build) do |obj|
       obj.local_path = Repository.make_local_path(obj.external_url)

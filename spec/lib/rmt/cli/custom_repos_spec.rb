@@ -68,7 +68,7 @@ describe RMT::CLI::CustomRepos do
         it 'does not add duplicate record to repository' do
           argv = ['add', option_product_id, product.id, option_url, external_url, option_name, 'foo']
           expect do
-            create :repository, external_url: external_url, is_custom: true
+            create :repository, external_url: external_url, custom: true
             described_class.start(argv)
           end.to output("A repository by url \"#{external_url}\" already exists.\n").to_stderr.and output('').to_stdout
         end
@@ -76,7 +76,7 @@ describe RMT::CLI::CustomRepos do
         it 'updates previous repository on --update' do
           argv = ['add', option_product_id, product.id, option_url, external_url, option_name, 'foo', '--update']
           expect do
-            create :repository, external_url: external_url, is_custom: true, name: 'foobar'
+            create :repository, external_url: external_url, custom: true, name: 'foobar'
             described_class.start(argv)
           end.to output("Successfully updated custom repository.\n").to_stdout.and output('').to_stderr
           expect(Repository.find_by(external_url: external_url).name).to eq('foo')
@@ -85,7 +85,7 @@ describe RMT::CLI::CustomRepos do
         it 'does not update previous repository if non-custom' do
           argv = ['add', option_product_id, product.id, option_url, external_url, option_name, 'foo', '--update']
           expect do
-            create :repository, external_url: external_url, is_custom: false, name: 'foobar'
+            create :repository, external_url: external_url, custom: false, name: 'foobar'
             described_class.start(argv)
           end.to output("A non-custom repository by url \"http://example.com/repos\" already exists.\n").to_stderr.and output('').to_stdout
           expect(Repository.find_by(external_url: external_url).name).to eq('foobar')
@@ -107,7 +107,7 @@ describe RMT::CLI::CustomRepos do
       end
 
       context 'with custom repository' do
-        let(:custom_repository) { create :repository, is_custom: true, name: 'custom foo' }
+        let(:custom_repository) { create :repository, custom: true, name: 'custom foo' }
 
         it 'displays the custom repo' do
           expect { described_class.start(argv) }.to output(/.*#{custom_repository.name}.*/).to_stdout
@@ -120,7 +120,7 @@ describe RMT::CLI::CustomRepos do
   %w[remove rm].each do |command|
     describe command do
       let(:suse_repository) { create :repository, name: 'awesome-rmt-repo' }
-      let(:custom_repository) { create :repository, is_custom: true, name: 'custom foo' }
+      let(:custom_repository) { create :repository, custom: true, name: 'custom foo' }
 
       context 'not found' do
         let(:argv) { [command, 'totally_wrong'] }

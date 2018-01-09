@@ -2,11 +2,12 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
 
   include ::RMT::CLI::RepoPrintable
 
-  desc 'add', 'Adds a custom repository to RMT'
-  option :name, aliases: '-n', type: :string, desc: 'The name for the custom repository', required: true
-  option :product_id, aliases: '-p', type: :string, desc: 'The product id', required: true
-  option :url, aliases: '-u', type: :string, desc: 'The custom repository url', required: true
-  option :update, type: :boolean, desc: 'Update repository on duplicate', default: false
+  desc 'add', 'Adds a custom repository to a product'
+  option :name, aliases: '-n', type: :string, desc: 'The name of the custom repository', required: true
+  option :url, aliases: '-u', type: :string, desc: 'Absolute external URL to this repository', required: true
+  option :update, type: :boolean, desc: 'Update repository instead of ignore when it already exists', default: false
+  option :product_id, aliases: '-p', type: :string, required: true,
+         desc: 'The id of the product where the repository should be added. Use `rmt-cli products list` to see products'
   def add
     product = Product.find_by(id: options[:product_id])
 
@@ -21,7 +22,7 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
     if previous_repository && !options[:update]
       warn "A repository by url \"#{options[:url]}\" already exists."
       return
-    elsif previous_repository && !previous_repository.is_custom
+    elsif previous_repository && !previous_repository.custom?
       warn "A non-custom repository by url \"#{options[:url]}\" already exists."
       return
     end
@@ -47,7 +48,7 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
 
   desc 'ls', 'Lists the custom repositories used in RMT'
   def list
-    repositories = Repository.all_custom_repos
+    repositories = Repository.only_custom
 
     if repositories.empty?
       warn 'No custom repositories found.'
@@ -66,7 +67,7 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
       return
     end
 
-    unless repository.is_custom?
+    unless repository.custom?
       warn 'Cannot remove non-custom repositories.'
       return
     end

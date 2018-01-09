@@ -4,7 +4,7 @@ RSpec.describe RepositoryService do
   subject(:service) { described_class.new }
 
   let(:product) { create :product }
-  let(:custom_repository) { create :repository, is_custom: true }
+  let(:custom_repository) { create :repository, custom: true }
   let(:suse_repository) { create :repository }
 
   describe '#repository_by_id' do

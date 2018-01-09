@@ -19,7 +19,7 @@ class RepositoryService
 
     repository.external_url = url
     repository.local_path = Repository.make_local_path(url)
-    repository.is_custom = is_custom_repo
+    repository.custom = is_custom_repo
     repository.id ||= Repository.random_id
 
     raise InvalidExternalUrl.new(url) if repository.local_path.to_s == ''
@@ -37,7 +37,7 @@ class RepositoryService
   end
 
   def remove_repository(repository)
-    return unless repository.is_custom?
+    return unless repository.custom?
     repository.destroy!
   end
 

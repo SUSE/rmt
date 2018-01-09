@@ -142,7 +142,7 @@ RSpec.describe RMT::CLI::Repos do
           end
         end
 
-        context 'list all' do
+        describe "#{command_name} --all" do
           let(:argv) { [command_name, '--all'] }
           let(:expected_output) do
             rows = []

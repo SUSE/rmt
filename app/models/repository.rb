@@ -9,7 +9,7 @@ class Repository < ApplicationRecord
 
   scope :only_installer_updates, -> { unscope(where: :installer_updates).where(installer_updates: true) }
   scope :only_mirrored, -> { where(mirroring_enabled: true) }
-  scope :all_custom_repos, -> { where(is_custom: true) }
+  scope :only_custom, -> { where(custom: true) }
 
   validates :name, presence: true
   validates :external_url, presence: true
@@ -28,7 +28,8 @@ class Repository < ApplicationRecord
 
     def only_mirrored_ids
       Repository.only_mirrored.pluck(:id).map do |string|
-        clean_id(string)
+        integer = Integer(string) rescue false
+        integer ? integer : string
       end
     end
 
@@ -40,11 +41,6 @@ class Repository < ApplicationRecord
       path
     end
 
-    def clean_id(string)
-      integer = Integer(string) rescue false
-      integer ? integer : string
-    end
-
   end
 
   def refresh_timestamp!
@@ -53,10 +49,6 @@ class Repository < ApplicationRecord
 
   def change_mirroring!(mirroring_enabled)
     update_column(:mirroring_enabled, mirroring_enabled)
-  end
-
-  def id
-    Repository.clean_id(self[:id])
   end
 
 end

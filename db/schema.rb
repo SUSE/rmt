@@ -71,7 +71,7 @@ ActiveRecord::Schema.define(version: 20180103150147) do
     t.boolean "mirroring_enabled", default: false, null: false
     t.string "local_path", null: false
     t.datetime "last_mirrored_at"
-    t.boolean "is_custom", default: false
+    t.boolean "custom", default: false
     t.index ["external_url"], name: "index_repositories_on_external_url", unique: true
   end
 
