@@ -180,5 +180,134 @@ RSpec.describe RMT::Mirror do
         end
       end
     end
+
+    context 'deduplication' do
+      let(:rmt_source_mirror) do
+        described_class.new(
+          mirroring_base_dir: @tmp_dir,
+          repository_url: 'http://localhost/dummy_product/product/',
+          local_path: '/dummy_product/product/',
+          auth_token: 'repo_auth_token',
+          mirror_src: false
+        )
+      end
+      let(:rmt_dedup_mirror) do
+        described_class.new(
+          mirroring_base_dir: @tmp_dir,
+          repository_url: 'http://localhost/dummy_deduped_product/product/',
+          local_path: '/dummy_deduped_product/product/',
+          auth_token: 'repo_auth_token',
+          mirror_src: false
+        )
+      end
+      let(:dedup_path) { File.join(@tmp_dir, 'dummy_deduped_product/product/') }
+      let(:source_path) { File.join(@tmp_dir, 'dummy_product/product/') }
+
+      shared_examples_for 'a deduplicated run' do |source_nlink, dedup_nlink, has_same_content|
+        it 'downloads source rpm files' do
+          rpm_entries = Dir.entries(File.join(source_path)).select { |entry| entry =~ /\.rpm$/ }
+          expect(rpm_entries.length).to eq(4)
+        end
+
+        it 'deduplicates rpm files' do
+          rpm_entries = Dir.entries(File.join(dedup_path)).select { |entry| entry =~ /\.rpm$/ }
+          expect(rpm_entries.length).to eq(4)
+        end
+
+
+        it 'has correct content for deduplicated rpm files' do
+          Dir.entries(File.join(dedup_path)).select { |entry| entry =~ /\.rpm$/ }.each do |file|
+            if has_same_content
+              expect(File.read(dedup_path + file)).to eq(File.read(source_path + file))
+            else
+              expect(File.read(dedup_path + file)).not_to eq(File.read(source_path + file))
+            end
+          end
+        end
+
+        it "source rpms have #{source_nlink} nlink" do
+          Dir.entries(source_path).select { |entry| entry =~ /\.rpm$/ }.each do |file|
+            expect(File.stat(source_path + file).nlink).to eq(source_nlink)
+          end
+        end
+
+        it "dedup rpms have #{dedup_nlink} nlink" do
+          Dir.entries(dedup_path).select { |entry| entry =~ /\.rpm$/ }.each do |file|
+            expect(File.stat(dedup_path + file).nlink).to eq(dedup_nlink)
+          end
+        end
+
+        it 'downloads source drpm files' do
+          rpm_entries = Dir.entries(File.join(source_path)).select { |entry| entry =~ /\.drpm$/ }
+          expect(rpm_entries.length).to eq(2)
+        end
+
+        it 'deduplicates drpm files' do
+          rpm_entries = Dir.entries(File.join(dedup_path)).select { |entry| entry =~ /\.drpm$/ }
+          expect(rpm_entries.length).to eq(2)
+        end
+
+        it 'has correct content for deduplicated drpm files' do
+          Dir.entries(File.join(dedup_path)).select { |entry| entry =~ /\.drpm$/ }.each do |file|
+            if has_same_content
+              expect(File.read(dedup_path + file)).to eq(File.read(source_path + file))
+            else
+              expect(File.read(dedup_path + file)).not_to eq(File.read(source_path + file))
+            end
+          end
+        end
+
+        it "source drpms have #{source_nlink} nlink" do
+          Dir.entries(source_path).select { |entry| entry =~ /\.drpm$/ }.each do |file|
+            expect(File.stat(source_path + file).nlink).to eq(source_nlink)
+          end
+        end
+
+        it "dedup drpms have #{dedup_nlink} nlink" do
+          Dir.entries(dedup_path).select { |entry| entry =~ /\.drpm$/ }.each do |file|
+            expect(File.stat(dedup_path + file).nlink).to eq(dedup_nlink)
+          end
+        end
+      end
+
+      context 'by copy' do
+        before do
+          deduplication_method(:copy)
+          VCR.use_cassette 'mirroring_product_with_dedup' do
+            rmt_source_mirror.mirror
+            rmt_dedup_mirror.mirror
+          end
+        end
+
+        it_behaves_like 'a deduplicated run', 1, 1, true
+      end
+
+      context 'by hardlink' do
+        before do
+          deduplication_method(:hardlink)
+          VCR.use_cassette 'mirroring_product_with_dedup' do
+            rmt_source_mirror.mirror
+            rmt_dedup_mirror.mirror
+          end
+        end
+
+        it_behaves_like 'a deduplicated run', 2, 2, true
+      end
+
+      context 'by copy with corruption' do
+        before do
+          deduplication_method(:copy)
+          VCR.use_cassette 'mirroring_product_with_dedup' do
+            rmt_source_mirror.mirror
+            Dir.entries(source_path).select { |entry| entry =~ /(\.drpm|\.rpm)$/ }.each do |filename|
+              File.open(source_path + filename, 'w') { |f| f.write('corruption') }
+            end
+            rmt_dedup_mirror.mirror
+          end
+        end
+
+        it_behaves_like 'a deduplicated run', 1, 1, false
+      end
+    end
   end
 end
