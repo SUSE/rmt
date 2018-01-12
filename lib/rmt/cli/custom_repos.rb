@@ -2,7 +2,7 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
 
   include ::RMT::CLI::RepoPrintable
 
-  desc 'add', 'Adds a custom repository to a product'
+  desc 'add', 'Add a custom repository to a product'
   option :name, aliases: '-n', type: :string, desc: 'The name of the custom repository', required: true
   option :url, aliases: '-u', type: :string, desc: 'Absolute external URL to this repository', required: true
   option :update, type: :boolean, desc: 'Update repository instead of ignore when it already exists', default: false
@@ -20,10 +20,10 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
     previous_repository = repository_service.repository_by_url(options[:url])
 
     if previous_repository && !options[:update]
-      warn "A repository by url \"#{options[:url]}\" already exists."
+      warn "A repository by URL \"#{options[:url]}\" already exists."
       return
     elsif previous_repository && !previous_repository.custom?
-      warn "A non-custom repository by url \"#{options[:url]}\" already exists."
+      warn "A non-custom repository by URL \"#{options[:url]}\" already exists."
       return
     end
 
@@ -42,7 +42,7 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
         puts 'Successfully added custom repository.'
       end
     rescue RepositoryService::InvalidExternalUrl => e
-      warn "Invalid url \"#{e.message}\" provided."
+      warn "Invalid URL \"#{e.message}\" provided."
     end
   end
 

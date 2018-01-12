@@ -53,24 +53,24 @@ describe RMT::CLI::CustomRepos do
         end
       end
 
-      context 'invalid url' do
+      context 'invalid URL' do
         let(:argv) { ['add', option_product_id, product.id, option_url, 'http://foo.bar', option_name, 'foo'] }
 
-        it 'adds the repository to the database' do
+        it 'does not add the repository to the database' do
           expect { described_class.start(argv) }.to output(
-            "Invalid url \"http://foo.bar\" provided.\n"
+            "Invalid URL \"http://foo.bar\" provided.\n"
                                                     ).to_stderr.and output('').to_stdout
           expect(Repository.find_by(name: 'foo')).to be_nil
         end
       end
 
-      context 'duplicate repositories' do
+      context 'duplicate URL' do
         it 'does not add duplicate record to repository' do
           argv = ['add', option_product_id, product.id, option_url, external_url, option_name, 'foo']
           expect do
             create :repository, external_url: external_url, custom: true
             described_class.start(argv)
-          end.to output("A repository by url \"#{external_url}\" already exists.\n").to_stderr.and output('').to_stdout
+          end.to output("A repository by URL \"#{external_url}\" already exists.\n").to_stderr.and output('').to_stdout
         end
 
         it 'updates previous repository on --update' do
@@ -87,7 +87,7 @@ describe RMT::CLI::CustomRepos do
           expect do
             create :repository, external_url: external_url, custom: false, name: 'foobar'
             described_class.start(argv)
-          end.to output("A non-custom repository by url \"http://example.com/repos\" already exists.\n").to_stderr.and output('').to_stdout
+          end.to output("A non-custom repository by URL \"http://example.com/repos\" already exists.\n").to_stderr.and output('').to_stdout
           expect(Repository.find_by(external_url: external_url).name).to eq('foobar')
         end
       end
