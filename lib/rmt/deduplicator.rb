@@ -26,7 +26,7 @@ class RMT::Deduplicator
 
   def self.add_local(path, checksum_type, checksum)
     file_size = File.size(path)
-    DownloadedFile.add_file!(checksum_type, checksum, file_size, path)
+    DownloadedFile.add_file(checksum_type, checksum, file_size, path)
   end
 
   def self.deduplicate(checksum_type, checksum_value, destination)
