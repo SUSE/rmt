@@ -25,6 +25,7 @@ class RMT::CLI::Products < RMT::CLI::Base
     end
     puts 'Only enabled products are shown by default. Use the `--all` option to see all products.' unless options.all
   end
+  map ls: :list
 
   desc 'enable', 'Enable mirroring of product repositories by product ID or product string.'
   def enable(target)
