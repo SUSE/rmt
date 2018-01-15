@@ -17,6 +17,44 @@ RSpec.describe RMT::CLI::Main do
       end
     end
 
+    describe 'mirror' do
+      let(:argv) { ['mirror'] }
+
+      context 'without repositories marked for mirroring' do
+        before { create :repository, :with_products, mirroring_enabled: false }
+
+        it 'outputs a warning' do
+          expect_any_instance_of(RMT::Mirror).not_to receive(:mirror)
+          expect { command }.to output("There are no repositories marked for mirroring.\n").to_stderr.and output('').to_stdout
+        end
+      end
+
+      context 'with repositories marked for mirroring' do
+        let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
+
+        before { expect_any_instance_of(RMT::Mirror).to receive(:mirror) }
+
+        it 'outputs mirroring progress' do
+          expect { command }.to output(/Mirroring repository #{repository.name}/).to_stdout.and output('').to_stderr
+        end
+
+        it 'updates repository mirroring timestamp' do
+          Timecop.freeze(Time.utc(2018)) do
+            expect { command }.to change { repository.reload.last_mirrored_at }.to(DateTime.now.utc)
+                                    .and output(/Mirroring repository #{repository.name}/).to_stdout
+          end
+        end
+
+        context 'with exceptions during mirroring' do
+          before { allow_any_instance_of(RMT::Mirror).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror') }
+
+          it 'outputs exception message' do
+            expect { command }.to output("black mirror\n").to_stderr.and output(/Mirroring repository #{repository.name}/).to_stdout
+          end
+        end
+      end
+    end
+
     describe 'help' do
       let(:argv) { ['help'] }
 

@@ -2,8 +2,6 @@ require 'rmt/cli/repos'
 
 class RMT::CLI::Products < RMT::CLI::Base
 
-  default_task :list
-
   desc 'list', 'List products which are marked to be mirrored.'
   option :all, aliases: '-a', type: :boolean, desc: 'List all products, including ones which are not marked to be mirrored'
   option :release_stage, aliases: '-r', type: :string, desc: 'beta, released'
@@ -27,6 +25,7 @@ class RMT::CLI::Products < RMT::CLI::Base
     end
     puts 'Only enabled products are shown by default. Use the `--all` option to see all products.' unless options.all
   end
+  map ls: :list
 
   desc 'enable', 'Enable mirroring of product repositories by product ID or product string.'
   def enable(target)

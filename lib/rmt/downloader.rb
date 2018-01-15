@@ -24,9 +24,7 @@ class RMT::Downloader
   end
 
   def download(remote_file, checksum_type = nil, checksum_value = nil)
-    local_file = make_local_path(remote_file)
-    was_deduplicated = deduplicate(checksum_type, checksum_value, local_file)
-    return local_file if was_deduplicated
+    local_file = self.class.make_local_path(@local_path, remote_file)
 
     request_fiber = Fiber.new do
       make_request(remote_file, local_file, request_fiber, checksum_type, checksum_value)
@@ -46,17 +44,22 @@ class RMT::Downloader
     @hydra.run
   end
 
+  def self.make_local_path(root_path, remote_file)
+    filename = File.join(root_path, remote_file.gsub(/\.\./, '__'))
+    dirname = File.dirname(filename)
+
+    FileUtils.mkdir_p(dirname)
+
+    filename
+  end
+
   protected
 
   def process_queue
-    # Skip over files that already exist
-    begin
-      queue_item = @queue.shift
-      return unless queue_item
-
-      remote_file = queue_item.location
-      local_file = make_local_path(remote_file)
-    end while (File.exist?(local_file) || deduplicate(queue_item[:checksum_type], queue_item[:checksum], local_file)) # rubocop:disable Lint/Loop
+    queue_item = @queue.shift
+    return unless queue_item
+    remote_file = queue_item.location
+    local_file = self.class.make_local_path(@local_path, remote_file)
 
     # The request is wrapped into a fiber for exception handling
     request_fiber = Fiber.new do
@@ -70,15 +73,6 @@ class RMT::Downloader
     end
 
     @hydra.queue(request_fiber.resume)
-  end
-
-  def deduplicate(checksum_type, checksum_value, destination)
-    return false unless ::RMT::Deduplicator.deduplicate(checksum_type, checksum_value, destination)
-    @logger.info("→ #{File.basename(destination)}")
-    true
-  rescue ::RMT::Deduplicator::MismatchException => e
-    @logger.debug("× File does not exist or has wrong filesize, deduplication ignored #{e.message}.")
-    false
   end
 
   def make_request(remote_file, local_file, request_fiber, checksum_type = nil, checksum_value = nil)
@@ -106,26 +100,9 @@ class RMT::Downloader
     FileUtils.mv(downloaded_file.path, local_file)
     File.chmod(0o644, local_file)
 
-    add_local_to_deduplicator(local_file, checksum_type, checksum_value)
+    ::RMT::Deduplicator.add_local(local_file, checksum_type, checksum_value)
 
     @logger.info("↓ #{File.basename(local_file)}")
-  end
-
-  def add_local_to_deduplicator(path, checksum_type, checksum)
-    ::RMT::Deduplicator.add_local(path, checksum_type, checksum)
-  rescue StandardError => e
-    # we don't really care whether or not this goes to the database.
-    @logger.debug e.message
-    e.backtrace.each { |line| @logger.debug line }
-  end
-
-  def make_local_path(remote_file)
-    filename = File.join(@local_path, remote_file.gsub(/\.\./, '__'))
-    dirname = File.dirname(filename)
-
-    FileUtils.mkdir_p(dirname)
-
-    filename
   end
 
 end

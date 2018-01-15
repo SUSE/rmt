@@ -53,7 +53,18 @@ desired location.
 
 ### Offline Mode
 
-RMT supports disconnected setups, similiar to [how SMT does](https://www.suse.com/documentation/sles-12/book_smt/data/smt_disconnected.html). Follow these steps to set it up:
+RMT supports disconnected setups, similiar to [how SMT does](https://www.suse.com/documentation/sles-12/book_smt/data/smt_disconnected.html).
+
+The supported scenarios are shown in the table below:
+
+| Online | Offline      |
+|--------|--------------|
+| SMT    | SMT          |
+| SMT    | SUSE Manager |
+| RMT    | RMT          |
+| RMT    | SUSE Manager |
+
+Connecting an SMT with an RMT this way is not supported.
 
 #### Inital Setup
 
