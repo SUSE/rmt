@@ -38,5 +38,4 @@ class RMT::CLI::Export < RMT::CLI::Base
     end
   end
 
-
 end
