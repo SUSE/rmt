@@ -9,7 +9,8 @@ class Repository < ApplicationRecord
 
   scope :only_installer_updates, -> { unscope(where: :installer_updates).where(installer_updates: true) }
   scope :only_mirrored, -> { where(mirroring_enabled: true) }
-  scope :only_custom, -> { where(custom: true) }
+  scope :only_custom, -> { where(scc_id: nil) }
+  scope :only_scc, -> { where.not(scc_id: nil) }
 
   validates :name, presence: true
   validates :external_url, presence: true
@@ -17,10 +18,6 @@ class Repository < ApplicationRecord
 
 
   class << self
-
-    def random_id
-      SecureRandom.uuid.delete('-')[0...6]
-    end
 
     def remove_suse_repos_without_tokens!
       where(auth_token: nil).where('external_url LIKE ?', 'https://updates.suse.com%').delete_all
@@ -49,6 +46,10 @@ class Repository < ApplicationRecord
 
   def change_mirroring!(mirroring_enabled)
     update_column(:mirroring_enabled, mirroring_enabled)
+  end
+
+  def custom?
+    scc_id.nil?
   end
 
 end

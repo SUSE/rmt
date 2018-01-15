@@ -138,14 +138,14 @@ class RMT::SCC
     service = @product_service.get_service(product)
 
     item[:repositories].each do |repo_item|
-      @repository_service.create_repository(service, repo_item[:url], repo_item, false)
+      @repository_service.create_repository(service, repo_item[:url], repo_item)
     end
   end
 
   def update_auth_token(item)
     uri = URI(item[:url])
     auth_token = uri.query
-    Repository.find(item[:id]).update! auth_token: auth_token
+    Repository.find_by(scc_id: item[:id]).update! auth_token: auth_token
   end
 
   def create_subscription(item)

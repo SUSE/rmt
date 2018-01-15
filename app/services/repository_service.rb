@@ -11,16 +11,17 @@ class RepositoryService
     Repository.find_by(external_url: url)
   end
 
-  def create_repository(product_service, url, attributes, is_custom_repo = false)
+  def create_repository(product_service, url, attributes, is_custom_repository = false)
     repository = Repository.find_or_initialize_by(external_url: url)
 
     # TODO: See if we can clean this up
-    repository.attributes = attributes.select { |k, _| repository.attributes.keys.member?(k.to_s) }
+    repository.attributes = attributes.select do |k, _|
+      repository.attributes.keys.member?(k.to_s) && k.to_s != 'id'
+    end
+    repository.scc_id = attributes[:id] unless is_custom_repository
 
     repository.external_url = url
     repository.local_path = Repository.make_local_path(url)
-    repository.custom = is_custom_repo
-    repository.id ||= Repository.random_id
 
     raise InvalidExternalUrl.new(url) if repository.local_path.to_s == ''
 

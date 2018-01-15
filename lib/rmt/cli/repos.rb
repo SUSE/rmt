@@ -1,6 +1,6 @@
 class RMT::CLI::Repos < RMT::CLI::Base
 
-  include ::RMT::CLI::RepoPrintable
+  include ::RMT::CLI::ArrayPrintable
 
   desc 'custom', 'Custom Repositories'
   subcommand 'custom', RMT::CLI::CustomRepos
@@ -57,7 +57,7 @@ class RMT::CLI::Repos < RMT::CLI::Base
   end
 
   def list_repositories(scope: :enabled)
-    repositories = (scope == :all) ? Repository.all : Repository.only_mirrored
+    repositories = (scope == :all) ? Repository.only_scc : Repository.only_scc.only_mirrored
 
     if repositories.empty?
       if options.all
@@ -66,7 +66,14 @@ class RMT::CLI::Repos < RMT::CLI::Base
         warn 'No repositories enabled.'
       end
     else
-      puts repositories_to_table(repositories)
+      puts array_to_table(repositories, {
+        scc_id: 'SCC ID',
+        name: 'Name',
+        description: 'Description',
+        enabled: 'Mandatory?',
+        mirroring_enabled: 'Mirror?',
+        last_mirrored_at: 'Last mirrored'
+      })
     end
   end
 

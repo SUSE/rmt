@@ -1,6 +1,6 @@
 class RMT::CLI::CustomRepos < RMT::CLI::Base
 
-  include ::RMT::CLI::RepoPrintable
+  include ::RMT::CLI::ArrayPrintable
 
   desc 'add', 'Adds a custom repository to a product'
   option :name, aliases: '-n', type: :string, desc: 'The name of the custom repository', required: true
@@ -31,7 +31,6 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
       repository_service.create_repository(service, options[:url], {
         name: options[:name],
         mirroring_enabled: true,
-        description: options[:name],
         autorefresh: 1,
         enabled: 0
       }, true)
@@ -53,7 +52,13 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
     if repositories.empty?
       warn 'No custom repositories found.'
     else
-      puts repositories_to_table(repositories)
+      puts array_to_table(repositories, {
+        id: 'ID',
+        name: 'Name',
+        enabled: 'Mandatory?',
+        mirroring_enabled: 'Mirror?',
+        last_mirrored_at: 'Last Mirrored'
+      })
     end
   end
   map ls: :list

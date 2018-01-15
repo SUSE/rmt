@@ -124,7 +124,7 @@ RSpec.describe RMT::CLI::Repos do
           let(:expected_output) do
             rows = []
             rows << [
-              repository_one.id,
+              repository_one.scc_id,
               repository_one.name,
               repository_one.description,
               repository_one.enabled,
@@ -132,7 +132,7 @@ RSpec.describe RMT::CLI::Repos do
               repository_one.last_mirrored_at
             ]
             Terminal::Table.new(
-              headings: ['ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'],
+              headings: ['SCC ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'],
               rows: rows
             ).to_s + "\n"
           end
@@ -147,7 +147,7 @@ RSpec.describe RMT::CLI::Repos do
           let(:expected_output) do
             rows = []
             rows << [
-              repository_one.id,
+              repository_one.scc_id,
               repository_one.name,
               repository_one.description,
               repository_one.enabled,
@@ -155,7 +155,7 @@ RSpec.describe RMT::CLI::Repos do
               repository_one.last_mirrored_at
             ]
             rows << [
-              repository_two.id,
+              repository_two.scc_id,
               repository_two.name,
               repository_two.description,
               repository_two.enabled,
@@ -163,7 +163,7 @@ RSpec.describe RMT::CLI::Repos do
               repository_two.last_mirrored_at
             ]
             Terminal::Table.new(
-              headings: ['ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'],
+              headings: ['SCC ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'],
               rows: rows
             ).to_s + "\n"
           end
