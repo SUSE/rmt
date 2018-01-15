@@ -18,7 +18,14 @@ class RMT::CLI::Main < RMT::CLI::Base
   subcommand 'repos', RMT::CLI::Repos
 
   desc 'mirror', 'Mirror repositories'
-  subcommand 'mirror', RMT::CLI::Mirror
+  def mirror
+    repos = Repository.where(mirroring_enabled: true)
+    if repos.empty?
+      warn 'There are no repositories marked for mirroring.'
+      return
+    end
+    repos.each { |repo| mirror!(repo) }
+  end
 
   desc 'import', 'Import commands for Offline Sync'
   subcommand 'import', RMT::CLI::Import
