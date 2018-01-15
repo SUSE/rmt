@@ -2,34 +2,30 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
 
   include ::RMT::CLI::ArrayPrintable
 
-  desc 'add', 'Add a custom repository to a product'
-  option :name, aliases: '-n', type: :string, desc: 'The name of the custom repository', required: true
-  option :url, aliases: '-u', type: :string, desc: 'Absolute external URL to this repository', required: true
+  desc 'add URL NAME PRODUCT_ID', 'Add a custom repository to a product'
   option :update, type: :boolean, desc: 'Update repository instead of ignore when it already exists', default: false
-  option :product_id, aliases: '-p', type: :string, required: true,
-         desc: 'The id of the product where the repository should be added. Use `rmt-cli products list` to see products'
-  def add
-    product = Product.find_by(id: options[:product_id])
+  def add(url, name, product_id)
+    product = Product.find_by(id: product_id)
 
     if product.nil?
-      warn "Cannot find product by id #{options[:product_id]}."
+      warn "Cannot find product by id #{product_id}."
       return
     end
 
     service = product_service.get_service(product)
-    previous_repository = repository_service.repository_by_url(options[:url])
+    previous_repository = repository_service.repository_by_url(url)
 
     if previous_repository && !options[:update]
-      warn "A repository by URL \"#{options[:url]}\" already exists."
+      warn "A repository by URL \"#{url}\" already exists."
       return
     elsif previous_repository && !previous_repository.custom?
-      warn "A non-custom repository by URL \"#{options[:url]}\" already exists."
+      warn "A non-custom repository by URL \"#{url}\" already exists."
       return
     end
 
     begin
-      repository_service.create_repository(service, options[:url], {
-        name: options[:name],
+      repository_service.create_repository(service, url, {
+        name: name,
         mirroring_enabled: true,
         autorefresh: 1,
         enabled: 0
@@ -45,7 +41,7 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
     end
   end
 
-  desc 'ls', 'Lists the custom repositories used in RMT'
+  desc 'list', 'List all custom repositories'
   def list
     repositories = Repository.only_custom
 
@@ -63,7 +59,7 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
   end
   map ls: :list
 
-  desc 'rm REPOSITORY_ID', 'Removes a custom repository from RMT'
+  desc 'remove ID', 'Remove a custom repository'
   def remove(repository_id)
     repository = repository_service.repository_by_id(repository_id)
 
