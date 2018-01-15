@@ -1,5 +1,3 @@
-require 'securerandom'
-
 class Repository < ApplicationRecord
 
   has_many :repositories_services_associations
