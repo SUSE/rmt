@@ -3,7 +3,6 @@ require 'terminal-table'
 
 class RMT::CLI::Main < RMT::CLI::Base
 
-  class_option :version, desc: 'Show RMT version', type: :boolean, aliases: '-v', required: false
   class_option :debug, desc: 'Enable debug output', type: :boolean, aliases: '-d', required: false
 
   desc 'sync', 'Sync database with SUSE Customer Center'
