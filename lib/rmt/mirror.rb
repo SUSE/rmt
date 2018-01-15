@@ -3,7 +3,8 @@ require 'rmt/rpm'
 
 class RMT::Mirror
 
-  class RMT::Mirror::Exception < RuntimeError; end
+  class RMT::Mirror::Exception < RuntimeError
+  end
 
   def initialize(mirroring_base_dir:, repository_url:, local_path:, mirror_src: false, auth_token: nil, logger: nil)
     @mirroring_base_dir = mirroring_base_dir
@@ -118,8 +119,9 @@ class RMT::Mirror
   end
 
   def mirror_data
+    root_path = File.join(@mirroring_base_dir, @local_path)
     @downloader.repository_url = @repository_url
-    @downloader.local_path = File.join(@mirroring_base_dir, @local_path)
+    @downloader.local_path = root_path
 
     @deltainfo_files.each do |filename|
       parser = RMT::Rpm::DeltainfoXmlParser.new(
@@ -127,7 +129,8 @@ class RMT::Mirror
         @mirror_src
       )
       parser.parse
-      @downloader.download_multi(parser.referenced_files)
+      to_download = parsed_files_after_dedup(root_path, parser.referenced_files)
+      @downloader.download_multi(to_download) unless to_download.empty?
     end
 
     @primary_files.each do |filename|
@@ -136,7 +139,8 @@ class RMT::Mirror
         @mirror_src
       )
       parser.parse
-      @downloader.download_multi(parser.referenced_files)
+      to_download = parsed_files_after_dedup(root_path, parser.referenced_files)
+      @downloader.download_multi(to_download) unless to_download.empty?
     end
   end
 
@@ -151,6 +155,29 @@ class RMT::Mirror
     FileUtils.mv(new_repodata, repodata)
   ensure
     FileUtils.remove_entry(@repodata_dir)
+  end
+
+  private
+
+  def deduplicate(checksum_type, checksum_value, destination)
+    return false unless ::RMT::Deduplicator.deduplicate(checksum_type, checksum_value, destination)
+    @logger.info("→ #{File.basename(destination)}")
+    true
+  rescue ::RMT::Deduplicator::MismatchException => e
+    @logger.debug("× File does not exist or has wrong filesize, deduplication ignored #{e.message}.")
+    false
+  end
+
+  def parsed_files_after_dedup(root_path, referenced_files)
+    files = referenced_files.map do |parsed_file|
+      local_file = ::RMT::Downloader.make_local_path(root_path, parsed_file.location)
+      if File.exist?(local_file) || deduplicate(parsed_file[:checksum_type], parsed_file[:checksum], local_file)
+        nil
+      else
+        parsed_file
+      end
+    end
+    files.compact
   end
 
 end
