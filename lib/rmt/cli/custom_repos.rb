@@ -3,7 +3,6 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
   include ::RMT::CLI::ArrayPrintable
 
   desc 'add URL NAME PRODUCT_ID', 'Add a custom repository to a product'
-  option :update, type: :boolean, desc: 'Update repository instead of ignore when it already exists', default: false
   def add(url, name, product_id)
     product = Product.find_by(id: product_id)
 
@@ -15,10 +14,7 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
     service = product_service.get_service(product)
     previous_repository = repository_service.repository_by_url(url)
 
-    if previous_repository && !options[:update]
-      warn "A repository by URL \"#{url}\" already exists."
-      return
-    elsif previous_repository && !previous_repository.custom?
+    if previous_repository && !previous_repository.custom?
       warn "A non-custom repository by URL \"#{url}\" already exists."
       return
     end
@@ -31,11 +27,7 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
         enabled: 0
       }, true)
 
-      if previous_repository
-        puts 'Successfully updated custom repository.'
-      else
-        puts 'Successfully added custom repository.'
-      end
+      puts 'Successfully added custom repository.'
     rescue RepositoryService::InvalidExternalUrl => e
       warn "Invalid URL \"#{e.message}\" provided."
     end
