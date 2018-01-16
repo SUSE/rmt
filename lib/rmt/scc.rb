@@ -143,7 +143,7 @@ class RMT::SCC
   def update_auth_token(item)
     uri = URI(item[:url])
     auth_token = uri.query
-    Repository.find_by(scc_id: item[:id]).update! auth_token: auth_token
+    Repository.by_id(item[:id]).update! auth_token: auth_token
   end
 
   def create_subscription(item)

@@ -37,10 +37,6 @@ class Repository < ApplicationRecord
       Repository.find_by(external_url: url)
     end
 
-    def remove_if_custom(repository)
-      return nil unless repository.custom?
-      repository.destroy!
-    end
 
   end
 
@@ -54,6 +50,10 @@ class Repository < ApplicationRecord
 
   def custom?
     scc_id.nil?
+  end
+
+  def remove_if_custom
+    destroy! if custom?
   end
 
 end
