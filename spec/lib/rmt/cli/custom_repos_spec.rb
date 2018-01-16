@@ -8,7 +8,7 @@ describe RMT::CLI::CustomRepos do
   let(:product) { create :product }
   let(:external_url) { 'http://example.com/repos' }
 
-  describe 'add' do
+  describe '#add' do
     context 'product does not exist' do
       let(:argv) { ['add', external_url, 'foo', 'foobarz'] }
 
@@ -49,8 +49,8 @@ describe RMT::CLI::CustomRepos do
     end
   end
 
-  %w[list ls].each do |command|
-    describe command do
+  describe '#list' do
+    shared_context 'rmt-cli custom repos list' do |command|
       let(:argv) { [command] }
 
       context 'empty repository list' do
@@ -67,11 +67,13 @@ describe RMT::CLI::CustomRepos do
         end
       end
     end
+
+    it_behaves_like 'rmt-cli custom repos list', 'list'
+    it_behaves_like 'rmt-cli custom repos list', 'ls'
   end
 
-
-  %w[remove rm].each do |command|
-    describe command do
+  describe '#remove' do
+    shared_context 'rmt-cli custom repos remove' do |command|
       let(:suse_repository) { create :repository, name: 'awesome-rmt-repo' }
       let(:custom_repository) { create :repository, :custom, name: 'custom foo' }
 
@@ -114,5 +116,9 @@ describe RMT::CLI::CustomRepos do
         end
       end
     end
+
+    it_behaves_like 'rmt-cli custom repos remove', 'remove'
+    it_behaves_like 'rmt-cli custom repos remove', 'rm'
   end
+
 end

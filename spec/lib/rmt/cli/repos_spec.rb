@@ -93,8 +93,8 @@ RSpec.describe RMT::CLI::Repos do
     end
   end
 
-  %w[list ls].each do |command_name|
-    describe "##{command_name}" do
+  describe '#list' do
+    shared_context 'rmt-cli repos list' do |command_name|
       subject(:command) { described_class.start(argv) }
 
       context 'without enabled repositories' do
@@ -174,5 +174,8 @@ RSpec.describe RMT::CLI::Repos do
         end
       end
     end
+
+    it_behaves_like 'rmt-cli repos list', 'list'
+    it_behaves_like 'rmt-cli repos list', 'ls'
   end
 end
