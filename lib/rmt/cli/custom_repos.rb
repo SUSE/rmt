@@ -20,12 +20,12 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
     end
 
     begin
-      repository_service.create_repository(service, url, {
+      create_repository_service.call(service, url, {
         name: name,
         mirroring_enabled: true,
         autorefresh: 1,
         enabled: 0
-      }, true)
+      }, custom: true)
 
       puts 'Successfully added custom repository.'
     rescue CreateRepositoryService::InvalidExternalUrl => e
@@ -53,27 +53,26 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
 
   desc 'remove ID', 'Remove a custom repository'
   def remove(repository_id)
-    repository = Repository.by_id(repository_id, true)
+    repository = Repository.by_id(repository_id, custom: true)
 
     if repository.nil?
       warn "Cannot find custom repository by id \"#{repository_id}\"."
       return
     end
 
-    unless repository.custom?
+    unless Repository.remove_if_custom(repository)
       warn 'Cannot remove non-custom repositories.'
       return
     end
 
-    Repository.remove(repository)
     puts "Removed custom repository by id \"#{repository.id}\"."
   end
   map rm: :remove
 
   private
 
-  def repository_service
-    @repository_service ||= ::CreateRepositoryService.new
+  def create_repository_service
+    @create_repository_service ||= CreateRepositoryService.new
   end
 
 end

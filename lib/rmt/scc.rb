@@ -9,7 +9,6 @@ class RMT::SCC
   def initialize(options = {})
     @logger = Logger.new(STDOUT)
     @logger.level = (options[:debug]) ? Logger::DEBUG : Logger::INFO
-    @repository_service = CreateRepositoryService.new
   end
 
   def sync
@@ -137,7 +136,7 @@ class RMT::SCC
     service = product.service
 
     item[:repositories].each do |repo_item|
-      @repository_service.create_repository(service, repo_item[:url], repo_item)
+      create_repository_service.call(service, repo_item[:url], repo_item)
     end
   end
 
@@ -159,6 +158,12 @@ class RMT::SCC
       subscription_product_class.product_class = item_class
       subscription_product_class.save!
     end
+  end
+
+  private
+
+  def create_repository_service
+    @create_repository_service ||= CreateRepositoryService.new
   end
 
 end

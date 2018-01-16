@@ -28,7 +28,7 @@ class Repository < ApplicationRecord
       path
     end
 
-    def by_id(repository_id, custom = false)
+    def by_id(repository_id, custom: false)
       return Repository.find_by(id: repository_id) if custom
       Repository.find_by(scc_id: repository_id)
     end
@@ -37,8 +37,8 @@ class Repository < ApplicationRecord
       Repository.find_by(external_url: url)
     end
 
-    def remove(repository)
-      return unless repository.custom?
+    def remove_if_custom(repository)
+      return false unless repository.custom?
       repository.destroy!
     end
 

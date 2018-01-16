@@ -120,5 +120,4 @@ describe RMT::CLI::CustomRepos do
     it_behaves_like 'rmt-cli custom repos remove', 'remove'
     it_behaves_like 'rmt-cli custom repos remove', 'rm'
   end
-
 end

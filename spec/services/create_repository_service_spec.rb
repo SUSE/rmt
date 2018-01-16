@@ -10,7 +10,7 @@ describe CreateRepositoryService do
   describe '#create_repository' do
     before do
       product_service = Service.find_or_create_by(product_id: product.id)
-      service.create_repository(product_service, 'http://foo.bar/repos', {
+      service.call(product_service, 'http://foo.bar/repos', {
         name: 'foo',
         mirroring_enabled: true,
         description: 'foo',
@@ -24,7 +24,7 @@ describe CreateRepositoryService do
     it 'returns error on invalid repository url' do
       product_service = Service.find_or_create_by(product_id: product.id)
       expect do
-        service.create_repository(product_service, 'http://foo.bar', {
+        service.call(product_service, 'http://foo.bar', {
           name: 'foo',
           mirroring_enabled: true,
           description: 'foo',

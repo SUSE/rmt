@@ -3,14 +3,14 @@ class CreateRepositoryService
   class InvalidExternalUrl < RuntimeError
   end
 
-  def create_repository(product_service, url, attributes, is_custom_repository = false)
+  def call(product_service, url, attributes, custom: false)
     repository = Repository.find_or_initialize_by(external_url: url)
 
     # TODO: See if we can clean this up
     repository.attributes = attributes.select do |k, _|
       repository.attributes.keys.member?(k.to_s) && k.to_s != 'id'
     end
-    repository.scc_id = attributes[:id] unless is_custom_repository
+    repository.scc_id = attributes[:id] unless custom
 
     repository.external_url = url
     repository.local_path = Repository.make_local_path(url)
