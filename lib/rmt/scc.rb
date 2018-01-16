@@ -9,7 +9,7 @@ class RMT::SCC
   def initialize(options = {})
     @logger = Logger.new(STDOUT)
     @logger.level = (options[:debug]) ? Logger::DEBUG : Logger::INFO
-    @repository_service = RepositoryService.new
+    @repository_service = CreateRepositoryService.new
   end
 
   def sync

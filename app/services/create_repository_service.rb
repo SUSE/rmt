@@ -1,14 +1,6 @@
-class RepositoryService
+class CreateRepositoryService
 
   class InvalidExternalUrl < RuntimeError
-  end
-
-  def repository_by_id(repository_id)
-    Repository.find_by(id: repository_id)
-  end
-
-  def repository_by_url(url)
-    Repository.find_by(external_url: url)
   end
 
   def create_repository(product_service, url, attributes, is_custom_repository = false)
@@ -35,11 +27,6 @@ class RepositoryService
     end
 
     repository
-  end
-
-  def remove_repository(repository)
-    return unless repository.custom?
-    repository.destroy!
   end
 
 end

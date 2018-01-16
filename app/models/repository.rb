@@ -14,7 +14,6 @@ class Repository < ApplicationRecord
   validates :external_url, presence: true
   validates :local_path, presence: true
 
-
   class << self
 
     def remove_suse_repos_without_tokens!
@@ -27,6 +26,20 @@ class Repository < ApplicationRecord
       path = uri.path.to_s
       path.gsub!(%r{^/repo}, '') if (uri.hostname == 'updates.suse.com')
       path
+    end
+
+    def by_id(repository_id, custom = false)
+      return Repository.find_by(id: repository_id) if custom
+      Repository.find_by(scc_id: repository_id)
+    end
+
+    def by_url(url)
+      Repository.find_by(external_url: url)
+    end
+
+    def remove(repository)
+      return unless repository.custom?
+      repository.destroy!
     end
 
   end

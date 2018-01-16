@@ -37,4 +37,21 @@ RSpec.describe Repository, type: :model do
       it { is_expected.to eq('/repo/dummy_repo/') }
     end
   end
+
+  describe '#remove_repository' do
+    let(:custom_repository) { create :repository, :custom }
+    let(:suse_repository) { create :repository }
+
+    it('has custom repository') { expect(Repository.find_by(id: custom_repository.id)).not_to be_nil }
+    it('removes custom repositories') do
+      Repository.remove(custom_repository)
+      expect(Repository.find_by(id: custom_repository.id)).to be_nil
+    end
+
+    it('has non-custom repository') { expect(Repository.find_by(id: suse_repository.id)).not_to be_nil }
+    it('does not remove non-custom repositories') do
+      Repository.remove(suse_repository)
+      expect(Repository.find_by(id: suse_repository.id)).not_to be_nil
+    end
+  end
 end
