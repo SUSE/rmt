@@ -38,7 +38,7 @@ class Repository < ApplicationRecord
     end
 
     def remove_if_custom(repository)
-      return false unless repository.custom?
+      return nil unless repository.custom?
       repository.destroy!
     end
 
