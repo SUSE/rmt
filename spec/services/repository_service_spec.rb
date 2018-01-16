@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe RepositoryService do
+describe RepositoryService do
   subject(:service) { described_class.new }
 
   let(:product) { create :product }

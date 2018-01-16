@@ -21,13 +21,6 @@ class Repository < ApplicationRecord
       where(auth_token: nil).where('external_url LIKE ?', 'https://updates.suse.com%').delete_all
     end
 
-    def only_mirrored_ids
-      Repository.only_mirrored.pluck(:id).map do |string|
-        integer = Integer(string) rescue false
-        integer ? integer : string
-      end
-    end
-
     # Mangles remote repo URL to make a nicer local path, see specs for examples
     def make_local_path(url)
       uri = URI(url)

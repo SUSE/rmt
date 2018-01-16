@@ -10,7 +10,6 @@ class RMT::SCC
     @logger = Logger.new(STDOUT)
     @logger.level = (options[:debug]) ? Logger::DEBUG : Logger::INFO
     @repository_service = RepositoryService.new
-    @product_service = ProductService.new
   end
 
   def sync
@@ -135,7 +134,7 @@ class RMT::SCC
   end
 
   def create_service(item, product)
-    service = @product_service.get_service(product)
+    service = product.service
 
     item[:repositories].each do |repo_item|
       @repository_service.create_repository(service, repo_item[:url], repo_item)

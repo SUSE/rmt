@@ -11,7 +11,7 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
       return
     end
 
-    service = product_service.get_service(product)
+    service = product.service
     previous_repository = repository_service.repository_by_url(url)
 
     if previous_repository && !previous_repository.custom?
@@ -74,10 +74,6 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
 
   def repository_service
     @repository_service ||= ::RepositoryService.new
-  end
-
-  def product_service
-    @product_service ||= ::ProductService.new
   end
 
 end

@@ -79,9 +79,7 @@ describe RMT::CLI::CustomRepos do
         let(:argv) { [command, 'totally_wrong'] }
 
         before do
-          expect { described_class.start(argv) }.to output(
-            "Cannot find custom repository by id \"totally_wrong\".\n"
-                                                    ).to_stderr
+          expect { described_class.start(argv) }.to output("Cannot find custom repository by id \"totally_wrong\".\n").to_stderr
         end
         it 'does not delete suse repository' do
           expect(Repository.find_by(id: suse_repository.id)).not_to be_nil
