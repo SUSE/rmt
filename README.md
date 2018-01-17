@@ -149,7 +149,7 @@ EOFF
 
 ### Packaging
 
-The package is build in the OBS at: https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT/rmt-server
+The package is built in the OBS at: https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT/rmt-server
 
 1. Checkout/update OBS working copy:
       * If the OBS project is not checked out, check out working copy of OBS project into a separate directory, e.g.:
