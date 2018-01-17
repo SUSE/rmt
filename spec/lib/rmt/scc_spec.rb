@@ -86,6 +86,42 @@ describe RMT::SCC do
 
       include_examples 'saves in database'
     end
+
+    context 'with SLES15 product tree' do
+      let!(:products) { JSON.parse(file_fixture('products/sles15_tree.json').read, symbolize_names: true) }
+      let!(:subscriptions) { [] }
+      let(:all_repositories) { [] }
+
+      let(:sles) { Product.find_by(identifier: 'SLES') }
+      let(:sled) { Product.find_by(identifier: 'SLED') }
+
+      before do
+        allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
+        described_class.new.sync
+      end
+
+      include_examples 'saves in database'
+
+      it 'SLES has the correct extension tree' do
+        basesystem = sles.extensions.first
+        desktop = basesystem.extensions.for_root_product(sles).first
+        sle_we  = desktop.extensions.for_root_product(sles).first
+
+        expect([basesystem, desktop, sle_we].map(&:identifier)).to eq(
+          ['sle-module-basesystem', 'sle-module-desktop', 'sle-module-we']
+        )
+      end
+
+      it 'SLED has the correct extension tree' do
+        basesystem = sled.extensions.first
+        desktop = basesystem.extensions.for_root_product(sled).first
+        productivity = desktop.extensions.for_root_product(sled).first
+
+        expect([basesystem, desktop, productivity].map(&:identifier)).to eq(
+          ['sle-module-basesystem', 'sle-module-desktop', 'sle-module-desktop-productivity']
+        )
+      end
+    end
   end
 
   describe '#remove_suse_repos_without_tokens' do
