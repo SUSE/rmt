@@ -88,8 +88,8 @@ describe RMT::SCC do
     end
 
     context 'with SLES15 product tree' do
-      let!(:products) { JSON.parse(file_fixture('products/sles15_tree.json').read, symbolize_names: true) }
-      let!(:subscriptions) { [] }
+      let(:products) { JSON.parse(file_fixture('products/sle15_tree.json').read, symbolize_names: true) }
+      let(:subscriptions) { [] }
       let(:all_repositories) { [] }
 
       let(:sles) { Product.find_by(identifier: 'SLES') }
