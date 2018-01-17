@@ -60,7 +60,7 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
       return
     end
 
-    unless repository.remove_if_custom
+    unless repository.destroy
       warn 'Cannot remove non-custom repositories.'
       return
     end

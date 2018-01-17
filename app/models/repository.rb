@@ -14,6 +14,8 @@ class Repository < ApplicationRecord
   validates :external_url, presence: true
   validates :local_path, presence: true
 
+  before_destroy :ensure_destroy_possible
+
   class << self
 
     def remove_suse_repos_without_tokens!
@@ -37,7 +39,6 @@ class Repository < ApplicationRecord
       Repository.find_by(external_url: url)
     end
 
-
   end
 
   def refresh_timestamp!
@@ -52,8 +53,10 @@ class Repository < ApplicationRecord
     scc_id.nil?
   end
 
-  def remove_if_custom
-    destroy! if custom?
+  private
+
+  def ensure_destroy_possible
+    throw(:abort) unless custom?
   end
 
 end
