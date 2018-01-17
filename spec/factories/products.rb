@@ -18,13 +18,15 @@ FactoryGirl.define do
       base_products []
       predecessor nil
       root_product nil
+      recommended false
     end
 
     after :create do |product, evaluator|
       evaluator.base_products.each do |base_product|
         product.product_extensions_associations << ProductsExtensionsAssociation.create(
           product: base_product,
-          root_product: evaluator.root_product || base_product
+          root_product: evaluator.root_product || base_product,
+          recommended: evaluator.recommended
         )
       end
 
