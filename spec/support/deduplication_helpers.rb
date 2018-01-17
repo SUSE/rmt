@@ -3,7 +3,7 @@ def deduplication_method(method)
 end
 
 def add_downloaded_file(checksum_type, checksum, path)
-  DownloadedFile.add_file!(checksum_type, checksum, File.size(path), path)
+  DownloadedFile.add_file(checksum_type, checksum, File.size(path), path)
 rescue StandardError
   nil
 end
