@@ -94,83 +94,88 @@ RSpec.describe RMT::CLI::Repos do
   end
 
   describe '#list' do
-    subject(:command) { described_class.start(argv) }
+    shared_context 'rmt-cli repos list' do |command_name|
+      subject(:command) { described_class.start(argv) }
 
-    context 'without enabled repositories' do
-      let(:argv) { ['list'] }
+      context 'without enabled repositories' do
+        let(:argv) { [command_name] }
 
-      it 'outputs success message' do
-        expect { command }.to output("No repositories enabled.\n").to_stderr
+        it 'outputs success message' do
+          expect { command }.to output("No repositories enabled.\n").to_stderr
+        end
+
+        context 'with --all option' do
+          let(:argv) { [command_name, '--all'] }
+
+          it 'warns about running sync command first' do
+            expect { described_class.start(argv) }.to output(
+              "Run \"rmt-cli sync\" to synchronize with your SUSE Customer Center data first.\n"
+                                                      ).to_stderr
+          end
+        end
       end
 
-      context 'with --all option' do
-        let(:argv) { ['list', '--all'] }
+      context 'with enabled repositories' do
+        let!(:repository_one) { FactoryGirl.create :repository, :with_products, mirroring_enabled: true }
+        let!(:repository_two) { FactoryGirl.create :repository, :with_products, mirroring_enabled: false }
 
-        it 'warns about running sync command first' do
-          expect { described_class.start(argv) }.to output(
-            "Run \"rmt-cli sync\" to synchronize with your SUSE Customer Center data first.\n"
-          ).to_stderr
+        context 'without parameters' do
+          let(:argv) { [command_name] }
+          let(:expected_output) do
+            rows = []
+            rows << [
+              repository_one.scc_id,
+              repository_one.name,
+              repository_one.description,
+              repository_one.enabled,
+              repository_one.mirroring_enabled,
+              repository_one.last_mirrored_at
+            ]
+            Terminal::Table.new(
+              headings: ['SCC ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'],
+              rows: rows
+            ).to_s + "\n"
+          end
+
+          it 'outputs success message' do
+            expect { command }.to output(expected_output).to_stdout
+          end
+        end
+
+        describe "#{command_name} --all" do
+          let(:argv) { [command_name, '--all'] }
+          let(:expected_output) do
+            rows = []
+            rows << [
+              repository_one.scc_id,
+              repository_one.name,
+              repository_one.description,
+              repository_one.enabled,
+              repository_one.mirroring_enabled,
+              repository_one.last_mirrored_at
+            ]
+            rows << [
+              repository_two.scc_id,
+              repository_two.name,
+              repository_two.description,
+              repository_two.enabled,
+              repository_two.mirroring_enabled,
+              repository_two.last_mirrored_at
+            ]
+            Terminal::Table.new(
+              headings: ['SCC ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'],
+              rows: rows
+            ).to_s + "\n"
+          end
+
+          it 'outputs success message' do
+            expect { command }.to output(expected_output).to_stdout
+          end
         end
       end
     end
 
-    context 'with enabled repositories' do
-      let!(:repository_one) { FactoryGirl.create :repository, :with_products, mirroring_enabled: true }
-      let!(:repository_two) { FactoryGirl.create :repository, :with_products, mirroring_enabled: false }
-
-      context 'without parameters' do
-        let(:argv) { ['list'] }
-        let(:expected_output) do
-          rows = []
-          rows << [
-            repository_one.id,
-            repository_one.name,
-            repository_one.description,
-            repository_one.enabled,
-            repository_one.mirroring_enabled,
-            repository_one.last_mirrored_at
-          ]
-          Terminal::Table.new(
-            headings: ['ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'],
-            rows: rows
-          ).to_s + "\n"
-        end
-
-        it 'outputs success message' do
-          expect { command }.to output(expected_output).to_stdout
-        end
-      end
-
-      context 'list all' do
-        let(:argv) { [ 'list', '--all' ] }
-        let(:expected_output) do
-          rows = []
-          rows << [
-            repository_one.id,
-            repository_one.name,
-            repository_one.description,
-            repository_one.enabled,
-            repository_one.mirroring_enabled,
-            repository_one.last_mirrored_at
-          ]
-          rows << [
-            repository_two.id,
-            repository_two.name,
-            repository_two.description,
-            repository_two.enabled,
-            repository_two.mirroring_enabled,
-            repository_two.last_mirrored_at
-          ]
-          Terminal::Table.new(
-            headings: ['ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'],
-            rows: rows
-          ).to_s + "\n"
-        end
-
-        it 'outputs success message' do
-          expect { command }.to output(expected_output).to_stdout
-        end
-      end
-    end
+    it_behaves_like 'rmt-cli repos list', 'list'
+    it_behaves_like 'rmt-cli repos list', 'ls'
   end
 end

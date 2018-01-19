@@ -33,7 +33,7 @@ class RMT::CLI::Export < RMT::CLI::Base
       repos_ids = JSON.parse(File.read(repos_file))
       repos_ids.each do |id|
         repo = Repository.find_by(id: id)
-        repo ? mirror(repo, to: path) : warn("No repo with id #{id} found in database.")
+        repo ? mirror!(repo, to: path) : warn("No repo with id #{id} found in database.")
       end
     end
   end

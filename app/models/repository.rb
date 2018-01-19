@@ -7,17 +7,38 @@ class Repository < ApplicationRecord
 
   scope :only_installer_updates, -> { unscope(where: :installer_updates).where(installer_updates: true) }
   scope :only_mirrored, -> { where(mirroring_enabled: true) }
+  scope :only_custom, -> { where(scc_id: nil) }
+  scope :only_scc, -> { where.not(scc_id: nil) }
 
   validates :name, presence: true
   validates :external_url, presence: true
   validates :local_path, presence: true
 
-  # Mangles remote repo URL to make a nicer local path, see specs for examples
-  def self.make_local_path(url)
-    uri = URI(url)
-    path = uri.path.to_s
-    path.gsub!(%r{^/repo}, '') if (uri.hostname == 'updates.suse.com')
-    path
+  before_destroy :ensure_destroy_possible
+
+  class << self
+
+    def remove_suse_repos_without_tokens!
+      where(auth_token: nil).where('external_url LIKE ?', 'https://updates.suse.com%').delete_all
+    end
+
+    # Mangles remote repo URL to make a nicer local path, see specs for examples
+    def make_local_path(url)
+      uri = URI(url)
+      path = uri.path.to_s
+      path.gsub!(%r{^/repo}, '') if (uri.hostname == 'updates.suse.com')
+      path
+    end
+
+    def by_id(repository_id, custom: false)
+      return Repository.find_by(id: repository_id) if custom
+      Repository.find_by(scc_id: repository_id)
+    end
+
+    def by_url(url)
+      Repository.find_by(external_url: url)
+    end
+
   end
 
   def refresh_timestamp!
@@ -28,8 +49,14 @@ class Repository < ApplicationRecord
     update_column(:mirroring_enabled, mirroring_enabled)
   end
 
-  def self.remove_suse_repos_without_tokens!
-    where(auth_token: nil).where('external_url LIKE ?', 'https://updates.suse.com%').delete_all
+  def custom?
+    scc_id.nil?
+  end
+
+  private
+
+  def ensure_destroy_possible
+    throw(:abort) unless custom?
   end
 
 end

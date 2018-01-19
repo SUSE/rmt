@@ -69,4 +69,8 @@ class Product < ApplicationRecord
     repositories.where(conditions).update_all(mirroring_enabled: mirroring_enabled)
   end
 
+  def service
+    Service.find_or_create_by(product_id: id)
+  end
+
 end
