@@ -4,9 +4,6 @@ VERSION       = 0.0.2
 all:
 	@:
 
-init:
-	if [ ! -d package/.osc ]; then rm -f package/* && osc co systemsmanagement:SCC:RMT rmt-server -o package; fi;
-
 clean:
 	rm -f rmt.8*
 	rm -rf package/*.tar.bz2
@@ -16,7 +13,7 @@ man:
 	bundle exec ronn --roff --pipe --manual RMT README.md > rmt.8 && gzip -f rmt.8
 	mv rmt.8.gz package/
 
-dist: init clean man
+dist: clean man
 	@mkdir -p $(NAME)-$(VERSION)/
 
 	@cp -r app $(NAME)-$(VERSION)/
