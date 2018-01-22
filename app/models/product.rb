@@ -79,6 +79,9 @@ class Product < ApplicationRecord
 
   def recommended_for?(root_product)
     product_extensions_associations.where(recommended: true).where(root_product: root_product).present?
+
+  def service
+    Service.find_or_create_by(product_id: id)
   end
 
 end

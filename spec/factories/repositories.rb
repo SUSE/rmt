@@ -1,5 +1,7 @@
 FactoryGirl.define do
   factory :repository do
+    sequence(:id) { |n| n }
+    sequence(:scc_id) { |n| n }
     sequence(:name) { |n| "Repository #{n}" }
     sequence(:external_url) { |n| "https://updates.suse.com/suse/repository_#{n}" }
     enabled true
@@ -13,6 +15,10 @@ FactoryGirl.define do
 
     trait :authenticated do
       sequence(:url) { "/#{FFaker.letterify('?????')}" }
+    end
+
+    trait :custom do
+      scc_id nil
     end
 
     trait :with_products do

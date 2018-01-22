@@ -130,19 +130,10 @@ class RMT::SCC
   end
 
   def create_service(item, product)
-    service = Service.find_or_create_by(product_id: product.id)
+    service = product.service
 
     item[:repositories].each do |repo_item|
-      repository = Repository.find_or_initialize_by(external_url: repo_item[:url])
-      repository.attributes = repo_item.select { |k, _| repository.attributes.keys.member?(k.to_s) }
-      repository.external_url = repo_item[:url]
-      repository.local_path = Repository.make_local_path(repo_item[:url])
-      repository.save!
-
-      RepositoriesServicesAssociation.find_or_create_by(
-        service_id: service.id,
-        repository_id: repository.id
-      )
+      create_repository_service.call(service, repo_item[:url], repo_item)
     end
   end
 
@@ -154,7 +145,7 @@ class RMT::SCC
     # sle-hae/11.3/s390x available without base product for s390x
     # In this case no repository data was added in create_product -- can't update those repos.
     begin
-      Repository.find(item[:id]).update! auth_token: auth_token
+      Repository.by_id(item[:id]).update! auth_token: auth_token
     rescue ActiveRecord::RecordNotFound
       @logger.debug("Repository #{item[:id]} is not available")
     end
@@ -172,6 +163,12 @@ class RMT::SCC
       subscription_product_class.product_class = item_class
       subscription_product_class.save!
     end
+  end
+
+  private
+
+  def create_repository_service
+    @create_repository_service ||= CreateRepositoryService.new
   end
 
 end

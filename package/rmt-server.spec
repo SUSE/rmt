@@ -59,7 +59,7 @@ BuildRequires:  ruby2.4-rubygem-bundler
 %else
 BuildRequires:  ruby2.5
 BuildRequires:  ruby2.5-devel
-BuildRequires:  ruby2.5-stdlib
+BuildRequires:  ruby2.5-rubygem-bundler
 %endif
 BuildRequires:  fdupes
 
@@ -69,6 +69,7 @@ Requires(post): ruby2.4
 Requires(post): ruby2.4-rubygem-bundler
 %else
 Requires(post): ruby2.5
+Requires(post): ruby2.5-rubygem-bundler
 %endif
 Requires(post): timezone
 Requires(post): util-linux
@@ -104,7 +105,7 @@ cp -p %SOURCE2 .
 %if 0%{?use_ruby_2_4}
 bundle.ruby2.4 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
 %else
-bundle.ruby.ruby2.5 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
+bundle.ruby2.5 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
 %endif
 
 %install

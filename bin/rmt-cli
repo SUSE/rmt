@@ -23,7 +23,7 @@ if Process.euid == 0
   Process::Sys.seteuid(Etc.getpwnam(user).uid)
 end
 
-relative_load_paths = %w[lib lib/rmt app/models].map { |dir| File.join(rmt_path, dir) }
+relative_load_paths = %w[lib lib/rmt app/models app/services].map { |dir| File.join(rmt_path, dir) }
 ActiveSupport::Dependencies.autoload_paths += relative_load_paths
 
 # FIXME: this check (or its message) is not correct. It already complains when the folder does just not exist, even-though it is perfectly writeable by my user.

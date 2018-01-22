@@ -29,11 +29,12 @@ describe RMT::SCC do
 
     it 'saves repos to the DB' do
       all_repositories.map.each do |repository|
-        db_repository = Repository.find(repository[:id])
+        db_repository = Repository.find_by(scc_id: repository[:id])
 
-        (db_repository.attributes.keys - %w[external_url mirroring_enabled local_path]).each do |key|
-          expect(db_repository[key]).to eq(repository[key.to_sym])
+        (db_repository.attributes.keys - %w[id scc_id external_url mirroring_enabled local_path]).each do |key|
+          expect(db_repository[key].to_s).to eq(repository[key.to_sym].to_s)
         end
+        expect(db_repository[:scc_id]).to eq(repository[:id])
       end
     end
 
