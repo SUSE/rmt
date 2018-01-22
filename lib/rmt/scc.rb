@@ -23,7 +23,6 @@ class RMT::SCC
     @logger.info('Updating products')
     data = scc_api_client.list_products
     data.each do |item|
-      @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
       create_product(item) if (item[:product_type] == 'base')
     end
 
@@ -100,6 +99,8 @@ class RMT::SCC
   protected
 
   def create_product(item, root_product_id = nil, base_product = nil, recommended = false)
+    @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
+
     product = Product.find_or_create_by(id: item[:id])
     product.attributes = item.select { |k, _| product.attributes.keys.member?(k.to_s) }
     product.save!
@@ -149,7 +150,14 @@ class RMT::SCC
     uri = URI(item[:url])
     auth_token = uri.query
 
-    Repository.find(item[:id]).update! auth_token: auth_token
+    # Sometimes the extension is available, but a base product is not, e.g.:
+    # sle-hae/11.3/s390x available without base product for s390x
+    # In this case no repository data was added in create_product -- can't update those repos.
+    begin
+      Repository.find(item[:id]).update! auth_token: auth_token
+    rescue ActiveRecord::RecordNotFound
+      @logger.debug("Repository #{item[:id]} is not available")
+    end
   end
 
   def create_subscription(item)
