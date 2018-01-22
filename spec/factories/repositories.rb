@@ -1,6 +1,5 @@
 FactoryGirl.define do
   factory :repository do
-    sequence(:id) { |n| n }
     sequence(:scc_id) { |n| n }
     sequence(:name) { |n| "Repository #{n}" }
     sequence(:external_url) { |n| "https://updates.suse.com/suse/repository_#{n}" }

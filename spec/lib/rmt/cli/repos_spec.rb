@@ -6,11 +6,12 @@ RSpec.describe RMT::CLI::Repos do
   before { allow(described_class).to receive(:exit) { raise 'Called exit unexpectedly' } }
 
   describe '#enable' do
-    subject(:repository) { FactoryGirl.create :repository, :with_products }
+    subject(:repository) { create :repository, :with_products }
 
     let(:command) do
       repository
       described_class.start(argv)
+      # repository = Repository.by_id(repository.id)
       repository.reload
     end
 
@@ -23,7 +24,7 @@ RSpec.describe RMT::CLI::Repos do
     end
 
     context 'by repo id' do
-      let(:argv) { ['enable', repository.id.to_s] }
+      let(:argv) { ['enable', repository.scc_id.to_s] }
 
       before { expect { command }.to output("Repository successfully enabled.\n").to_stdout }
 
@@ -67,7 +68,7 @@ RSpec.describe RMT::CLI::Repos do
     end
 
     context 'by repo id' do
-      let(:argv) { ['disable', repository.id.to_s] }
+      let(:argv) { ['disable', repository.scc_id.to_s] }
 
       before { expect { command }.to output("Repository successfully disabled.\n").to_stdout }
 

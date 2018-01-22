@@ -133,17 +133,15 @@ class RMT::SCC
   end
 
   def create_service(item, product)
-    service = product.service
-
     item[:repositories].each do |repo_item|
-      create_repository_service.call(service, repo_item[:url], repo_item)
+      repository_service.create_repository(product, repo_item[:url], repo_item)
     end
   end
 
   def update_auth_token(item)
     uri = URI(item[:url])
     auth_token = uri.query
-    Repository.by_id(item[:id]).update! auth_token: auth_token
+    Repository.find_by(scc_id: item[:id]).update! auth_token: auth_token
   end
 
   def create_subscription(item)
@@ -162,8 +160,8 @@ class RMT::SCC
 
   private
 
-  def create_repository_service
-    @create_repository_service ||= CreateRepositoryService.new
+  def repository_service
+    @repository_service ||= RepositoryService.new
   end
 
 end

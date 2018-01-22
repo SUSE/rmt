@@ -5,22 +5,18 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
   desc 'add URL NAME PRODUCT_ID', 'Add a custom repository to a product'
   def add(url, name, product_id)
     product = Product.find_by(id: product_id)
+    previous_repository = Repository.find_by(external_url: url)
 
     if product.nil?
       warn "Cannot find product by id #{product_id}."
       return
-    end
-
-    service = product.service
-    previous_repository = Repository.by_url(url)
-
-    if previous_repository && !previous_repository.custom?
-      warn "A non-custom repository by URL \"#{url}\" already exists."
+    elsif previous_repository
+      warn 'A repository by this URL already exists.'
       return
     end
 
     begin
-      create_repository_service.call(service, url, {
+      repository_service.create_repository(product, url, {
         name: name,
         mirroring_enabled: true,
         autorefresh: 1,
@@ -28,7 +24,7 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
       }, custom: true)
 
       puts 'Successfully added custom repository.'
-    rescue CreateRepositoryService::InvalidExternalUrl => e
+    rescue RepositoryService::InvalidExternalUrl => e
       warn "Invalid URL \"#{e.message}\" provided."
     end
   end
@@ -43,6 +39,7 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
       puts array_to_table(repositories, {
         id: 'ID',
         name: 'Name',
+        external_url: 'URL',
         enabled: 'Mandatory?',
         mirroring_enabled: 'Mirror?',
         last_mirrored_at: 'Last Mirrored'
@@ -52,27 +49,32 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
   map ls: :list
 
   desc 'remove ID', 'Remove a custom repository'
-  def remove(repository_id)
-    repository = Repository.by_id(repository_id, custom: true)
+  def remove(id)
+    repository = find_repository(id)
 
     if repository.nil?
-      warn "Cannot find custom repository by id \"#{repository_id}\"."
+      warn "Cannot find custom repository by id \"#{id}\"."
       return
     end
 
-    unless repository.destroy
-      warn 'Cannot remove non-custom repositories.'
-      return
-    end
-
+    repository.destroy!
     puts "Removed custom repository by id \"#{repository.id}\"."
   end
   map rm: :remove
 
+  desc 'products', 'List and modify custom repository products'
+  subcommand 'products', RMT::CLI::CustomReposProducts
+
   private
 
-  def create_repository_service
-    @create_repository_service ||= CreateRepositoryService.new
+  def find_repository(id)
+    repository = Repository.find_by(id: id)
+    return nil if repository && !repository.custom?
+    repository
+  end
+
+  def repository_service
+    @repository_service ||= RepositoryService.new
   end
 
 end

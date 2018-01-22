@@ -43,7 +43,15 @@ describe RMT::CLI::CustomRepos do
         expect do
           create :repository, external_url: external_url, name: 'foobar'
           described_class.start(argv)
-        end.to output("A non-custom repository by URL \"http://example.com/repos\" already exists.\n").to_stderr.and output('').to_stdout
+        end.to output("A repository by this URL already exists.\n").to_stderr.and output('').to_stdout
+        expect(Repository.find_by(external_url: external_url).name).to eq('foobar')
+      end
+
+      it 'does not update previous repository if custom' do
+        expect do
+          create :repository, :custom, external_url: external_url, name: 'foobar'
+          described_class.start(argv)
+        end.to output("A repository by this URL already exists.\n").to_stderr.and output('').to_stdout
         expect(Repository.find_by(external_url: external_url).name).to eq('foobar')
       end
     end
@@ -96,7 +104,7 @@ describe RMT::CLI::CustomRepos do
         let(:argv) { [command, suse_repository.id] }
 
         before do
-          expect { described_class.start(argv) }.to output("Cannot remove non-custom repositories.\n").to_stderr
+          expect { described_class.start(argv) }.to output("Cannot find custom repository by id \"#{suse_repository.id}\".\n").to_stderr
         end
 
         it 'does not delete suse non-custom repository' do
@@ -104,7 +112,7 @@ describe RMT::CLI::CustomRepos do
         end
       end
 
-      context 'non-custom repository' do
+      context 'custom repository' do
         let(:argv) { [command, custom_repository.id] }
 
         before do
