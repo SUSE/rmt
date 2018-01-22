@@ -122,6 +122,43 @@ describe RMT::SCC do
         )
       end
     end
+
+    context "with extensions that don't have base products available" do
+      let(:extra_repo) do
+        {
+          id: 999999,
+          url: 'http://example.com/extension-without-base',
+          name: 'Repo of an extension without base'
+        }
+      end
+      let(:extra_product) do
+        {
+          id: 999999,
+          identifier: 'ext-without-base',
+          version: '99',
+          arch: 'x86_64',
+          name: 'Extension without base',
+          friendly_name: 'Extension without base',
+          repositories: [ extra_repo ]
+        }
+      end
+      let(:repositories_with_extra_repos) { all_repositories + [extra_repo] }
+      let(:products_with_extra_extension) { products + [extra_product] }
+
+      before do
+        allow(api_double).to receive(:list_products).and_return products_with_extra_extension
+        allow(api_double).to receive(:list_repositories).and_return repositories_with_extra_repos
+        described_class.new.sync
+      end
+
+      it "doesn't save extensions without base products" do
+        expect { Product.find(extra_product[:id]) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it "doesn't save repos of extensions without base products" do
+        expect { Repository.find(extra_repo[:id]) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 
   describe '#remove_suse_repos_without_tokens' do
