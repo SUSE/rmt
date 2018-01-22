@@ -147,6 +147,7 @@ describe RMT::SCC do
       let(:products_with_extra_extension) { products + [extra_product] }
 
       before do
+        allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
         allow(api_double).to receive(:list_products).and_return products_with_extra_extension
         allow(api_double).to receive(:list_repositories).and_return repositories_with_extra_repos
         described_class.new.sync
