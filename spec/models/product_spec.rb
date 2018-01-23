@@ -115,4 +115,24 @@ RSpec.describe Product, type: :model do
       expect(level_one_extension.mirrored_extensions.for_root_product(base_b)).to eq([level_two_extension_b_mirrored])
     end
   end
+
+  describe '#recommended_for?' do
+    let!(:base_a) { FactoryGirl.create(:product) }
+    let!(:base_b) { FactoryGirl.create(:product) }
+
+    it 'recommended for base product A' do
+      extension = FactoryGirl.create(:product, :extension, base_products: [base_a], recommended: true)
+      expect(extension.recommended_for?(base_a)).to be(true)
+    end
+
+    it 'not recommended for base product A' do
+      extension = FactoryGirl.create(:product, :extension, base_products: [base_a], recommended: false)
+      expect(extension.recommended_for?(base_a)).to be(false)
+    end
+
+    it 'not recommended for unrelated product B' do
+      extension = FactoryGirl.create(:product, :extension, base_products: [base_a], recommended: true)
+      expect(extension.recommended_for?(base_b)).to be(false)
+    end
+  end
 end
