@@ -117,10 +117,10 @@ RSpec.describe Product, type: :model do
   end
 
   describe '#recommended_for?' do
+    subject { extension.recommended_for?(queried_base) }
+
     let(:base) { create :product }
     let(:extension) { create(:product, :extension, base_products: [base], recommended: recommended) }
-
-    subject { extension.recommended_for?(queried_base) }
 
     context 'when the extension is recommended for its base' do
       let(:recommended) { true }
