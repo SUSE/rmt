@@ -7,8 +7,14 @@ describe RMT::SCC do
   let!(:subscriptions) { JSON.parse(file_fixture('subscriptions/dummy_subscriptions.json').read, symbolize_names: true) }
   let(:extension) { product[:extensions][0] }
   let(:all_repositories) do
-    products.flat_map do |product|
+    repos = products.flat_map do |product|
       [product, product[:extensions][0]].flat_map { |item| item[:repositories] }
+    end
+
+    # Adding tokens to repository URLs, as organization/repositories endpoint does
+    repos.deep_dup.map do |item|
+      item[:url] += "?token_#{item[:id]}"
+      item
     end
   end
   let(:api_double) { instance_double 'SUSE::Connect::Api' }
@@ -31,10 +37,17 @@ describe RMT::SCC do
       all_repositories.map.each do |repository|
         db_repository = Repository.find_by(scc_id: repository[:id])
 
-        (db_repository.attributes.keys - %w[id scc_id external_url mirroring_enabled local_path]).each do |key|
+        (db_repository.attributes.keys - %w[id scc_id external_url mirroring_enabled local_path auth_token]).each do |key|
           expect(db_repository[key].to_s).to eq(repository[key.to_sym].to_s)
         end
         expect(db_repository[:scc_id]).to eq(repository[:id])
+
+        uri = URI(repository[:url])
+        auth_token = uri.query
+        uri.query = nil
+
+        expect(db_repository[:external_url]).to eq(uri.to_s)
+        expect(db_repository[:auth_token]).to eq(auth_token)
       end
     end
 
