@@ -7,8 +7,14 @@ describe RMT::SCC do
   let!(:subscriptions) { JSON.parse(file_fixture('subscriptions/dummy_subscriptions.json').read, symbolize_names: true) }
   let(:extension) { product[:extensions][0] }
   let(:all_repositories) do
-    products.flat_map do |product|
+    repos = products.flat_map do |product|
       [product, product[:extensions][0]].flat_map { |item| item[:repositories] }
+    end
+
+    # Adding tokens to repository URLs, as organization/repositories endpoint does
+    repos.deep_dup.map do |item|
+      item[:url] += "?token_#{item[:id]}"
+      item
     end
   end
   let(:api_double) { instance_double 'SUSE::Connect::Api' }
@@ -31,10 +37,17 @@ describe RMT::SCC do
       all_repositories.map.each do |repository|
         db_repository = Repository.find_by(scc_id: repository[:id])
 
-        (db_repository.attributes.keys - %w[id scc_id external_url mirroring_enabled local_path]).each do |key|
+        (db_repository.attributes.keys - %w[id scc_id external_url mirroring_enabled local_path auth_token]).each do |key|
           expect(db_repository[key].to_s).to eq(repository[key.to_sym].to_s)
         end
         expect(db_repository[:scc_id]).to eq(repository[:id])
+
+        uri = URI(repository[:url])
+        auth_token = uri.query
+        uri.query = nil
+
+        expect(db_repository[:external_url]).to eq(uri.to_s)
+        expect(db_repository[:auth_token]).to eq(auth_token)
       end
     end
 
@@ -86,6 +99,80 @@ describe RMT::SCC do
       end
 
       include_examples 'saves in database'
+    end
+
+    context 'with SLES15 product tree' do
+      let(:products) { JSON.parse(file_fixture('products/sle15_tree.json').read, symbolize_names: true) }
+      let(:subscriptions) { [] }
+      let(:all_repositories) { [] }
+
+      let(:sles) { Product.find_by(identifier: 'SLES') }
+      let(:sled) { Product.find_by(identifier: 'SLED') }
+
+      before do
+        allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
+        described_class.new.sync
+      end
+
+      include_examples 'saves in database'
+
+      it 'SLES has the correct extension tree' do
+        basesystem = sles.extensions.first
+        desktop = basesystem.extensions.for_root_product(sles).first
+        sle_we  = desktop.extensions.for_root_product(sles).first
+
+        expect([basesystem, desktop, sle_we].map(&:identifier)).to eq(
+          ['sle-module-basesystem', 'sle-module-desktop', 'sle-module-we']
+        )
+      end
+
+      it 'SLED has the correct extension tree' do
+        basesystem = sled.extensions.first
+        desktop = basesystem.extensions.for_root_product(sled).first
+        productivity = desktop.extensions.for_root_product(sled).first
+
+        expect([basesystem, desktop, productivity].map(&:identifier)).to eq(
+          ['sle-module-basesystem', 'sle-module-desktop', 'sle-module-desktop-productivity']
+        )
+      end
+    end
+
+    context "with extensions that don't have base products available" do
+      let(:extra_repo) do
+        {
+          id: 999999,
+          url: 'http://example.com/extension-without-base',
+          name: 'Repo of an extension without base'
+        }
+      end
+      let(:extra_product) do
+        {
+          id: 999999,
+          identifier: 'ext-without-base',
+          version: '99',
+          arch: 'x86_64',
+          name: 'Extension without base',
+          friendly_name: 'Extension without base',
+          repositories: [ extra_repo ]
+        }
+      end
+      let(:repositories_with_extra_repos) { all_repositories + [extra_repo] }
+      let(:products_with_extra_extension) { products + [extra_product] }
+
+      before do
+        allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
+        allow(api_double).to receive(:list_products).and_return products_with_extra_extension
+        allow(api_double).to receive(:list_repositories).and_return repositories_with_extra_repos
+        described_class.new.sync
+      end
+
+      it "doesn't save extensions without base products" do
+        expect { Product.find(extra_product[:id]) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it "doesn't save repos of extensions without base products" do
+        expect { Repository.find(extra_repo[:id]) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
   end
 
