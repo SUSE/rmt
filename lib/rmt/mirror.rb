@@ -7,9 +7,8 @@ class RMT::Mirror
   end
 
   def initialize(mirroring_base_dir:, repository_url:, local_path:, mirror_src: false, auth_token: nil, logger: nil)
-    @mirroring_base_dir = mirroring_base_dir
+    @repository_dir = File.join(mirroring_base_dir, local_path)
     @repository_url = repository_url
-    @local_path = local_path
     @mirror_src = mirror_src
     @logger = logger || Logger.new('/dev/null')
     @primary_files = []
@@ -18,7 +17,7 @@ class RMT::Mirror
 
     @downloader = RMT::Downloader.new(
       repository_url: @repository_url,
-      local_path: @repodata_dir.to_s,
+      local_path: @repository_dir,
       logger: @logger
     )
   end
@@ -48,14 +47,13 @@ class RMT::Mirror
 
   def create_directories
     begin
-      local_repo_dir = File.join(@mirroring_base_dir, @local_path)
-      FileUtils.mkpath(local_repo_dir) unless Dir.exist?(local_repo_dir)
+      FileUtils.mkpath(@repository_dir) unless Dir.exist?(@repository_dir)
     rescue StandardError => e
       raise RMT::Mirror::Exception.new("Can not create a local repository directory: #{e}")
     end
 
     begin
-      @repodata_dir = Dir.mktmpdir
+      @temp_metadata_dir = Dir.mktmpdir
     rescue StandardError => e
       raise RMT::Mirror::Exception.new("Can not create a temporary directory: #{e}")
     end
@@ -63,7 +61,7 @@ class RMT::Mirror
 
   def mirror_metadata
     @downloader.repository_url = URI.join(@repository_url)
-    @downloader.local_path = File.join(@repodata_dir.to_s)
+    @downloader.local_path = @temp_metadata_dir
 
     begin
       local_filename = @downloader.download('repodata/repomd.xml')
@@ -88,17 +86,17 @@ class RMT::Mirror
         @deltainfo_files << reference.location if (reference.type == :deltainfo)
       end
     rescue RuntimeError => e
-      FileUtils.remove_entry(@repodata_dir)
+      FileUtils.remove_entry(@temp_metadata_dir)
       raise RMT::Mirror::Exception.new("Error while mirroring metadata files: #{e}")
     rescue Interrupt => e
-      FileUtils.remove_entry(@repodata_dir)
+      FileUtils.remove_entry(@temp_metadata_dir)
       raise e
     end
   end
 
   def mirror_license
     @downloader.repository_url = URI.join(@repository_url, '../product.license/')
-    @downloader.local_path = File.join(@mirroring_base_dir, @local_path, '../product.license/')
+    @downloader.local_path = File.join(@repository_dir, '../product.license/')
 
     begin
       directory_yast = @downloader.download('directory.yast')
@@ -119,42 +117,40 @@ class RMT::Mirror
   end
 
   def mirror_data
-    root_path = File.join(@mirroring_base_dir, @local_path)
     @downloader.repository_url = @repository_url
-    @downloader.local_path = root_path
+    @downloader.local_path = @repository_dir
 
     @deltainfo_files.each do |filename|
       parser = RMT::Rpm::DeltainfoXmlParser.new(
-        File.join(@repodata_dir, filename),
+        File.join(@temp_metadata_dir, filename),
         @mirror_src
       )
       parser.parse
-      to_download = parsed_files_after_dedup(root_path, parser.referenced_files)
+      to_download = parsed_files_after_dedup(@repository_dir, parser.referenced_files)
       @downloader.download_multi(to_download) unless to_download.empty?
     end
 
     @primary_files.each do |filename|
       parser = RMT::Rpm::PrimaryXmlParser.new(
-        File.join(@repodata_dir, filename),
+        File.join(@temp_metadata_dir, filename),
         @mirror_src
       )
       parser.parse
-      to_download = parsed_files_after_dedup(root_path, parser.referenced_files)
+      to_download = parsed_files_after_dedup(@repository_dir, parser.referenced_files)
       @downloader.download_multi(to_download) unless to_download.empty?
     end
   end
 
   def replace_metadata
-    local_repo_dir = File.join(@mirroring_base_dir, @local_path)
-    old_repodata = File.join(local_repo_dir, '.old_repodata')
-    repodata = File.join(local_repo_dir, 'repodata')
-    new_repodata = File.join(@repodata_dir.to_s, 'repodata')
+    old_repodata = File.join(@repository_dir, '.old_repodata')
+    repodata = File.join(@repository_dir, 'repodata')
+    new_repodata = File.join(@temp_metadata_dir, 'repodata')
 
     FileUtils.remove_entry(old_repodata) if Dir.exist?(old_repodata)
     FileUtils.mv(repodata, old_repodata) if Dir.exist?(repodata)
     FileUtils.mv(new_repodata, repodata)
   ensure
-    FileUtils.remove_entry(@repodata_dir)
+    FileUtils.remove_entry(@temp_metadata_dir)
   end
 
   private

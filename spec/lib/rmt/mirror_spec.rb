@@ -165,7 +165,7 @@ RSpec.describe RMT::Mirror do
         it 'removes the temporary metadata directory' do
           VCR.use_cassette 'mirroring_product' do
             expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
-            expect(File.exist?(rmt_mirror.instance_variable_get(:@repodata_dir))).to be(false)
+            expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
           end
         end
       end
@@ -175,7 +175,7 @@ RSpec.describe RMT::Mirror do
         it 'removes the temporary metadata directory' do
           VCR.use_cassette 'mirroring_product' do
             expect { rmt_mirror.mirror }.to raise_error(Interrupt)
-            expect(File.exist?(rmt_mirror.instance_variable_get(:@repodata_dir))).to be(false)
+            expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
           end
         end
       end
