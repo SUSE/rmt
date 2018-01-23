@@ -117,22 +117,30 @@ RSpec.describe Product, type: :model do
   end
 
   describe '#recommended_for?' do
-    let!(:base_a) { FactoryGirl.create(:product) }
-    let!(:base_b) { FactoryGirl.create(:product) }
+    let(:base) { create :product }
+    let(:extension) { create(:product, :extension, base_products: [base], recommended: recommended) }
 
-    it 'recommended for base product A' do
-      extension = FactoryGirl.create(:product, :extension, base_products: [base_a], recommended: true)
-      expect(extension.recommended_for?(base_a)).to be(true)
+    subject { extension.recommended_for?(queried_base) }
+
+    context 'when the extension is recommended for its base' do
+      let(:recommended) { true }
+      let(:queried_base) { base }
+
+      it { is_expected.to be true }
     end
 
-    it 'not recommended for base product A' do
-      extension = FactoryGirl.create(:product, :extension, base_products: [base_a], recommended: false)
-      expect(extension.recommended_for?(base_a)).to be(false)
+    context 'when the extension is not recommended for its base' do
+      let(:recommended) { false }
+      let(:queried_base) { base }
+
+      it { is_expected.to be false }
     end
 
-    it 'not recommended for unrelated product B' do
-      extension = FactoryGirl.create(:product, :extension, base_products: [base_a], recommended: true)
-      expect(extension.recommended_for?(base_b)).to be(false)
+    context "when the queried base is not the extension's base" do
+      let(:recommended) { true }
+      let(:queried_base) { create(:product) }
+
+      it { is_expected.to be false }
     end
   end
 end
