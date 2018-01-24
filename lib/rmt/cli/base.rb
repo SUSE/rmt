@@ -73,7 +73,7 @@ class RMT::CLI::Base < Thor
 
   def mirror!(repo, to: RMT::DEFAULT_MIRROR_DIR, deduplication_enabled: true)
     puts "Mirroring repository #{repo.name} to #{to}"
-    RMT::Mirror.from_repo_model(repo, base_dir: to, deduplication_enabled: deduplication_enabled).mirror
+    RMT::Mirror.from_url(repo.external_url, repo.auth_token, base_dir: to, deduplication_enabled: deduplication_enabled).mirror
     repo.refresh_timestamp!
   rescue RMT::Mirror::Exception => e
     warn e.to_s

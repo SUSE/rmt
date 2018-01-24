@@ -46,18 +46,6 @@ class RMT::Mirror
     )
   end
 
-  def self.from_repo_model(repository, base_dir: nil, deduplication_enabled: true)
-    new(
-      mirroring_base_dir: base_dir || RMT::DEFAULT_MIRROR_DIR,
-      repository_url: repository.external_url,
-      local_path: repository.local_path,
-      auth_token: repository.auth_token,
-      mirror_src: Settings.mirroring.mirror_src,
-      logger: Logger.new(STDOUT),
-      deduplication_enabled: deduplication_enabled
-    )
-  end
-
   protected
 
   def create_directories
