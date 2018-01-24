@@ -5,27 +5,26 @@ volumes:
 
 services:
   db:
+    image: mariadb:10.2
+    restart: always
+    volumes:
+      - db_storage:/var/lib/mysql
     extends:
       service: base
       file: docker-compose-base.yml
-    image: postgres
-    volumes:
-      - db_storage:/var/lib/postgresql/data
-    environment:
-      - PGDATA=/var/lib/postgresql/data/pgdata
 
   rmt:
-    extends:
-      service: base
-      file: docker-compose-base.yml
     build: .
     environment:
-      - POSTGRES_HOST=db
+      - MYSQL_HOST=db
       - SECRET_KEY_BASE=8ea53ad3bc6c03923e376c8bdd85059c1885524947a7efe53d5e9c9d4e39861106ffd6a2ece82b803072ed701e6c960bade91644979e679416c5f255007237ae
     volumes:
       - ./public:/srv/www/repo/public/
     depends_on:
       - db
+    extends:
+      service: base
+      file: docker-compose-base.yml
     command: bash -c 'bundle exec rails db:migrate && bundle exec rails s -b rmt'
 
   nginx:
