@@ -108,11 +108,11 @@ RSpec.describe RMT::Downloader do
       let(:cache_dir) { Dir.mktmpdir }
       let(:repo_dir) { Dir.mktmpdir }
       let(:downloader) { described_class.new(repository_url: 'http://example.com', local_path: repo_dir, cache_path: cache_dir) }
-      let(:time) { Time.utc(2018, 1, 1, 9, 10, 0) }
+      let(:time) { Time.utc(2018, 1, 1, 10, 10, 0) }
       let(:if_modified_headers) do
         {
           'User-Agent' => "RMT/#{RMT::VERSION}",
-          'If-Modified-Since' => 'Mon, 01 Jan 2018 10:10:00 +0100'
+          'If-Modified-Since' => 'Mon, 01 Jan 2018 10:10:00 -0000'
         }
       end
       let(:filename) { 'repomd.xml' }

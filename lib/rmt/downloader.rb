@@ -31,7 +31,7 @@ class RMT::Downloader
     if use_cache
       raise 'Cache path not set!' unless @cache_path
       cache_file = File.join(@cache_path, remote_file)
-      if_modified_since = File.mtime(cache_file).rfc2822 if File.exist?(cache_file)
+      if_modified_since = File.mtime(cache_file).utc.rfc2822 if File.exist?(cache_file)
     end
 
     request_fiber = Fiber.new do
