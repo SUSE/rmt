@@ -53,10 +53,7 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
       context 'has products depending on it and is activated' do
         let(:product) do
           product = FactoryGirl.create(:product, :extension, :with_mirrored_repositories, :activated, system: system)
-          ext_product = FactoryGirl.create(:product, :extension, :with_mirrored_repositories, :activated, system: system)
-          ext_product.bases << product
-          ext_product.save!
-
+          FactoryGirl.create(:product, :extension, :with_mirrored_repositories, :activated, system: system, base_products: [product])
           product
         end
 
