@@ -59,7 +59,7 @@ RSpec.describe RMT::Downloader do
       context 'and hash function is unknown' do
         it 'raises an exception' do
           expect do
-            downloader.download('/repomd.xml', 'CHUNKYBACON42', '0xDEADBEEF')
+            downloader.download('/repomd.xml', checksum_type: 'CHUNKYBACON42', checksum_value: '0xDEADBEEF')
           end.to raise_error(RMT::ChecksumVerifier::Exception, 'Unknown hash function CHUNKYBACON42')
         end
       end
@@ -67,13 +67,13 @@ RSpec.describe RMT::Downloader do
       context 'and checksum is wrong' do
         it 'raises an exception' do
           expect do
-            downloader.download('/repomd.xml', 'SHA256', '0xDEADBEEF')
+            downloader.download('/repomd.xml', checksum_type: 'SHA256', checksum_value: '0xDEADBEEF')
           end.to raise_error(RMT::ChecksumVerifier::Exception, 'Checksum doesn\'t match')
         end
       end
 
       context 'and checksum is correct' do
-        let(:filename) { downloader.download('/repomd.xml', checksum_type, checksum) }
+        let(:filename) { downloader.download('/repomd.xml', checksum_type: checksum_type, checksum_value: checksum) }
 
         it('has correct content') { expect(File.read(filename)).to eq(content) }
       end
@@ -103,8 +103,72 @@ RSpec.describe RMT::Downloader do
         it('has correct content') { expect(File.read(filename)).to eq(content) }
       end
     end
-  end
 
+    describe '#download with If-Modified-Since' do
+      let(:cache_dir) { Dir.mktmpdir }
+      let(:repo_dir) { Dir.mktmpdir }
+      let(:downloader) { described_class.new(repository_url: 'http://example.com', local_path: repo_dir, cache_path: cache_dir) }
+      let(:time) { Time.utc(2018, 1, 1, 9, 10, 0) }
+      let(:if_modified_headers) do
+        {
+          'User-Agent' => "RMT/#{RMT::VERSION}",
+          'If-Modified-Since' => 'Mon, 01 Jan 2018 10:10:00 +0100'
+        }
+      end
+      let(:filename) { 'repomd.xml' }
+      let(:downloaded_file) { downloader.download("/#{filename}", use_cache: true) }
+      let(:cached_content) { 'cached_content' }
+      let(:fresh_content) { 'fresh_content' }
+
+      before do
+        cache_dir
+        repo_dir
+      end
+
+      after do
+        FileUtils.remove_entry(cache_dir)
+        FileUtils.remove_entry(repo_dir)
+      end
+
+      context 'a file exists in cache and not modified' do
+        before do
+          fn = File.join(cache_dir, filename)
+          File.open(fn, 'w') { |file| file.write(cached_content) }
+          File.utime(time, time, fn)
+          stub_request(:get, "http://example.com/#{filename}")
+              .with(headers: if_modified_headers)
+              .to_return(status: 304, body: '', headers: {})
+        end
+
+        it('has correct content') { expect(File.read(downloaded_file)).to eq(cached_content) }
+      end
+
+      context 'a file exists in cache and is modified' do
+        before do
+          fn = File.join(cache_dir, filename)
+          File.open(fn, 'w') { |file| file.write(cached_content) }
+          File.utime(time, time, fn)
+          stub_request(:get, "http://example.com/#{filename}")
+              .with(headers: if_modified_headers)
+              .to_return(status: 200, body: fresh_content, headers: {})
+        end
+
+        it('has correct content') { expect(File.read(downloaded_file)).to eq(fresh_content) }
+      end
+
+      context "a file doesn't exist in cache" do
+        let(:filename) { 'another_file.xml' }
+
+        before do
+          stub_request(:get, "http://example.com/#{filename}")
+              .with(headers: headers)
+              .to_return(status: 200, body: fresh_content, headers: {})
+        end
+
+        it('has correct content') { expect(File.read(downloaded_file)).to eq(fresh_content) }
+      end
+    end
+  end
 
   describe '#download over file://' do
     subject(:download) { downloader.download('repodata/repomd.xml') }

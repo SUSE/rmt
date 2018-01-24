@@ -1,5 +1,6 @@
 require 'rmt/downloader'
 require 'rmt/rpm'
+require 'time'
 
 class RMT::Mirror
 
@@ -18,6 +19,7 @@ class RMT::Mirror
     @downloader = RMT::Downloader.new(
       repository_url: @repository_url,
       local_path: @repository_dir,
+      cache_path: @repository_dir,
       logger: @logger
     )
   end
@@ -64,14 +66,14 @@ class RMT::Mirror
     @downloader.local_path = @temp_metadata_dir
 
     begin
-      local_filename = @downloader.download('repodata/repomd.xml')
+      local_filename = @downloader.download('repodata/repomd.xml', use_cache: true)
     rescue RMT::Downloader::Exception => e
       raise RMT::Mirror::Exception.new("Repodata download failed: #{e}")
     end
 
     begin
-      @downloader.download('repodata/repomd.xml.key')
-      @downloader.download('repodata/repomd.xml.asc')
+      @downloader.download('repodata/repomd.xml.key', use_cache: true)
+      @downloader.download('repodata/repomd.xml.asc', use_cache: true)
     rescue RMT::Downloader::Exception
       @logger.info('Repository metadata signatures are missing')
     end
@@ -81,7 +83,12 @@ class RMT::Mirror
       repomd_parser.parse
 
       repomd_parser.referenced_files.each do |reference|
-        @downloader.download(reference.location, reference.checksum_type, reference.checksum)
+        @downloader.download(
+          reference.location,
+            checksum_type: reference.checksum_type,
+            checksum_value: reference.checksum,
+            use_cache: true
+        )
         @primary_files << reference.location if (reference.type == :primary)
         @deltainfo_files << reference.location if (reference.type == :deltainfo)
       end
@@ -99,7 +106,7 @@ class RMT::Mirror
     @downloader.local_path = File.join(@repository_dir, '../product.license/')
 
     begin
-      directory_yast = @downloader.download('directory.yast')
+      directory_yast = @downloader.download('directory.yast', use_cache: true)
     rescue RMT::Downloader::Exception
       @logger.info('No product license found')
       return
@@ -109,7 +116,7 @@ class RMT::Mirror
       File.open(directory_yast).each_line do |filename|
         filename.strip!
         next if filename == 'directory.yast'
-        @downloader.download(filename)
+        @downloader.download(filename, use_cache: true)
       end
     rescue RMT::Downloader::Exception => e
       raise RMT::Mirror::Exception.new("Error during mirroring metadata: #{e.message}")
