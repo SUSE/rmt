@@ -6,7 +6,7 @@ class RMT::Mirror
   class RMT::Mirror::Exception < RuntimeError
   end
 
-  def initialize(mirroring_base_dir:, repository_url:, local_path:, mirror_src: false, auth_token: nil, logger: nil)
+  def initialize(mirroring_base_dir:, repository_url:, local_path:, mirror_src: false, auth_token: nil, logger: nil, deduplication_enabled: false)
     @mirroring_base_dir = mirroring_base_dir
     @repository_url = repository_url
     @local_path = local_path
@@ -15,6 +15,7 @@ class RMT::Mirror
     @primary_files = []
     @deltainfo_files = []
     @auth_token = auth_token
+    @deduplication_enabled = deduplication_enabled
 
     @downloader = RMT::Downloader.new(
       repository_url: @repository_url,
@@ -33,14 +34,27 @@ class RMT::Mirror
     replace_metadata
   end
 
-  def self.from_repo_model(repository, base_dir = nil)
+  def self.from_url(repository_url, auth_token, base_dir: nil, deduplication_enabled: false)
+    new(
+      mirroring_base_dir: base_dir || RMT::DEFAULT_MIRROR_DIR,
+      repository_url: repository_url,
+      auth_token: auth_token,
+      local_path: Repository.make_local_path(repository_url),
+      mirror_src: Settings.mirroring.mirror_src,
+      logger: Logger.new(STDOUT),
+      deduplication_enabled: deduplication_enabled
+    )
+  end
+
+  def self.from_repo_model(repository, base_dir: nil, deduplication_enabled: true)
     new(
       mirroring_base_dir: base_dir || RMT::DEFAULT_MIRROR_DIR,
       repository_url: repository.external_url,
       local_path: repository.local_path,
       auth_token: repository.auth_token,
       mirror_src: Settings.mirroring.mirror_src,
-      logger: Logger.new(STDOUT)
+      logger: Logger.new(STDOUT),
+      deduplication_enabled: deduplication_enabled
     )
   end
 
@@ -160,6 +174,7 @@ class RMT::Mirror
   private
 
   def deduplicate(checksum_type, checksum_value, destination)
+    return false unless @deduplication_enabled
     return false unless ::RMT::Deduplicator.deduplicate(checksum_type, checksum_value, destination)
     @logger.info("→ #{File.basename(destination)}")
     true

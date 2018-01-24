@@ -1,7 +1,7 @@
 class RMT::CLI::Export < RMT::CLI::Base
 
-  desc 'data PATH', 'Store SCC data in files at given path'
-  def data(path)
+  desc 'scc-data PATH', 'Store SCC data in files at given path'
+  def scc_data(path)
     needs_path(path) do
       RMT::SCC.new(options).export(path)
     end
@@ -10,7 +10,8 @@ class RMT::CLI::Export < RMT::CLI::Base
   desc 'settings PATH', 'Store repository settings at given path'
   def settings(path)
     needs_path(path) do
-      File.write(File.join(path, 'repos.json'), Repository.only_mirrored.pluck(:id).to_json)
+      data = Repository.only_mirrored.inject([]) { |data, repo| data << { url: repo.external_url, auth_token: repo.auth_token.to_s } }
+      File.write(File.join(path, 'repos.json'), data.to_json)
       puts "Settings saved at #{path}."
     end
   end
@@ -30,10 +31,14 @@ class RMT::CLI::Export < RMT::CLI::Base
         warn "#{repos_file} does not exist."
         return
       end
-      repos_ids = JSON.parse(File.read(repos_file))
-      repos_ids.each do |id|
-        repo = Repository.find_by(id: id)
-        repo ? mirror!(repo, to: path) : warn("No repo with id #{id} found in database.")
+      repos = JSON.parse(File.read(repos_file))
+      repos.each do |repo|
+        puts "Mirroring repository at #{repo['url']}"
+        begin
+          RMT::Mirror.from_url(repo['url'], repo['auth_token'], base_dir: path).mirror
+        rescue RMT::Mirror::Exception => e
+          warn e.to_s
+        end
       end
     end
   end

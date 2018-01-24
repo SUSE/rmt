@@ -1,7 +1,7 @@
 class RMT::CLI::Import < RMT::CLI::Base
 
-  desc 'data PATH', 'Read SCC data from given path'
-  def data(path)
+  desc 'scc-data PATH', 'Read SCC data from given path'
+  def scc_data(path)
     needs_path(path) do
       RMT::SCC.new(options).import(path)
     end
@@ -10,15 +10,22 @@ class RMT::CLI::Import < RMT::CLI::Base
   desc 'repos PATH', 'Mirror repos from given path'
   def repos(path)
     needs_path(path) do
-      repos = Repository.where(mirroring_enabled: true)
-      if repos.empty?
-        warn 'There are no repositories marked for mirroring.'
+      repos_file = File.join(path, 'repos.json')
+      unless File.exist?(repos_file)
+        warn "#{repos_file} does not exist."
         return
       end
 
-      repos.each do |repo|
-        repo.external_url = 'file://' + path + Repository.make_local_path(repo.external_url)
-        mirror!(repo)
+      repos = JSON.parse(File.read(repos_file))
+      repos.each do |repo_json|
+        repo = Repository.find_by(external_url: repo_json['url'])
+        if repo.nil?
+          warn "repo by id #{repo_json['url']} does not exist"
+          continue
+        end
+
+        repo.external_url = 'file://' + path + Repository.make_local_path(repo_json['url'])
+        mirror!(repo, deduplication_enabled: false)
       end
     end
   end
