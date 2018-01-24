@@ -1,4 +1,4 @@
-class RMT::CLI::CustomRepos < RMT::CLI::Base
+class RMT::CLI::ReposCustom < RMT::CLI::Base
 
   include ::RMT::CLI::ArrayPrintable
 
@@ -63,7 +63,7 @@ class RMT::CLI::CustomRepos < RMT::CLI::Base
   map rm: :remove
 
   desc 'products', 'List and modify custom repository products'
-  subcommand 'products', RMT::CLI::CustomReposProducts
+  subcommand 'products', RMT::CLI::ReposCustomProducts
 
   private
 

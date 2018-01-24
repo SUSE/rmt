@@ -3,7 +3,7 @@ class RMT::CLI::Repos < RMT::CLI::Base
   include ::RMT::CLI::ArrayPrintable
 
   desc 'custom', 'List and modify custom repositories'
-  subcommand 'custom', RMT::CLI::CustomRepos
+  subcommand 'custom', RMT::CLI::ReposCustom
 
   desc 'list', 'List repositories which are marked to be mirrored'
   option :all, aliases: '-a', type: :boolean, desc: 'List all repositories, including ones which are not marked to be mirrored'

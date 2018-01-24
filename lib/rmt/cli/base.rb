@@ -63,6 +63,18 @@ class RMT::CLI::Base < Thor
       )
     end
 
+    # These methods are needed to properly format the hint outputs for `rmt-cli repos custom`. This is a workaround
+    # taken and adapted from https://github.com/erikhuda/thor/issues/261, as Thor does not seem to handle nested subcommands
+    # the way we expect it to.
+    def banner(command, _namespace = nil, _subcommand = false)
+      "#{basename} #{subcommand_prefix} #{command.usage}"
+    end
+
+    def subcommand_prefix
+      return "\b" if name == RMT::CLI::Main.name
+      name.gsub(/.*::/, '').gsub(/^[A-Z]/) { |match| match[0].downcase }.gsub(/[A-Z]/) { |match| " #{match[0].downcase}" }
+    end
+
   end
 
   private

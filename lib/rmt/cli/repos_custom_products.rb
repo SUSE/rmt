@@ -1,4 +1,4 @@
-class RMT::CLI::CustomReposProducts < RMT::CLI::Base
+class RMT::CLI::ReposCustomProducts < RMT::CLI::Base
 
   include ::RMT::CLI::ArrayPrintable
 

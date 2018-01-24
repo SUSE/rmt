@@ -2,7 +2,7 @@ require 'rails_helper'
 
 # rubocop:disable RSpec/MultipleExpectations
 
-describe RMT::CLI::CustomRepos do
+describe RMT::CLI::ReposCustom do
   subject(:command) { described_class.start(argv) }
 
   let(:product) { create :product }
