@@ -17,7 +17,7 @@ RSpec.describe RMT::Mirror do
           mirroring_base_dir: @tmp_dir,
           repository_url: 'http://localhost/dummy_repo/',
           local_path: '/dummy_repo',
-          mirror_src: false
+          mirror_src: false,
         )
       end
 

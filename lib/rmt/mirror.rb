@@ -6,7 +6,7 @@ class RMT::Mirror
   class RMT::Mirror::Exception < RuntimeError
   end
 
-  def initialize(mirroring_base_dir:, repository_url:, local_path:, mirror_src: false, auth_token: nil, logger: nil, deduplication_enabled: false)
+  def initialize(mirroring_base_dir:, repository_url:, local_path:, mirror_src: false, auth_token: nil, logger: nil, deduplication_enabled: true)
     @mirroring_base_dir = mirroring_base_dir
     @repository_url = repository_url
     @local_path = local_path
