@@ -112,18 +112,13 @@ RSpec.describe RMT::Downloader do
       let(:if_modified_headers) do
         {
           'User-Agent' => "RMT/#{RMT::VERSION}",
-          'If-Modified-Since' => 'Mon, 01 Jan 2018 10:10:00 -0000'
+          'If-Modified-Since' => 'Mon, 01 Jan 2018 10:10:00 GMT'
         }
       end
       let(:filename) { 'repomd.xml' }
       let(:downloaded_file) { downloader.download("/#{filename}", use_cache: true) }
       let(:cached_content) { 'cached_content' }
       let(:fresh_content) { 'fresh_content' }
-
-      before do
-        cache_dir
-        repo_dir
-      end
 
       after do
         FileUtils.remove_entry(cache_dir)
