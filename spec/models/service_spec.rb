@@ -13,9 +13,9 @@ RSpec.describe Service, type: :model do
     context 'when has enabled and disabled repos' do
       subject { service.enabled_repositories }
 
-      let(:service) { FactoryGirl.create(:service) }
-      let(:enabled_repository) { FactoryGirl.create(:repository) }
-      let(:disabled_repository) { FactoryGirl.create(:repository, enabled: false) }
+      let(:service) { create(:service) }
+      let(:enabled_repository) { create(:repository) }
+      let(:disabled_repository) { create(:repository, enabled: false) }
 
       before do
         service.repositories << enabled_repository
@@ -25,5 +25,20 @@ RSpec.describe Service, type: :model do
       it { is_expected.to include enabled_repository }
       it { is_expected.not_to include disabled_repository }
     end
+  end
+
+  describe '#name' do
+    shared_examples 'service name' do |product_attributes, expected|
+      subject { create(:service, product: product).name }
+
+      let(:product) { create(:product, name: product_attributes[:name], release_type: product_attributes[:release_type], arch: product_attributes[:arch]) }
+
+      it { is_expected.to eq(expected) }
+    end
+
+    it_behaves_like 'service name', { name: 'SLES Special Product 1', arch: 'x86_64' }, 'SLES_Special_Product_1_x86_64'
+    it_behaves_like 'service name', { name: 'SLES Special Product 1', release_type: 'Online', arch: 'x86_64' }, 'SLES_Special_Product_1_Online_x86_64'
+    it_behaves_like 'service name', { name: 'SLES Special Product 1', arch: 'unknown' }, 'SLES_Special_Product_1'
+    it_behaves_like 'service name', { name: 'SLES Special Product 1', release_type: 'Online', arch: 'unknown' }, 'SLES_Special_Product_1_Online'
   end
 end
