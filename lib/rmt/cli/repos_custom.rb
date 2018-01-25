@@ -4,7 +4,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
   desc 'add URL NAME PRODUCT_ID', 'Add a new custom repository to a product'
   def add(url, name, product_id)
-    product = Product.find_by(id: product_id)
+    product = find_product(product_id)
     previous_repository = Repository.find_by(external_url: url)
 
     if product.nil?
@@ -85,34 +85,14 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
   desc 'attach ID PRODUCT_ID', 'Attach an existing custom repository to a product'
   def attach(id, product_id)
-    repository = find_repository(id)
-    product = Product.find_by(id: product_id)
-
-    if repository.nil?
-      warn "Cannot find custom repository by id \"#{id}\"."
-      return
-    elsif product.nil?
-      warn "Cannot find product by id \"#{product_id}\"."
-      return
-    end
-
+    product, repository = attach_or_detach(id, product_id)
     repository_service.attach_product!(product, repository)
     puts 'Attached repository to product'
   end
 
   desc 'detach ID PRODUCT_ID', 'Detach an existing custom repository from a product'
   def detach(id, product_id)
-    repository = find_repository(id)
-    product = Product.find_by(id: product_id)
-
-    if repository.nil?
-      warn "Cannot find custom repository by id \"#{id}\"."
-      return
-    elsif product.nil?
-      warn "Cannot find product by id \"#{product_id}\"."
-      return
-    end
-
+    product, repository = attach_or_detach(id, product_id)
     repository_service.detach_product!(product, repository)
     puts 'Detached repository from product'
   end
@@ -125,8 +105,27 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
     repository
   end
 
+  def find_product(id)
+    Product.find_by(id: id)
+  end
+
   def repository_service
     @repository_service ||= RepositoryService.new
+  end
+
+  def attach_or_detach(id, product_id)
+    repository = find_repository(id)
+    product = find_product(product_id)
+
+    if repository.nil?
+      warn "Cannot find custom repository by id \"#{id}\"."
+      return
+    elsif product.nil?
+      warn "Cannot find product by id \"#{product_id}\"."
+      return
+    end
+
+    [product, repository]
   end
 
 end
