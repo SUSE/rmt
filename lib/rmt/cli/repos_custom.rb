@@ -62,8 +62,60 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
   end
   map rm: :remove
 
-  desc 'products', 'List and modify custom repository products'
-  subcommand 'products', RMT::CLI::ReposCustomProducts
+  desc 'attachments ID', 'Shows products attached to a custom repository'
+  def attachments(id)
+    repository = find_repository(id)
+
+    if repository.nil?
+      warn "Cannot find custom repository by id \"#{id}\"."
+      return
+    end
+
+    products = repository.products
+
+    if products.empty?
+      warn 'No products attached to repository.'
+      return
+    end
+    puts array_to_table(products, {
+      id: 'Product ID',
+      name: 'Product Name'
+    })
+  end
+
+  desc 'attach ID PRODUCT_ID', 'Attaches a custom repository to a product'
+  def attach(id, product_id)
+    repository = find_repository(id)
+    product = Product.find_by(id: product_id)
+
+    if repository.nil?
+      warn "Cannot find custom repository by id \"#{id}\"."
+      return
+    elsif product.nil?
+      warn "Cannot find product by id \"#{product_id}\"."
+      return
+    end
+
+    repository_service.add_product(product, repository)
+    puts 'Attached repository to product'
+  end
+
+  desc 'detach ID PRODUCT_ID', 'Detaches a custom repository from a product'
+  def detach(id, product_id)
+    repository = find_repository(id)
+    product = Product.find_by(id: product_id)
+
+    if repository.nil?
+      warn "Cannot find custom repository by id \"#{id}\"."
+      return
+    elsif product.nil?
+      warn "Cannot find product by id \"#{product_id}\"."
+      return
+    end
+
+    repository_service.remove_product!(product, repository)
+    puts 'Detached repository from product'
+  end
 
   private
 
