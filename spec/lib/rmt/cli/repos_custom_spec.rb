@@ -190,7 +190,7 @@ describe RMT::CLI::ReposCustom do
       let(:argv) { ['detach', 'foo', repository.id] }
 
       before do
-        repository_service.add_product(product, repository)
+        repository_service.attach_product!(product, repository)
       end
 
       it('has an attached product') { expect(repository.products.count).to eq(1) }
@@ -206,7 +206,7 @@ describe RMT::CLI::ReposCustom do
       let(:argv) { ['detach', repository.id, 'foo'] }
 
       before do
-        repository_service.add_product(product, repository)
+        repository_service.attach_product!(product, repository)
       end
 
       it('has an attached product') { expect(repository.products.count).to eq(1) }
@@ -222,7 +222,7 @@ describe RMT::CLI::ReposCustom do
       let(:argv) { ['detach', repository.id, product.id] }
 
       before do
-        repository_service.add_product(product, repository)
+        repository_service.attach_product!(product, repository)
       end
 
       it('has an attached product') { expect(repository.products.count).to eq(1) }
@@ -240,7 +240,7 @@ describe RMT::CLI::ReposCustom do
       let(:argv) { ['attachments', repository.id] }
 
       before do
-        repository_service.add_product(product, repository)
+        repository_service.attach_product!(product, repository)
       end
 
       it('has an attached product') { expect(repository.products.count).to eq(1) }
@@ -255,7 +255,7 @@ describe RMT::CLI::ReposCustom do
       let(:argv) { ['attachments', repository.id] }
 
       before do
-        repository_service.add_product(product, repository)
+        repository_service.attach_product!(product, repository)
       end
 
       it('has an attached product') { expect(repository.products.count).to eq(1) }

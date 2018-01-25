@@ -96,7 +96,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
       return
     end
 
-    repository_service.add_product(product, repository)
+    repository_service.attach_product!(product, repository)
     puts 'Attached repository to product'
   end
 
@@ -113,7 +113,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
       return
     end
 
-    repository_service.remove_product!(product, repository)
+    repository_service.detach_product!(product, repository)
     puts 'Detached repository from product'
   end
 

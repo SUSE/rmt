@@ -39,7 +39,7 @@ describe RepositoryService do
     it('initially has no products') { expect(repository.products.count).to eq(0) }
 
     it 'can add a product' do
-      service.add_product(product, repository)
+      service.attach_product!(product, repository)
       expect(repository.products.first.id).to eq(product.id)
     end
   end
@@ -48,13 +48,13 @@ describe RepositoryService do
     let(:repository) { create :repository }
 
     before do
-      service.add_product(product, repository)
+      service.attach_product!(product, repository)
     end
 
     it('initially has one products') { expect(repository.products.count).to eq(1) }
 
     it 'can remove a product' do
-      service.remove_product!(product, repository)
+      service.detach_product!(product, repository)
       expect(repository.products.count).to eq(0)
     end
   end

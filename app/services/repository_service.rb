@@ -19,21 +19,21 @@ class RepositoryService
 
     ActiveRecord::Base.transaction do
       repository.save!
-      add_product(product, repository)
+      attach_product!(product, repository)
     end
 
     repository
   end
 
-  def add_product(product, repository)
+  def attach_product!(product, repository)
     product_service = find_product_service(product)
-    RepositoriesServicesAssociation.find_or_create_by(
+    RepositoriesServicesAssociation.find_or_create_by!(
       service_id: product_service.id,
       repository_id: repository.id
     )
   end
 
-  def remove_product!(product, repository)
+  def detach_product!(product, repository)
     product_service = find_product_service(product)
     association = RepositoriesServicesAssociation.find_by(
       service_id: product_service.id,

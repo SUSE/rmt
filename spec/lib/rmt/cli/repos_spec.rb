@@ -11,7 +11,6 @@ RSpec.describe RMT::CLI::Repos do
     let(:command) do
       repository
       described_class.start(argv)
-      # repository = Repository.by_id(repository.id)
       repository.reload
     end
 
