@@ -12,7 +12,11 @@ class Service < ApplicationRecord
   validates :product_id, presence: true
 
   def name
-    product.friendly_name.tr(' ', '_')
+    [
+      product.name,
+      product.release_type,
+      (product.arch if product.arch != 'unknown')
+    ].compact.join(' ').tr(' ', '_')
   end
 
 end
