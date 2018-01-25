@@ -2,7 +2,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
   include ::RMT::CLI::ArrayPrintable
 
-  desc 'add URL NAME PRODUCT_ID', 'Add a custom repository to a product'
+  desc 'add URL NAME PRODUCT_ID', 'Add a new custom repository to a product'
   def add(url, name, product_id)
     product = Product.find_by(id: product_id)
     previous_repository = Repository.find_by(external_url: url)
@@ -83,7 +83,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
     })
   end
 
-  desc 'attach ID PRODUCT_ID', 'Attaches a custom repository to a product'
+  desc 'attach ID PRODUCT_ID', 'Attach an existing custom repository to a product'
   def attach(id, product_id)
     repository = find_repository(id)
     product = Product.find_by(id: product_id)
@@ -100,7 +100,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
     puts 'Attached repository to product'
   end
 
-  desc 'detach ID PRODUCT_ID', 'Detaches a custom repository from a product'
+  desc 'detach ID PRODUCT_ID', 'Detach an existing custom repository from a product'
   def detach(id, product_id)
     repository = find_repository(id)
     product = Product.find_by(id: product_id)
