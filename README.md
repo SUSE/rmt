@@ -53,7 +53,7 @@ desired location.
 
 ### Custom Repositories
 
-* Run `rmt-cli repos custom add URL NAME PRODUCT_ID` to add a custom repository to a product, for example:
+* Run `rmt-cli repos custom add URL NAME PRODUCT_ID` to add a new custom repository to a product, for example:
   ```
   rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers 1421
   ```
@@ -176,7 +176,7 @@ The package is built in the OBS at: https://build.opensuse.org/package/show/syst
 4. Build the package with updated sources, call `make dist` and then build for your distribution by running:
 
     `osc build <repository> <arch> --no-verify`
-    
+
     The list of all build targets and architectures that configured for the project can be obtained by running `osc repos`.
 
 5. Examine the changes by running `osc status` and `osc diff`;
