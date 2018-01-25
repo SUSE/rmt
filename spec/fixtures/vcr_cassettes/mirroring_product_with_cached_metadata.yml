@@ -1,0 +1,388 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://localhost/dummy_product/product.license/directory.yast
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - RMT/0.0.2
+      If-Modified-Since:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Expect:
+      - ''
+  response:
+    status:
+      code: 304
+      message: Not Modified
+    headers:
+      Server:
+      - nginx/1.13.1
+      Date:
+      - Thu, 25 Jan 2018 16:29:13 GMT
+      Last-Modified:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Connection:
+      - keep-alive
+      ETag:
+      - '"5a4a08f8-39"'
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: '1.1'
+    adapter_metadata:
+      effective_url: http://localhost/dummy_product/product.license/directory.yast
+  recorded_at: Thu, 25 Jan 2018 16:29:13 GMT
+- request:
+    method: get
+    uri: http://localhost/dummy_product/product.license/license.de.txt
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - RMT/0.0.2
+      If-Modified-Since:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Expect:
+      - ''
+  response:
+    status:
+      code: 304
+      message: Not Modified
+    headers:
+      Server:
+      - nginx/1.13.1
+      Date:
+      - Thu, 25 Jan 2018 16:29:13 GMT
+      Last-Modified:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Connection:
+      - keep-alive
+      ETag:
+      - '"5a4a08f8-8d"'
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: '1.1'
+    adapter_metadata:
+      effective_url: http://localhost/dummy_product/product.license/license.de.txt
+  recorded_at: Thu, 25 Jan 2018 16:29:13 GMT
+- request:
+    method: get
+    uri: http://localhost/dummy_product/product.license/license.ru.txt
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - RMT/0.0.2
+      If-Modified-Since:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Expect:
+      - ''
+  response:
+    status:
+      code: 304
+      message: Not Modified
+    headers:
+      Server:
+      - nginx/1.13.1
+      Date:
+      - Thu, 25 Jan 2018 16:29:13 GMT
+      Last-Modified:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Connection:
+      - keep-alive
+      ETag:
+      - '"5a4a08f8-8d"'
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: '1.1'
+    adapter_metadata:
+      effective_url: http://localhost/dummy_product/product.license/license.ru.txt
+  recorded_at: Thu, 25 Jan 2018 16:29:13 GMT
+- request:
+    method: get
+    uri: http://localhost/dummy_product/product.license/license.txt
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - RMT/0.0.2
+      If-Modified-Since:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Expect:
+      - ''
+  response:
+    status:
+      code: 304
+      message: Not Modified
+    headers:
+      Server:
+      - nginx/1.13.1
+      Date:
+      - Thu, 25 Jan 2018 16:29:13 GMT
+      Last-Modified:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Connection:
+      - keep-alive
+      ETag:
+      - '"5a4a08f8-8d"'
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: '1.1'
+    adapter_metadata:
+      effective_url: http://localhost/dummy_product/product.license/license.txt
+  recorded_at: Thu, 25 Jan 2018 16:29:13 GMT
+- request:
+    method: get
+    uri: http://localhost/dummy_product/product/repodata/repomd.xml?repo_auth_token
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - RMT/0.0.2
+      If-Modified-Since:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Expect:
+      - ''
+  response:
+    status:
+      code: 304
+      message: Not Modified
+    headers:
+      Server:
+      - nginx/1.13.1
+      Date:
+      - Thu, 25 Jan 2018 16:29:13 GMT
+      Last-Modified:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Connection:
+      - keep-alive
+      ETag:
+      - '"5a4a08f8-793"'
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: '1.1'
+    adapter_metadata:
+      effective_url: http://localhost/dummy_product/product/repodata/repomd.xml?repo_auth_token
+  recorded_at: Thu, 25 Jan 2018 16:29:13 GMT
+- request:
+    method: get
+    uri: http://localhost/dummy_product/product/repodata/repomd.xml.key?repo_auth_token
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - RMT/0.0.2
+      If-Modified-Since:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Expect:
+      - ''
+  response:
+    status:
+      code: 304
+      message: Not Modified
+    headers:
+      Server:
+      - nginx/1.13.1
+      Date:
+      - Thu, 25 Jan 2018 16:29:13 GMT
+      Last-Modified:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Connection:
+      - keep-alive
+      ETag:
+      - '"5a4a08f8-b"'
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: '1.1'
+    adapter_metadata:
+      effective_url: http://localhost/dummy_product/product/repodata/repomd.xml.key?repo_auth_token
+  recorded_at: Thu, 25 Jan 2018 16:29:13 GMT
+- request:
+    method: get
+    uri: http://localhost/dummy_product/product/repodata/repomd.xml.asc?repo_auth_token
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - RMT/0.0.2
+      If-Modified-Since:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Expect:
+      - ''
+  response:
+    status:
+      code: 304
+      message: Not Modified
+    headers:
+      Server:
+      - nginx/1.13.1
+      Date:
+      - Thu, 25 Jan 2018 16:29:13 GMT
+      Last-Modified:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Connection:
+      - keep-alive
+      ETag:
+      - '"5a4a08f8-11"'
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: '1.1'
+    adapter_metadata:
+      effective_url: http://localhost/dummy_product/product/repodata/repomd.xml.asc?repo_auth_token
+  recorded_at: Thu, 25 Jan 2018 16:29:13 GMT
+- request:
+    method: get
+    uri: http://localhost/dummy_product/product/repodata/837fb50abc9680b1e11e050901a56721855a5e854e85e46ceaad2c6816297e69-filelists.xml.gz?repo_auth_token
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - RMT/0.0.2
+      If-Modified-Since:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Expect:
+      - ''
+  response:
+    status:
+      code: 304
+      message: Not Modified
+    headers:
+      Server:
+      - nginx/1.13.1
+      Date:
+      - Thu, 25 Jan 2018 16:29:13 GMT
+      Last-Modified:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Connection:
+      - keep-alive
+      ETag:
+      - '"5a4a08f8-192"'
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: '1.1'
+    adapter_metadata:
+      effective_url: http://localhost/dummy_product/product/repodata/837fb50abc9680b1e11e050901a56721855a5e854e85e46ceaad2c6816297e69-filelists.xml.gz?repo_auth_token
+  recorded_at: Thu, 25 Jan 2018 16:29:13 GMT
+- request:
+    method: get
+    uri: http://localhost/dummy_product/product/repodata/a546b430098b8a3fb7d65493a9ce608fafcb32f451d0ce8bf85410191f347cc3-deltainfo.xml.gz?repo_auth_token
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - RMT/0.0.2
+      If-Modified-Since:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Expect:
+      - ''
+  response:
+    status:
+      code: 304
+      message: Not Modified
+    headers:
+      Server:
+      - nginx/1.13.1
+      Date:
+      - Thu, 25 Jan 2018 16:29:13 GMT
+      Last-Modified:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Connection:
+      - keep-alive
+      ETag:
+      - '"5a4a08f8-1c3"'
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: '1.1'
+    adapter_metadata:
+      effective_url: http://localhost/dummy_product/product/repodata/a546b430098b8a3fb7d65493a9ce608fafcb32f451d0ce8bf85410191f347cc3-deltainfo.xml.gz?repo_auth_token
+  recorded_at: Thu, 25 Jan 2018 16:29:13 GMT
+- request:
+    method: get
+    uri: http://localhost/dummy_product/product/repodata/2d12587a74d924bad597fd8e25b8955270dfbe7591e020f9093edbb4a0d04444-other.xml.gz?repo_auth_token
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - RMT/0.0.2
+      If-Modified-Since:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Expect:
+      - ''
+  response:
+    status:
+      code: 304
+      message: Not Modified
+    headers:
+      Server:
+      - nginx/1.13.1
+      Date:
+      - Thu, 25 Jan 2018 16:29:13 GMT
+      Last-Modified:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Connection:
+      - keep-alive
+      ETag:
+      - '"5a4a08f8-17b"'
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: '1.1'
+    adapter_metadata:
+      effective_url: http://localhost/dummy_product/product/repodata/2d12587a74d924bad597fd8e25b8955270dfbe7591e020f9093edbb4a0d04444-other.xml.gz?repo_auth_token
+  recorded_at: Thu, 25 Jan 2018 16:29:13 GMT
+- request:
+    method: get
+    uri: http://localhost/dummy_product/product/repodata/abf421e45af5cd686f050bab3d2a98e0a60d1b5ca3b07c86cb948fc1abfa675e-primary.xml.gz?repo_auth_token
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - RMT/0.0.2
+      If-Modified-Since:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Expect:
+      - ''
+  response:
+    status:
+      code: 304
+      message: Not Modified
+    headers:
+      Server:
+      - nginx/1.13.1
+      Date:
+      - Thu, 25 Jan 2018 16:29:13 GMT
+      Last-Modified:
+      - Mon, 01 Jan 2018 10:10:00 GMT
+      Connection:
+      - keep-alive
+      ETag:
+      - '"5a4a08f8-398"'
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: '1.1'
+    adapter_metadata:
+      effective_url: http://localhost/dummy_product/product/repodata/abf421e45af5cd686f050bab3d2a98e0a60d1b5ca3b07c86cb948fc1abfa675e-primary.xml.gz?repo_auth_token
+  recorded_at: Thu, 25 Jan 2018 16:29:13 GMT
+recorded_with: VCR 4.0.0

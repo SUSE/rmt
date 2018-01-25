@@ -30,7 +30,7 @@ class RMT::Downloader
     cache_timestamp = nil
     if @cache_path
       cache_file = File.join(@cache_path, remote_file)
-      cache_timestamp = File.mtime(cache_file).utc.httpdate if File.exist?(cache_file)
+      cache_timestamp = get_cache_timestamp(cache_file)
     end
 
     request_fiber = Fiber.new do
@@ -46,6 +46,10 @@ class RMT::Downloader
     request_fiber.resume.run
 
     local_file
+  end
+
+  def get_cache_timestamp(filename)
+    File.mtime(filename).utc.httpdate if File.exist?(filename)
   end
 
   def download_multi(files)
