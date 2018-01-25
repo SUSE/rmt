@@ -85,14 +85,14 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
   desc 'attach ID PRODUCT_ID', 'Attach an existing custom repository to a product'
   def attach(id, product_id)
-    product, repository = attach_or_detach(id, product_id)
+    product, repository = attach_or_detach(id, product_id) || return
     repository_service.attach_product!(product, repository)
     puts 'Attached repository to product'
   end
 
   desc 'detach ID PRODUCT_ID', 'Detach an existing custom repository from a product'
   def detach(id, product_id)
-    product, repository = attach_or_detach(id, product_id)
+    product, repository = attach_or_detach(id, product_id) || return
     repository_service.detach_product!(product, repository)
     puts 'Detached repository from product'
   end
@@ -119,10 +119,10 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
     if repository.nil?
       warn "Cannot find custom repository by id \"#{id}\"."
-      return
+      return false
     elsif product.nil?
       warn "Cannot find product by id \"#{product_id}\"."
-      return
+      return false
     end
 
     [product, repository]
