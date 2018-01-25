@@ -51,9 +51,21 @@ desired location.
 * Register client against RMT by running `SUSEConnect --url https://rmt_hostname`
   After successful registration the repositories from RMT will be used by `zypper` on the client machine.
 
+### Custom Repositories
+
+* Run `rmt-cli repos custom add URL NAME PRODUCT_ID` to add a custom repository to a product, for example:
+  ```
+  rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers 1421
+  ```
+* Run `rmt-cli repos custom list` to list all custom repositories.
+* Run `rmt-cli repos custom remove ID` to remove a custom repository.
+* Run `rmt-cli repos custom attachments ID` to list the products attached to a custom repository.
+* Run `rmt-cli repos custom attach ID PRODUCT_ID` to attach an existing custom repository to a product.
+* Run `rmt-cli repos custom detach ID PRODUCT_ID` to detach an existing custom repository from a product.
+
 ### Offline Mode
 
-RMT supports disconnected setups, similiar to [how SMT does](https://www.suse.com/documentation/sles-12/book_smt/data/smt_disconnected.html).
+RMT supports disconnected setups, similar to [how SMT does](https://www.suse.com/documentation/sles-12/book_smt/data/smt_disconnected.html).
 
 The supported scenarios are shown in the table below:
 
