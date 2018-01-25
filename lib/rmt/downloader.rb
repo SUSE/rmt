@@ -24,11 +24,11 @@ class RMT::Downloader
     @cache_path = cache_path
   end
 
-  def download(remote_file, checksum_type: nil, checksum_value: nil, use_cache: false)
+  def download(remote_file, checksum_type: nil, checksum_value: nil)
     local_file = self.class.make_local_path(@local_path, remote_file)
 
     cache_timestamp = nil
-    if use_cache
+    if @cache_path
       raise 'Cache path not set!' unless @cache_path
       cache_file = File.join(@cache_path, remote_file)
       cache_timestamp = File.mtime(cache_file).utc.httpdate if File.exist?(cache_file)

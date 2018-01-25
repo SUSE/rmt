@@ -116,7 +116,7 @@ RSpec.describe RMT::Downloader do
         }
       end
       let(:filename) { 'repomd.xml' }
-      let(:downloaded_file) { downloader.download("/#{filename}", use_cache: true) }
+      let(:downloaded_file) { downloader.download("/#{filename}") }
       let(:cached_content) { 'cached_content' }
       let(:fresh_content) { 'fresh_content' }
 
