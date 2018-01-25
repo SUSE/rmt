@@ -14,6 +14,7 @@ class Repository < ApplicationRecord
   validates :external_url, presence: true
   validates :local_path, presence: true
 
+  before_create :ensure_trailing_slash
   before_destroy :ensure_destroy_possible
 
   class << self
@@ -48,6 +49,10 @@ class Repository < ApplicationRecord
 
   def ensure_destroy_possible
     throw(:abort) unless custom?
+  end
+
+  def ensure_trailing_slash
+    external_url << '/' unless external_url.end_with?('/')
   end
 
 end
