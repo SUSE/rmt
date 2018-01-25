@@ -27,24 +27,25 @@ class RMT::Downloader
   def download(remote_file, checksum_type: nil, checksum_value: nil, use_cache: false)
     local_file = self.class.make_local_path(@local_path, remote_file)
 
-    if_modified_since = nil
+    cache_timestamp = nil
     if use_cache
       raise 'Cache path not set!' unless @cache_path
       cache_file = File.join(@cache_path, remote_file)
-      if_modified_since = File.mtime(cache_file).utc.rfc2822 if File.exist?(cache_file)
+      cache_timestamp = File.mtime(cache_file).utc.rfc2822 if File.exist?(cache_file)
     end
 
     request_fiber = Fiber.new do
-      request = make_request(remote_file, request_fiber, if_modified_since)
-      finalize_download(request, local_file, checksum_type, checksum_value)
+      response = make_request(remote_file, request_fiber, cache_timestamp)
+
+      if (response.code == 304)
+        copy_from_cache(cache_file, local_file)
+      else
+        finalize_download(response.request, local_file, checksum_type, checksum_value)
+      end
     end
 
     request_fiber.resume.run
 
-    local_file
-  rescue NotModifiedException
-    FileUtils.cp(cache_file, local_file)
-    @logger.info("→ #{File.basename(local_file)}")
     local_file
   end
 
@@ -77,8 +78,8 @@ class RMT::Downloader
     # The request is wrapped into a fiber for exception handling
     request_fiber = Fiber.new do
       begin
-        request = make_request(remote_file, request_fiber)
-        finalize_download(request, local_file, queue_item[:checksum_type], queue_item[:checksum])
+        response = make_request(remote_file, request_fiber)
+        finalize_download(response.request, local_file, queue_item[:checksum_type], queue_item[:checksum])
       rescue RMT::Downloader::Exception => e
         @logger.warn("× #{File.basename(local_file)} - #{e}")
       ensure
@@ -89,7 +90,7 @@ class RMT::Downloader
     @hydra.queue(request_fiber.resume)
   end
 
-  def make_request(remote_file, request_fiber, if_modified_since = nil)
+  def make_request(remote_file, request_fiber, cache_timestamp = nil)
     uri = URI.join(@repository_url, remote_file)
     uri.query = @auth_token if (@auth_token && uri.scheme != 'file')
 
@@ -100,7 +101,7 @@ class RMT::Downloader
     downloaded_file = Tempfile.new('rmt', Dir.tmpdir, mode: File::BINARY, encoding: 'ascii-8bit')
 
     headers = {}
-    headers['If-Modified-Since'] = if_modified_since if if_modified_since
+    headers['If-Modified-Since'] = cache_timestamp if cache_timestamp
 
     request = RMT::FiberRequest.new(
       uri.to_s,
@@ -113,10 +114,19 @@ class RMT::Downloader
 
     request.receive_headers
     request.receive_body
-    request
+  end
+
+  def copy_from_cache(cache_file, local_file)
+    FileUtils.cp(cache_file, local_file)
+    @logger.info("→ #{File.basename(local_file)}")
+    local_file
   end
 
   def finalize_download(request, local_file, checksum_type = nil, checksum_value = nil)
+    if (URI(request.base_url).scheme != 'file' && request.response.code != 200)
+      raise RMT::Downloader::Exception.new("#{request.remote_file} - HTTP request failed with code #{request.response.code}")
+    end
+
     RMT::ChecksumVerifier.verify_checksum(checksum_type, checksum_value, request.download_path) if (checksum_type && checksum_value)
 
     FileUtils.mv(request.download_path.path, local_file)
