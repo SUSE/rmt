@@ -29,7 +29,6 @@ class RMT::Downloader
 
     cache_timestamp = nil
     if @cache_path
-      raise 'Cache path not set!' unless @cache_path
       cache_file = File.join(@cache_path, remote_file)
       cache_timestamp = File.mtime(cache_file).utc.httpdate if File.exist?(cache_file)
     end
@@ -117,7 +116,7 @@ class RMT::Downloader
   end
 
   def copy_from_cache(cache_file, local_file)
-    FileUtils.cp(cache_file, local_file)
+    FileUtils.cp(cache_file, local_file) unless (cache_file == local_file)
     @logger.info("→ #{File.basename(local_file)}")
     local_file
   end

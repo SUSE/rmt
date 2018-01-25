@@ -19,7 +19,6 @@ class RMT::Mirror
     @downloader = RMT::Downloader.new(
       repository_url: @repository_url,
       local_path: @repository_dir,
-      cache_path: @repository_dir,
       logger: @logger
     )
   end
@@ -64,6 +63,7 @@ class RMT::Mirror
   def mirror_metadata
     @downloader.repository_url = URI.join(@repository_url)
     @downloader.local_path = @temp_metadata_dir
+    @downloader.cache_path = @repository_dir
 
     begin
       local_filename = @downloader.download('repodata/repomd.xml')
@@ -102,7 +102,7 @@ class RMT::Mirror
 
   def mirror_license
     @downloader.repository_url = URI.join(@repository_url, '../product.license/')
-    @downloader.local_path = File.join(@repository_dir, '../product.license/')
+    @downloader.local_path = @downloader.cache_path = File.join(@repository_dir, '../product.license/')
 
     begin
       directory_yast = @downloader.download('directory.yast')
