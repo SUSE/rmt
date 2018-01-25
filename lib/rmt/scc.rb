@@ -131,7 +131,7 @@ class RMT::SCC
 
   def create_service(item, product)
     item[:repositories].each do |repo_item|
-      repository_service.create_repository(product, repo_item[:url], repo_item)
+      repository_service.create_repository!(product, repo_item[:url], repo_item)
     end
   end
 

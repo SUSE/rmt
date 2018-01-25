@@ -3,7 +3,7 @@ class RepositoryService
   class InvalidExternalUrl < RuntimeError
   end
 
-  def create_repository(product, url, attributes, custom: false)
+  def create_repository!(product, url, attributes, custom: false)
     repository = Repository.find_or_initialize_by(external_url: url)
 
     # TODO: See if we can clean this up
@@ -15,7 +15,7 @@ class RepositoryService
     repository.external_url = url
     repository.local_path = Repository.make_local_path(url)
 
-    raise InvalidExternalUrl.new(url) if repository.local_path.to_s == ''
+    raise InvalidExternalUrl.new(url) if repository.local_path.to_s == '' || repository.local_path.to_s == '/'
 
     ActiveRecord::Base.transaction do
       repository.save!

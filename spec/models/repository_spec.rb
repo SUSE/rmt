@@ -48,15 +48,4 @@ RSpec.describe Repository, type: :model do
     it('has non-custom repository') { expect(Repository.find_by(id: suse_repository.id)).not_to be_nil }
     it('does not remove non-custom repositories') { expect(suse_repository.destroy).to be_falsey }
   end
-
-  describe 'external_url' do
-    it 'keeps trailing /' do
-      repository = create(:repository, external_url: 'http://www.example.com/repo/')
-      expect(repository.external_url).to eq('http://www.example.com/repo/')
-    end
-    it 'adds trailing /' do
-      repository = create(:repository, external_url: 'http://www.example.com/repo2')
-      expect(repository.external_url).to eq('http://www.example.com/repo2/')
-    end
-  end
 end

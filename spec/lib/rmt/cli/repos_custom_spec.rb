@@ -234,10 +234,10 @@ describe RMT::CLI::ReposCustom do
     end
   end
 
-  describe '#attachments' do
+  describe '#products' do
     context 'scc repository' do
       let(:repository) { create :repository }
-      let(:argv) { ['attachments', repository.id] }
+      let(:argv) { ['product', repository.id] }
 
       before do
         repository_service.attach_product!(product, repository)
@@ -252,7 +252,7 @@ describe RMT::CLI::ReposCustom do
 
     context 'custom repository with products' do
       let(:repository) { create :repository, :custom }
-      let(:argv) { ['attachments', repository.id] }
+      let(:argv) { ['products', repository.id] }
 
       before do
         repository_service.attach_product!(product, repository)
@@ -267,7 +267,7 @@ describe RMT::CLI::ReposCustom do
 
     context 'custom repository without products' do
       let(:repository) { create :repository, :custom }
-      let(:argv) { ['attachments', repository.id] }
+      let(:argv) { ['products', repository.id] }
 
       it('does not have an attached product') { expect(repository.products.count).to eq(0) }
 

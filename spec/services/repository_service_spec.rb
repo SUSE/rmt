@@ -9,7 +9,7 @@ describe RepositoryService do
 
   describe '#create_repository' do
     before do
-      service.create_repository(product, 'http://foo.bar/repos', {
+      service.create_repository!(product, 'http://foo.bar/repos', {
         name: 'foo',
         mirroring_enabled: true,
         description: 'foo',
@@ -22,7 +22,7 @@ describe RepositoryService do
 
     it 'returns error on invalid repository url' do
       expect do
-        service.create_repository(product, 'http://foo.bar', {
+        service.create_repository!(product, 'http://foo.bar', {
           name: 'foo',
           mirroring_enabled: true,
           description: 'foo',

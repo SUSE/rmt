@@ -16,7 +16,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
     end
 
     begin
-      repository_service.create_repository(product, url, {
+      repository_service.create_repository!(product, url, {
         name: name,
         mirroring_enabled: product.mirror?,
         autorefresh: 1,
@@ -62,8 +62,8 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
   end
   map rm: :remove
 
-  desc 'attachments ID', 'Shows products attached to a custom repository'
-  def attachments(id)
+  desc 'products ID', 'Shows products attached to a custom repository'
+  def products(id)
     repository = find_repository(id)
 
     if repository.nil?
