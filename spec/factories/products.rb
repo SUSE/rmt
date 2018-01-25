@@ -17,11 +17,17 @@ FactoryGirl.define do
     transient do
       base_products []
       predecessor nil
+      root_product nil
+      recommended false
     end
 
     after :create do |product, evaluator|
       evaluator.base_products.each do |base_product|
-        product.product_extensions_associations << ProductsExtensionsAssociation.create(product: base_product)
+        product.product_extensions_associations << ProductsExtensionsAssociation.create(
+          product: base_product,
+          root_product: evaluator.root_product || base_product,
+          recommended: evaluator.recommended
+        )
       end
 
       product.predecessors << evaluator.predecessor if evaluator.predecessor
@@ -38,8 +44,7 @@ FactoryGirl.define do
     trait :with_extensions do
       after :create do |product, _evaluator|
         5.times do
-          extension = create :product, :extension
-          product.extensions << extension
+          create(:product, :extension, base_products: [product])
         end
       end
     end
@@ -47,8 +52,7 @@ FactoryGirl.define do
     trait :with_mirrored_extensions do
       after :create do |product, _evaluator|
         5.times do
-          extension = create :product, :extension, :with_mirrored_repositories
-          product.extensions << extension
+          create(:product, :extension, :with_mirrored_repositories, base_products: [product])
         end
       end
     end

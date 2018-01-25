@@ -56,7 +56,10 @@ ActiveRecord::Schema.define(version: 20180115112449) do
   create_table "products_extensions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "product_id", null: false
     t.bigint "extension_id", null: false
+    t.boolean "recommended"
+    t.integer "root_product_id", null: false
     t.index ["extension_id"], name: "index_products_extensions_on_extension_id"
+    t.index ["product_id", "extension_id", "root_product_id"], name: "index_products_extensions_on_product_extension_root", unique: true
     t.index ["product_id"], name: "index_products_extensions_on_product_id"
   end
 
