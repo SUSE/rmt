@@ -119,6 +119,7 @@ RSpec.describe RMT::CLI::Products do
     context 'by product ID' do
       let(:argv) { ['enable', product.id.to_s] }
       let(:expected_output) { "#{product.repositories.where(enabled: true).count} repo(s) successfully enabled.\n" }
+
       before { expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr }
 
       it 'enables the mandatory product repositories' do
@@ -132,6 +133,7 @@ RSpec.describe RMT::CLI::Products do
       let(:false_id) { (product.id + 1).to_s }
       let(:argv) { ['enable', false_id] }
       let(:expected_output) { "Product by id \"#{false_id}\" not found.\n" }
+
       before { expect { described_class.start(argv) }.to output(expected_output).to_stderr.and output('').to_stdout }
 
       it 'enables the mandatory product repositories' do
@@ -144,6 +146,7 @@ RSpec.describe RMT::CLI::Products do
     context 'by product string' do
       let(:argv) { ['enable', product.product_string] }
       let(:expected_output) { "#{product.repositories.where(enabled: true).count} repo(s) successfully enabled.\n" }
+
       before { expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr }
 
       it 'enables the mandatory product repositories' do
