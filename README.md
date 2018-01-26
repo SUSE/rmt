@@ -41,9 +41,9 @@ desired location.
 * Run `rmt-cli sync` to download available products and repositories data for your organization from SCC
 * Run `rmt-cli products --all` to see the list of products that are available for your organization
 * Run `rmt-cli repos --all` to see the list of all repositories available
-* Use the `rmt-cli repos enable` command to choose which product repositories to mirror, for example:
+* Use the `rmt-cli products enable` command to choose which product repositories to mirror, for example:
   ```
-  rmt-cli repos enable SLES/12.2/x86_64
+  rmt-cli products enable SLES/12.2/x86_64
   ```
   The above command would select the mandatory (`pool`, `updates`) SLES 12 SP2 repositories to be mirrored.
   Alternatively, you can specify repository ID to choose individual repositories.

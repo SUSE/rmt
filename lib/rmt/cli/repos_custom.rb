@@ -48,6 +48,16 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
   end
   map ls: :list
 
+  desc 'enable TARGET', 'Enable mirroring of custom repository by ID'
+  def enable(target)
+    change_mirroring(target, true)
+  end
+
+  desc 'disable TARGET', 'Disable mirroring of custom repository by ID'
+  def disable(target)
+    change_mirroring(target, false)
+  end
+
   desc 'remove ID', 'Remove a custom repository'
   def remove(id)
     repository = find_repository(id)
@@ -118,6 +128,13 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
   end
 
   private
+
+  def change_mirroring(target, set_enabled)
+    repository_service.change_repository_mirroring!(target, set_enabled, scc_repository: false)
+    puts "Repository successfully #{set_enabled ? 'enabled' : 'disabled'}."
+  rescue RepositoryService::RepositoryNotFound => e
+    warn e.message
+  end
 
   def find_repository(id)
     repository = Repository.find_by(id: id)

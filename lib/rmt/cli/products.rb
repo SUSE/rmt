@@ -40,24 +40,28 @@ class RMT::CLI::Products < RMT::CLI::Base
   protected
 
   def change_product(target, set_enabled)
-    repo_id = Integer(target, 10) rescue nil
-    if repo_id
-      change_product_mirroring_by_id(repo_id, set_enabled)
+    product_id = Integer(target, 10) rescue nil
+    products = []
+    if product_id
+      product = Product.find(product_id)
+      products << product unless product.nil?
     else
       identifier, version, arch = target.split('/')
-      RMT::CLI::Repos.change_product_mirroring(set_enabled, identifier, version, arch)
+      conditions = { identifier: identifier, version: version }
+      conditions[:arch] = arch if arch
+      products = Product.where(conditions)
     end
+
+    repo_count = repository_service.change_mirroring_by_product!(set_enabled, products)
+    puts "#{repo_count} repo(s) successfully #{set_enabled ? 'enabled' : 'disabled'}."
+  rescue ActiveRecord::RecordNotFound
+    warn "Product by id \"#{product_id}\" not found."
   end
 
-  def change_product_mirroring_by_id(id, mirroring_enabled)
-    conditions = { mirroring_enabled: !mirroring_enabled } # to only update the repos which need change
-    conditions[:enabled] = true if mirroring_enabled
+  private
 
-    repo_count = Product.find(id).change_repositories_mirroring!(conditions, mirroring_enabled)
-
-    raise RMT::CLI::Error, 'No repositories were modified.' unless (repo_count > 0)
-
-    puts "#{repo_count} repo(s) successfully #{mirroring_enabled ? 'enabled' : 'disabled'}."
+  def repository_service
+    @repository_service ||= RepositoryService.new
   end
 
 end

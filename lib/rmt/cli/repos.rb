@@ -15,46 +15,15 @@ class RMT::CLI::Repos < RMT::CLI::Base
 
   desc 'enable TARGET', 'Enable mirroring of repositories by repository ID or product string'
   def enable(target)
-    change_repository_mirroring(target, true)
+    change_mirroring(target, true)
   end
 
   desc 'disable TARGET', 'Disable mirroring of repositories by repository ID or product string'
   def disable(target)
-    change_repository_mirroring(target, false)
-  end
-
-  no_commands do
-    def self.change_product_mirroring(mirroring_enabled, identifier, version, arch)
-      conditions = { identifier: identifier, version: version }
-      conditions[:arch] = arch if arch
-      repo_count = 0
-
-      products = Product.where(conditions).all
-      products.each do |product|
-        conditions = { mirroring_enabled: !mirroring_enabled } # to only update the repos which need change
-        conditions[:enabled] = true if mirroring_enabled
-        repo_count += product.change_repositories_mirroring!(conditions, mirroring_enabled)
-      end
-
-      raise RMT::CLI::Error, 'No repositories were modified.' unless (repo_count > 0)
-
-      puts "#{repo_count} repo(s) successfully #{mirroring_enabled ? 'enabled' : 'disabled'}."
-    end
+    change_mirroring(target, false)
   end
 
   protected
-
-  def change_repository_mirroring(target, mirroring_enabled)
-    repo_id = Integer(target, 10) rescue nil
-    if repo_id
-      # FIXME: A non-existing Id raises an ActiveRecord::RecordNotFound! Same for `products enable 123`
-      Repository.find_by(scc_id: repo_id).change_mirroring!(mirroring_enabled)
-      puts "Repository successfully #{mirroring_enabled ? 'enabled' : 'disabled'}."
-    else
-      identifier, version, arch = target.split('/')
-      self.class.change_product_mirroring(mirroring_enabled, identifier, version, arch)
-    end
-  end
 
   def list_repositories(scope: :enabled)
     repositories = (scope == :all) ? Repository.only_scc : Repository.only_scc.only_mirrored
@@ -75,6 +44,19 @@ class RMT::CLI::Repos < RMT::CLI::Base
         last_mirrored_at: 'Last mirrored'
       })
     end
+  end
+
+  private
+
+  def change_mirroring(target, set_enabled)
+    repository_service.change_repository_mirroring!(target, set_enabled)
+    puts "Repository successfully #{set_enabled ? 'enabled' : 'disabled'}."
+  rescue RepositoryService::RepositoryNotFound => e
+    warn e.message
+  end
+
+  def repository_service
+    @repository_service ||= RepositoryService.new
   end
 
 end

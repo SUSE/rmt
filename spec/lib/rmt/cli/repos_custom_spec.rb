@@ -81,6 +81,74 @@ describe RMT::CLI::ReposCustom do
     it_behaves_like 'rmt-cli custom repos list', 'ls'
   end
 
+  describe '#enable' do
+    subject(:repository) { create :repository, :custom, :with_products }
+
+    let(:command) do
+      repository
+      described_class.start(argv)
+      repository.reload
+    end
+
+    context 'without parameters' do
+      let(:argv) { ['enable'] }
+
+      before { expect { command }.to output(/Usage:/).to_stderr }
+
+      its(:mirroring_enabled) { is_expected.to be(false) }
+    end
+
+    context 'repo id does not exist' do
+      let(:argv) { ['enable', (repository.id + 1).to_s] }
+
+      before { expect { command }.to output("Repository not found. No repositories were modified.\n").to_stderr.and output('').to_stdout }
+
+      its(:mirroring_enabled) { is_expected.to be(false) }
+    end
+
+    context 'by repo id' do
+      let(:argv) { ['enable', repository.id.to_s] }
+
+      before { expect { command }.to output("Repository successfully enabled.\n").to_stdout }
+
+      its(:mirroring_enabled) { is_expected.to be(true) }
+    end
+  end
+
+  describe '#disable' do
+    subject(:repository) { create :repository, :custom, :with_products, mirroring_enabled: true }
+
+    let(:command) do
+      repository
+      described_class.start(argv)
+      repository.reload
+    end
+
+    context 'without parameters' do
+      let(:argv) { ['disable'] }
+
+      before { expect { command }.to output(/Usage:/).to_stderr }
+
+      its(:mirroring_enabled) { is_expected.to be(true) }
+    end
+
+    context 'repo id does not exist' do
+      let(:argv) { ['disable', (repository.id + 1).to_s] }
+
+      before { expect { command }.to output("Repository not found. No repositories were modified.\n").to_stderr.and output('').to_stdout }
+
+      its(:mirroring_enabled) { is_expected.to be(true) }
+    end
+
+    context 'by repo id' do
+      let(:argv) { ['disable', repository.id.to_s] }
+
+      before { expect { command }.to output("Repository successfully disabled.\n").to_stdout }
+
+      its(:mirroring_enabled) { is_expected.to be(false) }
+    end
+  end
+
   describe '#remove' do
     shared_context 'rmt-cli custom repos remove' do |command|
       let(:suse_repository) { create :repository, name: 'awesome-rmt-repo' }
