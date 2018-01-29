@@ -19,18 +19,6 @@ describe RepositoryService do
     end
 
     it('creates the repository') { expect(Repository.find_by(external_url: 'http://foo.bar/repos').name).to eq('foo') }
-
-    it 'returns error on invalid repository url' do
-      expect do
-        service.create_repository!(product, 'http://foo.bar', {
-          name: 'foo',
-          mirroring_enabled: true,
-          description: 'foo',
-          autorefresh: 1,
-          enabled: 0
-        })
-      end.to raise_error(RepositoryService::InvalidExternalUrl)
-    end
   end
 
   describe '#add_product' do

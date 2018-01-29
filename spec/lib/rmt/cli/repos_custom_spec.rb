@@ -19,16 +19,6 @@ describe RMT::CLI::ReposCustom do
       end
     end
 
-    context 'invalid URL' do
-      let(:argv) { %w[add http://foo.bar foo] }
-
-      it 'adds the repository to the database' do
-        expect(described_class).to receive(:exit)
-        expect { described_class.start(argv) }.to output("Invalid URL \"http://foo.bar\" provided.\n").to_stderr.and output('').to_stdout
-        expect(Repository.find_by(name: 'foo')).to be_nil
-      end
-    end
-
     context 'duplicate URL' do
       let(:argv) { ['add', external_url, 'foo'] }
 

@@ -10,18 +10,14 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
       raise RMT::CLI::Error.new('A repository by this URL already exists.')
     end
 
-    begin
-      repository_service.create_repository!(nil, url, {
-        name: name,
-        mirroring_enabled: 1,
-        autorefresh: 1,
-        enabled: 0
-      }, custom: true)
+    repository_service.create_repository!(nil, url, {
+      name: name,
+      mirroring_enabled: 1,
+      autorefresh: 1,
+      enabled: 0
+    }, custom: true)
 
-      puts 'Successfully added custom repository.'
-    rescue RepositoryService::InvalidExternalUrl => e
-      raise RMT::CLI::Error.new("Invalid URL \"#{e.message}\" provided.")
-    end
+    puts 'Successfully added custom repository.'
   end
 
   desc 'list', 'List all custom repositories'

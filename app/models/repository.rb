@@ -27,7 +27,7 @@ class Repository < ApplicationRecord
       uri = URI(url)
       path = uri.path.to_s
       path.gsub!(%r{^/repo}, '') if (uri.hostname == 'updates.suse.com')
-      path
+      (path == '') ? '/' : path
     end
 
   end

@@ -1,8 +1,5 @@
 class RepositoryService
 
-  class InvalidExternalUrl < RuntimeError
-  end
-
   class RepositoryNotFound < RuntimeError
   end
 
@@ -17,8 +14,6 @@ class RepositoryService
 
     repository.external_url = url
     repository.local_path = Repository.make_local_path(url)
-
-    raise InvalidExternalUrl.new(url) if repository.local_path.to_s == '' || repository.local_path.to_s == '/'
 
     ActiveRecord::Base.transaction do
       repository.save!
