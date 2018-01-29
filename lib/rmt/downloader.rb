@@ -12,40 +12,40 @@ class RMT::Downloader
   class Exception < RuntimeError; end
   class NotModifiedException < RuntimeError; end
 
-  attr_accessor :repository_url, :local_path, :concurrency, :logger, :auth_token, :cache_path
+  attr_accessor :repository_url, :destination_dir, :concurrency, :logger, :auth_token, :cache_dir
 
-  def initialize(repository_url:, local_path:, auth_token: nil, logger: nil, cache_path: nil)
+  def initialize(repository_url:, destination_dir:, auth_token: nil, logger: nil, cache_dir: nil)
     Typhoeus::Config.user_agent = "RMT/#{RMT::VERSION}"
     @repository_url = repository_url
-    @local_path = local_path
+    @destination_dir = destination_dir
     @concurrency = 4
     @auth_token = auth_token
     @logger = logger || Logger.new('/dev/null')
-    @cache_path = cache_path
+    @cache_dir = cache_dir
   end
 
   def download(remote_file, checksum_type: nil, checksum_value: nil)
-    local_file = self.class.make_local_path(@local_path, remote_file)
+    local_filename = self.class.make_local_path(@destination_dir, remote_file)
 
     cache_timestamp = nil
-    if @cache_path
-      cache_file = File.join(@cache_path, remote_file)
-      cache_timestamp = get_cache_timestamp(cache_file)
+    if @cache_dir
+      cache_filename = File.join(@cache_dir, remote_file)
+      cache_timestamp = get_cache_timestamp(cache_filename)
     end
 
     request_fiber = Fiber.new do
       response = make_request(remote_file, request_fiber, cache_timestamp)
 
       if (response.code == 304)
-        copy_from_cache(cache_file, local_file)
+        copy_from_cache(cache_filename, local_filename)
       else
-        finalize_download(response.request, local_file, checksum_type, checksum_value)
+        finalize_download(response.request, local_filename, checksum_type, checksum_value)
       end
     end
 
     request_fiber.resume.run
 
-    local_file
+    local_filename
   end
 
   def get_cache_timestamp(filename)
@@ -76,7 +76,7 @@ class RMT::Downloader
     queue_item = @queue.shift
     return unless queue_item
     remote_file = queue_item.location
-    local_file = self.class.make_local_path(@local_path, remote_file)
+    local_file = self.class.make_local_path(@destination_dir, remote_file)
 
     # The request is wrapped into a fiber for exception handling
     request_fiber = Fiber.new do
@@ -119,10 +119,10 @@ class RMT::Downloader
     request.receive_body
   end
 
-  def copy_from_cache(cache_file, local_file)
-    FileUtils.cp(cache_file, local_file) unless (cache_file == local_file)
-    @logger.info("→ #{File.basename(local_file)}")
-    local_file
+  def copy_from_cache(cache_filename, local_filename)
+    FileUtils.cp(cache_filename, local_filename) unless (cache_filename == local_filename)
+    @logger.info("→ #{File.basename(local_filename)}")
+    local_filename
   end
 
   def finalize_download(request, local_file, checksum_type = nil, checksum_value = nil)

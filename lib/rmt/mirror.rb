@@ -18,7 +18,7 @@ class RMT::Mirror
 
     @downloader = RMT::Downloader.new(
       repository_url: @repository_url,
-      local_path: @repository_dir,
+      destination_dir: @repository_dir,
       logger: @logger
     )
   end
@@ -30,7 +30,9 @@ class RMT::Mirror
     @downloader.auth_token = @auth_token
     mirror_metadata
     mirror_data
-    replace_metadata
+
+    replace_directory(File.join(@temp_metadata_dir, 'repodata'), File.join(@repository_dir, 'repodata'))
+    replace_directory(@temp_licenses_dir, File.join(@repository_dir, '../product.license/'))
   end
 
   def self.from_repo_model(repository, base_dir = nil)
@@ -54,6 +56,7 @@ class RMT::Mirror
     end
 
     begin
+      @temp_licenses_dir = Dir.mktmpdir
       @temp_metadata_dir = Dir.mktmpdir
     rescue StandardError => e
       raise RMT::Mirror::Exception.new("Can not create a temporary directory: #{e}")
@@ -62,8 +65,8 @@ class RMT::Mirror
 
   def mirror_metadata
     @downloader.repository_url = URI.join(@repository_url)
-    @downloader.local_path = @temp_metadata_dir
-    @downloader.cache_path = @repository_dir
+    @downloader.destination_dir = @temp_metadata_dir
+    @downloader.cache_dir = @repository_dir
 
     begin
       local_filename = @downloader.download('repodata/repomd.xml')
@@ -102,7 +105,8 @@ class RMT::Mirror
 
   def mirror_license
     @downloader.repository_url = URI.join(@repository_url, '../product.license/')
-    @downloader.local_path = @downloader.cache_path = File.join(@repository_dir, '../product.license/')
+    @downloader.destination_dir = @temp_licenses_dir
+    @downloader.cache_dir = File.join(@repository_dir, '../product.license/')
 
     begin
       directory_yast = @downloader.download('directory.yast')
@@ -118,13 +122,16 @@ class RMT::Mirror
         @downloader.download(filename)
       end
     rescue RMT::Downloader::Exception => e
+      FileUtils.remove_entry(@temp_licenses_dir)
+      @temp_licenses_dir = nil
       raise RMT::Mirror::Exception.new("Error during mirroring metadata: #{e.message}")
     end
   end
 
   def mirror_data
     @downloader.repository_url = @repository_url
-    @downloader.local_path = @repository_dir
+    @downloader.destination_dir = @repository_dir
+    @downloader.cache_dir = nil
 
     @deltainfo_files.each do |filename|
       parser = RMT::Rpm::DeltainfoXmlParser.new(
@@ -147,19 +154,17 @@ class RMT::Mirror
     end
   end
 
-  def replace_metadata
-    old_repodata = File.join(@repository_dir, '.old_repodata')
-    repodata = File.join(@repository_dir, 'repodata')
-    new_repodata = File.join(@temp_metadata_dir, 'repodata')
-
-    FileUtils.remove_entry(old_repodata) if Dir.exist?(old_repodata)
-    FileUtils.mv(repodata, old_repodata) if Dir.exist?(repodata)
-    FileUtils.mv(new_repodata, repodata)
-  ensure
-    FileUtils.remove_entry(@temp_metadata_dir)
-  end
-
   private
+
+  def replace_directory(source_dir, destination_dir)
+    old_directory = File.join(File.dirname(destination_dir), '.old_' + File.basename(destination_dir))
+
+    FileUtils.remove_entry(old_directory) if Dir.exist?(old_directory)
+    FileUtils.mv(destination_dir, old_directory) if Dir.exist?(destination_dir)
+    FileUtils.mv(source_dir, destination_dir)
+  ensure
+    FileUtils.remove_entry(source_dir) if Dir.exist?(source_dir)
+  end
 
   def deduplicate(checksum_type, checksum_value, destination)
     return false unless ::RMT::Deduplicator.deduplicate(checksum_type, checksum_value, destination)
