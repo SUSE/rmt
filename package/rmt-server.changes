@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jan 24 12:03:41 UTC 2018 - ikapelyukhin@suse.com
+
+- version 0.0.2
+- Use cached metadata when possible (bsc#1066669)
+
+-------------------------------------------------------------------
 Sat Dec 16 08:36:05 UTC 2017 - bwiedemann@suse.com
 
 - Dont package build logs to make build reproducible
