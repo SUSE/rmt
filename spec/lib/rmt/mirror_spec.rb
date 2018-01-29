@@ -165,7 +165,7 @@ RSpec.describe RMT::Mirror do
         it 'removes the temporary metadata directory' do
           VCR.use_cassette 'mirroring_product' do
             expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
-            expect(File.exist?(rmt_mirror.instance_variable_get(:@repodata_dir))).to be(false)
+            expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
           end
         end
       end
@@ -175,7 +175,7 @@ RSpec.describe RMT::Mirror do
         it 'removes the temporary metadata directory' do
           VCR.use_cassette 'mirroring_product' do
             expect { rmt_mirror.mirror }.to raise_error(Interrupt)
-            expect(File.exist?(rmt_mirror.instance_variable_get(:@repodata_dir))).to be(false)
+            expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
           end
         end
       end
@@ -307,6 +307,35 @@ RSpec.describe RMT::Mirror do
         end
 
         it_behaves_like 'a deduplicated run', 1, 1, false
+      end
+    end
+
+    context 'with cached metadata' do
+      let(:mirroring_dir) do
+        FileUtils.cp_r(file_fixture('dummy_product'), File.join(@tmp_dir, 'dummy_product'))
+        @tmp_dir
+      end
+      let(:rmt_mirror) do
+        described_class.new(
+          mirroring_base_dir: mirroring_dir,
+          repository_url: 'http://localhost/dummy_product/product/',
+          local_path: '/dummy_product/product/',
+          auth_token: 'repo_auth_token',
+          mirror_src: false
+        )
+      end
+
+      before do
+        allow_any_instance_of(RMT::Downloader).to receive(:get_cache_timestamp) { 'Mon, 01 Jan 2018 10:10:00 GMT' }
+
+        VCR.use_cassette 'mirroring_product_with_cached_metadata' do
+          rmt_mirror.mirror
+        end
+      end
+
+      it 'downloads rpm files' do
+        rpm_entries = Dir.entries(File.join(@tmp_dir, 'dummy_product/product/')).select { |entry| entry =~ /\.rpm$/ }
+        expect(rpm_entries.length).to eq(4)
       end
     end
   end
