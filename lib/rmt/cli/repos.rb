@@ -52,7 +52,7 @@ class RMT::CLI::Repos < RMT::CLI::Base
     repository_service.change_repository_mirroring!(target, set_enabled)
     puts "Repository successfully #{set_enabled ? 'enabled' : 'disabled'}."
   rescue RepositoryService::RepositoryNotFound => e
-    warn e.message
+    raise RMT::CLI::Error.new(e.message)
   end
 
   def repository_service

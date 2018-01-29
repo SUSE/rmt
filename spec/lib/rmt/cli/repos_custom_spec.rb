@@ -23,6 +23,7 @@ describe RMT::CLI::ReposCustom do
       let(:argv) { %w[add http://foo.bar foo] }
 
       it 'adds the repository to the database' do
+        expect(described_class).to receive(:exit)
         expect { described_class.start(argv) }.to output("Invalid URL \"http://foo.bar\" provided.\n").to_stderr.and output('').to_stdout
         expect(Repository.find_by(name: 'foo')).to be_nil
       end
@@ -32,6 +33,7 @@ describe RMT::CLI::ReposCustom do
       let(:argv) { ['add', external_url, 'foo'] }
 
       it 'does not update previous repository if non-custom' do
+        expect(described_class).to receive(:exit)
         expect do
           create :repository, external_url: external_url, name: 'foobar'
           described_class.start(argv)
@@ -40,6 +42,7 @@ describe RMT::CLI::ReposCustom do
       end
 
       it 'does not update previous repository if custom' do
+        expect(described_class).to receive(:exit)
         expect do
           create :repository, :custom, external_url: external_url, name: 'foobar'
           described_class.start(argv)
@@ -55,6 +58,7 @@ describe RMT::CLI::ReposCustom do
 
       context 'empty repository list' do
         it 'says that there are not any custom repositories' do
+          expect(described_class).to receive(:exit)
           expect { described_class.start(argv) }.to output("No custom repositories found.\n").to_stderr
         end
       end
@@ -92,7 +96,10 @@ describe RMT::CLI::ReposCustom do
     context 'repo id does not exist' do
       let(:argv) { ['enable', (repository.id + 1).to_s] }
 
-      before { expect { command }.to output("Repository not found. No repositories were modified.\n").to_stderr.and output('').to_stdout }
+      before do
+        expect(described_class).to receive(:exit)
+        expect { command }.to output("Repository not found. No repositories were modified.\n").to_stderr.and output('').to_stdout
+      end
 
       its(:mirroring_enabled) { is_expected.to be(false) }
     end
@@ -126,7 +133,10 @@ describe RMT::CLI::ReposCustom do
     context 'repo id does not exist' do
       let(:argv) { ['disable', (repository.id + 1).to_s] }
 
-      before { expect { command }.to output("Repository not found. No repositories were modified.\n").to_stderr.and output('').to_stdout }
+      before do
+        expect(described_class).to receive(:exit)
+        expect { command }.to output("Repository not found. No repositories were modified.\n").to_stderr.and output('').to_stdout
+      end
 
       its(:mirroring_enabled) { is_expected.to be(true) }
     end
@@ -149,8 +159,10 @@ describe RMT::CLI::ReposCustom do
         let(:argv) { [command, 'totally_wrong'] }
 
         before do
+          expect(described_class).to receive(:exit)
           expect { described_class.start(argv) }.to output("Cannot find custom repository by id \"totally_wrong\".\n").to_stderr
         end
+
         it 'does not delete suse repository' do
           expect(Repository.find_by(id: suse_repository.id)).not_to be_nil
         end
@@ -164,6 +176,7 @@ describe RMT::CLI::ReposCustom do
         let(:argv) { [command, suse_repository.id] }
 
         before do
+          expect(described_class).to receive(:exit)
           expect { described_class.start(argv) }.to output("Cannot find custom repository by id \"#{suse_repository.id}\".\n").to_stderr
         end
 
@@ -194,6 +207,7 @@ describe RMT::CLI::ReposCustom do
       let(:argv) { ['attach', 'foo', product.id] }
 
       it 'fails' do
+        expect(described_class).to receive(:exit)
         expect { described_class.start(argv) }.to output("Cannot find custom repository by id \"foo\".\n").to_stderr.and output('').to_stdout
       end
     end
@@ -205,6 +219,7 @@ describe RMT::CLI::ReposCustom do
       it('does not have an attached product') { expect(repository.products.count).to eq(0) }
 
       it 'fails' do
+        expect(described_class).to receive(:exit)
         expect { described_class.start(argv) }.to output("Cannot find custom repository by id \"#{repository.id}\".\n").to_stderr.and output('').to_stdout
         expect(repository.products.count).to eq(0)
       end
@@ -217,6 +232,7 @@ describe RMT::CLI::ReposCustom do
       it('does not have an attached product') { expect(repository.products.count).to eq(0) }
 
       it 'fails' do
+        expect(described_class).to receive(:exit)
         expect { described_class.start(argv) }.to output("Cannot find product by id \"foo\".\n").to_stderr.and output('').to_stdout
         expect(repository.products.count).to eq(0)
       end
@@ -240,6 +256,7 @@ describe RMT::CLI::ReposCustom do
       let(:argv) { ['detach', 'foo', product.id] }
 
       it 'fails' do
+        expect(described_class).to receive(:exit)
         expect { described_class.start(argv) }.to output("Cannot find custom repository by id \"foo\".\n").to_stderr.and output('').to_stdout
       end
     end
@@ -255,6 +272,7 @@ describe RMT::CLI::ReposCustom do
       it('has an attached product') { expect(repository.products.count).to eq(1) }
 
       it 'fails' do
+        expect(described_class).to receive(:exit)
         expect { described_class.start(argv) }.to output("Cannot find custom repository by id \"foo\".\n").to_stderr.and output('').to_stdout
         expect(repository.products.count).to eq(1)
       end
@@ -271,6 +289,7 @@ describe RMT::CLI::ReposCustom do
       it('has an attached product') { expect(repository.products.count).to eq(1) }
 
       it 'fails' do
+        expect(described_class).to receive(:exit)
         expect { described_class.start(argv) }.to output("Cannot find product by id \"foo\".\n").to_stderr.and output('').to_stdout
         expect(repository.products.count).to eq(1)
       end
@@ -305,6 +324,7 @@ describe RMT::CLI::ReposCustom do
       it('has an attached product') { expect(repository.products.count).to eq(1) }
 
       it 'does not displays the product' do
+        expect(described_class).to receive(:exit)
         expect { described_class.start(argv) }.to output("Cannot find custom repository by id \"#{repository.id}\".\n").to_stderr.and output('').to_stdout
       end
     end
@@ -331,6 +351,7 @@ describe RMT::CLI::ReposCustom do
       it('does not have an attached product') { expect(repository.products.count).to eq(0) }
 
       it 'displays the product' do
+        expect(described_class).to receive(:exit)
         expect { described_class.start(argv) }.to output('').to_stdout.and output("No products attached to repository.\n").to_stderr
       end
     end

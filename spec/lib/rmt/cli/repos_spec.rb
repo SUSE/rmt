@@ -3,8 +3,6 @@ require 'rails_helper'
 # rubocop:disable RSpec/NestedGroups
 
 RSpec.describe RMT::CLI::Repos do
-  before { allow(described_class).to receive(:exit) { raise 'Called exit unexpectedly' } }
-
   describe '#enable' do
     subject(:repository) { create :repository, :with_products }
 
@@ -25,7 +23,10 @@ RSpec.describe RMT::CLI::Repos do
     context 'repo id does not exist' do
       let(:argv) { ['enable', (repository.scc_id + 1).to_s] }
 
-      before { expect { command }.to output("Repository not found. No repositories were modified.\n").to_stderr.and output('').to_stdout }
+      before do
+        expect(described_class).to receive(:exit)
+        expect { command }.to output("Repository not found. No repositories were modified.\n").to_stderr.and output('').to_stdout
+      end
 
       its(:mirroring_enabled) { is_expected.to be(false) }
     end
@@ -59,7 +60,10 @@ RSpec.describe RMT::CLI::Repos do
     context 'repo id does not exist' do
       let(:argv) { ['disable', (repository.scc_id + 1).to_s] }
 
-      before { expect { command }.to output("Repository not found. No repositories were modified.\n").to_stderr.and output('').to_stdout }
+      before do
+        expect(described_class).to receive(:exit)
+        expect { command }.to output("Repository not found. No repositories were modified.\n").to_stderr.and output('').to_stdout
+      end
 
       its(:mirroring_enabled) { is_expected.to be(true) }
     end

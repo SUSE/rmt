@@ -25,8 +25,8 @@ describe RMT::CLI::Import do
 
     let(:repo1) { create :repository, mirroring_enabled: true, auth_token: 'foobar' }
     let(:repo2) { create :repository, mirroring_enabled: true }
-    let(:repo1_local_path) { repo_url_to_local_path(repo1.external_url) }
-    let(:repo2_local_path) { repo_url_to_local_path(repo2.external_url) }
+    let(:repo1_local_path) { repo_url_to_local_path(path, repo1.external_url) }
+    let(:repo2_local_path) { repo_url_to_local_path(path, repo2.external_url) }
     let(:mirror_double) { instance_double 'RMT::Mirror' }
 
     context 'no repos.json file' do
@@ -40,7 +40,7 @@ describe RMT::CLI::Import do
 
     context 'repository does not exist in database' do
       let(:missing_repo_url) { 'http://foo.bar.missing/repo/bar' }
-      let(:missing_local_path) { repo_url_to_local_path(missing_repo_url) }
+      let(:missing_local_path) { repo_url_to_local_path(path, missing_repo_url) }
       let(:repo_settings) do
         [
           { url: missing_repo_url, auth_token: '' }

@@ -134,7 +134,10 @@ RSpec.describe RMT::CLI::Products do
       let(:argv) { ['enable', false_id] }
       let(:expected_output) { "Product by id \"#{false_id}\" not found.\n" }
 
-      before { expect { described_class.start(argv) }.to output(expected_output).to_stderr.and output('').to_stdout }
+      before do
+        expect(described_class).to receive(:exit)
+        expect { described_class.start(argv) }.to output(expected_output).to_stderr.and output('').to_stdout
+      end
 
       it 'enables the mandatory product repositories' do
         product.repositories.each do |repository|

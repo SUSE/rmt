@@ -7,8 +7,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
     previous_repository = Repository.find_by(external_url: url)
 
     if previous_repository
-      warn 'A repository by this URL already exists.'
-      return
+      raise RMT::CLI::Error.new('A repository by this URL already exists.')
     end
 
     begin
@@ -21,7 +20,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
       puts 'Successfully added custom repository.'
     rescue RepositoryService::InvalidExternalUrl => e
-      warn "Invalid URL \"#{e.message}\" provided."
+      raise RMT::CLI::Error.new("Invalid URL \"#{e.message}\" provided.")
     end
   end
 
@@ -30,7 +29,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
     repositories = Repository.only_custom
 
     if repositories.empty?
-      warn 'No custom repositories found.'
+      raise RMT::CLI::Error.new('No custom repositories found.')
     else
       puts array_to_table(repositories, {
         id: 'ID',
@@ -59,8 +58,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
     repository = find_repository(id)
 
     if repository.nil?
-      warn "Cannot find custom repository by id \"#{id}\"."
-      return
+      raise RMT::CLI::Error.new("Cannot find custom repository by id \"#{id}\".")
     end
 
     repository.destroy!
@@ -73,15 +71,13 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
     repository = find_repository(id)
 
     if repository.nil?
-      warn "Cannot find custom repository by id \"#{id}\"."
-      return
+      raise RMT::CLI::Error.new("Cannot find custom repository by id \"#{id}\".")
     end
 
     products = repository.products
 
     if products.empty?
-      warn 'No products attached to repository.'
-      return
+      raise RMT::CLI::Error.new('No products attached to repository.')
     end
     puts array_to_table(products, {
       id: 'Product ID',
@@ -91,14 +87,14 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
   desc 'attach ID PRODUCT_ID', 'Attach an existing custom repository to a product'
   def attach(id, product_id)
-    product, repository = attach_or_detach(id, product_id) || return
+    product, repository = attach_or_detach(id, product_id)
     repository_service.attach_product!(product, repository)
     puts 'Attached repository to product'
   end
 
   desc 'detach ID PRODUCT_ID', 'Detach an existing custom repository from a product'
   def detach(id, product_id)
-    product, repository = attach_or_detach(id, product_id) || return
+    product, repository = attach_or_detach(id, product_id)
     repository_service.detach_product!(product, repository)
     puts 'Detached repository from product'
   end
@@ -109,7 +105,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
     repository_service.change_repository_mirroring!(target, set_enabled, scc_repository: false)
     puts "Repository successfully #{set_enabled ? 'enabled' : 'disabled'}."
   rescue RepositoryService::RepositoryNotFound => e
-    warn e.message
+    raise RMT::CLI::Error.new(e.message)
   end
 
   def find_repository(id)
@@ -131,11 +127,9 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
     product = find_product(product_id)
 
     if repository.nil?
-      warn "Cannot find custom repository by id \"#{id}\"."
-      return false
+      raise RMT::CLI::Error.new("Cannot find custom repository by id \"#{id}\".")
     elsif product.nil?
-      warn "Cannot find product by id \"#{product_id}\"."
-      return false
+      raise RMT::CLI::Error.new("Cannot find product by id \"#{product_id}\".")
     end
 
     [product, repository]

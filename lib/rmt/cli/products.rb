@@ -55,7 +55,7 @@ class RMT::CLI::Products < RMT::CLI::Base
     repo_count = repository_service.change_mirroring_by_product!(set_enabled, products)
     puts "#{repo_count} repo(s) successfully #{set_enabled ? 'enabled' : 'disabled'}."
   rescue ActiveRecord::RecordNotFound
-    warn "Product by id \"#{product_id}\" not found."
+    raise RMT::CLI::Error.new("Product by id \"#{product_id}\" not found.")
   end
 
   private
