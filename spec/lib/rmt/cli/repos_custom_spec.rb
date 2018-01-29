@@ -10,17 +10,8 @@ describe RMT::CLI::ReposCustom do
   let(:repository_service) { RepositoryService.new }
 
   describe '#add' do
-    context 'product does not exist' do
-      let(:argv) { ['add', external_url, 'foo', 'foobarz'] }
-
-      it 'does not add the repository to the database' do
-        expect { described_class.start(argv) }.to output("Cannot find product by id foobarz.\n").to_stderr
-        expect(Repository.find_by(name: 'foo')).to be_nil
-      end
-    end
-
     context 'product exists' do
-      let(:argv) { ['add', external_url, 'foo', product.id] }
+      let(:argv) { ['add', external_url, 'foo'] }
 
       it 'adds the repository to the database' do
         expect { described_class.start(argv) }.to output("Successfully added custom repository.\n").to_stdout.and output('').to_stderr
@@ -29,7 +20,7 @@ describe RMT::CLI::ReposCustom do
     end
 
     context 'invalid URL' do
-      let(:argv) { ['add', 'http://foo.bar', 'foo', product.id] }
+      let(:argv) { %w[add http://foo.bar foo] }
 
       it 'adds the repository to the database' do
         expect { described_class.start(argv) }.to output("Invalid URL \"http://foo.bar\" provided.\n").to_stderr.and output('').to_stdout
@@ -38,7 +29,7 @@ describe RMT::CLI::ReposCustom do
     end
 
     context 'duplicate URL' do
-      let(:argv) { ['add', external_url, 'foo', product.id] }
+      let(:argv) { ['add', external_url, 'foo'] }
 
       it 'does not update previous repository if non-custom' do
         expect do

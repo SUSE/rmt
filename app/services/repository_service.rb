@@ -22,7 +22,7 @@ class RepositoryService
 
     ActiveRecord::Base.transaction do
       repository.save!
-      attach_product!(product, repository)
+      attach_product!(product, repository) unless product.nil?
     end
 
     repository

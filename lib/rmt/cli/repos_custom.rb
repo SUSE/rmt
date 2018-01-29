@@ -2,23 +2,19 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
   include ::RMT::CLI::ArrayPrintable
 
-  desc 'add URL NAME PRODUCT_ID', 'Add a new custom repository to a product'
-  def add(url, name, product_id)
-    product = find_product(product_id)
+  desc 'add URL NAME', 'Creates a custom repository.'
+  def add(url, name)
     previous_repository = Repository.find_by(external_url: url)
 
-    if product.nil?
-      warn "Cannot find product by id #{product_id}."
-      return
-    elsif previous_repository
+    if previous_repository
       warn 'A repository by this URL already exists.'
       return
     end
 
     begin
-      repository_service.create_repository!(product, url, {
+      repository_service.create_repository!(nil, url, {
         name: name,
-        mirroring_enabled: product.mirror?,
+        mirroring_enabled: 1,
         autorefresh: 1,
         enabled: 0
       }, custom: true)
