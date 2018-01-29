@@ -59,7 +59,6 @@ BuildRequires:  ruby2.4-rubygem-bundler
 %else
 BuildRequires:  ruby2.5
 BuildRequires:  ruby2.5-devel
-BuildRequires:  ruby2.5-rubygem-bundler
 %endif
 BuildRequires:  fdupes
 
@@ -69,7 +68,6 @@ Requires(post): ruby2.4
 Requires(post): ruby2.4-rubygem-bundler
 %else
 Requires(post): ruby2.5
-Requires(post): ruby2.5-rubygem-bundler
 %endif
 Requires(post): timezone
 Requires(post): util-linux
