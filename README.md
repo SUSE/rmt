@@ -46,7 +46,11 @@ desired location.
   rmt-cli products enable SLES/12.2/x86_64
   ```
   The above command would select the mandatory (`pool`, `updates`) SLES 12 SP2 repositories to be mirrored.
-  Alternatively, you can specify repository ID to choose individual repositories.
+  Alternatively, you can choose to mirror an individual repository with `rmt-cli repos enable REPO_ID`, for example:
+  ```
+  rmt-cli repos enable 2189
+  ```
+  The above command would enable mirroring for the SLES 12 SP3 Updates repository.
 * Run `rmt-cli mirror` to mirror selected repositories and make their content available through RMT
 * Register client against RMT by running `SUSEConnect --url https://rmt_hostname`
   After successful registration the repositories from RMT will be used by `zypper` on the client machine.
@@ -58,6 +62,8 @@ desired location.
   rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers
   ```
 * Run `rmt-cli repos custom list` to list all custom repositories.
+* Run `rmt-cli repos custom enable ID` to enable mirroring for a custom repository.
+* Run `rmt-cli repos custom disable ID` to disable mirroring for a custom repository.
 * Run `rmt-cli repos custom remove ID` to remove a custom repository.
 * Run `rmt-cli repos custom attachments ID` to list the products attached to a custom repository.
 * Run `rmt-cli repos custom attach ID PRODUCT_ID` to attach an existing custom repository to a product.
