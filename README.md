@@ -53,9 +53,9 @@ desired location.
 
 ### Custom Repositories
 
-* Run `rmt-cli repos custom add URL NAME PRODUCT_ID` to add a new custom repository to a product, for example:
+* Run `rmt-cli repos custom add URL NAME` to add a new custom repository, for example:
   ```
-  rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers 1421
+  rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers
   ```
 * Run `rmt-cli repos custom list` to list all custom repositories.
 * Run `rmt-cli repos custom remove ID` to remove a custom repository.
