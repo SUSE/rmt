@@ -32,3 +32,4 @@ config/secrets.yml.key
 config/secrets.yml.enc
 config/rmt.local.yml
 
+.env
