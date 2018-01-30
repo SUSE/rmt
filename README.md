@@ -171,12 +171,16 @@ The package is built in the OBS at: https://build.opensuse.org/package/show/syst
 6. Stage the changes by running `osc addremove`;
 7. Commit the changes into OBS by running `osc ci`.
 
-### With docker-compose
+### Running with docker-compose
 
-You can run the application locally using docker-compose:
+In order to run the application locally using docker-compose:
 
-```bash
-docker-compose up
-```
-
-And it will be accessible at http://localhost:8080/ .
+1. Copy `.env.example` file to `.env`;
+2. Add your organization credentials to `.env` file. Mirroring credentials can be obtained from the [SUSE Customer Center](https://scc.suse.com/organization);
+3. Start the containers by running `docker-compose up`. Running `docker-compose up -d` will start the containers in the background;
+4. Execute commands in the container, e.g.:
+    ```bash
+    docker-compose exec rmt rmt-cli repos --help
+    ```
+    Alternatively, running `docker-compose exec rmt bash` will start the shell inside the container.
+5. The web server will be accessible at [http://localhost:8080/](http://localhost:8080/), this URL can be used for registering clients.
