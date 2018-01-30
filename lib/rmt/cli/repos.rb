@@ -36,7 +36,7 @@ class RMT::CLI::Repos < RMT::CLI::Base
       end
     else
       puts array_to_table(repositories, {
-        scc_id: 'SCC ID',
+        unique_id: 'ID',
         name: 'Name',
         description: 'Description',
         enabled: 'Mandatory?',

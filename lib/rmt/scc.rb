@@ -143,7 +143,7 @@ class RMT::SCC
     # sle-hae/11.3/s390x available without base product for s390x
     # In this case no repository data was added in create_product -- can't update those repos.
     begin
-      Repository.find_by!(scc_id: item[:id]).update! auth_token: auth_token
+      Repository.find_by!(unique_id: item[:id]).update! auth_token: auth_token
     rescue ActiveRecord::RecordNotFound
       @logger.debug("Repository #{item[:id]} is not available")
     end
