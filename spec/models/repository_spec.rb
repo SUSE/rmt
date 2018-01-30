@@ -55,4 +55,10 @@ RSpec.describe Repository, type: :model do
     it(:handles_subpath) { expect(Repository.make_local_path('http://localhost.com/foo/bar')).to eq('/foo/bar') }
     it(:handles_subpath_trailing_slash) { expect(Repository.make_local_path('http://localhost.com/foo/bar/')).to eq('/foo/bar/') }
   end
+
+  describe '#set_unique_id' do
+    subject { create :repository, :custom, external_url: 'http://example.com/' }
+
+    its(:unique_id) { is_expected.to eq('a6bf1757fff057f266b697df9cf176fd') }
+  end
 end
