@@ -83,9 +83,9 @@ class RMT::CLI::Base < Thor
     File.directory?(path) ? yield : warn("#{path} is not a directory.")
   end
 
-  def mirror!(repo, to: RMT::DEFAULT_MIRROR_DIR, deduplication_enabled: true)
+  def mirror!(repo, to: RMT::DEFAULT_MIRROR_DIR, to_offline: false)
     puts "Mirroring repository #{repo.name} to #{to}"
-    RMT::Mirror.from_url(repo.external_url, repo.auth_token, base_dir: to, deduplication_enabled: deduplication_enabled).mirror
+    RMT::Mirror.from_url(repo.external_url, repo.auth_token, base_dir: to, to_offline: to_offline).mirror
     repo.refresh_timestamp!
   rescue RMT::Mirror::Exception => e
     warn e.to_s
