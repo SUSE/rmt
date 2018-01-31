@@ -35,7 +35,7 @@ class RMT::CLI::Export < RMT::CLI::Base
       repos.each do |repo|
         puts "Mirroring repository at #{repo['url']}"
         begin
-          RMT::Mirror.from_url(repo['url'], repo['auth_token'], base_dir: path).mirror
+          RMT::Mirror.from_uri(repo['url'], repo['auth_token'], base_dir: path).mirror
         rescue RMT::Mirror::Exception => e
           warn e.to_s
         end

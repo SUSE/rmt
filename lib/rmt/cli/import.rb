@@ -25,7 +25,7 @@ class RMT::CLI::Import < RMT::CLI::Base
         end
 
         repo.external_url = 'file://' + path + Repository.make_local_path(repo_json['url'])
-        mirror!(repo, to_offline: true)
+        mirror!(repo, repository_url: repo_json['url'], to_offline: true)
       end
     end
   end

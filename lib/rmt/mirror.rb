@@ -2,6 +2,7 @@ require 'rmt/downloader'
 require 'rmt/rpm'
 require 'time'
 
+# rubocop:disable Metrics/ClassLength
 class RMT::Mirror
 
   class RMT::Mirror::Exception < RuntimeError
@@ -37,10 +38,12 @@ class RMT::Mirror
     replace_directory(@temp_licenses_dir, File.join(@repository_dir, '../product.license/'))
   end
 
-  def self.from_url(repository_url, auth_token, base_dir: nil, to_offline: false)
+  def self.from_uri(uri, auth_token, repository_url: nil, base_dir: nil, to_offline: false)
+    repository_url ||= uri
+
     new(
       mirroring_base_dir: base_dir || RMT::DEFAULT_MIRROR_DIR,
-      repository_url: repository_url,
+      repository_url: uri,
       auth_token: auth_token,
       local_path: Repository.make_local_path(repository_url),
       mirror_src: Settings.mirroring.mirror_src,
