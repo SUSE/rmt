@@ -55,4 +55,20 @@ RSpec.describe Repository, type: :model do
     it(:handles_subpath) { expect(Repository.make_local_path('http://localhost.com/foo/bar')).to eq('/foo/bar') }
     it(:handles_subpath_trailing_slash) { expect(Repository.make_local_path('http://localhost.com/foo/bar/')).to eq('/foo/bar/') }
   end
+
+  describe '#set_unique_id' do
+    let(:repo1) { create :repository, :custom, external_url: 'http://example.com/test1/' }
+    let(:repo2) { create :repository, :custom, external_url: 'http://example.com/test2/' }
+    let(:repo3) { create :repository, :custom, external_url: 'http://example.com/test3/' }
+
+    before do
+      repo1
+      repo2.destroy
+      repo3
+    end
+
+    it('first repo has correct id') { expect(repo1.unique_id).to eq('c1') }
+    it('second repo has correct id') { expect(repo2.unique_id).to eq('c2') }
+    it('third repo has correct id after deletion of the second repo') { expect(repo3.unique_id).to eq('c2') }
+  end
 end
