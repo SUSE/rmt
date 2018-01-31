@@ -15,6 +15,7 @@ class Repository < ApplicationRecord
   validates :local_path, presence: true
 
   before_destroy :ensure_destroy_possible
+  before_create :set_unique_id
 
   class << self
 
@@ -41,6 +42,14 @@ class Repository < ApplicationRecord
   end
 
   private
+
+  def set_unique_id
+    self.unique_id = generate_unique_id if (custom? && !unique_id)
+  end
+
+  def generate_unique_id
+    Digest::MD5.hexdigest(external_url)
+  end
 
   def ensure_destroy_possible
     throw(:abort) unless custom?
