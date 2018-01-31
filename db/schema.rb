@@ -77,6 +77,7 @@ ActiveRecord::Schema.define(version: 20180130142951) do
     t.datetime "last_mirrored_at"
     t.boolean "custom", default: false
     t.index ["external_url"], name: "index_repositories_on_external_url", unique: true
+    t.index ["unique_id"], name: "index_repositories_on_unique_id", unique: true
   end
 
   create_table "repositories_services", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
