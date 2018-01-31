@@ -21,8 +21,8 @@ class RepositoryService
       attach_product!(product, repository) unless product.nil?
     end
 
-    # FIXME this is a hack to add some not nice ID value
-    if (custom)
+    # FIXME: this is a hack to add some not nice ID value
+    if custom
       repository.unique_id = "hack#{repository.id}"
       repository.save!
     end
