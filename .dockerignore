@@ -5,3 +5,6 @@ Dockerfile
 Jenkinsfile
 .codeclimate.yml
 .travis.yml
+public/repo/*
+config/rmt.local.yml
+vendor
