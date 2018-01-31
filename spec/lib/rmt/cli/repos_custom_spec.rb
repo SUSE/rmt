@@ -6,7 +6,7 @@ describe RMT::CLI::ReposCustom do
   subject(:command) { described_class.start(argv) }
 
   let(:product) { create :product }
-  let(:external_url) { 'http://example.com/repos' }
+  let(:external_url) { 'http://example.com/repos/' }
   let(:repository_service) { RepositoryService.new }
 
   describe '#add' do
@@ -29,6 +29,18 @@ describe RMT::CLI::ReposCustom do
           described_class.start(argv)
         end.to output("A repository by this URL already exists.\n").to_stderr.and output('').to_stdout
         expect(Repository.find_by(external_url: external_url).name).to eq('foobar')
+      end
+
+      it 'handles trailing slashes' do
+        expect(described_class).to receive(:exit)
+
+        expect do
+          described_class.start(%w[add http://example.com/repo/ foo])
+        end.to output("Successfully added custom repository.\n").to_stdout.and output('').to_stderr
+
+        expect do
+          described_class.start(%w[add http://example.com/repo foo])
+        end.to output("A repository by this URL already exists.\n").to_stderr.and output('').to_stdout
       end
 
       it 'does not update previous repository if custom' do
