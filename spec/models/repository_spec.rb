@@ -55,4 +55,31 @@ RSpec.describe Repository, type: :model do
     it(:handles_subpath) { expect(Repository.make_local_path('http://localhost.com/foo/bar')).to eq('/foo/bar') }
     it(:handles_subpath_trailing_slash) { expect(Repository.make_local_path('http://localhost.com/foo/bar/')).to eq('/foo/bar/') }
   end
+
+  describe '#set_unique_id' do
+    context 'assigns generated id to the custom repo' do
+      subject { create :repository, :custom, external_url: 'http://example.com/test1/' }
+
+      before do
+        expect(Repository).to receive(:generate_unique_id).and_return('abcde')
+      end
+
+      its(:unique_id) { is_expected.to eq('abcde') }
+    end
+
+    context "when can't generate the ID" do
+      let(:first_repo) { create :repository, :custom, external_url: 'http://example.com/test1/' }
+
+      before do
+        expect(Repository).to receive(:generate_unique_id).exactly(6).times.and_return('abcde')
+        first_repo
+      end
+
+      it 'raises an exception' do
+        expect do
+          create :repository, :custom, external_url: 'http://example.com/test2/'
+        end.to raise_error 'Can not generate unique custom repo ID'
+      end
+    end
+  end
 end

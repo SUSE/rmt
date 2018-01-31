@@ -15,6 +15,7 @@ class Repository < ApplicationRecord
   validates :local_path, presence: true
 
   before_destroy :ensure_destroy_possible
+  before_create :set_unique_id
 
   class << self
 
@@ -40,7 +41,27 @@ class Repository < ApplicationRecord
     update_column(:mirroring_enabled, mirroring_enabled)
   end
 
+  def self.generate_unique_id
+    (0...5).map { (97 + rand(26)).chr }.join
+  end
+
   private
+
+  def set_unique_id
+    return unless (custom? && !unique_id)
+    generated_id = nil
+    repo = nil
+
+    5.times do
+      generated_id = self.class.generate_unique_id
+      repo = Repository.find_by(unique_id: generated_id)
+      break unless repo
+    end
+
+    raise 'Can not generate unique custom repo ID' if repo
+
+    self.unique_id = generated_id
+  end
 
   def ensure_destroy_possible
     throw(:abort) unless custom?

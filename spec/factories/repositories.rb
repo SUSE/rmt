@@ -19,6 +19,7 @@ FactoryGirl.define do
 
     trait :custom do
       custom true
+      unique_id nil
     end
 
     trait :with_products do
