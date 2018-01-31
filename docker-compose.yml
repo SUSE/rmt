@@ -5,35 +5,37 @@ volumes:
 
 services:
   db:
+    image: mariadb:10.2
+    restart: always
+    volumes:
+      - db_storage:/var/lib/mysql
     extends:
       service: base
       file: docker-compose-base.yml
-    image: postgres
-    volumes:
-      - db_storage:/var/lib/postgresql/data
-    environment:
-      - PGDATA=/var/lib/postgresql/data/pgdata
 
   rmt:
-    extends:
-      service: base
-      file: docker-compose-base.yml
     build: .
     environment:
-      - POSTGRES_HOST=db
+      - MYSQL_HOST=db
       - SECRET_KEY_BASE=8ea53ad3bc6c03923e376c8bdd85059c1885524947a7efe53d5e9c9d4e39861106ffd6a2ece82b803072ed701e6c960bade91644979e679416c5f255007237ae
+      - SCC_USERNAME=${SCC_USERNAME}
+      - SCC_PASSWORD=${SCC_PASSWORD}
     volumes:
       - ./public:/srv/www/repo/public/
     depends_on:
       - db
+    extends:
+      service: base
+      file: docker-compose-base.yml
     command: bash -c 'bundle exec rails db:migrate && bundle exec rails s -b rmt'
 
   nginx:
     image: nginx
     volumes:
       - ./public:/var/www/
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/default.conf:/tmp/default.template
     ports:
-      - 8080:80
+      - "${EXTERNAL_PORT}:80"
     depends_on:
       - rmt
+    entrypoint: /bin/bash -c 'cat /tmp/default.template | sed "s/\\\$$server_port/$EXTERNAL_PORT/g" > /etc/nginx/conf.d/default.conf && nginx -g "daemon off;"'

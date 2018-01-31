@@ -4,6 +4,8 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
   desc 'add URL NAME', 'Creates a custom repository.'
   def add(url, name)
+    url << '/' unless url.end_with?('/')
+
     previous_repository = Repository.find_by(external_url: url)
 
     if previous_repository
