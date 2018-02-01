@@ -35,12 +35,12 @@ describe RMT::SCC do
 
     it 'saves repos to the DB' do
       all_repositories.map.each do |repository|
-        db_repository = Repository.find_by(scc_id: repository[:id])
+        db_repository = Repository.find_by(unique_id: repository[:id])
 
-        (db_repository.attributes.keys - %w[id scc_id external_url mirroring_enabled local_path auth_token]).each do |key|
+        (db_repository.attributes.keys - %w[id unique_id external_url mirroring_enabled local_path auth_token custom]).each do |key|
           expect(db_repository[key].to_s).to eq(repository[key.to_sym].to_s)
         end
-        expect(db_repository[:scc_id]).to eq(repository[:id])
+        expect(db_repository[:unique_id]).to eq(repository[:id].to_s)
 
         uri = URI(repository[:url])
         auth_token = uri.query

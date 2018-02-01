@@ -10,14 +10,21 @@ class RepositoryService
     repository.attributes = attributes.select do |k, _|
       repository.attributes.keys.member?(k.to_s) && k.to_s != 'id'
     end
-    repository.scc_id = attributes[:id] unless custom
+    repository.unique_id = attributes[:id] unless custom
 
     repository.external_url = url
     repository.local_path = Repository.make_local_path(url)
+    repository.custom = custom
 
     ActiveRecord::Base.transaction do
       repository.save!
       attach_product!(product, repository) unless product.nil?
+    end
+
+    # FIXME: this is a hack to add some not nice ID value
+    if custom
+      repository.unique_id = "hack#{repository.id}"
+      repository.save!
     end
 
     repository
@@ -41,7 +48,7 @@ class RepositoryService
   end
 
   def change_repository_mirroring!(repo_id, mirroring_enabled, scc_repository: true)
-    repository = scc_repository ? Repository.find_by!(scc_id: repo_id) : Repository.find_by!(id: repo_id)
+    repository = scc_repository ? Repository.find_by!(unique_id: repo_id) : Repository.find_by!(id: repo_id)
     repository.change_mirroring!(mirroring_enabled)
   rescue ActiveRecord::RecordNotFound
     raise RepositoryNotFound, 'Repository not found. No repositories were modified.'

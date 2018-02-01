@@ -30,7 +30,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
       raise RMT::CLI::Error.new('No custom repositories found.')
     else
       puts array_to_table(repositories, {
-        id: 'ID',
+        unique_id: 'ID',
         name: 'Name',
         external_url: 'URL',
         enabled: 'Mandatory?',

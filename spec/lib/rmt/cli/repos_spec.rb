@@ -21,7 +21,7 @@ RSpec.describe RMT::CLI::Repos do
     end
 
     context 'repo id does not exist' do
-      let(:argv) { ['enable', (repository.scc_id + 1).to_s] }
+      let(:argv) { ['enable', (repository.unique_id + 'blah').to_s] }
 
       before do
         expect(described_class).to receive(:exit)
@@ -32,7 +32,7 @@ RSpec.describe RMT::CLI::Repos do
     end
 
     context 'by repo id' do
-      let(:argv) { ['enable', repository.scc_id.to_s] }
+      let(:argv) { ['enable', repository.unique_id.to_s] }
 
       before { expect { command }.to output("Repository successfully enabled.\n").to_stdout }
 
@@ -58,7 +58,7 @@ RSpec.describe RMT::CLI::Repos do
     end
 
     context 'repo id does not exist' do
-      let(:argv) { ['disable', (repository.scc_id + 1).to_s] }
+      let(:argv) { ['disable', (repository.unique_id + 'blah').to_s] }
 
       before do
         expect(described_class).to receive(:exit)
@@ -69,7 +69,7 @@ RSpec.describe RMT::CLI::Repos do
     end
 
     context 'by repo id' do
-      let(:argv) { ['disable', repository.scc_id.to_s] }
+      let(:argv) { ['disable', repository.unique_id.to_s] }
 
       before { expect { command }.to output("Repository successfully disabled.\n").to_stdout }
 
@@ -106,7 +106,7 @@ RSpec.describe RMT::CLI::Repos do
           let(:expected_output) do
             rows = []
             rows << [
-              repository_one.scc_id,
+              repository_one.unique_id,
               repository_one.name,
               repository_one.description,
               repository_one.enabled,
@@ -114,7 +114,7 @@ RSpec.describe RMT::CLI::Repos do
               repository_one.last_mirrored_at
             ]
             Terminal::Table.new(
-              headings: ['SCC ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'],
+              headings: ['ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'],
               rows: rows
             ).to_s + "\n"
           end
@@ -129,7 +129,7 @@ RSpec.describe RMT::CLI::Repos do
           let(:expected_output) do
             rows = []
             rows << [
-              repository_one.scc_id,
+              repository_one.unique_id,
               repository_one.name,
               repository_one.description,
               repository_one.enabled,
@@ -137,7 +137,7 @@ RSpec.describe RMT::CLI::Repos do
               repository_one.last_mirrored_at
             ]
             rows << [
-              repository_two.scc_id,
+              repository_two.unique_id,
               repository_two.name,
               repository_two.description,
               repository_two.enabled,
@@ -145,7 +145,7 @@ RSpec.describe RMT::CLI::Repos do
               repository_two.last_mirrored_at
             ]
             Terminal::Table.new(
-              headings: ['SCC ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'],
+              headings: ['ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'],
               rows: rows
             ).to_s + "\n"
           end

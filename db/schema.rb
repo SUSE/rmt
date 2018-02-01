@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180115112449) do
+ActiveRecord::Schema.define(version: 20180130142951) do
 
   create_table "activations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "service_id", null: false
@@ -64,7 +64,7 @@ ActiveRecord::Schema.define(version: 20180115112449) do
   end
 
   create_table "repositories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.bigint "scc_id", unsigned: true
+    t.string "unique_id"
     t.string "name", null: false
     t.string "description"
     t.boolean "enabled", default: false, null: false
@@ -75,7 +75,9 @@ ActiveRecord::Schema.define(version: 20180115112449) do
     t.boolean "mirroring_enabled", default: false, null: false
     t.string "local_path", null: false
     t.datetime "last_mirrored_at"
+    t.boolean "custom", default: false
     t.index ["external_url"], name: "index_repositories_on_external_url", unique: true
+    t.index ["unique_id"], name: "index_repositories_on_unique_id", unique: true
   end
 
   create_table "repositories_services", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
