@@ -96,18 +96,18 @@ describe RMT::CLI::ReposCustom do
     end
 
     context 'repo id does not exist' do
-      let(:argv) { ['enable', (repository.id + 1).to_s] }
+      let(:argv) { %w[enable C:0] }
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output("Repository not found. No repositories were modified.\n").to_stderr.and output('').to_stdout
+        expect { command }.to output(/Cannot find custom repository by id/).to_stderr.and output('').to_stdout
       end
 
       its(:mirroring_enabled) { is_expected.to be(false) }
     end
 
     context 'by repo id' do
-      let(:argv) { ['enable', repository.id.to_s] }
+      let(:argv) { ['enable', "C:#{repository.id}"] }
 
       before { expect { command }.to output("Repository successfully enabled.\n").to_stdout }
 
@@ -133,18 +133,18 @@ describe RMT::CLI::ReposCustom do
     end
 
     context 'repo id does not exist' do
-      let(:argv) { ['disable', (repository.id + 1).to_s] }
+      let(:argv) { %w[disable C:0] }
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output("Repository not found. No repositories were modified.\n").to_stderr.and output('').to_stdout
+        expect { command }.to output(/Cannot find custom repository by id/).to_stderr.and output('').to_stdout
       end
 
       its(:mirroring_enabled) { is_expected.to be(true) }
     end
 
     context 'by repo id' do
-      let(:argv) { ['disable', repository.id.to_s] }
+      let(:argv) { ['disable', "C:#{repository.id}"] }
 
       before { expect { command }.to output("Repository successfully disabled.\n").to_stdout }
 
@@ -188,10 +188,10 @@ describe RMT::CLI::ReposCustom do
       end
 
       context 'custom repository' do
-        let(:argv) { [command, custom_repository.id] }
+        let(:argv) { [command, "C:#{custom_repository.id}"] }
 
         before do
-          expect { described_class.start(argv) }.to output("Removed custom repository by id \"#{custom_repository.id}\".\n").to_stdout
+          expect { described_class.start(argv) }.to output("Removed custom repository by id \"C:#{custom_repository.id}\".\n").to_stdout
         end
 
         it 'deletes custom repository' do
@@ -229,7 +229,7 @@ describe RMT::CLI::ReposCustom do
 
     context 'product does not exist' do
       let(:repository) { create :repository, :custom }
-      let(:argv) { ['attach', repository.id, 'foo'] }
+      let(:argv) { ['attach', "C:#{repository.id}", 'foo'] }
 
       it('does not have an attached product') { expect(repository.products.count).to eq(0) }
 
@@ -242,7 +242,7 @@ describe RMT::CLI::ReposCustom do
 
     context 'product and repo exist' do
       let(:repository) { create :repository, :custom }
-      let(:argv) { ['attach', repository.id, product.id] }
+      let(:argv) { ['attach', "C:#{repository.id}", product.id] }
 
       it('does not have an attached product') { expect(repository.products.count).to eq(0) }
 
@@ -282,7 +282,7 @@ describe RMT::CLI::ReposCustom do
 
     context 'product does not exist' do
       let(:repository) { create :repository, :custom }
-      let(:argv) { ['detach', repository.id, 'foo'] }
+      let(:argv) { ['detach', "C:#{repository.id}", 'foo'] }
 
       before do
         repository_service.attach_product!(product, repository)
@@ -299,7 +299,7 @@ describe RMT::CLI::ReposCustom do
 
     context 'product and repo exist' do
       let(:repository) { create :repository, :custom }
-      let(:argv) { ['detach', repository.id, product.id] }
+      let(:argv) { ['detach', "C:#{repository.id}", product.id] }
 
       before do
         repository_service.attach_product!(product, repository)
@@ -317,7 +317,7 @@ describe RMT::CLI::ReposCustom do
   describe '#products' do
     context 'scc repository' do
       let(:repository) { create :repository }
-      let(:argv) { ['product', repository.id] }
+      let(:argv) { ['product', "C:#{repository.id}"] }
 
       before do
         repository_service.attach_product!(product, repository)
@@ -327,13 +327,13 @@ describe RMT::CLI::ReposCustom do
 
       it 'does not displays the product' do
         expect(described_class).to receive(:exit)
-        expect { described_class.start(argv) }.to output("Cannot find custom repository by id \"#{repository.id}\".\n").to_stderr.and output('').to_stdout
+        expect { described_class.start(argv) }.to output("Cannot find custom repository by id \"C:#{repository.id}\".\n").to_stderr.and output('').to_stdout
       end
     end
 
     context 'custom repository with products' do
       let(:repository) { create :repository, :custom }
-      let(:argv) { ['products', repository.id] }
+      let(:argv) { ['products', "C:#{repository.id}"] }
 
       before do
         repository_service.attach_product!(product, repository)
@@ -348,7 +348,7 @@ describe RMT::CLI::ReposCustom do
 
     context 'custom repository without products' do
       let(:repository) { create :repository, :custom }
-      let(:argv) { ['products', repository.id] }
+      let(:argv) { ['products', "C:#{repository.id}"] }
 
       it('does not have an attached product') { expect(repository.products.count).to eq(0) }
 

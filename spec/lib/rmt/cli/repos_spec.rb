@@ -25,7 +25,7 @@ RSpec.describe RMT::CLI::Repos do
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output("Repository not found. No repositories were modified.\n").to_stderr.and output('').to_stdout
+        expect { command }.to output("Repository not found.\n").to_stderr.and output('').to_stdout
       end
 
       its(:mirroring_enabled) { is_expected.to be(false) }
@@ -62,7 +62,7 @@ RSpec.describe RMT::CLI::Repos do
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output("Repository not found. No repositories were modified.\n").to_stderr.and output('').to_stdout
+        expect { command }.to output("Repository not found.\n").to_stderr.and output('').to_stdout
       end
 
       its(:mirroring_enabled) { is_expected.to be(true) }

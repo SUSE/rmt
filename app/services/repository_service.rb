@@ -40,13 +40,6 @@ class RepositoryService
     association.destroy!
   end
 
-  def change_repository_mirroring!(repo_id, mirroring_enabled, scc_repository: true)
-    repository = scc_repository ? Repository.find_by!(scc_id: repo_id) : Repository.find_by!(id: repo_id)
-    repository.change_mirroring!(mirroring_enabled)
-  rescue ActiveRecord::RecordNotFound
-    raise RepositoryNotFound, 'Repository not found. No repositories were modified.'
-  end
-
   def change_mirroring_by_product!(mirroring_enabled, products)
     repo_count = 0
     products.each do |product|

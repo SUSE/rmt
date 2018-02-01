@@ -48,15 +48,12 @@ class RMT::CLI::Repos < RMT::CLI::Base
 
   private
 
-  def change_mirroring(target, set_enabled)
-    repository_service.change_repository_mirroring!(target, set_enabled)
+  def change_mirroring(id, set_enabled)
+    repository = Repository.find_by!(scc_id: id)
+    repository.change_mirroring!(set_enabled)
     puts "Repository successfully #{set_enabled ? 'enabled' : 'disabled'}."
-  rescue RepositoryService::RepositoryNotFound => e
-    raise RMT::CLI::Error.new(e.message)
-  end
-
-  def repository_service
-    @repository_service ||= RepositoryService.new
+  rescue ActiveRecord::RecordNotFound
+    raise RMT::CLI::Error, 'Repository not found.'
   end
 
 end

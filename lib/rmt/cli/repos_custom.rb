@@ -30,7 +30,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
       raise RMT::CLI::Error.new('No custom repositories found.')
     else
       puts array_to_table(repositories, {
-        id: 'ID',
+        custom_repository_id: 'ID',
         name: 'Name',
         external_url: 'URL',
         enabled: 'Mandatory?',
@@ -41,36 +41,27 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
   end
   map ls: :list
 
-  desc 'enable TARGET', 'Enable mirroring of custom repository by ID'
-  def enable(target)
-    change_mirroring(target, true)
+  desc 'enable ID', 'Enable mirroring of custom repository by ID'
+  def enable(id)
+    change_mirroring(id, true)
   end
 
-  desc 'disable TARGET', 'Disable mirroring of custom repository by ID'
-  def disable(target)
-    change_mirroring(target, false)
+  desc 'disable ID', 'Disable mirroring of custom repository by ID'
+  def disable(id)
+    change_mirroring(id, false)
   end
 
   desc 'remove ID', 'Remove a custom repository'
   def remove(id)
     repository = find_repository(id)
-
-    if repository.nil?
-      raise RMT::CLI::Error.new("Cannot find custom repository by id \"#{id}\".")
-    end
-
     repository.destroy!
-    puts "Removed custom repository by id \"#{repository.id}\"."
+    puts "Removed custom repository by id \"#{id}\"."
   end
   map rm: :remove
 
   desc 'products ID', 'Shows products attached to a custom repository'
   def products(id)
     repository = find_repository(id)
-
-    if repository.nil?
-      raise RMT::CLI::Error.new("Cannot find custom repository by id \"#{id}\".")
-    end
 
     products = repository.products
 
@@ -99,17 +90,22 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
   private
 
-  def change_mirroring(target, set_enabled)
-    repository_service.change_repository_mirroring!(target, set_enabled, scc_repository: false)
+  def change_mirroring(id, set_enabled)
+    repository = find_repository(id)
+    repository.change_mirroring!(set_enabled)
     puts "Repository successfully #{set_enabled ? 'enabled' : 'disabled'}."
-  rescue RepositoryService::RepositoryNotFound => e
-    raise RMT::CLI::Error.new(e.message)
   end
 
-  def find_repository(id)
-    repository = Repository.find_by(id: id)
-    return nil if repository && !repository.custom?
+  def find_repository(namespaced_id)
+    id_parts = namespaced_id.split(':')
+    raise StandardError unless (id_parts.size == 2) && (id_parts[0] == 'C')
+
+    repository = Repository.find_by!(id: id_parts[1])
+    raise StandardError unless repository.custom?
+
     repository
+  rescue
+    raise RMT::CLI::Error.new("Cannot find custom repository by id \"#{namespaced_id}\".")
   end
 
   def find_product(id)
@@ -124,11 +120,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
     repository = find_repository(id)
     product = find_product(product_id)
 
-    if repository.nil?
-      raise RMT::CLI::Error.new("Cannot find custom repository by id \"#{id}\".")
-    elsif product.nil?
-      raise RMT::CLI::Error.new("Cannot find product by id \"#{product_id}\".")
-    end
+    raise RMT::CLI::Error.new("Cannot find product by id \"#{product_id}\".") if product.nil?
 
     [product, repository]
   end
