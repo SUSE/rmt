@@ -13,14 +13,14 @@ class RMT::CLI::Repos < RMT::CLI::Base
   end
   map ls: :list
 
-  desc 'enable TARGET', 'Enable mirroring of repositories by repository ID or product string'
-  def enable(target)
-    change_mirroring(target, true)
+  desc 'enable ID', 'Enable mirroring of repositories by repository ID'
+  def enable(id)
+    change_mirroring(id, true)
   end
 
-  desc 'disable TARGET', 'Disable mirroring of repositories by repository ID or product string'
-  def disable(target)
-    change_mirroring(target, false)
+  desc 'disable ID', 'Disable mirroring of repositories by repository ID'
+  def disable(id)
+    change_mirroring(id, false)
   end
 
   protected
@@ -48,15 +48,13 @@ class RMT::CLI::Repos < RMT::CLI::Base
 
   private
 
-  def change_mirroring(target, set_enabled)
-    repository_service.change_repository_mirroring!(target, set_enabled)
-    puts "Repository successfully #{set_enabled ? 'enabled' : 'disabled'}."
-  rescue RepositoryService::RepositoryNotFound => e
-    raise RMT::CLI::Error.new(e.message)
-  end
+  def change_mirroring(id, set_enabled)
+    repository = Repository.find_by!(scc_id: id)
+    repository.change_mirroring!(set_enabled)
 
-  def repository_service
-    @repository_service ||= RepositoryService.new
+    puts "Repository successfully #{set_enabled ? 'enabled' : 'disabled'}."
+  rescue ActiveRecord::RecordNotFound
+    raise RMT::CLI::Error.new("Repository not found by id \"#{id}\".")
   end
 
 end
