@@ -100,7 +100,7 @@ describe RMT::CLI::ReposCustom do
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output(/Cannot find custom repository by id/).to_stderr.and output('').to_stdout
+        expect { command }.to output("Cannot find custom repository by id \"C:0\".\n").to_stderr.and output('').to_stdout
       end
 
       its(:mirroring_enabled) { is_expected.to be(false) }
@@ -137,7 +137,7 @@ describe RMT::CLI::ReposCustom do
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output(/Cannot find custom repository by id/).to_stderr.and output('').to_stdout
+        expect { command }.to output("Cannot find custom repository by id \"C:0\".\n").to_stderr.and output('').to_stdout
       end
 
       its(:mirroring_enabled) { is_expected.to be(true) }
@@ -247,7 +247,7 @@ describe RMT::CLI::ReposCustom do
       it('does not have an attached product') { expect(repository.products.count).to eq(0) }
 
       it 'attaches the repository to the product' do
-        expect { described_class.start(argv) }.to output('').to_stderr.and output("Attached repository to product\n").to_stdout
+        expect { described_class.start(argv) }.to output('').to_stderr.and output("Attached repository to product \"#{product.name}\".\n").to_stdout
         expect(repository.products.first.id).to eq(product.id)
       end
     end
@@ -308,7 +308,7 @@ describe RMT::CLI::ReposCustom do
       it('has an attached product') { expect(repository.products.count).to eq(1) }
 
       it 'detaches the repository from the product' do
-        expect { described_class.start(argv) }.to output('').to_stderr.and output("Detached repository from product\n").to_stdout
+        expect { described_class.start(argv) }.to output('').to_stderr.and output("Detached repository from product \"#{product.name}\".\n").to_stdout
         expect(repository.products.count).to eq(0)
       end
     end

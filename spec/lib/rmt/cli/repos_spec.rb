@@ -21,11 +21,11 @@ RSpec.describe RMT::CLI::Repos do
     end
 
     context 'repo id does not exist' do
-      let(:argv) { ['enable', (repository.scc_id + 1).to_s] }
+      let(:argv) { ['enable', 0] }
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output("Repository not found.\n").to_stderr.and output('').to_stdout
+        expect { command }.to output("Repository not found by id \"0\".\n").to_stderr.and output('').to_stdout
       end
 
       its(:mirroring_enabled) { is_expected.to be(false) }
@@ -58,11 +58,11 @@ RSpec.describe RMT::CLI::Repos do
     end
 
     context 'repo id does not exist' do
-      let(:argv) { ['disable', (repository.scc_id + 1).to_s] }
+      let(:argv) { ['disable', 0] }
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output("Repository not found.\n").to_stderr.and output('').to_stdout
+        expect { command }.to output("Repository not found by id \"0\".\n").to_stderr.and output('').to_stdout
       end
 
       its(:mirroring_enabled) { is_expected.to be(true) }
