@@ -1,0 +1,12 @@
+[Unit]
+Description=Sync RMT from scc
+After=rmt.service
+Requires=rmt.service
+
+[Service]
+Type=simple
+Restart=no
+ExecStart=/usr/share/rmt/bin/rmt-cli sync
+
+[Install]
+WantedBy=multi-user.target

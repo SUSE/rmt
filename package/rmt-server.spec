@@ -40,6 +40,14 @@ Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-server-rpmlintrc
 Source2:        rmt.conf
 Source3:        rmt.8.gz
+Source4:        rmt-server.conf
+Source5:        rmt-server-mirror.service
+Source6:        rmt-server-mirror.timer
+Source7:        rmt-server-sync.service
+Source8:        rmt-server-sync.timer
+Source9:        rmt.service
+Source10:       rmt.target
+Source11:       rmt-migration.service
 
 Patch0:         use-ruby-2.4-in-rmt-cli.patch
 Patch1:         use-ruby-2.4-in-rails.patch
@@ -52,6 +60,7 @@ BuildRequires:  libffi-devel
 BuildRequires:  libmysqlclient-devel
 BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
+BuildRequires:  systemd
 %if 0%{?use_ruby_2_4}
 BuildRequires:  ruby2.4
 BuildRequires:  ruby2.4-devel
@@ -64,6 +73,7 @@ BuildRequires:  ruby2.5-rubygem-bundler
 BuildRequires:  fdupes
 
 Requires:       mariadb
+Requires:       nginx
 %if 0%{?use_ruby_2_4}
 Requires(post): ruby2.4
 Requires(post): ruby2.4-rubygem-bundler
@@ -128,15 +138,24 @@ install -D -m 644 %_sourcedir/rmt.8.gz %{buildroot}%_mandir/man8/rmt.8.gz
 
 # systemd
 mkdir -p %{buildroot}%{_unitdir}
-install -m 444 service/rmt.target %{buildroot}%{_unitdir}
-install -m 444 service/rmt.service %{buildroot}%{_unitdir}
-install -m 444 service/rmt-migration.service %{buildroot}%{_unitdir}
+install -m 444 %{SOURCE5} %{buildroot}%{_unitdir}
+install -m 444 %{SOURCE6} %{buildroot}%{_unitdir}
+install -m 444 %{SOURCE7} %{buildroot}%{_unitdir}
+install -m 444 %{SOURCE8} %{buildroot}%{_unitdir}
+install -m 444 %{SOURCE9} %{buildroot}%{_unitdir}
+install -m 444 %{SOURCE10} %{buildroot}%{_unitdir}
+install -m 444 %{SOURCE11} %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}%{_sbindir}
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-migration
+ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-mirror
+ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-sync
 
 mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
+
+# nginx
+install -D -m 644 %{SOURCE4} %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server.conf
 
 sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"' \
     -e 's/^BUNDLE_JOBS: .*/BUNDLE_JOBS: "1"/' \
@@ -183,13 +202,23 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}
 %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
 %config(noreplace) %{_sysconfdir}/rmt.conf
+%config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server.conf
 %doc %{_mandir}/man8/rmt.8.gz
+%{_sysconfdir}/nginx
+%{_sysconfdir}/nginx/vhosts.d
 %{_bindir}/rmt-cli
 %{_sbindir}/rcrmt
 %{_sbindir}/rcrmt-migration
+%{_sbindir}/rcrmt-server-sync
+%{_sbindir}/rcrmt-server-mirror
 %{_unitdir}/rmt.target
 %{_unitdir}/rmt.service
 %{_unitdir}/rmt-migration.service
+%{_unitdir}/rmt-server-mirror.service
+%{_unitdir}/rmt-server-mirror.timer
+%{_unitdir}/rmt-server-sync.service
+%{_unitdir}/rmt-server-sync.timer
+
 %{_libdir}/rmt
 
 %pre
@@ -197,17 +226,17 @@ getent group %{rmt_group} >/dev/null || %{_sbindir}/groupadd -r %{rmt_group}
 getent passwd %{rmt_user} >/dev/null || \
 	%{_sbindir}/useradd -g %{rmt_group} -s /bin/false -r \
 	-c "user for RMT" -d %{app_dir} %{rmt_user}
-%service_add_pre rmt.target rmt.service rmt-migration.service
+%service_add_pre rmt.target rmt.service rmt-migration.service rmt-server-mirror.service rmt-server-sync.service
 
 %post
-%service_add_post rmt.target rmt.service rmt-migration.service
+%service_add_post rmt.target rmt.service rmt-migration.service rmt-server-mirror.service rmt-server-sync.service
 cd /usr/share/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails secrets:setup >/dev/null
 cd /usr/share/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails runner -e production "Rails::Secrets.write({'production' => {'secret_key_base' => SecureRandom.hex(64)}}.to_yaml)"
 
 %preun
-%service_del_preun rmt.target rmt.service rmt-migration.service
+%service_del_preun rmt.target rmt.service rmt-migration.service rmt-server-mirror.service rmt-server-sync.service
 
 %postun
-%service_del_postun rmt.target rmt.service rmt-migration.service
+%service_del_postun rmt.target rmt.service rmt-migration.service rmt-server-mirror.service rmt-server-sync.service
 
 %changelog
