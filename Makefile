@@ -33,7 +33,6 @@ dist: clean man
 	@cp -r tmp/.keep $(NAME)-$(VERSION)/tmp
 	@cp -r .bundle $(NAME)-$(VERSION)/
 	@cp -r locale $(NAME)-$(VERSION)/
-	@cp -r service $(NAME)-$(VERSION)/
 	@mkdir $(NAME)-$(VERSION)/vendor
 	@mkdir -p $(NAME)-$(VERSION)/public/repo/
 
