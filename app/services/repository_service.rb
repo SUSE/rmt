@@ -6,7 +6,6 @@ class RepositoryService
   def create_repository!(product, url, attributes, custom: false)
     repository = Repository.find_or_initialize_by(external_url: url)
 
-    # TODO: See if we can clean this up
     repository.attributes = attributes.select do |k, _|
       repository.attributes.keys.member?(k.to_s) && k.to_s != 'id'
     end
