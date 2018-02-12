@@ -1,5 +1,5 @@
 NAME          = rmt-server
-VERSION       = 0.0.2
+VERSION       = 0.0.3
 
 all:
 	@:
@@ -33,10 +33,8 @@ dist: clean man
 	@cp -r tmp/.keep $(NAME)-$(VERSION)/tmp
 	@cp -r .bundle $(NAME)-$(VERSION)/
 	@cp -r locale $(NAME)-$(VERSION)/
-	@cp -r service $(NAME)-$(VERSION)/
 	@mkdir $(NAME)-$(VERSION)/vendor
 	@mkdir -p $(NAME)-$(VERSION)/public/repo/
-	@cp -r public/repo/.keep $(NAME)-$(VERSION)/public/repo/.keep
 
 	@rm -rf $(NAME)-$(VERSION)/config/rmt.yml
 	@rm -rf $(NAME)-$(VERSION)/config/rmt.local.yml

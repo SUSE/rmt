@@ -1,0 +1,12 @@
+[Unit]
+Description=Mirror RMT
+After=rmt.service
+Requires=rmt.service
+
+[Service]
+Type=simple
+Restart=no
+ExecStart=/usr/share/rmt/bin/rmt-cli mirror
+
+[Install]
+WantedBy=multi-user.target
