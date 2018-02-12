@@ -73,7 +73,8 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
   desc 'attach ID PRODUCT_ID', 'Attach an existing custom repository to a product'
   def attach(id, product_id)
-    product, repository = attach_or_detach(id, product_id)
+    repository = find_repository!(id)
+    product = find_product!(product_id)
     repository_service.attach_product!(product, repository)
 
     puts "Attached repository to product \"#{product.name}\"."
@@ -81,7 +82,8 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
   desc 'detach ID PRODUCT_ID', 'Detach an existing custom repository from a product'
   def detach(id, product_id)
-    product, repository = attach_or_detach(id, product_id)
+    repository = find_repository!(id)
+    product = find_product!(product_id)
     repository_service.detach_product!(product, repository)
 
     puts "Detached repository from product \"#{product.name}\"."
@@ -112,13 +114,6 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
   def repository_service
     @repository_service ||= RepositoryService.new
-  end
-
-  def attach_or_detach(id, product_id)
-    repository = find_repository!(id)
-    product = find_product!(product_id)
-
-    [product, repository]
   end
 
 end

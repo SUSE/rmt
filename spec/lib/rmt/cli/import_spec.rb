@@ -3,10 +3,10 @@ require 'rails_helper'
 describe RMT::CLI::Import do
   let(:path) { '/mnt/usb' }
 
-  describe 'scc-data' do
+  describe 'data' do
     include_examples 'handles non-existing path'
 
-    subject(:command) { described_class.start(['scc-data', path]) }
+    subject(:command) { described_class.start(['data', path]) }
 
     it 'triggers import to path' do
       FakeFS.with_fresh do

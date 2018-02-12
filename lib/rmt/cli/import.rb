@@ -1,7 +1,7 @@
 class RMT::CLI::Import < RMT::CLI::Base
 
-  desc 'scc-data PATH', 'Read SCC data from given path'
-  def scc_data(path)
+  desc 'data PATH', 'Read SCC data from given path'
+  def data(path)
     needs_path(path) do
       RMT::SCC.new(options).import(path)
     end

@@ -39,8 +39,8 @@ desired location.
 ### SUSE products
 
 * Run `rmt-cli sync` to download available products and repositories data for your organization from SCC
-* Run `rmt-cli products --all` to see the list of products that are available for your organization
-* Run `rmt-cli repos --all` to see the list of all repositories available
+* Run `rmt-cli products list --all` to see the list of products that are available for your organization
+* Run `rmt-cli repos list --all` to see the list of all repositories available
 * Use the `rmt-cli products enable` command to choose which product repositories to mirror, for example:
   ```
   rmt-cli products enable SLES/12.2/x86_64
@@ -88,11 +88,11 @@ Connecting an SMT with an RMT this way is not supported.
 
 ##### On the Online RMT
 
-- `rmt-cli export scc-data /mnt/usb` will get the required JSON responses from SCC and save them as files at the specified path.
+- `rmt-cli export data /mnt/usb` will get the required JSON responses from SCC and save them as files at the specified path.
 
 ##### On the Offline RMT
 
-- `rmt-cli import scc-data /mnt/usb` will read the JSON-files from given path and fill the local database.
+- `rmt-cli import data /mnt/usb` will read the JSON-files from given path and fill the local database.
 - Now use `rmt-cli repos enable` or `rmt-cli products enable` to mark repos for mirroring.
 - `rmt-cli export settings /mnt/usb` saves your settings at given path as `repos.json`.
 

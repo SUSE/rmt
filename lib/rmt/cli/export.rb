@@ -1,7 +1,7 @@
 class RMT::CLI::Export < RMT::CLI::Base
 
-  desc 'scc-data PATH', 'Store SCC data in files at given path'
-  def scc_data(path)
+  desc 'data PATH', 'Store SCC data in files at given path'
+  def data(path)
     needs_path(path) do
       RMT::SCC.new(options).export(path)
     end

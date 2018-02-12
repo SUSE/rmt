@@ -28,10 +28,10 @@ describe RMT::CLI::Export do
     end
   end
 
-  describe 'scc-data' do
+  describe 'data' do
     include_examples 'handles non-existing path'
 
-    let(:command) { described_class.start(['scc-data', path]) }
+    let(:command) { described_class.start(['data', path]) }
 
     it 'triggers export to path' do
       FakeFS.with_fresh do
