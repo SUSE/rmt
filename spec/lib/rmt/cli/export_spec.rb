@@ -8,11 +8,11 @@ describe RMT::CLI::Export do
 
   describe 'settings' do
     include_examples 'handles non-existing path'
-
+    let(:repository) { create :repository, mirroring_enabled: true, id: 123 }
     let(:command) { described_class.start(['settings', path]) }
 
     before do
-      create :repository, mirroring_enabled: true, id: 123
+      repository
       create :repository, mirroring_enabled: false
     end
 
@@ -21,8 +21,9 @@ describe RMT::CLI::Export do
         FileUtils.mkdir_p path
         expect { command }.to output(/Settings saved/).to_stdout
         expected_filename = File.join(path, 'repos.json')
+        expected_json = [{ url: repository.external_url, auth_token: repository.auth_token.to_s }].to_json
         expect(File.exist?(expected_filename)).to be true
-        expect(File.read(expected_filename).chomp).to eq '[123]'
+        expect(File.read(expected_filename).chomp).to eq expected_json
       end
     end
   end
@@ -47,7 +48,12 @@ describe RMT::CLI::Export do
 
     let(:command) { described_class.start(['repos', path]) }
     let(:mirror_double) { instance_double('RMT::Mirror') }
-    let(:repo_ids) { [42, 69] }
+    let(:repo_settings) do
+      [
+        { url: 'http://foo.bar/repo1', auth_token: 'foobar' },
+        { url: 'http://foo.bar/repo2', auth_token: '' }
+      ]
+    end
 
     context 'with missing repos.json file' do
       it 'outputs a warning' do
@@ -59,27 +65,18 @@ describe RMT::CLI::Export do
       end
     end
 
-    context 'with invalid repo ids' do
-      it 'outputs warnings' do
-        FakeFS.with_fresh do
-          FileUtils.mkdir_p path
-          File.write("#{path}/repos.json", repo_ids.to_json)
-
-          expect { command }.to output("No repo with id 42 found in database.\nNo repo with id 69 found in database.\n").to_stderr
-        end
-      end
-    end
-
     context 'with valid repo ids' do
-      before { repo_ids.map { |id| create :repository, id: id } }
+      before do
+        expect(RMT::Mirror).to receive(:from_url).with('http://foo.bar/repo1', 'foobar', base_dir: path).once.and_return(mirror_double)
+        expect(RMT::Mirror).to receive(:from_url).with('http://foo.bar/repo2', '', base_dir: path).once.and_return(mirror_double)
+      end
 
       it 'reads repo ids from file at path and mirrors these repos' do
         FakeFS.with_fresh do
           FileUtils.mkdir_p path
-          File.write("#{path}/repos.json", repo_ids.to_json)
+          File.write("#{path}/repos.json", repo_settings.to_json)
 
-          expect(RMT::Mirror).to receive(:from_repo_model).exactly(repo_ids.count).times.and_return(mirror_double)
-          expect(mirror_double).to receive(:mirror).exactly(repo_ids.count).times
+          expect(mirror_double).to receive(:mirror).twice
           expect { command }.to output(/Mirroring repository/).to_stdout
         end
       end
@@ -88,9 +85,8 @@ describe RMT::CLI::Export do
         it 'outputs exception message' do
           FakeFS.with_fresh do
             FileUtils.mkdir_p path
-            File.write("#{path}/repos.json", repo_ids.to_json)
+            File.write("#{path}/repos.json", repo_settings.to_json)
 
-            expect(RMT::Mirror).to receive(:from_repo_model).exactly(repo_ids.count).times.and_return(mirror_double)
             expect(mirror_double).to receive(:mirror)
             expect(mirror_double).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror')
             expect { command }.to output(/black mirror/).to_stderr.and output(/Mirroring repository/).to_stdout

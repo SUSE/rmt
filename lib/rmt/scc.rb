@@ -130,10 +130,8 @@ class RMT::SCC
   end
 
   def create_service(item, product)
-    service = product.service
-
     item[:repositories].each do |repo_item|
-      create_repository_service.call(service, repo_item[:url], repo_item)
+      repository_service.create_repository!(product, repo_item[:url], repo_item)
     end
   end
 
@@ -167,8 +165,8 @@ class RMT::SCC
 
   private
 
-  def create_repository_service
-    @create_repository_service ||= CreateRepositoryService.new
+  def repository_service
+    @repository_service ||= RepositoryService.new
   end
 
 end

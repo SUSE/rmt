@@ -2,12 +2,13 @@ require 'rmt/downloader'
 require 'rmt/rpm'
 require 'time'
 
+# rubocop:disable Metrics/ClassLength
 class RMT::Mirror
 
   class RMT::Mirror::Exception < RuntimeError
   end
 
-  def initialize(mirroring_base_dir:, repository_url:, local_path:, mirror_src: false, auth_token: nil, logger: nil)
+  def initialize(mirroring_base_dir:, repository_url:, local_path:, mirror_src: false, auth_token: nil, logger: nil, to_offline: false)
     @repository_dir = File.join(mirroring_base_dir, local_path)
     @repository_url = repository_url
     @mirror_src = mirror_src
@@ -15,11 +16,13 @@ class RMT::Mirror
     @primary_files = []
     @deltainfo_files = []
     @auth_token = auth_token
+    @force_dedup_by_copy = to_offline
 
     @downloader = RMT::Downloader.new(
       repository_url: @repository_url,
       destination_dir: @repository_dir,
-      logger: @logger
+      logger: @logger,
+      save_for_dedup: !to_offline # don't save files for deduplication when in offline mode
     )
   end
 
@@ -35,14 +38,17 @@ class RMT::Mirror
     replace_directory(@temp_licenses_dir, File.join(@repository_dir, '../product.license/'))
   end
 
-  def self.from_repo_model(repository, base_dir = nil)
+  def self.from_url(uri, auth_token, repository_url: nil, base_dir: nil, to_offline: false)
+    repository_url ||= uri
+
     new(
       mirroring_base_dir: base_dir || RMT::DEFAULT_MIRROR_DIR,
-      repository_url: repository.external_url,
-      local_path: repository.local_path,
-      auth_token: repository.auth_token,
+      repository_url: uri,
+      auth_token: auth_token,
+      local_path: Repository.make_local_path(repository_url),
       mirror_src: Settings.mirroring.mirror_src,
-      logger: Logger.new(STDOUT)
+      logger: Logger.new(STDOUT),
+      to_offline: to_offline
     )
   end
 
@@ -167,7 +173,7 @@ class RMT::Mirror
   end
 
   def deduplicate(checksum_type, checksum_value, destination)
-    return false unless ::RMT::Deduplicator.deduplicate(checksum_type, checksum_value, destination)
+    return false unless ::RMT::Deduplicator.deduplicate(checksum_type, checksum_value, destination, force_copy: @force_dedup_by_copy)
     @logger.info("→ #{File.basename(destination)}")
     true
   rescue ::RMT::Deduplicator::MismatchException => e
