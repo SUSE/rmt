@@ -176,7 +176,6 @@ grep -rl '\/usr\/bin\/env bash' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xarg
     sed -i -e 's@\/usr\/bin\/env bash@\/bin\/bash@g' \
 
 # cleanup unneeded files
-rm -r %{buildroot}%{app_dir}/service
 find %{buildroot}%{lib_dir} "(" -name "*.c" -o -name "*.h" -o -name .keep ")" -delete
 find %{buildroot}%{app_dir} -name .keep -delete
 find %{buildroot}%{data_dir} -name .keep -delete
