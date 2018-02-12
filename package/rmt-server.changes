@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Feb 12 13:28:36 UTC 2018 - tmuntaner@suse.com
+
+- version 0.0.3
+- Added nginx integration
+- Added systemd timers for rmt-server-sync and rmt-server-mirror
+- Added custom repository integration
+
+-------------------------------------------------------------------
 Wed Jan 24 12:03:41 UTC 2018 - ikapelyukhin@suse.com
 
 - version 0.0.2
