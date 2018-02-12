@@ -4,8 +4,9 @@ module RMT::CLI::ArrayPrintable
     rows = []
 
     array.all.each do |element|
-      rows << options.keys.map { |k| element[k] }
+      rows << options.keys.map { |k| element.public_send(k) }
     end
+
     Terminal::Table.new headings: options.values, rows: rows
   end
 

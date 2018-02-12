@@ -40,6 +40,11 @@ class Repository < ApplicationRecord
     update_column(:mirroring_enabled, mirroring_enabled)
   end
 
+  def custom_repository_id
+    raise StandardError, 'Not a custom repository' unless custom?
+    "C:#{id}"
+  end
+
   def custom?
     scc_id.nil?
   end

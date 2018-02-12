@@ -29,7 +29,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
     raise RMT::CLI::Error.new('No custom repositories found.') if repositories.empty?
 
     puts array_to_table(repositories, {
-      id: 'ID',
+      custom_repository_id: 'ID',
       name: 'Name',
       external_url: 'URL',
       enabled: 'Mandatory?',
@@ -94,16 +94,19 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
   def change_mirroring(id, set_enabled)
     repository = find_repository!(id)
     repository.change_mirroring!(set_enabled)
-
     puts "Repository successfully #{set_enabled ? 'enabled' : 'disabled'}."
   end
 
-  def find_repository!(id)
-    repository = Repository.find_by!(id: id)
+  def find_repository!(namespaced_id)
+    id_parts = namespaced_id.split(':')
+    raise StandardError unless (id_parts.size == 2) && (id_parts[0] == 'C')
+
+    repository = Repository.find_by!(id: id_parts[1])
     raise StandardError unless repository.custom?
+
     repository
   rescue
-    raise RMT::CLI::Error.new("Cannot find custom repository by id \"#{id}\".")
+    raise RMT::CLI::Error.new("Cannot find custom repository by id \"#{namespaced_id}\".")
   end
 
   def find_product!(id)
