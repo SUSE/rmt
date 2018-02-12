@@ -149,7 +149,13 @@ EOFF
 
 ### Packaging
 
-The package is built in the OBS at: https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT/rmt-server
+**Notes:**
+
+* The package is built in OBS at: https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT/rmt-server
+* To update the version of RMT, you will have to change the following files:
+  * `Makefile`
+  * `lib/rmt.rb`
+  * `package/rmt-server.spec`
 
 1. Checkout/update OBS working copy:
       * If the OBS project is not checked out, check out working copy of OBS project into a separate directory, e.g.:
@@ -159,16 +165,16 @@ The package is built in the OBS at: https://build.opensuse.org/package/show/syst
           osc co systemsmanagement:SCC:RMT rmt-server
           ```
       * Alternatively, if OBS working copy is already checked out, update the working copy by running `osc up`
-2. In Git working directory, run `make dist` to build a tarball;
-3. Copy files from `package` directory to OBS working directory;
-4. Build the package with updated sources, call `make dist` and then build for your distribution by running:
+2. Run `make dist` in your RMT working directory to build a tarball.
+3. Copy the files from the `package` directory to the OBS working directory.
+4. Build the package with osc:
 
     `osc build <repository> <arch> --no-verify`
     
     The list of all build targets and architectures that configured for the project can be obtained by running `osc repos`.
 
-5. Examine the changes by running `osc status` and `osc diff`;
-6. Stage the changes by running `osc addremove`;
+5. Examine the changes by running `osc status` and `osc diff`.
+6. Stage the changes by running `osc addremove`.
 7. Commit the changes into OBS by running `osc ci`.
 
 ### Running with docker-compose
