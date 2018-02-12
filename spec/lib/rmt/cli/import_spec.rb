@@ -67,9 +67,9 @@ describe RMT::CLI::Import do
 
       before do
         expect(mirror_double).to receive(:mirror).twice
-        expect(RMT::Mirror).to receive(:from_uri).with(repo1_local_path, repo1.auth_token, base_dir: RMT::DEFAULT_MIRROR_DIR,
+        expect(RMT::Mirror).to receive(:from_url).with(repo1_local_path, repo1.auth_token, base_dir: RMT::DEFAULT_MIRROR_DIR,
                                                        repository_url: repo1.external_url, to_offline: true).and_return(mirror_double)
-        expect(RMT::Mirror).to receive(:from_uri).with(repo2_local_path, repo2.auth_token, base_dir: RMT::DEFAULT_MIRROR_DIR,
+        expect(RMT::Mirror).to receive(:from_url).with(repo2_local_path, repo2.auth_token, base_dir: RMT::DEFAULT_MIRROR_DIR,
                                                        repository_url: repo2.external_url, to_offline: true).and_return(mirror_double)
       end
 
@@ -104,9 +104,9 @@ describe RMT::CLI::Import do
       before do
         expect(mirror_error_double).to receive(:mirror).once.and_raise(RMT::Mirror::Exception, 'black mirror')
         expect(mirror_double).to receive(:mirror).once
-        expect(RMT::Mirror).to receive(:from_uri).with(repo1_local_path, repo1.auth_token, base_dir: RMT::DEFAULT_MIRROR_DIR,
+        expect(RMT::Mirror).to receive(:from_url).with(repo1_local_path, repo1.auth_token, base_dir: RMT::DEFAULT_MIRROR_DIR,
                                                        repository_url: repo1.external_url, to_offline: true).and_return(mirror_error_double)
-        expect(RMT::Mirror).to receive(:from_uri).with(repo2_local_path, repo2.auth_token, base_dir: RMT::DEFAULT_MIRROR_DIR,
+        expect(RMT::Mirror).to receive(:from_url).with(repo2_local_path, repo2.auth_token, base_dir: RMT::DEFAULT_MIRROR_DIR,
                                                        repository_url: repo2.external_url, to_offline: true).and_return(mirror_double)
       end
 

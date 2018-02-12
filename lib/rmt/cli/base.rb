@@ -87,7 +87,7 @@ class RMT::CLI::Base < Thor
     repository_url ||= repo.external_url
 
     puts "Mirroring repository #{repo.name} to #{to}"
-    RMT::Mirror.from_uri(repo.external_url, repo.auth_token, repository_url: repository_url, base_dir: to, to_offline: to_offline).mirror
+    RMT::Mirror.from_url(repo.external_url, repo.auth_token, repository_url: repository_url, base_dir: to, to_offline: to_offline).mirror
     repo.refresh_timestamp!
   rescue RMT::Mirror::Exception => e
     warn e.to_s

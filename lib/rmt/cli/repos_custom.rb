@@ -14,8 +14,8 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
     repository_service.create_repository!(nil, url, {
       name: name,
-      mirroring_enabled: 1,
-      autorefresh: 1,
+      mirroring_enabled: true,
+      autorefresh: true,
       enabled: 0
     }, custom: true)
 

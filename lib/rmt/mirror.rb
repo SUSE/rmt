@@ -38,7 +38,7 @@ class RMT::Mirror
     replace_directory(@temp_licenses_dir, File.join(@repository_dir, '../product.license/'))
   end
 
-  def self.from_uri(uri, auth_token, repository_url: nil, base_dir: nil, to_offline: false)
+  def self.from_url(uri, auth_token, repository_url: nil, base_dir: nil, to_offline: false)
     repository_url ||= uri
 
     new(

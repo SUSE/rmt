@@ -13,8 +13,8 @@ describe RepositoryService do
         name: 'foo',
         mirroring_enabled: true,
         description: 'foo',
-        autorefresh: 1,
-        enabled: 0
+        autorefresh: true,
+        enabled: false
       })
     end
 
