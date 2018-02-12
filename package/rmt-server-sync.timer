@@ -5,6 +5,7 @@ Requires=rmt.service
 
 [Timer]
 OnCalendar=*-*-* 01:00:00
+RandomizedDelaySec=3h
 Unit=rmt_sync.service
 
 [Install]
