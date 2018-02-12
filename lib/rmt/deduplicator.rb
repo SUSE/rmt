@@ -29,7 +29,7 @@ class RMT::Deduplicator
     DownloadedFile.add_file(checksum_type, checksum, file_size, path)
   end
 
-  def self.deduplicate(checksum_type, checksum_value, destination)
+  def self.deduplicate(checksum_type, checksum_value, destination, force_copy: false)
     src = DownloadedFile.get_local_path_by_checksum(checksum_type, checksum_value)
 
     if src.nil?
@@ -38,7 +38,11 @@ class RMT::Deduplicator
       raise MismatchException.new(src.local_path)
     end
 
-    RMT::Config.deduplication_by_hardlink? ? hardlink(src.local_path, destination) : copy(src.local_path, destination)
+    if RMT::Config.deduplication_by_hardlink? && !force_copy
+      hardlink(src.local_path, destination)
+    else
+      copy(src.local_path, destination)
+    end
 
     true
   end

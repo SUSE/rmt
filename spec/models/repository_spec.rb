@@ -48,4 +48,11 @@ RSpec.describe Repository, type: :model do
     it('has non-custom repository') { expect(Repository.find_by(id: suse_repository.id)).not_to be_nil }
     it('does not remove non-custom repositories') { expect(suse_repository.destroy).to be_falsey }
   end
+
+  describe 'local_path' do
+    it(:handles_empty_root) { expect(Repository.make_local_path('http://localhost.com')).to eq('/') }
+    it(:handles_empty_root_trailing_slash) { expect(Repository.make_local_path('http://localhost.com/')).to eq('/') }
+    it(:handles_subpath) { expect(Repository.make_local_path('http://localhost.com/foo/bar')).to eq('/foo/bar') }
+    it(:handles_subpath_trailing_slash) { expect(Repository.make_local_path('http://localhost.com/foo/bar/')).to eq('/foo/bar/') }
+  end
 end

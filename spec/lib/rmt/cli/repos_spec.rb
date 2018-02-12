@@ -3,10 +3,8 @@ require 'rails_helper'
 # rubocop:disable RSpec/NestedGroups
 
 RSpec.describe RMT::CLI::Repos do
-  before { allow(described_class).to receive(:exit) { raise 'Called exit unexpectedly' } }
-
   describe '#enable' do
-    subject(:repository) { FactoryGirl.create :repository, :with_products }
+    subject(:repository) { create :repository, :with_products }
 
     let(:command) do
       repository
@@ -22,35 +20,28 @@ RSpec.describe RMT::CLI::Repos do
       its(:mirroring_enabled) { is_expected.to be(false) }
     end
 
+    context 'repo id does not exist' do
+      let(:argv) { ['enable', 0] }
+
+      before do
+        expect(described_class).to receive(:exit)
+        expect { command }.to output("Repository not found by id \"0\".\n").to_stderr.and output('').to_stdout
+      end
+
+      its(:mirroring_enabled) { is_expected.to be(false) }
+    end
+
     context 'by repo id' do
-      let(:argv) { ['enable', repository.id.to_s] }
+      let(:argv) { ['enable', repository.scc_id.to_s] }
 
       before { expect { command }.to output("Repository successfully enabled.\n").to_stdout }
-
-      its(:mirroring_enabled) { is_expected.to be(true) }
-    end
-
-    context 'by product without arch' do
-      let(:product) { repository.services.first.product }
-      let(:argv) { ['enable', "#{product.identifier}/#{product.version}"] }
-
-      before { expect { command }.to output("1 repo(s) successfully enabled.\n").to_stdout }
-
-      its(:mirroring_enabled) { is_expected.to be(true) }
-    end
-
-    context 'by product with arch' do
-      let(:product) { repository.services.first.product }
-      let(:argv) { ['enable', "#{product.identifier}/#{product.version}/#{product.arch}"] }
-
-      before { expect { command }.to output("1 repo(s) successfully enabled.\n").to_stdout }
 
       its(:mirroring_enabled) { is_expected.to be(true) }
     end
   end
 
   describe '#disable' do
-    subject(:repository) { FactoryGirl.create :repository, :with_products, mirroring_enabled: true }
+    subject(:repository) { create :repository, :with_products, mirroring_enabled: true }
 
     let(:command) do
       repository
@@ -66,28 +57,21 @@ RSpec.describe RMT::CLI::Repos do
       its(:mirroring_enabled) { is_expected.to be(true) }
     end
 
+    context 'repo id does not exist' do
+      let(:argv) { ['disable', 0] }
+
+      before do
+        expect(described_class).to receive(:exit)
+        expect { command }.to output("Repository not found by id \"0\".\n").to_stderr.and output('').to_stdout
+      end
+
+      its(:mirroring_enabled) { is_expected.to be(true) }
+    end
+
     context 'by repo id' do
-      let(:argv) { ['disable', repository.id.to_s] }
+      let(:argv) { ['disable', repository.scc_id.to_s] }
 
       before { expect { command }.to output("Repository successfully disabled.\n").to_stdout }
-
-      its(:mirroring_enabled) { is_expected.to be(false) }
-    end
-
-    context 'by product without arch' do
-      let(:product) { repository.services.first.product }
-      let(:argv) { ['disable', "#{product.identifier}/#{product.version}"] }
-
-      before { expect { command }.to output("1 repo(s) successfully disabled.\n").to_stdout }
-
-      its(:mirroring_enabled) { is_expected.to be(false) }
-    end
-
-    context 'by product with arch' do
-      let(:product) { repository.services.first.product }
-      let(:argv) { ['disable', "#{product.identifier}/#{product.version}/#{product.arch}"] }
-
-      before { expect { command }.to output("1 repo(s) successfully disabled.\n").to_stdout }
 
       its(:mirroring_enabled) { is_expected.to be(false) }
     end
@@ -108,9 +92,7 @@ RSpec.describe RMT::CLI::Repos do
           let(:argv) { [command_name, '--all'] }
 
           it 'warns about running sync command first' do
-            expect { described_class.start(argv) }.to output(
-              "Run \"rmt-cli sync\" to synchronize with your SUSE Customer Center data first.\n"
-                                                      ).to_stderr
+            expect { described_class.start(argv) }.to output("Run \"rmt-cli sync\" to synchronize with your SUSE Customer Center data first.\n").to_stderr
           end
         end
       end

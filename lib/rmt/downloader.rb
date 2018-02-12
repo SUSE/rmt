@@ -14,7 +14,7 @@ class RMT::Downloader
 
   attr_accessor :repository_url, :destination_dir, :concurrency, :logger, :auth_token, :cache_dir
 
-  def initialize(repository_url:, destination_dir:, auth_token: nil, logger: nil, cache_dir: nil)
+  def initialize(repository_url:, destination_dir:, auth_token: nil, logger: nil, cache_dir: nil, save_for_dedup: true)
     Typhoeus::Config.user_agent = "RMT/#{RMT::VERSION}"
     @repository_url = repository_url
     @destination_dir = destination_dir
@@ -22,6 +22,7 @@ class RMT::Downloader
     @auth_token = auth_token
     @logger = logger || Logger.new('/dev/null')
     @cache_dir = cache_dir
+    @save_for_dedup = save_for_dedup
   end
 
   def download(remote_file, checksum_type: nil, checksum_value: nil)
@@ -135,7 +136,7 @@ class RMT::Downloader
     FileUtils.mv(request.download_path.path, local_file)
     File.chmod(0o644, local_file)
 
-    ::RMT::Deduplicator.add_local(local_file, checksum_type, checksum_value)
+    ::RMT::Deduplicator.add_local(local_file, checksum_type, checksum_value) if @save_for_dedup
 
     @logger.info("↓ #{File.basename(local_file)}")
   rescue StandardError => e

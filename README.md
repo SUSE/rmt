@@ -39,21 +39,39 @@ desired location.
 ### SUSE products
 
 * Run `rmt-cli sync` to download available products and repositories data for your organization from SCC
-* Run `rmt-cli products --all` to see the list of products that are available for your organization
-* Run `rmt-cli repos --all` to see the list of all repositories available
-* Use the `rmt-cli repos enable` command to choose which product repositories to mirror, for example:
+* Run `rmt-cli products list --all` to see the list of products that are available for your organization
+* Run `rmt-cli repos list --all` to see the list of all repositories available
+* Use the `rmt-cli products enable` command to choose which product repositories to mirror, for example:
   ```
-  rmt-cli repos enable SLES/12.2/x86_64
+  rmt-cli products enable SLES/12.2/x86_64
   ```
   The above command would select the mandatory (`pool`, `updates`) SLES 12 SP2 repositories to be mirrored.
-  Alternatively, you can specify repository ID to choose individual repositories.
+  Alternatively, you can choose to mirror an individual repository with `rmt-cli repos enable REPO_ID`, for example:
+  ```
+  rmt-cli repos enable 2189
+  ```
+  The above command would enable mirroring for the SLES 12 SP3 Updates repository.
 * Run `rmt-cli mirror` to mirror selected repositories and make their content available through RMT
 * Register client against RMT by running `SUSEConnect --url https://rmt_hostname`
   After successful registration the repositories from RMT will be used by `zypper` on the client machine.
 
+### Custom Repositories
+
+* Run `rmt-cli repos custom add URL NAME` to add a new custom repository, for example:
+  ```
+  rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers
+  ```
+* Run `rmt-cli repos custom list` to list all custom repositories.
+* Run `rmt-cli repos custom enable ID` to enable mirroring for a custom repository.
+* Run `rmt-cli repos custom disable ID` to disable mirroring for a custom repository.
+* Run `rmt-cli repos custom remove ID` to remove a custom repository.
+* Run `rmt-cli repos custom attachments ID` to list the products attached to a custom repository.
+* Run `rmt-cli repos custom attach ID PRODUCT_ID` to attach an existing custom repository to a product.
+* Run `rmt-cli repos custom detach ID PRODUCT_ID` to detach an existing custom repository from a product.
+
 ### Offline Mode
 
-RMT supports disconnected setups, similiar to [how SMT does](https://www.suse.com/documentation/sles-12/book_smt/data/smt_disconnected.html).
+RMT supports disconnected setups, similar to [how SMT does](https://www.suse.com/documentation/sles-12/book_smt/data/smt_disconnected.html).
 
 The supported scenarios are shown in the table below:
 
@@ -164,7 +182,7 @@ The package is built in the OBS at: https://build.opensuse.org/package/show/syst
 4. Build the package with updated sources, call `make dist` and then build for your distribution by running:
 
     `osc build <repository> <arch> --no-verify`
-    
+
     The list of all build targets and architectures that configured for the project can be obtained by running `osc repos`.
 
 5. Examine the changes by running `osc status` and `osc diff`;

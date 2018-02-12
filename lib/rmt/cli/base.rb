@@ -63,6 +63,18 @@ class RMT::CLI::Base < Thor
       )
     end
 
+    # These methods are needed to properly format the hint outputs for `rmt-cli repos custom`. This is a workaround
+    # taken and adapted from https://github.com/erikhuda/thor/issues/261, as Thor does not seem to handle nested subcommands
+    # the way we expect it to.
+    def banner(command, _namespace = nil, _subcommand = false)
+      "#{basename} #{subcommand_prefix} #{command.usage}"
+    end
+
+    def subcommand_prefix
+      return "\b" if name == RMT::CLI::Main.name
+      name.gsub(/.*::/, '').gsub(/^[A-Z]/) { |match| match[0].downcase }.gsub(/[A-Z]/) { |match| " #{match[0].downcase}" }
+    end
+
   end
 
   private
@@ -71,9 +83,11 @@ class RMT::CLI::Base < Thor
     File.directory?(path) ? yield : warn("#{path} is not a directory.")
   end
 
-  def mirror!(repo, to: RMT::DEFAULT_MIRROR_DIR)
+  def mirror!(repo, repository_url: nil, to: RMT::DEFAULT_MIRROR_DIR, to_offline: false)
+    repository_url ||= repo.external_url
+
     puts "Mirroring repository #{repo.name} to #{to}"
-    RMT::Mirror.from_repo_model(repo, to).mirror
+    RMT::Mirror.from_url(repo.external_url, repo.auth_token, repository_url: repository_url, base_dir: to, to_offline: to_offline).mirror
     repo.refresh_timestamp!
   rescue RMT::Mirror::Exception => e
     warn e.to_s
