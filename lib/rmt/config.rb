@@ -1,6 +1,10 @@
 require 'config'
 require_relative '../rmt'
 
+Config.setup do |config|
+  config.merge_nil_values = false
+end
+
 Config.load_and_set_settings(
   '/etc/rmt.conf',
   File.join(__dir__, '../../config/rmt.yml'),
