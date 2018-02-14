@@ -1,7 +1,5 @@
 require 'rails_helper'
 
-# rubocop:disable RSpec/MultipleExpectations
-
 RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
   include_context 'auth header', :system, :login, :password
   include_context 'version header', 4
