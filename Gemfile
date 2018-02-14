@@ -65,7 +65,7 @@ group :test do
   gem 'fuubar'
   gem 'timecop'
   gem 'vcr', '~> 4.0'
-  gem 'coveralls', require: false
+  gem 'coveralls', '~> 0.8.21', require: false
 end
 
 gem 'simplecov', require: false, group: :test
