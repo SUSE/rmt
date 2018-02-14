@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 # rubocop:disable RSpec/NestedGroups
-# rubocop:disable RSpec/MultipleExpectations
 
 RSpec.describe RMT::Mirror do
   describe '#mirror' do

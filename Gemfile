@@ -56,7 +56,7 @@ end
 
 group :test do
   gem 'rspec-rails', '~> 3.5'
-  gem 'factory_girl_rails'
+  gem 'factory_girl_rails', '4.8.0'
   gem 'ffaker'
   gem 'rspec-its'
   gem 'fakefs', require: 'fakefs/safe'
@@ -65,7 +65,7 @@ group :test do
   gem 'fuubar'
   gem 'timecop'
   gem 'vcr', '~> 4.0'
-  gem 'coveralls', require: false
+  gem 'coveralls', '~> 0.8.21', require: false
 end
 
 gem 'simplecov', require: false, group: :test
