@@ -15,9 +15,8 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
-
 %if (0%{?suse_version} > 0 && 0%{?suse_version} <= 1320) || (0%{?sle_version} > 0 && 0%{?sle_version} <= 120300)
-%define use_ruby_2_4 1
+%define is_sle_12_family 1
 %endif
 
 %define app_dir /usr/share/rmt/
@@ -48,6 +47,8 @@ Source8:        rmt-server-sync.timer
 Source9:        rmt.service
 Source10:       rmt.target
 Source11:       rmt-migration.service
+Source12:       rmt-server-sync-sles12.timer
+Source13:       rmt-server-mirror-sles12.timer
 
 Patch0:         use-ruby-2.4-in-rmt-cli.patch
 Patch1:         use-ruby-2.4-in-rails.patch
@@ -61,7 +62,7 @@ BuildRequires:  libmysqlclient-devel
 BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
 BuildRequires:  systemd
-%if 0%{?use_ruby_2_4}
+%if 0%{?is_sle_12_family}
 BuildRequires:  ruby2.4
 BuildRequires:  ruby2.4-devel
 BuildRequires:  ruby2.4-rubygem-bundler
@@ -74,7 +75,7 @@ BuildRequires:  fdupes
 
 Requires:       mariadb
 Requires:       nginx
-%if 0%{?use_ruby_2_4}
+%if 0%{?is_sle_12_family}
 Requires(post): ruby2.4
 Requires(post): ruby2.4-rubygem-bundler
 %else
@@ -103,7 +104,7 @@ cp -p %SOURCE2 .
 
 %setup -q
 
-%if 0%{?use_ruby_2_4}
+%if 0%{?is_sle_12_family}
 %patch0 -p1
 %patch1 -p1
 %else
@@ -112,7 +113,7 @@ cp -p %SOURCE2 .
 %endif
 
 %build
-%if 0%{?use_ruby_2_4}
+%if 0%{?is_sle_12_family}
 bundle.ruby2.4 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
 %else
 bundle.ruby2.5 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
@@ -138,10 +139,17 @@ install -D -m 644 %_sourcedir/rmt.8.gz %{buildroot}%_mandir/man8/rmt.8.gz
 
 # systemd
 mkdir -p %{buildroot}%{_unitdir}
-install -m 444 %{SOURCE5} %{buildroot}%{_unitdir}
+
+%if 0%{?is_sle_12_family}
+install -m 444 %{SOURCE12} %{buildroot}%{_unitdir}/rmt-server-sync.timer
+install -m 444 %{SOURCE13} %{buildroot}%{_unitdir}/rmt-server-mirror.timer
+%else
 install -m 444 %{SOURCE6} %{buildroot}%{_unitdir}
-install -m 444 %{SOURCE7} %{buildroot}%{_unitdir}
 install -m 444 %{SOURCE8} %{buildroot}%{_unitdir}
+%endif
+
+install -m 444 %{SOURCE5} %{buildroot}%{_unitdir}
+install -m 444 %{SOURCE7} %{buildroot}%{_unitdir}
 install -m 444 %{SOURCE9} %{buildroot}%{_unitdir}
 install -m 444 %{SOURCE10} %{buildroot}%{_unitdir}
 install -m 444 %{SOURCE11} %{buildroot}%{_unitdir}
@@ -162,7 +170,7 @@ sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"'
     %{buildroot}%{app_dir}/.bundle/config
 
 # cleanup of /usr/bin/env commands
-%if 0%{?use_ruby_2_4}
+%if 0%{?is_sle_12_family}
 grep -rl '\/usr\/bin\/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
     sed -i -e's@\/usr\/bin\/env ruby.ruby2\.4@\/usr\/bin\/ruby\.ruby2\.4@g' \
     -e 's@\/usr\/bin\/env ruby@\/usr\/bin\/ruby\.ruby2\.4@g'
