@@ -76,9 +76,10 @@ RSpec.describe RMT::CLI::Main do
     describe 'exception handling' do
       let(:exception_class) { RMT::CLI::Error }
       let(:error_message) { 'Dummy error' }
+      let(:argv) { ['sync'] }
 
       before do
-        expect(described_class).to receive(:help).and_raise(exception_class, error_message)
+        expect(RMT::SCC).to receive(:new).and_raise(exception_class, error_message)
         expect(described_class).to receive(:exit)
       end
 
@@ -89,7 +90,7 @@ RSpec.describe RMT::CLI::Main do
       end
 
       context 'with --debug' do
-        let(:argv) { ['--debug'] }
+        let(:argv) { ['sync', '--debug'] }
 
         it 'prints exception details' do
           expect { command }.to output(/#<RMT::CLI::Error: #{error_message}>/).to_stderr
