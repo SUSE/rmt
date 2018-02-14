@@ -1,0 +1,11 @@
+[Unit]
+Description=RMT Mirror timer
+After=rmt.service
+Requires=rmt.service
+
+[Timer]
+OnCalendar=*-*-* 02:00:00
+Unit=rmt_mirror.service
+
+[Install]
+WantedBy=multi-user.target

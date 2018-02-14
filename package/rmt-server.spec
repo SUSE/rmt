@@ -15,8 +15,8 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
-
 %if (0%{?suse_version} > 0 && 0%{?suse_version} <= 1320) || (0%{?sle_version} > 0 && 0%{?sle_version} <= 120300)
+%define is_sle_12 1
 %define use_ruby_2_4 1
 %endif
 
@@ -48,6 +48,8 @@ Source8:        rmt-server-sync.timer
 Source9:        rmt.service
 Source10:       rmt.target
 Source11:       rmt-migration.service
+Source12:       rmt-server-sync-sles12.timer
+Source13:       rmt-server-mirror-sles12.timer
 
 Patch0:         use-ruby-2.4-in-rmt-cli.patch
 Patch1:         use-ruby-2.4-in-rails.patch
@@ -138,10 +140,17 @@ install -D -m 644 %_sourcedir/rmt.8.gz %{buildroot}%_mandir/man8/rmt.8.gz
 
 # systemd
 mkdir -p %{buildroot}%{_unitdir}
-install -m 444 %{SOURCE5} %{buildroot}%{_unitdir}
+
+%if 0%{?is_sle_12}
+install -m 444 %{SOURCE12} %{buildroot}%{_unitdir}/rmt-server-sync.timer
+install -m 444 %{SOURCE13} %{buildroot}%{_unitdir}/rmt-server-mirror.timer
+%else
 install -m 444 %{SOURCE6} %{buildroot}%{_unitdir}
-install -m 444 %{SOURCE7} %{buildroot}%{_unitdir}
 install -m 444 %{SOURCE8} %{buildroot}%{_unitdir}
+%endif
+
+install -m 444 %{SOURCE5} %{buildroot}%{_unitdir}
+install -m 444 %{SOURCE7} %{buildroot}%{_unitdir}
 install -m 444 %{SOURCE9} %{buildroot}%{_unitdir}
 install -m 444 %{SOURCE10} %{buildroot}%{_unitdir}
 install -m 444 %{SOURCE11} %{buildroot}%{_unitdir}
