@@ -1,6 +1,4 @@
 require 'rails_helper'
-
-# rubocop:disable RSpec/MultipleExpectations
 # rubocop:disable RSpec/NestedGroups
 
 describe RMT::CLI::Export do

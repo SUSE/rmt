@@ -2,7 +2,6 @@ require 'spec_helper'
 require 'rails_helper'
 
 # rubocop:disable RSpec/NestedGroups
-# rubocop:disable RSpec/MultipleExpectations
 # rubocop:disable RSpec/LetSetup
 
 describe MigrationEngine do

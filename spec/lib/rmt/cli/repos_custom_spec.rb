@@ -1,7 +1,5 @@
 require 'rails_helper'
 
-# rubocop:disable RSpec/MultipleExpectations
-
 describe RMT::CLI::ReposCustom do
   subject(:command) { described_class.start(argv) }
 
