@@ -251,7 +251,7 @@ describe RMT::SCC do
           FakeFS.with_fresh do
             FileUtils.mkdir_p path
             described_class.new.export(path)
-            expect(File).to be_exist(File.join(path, "organizations_#{data}.json"))
+            expect(File).to exist(File.join(path, "organizations_#{data}.json"))
           end
         end
       end
