@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Feb 14 18:19:19 UTC 2018 - tmuntaner@suse.com
+
+- Fixed systemd timers for SLES 12 and Leap
+
+-------------------------------------------------------------------
 Mon Feb 12 13:28:36 UTC 2018 - tmuntaner@suse.com
 
 - version 0.0.3
