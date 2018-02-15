@@ -1,7 +1,7 @@
 language: ruby
 rvm:
-  # SLES15 sp0
-  - 2.4.1
+  # SLES15
+  - 2.5.0
 
 script:
   - 'bundle exec rails db:migrate RAILS_ENV=test'
