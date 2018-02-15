@@ -14,9 +14,6 @@ To add the repository, call: (replace `<dist>` with your distribution)
 
 `zypper ar -f https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/<dist>/systemsmanagement:SCC:RMT.repo`
 
-Note that on SLES 12 and openSUSE Leap 42.2 you will need to add another repository which provides ruby 2.4, like:
-`https://download.opensuse.org/repositories/OBS:/Server:/Unstable/SLE_12_SP3/OBS:Server:Unstable.repo`
-
 To install RMT, run: `zypper in rmt-server`
 
 After installation configure your RMT instance:
@@ -143,7 +140,7 @@ Your organization credentials can be obtained from the [SUSE Customer Center](ht
 
 ## Dependencies
 
-Supported Ruby versions are 2.4.1 and newer.
+Supported Ruby versions are 2.5.0 and newer.
 
 ## Development setup
 
