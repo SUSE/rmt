@@ -1,8 +1,0 @@
-diff --git a/bin/rmt-cli b/bin/rmt-cli
-index 8e9c41d..16481f5 100755
---- a/bin/rmt-cli
-+++ b/bin/rmt-cli
-@@ -1,2 +1,2 @@
--#!/usr/bin/env ruby
-+#!/usr/bin/ruby.ruby2.4
-

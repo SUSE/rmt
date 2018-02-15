@@ -15,6 +15,7 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
+
 %if (0%{?suse_version} > 0 && 0%{?suse_version} <= 1320) || (0%{?sle_version} > 0 && 0%{?sle_version} <= 120300)
 %define is_sle_12_family 1
 %endif
@@ -50,38 +51,25 @@ Source11:       rmt-migration.service
 Source12:       rmt-server-sync-sles12.timer
 Source13:       rmt-server-mirror-sles12.timer
 
-Patch0:         use-ruby-2.4-in-rmt-cli.patch
-Patch1:         use-ruby-2.4-in-rails.patch
-Patch2:         use-ruby-2.5-in-rmt-cli.patch
-Patch3:         use-ruby-2.5-in-rails.patch
+Patch0:         use-ruby-2.5-in-rmt-cli.patch
+Patch1:         use-ruby-2.5-in-rails.patch
 
+BuildRequires:  fdupes
 BuildRequires:  gcc
 BuildRequires:  libcurl-devel
 BuildRequires:  libffi-devel
 BuildRequires:  libmysqlclient-devel
 BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
-BuildRequires:  systemd
-%if 0%{?is_sle_12_family}
-BuildRequires:  ruby2.4
-BuildRequires:  ruby2.4-devel
-BuildRequires:  ruby2.4-rubygem-bundler
-%else
 BuildRequires:  ruby2.5
 BuildRequires:  ruby2.5-devel
 BuildRequires:  ruby2.5-rubygem-bundler
-%endif
-BuildRequires:  fdupes
+BuildRequires:  systemd
 
 Requires:       mariadb
 Requires:       nginx
-%if 0%{?is_sle_12_family}
-Requires(post): ruby2.4
-Requires(post): ruby2.4-rubygem-bundler
-%else
 Requires(post): ruby2.5
 Requires(post): ruby2.5-rubygem-bundler
-%endif
 Requires(post): timezone
 Requires(post): util-linux
 Requires(post): shadow
@@ -104,20 +92,11 @@ cp -p %SOURCE2 .
 
 %setup -q
 
-%if 0%{?is_sle_12_family}
 %patch0 -p1
 %patch1 -p1
-%else
-%patch2 -p1
-%patch3 -p1
-%endif
 
 %build
-%if 0%{?is_sle_12_family}
-bundle.ruby2.4 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
-%else
 bundle.ruby2.5 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
-%endif
 
 %install
 mkdir -p %{buildroot}%{data_dir}
@@ -170,16 +149,9 @@ sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"'
     %{buildroot}%{app_dir}/.bundle/config
 
 # cleanup of /usr/bin/env commands
-%if 0%{?is_sle_12_family}
-grep -rl '\/usr\/bin\/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
-    sed -i -e's@\/usr\/bin\/env ruby.ruby2\.4@\/usr\/bin\/ruby\.ruby2\.4@g' \
-    -e 's@\/usr\/bin\/env ruby@\/usr\/bin\/ruby\.ruby2\.4@g'
-%else
 grep -rl '\/usr\/bin\/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
     sed -i -e 's@\/usr\/bin\/env ruby.ruby2\.5@\/usr\/bin\/ruby\.ruby2\.5@g' \
     -e 's@\/usr\/bin\/env ruby@\/usr\/bin\/ruby\.ruby2\.5@g'
-%endif
-
 grep -rl '\/usr\/bin\/env bash' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
     sed -i -e 's@\/usr\/bin\/env bash@\/bin\/bash@g' \
 
