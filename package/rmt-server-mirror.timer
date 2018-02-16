@@ -6,7 +6,7 @@ Requires=rmt.service
 [Timer]
 OnCalendar=*-*-* 02:00:00
 RandomizedDelaySec=3h
-Unit=rmt_mirror.service
+Unit=rmt-server-mirror.service
 
 [Install]
 WantedBy=multi-user.target
