@@ -16,7 +16,7 @@
 #
 
 
-%if (0%{?suse_version} > 0 && 0%{?suse_version} <= 1320) || (0%{?sle_version} > 0 && 0%{?sle_version} <= 120300)
+%if 0%{?suse_version} == 1315
 %define is_sle_12_family 1
 %endif
 
