@@ -18,13 +18,17 @@ To install RMT, run: `zypper in rmt-server`
 
 After installation configure your RMT instance:
 
-* You can create a MySQL/MariaDB user with the following command:
-```
-mysql -u root -p <<EOFF
-GRANT ALL PRIVILEGES ON \`rmt\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
-FLUSH PRIVILEGES;
-EOFF
-```
+* Prepare the database:
+    * Start MySQL/MariaDB by running `systemctl start mysql`
+    * Set database `root` user password by running `mysqladmin -u root password`
+    * Make sure you can access to the database console as `root` user by running `mysql -u root -p`
+    * Create a MySQL/MariaDB user with the following command:
+    ```
+    mysql -u root -p <<EOFF
+    GRANT ALL PRIVILEGES ON \`rmt\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
+    FLUSH PRIVILEGES;
+    EOFF
+    ```
 * See the "Configuration" section for how to configure the options in `/etc/rmt.conf`.
 * Start RMT by running `systemctl start rmt`. This will start the RMT server at http://localhost:4224.
 * By default, mirrored repositories are saved under `/usr/share/rmt/public`, which is a symlink that points to
@@ -103,22 +107,13 @@ Connecting an SMT with an RMT this way is not supported.
 
 - `rmt-cli import repos /mnt/usb` will mirror all repos which are enabled in the database, from the given path.
 
-
-### openSUSE and other RPM based products
-
-To mirror repositories that are not delivered via SCC, you can run for example:
-
-`rmt-cli mirror custom https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/openSUSE_Leap_42.3/ foo/bar`
-
-This will mirror the repository content to `public/repo/foo/bar` and make it available at http://hostname:4224/repo/foo/bar.
-
 ## Configuration
 
 Available configuration options can be found in the `etc/rmt.conf` file.
 
 ### Mirroring settings
 
-- `mirroring.mirror_src` - whether to mirror source (arch = `src`) repos or not.
+- `mirroring.mirror_src` - whether to mirror source (arch = `src`) RPM packages or not.
 
 ### HTTP client settings
 
