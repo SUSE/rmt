@@ -27,7 +27,7 @@ services:
     extends:
       service: base
       file: docker-compose-base.yml
-    command: bash -c 'bundle exec rails db:migrate && bundle exec rails s -b rmt'
+    command: /bin/bash -c 'bundle.ruby2.5 exec rails db:migrate && bundle.ruby2.5 exec rails s -b rmt'
 
   nginx:
     image: nginx
