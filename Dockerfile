@@ -14,7 +14,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-RUN bundle config build.nokogiri --use-system-libraries
+RUN bundle.ruby2.5 config build.nokogiri --use-system-libraries
 
 ENV RAILS_ENV production
 
@@ -43,4 +43,4 @@ scc:\n\
 
 EXPOSE 4224
 
-CMD dockerize -wait tcp://$MYSQL_HOST:3306 -timeout 60s true && bundle exec rails s -b 0.0.0.0 -p 4224
+CMD dockerize -wait tcp://$MYSQL_HOST:3306 -timeout 60s true && bundle.ruby2.5 exec rails s -b 0.0.0.0 -p 4224
