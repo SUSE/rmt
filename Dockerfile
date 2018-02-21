@@ -1,7 +1,7 @@
 FROM opensuse/amd64:42.3
 
 RUN zypper --non-interactive install --no-recommend timezone wget \
-    gcc gcc-c++ libffi-devel make git-core zlib-devel libxml2-devel libxslt-devel cron libmariadb-devel \
+    gcc-c++ libffi-devel git-core zlib-devel libxml2-devel libxslt-devel cron libmariadb-devel \
     mariadb-client vim &&\
     zypper --non-interactive install -t pattern devel_basis
 
