@@ -6,7 +6,9 @@ Fri Feb 16 11:20:33 UTC 2018 - tmuntaner@suse.com
 -------------------------------------------------------------------
 Fri Feb 16 09:44:26 UTC 2018 - tschmidt@suse.com
 
-- RMT on SLE12 also uses ruby 2.5 
+- RMT on SLE12 also uses ruby 2.5
+  - Removed use-ruby-2.4-in-rails.patch and use-ruby-2.4-in-rmt-cli.patch as
+    they are no longer needed.
 
 -------------------------------------------------------------------
 Wed Feb 14 18:19:19 UTC 2018 - tmuntaner@suse.com
