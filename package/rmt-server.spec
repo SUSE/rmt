@@ -33,8 +33,8 @@ Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0+
 Group:          Productivity/Networking/Web/Proxy
 Url:            https://software.opensuse.org/package/rmt
-# Does not build for i586 and is not supported on that arch
-ExcludeArch:    %ix86
+# Does not build for i586 and s390 and is not supported on those architectures
+ExcludeArch:    %ix86 s390
 
 Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-server-rpmlintrc

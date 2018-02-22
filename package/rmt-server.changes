@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Feb 22 13:37:01 UTC 2018 - tschmidt@suse.com
+
+- Do not build for s390 (bsc#1082150) 
+
+-------------------------------------------------------------------
 Fri Feb 16 11:20:33 UTC 2018 - tmuntaner@suse.com
 
 - Use correct service for systemd timers
