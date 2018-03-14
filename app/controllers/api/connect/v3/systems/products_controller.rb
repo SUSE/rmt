@@ -27,7 +27,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     installed_products = params[:installed_products].map { |hash| product_from_hash(hash) rescue nil }.compact
 
     begin
-      upgrade_paths = MigrationEngine.new(@system, installed_products).generate
+      upgrade_paths = MigrationEngine.new(@system, installed_products).online_migrations
 
       render json: (
         upgrade_paths.reject(&:empty?).map do |item|
@@ -44,8 +44,17 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
   def offline_migrations
     require_params([:installed_products])
+    installed_products = params[:installed_products].map { |hash| product_from_hash(hash) rescue nil }.compact
     begin
-      # I will be an endpoint soon
+      offline_upgrade_paths = MigrationEngine.new(@system, installed_products).offline_migrations
+      render json: (
+        offline_upgrade_paths.reject(&:empty?).map do |item|
+          ActiveModelSerializers::SerializableResource.new(
+            item,
+            each_serializer: ::V3::UpgradePathItemSerializer
+          )
+        end
+      ).to_json
     rescue MigrationEngine::MigrationEngineError => e
       raise ActionController::TranslatedError.new(e.message, *e.data)
     end
