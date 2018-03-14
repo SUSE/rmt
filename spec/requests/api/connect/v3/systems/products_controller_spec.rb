@@ -341,4 +341,25 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       end
     end
   end
+
+  describe '#offline_migrations' do
+    before { post url, headers: headers, params: payload }
+    subject { response }
+
+    let(:url) { connect_systems_products_offline_migrations_url}
+
+    context 'without installed_products' do
+      let(:payload) { {} }
+      let(:error_response) do
+        {
+          type: 'error',
+          error: 'Required parameters are missing or empty: installed_products',
+          localized_error: 'Required parameters are missing or empty: installed_products'
+        }.to_json
+      end
+
+      its(:code) { is_expected.to eq('422') }
+      its(:body) { is_expected.to eq(error_response) }
+    end
+  end
 end

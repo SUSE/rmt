@@ -42,6 +42,7 @@ Rails.application.routes.draw do
         post 'products', to: 'products#activate'
         put 'products', to: 'products#upgrade'
         post 'products/migrations', to: 'products#migrations'
+        post 'products/offline_migrations', to: 'products#offline_migrations'
       end
 
       resource :systems, only: [], module: :systems do

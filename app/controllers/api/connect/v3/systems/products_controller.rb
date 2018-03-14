@@ -42,6 +42,15 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     end
   end
 
+  def offline_migrations
+    require_params([:installed_products])
+    begin
+      # I will be an endpoint soon
+    rescue MigrationEngine::MigrationEngineError => e
+      raise ActionController::TranslatedError.new(e.message, *e.data)
+    end
+  end
+
   def upgrade
     activation = @system.activations.joins(:service).find_by('services.product_id': [@product.id, @product.predecessor_ids, @product.successor_ids].flatten)
 
