@@ -20,9 +20,12 @@ class MigrationEngine
     generate
   end
 
-  def offline_migrations
-
+  def offline_migrations(target_base_product)
+    migrations = generate
+    filter_by_base_product(migrations, target_base_product)
   end
+
+  private
 
   def generate
     # check for migration attempt using products that have not been activated
@@ -39,10 +42,8 @@ class MigrationEngine
     # NB: It's possible to migrate to any product that's available on RMT, entitlement checks not needed.
 
     # Offering the most recent products first
-    migrations.map(&:uniq).sort_by { |c| c.map(&:version) }.reverse
+    sort_migrations(migrations)
   end
-
-  private
 
   def base_product
     return @base_product if @base_product
@@ -72,4 +73,35 @@ class MigrationEngine
     end
   end
 
+  def sort_migrations(migrations)
+    migrations
+      .map(&:uniq)
+      .map { |migration| sort_migration(migration) }
+      .sort_by { |migration| migration.map(&:version) }
+      .reverse!
+  end
+
+  # we sort the migration products, so clients will activate them in the right dependency order
+  def sort_migration(migration)
+    base_product = migration.first # First product is the base
+    sorted = []
+    queue = [base_product]
+
+    # Breadth-first search. We visit the products in the tree level by level,
+    # and add them to the `sorted` array as we visit them.
+    until queue.empty?
+      product = queue.shift
+      sorted << product
+      # Exclude extensions that are not part of the migration
+      # order(:name) prevents flickering tests
+      extensions = product.extensions.for_root_product(base_product).order(:name).select { |e| migration.map(&:id).include?(e.id) }
+      extensions.each { |ext| queue.push ext }
+    end
+
+    sorted
+  end
+
+  def filter_by_base_product(migrations, target_base_product)
+    migrations.select { |migration| migration.first == target_base_product }
+  end
 end
