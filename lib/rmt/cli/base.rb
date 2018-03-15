@@ -19,7 +19,7 @@ class RMT::CLI::Base < Thor
 
       shell.say
       shell.say 'Do you have suggestions for improvement? Let us know!'
-      shell.say 'Check out https://github.com/SUSE/rmt#feedback'
+      shell.say 'Check out https://github.com/SUSE/rmt/issues/new'
     end
 
     def dispatch(command, given_args, given_opts, config)
