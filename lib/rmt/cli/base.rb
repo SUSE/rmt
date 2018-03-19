@@ -18,7 +18,7 @@ class RMT::CLI::Base < Thor
       shell.say "Run '#{basename} help [COMMAND]' for more information on a command and its subcommands."
 
       shell.say
-      shell.say 'Do you have suggestions for improvement? Let us know!'
+      shell.say 'Do you have suggestions for improvement? We would love to hear from you!'
       shell.say 'Check out https://github.com/SUSE/rmt/issues/new'
     end
 
