@@ -1,8 +1,11 @@
 class ProductPredecessorAssociation < ApplicationRecord
-
   self.table_name = 'product_predecessors'
 
-  validates :product_id, presence: true
-  validates :predecessor_id, presence: true
+  enum kind: { online: 0, offline: 1 }
+
+  validates :product_id, :predecessor_id, :kind, presence: true
+
+  scope :online, -> { where(kind: :online) }
+  scope :offline, -> { where(kind: :offline) }
 
 end
