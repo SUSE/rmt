@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180115112449) do
+ActiveRecord::Schema.define(version: 20180321164623) do
 
   create_table "activations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "service_id", null: false
     t.bigint "system_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["system_id", "service_id"], name: "index_activations_on_system_id_and_service_id", unique: true
     t.index ["system_id"], name: "index_activations_on_system_id"
   end
 
