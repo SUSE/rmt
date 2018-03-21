@@ -29,8 +29,6 @@ FactoryGirl.define do
           recommended: evaluator.recommended
         )
       end
-
-      product.predecessors << evaluator.predecessor if evaluator.predecessor
     end
 
     trait :extension do
@@ -117,6 +115,19 @@ FactoryGirl.define do
           end
         else
           fail 'activated requires a system'
+        end
+      end
+    end
+
+    trait :with_predecessors do
+      transient do
+        predecessors [ nil ]
+      end
+
+      after :create do |product, evaluator|
+        evaluator.predecessors.each do |predecessor|
+          ProductPredecessorAssociation.create(product_id: product.id,
+            predecessor_id: predecessor.id, kind: 0)
         end
       end
     end
