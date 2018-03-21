@@ -25,8 +25,6 @@ class MigrationEngine
     filter_by_base_product(migrations, target_base_product)
   end
 
-  private
-
   def generate(migration_kind: :online)
     # check for migration attempt using products that have not been activated
     not_activated_products = @installed_products - @system.products
@@ -38,13 +36,16 @@ class MigrationEngine
       )
     end
 
-    migrations = remove_incompatible_combinations(migration_targets(migration_kind: migration_kind))
+    migrations = migration_targets(migration_kind: migration_kind)
+    remove_incompatible_migrations(migrations)
     add_dependencies(migrations)
     # NB: It's possible to migrate to any product that's available on RMT, entitlement checks not needed.
 
     # Offering the most recent products first
     sort_migrations(migrations)
   end
+
+  private
 
   def base_product
     return @base_product if @base_product
@@ -59,8 +60,10 @@ class MigrationEngine
     migration_path_scope = (migration_kind == :online) ? ProductPredecessorAssociation.online : ProductPredecessorAssociation.offline
     installed_extensions = @installed_products.reject { |product| product == base_product }
     base_successors = base_product.successors.merge(migration_path_scope).to_a
+    base_successors.push(base_product) if migration_kind == :online
     extension_successors = installed_extensions.map do |e|
       successors = e.successors.merge(migration_path_scope)
+      successors += [e] if migration_kind == :online
       successors
     end
     # full set of migrations
@@ -70,7 +73,7 @@ class MigrationEngine
   end
 
   # removes product combinations that include incompatible base-extension combinations
-  def remove_incompatible_combinations(migrations)
+  def remove_incompatible_migrations(migrations)
     migrations.clone.each do |migration|
       migration_root_product = migration.first
       (migration - [migration_root_product]).each do |extension|
