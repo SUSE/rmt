@@ -17,17 +17,17 @@ class MigrationEngine
   end
 
   def online_migrations
-    generate
+    generate(migration_kind: :online)
   end
 
   def offline_migrations(target_base_product)
-    migrations = generate
+    migrations = generate(migration_kind: :offline)
     filter_by_base_product(migrations, target_base_product)
   end
 
   private
 
-  def generate
+  def generate(migration_kind: :online)
     # check for migration attempt using products that have not been activated
     not_activated_products = @installed_products - @system.products
 
@@ -38,7 +38,8 @@ class MigrationEngine
       )
     end
 
-    migrations = remove_incompatible_combinations(migration_targets)
+    migrations = remove_incompatible_combinations(migration_targets(migration_kind: migration_kind))
+    add_dependencies(migrations)
     # NB: It's possible to migrate to any product that's available on RMT, entitlement checks not needed.
 
     # Offering the most recent products first
@@ -54,10 +55,14 @@ class MigrationEngine
   end
 
   # returns the possible migration targets for @installed_products by grouping successor products
-  def migration_targets
+  def migration_targets(migration_kind: :online)
+    migration_path_scope = (migration_kind == :online) ? ProductPredecessorAssociation.online : ProductPredecessorAssociation.offline
     installed_extensions = @installed_products.reject { |product| product == base_product }
-    base_successors = [base_product] + base_product.successors
-    extension_successors = installed_extensions.map { |e| [e] + e.successors }
+    base_successors = base_product.successors.merge(migration_path_scope).to_a
+    extension_successors = installed_extensions.map do |e|
+      successors = e.successors.merge(migration_path_scope)
+      successors
+    end
     # full set of migrations
     migrations = base_successors.product(*extension_successors)
     migrations.delete([base_product] + installed_extensions)
@@ -66,10 +71,28 @@ class MigrationEngine
 
   # removes product combinations that include incompatible base-extension combinations
   def remove_incompatible_combinations(migrations)
-    migrations.reject do |migration|
-      migration[1..-1].any? do |product|
-        (product.bases & migration).empty?
+    migrations.clone.each do |migration|
+      migration_root_product = migration.first
+      (migration - [migration_root_product]).each do |extension|
+        # remove migration if it does not include a valid root product for the current extension
+        if (extension.available_for.map(&:id) & migration.map(&:id)).empty?
+          migrations.delete(migration)
+          break
+        end
       end
+    end
+  end
+
+  # SLE 15 needs to have all of its available modules enabled, because there is
+  # no direct mapping from SLE12 modules to SLE15 modules.
+  # This method modifies the given array.
+  def add_dependencies(migrations)
+    migrations.map do |migration|
+      base = migration.first
+      if base.version.split('.').first == '15'
+        migration.concat Product.available_or_recommended_modules(base.id)
+      end
+      migration
     end
   end
 
