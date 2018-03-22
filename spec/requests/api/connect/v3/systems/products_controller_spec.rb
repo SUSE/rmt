@@ -80,6 +80,20 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
         end
       end
     end
+
+    describe 'activations' do
+      subject(:request) { post url, headers: headers, params: payload }
+
+      context 'when the product was already activated on this system' do
+        before { Activation.create system: system, service: product.service }
+
+        specify { expect { request }.not_to change { system.activations.reload } }
+      end
+
+      context 'when the product was not already activated on this system' do
+        specify { expect { request }.to change { system.activations.count }.from(0).to(1) }
+      end
+    end
   end
 
   describe '#show' do
@@ -168,10 +182,11 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       let(:verb) { 'put' }
     end
 
-    before { put url, headers: headers, params: payload }
-    subject { response }
 
     context 'with not activated product' do
+      before { put url, headers: headers, params: payload }
+      subject { response }
+
       let(:product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
       let(:payload) do
         {
@@ -195,9 +210,10 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
     end
 
     context 'with activated product' do
-      let(:old_product) { FactoryGirl.create(:product, :with_mirrored_repositories, :activated, system: system) }
+      let(:request) { put url, headers: headers, params: payload }
+
+      let!(:old_product) { FactoryGirl.create(:product, :with_mirrored_repositories, :activated, system: system) }
       let(:new_product) { FactoryGirl.create(:product, :with_mirrored_repositories, predecessor: old_product) }
-      let!(:activation_id) { system.activations.first.id }
 
       let(:payload) do
         {
@@ -214,12 +230,21 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
         ).to_json
       end
 
-      its(:code) { is_expected.to eq('201') }
-      its(:body) { is_expected.to eq(serialized_json) }
-      it 'updates the activation' do
-        activation = Activation.find(activation_id)
+      describe 'response' do
+        before { request }
+        subject { response }
 
-        expect(activation.product.id).to eq(new_product.id)
+        its(:code) { is_expected.to eq('201') }
+        its(:body) { is_expected.to eq(serialized_json) }
+      end
+
+      describe 'activations' do
+        specify { expect { request }.not_to change { system.activations.count } }
+        it "updates the system's activation with the new product" do
+          expect { request }.to change { system.activations.first.reload.service_id }
+            .from(old_product.service.id)
+            .to(new_product.service.id)
+        end
       end
     end
   end
