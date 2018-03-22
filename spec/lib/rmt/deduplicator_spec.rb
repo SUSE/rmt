@@ -33,7 +33,7 @@ RSpec.describe RMT::Deduplicator do
       before do
         deduplication_method(:copy)
         add_downloaded_file(checksum_type, 'foo', source_path)
-        open(source_path, 'a') { |f| f.puts 'this is a change' }
+        File.open(source_path, 'a') { |f| f.puts 'this is a change' }
         deduplicate(checksum_type, 'foo', dest_path)
       end
 
@@ -68,7 +68,7 @@ RSpec.describe RMT::Deduplicator do
       before do
         deduplication_method(:hardlink)
         add_downloaded_file(checksum_type, 'foo', source_path)
-        open(source_path, 'a') { |f| f.puts 'this is a change' }
+        File.open(source_path, 'a') { |f| f.puts 'this is a change' }
         deduplicate(checksum_type, 'foo', dest_path)
       end
 
