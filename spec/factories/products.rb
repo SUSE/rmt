@@ -16,7 +16,6 @@ FactoryGirl.define do
 
     transient do
       base_products []
-      predecessor nil
       root_product nil
       recommended false
     end
@@ -37,6 +36,7 @@ FactoryGirl.define do
 
     trait :module do
       product_type 'module'
+      free true
     end
 
     trait :with_extensions do
@@ -82,7 +82,7 @@ FactoryGirl.define do
 
     trait :with_mirrored_repositories do
       after :create do |product, _evaluator|
-        unless Service.find_by(product_id: product.id)
+        unless product.service
           FactoryGirl.create(:service, :with_repositories, product: product, mirroring_enabled: true)
         end
       end
@@ -90,7 +90,7 @@ FactoryGirl.define do
 
     trait :with_not_mirrored_repositories do
       after :create do |product, _evaluator|
-        unless Service.find_by(product_id: product.id)
+        unless product.service
           FactoryGirl.create(:service, :with_repositories, product: product, mirroring_enabled: false)
         end
       end
@@ -122,12 +122,13 @@ FactoryGirl.define do
     trait :with_predecessors do
       transient do
         predecessors [ nil ]
+        migration_kind :online
       end
 
       after :create do |product, evaluator|
         evaluator.predecessors.each do |predecessor|
           ProductPredecessorAssociation.create(product_id: product.id,
-            predecessor_id: predecessor.id, kind: 0)
+            predecessor_id: predecessor.id, kind: evaluator.migration_kind)
         end
       end
     end

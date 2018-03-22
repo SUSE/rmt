@@ -32,8 +32,8 @@ ActiveRecord::Schema.define(version: 20180322135848) do
 
   create_table "product_predecessors", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "product_id", null: false
-    t.integer "kind", null: false
     t.bigint "predecessor_id"
+    t.integer "kind", null: false
     t.index ["predecessor_id"], name: "fk_rails_ae2fd616af"
     t.index ["product_id", "predecessor_id"], name: "index_product_predecessors_on_product_id_and_predecessor_id", unique: true
     t.index ["product_id"], name: "index_product_predecessors_on_product_id"
