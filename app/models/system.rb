@@ -2,7 +2,7 @@ class System < ApplicationRecord
 
   after_initialize :init
 
-  has_many :activations
+  has_many :activations, dependent: :destroy
   has_many :services, through: :activations
   has_many :repositories, -> { distinct }, through: :services
   has_many :products, -> { distinct }, through: :services

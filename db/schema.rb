@@ -10,13 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180320153318) do
+ActiveRecord::Schema.define(version: 20180322135848) do
 
   create_table "activations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer "service_id", null: false
+    t.bigint "service_id", null: false
     t.bigint "system_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["service_id"], name: "fk_rails_5ad14bc754"
+    t.index ["system_id", "service_id"], name: "index_activations_on_system_id_and_service_id", unique: true
     t.index ["system_id"], name: "index_activations_on_system_id"
   end
 
@@ -30,8 +32,9 @@ ActiveRecord::Schema.define(version: 20180320153318) do
 
   create_table "product_predecessors", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "product_id", null: false
-    t.integer "predecessor_id"
     t.integer "kind", null: false
+    t.bigint "predecessor_id"
+    t.index ["predecessor_id"], name: "fk_rails_ae2fd616af"
     t.index ["product_id", "predecessor_id"], name: "index_product_predecessors_on_product_id_and_predecessor_id", unique: true
     t.index ["product_id"], name: "index_product_predecessors_on_product_id"
   end
@@ -58,10 +61,11 @@ ActiveRecord::Schema.define(version: 20180320153318) do
     t.bigint "product_id", null: false
     t.bigint "extension_id", null: false
     t.boolean "recommended"
-    t.integer "root_product_id", null: false
+    t.bigint "root_product_id", null: false
     t.index ["extension_id"], name: "index_products_extensions_on_extension_id"
     t.index ["product_id", "extension_id", "root_product_id"], name: "index_products_extensions_on_product_extension_root", unique: true
     t.index ["product_id"], name: "index_products_extensions_on_product_id"
+    t.index ["root_product_id"], name: "fk_rails_7d0e68d364"
   end
 
   create_table "repositories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -88,7 +92,7 @@ ActiveRecord::Schema.define(version: 20180320153318) do
   end
 
   create_table "services", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer "product_id", null: false
+    t.bigint "product_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_services_on_product_id", unique: true
@@ -129,11 +133,15 @@ ActiveRecord::Schema.define(version: 20180320153318) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "activations", "services", on_delete: :cascade
   add_foreign_key "activations", "systems", on_delete: :cascade
+  add_foreign_key "product_predecessors", "products", column: "predecessor_id"
   add_foreign_key "product_predecessors", "products", on_delete: :cascade
   add_foreign_key "products_extensions", "products", column: "extension_id", on_delete: :cascade
+  add_foreign_key "products_extensions", "products", column: "root_product_id"
   add_foreign_key "products_extensions", "products", on_delete: :cascade
   add_foreign_key "repositories_services", "repositories", on_delete: :cascade
   add_foreign_key "repositories_services", "services", on_delete: :cascade
+  add_foreign_key "services", "products"
   add_foreign_key "subscription_product_classes", "subscriptions", on_delete: :cascade
 end

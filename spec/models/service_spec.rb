@@ -5,7 +5,7 @@ RSpec.describe Service, type: :model do
   it { is_expected.to have_many :repositories }
   it { is_expected.to have_many :enabled_repositories }
   it { is_expected.to have_many :repositories_services_associations }
-  it { is_expected.to have_many :activations }
+  it { is_expected.to have_many(:activations).dependent(:destroy) }
   it { is_expected.to have_many(:systems).through(:activations) }
   it { is_expected.to validate_presence_of :product_id }
 

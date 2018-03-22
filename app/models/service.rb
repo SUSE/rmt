@@ -2,7 +2,7 @@ class Service < ApplicationRecord
 
   belongs_to :product
 
-  has_many :activations
+  has_many :activations, dependent: :destroy
   has_many :systems, through: :activations
 
   has_many :repositories_services_associations

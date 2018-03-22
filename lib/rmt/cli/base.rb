@@ -16,6 +16,10 @@ class RMT::CLI::Base < Thor
       class_options_help(shell)
 
       shell.say "Run '#{basename} help [COMMAND]' for more information on a command and its subcommands."
+
+      shell.say
+      shell.say 'Do you have suggestions for improvement? We would love to hear from you!'
+      shell.say 'Check out https://github.com/SUSE/rmt/issues/new'
     end
 
     def dispatch(command, given_args, given_opts, config)

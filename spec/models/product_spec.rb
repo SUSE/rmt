@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Product, type: :model do
-  it { is_expected.to have_one :service }
+  it { is_expected.to have_one(:service).dependent(:destroy) }
   it { is_expected.to have_many :repositories }
   it { is_expected.to have_many :bases }
   it { is_expected.to have_many :extensions }

@@ -200,3 +200,11 @@ In order to run the application locally using docker-compose:
     ```
     Alternatively, running `docker-compose exec rmt bash` will start the shell inside the container.
 5. The web server will be accessible at [http://localhost:8080/](http://localhost:8080/), this URL can be used for registering clients.
+
+## Feedback
+
+Do you have suggestions for improvement? Let us know!
+
+Go to [Issues](https://github.com/SUSE/rmt/issues/new), create a new issue and describe what you think could be improved.
+
+Feedback is always welcome!

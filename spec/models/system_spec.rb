@@ -7,7 +7,7 @@ RSpec.describe System, type: :model do
   let(:login) { described_class.generate_secure_login }
   let(:password) { described_class.generate_secure_password }
 
-  it { is_expected.to have_many :activations }
+  it { is_expected.to have_many(:activations).dependent(:destroy) }
   it { is_expected.to have_many(:services).through(:activations) }
   it { is_expected.to have_many(:repositories).through(:services) }
 

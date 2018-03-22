@@ -5,9 +5,7 @@ FactoryGirl.define do
 
     trait :with_activated_base_product do
       after :create do |system, _|
-        system.services << FactoryGirl.create(:service) if system.services.blank?
-        service = system.products.first.service
-        FactoryGirl.create(:activation, system: system, service: service)
+        create(:activation, system: system, service: create(:service)) if system.services.blank?
       end
     end
   end

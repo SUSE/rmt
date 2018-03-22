@@ -1,6 +1,6 @@
 class Product < ApplicationRecord
 
-  has_one :service
+  has_one :service, dependent: :destroy
   has_many :repositories, through: :service
 
   has_many :product_extensions_associations,
