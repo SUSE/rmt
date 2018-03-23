@@ -188,12 +188,13 @@ describe RMT::SCC do
       end
     end
 
-    context "with existing predecessor associations" do
+    context 'with existing predecessor associations' do
       let(:product) { create(:product, id: 100000) }
       let(:predecessor) { create(:product, id: 500000) }
       let!(:existing_association) do
         ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor.id, kind: :online)
       end
+
       before do
         allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
         described_class.new.sync

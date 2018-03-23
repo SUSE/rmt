@@ -35,7 +35,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
   def offline_migrations
     # This part below is not yet working and needs investigation
-    require_params([:installed_products, :target_base_product])
+    require_params(%i[installed_products target_base_product])
 
     begin
       offline_upgrade_paths = MigrationEngine.new(@system, installed_products)

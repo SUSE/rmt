@@ -67,8 +67,10 @@ describe MigrationEngine do
     end
 
     context 'with upgradeable base product' do
-      let!(:sle12sp1) { create :product, :with_mirrored_repositories, :cloned,
-                          from: sle12, name: 'sle12sp1', version: '12.1', predecessors: [sle12] }
+      let!(:sle12sp1) do
+        create :product, :with_mirrored_repositories, :cloned,
+          from: sle12, name: 'sle12sp1', version: '12.1', predecessors: [sle12]
+      end
       let!(:sle12sp2) do
         create :product, :with_mirrored_repositories, :cloned, from: sle12,
           name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
@@ -102,8 +104,10 @@ describe MigrationEngine do
     end
 
     context 'with base plus extension products' do
-      let!(:sle12sp1) { create :product, :with_mirrored_repositories, :cloned,
-        from: sle12, name: 'sle12sp1', version: '12.1', predecessors: [sle12] }
+      let!(:sle12sp1) do
+        create :product, :with_mirrored_repositories, :cloned,
+          from: sle12, name: 'sle12sp1', version: '12.1', predecessors: [sle12]
+      end
       let(:sdk12) do
         create :product, :with_mirrored_repositories, :activated, system: system, base_products: [sle12], name: 'sdk12',
           product_type: 'extension', free: true
@@ -394,10 +398,10 @@ describe MigrationEngine do
         end
 
         describe '#online_migrations' do
+          subject { engine.online_migrations }
+
           let(:installed_products) { [product_a] }
           let(:system) { create :system, :with_activated_product, product: product_a }
-
-          subject { engine.online_migrations }
 
           it 'does not contain offline migrations' do
             is_expected.to contain_exactly([product_b])
@@ -405,11 +409,12 @@ describe MigrationEngine do
         end
 
         describe '#offline_migrations' do
+          subject { engine.offline_migrations(target_base_product) }
+
           let(:installed_products) { [product_b] }
           let(:target_base_product) { product_c }
           let(:system) { create :system, :with_activated_product, product: product_b }
 
-          subject { engine.offline_migrations(target_base_product) }
 
           it 'gives an offline migratable base product' do
             is_expected.to contain_exactly([product_c])

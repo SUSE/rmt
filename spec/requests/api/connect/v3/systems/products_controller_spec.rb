@@ -361,24 +361,24 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
               'version': product.version,
               'arch': product.arch,
               'release_type': product.release_type
-              } ],
+            } ],
             'target_base_product': {
               'identifier': second_product.identifier,
               'version': second_product.version,
               'arch': second_product.arch,
               'release_type': second_product.release_type
-              }
             }
-          end
-          let(:expected_response) do
-            [[::V3::UpgradePathItemSerializer.new(second_product)]].to_json
-          end
-
-          its(:code) { is_expected.to eq('200') }
-          its(:body) do
-            is_expected.to eq(expected_response)
-          end
+          }
         end
+        let(:expected_response) do
+          [[::V3::UpgradePathItemSerializer.new(second_product)]].to_json
+        end
+
+        its(:code) { is_expected.to eq('200') }
+        its(:body) do
+          is_expected.to eq(expected_response)
+        end
+      end
     end
 
     describe '#migrations' do
