@@ -20,7 +20,7 @@ describe MigrationEngine do
     context 'error handling' do
       context 'multiple base products' do
         let!(:sle12sp1) do
-          create :product, :with_mirrored_repositories, :cloned, :activated, :with_predecessors,
+          create :product, :with_mirrored_repositories, :cloned, :activated,
             system: system, from: sle12, name: 'sle12sp1',
             version: '12.1', predecessors: [sle12]
         end
@@ -67,10 +67,10 @@ describe MigrationEngine do
     end
 
     context 'with upgradeable base product' do
-      let!(:sle12sp1) { create :product, :with_mirrored_repositories, :cloned, :with_predecessors,
+      let!(:sle12sp1) { create :product, :with_mirrored_repositories, :cloned,
                           from: sle12, name: 'sle12sp1', version: '12.1', predecessors: [sle12] }
       let!(:sle12sp2) do
-        create :product, :with_mirrored_repositories, :cloned, :with_predecessors, from: sle12,
+        create :product, :with_mirrored_repositories, :cloned, from: sle12,
           name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
       end
 
@@ -82,7 +82,7 @@ describe MigrationEngine do
 
       context 'one base migration target' do
         let!(:sle12sp1) do
-          create :product, :with_mirrored_repositories, :cloned, :with_predecessors, :activated,
+          create :product, :with_mirrored_repositories, :cloned, :activated,
             from: sle12, system: system, name: 'sle12sp1', version: '12.1', predecessors: [sle12]
         end
         let(:installed_products) { [sle12sp1] }
@@ -92,7 +92,7 @@ describe MigrationEngine do
 
       context 'no migration target' do
         let!(:sle12sp2) do
-          create :product, :with_mirrored_repositories, :cloned, :with_predecessors, :activated,
+          create :product, :with_mirrored_repositories, :cloned, :activated,
             from: sle12, system: system, name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
         end
         let(:installed_products) { [sle12sp2] }
@@ -102,14 +102,14 @@ describe MigrationEngine do
     end
 
     context 'with base plus extension products' do
-      let!(:sle12sp1) { create :product, :with_mirrored_repositories, :cloned, :with_predecessors,
+      let!(:sle12sp1) { create :product, :with_mirrored_repositories, :cloned,
         from: sle12, name: 'sle12sp1', version: '12.1', predecessors: [sle12] }
       let(:sdk12) do
         create :product, :with_mirrored_repositories, :activated, system: system, base_products: [sle12], name: 'sdk12',
           product_type: 'extension', free: true
       end
       let!(:sdk12sp1) do
-        create :product, :with_mirrored_repositories, :cloned, :with_predecessors,
+        create :product, :with_mirrored_repositories, :cloned,
           from: sdk12, name: 'sdk12sp1', base_products: [sle12sp1], predecessors: [sdk12], product_type: 'extension'
       end
       let(:sleha12) do
@@ -119,7 +119,7 @@ describe MigrationEngine do
         )
       end
       let!(:sleha12sp1) do
-        create :product, :with_mirrored_repositories, :cloned, :with_predecessors,
+        create :product, :with_mirrored_repositories, :cloned,
           from: sleha12, name: 'sleha12sp1', base_products: [sle12sp1], predecessors: [sleha12], product_type: 'extension'
       end
 
@@ -135,7 +135,7 @@ describe MigrationEngine do
             product_type: 'extension'
         end
         let!(:slehageo12sp1) do
-          create :product, :with_mirrored_repositories, :cloned, :with_predecessors,
+          create :product, :with_mirrored_repositories, :cloned,
             from: slehageo12, name: 'slehageo12sp1', base_products: [sleha12sp1], predecessors: [slehageo12], root_product: sle12sp1
         end
         let!(:slehageosub) { create(:subscription, product_classes: [slehageo12.product_class]) }
@@ -154,8 +154,7 @@ describe MigrationEngine do
         let!(:sle12_extension) { sleha12sp1 }
         let!(:extension_subscription) { create :subscription, product_classes: [sle12_extension.product_class] }
         let!(:sle15) do
-          create :product, :with_mirrored_repositories,
-            :with_predecessors, :cloned, from: sle12sp1,
+          create :product, :with_mirrored_repositories, :cloned, from: sle12sp1,
             name: 'sle15', version: '15', predecessors: [sle12sp1]
         end
         let!(:sle15_module) do
@@ -163,7 +162,7 @@ describe MigrationEngine do
             name: 'sle15module', version: '15', base_products: [sle15]
         end
         let!(:sle15_extension) do
-          create :product, :extension, :with_mirrored_repositories, :cloned, :with_predecessors, root_product: sle15,
+          create :product, :extension, :with_mirrored_repositories, :cloned, root_product: sle15,
             from: sle12_extension, predecessors: [sle12_extension], base_products: [sle15_module]
         end
         let(:system) { create :system }
@@ -184,7 +183,7 @@ describe MigrationEngine do
             name: 'ltss12', base_products: [sle12]
         end
         let!(:sle12sp1) do
-          create :product, :with_mirrored_repositories, :with_predecessors, :cloned, from: sle12,
+          create :product, :with_mirrored_repositories, :cloned, from: sle12,
             name: 'sle12sp1', predecessors: [sle12, ltss12]
         end
         let(:system) { create :system }
@@ -205,11 +204,11 @@ describe MigrationEngine do
         end
         let(:extension_subscription) { create :subscription, product_classes: [sle12_extension.product_class] }
         let!(:sle15) do
-          create :product, :with_mirrored_repositories, :with_predecessors, :cloned, from: sle12sp1,
+          create :product, :with_mirrored_repositories, :cloned, from: sle12sp1,
             name: 'sle15', predecessors: [sle12sp1]
         end
         let!(:sle15_merged_extension) do
-          create :product, :extension, :with_mirrored_repositories, :cloned, :with_predecessors,
+          create :product, :extension, :with_mirrored_repositories, :cloned,
           from: sle12_extension, predecessors: [sle12_extension, sle12_extension_extension], base_products: [sle15]
         end
         let(:system) { create :system }
@@ -230,11 +229,11 @@ describe MigrationEngine do
             base_products: [sle12], product_type: 'extension')
         end
         let!(:cloud8) do
-          create(:product, :with_mirrored_repositories, :cloned, :with_predecessors,
+          create(:product, :with_mirrored_repositories, :cloned,
             from: cloud7, name: 'Cloud 8', version: '8', predecessors: [cloud7], base_products: [sle12])
         end
         let!(:cloud9) do
-          create(:product, :with_mirrored_repositories, :cloned, :with_predecessors,
+          create(:product, :with_mirrored_repositories, :cloned,
             from: cloud7, name: 'Cloud 9', version: '9',
             predecessors: [cloud7, cloud8], base_products: [sle12])
         end
@@ -247,7 +246,7 @@ describe MigrationEngine do
 
       context 'multiple migrations for base plus modules' do
         let!(:sle12sp2) do
-          create :product, :with_mirrored_repositories, :cloned, :with_predecessors,
+          create :product, :with_mirrored_repositories, :cloned,
           from: sle12, name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
         end
         let!(:docker_module) do
@@ -267,7 +266,7 @@ describe MigrationEngine do
 
       context 'when not all products are upgradeable but still compatible' do
         let!(:sle12sp2) do
-          create :product, :with_mirrored_repositories, :cloned, :with_predecessors,
+          create :product, :with_mirrored_repositories, :cloned,
           from: sle12, name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
         end
         let!(:docker_module) do
@@ -295,7 +294,7 @@ describe MigrationEngine do
 
       context 'with base plus free extension of beta class' do
         let!(:sdk12sp1beta) do
-          create :product, :with_mirrored_repositories, :with_predecessors, base_products: [sle12sp1], predecessors: [sdk12], name: 'sdk12sp1beta',
+          create :product, :with_mirrored_repositories, base_products: [sle12sp1], predecessors: [sdk12], name: 'sdk12sp1beta',
             product_type: 'extension', free: true
         end
         let(:installed_products) { [sle12, sdk12] }
@@ -306,11 +305,11 @@ describe MigrationEngine do
       describe 'sorting' do
         context 'simple case with no dependencies' do
           let!(:sle12sp1) do
-            create :product, :with_mirrored_repositories, :with_predecessors, :cloned, from: sle12,
+            create :product, :with_mirrored_repositories, :cloned, from: sle12,
               name: 'sle12sp1', version: '12.1', predecessors: [sle12]
           end
           let!(:sle12sp2) do
-            create :product, :with_mirrored_repositories, :with_predecessors,
+            create :product, :with_mirrored_repositories,
               :cloned, from: sle12, name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
           end
           let!(:docker_module) do
@@ -327,8 +326,7 @@ describe MigrationEngine do
           # In this case, we have a tree of modules, and we need the products
           # that are deeper in the tree to come after the ones that are above.
           let!(:sle15) do
-            create :product, :with_mirrored_repositories,
-              :with_predecessors, :cloned, from: sle12sp1,
+            create :product, :with_mirrored_repositories, :cloned, from: sle12sp1,
               name: 'sle15', version: '15', predecessors: [sle12sp1]
           end
           let!(:basesystem) do
@@ -383,15 +381,15 @@ describe MigrationEngine do
         let(:product_class) { create :product_class }
         let!(:product_a) { create :product, :with_mirrored_repositories }
         let!(:product_b) do
-          create :product, :with_mirrored_repositories, :with_predecessors, predecessors: [product_a],
+          create :product, :with_mirrored_repositories, predecessors: [product_a],
             migration_kind: :online
         end
         let!(:product_c) do
-          create :product, :with_mirrored_repositories, :with_predecessors, predecessors: [product_b],
+          create :product, :with_mirrored_repositories, predecessors: [product_b],
             migration_kind: :offline
         end
         let!(:product_c_prime) do
-          create :product, :with_mirrored_repositories, :with_predecessors, predecessors: [product_b],
+          create :product, :with_mirrored_repositories, predecessors: [product_b],
             migration_kind: :offline
         end
 

@@ -18,6 +18,8 @@ FactoryGirl.define do
       base_products []
       root_product nil
       recommended false
+      migration_kind :online
+      predecessors [ ]
     end
 
     after :create do |product, evaluator|
@@ -27,6 +29,10 @@ FactoryGirl.define do
           root_product: evaluator.root_product || base_product,
           recommended: evaluator.recommended
         )
+      end
+      evaluator.predecessors.each do |predecessor|
+        ProductPredecessorAssociation.create(product_id: product.id,
+          predecessor_id: predecessor.id, kind: evaluator.migration_kind)
       end
     end
 
@@ -115,20 +121,6 @@ FactoryGirl.define do
           end
         else
           fail 'activated requires a system'
-        end
-      end
-    end
-
-    trait :with_predecessors do
-      transient do
-        predecessors [ nil ]
-        migration_kind :online
-      end
-
-      after :create do |product, evaluator|
-        evaluator.predecessors.each do |predecessor|
-          ProductPredecessorAssociation.create(product_id: product.id,
-            predecessor_id: predecessor.id, kind: evaluator.migration_kind)
         end
       end
     end

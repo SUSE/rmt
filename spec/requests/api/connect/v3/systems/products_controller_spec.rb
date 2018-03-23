@@ -213,7 +213,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       let(:request) { put url, headers: headers, params: payload }
 
       let!(:old_product) { FactoryGirl.create(:product, :with_mirrored_repositories, :activated, system: system) }
-      let(:new_product) { FactoryGirl.create(:product, :with_mirrored_repositories, predecessor: old_product) }
+      let(:new_product) { FactoryGirl.create(:product, :with_mirrored_repositories, predecessors: [old_product]) }
 
       let(:payload) do
         {
@@ -260,8 +260,8 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
         let(:error_response) do
           {
             type: 'error',
-            error: 'Required parameters are missing or empty: installed_products',
-            localized_error: 'Required parameters are missing or empty: installed_products'
+            error: "Required parameters are missing or empty: #{required_params}",
+            localized_error: "Required parameters are missing or empty: #{required_params}"
           }.to_json
         end
 
@@ -271,7 +271,10 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
 
       context 'with no base product in installed_products' do
         let(:payload) do
-          { 'installed_products': [ { 'identifier': 'non_existent_product', 'version': '42', 'arch': 'x86_64', 'release_type': nil } ] }
+          {
+            'installed_products': [ { 'identifier': 'non_existent_product', 'version': '42', 'arch': 'x86_64', 'release_type': nil } ],
+            'target_base_product': { 'identifier': 'SLES', 'version': '15', 'arch': 'x86_64' }
+          }
         end
         let(:error_response) do
           { type: 'error', error: 'No base product found.', localized_error: 'No base product found.' }.to_json
@@ -287,7 +290,10 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
           {
             'installed_products': [
               { 'identifier': product.identifier, 'version': product.version, 'arch': product.arch, 'release_type': product.release_type }
-            ]
+            ],
+            'target_base_product': {
+              'identifier': 'SLES', 'version': '15', 'arch': 'x86_64'
+            }
           }
         end
         let(:error_response) do
@@ -320,7 +326,8 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
                 'arch': second_product.arch,
                 'release_type': second_product.release_type
               }
-            ]
+            ],
+            'target_base_product': { 'identifier': 'SLES', 'version': '15', 'arch': 'x86_64' }
           }
         end
         let(:error_response) do
@@ -342,7 +349,8 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
             :product,
             :with_mirrored_repositories,
             product_type: 'base',
-            predecessor: first_product
+            predecessors: [first_product],
+            migration_kind: migration_kind
           )
         end
         let(:payload) do
@@ -353,7 +361,13 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
               'version': product.version,
               'arch': product.arch,
               'release_type': product.release_type
-              } ]
+              } ],
+            'target_base_product': {
+              'identifier': second_product.identifier,
+              'version': second_product.version,
+              'arch': second_product.arch,
+              'release_type': second_product.release_type
+              }
             }
           end
           let(:expected_response) do
@@ -369,12 +383,16 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
 
     describe '#migrations' do
       let(:url) { connect_systems_products_migrations_url }
+      let(:required_params) { 'installed_products' }
+      let(:migration_kind) { :online }
 
       include_examples 'migration return values'
     end
 
     describe '#offline_migrations' do
-      let(:url) { connect_systems_products_offline_migrations_url}
+      let(:url) { connect_systems_products_offline_migrations_url }
+      let(:required_params) { 'installed_products, target_base_product' }
+      let(:migration_kind) { :offline }
 
       include_examples 'migration return values'
     end
