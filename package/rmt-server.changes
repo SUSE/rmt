@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Fri Mar 23 10:51:14 UTC 2018 - hschmidt@suse.com
+
+- Version 0.0.4
+- Fix nginx config to point to correct root location
+- Add message to help output about collecting feedback from users
+- Only allow one activation to exist for a given system-service
+  combination.
+- Update loofah and rails-html-sanitizer gems due to CVEs.
+- Add proper foreign key constraints where applicable.
+
+-------------------------------------------------------------------
 Thu Feb 22 13:37:01 UTC 2018 - tschmidt@suse.com
 
 - Do not build for s390 (bsc#1082150) 
