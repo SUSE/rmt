@@ -32,8 +32,7 @@ unless File.writable?(RMT::DEFAULT_MIRROR_DIR)
   exit RMT::CLI::Error::ERROR_OTHER
 end
 
-key_name = Rails.env.production? ? 'database' : "database_#{Rails.env}"
-db_config = RMT::Config.db_config(key_name)
+db_config = RMT::Config.db_config
 ActiveRecord::Base.establish_connection(db_config)
 
 begin
