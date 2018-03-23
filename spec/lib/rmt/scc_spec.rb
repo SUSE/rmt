@@ -31,6 +31,21 @@ describe RMT::SCC do
       end
     end
 
+    it 'creates the correct predecessor association' do
+      products.each do |product|
+        extension = product[:extensions][0]
+
+        [product, extension].each do |product|
+          product[:online_predecessor_ids].each do |id|
+            expect(ProductPredecessorAssociation.find_by(product_id: product[:id], kind: :online, predecessor_id: id)).to be_persisted
+          end
+          product[:offline_predecessor_ids].each do |id|
+            expect(ProductPredecessorAssociation.find_by(product_id: product[:id], kind: :offline, predecessor_id: id)).to be_persisted
+          end
+        end
+      end
+    end
+
     it 'saves repos to the DB' do
       all_repositories.map.each do |repository|
         db_repository = Repository.find_by(scc_id: repository[:id])
@@ -172,7 +187,24 @@ describe RMT::SCC do
         expect { Repository.find(extra_repo[:id]) }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
+
+    context "with existing predecessor associations" do
+      let(:product) { create(:product, id: 100000) }
+      let(:predecessor) { create(:product, id: 500000) }
+      let!(:existing_association) do
+        ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor.id, kind: :online)
+      end
+      before do
+        allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
+        described_class.new.sync
+      end
+
+      it 'removes existing predecessor associations' do
+        expect { ProductPredecessorAssociation.find(existing_association.id) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
+
 
   describe '#remove_suse_repos_without_tokens' do
     let(:api_double) { double }

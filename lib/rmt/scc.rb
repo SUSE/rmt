@@ -106,13 +106,12 @@ class RMT::SCC
     product.save!
 
     ProductPredecessorAssociation.where(product_id: product.id).destroy_all
-
     item[:online_predecessor_ids].each do |predecessor_id|
-      ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor_id, kind: 0)
+      ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor_id, kind: :online)
     end
 
     item[:offline_predecessor_ids].each do |predecessor_id|
-      ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor_id, kind: 1)
+      ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor_id, kind: :offline)
     end
 
     create_service(item, product)
