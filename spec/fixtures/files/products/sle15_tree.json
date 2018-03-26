@@ -17,7 +17,9 @@
     "product_type": "base",
     "predecessor_ids": [],
     "online_predecessor_ids": [],
-    "offline_predecessor_ids": [],
+    "offline_predecessor_ids": [
+      5000
+    ],
     "shortname": null,
     "recommended": false,
     "repositories": [],

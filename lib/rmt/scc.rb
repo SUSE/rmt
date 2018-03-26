@@ -181,7 +181,7 @@ class RMT::SCC
 
   def create_migration_path(product, predecessors, kind)
     predecessors.each do |predecessor_id|
-      ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor_id, kind: kind)
+      ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor_id, kind: kind) unless Product.find_by(id: predecessor_id).nil?
     end
   end
 

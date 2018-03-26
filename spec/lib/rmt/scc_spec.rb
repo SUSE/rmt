@@ -31,16 +31,16 @@ describe RMT::SCC do
       end
     end
 
-    it 'creates the correct predecessor association' do
+    it 'creates the correct predecessor association when predecessor exists' do
       products.each do |product|
         extension = product[:extensions][0]
 
         [product, extension].each do |product|
           product[:online_predecessor_ids].each do |id|
-            expect(ProductPredecessorAssociation.find_by(product_id: product[:id], kind: :online, predecessor_id: id)).to be_persisted
+            expect(find_predecessor_association(product[:id], :online, id)).to be_persisted unless Product.find_by(id: id).nil?
           end
           product[:offline_predecessor_ids].each do |id|
-            expect(ProductPredecessorAssociation.find_by(product_id: product[:id], kind: :offline, predecessor_id: id)).to be_persisted
+            expect(find_predecessor_association(product[:id], :offline, id)).to be_persisted unless Product.find_by(id: id).nil?
           end
         end
       end
@@ -319,5 +319,9 @@ describe RMT::SCC do
 
       include_examples 'saves in database'
     end
+  end
+
+  def find_predecessor_association(product_id, kind, predecessor_id)
+    ProductPredecessorAssociation.find_by(product_id: product_id, kind: kind, predecessor_id: predecessor_id)
   end
 end

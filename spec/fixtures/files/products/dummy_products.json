@@ -95,7 +95,9 @@
 		"online_predecessor_ids": [
 			100000
 		],
-		"offline_predecessor_ids": [],
+		"offline_predecessor_ids": [
+			5000
+		],
 		"shortname": null,
 		"extensions": [
 			{
