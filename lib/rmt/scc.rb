@@ -25,6 +25,10 @@ class RMT::SCC
     data.each do |item|
       create_product(item) if (item[:product_type] == 'base')
     end
+    # with this loop, we create the migration paths after creating all products from sync, thus avoiding fk_constraint errors
+    data.each do |item|
+      migration_paths(item) if (item[:product_type] == 'base')
+    end
 
     @logger.info('Updating repositories')
     data = scc_api_client.list_repositories
@@ -80,6 +84,9 @@ class RMT::SCC
       @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
       create_product(item)
     end
+    data.each do |item|
+      migration_paths(item)
+    end
 
     @logger.info('Updating repositories')
     data = JSON.parse(File.read(File.join(path, 'organizations_repositories.json')), symbolize_names: true)
@@ -98,21 +105,16 @@ class RMT::SCC
 
   protected
 
+  def get_product(id)
+    Product.find_or_create_by(id: id)
+  end
+
   def create_product(item, root_product_id = nil, base_product = nil, recommended = false)
     @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
 
-    product = Product.find_or_create_by(id: item[:id])
+    product = get_product(item[:id])
     product.attributes = item.select { |k, _| product.attributes.keys.member?(k.to_s) }
     product.save!
-
-    ProductPredecessorAssociation.where(product_id: product.id).destroy_all
-    item[:online_predecessor_ids].each do |predecessor_id|
-      ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor_id, kind: :online)
-    end
-
-    item[:offline_predecessor_ids].each do |predecessor_id|
-      ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor_id, kind: :offline)
-    end
 
     create_service(item, product)
 
@@ -164,6 +166,22 @@ class RMT::SCC
       subscription_product_class.subscription_id = subscription.id
       subscription_product_class.product_class = item_class
       subscription_product_class.save!
+    end
+  end
+
+  def migration_paths(item)
+    product = get_product(item[:id])
+    ProductPredecessorAssociation.where(product_id: product.id).destroy_all
+    create_migration_path(product, item[:online_predecessor_ids], :online)
+    create_migration_path(product, item[:offline_predecessor_ids], :offline)
+    item[:extensions].each do |ext_item|
+      migration_paths(ext_item)
+    end
+  end
+
+  def create_migration_path(product, predecessors, kind)
+    predecessors.each do |predecessor_id|
+      ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor_id, kind: kind)
     end
   end
 

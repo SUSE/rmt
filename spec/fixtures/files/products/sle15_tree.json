@@ -86,7 +86,9 @@
                 "product_type": "module",
                 "predecessor_ids": [],
                 "online_predecessor_ids": [],
-                "offline_predecessor_ids": [],
+                "offline_predecessor_ids": [
+                  10005
+                ],
                 "shortname": null,
                 "recommended": false,
                 "repositories": [],

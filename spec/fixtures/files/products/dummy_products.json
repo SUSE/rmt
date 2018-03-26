@@ -55,7 +55,9 @@
 			"product_type": "extension",
 			"predecessor_ids": [],
 			"online_predecessor_ids": [],
-			"offline_predecessor_ids": [],
+			"offline_predecessor_ids": [
+				100003
+			],
 			"shortname": null,
 			"extensions": []
 		}]
@@ -125,9 +127,7 @@
 				"product_type": "extension",
 				"predecessor_ids": [],
 				"online_predecessor_ids": [],
-				"offline_predecessor_ids": [
-					100001
-				],
+				"offline_predecessor_ids": [],
 				"shortname": null,
 				"extensions": []
 			}
