@@ -25,12 +25,16 @@ dist: clean man
 	@cp -r Gemfile $(NAME)-$(VERSION)/
 	@cp -r Gemfile.lock $(NAME)-$(VERSION)/
 	@cp -r lib $(NAME)-$(VERSION)/
+
 	@mkdir $(NAME)-$(VERSION)/log
 	@cp -r log/.keep $(NAME)-$(VERSION)/log
-	@cp -r Rakefile $(NAME)-$(VERSION)/
-	@cp -r README.md $(NAME)-$(VERSION)/
+	@mkdir $(NAME)-$(VERSION)/ssl
+	@cp -r ssl/.keep $(NAME)-$(VERSION)/ssl
 	@mkdir $(NAME)-$(VERSION)/tmp
 	@cp -r tmp/.keep $(NAME)-$(VERSION)/tmp
+
+	@cp -r Rakefile $(NAME)-$(VERSION)/
+	@cp -r README.md $(NAME)-$(VERSION)/
 	@cp -r .bundle $(NAME)-$(VERSION)/
 	@cp -r locale $(NAME)-$(VERSION)/
 	@mkdir $(NAME)-$(VERSION)/vendor

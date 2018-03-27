@@ -40,7 +40,7 @@ Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-server-rpmlintrc
 Source2:        rmt.conf
 Source3:        rmt.8.gz
-Source4:        rmt-server.conf
+Source4:        nginx-http.conf
 Source5:        rmt-server-mirror.service
 Source6:        rmt-server-mirror.timer
 Source7:        rmt-server-sync.service
@@ -50,6 +50,7 @@ Source10:       rmt.target
 Source11:       rmt-migration.service
 Source12:       rmt-server-sync-sles12.timer
 Source13:       rmt-server-mirror-sles12.timer
+Source14:       nginx-https.conf
 
 Patch0:         use-ruby-2.5-in-rmt-cli.patch
 Patch1:         use-ruby-2.5-in-rails.patch
@@ -105,13 +106,15 @@ mkdir -p %{buildroot}%{app_dir}
 
 mv log %{buildroot}%{data_dir}
 mv tmp %{buildroot}%{data_dir}
-mv public %{buildroot}%{data_dir}
+mkdir %{buildroot}%{data_dir}/public
+mv public/repo %{buildroot}%{data_dir}/public/
 mv vendor %{buildroot}%{lib_dir}
+mv ssl %{buildroot}%{app_dir}
 
 cp -ar . %{buildroot}%{app_dir}
 ln -s %{data_dir}/log %{buildroot}%{app_dir}/log
 ln -s %{data_dir}/tmp %{buildroot}%{app_dir}/tmp
-ln -s %{data_dir}/public %{buildroot}%{app_dir}/public
+ln -s %{data_dir}/public/repo %{buildroot}%{app_dir}/public/repo
 mkdir -p %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-cli %{buildroot}%{_bindir}
 install -D -m 644 %_sourcedir/rmt.8.gz %{buildroot}%_mandir/man8/rmt.8.gz
@@ -142,7 +145,8 @@ mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
 # nginx
-install -D -m 644 %{SOURCE4} %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server.conf
+install -D -m 644 %{SOURCE4} %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
+install -D -m 644 %{SOURCE14} %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
 
 sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"' \
     -e 's/^BUNDLE_JOBS: .*/BUNDLE_JOBS: "1"/' \
@@ -181,7 +185,8 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}
 %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
 %config(noreplace) %{_sysconfdir}/rmt.conf
-%config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server.conf
+%config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
+%config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
 %doc %{_mandir}/man8/rmt.8.gz
 %{_sysconfdir}/nginx
 %{_sysconfdir}/nginx/vhosts.d
