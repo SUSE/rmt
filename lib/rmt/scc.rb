@@ -12,41 +12,28 @@ class RMT::SCC
   end
 
   def sync
-    raise CredentialsError, 'SCC credentials not set.' unless (Settings.scc.username && Settings.scc.password)
+    credentials_set? || (raise CredentialsError, 'SCC credentials not set.')
 
-    @logger.info('Cleaning up the database')
-    Subscription.delete_all
+    cleanup_database
 
     @logger.info('Downloading data from SCC')
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
     @logger.info('Updating products')
     data = scc_api_client.list_products
-    data.each do |item|
-      create_product(item) if (item[:product_type] == 'base')
-    end
+    data.each { |item| create_product(item) if (item[:product_type] == 'base') }
     # with this loop, we create the migration paths after creating all products from sync, thus avoiding fk_constraint errors
-    data.each do |item|
-      migration_paths(item) if (item[:product_type] == 'base')
-    end
+    data.each { |item| migration_paths(item) if (item[:product_type] == 'base') }
 
-    @logger.info('Updating repositories')
-    data = scc_api_client.list_repositories
-    data.each do |item|
-      update_auth_token(item)
-    end
+    update_repositories(scc_api_client.list_repositories)
 
     Repository.remove_suse_repos_without_tokens!
 
-    @logger.info('Updating subscriptions')
-    data = scc_api_client.list_subscriptions
-    data.each do |item|
-      create_subscription(item)
-    end
+    update_subscriptions(scc_api_client.list_subscriptions)
   end
 
   def export(path)
-    raise CredentialsError, 'SCC credentials not set.' unless (Settings.scc.username && Settings.scc.password)
+    credentials_set? || (raise CredentialsError, 'SCC credentials not set.')
 
     @logger.info("Exporting data from SCC to #{path}")
 
@@ -73,8 +60,7 @@ class RMT::SCC
       .reject { |filename| File.exist?(File.join(path, filename)) }
     raise DataFilesError, "Missing data files: #{missing_files.join(', ')}" if missing_files.any?
 
-    @logger.info('Cleaning up the database')
-    Subscription.delete_all
+    cleanup_database
 
     @logger.info("Importing SCC data from #{path}")
 
@@ -84,26 +70,41 @@ class RMT::SCC
       @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
       create_product(item)
     end
-    data.each do |item|
-      migration_paths(item)
-    end
+    data.each { |item| migration_paths(item) }
 
-    @logger.info('Updating repositories')
-    data = JSON.parse(File.read(File.join(path, 'organizations_repositories.json')), symbolize_names: true)
-    data.each do |item|
-      update_auth_token(item)
-    end
+    update_repositories(JSON.parse(File.read(File.join(path, 'organizations_repositories.json')), symbolize_names: true))
 
     Repository.remove_suse_repos_without_tokens!
 
-    @logger.info('Updating subscriptions')
-    data = JSON.parse(File.read(File.join(path, 'organizations_subscriptions.json')), symbolize_names: true)
-    data.each do |item|
-      create_subscription(item)
-    end
+    update_subscriptions(JSON.parse(File.read(File.join(path, 'organizations_subscriptions.json')), symbolize_names: true))
   end
 
   protected
+
+  def credentials_set?
+    Settings.scc.username && Settings.scc.password
+  end
+
+  def cleanup_database
+    @logger.info('Cleaning up the database')
+    Subscription.delete_all
+  end
+
+  def update_repositories(data)
+    @logger.info('Updating repositories')
+    repos = data
+    repos.each do |item|
+      update_auth_token(item)
+    end
+  end
+
+  def update_subscriptions(data)
+    @logger.info('Updating subscriptions')
+    subscriptions = data
+    subscriptions.each do |item|
+      create_subscription(item)
+    end
+  end
 
   def get_product(id)
     Product.find_or_create_by(id: id)
