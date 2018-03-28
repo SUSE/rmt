@@ -84,7 +84,9 @@ if [ `id -u` != 0 ]; then
     exit 1;
 fi
 
-REGURL="https://$S_HOSTNAME/"
+if [ -n "$S_HOSTNAME" -a -e $SUSECONNECT ]; then
+    REGURL="https://$S_HOSTNAME/"
+fi
 
 if [ -z "$REGURL" ]; then
     echo "Missing registration URL. Abort."

@@ -39,6 +39,7 @@ dist: clean man
 	@cp -r locale $(NAME)-$(VERSION)/
 	@mkdir $(NAME)-$(VERSION)/vendor
 	@mkdir -p $(NAME)-$(VERSION)/public/repo/
+	@cp -r public/tools $(NAME)-$(VERSION)/public/
 
 	@rm -rf $(NAME)-$(VERSION)/config/rmt.yml
 	@rm -rf $(NAME)-$(VERSION)/config/rmt.local.yml
