@@ -23,6 +23,7 @@ WORKDIR /srv/www/rmt/
 
 RUN sed -i 's/#!\/usr\/bin\/env ruby/#!\/usr\/bin\/ruby.ruby2.5/g' /srv/www/rmt/bin/rmt-cli
 RUN ln -s /srv/www/rmt/bin/rmt-cli /usr/bin
+RUN bundle update parser --patch
 RUN bundle
 
 RUN printf "database: &database\n\
