@@ -2,6 +2,7 @@
 Description=RMT API server
 Requires=mysql.service
 Requires=rmt-migration.service
+Requires=nginx.service
 After=rmt-migration.service
 
 [Service]
