@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Apr  3 08:23:16 UTC 2018 - ikapelyukhin@suse.com
+
+- version 0.0.5
+- Allow access to the API only over SSL
+- Add directories to store SSL keys & certificates
+- Add clientSetup4RMT.sh script
+
+-------------------------------------------------------------------
 Fri Mar 23 10:51:14 UTC 2018 - hschmidt@suse.com
 
 - Version 0.0.4
