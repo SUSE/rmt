@@ -227,8 +227,8 @@ fi
 ISRES=0
 
 if [ -d $CA_TRUSTSTORE ]; then
-    $CP $TEMPFILE $CA_TRUSTSTORE/registration-server.pem
-    $CHMOD 0644 $CA_TRUSTSTORE/registration-server.pem
+    $CP $TEMPFILE $CA_TRUSTSTORE/rmt-server.pem
+    $CHMOD 0644 $CA_TRUSTSTORE/rmt-server.pem
 
     $CA_GEN_TRUSTSTORE_CMD > /dev/null
 fi
