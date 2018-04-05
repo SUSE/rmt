@@ -203,7 +203,7 @@ In order to run the application locally using docker-compose:
 
 ## Is it any good?
 
-Yes.
+[Yes.](https://news.ycombinator.com/item?id=3067434)
 
 ## Feedback
 
