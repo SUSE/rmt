@@ -27,7 +27,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     begin
       upgrade_paths = MigrationEngine.new(@system, installed_products).online_migrations
 
-      render_migration_path upgrade_paths
+      render json: migration_paths_as_json(upgrade_paths)
     rescue MigrationEngine::MigrationEngineError => e
       raise ActionController::TranslatedError.new(e.message, *e.data)
     end
@@ -41,7 +41,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
       offline_upgrade_paths = MigrationEngine.new(@system, installed_products)
         .offline_migrations(product_from_hash(params[:target_base_product]))
 
-      render_migration_path offline_upgrade_paths
+      render json: migration_paths_as_json(offline_upgrade_paths)
     rescue MigrationEngine::MigrationEngineError => e
       raise ActionController::TranslatedError.new(e.message, *e.data)
     end
@@ -69,15 +69,13 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     params[:installed_products].map { |hash| product_from_hash(hash) rescue nil }.compact
   end
 
-  def render_migration_path(paths)
-    render json: (
-      paths.reject(&:empty?).map do |item|
-        ActiveModelSerializers::SerializableResource.new(
-          item,
-          each_serializer: ::V3::UpgradePathItemSerializer
-        )
-      end
-    ).to_json
+  def migration_paths_as_json(paths)
+    paths.reject(&:empty?).map do |item|
+      ActiveModelSerializers::SerializableResource.new(
+        item,
+        each_serializer: ::V3::UpgradePathItemSerializer
+      )
+    end.to_json
   end
 
   def require_product
