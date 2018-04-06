@@ -90,17 +90,15 @@ class RMT::SCC
     Subscription.delete_all
   end
 
-  def update_repositories(data)
+  def update_repositories(repos)
     @logger.info('Updating repositories')
-    repos = data
     repos.each do |item|
       update_auth_token(item)
     end
   end
 
-  def update_subscriptions(data)
+  def update_subscriptions(subscriptions)
     @logger.info('Updating subscriptions')
-    subscriptions = data
     subscriptions.each do |item|
       create_subscription(item)
     end
