@@ -8,7 +8,7 @@ CHMOD=/bin/chmod
 CUT=/usr/bin/cut
 GREP=/usr/bin/grep
 RM=/bin/rm
-SUSECONNECT=/usr/bin/SUSEConnect
+SUSECONNECT=/usr/sbin/SUSEConnect
 GPG=/usr/bin/gpg
 SUPPORTCONFIG=/etc/supportconfig.conf
 SUPPORTCONFIGENTRY=VAR_OPTION_UPLOAD_TARGET
@@ -33,17 +33,13 @@ function usage()
 
     cat << EOT >&2
 
-  Usage: $0 <registration URL> [--regcert <url>] [--namespace <namespace>] [--regdata <filename>] [--de-register]
-  Usage: $0 --host <hostname of the RMT server> [--regcert <url>] [--namespace <namespace>] [--regdata <filename>] [--de-register]
+  Usage: $0 <registration URL> [--regcert <url>] [--regdata <filename>] [--de-register]
+  Usage: $0 --host <hostname of the RMT server> [--regcert <url>] [--regdata <filename>] [--de-register]
   Usage: $0 --host <hostname of the RMT server> [--fingerprint <fingerprint of server cert>] [--yes] [--regdata <filename>] [--de-register]
          configures a SLE client to register against a different registration server
 
   Example: $0 https://rmt.example.com/
-  Example: $0 --host rmt.example.com --namespace web
   Example: $0 --host rmt.example.com --regcert http://rmt.example.com/certs/rmt.crt
-
-  If --namespace is omitted, no namespace is set and this results in using the
-  default production repositories.
 EOT
 
 exit 1
@@ -54,7 +50,6 @@ FINGERPRINT=""
 REGDATA=""
 REGURL=""
 VARIABLE=""
-NAMESPACE=""
 DE_REGISTER=""
 while true ; do
     case "$1" in
@@ -62,7 +57,6 @@ while true ; do
         --host) VARIABLE=S_HOSTNAME;;
         --regcert) VARIABLE=REGCERT;;
         --regdata) VARIABLE=REGDATA;;
-        --namespace) VARIABLE=NAMESPACE;;
         --de-register) DE_REGISTER="Y";;
         --yes) AUTOACCEPT="Y";;
         "") break ;;
@@ -95,11 +89,6 @@ fi
 
 if ! echo $REGURL | grep "^https" > /dev/null ; then
     echo "The registration URL must be a HTTPS URL. Abort."
-    exit 1
-fi
-
-if ! echo $NAMESPACE | grep -E "^[a-zA-Z0-9_-]*$" > /dev/null ; then
-    echo "Invalid characters in namespace. Allowed are [a-zA-Z0-9_-]. Abort."
     exit 1
 fi
 
@@ -293,14 +282,9 @@ if [ -z "$AUTOACCEPT" ]; then
 fi
 
 if [ -x "$SUSECONNECT" ]; then
-    if [ -n "$NAMESPACE" ]; then
-        NAMESPACE="--namespace $NAMESPACE"
-    fi
-
     echo "$SUSECONNECT --write-config --url $REGURL $NAMESPACE"
     $SUSECONNECT --write-config --url $REGURL $NAMESPACE
 else
-    echo "No registration client found."
+    echo "No SUSEConnect registration client found."
     exit 1
 fi
-
