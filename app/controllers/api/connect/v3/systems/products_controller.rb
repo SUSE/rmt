@@ -34,7 +34,6 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   end
 
   def offline_migrations
-    # This part below is not yet working and needs investigation
     require_params(%i[installed_products target_base_product])
 
     begin
