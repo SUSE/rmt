@@ -1,4 +1,18 @@
 -------------------------------------------------------------------
+Fri Apr  6 13:45:21 UTC 2018 - hschmidt@suse.com
+
+- Add the offline migration endpoint for upgrading major SLES versions.
+  https://github.com/SUSE/rmt/pull/121
+- Use the recommended systemd service type ("simple" instead of
+  "forking").
+  https://github.com/SUSE/rmt/pull/129
+- Don't create a local licenses directory if the repo has no licenses.
+  Closes bsc#1087707.
+  https://github.com/SUSE/rmt/pull/126
+- Don't allow duplicate activations to exist in the DB.
+  https://github.com/SUSE/rmt/pull/119
+
+-------------------------------------------------------------------
 Fri Mar 23 10:51:14 UTC 2018 - hschmidt@suse.com
 
 - Version 0.0.4

@@ -12,37 +12,28 @@ class RMT::SCC
   end
 
   def sync
-    raise CredentialsError, 'SCC credentials not set.' unless (Settings.scc.username && Settings.scc.password)
+    credentials_set? || (raise CredentialsError, 'SCC credentials not set.')
 
-    @logger.info('Cleaning up the database')
-    Subscription.delete_all
+    cleanup_database
 
     @logger.info('Downloading data from SCC')
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
     @logger.info('Updating products')
     data = scc_api_client.list_products
-    data.each do |item|
-      create_product(item) if (item[:product_type] == 'base')
-    end
+    data.each { |item| create_product(item) if (item[:product_type] == 'base') }
+    # with this loop, we create the migration paths after creating all products from sync, thus avoiding fk_constraint errors
+    data.each { |item| migration_paths(item) if (item[:product_type] == 'base') }
 
-    @logger.info('Updating repositories')
-    data = scc_api_client.list_repositories
-    data.each do |item|
-      update_auth_token(item)
-    end
+    update_repositories(scc_api_client.list_repositories)
 
     Repository.remove_suse_repos_without_tokens!
 
-    @logger.info('Updating subscriptions')
-    data = scc_api_client.list_subscriptions
-    data.each do |item|
-      create_subscription(item)
-    end
+    update_subscriptions(scc_api_client.list_subscriptions)
   end
 
   def export(path)
-    raise CredentialsError, 'SCC credentials not set.' unless (Settings.scc.username && Settings.scc.password)
+    credentials_set? || (raise CredentialsError, 'SCC credentials not set.')
 
     @logger.info("Exporting data from SCC to #{path}")
 
@@ -69,8 +60,7 @@ class RMT::SCC
       .reject { |filename| File.exist?(File.join(path, filename)) }
     raise DataFilesError, "Missing data files: #{missing_files.join(', ')}" if missing_files.any?
 
-    @logger.info('Cleaning up the database')
-    Subscription.delete_all
+    cleanup_database
 
     @logger.info("Importing SCC data from #{path}")
 
@@ -80,35 +70,50 @@ class RMT::SCC
       @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
       create_product(item)
     end
+    data.each { |item| migration_paths(item) }
 
-    @logger.info('Updating repositories')
-    data = JSON.parse(File.read(File.join(path, 'organizations_repositories.json')), symbolize_names: true)
-    data.each do |item|
-      update_auth_token(item)
-    end
+    update_repositories(JSON.parse(File.read(File.join(path, 'organizations_repositories.json')), symbolize_names: true))
 
     Repository.remove_suse_repos_without_tokens!
 
-    @logger.info('Updating subscriptions')
-    data = JSON.parse(File.read(File.join(path, 'organizations_subscriptions.json')), symbolize_names: true)
-    data.each do |item|
-      create_subscription(item)
-    end
+    update_subscriptions(JSON.parse(File.read(File.join(path, 'organizations_subscriptions.json')), symbolize_names: true))
   end
 
   protected
 
+  def credentials_set?
+    Settings.scc.username && Settings.scc.password
+  end
+
+  def cleanup_database
+    @logger.info('Cleaning up the database')
+    Subscription.delete_all
+  end
+
+  def update_repositories(repos)
+    @logger.info('Updating repositories')
+    repos.each do |item|
+      update_auth_token(item)
+    end
+  end
+
+  def update_subscriptions(subscriptions)
+    @logger.info('Updating subscriptions')
+    subscriptions.each do |item|
+      create_subscription(item)
+    end
+  end
+
+  def get_product(id)
+    Product.find_or_create_by(id: id)
+  end
+
   def create_product(item, root_product_id = nil, base_product = nil, recommended = false)
     @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
 
-    product = Product.find_or_create_by(id: item[:id])
+    product = get_product(item[:id])
     product.attributes = item.select { |k, _| product.attributes.keys.member?(k.to_s) }
     product.save!
-
-    ProductPredecessorAssociation.where(product_id: product.id).destroy_all
-    item[:predecessor_ids].each do |predecessor_id|
-      ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor_id)
-    end
 
     create_service(item, product)
 
@@ -160,6 +165,22 @@ class RMT::SCC
       subscription_product_class.subscription_id = subscription.id
       subscription_product_class.product_class = item_class
       subscription_product_class.save!
+    end
+  end
+
+  def migration_paths(item)
+    product = get_product(item[:id])
+    ProductPredecessorAssociation.where(product_id: product.id).destroy_all
+    create_migration_path(product, item[:online_predecessor_ids], :online)
+    create_migration_path(product, item[:offline_predecessor_ids], :offline)
+    item[:extensions].each do |ext_item|
+      migration_paths(ext_item)
+    end
+  end
+
+  def create_migration_path(product, predecessors, kind)
+    predecessors.each do |predecessor_id|
+      ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor_id, kind: kind) unless Product.find_by(id: predecessor_id).nil?
     end
   end
 
