@@ -103,13 +103,11 @@ mkdir -p %{buildroot}%{data_dir}
 mkdir -p %{buildroot}%{lib_dir}
 mkdir -p %{buildroot}%{app_dir}
 
-mv log %{buildroot}%{data_dir}
 mv tmp %{buildroot}%{data_dir}
 mv public %{buildroot}%{data_dir}
 mv vendor %{buildroot}%{lib_dir}
 
 cp -ar . %{buildroot}%{app_dir}
-ln -s %{data_dir}/log %{buildroot}%{app_dir}/log
 ln -s %{data_dir}/tmp %{buildroot}%{app_dir}/tmp
 ln -s %{data_dir}/public %{buildroot}%{app_dir}/public
 mkdir -p %{buildroot}%{_bindir}

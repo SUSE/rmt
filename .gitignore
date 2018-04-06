@@ -33,3 +33,4 @@ config/secrets.yml.enc
 config/rmt.local.yml
 
 .env
+.tags*
