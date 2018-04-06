@@ -34,8 +34,10 @@ class RMT::Mirror
     mirror_metadata
     mirror_data
 
+    replace_directory(@temp_licenses_dir, File.join(@repository_dir, '../product.license/')) if Dir.exist?(@temp_licenses_dir)
     replace_directory(File.join(@temp_metadata_dir, 'repodata'), File.join(@repository_dir, 'repodata'))
-    replace_directory(@temp_licenses_dir, File.join(@repository_dir, '../product.license/'))
+  ensure
+    remove_tmp_directories
   end
 
   def self.from_url(uri, auth_token, repository_url: nil, base_dir: nil, to_offline: false)
@@ -101,10 +103,8 @@ class RMT::Mirror
         @deltainfo_files << reference.location if (reference.type == :deltainfo)
       end
     rescue RuntimeError => e
-      FileUtils.remove_entry(@temp_metadata_dir)
       raise RMT::Mirror::Exception.new("Error while mirroring metadata files: #{e}")
     rescue Interrupt => e
-      FileUtils.remove_entry(@temp_metadata_dir)
       raise e
     end
   end
@@ -117,6 +117,7 @@ class RMT::Mirror
     begin
       directory_yast = @downloader.download('directory.yast')
     rescue RMT::Downloader::Exception
+      FileUtils.remove_entry(@temp_licenses_dir)
       @logger.info('No product license found')
       return
     end
@@ -128,8 +129,6 @@ class RMT::Mirror
         @downloader.download(filename)
       end
     rescue RMT::Downloader::Exception => e
-      FileUtils.remove_entry(@temp_licenses_dir)
-      @temp_licenses_dir = nil
       raise RMT::Mirror::Exception.new("Error during mirroring metadata: #{e.message}")
     end
   end
@@ -168,8 +167,6 @@ class RMT::Mirror
     FileUtils.remove_entry(old_directory) if Dir.exist?(old_directory)
     FileUtils.mv(destination_dir, old_directory) if Dir.exist?(destination_dir)
     FileUtils.mv(source_dir, destination_dir)
-  ensure
-    FileUtils.remove_entry(source_dir) if Dir.exist?(source_dir)
   end
 
   def deduplicate(checksum_type, checksum_value, destination)
@@ -191,6 +188,11 @@ class RMT::Mirror
       end
     end
     files.compact
+  end
+
+  def remove_tmp_directories
+    FileUtils.remove_entry(@temp_licenses_dir) if @temp_licenses_dir && Dir.exist?(@temp_licenses_dir)
+    FileUtils.remove_entry(@temp_metadata_dir) if @temp_metadata_dir && Dir.exist?(@temp_metadata_dir)
   end
 
 end
