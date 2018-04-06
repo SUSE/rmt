@@ -10,7 +10,7 @@ RSpec.describe RMT::Mirror do
       FileUtils.remove_entry(@tmp_dir)
     end
 
-    context 'without auth_token' do
+    context 'without auth_token', vcr: { cassette_name: 'mirroring' } do
       let(:rmt_mirror) do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
@@ -21,9 +21,7 @@ RSpec.describe RMT::Mirror do
       end
 
       before do
-        VCR.use_cassette 'mirroring' do
-          rmt_mirror.mirror
-        end
+        rmt_mirror.mirror
       end
 
       it 'downloads rpm files' do
@@ -37,7 +35,7 @@ RSpec.describe RMT::Mirror do
       end
     end
 
-    context 'with auth_token' do
+    context 'with auth_token', vcr: { cassette_name: 'mirroring_with_auth_token' } do
       let(:rmt_mirror) do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
@@ -49,9 +47,7 @@ RSpec.describe RMT::Mirror do
       end
 
       before do
-        VCR.use_cassette 'mirroring_with_auth_token' do
-          rmt_mirror.mirror
-        end
+        rmt_mirror.mirror
       end
 
       it 'downloads rpm files' do
@@ -65,7 +61,7 @@ RSpec.describe RMT::Mirror do
       end
     end
 
-    context 'product with license and signatures' do
+    context 'product with license and signatures', vcr: { cassette_name: 'mirroring_product' } do
       let(:rmt_mirror) do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
@@ -77,9 +73,7 @@ RSpec.describe RMT::Mirror do
       end
 
       before do
-        VCR.use_cassette 'mirroring_product' do
-          rmt_mirror.mirror
-        end
+        rmt_mirror.mirror
       end
 
       it 'downloads rpm files' do
@@ -105,7 +99,7 @@ RSpec.describe RMT::Mirror do
       end
     end
 
-    context 'handles erroring' do
+    context 'when an error occurs' do
       let(:mirroring_dir) { @tmp_dir }
       let(:rmt_mirror) do
         described_class.new(
@@ -120,28 +114,48 @@ RSpec.describe RMT::Mirror do
       context 'when mirroring_base_dir is not writable' do
         let(:mirroring_dir) { '/non/existent/path' }
 
-        it 'raises exception' do
-          VCR.use_cassette 'mirroring_product' do
-            expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
-          end
+        it 'raises exception', vcr: { cassette_name: 'mirroring_product' } do
+          expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
         end
       end
 
-      context "when can't create tmp dir" do
+      context "when can't create tmp dir", vcr: { cassette_name: 'mirroring_product' } do
         before { allow(Dir).to receive(:mktmpdir).and_raise('mktmpdir exception') }
         it 'handles the exception' do
-          VCR.use_cassette 'mirroring_product' do
-            expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
-          end
+          expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
         end
       end
 
-      context "when can't download metadata" do
+      context "when can't download metadata", vcr: { cassette_name: 'mirroring_product' } do
         before { allow_any_instance_of(RMT::Downloader).to receive(:download).and_raise(RMT::Downloader::Exception) }
         it 'handles RMT::Downloader::Exception' do
-          VCR.use_cassette 'mirroring_product' do
-            expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
-          end
+          expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
+        end
+      end
+
+      context "when there's no licenses to download", vcr: { cassette_name: 'mirroring' } do
+        let(:rmt_mirror) do
+          described_class.new(
+            mirroring_base_dir: @tmp_dir,
+            repository_url: 'http://localhost/dummy_repo/',
+            local_path: '/dummy_product/product/',
+            mirror_src: false
+          )
+        end
+
+        it 'does not error out' do
+          expect { rmt_mirror.mirror }.not_to raise_error
+        end
+
+        it 'does not create a product.licenses directory' do
+          rmt_mirror.mirror
+          expect(Dir).not_to exist(File.join(@tmp_dir, 'dummy_product', 'product.license'))
+        end
+
+        it 'removes the temporary licenses directory' do
+          rmt_mirror.mirror
+          tmpdir = rmt_mirror.instance_variable_get('@temp_licenses_dir')
+          expect(Dir).not_to exist tmpdir
         end
       end
 
@@ -152,30 +166,24 @@ RSpec.describe RMT::Mirror do
             klass.call(*args)
           end
         end
-        it 'handles RMT::Downloader::Exception' do
-          VCR.use_cassette 'mirroring_product' do
-            expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception, /Error during mirroring metadata:/)
-          end
+        it 'handles RMT::Downloader::Exception', vcr: { cassette_name: 'mirroring_product' } do
+          expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception, /Error during mirroring metadata:/)
         end
       end
 
-      context "when can't parse metadata" do
+      context "when can't parse metadata", vcr: { cassette_name: 'mirroring_product' } do
         before { allow_any_instance_of(RMT::Rpm::RepomdXmlParser).to receive(:parse).and_raise('Parse error') }
         it 'removes the temporary metadata directory' do
-          VCR.use_cassette 'mirroring_product' do
-            expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
-            expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
-          end
+          expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
+          expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
         end
       end
 
-      context 'when Interrupt is raised' do
+      context 'when Interrupt is raised', vcr: { cassette_name: 'mirroring_product' } do
         before { allow_any_instance_of(RMT::Rpm::RepomdXmlParser).to receive(:parse).and_raise(Interrupt.new) }
         it 'removes the temporary metadata directory' do
-          VCR.use_cassette 'mirroring_product' do
-            expect { rmt_mirror.mirror }.to raise_error(Interrupt)
-            expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
-          end
+          expect { rmt_mirror.mirror }.to raise_error(Interrupt)
+          expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
         end
       end
     end
