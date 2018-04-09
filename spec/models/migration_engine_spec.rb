@@ -326,7 +326,7 @@ describe MigrationEngine do
           end
         end
 
-        context 'complex case with SLE 15 module dependencies' do
+        context 'filter out free extensions in SLE 15' do
           let(:system) { create :system }
           let(:installed_products) { [sle12sp1] }
 
@@ -343,7 +343,7 @@ describe MigrationEngine do
               name: 'server_applications', version: '15', base_products: [basesystem]
           end
           let!(:packagehub) do
-            create :product, :extension, :with_mirrored_repositories, root_product: sle15,
+            create :product, :extension, :with_mirrored_repositories, root_product: sle15, free: true,
               name: 'packagehub', version: '15', base_products: [basesystem]
           end
 
