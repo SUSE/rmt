@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Apr  9 14:40:39 UTC 2018 - tmuntaner@suse.com
+
+- Only enable free modules in migrations for SLE 15
+  https://github.com/SUSE/rmt/pull/132 
+
+-------------------------------------------------------------------
 Mon Apr  9 09:58:02 UTC 2018 - ikapelyukhin@suse.com
 
 - version 0.0.5
