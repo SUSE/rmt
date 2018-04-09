@@ -26,11 +26,6 @@ fi
 
 function usage()
 {
-    if [ -n "$1" ] ; then
-        echo "$1" >&2
-        echo ""
-    fi
-
     cat << EOT >&2
 
   Usage: $0 <registration URL> [--regcert <url>] [--regdata <filename>] [--de-register]
