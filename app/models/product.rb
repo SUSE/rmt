@@ -86,7 +86,7 @@ class Product < ApplicationRecord
   end
 
   def self.available_or_recommended_modules(root_product_ids)
-    joins(:product_extensions_associations).where(free: true, products_extensions: { root_product_id: root_product_ids }).or(
+    joins(:product_extensions_associations).where(free: true, product_type: :module, products_extensions: { root_product_id: root_product_ids }).or(
       joins(:product_extensions_associations).where(products_extensions: { recommended: true, root_product_id: root_product_ids })
     ).distinct
   end

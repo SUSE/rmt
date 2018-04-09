@@ -327,6 +327,40 @@ describe MigrationEngine do
         end
 
         context 'complex case with SLE 15 module dependencies' do
+          let(:system) { create :system }
+          let(:installed_products) { [sle12sp1] }
+
+          let!(:sle15) do
+            create :product, :with_mirrored_repositories, :cloned, from: sle12sp1,
+              name: 'sle15', version: '15', predecessors: [sle12sp1]
+          end
+          let!(:basesystem) do
+            create :product, :module, :with_mirrored_repositories, root_product: sle15,
+              name: 'basesystem', version: '15', base_products: [sle15]
+          end
+          let!(:server_applications) do
+            create :product, :module, :with_mirrored_repositories, root_product: sle15,
+              name: 'server_applications', version: '15', base_products: [basesystem]
+          end
+          let!(:packagehub) do
+            create :product, :extension, :with_mirrored_repositories, root_product: sle15,
+              name: 'packagehub', version: '15', base_products: [basesystem]
+          end
+
+          before do
+            system.activations.create(service: sle12sp1.service)
+          end
+
+          it do
+            is_expected.to eq [[
+              sle15,
+              basesystem,
+              server_applications
+            ]]
+          end
+        end
+
+        context 'complex case with SLE 15 module dependencies' do
           # In this case, we have a tree of modules, and we need the products
           # that are deeper in the tree to come after the ones that are above.
           let!(:sle15) do
