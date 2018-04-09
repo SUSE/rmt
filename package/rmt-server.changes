@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Apr  9 09:58:02 UTC 2018 - ikapelyukhin@suse.com
+
+- version 0.0.5
+- Allow access to the API only via HTTPS, add directories to store SSL
+  keys & certificates, add clientSetup4RMT.sh script
+  https://github.com/SUSE/rmt/pull/122
+
+-------------------------------------------------------------------
 Fri Apr  6 13:45:21 UTC 2018 - hschmidt@suse.com
 
 - Add the offline migration endpoint for upgrading major SLES versions.
