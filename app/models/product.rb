@@ -40,6 +40,7 @@ class Product < ApplicationRecord
 
   enum product_type: { base: 'base', module: 'module', extension: 'extension' }
 
+  scope :free, -> { where(free: true) }
   scope :mirrored, lambda {
     distinct.joins(:repositories).where('repositories.enabled = true').group(:id).having('count(*)=count(CASE WHEN mirroring_enabled THEN 1 END)')
   }
@@ -86,7 +87,7 @@ class Product < ApplicationRecord
   end
 
   def self.available_or_recommended_modules(root_product_ids)
-    joins(:product_extensions_associations).where(free: true, products_extensions: { root_product_id: root_product_ids }).or(
+    joins(:product_extensions_associations).free.module.where(products_extensions: { root_product_id: root_product_ids }).or(
       joins(:product_extensions_associations).where(products_extensions: { recommended: true, root_product_id: root_product_ids })
     ).distinct
   end
