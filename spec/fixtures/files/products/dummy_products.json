@@ -25,6 +25,8 @@
 		}],
 		"product_type": "base",
 		"predecessor_ids": [],
+		"online_predecessor_ids": [],
+		"offline_predecessor_ids": [],
 		"shortname": null,
 		"extensions": [{
 			"id": 100001,
@@ -52,6 +54,10 @@
 			}],
 			"product_type": "extension",
 			"predecessor_ids": [],
+			"online_predecessor_ids": [],
+			"offline_predecessor_ids": [
+				100003
+			],
 			"shortname": null,
 			"extensions": []
 		}]
@@ -86,6 +92,12 @@
 		"predecessor_ids": [
 			100000
 		],
+		"online_predecessor_ids": [
+			100000
+		],
+		"offline_predecessor_ids": [
+			5000
+		],
 		"shortname": null,
 		"extensions": [
 			{
@@ -116,6 +128,8 @@
 				],
 				"product_type": "extension",
 				"predecessor_ids": [],
+				"online_predecessor_ids": [],
+				"offline_predecessor_ids": [],
 				"shortname": null,
 				"extensions": []
 			}

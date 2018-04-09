@@ -16,9 +16,10 @@ FactoryGirl.define do
 
     transient do
       base_products []
-      predecessor nil
       root_product nil
       recommended false
+      migration_kind :online
+      predecessors [ ]
     end
 
     after :create do |product, evaluator|
@@ -29,8 +30,10 @@ FactoryGirl.define do
           recommended: evaluator.recommended
         )
       end
-
-      product.predecessors << evaluator.predecessor if evaluator.predecessor
+      evaluator.predecessors.each do |predecessor|
+        ProductPredecessorAssociation.create(product_id: product.id,
+          predecessor_id: predecessor.id, kind: evaluator.migration_kind)
+      end
     end
 
     trait :extension do
@@ -39,6 +42,7 @@ FactoryGirl.define do
 
     trait :module do
       product_type 'module'
+      free true
     end
 
     trait :with_extensions do

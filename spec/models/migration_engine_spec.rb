@@ -20,7 +20,8 @@ describe MigrationEngine do
     context 'error handling' do
       context 'multiple base products' do
         let!(:sle12sp1) do
-          create :product, :with_mirrored_repositories, :cloned, :activated, system: system, from: sle12, name: 'sle12sp1',
+          create :product, :with_mirrored_repositories, :cloned, :activated,
+            system: system, from: sle12, name: 'sle12sp1',
             version: '12.1', predecessors: [sle12]
         end
         let(:installed_products) { [sle12, sle12sp1] }
@@ -66,9 +67,13 @@ describe MigrationEngine do
     end
 
     context 'with upgradeable base product' do
-      let!(:sle12sp1) { create :product, :with_mirrored_repositories, :cloned, from: sle12, name: 'sle12sp1', version: '12.1', predecessors: [sle12] }
+      let!(:sle12sp1) do
+        create :product, :with_mirrored_repositories, :cloned,
+          from: sle12, name: 'sle12sp1', version: '12.1', predecessors: [sle12]
+      end
       let!(:sle12sp2) do
-        create :product, :with_mirrored_repositories, :cloned, from: sle12, name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
+        create :product, :with_mirrored_repositories, :cloned, from: sle12,
+          name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
       end
 
       context 'multiple base migration targets' do
@@ -79,8 +84,8 @@ describe MigrationEngine do
 
       context 'one base migration target' do
         let!(:sle12sp1) do
-          create :product, :with_mirrored_repositories,
-            :cloned, :activated, from: sle12, system: system, name: 'sle12sp1', version: '12.1', predecessors: [sle12]
+          create :product, :with_mirrored_repositories, :cloned, :activated,
+            from: sle12, system: system, name: 'sle12sp1', version: '12.1', predecessors: [sle12]
         end
         let(:installed_products) { [sle12sp1] }
 
@@ -89,8 +94,8 @@ describe MigrationEngine do
 
       context 'no migration target' do
         let!(:sle12sp2) do
-          create :product, :with_mirrored_repositories, :cloned, :activated, from: sle12, system: system, name: 'sle12sp2', version: '12.2',
-            predecessors: [sle12sp1, sle12]
+          create :product, :with_mirrored_repositories, :cloned, :activated,
+            from: sle12, system: system, name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
         end
         let(:installed_products) { [sle12sp2] }
 
@@ -99,14 +104,17 @@ describe MigrationEngine do
     end
 
     context 'with base plus extension products' do
-      let!(:sle12sp1) { create :product, :with_mirrored_repositories, :cloned, from: sle12, name: 'sle12sp1', version: '12.1', predecessors: [sle12] }
+      let!(:sle12sp1) do
+        create :product, :with_mirrored_repositories, :cloned,
+          from: sle12, name: 'sle12sp1', version: '12.1', predecessors: [sle12]
+      end
       let(:sdk12) do
         create :product, :with_mirrored_repositories, :activated, system: system, base_products: [sle12], name: 'sdk12',
           product_type: 'extension', free: true
       end
       let!(:sdk12sp1) do
-        create :product, :with_mirrored_repositories, :cloned, from: sdk12, name: 'sdk12sp1', base_products: [sle12sp1],
-          predecessors: [sdk12], product_type: 'extension'
+        create :product, :with_mirrored_repositories, :cloned,
+          from: sdk12, name: 'sdk12sp1', base_products: [sle12sp1], predecessors: [sdk12], product_type: 'extension'
       end
       let(:sleha12) do
         create(
@@ -115,14 +123,14 @@ describe MigrationEngine do
         )
       end
       let!(:sleha12sp1) do
-        create :product, :with_mirrored_repositories, :cloned, from: sleha12, name: 'sleha12sp1', base_products: [sle12sp1],
-          predecessors: [sleha12], product_type: 'extension'
+        create :product, :with_mirrored_repositories, :cloned,
+          from: sleha12, name: 'sleha12sp1', base_products: [sle12sp1], predecessors: [sleha12], product_type: 'extension'
       end
 
       context 'with simple dependencies' do
         let(:installed_products) { [sle12, sleha12, sdk12] }
 
-        it { is_expected.to contain_exactly([sle12sp1, sleha12sp1, sdk12sp1]) }
+        its(:first) { is_expected.to match_array([sle12sp1, sleha12sp1, sdk12sp1]) }
       end
 
       context 'with complex dependencies (sles->ha->ha-geo)' do
@@ -131,8 +139,8 @@ describe MigrationEngine do
             product_type: 'extension'
         end
         let!(:slehageo12sp1) do
-          create :product, :with_mirrored_repositories, :cloned, from: slehageo12, name: 'slehageo12sp1',
-            base_products: [sleha12sp1], predecessors: [slehageo12]
+          create :product, :with_mirrored_repositories, :cloned,
+            from: slehageo12, name: 'slehageo12sp1', base_products: [sleha12sp1], predecessors: [slehageo12], root_product: sle12sp1
         end
         let!(:slehageosub) { create(:subscription, product_classes: [slehageo12.product_class]) }
 
@@ -141,27 +149,109 @@ describe MigrationEngine do
         it { is_expected.to contain_exactly([sle12sp1, sleha12sp1, slehageo12sp1]) }
       end
 
+      context 'when an extension is based on a dependency of the base product' do
+        # This is the case, for example, of an offline migration from SLE12 to SLE15.
+        # If the SLE12 system has HA12 installed, it should be upgraded to HA15.
+        # But HA15's base is Basesystem, not SLE15, and Basesystem is ALSO not
+        # installed on the SLE12 system, since that module did not even exist before.
+        # But Basesystem gets pulled in as a dependency of SLE15, so the migration should succeed.
+        let!(:sle12_extension) { sleha12sp1 }
+        let!(:extension_subscription) { create :subscription, product_classes: [sle12_extension.product_class] }
+        let!(:sle15) do
+          create :product, :with_mirrored_repositories, :cloned, from: sle12sp1,
+            name: 'sle15', version: '15', predecessors: [sle12sp1]
+        end
+        let!(:sle15_module) do
+          create :product, :module, :with_mirrored_repositories,
+            name: 'sle15module', version: '15', base_products: [sle15]
+        end
+        let!(:sle15_extension) do
+          create :product, :extension, :with_mirrored_repositories, :cloned, root_product: sle15,
+            from: sle12_extension, predecessors: [sle12_extension], base_products: [sle15_module]
+        end
+        let(:system) { create :system }
+        let(:installed_products) { [sle12sp1, sle12_extension] }
+
+        before do
+          system.activations.create(service: sle12sp1.service)
+          system.activations.create(service: sle12_extension.service)
+        end
+
+        it { is_expected.to contain_exactly([sle15, sle15_module, sle15_extension]) }
+      end
+
+      context 'when the successor product is a base' do
+        # For example, a system with (SLES 12 SP x) + (LTSS 12 SP x) could upgrade to (SLES 12 SP x+1)
+        let(:ltss12) do
+          create :product, :extension, :with_mirrored_repositories, :activated, system: system,
+            name: 'ltss12', base_products: [sle12]
+        end
+        let!(:sle12sp1) do
+          create :product, :with_mirrored_repositories, :cloned, from: sle12,
+            name: 'sle12sp1', predecessors: [sle12, ltss12]
+        end
+        let(:system) { create :system }
+        let(:installed_products) { [sle12, ltss12] }
+
+        it { is_expected.to contain_exactly([sle12sp1]) }
+      end
+
+      context 'when the new product has multiple predecessors' do
+        # This is the case, for example, of an offline migration from SLE12 to SLE15.
+        # A SLE12 system can have HA12 & HA-GEO12 installed, but those extensions
+        # were merged into a single HA15 extension. The engine should then simply offer
+        # SLE15+HA15 as a possible migration.
+        let!(:sle12_extension) { sleha12sp1 }
+        let!(:sle12_extension_extension) do
+          create :product, :extension, :with_mirrored_repositories, :cloned, from: sle12_extension,
+            name: 'sleha-geo12sp1', base_products: [sle12_extension]
+        end
+        let(:extension_subscription) { create :subscription, product_classes: [sle12_extension.product_class] }
+        let!(:sle15) do
+          create :product, :with_mirrored_repositories, :cloned, from: sle12sp1,
+            name: 'sle15', predecessors: [sle12sp1]
+        end
+        let!(:sle15_merged_extension) do
+          create :product, :extension, :with_mirrored_repositories, :cloned,
+          from: sle12_extension, predecessors: [sle12_extension, sle12_extension_extension], base_products: [sle15]
+        end
+        let(:system) { create :system }
+        let(:installed_products) { [sle12sp1, sle12_extension, sle12_extension_extension] }
+
+        before do
+          system.activations.create(service: sle12sp1.service)
+          system.activations.create(service: sle12_extension.service)
+          system.activations.create(service: sle12_extension_extension.service)
+        end
+
+        it { is_expected.to contain_exactly([sle15, sle15_merged_extension]) }
+      end
+
       context 'when only the extension can get upgraded' do
         let!(:cloud7) do
           create(:product, :with_mirrored_repositories, :activated, system: system, name: 'Cloud 7', version: '7',
             base_products: [sle12], product_type: 'extension')
         end
         let!(:cloud8) do
-          create(:product, :with_mirrored_repositories, :cloned, from: cloud7, name: 'Cloud 8', version: '8', predecessors: [cloud7], base_products: [sle12])
+          create(:product, :with_mirrored_repositories, :cloned,
+            from: cloud7, name: 'Cloud 8', version: '8', predecessors: [cloud7], base_products: [sle12])
         end
         let!(:cloud9) do
-          create(:product, :with_mirrored_repositories, :cloned, from: cloud7, name: 'Cloud 9', version: '9',
+          create(:product, :with_mirrored_repositories, :cloned,
+            from: cloud7, name: 'Cloud 9', version: '9',
             predecessors: [cloud7, cloud8], base_products: [sle12])
         end
 
         let(:installed_products) { [sle12, sdk12, cloud7] }
 
-        it { is_expected.to contain_exactly([sle12, sdk12, cloud8], [sle12, sdk12, cloud9]) }
+        its(:first) { is_expected.to match_array([sle12, sdk12, cloud9]) }
+        its(:second) { is_expected.to match_array([sle12, sdk12, cloud8]) }
       end
 
       context 'multiple migrations for base plus modules' do
         let!(:sle12sp2) do
-          create :product, :with_mirrored_repositories, :cloned, from: sle12, name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
+          create :product, :with_mirrored_repositories, :cloned,
+          from: sle12, name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
         end
         let!(:docker_module) do
           create(
@@ -180,7 +270,8 @@ describe MigrationEngine do
 
       context 'when not all products are upgradeable but still compatible' do
         let!(:sle12sp2) do
-          create :product, :with_mirrored_repositories, :cloned, from: sle12, name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
+          create :product, :with_mirrored_repositories, :cloned,
+          from: sle12, name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
         end
         let!(:docker_module) do
           create(
@@ -215,25 +306,125 @@ describe MigrationEngine do
         it { is_expected.to contain_exactly([sle12sp1, sdk12sp1], [sle12sp1, sdk12sp1beta]) }
       end
 
-      context 'sorts base product first' do
-        let!(:sle12sp1) { create :product, :with_mirrored_repositories, :cloned, from: sle12, name: 'sle12sp1', version: '12.1', predecessors: [sle12] }
-        let!(:sle12sp2) do
-          create :product, :with_mirrored_repositories, :cloned, from: sle12, name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
-        end
-        let!(:docker_module) do
-          create(
-            :product, :with_mirrored_repositories, :activated,
-            system: system, name: 'docker', base_products: [sle12, sle12sp1, sle12sp2], product_type: 'extension'
-          )
-        end
-        let(:installed_products) { [docker_module, sle12] }
+      describe 'sorting' do
+        context 'simple case with no dependencies' do
+          let!(:sle12sp1) do
+            create :product, :with_mirrored_repositories, :cloned, from: sle12,
+              name: 'sle12sp1', version: '12.1', predecessors: [sle12]
+          end
+          let!(:sle12sp2) do
+            create :product, :with_mirrored_repositories,
+              :cloned, from: sle12, name: 'sle12sp2', version: '12.2', predecessors: [sle12sp1, sle12]
+          end
+          let!(:docker_module) do
+            create :product, :module, :with_mirrored_repositories, :activated, system: system, name: 'docker', base_products: [sle12, sle12sp1, sle12sp2]
+          end
+          let(:installed_products) { [docker_module, sle12] }
 
-        context 'given extension product first' do
-          it { is_expected.to contain_exactly([sle12sp1, docker_module], [sle12sp2, docker_module]) }
+          it 'sorts migration paths by latest version first, and puts the base first in each migration path' do
+            is_expected.to eq([[sle12sp2, docker_module], [sle12sp1, docker_module]])
+          end
         end
 
-        context 'migration targets have latest base version first' do
-          it { is_expected.to eq([[sle12sp2, docker_module], [sle12sp1, docker_module]]) }
+        context 'complex case with SLE 15 module dependencies' do
+          # In this case, we have a tree of modules, and we need the products
+          # that are deeper in the tree to come after the ones that are above.
+          let!(:sle15) do
+            create :product, :with_mirrored_repositories, :cloned, from: sle12sp1,
+              name: 'sle15', version: '15', predecessors: [sle12sp1]
+          end
+          let!(:basesystem) do
+            create :product, :module, :with_mirrored_repositories, root_product: sle15,
+              name: 'basesystem', version: '15', base_products: [sle15]
+          end
+          let!(:server_applications) do
+            create :product, :module, :with_mirrored_repositories, root_product: sle15,
+              name: 'server_applications', version: '15', base_products: [basesystem]
+          end
+          let!(:development_tools) do
+            create :product, :module, :with_mirrored_repositories, root_product: sle15,
+              name: 'development_tools', version: '15', base_products: [server_applications]
+          end
+          let!(:module_ha) do
+            create :product, :module, :with_mirrored_repositories, root_product: sle15,
+              name: 'module_ha', version: '15', base_products: [server_applications]
+          end
+          let!(:sap_module) do
+            create :product, :module, :with_mirrored_repositories, root_product: sle15,
+              name: 'sap_module', version: '15', base_products: [module_ha]
+          end
+          let(:system) { create :system }
+          let(:installed_products) { [sle12sp1] }
+
+          before do
+            system.activations.create(service: sle12sp1.service)
+          end
+
+          it do
+            is_expected.to eq [[
+              sle15,
+              basesystem,
+              server_applications,
+              development_tools,
+              module_ha,
+              sap_module
+            ]]
+          end
+        end
+      end
+
+      describe 'offline/online migration filtering' do
+        # This is the product relationship tree being tested:
+        #
+        # A -online-> B -offline-> C
+        #              \
+        #           offline
+        #                \
+        #                 C'
+
+        let(:product_class) { create :product_class }
+        let!(:product_a) { create :product, :with_mirrored_repositories }
+        let!(:product_b) do
+          create :product, :with_mirrored_repositories, predecessors: [product_a],
+            migration_kind: :online
+        end
+        let!(:product_c) do
+          create :product, :with_mirrored_repositories, predecessors: [product_b],
+            migration_kind: :offline
+        end
+        let!(:product_c_prime) do
+          create :product, :with_mirrored_repositories, predecessors: [product_b],
+            migration_kind: :offline
+        end
+
+        describe '#online_migrations' do
+          subject { engine.online_migrations }
+
+          let(:installed_products) { [product_a] }
+          let(:system) { create :system, :with_activated_product, product: product_a }
+
+          it 'does not contain offline migrations' do
+            is_expected.to contain_exactly([product_b])
+          end
+        end
+
+        describe '#offline_migrations' do
+          subject { engine.offline_migrations(target_base_product) }
+
+          let(:installed_products) { [product_b] }
+          let(:target_base_product) { product_c }
+          let(:system) { create :system, :with_activated_product, product: product_b }
+
+
+          it 'gives an offline migratable base product' do
+            is_expected.to contain_exactly([product_c])
+          end
+
+          context 'with desired base that is not a migration from installed product' do
+            let(:target_base_product) { product_a }
+
+            it { is_expected.to be_empty }
+          end
         end
       end
     end

@@ -31,6 +31,21 @@ describe RMT::SCC do
       end
     end
 
+    it 'creates the correct predecessor association when predecessor exists' do
+      products.each do |product_data|
+        extension = product_data[:extensions][0]
+
+        [product_data, extension].each do |product|
+          product[:online_predecessor_ids].each do |id|
+            expect(find_predecessor_association(product[:id], :online, id)).to be_persisted unless Product.find_by(id: id).nil?
+          end
+          product[:offline_predecessor_ids].each do |id|
+            expect(find_predecessor_association(product[:id], :offline, id)).to be_persisted unless Product.find_by(id: id).nil?
+          end
+        end
+      end
+    end
+
     it 'saves repos to the DB' do
       all_repositories.map.each do |repository|
         db_repository = Repository.find_by(scc_id: repository[:id])
@@ -172,7 +187,25 @@ describe RMT::SCC do
         expect { Repository.find(extra_repo[:id]) }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
+
+    context 'with existing predecessor associations' do
+      let(:product) { create(:product, id: 100000) }
+      let(:predecessor) { create(:product, id: 500000) }
+      let!(:existing_association) do
+        ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor.id, kind: :online)
+      end
+
+      before do
+        allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
+        described_class.new.sync
+      end
+
+      it 'removes existing predecessor associations' do
+        expect { ProductPredecessorAssociation.find(existing_association.id) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
+
 
   describe '#remove_suse_repos_without_tokens' do
     let(:api_double) { double }
@@ -286,5 +319,9 @@ describe RMT::SCC do
 
       include_examples 'saves in database'
     end
+  end
+
+  def find_predecessor_association(product_id, kind, predecessor_id)
+    ProductPredecessorAssociation.find_by(product_id: product_id, kind: kind, predecessor_id: predecessor_id)
   end
 end
