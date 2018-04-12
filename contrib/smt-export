@@ -1,17 +1,22 @@
 #!/bin/bash
 
-NAME="$0"
+NAME="$(basename $0)"
 OUTPUT_FILE=""
+TEMP_DIR=""
 TEMP_PATH=""
+EXPORT_SSL=0
 
 SMT_CONFIG=${SMT_CONFIG:-/etc/smt.conf}
 APACHE_CONFIG=${APACHE_CONFIG:-/etc/apache2}
+SSL_PATH=${SSL_PATH:-/etc/ssl}
 
 SMT_MYSQL_USER=""
 SMT_MYSQL_PASSWORD=""
 SMT_MYSQL_DATABASE=""
 
 # -- UTILITY ------------------------------------------------------------------
+
+function warn() { echo -ne "\033[31mWarning: $@\033[0m\n"; }
 
 # reads a configuration parameter from smt.conf
 function smt_conf_value() {
@@ -77,7 +82,9 @@ function smt_read_all_systems() {
 function step_init_environment() {
   local dburl=""
 
-  TEMP_PATH=$(mktemp -d $NAME.XXXXXXXX)
+  TEMP_DIR="$(mktemp -p /tmp -d ${NAME}.XXXXXXXX)"
+  TEMP_PATH="${TEMP_DIR}/smt-export"
+  mkdir $TEMP_PATH
 
   SMT_MYSQL_USER=$(smt_conf_value "user")
   SMT_MYSQL_PASSWORD=$(smt_conf_value "pass")
@@ -88,6 +95,8 @@ function step_init_environment() {
 
 
 function step_export_smt() {
+  local temp_ssl_path="$TEMP_PATH/ssl"
+
   # copy all configurations
   cp $SMT_CONFIG $TEMP_PATH/smt.conf
 
@@ -96,7 +105,19 @@ function step_export_smt() {
   smt_read_all_enabled_custom_repos > $TEMP_PATH/enabled_custom_repos.csv
   smt_read_all_systems > $TEMP_PATH/systems.csv
 
-  cp $APACHE_CONFIG/ssl.* $TEMP_PATH/
+  if [[ $EXPORT_SSL == 0 ]]; then
+    warn "SSL certificates going to be exported. Make sure the created"
+    warn "tarball stays save!"
+
+    # copy ssl files
+    mkdir $temp_ssl_path
+
+    cp $SSL_PATH/openssl.cnf $temp_ssl_path
+    cp $SSL_PATH/ca-bundle.pem $temp_ssl_path
+    cp -r $SSL_PATH/servercerts $temp_ssl_path
+    cp $SSL_PATH/certs/YaST_Default_CA__smt-migration_.pem $temp_ssl_path
+  fi
+
   cp /etc/hostname $TEMP_PATH/
 }
 
@@ -104,14 +125,16 @@ function step_export_smt() {
 function step_create_tarball() {
   if [[ "$OUTPUT_FILE" == "" ]]; then
     local stamp=$(date +%m%d%Y%H%M%S)
-    OUTPUT_FILE="$(PWD)/smt.export.${stamp}.tar.gz"
+    OUTPUT_FILE="$PWD/smt-export.${stamp}.tar.gz"
   fi
-  tar -zcvf $OUTPUT_FILE $TEMP_PATH
+  pushd $TEMP_DIR &> /dev/null
+  tar -zcvf $OUTPUT_FILE smt-export 1> /dev/null
+  popd &> /dev/null
 }
 
 
 function step_cleanup_environment() {
-  rm -r $TEMP_PATH
+  rm -r $TEMP_DIR
 }
 
 # -- MAIN ---------------------------------------------------------------------
@@ -121,8 +144,17 @@ if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
   exit 0
 fi
 
+if [[ "$1" == "--no-ssl-export" ]]; then
+  EXPORT_SSL=1
+  shift
+fi
+
 if [[ "$1" != "" ]]; then
   OUTPUT_FILE="$1"
+fi
+
+if [[ "$2" == "--no-ssl-export" ]]; then
+  EXPORT_SSL=1
 fi
 
 step_init_environment
