@@ -119,9 +119,9 @@ function step_export_smt() {
   smt_read_all_activations > $TEMP_PATH/activations.csv
 
   if [[ $EXPORT_SSL == 0 ]]; then
-    warn "SSL certificates are going to be exported. Make sure that the created"
-    warn "tarball stays safe!"
-    warn "You can disable exporting the SSL certificates by adding --no-ssl-export"
+    warn "Warning:"
+    warn "Your server SSL certificates have been exported. Make sure to keep the tarball safe!"
+    warn "You can disable the export of SSL certificates by adding --no-ssl-export"
     warn "to this command."
 
     # copy ssl files
