@@ -1,0 +1,131 @@
+#!/bin/bash
+
+NAME="$0"
+OUTPUT_FILE=""
+TEMP_PATH=""
+
+SMT_CONFIG=${SMT_CONFIG:-/etc/smt.conf}
+APACHE_CONFIG=${APACHE_CONFIG:-/etc/apache2}
+
+SMT_MYSQL_USER=""
+SMT_MYSQL_PASSWORD=""
+SMT_MYSQL_DATABASE=""
+
+# -- UTILITY ------------------------------------------------------------------
+
+# reads a configuration parameter from smt.conf
+function smt_conf_value() {
+  local key=$1
+  grep -oP "$key\s*=\s*\K.*" $SMT_CONFIG
+}
+
+function usage() {
+  echo "Usage: $NAME <OUTPUT>"
+  echo ""
+  echo "   OUTPUT - The output file path"
+  echo ""
+  echo "Export smt configuration and data to a tarball"
+  echo ""
+}
+
+# -- DATABASE -----------------------------------------------------------------
+
+function smt_mysql() {
+  local query="$1"
+  mysql -u $SMT_MYSQL_USER -p$SMT_MYSQL_PASSWORD -sN -e "$query" $SMT_MYSQL_DATABASE
+}
+
+function smt_read_all_enabled_products() {
+  local query="select DISTINCT(p.PRODUCTDATAID) from Products p
+                join ProductCatalogs pc on p.ID = pc.PRODUCTID
+                join Catalogs c on c.ID = pc.CATALOGID
+
+                where c.DOMIRROR = 'Y'
+                and c.SRC='S'
+                and c.STAGING = 'N'"
+  smt_mysql "$query" | awk '{print $1}'
+}
+
+function smt_read_all_enabled_repos() {
+  local query="select c.CATALOGID from Catalogs c
+                 where c.DOMIRROR = 'Y'
+                 and c.SRC='S'
+                 and c.STAGING = 'N'"
+  smt_mysql "$query" | awk '{print $1}'
+}
+
+
+function smt_read_all_enabled_custom_repos() {
+  local query="select p.PRODUCTDATAID, c.NAME, c.EXTURL from Products p
+                 join ProductCatalogs pc on p.ID = pc.PRODUCTID
+                 join Catalogs c on c.ID = pc.CATALOGID
+
+                 where c.DOMIRROR='Y'
+                 and c.SRC='C'
+                 and c.STAGING = 'N'"
+  smt_mysql "$query" | awk '{print $1 "," $2 "," $3}'
+}
+
+function smt_read_all_systems() {
+  local query="select c.GUID, c.SECRET, c.HOSTNAME from Clients c"
+
+  smt_mysql "$query" | awk '{print $1 "," $2 "," $3}'
+}
+
+
+# -- STEPS --------------------------------------------------------------------
+function step_init_environment() {
+  local dburl=""
+
+  TEMP_PATH=$(mktemp -d $NAME.XXXXXXXX)
+
+  SMT_MYSQL_USER=$(smt_conf_value "user")
+  SMT_MYSQL_PASSWORD=$(smt_conf_value "pass")
+
+  dburl=$(smt_conf_value "config")
+  SMT_MYSQL_DATABASE=$(echo "$dburl" | grep -oP '(?<=(database=)).*(?=(;host))')
+}
+
+
+function step_export_smt() {
+  # copy all configurations
+  cp $SMT_CONFIG $TEMP_PATH/smt.conf
+
+  smt_read_all_enabled_products > $TEMP_PATH/enabled_products.csv
+  smt_read_all_enabled_repos > $TEMP_PATH/enabled_repos.csv
+  smt_read_all_enabled_custom_repos > $TEMP_PATH/enabled_custom_repos.csv
+  smt_read_all_systems > $TEMP_PATH/systems.csv
+
+  cp $APACHE_CONFIG/ssl.* $TEMP_PATH/
+  cp /etc/hostname $TEMP_PATH/
+}
+
+
+function step_create_tarball() {
+  if [[ "$OUTPUT_FILE" == "" ]]; then
+    local stamp=$(date +%m%d%Y%H%M%S)
+    OUTPUT_FILE="$(PWD)/smt.export.${stamp}.tar.gz"
+  fi
+  tar -zcvf $OUTPUT_FILE $TEMP_PATH
+}
+
+
+function step_cleanup_environment() {
+  rm -r $TEMP_PATH
+}
+
+# -- MAIN ---------------------------------------------------------------------
+
+if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
+  usage
+  exit 0
+fi
+
+if [[ "$1" != "" ]]; then
+  OUTPUT_FILE="$1"
+fi
+
+step_init_environment
+step_export_smt
+step_create_tarball
+step_cleanup_environment
