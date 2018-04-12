@@ -98,6 +98,7 @@ function step_init_environment() {
 
 function step_export_smt() {
   local temp_ssl_path="$TEMP_PATH/ssl"
+  local yast_migration_pem="YaST_Default_CA__smt-migration_.pem"
 
   # copy all configurations
   cp $SMT_CONFIG $TEMP_PATH/smt.conf
@@ -119,7 +120,10 @@ function step_export_smt() {
     cp $SSL_PATH/openssl.cnf $temp_ssl_path
     cp $SSL_PATH/ca-bundle.pem $temp_ssl_path
     cp -r $SSL_PATH/servercerts $temp_ssl_path
-    cp $SSL_PATH/certs/YaST_Default_CA__smt-migration_.pem $temp_ssl_path
+
+    if [ -f $SSL_PATH/certs/$yast_migration_pem ]; then
+      cp $SSL_PATH/certs/$yast_migration_pem $temp_ssl_path
+    fi
   fi
 
   cp /etc/hostname $TEMP_PATH/
