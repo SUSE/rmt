@@ -50,6 +50,7 @@ function smt_read_all_enabled_products() {
                 where c.DOMIRROR = 'Y'
                 and c.SRC='S'
                 and c.STAGING = 'N'"
+
   smt_mysql "$query" | awk '{print $1}'
 }
 
@@ -58,6 +59,7 @@ function smt_read_all_enabled_repos() {
                  where c.DOMIRROR = 'Y'
                  and c.SRC='S'
                  and c.STAGING = 'N'"
+
   smt_mysql "$query" | awk '{print $1}'
 }
 
@@ -70,6 +72,7 @@ function smt_read_all_enabled_custom_repos() {
                  where c.DOMIRROR='Y'
                  and c.SRC='C'
                  and c.STAGING = 'N'"
+
   smt_mysql "$query" | awk '{print $1 "," $2 "," $3}'
 }
 
@@ -79,8 +82,14 @@ function smt_read_all_systems() {
   smt_mysql "$query" | awk '{print $1 "," $2 "," $3}'
 }
 
+function smt_read_all_activations() {
+  local query="select r.GUID, p.PRODUCTDATAID from Registration r join Products p on p.ID = r.PRODUCTID"
+
+  smt_mysql "$query" | awk '{print $1 "," $2}'
+}
 
 # -- STEPS --------------------------------------------------------------------
+
 function step_init_environment() {
   local dburl=""
 
@@ -95,7 +104,6 @@ function step_init_environment() {
   SMT_MYSQL_DATABASE=$(echo "$dburl" | grep -oP '(?<=(database=)).*(?=(;host))')
 }
 
-
 function step_export_smt() {
   local temp_ssl_path="$TEMP_PATH/ssl"
   local yast_migration_pem="YaST_Default_CA__smt-migration_.pem"
@@ -107,12 +115,13 @@ function step_export_smt() {
   smt_read_all_enabled_repos > $TEMP_PATH/enabled_repos.csv
   smt_read_all_enabled_custom_repos > $TEMP_PATH/enabled_custom_repos.csv
   smt_read_all_systems > $TEMP_PATH/systems.csv
+  smt_read_all_activations > $TEMP_PATH/activations.csv
 
   if [[ $EXPORT_SSL == 0 ]]; then
-    warn "SSL certificates going to be exported. Make sure the created"
-    warn "tarball stays save!"
-    warn "You can disable exporting the SSL certificates add --no-ssl-export"
-    warn "to the commandline"
+    warn "SSL certificates are going to be exported. Make sure that the created"
+    warn "tarball stays safe!"
+    warn "You can disable exporting the SSL certificates by adding --no-ssl-export"
+    warn "to this command."
 
     # copy ssl files
     mkdir $temp_ssl_path
@@ -129,17 +138,16 @@ function step_export_smt() {
   cp /etc/hostname $TEMP_PATH/
 }
 
-
 function step_create_tarball() {
   if [[ "$OUTPUT_FILE" == "" ]]; then
     local stamp=$(date +%m%d%Y%H%M%S)
     OUTPUT_FILE="$PWD/smt-export.${stamp}.tar.gz"
   fi
+
   pushd $TEMP_DIR &> /dev/null
   tar -zcvf $OUTPUT_FILE smt-export 1> /dev/null
   popd &> /dev/null
 }
-
 
 function step_cleanup_environment() {
   rm -r $TEMP_DIR
