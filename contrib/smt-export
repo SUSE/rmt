@@ -16,7 +16,7 @@ SMT_MYSQL_DATABASE=""
 
 # -- UTILITY ------------------------------------------------------------------
 
-function warn() { echo -ne "\033[31mWarning: $@\033[0m\n"; }
+function warn() { echo -ne "\033[31m$@\033[0m\n"; }
 
 # reads a configuration parameter from smt.conf
 function smt_conf_value() {
@@ -25,9 +25,11 @@ function smt_conf_value() {
 }
 
 function usage() {
-  echo "Usage: $NAME <OUTPUT>"
+  echo "Usage: $NAME [OUTPUT] [--no-ssl-export]"
   echo ""
-  echo "   OUTPUT - The output file path"
+  echo "   OUTPUT           The output file path"
+  echo "   --no-ssl-export  Do not export ssl certificates to the resulting"
+  echo "                    tarball"
   echo ""
   echo "Export smt configuration and data to a tarball"
   echo ""
@@ -108,6 +110,8 @@ function step_export_smt() {
   if [[ $EXPORT_SSL == 0 ]]; then
     warn "SSL certificates going to be exported. Make sure the created"
     warn "tarball stays save!"
+    warn "You can disable exporting the SSL certificates add --no-ssl-export"
+    warn "to the commandline"
 
     # copy ssl files
     mkdir $temp_ssl_path
