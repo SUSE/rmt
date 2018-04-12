@@ -83,7 +83,8 @@ function smt_read_all_systems() {
 }
 
 function smt_read_all_activations() {
-  local query="select r.GUID, p.PRODUCTDATAID from Registration r join Products p on p.ID = r.PRODUCTID"
+  local query="select r.GUID, p.PRODUCTDATAID from Registration r
+                 join Products p on p.ID = r.PRODUCTID"
 
   smt_mysql "$query" | awk '{print $1 "," $2}'
 }
