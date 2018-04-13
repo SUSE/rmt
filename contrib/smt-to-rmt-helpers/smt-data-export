@@ -8,7 +8,7 @@ EXPORT_SSL=0
 
 SMT_CONFIG=${SMT_CONFIG:-/etc/smt.conf}
 APACHE_CONFIG=${APACHE_CONFIG:-/etc/apache2}
-SSL_PATH=${SSL_PATH:-/etc/ssl}
+SSL_PATH=${SSL_PATH:-/var/lib/CAM/YaST_Default_CA}
 
 SMT_MYSQL_USER=""
 SMT_MYSQL_PASSWORD=""
@@ -83,7 +83,7 @@ function step_init_environment() {
   local dburl=""
 
   TEMP_DIR="$(mktemp -p /tmp -d ${NAME}.XXXXXXXX)"
-  TEMP_PATH="${TEMP_DIR}/smt-export"
+  TEMP_PATH="${TEMP_DIR}/smt-data-export"
   mkdir $TEMP_PATH
 
   SMT_MYSQL_USER=$(smt_conf_value "user")
@@ -114,13 +114,8 @@ function step_export_smt() {
     # copy ssl files
     mkdir $temp_ssl_path
 
-    cp $SSL_PATH/openssl.cnf $temp_ssl_path
-    cp $SSL_PATH/ca-bundle.pem $temp_ssl_path
-    cp -r $SSL_PATH/servercerts $temp_ssl_path
-
-    if [ -f $SSL_PATH/certs/$yast_migration_pem ]; then
-      cp $SSL_PATH/certs/$yast_migration_pem $temp_ssl_path
-    fi
+    cp $SSL_PATH/cacert.key $temp_ssl_path
+    cp $SSL_PATH/cacert.pem $temp_ssl_path
   fi
 
   cp /etc/hostname $TEMP_PATH/
@@ -129,11 +124,11 @@ function step_export_smt() {
 function step_create_tarball() {
   if [[ "$OUTPUT_FILE" == "" ]]; then
     local stamp=$(date +%m%d%Y%H%M%S)
-    OUTPUT_FILE="$PWD/smt-export.${stamp}.tar.gz"
+    OUTPUT_FILE="$PWD/smt-data-export.${stamp}.tar.gz"
   fi
 
   pushd $TEMP_DIR &> /dev/null
-  tar -zcvf $OUTPUT_FILE smt-export 1> /dev/null
+  tar -zcvf $OUTPUT_FILE smt-data-export 1> /dev/null
   popd &> /dev/null
 }
 

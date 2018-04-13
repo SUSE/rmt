@@ -5,7 +5,7 @@ IMPORT_REPOS=0
 IMPORT_CUSTOM_REPOS=0
 
 SMT_TAR_FILE=""
-SMT_TAR_DIR="smt-export"
+SMT_TAR_DIR="smt-data-export"
 
 # -- UTILITY ------------------------------------------------------------------
 function warn() { echo -ne "\033[31m$@\033[0m\n"; }
@@ -30,14 +30,14 @@ function tar_has_file() {
 function usage() {
   echo "Usage: $NAME TARBALL [--no-custom-repos, --only-custom-repos]"
   echo ""
-  echo "    TARBALL              Tarball created by the 'smt-export' script."
+  echo "    TARBALL              Tarball created by the 'smt-data-export' script."
   echo ""
   echo "    --no-custom-repos    Only import and enable normal repositories"
   echo "                         which are defined by products"
   echo "    --only-custom-repos  Only import and enable custom defined"
   echo "                         repositories"
   echo ""
-  echo "Import and enable repositories from 'smt-export' tarball to rmt."
+  echo "Import and enable repositories from 'smt-data-export' tarball to rmt."
 }
 
 # -- RMT ----------------------------------------------------------------------
@@ -131,7 +131,7 @@ if [[ "$1" == "--only-custom-repos" ]]; then
 fi
 
 if [[ $1 != *.tar.gz ]]; then
-  warn "No or invalid smt-export supplied!"
+  warn "No or invalid smt-data-export supplied!"
   exit 1
 fi
 
