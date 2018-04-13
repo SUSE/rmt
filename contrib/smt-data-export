@@ -42,18 +42,6 @@ function smt_mysql() {
   mysql -u $SMT_MYSQL_USER -p$SMT_MYSQL_PASSWORD -sN -e "$query" $SMT_MYSQL_DATABASE
 }
 
-function smt_read_all_enabled_products() {
-  local query="select DISTINCT(p.PRODUCTDATAID) from Products p
-                join ProductCatalogs pc on p.ID = pc.PRODUCTID
-                join Catalogs c on c.ID = pc.CATALOGID
-
-                where c.DOMIRROR = 'Y'
-                and c.SRC='S'
-                and c.STAGING = 'N'"
-
-  smt_mysql "$query" | awk '{print $1}'
-}
-
 function smt_read_all_enabled_repos() {
   local query="select c.CATALOGID from Catalogs c
                  where c.DOMIRROR = 'Y'
@@ -112,7 +100,6 @@ function step_export_smt() {
   # copy all configurations
   cp $SMT_CONFIG $TEMP_PATH/smt.conf
 
-  smt_read_all_enabled_products > $TEMP_PATH/enabled_products.csv
   smt_read_all_enabled_repos > $TEMP_PATH/enabled_repos.csv
   smt_read_all_enabled_custom_repos > $TEMP_PATH/enabled_custom_repos.csv
   smt_read_all_systems > $TEMP_PATH/systems.csv
@@ -178,3 +165,4 @@ step_init_environment
 step_export_smt
 step_create_tarball
 step_cleanup_environment
+echo "The exported configuration has been saved to $OUTPUT_FILE"
