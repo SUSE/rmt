@@ -61,7 +61,7 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
       let(:hwinfo) { { cpus: 8, sockets: 1, arch: 'x86_64' } }
 
       before do
-        post url, params: { hwinfo: hwinfo }, headers: headers
+        post url, params: { hwinfo: hwinfo }.to_json, headers: headers
       end
 
       it { is_expected.to be_success }
@@ -80,7 +80,7 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
       subject { System.find_by(login: json_response[:login]).hw_info }
 
       before do
-        post url, params: { hwinfo: hwinfo }, headers: headers
+        post url, params: { hwinfo: hwinfo }.to_json, headers: headers
       end
 
       context 'with valid uuid' do
@@ -93,14 +93,14 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
         let(:hwinfo) { { cpus: 8, sockets: 1, arch: 'x86_64', uuid: '123' } }
 
         it { is_expected.not_to be nil }
-        its(uuid) { is_expected.to be nil }
+        its(:uuid) { is_expected.to be nil }
       end
 
       context 'with nil uuid' do
         let(:hwinfo) { { cpus: 8, sockets: 1, arch: 'x86_64', hypervisor: 'XEN', uuid: nil } }
 
         it { is_expected.not_to be nil }
-        its(uuid) { is_expected.to be nil }
+        its(:uuid) { is_expected.to be nil }
       end
     end
   end

@@ -58,6 +58,4 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
       expect { system.reload }.to raise_error ActiveRecord::RecordNotFound
     end
   end
-
-  # TODO: it 'updates hwinfo of an existing system' do
 end

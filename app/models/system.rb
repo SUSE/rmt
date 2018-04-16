@@ -6,6 +6,9 @@ class System < ApplicationRecord
   has_many :services, through: :activations
   has_many :repositories, -> { distinct }, through: :services
   has_many :products, -> { distinct }, through: :services
+  has_one :hw_info, dependent: :destroy
+
+  accepts_nested_attributes_for :hw_info
 
   def init
     self.login ||= System.generate_secure_login
