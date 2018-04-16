@@ -111,6 +111,30 @@ Connecting an SMT with an RMT this way is not supported.
 
 Available configuration options can be found in the `etc/rmt.conf` file.
 
+The recommended way to perform initial configuration is [YaST RMT module](https://github.com/SUSE/yast2-rmt). The RPM package is [available on OBS](https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT/yast2-rmt).
+YaST RMT module will take care of configuring SCC credentials, setting up the DB and creating SSL certificates.
+
+### SSL certificates & HTTPS
+
+By default access to API endpoints consumed by SUSEConnect is limited to HTTPS only.
+nginx is configured to use SSL certificate and private key from the following locations:
+
+* Certificate: /usr/share/rmt/ssl/rmt-server.crt
+* Private key: /usr/share/rmt/ssl/rmt-server.key
+
+YaST RMT module generates a custom certificate authority which is used to sign HTTPS certificates, which means that in order to register this certificate authority must be trusted by the client machines.
+
+* When registration is performed during installation from the media or with YaST Registration module a message will appear, prompting to trust the server certificate.
+
+* `clientSetup4RMT.sh` script is provided for registering on the command line at the following URL: `http://rmt.hostname/tools/clientSetup4RMT.sh`.
+The script requires only RMT hostname as a mandatory parameter, e.g.:
+
+    ```bash
+    ./clientSetup4RMT.sh https://rmt.hostname/
+    ```
+
+    Executing this script will import RMT CA's certificate into the trusted store and after that run SUSEConnect to perform the registration.
+
 ### Mirroring settings
 
 - `mirroring.mirror_src` - whether to mirror source (arch = `src`) RPM packages or not.
