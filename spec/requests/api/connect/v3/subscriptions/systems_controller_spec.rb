@@ -75,5 +75,33 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
         its(:arch) { is_expected.to eql hwinfo[:arch] }
       end
     end
+
+    context 'uuid processing' do
+      subject { System.find_by(login: json_response[:login]).hw_info }
+
+      before do
+        post url, params: { hwinfo: hwinfo }, headers: headers
+      end
+
+      context 'with valid uuid' do
+        let(:hwinfo) { { cpus: 8, sockets: 1, arch: 'x86_64', hypervisor: 'XEN', uuid: 'f46906c5-d87d-4e4c-894b-851e80376003' } }
+
+        its(:uuid) { is_expected.to eql 'f46906c5-d87d-4e4c-894b-851e80376003' }
+      end
+
+      context 'with invalid uuid' do
+        let(:hwinfo) { { cpus: 8, sockets: 1, arch: 'x86_64', uuid: '123' } }
+
+        it { is_expected.not_to be nil }
+        its(uuid) { is_expected.to be nil }
+      end
+
+      context 'with nil uuid' do
+        let(:hwinfo) { { cpus: 8, sockets: 1, arch: 'x86_64', hypervisor: 'XEN', uuid: nil } }
+
+        it { is_expected.not_to be nil }
+        its(uuid) { is_expected.to be nil }
+      end
+    end
   end
 end
