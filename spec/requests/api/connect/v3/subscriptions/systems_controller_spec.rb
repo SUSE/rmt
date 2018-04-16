@@ -54,5 +54,26 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
         it { is_expected.to match_array(%w[testhost0 testhost1 testhost2]) }
       end
     end
+
+    context 'with hwinfo parameters' do
+      subject { response }
+
+      let(:hwinfo) { { cpus: 8, sockets: 1, arch: 'x86_64' } }
+
+      before do
+        post url, params: { hwinfo: hwinfo }, headers: headers
+      end
+
+      it { is_expected.to be_success }
+      its(:status) { is_expected.to eq 201 }
+
+      describe 'stored hwinfo' do
+        subject { System.find_by(login: json_response[:login]).hw_info }
+
+        its(:cpus) { is_expected.to eql hwinfo[:cpus] }
+        its(:sockets) { is_expected.to eql hwinfo[:sockets] }
+        its(:arch) { is_expected.to eql hwinfo[:arch] }
+      end
+    end
   end
 end
