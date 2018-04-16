@@ -4,7 +4,7 @@
 
 database: &database
   host: localhost
-  database: rmt
+  database: rmt_development
   username: rmt
   password: rmt
   adapter: mysql2
@@ -42,4 +42,3 @@ http_client:
   proxy_auth:
   proxy_user:
   proxy_password:
-
