@@ -48,7 +48,7 @@ function smt_read_all_enabled_repos() {
                  and c.SRC='S'
                  and c.STAGING = 'N'"
 
-  smt_mysql "$query" | awk '{print $1}'
+  smt_mysql "$query"
 }
 
 
@@ -56,25 +56,30 @@ function smt_read_all_enabled_custom_repos() {
   local query="select p.PRODUCTDATAID, c.NAME, c.EXTURL from Products p
                  join ProductCatalogs pc on p.ID = pc.PRODUCTID
                  join Catalogs c on c.ID = pc.CATALOGID
-
                  where c.DOMIRROR='Y'
                  and c.SRC='C'
                  and c.STAGING = 'N'"
 
-  smt_mysql "$query" | awk '{print $1 "," $2 "," $3}'
+  smt_mysql "$query"
 }
 
 function smt_read_all_systems() {
   local query="select c.GUID, c.SECRET, c.HOSTNAME from Clients c"
 
-  smt_mysql "$query" | awk '{print $1 "," $2 "," $3}'
+  smt_mysql "$query"
 }
 
 function smt_read_all_activations() {
   local query="select r.GUID, p.PRODUCTDATAID from Registration r
                  join Products p on p.ID = r.PRODUCTID"
 
-  smt_mysql "$query" | awk '{print $1 "," $2}'
+  smt_mysql "$query"
+}
+
+function smt_read_all_hwinfo() {
+  local query="select GUID, KEYNAME, VALUE from MachineData"
+
+  smt_mysql "$query"
 }
 
 # -- STEPS --------------------------------------------------------------------
@@ -95,7 +100,6 @@ function step_init_environment() {
 
 function step_export_smt() {
   local temp_ssl_path="$TEMP_PATH/ssl"
-  local yast_migration_pem="YaST_Default_CA__smt-migration_.pem"
 
   # copy all configurations
   cp $SMT_CONFIG $TEMP_PATH/smt.conf
@@ -104,10 +108,11 @@ function step_export_smt() {
   smt_read_all_enabled_custom_repos > $TEMP_PATH/enabled_custom_repos.csv
   smt_read_all_systems > $TEMP_PATH/systems.csv
   smt_read_all_activations > $TEMP_PATH/activations.csv
+  smt_read_all_hwinfo > $TEMP_PATH/hw_info.csv
 
   if [[ $EXPORT_SSL == 0 ]]; then
     warn "Warning:"
-    warn "Your server SSL certificates have been exported. Make sure to keep the tarball safe!"
+    warn "Your CA SSL certificates have been exported. Make sure to keep the tarball safe!"
     warn "You can disable the export of SSL certificates by adding --no-ssl-export"
     warn "to this command."
 

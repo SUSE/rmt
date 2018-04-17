@@ -1,0 +1,80 @@
+#!/usr/bin/env ruby
+
+rmt_path = ENV['RMT_PATH'] ? ENV['RMT_PATH'] : '/usr/share/rmt/'
+
+require_relative "#{rmt_path}/config/boot"
+$LOAD_PATH.unshift File.join(rmt_path, 'lib')
+
+require 'active_support'
+require 'active_record'
+require 'erb'
+require 'yaml'
+require 'rmt/config'
+require 'csv'
+
+relative_load_paths = %w[lib lib/rmt app/models app/services].map { |dir| File.join(rmt_path, dir) }
+ActiveSupport::Dependencies.autoload_paths += relative_load_paths
+
+db_config = RMT::Config.db_config
+ActiveRecord::Base.establish_connection(db_config)
+
+#####
+
+# FIXME need to check that products table isn't empty
+# FIXME wrap everything into a gigantic transaction?
+
+CSV.open('systems.csv', 'r', {col_sep: "\t" }).each do |row|
+  login, password, hostname = row
+  System.create!(
+    login: login,
+    password: password,
+    hostname: hostname,
+    registered_at: Time.now # FIXME preserve registration date?
+  )
+
+  puts "Imported system #{login}"
+end
+
+CSV.open('activations.csv', 'r', {col_sep: "\t" }).each do |row|
+  login, product_id = row
+  product = Product.find_by(id: product_id)
+  system = System.find_by(login: login)
+  if product
+    Activation.create!(system: system, service: product.service)
+    puts "Imported activation of #{product_id} for #{login}"
+  elsif !system
+    warn "System #{login} not found"
+  else
+    warn "Product #{product_id} not found"
+  end
+end
+
+# FIXME hwinfo also needs to be imported
+
+CSV.open('enabled_repos.csv', 'r', {col_sep: "\t" }).each do |row|
+  repo_id, = row
+  repo = Repository.find_by(scc_id: repo_id)
+  if repo
+    repo.mirroring_enabled = true
+    repo.save!
+    puts "Enabled mirroring for repository #{repo_id}"
+  else
+    warn "Repository #{repo_id}, perhaps you no longer have a valid subscription for it"
+  end
+end
+
+CSV.open('enabled_custom_repos.csv', 'r', {col_sep: "\t" }).each do |row|
+  product_id, repo_name, repo_url = row
+  repo = Repository.find_by(external_url: repo_url)
+  repo = Repository.create!(external_url: repo_url, name: repo_name, local_path: Repository.make_local_path(repo_url)) unless repo
+
+  product = Product.find_by(id: product_id)
+
+  if product
+    RepositoriesServicesAssociation.create!(service: product.service, repository: repo)
+    puts "Added association between #{repo.name} and product #{product_id}"
+  else
+    warn "Product #{product_id} not found"
+  end
+end
+

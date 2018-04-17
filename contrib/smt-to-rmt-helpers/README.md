@@ -10,6 +10,14 @@ their SMT data to RMT.
 * We recommend that you install RMT on a new server. RMT is not a complete replacement for SMT. It has a different
 workflow from SMT and also only supports SLE 12 and above. However, nothing stops you from using the same server.
 
+## Caveats
+
+* Staged repositories settings will not be exported
+* Disabled custom repositories settings will not be exported
+* Products no longer available on the organization subscriptions will not be available
+* SMT client jobs will not be exported
+* Client patch status data will not be exported
+
 ## Exporting SMT Data
 
 The goal of this script is to store all the data that RMT could find useful in a tarball that you can bring to your
