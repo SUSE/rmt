@@ -77,7 +77,8 @@ RSpec.describe SUSE::Connect::Api do
   let(:expected_request_headers) do
     {
       'Authorization' => 'Basic ' + Base64.encode64("#{username}:#{password}").strip,
-      'User-Agent' => "RMT/#{RMT::VERSION}"
+      'User-Agent' => "RMT/#{RMT::VERSION}",
+      'RMT' => username
     }
   end
   let(:response_data) { { foo: 'bar' } }

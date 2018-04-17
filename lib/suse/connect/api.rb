@@ -47,6 +47,7 @@ module SUSE
         options[:userpwd] = "#{@username}:#{@password}" unless options[:userpwd]
         options[:method] = method
         options[:accept_encoding] = 'gzip, deflate'
+        options[:headers] = { 'RMT' => @username }
 
         response = RMT::HttpRequest.new(url, options).run
         raise InvalidCredentialsError if (response.code == 401)
