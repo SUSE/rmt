@@ -4,58 +4,82 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
   include_context 'auth header', :system, :login, :password
   include_context 'version header', 3
 
+  let(:system) { FactoryGirl.create(:system, :with_hw_info, hostname: 'initial') }
   let(:url) { '/connect/systems' }
   let(:headers) { auth_header.merge(version_header) }
-  let(:system) { FactoryGirl.create(:system, hostname: 'initial') }
-  let(:payload) { { hostname: 'test', hwinfo: { arch: 'x86_64' } } }
+  let(:payload) { { hostname: 'test', hwinfo: { cpus: 16, sockets: 1, arch: 'x86_64', hypervisor: 'XEN', uuid: 'f46906c5-d87d-4e4c-894b-851e80376003' } } }
 
   describe '#update' do
-    context 'when hostname is provided' do
-      subject { system }
+    subject { put url, params: payload, headers: headers }
 
-      before do
-        put url, params: payload, headers: headers
-        system.reload
+    context 'when hostname is provided' do
+      it do
+        expect { subject }.to change { system.reload.hostname }.from('initial').to(payload[:hostname])
       end
 
-      its(:hostname) { is_expected.to eq payload[:hostname] }
+      it do
+        subject
 
-      describe 'HTTP response' do
-        subject { response }
+        expect(system.reload.hostname).to eq('test') # FIXME: should detect the hostname instead
+        expect(response.body).to be_empty
+        expect(response.status).to eq(204)
+      end
 
-        its(:body) { is_expected.to be_empty }
-        its(:status) { is_expected.to eq 204 }
+      context 'hardware info' do
+        it do
+          subject
+
+          expect(system.hw_info.reload.arch).to eq('x86_64')
+          expect(system.hw_info.reload.hypervisor).to eq('XEN')
+          expect(system.hw_info.reload.uuid).to eq('f46906c5-d87d-4e4c-894b-851e80376003')
+        end
+
+        it 'should update initial hardware info' do
+          expect { subject }.to change { system.hw_info.reload.cpus }.from(2).to(16)
+        end
       end
     end
 
     context 'when hostname is not provided' do
-      subject { system }
+      let(:payload) { { hwinfo: { cpus: 16, sockets: 1, arch: 'x86_64', hypervisor: 'XEN', uuid: 'f46906c5-d87d-4e4c-894b-851e80376003' } } }
 
-      let(:payload) { { hwinfo: { arch: 'x86_64' } } }
+      it do
+        subject
 
-      before do
-        put url, params: payload, headers: headers
-        system.reload
+        expect(system.reload.hostname).to eq('Not provided') # FIXME: should detect the hostname instead
+        expect(response.body).to be_empty
+        expect(response.status).to eq(204)
       end
 
-      its(:hostname) { is_expected.to eq 'Not provided' } # FIXME: should detect the hostname instead
+      context 'hardware info' do
+        it do
+          subject
 
-      describe 'HTTP response' do
-        subject { response }
+          expect(system.hw_info.reload.arch).to eq('x86_64')
+          expect(system.hw_info.reload.hypervisor).to eq('XEN')
+          expect(system.hw_info.reload.uuid).to eq('f46906c5-d87d-4e4c-894b-851e80376003')
+        end
 
-        its(:body) { is_expected.to be_empty }
-        its(:status) { is_expected.to eq 204 }
+        it 'should update initial hardware info' do
+          expect { subject }.to change { system.hw_info.reload.cpus }.from(2).to(16)
+        end
       end
     end
   end
 
   describe '#deregister' do
-    subject { system }
+    before do
+      system # this will call `let() block for :system`
+    end
 
-    before { delete url, params: payload, headers: headers }
+    subject { delete url, params: payload, headers: headers }
 
-    it 'system is deregistered' do
-      expect { system.reload }.to raise_error ActiveRecord::RecordNotFound
+    it 'should delete system' do
+      expect { subject }.to change { System.count }.by(-1)
+    end
+
+    it 'should delete hardware info' do
+      expect { subject }.to change { HwInfo.count }.by(-1)
     end
   end
 end

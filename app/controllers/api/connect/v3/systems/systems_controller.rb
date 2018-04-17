@@ -4,7 +4,11 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
 
   def update
     @system.hostname = params[:hostname] || _('Not provided')
-    @system.hw_info_attributes = hwinfo_params
+    if @system.hw_info.present?
+      @system.hw_info.update_attributes(hwinfo_params)
+    else
+      @system.hw_info_attributes = hwinfo_params
+    end
 
     if @system.save
       logger.info(N_("Updated system information for host '%s'") % @system.hostname)
