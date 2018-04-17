@@ -2,44 +2,44 @@ require 'spec_helper'
 require 'rails_helper'
 
 describe HwInfo do
-  subject { create(:system, :with_hw_info).hw_info }
+  subject(:hw_info) { create(:system, :with_hw_info).hw_info }
 
   let(:valid_uuid) { 'aaaaaaaa-aaaa-4aaa-9aaa-aaaaaaaaaaaa' }
 
-  it { should belong_to :system }
-  it { should validate_presence_of :system }
+  it { is_expected.to belong_to :system }
+  it { is_expected.to validate_presence_of :system }
 
   it 'enforces uniqueness' do
-    expect(subject).to validate_uniqueness_of(:system)
+    expect(hw_info).to validate_uniqueness_of(:system)
   end
 
   describe '.uuid' do
-    it { should allow_value(nil).for(:uuid) }
-    it { should allow_value('xyzzy').for(:uuid) }
+    it { is_expected.to allow_value(nil).for(:uuid) }
+    it { is_expected.to allow_value('xyzzy').for(:uuid) }
 
     it 'forces invalid uuid to nil' do
-      subject.uuid = 'xyzzy'
-      subject.save!
+      hw_info.uuid = 'xyzzy'
+      hw_info.save!
 
-      expect(subject.uuid).to be nil
+      expect(hw_info.uuid).to be nil
     end
 
-    it_should_behave_like 'model with UUID format validation and nil forcing', :uuid
+    it_behaves_like 'model with UUID format validation and nil forcing', :uuid
 
     it 'has case-insensitive validations' do
-      subject.uuid = valid_uuid.upcase
-      subject.save!
+      hw_info.uuid = valid_uuid.upcase
+      hw_info.save!
 
-      hw_info = build :hw_info, uuid: valid_uuid.downcase
-      expect(hw_info).not_to be_valid
+      new_hw_info = build :hw_info, uuid: valid_uuid.downcase
+      expect(new_hw_info).not_to be_valid
     end
 
     it 'is saved downcased in the DB' do
-      subject.uuid = valid_uuid.upcase
-      subject.save!
+      hw_info.uuid = valid_uuid.upcase
+      hw_info.save!
 
-      hw_info = described_class.find_by(uuid: valid_uuid.downcase)
-      expect(hw_info).to eq(subject)
+      copy_hw_info = described_class.find_by(uuid: valid_uuid.downcase)
+      expect(copy_hw_info).to eq(hw_info)
     end
   end
 end

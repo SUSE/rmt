@@ -10,5 +10,5 @@ end
 describe UuidFormatValidator, type: :model do
   subject { UuidFormatValidatable.new }
 
-  it_should_behave_like 'model with UUID format validation on field', :uuid
+  it_behaves_like 'model with UUID format validation on field', :uuid
 end

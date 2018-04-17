@@ -5,7 +5,7 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
   def update
     @system.hostname = params[:hostname] || _('Not provided')
     if @system.hw_info.present?
-      @system.hw_info.update_attributes(hwinfo_params)
+      @system.hw_info.update(hwinfo_params)
     else
       @system.hw_info_attributes = hwinfo_params
     end
