@@ -26,16 +26,34 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
       end
 
       context 'hardware info' do
-        it do
-          update_action
+        context 'with existing hardware info' do
+          it do
+            update_action
 
-          expect(system.hw_info.reload.arch).to eq('x86_64')
-          expect(system.hw_info.reload.hypervisor).to eq('XEN')
-          expect(system.hw_info.reload.uuid).to eq('f46906c5-d87d-4e4c-894b-851e80376003')
+            expect(system.hw_info.reload.arch).to eq('x86_64')
+            expect(system.hw_info.reload.hypervisor).to eq('XEN')
+            expect(system.hw_info.reload.uuid).to eq('f46906c5-d87d-4e4c-894b-851e80376003')
+          end
+
+          it 'updates initial hardware info' do
+            expect { update_action }.to change { system.hw_info.reload.cpus }.from(2).to(16)
+          end
         end
 
-        it 'updates initial hardware info' do
-          expect { update_action }.to change { system.hw_info.reload.cpus }.from(2).to(16)
+        context 'with new hardware info' do
+          let(:system) { FactoryGirl.create(:system, hostname: 'initial') }
+
+          it do
+            update_action
+
+            expect(system.hw_info.reload.arch).to eq('x86_64')
+            expect(system.hw_info.reload.hypervisor).to eq('XEN')
+            expect(system.hw_info.reload.uuid).to eq('f46906c5-d87d-4e4c-894b-851e80376003')
+          end
+
+          it 'creates hardware info record' do
+            expect { update_action }.to change { HwInfo.count }.by(1)
+          end
         end
       end
     end
