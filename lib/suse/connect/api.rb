@@ -7,6 +7,8 @@ module SUSE
     class Api
 
       class InvalidCredentialsError < StandardError; end
+      CONNECT_API_URL = 'https://scc.suse.com/connect'.freeze
+      UUID_FILE_LOCATION = File.expand_path('../../../config/system_uuid', __dir__).freeze
 
       def initialize(username, password)
         @username = username
@@ -14,23 +16,23 @@ module SUSE
       end
 
       def list_orders
-        make_paginated_request(:get, 'https://scc.suse.com/connect/organizations/orders')
+        make_paginated_request(:get, "#{CONNECT_API_URL}/organizations/orders")
       end
 
       def list_products
-        make_paginated_request(:get, 'https://scc.suse.com/connect/organizations/products')
+        make_paginated_request(:get, "#{CONNECT_API_URL}/organizations/products")
       end
 
       def list_products_unscoped
-        make_paginated_request(:get, 'https://scc.suse.com/connect/organizations/products/unscoped')
+        make_paginated_request(:get, "#{CONNECT_API_URL}/organizations/products/unscoped")
       end
 
       def list_repositories
-        make_paginated_request(:get, 'https://scc.suse.com/connect/organizations/repositories')
+        make_paginated_request(:get, "#{CONNECT_API_URL}/organizations/repositories")
       end
 
       def list_subscriptions
-        make_paginated_request(:get, 'https://scc.suse.com/connect/organizations/subscriptions')
+        make_paginated_request(:get, "#{CONNECT_API_URL}/organizations/subscriptions")
       end
 
       protected
@@ -47,7 +49,7 @@ module SUSE
         options[:userpwd] = "#{@username}:#{@password}" unless options[:userpwd]
         options[:method] = method
         options[:accept_encoding] = 'gzip, deflate'
-        options[:headers] = { 'RMT' => @username }
+        options[:headers] = { 'RMT' => system_uuid }
 
         response = RMT::HttpRequest.new(url, options).run
         raise InvalidCredentialsError if (response.code == 401)
@@ -80,6 +82,17 @@ module SUSE
         @entities
       end
 
+      private
+
+      def system_uuid
+        @system_uuid ||= if File.exist?(UUID_FILE_LOCATION)
+                           File.read(UUID_FILE_LOCATION)
+                         else
+                           uuid = SecureRandom.uuid
+                           File.write(UUID_FILE_LOCATION, uuid)
+                           uuid
+                         end
+      end
     end
   end
 end
