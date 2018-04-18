@@ -8,8 +8,6 @@ class System < ApplicationRecord
   has_many :products, -> { distinct }, through: :services
   has_one :hw_info, dependent: :destroy
 
-  accepts_nested_attributes_for :hw_info
-
   def init
     self.login ||= System.generate_secure_login
     self.password ||= System.generate_secure_password

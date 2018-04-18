@@ -10,6 +10,7 @@ FactoryGirl.define do
     sockets 1
     hypervisor nil
     arch 'x86_64'
+    uuid { SecureRandom.uuid }
 
     after :build do |hw_info, evaluator|
       hw_info.hypervisor = 'KVM' if evaluator.virtual

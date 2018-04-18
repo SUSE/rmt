@@ -2,14 +2,14 @@
 class HwInfo < ApplicationRecord
   belongs_to :system, inverse_of: :hw_info, dependent: :destroy
 
-  # We store UUID as a downcased string. Please take that in account in finders
-  validates :uuid, uuid_format: true, allow_nil: true
+  before_validation :make_invalid_uuid_nil
 
+  # We store UUID as a downcased string. Please take that in account in finders
+  validates :uuid, uuid_format: true, uniqueness: { allow_nil: true }
   validates :system, uniqueness: true, presence: true
 
   before_save -> { uuid.try(:downcase!) }
 
-  before_validation :make_invalid_uuid_nil
 
   def make_invalid_uuid_nil
     self.uuid = nil unless uuid =~ UuidFormatValidator::UUID_REGEXP

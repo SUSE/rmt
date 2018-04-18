@@ -2,9 +2,10 @@ class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseCon
 
   def announce_system
     system = System.create!(
-      hostname: params[:hostname],
-      hw_info_attributes: hwinfo_params
+      hostname: params[:hostname]
     )
+
+    HwInfo.create!({ system_id: system.id }.merge(hw_info_params))
 
     logger.info("System '#{system.hostname}' announced")
     respond_with(system, serializer: ::V3::SystemSerializer, location: nil)
@@ -12,7 +13,7 @@ class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseCon
 
   private
 
-  def hwinfo_params
+  def hw_info_params
     return {} if params[:hwinfo].blank?
     params[:hwinfo].permit(:cpus, :sockets, :arch, :hypervisor, :uuid)
   end

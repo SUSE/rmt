@@ -11,6 +11,7 @@ describe HwInfo do
 
   it 'enforces uniqueness' do
     expect(hw_info).to validate_uniqueness_of(:system)
+    expect(hw_info).to validate_uniqueness_of(:uuid)
   end
 
   describe '.uuid' do
@@ -24,9 +25,14 @@ describe HwInfo do
       expect(hw_info.uuid).to be nil
     end
 
-    it_behaves_like 'model with UUID format validation and nil forcing', :uuid
+    it 'keeps valid uuid' do
+      hw_info.uuid = valid_uuid
+      hw_info.save!
 
-    it 'has case-insensitive validations' do
+      expect(hw_info.uuid).to eq(valid_uuid)
+    end
+
+    it 'does not allow to had downcased UUID' do
       hw_info.uuid = valid_uuid.upcase
       hw_info.save!
 

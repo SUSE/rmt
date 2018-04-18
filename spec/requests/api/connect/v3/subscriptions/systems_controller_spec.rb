@@ -55,52 +55,53 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
       end
     end
 
-    context 'with hwinfo parameters' do
-      subject { response }
+    context 'with hw_info' do
+      let(:hw_info) { { cpus: 8, sockets: 1, arch: 'x86_64', hypervisor: 'XEN', uuid: uuid } }
+      let(:uuid) { 'f46906c5-d87d-4e4c-894b-851e80376003' }
 
-      let(:hwinfo) { { cpus: 8, sockets: 1, arch: 'x86_64' } }
+      context 'with hw_info parameters' do
+        subject { response }
 
-      before do
-        post url, params: { hwinfo: hwinfo }.to_json, headers: headers
+        before do
+          post url, params: { hwinfo: hw_info }.to_json, headers: headers
+        end
+
+        it { is_expected.to be_success }
+        its(:status) { is_expected.to eq 201 }
+
+        describe 'stored hw_info' do
+          subject { System.find_by(login: json_response[:login]).hw_info }
+
+          its(:cpus) { is_expected.to eql hw_info[:cpus] }
+          its(:sockets) { is_expected.to eql hw_info[:sockets] }
+          its(:arch) { is_expected.to eql hw_info[:arch] }
+        end
       end
 
-      it { is_expected.to be_success }
-      its(:status) { is_expected.to eq 201 }
-
-      describe 'stored hwinfo' do
+      context 'uuid processing' do
         subject { System.find_by(login: json_response[:login]).hw_info }
 
-        its(:cpus) { is_expected.to eql hwinfo[:cpus] }
-        its(:sockets) { is_expected.to eql hwinfo[:sockets] }
-        its(:arch) { is_expected.to eql hwinfo[:arch] }
-      end
-    end
+        before do
+          post url, params: { hwinfo: hw_info }.to_json, headers: headers
+        end
 
-    context 'uuid processing' do
-      subject { System.find_by(login: json_response[:login]).hw_info }
+        context 'with valid uuid' do
+          its(:uuid) { is_expected.to eql 'f46906c5-d87d-4e4c-894b-851e80376003' }
+        end
 
-      before do
-        post url, params: { hwinfo: hwinfo }.to_json, headers: headers
-      end
+        context 'with invalid uuid' do
+          let(:uuid) { '123' }
 
-      context 'with valid uuid' do
-        let(:hwinfo) { { cpus: 8, sockets: 1, arch: 'x86_64', hypervisor: 'XEN', uuid: 'f46906c5-d87d-4e4c-894b-851e80376003' } }
+          it { is_expected.not_to be nil }
+          its(:uuid) { is_expected.to be nil }
+        end
 
-        its(:uuid) { is_expected.to eql 'f46906c5-d87d-4e4c-894b-851e80376003' }
-      end
+        context 'with nil uuid' do
+          let(:uuid) { nil }
 
-      context 'with invalid uuid' do
-        let(:hwinfo) { { cpus: 8, sockets: 1, arch: 'x86_64', uuid: '123' } }
-
-        it { is_expected.not_to be nil }
-        its(:uuid) { is_expected.to be nil }
-      end
-
-      context 'with nil uuid' do
-        let(:hwinfo) { { cpus: 8, sockets: 1, arch: 'x86_64', hypervisor: 'XEN', uuid: nil } }
-
-        it { is_expected.not_to be nil }
-        its(:uuid) { is_expected.to be nil }
+          it { is_expected.not_to be nil }
+          its(:uuid) { is_expected.to be nil }
+        end
       end
     end
   end
