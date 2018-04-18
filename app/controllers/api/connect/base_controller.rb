@@ -20,7 +20,12 @@ class Api::Connect::BaseController < ApplicationController
       missing_keys << key unless parameters.key?(key)
     end
 
-    raise ActionController::ParameterMissingTranslated.new(*missing_keys) if missing_keys.any?
+    if missing_keys.any?
+      raise ActionController::TranslatedError.new(
+        N_('Required parameters are missing or empty: %s'),
+        missing_keys.join(', ')
+      )
+    end
   end
 
   def authenticate_system
