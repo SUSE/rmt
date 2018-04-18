@@ -57,27 +57,26 @@ the following command.
 been saved to smt-export.xxxxxx.tar.gz`). Move that file to the RMT
 server or note its path if the same server will be used.
 
-## Importing Enabled Repositories from SMT to RMT
+## Importing SMT data to RMT
 
-The following steps require a fully working RMT instance and a tarball of the SMT data from the section "Exporting SMT
-Data".
+1. Upload the tarball containing SMT data and `rmt-data-import` script to the RMT server
+1. Unpack the tarball containing SMT data to some directory, e.g. `/root/smt-data`
+1. Decrypt the SMT CA private key to `/usr/share/rmt/ssl/`:
+    ```
+    openssl rsa -in /root/smt-data/ssl/cacert.key -out /usr/share/rmt/ssl/rmt-ca.key
+    ```
+1. Copy the SMT CA certificate to `/usr/share/rmt/ssl/`:
+    ```
+    cp /root/smt-data/ssl/cacert.pem /usr/share/rmt/ssl/rmt-ca.crt
+    ```
+1. Run YaST RMT configuration module from YaST command center or by running `yast2 rmt` on the command line;
+1. Go through setup steps of the YaST module. On the SSL setup page it is possible to add alternative common names (e.g., the hostname of the SMT server in case it is desirable to perform a switch) 
+1. Run `rmt-cli sync` to get the products and repositories data from SCC;
+1. Run the `rmt-data-import` to import SMT data:
+    ```
+    ./rmt-data-import /root/smt-data-export/
+    ```
 
-1. Copy over the `rmt-import-repos` script to your running RMT server. The script is located at
-https://github.com/SUSE/rmt/blob/master/contrib/smt-to-rmt-helpers/rmt-import-repos or you can download it directly with
-the following command.
-    ```bash
-    wget https://raw.githubusercontent.com/SUSE/rmt/master/contrib/smt-to-rmt-helpers/rmt-import-repos
-    ```
-2.
-    a) If you want to import all repositories including custom repositories:
-    ```bash
-    ./rmt-import-repos /path/to/smt-export.xxxx.tar.gz
-    ```
-    b) If you don't want to import custom repositories:
-    ```bash
-    ./rmt-import-repos --no-custom-repos /path/to/smt-export.xxxx.tar.gz
-    ```
-    c) If you only want to import custom repositories:
-    ```bash
-    ./rmt-import-repos --only-custom-repos /path/to/smt-export.xxxx.tar.gz
-    ```
+After this in order for the client machines to consume data from RMT, it would be possible to:
+1. Either change `url` parameter in `/etc/SUSEConnect` to point the client machines to RMT instead of SMT;
+1. Or change the DNS records to the re-assign SMT's hostname to RMT server.

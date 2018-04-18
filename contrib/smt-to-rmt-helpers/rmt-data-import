@@ -1,6 +1,15 @@
 #!/usr/bin/env ruby
 
-rmt_path = ENV['RMT_PATH'] ? ENV['RMT_PATH'] : '/usr/share/rmt/'
+# FIXME argument parsing with getopt? To produce help and such.
+unless (ARGV[0])
+  warn "Usage: #{$0} /path/to/smt-data-dir"
+  warn ''
+  warn 'Please specify a path to a directory with an unpacked SMT data tarball as the first argument.'
+  exit 1
+end
+
+data_dir = ARGV[0]
+rmt_path = ENV['RMT_PATH'] ? ENV['RMT_PATH'] : '/usr/share/rmt/' # for testing in dev-mode
 
 require_relative "#{rmt_path}/config/boot"
 $LOAD_PATH.unshift File.join(rmt_path, 'lib')
@@ -23,7 +32,7 @@ ActiveRecord::Base.establish_connection(db_config)
 # FIXME need to check that products table isn't empty
 # FIXME wrap everything into a gigantic transaction?
 
-CSV.open('systems.csv', 'r', {col_sep: "\t" }).each do |row|
+CSV.open(File.join(data_dir, 'systems.csv'), 'r', {col_sep: "\t" }).each do |row|
   login, password, hostname = row
   System.create!(
     login: login,
@@ -35,7 +44,7 @@ CSV.open('systems.csv', 'r', {col_sep: "\t" }).each do |row|
   puts "Imported system #{login}"
 end
 
-CSV.open('activations.csv', 'r', {col_sep: "\t" }).each do |row|
+CSV.open(File.join(data_dir, 'activations.csv'), 'r', {col_sep: "\t" }).each do |row|
   login, product_id = row
   product = Product.find_by(id: product_id)
   system = System.find_by(login: login)
@@ -51,7 +60,7 @@ end
 
 # FIXME hwinfo also needs to be imported
 
-CSV.open('enabled_repos.csv', 'r', {col_sep: "\t" }).each do |row|
+CSV.open(File.join(data_dir, 'enabled_repos.csv'), 'r', {col_sep: "\t" }).each do |row|
   repo_id, = row
   repo = Repository.find_by(scc_id: repo_id)
   if repo
@@ -63,7 +72,7 @@ CSV.open('enabled_repos.csv', 'r', {col_sep: "\t" }).each do |row|
   end
 end
 
-CSV.open('enabled_custom_repos.csv', 'r', {col_sep: "\t" }).each do |row|
+CSV.open(File.join(data_dir, 'enabled_custom_repos.csv'), 'r', {col_sep: "\t" }).each do |row|
   product_id, repo_name, repo_url = row
   repo = Repository.find_by(external_url: repo_url)
   repo = Repository.create!(external_url: repo_url, name: repo_name, local_path: Repository.make_local_path(repo_url)) unless repo
