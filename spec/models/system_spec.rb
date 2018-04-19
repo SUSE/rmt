@@ -25,13 +25,27 @@ RSpec.describe System, type: :model do
   end
 
   context 'when system is deleted' do
-    let(:activation) do
-      activation = create(:activation)
-      activation.system.destroy
+    context 'activation' do
+      let(:activation) do
+        activation = create(:activation)
+        activation.system.destroy
+      end
+
+
+      it 'activation is also deleted' do
+        expect { activation.reload }.to raise_error ActiveRecord::RecordNotFound
+      end
     end
 
-    it 'activation is also deleted' do
-      expect { activation.reload }.to raise_error ActiveRecord::RecordNotFound
+    context 'hw_info' do
+      let(:hw_info) do
+        hw_info = create(:system, :with_hw_info).hw_info
+        hw_info.system.destroy
+      end
+
+      it 'hw_info is also deleted' do
+        expect { hw_info.reload }.to raise_error ActiveRecord::RecordNotFound
+      end
     end
   end
 end
