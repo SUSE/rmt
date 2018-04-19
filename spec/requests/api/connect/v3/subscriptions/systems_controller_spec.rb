@@ -59,12 +59,12 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
       let(:hw_info) { { cpus: 8, sockets: 1, arch: 'x86_64', hypervisor: 'XEN', uuid: uuid } }
       let(:uuid) { 'f46906c5-d87d-4e4c-894b-851e80376003' }
 
+      before do
+        post url, params: { hwinfo: hw_info }.to_json, headers: headers
+      end
+
       context 'with hw_info parameters' do
         subject { response }
-
-        before do
-          post url, params: { hwinfo: hw_info }.to_json, headers: headers
-        end
 
         it { is_expected.to be_success }
         its(:status) { is_expected.to eq 201 }
@@ -80,10 +80,6 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
 
       context 'uuid processing' do
         subject { System.find_by(login: json_response[:login]).hw_info }
-
-        before do
-          post url, params: { hwinfo: hw_info }.to_json, headers: headers
-        end
 
         context 'with valid uuid' do
           its(:uuid) { is_expected.to eql 'f46906c5-d87d-4e4c-894b-851e80376003' }

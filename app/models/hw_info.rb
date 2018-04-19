@@ -10,7 +10,6 @@ class HwInfo < ApplicationRecord
 
   before_save -> { uuid.try(:downcase!) }
 
-
   def make_invalid_uuid_nil
     self.uuid = nil unless uuid =~ UuidFormatValidator::UUID_REGEXP
   end
