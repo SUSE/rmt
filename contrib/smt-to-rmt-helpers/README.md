@@ -61,11 +61,11 @@ server or note its path if the same server will be used.
 
 1. Upload the tarball containing SMT data and `rmt-data-import` script to the RMT server
 1. Unpack the tarball containing SMT data to some directory, e.g. `/root/smt-data`
-1. Decrypt the SMT CA private key to `/usr/share/rmt/ssl/`:
+1. If you chose to export SMT's SSL certificates, decrypt the SMT CA private key to `/usr/share/rmt/ssl/`:
     ```
     openssl rsa -in /root/smt-data/ssl/cacert.key -out /usr/share/rmt/ssl/rmt-ca.key
     ```
-1. Copy the SMT CA certificate to `/usr/share/rmt/ssl/`:
+1. If you chose to export SMT's SSL certificates, copy the SMT CA certificate to `/usr/share/rmt/ssl/`:
     ```
     cp /root/smt-data/ssl/cacert.pem /usr/share/rmt/ssl/rmt-ca.crt
     ```
