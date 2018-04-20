@@ -115,16 +115,33 @@ RSpec.describe RMT::CLI::Products do
 
   describe '#enable' do
     let(:product) { create :product, :with_not_mirrored_repositories }
+    let(:repo_count) { product.repositories.where(enabled: true).count }
 
     context 'by product ID' do
       let(:argv) { ['enable', product.id.to_s] }
-      let(:expected_output) { "#{product.repositories.where(enabled: true).count} repo(s) successfully enabled.\n" }
+      let(:expected_output) { "#{repo_count} repo(s) successfully enabled.\n" }
 
       before { expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr }
 
       it 'enables the mandatory product repositories' do
         product.repositories.each do |repository|
           expect(repository.mirroring_enabled).to eq(repository.enabled)
+        end
+      end
+
+      context 'with recommended products' do
+        let(:product) { create :product, :with_not_mirrored_repositories, :with_recommended_extensions }
+        let(:products) { [product] + Product.recommended_extensions(product).to_a }
+        let(:repo_count) { products.inject(0) { |sum, product| sum + product.repositories.where(enabled: true).count } }
+
+        it 'enables the mandatory product repositories' do
+          products.flat_map(&:repositories).each do |repository|
+            expect(repository.mirroring_enabled).to eq(repository.enabled)
+          end
+        end
+
+        it 'has more repositories than the base product' do
+          expect(repo_count).to be > product.repositories.where(enabled: true).count
         end
       end
     end

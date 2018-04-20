@@ -49,9 +49,10 @@ class RMT::CLI::Products < RMT::CLI::Base
       identifier, version, arch = target.split('/')
       conditions = { identifier: identifier, version: version }
       conditions[:arch] = arch if arch
-      products = Product.where(conditions)
+      products = Product.where(conditions).to_a
     end
 
+    products = products.flat_map { |product| [product] + Product.recommended_extensions(product.id).to_a }.uniq
     repo_count = repository_service.change_mirroring_by_product!(set_enabled, products)
     puts "#{repo_count} repo(s) successfully #{set_enabled ? 'enabled' : 'disabled'}."
   rescue ActiveRecord::RecordNotFound
