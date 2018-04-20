@@ -5,7 +5,7 @@ class HwInfo < ApplicationRecord
   before_validation :make_invalid_uuid_nil
 
   # We store UUID as a downcased string. Please take that in account in finders
-  validates :uuid, uuid_format: true, uniqueness: { allow_nil: true }
+  validates :uuid, uuid_format: true
   validates :system, uniqueness: true, presence: true
 
   before_save -> { uuid.try(:downcase!) }
