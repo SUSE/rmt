@@ -74,7 +74,7 @@ server or note its path if the same server will be used.
 1. Run `rmt-cli sync` to get the products and repositories data from SCC;
 1. Run the `rmt-data-import` to import SMT data:
     ```
-    ./rmt-data-import /root/smt-data-export/
+    ./rmt-data-import /root/smt-data/
     ```
 
 After this in order for the client machines to consume data from RMT, it would be possible to:
