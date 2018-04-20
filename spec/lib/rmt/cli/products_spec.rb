@@ -131,8 +131,13 @@ RSpec.describe RMT::CLI::Products do
 
       context 'with recommended products' do
         let(:product) { create :product, :with_not_mirrored_repositories, :with_recommended_extensions }
-        let(:products) { [product] + Product.recommended_extensions(product).to_a }
+        let(:extensions) { Product.recommended_extensions(product).to_a }
+        let(:products) { [product] + extensions }
         let(:repo_count) { products.inject(0) { |sum, product| sum + product.repositories.where(enabled: true).count } }
+        let(:expected_output) do
+          "The following required extensions for #{product.product_string} have been enabled: #{extensions.pluck(:name).join(', ')}.\n" \
+          "#{repo_count} repo(s) successfully enabled.\n"
+        end
 
         it 'enables the mandatory product repositories' do
           products.flat_map(&:repositories).each do |repository|

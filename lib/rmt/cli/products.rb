@@ -52,8 +52,14 @@ class RMT::CLI::Products < RMT::CLI::Base
       products = Product.where(conditions).to_a
     end
 
-    products = products.flat_map { |product| [product] + Product.recommended_extensions(product.id).to_a }.uniq
-    repo_count = repository_service.change_mirroring_by_product!(set_enabled, products)
+    products.each do |product|
+      extensions = Product.recommended_extensions(product.id).to_a
+      next if extensions.empty?
+      puts "The following required extensions for #{product.product_string} have been enabled: #{extensions.pluck(:name).join(', ')}."
+      products.push(*extensions)
+    end
+
+    repo_count = repository_service.change_mirroring_by_product!(set_enabled, products.uniq)
     puts "#{repo_count} repo(s) successfully #{set_enabled ? 'enabled' : 'disabled'}."
   rescue ActiveRecord::RecordNotFound
     raise RMT::CLI::Error.new("Product by id \"#{product_id}\" not found.")
