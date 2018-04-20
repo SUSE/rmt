@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180416124217) do
+ActiveRecord::Schema.define(version: 20180420145408) do
 
   create_table "activations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "service_id", null: false
@@ -41,7 +41,6 @@ ActiveRecord::Schema.define(version: 20180416124217) do
     t.datetime "updated_at", null: false
     t.index ["hypervisor"], name: "index_hw_infos_on_hypervisor"
     t.index ["system_id"], name: "index_hw_infos_on_system_id", unique: true
-    t.index ["uuid"], name: "index_hw_infos_on_uuid", unique: true
   end
 
   create_table "product_predecessors", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

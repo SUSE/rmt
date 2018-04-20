@@ -11,7 +11,6 @@ describe HwInfo do
 
   it 'enforces uniqueness' do
     expect(hw_info).to validate_uniqueness_of(:system)
-    expect(hw_info).to validate_uniqueness_of(:uuid)
   end
 
   describe '.uuid' do
