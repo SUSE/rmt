@@ -150,6 +150,10 @@ sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"'
     -e 's/^BUNDLE_JOBS: .*/BUNDLE_JOBS: "1"/' \
     %{buildroot}%{app_dir}/.bundle/config
 
+# supportconfig plugin
+mkdir -p %{buildroot}%{_libexecdir}/supportconfig/plugins
+install -D -m 544 support/rmt %{buildroot}%{_libexecdir}/supportconfig/plugins/rmt
+
 # cleanup of /usr/bin/env commands
 grep -rl '\/usr\/bin\/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
     sed -i -e 's@\/usr\/bin\/env ruby.ruby2\.5@\/usr\/bin\/ruby\.ruby2\.5@g' \
@@ -182,12 +186,14 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %defattr(-,root,root)
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}
 %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
+%dir %{_libexecdir}/supportconfig
+%dir %{_libexecdir}/supportconfig/plugins
+%dir %{_sysconfdir}/nginx
+%dir %{_sysconfdir}/nginx/vhosts.d
 %config(noreplace) %{_sysconfdir}/rmt.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
 %doc %{_mandir}/man8/rmt.8.gz
-%{_sysconfdir}/nginx
-%{_sysconfdir}/nginx/vhosts.d
 %{_bindir}/rmt-cli
 %{_sbindir}/rcrmt
 %{_sbindir}/rcrmt-migration
@@ -202,6 +208,7 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %{_unitdir}/rmt-server-sync.timer
 
 %{_libdir}/rmt
+%{_libexecdir}/supportconfig/plugins/rmt
 
 %pre
 getent group %{rmt_group} >/dev/null || %{_sbindir}/groupadd -r %{rmt_group}

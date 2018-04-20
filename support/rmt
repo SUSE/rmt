@@ -1,0 +1,85 @@
+#!/bin/bash
+#############################################################
+# Name:        Supportconfig Plugin for RMT
+# Description: Gathers important troubleshooting information
+#              about RMT
+# License:     GPLv2
+# Author:      Will Stephenson <wstephenson@suse.com>
+# Modified:    2018 April 18
+#############################################################
+
+SVER=0.0.1
+RCFILE="/usr/lib/supportconfig/resources/scplugin.rc"
+
+[ -s $RCFILE ] && . $RCFILE || { echo "ERROR: Initializing resource file: $RCFILE"; exit 1; }
+
+## Our own helper functions
+validate_rpm_if_installed() {
+  THISRPM=$1
+  echo "#==[ Validating RPM ]=================================#"
+  if rpm -q $THISRPM >/dev/null 2>&1; then
+    echo "# rpm -V $THISRPM"
+
+    if rpm -V $THISRPM; then
+      echo "Status: Passed"
+    else
+      echo "Status: WARNING"
+    fi
+  else
+    echo "package $THISRPM is not installed"
+    echo "Status: Skipped"
+  fi
+  echo
+}
+
+section_header "Supportconfig Plugin for SUSE Manager, v${SVER}"
+RPMLIST="
+rmt-server
+nginx
+mariadb
+"
+SERVICES="rmt rmt-sync rmt-mirror mariadb nginx"
+
+CONF_FILES="/etc/rmt.conf /etc/nginx/vhosts.d/rmt-server-http.conf /etc/nginx/vhosts.d/rmt-server-https.conf"
+
+# since we are using journalctl logged services here, no files
+LOG_FILES=""
+
+# how does supportconfig log/compress journalctl command output? Is it just stdout from this script?
+LOG_SERVICES="rmt nginx mariadb"
+
+if ! rpm -q rmt-server &>/dev/null; then
+  echo "ERROR: RMT rpm package not installed"
+  echo
+  exit 111
+fi
+
+plugin_tag("Packages")
+for THISRPM in $RPMLIST; do
+  validate_rpm_if_installed $THISRPM
+done
+
+plugin_tag("Configuration")
+pconf_files $CONF_FILES
+
+# check RMT SSL configuration
+plugin_tag("SSL Configuration")
+plugin_command "echo | openssl s_client -showcerts -servername localhost -connect localhost:443 2>/dev/null | openssl x509 -inform pem -noout -text"
+
+plugin_tag("Service Status")
+for i in $SERVICES; do
+  plugin_command "systemctl status $i"
+done
+
+plugin_tag("Mirroring Status")
+plugin_command "rmt-cli products list"
+plugin_command "rmt-cli repos list"
+plugin_command "rmt-cli repos custom list"
+
+plugin_tag("Service Logs")
+for service in $SERVICES; do
+  plugin_command "journalctl -u $service"
+done
+
+
+
