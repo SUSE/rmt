@@ -61,14 +61,6 @@ FactoryGirl.define do
       end
     end
 
-    trait :with_recommended_extensions do
-      after :create do |product, _evaluator|
-        5.times do
-          create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: true)
-        end
-      end
-    end
-
     trait :with_modules do
       after :create do |product, _evaluator|
         5.times do

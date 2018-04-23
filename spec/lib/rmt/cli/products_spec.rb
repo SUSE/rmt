@@ -130,8 +130,14 @@ RSpec.describe RMT::CLI::Products do
       end
 
       context 'with recommended extensions' do
-        let(:product) { create :product, :with_not_mirrored_repositories, :with_recommended_extensions }
-        let(:extensions) { Product.recommended_extensions(product).to_a }
+        let(:product) { create :product, :with_not_mirrored_repositories }
+        let(:extensions) do
+          [
+            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: true),
+            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: true),
+            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: true)
+          ]
+        end
         let(:products) { [product] + extensions }
         let(:repo_count) { products.inject(0) { |sum, product| sum + product.repositories.where(enabled: true).count } }
         let(:expected_output) do
@@ -200,8 +206,13 @@ RSpec.describe RMT::CLI::Products do
       end
 
       context 'with recommended extensions' do
-        let(:product) { create :product, :with_mirrored_repositories, :with_recommended_extensions }
-        let(:extensions) { Product.recommended_extensions(product).to_a }
+        let(:product) { create :product, :with_mirrored_repositories }
+        let(:extensions) do
+          [
+            create(:product, :extension, :with_mirrored_repositories, base_products: [product], recommended: true),
+            create(:product, :extension, :with_mirrored_repositories, base_products: [product], recommended: true)
+          ]
+        end
 
         it 'does not disable extension repositories' do
           product.repositories.each do |repository|
@@ -209,7 +220,7 @@ RSpec.describe RMT::CLI::Products do
           end
           extensions.each do |extension|
             extension.repositories.each do |repository|
-              expect(repository.mirroring_enabled).to eq(false)
+              expect(repository.mirroring_enabled).to eq(true)
             end
           end
         end
