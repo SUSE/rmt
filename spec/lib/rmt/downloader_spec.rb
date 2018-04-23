@@ -3,7 +3,7 @@ require 'webmock/rspec'
 
 RSpec.describe RMT::Downloader do
   let(:dir) { Dir.mktmpdir }
-  let(:downloader) { described_class.new(repository_url: 'http://example.com', destination_dir: dir) }
+  let(:downloader) { described_class.new(repository_url: 'http://example.com', destination_dir: dir, logger: RMT::Logger.new('/dev/null')) }
   let(:headers) { { 'User-Agent' => "RMT/#{RMT::VERSION}" } }
 
   after do
@@ -80,7 +80,14 @@ RSpec.describe RMT::Downloader do
     end
 
     context 'with auth_token' do
-      let(:downloader) { described_class.new(repository_url: 'http://example.com', destination_dir: dir, auth_token: 'repo_auth_token') }
+      let(:downloader) do
+        described_class.new(
+          repository_url: 'http://example.com',
+          destination_dir: dir,
+          logger: RMT::Logger.new('/dev/null'),
+          auth_token: 'repo_auth_token'
+        )
+      end
       let(:content) { 'test' }
 
       before do
@@ -107,7 +114,14 @@ RSpec.describe RMT::Downloader do
     describe '#download with If-Modified-Since' do
       let(:cache_dir) { Dir.mktmpdir }
       let(:repo_dir) { Dir.mktmpdir }
-      let(:downloader) { described_class.new(repository_url: 'http://example.com', destination_dir: repo_dir, cache_dir: cache_dir) }
+      let(:downloader) do
+        described_class.new(
+          repository_url: 'http://example.com',
+          destination_dir: repo_dir,
+          logger: RMT::Logger.new('/dev/null'),
+          cache_dir: cache_dir
+        )
+      end
       let(:time) { Time.utc(2018, 1, 1, 10, 10, 0) }
       let(:if_modified_headers) do
         {
@@ -170,7 +184,7 @@ RSpec.describe RMT::Downloader do
 
     let(:dir2) { Dir.mktmpdir }
     let(:path) { 'file://' + File.expand_path(file_fixture('dummy_repo/')) + '/' }
-    let(:downloader) { described_class.new(repository_url: path, destination_dir: dir2) }
+    let(:downloader) { described_class.new(repository_url: path, destination_dir: dir2, logger: RMT::Logger.new('/dev/null')) }
 
     # WebMock doesn't work nicely with file://
     around do |example|

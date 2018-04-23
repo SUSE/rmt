@@ -14,13 +14,13 @@ class RMT::Downloader
 
   attr_accessor :repository_url, :destination_dir, :concurrency, :logger, :auth_token, :cache_dir
 
-  def initialize(repository_url:, destination_dir:, auth_token: nil, logger: nil, cache_dir: nil, save_for_dedup: true)
+  def initialize(repository_url:, destination_dir:, logger:, auth_token: nil, cache_dir: nil, save_for_dedup: true)
     Typhoeus::Config.user_agent = "RMT/#{RMT::VERSION}"
     @repository_url = repository_url
     @destination_dir = destination_dir
     @concurrency = 4
     @auth_token = auth_token
-    @logger = logger || Logger.new('/dev/null')
+    @logger = logger
     @cache_dir = cache_dir
     @save_for_dedup = save_for_dedup
   end

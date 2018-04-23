@@ -1,4 +1,5 @@
 require 'rmt/config'
+require 'rmt/logger'
 require 'suse/connect/api'
 
 class RMT::SCC
@@ -7,7 +8,7 @@ class RMT::SCC
   class DataFilesError < RuntimeError; end
 
   def initialize(options = {})
-    @logger = Logger.new(STDOUT)
+    @logger = RMT::Logger.new(STDOUT)
     @logger.level = (options[:debug]) ? Logger::DEBUG : Logger::INFO
   end
 
