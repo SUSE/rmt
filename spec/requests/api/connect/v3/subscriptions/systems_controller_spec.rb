@@ -54,5 +54,51 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
         it { is_expected.to match_array(%w[testhost0 testhost1 testhost2]) }
       end
     end
+
+    context 'with hw_info' do
+      let(:hw_info) { { cpus: 8, sockets: 1, arch: 'x86_64', hypervisor: 'XEN', uuid: uuid } }
+      let(:uuid) { 'f46906c5-d87d-4e4c-894b-851e80376003' }
+
+      before do
+        post url, params: { hwinfo: hw_info }.to_json, headers: headers
+      end
+
+      context 'with hw_info parameters' do
+        subject { response }
+
+        it { is_expected.to be_success }
+        its(:status) { is_expected.to eq 201 }
+
+        describe 'stored hw_info' do
+          subject { System.find_by(login: json_response[:login]).hw_info }
+
+          its(:cpus) { is_expected.to eql hw_info[:cpus] }
+          its(:sockets) { is_expected.to eql hw_info[:sockets] }
+          its(:arch) { is_expected.to eql hw_info[:arch] }
+        end
+      end
+
+      context 'uuid processing' do
+        subject { System.find_by(login: json_response[:login]).hw_info }
+
+        context 'with valid uuid' do
+          its(:uuid) { is_expected.to eql 'f46906c5-d87d-4e4c-894b-851e80376003' }
+        end
+
+        context 'with invalid uuid' do
+          let(:uuid) { '123' }
+
+          it { is_expected.not_to be nil }
+          its(:uuid) { is_expected.to be nil }
+        end
+
+        context 'with nil uuid' do
+          let(:uuid) { nil }
+
+          it { is_expected.not_to be nil }
+          its(:uuid) { is_expected.to be nil }
+        end
+      end
+    end
   end
 end

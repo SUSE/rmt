@@ -3,10 +3,8 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
   before_action :authenticate_system
 
   def update
-    # FIXME: need hwinfo -- require_params([:hwinfo])
-
     @system.hostname = params[:hostname] || _('Not provided')
-    # FIXME: @system.hw_info.update_attributes(hwinfo_params)
+    HwInfo.find_or_initialize_by(system_id: @system.id).update!(hw_info_params)
 
     if @system.save
       logger.info(N_("Updated system information for host '%s'") % @system.hostname)
@@ -19,4 +17,9 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
     respond_with(@system.destroy, serializer: ::V3::SystemSerializer)
   end
 
+  private
+
+  def hw_info_params
+    params.require(:hwinfo).permit(:cpus, :sockets, :arch, :hypervisor, :uuid)
+  end
 end

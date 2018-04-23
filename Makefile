@@ -1,5 +1,5 @@
 NAME          = rmt-server
-VERSION       = 0.0.5
+VERSION       = 0.0.6
 
 all:
 	@:
@@ -46,7 +46,7 @@ dist: clean man
 	@rm -rf $(NAME)-$(VERSION)/config/secrets.yml.*
 
 	@mv $(NAME)-$(VERSION)/.bundle/config_packaging $(NAME)-$(VERSION)/.bundle/config
-	cd $(NAME)-$(VERSION) && bundler package --all
+	cd $(NAME)-$(VERSION) && bundle package --all
 	rm -rf $(NAME)-$(VERSION)/vendor/bundle/
 
 	# bundler hacks for ruby2.5
