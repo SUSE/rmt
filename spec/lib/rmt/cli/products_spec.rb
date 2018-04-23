@@ -129,7 +129,7 @@ RSpec.describe RMT::CLI::Products do
         end
       end
 
-      context 'with recommended products' do
+      context 'with recommended extensions' do
         let(:product) { create :product, :with_not_mirrored_repositories, :with_recommended_extensions }
         let(:extensions) { Product.recommended_extensions(product).to_a }
         let(:products) { [product] + extensions }
@@ -196,6 +196,22 @@ RSpec.describe RMT::CLI::Products do
       it 'disabled the mandatory product repositories' do
         product.repositories.each do |repository|
           expect(repository.mirroring_enabled).to eq(false)
+        end
+      end
+
+      context 'with recommended extensions' do
+        let(:product) { create :product, :with_mirrored_repositories, :with_recommended_extensions }
+        let(:extensions) { Product.recommended_extensions(product).to_a }
+
+        it 'disabled the mandatory product repositories' do
+          product.repositories.each do |repository|
+            expect(repository.mirroring_enabled).to eq(false)
+          end
+          extensions.each do |extension|
+            extension.repositories.each do |repository|
+              expect(repository.mirroring_enabled).to eq(false)
+            end
+          end
         end
       end
     end
