@@ -1,0 +1,91 @@
+#!/usr/bin/env ruby
+
+# FIXME: argument parsing with getopt? To produce help and such.
+unless (ARGV[0])
+  warn "Usage: #{$PROGRAM_NAME} /path/to/smt-data-dir"
+  warn ''
+  warn 'Please specify a path to a directory with an unpacked SMT data tarball as the first argument.'
+  exit 1
+end
+
+data_dir = ARGV[0]
+rmt_path = ENV['RMT_PATH'] ? ENV['RMT_PATH'] : '/usr/share/rmt/' # for testing in dev-mode
+
+require_relative "#{rmt_path}/config/boot"
+$LOAD_PATH.unshift File.join(rmt_path, 'lib')
+
+require 'active_support'
+require 'active_record'
+require 'erb'
+require 'yaml'
+require 'rmt/config'
+require 'csv'
+
+relative_load_paths = %w[lib lib/rmt app/models app/services].map { |dir| File.join(rmt_path, dir) }
+ActiveSupport::Dependencies.autoload_paths += relative_load_paths
+
+db_config = RMT::Config.db_config
+ActiveRecord::Base.establish_connection(db_config)
+
+#####
+
+# FIXME: need to check that products table isn't empty
+# FIXME wrap everything into a gigantic transaction?
+
+CSV.open(File.join(data_dir, 'systems.csv'), 'r', { col_sep: "\t" }).each do |row|
+  login, password, hostname = row
+
+  # rubocop:disable Rails/TimeZone
+  System.create!(
+    login: login,
+    password: password,
+    hostname: hostname,
+    registered_at: Time.now # FIXME: preserve registration date?
+  )
+  # rubocop:enable Rails/TimeZone
+
+  puts "Imported system #{login}"
+end
+
+CSV.open(File.join(data_dir, 'activations.csv'), 'r', { col_sep: "\t" }).each do |row|
+  login, product_id = row
+  product = Product.find_by(id: product_id)
+  system = System.find_by(login: login)
+  if product
+    Activation.create!(system: system, service: product.service)
+    puts "Imported activation of #{product_id} for #{login}"
+  elsif !system
+    warn "System #{login} not found"
+  else
+    warn "Product #{product_id} not found"
+  end
+end
+
+# FIXME: hwinfo also needs to be imported
+
+CSV.open(File.join(data_dir, 'enabled_repos.csv'), 'r', { col_sep: "\t" }).each do |row|
+  repo_id, = row
+  repo = Repository.find_by(scc_id: repo_id)
+  if repo
+    repo.mirroring_enabled = true
+    repo.save!
+    puts "Enabled mirroring for repository #{repo_id}"
+  else
+    warn "Repository #{repo_id}, perhaps you no longer have a valid subscription for it"
+  end
+end
+
+CSV.open(File.join(data_dir, 'enabled_custom_repos.csv'), 'r', { col_sep: "\t" }).each do |row|
+  product_id, repo_name, repo_url = row
+  repo = Repository.find_by(external_url: repo_url)
+  repo ||= Repository.create!(external_url: repo_url, name: repo_name, local_path: Repository.make_local_path(repo_url))
+
+  product = Product.find_by(id: product_id)
+
+  if product
+    RepositoriesServicesAssociation.create!(service: product.service, repository: repo)
+    puts "Added association between #{repo.name} and product #{product_id}"
+  else
+    warn "Product #{product_id} not found"
+  end
+end
