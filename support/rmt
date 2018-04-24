@@ -17,10 +17,10 @@ RCFILE="/usr/lib/supportconfig/resources/scplugin.rc"
 validate_rpm_if_installed() {
   THISRPM=$1
   echo "#==[ Validating RPM ]=================================#"
-  if rpm -q $THISRPM >/dev/null 2>&1; then
+  if rpm -q "$THISRPM" >/dev/null 2>&1; then
     echo "# rpm -V $THISRPM"
 
-    if rpm -V $THISRPM; then
+    if rpm -V "$THISRPM"; then
       echo "Status: Passed"
     else
       echo "Status: WARNING"
@@ -56,11 +56,11 @@ fi
 
 plugin_tag "Packages"
 for THISRPM in $RPMLIST; do
-  validate_rpm_if_installed $THISRPM
+  validate_rpm_if_installed "$THISRPM"
 done
 
 plugin_tag "Configuration"
-pconf_files $CONF_FILES
+pconf_files "$CONF_FILES"
 
 # check RMT SSL configuration
 plugin_tag "SSL Configuration"
