@@ -38,7 +38,7 @@ rmt-server
 nginx
 mariadb
 "
-SERVICES="rmt rmt-sync rmt-mirror mariadb nginx"
+SERVICES="rmt rmt-server-sync rmt-server-mirror mariadb nginx"
 
 CONF_FILES="/etc/rmt.conf /etc/nginx/vhosts.d/rmt-server-http.conf /etc/nginx/vhosts.d/rmt-server-https.conf"
 
