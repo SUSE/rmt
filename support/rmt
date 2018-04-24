@@ -54,29 +54,29 @@ if ! rpm -q rmt-server &>/dev/null; then
   exit 111
 fi
 
-plugin_tag("Packages")
+plugin_tag "Packages"
 for THISRPM in $RPMLIST; do
   validate_rpm_if_installed $THISRPM
 done
 
-plugin_tag("Configuration")
+plugin_tag "Configuration"
 pconf_files $CONF_FILES
 
 # check RMT SSL configuration
-plugin_tag("SSL Configuration")
+plugin_tag "SSL Configuration"
 plugin_command "echo | openssl s_client -showcerts -servername localhost -connect localhost:443 2>/dev/null | openssl x509 -inform pem -noout -text"
 
-plugin_tag("Service Status")
+plugin_tag "Service Status"
 for i in $SERVICES; do
   plugin_command "systemctl status $i"
 done
 
-plugin_tag("Mirroring Status")
+plugin_tag "Mirroring Status"
 plugin_command "rmt-cli products list"
 plugin_command "rmt-cli repos list"
 plugin_command "rmt-cli repos custom list"
 
-plugin_tag("Service Logs")
+plugin_tag "Service Logs"
 for service in $SERVICES; do
   plugin_command "journalctl -u $service"
 done
