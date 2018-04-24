@@ -115,16 +115,44 @@ RSpec.describe RMT::CLI::Products do
 
   describe '#enable' do
     let(:product) { create :product, :with_not_mirrored_repositories }
+    let(:repo_count) { product.repositories.where(enabled: true).count }
 
     context 'by product ID' do
       let(:argv) { ['enable', product.id.to_s] }
-      let(:expected_output) { "#{product.repositories.where(enabled: true).count} repo(s) successfully enabled.\n" }
+      let(:expected_output) { "#{repo_count} repo(s) successfully enabled.\n" }
 
       before { expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr }
 
       it 'enables the mandatory product repositories' do
         product.repositories.each do |repository|
           expect(repository.mirroring_enabled).to eq(repository.enabled)
+        end
+      end
+
+      context 'with recommended extensions' do
+        let(:product) { create :product, :with_not_mirrored_repositories }
+        let(:extensions) do
+          [
+            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: true),
+            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: true),
+            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: true)
+          ]
+        end
+        let(:products) { [product] + extensions }
+        let(:repo_count) { products.inject(0) { |sum, product| sum + product.repositories.where(enabled: true).count } }
+        let(:expected_output) do
+          "The following required extensions for #{product.product_string} have been enabled: #{extensions.pluck(:name).join(', ')}.\n" \
+          "#{repo_count} repo(s) successfully enabled.\n"
+        end
+
+        it 'enables product and recommended products repositories' do
+          products.flat_map(&:repositories).each do |repository|
+            expect(repository.mirroring_enabled).to eq(repository.enabled)
+          end
+        end
+
+        it 'has more repositories than the base product' do
+          expect(repo_count).to be > product.repositories.where(enabled: true).count
         end
       end
     end
@@ -174,6 +202,27 @@ RSpec.describe RMT::CLI::Products do
       it 'disabled the mandatory product repositories' do
         product.repositories.each do |repository|
           expect(repository.mirroring_enabled).to eq(false)
+        end
+      end
+
+      context 'with recommended extensions' do
+        let(:product) { create :product, :with_mirrored_repositories }
+        let(:extensions) do
+          [
+            create(:product, :extension, :with_mirrored_repositories, base_products: [product], recommended: true),
+            create(:product, :extension, :with_mirrored_repositories, base_products: [product], recommended: true)
+          ]
+        end
+
+        it 'does not disable extension repositories' do
+          product.repositories.each do |repository|
+            expect(repository.mirroring_enabled).to eq(false)
+          end
+          extensions.each do |extension|
+            extension.repositories.each do |repository|
+              expect(repository.mirroring_enabled).to eq(true)
+            end
+          end
         end
       end
     end

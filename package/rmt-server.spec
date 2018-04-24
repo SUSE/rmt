@@ -27,7 +27,7 @@
 %define rmt_group   nginx
 
 Name:           rmt-server
-Version:        0.0.5
+Version:        0.0.6
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0+
