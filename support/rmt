@@ -32,7 +32,6 @@ validate_rpm_if_installed() {
   echo
 }
 
-section_header "Supportconfig Plugin for SUSE Manager, v${SVER}"
 RPMLIST="
 rmt-server
 nginx
@@ -48,8 +47,9 @@ LOG_FILES=""
 # how does supportconfig log/compress journalctl command output? Is it just stdout from this script?
 LOG_SERVICES="rmt nginx mariadb"
 
+section_header "Supportconfig Plugin for RMT, v${SVER}"
 if ! rpm -q rmt-server &>/dev/null; then
-  echo "ERROR: RMT rpm package not installed"
+  echo "ERROR: RMT rpm package ('rmt-server') not installed"
   echo
   exit 111
 fi
