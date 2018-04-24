@@ -41,10 +41,6 @@ SERVICES="rmt rmt-server-sync rmt-server-mirror mariadb nginx"
 
 CONF_FILES="/etc/rmt.conf /etc/nginx/vhosts.d/rmt-server-http.conf /etc/nginx/vhosts.d/rmt-server-https.conf"
 
-# since we are using journalctl logged services here, no files
-LOG_FILES=""
-
-# how does supportconfig log/compress journalctl command output? Is it just stdout from this script?
 LOG_SERVICES="rmt nginx mariadb"
 
 section_header "Supportconfig Plugin for RMT, v${SVER}"
@@ -62,7 +58,6 @@ done
 plugin_tag "Configuration"
 pconf_files "$CONF_FILES"
 
-# check RMT SSL configuration
 plugin_tag "SSL Configuration"
 plugin_command "echo | openssl s_client -showcerts -servername localhost -connect localhost:443 2>/dev/null | openssl x509 -inform pem -noout -text"
 
@@ -80,6 +75,3 @@ plugin_tag "Service Logs"
 for service in $SERVICES; do
   plugin_command "journalctl -u $service"
 done
-
-
-
