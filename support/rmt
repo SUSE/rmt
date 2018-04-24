@@ -41,8 +41,6 @@ SERVICES="rmt rmt-server-sync rmt-server-mirror mariadb nginx"
 
 CONF_FILES="/etc/rmt.conf /etc/nginx/vhosts.d/rmt-server-http.conf /etc/nginx/vhosts.d/rmt-server-https.conf"
 
-LOG_SERVICES="rmt nginx mariadb"
-
 section_header "Supportconfig Plugin for RMT, v${SVER}"
 if ! rpm -q rmt-server &>/dev/null; then
   echo "ERROR: RMT rpm package ('rmt-server') not installed"
