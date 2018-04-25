@@ -32,16 +32,13 @@ validate_rpm_if_installed() {
   echo
 }
 
-RPMLIST="
-rmt-server
-nginx
-mariadb
-"
-STATUS_UNITS="rmt.service rmt-server-sync.timer rmt-server-mirror.timer mariadb.service nginx.service"
+RPMLIST=(rmt-server nginx mariadb)
 
-LOG_UNITS="rmt.service rmt-server-sync.service rmt-server-mirror.service mariadb.service nginx.service"
+STATUS_UNITS=(rmt.service rmt-server-sync.timer rmt-server-mirror.timer mariadb.service nginx.service)
 
-CONF_FILES="/etc/rmt.conf /etc/nginx/vhosts.d/rmt-server-http.conf /etc/nginx/vhosts.d/rmt-server-https.conf"
+LOG_UNITS=(rmt.service rmt-server-sync.service rmt-server-mirror.service mariadb.service nginx.service)
+
+CONF_FILES=(/etc/rmt.conf /etc/nginx/vhosts.d/rmt-server-http.conf /etc/nginx/vhosts.d/rmt-server-https.conf)
 
 section_header "Supportconfig Plugin for RMT, v${SVER}"
 if ! rpm -q rmt-server &>/dev/null; then
@@ -51,8 +48,8 @@ if ! rpm -q rmt-server &>/dev/null; then
 fi
 
 plugin_tag "Packages"
-for THISRPM in $RPMLIST; do
-  validate_rpm_if_installed "$THISRPM"
+for pkg in "${RPMLIST[@]}"; do
+  validate_rpm_if_installed "$pkg"
 done
 
 plugin_tag "Configuration"
@@ -62,7 +59,7 @@ plugin_tag "SSL Configuration"
 plugin_command "echo | openssl s_client -showcerts -servername localhost -connect localhost:443 2>/dev/null | openssl x509 -inform pem -noout -text"
 
 plugin_tag "Service Status"
-for i in $STATUS_UNITS; do
+for i in "${STATUS_UNITS[@]}"; do
   plugin_command "systemctl status $i"
 done
 
@@ -72,6 +69,6 @@ plugin_command "rmt-cli repos list"
 plugin_command "rmt-cli repos custom list"
 
 plugin_tag "Service Logs"
-for service in $LOG_UNITS; do
+for service in "${LOG_UNITS[@]}"; do
   plugin_command "journalctl -u $service"
 done
