@@ -1,4 +1,17 @@
 -------------------------------------------------------------------
+Wed Apr 25 14:47:18 UTC 2018 - tmuntaner@suse.com
+
+- version 0.0.7
+- Fixed offline repository sync with usb (bsc#1089038)
+  See: https://github.com/SUSE/rmt/pull/147
+- Removed unique index for uuid in HwInfo table
+  See: https://github.com/SUSE/rmt/pull/142
+- "rmt-cli products enable ..." enables recommended extensions in SLE 15
+  See: https://github.com/SUSE/rmt/pull/141
+- Added RMT header in requests for Connect API
+  See: https://github.com/SUSE/rmt/pull/139
+
+-------------------------------------------------------------------
 Thu Apr 19 15:09:41 UTC 2018 - skotov@suse.com
 
 - version 0.0.6
