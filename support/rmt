@@ -55,7 +55,15 @@ plugin_tag "Configuration"
 pconf_files "$CONF_FILES"
 
 plugin_tag "SSL Configuration"
-plugin_command "echo | openssl s_client -showcerts -servername localhost -connect localhost:443 2>/dev/null | openssl x509 -inform pem -noout -text"
+plugin_command "ls -l /usr/share/rmt/ssl/"
+
+if systemctl --quiet is-active nginx; then
+  plugin_command "echo | openssl s_client -showcerts -servername localhost -connect localhost:443 2>/dev/null | openssl x509 -inform pem -noout -text"
+else
+  for cert in /usr/share/rmt/ssl/rmt-ca.crt /usr/share/rmt/ssl/rmt-server.crt; do
+    plugin_command "openssl x509 -inform pem -noout -text -in $cert"
+  done
+fi
 
 plugin_tag "Service Status"
 for i in "${STATUS_UNITS[@]}"; do
