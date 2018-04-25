@@ -70,5 +70,5 @@ plugin_command "rmt-cli repos custom list"
 
 plugin_tag "Service Logs"
 for service in "${LOG_UNITS[@]}"; do
-  plugin_command "journalctl -u $service"
+  plugin_command "journalctl -n1000 -u $service"
 done
