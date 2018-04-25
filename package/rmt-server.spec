@@ -27,10 +27,10 @@
 %define rmt_group   nginx
 
 Name:           rmt-server
-Version:        0.0.6
+Version:        0.0.7
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
-License:        GPL-2.0+
+License:        GPL-2.0-or-later
 Group:          Productivity/Networking/Web/Proxy
 Url:            https://software.opensuse.org/package/rmt
 # Does not build for i586 and s390 and is not supported on those architectures
