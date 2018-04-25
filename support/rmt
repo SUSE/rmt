@@ -42,8 +42,7 @@ CONF_FILES=(/etc/rmt.conf /etc/nginx/vhosts.d/rmt-server-http.conf /etc/nginx/vh
 
 section_header "Supportconfig Plugin for RMT, v${SVER}"
 if ! rpm -q rmt-server &>/dev/null; then
-  echo "ERROR: RMT rpm package ('rmt-server') not installed"
-  echo
+  echo -e "ERROR: RMT rpm package ('rmt-server') not installed\n"
   exit 111
 fi
 
