@@ -279,7 +279,7 @@ describe RMT::SCC do
         allow(Settings).to receive(:scc).and_return(OpenStruct.new(username: 'me', password: 'groot'))
       end
 
-      %w[orders products products_scoped repositories subscriptions].each do |data|
+      %w[orders products_unscoped products_scoped repositories subscriptions].each do |data|
         it "writes #{data} file to path" do
           FakeFS.with_fresh do
             FileUtils.mkdir_p path
