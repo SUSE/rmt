@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Thu Apr 26 14:58:45 UTC 2018 - tmuntaner@suse.com
+
+- Added supportconfig plugin
+  See: https://github.com/SUSE/rmt/pull/146
+- Rename organizations_products.json to organizations_products_unscoped.json (fixes bsc#1088687)
+  See: https://github.com/SUSE/rmt/pull/151
+- Improved log formatting in journald
+  See: https://github.com/SUSE/rmt/pull/145
+
+-------------------------------------------------------------------
 Wed Apr 25 14:47:18 UTC 2018 - tmuntaner@suse.com
 
 - version 0.0.7
