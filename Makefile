@@ -50,6 +50,9 @@ dist: clean man
 	cd $(NAME)-$(VERSION) && bundle package --all
 	rm -rf $(NAME)-$(VERSION)/vendor/bundle/
 
+	@mkdir $(NAME)-$(VERSION)/support
+	@cp support/rmt $(NAME)-$(VERSION)/support/rmt
+
 	# bundler hacks for ruby2.5
 	sed -i '/source .*rubygems\.org/d' $(NAME)-$(VERSION)/Gemfile
 	sed -i '/remote: .*rubygems\.org/d' $(NAME)-$(VERSION)/Gemfile.lock
