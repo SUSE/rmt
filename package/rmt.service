@@ -9,7 +9,7 @@ After=rmt-migration.service
 Type=simple
 User=_rmt
 PrivateTmp=yes
-Environment=RAILS_LOG_TO_STDOUT=1
+Environment=LOG_TO_JOURNALD=1
 WorkingDirectory=/usr/share/rmt
 ExecStart=/usr/share/rmt/bin/rails server -e production
 Restart=always

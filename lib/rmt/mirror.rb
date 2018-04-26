@@ -8,11 +8,11 @@ class RMT::Mirror
   class RMT::Mirror::Exception < RuntimeError
   end
 
-  def initialize(mirroring_base_dir:, repository_url:, local_path:, mirror_src: false, auth_token: nil, logger: nil, to_offline: false)
+  def initialize(mirroring_base_dir:, repository_url:, local_path:, logger:, mirror_src: false, auth_token: nil, to_offline: false)
     @repository_dir = File.join(mirroring_base_dir, local_path)
     @repository_url = repository_url
     @mirror_src = mirror_src
-    @logger = logger || Logger.new('/dev/null')
+    @logger = logger
     @primary_files = []
     @deltainfo_files = []
     @auth_token = auth_token
@@ -49,7 +49,7 @@ class RMT::Mirror
       auth_token: auth_token,
       local_path: Repository.make_local_path(repository_url),
       mirror_src: Settings.mirroring.mirror_src,
-      logger: Logger.new(STDOUT),
+      logger: RMT::Logger.new(STDOUT),
       to_offline: to_offline
     )
   end

@@ -15,6 +15,7 @@ RSpec.describe RMT::Mirror do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
           repository_url: 'http://localhost/dummy_repo/',
+          logger: RMT::Logger.new('/dev/null'),
           local_path: '/dummy_repo',
           mirror_src: false
         )
@@ -40,6 +41,7 @@ RSpec.describe RMT::Mirror do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
           repository_url: 'http://localhost/dummy_repo/',
+          logger: RMT::Logger.new('/dev/null'),
           local_path: '/dummy_repo',
           auth_token: 'repo_auth_token',
           mirror_src: false
@@ -66,6 +68,7 @@ RSpec.describe RMT::Mirror do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
           repository_url: 'http://localhost/dummy_product/product/',
+          logger: RMT::Logger.new('/dev/null'),
           local_path: '/dummy_product/product/',
           auth_token: 'repo_auth_token',
           mirror_src: false
@@ -105,6 +108,7 @@ RSpec.describe RMT::Mirror do
         described_class.new(
           mirroring_base_dir: mirroring_dir,
           repository_url: 'http://localhost/dummy_product/product/',
+          logger: RMT::Logger.new('/dev/null'),
           local_path: '/dummy_product/product/',
           auth_token: 'repo_auth_token',
           mirror_src: false
@@ -138,6 +142,7 @@ RSpec.describe RMT::Mirror do
           described_class.new(
             mirroring_base_dir: @tmp_dir,
             repository_url: 'http://localhost/dummy_repo/',
+            logger: RMT::Logger.new('/dev/null'),
             local_path: '/dummy_product/product/',
             mirror_src: false
           )
@@ -193,6 +198,7 @@ RSpec.describe RMT::Mirror do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
           repository_url: 'http://localhost/dummy_product/product/',
+          logger: RMT::Logger.new('/dev/null'),
           local_path: '/dummy_product/product/',
           auth_token: 'repo_auth_token',
           mirror_src: false
@@ -202,6 +208,7 @@ RSpec.describe RMT::Mirror do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
           repository_url: 'http://localhost/dummy_deduped_product/product/',
+          logger: RMT::Logger.new('/dev/null'),
           local_path: '/dummy_deduped_product/product/',
           auth_token: 'repo_auth_token',
           mirror_src: false
@@ -326,6 +333,7 @@ RSpec.describe RMT::Mirror do
         described_class.new(
           mirroring_base_dir: mirroring_dir,
           repository_url: 'http://localhost/dummy_product/product/',
+          logger: RMT::Logger.new('/dev/null'),
           local_path: '/dummy_product/product/',
           auth_token: 'repo_auth_token',
           mirror_src: false
