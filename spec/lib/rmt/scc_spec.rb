@@ -279,7 +279,7 @@ describe RMT::SCC do
         allow(Settings).to receive(:scc).and_return(OpenStruct.new(username: 'me', password: 'groot'))
       end
 
-      %w[orders products products_scoped repositories subscriptions].each do |data|
+      %w[orders products_unscoped products repositories subscriptions].each do |data|
         it "writes #{data} file to path" do
           FakeFS.with_fresh do
             FileUtils.mkdir_p path
@@ -309,7 +309,7 @@ describe RMT::SCC do
       before do
         FakeFS.with_fresh do
           FileUtils.mkdir_p(path)
-          File.write(File.join(path, 'organizations_products_scoped.json'), products.to_json)
+          File.write(File.join(path, 'organizations_products.json'), products.to_json)
           File.write(File.join(path, 'organizations_subscriptions.json'), subscriptions.to_json)
           File.write(File.join(path, 'organizations_repositories.json'), all_repositories.to_json)
 
