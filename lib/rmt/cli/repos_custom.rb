@@ -67,7 +67,9 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
     puts array_to_table(products, {
       id: 'Product ID',
-      name: 'Product Name'
+      name: 'Product Name',
+      version: 'Product Version',
+      arch: 'Product Architecture'
     })
   end
 
