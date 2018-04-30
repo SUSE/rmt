@@ -65,9 +65,22 @@ describe RMT::CLI::ReposCustom do
 
       context 'with custom repository' do
         let(:custom_repository) { create :repository, :custom, name: 'custom foo' }
+        let(:expected_output) do
+          Terminal::Table.new(
+            headings: ['ID', 'Name', 'URL', 'Mandatory?', 'Mirror?', 'Last Mirrored'],
+            rows: [[
+              custom_repository.id,
+              custom_repository.name,
+              custom_repository.external_url,
+              custom_repository.enabled,
+              custom_repository.mirroring_enabled,
+              custom_repository.last_mirrored_at
+            ]]
+          )
+        end
 
         it 'displays the custom repo' do
-          expect { described_class.start(argv) }.to output(/.*#{custom_repository.name}.*/).to_stdout
+          expect { described_class.start(argv) }.to output(/.*#{expected_output}.*/).to_stdout
         end
       end
     end
