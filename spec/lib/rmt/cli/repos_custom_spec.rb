@@ -76,11 +76,11 @@ describe RMT::CLI::ReposCustom do
               custom_repository.mirroring_enabled,
               custom_repository.last_mirrored_at
             ]]
-          )
+          ).to_s + "\n"
         end
 
         it 'displays the custom repo' do
-          expect { described_class.start(argv) }.to output(/.*#{expected_output}.*/).to_stdout
+          expect { described_class.start(argv) }.to output(expected_output).to_stdout
         end
       end
     end
@@ -345,6 +345,17 @@ describe RMT::CLI::ReposCustom do
     context 'custom repository with products' do
       let(:repository) { create :repository, :custom }
       let(:argv) { ['products', repository.id] }
+      let(:expected_output) do
+        Terminal::Table.new(
+          headings: ['Product ID', 'Product Name', 'Product Version', 'Product Architecture'],
+          rows: [[
+            product.id,
+            product.name,
+            product.version,
+            product.arch
+          ]]
+        ).to_s + "\n"
+      end
 
       before do
         repository_service.attach_product!(product, repository)
@@ -353,7 +364,7 @@ describe RMT::CLI::ReposCustom do
       it('has an attached product') { expect(repository.products.count).to eq(1) }
 
       it 'displays the product' do
-        expect { described_class.start(argv) }.to output(/.*#{product.name}.*/).to_stdout
+        expect { described_class.start(argv) }.to output(expected_output).to_stdout
       end
     end
 
