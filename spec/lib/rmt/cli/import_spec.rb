@@ -92,6 +92,27 @@ describe RMT::CLI::Import do
       end
     end
 
+
+    context 'with existing lockfile' do
+      let(:repo_settings) do
+        [
+          { url: repo1.external_url, auth_token: repo1.auth_token.to_s },
+          { url: repo2.external_url, auth_token: repo2.auth_token.to_s }
+        ]
+      end
+
+      before { allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::ExecutionLockedError) }
+
+      it 'handles lockfile exception' do
+        FakeFS.with_fresh do
+          FileUtils.mkdir_p path
+          File.write("#{path}/repos.json", repo_settings.to_json)
+
+          expect { command }.to output(/Process is locked/).to_stdout.and output('').to_stderr
+        end
+      end
+    end
+
     context 'with exceptions during mirroring' do
       let(:mirror_error_double) { instance_double 'RMT::Mirror' }
       let(:repo_settings) do

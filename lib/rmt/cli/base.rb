@@ -69,6 +69,8 @@ class RMT::CLI::Base < Thor
         "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization",
         RMT::CLI::Error::ERROR_SCC
       )
+    rescue RMT::ExecutionLockedError
+      puts 'Process is locked'
     end
 
     # These methods are needed to properly format the hint outputs for `rmt-cli repos custom`. This is a workaround
