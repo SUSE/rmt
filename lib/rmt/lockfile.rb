@@ -6,6 +6,8 @@ class RMT::Lockfile
       if File.exist?(LOCKFILE_LOCATION)
         raise RMT::ExecutionLockedError
       else
+        dirname = File.dirname(LOCKFILE_LOCATION)
+        FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
         File.open(LOCKFILE_LOCATION, 'w') { |f| f.write(Process.pid) }
         true
       end
