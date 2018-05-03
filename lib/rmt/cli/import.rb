@@ -2,13 +2,21 @@ class RMT::CLI::Import < RMT::CLI::Base
 
   desc 'data PATH', 'Read SCC data from given path'
   def data(path)
+    RMT::Lockfile.create_file
     needs_path(path) do
       RMT::SCC.new(options).import(path)
     end
+    RMT::Lockfile.remove_file
+  rescue RMT::Lockfile::ExecutionLockedError
+    puts 'Process is locked'
+  rescue StandardError
+    RMT::Lockfile.remove_file
+    raise
   end
 
   desc 'repos PATH', 'Mirror repos from given path'
   def repos(path)
+    RMT::Lockfile.create_file
     needs_path(path) do
       repos_file = File.join(path, 'repos.json')
       unless File.exist?(repos_file)
@@ -28,6 +36,12 @@ class RMT::CLI::Import < RMT::CLI::Base
         mirror!(repo, repository_url: repo_json['url'], to_offline: true)
       end
     end
+    RMT::Lockfile.remove_file
+  rescue RMT::Lockfile::ExecutionLockedError
+    puts 'Process is locked'
+  rescue StandardError
+    RMT::Lockfile.remove_file
+    raise
   end
 
 end

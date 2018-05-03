@@ -7,9 +7,9 @@ RSpec.describe RMT::Lockfile do
     subject(:create_file) { described_class.create_file }
 
     context 'without file' do
-      it 'returns true' do
+      it 'does not raise exception' do
         FakeFS.with_fresh do
-          expect(create_file).to be true
+          expect { create_file }.not_to raise_error
         end
       end
 
@@ -25,7 +25,7 @@ RSpec.describe RMT::Lockfile do
       it 'raises exception' do
         FakeFS.with_fresh do
           described_class.create_file
-          expect { create_file }.to raise_error(RMT::ExecutionLockedError)
+          expect { create_file }.to raise_error(RMT::Lockfile::ExecutionLockedError)
         end
       end
     end
@@ -37,16 +37,16 @@ RSpec.describe RMT::Lockfile do
     context 'without file' do
       it 'returns true' do
         FakeFS.with_fresh do
-          expect(remove_file).to be true
+          expect { remove_file }.not_to raise_error
         end
       end
     end
 
     context 'with existing file' do
-      it 'returns true' do
+      it 'does not raise exception' do
         FakeFS.with_fresh do
           described_class.create_file
-          expect(remove_file).to be true
+          expect { remove_file }.not_to raise_error
         end
       end
 

@@ -10,10 +10,6 @@ RSpec.describe RMT::Mirror do
       FileUtils.remove_entry(@tmp_dir)
     end
 
-    before do
-      allow(RMT::Lockfile).to receive(:create_file).and_return(true)
-    end
-
     context 'without auth_token', vcr: { cassette_name: 'mirroring' } do
       let(:rmt_mirror) do
         described_class.new(
@@ -138,13 +134,6 @@ RSpec.describe RMT::Mirror do
         before { allow_any_instance_of(RMT::Downloader).to receive(:download).and_raise(RMT::Downloader::Exception) }
         it 'handles RMT::Downloader::Exception' do
           expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
-        end
-      end
-
-      context 'with existing lockfile' do
-        before { allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::ExecutionLockedError) }
-        it 'raises exception' do
-          expect { rmt_mirror.mirror }.to raise_error(RMT::ExecutionLockedError)
         end
       end
 
