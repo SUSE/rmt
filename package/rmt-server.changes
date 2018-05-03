@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu May  3 08:50:43 UTC 2018 - tmuntaner@suse.com
+
+- Removed ability to change user/group through configuration (GH-144)
+  See: https://github.com/SUSE/rmt/pull/154
+
+-------------------------------------------------------------------
 Thu Apr 26 14:58:45 UTC 2018 - tmuntaner@suse.com
 
 - Added supportconfig plugin
