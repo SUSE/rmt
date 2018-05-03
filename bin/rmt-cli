@@ -14,12 +14,8 @@ require 'rmt/config'
 
 # don't run as root
 if Process.euid == 0
-
-  group = Settings&.[](:cli)&.[](:group) || RMT::DEFAULT_GROUP
-  user = Settings&.[](:cli)&.[](:user) || RMT::DEFAULT_USER
-
-  Process::Sys.setegid(Etc.getgrnam(group).gid)
-  Process::Sys.seteuid(Etc.getpwnam(user).uid)
+  Process::Sys.seteuid(Etc.getpwnam(RMT::DEFAULT_USER).uid)
+  Process::Sys.setegid(Etc.getgrnam(RMT::DEFAULT_GROUP).gid)
 end
 
 relative_load_paths = %w[lib lib/rmt app/models app/services].map { |dir| File.join(rmt_path, dir) }
