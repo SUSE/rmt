@@ -23,6 +23,10 @@ AllCops:
     - lib/locale/*
     - package/*
 
+Naming/FileName:
+  Exclude:
+    - Dangerfile
+
 Rails/Output:
   Exclude:
     - lib/rmt/cli/**/*
