@@ -1,3 +1,5 @@
+require 'rmt/lockfile'
+
 class RMT::CLI::Base < Thor
 
   class << self
@@ -82,6 +84,17 @@ class RMT::CLI::Base < Thor
   end
 
   private
+
+  def locked_method(&_block)
+    RMT::Lockfile.create_file
+    yield
+    RMT::Lockfile.remove_file
+  rescue RMT::Lockfile::ExecutionLockedError
+    puts 'Process is locked'
+  rescue StandardError
+    RMT::Lockfile.remove_file
+    raise
+  end
 
   def needs_path(path)
     File.directory?(path) ? yield : warn("#{path} is not a directory.")

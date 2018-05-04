@@ -1,6 +1,10 @@
 -------------------------------------------------------------------
-Thu May  3 08:50:43 UTC 2018 - tmuntaner@suse.com
+Thu May  3 15:27:58 UTC 2018 - skotov@suse.com
 
+- Added lockfile feature for mirror, sync & import commands
+
+-------------------------------------------------------------------
+Thu May  3 08:50:43 UTC 2018 - tmuntaner@suse.com
 - Removed ability to change user/group through configuration (GH-144)
   See: https://github.com/SUSE/rmt/pull/154
 
@@ -38,7 +42,7 @@ Thu Apr 19 15:09:41 UTC 2018 - skotov@suse.com
 Mon Apr  9 14:40:39 UTC 2018 - tmuntaner@suse.com
 
 - Only enable free modules in migrations for SLE 15
-  https://github.com/SUSE/rmt/pull/132 
+  https://github.com/SUSE/rmt/pull/132
 
 -------------------------------------------------------------------
 Mon Apr  9 09:58:02 UTC 2018 - ikapelyukhin@suse.com
