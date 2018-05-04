@@ -7,14 +7,9 @@ class RMT::CLI::Main < RMT::CLI::Base
 
   desc 'sync', 'Sync database with SUSE Customer Center'
   def sync
-    RMT::Lockfile.create_file
-    RMT::SCC.new(options).sync
-    RMT::Lockfile.remove_file
-  rescue RMT::Lockfile::ExecutionLockedError
-    puts 'Process is locked'
-  rescue StandardError
-    RMT::Lockfile.remove_file
-    raise
+    locked_method do
+      RMT::SCC.new(options).sync
+    end
   end
 
   desc 'products', 'List and modify products'
@@ -25,19 +20,14 @@ class RMT::CLI::Main < RMT::CLI::Base
 
   desc 'mirror', 'Mirror repositories'
   def mirror
-    RMT::Lockfile.create_file
-    repos = Repository.where(mirroring_enabled: true)
-    if repos.empty?
-      warn 'There are no repositories marked for mirroring.'
-      return
+    locked_method do
+      repos = Repository.where(mirroring_enabled: true)
+      if repos.empty?
+        warn 'There are no repositories marked for mirroring.'
+        return
+      end
+      repos.each { |repo| mirror!(repo) }
     end
-    repos.each { |repo| mirror!(repo) }
-    RMT::Lockfile.remove_file
-  rescue RMT::Lockfile::ExecutionLockedError
-    puts 'Process is locked'
-  rescue StandardError
-    RMT::Lockfile.remove_file
-    raise
   end
 
   desc 'import', 'Import commands for Offline Sync'
