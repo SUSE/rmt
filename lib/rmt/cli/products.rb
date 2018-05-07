@@ -13,26 +13,26 @@ class RMT::CLI::Products < RMT::CLI::Base
   option :csv, type: :boolean, desc: 'Output data in CSV format'
 
   def list
-    attributes = %i[id name version arch product_string release_stage mirror? last_mirrored_at]
-    headings = ['ID', 'Name', 'Version', 'Architecture', 'Product string', 'Release stage', 'Mirror?', 'Last mirrored']
-
     products = options.all ? Product.all : Product.mirrored
-    rows = products.with_release_stage(options[:release_stage]).map do |product|
-      attributes.map { |a| product.public_send(a) }
-    end
+    products = products.with_release_stage(options[:release_stage])
 
-    if rows.empty?
+    if products.empty?
       if options.all
         warn 'Run "rmt-cli sync" to synchronize with your SUSE Customer Center data first.'
       else
         warn 'No matching products found in the database.'
       end
     else
-      if options.csv
-        puts array_to_csv_table(rows)
-      else
-        puts Terminal::Table.new(headings: headings, rows: rows)
-      end
+      puts format_array(products, {
+        id: 'ID',
+        name: 'Name',
+        version: 'Version',
+        arch: 'Architecture',
+        product_string: 'Product string',
+        release_stage: 'Release stage',
+        'mirror?' => 'Mirror?',
+        last_mirrored_at: 'Last mirrored'
+      })
     end
     puts 'Only enabled products are shown by default. Use the `--all` option to see all products.' unless options.all or options.csv
   end

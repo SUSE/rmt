@@ -36,14 +36,8 @@ class RMT::CLI::Repos < RMT::CLI::Base
       else
         warn 'No repositories enabled.'
       end
-    elsif options.csv
-      attributes = %i[id name description enabled mirroring_enabled last_mirrored_at]
-      rows = repositories.map do |repo|
-        attributes.map { |a| repo.public_send(a) }
-      end
-      puts array_to_csv_table(rows)
     else
-      puts array_to_table(repositories, {
+      puts format_array(repositories, {
         scc_id: 'SCC ID',
         name: 'Name',
         description: 'Description',

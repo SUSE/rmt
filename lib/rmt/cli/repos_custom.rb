@@ -23,12 +23,14 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
   end
 
   desc 'list', 'List all custom repositories'
+  option :csv, type: :boolean, desc: 'Output data in CSV format'
+
   def list
     repositories = Repository.only_custom
 
     raise RMT::CLI::Error.new('No custom repositories found.') if repositories.empty?
 
-    puts array_to_table(repositories, {
+    puts format_array(repositories, {
       id: 'ID',
       name: 'Name',
       external_url: 'URL',
@@ -59,13 +61,15 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
   map rm: :remove
 
   desc 'products ID', 'Shows products attached to a custom repository'
+  option :csv, type: :boolean, desc: 'Output data in CSV format'
+
   def products(id)
     repository = find_repository!(id)
     products = repository.products
 
     raise RMT::CLI::Error.new('No products attached to repository.') if products.empty?
 
-    puts array_to_table(products, {
+    puts format_array(products, {
       id: 'Product ID',
       name: 'Product Name',
       version: 'Product Version',
