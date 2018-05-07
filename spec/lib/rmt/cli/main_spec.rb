@@ -2,14 +2,8 @@ require 'rails_helper'
 
 # rubocop:disable RSpec/NestedGroups
 
-RSpec.describe RMT::CLI::Main do
+RSpec.describe RMT::CLI::Main, :with_fakefs do
   subject(:command) { described_class.start(argv) }
-
-  around do |example|
-    FakeFS.with_fresh do
-      example.run
-    end
-  end
 
   let(:argv) { [] }
 
@@ -17,17 +11,12 @@ RSpec.describe RMT::CLI::Main do
     describe 'sync' do
       let(:argv) { ['sync'] }
 
+      include_examples 'handles lockfile exception'
+
       context 'default' do
         it 'triggers sync' do
           expect_any_instance_of(RMT::SCC).to receive(:sync)
           command
-        end
-      end
-
-      context 'with execution locked exception thrown' do
-        it do
-          allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::Lockfile::ExecutionLockedError)
-          expect { command }.to output("Process is locked\n").to_stdout
         end
       end
     end
@@ -35,14 +24,14 @@ RSpec.describe RMT::CLI::Main do
     describe 'mirror' do
       let(:argv) { ['mirror'] }
 
+      include_examples 'handles lockfile exception'
+
       context 'without repositories marked for mirroring' do
         before { create :repository, :with_products, mirroring_enabled: false }
 
         it 'outputs a warning' do
-          FakeFS.with_fresh do
-            expect_any_instance_of(RMT::Mirror).not_to receive(:mirror)
-            expect { command }.to output("There are no repositories marked for mirroring.\n").to_stderr.and output('').to_stdout
-          end
+          expect_any_instance_of(RMT::Mirror).not_to receive(:mirror)
+          expect { command }.to output("There are no repositories marked for mirroring.\n").to_stderr.and output('').to_stdout
         end
       end
 
@@ -67,29 +56,6 @@ RSpec.describe RMT::CLI::Main do
 
           it 'outputs exception message' do
             expect { command }.to output("black mirror\n").to_stderr.and output(/Mirroring repository #{repository.name}/).to_stdout
-          end
-        end
-      end
-
-      context 'with execution locked exception thrown' do
-        let!(:repository) { create :repository, :with_products, mirroring_enabled: true } # rubocop:disable RSpec/LetSetup
-
-        before do
-          allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::Lockfile::ExecutionLockedError)
-        end
-
-        it do
-          expect { command }.to output(/Process is locked\n/).to_stdout
-        end
-      end
-
-      context 'with unexpected error being raised' do
-        it 'removes lockfile and re-raises error' do
-          FakeFS.with_fresh do
-            allow(Repository).to receive(:where).and_raise(RuntimeError)
-            expect(RMT::Lockfile).to receive(:remove_file)
-
-            expect { command }.to raise_error(RuntimeError)
           end
         end
       end

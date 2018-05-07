@@ -1,20 +1,23 @@
 class RMT::Lockfile
-  LOCKFILE_LOCATION = File.expand_path('../../tmp/rmt.lock', __dir__).freeze
+  LOCKFILE_LOCATION = '/tmp/rmt.lock'.freeze
   ExecutionLockedError = Class.new(StandardError)
 
   class << self
-    def create_file
-      if File.exist?(LOCKFILE_LOCATION)
-        raise RMT::Lockfile::ExecutionLockedError
-      else
-        dirname = File.dirname(LOCKFILE_LOCATION)
-        FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
-        File.open(LOCKFILE_LOCATION, 'w') { |f| f.write(Process.pid) }
-      end
-    end
+    def lock
+      # https://ruby-doc.org/core-2.5.0/File.html#method-i-flock
+      File.open(RMT::Lockfile::LOCKFILE_LOCATION, File::RDWR | File::CREAT) do |f|
+        if f.flock(File::LOCK_EX | File::LOCK_NB)
+          f.write(Process.pid.to_s)
+          f.fsync
+        else
+          pid = File.read(RMT::Lockfile::LOCKFILE_LOCATION)
+          raise ExecutionLockedError.new(
+            "Process is locked by the application with pid #{pid}. Close this application or wait for it to finish before trying again\n"
+          )
+        end
 
-    def remove_file
-      File.delete(LOCKFILE_LOCATION) if File.exist?(LOCKFILE_LOCATION)
+        yield
+      end
     end
   end
 end

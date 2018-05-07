@@ -2,7 +2,7 @@ class RMT::CLI::Import < RMT::CLI::Base
 
   desc 'data PATH', 'Read SCC data from given path'
   def data(path)
-    locked_method do
+    RMT::Lockfile.lock do
       needs_path(path) do
         RMT::SCC.new(options).import(path)
       end
@@ -11,7 +11,7 @@ class RMT::CLI::Import < RMT::CLI::Base
 
   desc 'repos PATH', 'Mirror repos from given path'
   def repos(path)
-    locked_method do
+    RMT::Lockfile.lock do
       needs_path(path) do
         repos_file = File.join(path, 'repos.json')
         unless File.exist?(repos_file)
