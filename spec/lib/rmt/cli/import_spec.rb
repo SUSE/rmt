@@ -24,7 +24,10 @@ describe RMT::CLI::Import do
         FakeFS.with_fresh do
           FileUtils.mkdir_p path
 
-          expect { command }.to output(/Process is locked/).to_stdout.and output('').to_stderr
+          expect(described_class).to receive(:exit)
+          expect { command }.to output(
+            "Process is locked. Please check lockfile at #{RMT::Lockfile::LOCKFILE_LOCATION}\n"
+          ).to_stderr
         end
       end
     end
@@ -124,7 +127,10 @@ describe RMT::CLI::Import do
           FileUtils.mkdir_p path
           File.write("#{path}/repos.json", repo_settings.to_json)
 
-          expect { command }.to output(/Process is locked/).to_stdout.and output('').to_stderr
+          expect(described_class).to receive(:exit)
+          expect { command }.to output(
+            "Process is locked. Please check lockfile at #{RMT::Lockfile::LOCKFILE_LOCATION}\n"
+          ).to_stderr
         end
       end
     end

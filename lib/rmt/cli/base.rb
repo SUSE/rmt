@@ -67,6 +67,11 @@ class RMT::CLI::Base < Thor
         "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization",
         RMT::CLI::Error::ERROR_SCC
       )
+    rescue RMT::Lockfile::ExecutionLockedError
+      raise RMT::CLI::Error.new(
+        "Process is locked. Please check lockfile at #{RMT::Lockfile::LOCKFILE_LOCATION}\n",
+        RMT::CLI::Error::ERROR_OTHER
+      )
     end
 
     # These methods are needed to properly format the hint outputs for `rmt-cli repos custom`. This is a workaround
@@ -87,13 +92,11 @@ class RMT::CLI::Base < Thor
 
   def locked_method(&_block)
     RMT::Lockfile.create_file
-    yield
-    RMT::Lockfile.remove_file
-  rescue RMT::Lockfile::ExecutionLockedError
-    puts 'Process is locked'
-  rescue StandardError
-    RMT::Lockfile.remove_file
-    raise
+    begin
+      yield
+    ensure
+      RMT::Lockfile.remove_file
+    end
   end
 
   def needs_path(path)

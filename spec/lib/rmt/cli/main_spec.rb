@@ -27,7 +27,10 @@ RSpec.describe RMT::CLI::Main do
       context 'with execution locked exception thrown' do
         it do
           allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::Lockfile::ExecutionLockedError)
-          expect { command }.to output("Process is locked\n").to_stdout
+          expect(described_class).to receive(:exit)
+          expect { command }.to output(
+            "Process is locked. Please check lockfile at #{RMT::Lockfile::LOCKFILE_LOCATION}\n"
+          ).to_stderr
         end
       end
     end
@@ -79,7 +82,10 @@ RSpec.describe RMT::CLI::Main do
         end
 
         it do
-          expect { command }.to output(/Process is locked\n/).to_stdout
+          expect(described_class).to receive(:exit)
+          expect { command }.to output(
+            "Process is locked. Please check lockfile at #{RMT::Lockfile::LOCKFILE_LOCATION}\n"
+          ).to_stderr
         end
       end
 
