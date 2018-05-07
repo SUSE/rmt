@@ -1,10 +1,17 @@
+require 'csv'
+require 'terminal-table'
+
 require 'rmt/cli/repos'
 
 class RMT::CLI::Products < RMT::CLI::Base
 
+  include ::RMT::CLI::ArrayPrintable
+
   desc 'list', 'List products which are marked to be mirrored.'
   option :all, aliases: '-a', type: :boolean, desc: 'List all products, including ones which are not marked to be mirrored'
   option :release_stage, aliases: '-r', type: :string, desc: 'beta, released'
+  option :csv, type: :boolean, desc: 'Output data in CSV format'
+
   def list
     attributes = %i[id name version arch product_string release_stage mirror? last_mirrored_at]
     headings = ['ID', 'Name', 'Version', 'Architecture', 'Product string', 'Release stage', 'Mirror?', 'Last mirrored']
@@ -21,9 +28,13 @@ class RMT::CLI::Products < RMT::CLI::Base
         warn 'No matching products found in the database.'
       end
     else
-      puts Terminal::Table.new(headings: headings, rows: rows)
+      if options.csv
+        puts array_to_csv_table(rows)
+      else
+        puts Terminal::Table.new(headings: headings, rows: rows)
+      end
     end
-    puts 'Only enabled products are shown by default. Use the `--all` option to see all products.' unless options.all
+    puts 'Only enabled products are shown by default. Use the `--all` option to see all products.' unless options.all or options.csv
   end
   map ls: :list
 

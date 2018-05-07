@@ -7,6 +7,8 @@ class RMT::CLI::Repos < RMT::CLI::Base
 
   desc 'list', 'List repositories which are marked to be mirrored'
   option :all, aliases: '-a', type: :boolean, desc: 'List all repositories, including ones which are not marked to be mirrored'
+  option :csv, type: :boolean, desc: 'Output data in CSV format'
+
   def list
     scope = options[:all] ? :all : :enabled
     list_repositories(scope: scope)
@@ -34,6 +36,12 @@ class RMT::CLI::Repos < RMT::CLI::Base
       else
         warn 'No repositories enabled.'
       end
+    elsif options.csv
+      attributes = %i[id name description enabled mirroring_enabled last_mirrored_at]
+      rows = repositories.map do |repo|
+        attributes.map { |a| repo.public_send(a) }
+      end
+      puts array_to_csv_table(rows)
     else
       puts array_to_table(repositories, {
         scc_id: 'SCC ID',
