@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'csv'
 
 # rubocop:disable RSpec/NestedGroups
 
@@ -65,6 +66,29 @@ RSpec.describe RMT::CLI::Products do
         end
 
         it 'lists only enabled products' do
+          expect { described_class.start(argv) }.to output(/.*#{expected_output}.*/).to_stdout.and output('').to_stderr
+        end
+      end
+
+      context 'with --csv option' do
+        let(:argv) { ['list', '--csv'] }
+        let(:expected_rows) do
+          [[
+            enabled_product.id,
+            enabled_product.name,
+            enabled_product.version,
+            enabled_product.arch,
+            enabled_product.product_string,
+            enabled_product.release_stage,
+            enabled_product.mirror?,
+            enabled_product.last_mirrored_at
+          ]]
+        end
+        let(:expected_output) do
+          CSV.generate { |csv| expected_rows.each { |row| csv << row } }
+        end
+
+        it 'lists all products' do
           expect { described_class.start(argv) }.to output(/.*#{expected_output}.*/).to_stdout.and output('').to_stderr
         end
       end
