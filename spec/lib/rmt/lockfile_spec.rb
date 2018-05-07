@@ -13,18 +13,19 @@ RSpec.describe RMT::Lockfile do
         end
       end
 
-      it 'creates a file' do
+      it 'creates a file and locks it' do
         FakeFS.with_fresh do
-          allow(File).to receive(:open).with(lockfile, 'w').exactly(1).times.and_return(true)
+          allow(File).to receive(:open).with(lockfile, 66).exactly(1).times.and_call_original
+          expect_any_instance_of(File).to receive(:flock).exactly(1).times.and_call_original
           create_file
         end
       end
     end
 
-    context 'with existing file' do
+    context 'with locked file' do
       it 'raises exception' do
         FakeFS.with_fresh do
-          described_class.create_file
+          expect_any_instance_of(File).to receive(:flock).exactly(1).times.and_return(false)
           expect { create_file }.to raise_error(RMT::Lockfile::ExecutionLockedError)
         end
       end

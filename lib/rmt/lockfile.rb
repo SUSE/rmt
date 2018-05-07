@@ -4,13 +4,11 @@ class RMT::Lockfile
 
   class << self
     def create_file
-      if File.exist?(LOCKFILE_LOCATION)
-        raise RMT::Lockfile::ExecutionLockedError
-      else
-        dirname = File.dirname(LOCKFILE_LOCATION)
-        FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
-        File.open(LOCKFILE_LOCATION, 'w') { |f| f.write(Process.pid) }
-      end
+      dirname = File.dirname(LOCKFILE_LOCATION)
+      FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
+
+      f = File.open(RMT::Lockfile::LOCKFILE_LOCATION, File::RDWR | File::CREAT)
+      raise ExecutionLockedError unless f.flock(File::LOCK_EX | File::LOCK_NB)
     end
 
     def remove_file
