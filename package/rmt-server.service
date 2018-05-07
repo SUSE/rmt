@@ -1,9 +1,9 @@
 [Unit]
 Description=RMT API server
 Requires=mysql.service
-Requires=rmt-migration.service
+Requires=rmt-server-migration.service
 Requires=nginx.service
-After=rmt-migration.service
+After=rmt-server-migration.service
 
 [Service]
 Type=simple

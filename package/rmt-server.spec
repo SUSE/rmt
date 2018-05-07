@@ -45,9 +45,9 @@ Source5:        rmt-server-mirror.service
 Source6:        rmt-server-mirror.timer
 Source7:        rmt-server-sync.service
 Source8:        rmt-server-sync.timer
-Source9:        rmt.service
-Source10:       rmt.target
-Source11:       rmt-migration.service
+Source9:        rmt-server.service
+Source10:       rmt-server.target
+Source11:       rmt-server-migration.service
 Source12:       rmt-server-sync-sles12.timer
 Source13:       rmt-server-mirror-sles12.timer
 Source14:       nginx-https.conf
@@ -196,12 +196,12 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %doc %{_mandir}/man8/rmt.8.gz
 %{_bindir}/rmt-cli
 %{_sbindir}/rcrmt
-%{_sbindir}/rcrmt-migration
+%{_sbindir}/rcrmt-server-migration
 %{_sbindir}/rcrmt-server-sync
 %{_sbindir}/rcrmt-server-mirror
-%{_unitdir}/rmt.target
-%{_unitdir}/rmt.service
-%{_unitdir}/rmt-migration.service
+%{_unitdir}/rmt-server.target
+%{_unitdir}/rmt-server.service
+%{_unitdir}/rmt-server-migration.service
 %{_unitdir}/rmt-server-mirror.service
 %{_unitdir}/rmt-server-mirror.timer
 %{_unitdir}/rmt-server-sync.service
@@ -215,17 +215,17 @@ getent group %{rmt_group} >/dev/null || %{_sbindir}/groupadd -r %{rmt_group}
 getent passwd %{rmt_user} >/dev/null || \
 	%{_sbindir}/useradd -g %{rmt_group} -s /bin/false -r \
 	-c "user for RMT" -d %{app_dir} %{rmt_user}
-%service_add_pre rmt.target rmt.service rmt-migration.service rmt-server-mirror.service rmt-server-sync.service
+%service_add_pre rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service
 
 %post
-%service_add_post rmt.target rmt.service rmt-migration.service rmt-server-mirror.service rmt-server-sync.service
+%service_add_post rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service
 cd /usr/share/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails secrets:setup >/dev/null
 cd /usr/share/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails runner -e production "Rails::Secrets.write({'production' => {'secret_key_base' => SecureRandom.hex(64)}}.to_yaml)"
 
 %preun
-%service_del_preun rmt.target rmt.service rmt-migration.service rmt-server-mirror.service rmt-server-sync.service
+%service_del_preun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service
 
 %postun
-%service_del_postun rmt.target rmt.service rmt-migration.service rmt-server-mirror.service rmt-server-sync.service
+%service_del_postun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service
 
 %changelog
