@@ -134,8 +134,8 @@ install -m 444 %{SOURCE9} %{buildroot}%{_unitdir}
 install -m 444 %{SOURCE10} %{buildroot}%{_unitdir}
 install -m 444 %{SOURCE11} %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}%{_sbindir}
-ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt
-ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-migration
+ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server
+ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-migration
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-mirror
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-sync
 
@@ -195,7 +195,7 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
 %doc %{_mandir}/man8/rmt.8.gz
 %{_bindir}/rmt-cli
-%{_sbindir}/rcrmt
+%{_sbindir}/rcrmt-server
 %{_sbindir}/rcrmt-server-migration
 %{_sbindir}/rcrmt-server-sync
 %{_sbindir}/rcrmt-server-mirror
