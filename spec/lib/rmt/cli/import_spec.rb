@@ -16,6 +16,30 @@ describe RMT::CLI::Import do
         command
       end
     end
+
+    context 'with existing lockfile' do
+      before { allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::Lockfile::ExecutionLockedError) }
+
+      it 'handles lockfile exception' do
+        FakeFS.with_fresh do
+          FileUtils.mkdir_p path
+
+          expect { command }.to output(/Process is locked/).to_stdout.and output('').to_stderr
+        end
+      end
+    end
+
+    context 'with unexpected error being raised' do
+      it 'removes lockfile and re-raises error' do
+        FakeFS.with_fresh do
+          FileUtils.mkdir_p path
+          allow_any_instance_of(RMT::SCC).to receive(:import).with(path).and_raise(RuntimeError)
+          expect(RMT::Lockfile).to receive(:remove_file)
+
+          expect { command }.to raise_error(RuntimeError)
+        end
+      end
+    end
   end
 
   describe 'repos' do
@@ -28,6 +52,12 @@ describe RMT::CLI::Import do
     let(:repo1_local_path) { repo_url_to_local_path(path, repo1.external_url) }
     let(:repo2_local_path) { repo_url_to_local_path(path, repo2.external_url) }
     let(:mirror_double) { instance_double 'RMT::Mirror' }
+    let(:repo_settings) do
+      [
+        { url: repo1.external_url, auth_token: repo1.auth_token.to_s },
+        { url: repo2.external_url, auth_token: repo2.auth_token.to_s }
+      ]
+    end
 
     context 'no repos.json file' do
       it 'warns that repos.json does not exist' do
@@ -58,13 +88,6 @@ describe RMT::CLI::Import do
     end
 
     context 'without exception' do
-      let(:repo_settings) do
-        [
-          { url: repo1.external_url, auth_token: repo1.auth_token.to_s },
-          { url: repo2.external_url, auth_token: repo2.auth_token.to_s }
-        ]
-      end
-
       before do
         expect(mirror_double).to receive(:mirror).twice
         expect(RMT::Mirror).to receive(:from_url).with(repo1_local_path, repo1.auth_token, base_dir: RMT::DEFAULT_MIRROR_DIR,
@@ -88,6 +111,33 @@ describe RMT::CLI::Import do
           File.write("#{path}/repos.json", repo_settings.to_json)
 
           expect { command }.to output(/Mirroring repository #{repo2.name}/).to_stdout.and output('').to_stderr
+        end
+      end
+    end
+
+
+    context 'with existing lockfile' do
+      before { allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::Lockfile::ExecutionLockedError) }
+
+      it 'handles lockfile exception' do
+        FakeFS.with_fresh do
+          FileUtils.mkdir_p path
+          File.write("#{path}/repos.json", repo_settings.to_json)
+
+          expect { command }.to output(/Process is locked/).to_stdout.and output('').to_stderr
+        end
+      end
+    end
+
+    context 'with unexpected error being raised' do
+      it 'removes lockfile and re-raises error' do
+        FakeFS.with_fresh do
+          FileUtils.mkdir_p path
+          File.write("#{path}/repos.json", repo_settings.to_json)
+          allow(Repository).to receive(:make_local_path).and_raise(RuntimeError)
+          expect(RMT::Lockfile).to receive(:remove_file)
+
+          expect { command }.to raise_error(RuntimeError)
         end
       end
     end

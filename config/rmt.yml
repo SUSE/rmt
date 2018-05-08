@@ -32,10 +32,6 @@ mirroring:
 rails:
   port: 4224
 
-cli:
-  user: _rmt
-  group: nginx
-
 http_client:
   verbose: false
   proxy:
