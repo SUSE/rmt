@@ -116,7 +116,7 @@ RSpec.describe RMT::CLI::Repos do
             Terminal::Table.new(
               headings: ['SCC ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'],
               rows: rows
-            ).to_s + "\n"
+            ).to_s + "\n" + 'Only enabled repositories are shown by default. Use the `--all` option to see all repositories.' + "\n"
           end
 
           it 'outputs success message' do

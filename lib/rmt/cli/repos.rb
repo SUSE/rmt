@@ -43,6 +43,7 @@ class RMT::CLI::Repos < RMT::CLI::Base
         mirroring_enabled: 'Mirror?',
         last_mirrored_at: 'Last mirrored'
       })
+      puts 'Only enabled repositories are shown by default. Use the `--all` option to see all repositories.' unless options.all
     end
   end
 
