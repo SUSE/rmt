@@ -73,9 +73,16 @@ done
 plugin_tag "Mirroring Status"
 plugin_command "rmt-cli products list"
 plugin_command "rmt-cli repos list"
-plugin_command "rmt-cli repos custom list"
 
 plugin_tag "Service Logs"
 for service in "${LOG_UNITS[@]}"; do
   plugin_command "journalctl -n1000 -u $service"
+done
+
+plugin_tag "Custom Repos"
+plugin_command "rmt-cli repos custom list"
+custom_repos=$(bin/rmt-cli repos custom list --csv | cut -d ',' -f 1)
+for custom in "$custom_repos"; do
+  echo "Products bound to custom repo id: $custom"
+  plugin_command "rmt-cli repos custom products $custom"
 done
