@@ -8,6 +8,8 @@ class ServicesController < ActionController::Base
   def show
     # TODO: add optional authentication?
 
+    hi_there = 1
+
     @service    = Service.find(params[:id])
     @repos      = @service.repositories
     @expires_at = nil
