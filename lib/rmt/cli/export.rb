@@ -9,10 +9,11 @@ class RMT::CLI::Export < RMT::CLI::Base
 
   desc 'settings PATH', 'Store repository settings at given path'
   def settings(path)
+    filename = File.join(path, 'repos.json')
     needs_path(path) do
       data = Repository.only_mirrored.inject([]) { |data, repo| data << { url: repo.external_url, auth_token: repo.auth_token.to_s } }
-      File.write(File.join(path, 'repos.json'), data.to_json)
-      puts "Settings saved at #{path}."
+      File.write(filename, data.to_json)
+      puts "Settings saved at #{filename}."
     end
   end
 
