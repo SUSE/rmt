@@ -1,3 +1,4 @@
+require 'csv'
 require 'terminal-table'
 
 module RMT::CLI::ArrayPrintable

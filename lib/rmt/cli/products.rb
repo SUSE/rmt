@@ -1,6 +1,3 @@
-require 'csv'
-require 'terminal-table'
-
 require 'rmt/cli/repos'
 
 class RMT::CLI::Products < RMT::CLI::Base
