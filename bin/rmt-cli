@@ -14,8 +14,9 @@ require 'rmt/config'
 
 # don't run as root
 if Process.euid == 0
-  Process::Sys.seteuid(Etc.getpwnam(RMT::DEFAULT_USER).uid)
+  # set group and then user, otherwise user cannot change group
   Process::Sys.setegid(Etc.getgrnam(RMT::DEFAULT_GROUP).gid)
+  Process::Sys.seteuid(Etc.getpwnam(RMT::DEFAULT_USER).uid)
 end
 
 relative_load_paths = %w[lib lib/rmt app/models app/services].map { |dir| File.join(rmt_path, dir) }
