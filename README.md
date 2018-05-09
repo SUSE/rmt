@@ -30,7 +30,7 @@ After installation configure your RMT instance:
     EOFF
     ```
 * See the "Configuration" section for how to configure the options in `/etc/rmt.conf`.
-* Start RMT by running `systemctl start rmt`. This will start the RMT server at http://localhost:4224.
+* Start RMT by running `systemctl start rmt-server`. This will start the RMT server at http://localhost:4224.
 * By default, mirrored repositories are saved under `/usr/share/rmt/public`, which is a symlink that points to
 `/var/lib/rmt/public`. In order to change destination directory, recreate `/usr/share/rmt/public` symlink to point to the
 desired location.
@@ -163,7 +163,9 @@ Supported Ruby versions are 2.5.0 and newer.
 
 ## Development setup
 
-* Install the dependencies by running `bundle install`
+* Install the dependencies:
+  * `sudo zypper in libxml2-devel libxslt-devel`
+  * `bundle install`
 * Copy the file `config/rmt.yml` to `config/rmt.local.yml` to override the default settings:
     * Add your organization credentials to `scc` section
     * Add your MySQL credentials

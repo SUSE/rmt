@@ -7,6 +7,14 @@ Wed May  9 09:36:02 UTC 2018 - wstephenson@suse.com
   See: https://github.com/SUSE/rmt/pull/158
 
 -------------------------------------------------------------------
+Tue May  8 09:58:29 UTC 2018 - tmuntaner@suse.com
+
+- Rename of service files
+  rmt.service -> rmt-server.service
+  rmt-migration.service -> rmt-server-migration.service
+  See: https://github.com/SUSE/rmt/pull/159
+
+-------------------------------------------------------------------
 Mon May  7 10:55:19 UTC 2018 - tmuntaner@suse.com
 
 - RMT server binds to 127.0.0.1, not 0.0.0.0

@@ -2,7 +2,7 @@
 Description=RMT database setup
 Requires=mysql.service
 After=mysql.service
-Before=rmt.service
+Before=rmt-server.service
 
 [Service]
 Type=oneshot
@@ -12,4 +12,4 @@ WorkingDirectory=/usr/share/rmt
 ExecStart=/usr/share/rmt/bin/rails db:create db:migrate RAILS_ENV=production
 
 [Install]
-WantedBy=rmt.target
+WantedBy=rmt-server.target
