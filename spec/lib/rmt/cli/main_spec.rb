@@ -12,6 +12,7 @@ RSpec.describe RMT::CLI::Main do
   end
 
   let(:argv) { [] }
+  let(:pid) { 42 }
 
   describe '.start' do
     describe 'sync' do
@@ -25,11 +26,15 @@ RSpec.describe RMT::CLI::Main do
       end
 
       context 'with execution locked exception thrown' do
-        it do
+        before do
           allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::Lockfile::ExecutionLockedError)
+          allow(File).to receive(:read).with(RMT::Lockfile::LOCKFILE_LOCATION).and_return(pid)
+        end
+
+        it do
           expect(described_class).to receive(:exit)
           expect { command }.to output(
-            "Process is locked. Please check lockfile at #{RMT::Lockfile::LOCKFILE_LOCATION}\n"
+            "Process is locked by the application with pid #{pid}. Close this application or wait for it to finish before trying again\n"
           ).to_stderr
         end
       end
@@ -79,12 +84,13 @@ RSpec.describe RMT::CLI::Main do
 
         before do
           allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::Lockfile::ExecutionLockedError)
+          allow(File).to receive(:read).with(RMT::Lockfile::LOCKFILE_LOCATION).and_return(pid)
         end
 
         it do
           expect(described_class).to receive(:exit)
           expect { command }.to output(
-            "Process is locked. Please check lockfile at #{RMT::Lockfile::LOCKFILE_LOCATION}\n"
+            "Process is locked by the application with pid #{pid}. Close this application or wait for it to finish before trying again\n"
           ).to_stderr
         end
       end

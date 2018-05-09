@@ -2,6 +2,7 @@ require 'rails_helper'
 
 describe RMT::CLI::Import do
   let(:path) { '/mnt/usb' }
+  let(:pid) { 42 }
 
   describe 'data' do
     include_examples 'handles non-existing path'
@@ -18,15 +19,18 @@ describe RMT::CLI::Import do
     end
 
     context 'with existing lockfile' do
-      before { allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::Lockfile::ExecutionLockedError) }
+      before do
+        allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::Lockfile::ExecutionLockedError)
+      end
 
       it 'handles lockfile exception' do
         FakeFS.with_fresh do
           FileUtils.mkdir_p path
 
           expect(described_class).to receive(:exit)
+          expect(File).to receive(:read).with(RMT::Lockfile::LOCKFILE_LOCATION).and_return(pid)
           expect { command }.to output(
-            "Process is locked. Please check lockfile at #{RMT::Lockfile::LOCKFILE_LOCATION}\n"
+            "Process is locked by the application with pid #{pid}. Close this application or wait for it to finish before trying again\n"
           ).to_stderr
         end
       end
@@ -120,7 +124,9 @@ describe RMT::CLI::Import do
 
 
     context 'with existing lockfile' do
-      before { allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::Lockfile::ExecutionLockedError) }
+      before do
+        allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::Lockfile::ExecutionLockedError)
+      end
 
       it 'handles lockfile exception' do
         FakeFS.with_fresh do
@@ -128,8 +134,9 @@ describe RMT::CLI::Import do
           File.write("#{path}/repos.json", repo_settings.to_json)
 
           expect(described_class).to receive(:exit)
+          expect(File).to receive(:read).with(RMT::Lockfile::LOCKFILE_LOCATION).and_return(pid)
           expect { command }.to output(
-            "Process is locked. Please check lockfile at #{RMT::Lockfile::LOCKFILE_LOCATION}\n"
+            "Process is locked by the application with pid #{pid}. Close this application or wait for it to finish before trying again\n"
           ).to_stderr
         end
       end

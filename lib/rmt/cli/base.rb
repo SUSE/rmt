@@ -68,8 +68,9 @@ class RMT::CLI::Base < Thor
         RMT::CLI::Error::ERROR_SCC
       )
     rescue RMT::Lockfile::ExecutionLockedError
+      pid = File.read(RMT::Lockfile::LOCKFILE_LOCATION)
       raise RMT::CLI::Error.new(
-        "Process is locked. Please check lockfile at #{RMT::Lockfile::LOCKFILE_LOCATION}\n",
+        "Process is locked by the application with pid #{pid}. Close this application or wait for it to finish before trying again\n",
         RMT::CLI::Error::ERROR_OTHER
       )
     end
