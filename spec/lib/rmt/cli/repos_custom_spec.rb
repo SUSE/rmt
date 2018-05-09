@@ -1,5 +1,7 @@
 require 'rails_helper'
 
+# rubocop:disable RSpec/NestedGroups
+
 describe RMT::CLI::ReposCustom do
   subject(:command) { described_class.start(argv) }
 
@@ -346,13 +348,13 @@ describe RMT::CLI::ReposCustom do
       let(:repository) { create :repository, :custom }
       let(:argv) { ['products', repository.id] }
       let(:rows) do
-          [[
-            product.id,
-            product.name,
-            product.version,
-            product.arch
-          ]]
-          end
+        [[
+          product.id,
+          product.name,
+          product.version,
+          product.arch
+        ]]
+      end
       let(:expected_output) do
         Terminal::Table.new(
           headings: ['Product ID', 'Product Name', 'Product Version', 'Product Architecture'],
@@ -370,7 +372,7 @@ describe RMT::CLI::ReposCustom do
         expect { described_class.start(argv) }.to output(expected_output).to_stdout
       end
 
-      describe "products --csv" do
+      describe 'products --csv' do
         let(:argv) { ['products', repository.id, '--csv'] }
         let(:expected_output) do
           CSV.generate { |csv| rows.each { |row| csv << row } }
@@ -395,3 +397,5 @@ describe RMT::CLI::ReposCustom do
     end
   end
 end
+
+# rubocop:enable RSpec/NestedGroups

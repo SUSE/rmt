@@ -31,7 +31,7 @@ class RMT::CLI::Products < RMT::CLI::Base
         last_mirrored_at: 'Last mirrored'
       })
     end
-    puts 'Only enabled products are shown by default. Use the `--all` option to see all products.' unless options.all or options.csv
+    puts 'Only enabled products are shown by default. Use the `--all` option to see all products.' unless options.all || options.csv
   end
   map ls: :list
 

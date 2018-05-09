@@ -173,3 +173,5 @@ RSpec.describe RMT::CLI::Repos do
     it_behaves_like 'rmt-cli repos list', 'ls'
   end
 end
+
+# rubocop:enable RSpec/NestedGroups
