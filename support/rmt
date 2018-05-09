@@ -34,9 +34,9 @@ validate_rpm_if_installed() {
 
 RPMLIST=(rmt-server nginx mariadb)
 
-STATUS_UNITS=(rmt.service rmt-server-sync.timer rmt-server-mirror.timer mariadb.service nginx.service)
+STATUS_UNITS=(rmt-server.service rmt-server-migration.service rmt-server-sync.timer rmt-server-mirror.timer mariadb.service nginx.service)
 
-LOG_UNITS=(rmt.service rmt-server-sync.service rmt-server-mirror.service mariadb.service nginx.service)
+LOG_UNITS=(rmt-server.service rmt-server-migration.service rmt-server-sync.service rmt-server-mirror.service mariadb.service nginx.service)
 
 CONF_FILES=(/etc/rmt.conf /etc/nginx/vhosts.d/rmt-server-http.conf /etc/nginx/vhosts.d/rmt-server-https.conf)
 

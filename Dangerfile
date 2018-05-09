@@ -6,7 +6,7 @@ if !git.modified_files.include?('package/rmt-server.changes') && has_app_changes
 end
 
 # Run rubocop, failing if there's any violations
-rubocop.lint(report_danger: true, inline_comment: true)
+rubocop.lint(report_danger: true, inline_comment: true, force_exclusion: true)
 
 # Check that the versions in all files are the same
 def check_all_versions_equal

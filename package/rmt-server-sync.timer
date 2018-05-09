@@ -1,7 +1,7 @@
 [Unit]
 Description=RMT Sync timer
-After=rmt.service
-Requires=rmt.service
+After=rmt-server.service
+Requires=rmt-server.service
 
 [Timer]
 OnCalendar=*-*-* 01:00:00
