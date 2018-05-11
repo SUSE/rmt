@@ -2,6 +2,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
   before_action :authenticate_system
   before_action :require_product, only: %i[show activate upgrade destroy]
+  before_action :check_product_service_and_repositories, only: %i[show activate upgrade]
   before_action :check_base_product_dependencies, only: %i[activate upgrade show]
 
   def activate
@@ -85,7 +86,6 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     unless @product
       raise ActionController::TranslatedError.new(N_('No product found'))
     end
-    check_product_service_and_repositories
   end
 
   def check_product_service_and_repositories
@@ -93,8 +93,8 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
       fail ActionController::TranslatedError.new(N_('No repositories found for product: %s'), @product.friendly_name)
     end
 
-    mandatory_repos = @product.repositories.where({ enabled: true })
-    mirrored_repos = @product.repositories.where({ enabled: true, mirroring_enabled: true })
+    mandatory_repos = @product.repositories.only_enabled
+    mirrored_repos = @product.repositories.only_enabled.only_mirrored
 
     unless (mandatory_repos.size == mirrored_repos.size)
       fail ActionController::TranslatedError.new(N_('Not all mandatory repositories are mirrored for product %s'), @product.friendly_name)

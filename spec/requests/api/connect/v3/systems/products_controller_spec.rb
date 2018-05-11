@@ -22,21 +22,8 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       let(:verb) { 'post' }
     end
 
-    context 'when product mandatory repos aren\'t mirrored' do
-      subject { response }
-
-      let(:product) { FactoryGirl.create(:product, :with_not_mirrored_repositories) }
-      let(:error_json) do
-        {
-          type: 'error',
-          error: "Not all mandatory repositories are mirrored for product #{product.friendly_name}",
-          localized_error: "Not all mandatory repositories are mirrored for product #{product.friendly_name}"
-        }.to_json
-      end
-
-      before { post url, headers: headers, params: payload }
-      its(:code) { is_expected.to eq('422') }
-      its(:body) { is_expected.to eq(error_json) }
+    it_behaves_like 'product must have mirrored repositories' do
+      let(:verb) { 'post' }
     end
 
     context 'when product has unmet dependencies' do
@@ -100,6 +87,10 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
     let(:activation) { FactoryGirl.create(:activation, :with_mirrored_product) }
 
     it_behaves_like 'products controller action' do
+      let(:verb) { 'get' }
+    end
+
+    it_behaves_like 'product must have mirrored repositories' do
       let(:verb) { 'get' }
     end
 
@@ -182,6 +173,9 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       let(:verb) { 'put' }
     end
 
+    it_behaves_like 'product must have mirrored repositories' do
+      let(:verb) { 'put' }
+    end
 
     context 'with not activated product' do
       before { put url, headers: headers, params: payload }

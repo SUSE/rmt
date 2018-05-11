@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri May 11 15:54:46 UTC 2018 - hschmidt@suse.com
+
+- Don't check if a product has repos and that they are mirrored
+  when deactivating.
+  See: https://github.com/SUSE/rmt/pull/168
+
+-------------------------------------------------------------------
 Tue May  8 09:58:29 UTC 2018 - tmuntaner@suse.com
 
 - Rename of service files

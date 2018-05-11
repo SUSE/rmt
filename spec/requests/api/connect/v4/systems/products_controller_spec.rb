@@ -14,7 +14,7 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
       let(:verb) { 'delete' }
     end
 
-    context 'when product is base product has repos' do
+    context 'when the product is a base product' do
       subject { response }
 
       let(:product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
@@ -30,13 +30,14 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
       end
     end
 
-    context 'when product has repos, is an extension' do
+    context 'when the product is an extension' do
       subject { response }
 
       let(:payload) { { identifier: product.identifier, version: product.version, arch: product.arch } }
 
       before { delete url, headers: headers, params: payload }
-      context 'and is not activated' do
+
+      context 'and it is not activated' do
         let(:product) { FactoryGirl.create(:product, :extension, :with_mirrored_repositories) }
 
         its(:code) { is_expected.to eq('422') }
@@ -48,7 +49,7 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
         end
       end
 
-      context 'has products depending on it and is activated' do
+      context 'and the system has other extensions that depend on this one' do
         let(:product) do
           product = FactoryGirl.create(:product, :extension, :with_mirrored_repositories, :activated, system: system)
           FactoryGirl.create(:product, :extension, :with_mirrored_repositories, :activated, system: system, base_products: [product])
@@ -64,7 +65,7 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
         end
       end
 
-      context 'and is activated' do
+      context 'and it is activated' do
         let(:system) { FactoryGirl.create(:system) }
         let(:product) { FactoryGirl.create(:product, :extension, :with_mirrored_repositories, :activated, system: system) }
         let(:serialized_json) do
