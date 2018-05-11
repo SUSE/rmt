@@ -81,7 +81,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   def require_product
     require_params(%i[identifier version arch])
 
-    @product = Product.where(identifier: params[:identifier], version: params[:version], arch: params[:arch]).first
+    @product = Product.find_by(identifier: params[:identifier], version: Product.clean_up_version(params[:version]), arch: params[:arch])
 
     unless @product
       raise ActionController::TranslatedError.new(N_('No product found'))
@@ -134,7 +134,9 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   end
 
   def product_search_params(product_hash)
-    product_hash.permit(:identifier, :version, :arch, :release_type).to_h.symbolize_keys
+    hash = product_hash.permit(:identifier, :version, :arch, :release_type).to_h.symbolize_keys
+    hash[:version] = Product.clean_up_version(hash[:version])
+    hash
   end
 
   def product_from_hash(product_hash)
