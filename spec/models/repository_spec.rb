@@ -36,23 +36,41 @@ RSpec.describe Repository, type: :model do
 
       it { is_expected.to eq('/repo/dummy_repo/') }
     end
+
+    context 'with no subpath and no trailing slash' do
+      let(:url) { 'http://localhost.com' }
+
+      it { is_expected.to eq '/' }
+    end
+
+    context 'with no subpath but with a trailing slash' do
+      let(:url) { 'http://localhost.com/' }
+
+      it { is_expected.to eq '/' }
+    end
+
+    context 'with a subpath and no trailing slash' do
+      let(:url) { 'http://localhost.com/foo/bar' }
+
+      it { is_expected.to eq '/foo/bar' }
+    end
   end
 
-  describe '#remove_repository' do
-    let(:custom_repository) { create :repository, :custom }
-    let(:suse_repository) { create :repository }
+  describe '#destroy' do
+    context 'when it is an official repository' do
+      subject { repository.destroy }
 
-    it('has custom repository') { expect(Repository.find_by(id: custom_repository.id)).not_to be_nil }
-    it('removes custom repositories') { expect(custom_repository.destroy).not_to be_falsey }
+      let!(:repository) { create :repository }
 
-    it('has non-custom repository') { expect(Repository.find_by(id: suse_repository.id)).not_to be_nil }
-    it('does not remove non-custom repositories') { expect(suse_repository.destroy).to be_falsey }
-  end
+      it { is_expected.to be_falsey }
+    end
 
-  describe 'local_path' do
-    it(:handles_empty_root) { expect(Repository.make_local_path('http://localhost.com')).to eq('/') }
-    it(:handles_empty_root_trailing_slash) { expect(Repository.make_local_path('http://localhost.com/')).to eq('/') }
-    it(:handles_subpath) { expect(Repository.make_local_path('http://localhost.com/foo/bar')).to eq('/foo/bar') }
-    it(:handles_subpath_trailing_slash) { expect(Repository.make_local_path('http://localhost.com/foo/bar/')).to eq('/foo/bar/') }
+    context 'when it is a custom repository' do
+      subject { repository.destroy }
+
+      let!(:repository) { create :repository, :custom }
+
+      it { is_expected.to be_truthy }
+    end
   end
 end
