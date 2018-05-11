@@ -16,6 +16,61 @@ RSpec.describe Repository, type: :model do
   it { is_expected.to have_db_column(:name).of_type(:string).with_options(null: false) }
   it { is_expected.to have_db_column(:external_url).of_type(:string).with_options(null: false) }
 
+  describe 'scopes' do
+    describe '.only_mirrored' do
+      it 'returns only mirrored repos' do
+        mirrored = create :repository, mirroring_enabled: true
+        create :repository, mirroring_enabled: false
+
+        expect(Repository.only_mirrored).to contain_exactly(mirrored)
+      end
+    end
+
+    describe '.only_enabled' do
+      it 'returns only enabled repos' do
+        enabled = create :repository, enabled: true
+        create :repository, enabled: false
+
+        expect(Repository.only_enabled).to contain_exactly(enabled)
+      end
+    end
+
+    describe '.only_installer_updates' do
+      it 'returns only repos that are installer updates' do
+        installer_updates = create :repository, installer_updates: true
+        create :repository, installer_updates: false
+
+        expect(Repository.only_installer_updates).to contain_exactly(installer_updates)
+      end
+
+      # NOTE: It's unknown to me (Hernan) why this scope does this.
+      it 'clears existing where-clauses' do
+        installer_updates = create :repository, installer_updates: true
+        create :repository, installer_updates: false
+
+        expect(Repository.where(installer_updates: false).only_installer_updates).to contain_exactly(installer_updates)
+      end
+    end
+
+    describe '.only_scc' do
+      it 'returns only official repositories' do
+        official = create :repository, scc_id: 1
+        create :repository, scc_id: nil
+
+        expect(Repository.only_scc).to contain_exactly(official)
+      end
+    end
+
+    describe '.only_custom' do
+      it 'returns only custom repositories' do
+        custom = create :repository, scc_id: nil
+        create :repository, scc_id: 1
+
+        expect(Repository.only_custom).to contain_exactly(custom)
+      end
+    end
+  end
+
   describe '.make_local_path' do
     subject { described_class.make_local_path(url) }
 
