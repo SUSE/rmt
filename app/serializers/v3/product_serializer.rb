@@ -25,7 +25,7 @@ class V3::ProductSerializer < ApplicationSerializer
   end
 
   def eula_url
-    if object.eula_url
+    if object.eula_url.present?
       RMT::Misc.replace_uri_parts(object.eula_url, base_url + RMT::DEFAULT_MIRROR_URL_PREFIX)
     else
       ''
