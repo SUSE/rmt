@@ -11,6 +11,30 @@ describe V3::ProductSerializer do
   end
   let(:base_url) { 'http://example.com' }
 
+  describe '#eula_url' do
+    subject { described_class.new(product, base_url: base_url).eula_url }
+
+    let(:product) { create :product, eula_url: eula_url }
+
+    context "when the product's eula_url is an empty string" do
+      let(:eula_url) { '' }
+
+      it { is_expected.to eq '' }
+    end
+
+    context "when the product's eula_url is nil" do
+      let(:eula_url) { nil }
+
+      it { is_expected.to eq '' }
+    end
+
+    context "when the product's eula_url is a URL" do
+      let(:eula_url) { 'http://example.com/eula' }
+
+      it { is_expected.to eq 'http://example.com/repo/eula' }
+    end
+  end
+
   describe 'SLES extension tree' do
     subject(:serializer) { described_class.new(sles15, root_product: sles15, base_url: base_url) }
 
