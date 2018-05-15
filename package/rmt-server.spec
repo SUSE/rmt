@@ -54,6 +54,7 @@ Source14:       nginx-https.conf
 
 Patch0:         use-ruby-2.5-in-rmt-cli.patch
 Patch1:         use-ruby-2.5-in-rails.patch
+Patch2:         use-ruby-2.5-in-rmt-data-import.patch
 
 BuildRequires:  fdupes
 BuildRequires:  gcc
@@ -95,6 +96,7 @@ cp -p %SOURCE2 .
 
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 bundle.ruby2.5 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
