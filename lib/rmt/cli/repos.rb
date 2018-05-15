@@ -44,7 +44,7 @@ class RMT::CLI::Repos < RMT::CLI::Base
         enabled: 'Mandatory?',
         mirroring_enabled: 'Mirror?',
         last_mirrored_at: 'Last mirrored'
-      })
+      }, options.csv)
     end
   end
 

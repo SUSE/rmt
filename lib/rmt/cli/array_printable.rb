@@ -3,11 +3,11 @@ require 'terminal-table'
 
 module RMT::CLI::ArrayPrintable
 
-  def format_array(array, array_options)
+  def format_array(array, array_options, csv_format)
     rows = array.map do |element|
       array_options.keys.map { |k| element.public_send(k) }
     end
-    if options.csv
+    if csv_format
       array_to_csv(rows)
     else
       array_to_table(rows, array_options)

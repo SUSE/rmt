@@ -37,7 +37,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
       enabled: 'Mandatory?',
       mirroring_enabled: 'Mirror?',
       last_mirrored_at: 'Last Mirrored'
-    })
+    }, options.csv)
   end
   map ls: :list
 
@@ -74,7 +74,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
       name: 'Product Name',
       version: 'Product Version',
       arch: 'Product Architecture'
-    })
+    }, options.csv)
   end
 
   desc 'attach ID PRODUCT_ID', 'Attach an existing custom repository to a product'

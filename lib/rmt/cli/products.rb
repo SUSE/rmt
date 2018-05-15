@@ -29,7 +29,7 @@ class RMT::CLI::Products < RMT::CLI::Base
         release_stage: 'Release stage',
         'mirror?' => 'Mirror?',
         last_mirrored_at: 'Last mirrored'
-      })
+      }, options.csv)
     end
     puts 'Only enabled products are shown by default. Use the `--all` option to see all products.' unless options.all || options.csv
   end
