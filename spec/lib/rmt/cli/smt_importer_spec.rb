@@ -1,13 +1,7 @@
-
-
-# Set the rmt environment to make the script work in
-# development
-ENV['RMT_PATH'] = Dir.pwd
-
-require_relative '../../../bin/rmt-data-import'
 require 'rails_helper'
+require 'rmt/cli/smt_importer'
 
-describe ImportScript do
+describe SMTImporter do
   let(:config) do
     config = OpenStruct.new
     config.data_dir = File.join(Dir.pwd, 'spec/fixtures/files/csv')
@@ -241,7 +235,7 @@ describe ImportScript do
       expect(script).not_to receive(:import_systems)
       expect(script).not_to receive(:import_activations)
       expect(script).not_to receive(:import_hardware_info)
-      expect { script.run ['--no-systems', '-d', 'foo'] }.to raise_exception SystemExit
+      expect { script.run ['--no-systems', '-d', 'foo'] }.to raise_exception SMTImporter::ImportException
     end
     # rubocop:enable RSpec/MultipleExpectations
   end
@@ -264,7 +258,7 @@ describe ImportScript do
 
     it 'shows the help output when invalid arguments supplied' do
       expect do
-        expect { script.parse_cli_arguments ['--nope-nope'] }.to raise_exception SystemExit
+        expect { script.parse_cli_arguments ['--nope-nope'] }.to raise_exception SMTImporter::ImportException
       end.to output(<<-OUTPUT.strip_heredoc).to_stdout
         Usage: rspec [options]
             -d, --data PATH                  Path to unpacked SMT data tarball
@@ -276,7 +270,7 @@ describe ImportScript do
   describe '#check_products_exist' do
     it 'warns and exits if no product exists' do
       expect do
-        expect { script.check_products_exist }.to raise_exception SystemExit
+        expect { script.check_products_exist }.to raise_exception SMTImporter::ImportException
       end.to output(<<-OUTPUT.strip_heredoc).to_stderr
         No products has been found in rmt. Please run rmt-cli sync before
         importing data from smt.
