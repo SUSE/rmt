@@ -85,7 +85,9 @@ RSpec.describe RMT::CLI::Repos do
         let(:argv) { [command_name] }
 
         it 'outputs success message' do
-          expect { command }.to output("No repositories enabled.\n").to_stderr
+          expect { command }.to output(
+            "Only enabled repositories are shown by default. Use the `--all` option to see all repositories.\n"
+          ).to_stdout.and output("No repositories enabled.\n").to_stderr
         end
 
         context 'with --all option' do
