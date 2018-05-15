@@ -181,8 +181,8 @@ rm -f %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/*/mkmf.log
 find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod 644 -- {} +
 
 # lockfile location
-mkdir -p /run/lock/rmt/
-chown -R _rmt /run/lock/rmt/
+mkdir -p /run/lock/rmt.lock
+usermod -a -G lock _rmt
 
 %fdupes %{buildroot}/%{lib_dir}
 

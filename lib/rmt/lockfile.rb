@@ -1,5 +1,5 @@
 class RMT::Lockfile
-  LOCKFILE_LOCATION = '/run/lock/rmt/.lock'.freeze
+  LOCKFILE_LOCATION = '/run/lock/rmt.lock'.freeze
   ExecutionLockedError = Class.new(StandardError)
 
   class << self
