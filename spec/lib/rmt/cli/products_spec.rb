@@ -90,6 +90,10 @@ RSpec.describe RMT::CLI::Products do
         it 'lists all products' do
           expect { described_class.start(argv) }.to output(/.*#{expected_output}.*/).to_stdout.and output('').to_stderr
         end
+
+        it 'does not mention --all option' do
+          expect { described_class.start(argv) }.not_to output(/--all/).to_stdout
+        end
       end
 
       context 'with --all option' do
