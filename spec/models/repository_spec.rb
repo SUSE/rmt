@@ -45,12 +45,6 @@ RSpec.describe Repository, type: :model do
       before { create :repository, installer_updates: false }
 
       it { is_expected.to contain_exactly(installer_updates) }
-
-      context 'with an existing where clause' do
-        subject { described_class.where(installer_updates: false).only_installer_updates }
-
-        it { is_expected.to contain_exactly(installer_updates) }
-      end
     end
 
     describe '.only_scc' do
