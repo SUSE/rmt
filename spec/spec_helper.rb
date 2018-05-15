@@ -107,4 +107,11 @@ RSpec.configure do |config|
   # test failures related to randomization by passing the same `--seed` value
   # as the one that triggered the failure.
   # Kernel.srand config.seed
+
+  config.around(:each, :with_fakefs) do |example|
+    FakeFS.with_fresh do
+      FileUtils.mkdir_p(File.dirname(RMT::Lockfile::LOCKFILE_LOCATION))
+      example.run
+    end
+  end
 end

@@ -2,14 +2,8 @@ require 'rails_helper'
 
 # rubocop:disable RSpec/NestedGroups
 
-RSpec.describe RMT::CLI::Main do
+RSpec.describe RMT::CLI::Main, :with_fakefs do
   subject(:command) { described_class.start(argv) }
-
-  around do |example|
-    FakeFS.with_fresh do
-      example.run
-    end
-  end
 
   let(:argv) { [] }
 
@@ -35,11 +29,9 @@ RSpec.describe RMT::CLI::Main do
       context 'without repositories marked for mirroring' do
         before { create :repository, :with_products, mirroring_enabled: false }
 
-        it 'outputs a warning' do
-          FakeFS.with_fresh do
-            expect_any_instance_of(RMT::Mirror).not_to receive(:mirror)
-            expect { command }.to output("There are no repositories marked for mirroring.\n").to_stderr.and output('').to_stdout
-          end
+        it 'outputs a warning', :with_fakefs do
+          expect_any_instance_of(RMT::Mirror).not_to receive(:mirror)
+          expect { command }.to output("There are no repositories marked for mirroring.\n").to_stderr.and output('').to_stdout
         end
       end
 

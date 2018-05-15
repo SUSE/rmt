@@ -7,9 +7,8 @@ class RMT::Lockfile
       # https://ruby-doc.org/core-2.5.0/File.html#method-i-flock
       File.open(RMT::Lockfile::LOCKFILE_LOCATION, File::RDWR | File::CREAT) do |f|
         if f.flock(File::LOCK_EX | File::LOCK_NB)
-          f.flock(File::LOCK_UN) # unlock for writing the PID
           f.write(Process.pid.to_s)
-          f.flock(File::LOCK_EX) # lock again
+          f.fsync
         else
           pid = File.read(RMT::Lockfile::LOCKFILE_LOCATION)
           raise ExecutionLockedError.new(

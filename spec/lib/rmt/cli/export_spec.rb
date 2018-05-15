@@ -1,7 +1,6 @@
 require 'rails_helper'
-# rubocop:disable RSpec/NestedGroups
 
-describe RMT::CLI::Export do
+describe RMT::CLI::Export, :with_fakefs do
   let(:path) { '/mnt/usb' }
 
   describe 'settings' do
@@ -15,14 +14,12 @@ describe RMT::CLI::Export do
     end
 
     it 'writes ids of enabled repos to file' do
-      FakeFS.with_fresh do
-        FileUtils.mkdir_p path
-        expect { command }.to output(/Settings saved/).to_stdout
-        expected_filename = File.join(path, 'repos.json')
-        expected_json = [{ url: repository.external_url, auth_token: repository.auth_token.to_s }].to_json
-        expect(File.exist?(expected_filename)).to be true
-        expect(File.read(expected_filename).chomp).to eq expected_json
-      end
+      FileUtils.mkdir_p path
+      expect { command }.to output(/Settings saved/).to_stdout
+      expected_filename = File.join(path, 'repos.json')
+      expected_json = [{ url: repository.external_url, auth_token: repository.auth_token.to_s }].to_json
+      expect(File.exist?(expected_filename)).to be true
+      expect(File.read(expected_filename).chomp).to eq expected_json
     end
   end
 
@@ -32,12 +29,10 @@ describe RMT::CLI::Export do
     let(:command) { described_class.start(['data', path]) }
 
     it 'triggers export to path' do
-      FakeFS.with_fresh do
-        FileUtils.mkdir_p path
+      FileUtils.mkdir_p path
 
-        expect_any_instance_of(RMT::SCC).to receive(:export).with(path)
-        command
-      end
+      expect_any_instance_of(RMT::SCC).to receive(:export).with(path)
+      command
     end
   end
 
@@ -55,11 +50,9 @@ describe RMT::CLI::Export do
 
     context 'with missing repos.json file' do
       it 'outputs a warning' do
-        FakeFS.with_fresh do
-          FileUtils.mkdir_p path
+        FileUtils.mkdir_p path
 
-          expect { command }.to output("#{File.join(path, 'repos.json')} does not exist.\n").to_stderr
-        end
+        expect { command }.to output("#{File.join(path, 'repos.json')} does not exist.\n").to_stderr
       end
     end
 
@@ -70,25 +63,21 @@ describe RMT::CLI::Export do
       end
 
       it 'reads repo ids from file at path and mirrors these repos' do
-        FakeFS.with_fresh do
-          FileUtils.mkdir_p path
-          File.write("#{path}/repos.json", repo_settings.to_json)
+        FileUtils.mkdir_p path
+        File.write("#{path}/repos.json", repo_settings.to_json)
 
-          expect(mirror_double).to receive(:mirror).twice
-          expect { command }.to output(/Mirroring repository/).to_stdout
-        end
+        expect(mirror_double).to receive(:mirror).twice
+        expect { command }.to output(/Mirroring repository/).to_stdout
       end
 
       context 'with exceptions during mirroring' do
         it 'outputs exception message' do
-          FakeFS.with_fresh do
-            FileUtils.mkdir_p path
-            File.write("#{path}/repos.json", repo_settings.to_json)
+          FileUtils.mkdir_p path
+          File.write("#{path}/repos.json", repo_settings.to_json)
 
-            expect(mirror_double).to receive(:mirror)
-            expect(mirror_double).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror')
-            expect { command }.to output(/black mirror/).to_stderr.and output(/Mirroring repository/).to_stdout
-          end
+          expect(mirror_double).to receive(:mirror)
+          expect(mirror_double).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror')
+          expect { command }.to output(/black mirror/).to_stderr.and output(/Mirroring repository/).to_stdout
         end
       end
     end
