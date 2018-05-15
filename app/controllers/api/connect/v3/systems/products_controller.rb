@@ -2,7 +2,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
   before_action :authenticate_system
   before_action :require_product, only: %i[show activate upgrade destroy]
-  before_action :check_product_service_and_repositories, only: %i[show activate upgrade]
+  before_action :check_product_service_and_repositories, only: %i[show activate]
   before_action :check_base_product_dependencies, only: %i[activate upgrade show]
 
   def activate

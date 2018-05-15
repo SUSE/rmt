@@ -173,10 +173,6 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       let(:verb) { 'put' }
     end
 
-    it_behaves_like 'product must have mirrored repositories' do
-      let(:verb) { 'put' }
-    end
-
     context 'with not activated product' do
       before { put url, headers: headers, params: payload }
       subject { response }
