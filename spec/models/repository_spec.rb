@@ -16,6 +16,58 @@ RSpec.describe Repository, type: :model do
   it { is_expected.to have_db_column(:name).of_type(:string).with_options(null: false) }
   it { is_expected.to have_db_column(:external_url).of_type(:string).with_options(null: false) }
 
+  describe 'scopes' do
+    describe '.only_mirrored' do
+      subject { described_class.only_mirrored }
+
+      let!(:mirrored) { create :repository, mirroring_enabled: true }
+
+      before { create :repository, mirroring_enabled: false }
+
+      it { is_expected.to contain_exactly(mirrored) }
+    end
+
+    describe '.only_enabled' do
+      subject { described_class.only_enabled }
+
+      let!(:enabled) { create :repository, enabled: true }
+
+      before { create :repository, enabled: false }
+
+      it { is_expected.to contain_exactly(enabled) }
+    end
+
+    describe '.only_installer_updates' do
+      subject { described_class.only_installer_updates }
+
+      let!(:installer_updates) { create :repository, installer_updates: true }
+
+      before { create :repository, installer_updates: false }
+
+      it { is_expected.to contain_exactly(installer_updates) }
+    end
+
+    describe '.only_scc' do
+      subject { described_class.only_scc }
+
+      let!(:official) { create :repository, scc_id: 1 }
+
+      before { create :repository, scc_id: nil }
+
+      it { is_expected.to contain_exactly(official) }
+    end
+
+    describe '.only_custom' do
+      subject { described_class.only_custom }
+
+      let!(:custom) { create :repository, scc_id: nil }
+
+      before { create :repository, scc_id: 1 }
+
+      it { is_expected.to contain_exactly(custom) }
+    end
+  end
+
   describe '.make_local_path' do
     subject { described_class.make_local_path(url) }
 
@@ -36,23 +88,41 @@ RSpec.describe Repository, type: :model do
 
       it { is_expected.to eq('/repo/dummy_repo/') }
     end
+
+    context 'with no subpath and no trailing slash' do
+      let(:url) { 'http://localhost.com' }
+
+      it { is_expected.to eq '/' }
+    end
+
+    context 'with no subpath but with a trailing slash' do
+      let(:url) { 'http://localhost.com/' }
+
+      it { is_expected.to eq '/' }
+    end
+
+    context 'with a subpath and no trailing slash' do
+      let(:url) { 'http://localhost.com/foo/bar' }
+
+      it { is_expected.to eq '/foo/bar' }
+    end
   end
 
-  describe '#remove_repository' do
-    let(:custom_repository) { create :repository, :custom }
-    let(:suse_repository) { create :repository }
+  describe '#destroy' do
+    context 'when it is an official repository' do
+      subject { repository.destroy }
 
-    it('has custom repository') { expect(Repository.find_by(id: custom_repository.id)).not_to be_nil }
-    it('removes custom repositories') { expect(custom_repository.destroy).not_to be_falsey }
+      let!(:repository) { create :repository }
 
-    it('has non-custom repository') { expect(Repository.find_by(id: suse_repository.id)).not_to be_nil }
-    it('does not remove non-custom repositories') { expect(suse_repository.destroy).to be_falsey }
-  end
+      it { is_expected.to be_falsey }
+    end
 
-  describe 'local_path' do
-    it(:handles_empty_root) { expect(Repository.make_local_path('http://localhost.com')).to eq('/') }
-    it(:handles_empty_root_trailing_slash) { expect(Repository.make_local_path('http://localhost.com/')).to eq('/') }
-    it(:handles_subpath) { expect(Repository.make_local_path('http://localhost.com/foo/bar')).to eq('/foo/bar') }
-    it(:handles_subpath_trailing_slash) { expect(Repository.make_local_path('http://localhost.com/foo/bar/')).to eq('/foo/bar/') }
+    context 'when it is a custom repository' do
+      subject { repository.destroy }
+
+      let!(:repository) { create :repository, :custom }
+
+      it { is_expected.to be_truthy }
+    end
   end
 end
