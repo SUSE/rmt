@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed May  9 09:36:02 UTC 2018 - wstephenson@suse.com
+
+- Show custom repositories and product bindings in supportconfig
+  plugin output
+- Add CSV output option  
+  See: https://github.com/SUSE/rmt/pull/158
+
+-------------------------------------------------------------------
 Tue May  8 09:58:29 UTC 2018 - tmuntaner@suse.com
 
 - Rename of service files

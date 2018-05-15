@@ -1,5 +1,4 @@
 require 'thor'
-require 'terminal-table'
 
 class RMT::CLI::Main < RMT::CLI::Base
 
