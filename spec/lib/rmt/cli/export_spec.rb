@@ -1,5 +1,4 @@
 require 'rails_helper'
-# rubocop:disable RSpec/NestedGroups
 
 describe RMT::CLI::Export do
   let(:path) { '/mnt/usb' }

@@ -1,7 +1,5 @@
 require 'rails_helper'
 
-# rubocop:disable RSpec/NestedGroups
-
 RSpec.describe Api::Connect::V4::Subscriptions::ProductsController, type: :request do
   include_context 'version header', 4
 

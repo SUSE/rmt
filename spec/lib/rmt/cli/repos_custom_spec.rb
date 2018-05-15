@@ -1,7 +1,5 @@
 require 'rails_helper'
 
-# rubocop:disable RSpec/NestedGroups
-
 describe RMT::CLI::ReposCustom do
   subject(:command) { described_class.start(argv) }
 
@@ -397,5 +395,3 @@ describe RMT::CLI::ReposCustom do
     end
   end
 end
-
-# rubocop:enable RSpec/NestedGroups
