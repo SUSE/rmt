@@ -91,15 +91,6 @@ class RMT::CLI::Base < Thor
 
   private
 
-  def locked_method(&_block)
-    RMT::Lockfile.create_file
-    begin
-      yield
-    ensure
-      RMT::Lockfile.remove_file
-    end
-  end
-
   def needs_path(path)
     File.directory?(path) ? yield : warn("#{path} is not a directory.")
   end
