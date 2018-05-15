@@ -12,11 +12,12 @@ RSpec.describe RMT::CLI::Main do
   end
 
   let(:argv) { [] }
-  let(:pid) { 42 }
 
   describe '.start' do
     describe 'sync' do
       let(:argv) { ['sync'] }
+
+      include_examples 'handles lockfile exception'
 
       context 'default' do
         it 'triggers sync' do
@@ -24,24 +25,12 @@ RSpec.describe RMT::CLI::Main do
           command
         end
       end
-
-      context 'with execution locked exception thrown' do
-        before do
-          allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::Lockfile::ExecutionLockedError)
-          allow(File).to receive(:read).with(RMT::Lockfile::LOCKFILE_LOCATION).and_return(pid)
-        end
-
-        it do
-          expect(described_class).to receive(:exit)
-          expect { command }.to output(
-            "Process is locked by the application with pid #{pid}. Close this application or wait for it to finish before trying again\n"
-          ).to_stderr
-        end
-      end
     end
 
     describe 'mirror' do
       let(:argv) { ['mirror'] }
+
+      include_examples 'handles lockfile exception'
 
       context 'without repositories marked for mirroring' do
         before { create :repository, :with_products, mirroring_enabled: false }
@@ -75,33 +64,6 @@ RSpec.describe RMT::CLI::Main do
 
           it 'outputs exception message' do
             expect { command }.to output("black mirror\n").to_stderr.and output(/Mirroring repository #{repository.name}/).to_stdout
-          end
-        end
-      end
-
-      context 'with execution locked exception thrown' do
-        let!(:repository) { create :repository, :with_products, mirroring_enabled: true } # rubocop:disable RSpec/LetSetup
-
-        before do
-          allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::Lockfile::ExecutionLockedError)
-          allow(File).to receive(:read).with(RMT::Lockfile::LOCKFILE_LOCATION).and_return(pid)
-        end
-
-        it do
-          expect(described_class).to receive(:exit)
-          expect { command }.to output(
-            "Process is locked by the application with pid #{pid}. Close this application or wait for it to finish before trying again\n"
-          ).to_stderr
-        end
-      end
-
-      context 'with unexpected error being raised' do
-        it 'removes lockfile and re-raises error' do
-          FakeFS.with_fresh do
-            allow(Repository).to receive(:where).and_raise(RuntimeError)
-            expect(RMT::Lockfile).to receive(:remove_file)
-
-            expect { command }.to raise_error(RuntimeError)
           end
         end
       end

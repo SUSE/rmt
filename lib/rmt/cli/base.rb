@@ -67,10 +67,9 @@ class RMT::CLI::Base < Thor
         "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization",
         RMT::CLI::Error::ERROR_SCC
       )
-    rescue RMT::Lockfile::ExecutionLockedError
-      pid = File.read(RMT::Lockfile::LOCKFILE_LOCATION)
+    rescue RMT::Lockfile::ExecutionLockedError => e
       raise RMT::CLI::Error.new(
-        "Process is locked by the application with pid #{pid}. Close this application or wait for it to finish before trying again\n",
+        e.message,
         RMT::CLI::Error::ERROR_OTHER
       )
     end

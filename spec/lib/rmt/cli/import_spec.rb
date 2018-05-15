@@ -2,10 +2,10 @@ require 'rails_helper'
 
 describe RMT::CLI::Import do
   let(:path) { '/mnt/usb' }
-  let(:pid) { 42 }
 
   describe 'data' do
     include_examples 'handles non-existing path'
+    include_examples 'handles lockfile exception'
 
     subject(:command) { described_class.start(['data', path]) }
 
@@ -18,30 +18,11 @@ describe RMT::CLI::Import do
       end
     end
 
-    context 'with existing lockfile' do
-      before do
-        allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::Lockfile::ExecutionLockedError)
-      end
-
-      it 'handles lockfile exception' do
-        FakeFS.with_fresh do
-          FileUtils.mkdir_p path
-
-          expect(described_class).to receive(:exit)
-          expect(File).to receive(:read).with(RMT::Lockfile::LOCKFILE_LOCATION).and_return(pid)
-          expect { command }.to output(
-            "Process is locked by the application with pid #{pid}. Close this application or wait for it to finish before trying again\n"
-          ).to_stderr
-        end
-      end
-    end
-
     context 'with unexpected error being raised' do
       it 'removes lockfile and re-raises error' do
         FakeFS.with_fresh do
           FileUtils.mkdir_p path
           allow_any_instance_of(RMT::SCC).to receive(:import).with(path).and_raise(RuntimeError)
-          expect(RMT::Lockfile).to receive(:remove_file)
 
           expect { command }.to raise_error(RuntimeError)
         end
@@ -51,6 +32,7 @@ describe RMT::CLI::Import do
 
   describe 'repos' do
     include_examples 'handles non-existing path'
+    include_examples 'handles lockfile exception'
 
     subject(:command) { described_class.start(['repos', path]) }
 
@@ -118,39 +100,6 @@ describe RMT::CLI::Import do
           File.write("#{path}/repos.json", repo_settings.to_json)
 
           expect { command }.to output(/Mirroring repository #{repo2.name}/).to_stdout.and output('').to_stderr
-        end
-      end
-    end
-
-
-    context 'with existing lockfile' do
-      before do
-        allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::Lockfile::ExecutionLockedError)
-      end
-
-      it 'handles lockfile exception' do
-        FakeFS.with_fresh do
-          FileUtils.mkdir_p path
-          File.write("#{path}/repos.json", repo_settings.to_json)
-
-          expect(described_class).to receive(:exit)
-          expect(File).to receive(:read).with(RMT::Lockfile::LOCKFILE_LOCATION).and_return(pid)
-          expect { command }.to output(
-            "Process is locked by the application with pid #{pid}. Close this application or wait for it to finish before trying again\n"
-          ).to_stderr
-        end
-      end
-    end
-
-    context 'with unexpected error being raised' do
-      it 'removes lockfile and re-raises error' do
-        FakeFS.with_fresh do
-          FileUtils.mkdir_p path
-          File.write("#{path}/repos.json", repo_settings.to_json)
-          allow(Repository).to receive(:make_local_path).and_raise(RuntimeError)
-          expect(RMT::Lockfile).to receive(:remove_file)
-
-          expect { command }.to raise_error(RuntimeError)
         end
       end
     end
