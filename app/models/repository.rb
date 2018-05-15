@@ -5,8 +5,9 @@ class Repository < ApplicationRecord
   has_many :systems, through: :services
   has_many :products, -> { distinct }, through: :services
 
-  scope :only_installer_updates, -> { unscope(where: :installer_updates).where(installer_updates: true) }
+  scope :only_installer_updates, -> { where(installer_updates: true) }
   scope :only_mirrored, -> { where(mirroring_enabled: true) }
+  scope :only_enabled, -> { where(enabled: true) }
   scope :only_custom, -> { where(scc_id: nil) }
   scope :only_scc, -> { where.not(scc_id: nil) }
 
