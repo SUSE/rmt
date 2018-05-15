@@ -18,7 +18,7 @@ RSpec.describe Repository, type: :model do
 
   describe 'scopes' do
     describe '.only_mirrored' do
-      subject { Repository.only_mirrored }
+      subject { described_class.only_mirrored }
 
       let!(:mirrored) { create :repository, mirroring_enabled: true }
 
@@ -28,7 +28,7 @@ RSpec.describe Repository, type: :model do
     end
 
     describe '.only_enabled' do
-      subject { Repository.only_enabled }
+      subject { described_class.only_enabled }
 
       let!(:enabled) { create :repository, enabled: true }
 
@@ -38,7 +38,7 @@ RSpec.describe Repository, type: :model do
     end
 
     describe '.only_installer_updates' do
-      subject { Repository.only_installer_updates }
+      subject { described_class.only_installer_updates }
 
       let!(:installer_updates) { create :repository, installer_updates: true }
 
@@ -47,14 +47,14 @@ RSpec.describe Repository, type: :model do
       it { is_expected.to contain_exactly(installer_updates) }
 
       context 'with an existing where clause' do
-        subject { Repository.where(installer_updates: false).only_installer_updates }
+        subject { described_class.where(installer_updates: false).only_installer_updates }
 
         it { is_expected.to contain_exactly(installer_updates) }
       end
     end
 
     describe '.only_scc' do
-      subject { Repository.only_scc }
+      subject { described_class.only_scc }
 
       let!(:official) { create :repository, scc_id: 1 }
 
@@ -64,7 +64,7 @@ RSpec.describe Repository, type: :model do
     end
 
     describe '.only_custom' do
-      subject { Repository.only_custom }
+      subject { described_class.only_custom }
 
       let!(:custom) { create :repository, scc_id: nil }
 
