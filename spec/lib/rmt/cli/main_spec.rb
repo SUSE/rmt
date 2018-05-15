@@ -29,7 +29,7 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
       context 'without repositories marked for mirroring' do
         before { create :repository, :with_products, mirroring_enabled: false }
 
-        it 'outputs a warning', :with_fakefs do
+        it 'outputs a warning' do
           expect_any_instance_of(RMT::Mirror).not_to receive(:mirror)
           expect { command }.to output("There are no repositories marked for mirroring.\n").to_stderr.and output('').to_stdout
         end
