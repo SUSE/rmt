@@ -100,19 +100,20 @@ RSpec.describe RMT::CLI::Repos do
       context 'with enabled repositories' do
         let!(:repository_one) { FactoryGirl.create :repository, :with_products, mirroring_enabled: true }
         let!(:repository_two) { FactoryGirl.create :repository, :with_products, mirroring_enabled: false }
+        let(:rows) do
+          [[
+            repository_one.scc_id,
+            repository_one.name,
+            repository_one.description,
+            repository_one.enabled,
+            repository_one.mirroring_enabled,
+            repository_one.last_mirrored_at
+          ]]
+        end
 
         context 'without parameters' do
           let(:argv) { [command_name] }
           let(:expected_output) do
-            rows = []
-            rows << [
-              repository_one.scc_id,
-              repository_one.name,
-              repository_one.description,
-              repository_one.enabled,
-              repository_one.mirroring_enabled,
-              repository_one.last_mirrored_at
-            ]
             Terminal::Table.new(
               headings: ['SCC ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'],
               rows: rows
@@ -120,6 +121,17 @@ RSpec.describe RMT::CLI::Repos do
           end
 
           it 'outputs success message' do
+            expect { command }.to output(expected_output).to_stdout
+          end
+        end
+
+        describe "#{command_name} --csv" do
+          let(:argv) { [command_name, '--csv'] }
+          let(:expected_output) do
+            CSV.generate { |csv| rows.each { |row| csv << row } }
+          end
+
+          it 'outputs expected format' do
             expect { command }.to output(expected_output).to_stdout
           end
         end
@@ -161,3 +173,5 @@ RSpec.describe RMT::CLI::Repos do
     it_behaves_like 'rmt-cli repos list', 'ls'
   end
 end
+
+# rubocop:enable RSpec/NestedGroups

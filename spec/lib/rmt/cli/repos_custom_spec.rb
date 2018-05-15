@@ -1,5 +1,7 @@
 require 'rails_helper'
 
+# rubocop:disable RSpec/NestedGroups
+
 describe RMT::CLI::ReposCustom do
   subject(:command) { described_class.start(argv) }
 
@@ -65,9 +67,22 @@ describe RMT::CLI::ReposCustom do
 
       context 'with custom repository' do
         let(:custom_repository) { create :repository, :custom, name: 'custom foo' }
+        let(:expected_output) do
+          Terminal::Table.new(
+            headings: ['ID', 'Name', 'URL', 'Mandatory?', 'Mirror?', 'Last Mirrored'],
+            rows: [[
+              custom_repository.id,
+              custom_repository.name,
+              custom_repository.external_url,
+              custom_repository.enabled,
+              custom_repository.mirroring_enabled,
+              custom_repository.last_mirrored_at
+            ]]
+          ).to_s + "\n"
+        end
 
         it 'displays the custom repo' do
-          expect { described_class.start(argv) }.to output(/.*#{custom_repository.name}.*/).to_stdout
+          expect { described_class.start(argv) }.to output(expected_output).to_stdout
         end
       end
     end
@@ -332,6 +347,20 @@ describe RMT::CLI::ReposCustom do
     context 'custom repository with products' do
       let(:repository) { create :repository, :custom }
       let(:argv) { ['products', repository.id] }
+      let(:rows) do
+        [[
+          product.id,
+          product.name,
+          product.version,
+          product.arch
+        ]]
+      end
+      let(:expected_output) do
+        Terminal::Table.new(
+          headings: ['Product ID', 'Product Name', 'Product Version', 'Product Architecture'],
+          rows: rows
+        ).to_s + "\n"
+      end
 
       before do
         repository_service.attach_product!(product, repository)
@@ -340,7 +369,18 @@ describe RMT::CLI::ReposCustom do
       it('has an attached product') { expect(repository.products.count).to eq(1) }
 
       it 'displays the product' do
-        expect { described_class.start(argv) }.to output(/.*#{product.name}.*/).to_stdout
+        expect { described_class.start(argv) }.to output(expected_output).to_stdout
+      end
+
+      describe 'products --csv' do
+        let(:argv) { ['products', repository.id, '--csv'] }
+        let(:expected_output) do
+          CSV.generate { |csv| rows.each { |row| csv << row } }
+        end
+
+        it 'outputs expected format' do
+          expect { command }.to output(expected_output).to_stdout
+        end
       end
     end
 
@@ -357,3 +397,5 @@ describe RMT::CLI::ReposCustom do
     end
   end
 end
+
+# rubocop:enable RSpec/NestedGroups
