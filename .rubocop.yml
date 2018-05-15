@@ -35,3 +35,6 @@ Naming/UncommunicativeMethodParamName:
   AllowedNames:
   - to
   - id
+
+RSpec/NestedGroups:
+  MaxNesting: 4

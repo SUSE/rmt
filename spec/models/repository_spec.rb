@@ -18,56 +18,59 @@ RSpec.describe Repository, type: :model do
 
   describe 'scopes' do
     describe '.only_mirrored' do
-      it 'returns only mirrored repos' do
-        mirrored = create :repository, mirroring_enabled: true
-        create :repository, mirroring_enabled: false
+      subject { Repository.only_mirrored }
 
-        expect(Repository.only_mirrored).to contain_exactly(mirrored)
-      end
+      let!(:mirrored) { create :repository, mirroring_enabled: true }
+
+      before { create :repository, mirroring_enabled: false }
+
+      it { is_expected.to contain_exactly(mirrored) }
     end
 
     describe '.only_enabled' do
-      it 'returns only enabled repos' do
-        enabled = create :repository, enabled: true
-        create :repository, enabled: false
+      subject { Repository.only_enabled }
 
-        expect(Repository.only_enabled).to contain_exactly(enabled)
-      end
+      let!(:enabled) { create :repository, enabled: true }
+
+      before { create :repository, enabled: false }
+
+      it { is_expected.to contain_exactly(enabled) }
     end
 
     describe '.only_installer_updates' do
-      it 'returns only repos that are installer updates' do
-        installer_updates = create :repository, installer_updates: true
-        create :repository, installer_updates: false
+      subject { Repository.only_installer_updates }
 
-        expect(Repository.only_installer_updates).to contain_exactly(installer_updates)
-      end
+      let!(:installer_updates) { create :repository, installer_updates: true }
 
-      # NOTE: It's unknown to me (Hernan) why this scope does this.
-      it 'clears existing where-clauses' do
-        installer_updates = create :repository, installer_updates: true
-        create :repository, installer_updates: false
+      before { create :repository, installer_updates: false }
 
-        expect(Repository.where(installer_updates: false).only_installer_updates).to contain_exactly(installer_updates)
+      it { is_expected.to contain_exactly(installer_updates) }
+
+      context 'with an existing where clause' do
+        subject { Repository.where(installer_updates: false).only_installer_updates }
+
+        it { is_expected.to contain_exactly(installer_updates) }
       end
     end
 
     describe '.only_scc' do
-      it 'returns only official repositories' do
-        official = create :repository, scc_id: 1
-        create :repository, scc_id: nil
+      subject { Repository.only_scc }
 
-        expect(Repository.only_scc).to contain_exactly(official)
-      end
+      let!(:official) { create :repository, scc_id: 1 }
+
+      before { create :repository, scc_id: nil }
+
+      it { is_expected.to contain_exactly(official) }
     end
 
     describe '.only_custom' do
-      it 'returns only custom repositories' do
-        custom = create :repository, scc_id: nil
-        create :repository, scc_id: 1
+      subject { Repository.only_custom }
 
-        expect(Repository.only_custom).to contain_exactly(custom)
-      end
+      let!(:custom) { create :repository, scc_id: nil }
+
+      before { create :repository, scc_id: 1 }
+
+      it { is_expected.to contain_exactly(custom) }
     end
   end
 
