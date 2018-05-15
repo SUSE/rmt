@@ -69,6 +69,7 @@ BuildRequires:  systemd
 
 Requires:       mariadb
 Requires:       nginx
+Requires(pre):  group(lock)
 Requires(post): ruby2.5
 Requires(post): ruby2.5-rubygem-bundler
 Requires(post): timezone
@@ -180,9 +181,6 @@ rm -f %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/*/gem_make.out
 rm -f %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/*/mkmf.log
 find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod 644 -- {} +
 
-# give _rmt user access to /run/lock
-usermod -a -G lock _rmt
-
 %fdupes %{buildroot}/%{lib_dir}
 
 %files
@@ -216,7 +214,7 @@ usermod -a -G lock _rmt
 %pre
 getent group %{rmt_group} >/dev/null || %{_sbindir}/groupadd -r %{rmt_group}
 getent passwd %{rmt_user} >/dev/null || \
-	%{_sbindir}/useradd -g %{rmt_group} -s /bin/false -r \
+	%{_sbindir}/useradd -g %{rmt_group} -G lock -s /bin/false -r \
 	-c "user for RMT" -d %{app_dir} %{rmt_user}
 %service_add_pre rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service
 
