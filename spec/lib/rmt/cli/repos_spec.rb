@@ -1,7 +1,5 @@
 require 'rails_helper'
 
-# rubocop:disable RSpec/NestedGroups
-
 RSpec.describe RMT::CLI::Repos do
   describe '#enable' do
     subject(:repository) { create :repository, :with_products }
@@ -173,5 +171,3 @@ RSpec.describe RMT::CLI::Repos do
     it_behaves_like 'rmt-cli repos list', 'ls'
   end
 end
-
-# rubocop:enable RSpec/NestedGroups

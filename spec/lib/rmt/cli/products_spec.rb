@@ -1,7 +1,5 @@
 require 'rails_helper'
 
-# rubocop:disable RSpec/NestedGroups
-
 RSpec.describe RMT::CLI::Products do
   describe 'list-command' do
     subject(:command) { described_class.start(argv) }
