@@ -126,11 +126,11 @@ YaST RMT module generates a custom certificate authority which is used to sign H
 
 * When registration is performed during installation from the media or with YaST Registration module, a message will appear, prompting to trust the server certificate.
 
-* `clientSetup4RMT.sh` script is provided for registering on the command line at the following URL: `http://rmt.hostname/tools/clientSetup4RMT.sh`.
+* `rmt-client-setup` script is provided for registering on the command line at the following URL: `http://rmt.hostname/tools/rmt-client-setup`.
 The script requires only the RMT server hostname as a mandatory parameter, e.g.:
 
     ```bash
-    ./clientSetup4RMT.sh https://rmt.hostname/
+    ./rmt-client-setup https://rmt.hostname/
     ```
 
     Executing this script will import the RMT CA's certificate into the trusted store and after that run SUSEConnect to register the client with the RMT.
