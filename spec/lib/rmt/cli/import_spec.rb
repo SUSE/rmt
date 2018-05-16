@@ -1,49 +1,34 @@
 require 'rails_helper'
 
-describe RMT::CLI::Import do
+describe RMT::CLI::Import, :with_fakefs do
   let(:path) { '/mnt/usb' }
 
   describe 'data' do
     include_examples 'handles non-existing path'
+    include_examples 'handles lockfile exception'
 
     subject(:command) { described_class.start(['data', path]) }
 
     it 'triggers import to path' do
-      FakeFS.with_fresh do
-        FileUtils.mkdir_p path
+      FileUtils.mkdir_p path
 
-        expect_any_instance_of(RMT::SCC).to receive(:import).with(path)
-        command
-      end
-    end
-
-    context 'with existing lockfile' do
-      before { allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::Lockfile::ExecutionLockedError) }
-
-      it 'handles lockfile exception' do
-        FakeFS.with_fresh do
-          FileUtils.mkdir_p path
-
-          expect { command }.to output(/Process is locked/).to_stdout.and output('').to_stderr
-        end
-      end
+      expect_any_instance_of(RMT::SCC).to receive(:import).with(path)
+      command
     end
 
     context 'with unexpected error being raised' do
       it 'removes lockfile and re-raises error' do
-        FakeFS.with_fresh do
-          FileUtils.mkdir_p path
-          allow_any_instance_of(RMT::SCC).to receive(:import).with(path).and_raise(RuntimeError)
-          expect(RMT::Lockfile).to receive(:remove_file)
+        FileUtils.mkdir_p path
+        allow_any_instance_of(RMT::SCC).to receive(:import).with(path).and_raise(RuntimeError)
 
-          expect { command }.to raise_error(RuntimeError)
-        end
+        expect { command }.to raise_error(RuntimeError)
       end
     end
   end
 
   describe 'repos' do
     include_examples 'handles non-existing path'
+    include_examples 'handles lockfile exception'
 
     subject(:command) { described_class.start(['repos', path]) }
 
@@ -61,10 +46,8 @@ describe RMT::CLI::Import do
 
     context 'no repos.json file' do
       it 'warns that repos.json does not exist' do
-        FakeFS.with_fresh do
-          FileUtils.mkdir_p path
-          expect { command }.to output('').to_stdout.and output(/repos.json does not exist/).to_stderr
-        end
+        FileUtils.mkdir_p path
+        expect { command }.to output('').to_stdout.and output(/repos.json does not exist/).to_stderr
       end
     end
 
@@ -78,12 +61,10 @@ describe RMT::CLI::Import do
       end
 
       it 'tries to mirrors repo2, but outputs warning' do
-        FakeFS.with_fresh do
-          FileUtils.mkdir_p path
-          File.write("#{path}/repos.json", repo_settings.to_json)
+        FileUtils.mkdir_p path
+        File.write("#{path}/repos.json", repo_settings.to_json)
 
-          expect { command }.to output(/repository by url #{missing_repo_url} does not exist in database/).to_stderr.and output('').to_stdout
-        end
+        expect { command }.to output(/repository by url #{missing_repo_url} does not exist in database/).to_stderr.and output('').to_stdout
       end
     end
 
@@ -97,48 +78,17 @@ describe RMT::CLI::Import do
       end
 
       it 'mirrors repo1' do
-        FakeFS.with_fresh do
-          FileUtils.mkdir_p path
-          File.write("#{path}/repos.json", repo_settings.to_json)
+        FileUtils.mkdir_p path
+        File.write("#{path}/repos.json", repo_settings.to_json)
 
-          expect { command }.to output(/Mirroring repository #{repo1.name}/).to_stdout.and output('').to_stderr
-        end
+        expect { command }.to output(/Mirroring repository #{repo1.name}/).to_stdout.and output('').to_stderr
       end
 
       it 'mirrors repo2' do
-        FakeFS.with_fresh do
-          FileUtils.mkdir_p path
-          File.write("#{path}/repos.json", repo_settings.to_json)
+        FileUtils.mkdir_p path
+        File.write("#{path}/repos.json", repo_settings.to_json)
 
-          expect { command }.to output(/Mirroring repository #{repo2.name}/).to_stdout.and output('').to_stderr
-        end
-      end
-    end
-
-
-    context 'with existing lockfile' do
-      before { allow(RMT::Lockfile).to receive(:create_file).and_raise(RMT::Lockfile::ExecutionLockedError) }
-
-      it 'handles lockfile exception' do
-        FakeFS.with_fresh do
-          FileUtils.mkdir_p path
-          File.write("#{path}/repos.json", repo_settings.to_json)
-
-          expect { command }.to output(/Process is locked/).to_stdout.and output('').to_stderr
-        end
-      end
-    end
-
-    context 'with unexpected error being raised' do
-      it 'removes lockfile and re-raises error' do
-        FakeFS.with_fresh do
-          FileUtils.mkdir_p path
-          File.write("#{path}/repos.json", repo_settings.to_json)
-          allow(Repository).to receive(:make_local_path).and_raise(RuntimeError)
-          expect(RMT::Lockfile).to receive(:remove_file)
-
-          expect { command }.to raise_error(RuntimeError)
-        end
+        expect { command }.to output(/Mirroring repository #{repo2.name}/).to_stdout.and output('').to_stderr
       end
     end
 
@@ -161,20 +111,16 @@ describe RMT::CLI::Import do
       end
 
       it 'tries to mirror repo1' do
-        FakeFS.with_fresh do
-          FileUtils.mkdir_p path
-          File.write("#{path}/repos.json", repo_settings.to_json)
+        FileUtils.mkdir_p path
+        File.write("#{path}/repos.json", repo_settings.to_json)
 
-          expect { command }.to output("black mirror\n").to_stderr.and output(/Mirroring repository #{repo1.name}/).to_stdout
-        end
+        expect { command }.to output("black mirror\n").to_stderr.and output(/Mirroring repository #{repo1.name}/).to_stdout
       end
       it 'tries to mirror repo2' do
-        FakeFS.with_fresh do
-          FileUtils.mkdir_p path
-          File.write("#{path}/repos.json", repo_settings.to_json)
+        FileUtils.mkdir_p path
+        File.write("#{path}/repos.json", repo_settings.to_json)
 
-          expect { command }.to output("black mirror\n").to_stderr.and output(/Mirroring repository #{repo2.name}/).to_stdout
-        end
+        expect { command }.to output("black mirror\n").to_stderr.and output(/Mirroring repository #{repo2.name}/).to_stdout
       end
     end
   end
