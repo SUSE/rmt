@@ -1,7 +1,5 @@
 require 'rails_helper'
 
-# rubocop:disable RSpec/NestedGroups
-
 RSpec.describe RMT::CLI::Repos do
   describe '#enable' do
     subject(:repository) { create :repository, :with_products }
@@ -85,7 +83,9 @@ RSpec.describe RMT::CLI::Repos do
         let(:argv) { [command_name] }
 
         it 'outputs success message' do
-          expect { command }.to output("No repositories enabled.\n").to_stderr
+          expect { command }.to output(
+            "Only enabled repositories are shown by default. Use the `--all` option to see all repositories.\n"
+          ).to_stdout.and output("No repositories enabled.\n").to_stderr
         end
 
         context 'with --all option' do
@@ -117,7 +117,7 @@ RSpec.describe RMT::CLI::Repos do
             Terminal::Table.new(
               headings: ['SCC ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'],
               rows: rows
-            ).to_s + "\n"
+            ).to_s + "\n" + 'Only enabled repositories are shown by default. Use the `--all` option to see all repositories.' + "\n"
           end
 
           it 'outputs success message' do
@@ -131,8 +131,12 @@ RSpec.describe RMT::CLI::Repos do
             CSV.generate { |csv| rows.each { |row| csv << row } }
           end
 
-          it 'outputs expected format' do
+          it 'outputs only the expected format' do
             expect { command }.to output(expected_output).to_stdout
+          end
+
+          it 'does not output extra information' do
+            expect { command }.not_to output(/Use the `--all` option to see all repositories/).to_stdout
           end
         end
 
@@ -173,5 +177,3 @@ RSpec.describe RMT::CLI::Repos do
     it_behaves_like 'rmt-cli repos list', 'ls'
   end
 end
-
-# rubocop:enable RSpec/NestedGroups

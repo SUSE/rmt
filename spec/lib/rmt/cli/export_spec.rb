@@ -1,5 +1,4 @@
 require 'rails_helper'
-# rubocop:disable RSpec/NestedGroups
 
 describe RMT::CLI::Export do
   let(:path) { '/mnt/usb' }
@@ -17,7 +16,7 @@ describe RMT::CLI::Export do
     it 'writes ids of enabled repos to file' do
       FakeFS.with_fresh do
         FileUtils.mkdir_p path
-        expect { command }.to output(/Settings saved/).to_stdout
+        expect { command }.to output(/Settings saved at #{path}/).to_stdout
         expected_filename = File.join(path, 'repos.json')
         expected_json = [{ url: repository.external_url, auth_token: repository.auth_token.to_s }].to_json
         expect(File.exist?(expected_filename)).to be true

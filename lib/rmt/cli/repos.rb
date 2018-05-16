@@ -46,6 +46,7 @@ class RMT::CLI::Repos < RMT::CLI::Base
         last_mirrored_at: 'Last mirrored'
       }, options.csv)
     end
+    puts 'Only enabled repositories are shown by default. Use the `--all` option to see all repositories.' unless options.all || options.csv
   end
 
   private
