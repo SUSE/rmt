@@ -111,6 +111,24 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
       end
     end
 
+    context 'In sync with "-0" version suffix' do
+      it 'checks the system activations and returns a list of system products' do
+        params = system.products.map do |product|
+          {
+            identifier: product.identifier,
+            version: product.version + '-0',
+            arch: product.arch,
+            release_type: product.release_type
+          }
+        end
+
+        post path, params: { products: params }, headers: headers
+
+        expect(response.status).to eq 200
+        expect(json_response.map { |p| p[:id] }).to match_array(system.product_ids)
+      end
+    end
+
     context 'Out of sync' do
       it 'removes obsolete activations' do
         product = system.products.first

@@ -58,6 +58,21 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       its(:code) { is_expected.to eq('201') }
       its(:body) { is_expected.to eq(serialized_json) }
 
+      context 'response with "-" in version' do
+        let(:product) { FactoryGirl.create(:product, :with_mirrored_repositories, :with_mirrored_extensions, version: '24.0') }
+
+        let(:payload) do
+          {
+            identifier: product.identifier,
+            version: '24.0-0',
+            arch: product.arch
+          }
+        end
+
+        its(:code) { is_expected.to eq('201') }
+        its(:body) { is_expected.to eq(serialized_json) }
+      end
+
       describe 'JSON response' do
         subject(:json_data) { JSON.parse(response.body, symbolize_names: true) }
 
@@ -108,8 +123,6 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
     end
 
     context 'when product is activated' do
-      subject { response }
-
       let(:system) { activation.system }
       let(:payload) do
         {
@@ -125,9 +138,34 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
         ).to_json
       end
 
-      before { get url, headers: headers, params: payload }
-      its(:code) { is_expected.to eq('200') }
-      its(:body) { is_expected.to eq(serialized_json) }
+      describe 'response' do
+        subject { response }
+
+        before { get url, headers: headers, params: payload }
+
+        its(:code) { is_expected.to eq('200') }
+        its(:body) { is_expected.to eq(serialized_json) }
+      end
+
+      describe 'response with "-" in version' do
+        subject { response }
+
+        let(:payload) do
+          {
+            identifier: activation.product.identifier,
+            version: '24.0-0',
+            arch: activation.product.arch
+          }
+        end
+
+        before do
+          activation.service.product.update_attribute(:version, '24.0')
+          get url, headers: headers, params: payload
+        end
+
+        its(:code) { is_expected.to eq('200') }
+        its(:body) { is_expected.to eq(serialized_json) }
+      end
     end
 
     context 'with eula_url' do
@@ -223,6 +261,23 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       describe 'response' do
         before { request }
         subject { response }
+
+        its(:code) { is_expected.to eq('201') }
+        its(:body) { is_expected.to eq(serialized_json) }
+      end
+
+      describe 'response with "-" in product version' do
+        before { request }
+        subject { response }
+
+        let(:new_product) { FactoryGirl.create(:product, :with_mirrored_repositories, version: '24.0', predecessors: [old_product]) }
+        let(:payload) do
+          {
+            identifier: new_product.identifier,
+            version: '24.0-0',
+            arch: new_product.arch
+          }
+        end
 
         its(:code) { is_expected.to eq('201') }
         its(:body) { is_expected.to eq(serialized_json) }
@@ -355,6 +410,44 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
             'target_base_product': {
               'identifier': second_product.identifier,
               'version': second_product.version,
+              'arch': second_product.arch,
+              'release_type': second_product.release_type
+            }
+          }
+        end
+        let(:expected_response) do
+          [[::V3::UpgradePathItemSerializer.new(second_product)]].to_json
+        end
+
+        its(:code) { is_expected.to eq('200') }
+        its(:body) do
+          is_expected.to eq(expected_response)
+        end
+      end
+
+      context 'with "-0" version suffix' do
+        let(:first_product) { FactoryGirl.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'base') }
+        let(:second_product) do
+          FactoryGirl.create(
+            :product,
+            :with_mirrored_repositories,
+            product_type: 'base',
+            predecessors: [first_product],
+            migration_kind: migration_kind
+          )
+        end
+        let(:payload) do
+          product = second_product.predecessors.first # For initializing everything in the correct order
+          {
+            'installed_products': [ {
+              'identifier': product.identifier,
+              'version': product.version + '-0',
+              'arch': product.arch,
+              'release_type': product.release_type
+            } ],
+            'target_base_product': {
+              'identifier': second_product.identifier,
+              'version': second_product.version + '-0',
               'arch': second_product.arch,
               'release_type': second_product.release_type
             }
