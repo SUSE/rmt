@@ -131,8 +131,12 @@ RSpec.describe RMT::CLI::Repos do
             CSV.generate { |csv| rows.each { |row| csv << row } }
           end
 
-          it 'outputs expected format' do
+          it 'outputs only the expected format' do
             expect { command }.to output(expected_output).to_stdout
+          end
+
+          it 'does not output extra information' do
+            expect { command }.not_to output(/Use the `--all` option to see all repositories/).to_stdout
           end
         end
 
