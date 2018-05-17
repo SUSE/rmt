@@ -20,9 +20,8 @@ require 'csv'
 require 'json'
 require 'rmt/cli/smt_importer'
 
-config = OpenStruct.new
-config.no_systems = false
-config.data_dir = nil
+no_systems = false
+data_dir = nil
 
 # Initialize the database
 relative_load_paths = %w[lib lib/rmt app/models app/validators app/services].map { |dir| File.join(RMT_PATH, dir) }
@@ -32,7 +31,7 @@ ActiveSupport::Dependencies.autoload_paths += relative_load_paths
 ActiveRecord::Base.establish_connection(db_config)
 
 begin
-  script = SMTImporter.new(config)
+  script = SMTImporter.new(data_dir, no_systems)
   script.run ARGV
 rescue SMTImporter::ImportException
   exit 1
