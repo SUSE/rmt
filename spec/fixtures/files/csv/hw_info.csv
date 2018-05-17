@@ -1,0 +1,14 @@
+SCC_620a989bc9fb44cc95e7f96390bd979e	host	Y
+SCC_620a989bc9fb44cc95e7f96390bd979e	machinedata	{"hostname":"e9","distro_target":"sle-12-x86_64","hwinfo":{"uuid":null,"hypervisor":"vertical","hostname":"e9","cpus":8,"sockets":1,"arch":"x86_64"}}
+SCC_620a989bc9fb44cc95e7f96390bd979e	product-arch-100687	x86_64
+SCC_620a989bc9fb44cc95e7f96390bd979e	product-name-100687	SLES
+SCC_620a989bc9fb44cc95e7f96390bd979e	product-rel-100687	NULL
+SCC_620a989bc9fb44cc95e7f96390bd979e	product-version-100687	12.3
+SCC_620a989bc9fb44cc95e7f96390bd979e	virttype	vertical
+SCC_82660967a72c4c6f9567cd2382b232b9	host	Y
+SCC_82660967a72c4c6f9567cd2382b232b9	machinedata	{"hwinfo":{"sockets":1,"arch":"x86_64","cpus":8,"hostname":"e9","hypervisor":"vertical","uuid":null},"distro_target":"sle-12-x86_64","hostname":"e9"}
+SCC_82660967a72c4c6f9567cd2382b232b9	product-arch-100687	x86_64
+SCC_82660967a72c4c6f9567cd2382b232b9	product-name-100687	SLES
+SCC_82660967a72c4c6f9567cd2382b232b9	product-rel-100687	NULL
+SCC_82660967a72c4c6f9567cd2382b232b9	product-version-100687	12.3
+SCC_82660967a72c4c6f9567cd2382b232b9	virttype	vertical

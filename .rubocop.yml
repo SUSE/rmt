@@ -24,6 +24,9 @@ AllCops:
     - lib/locale/*
     - package/*
 
+Style/TrailingUnderscoreVariable:
+  Enabled: false
+
 Naming/FileName:
   Exclude:
     - Dangerfile

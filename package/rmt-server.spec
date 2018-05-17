@@ -54,6 +54,7 @@ Source14:       nginx-https.conf
 
 Patch0:         use-ruby-2.5-in-rmt-cli.patch
 Patch1:         use-ruby-2.5-in-rails.patch
+Patch2:         use-ruby-2.5-in-rmt-data-import.patch
 
 BuildRequires:  fdupes
 BuildRequires:  gcc
@@ -95,6 +96,7 @@ cp -p %SOURCE2 .
 
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 bundle.ruby2.5 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
@@ -115,6 +117,7 @@ ln -s %{data_dir}/tmp %{buildroot}%{app_dir}/tmp
 ln -s %{data_dir}/public/repo %{buildroot}%{app_dir}/public/repo
 mkdir -p %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-cli %{buildroot}%{_bindir}
+ln -s %{app_dir}/bin/rmt-data-import %{buildroot}%{_bindir}/rmt-data-import
 install -D -m 644 %_sourcedir/rmt-cli.8.gz %{buildroot}%_mandir/man8/rmt-cli.8.gz
 
 # systemd
@@ -195,6 +198,7 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
 %doc %{_mandir}/man8/rmt-cli.8.gz
 %{_bindir}/rmt-cli
+%{_bindir}/rmt-data-import
 %{_sbindir}/rcrmt-server
 %{_sbindir}/rcrmt-server-migration
 %{_sbindir}/rcrmt-server-sync
