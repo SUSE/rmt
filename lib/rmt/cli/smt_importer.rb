@@ -3,19 +3,21 @@ require 'ostruct'
 
 
 class SMTImporter
-  attr_accessor :config
+  attr_accessor :data_dir
+  attr_accessor :no_systems
 
   class ImportException < StandardError
   end
 
-  def initialize(config)
-    @config = config
+  def initialize(data_dir, no_systems)
+    @data_dir = data_dir
+    @no_systems = no_systems
   end
 
   def read_csv(file)
     # set the quote char to something not used to make sure the csv parser is not interfering with the
     # JSON quoting.
-    CSV.open(File.join(config.data_dir, file + '.csv'), 'r', { col_sep: "\t", quote_char: "\x00" })
+    CSV.open(File.join(data_dir, file + '.csv'), 'r', { col_sep: "\t", quote_char: "\x00" })
   end
 
   def import_repositories
@@ -27,7 +29,7 @@ class SMTImporter
         repo.save!
         puts "Enabled mirroring for repository #{repo_id}"
       else
-        warn "Repository #{repo_id}, perhaps you no longer have a valid subscription for it"
+        warn "Repository #{repo_id} was not found in RMT database, perhaps you no longer have a valid subscription for it"
       end
     end
   end
@@ -36,37 +38,39 @@ class SMTImporter
     read_csv('enabled_custom_repos').each do |row|
       product_id, repo_name, repo_url = row
 
-      repo = Repository.find_by(external_url: repo_url)
       product = Product.find_by(id: product_id)
-
-      # create the repository if it does not exist yet
-      unless repo
-        local_path = Repository.make_local_path(repo_url)
-        repo = Repository.create!(external_url: repo_url, name: repo_name, local_path: local_path)
+      repo = Repository.find_or_create_by(external_url: repo_url) do |repository|
+        repository.name = repo_name
+        repository.local_path = Repository.make_local_path(repo_url)
       end
 
       if product
-        assoc = RepositoriesServicesAssociation.find_by(service: product.service, repository: repo)
+        assoc = repo.services.find_by(id: product.service)
         unless assoc
-          RepositoriesServicesAssociation.create!(service: product.service, repository: repo)
+          repo.services << product.service
           puts "Added association between #{repo.name} and product #{product_id}"
         end
       else
-        warn "Product #{product_id} not found"
+        warn "Product #{product_id} not found!"
+        warn "Tried to attach custom repository #{repo.name} to product #{product_id},"
+        warn 'but that product was not found. Attach it to a different product'
+        warn 'by running `rmt-cli repos custom attach`'
       end
     end
   end
 
   def import_systems
     read_csv('systems').each do |row|
-      login, password, hostname = row
+      login, password, hostname, registered_at = row
+
+      next unless System.find_by(login: login, password: password).nil?
 
       # rubocop:disable Rails/TimeZone
       System.create!(
         login: login,
         password: password,
         hostname: hostname,
-        registered_at: Time.now
+        registered_at: Time.at(registered_at.to_i)
       )
       # rubocop:enable Rails/TimeZone
       puts "Imported system #{login}"
@@ -130,7 +134,7 @@ class SMTImporter
       import_custom_repositories
     end
 
-    raise ImportException if config.no_systems
+    return if no_systems
 
     ActiveRecord::Base.transaction do
       import_systems
@@ -141,11 +145,11 @@ class SMTImporter
 
   def parse_cli_arguments(argv)
     parser = OptionParser.new do |parser|
-      parser.on('-d', '--data PATH', 'Path to unpacked SMT data tarball') { |path| config.data_dir = path }
-      parser.on('--no-systems', 'Import no systems to rmt')               { config.no_systems = true }
+      parser.on('-d', '--data PATH', 'Path to unpacked SMT data tarball') { |path| @data_dir = path }
+      parser.on('--no-systems', 'Do not import the systems that were registered to the SMT') { @no_systems = true }
     end
     parser.parse!(argv)
-    raise OptionParser::MissingArgument if config.data_dir.nil?
+    raise OptionParser::MissingArgument if data_dir.nil?
   rescue OptionParser::InvalidOption, OptionParser::MissingArgument
     puts parser
     raise ImportException
@@ -153,9 +157,8 @@ class SMTImporter
 
   def check_products_exist
     return if Product.count > 0
-
-    warn 'No products has been found in rmt. Please run rmt-cli sync before'
-    warn 'importing data from smt.'
+    warn 'RMT has not been synced to SCC yet. Please run `rmt-cli sync` before'
+    warn 'importing data from SMT.'
     raise ImportException
   end
 end
