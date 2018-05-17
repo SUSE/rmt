@@ -1,130 +1,181 @@
-# Repository Mirroring Tool
+rmt-cli(8) -- control and configure your RMT server
+===========================================================================
 
-This tool allows you to mirror RPM repositories in your own private network.
-Organization (mirroring) credentials are required to mirror SUSE repositories.
+## DESCRIPTION
 
-## Usage
+`rmt-cli` is the command line interface to control and configure a local RMT server.
 
-### SUSE products
+RMT allows you to mirror RPM repositories in your own private network.
+It also is a registration proxy for SUSE systems.
 
-* Run `rmt-cli sync` to download available products and repositories data for your organization from SCC
-* Run `rmt-cli products list --all` to see the list of products that are available for your organization
-* Run `rmt-cli repos list --all` to see the list of all repositories available
-* Use the `rmt-cli products enable` command to choose which product repositories to mirror, for example:
 
-  ```
-  rmt-cli products enable SLES/12.2/x86_64
-  ```
+## PREREQUISITE
 
-  The above command would select the mandatory (`pool`, `updates`) SLES 12 SP2 repositories to be mirrored.
-  Alternatively, you can choose to mirror an individual repository with `rmt-cli repos enable REPO_ID`, for example:
+Before using `rmt-cli` for the first time, you have to finish the initial setup of your RMT server.
+The recommended way to do this is the **RMT Yast module**.
+You can install and run this wizard like this:
 
-  ```
-  rmt-cli repos enable 2189
-  ```
+`zypper install yast2-rmt`
 
-  The above command would enable mirroring for the SLES 12 SP3 Updates repository.
-* Run `rmt-cli mirror` to mirror selected repositories and make their content available through RMT
-* Register client against RMT by running `SUSEConnect --url https://rmt_hostname`
-  After successful registration the repositories from RMT will be used by `zypper` on the client machine.
+`yast2 rmt`
 
-### Custom Repositories
 
-* Run `rmt-cli repos custom add URL NAME` to add a new custom repository, for example:
+## USAGE
 
-  ```
-  rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers
-  ```
+  * `rmt-cli sync`:
+    RMT comes with a preconfigured systemd timer to automatically get the latest product and repository data from the SUSE Customer Center over night.
+    This command triggers the same synchronization instantly.
 
-* Run `rmt-cli repos custom list` to list all custom repositories.
-* Run `rmt-cli repos custom enable ID` to enable mirroring for a custom repository.
-* Run `rmt-cli repos custom disable ID` to disable mirroring for a custom repository.
-* Run `rmt-cli repos custom remove ID` to remove a custom repository.
-* Run `rmt-cli repos custom products ID` to list the products attached to a custom repository.
-* Run `rmt-cli repos custom attach ID PRODUCT_ID` to attach an existing custom repository to a product.
-* Run `rmt-cli repos custom detach ID PRODUCT_ID` to detach an existing custom repository from a product.
+  * `rmt-cli products list [--all] [--csv]`:
+    Lists the products that are enabled for mirroring.
 
-### Offline Mode
+    Use the `--all` flag to list all available products.
 
-RMT supports disconnected setups, similar to how SMT did.
-Connecting an SMT with an RMT this way is not supported.
+    Use the `--csv` flag to output the list in CSV format.
 
-#### Inital Setup
+  * `rmt-cli products enable <id | string>`:
+    Enables mandatory repositories of a single product by its id or identifier string.
 
-##### On the Online RMT
+  * `rmt-cli products disable <id | string>`:
+    Disables all repositories of a single product by its id or identifier string.
 
-- `rmt-cli export data /mnt/usb` will get the required JSON responses from SCC and save them as files at the specified path.
+  * `rmt-cli repos list [--all] [--csv]`:
+    Lists the repositories that are enabled for mirroring.
 
-##### On the Offline RMT
+    Use the `--all` flag to list all available repositories.
 
-- `rmt-cli import data /mnt/usb` will read the JSON-files from given path and fill the local database.
-- Now use `rmt-cli repos enable` or `rmt-cli products enable` to mark repos for mirroring.
-- `rmt-cli export settings /mnt/usb` saves your settings at given path as `repos.json`.
+    Use the `--csv` flag to output the list in CSV format.
 
-#### Regular workflow
+  * `rmt-cli repos enable <id>`:
+    Enables a single repository by its id.
 
-##### On the Online RMT
+  * `rmt-cli repos disable <id>`:
+    Disables a single repository by its id.
 
-- `rmt-cli export repos /mnt/usb` will look for the `repos.json` at given path and mirror these repos directly to that path.
+  * `rmt-cli mirror`:
+    In its default configuration, RMT mirrors its enabled product repositories automatically once every night.
+    This command starts this mirroring process manually.
 
-##### On the Offline RMT
+When all enabled repositories are fully mirrored, you can register your client systems against RMT by running `SUSEConnect --url https://<RMT hostname>` on the client machine.
+After successful registration the repositories from RMT will be used by `zypper` on the client machine.
 
-- `rmt-cli import repos /mnt/usb` will mirror all repos which are enabled in the database, from the given path.
 
-## Configuration
+**Custom repositories**
 
-Available configuration options can be found in the `etc/rmt.conf` file.
+  * `rmt-cli repos custom list [--csv]`:
+    Lists all your custom repositories.
 
-The recommended way to perform initial configuration is using the [YaST RMT module](https://github.com/SUSE/yast2-rmt).
+    Use the `--csv` flag to output the list in CSV format.
+
+  * `rmt-cli repos custom add <url> <name>`:
+    Adds a new custom repository, for example:
+
+    `rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers`
+
+  * `rmt-cli repos custom enable <id>`:
+    Enables mirroring for a custom repository.
+
+  * `rmt-cli repos custom disable <id>`:
+    Disables mirroring for a custom repository.
+
+  * `rmt-cli repos custom remove <id>`:
+    Removes a custom repository.
+
+  * `rmt-cli repos custom products <id>`:
+    Lists the products attached to the custom repository with given id.
+
+  * `rmt-cli repos custom attach <id> <product id>`:
+    Attaches an existing custom repository to a product.
+
+  * `rmt-cli repos custom detach <id> <product id>`:
+    Detaches an existing custom repository from a product.
+
+
+**Offline mode**
+
+RMT supports disconnected setups, in which an RMT does not need a connection to the internet, but takes all data and repository files from a portable storage device.
+A similar functionality was available in SMT. However, connecting an SMT with an RMT this way is not supported.
+
+The offline mode requires some initial setup steps:
+
+  * `rmt-cli export data <path>`:
+    Run this on an online RMT to get the latest data from SUSE Customer Center and save it as JSON files at the specified path.
+
+  * `rmt-cli import data <path>`:
+    Run this on the offline RMT to read the JSON files from given path and fill the local database with data.
+
+You can now run the usual `rmt-cli repos enable <id>` or `rmt-cli products enable <id>` commands on the offline RMT to select the repositories you want to enable for mirroring here.
+
+* `rmt-cli export settings <path>`:
+  Run this on the offline RMT to save the settings for enabled repositories at given path as `repos.json`.
+
+After you have finished above setup steps, you can mirror repositories regularly to and from a portable storage device, which you first mount on the online, and later on the offline RMT to carry the files over:
+
+* `rmt-cli export repos <path>`:
+  Run this regularly on the online RMT to mirror the set of repositories specified in the `repos.json` at given path.
+  The mirrored repository files will be stored in subdirectories of the same path.
+
+* `rmt-cli import repos <path>`:
+  Run this on the offline RMT to copy over all files of the enabled repositories from given path.
+
+
+## CONFIGURATION
+
+As described in the [PREREQUISITE][] section, the recommended way to perform initial configuration of RMT is using its YaST module.
 The YaST RMT module will take care of configuring SCC credentials, setting up the database and creating SSL certificates.
+However, if you want to reconfigure specific settings manually, this section tells you how.
 
-### SSL certificates & HTTPS
+All available configuration options can be found in the `/etc/rmt.conf` file.
 
-By default access to API endpoints consumed by SUSEConnect is limited to HTTPS only.
+**SSL certificates & HTTPS**
+
+By default access to API endpoints consumed by `SUSEConnect` is limited to HTTPS only.
 nginx is configured to use SSL certificate and private key from the following locations:
 
-* Certificate: /usr/share/rmt/ssl/rmt-server.crt
-* Private key: /usr/share/rmt/ssl/rmt-server.key
+- Certificate: `/usr/share/rmt/ssl/rmt-server.crt`
+- Private key: `/usr/share/rmt/ssl/rmt-server.key`
 
-YaST RMT module generates a custom certificate authority which is used to sign HTTPS certificates, which means that in order to register, this certificate authority must be trusted by the client machines.
 
-* When registration is performed during installation from the media or with YaST Registration module, a message will appear, prompting to trust the server certificate.
+YaST RMT module generates a custom certificate authority which is used to sign HTTPS certificates, which means that in order to register, this certificate authority must be trusted by the client machines:
 
-* `rmt-client-setup` script is provided for registering on the command line at the following URL: `http://rmt.hostname/tools/rmt-client-setup`.
+- For registrations during installation from the media or with YaST Registration module, a message will appear, prompting to trust the server certificate.
+
+- For registering a client system on the command line, use the `rmt-client-setup` script. It is provided at the following URL:
+`http://<RMT hostname>/tools/rmt-client-setup`.
+
 The script requires only the RMT server hostname as a mandatory parameter, e.g.:
 
-    ```bash
-    ./rmt-client-setup https://rmt.hostname/
-    ```
+`wget http://rmt.example.org/tools/rmt-client-setup`
 
-    Executing this script will import the RMT CA's certificate into the trusted store and after that run SUSEConnect to register the client with the RMT.
+`chmod +x ./rmt-client-setup`
 
-### Mirroring settings
+`./rmt-client-setup http://rmt.example.org`
 
-- `mirroring.mirror_src` - whether to mirror source (arch = `src`) RPM packages or not.
+Executing this script will import the RMT CA's certificate into the trusted store and after that, run `SUSEConnect` to register the client with the RMT.
 
-### HTTP client settings
+**Mirroring settings**
 
-`http_client` section defines RMT's global HTTP connection settings.
+The `mirroring` section lets you adjust mirroring behavior.
 
-- `http_client.proxy_auth` setting determines proxy authentication mechanism, possible values are:
-    * `none`
-    * `basic`
-    * `digest`
-    * `gssnegotiate`
-    * `ntlm`
-    * `digest_ie`
-    * `ntlm_wb`
+  * `mirroring.mirror_src`:
+    Whether to mirror source (arch = `src`) RPM packages or not.
 
-### SCC settings for accessing SUSE repositories
+**HTTP client settings**
 
-The `scc` section contains your organization credentials for mirroring SUSE repositories.
-Your organization credentials can be obtained from the [SUSE Customer Center](https://scc.suse.com/organization).
+The `http_client` section defines RMT's global HTTP connection settings.
 
-## Feedback
+  * `http_client.proxy_auth` setting:
+    Determines proxy authentication mechanism, possible values are:
+    `none`, `basic`, `digest`, `gssnegotiate`, `ntlm`, `digest_ie`, `ntlm_wb`
+
+**Settings for accessing SUSE repositories**
+
+The `scc` section contains your organization credentials for mirroring SUSE repositories from SUSE Customer Center.
+Your organization credentials can be obtained from the [SUSE Customer Center](https://scc.suse.com/).
+
+
+## FEEDBACK
 
 Do you have suggestions for improvement? Let us know!
-
-Go to [Issues](https://github.com/SUSE/rmt/issues/new), create a new issue and describe what you think could be improved.
-
+Go to *https://github.com/SUSE/rmt/issues/new* and create a new issue and describe what you think could be improved.
 Feedback is always welcome!
