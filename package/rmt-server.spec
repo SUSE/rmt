@@ -39,7 +39,7 @@ ExcludeArch:    %ix86 s390
 Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-server-rpmlintrc
 Source2:        rmt.conf
-Source3:        rmt.8.gz
+Source3:        rmt-cli.8.gz
 Source4:        nginx-http.conf
 Source5:        rmt-server-mirror.service
 Source6:        rmt-server-mirror.timer
@@ -115,7 +115,7 @@ ln -s %{data_dir}/tmp %{buildroot}%{app_dir}/tmp
 ln -s %{data_dir}/public/repo %{buildroot}%{app_dir}/public/repo
 mkdir -p %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-cli %{buildroot}%{_bindir}
-install -D -m 644 %_sourcedir/rmt.8.gz %{buildroot}%_mandir/man8/rmt.8.gz
+install -D -m 644 %_sourcedir/rmt-cli.8.gz %{buildroot}%_mandir/man8/rmt-cli.8.gz
 
 # systemd
 mkdir -p %{buildroot}%{_unitdir}
@@ -193,7 +193,7 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %config(noreplace) %{_sysconfdir}/rmt.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
-%doc %{_mandir}/man8/rmt.8.gz
+%doc %{_mandir}/man8/rmt-cli.8.gz
 %{_bindir}/rmt-cli
 %{_sbindir}/rcrmt-server
 %{_sbindir}/rcrmt-server-migration
