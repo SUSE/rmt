@@ -1,4 +1,23 @@
 -------------------------------------------------------------------
+Fri May 18 08:24:11 UTC 2018 - skotov@suse.com
+- Bump version to 1.0.0
+  Make rmt-server require yast2-rmt
+  Add the post-install message about running yast2 rmt:
+  See https://github.com/SUSE/rmt/pull/176
+- Add new script rmt-data-import for migration from SMT to RMT
+  See https://github.com/SUSE/rmt/pull/170
+- Split off usage instruction into manual.md
+  See https://github.com/SUSE/rmt/pull/174
+- Squash migrations into one
+  See https://github.com/SUSE/rmt/pull/175
+- Fixed rollback
+  See https://github.com/SUSE/rmt/pull/166
+- Small improvements on CLI responses
+  See https://github.com/SUSE/rmt/pull/167
+- Rename clientSetup4RMT.sh => rmt-client-setup
+  See: https://github.com/SUSE/rmt/pull/172
+
+-------------------------------------------------------------------
 Fri May 11 15:54:46 UTC 2018 - hschmidt@suse.com
 
 - Don't check if a product has repos and that they are mirrored

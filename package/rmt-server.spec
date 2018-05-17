@@ -27,7 +27,7 @@
 %define rmt_group   nginx
 
 Name:           rmt-server
-Version:        0.0.7
+Version:        1.0.0
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -70,6 +70,7 @@ BuildRequires:  systemd
 
 Requires:       mariadb
 Requires:       nginx
+Requires:       yast2-rmt
 Requires(post): ruby2.5
 Requires(post): ruby2.5-rubygem-bundler
 Requires(post): timezone
@@ -225,6 +226,7 @@ getent passwd %{rmt_user} >/dev/null || \
 %service_add_post rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service
 cd /usr/share/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails secrets:setup >/dev/null
 cd /usr/share/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails runner -e production "Rails::Secrets.write({'production' => {'secret_key_base' => SecureRandom.hex(64)}}.to_yaml)"
+echo "The installation completed. Please run yast2-rmt to configure the package properly" >> /dev/stdout
 
 %preun
 %service_del_preun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service
