@@ -5,13 +5,13 @@ all:
 	@:
 
 clean:
-	rm -f rmt.8*
+	rm -f rmt-cli.8*
 	rm -rf package/*.tar.bz2
 	rm -rf $(NAME)-$(VERSION)/
 
 man:
-	bundle exec ronn --roff --pipe --manual RMT README.md > rmt.8 && gzip -f rmt.8
-	mv rmt.8.gz package/
+	bundle exec ronn --roff --pipe --manual RMT MANUAL.md > rmt-cli.8 && gzip -f rmt-cli.8
+	mv rmt-cli.8.gz package/
 
 dist: clean man
 	@mkdir -p $(NAME)-$(VERSION)/
