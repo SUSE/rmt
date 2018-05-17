@@ -22,7 +22,7 @@ class SMTImporter
 
   def import_repositories
     read_csv('enabled_repos').each do |row|
-      repo_id, = row
+      repo_id, _ = row
       repo = Repository.find_by(scc_id: repo_id)
       if repo
         repo.mirroring_enabled = true
