@@ -6,7 +6,7 @@ class RMT::CLI::Main < RMT::CLI::Base
 
   desc 'sync', 'Sync database with SUSE Customer Center'
   def sync
-    locked_method do
+    RMT::Lockfile.lock do
       RMT::SCC.new(options).sync
     end
   end
@@ -19,7 +19,7 @@ class RMT::CLI::Main < RMT::CLI::Base
 
   desc 'mirror', 'Mirror repositories'
   def mirror
-    locked_method do
+    RMT::Lockfile.lock do
       repos = Repository.where(mirroring_enabled: true)
       if repos.empty?
         warn 'There are no repositories marked for mirroring.'

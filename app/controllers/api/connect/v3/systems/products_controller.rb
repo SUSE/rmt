@@ -48,17 +48,14 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   end
 
   def upgrade
-    activation = @system.activations.joins(:service).find_by('services.product_id': [@product.id, @product.predecessor_ids, @product.successor_ids].flatten)
+    obsoleted_product_ids = ([@product] + @product.predecessors + @product.successors).map(&:id)
+    obsoleted_service = @system.services.find_by(product_id: obsoleted_product_ids)
+    @obsoleted_service_name = obsoleted_service.name if obsoleted_service
 
-    unless activation
-      raise ActionController::TranslatedError.new(
-        N_("No activation with product '%s' was found."),
-        @product.friendly_name
-      )
+    ActiveRecord::Base.transaction do
+      remove_previous_product_activations(obsoleted_product_ids)
+      create_product_activation
     end
-
-    activation.service = @product.service
-    activation.save!
 
     render_service
   end
@@ -81,7 +78,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   def require_product
     require_params(%i[identifier version arch])
 
-    @product = Product.where(identifier: params[:identifier], version: params[:version], arch: params[:arch]).first
+    @product = Product.find_by(identifier: params[:identifier], version: Product.clean_up_version(params[:version]), arch: params[:arch])
 
     unless @product
       raise ActionController::TranslatedError.new(N_('No product found'))
@@ -103,6 +100,10 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
   def create_product_activation
     @system.activations.where(service_id: @product.service.id).first_or_create
+  end
+
+  def remove_previous_product_activations(product_ids)
+    @system.activations.includes(:product).where('products.id' => product_ids).destroy_all
   end
 
   # Check if extension base product is already activated
@@ -134,7 +135,9 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   end
 
   def product_search_params(product_hash)
-    product_hash.permit(:identifier, :version, :arch, :release_type).to_h.symbolize_keys
+    hash = product_hash.permit(:identifier, :version, :arch, :release_type).to_h.symbolize_keys
+    hash[:version] = Product.clean_up_version(hash[:version])
+    hash
   end
 
   def product_from_hash(product_hash)

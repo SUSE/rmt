@@ -58,6 +58,21 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       its(:code) { is_expected.to eq('201') }
       its(:body) { is_expected.to eq(serialized_json) }
 
+      context 'response with "-" in version' do
+        let(:product) { FactoryGirl.create(:product, :with_mirrored_repositories, :with_mirrored_extensions, version: '24.0') }
+
+        let(:payload) do
+          {
+            identifier: product.identifier,
+            version: '24.0-0',
+            arch: product.arch
+          }
+        end
+
+        its(:code) { is_expected.to eq('201') }
+        its(:body) { is_expected.to eq(serialized_json) }
+      end
+
       describe 'JSON response' do
         subject(:json_data) { JSON.parse(response.body, symbolize_names: true) }
 
@@ -108,8 +123,6 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
     end
 
     context 'when product is activated' do
-      subject { response }
-
       let(:system) { activation.system }
       let(:payload) do
         {
@@ -125,9 +138,34 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
         ).to_json
       end
 
-      before { get url, headers: headers, params: payload }
-      its(:code) { is_expected.to eq('200') }
-      its(:body) { is_expected.to eq(serialized_json) }
+      describe 'response' do
+        subject { response }
+
+        before { get url, headers: headers, params: payload }
+
+        its(:code) { is_expected.to eq('200') }
+        its(:body) { is_expected.to eq(serialized_json) }
+      end
+
+      describe 'response with "-" in version' do
+        subject { response }
+
+        let(:payload) do
+          {
+            identifier: activation.product.identifier,
+            version: '24.0-0',
+            arch: activation.product.arch
+          }
+        end
+
+        before do
+          activation.service.product.update_attribute(:version, '24.0')
+          get url, headers: headers, params: payload
+        end
+
+        its(:code) { is_expected.to eq('200') }
+        its(:body) { is_expected.to eq(serialized_json) }
+      end
     end
 
     context 'with eula_url' do
@@ -169,73 +207,78 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
   end
 
   describe '#upgrade' do
+    subject { response }
+
+    let(:request) { put url, headers: headers, params: payload }
+    let(:new_product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
+    let(:payload) do
+      {
+        identifier: new_product.identifier,
+        version: new_product.version,
+        arch: new_product.arch
+      }
+    end
+    let(:serialized_json) do
+      V3::ServiceSerializer.new(
+        new_product.service,
+        base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
+      ).to_json
+    end
+
     it_behaves_like 'products controller action' do
       let(:verb) { 'put' }
     end
 
-    context 'with not activated product' do
-      before { put url, headers: headers, params: payload }
-      subject { response }
-
-      let(:product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
-      let(:payload) do
-        {
-          identifier: product.identifier,
-          version: product.version,
-          arch: product.arch
-        }
-      end
-
-      let(:error_response) do
-        {
-          type: 'error',
-          error: "No activation with product '#{product.friendly_name}' was found.",
-          localized_error: "No activation with product '#{product.friendly_name}' was found."
-        }
-      end
-
-
-      its(:code) { is_expected.to eq('422') }
-      its(:body) { is_expected.to eq(error_response.to_json) }
+    before do
+      request
+      system.reload
     end
 
-    context 'with activated product' do
-      let(:request) { put url, headers: headers, params: payload }
+    context 'new product' do
+      its(:code) { is_expected.to eq('201') }
+      its(:body) { is_expected.to eq(serialized_json) }
 
+      it('has one activation') { expect(system.activations.count).to eq(1) }
+
+      it 'activates new product' do
+        expect(system.activations.first.reload.service_id).to equal(new_product.service.id)
+      end
+    end
+
+    context 'with activated previous product' do
       let!(:old_product) { FactoryGirl.create(:product, :with_mirrored_repositories, :activated, system: system) }
       let(:new_product) { FactoryGirl.create(:product, :with_mirrored_repositories, predecessors: [old_product]) }
-
-      let(:payload) do
-        {
-          identifier: new_product.identifier,
-          version: new_product.version,
-          arch: new_product.arch
-        }
-      end
-
       let(:serialized_json) do
         V3::ServiceSerializer.new(
           new_product.service,
+          obsoleted_service_name: old_product.service.name,
           base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
         ).to_json
       end
 
-      describe 'response' do
-        before { request }
-        subject { response }
 
-        its(:code) { is_expected.to eq('201') }
-        its(:body) { is_expected.to eq(serialized_json) }
+      its(:code) { is_expected.to eq('201') }
+      its(:body) { is_expected.to eq(serialized_json) }
+
+      it('has one activation') { expect(system.activations.count).to eq(1) }
+
+      it 'deactivates old product and activates new product' do
+        expect(system.activations.first.reload.service_id).to equal(new_product.service.id)
+      end
+    end
+
+    context 'with "-" in product version' do
+      let(:new_product) { FactoryGirl.create(:product, :with_mirrored_repositories, version: '24.0') }
+      let(:payload) do
+        {
+          identifier: new_product.identifier,
+          version: '24.0-0',
+          arch: new_product.arch
+        }
       end
 
-      describe 'activations' do
-        specify { expect { request }.not_to change { system.activations.count } }
-        it "updates the system's activation with the new product" do
-          expect { request }.to change { system.activations.first.reload.service_id }
-            .from(old_product.service.id)
-            .to(new_product.service.id)
-        end
-      end
+      its(:code) { is_expected.to eq('201') }
+      its(:body) { is_expected.to eq(serialized_json) }
     end
   end
 
@@ -355,6 +398,44 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
             'target_base_product': {
               'identifier': second_product.identifier,
               'version': second_product.version,
+              'arch': second_product.arch,
+              'release_type': second_product.release_type
+            }
+          }
+        end
+        let(:expected_response) do
+          [[::V3::UpgradePathItemSerializer.new(second_product)]].to_json
+        end
+
+        its(:code) { is_expected.to eq('200') }
+        its(:body) do
+          is_expected.to eq(expected_response)
+        end
+      end
+
+      context 'with "-0" version suffix' do
+        let(:first_product) { FactoryGirl.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'base') }
+        let(:second_product) do
+          FactoryGirl.create(
+            :product,
+            :with_mirrored_repositories,
+            product_type: 'base',
+            predecessors: [first_product],
+            migration_kind: migration_kind
+          )
+        end
+        let(:payload) do
+          product = second_product.predecessors.first # For initializing everything in the correct order
+          {
+            'installed_products': [ {
+              'identifier': product.identifier,
+              'version': product.version + '-0',
+              'arch': product.arch,
+              'release_type': product.release_type
+            } ],
+            'target_base_product': {
+              'identifier': second_product.identifier,
+              'version': second_product.version + '-0',
               'arch': second_product.arch,
               'release_type': second_product.release_type
             }

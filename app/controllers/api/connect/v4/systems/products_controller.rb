@@ -19,7 +19,7 @@ class Api::Connect::V4::Systems::ProductsController < Api::Connect::V3::Systems:
     products = params.require(:products).map do |product_params|
       @system.products.find_by(
         identifier: product_params[:identifier],
-        version: product_params[:version],
+        version: Product.clean_up_version(product_params[:version]),
         arch: product_params[:arch]
       )
     end

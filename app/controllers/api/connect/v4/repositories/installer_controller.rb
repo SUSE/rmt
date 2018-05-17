@@ -2,8 +2,7 @@ class Api::Connect::V4::Repositories::InstallerController < Api::Connect::BaseCo
 
   def index
     require_params(%i[identifier version arch])
-
-    product = Product.find_by(product_params.to_h.symbolize_keys)
+    product = Product.find_by(product_params)
 
     if product
       respond_with ActiveModel::Serializer::CollectionSerializer.new(
@@ -23,7 +22,9 @@ class Api::Connect::V4::Repositories::InstallerController < Api::Connect::BaseCo
   private
 
   def product_params
-    params.permit(:identifier, :version, :arch, :release_type)
+    hash = params.permit(:identifier, :version, :arch, :release_type)
+    hash[:version] = Product.clean_up_version(hash[:version])
+    hash.to_h.symbolize_keys
   end
 
 end
