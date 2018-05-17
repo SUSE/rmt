@@ -17,6 +17,7 @@ AllCops:
   Exclude:
     - .bundle/**/*
     - db/schema.rb
+    - db/migrate/20180420145408_init_schema.rb
     - features/**/*
     - vendor/**/*
     - tmp/**/*
