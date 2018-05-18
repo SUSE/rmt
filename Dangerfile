@@ -1,7 +1,4 @@
-# Flag that tells if any actual changes to the app were done
-has_app_changes = !git.modified_files.grep(/lib/).empty? || !git.modified_files.grep(/app/).empty?
-
-if !git.modified_files.include?('package/rmt-server.changes') && has_app_changes
+unless git.modified_files.include?('package/rmt-server.changes')
   warn("Unless this is a trivial change, please include a CHANGELOG entry.\nRun `osc vc` in the `package` directory to add one.")
 end
 
