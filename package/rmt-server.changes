@@ -1,18 +1,15 @@
 -------------------------------------------------------------------
 Fri May 18 08:24:11 UTC 2018 - skotov@suse.com
-- Bump version to 1.0.0
+
+- Bump version to 1.0.0 (bsc#1093879)
 - Make rmt-server recommend yast2-rmt
 - Add the post-install message about running yast2-rmt
 - Add new script rmt-data-import for migration from SMT to RMT
-  See: https://github.com/SUSE/rmt/pull/170
 - Split off usage instruction into MANUAL.md
-  See: https://github.com/SUSE/rmt/pull/174
 - Squash migrations into one
-  See: https://github.com/SUSE/rmt/pull/175
 - Small improvements on CLI responses
-  See: https://github.com/SUSE/rmt/pull/167
 - Rename clientSetup4RMT.sh => rmt-client-setup
-  See: https://github.com/SUSE/rmt/pull/172
+- Add use-ruby-2.5-in-rmt-data-import.patch
 
 -------------------------------------------------------------------
 Fri May 11 15:54:46 UTC 2018 - hschmidt@suse.com
