@@ -1,6 +1,7 @@
 class Subscription < ApplicationRecord
 
-  enum kind: { test: 'test', full: 'full', evaluation: 'evaluation', oem: 'oem', provisional: 'provisional', internal: 'internal' }
+  # we avoid to name enum key 'test' because it will override existing private method
+  enum kind: { is_test: 'test', full: 'full', evaluation: 'evaluation', oem: 'oem', provisional: 'provisional', internal: 'internal' }
   enum status: { expired: 'EXPIRED', active: 'ACTIVE', notactivated: 'NOTACTIVATED' }
 
   validates :regcode, presence: true
