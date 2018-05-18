@@ -14,3 +14,5 @@ before_script:
   - mysql -e 'CREATE DATABASE rmt_test;'
   - mysql -e $'GRANT ALL PRIVILEGES ON `rmt\_%` .  * TO rmt@localhost identified by \'rmt\';'
   - ruby -e "require 'yaml'; puts({'database_test'=>{'host'=>'localhost','username'=>'rmt','password'=>'rmt','database'=>'rmt_test','adapter'=>'mysql2','encoding'=>'utf8','timeout'=>5000,'pool'=>5}}.to_yaml)" > config/rmt.local.yml
+
+before_install: gem install bundler
