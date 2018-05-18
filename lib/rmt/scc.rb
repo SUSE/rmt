@@ -83,7 +83,7 @@ class RMT::SCC
   protected
 
   def credentials_set?
-    Settings.scc.username && Settings.scc.password
+    Settings.try(:scc).try(:username) && Settings.try(:scc).try(:password)
   end
 
   def cleanup_database

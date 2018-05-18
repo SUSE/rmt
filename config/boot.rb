@@ -7,4 +7,4 @@ require 'rails/command'
 require 'rails/commands/server/server_command'
 
 Rails::Command::ServerCommand.send(:remove_const, 'DEFAULT_PORT')
-Rails::Command::ServerCommand.const_set('DEFAULT_PORT', Settings&.[](:rails)&.[](:port) || 4224)
+Rails::Command::ServerCommand.const_set('DEFAULT_PORT', 4224)
