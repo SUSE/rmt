@@ -16,26 +16,21 @@
 #
 
 
+%define app_dir %{_datadir}/rmt/
+%define lib_dir %{_libdir}/rmt/
+%define data_dir %{_localstatedir}/lib/rmt/
+%define rmt_user    _rmt
+%define rmt_group   nginx
 %if 0%{?suse_version} == 1315
 %define is_sle_12_family 1
 %endif
-
-%define app_dir /usr/share/rmt/
-%define lib_dir %{_libdir}/rmt/
-%define data_dir /var/lib/rmt/
-%define rmt_user    _rmt
-%define rmt_group   nginx
-
 Name:           rmt-server
-Version:        0.0.7
+Version:        1.0.0
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
 Group:          Productivity/Networking/Web/Proxy
-Url:            https://software.opensuse.org/package/rmt
-# Does not build for i586 and s390 and is not supported on those architectures
-ExcludeArch:    %ix86 s390
-
+URL:            https://software.opensuse.org/package/rmt-server
 Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-server-rpmlintrc
 Source2:        rmt.conf
@@ -51,11 +46,9 @@ Source11:       rmt-server-migration.service
 Source12:       rmt-server-sync-sles12.timer
 Source13:       rmt-server-mirror-sles12.timer
 Source14:       nginx-https.conf
-
 Patch0:         use-ruby-2.5-in-rmt-cli.patch
 Patch1:         use-ruby-2.5-in-rails.patch
 Patch2:         use-ruby-2.5-in-rmt-data-import.patch
-
 BuildRequires:  fdupes
 BuildRequires:  gcc
 BuildRequires:  libcurl-devel
@@ -67,14 +60,16 @@ BuildRequires:  ruby2.5
 BuildRequires:  ruby2.5-devel
 BuildRequires:  ruby2.5-rubygem-bundler
 BuildRequires:  systemd
-
 Requires:       mariadb
 Requires:       nginx
 Requires(post): ruby2.5
 Requires(post): ruby2.5-rubygem-bundler
+Requires(post): shadow
 Requires(post): timezone
 Requires(post): util-linux
-Requires(post): shadow
+Recommends:     yast2-rmt
+# Does not build for i586 and s390 and is not supported on those architectures
+ExcludeArch:    %{ix86} s390
 
 %description
 This package provides a mirroring tool for RPM repositories and a registration
@@ -90,7 +85,7 @@ subscription information, and to mirror SUSE repositories.
 RMT supersedes the main functionality of SMT in SLES 15.
 
 %prep
-cp -p %SOURCE2 .
+cp -p %{SOURCE2} .
 
 %setup -q
 
@@ -99,7 +94,7 @@ cp -p %SOURCE2 .
 %patch2 -p1
 
 %build
-bundle.ruby2.5 install %{?jobs:--jobs %jobs} --without test development --deployment --standalone
+bundle.ruby2.5 install %{?jobs:--jobs %{jobs}} --without test development --deployment --standalone
 
 %install
 mkdir -p %{buildroot}%{data_dir}
@@ -118,7 +113,7 @@ ln -s %{data_dir}/public/repo %{buildroot}%{app_dir}/public/repo
 mkdir -p %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-cli %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-data-import %{buildroot}%{_bindir}/rmt-data-import
-install -D -m 644 %_sourcedir/rmt-cli.8.gz %{buildroot}%_mandir/man8/rmt-cli.8.gz
+install -D -m 644 %{_sourcedir}/rmt-cli.8.gz %{buildroot}%{_mandir}/man8/rmt-cli.8.gz
 
 # systemd
 mkdir -p %{buildroot}%{_unitdir}
@@ -186,7 +181,6 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %fdupes %{buildroot}/%{lib_dir}
 
 %files
-%defattr(-,root,root)
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}
 %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
 %dir %{_libexecdir}/supportconfig
@@ -196,7 +190,7 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %config(noreplace) %{_sysconfdir}/rmt.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
-%doc %{_mandir}/man8/rmt-cli.8.gz
+%{_mandir}/man8/rmt-cli.8%{?ext_man}
 %{_bindir}/rmt-cli
 %{_bindir}/rmt-data-import
 %{_sbindir}/rcrmt-server
@@ -223,8 +217,9 @@ getent passwd %{rmt_user} >/dev/null || \
 
 %post
 %service_add_post rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service
-cd /usr/share/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails secrets:setup >/dev/null
-cd /usr/share/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails runner -e production "Rails::Secrets.write({'production' => {'secret_key_base' => SecureRandom.hex(64)}}.to_yaml)"
+cd %{_datadir}/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails secrets:setup >/dev/null
+cd %{_datadir}/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails runner -e production "Rails::Secrets.write({'production' => {'secret_key_base' => SecureRandom.hex(64)}}.to_yaml)" >/dev/null
+echo "Please run the YaST RMT module (or 'yast2 rmt' from the command line) to complete the configuration of your RMT" >> /dev/stdout
 
 %preun
 %service_del_preun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service
