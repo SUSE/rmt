@@ -48,7 +48,7 @@ class RMT::Mirror
       repository_url: uri,
       auth_token: auth_token,
       local_path: Repository.make_local_path(repository_url),
-      mirror_src: Settings.mirroring.mirror_src,
+      mirror_src: Settings.try(:mirroring).try(:mirror_src),
       logger: RMT::Logger.new(STDOUT),
       to_offline: to_offline
     )

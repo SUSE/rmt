@@ -14,14 +14,14 @@ Config.load_and_set_settings(
 module RMT::Config
   def self.db_config(key = 'database')
     {
-      'host'     => Settings[key].host,
       'username' => Settings[key].username,
       'password' => Settings[key].password,
       'database' => Settings[key].database,
-      'adapter'  => Settings[key].adapter,
-      'encoding' => Settings[key].encoding,
-      'timeout'  => Settings[key].timeout,
-      'pool'     => Settings[key].pool
+      'host'     => Settings[key].host     || 'localhost',
+      'adapter'  => Settings[key].adapter  || 'mysql2',
+      'encoding' => Settings[key].encoding || 'utf8',
+      'timeout'  => Settings[key].timeout  || 5000,
+      'pool'     => Settings[key].pool     || 5
     }
   end
 
@@ -29,7 +29,7 @@ module RMT::Config
   # This method checks whether or not deduplication should be done by hardlinks.
   # If hardlinks are not used, the file will be copied instead.
   def self.deduplication_by_hardlink?
-    Settings['mirroring'].dedup_method.to_s.to_sym != :copy
+    Settings.try(:mirroring).try(:dedup_method).to_s.to_sym != :copy
   end
 
 end
