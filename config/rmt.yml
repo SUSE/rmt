@@ -29,9 +29,6 @@ mirroring:
   verify_rpm_checksums: false
   dedup_method: hardlink
 
-rails:
-  port: 4224
-
 http_client:
   verbose: false
   proxy:
