@@ -5,7 +5,7 @@ class RMT::HttpRequest < Typhoeus::Request
 
   def set_defaults
     Typhoeus::Config.user_agent = "RMT/#{RMT::VERSION}"
-    Typhoeus::Config.verbose = Settings.try(:http_client).try(:verbose) || nil
+    Typhoeus::Config.verbose = Settings.try(:http_client).try(:verbose)
 
     super
 
