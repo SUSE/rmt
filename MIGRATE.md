@@ -34,7 +34,7 @@ What will be exported to RMT:
 
 * If you do choose to export your SSL certificate, please keep it safe.
 
-1. Update your SMT server installation. `smt-data-export` is available in SMT versions >= 3.0.33 on SLE 12 and SMT versions >= 2.0.33 on SLE 11
+1. Update your SMT server installation. `smt-data-export` is available in SMT versions >= 3.0.34 on SLE 12 and SMT versions >= 2.0.34 on SLE 11
 
 2. Run the smt-data-export script:
     a) If you want to export the SSL certificates from SMT:
