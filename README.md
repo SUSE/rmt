@@ -131,6 +131,7 @@ RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Follo
 |Custom repositories|yes|yes|
 |YaST installation wizard|yes|yes|
 |YaST management wizard|yes|no|
+|Client management|yes|no|
 |RedHat support (Extended Support)|yes|no<sup>[2](#res)</sup>|
 |Files deduplication|yes|yes|
 |Data transfer from SMT to RMT|-|yes|
