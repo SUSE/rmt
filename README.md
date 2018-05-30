@@ -145,9 +145,6 @@ RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Follo
 <a name="staging">1</a>: Functionality is offered by [SUSE Manager](https://www.suse.com/documentation/suse-best-practices/susemanager/data/susemanager.html)  
 <a name="res">2</a>: RES support is planned for SLES15 SP1
 
-
-
-
 ## Feedback
 
 Do you have suggestions for improvement? Let us know!
