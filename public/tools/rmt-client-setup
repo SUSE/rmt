@@ -1,6 +1,6 @@
 #! /bin/sh
 
-WGET=/usr/bin/wget
+CURL=/usr/bin/curl
 OPENSSL=/usr/bin/openssl
 CP=/bin/cp
 CAT=/bin/cat
@@ -38,6 +38,87 @@ function usage()
 EOT
 
 exit 1
+}
+
+function http_get_signing_keys_index_html()
+{
+  local index_html_url=`echo "$REGURL" | awk -F/ '{print "https://" $3 "/repo/keys/"}'`
+
+  $CURL --insecure --fail --output $TMPDIR/index.html $index_html_url
+
+  return $?
+}
+
+function parse_index_html()
+{
+  KEY_FILES=()
+  while read line; do
+    KEY_FILES+=(`echo $line | sed -n "/href/ s/.*href=['\"]\([^'\"]*\)['\"].*/\1/gp"`)
+  done < $TMPDIR/index.html
+}
+
+function http_get_key_file()
+{
+  local key_file_url=`echo "$REGURL/$1" | awk -F/ '{print "https://" $3 "/repo/keys/" $4}'`
+  echo "Getting '$1' from $key_file_url"
+  $CURL --insecure --fail --output "$TMPDIR/$1" $key_file_url
+  return $?
+}
+
+function import_key
+{
+    if [ "$1" == "res-signingkeys.key" -a $ISRES -eq 0 ]; then
+        # this is no RES system, so we do not need this key
+        return
+    fi
+
+    local key=$TMPDIR/$1
+
+    echo "importing $key"
+
+    mkdir $TMPDIR/.gnupg
+
+    $GPG --no-default-keyring --quiet --no-greeting --no-permission-warning --homedir  $TMPDIR/.gnupg --import $key
+
+    $GPG --no-default-keyring --no-greeting --no-permission-warning --homedir $TMPDIR/.gnupg --list-public-keys --with-fingerprint
+
+    if [ "$AUTOACCEPT" = "Y" ]; then
+        echo "Accepting key"
+        rm -rf $TMPDIR/.gnupg/
+    else
+        read -p "Trust and import this key? [y/n] " YN
+        rm -rf $TMPDIR/.gnupg/
+        if [ "$YN" != "Y" -a "$YN" != "y" ]; then
+            continue ;
+        fi
+    fi
+
+    echo "rpm --import $key"
+}
+
+function import_signing_keys()
+{
+  TMPDIR=`mktemp -d /tmp/rmtsetup-XXXXXXXX`;
+
+  if [ -z $TMPDIR ]; then
+    echo "Cannot create tmpdir for key import in /tmp. Abort."
+    exit 1
+  fi
+
+  http_get_signing_keys_index_html
+  local retval=$?
+
+  if [ $retval -eq 22 ]; then
+    echo "No signing keys found on server."
+  elif [ $retval -eq 0 ]; then
+    parse_index_html
+    for i in "${KEY_FILES[@]}"; do
+      if [[ $i == *.key ]]; then
+        http_get_key_file $i
+        import_key $i
+      fi
+    done
+  fi
 }
 
 AUTOACCEPT=""
@@ -178,14 +259,15 @@ fi
 
 TEMPFILE=`mktemp /tmp/rmt.crt.XXXXXX`
 
-if [ -x $WGET ]; then
-    $WGET --secure-protocol TLSv1_2 --no-verbose -q --no-check-certificate --dns-timeout 10 --connect-timeout 10 --output-document $TEMPFILE $CERTURL
+if [ -x $CURL ]; then
+    $CURL --tlsv1.2 --silent --insecure --connect-timeout 10 --output $TEMPFILE $CERTURL
     if [ $? -ne 0 ]; then
         echo "Download failed. Abort."
         exit 1
     fi
 else
-    echo "Binary to download the certificate not found. Please install wget. Abort."
+    download_tool_basename=$(basename $CURL)
+    echo "Binary to download the certificate not found. Please install $download_tool_basename. Abort."
     exit 1
 fi
 
@@ -219,52 +301,7 @@ fi
 
 rm -f $TEMPFILE
 
-#
-# check for keys on the rmt server to import
-#
-TMPDIR=`mktemp -d /tmp/rmtsetup-XXXXXXXX`;
-
-KEYSURL=`echo "$REGURL" | awk -F/ '{print "https://" $3 "/repo/keys/"}'`
-
-if [ -z $TMPDIR ]; then
-    echo "Cannot create tmpdir. Abort."
-    exit 1
-fi
-
-$WGET --quiet --mirror --no-parent --no-host-directories --directory-prefix $TMPDIR --cut-dirs 2 $KEYSURL
-
-for key in `ls $TMPDIR/*.key 2>/dev/null`; do
-
-    if [ -z $key ]; then
-        continue
-    fi
-
-    if [ "$key" == "$TMPDIR/res-signingkeys.key" -a $ISRES -eq 0 ]; then
-        # this is no RES system, so we do not need this key
-        continue
-    fi
-
-    mkdir $TMPDIR/.gnupg
-
-    $GPG --no-default-keyring --quiet --no-greeting --no-permission-warning --homedir  $TMPDIR/.gnupg --import $key
-
-    $GPG --no-default-keyring --no-greeting --no-permission-warning --homedir $TMPDIR/.gnupg --list-public-keys --with-fingerprint
-
-    if [ "$AUTOACCEPT" = "Y" ]; then
-        echo "Accepting key"
-        rm -rf $TMPDIR/.gnupg/
-    else
-        read -p "Trust and import this key? [y/n] " YN
-        rm -rf $TMPDIR/.gnupg/
-        if [ "$YN" != "Y" -a "$YN" != "y" ]; then
-            continue ;
-        fi
-    fi
-
-    rpm --import $key
-done
-
-rm -rf $TMPDIR/
+import_signing_keys
 
 echo "Client setup finished."
 
