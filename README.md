@@ -117,6 +117,9 @@ RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Follo
 
 | Feature/Tech      | SMT           | RMT           |
 |-------------------|---------------|---------------|
+|Available on SLES11|yes|no|
+|Available on SLES12|yes|no|
+|Available on SLES15|no|yes|
 |Sync products data from SCC|yes|yes|
 |Mirror RPMs from repositories|yes|yes|
 |Selective mirroring(which products to mirror)|yes|yes|
@@ -140,7 +143,6 @@ RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Follo
 |Custom TLS certificates for web-server|yes|yes|
 |Web-server|Apache2|Nginx|
 |Platform|Perl|Ruby|
-
 
 <a name="staging">1</a>: Functionality is offered by [SUSE Manager](https://www.suse.com/documentation/suse-best-practices/susemanager/data/susemanager.html)  
 <a name="res">2</a>: RES support is planned for SLES15 SP1
