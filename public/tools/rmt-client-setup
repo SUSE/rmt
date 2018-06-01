@@ -112,9 +112,8 @@ function import_signing_keys()
     fi
 
     http_get_signing_keys_index_html
-    local retval=$?
 
-    if [ $retval -eq 22 ]; then
+    if [ $? -eq 22 ]; then
         echo "Custom keys directory 'repo/keys' on RMT server is not accessible. Check it exists and is readable and searchable by RMT process."
     else
         parse_index_html
