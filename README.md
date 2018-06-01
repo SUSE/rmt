@@ -111,6 +111,42 @@ In order to run the application locally using docker-compose:
 
 [Yes.](https://news.ycombinator.com/item?id=3067434)
 
+## RMT and SMT
+
+RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Following table outlines differences and similarities between the two tools. Last SLE version where SMT is available is 12. From version 15 onward only RMT is offered.
+
+| Feature/Tech      | SMT           | RMT           |
+|-------------------|---------------|---------------|
+|Available on SLES11|yes|no|
+|Available on SLES12|yes|no|
+|Available on SLES15|no|yes|
+|Sync products data from SCC|yes|yes|
+|Mirror RPMs from repositories|yes|yes|
+|Selective mirroring(which products to mirror)|yes|yes|
+|Serve RPMs via http|yes|yes|
+|Registration of SLE 15 systems|yes|yes|
+|Registration of SLE 12 systems|yes|yes|
+|Registration of SLE 11 systems|yes|no|
+|Migration support SLE 12 > 15|yes|yes|
+|Staging repositories|yes|no<sup>[1](#staging)</sup>|
+|Air gap sync/mirroring for secure environments|yes|yes|
+|NTLM Proxy support|yes|yes|
+|Custom repositories|yes|yes|
+|YaST installation wizard|yes|yes|
+|YaST management wizard|yes|no|
+|Client management|yes|no|
+|RedHat support (Extended Support)|yes|no<sup>[2](#res)</sup>|
+|Files deduplication|yes|yes|
+|Data transfer from SMT to RMT|-|yes|
+|Transfer registration data to SCC|yes|no|
+|Reporting|yes|no|
+|Custom TLS certificates for web-server|yes|yes|
+|Web-server|Apache2|Nginx|
+|Platform|Perl|Ruby|
+
+<a name="staging">1</a>: Functionality is offered by [SUSE Manager](https://www.suse.com/documentation/suse-best-practices/susemanager/data/susemanager.html)  
+<a name="res">2</a>: RES support is planned for SLES15 SP1
+
 ## Feedback
 
 Do you have suggestions for improvement? Let us know!
