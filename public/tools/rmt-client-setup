@@ -70,7 +70,7 @@ function http_get_key_file()
 
 function import_key
 {
-    if [ "$1" == "res-signingkeys.key" -a $ISRES -eq 0 ]; then
+    if [ "$1" == "res-signingkeys.key" ]; then
         # this is no RES system, so we do not need this key
         return
     fi
@@ -301,8 +301,6 @@ else
         exit 1
     fi
 fi
-
-ISRES=0
 
 if [ -d $CA_TRUSTSTORE ]; then
     $CP $TEMPFILE $CA_TRUSTSTORE/rmt-server.pem
