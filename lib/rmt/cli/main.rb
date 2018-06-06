@@ -20,12 +20,13 @@ class RMT::CLI::Main < RMT::CLI::Base
   desc 'mirror', 'Mirror repositories'
   def mirror
     RMT::Lockfile.lock do
+      logger = RMT::Logger.new(STDOUT)
       repos = Repository.where(mirroring_enabled: true)
       if repos.empty?
         warn 'There are no repositories marked for mirroring.'
         return
       end
-      repos.each { |repo| mirror!(repo) }
+      repos.each { |repo| mirror!(repo, logger: logger) }
     end
   end
 

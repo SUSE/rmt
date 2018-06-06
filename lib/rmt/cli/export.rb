@@ -27,6 +27,7 @@ class RMT::CLI::Export < RMT::CLI::Base
   REPOS
   def repos(path)
     needs_path(path) do
+      logger = RMT::Logger.new(STDOUT)
       repos_file = File.join(path, 'repos.json')
       unless File.exist?(repos_file)
         warn "#{repos_file} does not exist."
@@ -36,7 +37,7 @@ class RMT::CLI::Export < RMT::CLI::Base
       repos.each do |repo|
         puts "Mirroring repository at #{repo['url']}"
         begin
-          RMT::Mirror.from_url(repo['url'], repo['auth_token'], base_dir: path, to_offline: true).mirror
+          RMT::Mirror.from_url(repo['url'], repo['auth_token'], base_dir: path, to_offline: true, logger: logger).mirror
         rescue RMT::Mirror::Exception => e
           warn e.to_s
         end

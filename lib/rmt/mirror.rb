@@ -40,7 +40,7 @@ class RMT::Mirror
     remove_tmp_directories
   end
 
-  def self.from_url(uri, auth_token, repository_url: nil, base_dir: nil, to_offline: false)
+  def self.from_url(uri, auth_token, repository_url: nil, base_dir: nil, to_offline: false, logger:)
     repository_url ||= uri
 
     new(
@@ -49,7 +49,7 @@ class RMT::Mirror
       auth_token: auth_token,
       local_path: Repository.make_local_path(repository_url),
       mirror_src: Settings.try(:mirroring).try(:mirror_src),
-      logger: RMT::Logger.new(STDOUT),
+      logger: logger,
       to_offline: to_offline
     )
   end

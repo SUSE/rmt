@@ -13,6 +13,8 @@ class RMT::CLI::Import < RMT::CLI::Base
   def repos(path)
     RMT::Lockfile.lock do
       needs_path(path) do
+        logger = RMT::Logger.new(STDOUT)
+
         repos_file = File.join(path, 'repos.json')
         unless File.exist?(repos_file)
           warn "#{repos_file} does not exist."
@@ -28,7 +30,7 @@ class RMT::CLI::Import < RMT::CLI::Base
           end
 
           repo.external_url = 'file://' + path + Repository.make_local_path(repo_json['url'])
-          mirror!(repo, repository_url: repo_json['url'], to_offline: true)
+          mirror!(repo, repository_url: repo_json['url'], to_offline: true, logger: logger)
         end
       end
     end

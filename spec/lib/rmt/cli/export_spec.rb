@@ -58,8 +58,15 @@ describe RMT::CLI::Export, :with_fakefs do
 
     context 'with valid repo ids' do
       before do
-        expect(RMT::Mirror).to receive(:from_url).with('http://foo.bar/repo1', 'foobar', base_dir: path, to_offline: true).once.and_return(mirror_double)
-        expect(RMT::Mirror).to receive(:from_url).with('http://foo.bar/repo2', '', base_dir: path, to_offline: true).once.and_return(mirror_double)
+        expect(RMT::Mirror).to receive(:from_url).with(
+          'http://foo.bar/repo1', 'foobar', base_dir: path, to_offline: true,
+          logger: instance_of(RMT::Logger)
+        ).once.and_return(mirror_double)
+
+        expect(RMT::Mirror).to receive(:from_url).with(
+          'http://foo.bar/repo2', '', base_dir: path, to_offline: true,
+          logger: instance_of(RMT::Logger)
+        ).once.and_return(mirror_double)
       end
 
       it 'reads repo ids from file at path and mirrors these repos' do
