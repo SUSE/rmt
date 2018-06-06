@@ -153,7 +153,8 @@ RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Follo
 |Transfer registration data to SCC|:white_check_mark:|:x:|
 |Reporting|:white_check_mark:|:x:|
 |Custom TLS certificates for web-server|:white_check_mark:|:white_check_mark:|
-|Web-server|Apache2|Nginx|
+|Webserver|Apache2|Nginx|
+|Database|mariadb|mariadb|
 |Platform|Perl|Ruby|
 
 <a name="staging">1</a>: Functionality is offered by [SUSE Manager](https://www.suse.com/documentation/suse-best-practices/susemanager/data/susemanager.html)  
