@@ -9,6 +9,18 @@ Organization (mirroring) credentials are required to mirror SUSE repositories.
 
 Basic usage instructions for the version packaged and shipped in SUSE and openSUSE distributions can be found in the [manual of rmt-cli](MANUAL.md).
 
+## Installation on SLE15
+
+1. Activate your instance of SLE15 via `SUSEConnect -r <regcode>`
+2. Activate Server Applications module `SUSEConnect -p sle-module-server-applications/15/x86_64`
+3. Install RMT with YaST installation wizard `zypper in rmt-server yast2-rmt`
+4. Run installation wizard for RMT `yast2 rmt` and configure your instance
+
+## Installation on OpenSUSE Leap 15
+
+1. Install RMT with YaST installation wizard `zypper in rmt-server yast2-rmt`
+2. Run installation wizard for RMT `yast2 rmt` and configure your instance
+
 ## Manual installation and configuration
 
 RMT currently gets built for these distributions: `SLE_15`, `SLE_12_SP2`, `SLE_12_SP3`, `openSUSE_Leap_42.2`, `openSUSE_Leap_42.3`, `openSUSE_Tumbleweed`.
