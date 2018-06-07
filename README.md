@@ -127,7 +127,7 @@ In order to run the application locally using docker-compose:
 RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Following table outlines differences and similarities between the two tools. Last SLE version where SMT is available is 12. From version 15 onward only RMT is offered.
 
 | Feature/Tech      | SMT           | RMT           |
-|-------------------|---------------|---------------|
+|-------------------|:-------------:|:-------------:|
 |Available on SLES11|:heavy_check_mark:|:x:|
 |Available on SLES12|:heavy_check_mark:|:x:|
 |Available on SLES15|:x:|:heavy_check_mark:|
