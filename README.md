@@ -128,32 +128,32 @@ RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Follo
 
 | Feature/Tech      | SMT           | RMT           |
 |-------------------|---------------|---------------|
-|Available on SLES11|:white_check_mark:|:x:|
-|Available on SLES12|:white_check_mark:|:x:|
-|Available on SLES15|:x:|:white_check_mark:|
-|Sync products data from SCC|:white_check_mark:|:white_check_mark:|
-|Mirror RPMs from repositories|:white_check_mark:|:white_check_mark:|
-|Selective mirroring(which products to mirror)|:white_check_mark:|:white_check_mark:|
-|Serve RPMs via http|:white_check_mark:|:white_check_mark:|
-|Registration of SLE 15 systems|:white_check_mark:|:white_check_mark:|
-|Registration of SLE 12 systems|:white_check_mark:|:white_check_mark:|
-|Registration of SLE 11 systems|:white_check_mark:|:x:|
-|Migration support SLE 12 > 15|:white_check_mark:|:white_check_mark:|
-|Staging repositories|:white_check_mark:|:x:<sup>[1](#staging)</sup>|
-|Air gap sync/mirroring for secure environments|:white_check_mark:|:white_check_mark:|
-|NTLM Proxy support|:white_check_mark:|:white_check_mark:|
-|Custom repositories|:white_check_mark:|:white_check_mark:|
-|YaST installation wizard|:white_check_mark:|:white_check_mark:|
-|YaST management wizard|:white_check_mark:|:x:|
-|Client management|:white_check_mark:|:x:|
-|RedHat support (Extended Support)|:white_check_mark:|:x:<sup>[2](#res)</sup>|
-|Files deduplication|:white_check_mark:|:white_check_mark:|
-|Data transfer from SMT to RMT|-|:white_check_mark:|
-|Transfer registration data to SCC|:white_check_mark:|:x:|
-|Reporting|:white_check_mark:|:x:|
-|Custom TLS certificates for web-server|:white_check_mark:|:white_check_mark:|
+|Available on SLES11|:heavy_check_mark:|:x:|
+|Available on SLES12|:heavy_check_mark:|:x:|
+|Available on SLES15|:x:|:heavy_check_mark:|
+|Sync products data from SCC|:heavy_check_mark:|:heavy_check_mark:|
+|Mirror RPMs from repositories|:heavy_check_mark:|:heavy_check_mark:|
+|Selective mirroring(which products to mirror)|:heavy_check_mark:|:heavy_check_mark:|
+|Serve RPMs via http|:heavy_check_mark:|:heavy_check_mark:|
+|Registration of SLE 15 systems|:heavy_check_mark:|:heavy_check_mark:|
+|Registration of SLE 12 systems|:heavy_check_mark:|:heavy_check_mark:|
+|Registration of SLE 11 systems|:heavy_check_mark:|:x:|
+|Migration support SLE 12 > 15|:heavy_check_mark:|:heavy_check_mark:|
+|Staging repositories|:heavy_check_mark:|:x:<sup>[1](#staging)</sup>|
+|Air gap sync/mirroring for secure environments|:heavy_check_mark:|:heavy_check_mark:|
+|NTLM Proxy support|:heavy_check_mark:|:heavy_check_mark:|
+|Custom repositories|:heavy_check_mark:|:heavy_check_mark:|
+|YaST installation wizard|:heavy_check_mark:|:heavy_check_mark:|
+|YaST management wizard|:heavy_check_mark:|:x:|
+|Client management|:heavy_check_mark:|:x:|
+|RedHat support (Extended Support)|:heavy_check_mark:|:x:<sup>[2](#res)</sup>|
+|Files deduplication|:heavy_check_mark:|:heavy_check_mark:|
+|Data transfer from SMT to RMT|-|:heavy_check_mark:|
+|Transfer registration data to SCC|:heavy_check_mark:|:x:|
+|Reporting|:heavy_check_mark:|:x:|
+|Custom TLS certificates for web-server|:heavy_check_mark:|:heavy_check_mark:|
 |Webserver|Apache2|Nginx|
-|Database|mariadb|mariadb|
+|Database|MariaDB|MariaDB|
 |Platform|Perl|Ruby|
 
 <a name="staging">1</a>: Functionality is offered by [SUSE Manager](https://www.suse.com/documentation/suse-best-practices/susemanager/data/susemanager.html)  
