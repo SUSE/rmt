@@ -21,12 +21,31 @@ class RMT::CLI::Main < RMT::CLI::Base
   def mirror
     RMT::Lockfile.lock do
       logger = RMT::Logger.new(STDOUT)
+      mirror = RMT::Mirror.new(logger: logger)
+
       repos = Repository.where(mirroring_enabled: true)
       if repos.empty?
         warn 'There are no repositories marked for mirroring.'
-        return
+        return # FIXME: needs to raise exception
       end
-      repos.each { |repo| mirror!(repo, logger: logger) }
+
+      repos.each do |repo|
+        # mirror!(repo, logger: logger)
+        begin
+          local_path = Repository.make_local_path(repo.external_url)
+          logger.info "Mirroring repository #{repo.name} to #{local_path}"
+
+          mirror.mirror(
+            repository_url: repo.external_url,
+            local_path: Repository.make_local_path(repo.external_url),
+            auth_token: repo.auth_token
+          )
+
+          repo.refresh_timestamp!
+        rescue RMT::Mirror::Exception => e
+          logger.warn e.to_s
+        end
+      end
     end
   end
 

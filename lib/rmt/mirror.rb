@@ -1,36 +1,35 @@
 require 'rmt/downloader'
 require 'rmt/rpm'
 require 'time'
-
-# rubocop:disable Metrics/ClassLength
 class RMT::Mirror
 
   class RMT::Mirror::Exception < RuntimeError
   end
 
-  def initialize(mirroring_base_dir:, repository_url:, local_path:, logger:, mirror_src: false, auth_token: nil, to_offline: false)
-    @repository_dir = File.join(mirroring_base_dir, local_path)
-    @repository_url = repository_url
+  def initialize(mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, logger:, mirror_src: false, disable_hardlinks: false)
+    @mirroring_base_dir = mirroring_base_dir
     @mirror_src = mirror_src
     @logger = logger
     @primary_files = []
     @deltainfo_files = []
-    @auth_token = auth_token
-    @force_dedup_by_copy = to_offline
+    @force_dedup_by_copy = disable_hardlinks
 
     @downloader = RMT::Downloader.new(
       repository_url: @repository_url,
       destination_dir: @repository_dir,
       logger: @logger,
-      save_for_dedup: !to_offline # don't save files for deduplication when in offline mode
+      save_for_dedup: !disable_hardlinks # don't save files for deduplication when in offline mode
     )
   end
 
-  def mirror
+  def mirror(repository_url:, local_path:, auth_token: nil)
+    @repository_dir = File.join(@mirroring_base_dir, local_path)
+    @repository_url = repository_url
+
     create_directories
     mirror_license
     # downloading license doesn't require an auth token
-    @downloader.auth_token = @auth_token
+    @downloader.auth_token = auth_token
     mirror_metadata
     mirror_data
 
@@ -38,20 +37,6 @@ class RMT::Mirror
     replace_directory(File.join(@temp_metadata_dir, 'repodata'), File.join(@repository_dir, 'repodata'))
   ensure
     remove_tmp_directories
-  end
-
-  def self.from_url(uri, auth_token, repository_url: nil, base_dir: nil, to_offline: false, logger:)
-    repository_url ||= uri
-
-    new(
-      mirroring_base_dir: base_dir || RMT::DEFAULT_MIRROR_DIR,
-      repository_url: uri,
-      auth_token: auth_token,
-      local_path: Repository.make_local_path(repository_url),
-      mirror_src: Settings.try(:mirroring).try(:mirror_src),
-      logger: logger,
-      to_offline: to_offline
-    )
   end
 
   protected

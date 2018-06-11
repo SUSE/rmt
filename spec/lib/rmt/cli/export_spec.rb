@@ -58,14 +58,10 @@ describe RMT::CLI::Export, :with_fakefs do
 
     context 'with valid repo ids' do
       before do
-        expect(RMT::Mirror).to receive(:from_url).with(
-          'http://foo.bar/repo1', 'foobar', base_dir: path, to_offline: true,
-          logger: instance_of(RMT::Logger)
-        ).once.and_return(mirror_double)
-
-        expect(RMT::Mirror).to receive(:from_url).with(
-          'http://foo.bar/repo2', '', base_dir: path, to_offline: true,
-          logger: instance_of(RMT::Logger)
+        expect(RMT::Mirror).to receive(:new).with(
+          mirroring_base_dir: path,
+          logger: instance_of(RMT::Logger),
+          disable_hardlinks: true
         ).once.and_return(mirror_double)
       end
 
@@ -73,7 +69,18 @@ describe RMT::CLI::Export, :with_fakefs do
         FileUtils.mkdir_p path
         File.write("#{path}/repos.json", repo_settings.to_json)
 
-        expect(mirror_double).to receive(:mirror).twice
+        expect(mirror_double).to receive(:mirror).with(
+          repository_url: 'http://foo.bar/repo1',
+          auth_token: 'foobar',
+          local_path: '/repo1'
+        )
+
+        expect(mirror_double).to receive(:mirror).with(
+          repository_url: 'http://foo.bar/repo2',
+          auth_token: '',
+          local_path: '/repo2'
+        )
+
         expect { command }.to output(/Mirroring repository/).to_stdout
       end
 
@@ -82,8 +89,18 @@ describe RMT::CLI::Export, :with_fakefs do
           FileUtils.mkdir_p path
           File.write("#{path}/repos.json", repo_settings.to_json)
 
-          expect(mirror_double).to receive(:mirror)
-          expect(mirror_double).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror')
+          expect(mirror_double).to receive(:mirror).with(
+            repository_url: 'http://foo.bar/repo1',
+            auth_token: 'foobar',
+            local_path: '/repo1'
+          ).and_raise(RMT::Mirror::Exception, 'black mirror')
+
+          expect(mirror_double).to receive(:mirror).with(
+            repository_url: 'http://foo.bar/repo2',
+            auth_token: '',
+            local_path: '/repo2'
+          )
+
           expect { command }.to output(/black mirror/).to_stderr.and output(/Mirroring repository/).to_stdout
         end
       end
