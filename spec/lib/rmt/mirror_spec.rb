@@ -8,11 +8,13 @@ RSpec.describe RMT::Mirror do
       FileUtils.remove_entry(@tmp_dir)
     end
 
+    let(:logger) { RMT::Logger.new('/dev/null') }
+
     context 'without auth_token', vcr: { cassette_name: 'mirroring' } do
       let(:rmt_mirror) do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
-          logger: RMT::Logger.new('/dev/null'),
+          logger: logger,
           mirror_src: false
         )
       end
@@ -43,7 +45,7 @@ RSpec.describe RMT::Mirror do
       let(:rmt_mirror) do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
-          logger: RMT::Logger.new('/dev/null'),
+          logger: logger,
           mirror_src: false
         )
       end
@@ -75,7 +77,7 @@ RSpec.describe RMT::Mirror do
       let(:rmt_mirror) do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
-          logger: RMT::Logger.new('/dev/null'),
+          logger: logger,
           mirror_src: false
         )
       end
@@ -120,7 +122,7 @@ RSpec.describe RMT::Mirror do
       let(:rmt_mirror) do
         described_class.new(
           mirroring_base_dir: mirroring_dir,
-          logger: RMT::Logger.new('/dev/null'),
+          logger: logger,
           mirror_src: false
         )
       end
@@ -159,7 +161,7 @@ RSpec.describe RMT::Mirror do
         let(:rmt_mirror) do
           described_class.new(
             mirroring_base_dir: @tmp_dir,
-            logger: RMT::Logger.new('/dev/null'),
+            logger: logger,
             mirror_src: false
           )
         end
@@ -367,7 +369,7 @@ RSpec.describe RMT::Mirror do
       let(:rmt_mirror) do
         described_class.new(
           mirroring_base_dir: mirroring_dir,
-          logger: RMT::Logger.new('/dev/null'),
+          logger: logger,
           mirror_src: false
         )
       end
@@ -391,6 +393,33 @@ RSpec.describe RMT::Mirror do
       it 'downloads rpm files' do
         rpm_entries = Dir.entries(File.join(@tmp_dir, 'dummy_product/product/')).select { |entry| entry =~ /\.rpm$/ }
         expect(rpm_entries.length).to eq(4)
+      end
+    end
+
+    context 'when repo_name parameter is not specified' do
+      let(:rmt_mirror) do
+        described_class.new(
+          mirroring_base_dir: mirroring_dir,
+          logger: logger
+        )
+      end
+
+      let(:mirror_params) do
+        {
+          repository_url: 'http://localhost/dummy_product/product/',
+          local_path: '/dummy_product/product/',
+          auth_token: 'repo_auth_token'
+        }
+      end
+
+      it 'logs with the URL' do
+        pending 'TBD'
+      end
+    end
+
+    context 'when repo_name parameter is specified' do
+      it 'logs with the repo_name' do
+        pending 'TBD'
       end
     end
   end

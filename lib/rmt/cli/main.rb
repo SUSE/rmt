@@ -24,17 +24,11 @@ class RMT::CLI::Main < RMT::CLI::Base
       mirror = RMT::Mirror.new(logger: logger)
 
       repos = Repository.where(mirroring_enabled: true)
-      if repos.empty?
-        warn 'There are no repositories marked for mirroring.'
-        return # FIXME: needs to raise exception
-      end
+
+      raise RMT::CLI::Error.new('There are no repositories marked for mirroring.') if repos.empty?
 
       repos.each do |repo|
-        # mirror!(repo, logger: logger)
         begin
-          local_path = Repository.make_local_path(repo.external_url)
-          logger.info "Mirroring repository #{repo.name} to #{local_path}"
-
           mirror.mirror(
             repository_url: repo.external_url,
             local_path: Repository.make_local_path(repo.external_url),

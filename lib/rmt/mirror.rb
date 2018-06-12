@@ -10,8 +10,6 @@ class RMT::Mirror
     @mirroring_base_dir = mirroring_base_dir
     @mirror_src = mirror_src
     @logger = logger
-    @primary_files = []
-    @deltainfo_files = []
     @force_dedup_by_copy = disable_hardlinks
 
     @downloader = RMT::Downloader.new(
@@ -22,7 +20,12 @@ class RMT::Mirror
     )
   end
 
-  def mirror(repository_url:, local_path:, auth_token: nil)
+  def mirror(repository_url:, local_path:, auth_token: nil, repo_name: nil)
+    @logger.info "Mirroring repository #{repo_name || repository_url} to #{local_path}"
+
+    @primary_files = []
+    @deltainfo_files = []
+
     @repository_dir = File.join(@mirroring_base_dir, local_path)
     @repository_url = repository_url
 

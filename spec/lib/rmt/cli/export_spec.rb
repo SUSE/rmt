@@ -52,7 +52,7 @@ describe RMT::CLI::Export, :with_fakefs do
       it 'outputs a warning' do
         FileUtils.mkdir_p path
 
-        expect { command }.to output("#{File.join(path, 'repos.json')} does not exist.\n").to_stderr
+        expect { command }.to raise_error(SystemExit).and(output("#{File.join(path, 'repos.json')} does not exist.\n").to_stderr)
       end
     end
 
@@ -81,7 +81,7 @@ describe RMT::CLI::Export, :with_fakefs do
           local_path: '/repo2'
         )
 
-        expect { command }.to output(/Mirroring repository/).to_stdout
+        command
       end
 
       context 'with exceptions during mirroring' do
@@ -101,7 +101,7 @@ describe RMT::CLI::Export, :with_fakefs do
             local_path: '/repo2'
           )
 
-          expect { command }.to output(/black mirror/).to_stderr.and output(/Mirroring repository/).to_stdout
+          expect { command }.to output(/black mirror/).to_stderr
         end
       end
     end

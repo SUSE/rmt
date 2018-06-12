@@ -91,7 +91,7 @@ class RMT::CLI::Base < Thor
   private
 
   def needs_path(path)
-    File.directory?(path) ? yield : warn("#{path} is not a directory.")
+    raise RMT::CLI::Error.new("#{path} is not a directory.") unless File.directory?(path)
   end
 
 end

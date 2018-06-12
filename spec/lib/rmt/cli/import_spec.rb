@@ -47,7 +47,7 @@ describe RMT::CLI::Import, :with_fakefs do
     context 'no repos.json file' do
       it 'warns that repos.json does not exist' do
         FileUtils.mkdir_p path
-        expect { command }.to output('').to_stdout.and output(/repos.json does not exist/).to_stderr
+        expect { command }.to raise_error(SystemExit).and output('').to_stdout.and output(/repos.json does not exist/).to_stderr
       end
     end
 
@@ -69,7 +69,10 @@ describe RMT::CLI::Import, :with_fakefs do
     end
 
     context 'without exception' do
-      before do
+      it 'mirrors repo1 and repo2' do
+        FileUtils.mkdir_p path
+        File.write("#{path}/repos.json", repo_settings.to_json)
+
         expect(RMT::Mirror).to receive(:new).with(
           logger: instance_of(RMT::Logger),
           disable_hardlinks: true
@@ -78,22 +81,17 @@ describe RMT::CLI::Import, :with_fakefs do
         expect(mirror_double).to receive(:mirror).with(
           repository_url: repo1_local_path,
           local_path: Repository.make_local_path(repo1.external_url),
-          auth_token: repo1.auth_token
+          auth_token: repo1.auth_token,
+          repo_name: repo1.name
         )
 
         expect(mirror_double).to receive(:mirror).with(
           repository_url: repo2_local_path,
           local_path: Repository.make_local_path(repo2.external_url),
-          auth_token: repo2.auth_token
+          auth_token: repo2.auth_token,
+          repo_name: repo2.name
         )
-      end
 
-      it 'mirrors repo1 and repo2' do
-        FileUtils.mkdir_p path
-        File.write("#{path}/repos.json", repo_settings.to_json)
-
-        expect_any_instance_of(RMT::Logger).to receive(:info).with(/Mirroring repository #{repo1.name}/)
-        expect_any_instance_of(RMT::Logger).to receive(:info).with(/Mirroring repository #{repo2.name}/)
         command
       end
     end
@@ -106,7 +104,10 @@ describe RMT::CLI::Import, :with_fakefs do
         ]
       end
 
-      before do
+      it 'mirrors repo2 when repo1 raised an exception' do
+        FileUtils.mkdir_p path
+        File.write("#{path}/repos.json", repo_settings.to_json)
+
         expect(RMT::Mirror).to receive(:new).with(
           logger: instance_of(RMT::Logger),
           disable_hardlinks: true
@@ -115,22 +116,17 @@ describe RMT::CLI::Import, :with_fakefs do
         expect(mirror_double).to receive(:mirror).with(
           repository_url: repo1_local_path,
           local_path: Repository.make_local_path(repo1.external_url),
-          auth_token: repo1.auth_token
+          auth_token: repo1.auth_token,
+          repo_name: repo1.name
         ).and_raise(RMT::Mirror::Exception, 'black mirror')
 
         expect(mirror_double).to receive(:mirror).with(
           repository_url: repo2_local_path,
           local_path: Repository.make_local_path(repo2.external_url),
-          auth_token: repo2.auth_token
+          auth_token: repo2.auth_token,
+          repo_name: repo2.name
         )
-      end
 
-      it 'mirrors repo2 when repo1 raised an exception' do
-        FileUtils.mkdir_p path
-        File.write("#{path}/repos.json", repo_settings.to_json)
-
-        expect_any_instance_of(RMT::Logger).to receive(:info).with(/Mirroring repository #{repo1.name}/)
-        expect_any_instance_of(RMT::Logger).to receive(:info).with(/Mirroring repository #{repo2.name}/)
         expect_any_instance_of(RMT::Logger).to receive(:warn).with('black mirror')
 
         command
