@@ -61,7 +61,7 @@ describe RMT::CLI::Export, :with_fakefs do
         expect(RMT::Mirror).to receive(:new).with(
           mirroring_base_dir: path,
           logger: instance_of(RMT::Logger),
-          disable_hardlinks: true
+          airgap_mode: true
         ).once.and_return(mirror_double)
       end
 

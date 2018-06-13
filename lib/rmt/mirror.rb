@@ -6,35 +6,32 @@ class RMT::Mirror
   class RMT::Mirror::Exception < RuntimeError
   end
 
-  def initialize(mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, logger:, mirror_src: false, disable_hardlinks: false)
+  def initialize(mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, logger:, mirror_src: false, airgap_mode: false)
     @mirroring_base_dir = mirroring_base_dir
     @mirror_src = mirror_src
     @logger = logger
-    @force_dedup_by_copy = disable_hardlinks
+    @force_dedup_by_copy = airgap_mode
 
     @downloader = RMT::Downloader.new(
       repository_url: @repository_url,
       destination_dir: @repository_dir,
       logger: @logger,
-      save_for_dedup: !disable_hardlinks # don't save files for deduplication when in offline mode
+      save_for_dedup: !airgap_mode # don't save files for deduplication when in offline mode
     )
   end
 
   def mirror(repository_url:, local_path:, auth_token: nil, repo_name: nil)
-    @logger.info "Mirroring repository #{repo_name || repository_url} to #{local_path}"
-
-    @primary_files = []
-    @deltainfo_files = []
-
     @repository_dir = File.join(@mirroring_base_dir, local_path)
     @repository_url = repository_url
+
+    @logger.info "Mirroring repository #{repo_name || repository_url} to #{@repository_dir}"
 
     create_directories
     mirror_license
     # downloading license doesn't require an auth token
     @downloader.auth_token = auth_token
-    mirror_metadata
-    mirror_data
+    primary_files, deltainfo_files = mirror_metadata
+    mirror_data(primary_files, deltainfo_files)
 
     replace_directory(@temp_licenses_dir, File.join(@repository_dir, '../product.license/')) if Dir.exist?(@temp_licenses_dir)
     replace_directory(File.join(@temp_metadata_dir, 'repodata'), File.join(@repository_dir, 'repodata'))
@@ -78,6 +75,9 @@ class RMT::Mirror
     end
 
     begin
+      primary_files = []
+      deltainfo_files = []
+
       repomd_parser = RMT::Rpm::RepomdXmlParser.new(local_filename)
       repomd_parser.parse
 
@@ -87,9 +87,11 @@ class RMT::Mirror
             checksum_type: reference.checksum_type,
             checksum_value: reference.checksum
         )
-        @primary_files << reference.location if (reference.type == :primary)
-        @deltainfo_files << reference.location if (reference.type == :deltainfo)
+        primary_files << reference.location if (reference.type == :primary)
+        deltainfo_files << reference.location if (reference.type == :deltainfo)
       end
+
+      return primary_files, deltainfo_files
     rescue RuntimeError => e
       raise RMT::Mirror::Exception.new("Error while mirroring metadata files: #{e}")
     rescue Interrupt => e
@@ -121,12 +123,12 @@ class RMT::Mirror
     end
   end
 
-  def mirror_data
+  def mirror_data(primary_files, deltainfo_files)
     @downloader.repository_url = @repository_url
     @downloader.destination_dir = @repository_dir
     @downloader.cache_dir = nil
 
-    @deltainfo_files.each do |filename|
+    deltainfo_files.each do |filename|
       parser = RMT::Rpm::DeltainfoXmlParser.new(
         File.join(@temp_metadata_dir, filename),
         @mirror_src
@@ -136,7 +138,7 @@ class RMT::Mirror
       @downloader.download_multi(to_download) unless to_download.empty?
     end
 
-    @primary_files.each do |filename|
+    primary_files.each do |filename|
       parser = RMT::Rpm::PrimaryXmlParser.new(
         File.join(@temp_metadata_dir, filename),
         @mirror_src

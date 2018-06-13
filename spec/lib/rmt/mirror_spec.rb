@@ -59,6 +59,10 @@ RSpec.describe RMT::Mirror do
       end
 
       before do
+        expect(logger).to receive(:info).with(/Mirroring repository/).once
+        expect(logger).to receive(:info).with('No product license found').once
+        expect(logger).to receive(:info).with('Repository metadata signatures are missing').once
+        expect(logger).to receive(:info).with(/↓/).at_least(1).times
         rmt_mirror.mirror(mirror_params)
       end
 
@@ -91,6 +95,8 @@ RSpec.describe RMT::Mirror do
       end
 
       before do
+        expect(logger).to receive(:info).with(/Mirroring repository/).once
+        expect(logger).to receive(:info).with(/↓/).at_least(1).times
         rmt_mirror.mirror(mirror_params)
       end
 
@@ -393,33 +399,6 @@ RSpec.describe RMT::Mirror do
       it 'downloads rpm files' do
         rpm_entries = Dir.entries(File.join(@tmp_dir, 'dummy_product/product/')).select { |entry| entry =~ /\.rpm$/ }
         expect(rpm_entries.length).to eq(4)
-      end
-    end
-
-    context 'when repo_name parameter is not specified' do
-      let(:rmt_mirror) do
-        described_class.new(
-          mirroring_base_dir: mirroring_dir,
-          logger: logger
-        )
-      end
-
-      let(:mirror_params) do
-        {
-          repository_url: 'http://localhost/dummy_product/product/',
-          local_path: '/dummy_product/product/',
-          auth_token: 'repo_auth_token'
-        }
-      end
-
-      it 'logs with the URL' do
-        pending 'TBD'
-      end
-    end
-
-    context 'when repo_name parameter is specified' do
-      it 'logs with the repo_name' do
-        pending 'TBD'
       end
     end
   end

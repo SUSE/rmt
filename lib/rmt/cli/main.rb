@@ -32,7 +32,8 @@ class RMT::CLI::Main < RMT::CLI::Base
           mirror.mirror(
             repository_url: repo.external_url,
             local_path: Repository.make_local_path(repo.external_url),
-            auth_token: repo.auth_token
+            auth_token: repo.auth_token,
+            repo_name: repo.name
           )
 
           repo.refresh_timestamp!

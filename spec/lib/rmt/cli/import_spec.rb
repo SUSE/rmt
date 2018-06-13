@@ -75,7 +75,7 @@ describe RMT::CLI::Import, :with_fakefs do
 
         expect(RMT::Mirror).to receive(:new).with(
           logger: instance_of(RMT::Logger),
-          disable_hardlinks: true
+          airgap_mode: true
         ).and_return(mirror_double)
 
         expect(mirror_double).to receive(:mirror).with(
@@ -110,7 +110,7 @@ describe RMT::CLI::Import, :with_fakefs do
 
         expect(RMT::Mirror).to receive(:new).with(
           logger: instance_of(RMT::Logger),
-          disable_hardlinks: true
+          airgap_mode: true
         ).and_return(mirror_double)
 
         expect(mirror_double).to receive(:mirror).with(

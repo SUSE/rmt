@@ -28,7 +28,7 @@ class RMT::CLI::Export < RMT::CLI::Base
     needs_path(path)
 
     logger = RMT::Logger.new(STDOUT)
-    mirror = RMT::Mirror.new(mirroring_base_dir: path, logger: logger, disable_hardlinks: true)
+    mirror = RMT::Mirror.new(mirroring_base_dir: path, logger: logger, airgap_mode: true)
 
     repos_file = File.join(path, 'repos.json')
     raise RMT::CLI::Error.new("#{repos_file} does not exist.") unless File.exist?(repos_file)

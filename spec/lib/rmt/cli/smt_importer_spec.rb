@@ -219,9 +219,6 @@ describe SMTImporter do
       OUTPUT
     end
   end
-
-
-  # rubocop:disable RSpec/MultipleExpectations
   describe '#run' do
     context 'without --no-system flag' do
       it 'runs all steps including importing the systems' do
