@@ -242,7 +242,6 @@ describe SMTImporter do
         importer.run ['--no-systems', '-d', 'foo']
       end
     end
-    # rubocop:enable RSpec/MultipleExpectations
   end
 
   describe '#parse_cli_arguments' do
