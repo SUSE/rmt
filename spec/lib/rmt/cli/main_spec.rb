@@ -31,7 +31,7 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
 
         it 'outputs a warning' do
           expect_any_instance_of(RMT::Mirror).not_to receive(:mirror)
-          expect { command }.to output("There are no repositories marked for mirroring.\n").to_stderr.and output('').to_stdout
+          expect { command }.to raise_error(SystemExit).and output("There are no repositories marked for mirroring.\n").to_stderr.and output('').to_stdout
         end
       end
 
@@ -40,14 +40,8 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
 
         before { expect_any_instance_of(RMT::Mirror).to receive(:mirror) }
 
-        it 'outputs mirroring progress' do
-          expect_any_instance_of(RMT::Logger).to receive(:info).with(/Mirroring repository #{repository.name}/)
-          command
-        end
-
         it 'updates repository mirroring timestamp' do
           Timecop.freeze(Time.utc(2018)) do
-            expect_any_instance_of(RMT::Logger).to receive(:info).with(/Mirroring repository #{repository.name}/)
             expect { command }.to change { repository.reload.last_mirrored_at }.to(DateTime.now.utc)
           end
         end
@@ -56,7 +50,6 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
           before { allow_any_instance_of(RMT::Mirror).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror') }
 
           it 'outputs exception message' do
-            expect_any_instance_of(RMT::Logger).to receive(:info).with(/Mirroring repository #{repository.name}/)
             expect_any_instance_of(RMT::Logger).to receive(:warn).with('black mirror')
             command
           end

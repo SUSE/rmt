@@ -36,7 +36,7 @@ describe RMT::CLI::Import, :with_fakefs do
     let(:repo2) { create :repository, mirroring_enabled: true }
     let(:repo1_local_path) { repo_url_to_local_path(path, repo1.external_url) }
     let(:repo2_local_path) { repo_url_to_local_path(path, repo2.external_url) }
-    let(:mirror_double) { instance_double 'RMT::Mirror' }
+    let(:mirror_double) { instance_double RMT::Mirror }
     let(:repo_settings) do
       [
         { url: repo1.external_url, auth_token: repo1.auth_token.to_s },
@@ -47,7 +47,7 @@ describe RMT::CLI::Import, :with_fakefs do
     context 'no repos.json file' do
       it 'warns that repos.json does not exist' do
         FileUtils.mkdir_p path
-        expect { command }.to output('').to_stdout.and output(/repos.json does not exist/).to_stderr
+        expect { command }.to raise_error(SystemExit).and output('').to_stdout.and output(/repos.json does not exist/).to_stderr
       end
     end
 
@@ -69,31 +69,34 @@ describe RMT::CLI::Import, :with_fakefs do
     end
 
     context 'without exception' do
-      before do
-        expect(mirror_double).to receive(:mirror).twice
-        expect(RMT::Mirror).to receive(:from_url).with(
-          repo1_local_path, repo1.auth_token, base_dir: RMT::DEFAULT_MIRROR_DIR,
-          repository_url: repo1.external_url, to_offline: true, logger: instance_of(RMT::Logger)
-        ).and_return(mirror_double)
-
-        expect(RMT::Mirror).to receive(:from_url).with(
-          repo2_local_path, repo2.auth_token, base_dir: RMT::DEFAULT_MIRROR_DIR,
-          repository_url: repo2.external_url, to_offline: true, logger: instance_of(RMT::Logger)
-        ).and_return(mirror_double)
-      end
-
       it 'mirrors repo1 and repo2' do
         FileUtils.mkdir_p path
         File.write("#{path}/repos.json", repo_settings.to_json)
 
-        expect_any_instance_of(RMT::Logger).to receive(:info).with(/Mirroring repository #{repo1.name}/)
-        expect_any_instance_of(RMT::Logger).to receive(:info).with(/Mirroring repository #{repo2.name}/)
+        expect(RMT::Mirror).to receive(:new).with(
+          logger: instance_of(RMT::Logger),
+          airgap_mode: true
+        ).and_return(mirror_double)
+
+        expect(mirror_double).to receive(:mirror).with(
+          repository_url: repo1_local_path,
+          local_path: Repository.make_local_path(repo1.external_url),
+          auth_token: repo1.auth_token,
+          repo_name: repo1.name
+        )
+
+        expect(mirror_double).to receive(:mirror).with(
+          repository_url: repo2_local_path,
+          local_path: Repository.make_local_path(repo2.external_url),
+          auth_token: repo2.auth_token,
+          repo_name: repo2.name
+        )
+
         command
       end
     end
 
     context 'with exceptions during mirroring' do
-      let(:mirror_error_double) { instance_double 'RMT::Mirror' }
       let(:repo_settings) do
         [
           { url: repo1.external_url, auth_token: repo1.auth_token.to_s },
@@ -101,26 +104,29 @@ describe RMT::CLI::Import, :with_fakefs do
         ]
       end
 
-      before do
-        expect(mirror_error_double).to receive(:mirror).once.and_raise(RMT::Mirror::Exception, 'black mirror')
-        expect(mirror_double).to receive(:mirror).once
-        expect(RMT::Mirror).to receive(:from_url).with(
-          repo1_local_path, repo1.auth_token, base_dir: RMT::DEFAULT_MIRROR_DIR,
-          repository_url: repo1.external_url, to_offline: true, logger: instance_of(RMT::Logger)
-        ).and_return(mirror_error_double)
-
-        expect(RMT::Mirror).to receive(:from_url).with(
-          repo2_local_path, repo2.auth_token, base_dir: RMT::DEFAULT_MIRROR_DIR,
-          repository_url: repo2.external_url, to_offline: true, logger: instance_of(RMT::Logger)
-        ).and_return(mirror_double)
-      end
-
       it 'mirrors repo2 when repo1 raised an exception' do
         FileUtils.mkdir_p path
         File.write("#{path}/repos.json", repo_settings.to_json)
 
-        expect_any_instance_of(RMT::Logger).to receive(:info).with(/Mirroring repository #{repo1.name}/)
-        expect_any_instance_of(RMT::Logger).to receive(:info).with(/Mirroring repository #{repo2.name}/)
+        expect(RMT::Mirror).to receive(:new).with(
+          logger: instance_of(RMT::Logger),
+          airgap_mode: true
+        ).and_return(mirror_double)
+
+        expect(mirror_double).to receive(:mirror).with(
+          repository_url: repo1_local_path,
+          local_path: Repository.make_local_path(repo1.external_url),
+          auth_token: repo1.auth_token,
+          repo_name: repo1.name
+        ).and_raise(RMT::Mirror::Exception, 'black mirror')
+
+        expect(mirror_double).to receive(:mirror).with(
+          repository_url: repo2_local_path,
+          local_path: Repository.make_local_path(repo2.external_url),
+          auth_token: repo2.auth_token,
+          repo_name: repo2.name
+        )
+
         expect_any_instance_of(RMT::Logger).to receive(:warn).with('black mirror')
 
         command

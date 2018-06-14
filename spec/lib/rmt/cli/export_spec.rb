@@ -52,20 +52,16 @@ describe RMT::CLI::Export, :with_fakefs do
       it 'outputs a warning' do
         FileUtils.mkdir_p path
 
-        expect { command }.to output("#{File.join(path, 'repos.json')} does not exist.\n").to_stderr
+        expect { command }.to raise_error(SystemExit).and(output("#{File.join(path, 'repos.json')} does not exist.\n").to_stderr)
       end
     end
 
     context 'with valid repo ids' do
       before do
-        expect(RMT::Mirror).to receive(:from_url).with(
-          'http://foo.bar/repo1', 'foobar', base_dir: path, to_offline: true,
-          logger: instance_of(RMT::Logger)
-        ).once.and_return(mirror_double)
-
-        expect(RMT::Mirror).to receive(:from_url).with(
-          'http://foo.bar/repo2', '', base_dir: path, to_offline: true,
-          logger: instance_of(RMT::Logger)
+        expect(RMT::Mirror).to receive(:new).with(
+          mirroring_base_dir: path,
+          logger: instance_of(RMT::Logger),
+          airgap_mode: true
         ).once.and_return(mirror_double)
       end
 
@@ -73,8 +69,19 @@ describe RMT::CLI::Export, :with_fakefs do
         FileUtils.mkdir_p path
         File.write("#{path}/repos.json", repo_settings.to_json)
 
-        expect(mirror_double).to receive(:mirror).twice
-        expect { command }.to output(/Mirroring repository/).to_stdout
+        expect(mirror_double).to receive(:mirror).with(
+          repository_url: 'http://foo.bar/repo1',
+          auth_token: 'foobar',
+          local_path: '/repo1'
+        )
+
+        expect(mirror_double).to receive(:mirror).with(
+          repository_url: 'http://foo.bar/repo2',
+          auth_token: '',
+          local_path: '/repo2'
+        )
+
+        command
       end
 
       context 'with exceptions during mirroring' do
@@ -82,9 +89,19 @@ describe RMT::CLI::Export, :with_fakefs do
           FileUtils.mkdir_p path
           File.write("#{path}/repos.json", repo_settings.to_json)
 
-          expect(mirror_double).to receive(:mirror)
-          expect(mirror_double).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror')
-          expect { command }.to output(/black mirror/).to_stderr.and output(/Mirroring repository/).to_stdout
+          expect(mirror_double).to receive(:mirror).with(
+            repository_url: 'http://foo.bar/repo1',
+            auth_token: 'foobar',
+            local_path: '/repo1'
+          ).and_raise(RMT::Mirror::Exception, 'black mirror')
+
+          expect(mirror_double).to receive(:mirror).with(
+            repository_url: 'http://foo.bar/repo2',
+            auth_token: '',
+            local_path: '/repo2'
+          )
+
+          expect { command }.to output(/black mirror/).to_stderr
         end
       end
     end

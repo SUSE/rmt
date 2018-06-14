@@ -1,7 +1,7 @@
 shared_examples 'handles non-existing path' do
   context 'with non-existing path' do
     it 'complains and exits' do
-      expect { command }.to output("#{path} is not a directory.\n").to_stderr
+      expect { command }.to raise_error(SystemExit).and(output("#{path} is not a directory.\n").to_stderr)
     end
   end
 end

@@ -1,57 +1,42 @@
 require 'rmt/downloader'
 require 'rmt/rpm'
 require 'time'
-
-# rubocop:disable Metrics/ClassLength
 class RMT::Mirror
 
   class RMT::Mirror::Exception < RuntimeError
   end
 
-  def initialize(mirroring_base_dir:, repository_url:, local_path:, logger:, mirror_src: false, auth_token: nil, to_offline: false)
-    @repository_dir = File.join(mirroring_base_dir, local_path)
-    @repository_url = repository_url
+  def initialize(mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, logger:, mirror_src: false, airgap_mode: false)
+    @mirroring_base_dir = mirroring_base_dir
     @mirror_src = mirror_src
     @logger = logger
-    @primary_files = []
-    @deltainfo_files = []
-    @auth_token = auth_token
-    @force_dedup_by_copy = to_offline
+    @force_dedup_by_copy = airgap_mode
 
     @downloader = RMT::Downloader.new(
       repository_url: @repository_url,
       destination_dir: @repository_dir,
       logger: @logger,
-      save_for_dedup: !to_offline # don't save files for deduplication when in offline mode
+      save_for_dedup: !airgap_mode # don't save files for deduplication when in offline mode
     )
   end
 
-  def mirror
+  def mirror(repository_url:, local_path:, auth_token: nil, repo_name: nil)
+    @repository_dir = File.join(@mirroring_base_dir, local_path)
+    @repository_url = repository_url
+
+    @logger.info "Mirroring repository #{repo_name || repository_url} to #{@repository_dir}"
+
     create_directories
     mirror_license
     # downloading license doesn't require an auth token
-    @downloader.auth_token = @auth_token
-    mirror_metadata
-    mirror_data
+    @downloader.auth_token = auth_token
+    primary_files, deltainfo_files = mirror_metadata
+    mirror_data(primary_files, deltainfo_files)
 
     replace_directory(@temp_licenses_dir, File.join(@repository_dir, '../product.license/')) if Dir.exist?(@temp_licenses_dir)
     replace_directory(File.join(@temp_metadata_dir, 'repodata'), File.join(@repository_dir, 'repodata'))
   ensure
     remove_tmp_directories
-  end
-
-  def self.from_url(uri, auth_token, repository_url: nil, base_dir: nil, to_offline: false, logger:)
-    repository_url ||= uri
-
-    new(
-      mirroring_base_dir: base_dir || RMT::DEFAULT_MIRROR_DIR,
-      repository_url: uri,
-      auth_token: auth_token,
-      local_path: Repository.make_local_path(repository_url),
-      mirror_src: Settings.try(:mirroring).try(:mirror_src),
-      logger: logger,
-      to_offline: to_offline
-    )
   end
 
   protected
@@ -90,6 +75,9 @@ class RMT::Mirror
     end
 
     begin
+      primary_files = []
+      deltainfo_files = []
+
       repomd_parser = RMT::Rpm::RepomdXmlParser.new(local_filename)
       repomd_parser.parse
 
@@ -99,9 +87,11 @@ class RMT::Mirror
             checksum_type: reference.checksum_type,
             checksum_value: reference.checksum
         )
-        @primary_files << reference.location if (reference.type == :primary)
-        @deltainfo_files << reference.location if (reference.type == :deltainfo)
+        primary_files << reference.location if (reference.type == :primary)
+        deltainfo_files << reference.location if (reference.type == :deltainfo)
       end
+
+      return primary_files, deltainfo_files
     rescue RuntimeError => e
       raise RMT::Mirror::Exception.new("Error while mirroring metadata files: #{e}")
     rescue Interrupt => e
@@ -133,12 +123,12 @@ class RMT::Mirror
     end
   end
 
-  def mirror_data
+  def mirror_data(primary_files, deltainfo_files)
     @downloader.repository_url = @repository_url
     @downloader.destination_dir = @repository_dir
     @downloader.cache_dir = nil
 
-    @deltainfo_files.each do |filename|
+    deltainfo_files.each do |filename|
       parser = RMT::Rpm::DeltainfoXmlParser.new(
         File.join(@temp_metadata_dir, filename),
         @mirror_src
@@ -148,7 +138,7 @@ class RMT::Mirror
       @downloader.download_multi(to_download) unless to_download.empty?
     end
 
-    @primary_files.each do |filename|
+    primary_files.each do |filename|
       parser = RMT::Rpm::PrimaryXmlParser.new(
         File.join(@temp_metadata_dir, filename),
         @mirror_src
