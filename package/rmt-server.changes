@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Jun 15 13:12:09 UTC 2018 - ikapelyukhin@suse.com
+
+- Log version on service startup
+
+-------------------------------------------------------------------
 Fri Jun  1 12:50:03 UTC 2018 - wstephenson@suse.com
 
 - Version 1.0.1

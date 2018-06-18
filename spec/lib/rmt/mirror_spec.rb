@@ -8,19 +8,26 @@ RSpec.describe RMT::Mirror do
       FileUtils.remove_entry(@tmp_dir)
     end
 
+    let(:logger) { RMT::Logger.new('/dev/null') }
+
     context 'without auth_token', vcr: { cassette_name: 'mirroring' } do
       let(:rmt_mirror) do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
-          repository_url: 'http://localhost/dummy_repo/',
-          logger: RMT::Logger.new('/dev/null'),
-          local_path: '/dummy_repo',
+          logger: logger,
           mirror_src: false
         )
       end
 
+      let(:mirror_params) do
+        {
+          repository_url: 'http://localhost/dummy_repo/',
+          local_path: '/dummy_repo'
+        }
+      end
+
       before do
-        rmt_mirror.mirror
+        rmt_mirror.mirror(mirror_params)
       end
 
       it 'downloads rpm files' do
@@ -38,16 +45,25 @@ RSpec.describe RMT::Mirror do
       let(:rmt_mirror) do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
-          repository_url: 'http://localhost/dummy_repo/',
-          logger: RMT::Logger.new('/dev/null'),
-          local_path: '/dummy_repo',
-          auth_token: 'repo_auth_token',
+          logger: logger,
           mirror_src: false
         )
       end
 
+      let(:mirror_params) do
+        {
+          repository_url: 'http://localhost/dummy_repo/',
+          local_path: '/dummy_repo',
+          auth_token: 'repo_auth_token'
+        }
+      end
+
       before do
-        rmt_mirror.mirror
+        expect(logger).to receive(:info).with(/Mirroring repository/).once
+        expect(logger).to receive(:info).with('No product license found').once
+        expect(logger).to receive(:info).with('Repository metadata signatures are missing').once
+        expect(logger).to receive(:info).with(/↓/).at_least(1).times
+        rmt_mirror.mirror(mirror_params)
       end
 
       it 'downloads rpm files' do
@@ -65,16 +81,23 @@ RSpec.describe RMT::Mirror do
       let(:rmt_mirror) do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
-          repository_url: 'http://localhost/dummy_product/product/',
-          logger: RMT::Logger.new('/dev/null'),
-          local_path: '/dummy_product/product/',
-          auth_token: 'repo_auth_token',
+          logger: logger,
           mirror_src: false
         )
       end
 
+      let(:mirror_params) do
+        {
+          repository_url: 'http://localhost/dummy_product/product/',
+          local_path: '/dummy_product/product/',
+          auth_token: 'repo_auth_token'
+        }
+      end
+
       before do
-        rmt_mirror.mirror
+        expect(logger).to receive(:info).with(/Mirroring repository/).once
+        expect(logger).to receive(:info).with(/↓/).at_least(1).times
+        rmt_mirror.mirror(mirror_params)
       end
 
       it 'downloads rpm files' do
@@ -105,33 +128,38 @@ RSpec.describe RMT::Mirror do
       let(:rmt_mirror) do
         described_class.new(
           mirroring_base_dir: mirroring_dir,
-          repository_url: 'http://localhost/dummy_product/product/',
-          logger: RMT::Logger.new('/dev/null'),
-          local_path: '/dummy_product/product/',
-          auth_token: 'repo_auth_token',
+          logger: logger,
           mirror_src: false
         )
+      end
+
+      let(:mirror_params) do
+        {
+          repository_url: 'http://localhost/dummy_product/product/',
+          local_path: '/dummy_product/product/',
+          auth_token: 'repo_auth_token'
+        }
       end
 
       context 'when mirroring_base_dir is not writable' do
         let(:mirroring_dir) { '/non/existent/path' }
 
         it 'raises exception', vcr: { cassette_name: 'mirroring_product' } do
-          expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
+          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception)
         end
       end
 
       context "when can't create tmp dir", vcr: { cassette_name: 'mirroring_product' } do
         before { allow(Dir).to receive(:mktmpdir).and_raise('mktmpdir exception') }
         it 'handles the exception' do
-          expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
+          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception)
         end
       end
 
       context "when can't download metadata", vcr: { cassette_name: 'mirroring_product' } do
         before { allow_any_instance_of(RMT::Downloader).to receive(:download).and_raise(RMT::Downloader::Exception) }
         it 'handles RMT::Downloader::Exception' do
-          expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
+          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception)
         end
       end
 
@@ -139,24 +167,29 @@ RSpec.describe RMT::Mirror do
         let(:rmt_mirror) do
           described_class.new(
             mirroring_base_dir: @tmp_dir,
-            repository_url: 'http://localhost/dummy_repo/',
-            logger: RMT::Logger.new('/dev/null'),
-            local_path: '/dummy_product/product/',
+            logger: logger,
             mirror_src: false
           )
         end
 
+        let(:mirror_params) do
+          {
+            repository_url: 'http://localhost/dummy_repo/',
+            local_path: '/dummy_product/product/'
+          }
+        end
+
         it 'does not error out' do
-          expect { rmt_mirror.mirror }.not_to raise_error
+          expect { rmt_mirror.mirror(mirror_params) }.not_to raise_error
         end
 
         it 'does not create a product.licenses directory' do
-          rmt_mirror.mirror
+          rmt_mirror.mirror(mirror_params)
           expect(Dir).not_to exist(File.join(@tmp_dir, 'dummy_product', 'product.license'))
         end
 
         it 'removes the temporary licenses directory' do
-          rmt_mirror.mirror
+          rmt_mirror.mirror(mirror_params)
           tmpdir = rmt_mirror.instance_variable_get('@temp_licenses_dir')
           expect(Dir).not_to exist tmpdir
         end
@@ -170,14 +203,14 @@ RSpec.describe RMT::Mirror do
           end
         end
         it 'handles RMT::Downloader::Exception', vcr: { cassette_name: 'mirroring_product' } do
-          expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception, /Error during mirroring metadata:/)
+          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, /Error during mirroring metadata:/)
         end
       end
 
       context "when can't parse metadata", vcr: { cassette_name: 'mirroring_product' } do
         before { allow_any_instance_of(RMT::Rpm::RepomdXmlParser).to receive(:parse).and_raise('Parse error') }
         it 'removes the temporary metadata directory' do
-          expect { rmt_mirror.mirror }.to raise_error(RMT::Mirror::Exception)
+          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception)
           expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
         end
       end
@@ -185,7 +218,7 @@ RSpec.describe RMT::Mirror do
       context 'when Interrupt is raised', vcr: { cassette_name: 'mirroring_product' } do
         before { allow_any_instance_of(RMT::Rpm::RepomdXmlParser).to receive(:parse).and_raise(Interrupt.new) }
         it 'removes the temporary metadata directory' do
-          expect { rmt_mirror.mirror }.to raise_error(Interrupt)
+          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(Interrupt)
           expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
         end
       end
@@ -195,23 +228,35 @@ RSpec.describe RMT::Mirror do
       let(:rmt_source_mirror) do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
-          repository_url: 'http://localhost/dummy_product/product/',
           logger: RMT::Logger.new('/dev/null'),
-          local_path: '/dummy_product/product/',
-          auth_token: 'repo_auth_token',
           mirror_src: false
         )
       end
+
       let(:rmt_dedup_mirror) do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
-          repository_url: 'http://localhost/dummy_deduped_product/product/',
           logger: RMT::Logger.new('/dev/null'),
-          local_path: '/dummy_deduped_product/product/',
-          auth_token: 'repo_auth_token',
           mirror_src: false
         )
       end
+
+      let(:mirror_params_source) do
+        {
+          repository_url: 'http://localhost/dummy_product/product/',
+          local_path: '/dummy_product/product/',
+          auth_token: 'repo_auth_token'
+        }
+      end
+
+      let(:mirror_params_dedup) do
+        {
+          repository_url: 'http://localhost/dummy_deduped_product/product/',
+          local_path: '/dummy_deduped_product/product/',
+          auth_token: 'repo_auth_token'
+        }
+      end
+
       let(:dedup_path) { File.join(@tmp_dir, 'dummy_deduped_product/product/') }
       let(:source_path) { File.join(@tmp_dir, 'dummy_product/product/') }
 
@@ -286,8 +331,8 @@ RSpec.describe RMT::Mirror do
         before do
           deduplication_method(:copy)
           VCR.use_cassette 'mirroring_product_with_dedup' do
-            rmt_source_mirror.mirror
-            rmt_dedup_mirror.mirror
+            rmt_source_mirror.mirror(mirror_params_source)
+            rmt_dedup_mirror.mirror(mirror_params_dedup)
           end
         end
 
@@ -298,8 +343,8 @@ RSpec.describe RMT::Mirror do
         before do
           deduplication_method(:hardlink)
           VCR.use_cassette 'mirroring_product_with_dedup' do
-            rmt_source_mirror.mirror
-            rmt_dedup_mirror.mirror
+            rmt_source_mirror.mirror(mirror_params_source)
+            rmt_dedup_mirror.mirror(mirror_params_dedup)
           end
         end
 
@@ -310,11 +355,11 @@ RSpec.describe RMT::Mirror do
         before do
           deduplication_method(:copy)
           VCR.use_cassette 'mirroring_product_with_dedup' do
-            rmt_source_mirror.mirror
+            rmt_source_mirror.mirror(mirror_params_source)
             Dir.entries(source_path).select { |entry| entry =~ /(\.drpm|\.rpm)$/ }.each do |filename|
               File.open(source_path + filename, 'w') { |f| f.write('corruption') }
             end
-            rmt_dedup_mirror.mirror
+            rmt_dedup_mirror.mirror(mirror_params_dedup)
           end
         end
 
@@ -330,19 +375,24 @@ RSpec.describe RMT::Mirror do
       let(:rmt_mirror) do
         described_class.new(
           mirroring_base_dir: mirroring_dir,
-          repository_url: 'http://localhost/dummy_product/product/',
-          logger: RMT::Logger.new('/dev/null'),
-          local_path: '/dummy_product/product/',
-          auth_token: 'repo_auth_token',
+          logger: logger,
           mirror_src: false
         )
+      end
+
+      let(:mirror_params) do
+        {
+          repository_url: 'http://localhost/dummy_product/product/',
+          local_path: '/dummy_product/product/',
+          auth_token: 'repo_auth_token'
+        }
       end
 
       before do
         allow_any_instance_of(RMT::Downloader).to receive(:get_cache_timestamp) { 'Mon, 01 Jan 2018 10:10:00 GMT' }
 
         VCR.use_cassette 'mirroring_product_with_cached_metadata' do
-          rmt_mirror.mirror
+          rmt_mirror.mirror(mirror_params)
         end
       end
 

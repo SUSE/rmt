@@ -14,7 +14,7 @@ RSpec.describe RMT::Logger do
       it do
         logger.info('42')
         log.rewind
-        expect(log.read).to eq("INFO: 42\n")
+        expect(log.read).to eq("INFO: RMT version #{RMT::VERSION}\nINFO: 42\n")
       end
     end
 

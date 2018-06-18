@@ -91,17 +91,7 @@ class RMT::CLI::Base < Thor
   private
 
   def needs_path(path)
-    File.directory?(path) ? yield : warn("#{path} is not a directory.")
-  end
-
-  def mirror!(repo, repository_url: nil, to: RMT::DEFAULT_MIRROR_DIR, to_offline: false)
-    repository_url ||= repo.external_url
-
-    puts "Mirroring repository #{repo.name} to #{to}"
-    RMT::Mirror.from_url(repo.external_url, repo.auth_token, repository_url: repository_url, base_dir: to, to_offline: to_offline).mirror
-    repo.refresh_timestamp!
-  rescue RMT::Mirror::Exception => e
-    warn e.to_s
+    raise RMT::CLI::Error.new("#{path} is not a directory.") unless File.directory?(path)
   end
 
 end

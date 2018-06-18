@@ -2,19 +2,18 @@ class RMT::CLI::Export < RMT::CLI::Base
 
   desc 'data PATH', 'Store SCC data in files at given path'
   def data(path)
-    needs_path(path) do
-      RMT::SCC.new(options).export(path)
-    end
+    needs_path(path)
+    RMT::SCC.new(options).export(path)
   end
 
   desc 'settings PATH', 'Store repository settings at given path'
   def settings(path)
+    needs_path(path)
     filename = File.join(path, 'repos.json')
-    needs_path(path) do
-      data = Repository.only_mirrored.inject([]) { |data, repo| data << { url: repo.external_url, auth_token: repo.auth_token.to_s } }
-      File.write(filename, data.to_json)
-      puts "Settings saved at #{filename}."
-    end
+
+    data = Repository.only_mirrored.inject([]) { |data, repo| data << { url: repo.external_url, auth_token: repo.auth_token.to_s } }
+    File.write(filename, data.to_json)
+    puts "Settings saved at #{filename}."
   end
 
   desc 'repos PATH', 'Mirror repos at given path'
@@ -26,20 +25,24 @@ class RMT::CLI::Export < RMT::CLI::Base
   `export repos` will mirror these repositories to this PATH, usually a portable storage device.
   REPOS
   def repos(path)
-    needs_path(path) do
-      repos_file = File.join(path, 'repos.json')
-      unless File.exist?(repos_file)
-        warn "#{repos_file} does not exist."
-        return
-      end
-      repos = JSON.parse(File.read(repos_file))
-      repos.each do |repo|
-        puts "Mirroring repository at #{repo['url']}"
-        begin
-          RMT::Mirror.from_url(repo['url'], repo['auth_token'], base_dir: path, to_offline: true).mirror
-        rescue RMT::Mirror::Exception => e
-          warn e.to_s
-        end
+    needs_path(path)
+
+    logger = RMT::Logger.new(STDOUT)
+    mirror = RMT::Mirror.new(mirroring_base_dir: path, logger: logger, airgap_mode: true)
+
+    repos_file = File.join(path, 'repos.json')
+    raise RMT::CLI::Error.new("#{repos_file} does not exist.") unless File.exist?(repos_file)
+
+    repos = JSON.parse(File.read(repos_file))
+    repos.each do |repo|
+      begin
+        mirror.mirror(
+          repository_url: repo['url'],
+          local_path: Repository.make_local_path(repo['url']),
+          auth_token: repo['auth_token']
+        )
+      rescue RMT::Mirror::Exception => e
+        warn e.to_s
       end
     end
   end
