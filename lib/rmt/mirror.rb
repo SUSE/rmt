@@ -61,11 +61,7 @@ class RMT::Mirror
     @downloader.destination_dir = @temp_metadata_dir
     @downloader.cache_dir = @repository_dir
 
-    begin
-      local_filename = @downloader.download('repodata/repomd.xml')
-    rescue RMT::Downloader::Exception => e
-      raise RMT::Mirror::Exception.new("Repodata download failed: #{e}")
-    end
+    local_filename = @downloader.download('repodata/repomd.xml')
 
     begin
       @downloader.download('repodata/repomd.xml.key')
@@ -74,29 +70,25 @@ class RMT::Mirror
       @logger.info('Repository metadata signatures are missing')
     end
 
-    begin
-      primary_files = []
-      deltainfo_files = []
+    primary_files = []
+    deltainfo_files = []
 
-      repomd_parser = RMT::Rpm::RepomdXmlParser.new(local_filename)
-      repomd_parser.parse
+    repomd_parser = RMT::Rpm::RepomdXmlParser.new(local_filename)
+    repomd_parser.parse
 
-      repomd_parser.referenced_files.each do |reference|
-        @downloader.download(
-          reference.location,
-            checksum_type: reference.checksum_type,
-            checksum_value: reference.checksum
-        )
-        primary_files << reference.location if (reference.type == :primary)
-        deltainfo_files << reference.location if (reference.type == :deltainfo)
-      end
-
-      return primary_files, deltainfo_files
-    rescue RuntimeError => e
-      raise RMT::Mirror::Exception.new("Error while mirroring metadata files: #{e}")
-    rescue Interrupt => e
-      raise e
+    repomd_parser.referenced_files.each do |reference|
+      @downloader.download(
+        reference.location,
+          checksum_type: reference.checksum_type,
+          checksum_value: reference.checksum
+      )
+      primary_files << reference.location if (reference.type == :primary)
+      deltainfo_files << reference.location if (reference.type == :deltainfo)
     end
+
+    [primary_files, deltainfo_files]
+  rescue StandardError => e
+    raise RMT::Mirror::Exception.new("Error while mirroring metadata: #{e}")
   end
 
   def mirror_license
@@ -107,20 +99,18 @@ class RMT::Mirror
     begin
       directory_yast = @downloader.download('directory.yast')
     rescue RMT::Downloader::Exception
-      FileUtils.remove_entry(@temp_licenses_dir)
+      FileUtils.remove_entry(@temp_licenses_dir) # the repository would have an empty licenses directory unless removed
       @logger.info('No product license found')
       return
     end
 
-    begin
-      File.open(directory_yast).each_line do |filename|
-        filename.strip!
-        next if filename == 'directory.yast'
-        @downloader.download(filename)
-      end
-    rescue RMT::Downloader::Exception => e
-      raise RMT::Mirror::Exception.new("Error during mirroring metadata: #{e.message}")
+    File.open(directory_yast).each_line do |filename|
+      filename.strip!
+      next if filename == 'directory.yast'
+      @downloader.download(filename)
     end
+  rescue RMT::Downloader::Exception => e
+    raise RMT::Mirror::Exception.new("Error during mirroring license: #{e.message}")
   end
 
   def mirror_data(primary_files, deltainfo_files)
@@ -147,9 +137,9 @@ class RMT::Mirror
       to_download = parsed_files_after_dedup(@repository_dir, parser.referenced_files)
       @downloader.download_multi(to_download) unless to_download.empty?
     end
+  rescue StandardError => e
+    raise RMT::Mirror::Exception.new("Error while mirroring data: #{e}")
   end
-
-  private
 
   def replace_directory(source_dir, destination_dir)
     old_directory = File.join(File.dirname(destination_dir), '.old_' + File.basename(destination_dir))
@@ -157,6 +147,8 @@ class RMT::Mirror
     FileUtils.remove_entry(old_directory) if Dir.exist?(old_directory)
     FileUtils.mv(destination_dir, old_directory) if Dir.exist?(destination_dir)
     FileUtils.mv(source_dir, destination_dir)
+  rescue StandardError => e
+    raise RMT::Mirror::Exception.new("Error while moving directory #{source_dir} to #{destination_dir}: #{e}")
   end
 
   def deduplicate(checksum_type, checksum_value, destination)
