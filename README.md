@@ -146,7 +146,7 @@ RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Follo
 |YaST installation wizard|:heavy_check_mark:|:heavy_check_mark:|
 |YaST management wizard|:heavy_check_mark:|:x:|
 |Client management|:heavy_check_mark:|:x:|
-|RedHat support (Extended Support)|:heavy_check_mark:|:x:<sup>[2](#res)</sup>|
+|Red Hat support ([Expanded Support](https://www.suse.com/products/expandedsupport/))|:heavy_check_mark:|:x:<sup>[2](#res)</sup>|
 |Files deduplication|:heavy_check_mark:|:heavy_check_mark:|
 |Data transfer from SMT to RMT|-|:heavy_check_mark:|
 |Transfer registration data to SCC|:heavy_check_mark:|:x:|
