@@ -109,7 +109,7 @@ class RMT::Mirror
       next if filename == 'directory.yast'
       @downloader.download(filename)
     end
-  rescue RMT::Downloader::Exception => e
+  rescue StandardError => e
     raise RMT::Mirror::Exception.new("Error while mirroring license: #{e.message}")
   end
 
