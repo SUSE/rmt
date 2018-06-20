@@ -206,7 +206,7 @@ RSpec.describe RMT::Mirror do
           end
         end
         it 'handles RMT::Downloader::Exception', vcr: { cassette_name: 'mirroring_product' } do
-          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, /Error during mirroring license:/)
+          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, /Error while mirroring license:/)
         end
       end
 
@@ -419,7 +419,7 @@ RSpec.describe RMT::Mirror do
   end
 
   describe '#replace_directory' do
-    subject(:replace_directory) { rmt_mirror.send(:replace_directory, 'src', 'dst') }
+    subject(:replace_directory) { rmt_mirror.send(:replace_directory, source_dir, destination_dir) }
 
     let(:rmt_mirror) do
       described_class.new(
@@ -429,9 +429,44 @@ RSpec.describe RMT::Mirror do
       )
     end
 
-    it 'raises RMT::Mirror::Exception when encounters an error' do
-      expect(FileUtils).to receive(:mv).and_raise(Errno::ENOENT)
-      expect { replace_directory }.to raise_error(RMT::Mirror::Exception, 'Error while moving directory src to dst: No such file or directory')
+    let(:source_dir) { '/tmp/temp-repo-dir' }
+    let(:destination_dir) { '/var/www/repo/product.license' }
+    let(:old_dir) { '/var/www/repo/.old_product.license' }
+
+    context 'when the old directory exists' do
+      before do
+        expect(Dir).to receive(:exist?).with(old_dir).and_return(true)
+        expect(Dir).to receive(:exist?).with(destination_dir).and_return(false)
+      end
+
+      it 'removes it and moves src to dst' do
+        expect(FileUtils).to receive(:remove_entry).with(old_dir)
+        expect(FileUtils).to receive(:mv).with(source_dir, destination_dir)
+        replace_directory
+      end
+    end
+
+    context 'when the destination directory already exists' do
+      before do
+        expect(Dir).to receive(:exist?).with(old_dir).and_return(false)
+        expect(Dir).to receive(:exist?).with(destination_dir).and_return(true)
+      end
+
+      it 'renames it as .old and moves src to dst' do
+        expect(FileUtils).to receive(:mv).with(destination_dir, old_dir)
+        expect(FileUtils).to receive(:mv).with(source_dir, destination_dir)
+        replace_directory
+      end
+    end
+
+    context 'when an error is encountered' do
+      it 'raises RMT::Mirror::Exception' do
+        expect(FileUtils).to receive(:mv).and_raise(Errno::ENOENT)
+        expect { replace_directory }.to raise_error(
+          RMT::Mirror::Exception,
+          "Error while moving directory #{source_dir} to #{destination_dir}: No such file or directory"
+        )
+      end
     end
   end
 end

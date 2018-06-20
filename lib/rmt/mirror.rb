@@ -110,7 +110,7 @@ class RMT::Mirror
       @downloader.download(filename)
     end
   rescue RMT::Downloader::Exception => e
-    raise RMT::Mirror::Exception.new("Error during mirroring license: #{e.message}")
+    raise RMT::Mirror::Exception.new("Error while mirroring license: #{e.message}")
   end
 
   def mirror_data(primary_files, deltainfo_files)
