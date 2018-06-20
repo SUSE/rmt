@@ -1,6 +1,8 @@
 -------------------------------------------------------------------
-Fri Jun 15 13:12:09 UTC 2018 - ikapelyukhin@suse.com
+Tue Jun 19 15:01:19 UTC 2018 - ikapelyukhin@suse.com
 
+- Version 1.0.2
+- Improved handling of errors during mirroring (bsc#1096967)
 - Log version on service startup
 
 -------------------------------------------------------------------

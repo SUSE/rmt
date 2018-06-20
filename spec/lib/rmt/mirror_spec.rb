@@ -1,14 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe RMT::Mirror do
+  let(:logger) { RMT::Logger.new('/dev/null') }
+
   describe '#mirror' do
     around do |example|
       @tmp_dir = Dir.mktmpdir('rmt')
       example.run
       FileUtils.remove_entry(@tmp_dir)
     end
-
-    let(:logger) { RMT::Logger.new('/dev/null') }
 
     context 'without auth_token', vcr: { cassette_name: 'mirroring' } do
       let(:rmt_mirror) do
@@ -157,9 +157,12 @@ RSpec.describe RMT::Mirror do
       end
 
       context "when can't download metadata", vcr: { cassette_name: 'mirroring_product' } do
-        before { allow_any_instance_of(RMT::Downloader).to receive(:download).and_raise(RMT::Downloader::Exception) }
+        before do
+          allow_any_instance_of(RMT::Downloader).to receive(:download).and_call_original
+          expect_any_instance_of(RMT::Downloader).to receive(:download).with('repodata/repomd.xml').and_raise(RMT::Downloader::Exception, "418 - I'm a teapot")
+        end
         it 'handles RMT::Downloader::Exception' do
-          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception)
+          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, "Error while mirroring metadata: 418 - I'm a teapot")
         end
       end
 
@@ -203,14 +206,14 @@ RSpec.describe RMT::Mirror do
           end
         end
         it 'handles RMT::Downloader::Exception', vcr: { cassette_name: 'mirroring_product' } do
-          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, /Error during mirroring metadata:/)
+          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, /Error while mirroring license:/)
         end
       end
 
       context "when can't parse metadata", vcr: { cassette_name: 'mirroring_product' } do
         before { allow_any_instance_of(RMT::Rpm::RepomdXmlParser).to receive(:parse).and_raise('Parse error') }
         it 'removes the temporary metadata directory' do
-          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception)
+          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring metadata: Parse error')
           expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
         end
       end
@@ -220,6 +223,18 @@ RSpec.describe RMT::Mirror do
         it 'removes the temporary metadata directory' do
           expect { rmt_mirror.mirror(mirror_params) }.to raise_error(Interrupt)
           expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
+        end
+      end
+
+      context "when can't download data", vcr: { cassette_name: 'mirroring_product' } do
+        it 'handles RMT::Downloader::Exception' do
+          expect_any_instance_of(RMT::Downloader).to receive(:download_multi).and_raise(RMT::Downloader::Exception, "418 - I'm a teapot")
+          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, "Error while mirroring data: 418 - I'm a teapot")
+        end
+
+        it 'handles RMT::ChecksumVerifier::Exception' do
+          expect_any_instance_of(RMT::Downloader).to receive(:download_multi).and_raise(RMT::ChecksumVerifier::Exception, "Checksum doesn't match")
+          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, "Error while mirroring data: Checksum doesn't match")
         end
       end
     end
@@ -399,6 +414,58 @@ RSpec.describe RMT::Mirror do
       it 'downloads rpm files' do
         rpm_entries = Dir.entries(File.join(@tmp_dir, 'dummy_product/product/')).select { |entry| entry =~ /\.rpm$/ }
         expect(rpm_entries.length).to eq(4)
+      end
+    end
+  end
+
+  describe '#replace_directory' do
+    subject(:replace_directory) { rmt_mirror.send(:replace_directory, source_dir, destination_dir) }
+
+    let(:rmt_mirror) do
+      described_class.new(
+        mirroring_base_dir: @tmp_dir,
+        logger: logger,
+        mirror_src: false
+      )
+    end
+
+    let(:source_dir) { '/tmp/temp-repo-dir' }
+    let(:destination_dir) { '/var/www/repo/product.license' }
+    let(:old_dir) { '/var/www/repo/.old_product.license' }
+
+    context 'when the old directory exists' do
+      before do
+        expect(Dir).to receive(:exist?).with(old_dir).and_return(true)
+        expect(Dir).to receive(:exist?).with(destination_dir).and_return(false)
+      end
+
+      it 'removes it and moves src to dst' do
+        expect(FileUtils).to receive(:remove_entry).with(old_dir)
+        expect(FileUtils).to receive(:mv).with(source_dir, destination_dir)
+        replace_directory
+      end
+    end
+
+    context 'when the destination directory already exists' do
+      before do
+        expect(Dir).to receive(:exist?).with(old_dir).and_return(false)
+        expect(Dir).to receive(:exist?).with(destination_dir).and_return(true)
+      end
+
+      it 'renames it as .old and moves src to dst' do
+        expect(FileUtils).to receive(:mv).with(destination_dir, old_dir)
+        expect(FileUtils).to receive(:mv).with(source_dir, destination_dir)
+        replace_directory
+      end
+    end
+
+    context 'when an error is encountered' do
+      it 'raises RMT::Mirror::Exception' do
+        expect(FileUtils).to receive(:mv).and_raise(Errno::ENOENT)
+        expect { replace_directory }.to raise_error(
+          RMT::Mirror::Exception,
+          "Error while moving directory #{source_dir} to #{destination_dir}: No such file or directory"
+        )
       end
     end
   end
