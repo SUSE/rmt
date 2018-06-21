@@ -147,6 +147,7 @@ class RMT::Mirror
     FileUtils.remove_entry(old_directory) if Dir.exist?(old_directory)
     FileUtils.mv(destination_dir, old_directory) if Dir.exist?(destination_dir)
     FileUtils.mv(source_dir, destination_dir)
+    FileUtils.chmod(0o755, destination_dir)
   rescue StandardError => e
     raise RMT::Mirror::Exception.new("Error while moving directory #{source_dir} to #{destination_dir}: #{e}")
   end

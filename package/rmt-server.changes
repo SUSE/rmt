@@ -3,6 +3,7 @@ Tue Jun 19 15:01:19 UTC 2018 - ikapelyukhin@suse.com
 
 - Version 1.0.2
 - Improved handling of errors during mirroring (bsc#1096967)
+- Set correct permissions for product.license directory (bsc#1097367)
 - Log version on service startup
 
 -------------------------------------------------------------------
