@@ -439,9 +439,10 @@ RSpec.describe RMT::Mirror do
         expect(Dir).to receive(:exist?).with(destination_dir).and_return(false)
       end
 
-      it 'removes it and moves src to dst' do
+      it 'removes it, moves src to dst and sets permissions' do
         expect(FileUtils).to receive(:remove_entry).with(old_dir)
         expect(FileUtils).to receive(:mv).with(source_dir, destination_dir)
+        expect(FileUtils).to receive(:chmod).with(0o755, destination_dir)
         replace_directory
       end
     end
@@ -452,9 +453,10 @@ RSpec.describe RMT::Mirror do
         expect(Dir).to receive(:exist?).with(destination_dir).and_return(true)
       end
 
-      it 'renames it as .old and moves src to dst' do
+      it 'renames it as .old, moves src to dst and sets permissions' do
         expect(FileUtils).to receive(:mv).with(destination_dir, old_dir)
         expect(FileUtils).to receive(:mv).with(source_dir, destination_dir)
+        expect(FileUtils).to receive(:chmod).with(0o755, destination_dir)
         replace_directory
       end
     end
