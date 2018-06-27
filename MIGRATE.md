@@ -1,12 +1,11 @@
 # SMT to RMT Transition Helper Scripts
 
-RMT is a successor to SMT, but it's a new product and does not have an officially supported migration path. The RMT team
+RMT is a successor to SMT, but it's a new product and doesn't automatically migrate from SMT. The RMT team
 created these scripts to help ease the transition, enabling users to start their RMT experience by transferring some of
 their SMT data to RMT.
 
 **Notes:**
 
-* These scripts are community supported only.
 * We recommend that you install RMT on a new server. RMT is not a complete replacement for SMT. It has a different
 workflow from SMT and also only supports SLE 12 and above. However, nothing stops you from using the same server.
 
