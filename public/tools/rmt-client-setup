@@ -112,10 +112,8 @@ function import_signing_keys()
     fi
 
     http_get_signing_keys_index_html
-
-    if [ $? -eq 22 ]; then
-        echo "Custom keys directory 'repo/keys' on RMT server is not accessible. Check it exists and is readable and searchable by RMT process."
-    else
+    local retcode=$?
+    if [ $retcode -eq 0 ]; then
         parse_index_html
         for i in "${KEY_FILES[@]}"; do
             if [[ $i == *.key ]]; then
@@ -128,6 +126,9 @@ function import_signing_keys()
                 fi
             fi
         done
+    elif [ $retcode -ne 22 ]; then
+      local key_file_url=`echo "$REGURL/$1" | awk -F/ '{print "https://" $3 "/repo/keys/" $4}'`
+      echo "An error occurred reading the custom rpm key directory $key_file_url. Please ensure this directory exists, is readable to RMT and contains rpm signing keys if you wish to import custom rpm signing keys."
     fi
 
     rm -rf $TMPDIR/
