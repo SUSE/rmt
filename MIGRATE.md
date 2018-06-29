@@ -25,15 +25,15 @@ RMT server.
 What will be exported to RMT:
 
 * SSL certificates (optional)
-* Repositories that have been marked to be mirrored.
-* Custom repositories.
-* Systems and their product activations.
+* Repositories that have been marked to be mirrored
+* Custom repositories
+* Systems and their product activations
 
 **Notes:**
 
 * If you do choose to export your SSL certificate, please keep it safe.
 
-1. Update your SMT server installation. `smt-data-export` is available in SMT versions >= 3.0.34 on SLE 12 and SMT versions >= 2.0.34 on SLE 11
+1. Update your SMT server installation. `smt-data-export` is available in SMT versions >= 3.0.34 on SLE 12 and SMT versions >= 2.0.34 on SLE 11.
 
 2. Run the smt-data-export script:
     a) If you want to export the SSL certificates from SMT:
@@ -50,36 +50,33 @@ server or note its path if the same server will be used.
 
 ## Importing SMT data to RMT
 
-1. Make sure your rmt installation is up-to-date. `rmt-data-import` is available in RMT versions >= 1.0.0
-2. Unpack the tarball containing SMT data to some directory, e.g. `/root/smt-data`
-3. If you chose to export SMT's SSL certificates, decrypt the SMT CA private key to `/usr/share/rmt/ssl/`:
+1. Make sure your rmt installation is up-to-date. `rmt-data-import` is available in RMT versions >= 1.0.0.
+2. Unpack the tarball containing SMT data to some directory, e.g. `/root/smt-data`.
+3. If you chose to export SMT's SSL certificates, copy the SMT CA private key and certificate to `/usr/share/rmt/ssl/`:
     ```
-    openssl rsa -in /root/smt-data/ssl/cacert.key -out /usr/share/rmt/ssl/rmt-ca.key
-    ```
-4. If you chose to export SMT's SSL certificates, copy the SMT CA certificate to `/usr/share/rmt/ssl/`:
-    ```
+    cp /root/smt-data/ssl/cacert.key /usr/share/rmt/ssl/rmt-ca.key
     cp /root/smt-data/ssl/cacert.pem /usr/share/rmt/ssl/rmt-ca.crt
     ```
-5. Run YaST RMT configuration module from YaST command center or by running `yast2 rmt` on the command line;
-6. Go through setup steps of the YaST module. On the SSL setup page it is possible to add alternative common names (e.g., the hostname of the SMT server in case it is desirable to perform a switch) 
-7. Run `rmt-cli sync` to get the products and repositories data from SCC;
-8. Run the `rmt-data-import` to import SMT data:
+4. Run YaST RMT configuration module from YaST command center or by running `yast2 rmt` on the command line.
+5. Proceed through the YaST module. If you want to support your old SMT hostname in your new SSL certificate, you can add it as an alternative common name on the SSL setup page.
+6. Run `rmt-cli sync` to get the products and repositories data from SCC.
+7. Run the `rmt-data-import` to import SMT data:
     ```
     rmt-data-import -d /root/smt-data/
     ```
 
 After this in order for the client machines to consume data from RMT, it would be possible to:
-1. Either change `url` parameter in `/etc/SUSEConnect` to point the client machines to RMT instead of SMT;
+1. Either change `url` parameter in `/etc/SUSEConnect` to point the client machines to RMT instead of SMT.
 1. Or change the DNS records to the re-assign SMT's hostname to RMT server.
 
 
 ## Moving the mirrored repositories from SMT to RMT
 
-1. Copy data from `/var/www/htdocs/repo` to `/var/lib/rmt/public/repo`
+1. Copy data from `/var/www/htdocs/repo` to `/var/lib/rmt/public/repo`:
     ```
     cp -r /var/www/htdocs/repo/* /var/lib/rmt/public/repo
     ```
-2. Adjust owner/group of the files to `_rmt:nginx`
+2. Adjust owner/group of the files to `_rmt:nginx`:
     ```
     chown -R _rmt:nginx /var/lib/rmt/public/repo
     ```
