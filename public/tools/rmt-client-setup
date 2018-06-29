@@ -44,7 +44,7 @@ function http_get_signing_keys_index_html()
 {
     local index_html_url=`echo "$REGURL" | awk -F/ '{print "https://" $3 "/repo/keys/"}'`
 
-    $CURL --insecure --fail --output $TMPDIR/index.html $index_html_url
+    $CURL --insecure --silent --fail --output $TMPDIR/index.html $index_html_url
 
     return $?
 }
