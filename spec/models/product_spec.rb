@@ -50,19 +50,19 @@ RSpec.describe Product, type: :model do
     context 'without special symbols' do
       let(:version) { '42' }
 
-      it { is_expected.to eq('42') }
+      it { is_expected.to eq(['42']) }
     end
 
     context 'with a dot' do
       let(:version) { '42.0' }
 
-      it { is_expected.to eq('42') }
+      it { is_expected.to eq(%w[42.0 42]) }
     end
 
     context 'with dashes' do
       let(:version) { '42-0' }
 
-      it { is_expected.to eq('42') }
+      it { is_expected.to eq(%w[42-0 42]) }
     end
   end
 
