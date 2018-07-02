@@ -463,4 +463,13 @@ describe MigrationEngine do
       end
     end
   end
+
+  describe '#sort_migrations' do
+    let(:installed_products) { [sle12] }
+    let(:system) { FactoryGirl.create(:system, :with_activated_base_product) }
+
+    it 'removes duplicate migration paths' do
+      expect(engine.send(:sort_migrations, [[sle12], [sle12], [sle12]])).to eq([[sle12]])
+    end
+  end
 end
