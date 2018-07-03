@@ -103,6 +103,7 @@ class MigrationEngine
       .map { |migration| sort_migration(migration) }
       .sort_by { |migration| migration.map(&:version) }
       .reverse!
+      .uniq
   end
 
   # we sort the migration products, so clients will activate them in the right dependency order

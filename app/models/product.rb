@@ -67,7 +67,7 @@ class Product < ApplicationRecord
 
   def self.clean_up_version(version)
     return unless version
-    version.tr('-', '.').chomp('.0')
+    [version, version.tr('-', '.').chomp('.0')].uniq
   end
 
   def product_string
