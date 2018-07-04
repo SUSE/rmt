@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jul  4 15:32:13 UTC 2018 - fschueller@suse.com
+
+- Version 1.0.4
+- Only show post-install message on initial install
+
+-------------------------------------------------------------------
 Wed Jun 27 12:18:16 UTC 2018 - ikapelyukhin@suse.com
 
 - Version 1.0.3
