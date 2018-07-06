@@ -7,21 +7,11 @@ rubocop.lint(report_danger: true, inline_comment: true, force_exclusion: true)
 
 # Check that the versions in all files are the same
 def check_all_versions_equal
-  if makefile_version != spec_version || makefile_version != rmt_version || spec_version != rmt_version
+  if spec_version != rmt_version
     error_msg = "The version of RMT is not consistent. These files must specify the same version:\n"
     error_msg << "- `lib/rmt.rb` specifies `#{rmt_version}`\n"
-    error_msg << "- `Makefile` specifies `#{makefile_version}`\n"
-    error_msg << "- `package/rmt-server.spec` specifies `#{spec_version}`"
+    error_msg << "- `package/rmt-server.spec` specifies `#{spec_version}`\n"
     fail(error_msg)
-  end
-end
-
-def makefile_version
-  return @_makefile_version if defined?(@_makefile_version)
-  @_makefile_version = File.open('Makefile', 'r') do |f|
-    f.each_line do |line|
-      break line.split('=').last.strip if line =~ /^VERSION/
-    end
   end
 end
 
