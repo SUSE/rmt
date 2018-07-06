@@ -1,5 +1,5 @@
 NAME          = rmt-server
-VERSION       = 1.0.4
+VERSION       = $(shell ruby -e 'require "./lib/rmt.rb"; print RMT::VERSION')
 
 all:
 	@:
