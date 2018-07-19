@@ -159,6 +159,10 @@ RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Follo
 <a name="staging">1</a>: Functionality is offered by [SUSE Manager](https://www.suse.com/documentation/suse-best-practices/susemanager/data/susemanager.html)  
 <a name="res">2</a>: RES support is planned for SLES15 SP1
 
+## API documentation
+
+RMT partially implements the [SUSE Customer Center API](https://github.com/SUSE/connect/blob/master/doc/SCC-API-(Implemented).md). Make sure to checkout the [Differences in RMT, SMT and SCC API](https://github.com/SUSE/connect/blob/master/doc/SCC-API-(Implemented).md#differences-in-rmt-smt-and-scc-api) section to understand which API endpoints are not supported by RMT.
+
 ## Feedback
 
 Do you have suggestions for improvement? Let us know!
