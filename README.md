@@ -158,7 +158,7 @@ RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Follo
 
 <a name="staging">1</a>: Functionality is offered by [SUSE Manager](https://www.suse.com/documentation/suse-best-practices/susemanager/data/susemanager.html)  
 <a name="res">2</a>: RES support is planned for SLES15 SP1  
-<a name="regup">3</a>: Registartion data transfer to SCC planned for SLES15 SP2 or later
+<a name="regup">3</a>: Registartion data transfer to SCC is planned for SLES15 SP2
 
 ## API documentation
 
