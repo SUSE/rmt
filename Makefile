@@ -58,5 +58,6 @@ dist: clean man
 	sed -i '/source .*rubygems\.org/d' $(NAME)-$(VERSION)/Gemfile
 	sed -i '/remote: .*rubygems\.org/d' $(NAME)-$(VERSION)/Gemfile.lock
 
+	find $(NAME)-$(VERSION) -name \*~ -exec rm {} \;
 	tar cfvj package/$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)/
 	rm -rf $(NAME)-$(VERSION)/
