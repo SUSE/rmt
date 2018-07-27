@@ -26,7 +26,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
   option :csv, type: :boolean, desc: 'Output data in CSV format'
 
   def list
-    repositories = Repository.only_custom
+    repositories = Repository.only_custom.order(:name)
 
     raise RMT::CLI::Error.new('No custom repositories found.') if repositories.empty?
 

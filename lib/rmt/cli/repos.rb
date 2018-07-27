@@ -28,7 +28,7 @@ class RMT::CLI::Repos < RMT::CLI::Base
   protected
 
   def list_repositories(scope: :enabled)
-    repositories = (scope == :all) ? Repository.only_scc : Repository.only_scc.only_mirrored
+    repositories = ((scope == :all) ? Repository.only_scc : Repository.only_scc.only_mirrored).order(:name, :description)
 
     if repositories.empty?
       if options.all
