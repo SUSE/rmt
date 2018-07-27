@@ -2,7 +2,8 @@
 Thu Jul 19 12:27:23 UTC 2018 - wstephenson@suse.com
 
 - Version 1.0.5
-- Include 'last_seen_at' field in API systems output, for 
+- sort all list outputs alphabetically (bsc#1088680)
+- Include 'last_seen_at' field in API systems output, for
   consistency with SCC
 
 -------------------------------------------------------------------

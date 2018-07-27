@@ -10,7 +10,7 @@ class RMT::CLI::Products < RMT::CLI::Base
   option :csv, type: :boolean, desc: 'Output data in CSV format'
 
   def list
-    products = options.all ? Product.all : Product.mirrored
+    products = (options.all ? Product.all : Product.mirrored).order(:name, :version, :arch)
     products = products.with_release_stage(options[:release_stage])
 
     if products.empty?
