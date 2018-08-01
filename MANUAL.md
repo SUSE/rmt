@@ -125,15 +125,15 @@ As described in the [PREREQUISITE][] section, the recommended way to perform ini
 The YaST RMT module will take care of configuring SCC credentials, setting up the database and creating SSL certificates.
 However, if you want to reconfigure specific settings manually, this section tells you how.
 
-All available configuration options can be found in the `/etc/rmt.conf` file.
+All available configuration options can be found in the `/etc/rmt/rmt.conf` file.
 
 **SSL certificates & HTTPS**
 
 By default access to API endpoints consumed by `SUSEConnect` is limited to HTTPS only.
 nginx is configured to use SSL certificate and private key from the following locations:
 
-- Certificate: `/usr/share/rmt/ssl/rmt-server.crt`
-- Private key: `/usr/share/rmt/ssl/rmt-server.key`
+- Certificate: `/etc/rmt/ssl/rmt-server.crt`
+- Private key: `/etc/rmt/ssl/rmt-server.key`
 
 
 YaST RMT module generates a custom certificate authority which is used to sign HTTPS certificates, which means that in order to register, this certificate authority must be trusted by the client machines:

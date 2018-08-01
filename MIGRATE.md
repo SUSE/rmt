@@ -52,10 +52,10 @@ server or note its path if the same server will be used.
 
 1. Make sure your rmt installation is up-to-date. `rmt-data-import` is available in RMT versions >= 1.0.0.
 2. Unpack the tarball containing SMT data to some directory, e.g. `/root/smt-data`.
-3. If you chose to export SMT's SSL certificates, copy the SMT CA private key and certificate to `/usr/share/rmt/ssl/`:
+3. If you chose to export SMT's SSL certificates, copy the SMT CA private key and certificate to `/etc/rmt/ssl/`:
     ```
-    cp /root/smt-data/ssl/cacert.key /usr/share/rmt/ssl/rmt-ca.key
-    cp /root/smt-data/ssl/cacert.pem /usr/share/rmt/ssl/rmt-ca.crt
+    cp /root/smt-data/ssl/cacert.key /etc/rmt/ssl/rmt-ca.key
+    cp /root/smt-data/ssl/cacert.pem /etc/rmt/ssl/rmt-ca.crt
     ```
 4. Run YaST RMT configuration module from YaST command center or by running `yast2 rmt` on the command line.
 5. Proceed through the YaST module. If you want to support your old SMT hostname in your new SSL certificate, you can add it as an alternative common name on the SSL setup page.
