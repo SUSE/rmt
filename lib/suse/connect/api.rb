@@ -8,7 +8,7 @@ module SUSE
 
       class InvalidCredentialsError < StandardError; end
       CONNECT_API_URL = 'https://scc.suse.com/connect'.freeze
-      UUID_FILE_LOCATION = File.expand_path('../../../config/system_uuid', __dir__).freeze
+      UUID_FILE_LOCATION = "/var/lib/rmt/system_uuid".freeze
 
       def initialize(username, password)
         @username = username
