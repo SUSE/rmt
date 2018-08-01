@@ -19,6 +19,7 @@
 %define app_dir %{_datadir}/rmt/
 %define lib_dir %{_libdir}/rmt/
 %define data_dir %{_localstatedir}/lib/rmt/
+%define conf_dir %{_sysconfdir}/rmt
 %define rmt_user    _rmt
 %define rmt_group   nginx
 %if 0%{?suse_version} == 1315
@@ -100,12 +101,14 @@ bundle.ruby2.5 install %{?jobs:--jobs %{jobs}} --without test development --depl
 mkdir -p %{buildroot}%{data_dir}
 mkdir -p %{buildroot}%{lib_dir}
 mkdir -p %{buildroot}%{app_dir}
+mkdir -p %{buildroot}%{conf_dir}
+mkdir -p %{buildroot}%{_sharedstatedir}/rmt
 
 mv tmp %{buildroot}%{data_dir}
 mkdir %{buildroot}%{data_dir}/public
 mv public/repo %{buildroot}%{data_dir}/public/
 mv vendor %{buildroot}%{lib_dir}
-mv ssl %{buildroot}%{app_dir}
+mv ssl %{buildroot}%{conf_dir}
 
 cp -ar . %{buildroot}%{app_dir}
 ln -s %{data_dir}/tmp %{buildroot}%{app_dir}/tmp
@@ -138,7 +141,7 @@ ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-mirror
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-sync
 
 mkdir -p %{buildroot}%{_sysconfdir}
-mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
+mv %{_builddir}/rmt.conf %{buildroot}%{conf_dir}/rmt.conf
 
 # nginx
 install -D -m 644 %{SOURCE4} %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
@@ -183,11 +186,14 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %files
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}
 %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
+%attr(-,%{rmt_user},%{rmt_group}) %{conf_dir}
+%attr(-,%{rmt_user},%{rmt_group}) %{_sharedstatedir}/rmt
 %dir %{_libexecdir}/supportconfig
 %dir %{_libexecdir}/supportconfig/plugins
 %dir %{_sysconfdir}/nginx
 %dir %{_sysconfdir}/nginx/vhosts.d
-%config(noreplace) %{_sysconfdir}/rmt.conf
+%dir %{_sharedstatedir}/rmt
+%config(noreplace) %{conf_dir}/rmt.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
 %{_mandir}/man8/rmt-cli.8%{?ext_man}
@@ -219,8 +225,26 @@ getent passwd %{rmt_user} >/dev/null || \
 %service_add_post rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service
 cd %{_datadir}/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails secrets:setup >/dev/null
 cd %{_datadir}/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails runner -e production "Rails::Secrets.write({'production' => {'secret_key_base' => SecureRandom.hex(64)}}.to_yaml)" >/dev/null
-if [ $1 -eq 1 ] ; then
+
+# Run only on install
+if [ $1 -eq 1 ]; then
   echo "Please run the YaST RMT module (or 'yast2 rmt' from the command line) to complete the configuration of your RMT" >> /dev/stdout
+fi
+
+# Run only on upgrade
+if [ $1 -eq 2 ]; then
+  if [ -d %{app_dir}/ssl ]; then
+    mv %{app_dir}/ssl/* %{conf_dir}/ssl
+    echo "RMT ssl configuration has been moved to a new place. New place is: %{conf_dir}/ssl"
+  fi
+  if [ -f %{_sysconfdir}/rmt.conf ]; then
+    mv %{_sysconfdir}/rmt.conf %{conf_dir}/rmt.conf
+    echo "RMT configuration has been moved to a new place. New place is: %{conf_dir}/rmt.conf"
+  fi
+
+  if [ -f %{app_dir}/config/system_uuid ]; then
+    mv %{app_dir}/config/system_uuid %{_sharedstatedir}/rmt/system_uuid
+  fi
 fi
 
 %preun
