@@ -26,7 +26,7 @@
 %define is_sle_12_family 1
 %endif
 Name:           rmt-server
-Version:        1.0.5
+Version:        1.0.6
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
