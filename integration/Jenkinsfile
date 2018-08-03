@@ -1,0 +1,34 @@
+pipeline {
+  agent {
+    label 'scc-happy-customer'
+  }
+
+  stages {
+    stage('checkout') {
+      steps {
+        script {
+          currentBuild.displayName = "#${BUILD_NUMBER}: ${branch}"
+        }
+
+        git url: 'git@github.com:SUSE/rmt.git', branch: "${branch}"
+      }
+    }
+    stage('docker-compose build') {
+      steps {
+        sh 'docker-compose -f docker-compose-test.yml build'
+      }
+    }
+
+    stage('rmt integration tests') {
+      steps {
+        sh 'docker-compose -f docker-compose-test.yml run rmt_test ./integration.sh'
+      }
+    }
+  }
+  post {
+    always {
+      sh 'docker-compose down'
+      sh 'docker system prune -f'
+    }
+  }
+}

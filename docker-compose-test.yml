@@ -1,0 +1,44 @@
+version: '2'
+volumes:
+  db_storage:
+    driver: local
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1350
+
+services:
+  db:
+    image: mariadb:10.2
+    restart: always
+    volumes:
+      - db_storage:/var/lib/mysql
+    extends:
+      service: base
+      file: docker-compose-base.yml
+
+  rmt_test:
+    privileged: true
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+      args:
+        REGCODE: ${REGCODE}
+        OBS_USER: ${OBS_USER}
+        OBS_PASSWORD: ${OBS_PASSWORD}
+        SCC_USERNAME: ${SCC_USERNAME}
+        SCC_PASSWORD: ${SCC_PASSWORD}
+        MYSQL_HOST: ${MYSQL_HOST}
+        MYSQL_USER: ${MYSQL_USER}
+        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        MYSQL_DATABASE: ${MYSQL_DATABASE}
+    environment:
+      - MYSQL_HOST=db
+      - SECRET_KEY_BASE=8ea53ad3bc6c03923e376c8bdd85059c1885524947a7efe53d5e9c9d4e39861106ffd6a2ece82b803072ed701e6c960bade91644979e679416c5f255007237ae
+    depends_on:
+      - db
+    extends:
+      service: base
+      file: docker-compose-base.yml
+    command: /bin/bash -c 'bundle.ruby2.5 exec rails db:migrate'
