@@ -55,7 +55,7 @@ RUN printf "database:\n\
 scc:\n\
   username: $SCC_USERNAME\n\
   password: $SCC_PASSWORD\n\
-" >> /etc/rmt.conf
+" >> /etc/rmt/rmt.conf
 
 RUN bundle
 
