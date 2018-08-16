@@ -3,6 +3,15 @@ FROM registry.scc.suse.de/suse/sles15:ga
 RUN useradd --no-log-init --create-home scc
 
 ARG REGCODE
+ARG OBS_USER
+ARG OBS_PASSWORD
+ARG MYSQL_HOST
+ARG MYSQL_USER
+ARG MYSQL_PASSWORD
+ARG MYSQL_DATABASE
+ARG SCC_USERNAME
+ARG SCC_PASSWORD
+
 RUN SUSEConnect -r $REGCODE
 RUN zypper --non-interactive ar http://download.opensuse.org/repositories/openSUSE:/Tools/SLE_15/openSUSE:Tools.repo
 RUN zypper --non-interactive --gpg-auto-import-keys ref
@@ -18,8 +27,6 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-ARG OBS_USER
-ARG OBS_PASSWORD
 RUN printf "[general]\n\
 build-root = /oscbuild/%(repo)s-%(arch)s\n\
 packagecachedir = /oscbuild/packagecache\n\
@@ -39,12 +46,7 @@ RUN mkdir /tmp/rmt-server
 WORKDIR /tmp/rmt-server
 ADD . /tmp/rmt-server
 RUN chown -R scc /tmp/rmt-server
-ARG MYSQL_HOST
-ARG MYSQL_USER
-ARG MYSQL_PASSWORD
-ARG MYSQL_DATABASE
-ARG SCC_USERNAME
-ARG SCC_PASSWORD
+RUN mkdir /etc/rmt
 RUN printf "database:\n\
   host: $MYSQL_HOST\n\
   username: $MYSQL_USER\n\

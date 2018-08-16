@@ -2,7 +2,6 @@ namespace :package do
   package_dir = 'package/'
   package_name = 'rmt-server'
   obs_project = 'systemsmanagement:SCC:RMT'
-  local_spec_file = "#{package_name}.spec"
   root_path = File.join(File.dirname(__FILE__), '../..')
 
   desc 'Checkout from OBS'
