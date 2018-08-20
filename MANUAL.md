@@ -125,7 +125,7 @@ As described in the [PREREQUISITE][] section, the recommended way to perform ini
 The YaST RMT module will take care of configuring SCC credentials, setting up the database and creating SSL certificates.
 However, if you want to reconfigure specific settings manually, this section tells you how.
 
-All available configuration options can be found in the `/etc/rmt/rmt.conf` file.
+All available configuration options can be found in the `/etc/rmt.conf` file.
 
 **SSL certificates & HTTPS**
 
