@@ -243,9 +243,6 @@ if [ $1 -eq 2 ]; then
   fi
 fi
 
-chmod 640 %{conf_dir}/rmt.conf
-chown _rmt %{conf_dir}/rmt.conf
-
 %preun
 %service_del_preun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service
 
