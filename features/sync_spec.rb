@@ -4,10 +4,10 @@ describe 'rmt-cli' do
   describe 'sync' do
     command '/usr/bin/rmt-cli sync'
     its(:exitstatus) { is_expected.to eq 0 }
-    its(:stdout) { is_expected.to include("INFO -- : Cleaning up the database\n") }
-    its(:stdout) { is_expected.to include("INFO -- : Downloading data from SCC\n") }
-    its(:stdout) { is_expected.to include("INFO -- : Updating products\n") }
-    its(:stdout) { is_expected.to include("INFO -- : Updating repositories\n") }
-    its(:stdout) { is_expected.to include("INFO -- : Updating subscriptions\n") }
+
+    it do
+      expect( %x"/usr/bin/rmt-cli products list --all | wc -l".strip&.to_i ).to be >= 361
+      expect( %x"/usr/bin/rmt-cli repos list --all | wc -l".strip&.to_i ).to be >= 839
+    end
   end
 end
