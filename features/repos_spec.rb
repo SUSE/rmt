@@ -6,17 +6,17 @@ describe 'enable repos' do
 
   before do
     repos.each do |repo_id|
-      command "/usr/bin/rmt-cli repos enable #{repo_id}"
+      `/usr/bin/rmt-cli repos enable #{repo_id}`
     end
   end
 
   after do
     repos.each do |repo_id|
-      command "/usr/bin/rmt-cli repos disable #{repo_id}"
+      `/usr/bin/rmt-cli repos disable #{repo_id}`
     end
   end
 
   it do
-    expect( %x"/usr/bin/rmt-cli repos list | grep [0-9] | wc -l".strip&.to_i ).to eq(5)
+    expect(`/usr/bin/rmt-cli repos list --csv | wc -l`.strip&.to_i ).to eq(5)
   end
 end

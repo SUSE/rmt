@@ -1,9 +1,9 @@
 require File.expand_path('../support/command_rspec_helper', __FILE__)
 
 describe 'rmt-cli' do
-  before { system '/usr/bin/rmt-cli sync > /dev/null &' }
+  before { `/usr/bin/rmt-cli sync > /dev/null &` }
   # kill running process to let further specs pass
-  after { system 'kill -9 $(cat /tmp/rmt.lock)' }
+  after { `kill -9 $(cat /tmp/rmt.lock)` }
 
   describe 'lockfile' do
     command '/usr/bin/rmt-cli sync', allow_error: true

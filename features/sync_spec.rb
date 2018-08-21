@@ -6,8 +6,8 @@ describe 'rmt-cli' do
     its(:exitstatus) { is_expected.to eq 0 }
 
     it do
-      expect( %x"/usr/bin/rmt-cli products list --all | wc -l".strip&.to_i ).to be >= 361
-      expect( %x"/usr/bin/rmt-cli repos list --all | wc -l".strip&.to_i ).to be >= 839
+      expect(`/usr/bin/rmt-cli products list --all | wc -l`.strip&.to_i ).to be >= 361
+      expect(`/usr/bin/rmt-cli repos list --all | wc -l`.strip&.to_i ).to be >= 839
     end
   end
 end
