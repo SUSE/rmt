@@ -12,7 +12,7 @@ describe 'mirror' do
     `/usr/bin/rmt-cli repos disable 3114`
 
     # cleanup files
-    FileUtils.rm_r('/var/lib/rmt/public/repo/')
+    FileUtils.rm_r('/var/lib/rmt/public/repo/SUSE/Updates/SLE-Product-SLES/15')
   end
 
   it do
