@@ -68,7 +68,8 @@ Requires(post): ruby2.5-rubygem-bundler
 Requires(post): shadow
 Requires(post): timezone
 Requires(post): util-linux
-Recommends:     yast2-rmt
+Conflicts:      yast2-rmt < 1.0.3
+Recommends:     yast2-rmt >= 1.0.3
 # Does not build for i586 and s390 and is not supported on those architectures
 ExcludeArch:    %{ix86} s390
 
