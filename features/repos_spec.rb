@@ -1,6 +1,3 @@
-require File.expand_path('../support/command_rspec_helper', __FILE__)
-
-
 describe 'enable repos' do
   let(:repos) { [3114, 3115, 3116, 2705, 2707] }
 
