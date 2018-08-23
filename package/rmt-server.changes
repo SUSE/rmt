@@ -1,14 +1,10 @@
 -------------------------------------------------------------------
-Wed Aug 15 13:41:49 UTC 2018 - skotov@suse.com
-
-- Change file permissions for rmt.conf
-
--------------------------------------------------------------------
 Thu Aug  2 16:19:35 UTC 2018 - fschnizlein@suse.com
 
 - Version 1.0.6
 - Change file paths to new locations to make RMT work with
   read-only rootfs (bsc#1102198)
+- Change file permissions for rmt.conf (bsc#1104232)
 
 -------------------------------------------------------------------
 Thu Jul 19 12:27:23 UTC 2018 - wstephenson@suse.com
