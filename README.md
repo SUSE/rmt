@@ -42,7 +42,7 @@ After installation configure your RMT instance:
     FLUSH PRIVILEGES;
     EOFF
     ```
-* See the "Configuration" section for how to configure the options in `/etc/rmt/rmt.conf`.
+* See the "Configuration" section for how to configure the options in `/etc/rmt.conf`.
 * Start RMT by running `systemctl start rmt-server`. This will start the RMT server at http://localhost:4224.
 * By default, mirrored repositories are saved under `/usr/share/rmt/public`, which is a symlink that points to
 `/var/lib/rmt/public`. In order to change destination directory, recreate `/usr/share/rmt/public` symlink to point to the

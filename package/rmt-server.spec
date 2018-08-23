@@ -68,7 +68,8 @@ Requires(post): ruby2.5-rubygem-bundler
 Requires(post): shadow
 Requires(post): timezone
 Requires(post): util-linux
-Recommends:     yast2-rmt
+Conflicts:      yast2-rmt < 1.0.3
+Recommends:     yast2-rmt >= 1.0.3
 # Does not build for i586 and s390 and is not supported on those architectures
 ExcludeArch:    %{ix86} s390
 
@@ -141,7 +142,7 @@ ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-mirror
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-sync
 
 mkdir -p %{buildroot}%{_sysconfdir}
-mv %{_builddir}/rmt.conf %{buildroot}%{conf_dir}/rmt.conf
+mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
 # nginx
 install -D -m 644 %{SOURCE4} %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
@@ -193,7 +194,7 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %dir %{_sysconfdir}/nginx
 %dir %{_sysconfdir}/nginx/vhosts.d
 %dir %{_sharedstatedir}/rmt
-%config(noreplace) %{conf_dir}/rmt.conf
+%config(noreplace) %{_sysconfdir}/rmt.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
 %{_mandir}/man8/rmt-cli.8%{?ext_man}
@@ -237,11 +238,6 @@ if [ $1 -eq 2 ]; then
     mv %{app_dir}/ssl/* %{conf_dir}/ssl
     echo "RMT ssl configuration has been moved to a new place. New place is: %{conf_dir}/ssl"
   fi
-  if [ -f %{_sysconfdir}/rmt.conf ]; then
-    mv %{_sysconfdir}/rmt.conf %{conf_dir}/rmt.conf
-    echo "RMT configuration has been moved to a new place. New place is: %{conf_dir}/rmt.conf"
-  fi
-
   if [ -f %{app_dir}/config/system_uuid ]; then
     mv %{app_dir}/config/system_uuid %{_sharedstatedir}/rmt/system_uuid
   fi

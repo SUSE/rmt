@@ -116,7 +116,7 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
 
           it 'outputs custom error message' do
             expect { command }.to output(
-              "Cannot connect to database server. Make sure its credentials are configured in '/etc/rmt/rmt.conf'.\n"
+              "Cannot connect to database server. Make sure its credentials are configured in '/etc/rmt.conf'.\n"
             ).to_stderr
           end
         end
@@ -127,7 +127,7 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
 
           it 'outputs custom error message' do
             expect { command }.to output(
-              "Cannot connect to database server. Make sure it is running and its credentials are configured in '/etc/rmt/rmt.conf'.\n"
+              "Cannot connect to database server. Make sure it is running and its credentials are configured in '/etc/rmt.conf'.\n"
             ).to_stderr
           end
         end
@@ -147,7 +147,7 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
 
           it 'outputs custom error message' do
             expect { command }.to output(
-              "The SCC credentials are not configured correctly in '/etc/rmt/rmt.conf'. You can obtain them from https://scc.suse.com/organization\n"
+              "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization\n"
             ).to_stderr
           end
         end
@@ -157,7 +157,7 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
 
           it 'outputs custom error message' do
             expect { command }.to output(
-              "The SCC credentials are not configured correctly in '/etc/rmt/rmt.conf'. You can obtain them from https://scc.suse.com/organization\n"
+              "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization\n"
             ).to_stderr
           end
         end

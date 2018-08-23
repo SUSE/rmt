@@ -45,12 +45,12 @@ class RMT::CLI::Base < Thor
     rescue Mysql2::Error => e
       if e.message =~ /^Access denied/
         raise RMT::CLI::Error.new(
-          "Cannot connect to database server. Make sure its credentials are configured in '/etc/rmt/rmt.conf'.",
+          "Cannot connect to database server. Make sure its credentials are configured in '/etc/rmt.conf'.",
           RMT::CLI::Error::ERROR_DB
         )
       elsif e.message =~ /^Can't connect/
         raise RMT::CLI::Error.new(
-          "Cannot connect to database server. Make sure it is running and its credentials are configured in '/etc/rmt/rmt.conf'.",
+          "Cannot connect to database server. Make sure it is running and its credentials are configured in '/etc/rmt.conf'.",
           RMT::CLI::Error::ERROR_DB
         )
       else
@@ -64,7 +64,7 @@ class RMT::CLI::Base < Thor
       )
     rescue RMT::SCC::CredentialsError, ::SUSE::Connect::Api::InvalidCredentialsError
       raise RMT::CLI::Error.new(
-        "The SCC credentials are not configured correctly in '/etc/rmt/rmt.conf'. You can obtain them from https://scc.suse.com/organization",
+        "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization",
         RMT::CLI::Error::ERROR_SCC
       )
     rescue RMT::Lockfile::ExecutionLockedError => e
