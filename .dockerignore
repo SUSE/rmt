@@ -1,7 +1,10 @@
 tmp/*
+!tmp/.keep
 log/*
+!log/.keep
 .git
 Dockerfile
+Dockerfile.test
 Jenkinsfile
 .codeclimate.yml
 .travis.yml

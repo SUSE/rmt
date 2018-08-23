@@ -1,0 +1,62 @@
+FROM registry.scc.suse.de/suse/sles15:ga
+
+RUN useradd --no-log-init --create-home scc
+
+ARG REGCODE
+ARG OBS_USER
+ARG OBS_PASSWORD
+ARG MYSQL_HOST
+ARG MYSQL_USER
+ARG MYSQL_PASSWORD
+ARG MYSQL_DATABASE
+ARG SCC_USERNAME
+ARG SCC_PASSWORD
+
+RUN SUSEConnect -r $REGCODE
+RUN zypper --non-interactive ar http://download.opensuse.org/repositories/openSUSE:/Tools/SLE_15/openSUSE:Tools.repo
+RUN zypper --non-interactive --gpg-auto-import-keys ref
+RUN zypper --non-interactive up
+RUN zypper --non-interactive in -t pattern devel_osc_build
+RUN zypper --non-interactive install --no-recommend wget curl timezone \
+    gcc-c++ libffi-devel git-core zlib-devel libxml2-devel libxslt-devel libmariadb-devel \
+    mariadb-client ruby2.5-rubygem-bundler make build sudo ruby-devel
+
+
+ENV DOCKERIZE_VERSION v0.6.0
+RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
+RUN printf "[general]\n\
+build-root = /oscbuild/%(repo)s-%(arch)s\n\
+packagecachedir = /oscbuild/packagecache\n\
+[https://api.suse.de]\n\
+user=$OBS_USER\n\
+pass=$OBS_PASSWORD\n\
+sslcertck = 0\n\
+trusted_prj=SLE_12 SUSE:SLE-12:GA\n\
+[https://api.opensuse.org]\n\
+user=$OBS_USER\n\
+pass=$OBS_PASSWORD\n\
+sslcertck = 0\n\
+trusted_prj=SLE_12 SUSE:SLE-12:GA\n\
+" >> ~/.oscrc
+
+RUN mkdir /tmp/rmt-server
+WORKDIR /tmp/rmt-server
+ADD . /tmp/rmt-server
+RUN chown -R scc /tmp/rmt-server
+RUN mkdir /etc/rmt
+RUN printf "database:\n\
+  host: $MYSQL_HOST\n\
+  username: $MYSQL_USER\n\
+  password: $MYSQL_PASSWORD\n\
+  database: $MYSQL_DATABASE\n\
+scc:\n\
+  username: $SCC_USERNAME\n\
+  password: $SCC_PASSWORD\n\
+" >> /etc/rmt.conf
+
+RUN bundle
+
+CMD dockerize -wait tcp://$MYSQL_HOST:3306 -timeout 60s true
