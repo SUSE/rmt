@@ -20,6 +20,8 @@ services:
 
   rmt_test:
     privileged: true
+    volumes:
+      - /space/oscbuild:/oscbuild:cached
     build:
       context: .
       dockerfile: Dockerfile.test
