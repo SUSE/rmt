@@ -103,7 +103,7 @@ mkdir -p %{buildroot}%{data_dir}
 mkdir -p %{buildroot}%{lib_dir}
 mkdir -p %{buildroot}%{app_dir}
 mkdir -p %{buildroot}%{conf_dir}
-mkdir -p %{buildroot}%{_sharedstatedir}/rmt
+mkdir -p %{buildroot}/var/lib/rmt
 
 mv tmp %{buildroot}%{data_dir}
 mkdir %{buildroot}%{data_dir}/public
@@ -188,12 +188,12 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}
 %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
 %attr(-,%{rmt_user},%{rmt_group}) %{conf_dir}
-%attr(-,%{rmt_user},%{rmt_group}) %{_sharedstatedir}/rmt
+%attr(-,%{rmt_user},%{rmt_group}) /var/lib/rmt
 %dir %{_libexecdir}/supportconfig
 %dir %{_libexecdir}/supportconfig/plugins
 %dir %{_sysconfdir}/nginx
 %dir %{_sysconfdir}/nginx/vhosts.d
-%dir %{_sharedstatedir}/rmt
+%dir /var/lib/rmt
 %config(noreplace) %attr(0640, %{rmt_user},root) %{_sysconfdir}/rmt.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
@@ -239,7 +239,7 @@ if [ $1 -eq 2 ]; then
     echo "RMT ssl configuration has been moved to a new place. New place is: %{conf_dir}/ssl"
   fi
   if [ -f %{app_dir}/config/system_uuid ]; then
-    mv %{app_dir}/config/system_uuid %{_sharedstatedir}/rmt/system_uuid
+    mv %{app_dir}/config/system_uuid /var/lib/rmt/system_uuid
   fi
 fi
 
