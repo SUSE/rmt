@@ -11,6 +11,7 @@ ARG MYSQL_PASSWORD
 ARG MYSQL_DATABASE
 ARG SCC_USERNAME
 ARG SCC_PASSWORD
+ARG SYSTEM_UUID
 
 RUN SUSEConnect -r $REGCODE
 RUN zypper --non-interactive ar http://download.opensuse.org/repositories/openSUSE:/Tools/SLE_15/openSUSE:Tools.repo
@@ -56,6 +57,8 @@ scc:\n\
   username: $SCC_USERNAME\n\
   password: $SCC_PASSWORD\n\
 " >> /etc/rmt.conf
+RUN mkdir -p /var/lib/rmt/
+RUN printf "$SYSTEM_UUID" >> /var/lib/rmt/system_uuid
 
 RUN bundle
 
