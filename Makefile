@@ -29,8 +29,6 @@ dist: clean man
 
 	@mkdir $(NAME)-$(VERSION)/log
 	@cp -r log/.keep $(NAME)-$(VERSION)/log
-	@mkdir $(NAME)-$(VERSION)/ssl
-	@cp -r ssl/.keep $(NAME)-$(VERSION)/ssl
 	@mkdir $(NAME)-$(VERSION)/tmp
 	@cp -r tmp/.keep $(NAME)-$(VERSION)/tmp
 
