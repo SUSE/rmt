@@ -59,6 +59,7 @@ scc:\n\
 " >> /etc/rmt.conf
 RUN mkdir -p /var/lib/rmt/
 RUN printf "$SYSTEM_UUID" >> /var/lib/rmt/system_uuid
+RUN SUSEConnect -d; exit 0 # register can be cached, so that deregistering will fail. this command is never cached
 
 RUN bundle
 
