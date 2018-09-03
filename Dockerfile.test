@@ -11,6 +11,7 @@ ARG MYSQL_PASSWORD
 ARG MYSQL_DATABASE
 ARG SCC_USERNAME
 ARG SCC_PASSWORD
+ARG SYSTEM_UUID
 
 RUN SUSEConnect -r $REGCODE
 RUN zypper --non-interactive ar http://download.opensuse.org/repositories/openSUSE:/Tools/SLE_15/openSUSE:Tools.repo
@@ -19,7 +20,7 @@ RUN zypper --non-interactive up
 RUN zypper --non-interactive in -t pattern devel_osc_build
 RUN zypper --non-interactive install --no-recommend wget curl timezone \
     gcc-c++ libffi-devel git-core zlib-devel libxml2-devel libxslt-devel libmariadb-devel \
-    mariadb-client ruby2.5-rubygem-bundler make build sudo ruby-devel
+    mariadb-client mariadb ruby2.5-rubygem-bundler make build sudo ruby-devel nginx
 
 
 ENV DOCKERIZE_VERSION v0.6.0
@@ -56,6 +57,9 @@ scc:\n\
   username: $SCC_USERNAME\n\
   password: $SCC_PASSWORD\n\
 " >> /etc/rmt.conf
+RUN mkdir -p /var/lib/rmt/
+RUN printf "$SYSTEM_UUID" >> /var/lib/rmt/system_uuid
+RUN SUSEConnect -d; exit 0 # register can be cached, so that deregistering will fail. this command is never cached
 
 RUN bundle
 
