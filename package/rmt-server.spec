@@ -19,7 +19,7 @@
 %define app_dir %{_datadir}/rmt/
 %define lib_dir %{_libdir}/rmt/
 %define data_dir %{_localstatedir}/lib/rmt/
-%define conf_dir %{_sysconfdir}/rmt
+%define conf_dir %{_sysconfdir}/rmt/
 %define rmt_user    _rmt
 %define rmt_group   nginx
 %if 0%{?suse_version} == 1315
@@ -102,14 +102,13 @@ bundle.ruby2.5 install %{?jobs:--jobs %{jobs}} --without test development --depl
 mkdir -p %{buildroot}%{data_dir}
 mkdir -p %{buildroot}%{lib_dir}
 mkdir -p %{buildroot}%{app_dir}
-mkdir -p %{buildroot}%{conf_dir}
-mkdir -p %{buildroot}/var/lib/rmt
+mkdir -p %{buildroot}%{conf_dir}ssl
+mkdir -p %{buildroot}var/lib/rmt
 
 mv tmp %{buildroot}%{data_dir}
 mkdir %{buildroot}%{data_dir}/public
 mv public/repo %{buildroot}%{data_dir}/public/
 mv vendor %{buildroot}%{lib_dir}
-mv ssl %{buildroot}%{conf_dir}
 
 cp -ar . %{buildroot}%{app_dir}
 ln -s %{data_dir}/tmp %{buildroot}%{app_dir}/tmp
@@ -234,9 +233,9 @@ fi
 
 # Run only on upgrade
 if [ $1 -eq 2 ]; then
-  if [ -d %{app_dir}/ssl ]; then
-    mv %{app_dir}/ssl/* %{conf_dir}/ssl
-    echo "RMT ssl configuration has been moved to a new place. New place is: %{conf_dir}/ssl"
+  if [ -f %{app_dir}ssl/rmt-ca.crt ]; then
+    mv %{app_dir}ssl/* %{conf_dir}ssl
+    echo "RMT ssl configuration has been moved to a new location: %{conf_dir}ssl"
   fi
   if [ -f %{app_dir}/config/system_uuid ]; then
     mv %{app_dir}/config/system_uuid /var/lib/rmt/system_uuid
