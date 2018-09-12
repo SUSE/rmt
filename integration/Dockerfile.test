@@ -1,0 +1,37 @@
+FROM registry.scc.suse.de/suse/sles15:ga
+
+RUN useradd --no-log-init --create-home scc
+
+ARG REGCODE
+ARG OBS_USER
+ARG OBS_PASSWORD
+ARG MYSQL_HOST
+ARG MYSQL_USER
+ARG MYSQL_PASSWORD
+ARG MYSQL_DATABASE
+ARG SCC_USERNAME
+ARG SCC_PASSWORD
+ARG SYSTEM_UUID
+
+RUN mkdir /tmp/rmt-server
+WORKDIR /tmp/rmt-server
+RUN chown -R scc /tmp/rmt-server
+ADD integration/install.sh /tmp/rmt-server/integration/install.sh
+RUN sh integration/install.sh
+
+ENV DOCKERIZE_VERSION v0.6.0
+RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
+ADD integration/create-oscrc.sh /tmp/rmt-server/integration/create-oscrc.sh
+RUN sh integration/create-oscrc.sh
+ADD integration/create-rmt-conf.sh /tmp/rmt-server/integration/create-rmt-conf.sh
+RUN sh integration/create-rmt-conf.sh
+RUN mkdir -p /var/lib/rmt/
+RUN printf "$SYSTEM_UUID" >> /var/lib/rmt/system_uuid
+
+ADD . /tmp/rmt-server
+RUN bundle
+
+CMD dockerize -wait tcp://$MYSQL_HOST:3306 -timeout 60s true
