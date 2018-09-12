@@ -21,7 +21,7 @@ pipeline {
 
     stage('rmt integration tests') {
       steps {
-        sh 'docker-compose -f docker-compose-test.yml run rmt_test ./integration.sh'
+        sh 'docker-compose -f docker-compose-test.yml run rmt_test ./integration/run.sh'
       }
     }
   }
