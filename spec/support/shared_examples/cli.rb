@@ -6,6 +6,16 @@ shared_examples 'handles non-existing path' do
   end
 end
 
+shared_examples 'handles non-writable path' do
+  context 'with path without write permissions for user' do
+    it 'complains and exits' do
+      expect(File).to receive(:directory?).and_return(true)
+      expect(File).to receive(:writable?).and_return(false)
+      expect { command }.to raise_error(SystemExit).and(output("#{path} is not writable by user #{RMT::CLI::Base.process_user_name}.\n").to_stderr)
+    end
+  end
+end
+
 shared_examples 'handles lockfile exception' do
   context 'with existing lockfile' do
     let(:pid) { 42 }

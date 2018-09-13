@@ -5,6 +5,7 @@ describe RMT::CLI::Export, :with_fakefs do
 
   describe 'settings' do
     include_examples 'handles non-existing path'
+    include_examples 'handles non-writable path'
     let(:repository) { create :repository, mirroring_enabled: true, id: 123 }
     let(:command) { described_class.start(['settings', path]) }
 
@@ -25,6 +26,7 @@ describe RMT::CLI::Export, :with_fakefs do
 
   describe 'data' do
     include_examples 'handles non-existing path'
+    include_examples 'handles non-writable path'
 
     let(:command) { described_class.start(['data', path]) }
 
@@ -38,6 +40,7 @@ describe RMT::CLI::Export, :with_fakefs do
 
   describe 'repos' do
     include_examples 'handles non-existing path'
+    include_examples 'handles non-writable path'
 
     let(:command) { described_class.start(['repos', path]) }
     let(:mirror_double) { instance_double('RMT::Mirror') }
