@@ -1,4 +1,5 @@
 require 'rmt/lockfile'
+require 'etc'
 
 class RMT::CLI::Base < Thor
 
@@ -86,12 +87,19 @@ class RMT::CLI::Base < Thor
       name.gsub(/.*::/, '').gsub(/^[A-Z]/) { |match| match[0].downcase }.gsub(/[A-Z]/) { |match| " #{match[0].downcase}" }
     end
 
+    def process_user_name
+      Etc.getpwuid(Process.euid).name
+    end
+
   end
 
   private
 
-  def needs_path(path)
+  def needs_path(path, writable: false)
     raise RMT::CLI::Error.new("#{path} is not a directory.") unless File.directory?(path)
+    if writable
+      raise RMT::CLI::Error.new("#{path} is not writable by user #{RMT::CLI::Base.process_user_name}.") unless File.writable?(path)
+    end
   end
 
 end
