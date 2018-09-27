@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Sep 27 15:35:29 UTC 2018 - ikapelyukhin@suse.com
+
+- Improved exception handling when HTTP request fails due to
+  a network or SSL validity issue
+
+-------------------------------------------------------------------
 Thu Aug  2 16:19:35 UTC 2018 - fschnizlein@suse.com
 
 - Version 1.0.6

@@ -17,7 +17,7 @@ class RMT::FiberRequest < RMT::HttpRequest
       @download_path.write(chunk)
     end
     on_complete do |response|
-      @request_fiber.resume(response) unless (response.return_code == :ok)
+      @request_fiber.resume(response) unless response.return_code == :ok # otherwise skips on_headers resume when the request has failed
       @request_fiber.resume(response) if @request_fiber.alive?
     end
   end
