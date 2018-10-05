@@ -1,6 +1,6 @@
 ### rmt-server Packaging
 
-Note: Never push changes to the interal build service `ibs://Devel:SCC:RMT`!
+Note: Never push changes to the internal build service `ibs://Devel:SCC:RMT`!
           The repository links to `systemsmanagement:SCC:RMT` and gets updated
           automatically.
 
