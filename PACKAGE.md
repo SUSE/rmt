@@ -18,14 +18,14 @@ Note: Never push changes to the interal build service `ibs://Devel:SCC:RMT`!
           cd ~/obs
           osc co systemsmanagement:SCC:RMT rmt-server
           ```
-      * Alternatively, if OBS working copy is already checked out, update the working copy by running `osc up`
+      * Alternatively, if an OBS working copy is already checked out, update the working copy by running `osc up`
 2. Run `make dist` in your RMT working directory to build a tarball.
 3. Copy the files from the `package` directory to the OBS working directory.
 4. Build the package with osc:
 
     `osc build <repository> <arch> --no-verify`
 
-    The list of all build targets and architectures that configured for the project can be obtained by running `osc repos`.
+    The list of all build targets and architectures that are configured for the project can be obtained by running `osc repos`.
 
 5. Examine the changes by running `osc status` and `osc diff`.
 6. Stage the changes by running `osc addremove`.
@@ -50,15 +50,15 @@ osc sr systemsmanagement:SCC:RMT rmt-server openSUSE:Factory
 
 ##### Submit maintenance updates for SLES to the Internal Build Service
 
-###### Get target codesteams where to submit
+###### Get target codestreams where to submit
 
-To checkout in which codestreams the package is currently maintaned, run:
+To check out which codestreams the package is currently maintained in, run:
 
 ```bash
 osc -A https://api.suse.de maintained rmt-server
 ```
 
-For a more detailed view which target codestreams are in which state checkout: [Codestream overview](https://maintenance.suse.de/maintained/?package=rmt-server)
+For a more detailed view which target codestreams are in which state, check out: [Codestream overview](https://maintenance.suse.de/maintained/?package=rmt-server)
 
 ###### Submit updates
 
@@ -85,4 +85,4 @@ Using target project 'SUSE:Maintenance'
 
 You can check the status of your requests [here](https://build.opensuse.org/package/requests/systemsmanagement:SCC:RMT/rmt-server) and [here](https://build.suse.de/package/requests/Devel:SCC:RMT/rmt-server).
 
-After your requests got accepted, they still have to pass maintenance testing before they get released to customers. You can check their progress at [maintenance.suse.de](https://maintenance.suse.de/search/?q=rmt-server). If you still need help, the maintenance team can be reached at [maint-coord@suse.de](maint-coord@suse.de) or #maintenance on irc.suse.de.
+After your requests have been accepted, they still have to pass maintenance testing before they are released to customers. You can check their progress at [maintenance.suse.de](https://maintenance.suse.de/search/?q=rmt-server). If you still need help, the maintenance team can be reached at [maint-coord@suse.de](maint-coord@suse.de) or #maintenance on irc.suse.de.
