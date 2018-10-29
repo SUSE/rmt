@@ -1,7 +1,7 @@
 require 'rmt'
 require 'rmt/misc'
 
-class ServicesController < ActionController::Base
+class ServicesController < ApplicationController
 
   include ActionController::MimeResponds
 

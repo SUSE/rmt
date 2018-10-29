@@ -1,6 +1,5 @@
 class Api::Connect::BaseController < ApplicationController
 
-  include ActionController::HttpAuthentication::Basic::ControllerMethods
   include ActionController::HttpAuthentication::Token::ControllerMethods
 
   respond_to :json
@@ -25,21 +24,6 @@ class Api::Connect::BaseController < ApplicationController
         N_('Required parameters are missing or empty: %s'),
         missing_keys.join(', ')
       )
-    end
-  end
-
-  def authenticate_system
-    authenticate_or_request_with_http_basic('RMT API') do |login, password|
-      @system = System.find_by(login: login, password: password)
-      if @system
-        logger.info "Authenticated system with login '#{login}'"
-        @system.touch(:last_seen_at)
-      else
-        logger.info "Could not find system with login '#{login}' and password '#{password}'"
-        error = ActionController::TranslatedError.new('Invalid system credentials')
-        error.status = :unauthorized
-        raise error
-      end
     end
   end
 
