@@ -180,6 +180,49 @@ RSpec.describe RMT::CLI::Products do
           expect(repo_count).to be > product.repositories.where(enabled: true).count
         end
       end
+
+      context 'with option --all-modules' do
+        let(:argv) { ['enable', product.id.to_s, '--all-modules'] }
+        let(:product) { create :product, :with_not_mirrored_repositories }
+        let(:extensions) do
+          [
+            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: true),
+            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: true),
+            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: true),
+            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: false, free: true, product_type: :module),
+            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: false, free: true, product_type: :module)
+          ]
+        end
+        let!(:non_free_extensions) do
+          [
+            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: false, free: false, product_type: :module),
+            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: false, free: false, product_type: :module)
+          ]
+        end
+        let(:all_products) { [product] + extensions + non_free_extensions }
+        let(:products_to_enable) { all_products - non_free_extensions }
+        let(:repo_count) { products_to_enable.inject(0) { |sum, product| sum + product.repositories.where(enabled: true).count } }
+        let(:expected_output) do
+          "The following required extensions for #{product.product_string} have been enabled: #{extensions.pluck(:name).join(', ')}.\n" \
+          "#{repo_count} repo(s) successfully enabled.\n"
+        end
+
+        it 'enables product and recommended products repositories' do
+          products_to_enable.flat_map(&:repositories).each do |repository|
+            expect(repository.mirroring_enabled).to eq(repository.enabled)
+          end
+        end
+
+        it 'does not enable non-free extensions' do
+          non_free_extensions.flat_map(&:repositories).each do |repository|
+            expect(repository.mirroring_enabled).to be_falsey
+          end
+        end
+
+        it 'has more repositories than the base product' do
+          expect(repo_count).to be > product.repositories.where(enabled: true).count
+        end
+      end
     end
 
     context 'by wrong product ID' do
