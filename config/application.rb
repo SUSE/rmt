@@ -12,6 +12,10 @@ require 'action_view/railtie'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+if ENV['RMT_LOAD_ENGINES']
+  require_relative '../engines/strict_authentication/lib/strict_authentication'
+end
+
 module RMT
   class CustomConfiguration < Rails::Application::Configuration
 
