@@ -1,25 +1,48 @@
 require 'rails_helper'
 
-RSpec.describe ServicesController do
+# rubocop:disable RSpec/NestedGroups
+
+RSpec.describe ServicesController, type: :request do
   describe '#show' do
     let(:service) { FactoryGirl.create(:service, :with_repositories) }
+    let(:system) { FactoryGirl.create(:system) }
 
     describe 'HTTP response' do
-      subject { response }
+      context 'without authentication' do
+        subject { response }
 
-      context 'when service doesn\'t exist' do
-        before { get '/services/0' }
-        its(:code) { is_expected.to eq '404' }
+        context 'when service doesn\'t exist' do
+          before { get '/services/0' }
+          its(:code) { is_expected.to eq '401' }
+        end
+
+        context 'when service exists' do
+          before { get "/services/#{service.id}" }
+          its(:code) { is_expected.to eq '401' }
+        end
       end
 
-      context 'when service exists' do
-        before { get "/services/#{service.id}" }
-        its(:code) { is_expected.to eq '200' }
+      context 'with authentication' do
+        subject { response }
+
+        include_context 'auth header', :system, :login, :password
+
+        context 'when service doesn\'t exist' do
+          before { get '/services/0', headers: auth_header }
+          its(:code) { is_expected.to eq '404' }
+        end
+
+        context 'when service exists' do
+          before { get "/services/#{service.id}", headers: auth_header }
+          its(:code) { is_expected.to eq '200' }
+        end
       end
     end
 
     describe 'response XML URLs' do
-      before { get "/services/#{service.id}" }
+      before { get "/services/#{service.id}", headers: auth_header }
+
+      include_context 'auth header', :system, :login, :password
 
       subject { xml_urls }
 
@@ -40,3 +63,5 @@ RSpec.describe ServicesController do
     end
   end
 end
+
+# rubocop:enable RSpec/NestedGroups

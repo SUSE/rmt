@@ -1,10 +1,6 @@
-#Dir["#{__dir__}/../{app,config,db,lib}/*"].each do |entry|
-#  puts entry
-#end
+$LOAD_PATH.push File.expand_path(__dir__, '..')
 
-$:.push File.expand_path(__dir__, '..')
-
-require "strict_authentication/engine"
+require 'strict_authentication/engine'
 
 module StrictAuthentication
 end

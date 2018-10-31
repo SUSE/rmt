@@ -56,4 +56,6 @@ Rails.application.routes.draw do
   get 'services/:id/repo/repoindex.xml', to: 'services#show'
 
   get '/api/health/status', to: 'api/health#status'
+
+  mount StrictAuthentication::Engine, at: '/api/auth' if defined?(StrictAuthentication::Engine)
 end

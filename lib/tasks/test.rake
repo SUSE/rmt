@@ -1,10 +1,13 @@
 require 'simplecov'
 require 'rspec/core/rake_task'
 
-task 'test' => ['test:core', 'test:engines']
+task :test do
+  Rake::Task['test:core'].execute
+  Rake::Task['test:engines'].execute
+end
 
 RSpec::Core::RakeTask.new('test:core') do |t|
-  SimpleCov.command_name 'core'
+  ENV['SIMPLECOV_CMD'] = 'test:core'
   t.pattern = 'spec'
   t.verbose = false
   t.fail_on_error = false
@@ -13,10 +16,9 @@ end
 
 RSpec::Core::RakeTask.new('test:engines') do |t|
   ENV['RMT_LOAD_ENGINES'] = '1'
-  SimpleCov.command_name 'engines'
-  t.pattern = 'engines/strict_authentication/'
+  ENV['SIMPLECOV_CMD'] = 'test:engines'
+  t.pattern = 'engines/strict_authentication/spec'
   t.verbose = false
   t.fail_on_error = false
   t.rspec_opts = '--format Fuubar --color'
 end
-

@@ -4,10 +4,6 @@ class Api::Connect::BaseController < ApplicationController
 
   respond_to :json
 
-  rescue_from ActionController::TranslatedError do |error|
-    render json: { type: 'error', error: error.message, localized_error: error.localized_message }, status: error.status, location: nil
-  end
-
   protected
 
   def require_params(keys)

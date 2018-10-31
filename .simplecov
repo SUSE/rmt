@@ -1,6 +1,7 @@
 unless ENV['NO_COVERAGE']
   SimpleCov.minimum_coverage 100
   SimpleCov.start do
+    SimpleCov.command_name ENV['SIMPLECOV_CMD']
     add_filter '/spec/'
 
     track_files('app/**/*.rb')
