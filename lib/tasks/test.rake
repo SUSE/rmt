@@ -1,7 +1,7 @@
-require 'simplecov'
 require 'rspec/core/rake_task'
 
 task :test do
+  require 'simplecov'
   Rake::Task['test:core'].execute
   Rake::Task['test:engines'].execute
 end
