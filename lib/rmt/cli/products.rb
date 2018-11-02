@@ -4,6 +4,9 @@ class RMT::CLI::Products < RMT::CLI::Base
 
   include ::RMT::CLI::ArrayPrintable
 
+  class ProductNotFoundException < StandardError
+  end
+
   desc 'list', 'List products which are marked to be mirrored.'
   option :all, aliases: '-a', type: :boolean, desc: 'List all products, including ones which are not marked to be mirrored'
   option :release_stage, aliases: '-r', type: :string, desc: 'beta, released'
@@ -35,21 +38,38 @@ class RMT::CLI::Products < RMT::CLI::Base
   end
   map ls: :list
 
-  desc 'enable', 'Enable mirroring of product repositories by product ID or product string.'
+  desc 'enable TARGETS', 'Enable mirroring of product repositories by product ID or product string.'
   option :all_modules, type: :boolean, desc: 'Enables all free modules for a product'
-  def enable(target)
-    change_product(target, true, options[:all_modules])
+  def enable(*targets)
+    change_products(targets, true, options[:all_modules])
   end
 
-  desc 'disable', 'Disable mirroring of product repositories by product ID or product string.'
-  def disable(target)
-    change_product(target, false, false)
+  desc 'disable TARGETS', 'Disable mirroring of product repositories by product ID or product string.'
+  def disable(*targets)
+    change_products(targets, false, false)
   end
 
   protected
 
+  def change_products(targets, set_enabled, all_modules)
+    success = true
+    targets = clean_target_input(targets)
+    raise RMT::CLI::Error.new('No product ids supplied', ) if targets.empty?
+
+    targets.each do |target|
+      change_product(target, set_enabled, all_modules)
+    rescue ProductNotFoundException => e
+      puts e.message
+      success = false
+    end
+
+    raise RMT::CLI::Error.new("Not all products were #{set_enabled ? 'enabled' : 'disabled'}.") unless success
+  end
+
   def change_product(target, set_enabled, all_modules)
+    puts "#{set_enabled ? 'Enabling' : 'Disabling'} #{target}:"
     product_id = Integer(target, 10) rescue nil
+
     products = []
     if product_id
       product = Product.find(product_id)
@@ -60,6 +80,8 @@ class RMT::CLI::Products < RMT::CLI::Base
       conditions[:arch] = arch if arch
       products = Product.where(conditions).to_a
     end
+
+    raise ProductNotFoundException.new("Product by target '#{target}' not found.") if products.empty?
 
     if set_enabled
       products.each do |product|
@@ -73,13 +95,17 @@ class RMT::CLI::Products < RMT::CLI::Base
     repo_count = repository_service.change_mirroring_by_product!(set_enabled, products.uniq)
     puts "#{repo_count} repo(s) successfully #{set_enabled ? 'enabled' : 'disabled'}."
   rescue ActiveRecord::RecordNotFound
-    raise RMT::CLI::Error.new("Product by id \"#{product_id}\" not found.")
+    raise ProductNotFoundException.new("Product by id \"#{product_id}\" not found.")
   end
 
   private
 
   def repository_service
     @repository_service ||= RepositoryService.new
+  end
+
+  def clean_target_input(input)
+    input.inject([]) { |targets, object| targets + object.split(',') }.reject { |target| target.empty? }
   end
 
 end
