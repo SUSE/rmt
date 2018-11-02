@@ -12,8 +12,10 @@ ActiveSupport::Dependencies.autoload_paths += relative_load_paths
 
 # MAIN:
 completion = RMT::CLI::Completion.new
+
 if !completion.correct_capitalization? then exit 0 end
-completion.generate_static_options
+if !completion.static_completion_possible? then exit 0 end
+
 completion.generate_completions
 
 completion.complete
