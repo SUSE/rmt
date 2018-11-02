@@ -63,7 +63,7 @@ class RMT::CLI::Products < RMT::CLI::Base
 
     if set_enabled
       products.each do |product|
-        extensions = all_modules ? Product.available_or_recommended_modules(product.id) : Product.recommended_extensions(product.id).to_a
+        extensions = all_modules ? Product.free_and_recommended_modules(product.id) : Product.recommended_extensions(product.id).to_a
         next if extensions.empty?
         puts "The following required extensions for #{product.product_string} have been enabled: #{extensions.pluck(:name).join(', ')}."
         products.push(*extensions)

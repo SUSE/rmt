@@ -190,13 +190,15 @@ RSpec.describe RMT::CLI::Products do
             create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: true),
             create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: true),
             create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: false, free: true, product_type: :module),
-            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: false, free: true, product_type: :module)
+            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: false, free: true, product_type: :module),
+            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: false, free: true, product_type: :extension)
           ]
         end
         let!(:non_free_extensions) do
           [
             create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: false, free: false, product_type: :module),
-            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: false, free: false, product_type: :module)
+            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: false, free: false, product_type: :module),
+            create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: false, free: false, product_type: :extension)
           ]
         end
         let(:all_products) { [product] + extensions + non_free_extensions }
