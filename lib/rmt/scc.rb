@@ -109,7 +109,7 @@ class RMT::SCC
     Product.find_or_create_by(id: id)
   end
 
-  def create_product(item, root_product_id = nil, base_product = nil, recommended = false)
+  def create_product(item, root_product_id = nil, base_product = nil, recommended = false, migration_extra = false)
     @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
 
     product = get_product(item[:id])
@@ -123,7 +123,8 @@ class RMT::SCC
         product_id: base_product,
         extension_id: product.id,
         root_product_id: root_product_id,
-        recommended: recommended
+        recommended: recommended,
+        migration_extra: migration_extra
       )
     else
       root_product_id = product.id
@@ -131,7 +132,7 @@ class RMT::SCC
     end
 
     item[:extensions].each do |ext_item|
-      create_product(ext_item, root_product_id, product.id, ext_item[:recommended])
+      create_product(ext_item, root_product_id, product.id, ext_item[:recommended], ext_item[:migration_extra])
     end
   end
 
