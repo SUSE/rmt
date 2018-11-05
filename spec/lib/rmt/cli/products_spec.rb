@@ -140,13 +140,48 @@ RSpec.describe RMT::CLI::Products do
 
   describe '#enable' do
     let(:product) { create :product, :with_not_mirrored_repositories }
-    let(:repo_count) { product.repositories.where(enabled: true).count }
+    let(:repo_names) { product.repositories.where(enabled: true).pluck(:name).sort }
+    let(:repo_count) { repo_names.count }
+    let(:extensions) { [] }
+    let(:target) { '' }
+    let(:argv) { ['enable', target] }
+    let(:expected_output) do
+      output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
+      unless extensions.empty?
+        output += "  The following required extensions for #{product.product_string} have been enabled: #{extensions.pluck(:name).join(', ')}.\n"
+      end
+      unless repo_names.empty?
+        output += '  ' + repo_names.map { |name| "Repository #{name} has been successfully enabled." }.join("\n  ")
+      end
+      output + "\n"
+    end
+
+    context 'already enabled repositories' do
+      let(:target) { product.id.to_s }
+      let(:product) { create :product, :with_mirrored_repositories }
+      let(:expected_output) do
+        output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
+        output += '  All repositories have already been enabled.'
+        output + "\n"
+      end
+
+      before do
+        expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
+      end
+
+      it 'enables the mandatory product repositories' do
+        product.repositories.each do |repository|
+          expect(repository.mirroring_enabled).to eq(true) if repository.enabled
+        end
+      end
+    end
 
     context 'by product ID' do
-      let(:argv) { ['enable', product.id.to_s] }
-      let(:expected_output) { "#{repo_count} repo(s) successfully enabled.\n" }
+      let(:target) { product.id.to_s }
 
-      before { expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr }
+      before do
+        expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
+      end
 
       it 'enables the mandatory product repositories' do
         product.repositories.each do |repository|
@@ -164,11 +199,7 @@ RSpec.describe RMT::CLI::Products do
           ]
         end
         let(:products) { [product] + extensions }
-        let(:repo_count) { products.inject(0) { |sum, product| sum + product.repositories.where(enabled: true).count } }
-        let(:expected_output) do
-          "The following required extensions for #{product.product_string} have been enabled: #{extensions.pluck(:name).join(', ')}.\n" \
-          "#{repo_count} repo(s) successfully enabled.\n"
-        end
+        let(:repo_names) { products.flat_map { |product| product.repositories.where(enabled: true) }.pluck(:name).sort }
 
         it 'enables product and recommended products repositories' do
           products.flat_map(&:repositories).each do |repository|
@@ -182,7 +213,7 @@ RSpec.describe RMT::CLI::Products do
       end
 
       context 'with option --all-modules' do
-        let(:argv) { ['enable', product.id.to_s, '--all-modules'] }
+        let(:argv) { ['enable', target, '--all-modules'] }
         let(:product) { create :product, :with_not_mirrored_repositories }
         let(:extensions) do
           [
@@ -203,11 +234,7 @@ RSpec.describe RMT::CLI::Products do
         end
         let(:all_products) { [product] + extensions + non_free_extensions }
         let(:products_to_enable) { all_products - non_free_extensions }
-        let(:repo_count) { products_to_enable.inject(0) { |sum, product| sum + product.repositories.where(enabled: true).count } }
-        let(:expected_output) do
-          "The following required extensions for #{product.product_string} have been enabled: #{extensions.pluck(:name).join(', ')}.\n" \
-          "#{repo_count} repo(s) successfully enabled.\n"
-        end
+        let(:repo_names) { products_to_enable.flat_map { |product| product.repositories.where(enabled: true) }.pluck(:name).sort }
 
         it 'enables product and recommended products repositories' do
           products_to_enable.flat_map(&:repositories).each do |repository|
@@ -228,13 +255,14 @@ RSpec.describe RMT::CLI::Products do
     end
 
     context 'by wrong product ID' do
-      let(:false_id) { (product.id + 1).to_s }
-      let(:argv) { ['enable', false_id] }
-      let(:expected_output) { "Product by id \"#{false_id}\" not found.\n" }
+      let(:target) { (product.id + 1).to_s }
+      let(:argv) { ['enable', target] }
+      let(:expected_stderr) { "Not all products were enabled.\n" }
+      let(:expected_output) { "Product by id \"#{target}\" not found.\n" }
 
       before do
         expect(described_class).to receive(:exit)
-        expect { described_class.start(argv) }.to output(expected_output).to_stderr.and output('').to_stdout
+        expect { described_class.start(argv) }.to output(expected_stderr).to_stderr.and output(expected_output).to_stdout
       end
 
       it 'enables the mandatory product repositories' do
@@ -245,8 +273,7 @@ RSpec.describe RMT::CLI::Products do
     end
 
     context 'by product string' do
-      let(:argv) { ['enable', product.product_string] }
-      let(:expected_output) { "#{product.repositories.where(enabled: true).count} repo(s) successfully enabled.\n" }
+      let(:target) { product.product_string }
 
       before { expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr }
 
@@ -260,14 +287,40 @@ RSpec.describe RMT::CLI::Products do
 
   describe '#disable' do
     let(:product) { create :product, :with_mirrored_repositories }
-    let(:expected_output) { "#{product.repositories.count} repo(s) successfully disabled.\n" }
+    let(:repo_names) { product.repositories.pluck(:name).sort }
+    let(:repo_count) { repo_names.count }
+    let(:target) { '' }
+    let(:argv) { ['disable', target] }
+    let(:expected_output) do
+      output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
+      output += '  ' + repo_names.map { |name| "Repository #{name} has been successfully disabled." }.join("\n  ") unless repo_names.empty?
+      output + "\n"
+    end
 
     before do
       expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
     end
 
+    context 'already enabled repositories' do
+      let(:target) { product.id.to_s }
+      let(:product) { create :product, :with_not_mirrored_repositories }
+
+      let(:expected_output) do
+        output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
+        output += '  All repositories have already been disabled.'
+        output + "\n"
+      end
+
+      it 'enables the mandatory product repositories' do
+        product.repositories.each do |repository|
+          expect(repository.mirroring_enabled).to eq(false)
+        end
+      end
+    end
+
+
     context 'by product ID' do
-      let(:argv) { ['disable', product.id.to_s] }
+      let(:target) { product.id.to_s }
 
       it 'disabled the mandatory product repositories' do
         product.repositories.each do |repository|
@@ -298,7 +351,7 @@ RSpec.describe RMT::CLI::Products do
     end
 
     context 'by product string' do
-      let(:argv) { ['disable', product.product_string] }
+      let(:target) { product.product_string }
 
       it 'disabled the mandatory product repositories' do
         product.repositories.each do |repository|

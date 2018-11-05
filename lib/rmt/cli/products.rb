@@ -54,7 +54,7 @@ class RMT::CLI::Products < RMT::CLI::Base
   def change_products(targets, set_enabled, all_modules)
     success = true
     targets = clean_target_input(targets)
-    raise RMT::CLI::Error.new('No product ids supplied', ) if targets.empty?
+    raise RMT::CLI::Error.new('No product ids supplied') if targets.empty?
 
     targets.each do |target|
       change_product(target, set_enabled, all_modules)
@@ -67,7 +67,32 @@ class RMT::CLI::Products < RMT::CLI::Base
   end
 
   def change_product(target, set_enabled, all_modules)
-    puts "#{set_enabled ? 'Enabling' : 'Disabling'} #{target}:"
+    products = find_products(target)
+    raise ProductNotFoundException.new("Product by target '#{target}' not found.") if products.empty?
+    puts "Found product(s) by target #{target}: #{products.map(&:friendly_name).join(', ')}."
+
+    if set_enabled
+      products.each do |product|
+        extensions = all_modules ? Product.free_and_recommended_modules(product.id).to_a : Product.recommended_extensions(product.id).to_a
+        next if extensions.empty?
+        puts "  The following required extensions for #{product.product_string} have been enabled: #{extensions.pluck(:name).join(', ')}."
+        products.push(*extensions)
+      end
+    end
+
+    repo_names = repository_service.change_mirroring_by_product!(set_enabled, products.uniq)
+    if repo_names.empty?
+      puts "  All repositories have already been #{set_enabled ? 'enabled' : 'disabled'}."
+    else
+      repo_names.each do |repo_name|
+        puts "  Repository #{repo_name} has been successfully #{set_enabled ? 'enabled' : 'disabled'}."
+      end
+    end
+  end
+
+  private
+
+  def find_products(target)
     product_id = Integer(target, 10) rescue nil
 
     products = []
@@ -81,31 +106,17 @@ class RMT::CLI::Products < RMT::CLI::Base
       products = Product.where(conditions).to_a
     end
 
-    raise ProductNotFoundException.new("Product by target '#{target}' not found.") if products.empty?
-
-    if set_enabled
-      products.each do |product|
-        extensions = all_modules ? Product.free_and_recommended_modules(product.id).to_a : Product.recommended_extensions(product.id).to_a
-        next if extensions.empty?
-        puts "The following required extensions for #{product.product_string} have been enabled: #{extensions.pluck(:name).join(', ')}."
-        products.push(*extensions)
-      end
-    end
-
-    repo_count = repository_service.change_mirroring_by_product!(set_enabled, products.uniq)
-    puts "#{repo_count} repo(s) successfully #{set_enabled ? 'enabled' : 'disabled'}."
+    products
   rescue ActiveRecord::RecordNotFound
     raise ProductNotFoundException.new("Product by id \"#{product_id}\" not found.")
   end
-
-  private
 
   def repository_service
     @repository_service ||= RepositoryService.new
   end
 
   def clean_target_input(input)
-    input.inject([]) { |targets, object| targets + object.split(',') }.reject { |target| target.empty? }
+    input.inject([]) { |targets, object| targets + object.split(',') }.reject(&:empty?)
   end
 
 end

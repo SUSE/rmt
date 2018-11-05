@@ -70,12 +70,20 @@ class Product < ApplicationRecord
     [version, version.tr('-', '.').chomp('.0')].uniq
   end
 
+  def friendly_name
+    "#{name} #{version} #{arch}"
+  end
+
   def product_string
     [identifier, version, arch].join('/')
   end
 
   def change_repositories_mirroring!(conditions, mirroring_enabled)
-    repositories.where(conditions).update_all(mirroring_enabled: mirroring_enabled)
+    repos = repositories.where(conditions)
+    repo_names = repos.pluck(:name)
+    repos.update_all(mirroring_enabled: mirroring_enabled)
+
+    repo_names.sort
   end
 
   def recommended_for?(root_product)
