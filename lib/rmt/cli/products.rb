@@ -38,13 +38,13 @@ class RMT::CLI::Products < RMT::CLI::Base
   end
   map ls: :list
 
-  desc 'enable TARGETS', 'Enable mirroring of product repositories by product ID or product string.'
+  desc 'enable TARGETS', 'Enable mirroring of product repositories by a list of product IDs or product strings.'
   option :all_modules, type: :boolean, desc: 'Enables all free modules for a product'
   def enable(*targets)
     change_products(targets, true, options[:all_modules])
   end
 
-  desc 'disable TARGETS', 'Disable mirroring of product repositories by product ID or product string.'
+  desc 'disable TARGETS', 'Disable mirroring of product repositories by a list of product IDs or product strings.'
   def disable(*targets)
     change_products(targets, false, false)
   end
