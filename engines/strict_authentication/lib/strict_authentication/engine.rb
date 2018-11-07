@@ -9,7 +9,15 @@ module StrictAuthentication
 
     config.after_initialize do
       ::ServicesController.class_eval do
-        before_action :authenticate_system
+        include StrictAuthentication
+
+        prepend_before_action :verify_service_access, :authenticate_system
+
+        def verify_service_access
+          @system.services.find(params[:id])
+        rescue ActiveRecord::RecordNotFound
+          render plain: 'Product is not registered', status: :forbidden
+        end
       end
     end
   end

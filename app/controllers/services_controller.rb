@@ -1,5 +1,6 @@
 require 'rmt'
 require 'rmt/misc'
+require 'active_support/builder'
 
 class ServicesController < ApplicationController
 

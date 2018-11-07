@@ -4,8 +4,15 @@ require 'rails_helper'
 
 RSpec.describe ServicesController, type: :request do
   describe '#show' do
-    let(:service) { FactoryGirl.create(:service, :with_repositories) }
     let(:system) { FactoryGirl.create(:system) }
+    let(:service) { FactoryGirl.create(:service, :with_repositories) }
+    let(:activated_service) do
+      service = FactoryGirl.create(:service, :with_repositories)
+      system.services << service
+      system.save!
+      service
+    end
+
 
     describe 'HTTP response' do
       context 'without authentication' do
@@ -29,18 +36,25 @@ RSpec.describe ServicesController, type: :request do
 
         context 'when service doesn\'t exist' do
           before { get '/services/0', headers: auth_header }
-          its(:code) { is_expected.to eq '404' }
+          its(:code) { is_expected.to eq '403' }
+          its(:body) { is_expected.to eq 'Product is not registered' }
         end
 
-        context 'when service exists' do
+        context 'when service is not registered' do
           before { get "/services/#{service.id}", headers: auth_header }
+          its(:code) { is_expected.to eq '403' }
+          its(:body) { is_expected.to eq 'Product is not registered' }
+        end
+
+        context 'when service is registered' do
+          before { get "/services/#{activated_service.id}", headers: auth_header }
           its(:code) { is_expected.to eq '200' }
         end
       end
     end
 
     describe 'response XML URLs' do
-      before { get "/services/#{service.id}", headers: auth_header }
+      before { get "/services/#{activated_service.id}", headers: auth_header }
 
       include_context 'auth header', :system, :login, :password
 
@@ -53,7 +67,7 @@ RSpec.describe ServicesController, type: :request do
       end
 
       let(:model_urls) do
-        service.repositories.map do |repo|
+        activated_service.repositories.map do |repo|
           RMT::Misc.make_repo_url('http://www.example.com', repo.local_path)
         end
       end
