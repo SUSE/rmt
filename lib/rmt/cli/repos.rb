@@ -2,12 +2,12 @@ class RMT::CLI::Repos < RMT::CLI::Base
 
   include ::RMT::CLI::ArrayPrintable
 
-  desc 'custom', 'List and modify custom repositories'
+  desc 'custom', _('List and modify custom repositories')
   subcommand 'custom', RMT::CLI::ReposCustom
 
-  desc 'list', 'List repositories which are marked to be mirrored'
-  option :all, aliases: '-a', type: :boolean, desc: 'List all repositories, including ones which are not marked to be mirrored'
-  option :csv, type: :boolean, desc: 'Output data in CSV format'
+  desc 'list', _('List repositories which are marked to be mirrored')
+  option :all, aliases: '-a', type: :boolean, desc: _('List all repositories, including ones which are not marked to be mirrored')
+  option :csv, type: :boolean, desc: _('Output data in CSV format')
 
   def list
     scope = options[:all] ? :all : :enabled
@@ -15,12 +15,12 @@ class RMT::CLI::Repos < RMT::CLI::Base
   end
   map ls: :list
 
-  desc 'enable ID', 'Enable mirroring of repositories by repository ID'
+  desc 'enable ID', _('Enable mirroring of repositories by repository ID')
   def enable(id)
     change_mirroring(id, true)
   end
 
-  desc 'disable ID', 'Disable mirroring of repositories by repository ID'
+  desc 'disable ID', _('Disable mirroring of repositories by repository ID')
   def disable(id)
     change_mirroring(id, false)
   end
@@ -32,21 +32,23 @@ class RMT::CLI::Repos < RMT::CLI::Base
 
     if repositories.empty?
       if options.all
-        warn 'Run "rmt-cli sync" to synchronize with your SUSE Customer Center data first.'
+        warn _('Run `%{command}` to synchronize with your SUSE Customer Center data first.') % { command: 'rmt-cli sync' }
       else
-        warn 'No repositories enabled.'
+        warn _('No repositories enabled.')
       end
     else
       puts format_array(repositories, {
-        scc_id: 'SCC ID',
-        name: 'Name',
-        description: 'Description',
-        enabled: 'Mandatory?',
-        mirroring_enabled: 'Mirror?',
-        last_mirrored_at: 'Last mirrored'
+        scc_id: _('SCC ID'),
+        name: _('Name'),
+        description: _('Description'),
+        enabled: _('Mandatory?'),
+        mirroring_enabled: _('Mirror?'),
+        last_mirrored_at: _('Last mirrored')
       }, options.csv)
     end
-    puts 'Only enabled repositories are shown by default. Use the `--all` option to see all repositories.' unless options.all || options.csv
+    unless options.all || options.csv
+      puts _('Only enabled repositories are shown by default. Use the `%{option}` option to see all repositories.') % { option: '--all' }
+    end
   end
 
   private
@@ -55,9 +57,9 @@ class RMT::CLI::Repos < RMT::CLI::Base
     repository = Repository.find_by!(scc_id: id)
     repository.change_mirroring!(set_enabled)
 
-    puts "Repository successfully #{set_enabled ? 'enabled' : 'disabled'}."
+    puts set_enabled ? _('Repository successfully enabled.') : _('Repository successfully disabled.')
   rescue ActiveRecord::RecordNotFound
-    raise RMT::CLI::Error.new("Repository not found by id \"#{id}\".")
+    raise RMT::CLI::Error.new(_('Repository not found by id "%{id}".') % { id: id })
   end
 
 end

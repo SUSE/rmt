@@ -27,9 +27,9 @@ class SMTImporter
       if repo
         repo.mirroring_enabled = true
         repo.save!
-        puts "Enabled mirroring for repository #{repo_id}"
+        puts _('Enabled mirroring for repository %{repo}') % { repo: repo_id }
       else
-        warn "Repository #{repo_id} was not found in RMT database, perhaps you no longer have a valid subscription for it"
+        warn _('Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it') % { repo: repo_id }
       end
     end
   end
@@ -48,13 +48,16 @@ class SMTImporter
         assoc = repo.services.find_by(id: product.service)
         unless assoc
           repo.services << product.service
-          puts "Added association between #{repo.name} and product #{product_id}"
+          puts _('Added association between %{repo} and product %{product}') % { repo: repo.name, product: product.id }
         end
       else
-        warn "Product #{product_id} not found!"
-        warn "Tried to attach custom repository #{repo.name} to product #{product_id},"
-        warn 'but that product was not found. Attach it to a different product'
-        warn 'by running `rmt-cli repos custom attach`'
+        warn _(<<-WARNING
+Product %{product} not found!
+Tried to attach custom repository %{repo} to product %{product},
+but that product was not found. Attach it to a different product
+by running `%{command}`
+WARNING
+) % { repo: repo.name, product: product_id, command: 'rmt-cli repos custom attach' }
       end
     end
   end
@@ -73,7 +76,7 @@ class SMTImporter
         registered_at: Time.at(registered_at.to_i)
       )
       # rubocop:enable Rails/TimeZone
-      puts "Imported system #{login}"
+      puts _('Imported system %{system}') % { system: login }
     end
   end
 
@@ -85,16 +88,16 @@ class SMTImporter
       system = System.find_by(login: login)
 
       if !system
-        warn "System #{login} not found"
+        warn _('System %{system} not found') % { system: login }
         next
       elsif !product
-        warn "Product #{product_id} not found"
+        warn _('Product %{product} not found') % { product: product_id }
         next
       else
         activation = Activation.find_by(system: system, service: product.service)
         unless activation
           Activation.create!(system: system, service: product.service)
-          puts "Imported activation of #{product_id} for #{login}"
+          puts _('Imported activation of %{product} for %{system}') % { product: product_id, system: login }
         end
       end
     end
@@ -115,13 +118,13 @@ class SMTImporter
       system = System.find_by(login: login)
 
       unless system
-        warn "System #{login} not found"
+        warn _('System %{system} not found') % { system: login }
         next
       end
       info.delete('hostname')
 
       HwInfo.find_or_initialize_by(system: system).update!(info)
-      puts "Hardware information stored for system #{login}"
+      puts _('Hardware information stored for system %{system}') % { system: login }
     end
   end
 
@@ -145,8 +148,8 @@ class SMTImporter
 
   def parse_cli_arguments(argv)
     parser = OptionParser.new do |parser|
-      parser.on('-d', '--data PATH', 'Path to unpacked SMT data tarball') { |path| @data_dir = path }
-      parser.on('--no-systems', 'Do not import the systems that were registered to the SMT') { @no_systems = true }
+      parser.on('-d', '--data PATH', _('Path to unpacked SMT data tarball')) { |path| @data_dir = path }
+      parser.on('--no-systems', _('Do not import the systems that were registered to the SMT')) { @no_systems = true }
     end
     parser.parse!(argv)
     raise OptionParser::MissingArgument if data_dir.nil?
@@ -157,8 +160,8 @@ class SMTImporter
 
   def check_products_exist
     return if Product.count > 0
-    warn 'RMT has not been synced to SCC yet. Please run `rmt-cli sync` before'
-    warn 'importing data from SMT.'
+    warn _('RMT has not been synced to SCC yet. Please run `%{command}` before') % { command: 'rmt-cli sync' }
+    warn _('importing data from SMT.')
     raise ImportException
   end
 end
