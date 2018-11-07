@@ -6,7 +6,7 @@ class V3::ServiceSerializer < ApplicationSerializer
 
   def url
     # credentials parameter is required by Yast, it dies without it
-    service_url(object, host: base_url, credentials: "RMT-#{base_url.gsub(/\W/, '_').gsub(/_+/, '_')}")
+    service_url(object, host: base_url, credentials: object.name)
   end
 
   def obsoleted_service_name

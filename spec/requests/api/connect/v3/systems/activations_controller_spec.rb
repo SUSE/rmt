@@ -41,6 +41,12 @@ RSpec.describe Api::Connect::V3::Systems::ActivationsController do
             expect(element).to have_key(:service)
           end
         end
+
+        it 'has valid credentials parameter in the URL' do
+          json_response.each do |element|
+            expect(element[:service][:url]).to match(/\?credentials=#{element[:service][:name]}/)
+          end
+        end
       end
     end
   end

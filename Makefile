@@ -26,6 +26,7 @@ dist: clean man
 	@cp -r Gemfile $(NAME)-$(VERSION)/
 	@cp -r Gemfile.lock $(NAME)-$(VERSION)/
 	@cp -r lib $(NAME)-$(VERSION)/
+	@cp -r engines $(NAME)-$(VERSION)/
 
 	@mkdir $(NAME)-$(VERSION)/log
 	@cp -r log/.keep $(NAME)-$(VERSION)/log
@@ -44,6 +45,7 @@ dist: clean man
 	@rm -rf $(NAME)-$(VERSION)/config/rmt.local.yml
 	@rm -rf $(NAME)-$(VERSION)/config/secrets.yml.*
 	@rm -rf $(NAME)-$(VERSION)/config/system_uuid
+	@rm -rf $(NAME)-$(VERSION)/lib/tasks/test.rake
 
 	@mv $(NAME)-$(VERSION)/.bundle/config_packaging $(NAME)-$(VERSION)/.bundle/config
 	cd $(NAME)-$(VERSION) && bundle package --all
