@@ -5,6 +5,7 @@ After=mysql.service
 Before=rmt-server.service
 
 [Service]
+Environment=LANG=en
 Type=oneshot
 User=_rmt
 Environment=LOG_TO_JOURNALD=1

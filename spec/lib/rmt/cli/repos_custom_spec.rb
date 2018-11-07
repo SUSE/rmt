@@ -25,7 +25,7 @@ describe RMT::CLI::ReposCustom do
         expect do
           create :repository, external_url: external_url, name: 'foobar'
           described_class.start(argv)
-        end.to output("A repository by this URL already exists.\n").to_stderr.and output('').to_stdout
+        end.to output("A repository by the URL #{external_url} already exists.\n").to_stderr.and output('').to_stdout
         expect(Repository.find_by(external_url: external_url).name).to eq('foobar')
       end
 
@@ -38,7 +38,7 @@ describe RMT::CLI::ReposCustom do
 
         expect do
           described_class.start(%w[add http://example.com/repo foo])
-        end.to output("A repository by this URL already exists.\n").to_stderr.and output('').to_stdout
+        end.to output("A repository by the URL http://example.com/repo/ already exists.\n").to_stderr.and output('').to_stdout
       end
 
       it 'does not update previous repository if custom' do
@@ -46,7 +46,7 @@ describe RMT::CLI::ReposCustom do
         expect do
           create :repository, :custom, external_url: external_url, name: 'foobar'
           described_class.start(argv)
-        end.to output("A repository by this URL already exists.\n").to_stderr.and output('').to_stdout
+        end.to output("A repository by the URL #{external_url} already exists.\n").to_stderr.and output('').to_stdout
         expect(Repository.find_by(external_url: external_url).name).to eq('foobar')
       end
     end

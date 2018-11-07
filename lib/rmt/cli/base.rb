@@ -4,7 +4,6 @@ require 'etc'
 class RMT::CLI::Base < Thor
 
   class << self
-
     # custom output of the help command
     # (removes the alphabetical sorting and adds some custom behavior)
     def help(shell, subcommand = false)
@@ -12,17 +11,17 @@ class RMT::CLI::Base < Thor
 
       list.reject! { |l| l[0].split.include?('help') }
 
-      shell.say 'Commands:'
+      shell.say _('Commands:')
 
       shell.print_table(list, indent: 2, truncate: true)
       shell.say
       class_options_help(shell)
 
-      shell.say "Run '#{basename} help [COMMAND]' for more information on a command and its subcommands."
+      shell.say _('Run `%{command}` for more information on a command and its subcommands.') % { command: "#{basename} help [COMMAND]" }
 
       shell.say
-      shell.say 'Do you have suggestions for improvement? We would love to hear from you!'
-      shell.say 'Check out https://github.com/SUSE/rmt/issues/new'
+      shell.say _('Do you have suggestions for improvement? We would love to hear from you!')
+      shell.say _('Check out %{url}') % { url: 'https://github.com/SUSE/rmt/issues/new' }
     end
 
     def dispatch(command, given_args, given_opts, config)
@@ -40,18 +39,18 @@ class RMT::CLI::Base < Thor
       yield
     rescue RMT::Deduplicator::HardlinkException => e
       raise RMT::CLI::Error.new(
-        "Could not create deduplication hardlink: #{e.message}.",
+        _('Could not create deduplication hardlink: %{error}.') % { error: e.message },
         RMT::CLI::Error::ERROR_OTHER
       )
     rescue Mysql2::Error => e
       if e.message =~ /^Access denied/
         raise RMT::CLI::Error.new(
-          "Cannot connect to database server. Make sure its credentials are configured in '/etc/rmt.conf'.",
+          _('Cannot connect to database server. Make sure its credentials are configured in "%{path}".') % { path: '/etc/rmt.conf' },
           RMT::CLI::Error::ERROR_DB
         )
       elsif e.message =~ /^Can't connect/
         raise RMT::CLI::Error.new(
-          "Cannot connect to database server. Make sure it is running and its credentials are configured in '/etc/rmt.conf'.",
+          _('Cannot connect to database server. Make sure it is running and its credentials are configured in "%{path}".') % { path: '/etc/rmt.conf' },
           RMT::CLI::Error::ERROR_DB
         )
       else
@@ -60,12 +59,15 @@ class RMT::CLI::Base < Thor
       end
     rescue ActiveRecord::NoDatabaseError
       raise RMT::CLI::Error.new(
-        "The RMT database has not yet been initialized. Run 'systemctl start rmt-migration' to setup the database.",
+        _('The RMT database has not yet been initialized. Run `%{command}` to setup the database.') % { command: 'systemctl start rmt-migration' },
         RMT::CLI::Error::ERROR_DB
       )
     rescue RMT::SCC::CredentialsError, ::SUSE::Connect::Api::InvalidCredentialsError
       raise RMT::CLI::Error.new(
-        "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization",
+        _('The SCC credentials are not configured correctly in "%{path}". You can obtain them from %{url}') % {
+          path: '/etc/rmt.conf',
+          url: 'https://scc.suse.com/organization'
+        },
         RMT::CLI::Error::ERROR_SCC
       )
     rescue RMT::Lockfile::ExecutionLockedError => e
@@ -96,9 +98,14 @@ class RMT::CLI::Base < Thor
   private
 
   def needs_path(path, writable: false)
-    raise RMT::CLI::Error.new("#{path} is not a directory.") unless File.directory?(path)
+    raise RMT::CLI::Error.new(_('%{path} is not a directory.') % { path: path }) unless File.directory?(path)
     if writable
-      raise RMT::CLI::Error.new("#{path} is not writable by user #{RMT::CLI::Base.process_user_name}.") unless File.writable?(path)
+      unless File.writable?(path)
+        raise RMT::CLI::Error.new(_('%{path} is not writable by user %{username}.') % {
+          path: path,
+          username: RMT::CLI::Base.process_user_name
+        })
+      end
     end
   end
 

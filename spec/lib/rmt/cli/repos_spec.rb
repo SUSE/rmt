@@ -92,7 +92,7 @@ RSpec.describe RMT::CLI::Repos do
           let(:argv) { [command_name, '--all'] }
 
           it 'warns about running sync command first' do
-            expect { described_class.start(argv) }.to output("Run \"rmt-cli sync\" to synchronize with your SUSE Customer Center data first.\n").to_stderr
+            expect { described_class.start(argv) }.to output("Run `rmt-cli sync` to synchronize with your SUSE Customer Center data first.\n").to_stderr
           end
         end
       end

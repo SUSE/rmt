@@ -1,6 +1,5 @@
 # Wraps Typhoeus request in a fiber, resumes the fiber in callbacks.
 class RMT::FiberRequest < RMT::HttpRequest
-
   attr_accessor :base_url, :download_path, :remote_file
 
   def initialize(base_url, download_path:, request_fiber:, remote_file:, **options)
@@ -30,7 +29,7 @@ class RMT::FiberRequest < RMT::HttpRequest
     response = read_body
 
     if (response.return_code && response.return_code != :ok)
-      raise RMT::Downloader::Exception.new("#{@remote_file} - return code #{response.return_code}")
+      raise RMT::Downloader::Exception.new(_('%{file} - return code %{code}') % { file: @remote_file, code: response.return_code })
     end
 
     @download_path.close
