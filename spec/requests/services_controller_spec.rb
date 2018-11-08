@@ -31,7 +31,7 @@ RSpec.describe ServicesController do
 
       let(:model_urls) do
         service.repositories.map do |repo|
-          RMT::Misc.make_repo_url('http://www.example.com', repo.local_path)
+          RMT::Misc.make_repo_url('http://www.example.com', repo.local_path, service.name)
         end
       end
 

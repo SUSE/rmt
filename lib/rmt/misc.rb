@@ -2,8 +2,10 @@ require 'rmt/config'
 
 module RMT
   module Misc
-    def self.make_repo_url(base_url, local_path)
-      URI.join(base_url, File.join(RMT::DEFAULT_MIRROR_URL_PREFIX, local_path)).to_s
+    def self.make_repo_url(base_url, local_path, service_name = nil)
+      uri = URI.join(base_url, File.join(RMT::DEFAULT_MIRROR_URL_PREFIX, local_path))
+      uri.query = "credentials=#{service_name}" if service_name
+      uri.to_s
     end
 
     def self.replace_uri_parts(uri, replacement)

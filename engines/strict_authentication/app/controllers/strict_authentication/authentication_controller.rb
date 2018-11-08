@@ -6,7 +6,10 @@ module StrictAuthentication
 
     # This is the endpoint for nginx subrequest auth check
     def check
-      head path_allowed?(request.headers['X-Original-URI']) ? :ok : :forbidden
+      request_uri = request.headers['X-Original-URI']
+      auth_result = path_allowed?(request.headers['X-Original-URI'])
+      logger.info "Authentication subrequest for #{request_uri} -- #{auth_result ? 'allowed' : 'denied'}"
+      head auth_result ? :ok : :forbidden
     end
 
     protected

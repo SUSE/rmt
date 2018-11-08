@@ -18,7 +18,7 @@ class ServicesController < ApplicationController
     service_xml = builder.repoindex(ttl: ZYPPER_SERVICE_TTL) do
       @repos.each do |repo|
         attributes = {
-          url: RMT::Misc.make_repo_url(@base_url, repo.local_path),
+          url: RMT::Misc.make_repo_url(@base_url, repo.local_path, @service.name),
           alias: repo.name,
           name: repo.name,
           autorefresh: repo.autorefresh,
