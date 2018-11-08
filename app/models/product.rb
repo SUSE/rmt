@@ -92,6 +92,13 @@ class Product < ApplicationRecord
     ).distinct
   end
 
+  def self.free_and_recommended_modules(root_product_ids)
+    joins(:product_extensions_associations).free
+        .where(products_extensions: { root_product_id: root_product_ids })
+        .or(recommended_extensions(root_product_ids))
+        .distinct
+  end
+
   def self.recommended_extensions(root_product_ids)
     joins(:product_extensions_associations).where(products_extensions: { recommended: true, root_product_id: root_product_ids })
   end

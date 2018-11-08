@@ -36,18 +36,19 @@ class RMT::CLI::Products < RMT::CLI::Base
   map ls: :list
 
   desc 'enable', 'Enable mirroring of product repositories by product ID or product string.'
+  option :all_modules, type: :boolean, desc: 'Enables all free modules for a product'
   def enable(target)
-    change_product(target, true)
+    change_product(target, true, options[:all_modules])
   end
 
   desc 'disable', 'Disable mirroring of product repositories by product ID or product string.'
   def disable(target)
-    change_product(target, false)
+    change_product(target, false, false)
   end
 
   protected
 
-  def change_product(target, set_enabled)
+  def change_product(target, set_enabled, all_modules)
     product_id = Integer(target, 10) rescue nil
     products = []
     if product_id
@@ -62,7 +63,7 @@ class RMT::CLI::Products < RMT::CLI::Base
 
     if set_enabled
       products.each do |product|
-        extensions = Product.recommended_extensions(product.id).to_a
+        extensions = all_modules ? Product.free_and_recommended_modules(product.id).to_a : Product.recommended_extensions(product.id).to_a
         next if extensions.empty?
         puts "The following required extensions for #{product.product_string} have been enabled: #{extensions.pluck(:name).join(', ')}."
         products.push(*extensions)
