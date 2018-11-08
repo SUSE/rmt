@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Nov  8 15:37:57 UTC 2018 - tmuntaner@suse.com
+
+- Added ability to enable/disable multiple products at the same time
+
+-------------------------------------------------------------------
 Tue Oct 30 15:35:17 UTC 2018 - skotov@suse.com
 
 - Import migration_extra attribute from SCC API
