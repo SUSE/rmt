@@ -79,19 +79,19 @@ class RMT::CLI::Products < RMT::CLI::Base
       if set_enabled
         extensions = all_modules ? Product.free_and_recommended_modules(product.id).to_a : Product.recommended_extensions(product.id).to_a
         unless extensions.empty?
-          puts '  Enabling additional extensions:'
-          extensions.each{ |extension| puts '    ' + extension.name }
+          puts 'Enabling additional extensions:'.indent(2)
+          extensions.each { |extension| puts extension.name.indent(4) }
           product_with_extensions.push(*extensions)
         end
       end
 
-      puts "  #{set_enabled ? 'Enabling' : 'Disabling'} repositories:"
+      puts "#{set_enabled ? 'Enabling' : 'Disabling'} repositories:".indent(2)
       repo_names = repository_service.change_mirroring_by_product!(set_enabled, product_with_extensions.uniq)
       if repo_names.empty?
-        puts "    All repositories have already been #{set_enabled ? 'enabled' : 'disabled'}."
+        puts "All repositories have already been #{set_enabled ? 'enabled' : 'disabled'}.".indent(4)
       else
         repo_names.each do |repo_name|
-          puts "    #{repo_name}"
+          puts repo_name.to_s.indent(4)
         end
       end
     end

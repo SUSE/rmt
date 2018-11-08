@@ -150,7 +150,7 @@ RSpec.describe RMT::CLI::Products do
       output += "For #{product.friendly_name}:\n"
       unless extensions.empty?
         output += "  Enabling additional extensions:\n"
-        extensions.each { |extension|  output += "    #{extension.name}\n" }
+        extensions.each { |extension| output += "    #{extension.name}\n" }
       end
       output += "  Enabling repositories:\n"
       unless repo_names.empty?
