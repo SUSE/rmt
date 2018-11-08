@@ -148,10 +148,12 @@ RSpec.describe RMT::CLI::Products do
     let(:expected_output) do
       output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
       unless extensions.empty?
-        output += "  The following required extensions for #{product.product_string} have been enabled: #{extensions.pluck(:name).join(', ')}.\n"
+        output += "  Enabling all extensions and modules:\n"
+        extensions.each { |extension|  output += "    #{extension.name}\n" }
       end
+      output += "  Enabling repositories:\n"
       unless repo_names.empty?
-        output += '  ' + repo_names.map { |name| "Repository #{name} has been successfully enabled." }.join("\n  ")
+        repo_names.each { |name| output += "    #{name}\n" }
       end
       output + "\n"
     end
@@ -293,6 +295,8 @@ RSpec.describe RMT::CLI::Products do
     let(:argv) { ['disable', target] }
     let(:expected_output) do
       output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
+      output += "For #{product.friendly_name}:\n"
+      output += "  Disabling repositories:\n"
       output += '  ' + repo_names.map { |name| "Repository #{name} has been successfully disabled." }.join("\n  ") unless repo_names.empty?
       output + "\n"
     end

@@ -67,25 +67,38 @@ class RMT::CLI::Products < RMT::CLI::Base
   end
 
   def change_product(target, set_enabled, all_modules)
+    # This will return multiple products if 'SLES/15' was used
     products = find_products(target)
-    raise ProductNotFoundException.new("Product by target '#{target}' not found.") if products.empty?
+    raise ProductNotFoundException.new("No product found for target '#{target}'.") if products.empty?
     puts "Found product(s) by target #{target}: #{products.map(&:friendly_name).join(', ')}."
 
-    if set_enabled
-      products.each do |product|
-        extensions = all_modules ? Product.free_and_recommended_modules(product.id).to_a : Product.recommended_extensions(product.id).to_a
-        next if extensions.empty?
-        puts "  The following required extensions for #{product.product_string} have been enabled: #{extensions.pluck(:name).join(', ')}."
-        products.push(*extensions)
-      end
-    end
+    products.each do |product|
+      puts "For #{product.friendly_name}:"
 
-    repo_names = repository_service.change_mirroring_by_product!(set_enabled, products.uniq)
-    if repo_names.empty?
-      puts "  All repositories have already been #{set_enabled ? 'enabled' : 'disabled'}."
-    else
-      repo_names.each do |repo_name|
-        puts "  Repository #{repo_name} has been successfully #{set_enabled ? 'enabled' : 'disabled'}."
+      product_with_extensions = [product]
+      if set_enabled
+        if all_modules
+          extensions = Product.free_and_recommended_modules(product.id).to_a
+          message =  '  Enabling all extensions and modules:'
+        else
+          extensions = Product.recommended_extensions(product.id).to_a
+          message = '  Enabling only essential extensions:'
+        end
+        unless extensions.empty?
+          puts message
+          extensions.each{ |extension| puts '    ' + extension.name }
+          product_with_extensions.push(*extensions)
+        end
+      end
+
+      puts "  #{set_enabled ? 'Enabling' : 'Disabling'} repositories:"
+      repo_names = repository_service.change_mirroring_by_product!(set_enabled, product_with_extensions.uniq)
+      if repo_names.empty?
+        puts "    All repositories have already been #{set_enabled ? 'enabled' : 'disabled'}."
+      else
+        repo_names.each do |repo_name|
+          puts "    #{repo_name}"
+        end
       end
     end
   end
