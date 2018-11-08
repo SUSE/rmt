@@ -77,15 +77,9 @@ class RMT::CLI::Products < RMT::CLI::Base
 
       product_with_extensions = [product]
       if set_enabled
-        if all_modules
-          extensions = Product.free_and_recommended_modules(product.id).to_a
-          message =  '  Enabling all extensions and modules:'
-        else
-          extensions = Product.recommended_extensions(product.id).to_a
-          message = '  Enabling only essential extensions:'
-        end
+        extensions = all_modules ? Product.free_and_recommended_modules(product.id).to_a : Product.recommended_extensions(product.id).to_a
         unless extensions.empty?
-          puts message
+          puts '  Enabling additional extensions:'
           extensions.each{ |extension| puts '    ' + extension.name }
           product_with_extensions.push(*extensions)
         end

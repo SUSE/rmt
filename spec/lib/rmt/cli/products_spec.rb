@@ -147,15 +147,16 @@ RSpec.describe RMT::CLI::Products do
     let(:argv) { ['enable', target] }
     let(:expected_output) do
       output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
+      output += "For #{product.friendly_name}:\n"
       unless extensions.empty?
-        output += "  Enabling all extensions and modules:\n"
+        output += "  Enabling additional extensions:\n"
         extensions.each { |extension|  output += "    #{extension.name}\n" }
       end
       output += "  Enabling repositories:\n"
       unless repo_names.empty?
         repo_names.each { |name| output += "    #{name}\n" }
       end
-      output + "\n"
+      output
     end
 
     context 'already enabled repositories' do
@@ -163,8 +164,10 @@ RSpec.describe RMT::CLI::Products do
       let(:product) { create :product, :with_mirrored_repositories }
       let(:expected_output) do
         output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
-        output += '  All repositories have already been enabled.'
-        output + "\n"
+        output += "For #{product.friendly_name}:\n"
+        output += "  Enabling repositories:\n"
+        output += "    All repositories have already been enabled.\n"
+        output
       end
 
       before do
@@ -297,8 +300,8 @@ RSpec.describe RMT::CLI::Products do
       output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
       output += "For #{product.friendly_name}:\n"
       output += "  Disabling repositories:\n"
-      output += '  ' + repo_names.map { |name| "Repository #{name} has been successfully disabled." }.join("\n  ") unless repo_names.empty?
-      output + "\n"
+      repo_names.each { |name| output += "    #{name}\n" } unless repo_names.empty?
+      output
     end
 
     before do
@@ -311,8 +314,10 @@ RSpec.describe RMT::CLI::Products do
 
       let(:expected_output) do
         output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
-        output += '  All repositories have already been disabled.'
-        output + "\n"
+        output += "For #{product.friendly_name}:\n"
+        output += "  Disabling repositories:\n"
+        output += "    All repositories have already been disabled.\n"
+        output
       end
 
       it 'enables the mandatory product repositories' do
