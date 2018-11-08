@@ -12,6 +12,16 @@ require 'action_view/railtie'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+
+# Engine loading mechanism
+if (Rails.env.production? || ENV['RMT_LOAD_ENGINES'])
+  Dir.glob("#{__dir__}/../engines/*").select { |i| File.directory?(i) }.each do |dir|
+    engine_name = File.basename(dir)
+    filename = File.expand_path(File.join(dir, 'lib', "#{engine_name}.rb"))
+    require_relative(filename) if File.exist?(filename)
+  end
+end
+
 module RMT
   class CustomConfiguration < Rails::Application::Configuration
 
