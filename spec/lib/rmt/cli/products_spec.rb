@@ -26,7 +26,7 @@ RSpec.describe RMT::CLI::Products do
 
         it 'warns about running sync command first' do
           expect { described_class.start(argv) }.to output(
-            "Run \"rmt-cli sync\" to synchronize with your SUSE Customer Center data first.\n"
+            "Run `rmt-cli sync` to synchronize with your SUSE Customer Center data first.\n"
           ).to_stderr
         end
 
