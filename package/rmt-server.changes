@@ -1,7 +1,12 @@
 -------------------------------------------------------------------
 Tue Oct 30 15:35:17 UTC 2018 - skotov@suse.com
 
+- Version 1.0.7
 - Import migration_extra attribute from SCC API
+- Dependency gems security updates:
+  - Update loofah to 2.2.3 (CVE-2018-16468)
+  - Update rack to 2.0.6 (CVE-2018-16470)
+  - Update nokogiri to 1.8.5 (CVE-2018-14404)
 
 -------------------------------------------------------------------
 Tue Oct 30 14:18:13 UTC 2018 - tmuntaner@suse.com
