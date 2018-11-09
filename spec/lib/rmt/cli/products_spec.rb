@@ -258,7 +258,7 @@ RSpec.describe RMT::CLI::Products do
     end
 
     context 'by wrong product string' do
-      let(:target) { 'badproductstring'}
+      let(:target) { 'badproductstring' }
       let(:argv) { ['enable', target] }
       let(:expected_stderr) { "Product(s) #{target} could not be found and were not enabled.\n" }
       let(:expected_output) { "No product found for target '#{target}'.\n" }
