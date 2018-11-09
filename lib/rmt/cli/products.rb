@@ -64,18 +64,25 @@ REPOS
   protected
 
   def change_products(targets, set_enabled, all_modules)
-    success = true
     targets = clean_target_input(targets)
     raise RMT::CLI::Error.new('No product ids supplied') if targets.empty?
 
+    failed_targets = []
     targets.each do |target|
       change_product(target, set_enabled, all_modules)
     rescue ProductNotFoundException => e
       puts e.message
-      success = false
+      failed_targets << target
     end
 
-    raise RMT::CLI::Error.new("Not all products were #{set_enabled ? 'enabled' : 'disabled'}.") unless success
+    unless failed_targets.empty?
+      message = if set_enabled
+                  "Product(s) #{failed_targets.join(',')} could not be found and were not enabled."
+                else
+                  "Product(s) #{failed_targets.join(',')} could not be found and were not disabled."
+                end
+      raise RMT::CLI::Error.new(message)
+    end
   end
 
   def change_product(target, set_enabled, all_modules)
@@ -90,9 +97,7 @@ REPOS
       products = [base_product]
       if set_enabled
         extensions = all_modules ? Product.free_and_recommended_modules(base_product.id).to_a : Product.recommended_extensions(base_product.id).to_a
-        unless extensions.empty?
-          products.push(*extensions)
-        end
+        products.push(*extensions) unless extensions.empty?
       end
 
       products.each do |product|
