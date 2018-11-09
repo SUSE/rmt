@@ -3,6 +3,7 @@ Tue Oct 30 15:35:17 UTC 2018 - skotov@suse.com
 
 - Version 1.0.7
 - Import migration_extra attribute from SCC API
+- Auto-selected modules feature migration engine changes
 - Dependency gems security updates:
   - Update loofah to 2.2.3 (CVE-2018-16468)
   - Update rack to 2.0.6 (CVE-2018-16470)
