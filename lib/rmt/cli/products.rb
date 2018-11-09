@@ -46,7 +46,9 @@ Examples:
 
 `rmt-cli products enable SLES/15`
 
-`rmt-cli products enable 1254`
+`rmt-cli products enable 1575`
+
+`rmt-cli products enable SLES/15/x86_64,1743`
 
 `rmt-cli products enable --all-modules SLES/15`
 REPOS
