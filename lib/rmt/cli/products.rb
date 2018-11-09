@@ -40,6 +40,16 @@ class RMT::CLI::Products < RMT::CLI::Base
 
   desc 'enable TARGETS', 'Enable mirroring of product repositories by a list of product IDs or product strings.'
   option :all_modules, type: :boolean, desc: 'Enables all free modules for a product'
+  long_desc <<-REPOS
+
+Examples:
+
+`rmt-cli products enable SLES/15`
+
+`rmt-cli products enable 1254`
+
+`rmt-cli products enable --all-modules SLES/15`
+REPOS
   def enable(*targets)
     change_products(targets, true, options[:all_modules])
   end
