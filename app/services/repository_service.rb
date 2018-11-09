@@ -39,15 +39,10 @@ class RepositoryService
     association.destroy!
   end
 
-  def change_mirroring_by_product!(mirroring_enabled, products)
-    repos = []
-    products.each do |product|
-      conditions = { mirroring_enabled: !mirroring_enabled } # to only update the repos which need change
-      conditions[:enabled] = true if mirroring_enabled
-      repos += product.change_repositories_mirroring!(conditions, mirroring_enabled)
-    end
-
-    repos
+  def change_mirroring_by_product!(mirroring_enabled, product)
+    conditions = { mirroring_enabled: !mirroring_enabled } # to only update the repos which need change
+    conditions[:enabled] = true if mirroring_enabled
+    product.change_repositories_mirroring!(conditions, mirroring_enabled)
   end
 
   private

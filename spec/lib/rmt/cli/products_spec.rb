@@ -140,21 +140,19 @@ RSpec.describe RMT::CLI::Products do
 
   describe '#enable' do
     let(:product) { create :product, :with_not_mirrored_repositories }
-    let(:repo_names) { product.repositories.where(enabled: true).pluck(:name).sort }
-    let(:repo_count) { repo_names.count }
+    let(:repos) { product.repositories.where(enabled: true) }
     let(:extensions) { [] }
     let(:target) { '' }
+    let(:products_to_enable) { [product] + extensions }
     let(:argv) { ['enable', target] }
     let(:expected_output) do
       output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
-      output += "For #{product.friendly_name}:\n"
-      unless extensions.empty?
-        output += "  Enabling additional extensions:\n"
-        extensions.each { |extension| output += "    #{extension.name}\n" }
-      end
-      output += "  Enabling repositories:\n"
-      unless repo_names.empty?
-        repo_names.each { |name| output += "    #{name}\n" }
+      output += "Enabling #{product.friendly_name}:\n"
+      products_to_enable.each do |p|
+        output += "  #{p.friendly_name}:\n"
+        p.repositories.where(enabled: true).pluck(:name).sort.each do |repo_name|
+          output += "    Enabled repository #{repo_name}.\n"
+        end
       end
       output
     end
@@ -164,8 +162,8 @@ RSpec.describe RMT::CLI::Products do
       let(:product) { create :product, :with_mirrored_repositories }
       let(:expected_output) do
         output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
-        output += "For #{product.friendly_name}:\n"
-        output += "  Enabling repositories:\n"
+        output += "Enabling #{product.friendly_name}:\n"
+        output += "  #{product.friendly_name}:\n"
         output += "    All repositories have already been enabled.\n"
         output
       end
@@ -203,17 +201,17 @@ RSpec.describe RMT::CLI::Products do
             create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: true)
           ]
         end
-        let(:products) { [product] + extensions }
-        let(:repo_names) { products.flat_map { |product| product.repositories.where(enabled: true) }.pluck(:name).sort }
+        let(:repos) { products_to_enable.flat_map { |product| product.repositories.where(enabled: true) } }
+        let(:products_to_enable) { [product] + extensions }
 
         it 'enables product and recommended products repositories' do
-          products.flat_map(&:repositories).each do |repository|
+          products_to_enable.flat_map(&:repositories).each do |repository|
             expect(repository.mirroring_enabled).to eq(repository.enabled)
           end
         end
 
         it 'has more repositories than the base product' do
-          expect(repo_count).to be > product.repositories.where(enabled: true).count
+          expect(repos.count).to be > product.repositories.where(enabled: true).count
         end
       end
 
@@ -239,7 +237,7 @@ RSpec.describe RMT::CLI::Products do
         end
         let(:all_products) { [product] + extensions + non_free_extensions }
         let(:products_to_enable) { all_products - non_free_extensions }
-        let(:repo_names) { products_to_enable.flat_map { |product| product.repositories.where(enabled: true) }.pluck(:name).sort }
+        let(:repos) { products_to_enable.flat_map { |product| product.repositories.where(enabled: true) } }
 
         it 'enables product and recommended products repositories' do
           products_to_enable.flat_map(&:repositories).each do |repository|
@@ -254,7 +252,7 @@ RSpec.describe RMT::CLI::Products do
         end
 
         it 'has more repositories than the base product' do
-          expect(repo_count).to be > product.repositories.where(enabled: true).count
+          expect(repos.count).to be > product.repositories.where(enabled: true).count
         end
       end
     end
@@ -292,15 +290,14 @@ RSpec.describe RMT::CLI::Products do
 
   describe '#disable' do
     let(:product) { create :product, :with_mirrored_repositories }
-    let(:repo_names) { product.repositories.pluck(:name).sort }
-    let(:repo_count) { repo_names.count }
+    let(:repos) { product.repositories }
     let(:target) { '' }
     let(:argv) { ['disable', target] }
     let(:expected_output) do
       output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
-      output += "For #{product.friendly_name}:\n"
-      output += "  Disabling repositories:\n"
-      repo_names.each { |name| output += "    #{name}\n" } unless repo_names.empty?
+      output += "Disabling #{product.friendly_name}:\n"
+      output += "  #{product.friendly_name}:\n"
+      repos.pluck(:name).sort.each { |repo| output += "    Disabled repository #{repo}.\n" } unless repos.empty?
       output
     end
 
@@ -314,8 +311,8 @@ RSpec.describe RMT::CLI::Products do
 
       let(:expected_output) do
         output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
-        output += "For #{product.friendly_name}:\n"
-        output += "  Disabling repositories:\n"
+        output += "Disabling #{product.friendly_name}:\n"
+        output += "  #{product.friendly_name}:\n"
         output += "    All repositories have already been disabled.\n"
         output
       end
