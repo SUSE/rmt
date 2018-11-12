@@ -124,7 +124,7 @@ GEM
     ffaker (2.8.1)
     ffi (1.9.25)
     formatador (0.2.5)
-    fuubar (2.3.1)
+    fuubar (2.3.2)
       rspec-core (~> 3.0)
       ruby-progressbar (~> 1.4)
     gettext (3.2.6)
