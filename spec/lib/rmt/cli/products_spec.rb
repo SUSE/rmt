@@ -319,9 +319,6 @@ RSpec.describe RMT::CLI::Products do
       output
     end
 
-    before do
-      expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
-    end
 
     context 'already enabled repositories' do
       let(:target) { product.id.to_s }
@@ -336,6 +333,7 @@ RSpec.describe RMT::CLI::Products do
       end
 
       it 'enables the mandatory product repositories' do
+        expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
         product.repositories.each do |repository|
           expect(repository.mirroring_enabled).to eq(false)
         end
@@ -345,6 +343,10 @@ RSpec.describe RMT::CLI::Products do
 
     context 'by product ID' do
       let(:target) { product.id.to_s }
+
+      before do
+        expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
+      end
 
       it 'disabled the mandatory product repositories' do
         product.repositories.each do |repository|
@@ -374,12 +376,35 @@ RSpec.describe RMT::CLI::Products do
       end
     end
 
-    context 'by product string' do
-      let(:target) { product.product_string }
+    context 'failure' do
+      let(:expected_stderr) { "Product(s) #{target} could not be found and were not disabled.\n" }
+      let(:expected_output) { "No product found for target '#{target}'.\n" }
+      let(:argv) { ['disable', target] }
 
-      it 'disabled the mandatory product repositories' do
-        product.repositories.each do |repository|
-          expect(repository.mirroring_enabled).to eq(false)
+      before do
+        expect(described_class).to receive(:exit)
+        expect { described_class.start(argv) }.to output(expected_stderr).to_stderr.and output(expected_output).to_stdout
+      end
+
+      context 'by wrong product ID' do
+        let(:expected_output) { "Product by id \"#{target}\" not found.\n" }
+        let(:target) { (product.id + 1).to_s }
+
+        it 'leaves the product repositories enabled' do
+          product.repositories.each do |repository|
+            expect(repository.mirroring_enabled).to eq(true)
+          end
+        end
+      end
+
+      context 'by wrong product string' do
+        let(:expected_output) { "No product found for target '#{target}'.\n" }
+        let(:target) { product.product_string + 'foo' }
+
+        it 'leaves the product repositories enabled' do
+          product.repositories.each do |repository|
+            expect(repository.mirroring_enabled).to eq(true)
+          end
         end
       end
     end
