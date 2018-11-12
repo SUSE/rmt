@@ -26,7 +26,7 @@
 %define is_sle_12_family 1
 %endif
 Name:           rmt-server
-Version:        1.0.6
+Version:        1.0.7
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -91,7 +91,7 @@ RMT supersedes the main functionality of SMT in SLES 15.
 %package pubcloud
 Summary:        RMT pubcloud extensions
 Group:          Productivity/Networking/Web/Proxy
-PreReq:         rmt-server = %version
+Requires:       rmt-server = %version
 
 %description pubcloud
 This package extends the basic RMT functionality with capabilities
