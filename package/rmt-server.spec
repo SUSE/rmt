@@ -91,7 +91,7 @@ RMT supersedes the main functionality of SMT in SLES 15.
 %package pubcloud
 Summary:        RMT pubcloud extensions
 Group:          Productivity/Networking/Web/Proxy
-PreReq:         rmt-server = %version
+Requires:       rmt-server = %version
 
 %description pubcloud
 This package extends the basic RMT functionality with capabilities
