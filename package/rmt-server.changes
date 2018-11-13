@@ -1,30 +1,20 @@
 -------------------------------------------------------------------
 Fri Nov  9 13:24:52 UTC 2018 - sschricker@suse.de
 
-- Add bash completion for rmt-cli
-
--------------------------------------------------------------------
-Tue Oct 30 15:35:17 UTC 2018 - skotov@suse.com
-
-- Version 1.0.7
+- Version 1.1.0
 - Import migration_extra attribute from SCC API
 - Auto-selected modules feature migration engine changes
 - Dependency gems security updates:
   - Update loofah to 2.2.3 (CVE-2018-16468)
   - Update rack to 2.0.6 (CVE-2018-16470)
   - Update nokogiri to 1.8.5 (CVE-2018-14404)
-
--------------------------------------------------------------------
-Tue Oct 30 14:18:13 UTC 2018 - tmuntaner@suse.com
-
-- Added flag `--all-modules` to the `products enable` command to
+- Add bash completion for rmt-cli
+- Add flag `--all-modules` to the `products enable` command to
   enable all free modules/extensions.
-
--------------------------------------------------------------------
-Thu Sep 27 15:35:29 UTC 2018 - ikapelyukhin@suse.com
-
 - Improved exception handling when HTTP request fails due to
   a network or SSL validity issue
+- Add plug-in functionality
+  - Add strict authentication plug-in
 
 -------------------------------------------------------------------
 Thu Aug  2 16:19:35 UTC 2018 - fschnizlein@suse.com
