@@ -17,7 +17,7 @@ end
 RSpec::Core::RakeTask.new('test:engines') do |t|
   ENV['RMT_LOAD_ENGINES'] = '1'
   ENV['SIMPLECOV_CMD'] = 'test:engines'
-  t.pattern = 'engines/strict_authentication/spec'
+  t.pattern = 'engines/*/spec/**/**{,/*/**}/*_spec.rb'
   t.verbose = false
   t.fail_on_error = false
   t.rspec_opts = '--format Fuubar --color'
