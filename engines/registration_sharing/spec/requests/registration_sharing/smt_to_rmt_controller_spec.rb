@@ -2,11 +2,12 @@ require 'rails_helper'
 
 module RegistrationSharing
   RSpec.describe SmtToRmtController, type: :request do
-
+    # rubocop:disable RSpec/ExpectInHook
     before do
       # registration sharing must not trigger infinite registration sharing
       expect(RegistrationSharing).not_to receive(:share)
     end
+    # rubocop:enable RSpec/ExpectInHook
 
     describe '#smt_share_registration' do
       let(:product) { FactoryGirl.create(:product) }
@@ -59,11 +60,12 @@ module RegistrationSharing
       context 'with activation XML' do
         before { post '/api/regsharing/center/regsvc?command=shareregistration', params: reg_xml }
 
-        let(:system) { System.find_by(login: login) }
         subject(:activation) { Activation.find_by(service_id: product.service.id, system_id: system.id) }
 
+        let(:system) { System.find_by(login: login) }
+
         it 'creates a system' do
-          expect(activation).not_to eq(nil)
+          expect(system).not_to eq(nil)
         end
 
         it 'creates an activation' do
@@ -72,8 +74,22 @@ module RegistrationSharing
 
         its(:created_at) { is_expected.to eq(regdate) }
       end
-
     end
 
+    describe '#delete_registrations' do
+      let!(:system) { FactoryGirl.create(:system) }
+      let(:delete_xml) do
+        "<?xml version='1.0' encoding='UTF-8'?>
+        <deleteRegistrationData>
+          <guid>#{system.login}</guid>
+        </deleteRegistrationData>"
+      end
+
+      before { post '/api/regsharing/center/regsvc?command=deltesharedregistration', params: delete_xml }
+
+      it 'removes the system' do
+        expect { system.reload }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 end

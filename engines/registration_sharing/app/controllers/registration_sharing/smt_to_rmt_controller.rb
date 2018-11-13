@@ -1,6 +1,4 @@
-require_dependency "registration_sharing/application_controller"
-
-require 'nokogiri'
+require_dependency 'registration_sharing/application_controller'
 
 module RegistrationSharing
   class SmtToRmtController < ApplicationController
@@ -81,7 +79,12 @@ module RegistrationSharing
     end
 
     def smt_delete_registration(xml)
+      guid = xml.css('deleteRegistrationData guid')
 
+      raise 'System GUID not found' unless guid
+
+      system = RegistrationSharing::System.find_by(login: guid.text)
+      system.destroy if system
     end
   end
 end
