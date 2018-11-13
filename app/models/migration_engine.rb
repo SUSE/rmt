@@ -92,7 +92,7 @@ class MigrationEngine
   def add_dependencies(migrations)
     migrations.map do |migration|
       base = migration.first
-      migration.concat Product.available_or_recommended_modules(base.id) if base.version.split('.').first == '15'
+      migration.concat Product.modules_for_migration(base.id)
       migration
     end
   end
