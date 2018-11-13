@@ -36,7 +36,7 @@ GEM
     ast (2.4.0)
     awesome_print (1.8.0)
     builder (3.2.3)
-    byebug (10.0.0)
+    byebug (10.0.2)
     case_transform (0.2)
       activesupport
     claide (1.0.2)
@@ -124,7 +124,7 @@ GEM
     ffaker (2.8.1)
     ffi (1.9.25)
     formatador (0.2.5)
-    fuubar (2.3.1)
+    fuubar (2.3.2)
       rspec-core (~> 3.0)
       ruby-progressbar (~> 1.4)
     gettext (3.2.6)
