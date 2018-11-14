@@ -169,60 +169,6 @@ describe MigrationEngine do
         it { is_expected.to contain_exactly([sle15]) }
       end
 
-      context 'recommended modules do get added automatically to the migration target' do
-        let!(:sle15) do
-          create :product, :with_mirrored_repositories, :cloned, from: sle12sp1,
-            name: 'sle15', version: '15', predecessors: [sle12sp1]
-        end
-        let!(:sle15_recommended_module) do
-          recommended_module = create(:product, :module, :with_mirrored_repositories,
-            name: 'sle15module', version: '15', base_products: [sle15])
-
-          ProductsExtensionsAssociation.find_by(
-            product: sle15,
-            extension: recommended_module,
-            root_product: sle15
-          ).update!(recommended: true)
-
-          recommended_module
-        end
-        let(:system) { create :system }
-        let(:installed_products) { [sle12sp1] }
-
-        before do
-          system.activations.create(service: sle12sp1.service)
-        end
-
-        it { is_expected.to contain_exactly([sle15, sle15_recommended_module]) }
-      end
-
-      context "modules with a 'migration_extra' flag do get added automatically to the migration target" do
-        let!(:sle15) do
-          create :product, :with_mirrored_repositories, :cloned, from: sle12sp1,
-            name: 'sle15', version: '15', predecessors: [sle12sp1]
-        end
-        let!(:sle15_recommended_module) do
-          recommended_module = create(:product, :module, :with_mirrored_repositories,
-            name: 'sle15module', version: '15', base_products: [sle15])
-
-          ProductsExtensionsAssociation.find_by(
-            product: sle15,
-            extension: recommended_module,
-            root_product: sle15
-          ).update!(migration_extra: true)
-
-          recommended_module
-        end
-        let(:system) { create :system }
-        let(:installed_products) { [sle12sp1] }
-
-        before do
-          system.activations.create(service: sle12sp1.service)
-        end
-
-        it { is_expected.to contain_exactly([sle15, sle15_recommended_module]) }
-      end
-
       context 'when the successor product is a base' do
         # For example, a system with (SLES 12 SP x) + (LTSS 12 SP x) could upgrade to (SLES 12 SP x+1)
         let(:ltss12) do
@@ -421,6 +367,38 @@ describe MigrationEngine do
             let(:target_base_product) { product_a }
 
             it { is_expected.to be_empty }
+          end
+
+          context 'recommended modules are added automatically to the migration target' do
+            let!(:target_product_recommended_module) do
+              recommended_module = create(:product, :module, :with_mirrored_repositories, base_products: [product_c])
+
+              ProductsExtensionsAssociation.find_by(
+                product: product_c,
+                extension: recommended_module,
+                root_product: product_c
+              ).update!(recommended: true)
+
+              recommended_module
+            end
+
+            it { is_expected.to contain_exactly([target_base_product, target_product_recommended_module]) }
+          end
+
+          context "modules with a 'migration_extra' flag are added automatically to the migration target" do
+            let!(:target_product_extra_module) do
+              extra_module = create(:product, :module, :with_mirrored_repositories, base_products: [product_c])
+
+              ProductsExtensionsAssociation.find_by(
+                product: product_c,
+                extension: extra_module,
+                root_product: product_c
+              ).update!(migration_extra: true)
+
+              extra_module
+            end
+
+            it { is_expected.to contain_exactly([target_base_product, target_product_extra_module]) }
           end
         end
       end
