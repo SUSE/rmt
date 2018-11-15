@@ -227,6 +227,8 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %{_unitdir}/rmt-server-mirror.timer
 %{_unitdir}/rmt-server-sync.service
 %{_unitdir}/rmt-server-sync.timer
+%dir %{_datadir}/bash-completion/
+%dir %{_datadir}/bash-completion/completions/
 %{_datadir}/bash-completion/completions/rmt-cli
 
 %{_libdir}/rmt
