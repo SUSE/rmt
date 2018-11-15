@@ -157,7 +157,7 @@ RSpec.describe RMT::CLI::Products do
       output
     end
 
-    context 'already enabled repositories' do
+    context 'with repositories already enabled' do
       let(:target) { product.id.to_s }
       let(:product) { create :product, :with_mirrored_repositories }
       let(:expected_output) do
