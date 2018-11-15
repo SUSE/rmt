@@ -49,6 +49,7 @@ Source13:       rmt-server-mirror-sles12.timer
 Source14:       nginx-https.conf
 Source15:       auth-handler.conf
 Source16:       auth-location.conf
+Source17:       rmt-cli_bash-completion.sh
 Patch0:         use-ruby-2.5-in-rmt-cli.patch
 Patch1:         use-ruby-2.5-in-rails.patch
 Patch2:         use-ruby-2.5-in-rmt-data-import.patch
@@ -167,6 +168,9 @@ sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"'
 mkdir -p %{buildroot}%{_libexecdir}/supportconfig/plugins
 install -D -m 544 support/rmt %{buildroot}%{_libexecdir}/supportconfig/plugins/rmt
 
+# bash completion
+install -D -m 644 %{SOURCE17} %{buildroot}%{_datadir}/bash-completion/completions/rmt-cli
+
 # cleanup of /usr/bin/env commands
 grep -rl '\/usr\/bin\/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
     sed -i -e 's@\/usr\/bin\/env ruby.ruby2\.5@\/usr\/bin\/ruby\.ruby2\.5@g' \
@@ -223,6 +227,9 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %{_unitdir}/rmt-server-mirror.timer
 %{_unitdir}/rmt-server-sync.service
 %{_unitdir}/rmt-server-sync.timer
+%dir %{_datadir}/bash-completion/
+%dir %{_datadir}/bash-completion/completions/
+%{_datadir}/bash-completion/completions/rmt-cli
 
 %{_libdir}/rmt
 %{_libexecdir}/supportconfig/plugins/rmt
