@@ -8,7 +8,7 @@ module RegistrationSharing
     end
 
     config.after_initialize do
-      System.class_eval do
+      ::System.class_eval do
         after_commit :share_registration
 
         def share_registration
@@ -17,7 +17,7 @@ module RegistrationSharing
         end
       end
 
-      Activation.class_eval do
+      ::Activation.class_eval do
         after_commit :share_registration
 
         def share_registration

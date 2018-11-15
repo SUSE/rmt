@@ -4,6 +4,6 @@ require 'registration_sharing/engine'
 
 module RegistrationSharing
   def self.share(_obj)
-    raise 'TODO'
+    return if Settings.try(:regsharing).try(:peers).blank?
   end
 end
