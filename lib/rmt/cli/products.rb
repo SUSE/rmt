@@ -77,9 +77,9 @@ REPOS
 
     unless failed_targets.empty?
       message = if set_enabled
-                  "Product(s) #{failed_targets.join(',')} could not be found and were not enabled."
+                  "Product(s) #{failed_targets.join(', ')} could not be found and were not enabled."
                 else
-                  "Product(s) #{failed_targets.join(',')} could not be found and were not disabled."
+                  "Product(s) #{failed_targets.join(', ')} could not be found and were not disabled."
                 end
       raise RMT::CLI::Error.new(message)
     end
