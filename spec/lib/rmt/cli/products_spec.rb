@@ -179,6 +179,60 @@ RSpec.describe RMT::CLI::Products do
       end
     end
 
+    context 'with multiple ids' do
+      let(:product_1) { create :product, :with_not_mirrored_repositories }
+      let(:product_2) { create :product, :with_not_mirrored_repositories }
+      let(:product_3) { create :product, :with_not_mirrored_repositories }
+      let(:products_to_enable) { [product_1, product_2, product_3] }
+      let(:repos) { products_to_enable.flat_map { |product| product.repositories.where(enabled: true) } }
+      let(:expected_output) do
+        output = ''
+        products_to_enable.each do |product|
+          output += "Found product(s) by target #{product.id}: #{product.friendly_name}.\n"
+          output += "Enabling #{product.friendly_name}:\n"
+          output += "  #{product.friendly_name}:\n"
+          product.repositories.where(enabled: true).pluck(:name).sort.each do |repo_name|
+            output += "    Enabled repository #{repo_name}.\n"
+          end
+        end
+        output
+      end
+
+      before do
+        expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
+      end
+
+      context 'with multi-input' do
+        let(:argv) { ['enable', product_1.id, product_2.id, product_3.id] }
+
+        it 'enables product repositories' do
+          products_to_enable.flat_map(&:repositories).each do |repository|
+            expect(repository.mirroring_enabled).to eq(repository.enabled)
+          end
+        end
+      end
+
+      context 'with commas' do
+        let(:argv) { ['enable', "#{product_1.id}, #{product_2.id}, #{product_3.id}"] }
+
+        it 'enables product repositories' do
+          products_to_enable.flat_map(&:repositories).each do |repository|
+            expect(repository.mirroring_enabled).to eq(repository.enabled)
+          end
+        end
+      end
+
+      context 'with spaces' do
+        let(:argv) { ['enable', "#{product_1.id} #{product_2.id} #{product_3.id}"] }
+
+        it 'enables product repositories' do
+          products_to_enable.flat_map(&:repositories).each do |repository|
+            expect(repository.mirroring_enabled).to eq(repository.enabled)
+          end
+        end
+      end
+    end
+
     context 'by product ID' do
       let(:target) { product.id.to_s }
 
