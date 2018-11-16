@@ -217,6 +217,17 @@ RSpec.describe RMT::CLI::Products do
         end
       end
 
+      context 'with mixed spaces and commas' do
+        let(:argv) { ['enable', "#{product_1.id}, #{product_2.id} #{product_3.id}"] }
+
+        it 'enables product repositories' do
+          expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
+          products_to_enable.flat_map(&:repositories).each do |repository|
+            expect(repository.mirroring_enabled).to eq(repository.enabled)
+          end
+        end
+      end
+
       context 'with spaces' do
         let(:argv) { ['enable', "#{product_1.id} #{product_2.id} #{product_3.id}"] }
 
