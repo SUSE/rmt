@@ -9,6 +9,7 @@ inherit_mode:
     - Exclude
 
 AllCops:
+  TargetRubyVersion: 2.5
   Include:
     - Gemfile
     - Rakefile
