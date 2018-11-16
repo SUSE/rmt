@@ -315,12 +315,10 @@ RSpec.describe RMT::CLI::Products do
       let(:expected_stderr) { "Product(s) #{target} could not be found and were not enabled.\n" }
       let(:expected_output) { "No product found for target '#{target}'.\n" }
 
-      before do
-        expect(described_class).to receive(:exit)
-        expect { described_class.start(argv) }.to output(expected_stderr).to_stderr.and output(expected_output).to_stdout
-      end
+      before { allow(described_class).to receive(:exit) }
 
       it 'enables the mandatory product repositories' do
+        expect { described_class.start(argv) }.to output(expected_stderr).to_stderr.and output(expected_output).to_stdout
         product.repositories.each do |repository|
           expect(repository.mirroring_enabled).to eq(false)
         end
