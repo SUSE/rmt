@@ -1,4 +1,5 @@
-# desc "Explaining what the task does"
-# task :registration_sharing do
-#   # Task goes here
-# end
+namespace :regsharing do
+  desc 'Share registrations to the sibling servers'
+  task sync: :environment do
+  end
+end
