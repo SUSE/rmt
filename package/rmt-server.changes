@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Nov 21 10:30:44 UTC 2018 - skotov@suse.com
+
+- Modules for migration are being sorted in the correct order
+
+-------------------------------------------------------------------
 Thu Nov  8 15:37:57 UTC 2018 - tmuntaner@suse.com
 
 - Added ability to enable/disable multiple products at the same time
