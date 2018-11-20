@@ -5,7 +5,7 @@ module RegistrationSharing
     # rubocop:disable RSpec/ExpectInHook
     before do
       # registration sharing must not trigger infinite recursive registration sharing
-      expect(RegistrationSharing).not_to receive(:share)
+      expect(RegistrationSharing).not_to receive(:save_for_sharing)
     end
     # rubocop:enable RSpec/ExpectInHook
 

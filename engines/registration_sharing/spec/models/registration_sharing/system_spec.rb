@@ -9,7 +9,7 @@ describe System, type: :model do
   end
 
   it 'does not trigger registration sharing' do
-    expect(RegistrationSharing).not_to receive(:share)
+    expect(RegistrationSharing).not_to receive(:save_for_sharing)
     system.save!
   end
 end

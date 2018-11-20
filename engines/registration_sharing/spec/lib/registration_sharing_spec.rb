@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 describe RegistrationSharing do
-  describe '.share' do
+  describe '.save_for_sharing' do
     before do
       allow(Settings).to receive(:[]).with(:regsharing).and_return(config).at_least(:once)
       Timecop.freeze(time)
-      described_class.share(system)
+      described_class.save_for_sharing(system)
     end
 
     after do

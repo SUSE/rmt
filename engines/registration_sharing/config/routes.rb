@@ -1,4 +1,5 @@
 RegistrationSharing::Engine.routes.draw do
-  # /center/regsvc?command=shareregistration&lang=en-US&version=1.0
   post 'center/regsvc', to: 'smt_to_rmt#regsvc'
+  post '/', to: 'rmt_to_rmt#create'
+  delete '/', to: 'rmt_to_rmt#delete'
 end

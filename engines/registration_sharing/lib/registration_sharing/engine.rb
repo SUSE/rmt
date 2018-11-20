@@ -13,7 +13,7 @@ module RegistrationSharing
 
         def share_registration
           return if self.class == RegistrationSharing::System
-          RegistrationSharing.share(self)
+          RegistrationSharing.save_for_sharing(self)
         end
       end
 
@@ -22,7 +22,7 @@ module RegistrationSharing
 
         def share_registration
           return if self.class == RegistrationSharing::Activation
-          RegistrationSharing.share(self)
+          RegistrationSharing.save_for_sharing(self)
         end
       end
     end
