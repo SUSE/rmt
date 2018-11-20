@@ -14,7 +14,7 @@ class ApplicationController < ActionController::API
         @system.touch(:last_seen_at)
       else
         logger.info _('Could not find system with login \"%{login}\" and password \"%{password}\"') % { login: login, password: password }
-        error = ActionController::TranslatedError.new('Invalid system credentials')
+        error = ActionController::TranslatedError.new(N_('Invalid system credentials'))
         error.status = :unauthorized
         raise error
       end
