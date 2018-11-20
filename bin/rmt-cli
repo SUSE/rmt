@@ -2,6 +2,7 @@
 
 rmt_path = File.expand_path('..', __dir__)
 require_relative '../config/boot'
+require_relative '../config/boot_cli_i18n'
 $LOAD_PATH.unshift File.join(rmt_path, 'lib')
 
 require 'etc'
