@@ -3,6 +3,8 @@ require_dependency 'registration_sharing/application_controller'
 module RegistrationSharing
   class RmtToRmtController < ApplicationController
 
+    before_action :authenticate
+
     def create
       System.transaction do
         system = RegistrationSharing::System.find_or_create_by(login: params[:login])
@@ -30,5 +32,17 @@ module RegistrationSharing
       system = RegistrationSharing::System.find_by(login: params[:login])
       system.destroy if system
     end
+
+    protected
+
+    def authenticate
+      authenticate_or_request_with_http_token do |token, _options|
+        secret = RegistrationSharing.config_api_secret
+        return false unless secret
+
+        ActiveSupport::SecurityUtils.secure_compare(token, secret)
+      end
+    end
+
   end
 end

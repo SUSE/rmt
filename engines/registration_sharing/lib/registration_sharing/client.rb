@@ -13,6 +13,8 @@ class RegistrationSharing::Client
     end
   end
 
+  protected
+
   def peer_register_system(system)
     params = {}
 
@@ -32,13 +34,15 @@ class RegistrationSharing::Client
   end
 
   def make_request(method, params)
-    # TODO: auth token
-    # TODO CA path
+    # TODO: CA path
 
     request = Typhoeus::Request.new(
-      "https://#{@peer}/api/regsharing",
+      "http://#{@peer}/api/regsharing",
       method: method,
-      headers: { 'Content-Type' => 'application/json' },
+      headers: {
+        'Content-Type' => 'application/json',
+        'Authorization' => "Bearer #{RegistrationSharing.config_api_secret}"
+      },
       body: JSON.dump(params)
     )
 

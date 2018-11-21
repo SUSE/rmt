@@ -1,11 +1,15 @@
 require_dependency 'registration_sharing/application_controller'
 
 module RegistrationSharing
+
+  class SmtToRmtException < RuntimeError; end
+
   class SmtToRmtController < ApplicationController
     def regsvc
-
-      # TODO: authenticate SMT instance here
-      # TODO: handle invalid XML?
+      unless check_ip
+        render status: :forbidden, plain: 'Forbidden'
+        return
+      end
 
       xml = Nokogiri::XML(request.body.read)
 
@@ -14,11 +18,18 @@ module RegistrationSharing
       elsif params[:command] == 'deltesharedregistration'
         return smt_delete_registration(xml)
       else
-        raise 'Command not supported'
+        raise SmtToRmtException, 'Command not supported'
       end
+    rescue SmtToRmtException => e
+      render status: :bad_request, plain: e.to_s
     end
 
     protected
+
+    def check_ip
+      allowed_ips = (Settings[:regsharing][:smt_allowed_ips] rescue [] || [])
+      allowed_ips.include?(request.remote_ip)
+    end
 
     def smt_share_registration(xml)
       xml.css('registrationData').each do |reg_data|
@@ -32,7 +43,7 @@ module RegistrationSharing
           elsif table_name == 'Registration'
             save_registration(hash)
           else
-            raise 'Unknown table'
+            raise SmtToRmtException, 'Unknown table'
           end
         end
       end
