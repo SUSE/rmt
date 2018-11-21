@@ -22,7 +22,7 @@ class MigrationEngine
 
   def offline_migrations(target_base_product)
     migrations = generate(migration_kind: :offline)
-    add_migration_extras(migrations)
+    migrations = add_migration_extras(migrations)
     filter_by_base_product(migrations, target_base_product)
   end
 
@@ -91,6 +91,7 @@ class MigrationEngine
     migrations.map do |migration|
       base = migration.first
       migration.concat Product.modules_for_migration(base.id)
+      migration = sort_migration(migration)
       migration
     end
   end

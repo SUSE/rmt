@@ -385,7 +385,16 @@ describe MigrationEngine do
             it { is_expected.to contain_exactly([target_base_product, target_product_recommended_module]) }
           end
 
-          context "modules with a 'migration_extra' flag are added automatically to the migration target" do
+          context "modules with a 'migration_extra' flag are added automatically to the migration target and sorted" do
+            before do
+              # stub method to test that the migration is being sorted
+              original_modules_for_migration = Product.method(:modules_for_migration)
+
+              allow(Product).to receive(:modules_for_migration).with(anything) do |target_base_product_id|
+                original_modules_for_migration.call(target_base_product_id).reverse
+              end
+            end
+
             let!(:target_product_extra_module) do
               extra_module = create(:product, :module, :with_mirrored_repositories, base_products: [product_c])
 
@@ -397,8 +406,22 @@ describe MigrationEngine do
 
               extra_module
             end
+            let!(:target_product_extra_module_child) do
+              extra_module_child = create(:product, :module, :with_mirrored_repositories, base_products: [product_c],
+                                    predecessors: [product_c], migration_kind: :offline)
 
-            it { is_expected.to contain_exactly([target_base_product, target_product_extra_module]) }
+              ProductsExtensionsAssociation.find_by(
+                product: product_c,
+                extension: extra_module_child,
+                root_product: product_c
+              ).update!(migration_extra: true)
+
+              extra_module_child
+            end
+
+            it do
+              is_expected.to contain_exactly([product_c, target_product_extra_module, target_product_extra_module_child])
+            end
           end
         end
       end
