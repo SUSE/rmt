@@ -32,6 +32,6 @@ RUN mkdir -p /var/lib/rmt/
 RUN printf "$SYSTEM_UUID" >> /var/lib/rmt/system_uuid
 
 ADD . /tmp/rmt-server
-RUN bundle
+RUN NOKOGIRI_USE_SYSTEM_LIBRARIES=1 bundle install
 
 CMD dockerize -wait tcp://$MYSQL_HOST:3306 -timeout 60s true
