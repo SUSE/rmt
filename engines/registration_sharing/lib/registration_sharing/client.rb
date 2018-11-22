@@ -18,7 +18,7 @@ class RegistrationSharing::Client
   def peer_register_system(system)
     params = {}
 
-    %w[login password hostname registered_at last_seen_at].each do |attribute|
+    %w[login password hostname registered_at created_at last_seen_at].each do |attribute|
       params[attribute] = system.send(attribute)
     end
 
@@ -30,14 +30,15 @@ class RegistrationSharing::Client
   end
 
   def peer_deregister_system
-    make_request(:delete, { login: @system_login, is_deleted: true })
+    make_request(:delete, { login: @system_login })
   end
 
   def make_request(method, params)
     # TODO: CA path
+    # TODO: user-agent
 
     request = Typhoeus::Request.new(
-      "http://#{@peer}/api/regsharing",
+      "https://#{@peer}/api/regsharing",
       method: method,
       headers: {
         'Content-Type' => 'application/json',

@@ -9,7 +9,7 @@ module RegistrationSharing
       System.transaction do
         system = RegistrationSharing::System.find_or_create_by(login: params[:login])
 
-        %w[password hostname registered_at last_seen_at].each do |attribute|
+        %w[password hostname registered_at created_at last_seen_at].each do |attribute|
           system.send("#{attribute}=", params[attribute])
         end
 
@@ -28,7 +28,7 @@ module RegistrationSharing
       end
     end
 
-    def delete
+    def destroy
       system = RegistrationSharing::System.find_by(login: params[:login])
       system.destroy if system
     end
