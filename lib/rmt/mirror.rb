@@ -100,7 +100,6 @@ class RMT::Mirror
       directory_yast = @downloader.download('directory.yast')
     rescue RMT::Downloader::Exception
       FileUtils.remove_entry(@temp_licenses_dir) # the repository would have an empty licenses directory unless removed
-      @logger.info(_('No product license found'))
       return
     end
 
