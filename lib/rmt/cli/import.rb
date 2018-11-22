@@ -1,6 +1,6 @@
 class RMT::CLI::Import < RMT::CLI::Base
 
-  desc 'data PATH', 'Read SCC data from given path'
+  desc 'data PATH', _('Read SCC data from given path')
   def data(path)
     RMT::Lockfile.lock do
       needs_path(path)
@@ -8,7 +8,7 @@ class RMT::CLI::Import < RMT::CLI::Base
     end
   end
 
-  desc 'repos PATH', 'Mirror repos from given path'
+  desc 'repos PATH', _('Mirror repos from given path')
   def repos(path)
     RMT::Lockfile.lock do
       needs_path(path)
@@ -17,13 +17,13 @@ class RMT::CLI::Import < RMT::CLI::Base
       mirror = RMT::Mirror.new(logger: logger, airgap_mode: true)
 
       repos_file = File.join(path, 'repos.json')
-      raise RMT::CLI::Error.new("#{repos_file} does not exist.") unless File.exist?(repos_file)
+      raise RMT::CLI::Error.new(_('%{file} does not exist.') % { file: repos_file }) unless File.exist?(repos_file)
 
       repos = JSON.parse(File.read(repos_file))
       repos.each do |repo_json|
         repo = Repository.find_by(external_url: repo_json['url'])
         if repo.nil?
-          warn "repository by url #{repo_json['url']} does not exist in database"
+          warn _('repository by url %{url} does not exist in database') % { url: repo_json['url'] }
           next
         end
 

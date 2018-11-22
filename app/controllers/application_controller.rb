@@ -10,11 +10,11 @@ class ApplicationController < ActionController::API
     authenticate_or_request_with_http_basic('RMT API') do |login, password|
       @system = System.find_by(login: login, password: password)
       if @system
-        logger.info "Authenticated system with login '#{login}'"
+        logger.info _('Authenticated system with login \"%{login}\"') % { login: login }
         @system.touch(:last_seen_at)
       else
-        logger.info "Could not find system with login '#{login}' and password '#{password}'"
-        error = ActionController::TranslatedError.new('Invalid system credentials')
+        logger.info _('Could not find system with login \"%{login}\" and password \"%{password}\"') % { login: login, password: password }
+        error = ActionController::TranslatedError.new(N_('Invalid system credentials'))
         error.status = :unauthorized
         raise error
       end

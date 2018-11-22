@@ -43,3 +43,6 @@ Naming/UncommunicativeMethodParamName:
 
 RSpec/NestedGroups:
   Max: 4
+
+Style/FormatStringToken:
+  EnforcedStyle: template
