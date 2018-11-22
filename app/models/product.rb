@@ -44,6 +44,14 @@ class Product < ApplicationRecord
   scope :mirrored, lambda {
     distinct.joins(:repositories).where('repositories.enabled = true').group(:id).having('count(*)=count(CASE WHEN mirroring_enabled THEN 1 END)')
   }
+  scope :migration_extra, lambda { |root_product_ids|
+    joins(:product_extensions_associations)
+    .where(products_extensions: { root_product_id: root_product_ids, migration_extra: true })
+  }
+  scope :recommended, lambda { |root_product_ids|
+    joins(:product_extensions_associations)
+    .where(products_extensions: { root_product_id: root_product_ids, recommended: true })
+  }
 
   scope :with_release_stage, lambda { |release_stage|
     if release_stage
@@ -70,12 +78,20 @@ class Product < ApplicationRecord
     [version, version.tr('-', '.').chomp('.0')].uniq
   end
 
+  def friendly_name
+    "#{name} #{version} #{arch}"
+  end
+
   def product_string
     [identifier, version, arch].join('/')
   end
 
   def change_repositories_mirroring!(conditions, mirroring_enabled)
-    repositories.where(conditions).update_all(mirroring_enabled: mirroring_enabled)
+    repos = repositories.where(conditions)
+    repo_names = repos.pluck(:name)
+    repos.update_all(mirroring_enabled: mirroring_enabled)
+
+    repo_names.sort
   end
 
   def recommended_for?(root_product)
@@ -86,10 +102,8 @@ class Product < ApplicationRecord
     product_extensions_associations.includes(:root_product).map(&:root_product).uniq
   end
 
-  def self.available_or_recommended_modules(root_product_ids)
-    joins(:product_extensions_associations).free.module.where(products_extensions: { root_product_id: root_product_ids }).or(
-      recommended_extensions(root_product_ids)
-    ).distinct
+  def self.modules_for_migration(root_product_ids)
+    migration_extra(root_product_ids).or(recommended(root_product_ids)).module.distinct
   end
 
   def self.free_and_recommended_modules(root_product_ids)

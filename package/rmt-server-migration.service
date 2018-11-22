@@ -7,7 +7,7 @@ Before=rmt-server.service
 [Service]
 Type=oneshot
 User=_rmt
-Environment=LOG_TO_JOURNALD=1
+Environment="LOG_TO_JOURNALD=1" "LANG=en"
 WorkingDirectory=/usr/share/rmt
 ExecStart=/usr/share/rmt/bin/rails db:create db:migrate RAILS_ENV=production
 

@@ -6,7 +6,7 @@ rvm:
 script:
   - bundle exec danger
   - 'bundle exec rails db:migrate RAILS_ENV=test'
-  - 'bundle exec rspec spec'
+  - 'bundle exec rake test'
 
 services:
   - mysql

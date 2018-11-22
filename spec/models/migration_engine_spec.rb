@@ -149,35 +149,24 @@ describe MigrationEngine do
         it { is_expected.to contain_exactly([sle12sp1, sleha12sp1, slehageo12sp1]) }
       end
 
-      context 'when an extension is based on a dependency of the base product' do
-        # This is the case, for example, of an offline migration from SLE12 to SLE15.
-        # If the SLE12 system has HA12 installed, it should be upgraded to HA15.
-        # But HA15's base is Basesystem, not SLE15, and Basesystem is ALSO not
-        # installed on the SLE12 system, since that module did not even exist before.
-        # But Basesystem gets pulled in as a dependency of SLE15, so the migration should succeed.
-        let!(:sle12_extension) { sleha12sp1 }
-        let!(:extension_subscription) { create :subscription, product_classes: [sle12_extension.product_class] }
+      context 'available modules do not get added automatically to the migration target' do
         let!(:sle15) do
-          create :product, :with_mirrored_repositories, :cloned, from: sle12sp1,
+          create :product, :with_mirrored_repositories,
+            :cloned, from: sle12sp1,
             name: 'sle15', version: '15', predecessors: [sle12sp1]
         end
         let!(:sle15_module) do
           create :product, :module, :with_mirrored_repositories,
             name: 'sle15module', version: '15', base_products: [sle15]
         end
-        let!(:sle15_extension) do
-          create :product, :extension, :with_mirrored_repositories, :cloned, root_product: sle15,
-            from: sle12_extension, predecessors: [sle12_extension], base_products: [sle15_module]
-        end
         let(:system) { create :system }
-        let(:installed_products) { [sle12sp1, sle12_extension] }
+        let(:installed_products) { [sle12sp1] }
 
         before do
           system.activations.create(service: sle12sp1.service)
-          system.activations.create(service: sle12_extension.service)
         end
 
-        it { is_expected.to contain_exactly([sle15, sle15_module, sle15_extension]) }
+        it { is_expected.to contain_exactly([sle15]) }
       end
 
       context 'when the successor product is a base' do
@@ -325,86 +314,6 @@ describe MigrationEngine do
             is_expected.to eq([[sle12sp2, docker_module], [sle12sp1, docker_module]])
           end
         end
-
-        context 'filter out free extensions in SLE 15' do
-          let(:system) { create :system }
-          let(:installed_products) { [sle12sp1] }
-
-          let!(:sle15) do
-            create :product, :with_mirrored_repositories, :cloned, from: sle12sp1,
-              name: 'sle15', version: '15', predecessors: [sle12sp1]
-          end
-          let!(:basesystem) do
-            create :product, :module, :with_mirrored_repositories, root_product: sle15,
-              name: 'basesystem', version: '15', base_products: [sle15]
-          end
-          let!(:server_applications) do
-            create :product, :module, :with_mirrored_repositories, root_product: sle15,
-              name: 'server_applications', version: '15', base_products: [basesystem]
-          end
-          let!(:packagehub) do
-            create :product, :extension, :with_mirrored_repositories, root_product: sle15, free: true,
-              name: 'packagehub', version: '15', base_products: [basesystem]
-          end
-
-          before do
-            system.activations.create(service: sle12sp1.service)
-          end
-
-          it do
-            is_expected.to eq [[
-              sle15,
-              basesystem,
-              server_applications
-            ]]
-          end
-        end
-
-        context 'complex case with SLE 15 module dependencies' do
-          # In this case, we have a tree of modules, and we need the products
-          # that are deeper in the tree to come after the ones that are above.
-          let!(:sle15) do
-            create :product, :with_mirrored_repositories, :cloned, from: sle12sp1,
-              name: 'sle15', version: '15', predecessors: [sle12sp1]
-          end
-          let!(:basesystem) do
-            create :product, :module, :with_mirrored_repositories, root_product: sle15,
-              name: 'basesystem', version: '15', base_products: [sle15]
-          end
-          let!(:server_applications) do
-            create :product, :module, :with_mirrored_repositories, root_product: sle15,
-              name: 'server_applications', version: '15', base_products: [basesystem]
-          end
-          let!(:development_tools) do
-            create :product, :module, :with_mirrored_repositories, root_product: sle15,
-              name: 'development_tools', version: '15', base_products: [server_applications]
-          end
-          let!(:module_ha) do
-            create :product, :module, :with_mirrored_repositories, root_product: sle15,
-              name: 'module_ha', version: '15', base_products: [server_applications]
-          end
-          let!(:sap_module) do
-            create :product, :module, :with_mirrored_repositories, root_product: sle15,
-              name: 'sap_module', version: '15', base_products: [module_ha]
-          end
-          let(:system) { create :system }
-          let(:installed_products) { [sle12sp1] }
-
-          before do
-            system.activations.create(service: sle12sp1.service)
-          end
-
-          it do
-            is_expected.to eq [[
-              sle15,
-              basesystem,
-              server_applications,
-              development_tools,
-              module_ha,
-              sap_module
-            ]]
-          end
-        end
       end
 
       describe 'offline/online migration filtering' do
@@ -458,6 +367,61 @@ describe MigrationEngine do
             let(:target_base_product) { product_a }
 
             it { is_expected.to be_empty }
+          end
+
+          context 'recommended modules are added automatically to the migration target' do
+            let!(:target_product_recommended_module) do
+              recommended_module = create(:product, :module, :with_mirrored_repositories, base_products: [product_c])
+
+              ProductsExtensionsAssociation.find_by(
+                product: product_c,
+                extension: recommended_module,
+                root_product: product_c
+              ).update!(recommended: true)
+
+              recommended_module
+            end
+
+            it { is_expected.to contain_exactly([target_base_product, target_product_recommended_module]) }
+          end
+
+          context "modules with a 'migration_extra' flag are added automatically to the migration target and sorted" do
+            before do
+              # stub method to test that the migration is being sorted
+              original_modules_for_migration = Product.method(:modules_for_migration)
+
+              allow(Product).to receive(:modules_for_migration).with(anything) do |target_base_product_id|
+                original_modules_for_migration.call(target_base_product_id).reverse
+              end
+            end
+
+            let!(:target_product_extra_module) do
+              extra_module = create(:product, :module, :with_mirrored_repositories, base_products: [product_c])
+
+              ProductsExtensionsAssociation.find_by(
+                product: product_c,
+                extension: extra_module,
+                root_product: product_c
+              ).update!(migration_extra: true)
+
+              extra_module
+            end
+            let!(:target_product_extra_module_child) do
+              extra_module_child = create(:product, :module, :with_mirrored_repositories, base_products: [product_c],
+                                    predecessors: [product_c], migration_kind: :offline)
+
+              ProductsExtensionsAssociation.find_by(
+                product: product_c,
+                extension: extra_module_child,
+                root_product: product_c
+              ).update!(migration_extra: true)
+
+              extra_module_child
+            end
+
+            it do
+              is_expected.to contain_exactly([product_c, target_product_extra_module, target_product_extra_module_child])
+            end
           end
         end
       end

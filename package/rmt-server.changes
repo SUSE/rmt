@@ -1,7 +1,34 @@
 -------------------------------------------------------------------
+Wed Nov 21 10:30:44 UTC 2018 - skotov@suse.com
+
+- Modules for migration are being sorted in the correct order
+
+-------------------------------------------------------------------
+Tue Nov 20 11:57:10 UTC 2018 - tmuntaner@suse.com
+
+- Added the ability to localize RMT
+
+-------------------------------------------------------------------
+Fri Nov  9 13:24:52 UTC 2018 - sschricker@suse.de
+
+- Add bash completion for rmt-cli
+
+-------------------------------------------------------------------
+Thu Nov  8 15:37:57 UTC 2018 - tmuntaner@suse.com
+
+- Added ability to enable/disable multiple products at the same time
+
+-------------------------------------------------------------------
 Tue Oct 30 15:35:17 UTC 2018 - skotov@suse.com
 
+- Version 1.0.7
 - Import migration_extra attribute from SCC API
+- Offline migrations will automatically add additional modules
+  to the client systems depending on the base product
+- Dependency gems security updates:
+  - Update loofah to 2.2.3 (CVE-2018-16468)
+  - Update rack to 2.0.6 (CVE-2018-16470)
+  - Update nokogiri to 1.8.5 (CVE-2018-14404)
 
 -------------------------------------------------------------------
 Tue Oct 30 14:18:13 UTC 2018 - tmuntaner@suse.com

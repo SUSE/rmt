@@ -134,7 +134,7 @@ RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Follo
 
 ## API documentation
 
-RMT partially implements the [SUSE Customer Center API](https://github.com/SUSE/connect/blob/master/doc/SCC-API-(Implemented).md). Make sure to checkout the [Differences in RMT, SMT and SCC API](https://github.com/SUSE/connect/blob/master/doc/SCC-API-(Implemented).md#differences-in-rmt-smt-and-scc-api) section to understand which API endpoints are not supported by RMT.
+RMT partially implements the [SUSE Customer Center API](https://scc.suse.com/connect/v4/documentation). You can read the details of each endpoint to find out whether they are supported by RMT.
 
 ## Feedback
 

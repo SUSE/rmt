@@ -1,8 +1,8 @@
 require 'rmt/downloader'
 require 'rmt/rpm'
 require 'time'
-class RMT::Mirror
 
+class RMT::Mirror
   class RMT::Mirror::Exception < RuntimeError
   end
 
@@ -24,7 +24,7 @@ class RMT::Mirror
     @repository_dir = File.join(@mirroring_base_dir, local_path)
     @repository_url = repository_url
 
-    @logger.info "Mirroring repository #{repo_name || repository_url} to #{@repository_dir}"
+    @logger.info _('Mirroring repository %{repo} to %{dir}') % { repo: repo_name || repository_url, dir: @repository_dir }
 
     create_directories
     mirror_license
@@ -45,14 +45,14 @@ class RMT::Mirror
     begin
       FileUtils.mkpath(@repository_dir) unless Dir.exist?(@repository_dir)
     rescue StandardError => e
-      raise RMT::Mirror::Exception.new("Can not create a local repository directory: #{e}")
+      raise RMT::Mirror::Exception.new(_('Can not create a local repository directory: %{error}') % { error: e.message })
     end
 
     begin
       @temp_licenses_dir = Dir.mktmpdir
       @temp_metadata_dir = Dir.mktmpdir
     rescue StandardError => e
-      raise RMT::Mirror::Exception.new("Can not create a temporary directory: #{e}")
+      raise RMT::Mirror::Exception.new(_('Can not create a temporary directory: %{error}') % { error: e.message })
     end
   end
 
@@ -67,7 +67,7 @@ class RMT::Mirror
       @downloader.download('repodata/repomd.xml.key')
       @downloader.download('repodata/repomd.xml.asc')
     rescue RMT::Downloader::Exception
-      @logger.info('Repository metadata signatures are missing')
+      @logger.info(_('Repository metadata signatures are missing'))
     end
 
     primary_files = []
@@ -88,7 +88,7 @@ class RMT::Mirror
 
     [primary_files, deltainfo_files]
   rescue StandardError => e
-    raise RMT::Mirror::Exception.new("Error while mirroring metadata: #{e}")
+    raise RMT::Mirror::Exception.new(_('Error while mirroring metadata: %{error}') % { error: e.message })
   end
 
   def mirror_license
@@ -100,7 +100,7 @@ class RMT::Mirror
       directory_yast = @downloader.download('directory.yast')
     rescue RMT::Downloader::Exception
       FileUtils.remove_entry(@temp_licenses_dir) # the repository would have an empty licenses directory unless removed
-      @logger.info('No product license found')
+      @logger.info(_('No product license found'))
       return
     end
 
@@ -110,7 +110,7 @@ class RMT::Mirror
       @downloader.download(filename)
     end
   rescue StandardError => e
-    raise RMT::Mirror::Exception.new("Error while mirroring license: #{e.message}")
+    raise RMT::Mirror::Exception.new(_('Error while mirroring license: %{error}') % { error: e.message })
   end
 
   def mirror_data(primary_files, deltainfo_files)
@@ -138,7 +138,7 @@ class RMT::Mirror
       @downloader.download_multi(to_download) unless to_download.empty?
     end
   rescue StandardError => e
-    raise RMT::Mirror::Exception.new("Error while mirroring data: #{e}")
+    raise RMT::Mirror::Exception.new(_('Error while mirroring data: %{error}') % { error: e.message })
   end
 
   def replace_directory(source_dir, destination_dir)
@@ -149,7 +149,11 @@ class RMT::Mirror
     FileUtils.mv(source_dir, destination_dir)
     FileUtils.chmod(0o755, destination_dir)
   rescue StandardError => e
-    raise RMT::Mirror::Exception.new("Error while moving directory #{source_dir} to #{destination_dir}: #{e}")
+    raise RMT::Mirror::Exception.new(_('Error while moving directory %{src} to %{dest}: %{error}') % {
+      src: source_dir,
+      dest: destination_dir,
+      error: e.message
+    })
   end
 
   def deduplicate(checksum_type, checksum_value, destination)
@@ -157,7 +161,7 @@ class RMT::Mirror
     @logger.info("→ #{File.basename(destination)}")
     true
   rescue ::RMT::Deduplicator::MismatchException => e
-    @logger.debug("× File does not exist or has wrong filesize, deduplication ignored #{e.message}.")
+    @logger.debug(_('× File does not exist or has wrong filesize, deduplication ignored %{error}.') % { error: e.message })
     false
   end
 

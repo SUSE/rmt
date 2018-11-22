@@ -26,6 +26,7 @@ dist: clean man
 	@cp -r Gemfile $(NAME)-$(VERSION)/
 	@cp -r Gemfile.lock $(NAME)-$(VERSION)/
 	@cp -r lib $(NAME)-$(VERSION)/
+	@cp -r engines $(NAME)-$(VERSION)/
 
 	@mkdir $(NAME)-$(VERSION)/log
 	@cp -r log/.keep $(NAME)-$(VERSION)/log
@@ -35,15 +36,28 @@ dist: clean man
 	@cp -r Rakefile $(NAME)-$(VERSION)/
 	@cp -r README.md $(NAME)-$(VERSION)/
 	@cp -r .bundle $(NAME)-$(VERSION)/
-	@cp -r locale $(NAME)-$(VERSION)/
 	@mkdir $(NAME)-$(VERSION)/vendor
 	@mkdir -p $(NAME)-$(VERSION)/public/repo/
 	@cp -r public/tools $(NAME)-$(VERSION)/public/
+
+	# i18n
+	@cp -r locale $(NAME)-$(VERSION)/
+	@rm -rf $(NAME)-$(VERSION)/locale/.keep
+	@rm -rf $(NAME)-$(VERSION)/locale/*/rmt.edit.po
+	@rm -rf $(NAME)-$(VERSION)/locale/*/rmt.po.time_stamp
 
 	@rm -rf $(NAME)-$(VERSION)/config/rmt.yml
 	@rm -rf $(NAME)-$(VERSION)/config/rmt.local.yml
 	@rm -rf $(NAME)-$(VERSION)/config/secrets.yml.*
 	@rm -rf $(NAME)-$(VERSION)/config/system_uuid
+
+	# don't package test tasks (fails to load because of rspec dependency)
+	@rm -rf $(NAME)-$(VERSION)/lib/tasks/test.rake
+
+	# don't package engine bin directory, specs (no need) and .gitignore (OBS complains)
+	@rm -rf $(NAME)-$(VERSION)/engines/*/bin
+	@rm -rf $(NAME)-$(VERSION)/engines/*/spec
+	@rm -rf $(NAME)-$(VERSION)/engines/*/.gitignore
 
 	@mv $(NAME)-$(VERSION)/.bundle/config_packaging $(NAME)-$(VERSION)/.bundle/config
 	cd $(NAME)-$(VERSION) && bundle package --all

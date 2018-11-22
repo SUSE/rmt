@@ -22,6 +22,7 @@ class MigrationEngine
 
   def offline_migrations(target_base_product)
     migrations = generate(migration_kind: :offline)
+    migrations = add_migration_extras(migrations)
     filter_by_base_product(migrations, target_base_product)
   end
 
@@ -38,7 +39,6 @@ class MigrationEngine
 
     migrations = migration_targets(migration_kind: migration_kind)
     remove_incompatible_migrations(migrations)
-    add_dependencies(migrations)
     # NB: It's possible to migrate to any product that's available on RMT, entitlement checks not needed.
 
     # Offering the most recent products first
@@ -86,13 +86,12 @@ class MigrationEngine
     end
   end
 
-  # SLE 15 needs to have all of its available modules enabled, because there is
-  # no direct mapping from SLE12 modules to SLE15 modules.
-  # This method modifies the given array.
-  def add_dependencies(migrations)
+  # automatically add modules that are flagged as `migration_extra` or `recommended`
+  def add_migration_extras(migrations)
     migrations.map do |migration|
       base = migration.first
-      migration.concat Product.available_or_recommended_modules(base.id) if base.version.split('.').first == '15'
+      migration.concat Product.modules_for_migration(base.id)
+      migration = sort_migration(migration)
       migration
     end
   end

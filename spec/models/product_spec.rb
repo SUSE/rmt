@@ -116,6 +116,29 @@ RSpec.describe Product, type: :model do
     end
   end
 
+  describe '.modules_for_migration' do
+    it 'returns auto-selected and recommended modules for provided root products' do
+      root_product = create :product
+      recommended_module = create(:product, :module)
+      autoselected_module = create(:product, :module)
+
+      ProductsExtensionsAssociation.create(
+        product: root_product,
+        extension: recommended_module,
+        root_product: root_product,
+        recommended: true
+      )
+      ProductsExtensionsAssociation.create(
+        product: root_product,
+        extension: autoselected_module,
+        root_product: root_product,
+        migration_extra: true
+      )
+
+      expect(described_class.modules_for_migration([root_product])).to contain_exactly(recommended_module, autoselected_module)
+    end
+  end
+
   describe '#recommended_for?' do
     subject { extension.recommended_for?(queried_base) }
 

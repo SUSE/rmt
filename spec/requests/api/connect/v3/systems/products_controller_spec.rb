@@ -411,6 +411,68 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
         its(:body) do
           is_expected.to eq(expected_response)
         end
+
+        context 'with recommended module' do
+          subject do
+            post url, headers: headers, params: payload
+            response
+          end
+
+          let!(:recommended_module) do
+            recommended_module = create(:product, :module, :with_mirrored_repositories, base_products: [second_product])
+
+            ProductsExtensionsAssociation.find_by(
+              product: second_product,
+              extension: recommended_module,
+              root_product: second_product
+            ).update!(recommended: true)
+            recommended_module
+          end
+          let!(:expected_response) do
+            case migration_kind
+            when :online
+              [[::V3::UpgradePathItemSerializer.new(second_product)]].to_json
+            when :offline
+              [[::V3::UpgradePathItemSerializer.new(second_product), ::V3::UpgradePathItemSerializer.new(recommended_module)]].to_json
+            end
+          end
+
+          its(:code) { is_expected.to eq('200') }
+          its(:body) do
+            is_expected.to eq(expected_response)
+          end
+        end
+
+        context 'with migration_extra module' do
+          subject do
+            post url, headers: headers, params: payload
+            response
+          end
+
+          let!(:migration_extra_module) do
+            migration_extra_module = create(:product, :module, :with_mirrored_repositories, base_products: [second_product])
+
+            ProductsExtensionsAssociation.find_by(
+              product: second_product,
+              extension: migration_extra_module,
+              root_product: second_product
+            ).update!(migration_extra: true)
+            migration_extra_module
+          end
+          let!(:expected_response) do
+            case migration_kind
+            when :online
+              [[::V3::UpgradePathItemSerializer.new(second_product)]].to_json
+            when :offline
+              [[::V3::UpgradePathItemSerializer.new(second_product), ::V3::UpgradePathItemSerializer.new(migration_extra_module)]].to_json
+            end
+          end
+
+          its(:code) { is_expected.to eq('200') }
+          its(:body) do
+            is_expected.to eq(expected_response)
+          end
+        end
       end
 
       context 'with "-0" version suffix' do

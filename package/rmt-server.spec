@@ -26,7 +26,7 @@
 %define is_sle_12_family 1
 %endif
 Name:           rmt-server
-Version:        1.0.6
+Version:        1.0.7
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -47,6 +47,9 @@ Source11:       rmt-server-migration.service
 Source12:       rmt-server-sync-sles12.timer
 Source13:       rmt-server-mirror-sles12.timer
 Source14:       nginx-https.conf
+Source15:       auth-handler.conf
+Source16:       auth-location.conf
+Source17:       rmt-cli_bash-completion.sh
 Patch0:         use-ruby-2.5-in-rmt-cli.patch
 Patch1:         use-ruby-2.5-in-rails.patch
 Patch2:         use-ruby-2.5-in-rmt-data-import.patch
@@ -85,6 +88,15 @@ SCC organization credentials are required to synchronize SUSE products,
 subscription information, and to mirror SUSE repositories.
 
 RMT supersedes the main functionality of SMT in SLES 15.
+
+%package pubcloud
+Summary:        RMT pubcloud extensions
+Group:          Productivity/Networking/Web/Proxy
+Requires:       rmt-server = %version
+
+%description pubcloud
+This package extends the basic RMT functionality with capabilities
+required for public cloud environments.
 
 %prep
 cp -p %{SOURCE2} .
@@ -145,6 +157,8 @@ mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 # nginx
 install -D -m 644 %{SOURCE4} %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
 install -D -m 644 %{SOURCE14} %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
+install -D -m 644 %{SOURCE15} %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
+install -D -m 644 %{SOURCE16} %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
 
 sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"' \
     -e 's/^BUNDLE_JOBS: .*/BUNDLE_JOBS: "1"/' \
@@ -153,6 +167,9 @@ sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"'
 # supportconfig plugin
 mkdir -p %{buildroot}%{_libexecdir}/supportconfig/plugins
 install -D -m 544 support/rmt %{buildroot}%{_libexecdir}/supportconfig/plugins/rmt
+
+# bash completion
+install -D -m 644 %{SOURCE17} %{buildroot}%{_datadir}/bash-completion/completions/rmt-cli
 
 # cleanup of /usr/bin/env commands
 grep -rl '\/usr\/bin\/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
@@ -184,6 +201,7 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 
 %files
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}
+%exclude %{app_dir}/engines/
 %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
 %attr(-,%{rmt_user},%{rmt_group}) %{conf_dir}
 %attr(-,%{rmt_user},%{rmt_group}) /var/lib/rmt
@@ -211,9 +229,18 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %{_unitdir}/rmt-server-mirror.timer
 %{_unitdir}/rmt-server-sync.service
 %{_unitdir}/rmt-server-sync.timer
+%dir %{_datadir}/bash-completion/
+%dir %{_datadir}/bash-completion/completions/
+%{_datadir}/bash-completion/completions/rmt-cli
 
 %{_libdir}/rmt
 %{_libexecdir}/supportconfig/plugins/rmt
+
+%files pubcloud
+%attr(-,%{rmt_user},%{rmt_group}) %{app_dir}/engines/
+%dir %{_sysconfdir}/nginx/rmt-auth.d/
+%config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
+%config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
 
 %pre
 getent group %{rmt_group} >/dev/null || %{_sbindir}/groupadd -r %{rmt_group}
