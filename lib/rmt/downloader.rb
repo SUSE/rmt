@@ -8,7 +8,6 @@ require 'rmt/fiber_request'
 require 'rmt/deduplicator'
 
 class RMT::Downloader
-
   class Exception < RuntimeError; end
   class NotModifiedException < RuntimeError; end
 
@@ -99,7 +98,7 @@ class RMT::Downloader
     uri.query = @auth_token if (@auth_token && uri.scheme != 'file')
 
     if URI(uri).scheme == 'file' && !File.exist?(uri.path)
-      raise RMT::Downloader::Exception.new("#{remote_file} - File does not exist")
+      raise RMT::Downloader::Exception.new(_('%{file} - File does not exist') % { file: remote_file })
     end
 
     downloaded_file = Tempfile.new('rmt', Dir.tmpdir, mode: File::BINARY, encoding: 'ascii-8bit')
@@ -128,7 +127,7 @@ class RMT::Downloader
 
   def finalize_download(request, local_file, checksum_type = nil, checksum_value = nil)
     if (URI(request.base_url).scheme != 'file' && request.response.code != 200)
-      raise RMT::Downloader::Exception.new("#{request.remote_file} - HTTP request failed with code #{request.response.code}")
+      raise RMT::Downloader::Exception.new(_('%{file} - HTTP request failed with code %{code}') % { file: request.remote_file, code: request.response.code })
     end
 
     RMT::ChecksumVerifier.verify_checksum(checksum_type, checksum_value, request.download_path) if (checksum_type && checksum_value)

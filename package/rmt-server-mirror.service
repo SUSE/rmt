@@ -6,7 +6,7 @@ Requires=rmt-server.service
 [Service]
 Type=simple
 Restart=no
-Environment=LOG_TO_JOURNALD=1
+Environment="LOG_TO_JOURNALD=1" "LANG=en"
 ExecStart=/usr/share/rmt/bin/rmt-cli mirror
 
 [Install]

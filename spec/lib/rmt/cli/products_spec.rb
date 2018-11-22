@@ -26,7 +26,7 @@ RSpec.describe RMT::CLI::Products do
 
         it 'warns about running sync command first' do
           expect { described_class.start(argv) }.to output(
-            "Run \"rmt-cli sync\" to synchronize with your SUSE Customer Center data first.\n"
+            "Run `rmt-cli sync` to synchronize with your SUSE Customer Center data first.\n"
           ).to_stderr
         end
 
@@ -146,7 +146,7 @@ RSpec.describe RMT::CLI::Products do
     let(:products_to_enable) { [product] + extensions }
     let(:argv) { ['enable', target] }
     let(:expected_output) do
-      output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
+      output = "Found product by target #{target}: #{product.friendly_name}.\n"
       output += "Enabling #{product.friendly_name}:\n"
       products_to_enable.each do |p|
         output += "  #{p.friendly_name}:\n"
@@ -161,7 +161,7 @@ RSpec.describe RMT::CLI::Products do
       let(:target) { product.id.to_s }
       let(:product) { create :product, :with_mirrored_repositories }
       let(:expected_output) do
-        output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
+        output = "Found product by target #{target}: #{product.friendly_name}.\n"
         output += "Enabling #{product.friendly_name}:\n"
         output += "  #{product.friendly_name}:\n"
         output += "    All repositories have already been enabled.\n"
@@ -185,7 +185,7 @@ RSpec.describe RMT::CLI::Products do
       let(:expected_output) do
         output = ''
         products_to_enable.each do |product|
-          output += "Found product(s) by target #{product.id}: #{product.friendly_name}.\n"
+          output += "Found product by target #{product.id}: #{product.friendly_name}.\n"
           output += "Enabling #{product.friendly_name}:\n"
           output += "  #{product.friendly_name}:\n"
           product.repositories.where(enabled: true).pluck(:name).sort.each do |repo_name|
@@ -324,7 +324,7 @@ RSpec.describe RMT::CLI::Products do
       let(:target) { 'badproductstring' }
       let(:argv) { ['enable', target] }
       let(:expected_stderr) { "Product(s) #{target} could not be found and were not enabled.\n" }
-      let(:expected_output) { "No product found for target '#{target}'.\n" }
+      let(:expected_output) { "No product found for target \"#{target}\".\n" }
 
       before { allow(described_class).to receive(:exit) }
 
@@ -370,7 +370,7 @@ RSpec.describe RMT::CLI::Products do
     let(:target) { '' }
     let(:argv) { ['disable', target] }
     let(:expected_output) do
-      output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
+      output = "Found product by target #{target}: #{product.friendly_name}.\n"
       output += "Disabling #{product.friendly_name}:\n"
       output += "  #{product.friendly_name}:\n"
       repos.pluck(:name).sort.each { |repo| output += "    Disabled repository #{repo}.\n" } unless repos.empty?
@@ -382,7 +382,7 @@ RSpec.describe RMT::CLI::Products do
       let(:product) { create :product, :with_not_mirrored_repositories }
 
       let(:expected_output) do
-        output = "Found product(s) by target #{target}: #{product.friendly_name}.\n"
+        output = "Found product by target #{target}: #{product.friendly_name}.\n"
         output += "Disabling #{product.friendly_name}:\n"
         output += "  #{product.friendly_name}:\n"
         output += "    All repositories have already been disabled.\n"
@@ -450,7 +450,7 @@ RSpec.describe RMT::CLI::Products do
       end
 
       context 'by wrong product string' do
-        let(:expected_output) { "No product found for target '#{target}'.\n" }
+        let(:expected_output) { "No product found for target \"#{target}\".\n" }
         let(:target) { product.product_string + 'foo' }
 
         it 'leaves the product repositories enabled' do

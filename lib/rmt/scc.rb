@@ -3,7 +3,6 @@ require 'rmt/logger'
 require 'suse/connect/api'
 
 class RMT::SCC
-
   class CredentialsError < RuntimeError; end
   class DataFilesError < RuntimeError; end
 
@@ -17,10 +16,10 @@ class RMT::SCC
 
     cleanup_database
 
-    @logger.info('Downloading data from SCC')
+    @logger.info(_('Downloading data from SCC'))
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
-    @logger.info('Updating products')
+    @logger.info(_('Updating products'))
     data = scc_api_client.list_products
     data.each { |item| create_product(item) if (item[:product_type] == 'base') }
     # with this loop, we create the migration paths after creating all products from sync, thus avoiding fk_constraint errors
@@ -36,22 +35,22 @@ class RMT::SCC
   def export(path)
     credentials_set? || (raise CredentialsError, 'SCC credentials not set.')
 
-    @logger.info("Exporting data from SCC to #{path}")
+    @logger.info _('Exporting data from SCC to %{path}') % { path: path }
 
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
-    @logger.info('Exporting products')
+    @logger.info(_('Exporting products'))
     File.write(File.join(path, 'organizations_products.json'), scc_api_client.list_products.to_json)
     # For SUMA, we also export the unscoped products with the filename it expects.
     File.write(File.join(path, 'organizations_products_unscoped.json'), scc_api_client.list_products_unscoped.to_json)
 
-    @logger.info('Exporting repositories')
+    @logger.info(_('Exporting repositories'))
     File.write(File.join(path, 'organizations_repositories.json'), scc_api_client.list_repositories.to_json)
 
-    @logger.info('Exporting subscriptions')
+    @logger.info(_('Exporting subscriptions'))
     File.write(File.join(path, 'organizations_subscriptions.json'), scc_api_client.list_subscriptions.to_json)
 
-    @logger.info('Exporting orders')
+    @logger.info(_('Exporting orders'))
     File.write(File.join(path, 'organizations_orders.json'), scc_api_client.list_orders.to_json)
   end
 
@@ -59,16 +58,15 @@ class RMT::SCC
     missing_files = %w[products repositories subscriptions]
       .map { |data| "organizations_#{data}.json" }
       .reject { |filename| File.exist?(File.join(path, filename)) }
-    raise DataFilesError, "Missing data files: #{missing_files.join(', ')}" if missing_files.any?
+    raise DataFilesError, _('Missing data files: %{files}') % { files: missing_files.join(', ') } if missing_files.any?
 
     cleanup_database
 
-    @logger.info("Importing SCC data from #{path}")
+    @logger.info _('Importing SCC data from %{path}') % { path: path }
 
-    @logger.info('Updating products')
+    @logger.info _('Updating products')
     data = JSON.parse(File.read(File.join(path, 'organizations_products.json')), symbolize_names: true)
     data.each do |item|
-      @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
       create_product(item)
     end
     data.each { |item| migration_paths(item) }
@@ -87,19 +85,19 @@ class RMT::SCC
   end
 
   def cleanup_database
-    @logger.info('Cleaning up the database')
+    @logger.info _('Cleaning up the database')
     Subscription.delete_all
   end
 
   def update_repositories(repos)
-    @logger.info('Updating repositories')
+    @logger.info _('Updating repositories')
     repos.each do |item|
       update_auth_token(item)
     end
   end
 
   def update_subscriptions(subscriptions)
-    @logger.info('Updating subscriptions')
+    @logger.info _('Updating subscriptions')
     subscriptions.each do |item|
       create_subscription(item)
     end
@@ -110,7 +108,7 @@ class RMT::SCC
   end
 
   def create_product(item, root_product_id = nil, base_product = nil, recommended = false, migration_extra = false)
-    @logger.debug("Adding product #{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}")
+    @logger.debug _('Adding product %{product}') % { product: "#{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}" }
 
     product = get_product(item[:id])
     product.attributes = item.select { |k, _| product.attributes.keys.member?(k.to_s) }
@@ -152,7 +150,7 @@ class RMT::SCC
     begin
       Repository.find_by!(scc_id: item[:id]).update! auth_token: auth_token
     rescue ActiveRecord::RecordNotFound
-      @logger.debug("Repository #{item[:id]} is not available")
+      @logger.debug _('Repository %{repo} is not available') % { repo: item[:id] }
     end
   end
 

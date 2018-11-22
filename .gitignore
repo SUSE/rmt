@@ -35,3 +35,6 @@ config/system_uuid
 
 .env
 .tags*
+
+locale/*/*.po.time_stamp
+locale/*/*.edit.po

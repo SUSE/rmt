@@ -4,14 +4,19 @@ Wed Nov 21 10:30:44 UTC 2018 - skotov@suse.com
 - Modules for migration are being sorted in the correct order
 
 -------------------------------------------------------------------
-Thu Nov  8 15:37:57 UTC 2018 - tmuntaner@suse.com
+Tue Nov 20 11:57:10 UTC 2018 - tmuntaner@suse.com
 
-- Added ability to enable/disable multiple products at the same time
+- Added the ability to localize RMT
 
 -------------------------------------------------------------------
 Fri Nov  9 13:24:52 UTC 2018 - sschricker@suse.de
 
 - Add bash completion for rmt-cli
+
+-------------------------------------------------------------------
+Thu Nov  8 15:37:57 UTC 2018 - tmuntaner@suse.com
+
+- Added ability to enable/disable multiple products at the same time
 
 -------------------------------------------------------------------
 Tue Oct 30 15:35:17 UTC 2018 - skotov@suse.com

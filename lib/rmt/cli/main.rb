@@ -2,22 +2,22 @@ require 'thor'
 
 class RMT::CLI::Main < RMT::CLI::Base
 
-  class_option :debug, desc: 'Enable debug output', type: :boolean, aliases: '-d', required: false
+  class_option :debug, desc: _('Enable debug output'), type: :boolean, aliases: '-d', required: false
 
-  desc 'sync', 'Sync database with SUSE Customer Center'
+  desc 'sync', _('Sync database with SUSE Customer Center')
   def sync
     RMT::Lockfile.lock do
       RMT::SCC.new(options).sync
     end
   end
 
-  desc 'products', 'List and modify products'
+  desc 'products', _('List and modify products')
   subcommand 'products', RMT::CLI::Products
 
-  desc 'repos', 'List and modify repositories'
+  desc 'repos', _('List and modify repositories')
   subcommand 'repos', RMT::CLI::Repos
 
-  desc 'mirror', 'Mirror repositories'
+  desc 'mirror', _('Mirror repositories')
   def mirror
     RMT::Lockfile.lock do
       logger = RMT::Logger.new(STDOUT)
@@ -25,7 +25,7 @@ class RMT::CLI::Main < RMT::CLI::Base
 
       repos = Repository.where(mirroring_enabled: true)
 
-      raise RMT::CLI::Error.new('There are no repositories marked for mirroring.') if repos.empty?
+      raise RMT::CLI::Error.new(_('There are no repositories marked for mirroring.')) if repos.empty?
 
       repos.each do |repo|
         begin
@@ -44,13 +44,13 @@ class RMT::CLI::Main < RMT::CLI::Base
     end
   end
 
-  desc 'import', 'Import commands for Offline Sync'
+  desc 'import', _('Import commands for Offline Sync')
   subcommand 'import', RMT::CLI::Import
 
-  desc 'export', 'Export commands for Offline Sync'
+  desc 'export', _('Export commands for Offline Sync')
   subcommand 'export', RMT::CLI::Export
 
-  desc 'version', 'Show RMT version'
+  desc 'version', _('Show RMT version')
   def version
     puts RMT::VERSION
   end
