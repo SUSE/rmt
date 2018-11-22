@@ -50,6 +50,7 @@ Source14:       nginx-https.conf
 Source15:       auth-handler.conf
 Source16:       auth-location.conf
 Source17:       rmt-cli_bash-completion.sh
+Source18:       rmt-server.reg
 Patch0:         use-ruby-2.5-in-rmt-cli.patch
 Patch1:         use-ruby-2.5-in-rails.patch
 Patch2:         use-ruby-2.5-in-rmt-data-import.patch
@@ -128,6 +129,7 @@ mkdir -p %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-cli %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-data-import %{buildroot}%{_bindir}/rmt-data-import
 install -D -m 644 %{_sourcedir}/rmt-cli.8.gz %{buildroot}%{_mandir}/man8/rmt-cli.8.gz
+install -D -m 644 %{_sourcedir}/rmt-cli.8.gz %{buildroot}%{_mandir}/man8/rmt-cli.8.gz
 
 # systemd
 mkdir -p %{buildroot}%{_unitdir}
@@ -170,6 +172,8 @@ install -D -m 544 support/rmt %{buildroot}%{_libexecdir}/supportconfig/plugins/r
 
 # bash completion
 install -D -m 644 %{SOURCE17} %{buildroot}%{_datadir}/bash-completion/completions/rmt-cli
+
+install -D -m 644 %{SOURCE18} %{buildroot}%{_sysconfdir}/slp.reg.d/rmt-server.reg
 
 # cleanup of /usr/bin/env commands
 grep -rl '\/usr\/bin\/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
