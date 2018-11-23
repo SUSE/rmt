@@ -60,7 +60,6 @@ RSpec.describe RMT::Mirror do
 
       before do
         expect(logger).to receive(:info).with(/Mirroring repository/).once
-        expect(logger).to receive(:info).with('No product license found').once
         expect(logger).to receive(:info).with('Repository metadata signatures are missing').once
         expect(logger).to receive(:info).with(/↓/).at_least(1).times
         rmt_mirror.mirror(mirror_params)
