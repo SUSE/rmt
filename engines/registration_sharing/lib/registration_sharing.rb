@@ -26,7 +26,9 @@ module RegistrationSharing
     end
 
     def config_data_dir
-      Settings[:regsharing][:data_dir] rescue RMT_REGSHARING_DEFAULT_DATA_DIR
+      Settings[:regsharing][:data_dir] || RMT_REGSHARING_DEFAULT_DATA_DIR
+    rescue StandardError
+      RMT_REGSHARING_DEFAULT_DATA_DIR
     end
 
     def config_api_secret

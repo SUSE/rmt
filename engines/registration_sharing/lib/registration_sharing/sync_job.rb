@@ -18,7 +18,6 @@ class RegistrationSharing::SyncJob
 
   def populate_peer_data
     peer_hostnames = RegistrationSharing.config_peers
-
     peer_hostnames.each do |peer_hostname|
       next if @peers[peer_hostname]
 
@@ -70,12 +69,7 @@ class RegistrationSharing::SyncJob
     File.open(filename, 'r') do |f|
       f.flock(File::LOCK_EX)
       data = f.read
-      if (data == previous_data)
-        File.unlink(filename)
-        return true
-      end
+      File.unlink(filename) if (data == previous_data)
     end
-
-    false
   end
 end

@@ -33,4 +33,24 @@ describe RegistrationSharing do
       end
     end
   end
+
+  describe '.config_data_dir' do
+    before { allow(Settings).to receive(:[]).with(:regsharing).and_return(nil) }
+
+    context 'when regsharing section is missing' do
+      it 'returns the default dir' do
+        expect(RegistrationSharing.config_data_dir).to eq(RegistrationSharing::RMT_REGSHARING_DEFAULT_DATA_DIR)
+      end
+    end
+  end
+
+  describe '.config_api_secret' do
+    before { allow(Settings).to receive(:[]).with(:regsharing).and_return(nil) }
+
+    context 'when regsharing section is missing' do
+      it 'returns nil' do
+        expect(RegistrationSharing.config_api_secret).to eq(nil)
+      end
+    end
+  end
 end

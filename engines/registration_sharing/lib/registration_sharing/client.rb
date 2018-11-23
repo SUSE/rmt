@@ -35,14 +35,14 @@ class RegistrationSharing::Client
 
   def make_request(method, params)
     # TODO: CA path
-    # TODO: user-agent
 
     request = Typhoeus::Request.new(
       "https://#{@peer}/api/regsharing",
       method: method,
       headers: {
         'Content-Type' => 'application/json',
-        'Authorization' => "Bearer #{RegistrationSharing.config_api_secret}"
+        'Authorization' => "Bearer #{RegistrationSharing.config_api_secret}",
+        'User-Agent' => "RMT::Regsharing/#{RMT::VERSION}"
       },
       body: JSON.dump(params)
     )
