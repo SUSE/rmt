@@ -35,6 +35,10 @@ module RegistrationSharing
       Settings[:regsharing][:api_secret] rescue nil
     end
 
+    def config_ca_path
+      Settings[:regsharing][:ca_path] rescue nil
+    end
+
     protected
 
     def write_file(peer, system_login)

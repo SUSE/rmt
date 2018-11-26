@@ -53,4 +53,14 @@ describe RegistrationSharing do
       end
     end
   end
+
+  describe '.config_ca_path' do
+    before { allow(Settings).to receive(:[]).with(:regsharing).and_return(nil) }
+
+    context 'when regsharing section is missing' do
+      it 'returns nil' do
+        expect(RegistrationSharing.config_ca_path).to eq(nil)
+      end
+    end
+  end
 end

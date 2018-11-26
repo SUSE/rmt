@@ -1,0 +1,14 @@
+[Unit]
+Description=Share RMT registrations
+After=rmt-server.service
+Requires=rmt-server.service
+
+[Service]
+Type=simple
+Restart=no
+Environment=RAILS_ENV=production
+WorkingDirectory=/usr/share/rmt
+ExecStart=/usr/bin/bundle.ruby2.5 exec rake regsharing:sync
+
+[Install]
+WantedBy=multi-user.target
