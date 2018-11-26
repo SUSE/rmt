@@ -2,10 +2,9 @@ require 'rails_helper'
 require 'registration_sharing/sync_job'
 
 describe RegistrationSharing::SyncJob do
-
   let(:peer) { 'example.org' }
   let(:system_login) { 'SCC_testtesttest' }
-  let(:sync_job) { RegistrationSharing::SyncJob.new }
+  let(:sync_job) { described_class.new }
   let(:data_dir) { Dir.mktmpdir }
   let(:peer_dir) { File.join(data_dir, peer) }
   let(:system_file) { File.join(peer_dir, system_login) }
@@ -16,7 +15,7 @@ describe RegistrationSharing::SyncJob do
     File.open(system_file, 'w') { |file| file.write('test') }
   end
 
-  after { FileUtils.remove_entry_secure(data_dir) if File.exists?(data_dir) }
+  after { FileUtils.remove_entry_secure(data_dir) if File.exist?(data_dir) }
 
   describe '#sync_registrations' do
     let(:client_double) { instance_double(RegistrationSharing::Client) }
@@ -26,7 +25,7 @@ describe RegistrationSharing::SyncJob do
         expect(RegistrationSharing::Client).to receive(:new).with(peer, system_login).and_return(client_double)
         expect(client_double).to receive(:sync_system).and_return(true)
         sync_job.run
-        expect(File.exists?(system_file)).to eq(false)
+        expect(File.exist?(system_file)).to eq(false)
       end
     end
 
@@ -38,7 +37,7 @@ describe RegistrationSharing::SyncJob do
           true
         end
         sync_job.run
-        expect(File.exists?(system_file)).to eq(true)
+        expect(File.exist?(system_file)).to eq(true)
       end
     end
 
@@ -47,7 +46,7 @@ describe RegistrationSharing::SyncJob do
         expect(RegistrationSharing::Client).to receive(:new).with(peer, system_login).and_return(client_double)
         expect(client_double).to receive(:sync_system).and_raise('Request failed')
         sync_job.run
-        expect(File.exists?(system_file)).to eq(true)
+        expect(File.exist?(system_file)).to eq(true)
       end
     end
   end

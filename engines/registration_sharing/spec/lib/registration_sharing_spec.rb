@@ -39,7 +39,7 @@ describe RegistrationSharing do
 
     context 'when regsharing section is missing' do
       it 'returns the default dir' do
-        expect(RegistrationSharing.config_data_dir).to eq(RegistrationSharing::RMT_REGSHARING_DEFAULT_DATA_DIR)
+        expect(described_class.config_data_dir).to eq(RegistrationSharing::RMT_REGSHARING_DEFAULT_DATA_DIR)
       end
     end
   end
@@ -49,7 +49,7 @@ describe RegistrationSharing do
 
     context 'when regsharing section is missing' do
       it 'returns nil' do
-        expect(RegistrationSharing.config_api_secret).to eq(nil)
+        expect(described_class.config_api_secret).to eq(nil)
       end
     end
   end
@@ -59,7 +59,7 @@ describe RegistrationSharing do
 
     context 'when regsharing section is missing' do
       it 'returns nil' do
-        expect(RegistrationSharing.config_ca_path).to eq(nil)
+        expect(described_class.config_ca_path).to eq(nil)
       end
     end
   end

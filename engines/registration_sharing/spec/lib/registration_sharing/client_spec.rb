@@ -37,8 +37,8 @@ describe RegistrationSharing::Client do
 
     context 'when request fails' do
       it 'raises an exception' do
-        stub_request(:post, "https://#{peer}/api/regsharing").
-          with(
+        stub_request(:post, "https://#{peer}/api/regsharing")
+          .with(
             body: JSON.dump(expected_payload),
             headers: expected_headers
           ).to_return(status: 422, body: '', headers: {})
@@ -49,8 +49,8 @@ describe RegistrationSharing::Client do
 
     context 'when request succeeds' do
       it 'returns the response' do
-        stub_request(:post, "https://#{peer}/api/regsharing").
-          with(
+        stub_request(:post, "https://#{peer}/api/regsharing")
+          .with(
             body: JSON.dump(expected_payload),
             headers: expected_headers
           ).to_return(status: 204, body: '', headers: {})
@@ -67,8 +67,8 @@ describe RegistrationSharing::Client do
 
     context 'when request fails' do
       it 'raises an exception' do
-        stub_request(:delete, "https://#{peer}/api/regsharing").
-          with(
+        stub_request(:delete, "https://#{peer}/api/regsharing")
+          .with(
             body: JSON.dump(expected_payload),
             headers: expected_headers
           ).to_return(status: 422, body: '', headers: {})
@@ -79,8 +79,8 @@ describe RegistrationSharing::Client do
 
     context 'when request succeeds' do
       it 'returns the response' do
-        stub_request(:delete, "https://#{peer}/api/regsharing").
-          with(
+        stub_request(:delete, "https://#{peer}/api/regsharing")
+          .with(
             body: JSON.dump(expected_payload),
             headers: expected_headers
           ).to_return(status: 204, body: '', headers: {})
@@ -89,5 +89,4 @@ describe RegistrationSharing::Client do
       end
     end
   end
-
 end
