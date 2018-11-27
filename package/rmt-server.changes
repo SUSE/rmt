@@ -1,13 +1,14 @@
-Thu Nov 22 11:23:18 UTC 2018 - wstephenson@suse.com
-
-- Register to SLP if a server running on this host
-
 -------------------------------------------------------------------
 Thu Nov 22 15:31:29 UTC 2018 - hschmidt@suse.com
 
-- Remmove the "No product license found" message when mirroring.
+- Remove the "No product license found" message when mirroring.
   It's not useful for users, and it was just causing confusion,
   as many people mistook it for an error.
+
+-------------------------------------------------------------------
+Thu Nov 22 11:23:18 UTC 2018 - wstephenson@suse.com
+
+- Register to SLP if a server running on this host (bsc#1113760)
 
 -------------------------------------------------------------------
 Wed Nov 21 10:30:44 UTC 2018 - skotov@suse.com

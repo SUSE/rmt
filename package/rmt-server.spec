@@ -129,7 +129,6 @@ mkdir -p %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-cli %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-data-import %{buildroot}%{_bindir}/rmt-data-import
 install -D -m 644 %{_sourcedir}/rmt-cli.8.gz %{buildroot}%{_mandir}/man8/rmt-cli.8.gz
-install -D -m 644 %{_sourcedir}/rmt-cli.8.gz %{buildroot}%{_mandir}/man8/rmt-cli.8.gz
 
 # systemd
 mkdir -p %{buildroot}%{_unitdir}
