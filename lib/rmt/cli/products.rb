@@ -24,17 +24,34 @@ class RMT::CLI::Products < RMT::CLI::Base
         warn _('No matching products found in the database.')
       end
     else
-      puts format_array(products, {
-        id: _('ID'),
-        name: _('Name'),
-        version: _('Version'),
-        arch: _('Architecture'),
-        product_string: _('Product string'),
-        release_stage: _('Release stage'),
-        'mirror?' => _('Mirror?'),
-        last_mirrored_at: _('Last mirrored')
-      }, options.csv)
+      data = products.map do |product|
+        [
+          product.id,
+          product.name,
+          product.version,
+          product.arch,
+          product.product_string,
+          product.release_stage,
+          product.mirror?,
+          product.last_mirrored_at
+        ]
+      end
+      if options.csv
+        puts array_to_csv(data)
+      else
+        puts array_to_table(data, [
+          _('ID'),
+          _('Name'),
+          _('Version'),
+          _('Architecture'),
+          _('Product string'),
+          _('Release stage'),
+          _('Mirror?'),
+          _('Last mirrored')
+        ])
+      end
     end
+
     unless options.all || options.csv
       puts _('Only enabled products are shown by default. Use the `%{command}` option to see all products.') % {
         command: '--all'
