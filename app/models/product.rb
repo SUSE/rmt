@@ -66,7 +66,18 @@ class Product < ApplicationRecord
   end
 
   def mirror?
-    repositories.where(enabled: true, mirroring_enabled: false).empty?
+
+    enabled_repositories = repositories.where(enabled: true)
+    unless enabled_repositories.empty?
+      return enabled_repositories.where(mirroring_enabled: false).empty?
+    end
+
+    disabled_repositories = repositories.where(enabled: false)
+    unless disabled_repositories.empty?
+      disabled_repositories.where(mirroring_enabled: false).empty?
+    end
+
+    false
   end
 
   def last_mirrored_at

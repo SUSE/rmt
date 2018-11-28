@@ -28,7 +28,7 @@ RSpec.describe Product, type: :model do
     context 'without any repositories' do
       let(:product) { create :product }
 
-      it { is_expected.to be true }
+      it { is_expected.to be false }
     end
 
     context 'with_not_mirrored_repositories' do
