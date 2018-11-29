@@ -1,0 +1,13 @@
+#############################################################################
+#
+# OpenSLP registration file
+#
+# register Repository Mirroring Tool registration service
+#
+#############################################################################
+
+# Register the RMT server, if it's running
+service:registration.suse:rmt:https://$HOSTNAME/connect,en,65535
+tcp-port=443
+type=server
+description=RMT registration URL for clients

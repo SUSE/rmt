@@ -50,6 +50,7 @@ Source14:       nginx-https.conf
 Source15:       auth-handler.conf
 Source16:       auth-location.conf
 Source17:       rmt-cli_bash-completion.sh
+Source18:       rmt-server.reg
 Patch0:         use-ruby-2.5-in-rmt-cli.patch
 Patch1:         use-ruby-2.5-in-rails.patch
 Patch2:         use-ruby-2.5-in-rmt-data-import.patch
@@ -171,6 +172,8 @@ install -D -m 544 support/rmt %{buildroot}%{_libexecdir}/supportconfig/plugins/r
 # bash completion
 install -D -m 644 %{SOURCE17} %{buildroot}%{_datadir}/bash-completion/completions/rmt-cli
 
+install -D -m 644 %{SOURCE18} %{buildroot}%{_sysconfdir}/slp.reg.d/rmt-server.reg
+
 # cleanup of /usr/bin/env commands
 grep -rl '\/usr\/bin\/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
     sed -i -e 's@\/usr\/bin\/env ruby.ruby2\.5@\/usr\/bin\/ruby\.ruby2\.5@g' \
@@ -210,9 +213,11 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %dir %{_sysconfdir}/nginx
 %dir %{_sysconfdir}/nginx/vhosts.d
 %dir /var/lib/rmt
+%dir %{_sysconfdir}/slp.reg.d
 %config(noreplace) %attr(0640, %{rmt_user},root) %{_sysconfdir}/rmt.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
+%config(noreplace) %{_sysconfdir}/slp.reg.d/rmt-server.reg
 %{_mandir}/man8/rmt-cli.8%{?ext_man}
 %{_bindir}/rmt-cli
 %{_bindir}/rmt-data-import
