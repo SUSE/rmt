@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Dec 11 10:42:33 UTC 2018 - skotov@suse.com
+
+- Sync products that do not have base product (bsc#1109307) 
+
+-------------------------------------------------------------------
 Fri Dec 7 15:39:00 UTC 2018 - tmuntaner@suse.com
 
 - Repository table using context relevant values instead of true and

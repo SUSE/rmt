@@ -166,7 +166,10 @@ describe RMT::SCC do
           arch: 'x86_64',
           name: 'Extension without base',
           friendly_name: 'Extension without base',
-          repositories: [ extra_repo ]
+          repositories: [ extra_repo ],
+          extensions: [],
+          online_predecessor_ids: [],
+          offline_predecessor_ids: []
         }
       end
       let(:repositories_with_extra_repos) { all_repositories + [extra_repo] }
@@ -179,8 +182,8 @@ describe RMT::SCC do
         described_class.new.sync
       end
 
-      it "doesn't save extensions without base products" do
-        expect { Product.find(extra_product[:id]) }.to raise_error(ActiveRecord::RecordNotFound)
+      it 'saves extensions without base products' do
+        expect(Product.find(extra_product[:id]).identifier).to eq(extra_product[:identifier])
       end
 
       it "doesn't save repos of extensions without base products" do
