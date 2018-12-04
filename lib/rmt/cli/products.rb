@@ -12,7 +12,6 @@ class RMT::CLI::Products < RMT::CLI::Base
   option :all, aliases: '-a', type: :boolean, desc: _('List all products, including ones which are not marked to be mirrored')
   option :release_stage, aliases: '-r', type: :string, desc: 'beta, released'
   option :csv, type: :boolean, desc: _('Output data in CSV format')
-
   def list
     products = (options.all ? Product.all : Product.mirrored).order(:name, :version, :arch)
     products = products.with_release_stage(options[:release_stage])
@@ -23,18 +22,41 @@ class RMT::CLI::Products < RMT::CLI::Base
       else
         warn _('No matching products found in the database.')
       end
+    elsif options.csv
+      data = products.map do |product|
+        [
+          product.id,
+          product.shortname,
+          product.version,
+          product.arch,
+          product.product_string,
+          product.release_stage,
+          product.mirror?,
+          product.last_mirrored_at
+        ]
+      end
+      puts array_to_csv(data)
     else
-      puts format_array(products, {
-        id: _('ID'),
-        name: _('Name'),
-        version: _('Version'),
-        arch: _('Architecture'),
-        product_string: _('Product string'),
-        release_stage: _('Release stage'),
-        'mirror?' => _('Mirror?'),
-        last_mirrored_at: _('Last mirrored')
-      }, options.csv)
+      data = products.map do |product|
+        [
+          product.id,
+          "#{product.name}\n#{product.product_string}",
+          product.version,
+          product.arch,
+          product.mirror? ? _('Mirrored') : _('Not Mirrored'),
+          product.last_mirrored_at
+        ]
+      end
+      puts array_to_table(data, [
+        _('ID'),
+        _('Product'),
+        _('Version'),
+        _('Arch'),
+        _('Mirror?'),
+        _('Last mirrored')
+      ])
     end
+
     unless options.all || options.csv
       puts _('Only enabled products are shown by default. Use the `%{command}` option to see all products.') % {
         command: '--all'

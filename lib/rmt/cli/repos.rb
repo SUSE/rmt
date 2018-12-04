@@ -37,14 +37,29 @@ class RMT::CLI::Repos < RMT::CLI::Base
         warn _('No repositories enabled.')
       end
     else
-      puts format_array(repositories, {
-        scc_id: _('SCC ID'),
-        name: _('Name'),
-        description: _('Description'),
-        enabled: _('Mandatory?'),
-        mirroring_enabled: _('Mirror?'),
-        last_mirrored_at: _('Last mirrored')
-      }, options.csv)
+      data = repositories.map do |repo|
+        [
+          repo.scc_id,
+          repo.name,
+          repo.description,
+          repo.enabled,
+          repo.mirroring_enabled,
+          repo.last_mirrored_at
+        ]
+      end
+
+      if options.csv
+        puts array_to_csv(data)
+      else
+        puts array_to_table(data, [
+          _('SCC ID'),
+          _('Name'),
+          _('Description'),
+          _('Mandatory?'),
+          _('Mirror?'),
+          _('Last mirrored')
+        ])
+      end
     end
     unless options.all || options.csv
       puts _('Only enabled repositories are shown by default. Use the `%{option}` option to see all repositories.') % { option: '--all' }

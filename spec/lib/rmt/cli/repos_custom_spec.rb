@@ -63,6 +63,28 @@ describe RMT::CLI::ReposCustom do
         end
       end
 
+      context 'products --csv' do
+        let(:custom_repository) { create :repository, :custom, name: 'custom foo' }
+        let(:argv) { [command, '--csv'] }
+        let(:rows) do
+          [[
+            custom_repository.id,
+            custom_repository.name,
+            custom_repository.external_url,
+            custom_repository.enabled,
+            custom_repository.mirroring_enabled,
+            custom_repository.last_mirrored_at
+          ]]
+        end
+        let(:expected_output) do
+          CSV.generate { |csv| rows.each { |row| csv << row } }
+        end
+
+        it 'outputs expected format' do
+          expect { described_class.start(argv) }.to output(expected_output).to_stdout
+        end
+      end
+
       context 'with custom repository' do
         let(:custom_repository) { create :repository, :custom, name: 'custom foo' }
         let(:expected_output) do
