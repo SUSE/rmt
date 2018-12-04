@@ -2,6 +2,9 @@ class RMT::CLI::Repos < RMT::CLI::Base
 
   include ::RMT::CLI::ArrayPrintable
 
+  class RepoNotFoundException < StandardError
+  end
+
   desc 'custom', _('List and modify custom repositories')
   subcommand 'custom', RMT::CLI::ReposCustom
 
@@ -16,13 +19,13 @@ class RMT::CLI::Repos < RMT::CLI::Base
   map ls: :list
 
   desc 'enable ID', _('Enable mirroring of repositories by repository ID')
-  def enable(id)
-    change_mirroring(id, true)
+  def enable(*ids)
+    change_repos(ids, true)
   end
 
   desc 'disable ID', _('Disable mirroring of repositories by repository ID')
-  def disable(id)
-    change_mirroring(id, false)
+  def disable(*ids)
+    change_repos(ids, false)
   end
 
   protected
@@ -66,15 +69,40 @@ class RMT::CLI::Repos < RMT::CLI::Base
     end
   end
 
-  private
+  def change_repos(ids, set_enabled)
+    ids = clean_target_input(ids)
+    raise RMT::CLI::Error.new(_('No repository ids supplied')) if ids.empty?
 
-  def change_mirroring(id, set_enabled)
+    failed_repos = []
+    ids.each do |id|
+      change_repo(id, set_enabled)
+    rescue RepoNotFoundException => e
+      warn e.message
+      failed_repos << id
+    end
+
+    unless failed_repos.empty?
+      message = if set_enabled
+                  n_('Repository %{repos} could not be found and was not enabled.',
+                     'Repositories %{repos} could not be found and were not enabled.',
+                     failed_repos.count) % { repos: failed_repos.join(', ') }
+                else
+                  n_('Repository %{repos} could not be found and was not disabled.',
+                     'Repositories %{repos} could not be found and were not disabled.',
+                     failed_repos.count) % { repos: failed_repos.join(', ') }
+                end
+      raise RMT::CLI::Error.new(message)
+    end
+  end
+
+  def change_repo(id, set_enabled)
     repository = Repository.find_by!(scc_id: id)
     repository.change_mirroring!(set_enabled)
 
-    puts set_enabled ? _('Repository successfully enabled.') : _('Repository successfully disabled.')
+    puts set_enabled ? _('Repository by id %{id} successfully enabled.') % { id: id } : _('Repository by id %{id} successfully disabled.') % { id: id }
   rescue ActiveRecord::RecordNotFound
-    raise RMT::CLI::Error.new(_('Repository not found by id "%{id}".') % { id: id })
+    raise RepoNotFoundException.new(_('Repository not found by id "%{id}".') % { id: id })
   end
+
 
 end
