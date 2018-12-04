@@ -116,7 +116,7 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
 
           it 'outputs custom error message' do
             expect { command }.to output(
-              "Cannot connect to database server. Make sure its credentials are configured in \"/etc/rmt.conf\".\n"
+              "Cannot connect to database server. Ensure its credentials are correctly configured in \"/etc/rmt.conf\" or configure RMT with YaST (`yast2 rmt`).\n"
             ).to_stderr
           end
         end
