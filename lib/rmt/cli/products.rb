@@ -12,7 +12,6 @@ class RMT::CLI::Products < RMT::CLI::Base
   option :all, aliases: '-a', type: :boolean, desc: _('List all products, including ones which are not marked to be mirrored')
   option :release_stage, aliases: '-r', type: :string, desc: 'beta, released'
   option :csv, type: :boolean, desc: _('Output data in CSV format')
-
   def list
     products = (options.all ? Product.all : Product.mirrored).order(:name, :version, :arch)
     products = products.with_release_stage(options[:release_stage])
@@ -23,18 +22,41 @@ class RMT::CLI::Products < RMT::CLI::Base
       else
         warn _('No matching products found in the database.')
       end
+    elsif options.csv
+      data = products.map do |product|
+        [
+          product.id,
+          product.shortname,
+          product.version,
+          product.arch,
+          product.product_string,
+          product.release_stage,
+          product.mirror?,
+          product.last_mirrored_at
+        ]
+      end
+      puts array_to_csv(data)
     else
-      puts format_array(products, {
-        id: _('ID'),
-        name: _('Name'),
-        version: _('Version'),
-        arch: _('Architecture'),
-        product_string: _('Product string'),
-        release_stage: _('Release stage'),
-        'mirror?' => _('Mirror?'),
-        last_mirrored_at: _('Last mirrored')
-      }, options.csv)
+      data = products.map do |product|
+        [
+          product.id,
+          "#{product.name}\n#{product.product_string}",
+          product.version,
+          product.arch,
+          product.mirror? ? _('Mirrored') : _('Not Mirrored'),
+          product.last_mirrored_at
+        ]
+      end
+      puts array_to_table(data, [
+        _('ID'),
+        _('Product'),
+        _('Version'),
+        _('Arch'),
+        _('Mirror?'),
+        _('Last mirrored')
+      ])
     end
+
     unless options.all || options.csv
       puts _('Only enabled products are shown by default. Use the `%{command}` option to see all products.') % {
         command: '--all'
@@ -46,6 +68,8 @@ class RMT::CLI::Products < RMT::CLI::Base
   desc 'enable TARGETS', _('Enable mirroring of product repositories by a list of product IDs or product strings.')
   option :all_modules, type: :boolean, desc: _('Enables all free modules for a product')
   long_desc _(<<-REPOS
+Enable mirroring of product repositories by a list of product IDs or product strings.
+
 Examples:
 
 `rmt-cli products enable SLES/15`
@@ -62,6 +86,20 @@ REPOS
   end
 
   desc 'disable TARGETS', _('Disable mirroring of product repositories by a list of product IDs or product strings.')
+  long_desc _(<<-REPOS
+Disable mirroring of product repositories by a list of product IDs or product strings.
+
+Examples:
+
+`rmt-cli products disable SLES/15`
+
+`rmt-cli products disable 1575`
+
+`rmt-cli products disable SLES/15/x86_64,1743`
+
+`rmt-cli products disable --all-modules SLES/15`
+REPOS
+)
   def disable(*targets)
     change_products(targets, false, false)
   end
@@ -82,9 +120,13 @@ REPOS
 
     unless failed_targets.empty?
       message = if set_enabled
-                  "Product(s) #{failed_targets.join(', ')} could not be found and were not enabled."
+                  n_('Product %{products} could not be found and was not enabled.',
+                     'Products %{products} could not be found and were not enabled.',
+                     failed_targets.count) % { products: failed_targets.join(', ') }
                 else
-                  "Product(s) #{failed_targets.join(', ')} could not be found and were not disabled."
+                  n_('Product %{products} could not be found and was not disabled.',
+                     'Products %{products} could not be found and were not disabled.',
+                     failed_targets.count) % { products: failed_targets.join(', ') }
                 end
       raise RMT::CLI::Error.new(message)
     end

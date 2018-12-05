@@ -30,14 +30,28 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
     raise RMT::CLI::Error.new(_('No custom repositories found.')) if repositories.empty?
 
-    puts format_array(repositories, {
-      id: _('ID'),
-      name: _('Name'),
-      external_url: _('URL'),
-      enabled: _('Mandatory?'),
-      mirroring_enabled: _('Mirror?'),
-      last_mirrored_at: _('Last Mirrored')
-    }, options.csv)
+    data = repositories.map do |repo|
+      [
+        repo.id,
+        repo.name,
+        repo.external_url,
+        repo.enabled,
+        repo.mirroring_enabled,
+        repo.last_mirrored_at
+      ]
+    end
+    if options.csv
+      puts array_to_csv(data)
+    else
+      puts array_to_table(data, [
+        _('ID'),
+        _('Name'),
+        _('URL'),
+        _('Mandatory?'),
+        _('Mirror?'),
+        _('Last Mirrored')
+      ])
+    end
   end
   map ls: :list
 
@@ -68,13 +82,24 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
     products = repository.products
 
     raise RMT::CLI::Error.new(_('No products attached to repository.')) if products.empty?
-
-    puts format_array(products, {
-      id: 'Product ID',
-      name: 'Product Name',
-      version: 'Product Version',
-      arch: 'Product Architecture'
-    }, options.csv)
+    data = products.map do |product|
+      [
+        product.id,
+        product.name,
+        product.version,
+        product.arch
+      ]
+    end
+    if options.csv
+      puts array_to_csv(data)
+    else
+      puts array_to_table(data, [
+        _('Product ID'),
+        _('Product Name'),
+        _('Product Version'),
+        _('Product Architecture')
+      ])
+    end
   end
 
   desc 'attach ID PRODUCT_ID', _('Attach an existing custom repository to a product')

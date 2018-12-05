@@ -45,7 +45,10 @@ class RMT::CLI::Base < Thor
     rescue Mysql2::Error => e
       if e.message =~ /^Access denied/
         raise RMT::CLI::Error.new(
-          _('Cannot connect to database server. Make sure its credentials are configured in "%{path}".') % { path: '/etc/rmt.conf' },
+          _('Cannot connect to database server. Ensure its credentials are correctly configured in "%{path}" or configure RMT with YaST (`%{command}`).') % {
+            path: '/etc/rmt.conf',
+            command: 'yast2 rmt'
+          },
           RMT::CLI::Error::ERROR_DB
         )
       elsif e.message =~ /^Can't connect/
@@ -107,6 +110,17 @@ class RMT::CLI::Base < Thor
         })
       end
     end
+  end
+
+  # Allows to have any type of multi input that you want:
+  #
+  # 1575 (alone)
+  # SLES/15/x86_64,1743 (no space but with comma)
+  # SLES/15/x86_64, 1743 (space with comma)
+  # SLES/15/x86_64 1743 (space but no comma)
+  # "SLES/15/x86_64, 1743, SLED/15" (enclosed in spaces)
+  def clean_target_input(input)
+    input.inject([]) { |targets, object| targets + object.to_s.split(/,|\s/) }.reject(&:empty?)
   end
 
 end
