@@ -112,4 +112,15 @@ class RMT::CLI::Base < Thor
     end
   end
 
+  # Allows to have any type of multi input that you want:
+  #
+  # 1575 (alone)
+  # SLES/15/x86_64,1743 (no space but with comma)
+  # SLES/15/x86_64, 1743 (space with comma)
+  # SLES/15/x86_64 1743 (space but no comma)
+  # "SLES/15/x86_64, 1743, SLED/15" (enclosed in spaces)
+  def clean_target_input(input)
+    input.inject([]) { |targets, object| targets + object.to_s.split(/,|\s/) }.reject(&:empty?)
+  end
+
 end

@@ -10,10 +10,43 @@ RSpec.describe RMT::CLI::Repos do
       repository.reload
     end
 
+    context 'with multiple ids' do
+      let(:repository_2) { create :repository, :with_products }
+      let(:repository_3) { create :repository, :with_products }
+      let(:argv) { ['enable', repository.scc_id.to_s, repository_2.scc_id.to_s, repository_3.scc_id.to_s] }
+      let(:expected_output) do
+        <<-OUTPUT
+Repository by id #{repository.scc_id} successfully enabled.
+Repository by id #{repository_2.scc_id} successfully enabled.
+Repository by id #{repository_3.scc_id} successfully enabled.
+OUTPUT
+      end
+
+      it 'enables repository' do
+        expect { command }.to output(expected_output).to_stdout
+        expect(repository.mirroring_enabled).to be_truthy
+      end
+
+      it 'enables repository_2' do
+        expect { command }.to output(expected_output).to_stdout
+        repository_2.reload
+        expect(repository_2.mirroring_enabled).to be_truthy
+      end
+
+      it 'enables repository_3' do
+        expect { command }.to output(expected_output).to_stdout
+        repository_3.reload
+        expect(repository_3.mirroring_enabled).to be_truthy
+      end
+    end
+
     context 'without parameters' do
       let(:argv) { ['enable'] }
 
-      before { expect { command }.to output(/Usage:/).to_stderr }
+      before do
+        expect(described_class).to receive(:exit)
+        expect { command }.to output(/No repository ids supplied/).to_stderr
+      end
 
       its(:mirroring_enabled) { is_expected.to be(false) }
     end
@@ -23,7 +56,8 @@ RSpec.describe RMT::CLI::Repos do
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output("Repository not found by id \"0\".\n").to_stderr.and output('').to_stdout
+        expect { command }.to output("Repository not found by id \"0\".\nRepository 0 could not be found and was not enabled.\n").to_stderr
+                                  .and output('').to_stdout
       end
 
       its(:mirroring_enabled) { is_expected.to be(false) }
@@ -32,7 +66,7 @@ RSpec.describe RMT::CLI::Repos do
     context 'by repo id' do
       let(:argv) { ['enable', repository.scc_id.to_s] }
 
-      before { expect { command }.to output("Repository successfully enabled.\n").to_stdout }
+      before { expect { command }.to output("Repository by id #{repository.scc_id} successfully enabled.\n").to_stdout }
 
       its(:mirroring_enabled) { is_expected.to be(true) }
     end
@@ -47,20 +81,56 @@ RSpec.describe RMT::CLI::Repos do
       repository.reload
     end
 
+    context 'with multiple ids' do
+      let(:repository_2) { create :repository, :with_products, mirroring_enabled: true  }
+      let(:repository_3) { create :repository, :with_products, mirroring_enabled: true  }
+      let(:argv) { ['disable', repository.scc_id.to_s, repository_2.scc_id.to_s, repository_3.scc_id.to_s] }
+      let(:expected_output) do
+        <<-OUTPUT
+Repository by id #{repository.scc_id} successfully disabled.
+Repository by id #{repository_2.scc_id} successfully disabled.
+Repository by id #{repository_3.scc_id} successfully disabled.
+OUTPUT
+      end
+
+      it 'disables repository' do
+        expect { command }.to output(expected_output).to_stdout
+        expect(repository.mirroring_enabled).to be_falsey
+      end
+
+      it 'disables repository_2' do
+        expect { command }.to output(expected_output).to_stdout
+        repository_2.reload
+        expect(repository_2.mirroring_enabled).to be_falsey
+      end
+
+      it 'disables repository_3' do
+        expect { command }.to output(expected_output).to_stdout
+        repository_3.reload
+        expect(repository_3.mirroring_enabled).to be_falsey
+      end
+    end
+
     context 'without parameters' do
       let(:argv) { ['disable'] }
 
-      before { expect { command }.to output(/Usage:/).to_stderr }
+      before do
+        expect(described_class).to receive(:exit)
+        expect { command }.to output(/No repository ids supplied/).to_stderr
+      end
 
       its(:mirroring_enabled) { is_expected.to be(true) }
     end
 
     context 'repo id does not exist' do
       let(:argv) { ['disable', 0] }
+      let(:error_message) do
+        "Repository not found by id \"0\".\nRepository 0 could not be found and was not disabled.\n"
+      end
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output("Repository not found by id \"0\".\n").to_stderr.and output('').to_stdout
+        expect { command }.to output(error_message).to_stderr.and output('').to_stdout
       end
 
       its(:mirroring_enabled) { is_expected.to be(true) }
@@ -69,7 +139,7 @@ RSpec.describe RMT::CLI::Repos do
     context 'by repo id' do
       let(:argv) { ['disable', repository.scc_id.to_s] }
 
-      before { expect { command }.to output("Repository successfully disabled.\n").to_stdout }
+      before { expect { command }.to output("Repository by id #{repository.scc_id} successfully disabled.\n").to_stdout }
 
       its(:mirroring_enabled) { is_expected.to be(false) }
     end
