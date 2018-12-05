@@ -1,11 +1,11 @@
 -------------------------------------------------------------------
-Mon December 3 17:00:00 UTC 2018 - tmuntaner@suse.com
+Mon Dec 3 17:00:00 UTC 2018 - tmuntaner@suse.com
 
 - Added ability to enable/disable multiple repositories at the
   same time.
 
 -------------------------------------------------------------------
-Mon December 3 16:08:00 UTC 2018 - tmuntaner@suse.com
+Mon Dec 3 16:08:00 UTC 2018 - tmuntaner@suse.com
 
 - The command `rmt-cli products list` is more compact for smaller
   screens.
