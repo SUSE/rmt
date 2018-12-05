@@ -16,7 +16,7 @@ class RMT::CLI::Repos < RMT::CLI::Base
     scope = options[:all] ? :all : :enabled
     list_repositories(scope: scope)
   end
-  map ls: :list
+  map 'ls' => :list
 
   desc 'enable IDS', _('Enable mirroring of repositories by a list of repository IDs')
   long_desc _(<<-REPOS
