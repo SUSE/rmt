@@ -63,7 +63,7 @@ class RMT::CLI::Products < RMT::CLI::Base
       }
     end
   end
-  map ls: :list
+  map 'ls' => :list
 
   desc 'enable TARGETS', _('Enable mirroring of product repositories by a list of product IDs or product strings.')
   option :all_modules, type: :boolean, desc: _('Enables all free modules for a product')

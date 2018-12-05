@@ -53,7 +53,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
       ])
     end
   end
-  map ls: :list
+  map 'ls' => :list
 
   desc 'enable ID', _('Enable mirroring of custom repository by ID')
   def enable(id)
@@ -72,7 +72,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
     puts _('Removed custom repository by id "%{id}".') % { id: id }
   end
-  map rm: :remove
+  map 'rm' => :remove
 
   desc 'products ID', _('Shows products attached to a custom repository')
   option :csv, type: :boolean, desc: _('Output data in CSV format')
