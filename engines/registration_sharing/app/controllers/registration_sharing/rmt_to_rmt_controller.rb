@@ -8,10 +8,7 @@ module RegistrationSharing
     def create
       System.transaction do
         system = RegistrationSharing::System.find_or_create_by(login: params[:login])
-
-        %w[password hostname registered_at created_at last_seen_at].each do |attribute|
-          system.send("#{attribute}=", params[attribute])
-        end
+        system.update(system_params)
 
         system.activations = []
         params[:activations].each do |activation|
@@ -34,6 +31,10 @@ module RegistrationSharing
     end
 
     protected
+
+    def system_params
+      params.permit(:login, :password, :hostname, :registered_at, :created_at, :last_seen_at)
+    end
 
     def authenticate
       authenticate_or_request_with_http_token do |token, _options|
