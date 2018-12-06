@@ -43,7 +43,7 @@ class RMT::CLI::Products < RMT::CLI::Base
           "#{product.name}\n#{product.product_string}",
           product.version,
           product.arch,
-          product.mirror? ? _('Mirrored') : _('Not Mirrored'),
+          product.mirror? ? _('Mirror') : _("Don't Mirror"),
           product.last_mirrored_at
         ]
       end

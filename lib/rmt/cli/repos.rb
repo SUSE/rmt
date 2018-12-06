@@ -59,7 +59,7 @@ REPOS
       else
         warn _('No repositories enabled.')
       end
-    else
+    elsif options.csv
       data = repositories.map do |repo|
         [
           repo.scc_id,
@@ -70,19 +70,24 @@ REPOS
           repo.last_mirrored_at
         ]
       end
-
-      if options.csv
-        puts array_to_csv(data)
-      else
-        puts array_to_table(data, [
-          _('SCC ID'),
-          _('Name'),
-          _('Description'),
-          _('Mandatory?'),
-          _('Mirror?'),
-          _('Last mirrored')
-        ])
+      puts array_to_csv(data)
+    else
+      data = repositories.map do |repo|
+        [
+          repo.scc_id,
+          repo.description,
+          repo.enabled ? _('Mandatory') : _('Not Mandatory'),
+          repo.mirroring_enabled ? _('Mirror') : _("Don't Mirror"),
+          repo.last_mirrored_at
+        ]
       end
+      puts array_to_table(data, [
+        _('SCC ID'),
+        _('Product'),
+        _('Mandatory?'),
+        _('Mirror?'),
+        _('Last mirrored')
+      ])
     end
     unless options.all || options.csv
       puts _('Only enabled repositories are shown by default. Use the `%{option}` option to see all repositories.') % { option: '--all' }
