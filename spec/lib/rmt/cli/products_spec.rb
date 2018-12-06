@@ -323,7 +323,7 @@ RSpec.describe RMT::CLI::Products do
     context 'by wrong product string' do
       let(:target) { 'badproductstring' }
       let(:argv) { ['enable', target] }
-      let(:expected_stderr) { "Product(s) #{target} could not be found and were not enabled.\n" }
+      let(:expected_stderr) { "Product #{target} could not be found and was not enabled.\n" }
       let(:expected_output) { "No product found for target \"#{target}\".\n" }
 
       before { allow(described_class).to receive(:exit) }
@@ -339,7 +339,7 @@ RSpec.describe RMT::CLI::Products do
     context 'by wrong product ID' do
       let(:target) { (product.id + 1).to_s }
       let(:argv) { ['enable', target] }
-      let(:expected_stderr) { "Product(s) #{target} could not be found and were not enabled.\n" }
+      let(:expected_stderr) { "Product #{target} could not be found and was not enabled.\n" }
       let(:expected_output) { "Product by id \"#{target}\" not found.\n" }
 
       before { allow(described_class).to receive(:exit) }
@@ -431,7 +431,7 @@ RSpec.describe RMT::CLI::Products do
     end
 
     context 'failure' do
-      let(:expected_stderr) { "Product(s) #{target} could not be found and were not disabled.\n" }
+      let(:expected_stderr) { "Product #{target} could not be found and was not disabled.\n" }
       let(:expected_output) { "No product found for target '#{target}'.\n" }
       let(:argv) { ['disable', target] }
 
