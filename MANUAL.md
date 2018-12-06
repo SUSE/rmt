@@ -33,11 +33,33 @@ You can install and run this wizard like this:
 
     Use the `--csv` flag to output the list in CSV format.
 
-  * `rmt-cli products enable <id | string>`:
-    Enables mandatory repositories of a single product by its id or identifier string.
+  * `rmt-cli products enable <id | string>...`:
+    Enables mandatory repositories of a single product by a list of product IDs or product strings.
+
+    Use the `--all-modules` flag to enable all free modules for a product.
+
+    Examples:
+
+    `rmt-cli products enable SLES/15`
+
+    `rmt-cli products enable 1575`
+
+    `rmt-cli products enable SLES/15/x86_64,1743`
+
+    `rmt-cli products enable --all-modules SLES/15`
 
   * `rmt-cli products disable <id | string>`:
-    Disables all repositories of a single product by its id or identifier string.
+    Disable mirroring of product repositories by a list of product IDs or product strings.
+
+    Examples:
+
+    `rmt-cli products disable SLES/15`
+
+    `rmt-cli products disable 1575`
+
+    `rmt-cli products disable SLES/15/x86_64,1743`
+
+    `rmt-cli products disable --all-modules SLES/15`
 
   * `rmt-cli repos list [--all] [--csv]`:
     Lists the repositories that are enabled for mirroring.
@@ -46,11 +68,31 @@ You can install and run this wizard like this:
 
     Use the `--csv` flag to output the list in CSV format.
 
-  * `rmt-cli repos enable <id>`:
-    Enables a single repository by its id.
+  * `rmt-cli repos enable <id>...`:
+    Enable mirroring of repositories by a list of repository IDs
 
-  * `rmt-cli repos disable <id>`:
-    Disables a single repository by its id.
+    Examples:
+
+    `rmt-cli repos enable 2526`
+
+    `rmt-cli repos enable 2526 3263`
+
+    `rmt-cli repos enable 2526,3263`
+
+    `rmt-cli repos enable "2526,3263"`
+
+  * `rmt-cli repos disable <id>...`:
+    Disable mirroring of repositories by a list of repository IDs
+
+    Examples:
+
+    `rmt-cli repos disable 2526`
+
+    `rmt-cli repos disable 2526 3263`
+
+    `rmt-cli repos disable 2526,3263`
+
+    `rmt-cli repos disable "2526,3263"`
 
   * `rmt-cli mirror`:
     In its default configuration, RMT mirrors its enabled product repositories automatically once every night.
