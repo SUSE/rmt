@@ -1,7 +1,5 @@
 class RMT::CLI::Repos < RMT::CLI::Base
 
-  include ::RMT::CLI::ArrayPrintable
-
   class RepoNotFoundException < StandardError
   end
 
@@ -52,6 +50,7 @@ REPOS
 
   def list_repositories(scope: :enabled)
     repositories = ((scope == :all) ? Repository.only_scc : Repository.only_scc.only_mirrored).order(:name, :description)
+    decorator = ::RMT::CLI::Decorators::RepositoryDecorator.new(repositories)
 
     if repositories.empty?
       if options.all
@@ -60,34 +59,9 @@ REPOS
         warn _('No repositories enabled.')
       end
     elsif options.csv
-      data = repositories.map do |repo|
-        [
-          repo.scc_id,
-          repo.name,
-          repo.description,
-          repo.enabled,
-          repo.mirroring_enabled,
-          repo.last_mirrored_at
-        ]
-      end
-      puts array_to_csv(data)
+      puts decorator.to_csv
     else
-      data = repositories.map do |repo|
-        [
-          repo.scc_id,
-          repo.description,
-          repo.enabled ? _('Mandatory') : _('Not Mandatory'),
-          repo.mirroring_enabled ? _('Mirror') : _("Don't Mirror"),
-          repo.last_mirrored_at
-        ]
-      end
-      puts array_to_table(data, [
-        _('SCC ID'),
-        _('Product'),
-        _('Mandatory?'),
-        _('Mirror?'),
-        _('Last mirrored')
-      ])
+      puts decorator.to_table
     end
     unless options.all || options.csv
       puts _('Only enabled repositories are shown by default. Use the `%{option}` option to see all repositories.') % { option: '--all' }

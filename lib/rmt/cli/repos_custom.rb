@@ -1,7 +1,5 @@
 class RMT::CLI::ReposCustom < RMT::CLI::Base
 
-  include ::RMT::CLI::ArrayPrintable
-
   desc 'add URL NAME', _('Creates a custom repository.')
   def add(url, name)
     url += '/' unless url.end_with?('/')
@@ -27,30 +25,14 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
 
   def list
     repositories = Repository.only_custom.order(:name)
+    decorator = ::RMT::CLI::Decorators::CustomRepositoryDecorator.new(repositories)
 
     raise RMT::CLI::Error.new(_('No custom repositories found.')) if repositories.empty?
 
-    data = repositories.map do |repo|
-      [
-        repo.id,
-        repo.name,
-        repo.external_url,
-        repo.enabled,
-        repo.mirroring_enabled,
-        repo.last_mirrored_at
-      ]
-    end
     if options.csv
-      puts array_to_csv(data)
+      puts decorator.to_csv
     else
-      puts array_to_table(data, [
-        _('ID'),
-        _('Name'),
-        _('URL'),
-        _('Mandatory?'),
-        _('Mirror?'),
-        _('Last Mirrored')
-      ])
+      puts decorator.to_table
     end
   end
   map 'ls' => :list
@@ -80,25 +62,13 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
   def products(id)
     repository = find_repository!(id)
     products = repository.products
+    decorator = ::RMT::CLI::Decorators::CustomRepositoryProductsDecorator.new(products)
 
     raise RMT::CLI::Error.new(_('No products attached to repository.')) if products.empty?
-    data = products.map do |product|
-      [
-        product.id,
-        product.name,
-        product.version,
-        product.arch
-      ]
-    end
     if options.csv
-      puts array_to_csv(data)
+      puts decorator.to_csv
     else
-      puts array_to_table(data, [
-        _('Product ID'),
-        _('Product Name'),
-        _('Product Version'),
-        _('Product Architecture')
-      ])
+      puts decorator.to_table
     end
   end
 
