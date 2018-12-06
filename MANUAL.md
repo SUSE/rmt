@@ -48,7 +48,7 @@ You can install and run this wizard like this:
 
     `rmt-cli products enable --all-modules SLES/15`
 
-  * `rmt-cli products disable <id | string>`:
+  * `rmt-cli products disable <id | string>`...:
     Disable mirroring of product repositories by a list of product IDs or product strings.
 
     Examples:
