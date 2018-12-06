@@ -1,5 +1,10 @@
 -------------------------------------------------------------------
-Mon Dec 5 14:30:00 UTC 2018 - tmuntaner@suse.com
+Thu Dec 6 15:00:00 UTC 2018 - tmuntaner@suse.com
+
+- Version 1.1.0.rc1
+
+-------------------------------------------------------------------
+Wed Dec 5 14:30:00 UTC 2018 - tmuntaner@suse.com
 
 - Bugfix: Alias commands in short form no longer raise an exception
   * remove -> rm -> r
