@@ -1,5 +1,5 @@
 namespace :regsharing do
-  desc 'Share registrations to the sibling servers'
+  desc 'Share registrations to peer servers'
   task sync: :environment do
     require 'registration_sharing/sync_job'
     RegistrationSharing::SyncJob.new.run
