@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Dec 7 15:39:00 UTC 2018 - tmuntaner@suse.com
+
+- Repository table using context relevant values instead of true and
+  false.
+
+-------------------------------------------------------------------
 Thu Dec 6 15:00:00 UTC 2018 - tmuntaner@suse.com
 
 - Version 1.1.0
