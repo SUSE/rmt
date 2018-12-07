@@ -27,10 +27,6 @@ Examples:
 `rmt-cli repos enable 2526`
 
 `rmt-cli repos enable 2526 3263`
-
-`rmt-cli repos enable 2526,3263`
-
-`rmt-cli repos enable "2526,3263"`
 REPOS
 )
   def enable(*ids)
@@ -46,10 +42,6 @@ Examples:
 `rmt-cli repos disable 2526`
 
 `rmt-cli repos disable 2526 3263`
-
-`rmt-cli repos disable 2526,3263`
-
-`rmt-cli repos disable "2526,3263"`
 REPOS
 )
   def disable(*ids)
