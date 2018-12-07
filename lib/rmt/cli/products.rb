@@ -76,7 +76,7 @@ Examples:
 
 `rmt-cli products enable 1575`
 
-`rmt-cli products enable SLES/15/x86_64,1743`
+`rmt-cli products enable SLES/15/x86_64 1743`
 
 `rmt-cli products enable --all-modules SLES/15`
 REPOS
@@ -95,9 +95,7 @@ Examples:
 
 `rmt-cli products disable 1575`
 
-`rmt-cli products disable SLES/15/x86_64,1743`
-
-`rmt-cli products disable --all-modules SLES/15`
+`rmt-cli products disable SLES/15/x86_64 1743`
 REPOS
 )
   def disable(*targets)
