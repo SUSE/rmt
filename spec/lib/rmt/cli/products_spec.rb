@@ -43,27 +43,25 @@ RSpec.describe RMT::CLI::Products do
 
       let(:expected_output) do
         Terminal::Table.new(
-          headings: ['ID', 'Name', 'Version', 'Architecture', 'Product string', 'Release stage', 'Mirror?', 'Last mirrored'],
+          headings: ['ID', 'Product', 'Version', 'Arch', 'Mirror?', 'Last mirrored'],
           rows: expected_rows
-        ).to_s + "\n"
+        ).to_s + "\n" + "Only enabled products are shown by default. Use the `--all` option to see all products.\n"
       end
 
       context 'with no options' do
         let(:expected_rows) do
           [[
             enabled_product.id,
-            enabled_product.name,
+            "#{enabled_product.name}\n#{enabled_product.product_string}",
             enabled_product.version,
             enabled_product.arch,
-            enabled_product.product_string,
-            enabled_product.release_stage,
-            enabled_product.mirror?,
+            enabled_product.mirror? ? 'Mirror' : "Don't Mirror",
             enabled_product.last_mirrored_at
           ]]
         end
 
         it 'lists only enabled products' do
-          expect { described_class.start(argv) }.to output(/.*#{expected_output}.*/).to_stdout.and output('').to_stderr
+          expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
         end
       end
 
@@ -96,43 +94,51 @@ RSpec.describe RMT::CLI::Products do
 
       context 'with --all option' do
         let(:argv) { ['list', '--all'] }
+        let(:expected_output) do
+          Terminal::Table.new(
+            headings: ['ID', 'Product', 'Version', 'Arch', 'Mirror?', 'Last mirrored'],
+            rows: expected_rows
+          ).to_s + "\n"
+        end
         let(:expected_rows) do
           Product.all.map do |product|
             [
               product.id,
-              product.name,
+              "#{product.name}\n#{product.product_string}",
               product.version,
               product.arch,
-              product.product_string,
-              product.release_stage,
-              product.mirror?,
+              product.mirror? ? 'Mirror' : "Don't Mirror",
               product.last_mirrored_at
             ]
           end
         end
 
         it 'lists all products' do
-          expect { described_class.start(argv) }.to output(/.*#{expected_output}.*/).to_stdout.and output('').to_stderr
+          expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
         end
       end
 
       context 'with --release-stage option' do
-        let(:argv) { ['list', '--all', '--release-stage', 'released'] }
+        let(:expected_output) do
+          Terminal::Table.new(
+            headings: ['ID', 'Product', 'Version', 'Arch', 'Mirror?', 'Last mirrored'],
+            rows: expected_rows
+          ).to_s + "\n"
+        end
+        let(:argv) { ['list', '--all', '--release-stage', 'beta'] }
         let(:expected_rows) do
           [[
             beta_product.id,
-            beta_product.name,
+            "#{beta_product.name}\n#{beta_product.product_string}",
             beta_product.version,
             beta_product.arch,
-            beta_product.product_string,
-            beta_product.release_stage,
-            beta_product.mirror?,
+            beta_product.mirror? ? 'Mirror' : "Don't Mirror",
             beta_product.last_mirrored_at
           ]]
         end
 
         it 'lists only products in that release stage' do
-          expect { described_class.start(argv) }.to output(/.*#{expected_output}.*/).to_stdout.and output('').to_stderr
+          expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
         end
       end
     end
