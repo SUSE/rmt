@@ -3,6 +3,7 @@ unless ENV['NO_COVERAGE']
   SimpleCov.start do
     SimpleCov.command_name ENV['SIMPLECOV_CMD']
     add_filter '/spec/'
+    add_filter '/tasks/'
 
     track_files('app/**/*.rb')
     track_files('lib/**/*.rb')

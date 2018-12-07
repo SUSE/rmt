@@ -116,6 +116,7 @@ mkdir -p %{buildroot}%{data_dir}
 mkdir -p %{buildroot}%{lib_dir}
 mkdir -p %{buildroot}%{app_dir}
 mkdir -p %{buildroot}%{conf_dir}/ssl
+mkdir -p %{buildroot}%{data_dir}/regsharing
 
 mv tmp %{buildroot}%{data_dir}
 mkdir %{buildroot}%{data_dir}/public
@@ -146,11 +147,15 @@ install -m 444 %{SOURCE7} %{buildroot}%{_unitdir}
 install -m 444 %{SOURCE9} %{buildroot}%{_unitdir}
 install -m 444 %{SOURCE10} %{buildroot}%{_unitdir}
 install -m 444 %{SOURCE11} %{buildroot}%{_unitdir}
+install -m 444 engines/registration_sharing/package/rmt-server-regsharing.service %{buildroot}%{_unitdir}
+install -m 444 engines/registration_sharing/package/rmt-server-regsharing.timer %{buildroot}%{_unitdir}
+
 mkdir -p %{buildroot}%{_sbindir}
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-migration
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-mirror
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-sync
+ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-regsharing
 
 mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
@@ -242,8 +247,14 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %files pubcloud
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}/engines/
 %dir %{_sysconfdir}/nginx/rmt-auth.d/
+%dir %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}/regsharing
+%exclude %{app_dir}/engines/registration_sharing/package/
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
+
+%{_sbindir}/rcrmt-server-regsharing
+%{_unitdir}/rmt-server-regsharing.service
+%{_unitdir}/rmt-server-regsharing.timer
 
 %pre
 getent group %{rmt_group} >/dev/null || %{_sbindir}/groupadd -r %{rmt_group}
@@ -278,5 +289,17 @@ fi
 
 %postun
 %service_del_postun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service
+
+%pre pubcloud
+%service_add_pre rmt-server-regsharing.service
+
+%post pubcloud
+%service_add_post rmt-server-regsharing.service
+
+%preun pubcloud
+%service_del_preun rmt-server-regsharing.service
+
+%postun pubcloud
+%service_del_postun rmt-server-regsharing.service
 
 %changelog
