@@ -66,16 +66,14 @@ class Product < ApplicationRecord
   end
 
   def mirror?
+    enabled = repositories.select(&:enabled).to_a
+    disabled = repositories.reject(&:enabled).to_a
 
-    enabled_repositories = repositories.where(enabled: true)
-    unless enabled_repositories.empty?
-      return enabled_repositories.where(mirroring_enabled: false).empty?
-    end
+    # If we have enabled repositories, return true if any are enabled to be mirrored.
+    return enabled.reject(&:mirroring_enabled).empty? unless enabled.empty?
 
-    disabled_repositories = repositories.where(enabled: false)
-    unless disabled_repositories.empty?
-      disabled_repositories.where(mirroring_enabled: false).empty?
-    end
+    # If we only have disabled repositories, return true if any are enabled to be mirrored.
+    return disabled.reject(&:mirroring_enabled).empty? unless disabled.empty?
 
     false
   end

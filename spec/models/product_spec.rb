@@ -31,6 +31,18 @@ RSpec.describe Product, type: :model do
       it { is_expected.to be false }
     end
 
+    context 'with disabled mirrored repositories' do
+      let(:product) { create :product, :with_disabled_mirrored_repositories }
+
+      it { is_expected.to be true }
+    end
+
+    context 'with disabled not mirrored repositories' do
+      let(:product) { create :product, :with_disabled_not_mirrored_repositories }
+
+      it { is_expected.to be false }
+    end
+
     context 'with_not_mirrored_repositories' do
       let(:product) { create :product, :with_not_mirrored_repositories }
 
