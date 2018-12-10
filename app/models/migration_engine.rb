@@ -22,7 +22,15 @@ class MigrationEngine
 
   def offline_migrations(target_base_product)
     migrations = generate(migration_kind: :offline)
-    migrations = add_migration_extras(migrations)
+    # do not add recommended modules when we are migrating to next service pack
+    # i. e. if the migration path to target_base_product is 'online'
+    unless ProductPredecessorAssociation.find_by(
+      product_id: target_base_product.id,
+      predecessor_id: base_product.id,
+      kind: :online
+    )
+      migrations = add_migration_extras(migrations)
+    end
     filter_by_base_product(migrations, target_base_product)
   end
 
@@ -57,7 +65,7 @@ class MigrationEngine
 
   # returns the possible migration targets for @installed_products by grouping successor products
   def migration_targets(migration_kind: :online)
-    migration_path_scope = (migration_kind == :online) ? ProductPredecessorAssociation.online : ProductPredecessorAssociation.offline
+    migration_path_scope = (migration_kind == :online) ? ProductPredecessorAssociation.online : ProductPredecessorAssociation.all
     installed_extensions = @installed_products.reject { |product| product == base_product }
     base_successors = base_product.successors.merge(migration_path_scope).to_a
     base_successors.push(base_product) if migration_kind == :online
