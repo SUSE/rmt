@@ -94,8 +94,8 @@ describe RMT::CLI::ReposCustom do
               custom_repository.id,
               custom_repository.name,
               custom_repository.external_url,
-              custom_repository.enabled,
-              custom_repository.mirroring_enabled,
+              custom_repository.enabled ? 'Mandatory' : 'Not Mandatory',
+              custom_repository.mirroring_enabled ? 'Mirror' : "Don't Mirror",
               custom_repository.last_mirrored_at
             ]]
           ).to_s + "\n"

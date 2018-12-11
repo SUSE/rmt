@@ -1,4 +1,5 @@
 require 'rmt/lockfile'
+require 'rmt/cli/decorators'
 require 'etc'
 
 class RMT::CLI::Base < Thor

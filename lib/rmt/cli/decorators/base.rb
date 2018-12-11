@@ -1,7 +1,17 @@
 require 'csv'
 require 'terminal-table'
 
-module RMT::CLI::ArrayPrintable
+class RMT::CLI::Decorators::Base
+
+  def to_csv
+    raise NotImplementedError
+  end
+
+  def to_table
+    raise NotImplementedError
+  end
+
+  protected
 
   def array_to_csv(array)
     CSV.generate { |csv| array.each { |row| csv << row } }
