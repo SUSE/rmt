@@ -319,7 +319,7 @@ describe MigrationEngine do
       describe 'offline/online migration filtering' do
         # This is the product relationship tree being tested:
         #
-        # A -online-> B -offline-> C
+        # A -online-> B -offline-> C -> online D
         #              \
         #           offline
         #                \
@@ -367,6 +367,31 @@ describe MigrationEngine do
             let(:target_base_product) { product_a }
 
             it { is_expected.to be_empty }
+          end
+
+          context 'should contain online migrations without recommended_module' do
+            let!(:product_d) do
+              create :product, :with_mirrored_repositories, predecessors: [product_c],
+              migration_kind: :online
+            end
+            let!(:target_product_recommended_module) do
+              recommended_module = create(:product, :module, :with_mirrored_repositories, base_products: [product_d])
+
+              ProductsExtensionsAssociation.find_by(
+                product: product_d,
+                extension: recommended_module,
+                root_product: product_d
+              ).update!(recommended: true)
+
+              recommended_module
+            end
+            let(:installed_products) { [product_c] }
+            let(:target_base_product) { product_d }
+            let(:system) { create :system, :with_activated_product, product: product_c }
+
+            it 'contains online migrations' do
+              is_expected.to contain_exactly([product_d])
+            end
           end
 
           context 'recommended modules are added automatically to the migration target' do
