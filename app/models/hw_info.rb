@@ -2,8 +2,6 @@
 class HwInfo < ApplicationRecord
   belongs_to :system, inverse_of: :hw_info, dependent: :destroy
 
-  store :extra_data, accessors: [ :instance_data ], coder: JSON
-
   before_validation :make_invalid_uuid_nil
 
   # We store UUID as a downcased string. Please take that in account in finders

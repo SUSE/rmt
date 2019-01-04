@@ -20,9 +20,13 @@ module InstanceVerification
         before_action :verify_base_product_upgrade, only: %i[upgrade]
 
         def verify_base_product_activation
-          unless InstanceVerification.provider.verify(params[:product], @system.hw_info.instance_data)
-            raise ActionController::TranslatedError.new('Instance verification failed')
-          end
+          is_valid = InstanceVerification.provider.instance_valid?(
+            request,
+            params.permit(:identifier, :version, :arch, :release_type).to_h,
+            @system.hw_info&.instance_data
+          )
+
+          raise ActionController::TranslatedError.new('Instance verification failed') unless is_valid
         end
 
         def verify_base_product_upgrade
