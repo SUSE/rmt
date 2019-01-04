@@ -1,0 +1,12 @@
+[Unit]
+Description=RMT registration sharing timer
+After=mariadb.service
+Requires=mariadb.service
+
+[Timer]
+OnCalendar=*:*:0/30
+AccuracySec=1
+Unit=rmt-server-regsharing.service
+
+[Install]
+WantedBy=multi-user.target

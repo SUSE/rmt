@@ -173,10 +173,9 @@ OUTPUT
         let(:rows) do
           [[
             repository_one.scc_id,
-            repository_one.name,
             repository_one.description,
-            repository_one.enabled,
-            repository_one.mirroring_enabled,
+            repository_one.enabled ? 'Mandatory' : 'Not Mandatory',
+            repository_one.mirroring_enabled ? 'Mirror' : "Don't Mirror",
             repository_one.last_mirrored_at
           ]]
         end
@@ -185,7 +184,7 @@ OUTPUT
           let(:argv) { [command_name] }
           let(:expected_output) do
             Terminal::Table.new(
-              headings: ['SCC ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'],
+              headings: ['SCC ID', 'Product', 'Mandatory?', 'Mirror?', 'Last mirrored'],
               rows: rows
             ).to_s + "\n" + 'Only enabled repositories are shown by default. Use the `--all` option to see all repositories.' + "\n"
           end
@@ -196,6 +195,16 @@ OUTPUT
         end
 
         describe "#{command_name} --csv" do
+          let(:rows) do
+            [[
+              repository_one.scc_id,
+              repository_one.name,
+              repository_one.description,
+              repository_one.enabled,
+              repository_one.mirroring_enabled,
+              repository_one.last_mirrored_at
+            ]]
+          end
           let(:argv) { [command_name, '--csv'] }
           let(:expected_output) do
             CSV.generate { |csv| rows.each { |row| csv << row } }
@@ -216,22 +225,20 @@ OUTPUT
             rows = []
             rows << [
               repository_one.scc_id,
-              repository_one.name,
               repository_one.description,
-              repository_one.enabled,
-              repository_one.mirroring_enabled,
+              repository_one.enabled ? 'Mandatory' : 'Not Mandatory',
+              repository_one.mirroring_enabled ? 'Mirror' : "Don't Mirror",
               repository_one.last_mirrored_at
             ]
             rows << [
               repository_two.scc_id,
-              repository_two.name,
               repository_two.description,
-              repository_two.enabled,
-              repository_two.mirroring_enabled,
+              repository_two.enabled ? 'Mandatory' : 'Not Mandatory',
+              repository_two.mirroring_enabled ? 'Mirror' : "Don't Mirror",
               repository_two.last_mirrored_at
             ]
             Terminal::Table.new(
-              headings: ['SCC ID', 'Name', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored'],
+              headings: ['SCC ID', 'Product', 'Mandatory?', 'Mirror?', 'Last mirrored'],
               rows: rows
             ).to_s + "\n"
           end

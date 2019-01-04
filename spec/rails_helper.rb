@@ -62,3 +62,6 @@ Shoulda::Matchers.configure do |config|
     with.library :rails
   end
 end
+
+# Load rake tasks
+Rails.application.load_tasks

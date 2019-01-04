@@ -1,5 +1,31 @@
 -------------------------------------------------------------------
-Mon Dec 5 14:30:00 UTC 2018 - tmuntaner@suse.com
+Tue Dec 11 17:04:00 UTC 2018 - tmuntaner@suse.com
+
+- Fix listing of enabled for mirroring for non-mirrored products. (bsc#1102193)
+
+-------------------------------------------------------------------
+Tue Dec 11 14:48:27 UTC 2018 - skotov@suse.com
+
+- Include online migration paths into offline migration (bsc#1117106)
+
+-------------------------------------------------------------------
+Tue Dec 11 10:42:33 UTC 2018 - skotov@suse.com
+
+- Sync products that do not have base product (bsc#1109307)
+
+-------------------------------------------------------------------
+Fri Dec 7 15:39:00 UTC 2018 - tmuntaner@suse.com
+
+- Repository table using context relevant values instead of true and
+  false.
+
+-------------------------------------------------------------------
+Thu Dec 6 15:00:00 UTC 2018 - tmuntaner@suse.com
+
+- Version 1.1.0
+
+-------------------------------------------------------------------
+Wed Dec 5 14:30:00 UTC 2018 - tmuntaner@suse.com
 
 - Bugfix: Alias commands in short form no longer raise an exception
   * remove -> rm -> r

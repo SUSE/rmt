@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181030125058) do
+ActiveRecord::Schema.define(version: 20181204130210) do
 
   create_table "activations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "service_id", null: false
@@ -137,10 +137,7 @@ ActiveRecord::Schema.define(version: 20181030125058) do
   create_table "systems", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "login"
     t.string "password"
-    t.string "guid"
-    t.string "secret"
     t.string "hostname"
-    t.string "target"
     t.datetime "registered_at"
     t.datetime "last_seen_at"
     t.datetime "created_at", null: false

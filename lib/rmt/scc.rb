@@ -21,9 +21,8 @@ class RMT::SCC
 
     @logger.info(_('Updating products'))
     data = scc_api_client.list_products
-    data.each { |item| create_product(item) if (item[:product_type] == 'base') }
-    # with this loop, we create the migration paths after creating all products from sync, thus avoiding fk_constraint errors
-    data.each { |item| migration_paths(item) if (item[:product_type] == 'base') }
+    data.each { |item| create_product(item) }
+    data.each { |item| migration_paths(item) }
 
     update_repositories(scc_api_client.list_repositories)
 
@@ -144,14 +143,7 @@ class RMT::SCC
     uri = URI(item[:url])
     auth_token = uri.query
 
-    # Sometimes the extension is available, but a base product is not, e.g.:
-    # sle-hae/11.3/s390x available without base product for s390x
-    # In this case no repository data was added in create_product -- can't update those repos.
-    begin
-      Repository.find_by!(scc_id: item[:id]).update! auth_token: auth_token
-    rescue ActiveRecord::RecordNotFound
-      @logger.debug _('Repository %{repo} is not available') % { repo: item[:id] }
-    end
+    Repository.find_by!(scc_id: item[:id]).update! auth_token: auth_token
   end
 
   def create_subscription(item)
@@ -171,8 +163,8 @@ class RMT::SCC
   def migration_paths(item)
     product = get_product(item[:id])
     ProductPredecessorAssociation.where(product_id: product.id).destroy_all
-    create_migration_path(product, item[:online_predecessor_ids], :online)
-    create_migration_path(product, item[:offline_predecessor_ids], :offline)
+    create_migration_path(product, item[:online_predecessor_ids], :online) unless item[:online_predecessor_ids].empty?
+    create_migration_path(product, item[:offline_predecessor_ids], :offline) unless item[:offline_predecessor_ids].empty?
     item[:extensions].each do |ext_item|
       migration_paths(ext_item)
     end

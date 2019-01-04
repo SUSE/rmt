@@ -1,9 +1,6 @@
 require 'rmt/cli/repos'
 
-
 class RMT::CLI::Products < RMT::CLI::Base
-
-  include ::RMT::CLI::ArrayPrintable
 
   class ProductNotFoundException < StandardError
   end
@@ -15,6 +12,7 @@ class RMT::CLI::Products < RMT::CLI::Base
   def list
     products = (options.all ? Product.all : Product.mirrored).order(:name, :version, :arch)
     products = products.with_release_stage(options[:release_stage])
+    decorator = ::RMT::CLI::Decorators::ProductDecorator.new(products)
 
     if products.empty?
       if options.all
@@ -23,38 +21,9 @@ class RMT::CLI::Products < RMT::CLI::Base
         warn _('No matching products found in the database.')
       end
     elsif options.csv
-      data = products.map do |product|
-        [
-          product.id,
-          product.shortname,
-          product.version,
-          product.arch,
-          product.product_string,
-          product.release_stage,
-          product.mirror?,
-          product.last_mirrored_at
-        ]
-      end
-      puts array_to_csv(data)
+      puts decorator.to_csv
     else
-      data = products.map do |product|
-        [
-          product.id,
-          "#{product.name}\n#{product.product_string}",
-          product.version,
-          product.arch,
-          product.mirror? ? _('Mirrored') : _('Not Mirrored'),
-          product.last_mirrored_at
-        ]
-      end
-      puts array_to_table(data, [
-        _('ID'),
-        _('Product'),
-        _('Version'),
-        _('Arch'),
-        _('Mirror?'),
-        _('Last mirrored')
-      ])
+      puts decorator.to_table
     end
 
     unless options.all || options.csv
@@ -76,7 +45,7 @@ Examples:
 
 `rmt-cli products enable 1575`
 
-`rmt-cli products enable SLES/15/x86_64,1743`
+`rmt-cli products enable SLES/15/x86_64 1743`
 
 `rmt-cli products enable --all-modules SLES/15`
 REPOS
@@ -95,9 +64,7 @@ Examples:
 
 `rmt-cli products disable 1575`
 
-`rmt-cli products disable SLES/15/x86_64,1743`
-
-`rmt-cli products disable --all-modules SLES/15`
+`rmt-cli products disable SLES/15/x86_64 1743`
 REPOS
 )
   def disable(*targets)
