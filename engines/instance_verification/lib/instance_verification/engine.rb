@@ -29,9 +29,19 @@ module InstanceVerification
           raise ActionController::TranslatedError.new('Instance verification failed') unless is_valid
         end
 
+        # Verify that the base product doesn't change in the offline migration
         def verify_base_product_upgrade
-          # TODO: verify that the base product doesn't change in the migration
-          raise ActionController::TranslatedError.new('Migration not allowed on this instance type')
+          upgrade_product = Product.find_by(identifier: params[:identifier], version: Product.clean_up_version(params[:version]), arch: params[:arch])
+
+          raise ActionController::TranslatedError.new('Migration target not found') unless upgrade_product
+          return unless upgrade_product.base?
+
+          activated_bases = @system.products.where(product_type: 'base')
+          activated_bases.each do |base_product|
+            return true if (base_product.identifier == upgrade_product.identifier)
+          end
+
+          raise ActionController::TranslatedError.new('Migration target not allowed on this instance type')
         end
       end
     end

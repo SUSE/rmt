@@ -62,4 +62,70 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       end
     end
   end
+
+  describe '#upgrade' do
+    subject { response }
+
+    let(:system) { FactoryGirl.create(:system) }
+    let(:request) { put url, headers: headers, params: payload }
+    let!(:old_product) { FactoryGirl.create(:product, :with_mirrored_repositories, :activated, system: system) }
+    let(:payload) do
+      {
+        identifier: new_product.identifier,
+        version: new_product.version,
+        arch: new_product.arch
+      }
+    end
+
+    before { request }
+
+    context "when migration target base product doesn't have an activated successor/predecessor" do
+      let(:new_product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
+
+      it 'HTTP response code is 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'renders an error' do
+        data = JSON.parse(response.body)
+        expect(data['error']).to eq('Migration target not allowed on this instance type')
+      end
+    end
+
+    context 'when migration target base product has a different identifier' do
+      let(:new_product) do
+        FactoryGirl.create(
+          :product, :with_mirrored_repositories,
+          identifier: old_product.identifier + '-foo', predecessors: [ old_product ]
+        )
+      end
+
+      it 'HTTP response code is 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'renders an error' do
+        data = JSON.parse(response.body)
+        expect(data['error']).to eq('Migration target not allowed on this instance type')
+      end
+    end
+
+    context 'when migration target base product has the same identifier' do
+      let(:new_product) do
+        FactoryGirl.create(
+          :product, :with_mirrored_repositories, identifier: old_product.identifier,
+          version: '999', predecessors: [ old_product ]
+        )
+      end
+
+      it 'HTTP response code is 201' do
+        expect(response).to have_http_status(201)
+      end
+
+      it "doesn't render an error" do
+        data = JSON.parse(response.body)
+        expect(data).not_to have_key('error')
+      end
+    end
+  end
 end
