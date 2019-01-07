@@ -45,14 +45,14 @@ class RMT::Mirror
     begin
       FileUtils.mkpath(@repository_dir) unless Dir.exist?(@repository_dir)
     rescue StandardError => e
-      raise RMT::Mirror::Exception.new(_('Can not create a local repository directory: %{error}') % { error: e.message })
+      raise RMT::Mirror::Exception.new(_('Could not create local directory %{dir} with error: %{error}') % { dir: @repository_dir, error: e.message })
     end
 
     begin
       @temp_licenses_dir = Dir.mktmpdir
       @temp_metadata_dir = Dir.mktmpdir
     rescue StandardError => e
-      raise RMT::Mirror::Exception.new(_('Can not create a temporary directory: %{error}') % { error: e.message })
+      raise RMT::Mirror::Exception.new(_('Could not create a temporary directory: %{error}') % { error: e.message })
     end
   end
 
