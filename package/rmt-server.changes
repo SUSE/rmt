@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jan  8 14:37:20 UTC 2019 - hschmidt@suse.com
+
+- Fix some migration problems which caused some extensions / modules
+  to be dropped. (bsc#1118584, bsc#1118579)
+
+-------------------------------------------------------------------
 Tue Dec 11 17:04:00 UTC 2018 - tmuntaner@suse.com
 
 - Fix listing of enabled for mirroring for non-mirrored products. (bsc#1102193)
