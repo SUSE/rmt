@@ -375,15 +375,14 @@ describe MigrationEngine do
               migration_kind: :online
             end
             let!(:target_product_recommended_module) do
-              recommended_module = create(:product, :module, :with_mirrored_repositories, base_products: [product_d])
-
-              ProductsExtensionsAssociation.find_by(
-                product: product_d,
-                extension: recommended_module,
-                root_product: product_d
-              ).update!(recommended: true)
-
-              recommended_module
+              create(:product, :module, :with_mirrored_repositories).tap do |mod|
+                ProductsExtensionsAssociation.create(
+                  product: product_d,
+                  extension: mod,
+                  root_product: product_d,
+                  recommended: true
+                )
+              end
             end
             let(:installed_products) { [product_c] }
             let(:target_base_product) { product_d }
@@ -396,15 +395,14 @@ describe MigrationEngine do
 
           context 'recommended modules are added automatically to the migration target' do
             let!(:target_product_recommended_module) do
-              recommended_module = create(:product, :module, :with_mirrored_repositories, base_products: [product_c])
-
-              ProductsExtensionsAssociation.find_by(
-                product: product_c,
-                extension: recommended_module,
-                root_product: product_c
-              ).update!(recommended: true)
-
-              recommended_module
+              create(:product, :module, :with_mirrored_repositories).tap do |mod|
+                ProductsExtensionsAssociation.create(
+                  product: product_c,
+                  extension: mod,
+                  root_product: product_c,
+                  recommended: true
+                )
+              end
             end
 
             it { is_expected.to contain_exactly([target_base_product, target_product_recommended_module]) }
@@ -421,32 +419,27 @@ describe MigrationEngine do
             end
 
             let!(:target_product_extra_module) do
-              extra_module = create(:product, :module, :with_mirrored_repositories, base_products: [product_c])
-
-              ProductsExtensionsAssociation.find_by(
-                product: product_c,
-                extension: extra_module,
-                root_product: product_c
-              ).update!(migration_extra: true)
-
-              extra_module
+              create(:product, :module, :with_mirrored_repositories).tap do |mod|
+                ProductsExtensionsAssociation.create(
+                  product: product_c,
+                  extension: mod,
+                  root_product: product_c,
+                  migration_extra: true
+                )
+              end
             end
             let!(:target_product_extra_module_child) do
-              extra_module_child = create(:product, :module, :with_mirrored_repositories, base_products: [product_c],
-                                    predecessors: [product_c], migration_kind: :offline)
-
-              ProductsExtensionsAssociation.find_by(
-                product: product_c,
-                extension: extra_module_child,
-                root_product: product_c
-              ).update!(migration_extra: true)
-
-              extra_module_child
+              create(:product, :module, :with_mirrored_repositories, predecessors: [product_c], migration_kind: :offline).tap do |mod|
+                ProductsExtensionsAssociation.create(
+                  product: product_c,
+                  extension: mod,
+                  root_product: product_c,
+                  migration_extra: true
+                )
+              end
             end
 
-            it do
-              is_expected.to contain_exactly([product_c, target_product_extra_module, target_product_extra_module_child])
-            end
+            it { is_expected.to contain_exactly([product_c, target_product_extra_module, target_product_extra_module_child]) }
           end
         end
       end
