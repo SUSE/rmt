@@ -412,6 +412,40 @@ describe MigrationEngine do
             it { is_expected.to contain_exactly([target_base_product, recommended_module]) }
           end
 
+          # Example: SLED 12 + SDK system should get upgraded to SLED 15 + Dev Tools Module + recommended modules,
+          # since Dev Tools Module is the successor of SDK
+          context 'when the new base product has recommended modules, and the old base has a module with a successor' do
+            let!(:recommended_module) do
+              create(:product, :module, :with_mirrored_repositories).tap do |mod|
+                ProductsExtensionsAssociation.create(
+                  product: target_base_product,
+                  extension: mod,
+                  root_product: target_base_product,
+                  recommended: true
+                )
+              end
+            end
+
+            let!(:additional_module) do
+              create(:product, :module, :with_mirrored_repositories, base_products: [product_b]).tap do |mod|
+                system.activations << create(:activation, system: system, service: mod.service)
+              end
+            end
+
+            let!(:additional_module_successor) do
+              # Note that the successor of the additional module sits on top of the recommended module (Dev Tools case)
+              create(:product, :module, :with_mirrored_repositories, predecessors: [additional_module], migration_kind: :offline,
+                base_products: [recommended_module], root_product: target_base_product)
+            end
+
+            let(:installed_products) { [product_b, additional_module] }
+
+            it 'does not drop other non-recommended successors' do
+              is_expected.to contain_exactly([target_base_product, recommended_module, additional_module_successor])
+            end
+          end
+
+
           context "modules with a 'migration_extra' flag are added automatically to the migration target and sorted" do
             before do
               # stub method to test that the migration is being sorted
