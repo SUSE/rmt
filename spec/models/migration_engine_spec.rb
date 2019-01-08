@@ -369,7 +369,10 @@ describe MigrationEngine do
             it { is_expected.to be_empty }
           end
 
-          context 'should contain online migrations without recommended_module' do
+          # Example: SLES 15 system gets upgraded to SLES 15 SP1
+          # The SLES 15 SP1 recommended modules should not be offered in this case,
+          # since recommended modules should only get added when doing a major upgrade (12 to 15)
+          context 'when doing an offline upgrade to the next service pack' do
             let!(:product_d) do
               create :product, :with_mirrored_repositories, predecessors: [product_c],
               migration_kind: :online
@@ -388,13 +391,14 @@ describe MigrationEngine do
             let(:target_base_product) { product_d }
             let(:system) { create :system, :with_activated_product, product: product_c }
 
-            it 'contains online migrations' do
+            it 'does not include recommended modules' do
               is_expected.to contain_exactly([product_d])
             end
           end
 
-          context 'recommended modules are added automatically to the migration target' do
-            let!(:target_product_recommended_module) do
+          # Example: SLED 12 system should get upgraded to SLED 15 + recommended modules
+          context 'when the new base product has recommended modules' do
+            let!(:recommended_module) do
               create(:product, :module, :with_mirrored_repositories).tap do |mod|
                 ProductsExtensionsAssociation.create(
                   product: product_c,
@@ -405,7 +409,7 @@ describe MigrationEngine do
               end
             end
 
-            it { is_expected.to contain_exactly([target_base_product, target_product_recommended_module]) }
+            it { is_expected.to contain_exactly([target_base_product, recommended_module]) }
           end
 
           context "modules with a 'migration_extra' flag are added automatically to the migration target and sorted" do
