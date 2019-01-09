@@ -21,17 +21,19 @@ class MigrationEngine
   end
 
   def offline_migrations(target_base_product)
-    migrations = generate(migration_kind: :offline)
-    # do not add recommended modules when we are migrating to next service pack
-    # i. e. if the migration path to target_base_product is 'online'
-    unless ProductPredecessorAssociation.find_by(
-      product_id: target_base_product.id,
-      predecessor_id: base_product.id,
-      kind: :online
-    )
-      migrations = add_migration_extras(migrations)
+    generate(migration_kind: :offline) do |migrations|
+      migrations = filter_by_base_product(migrations, target_base_product)
+      # Do not add extra migration modules when we are migrating to next service pack
+      # i.e. if the migration path to target_base_product is 'online'
+      unless ProductPredecessorAssociation.find_by(
+        product_id: target_base_product.id,
+        predecessor_id: base_product.id,
+        kind: :online
+      )
+        add_migration_extras(migrations)
+      end
+      migrations
     end
-    filter_by_base_product(migrations, target_base_product)
   end
 
   def generate(migration_kind: :online)
@@ -47,6 +49,7 @@ class MigrationEngine
 
     migrations = migration_targets(migration_kind: migration_kind)
     remove_incompatible_migrations(migrations)
+    migrations = yield(migrations) if block_given?
     # NB: It's possible to migrate to any product that's available on RMT, entitlement checks not needed.
 
     # Offering the most recent products first
@@ -99,7 +102,6 @@ class MigrationEngine
     migrations.map do |migration|
       base = migration.first
       migration.concat Product.modules_for_migration(base.id)
-      migration = sort_migration(migration)
       migration
     end
   end

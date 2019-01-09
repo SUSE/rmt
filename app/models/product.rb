@@ -112,7 +112,7 @@ class Product < ApplicationRecord
   end
 
   def self.modules_for_migration(root_product_ids)
-    migration_extra(root_product_ids).or(recommended(root_product_ids)).module.distinct
+    migration_extra(root_product_ids).or(recommended(root_product_ids)).distinct
   end
 
   def self.free_and_recommended_modules(root_product_ids)
