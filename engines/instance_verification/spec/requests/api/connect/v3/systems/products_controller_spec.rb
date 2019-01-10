@@ -45,7 +45,20 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         it 'renders an error' do
           data = JSON.parse(response.body)
-          expect(data['error']).to eq('Instance verification failed')
+          expect(data['error']).to eq('Instance verification failed: Unspecified error')
+        end
+      end
+
+      context 'when verification provider raises an exception' do
+        before do
+          expect(InstanceVerification::Providers::Example).to receive(:instance_valid?)
+            .with(be_a(ActionDispatch::Request), payload, instance_data).and_raise('Custom plugin error')
+          post url, params: payload, headers: headers
+        end
+
+        it 'renders an error with exception details' do
+          data = JSON.parse(response.body)
+          expect(data['error']).to eq('Instance verification failed: Custom plugin error')
         end
       end
 

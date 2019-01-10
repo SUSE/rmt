@@ -8,7 +8,14 @@ module InstanceVerification
   end
 end
 
-Dir.glob(File.join(__dir__, 'instance_verification/providers/*.rb')) do |f|
+module InstanceVerification::Providers
+end
+
+providers = Dir.glob(File.join(__dir__, 'instance_verification/providers/*.rb'))
+
+raise 'Too many instance verification providers found' if providers.size > 1
+
+providers.each do |f|
   require_relative f
   break
 end

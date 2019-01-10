@@ -19,21 +19,35 @@ module InstanceVerification
         before_action :verify_base_product_activation, only: %i[activate]
         before_action :verify_base_product_upgrade, only: %i[upgrade]
 
+        def find_product
+          product = Product.find_by(
+            identifier: params[:identifier],
+            version: Product.clean_up_version(params[:version]),
+            arch: params[:arch]
+          )
+
+          raise ActionController::TranslatedError.new('Migration target not found') unless product
+          product
+        end
+
         def verify_base_product_activation
+          product = find_product
+          return unless product.base?
+
           is_valid = InstanceVerification.provider.instance_valid?(
             request,
             params.permit(:identifier, :version, :arch, :release_type).to_h,
             @system.hw_info&.instance_data
           )
 
-          raise ActionController::TranslatedError.new('Instance verification failed') unless is_valid
+          raise 'Unspecified error' unless is_valid
+        rescue StandardError => e
+          raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
         end
 
         # Verify that the base product doesn't change in the offline migration
         def verify_base_product_upgrade
-          upgrade_product = Product.find_by(identifier: params[:identifier], version: Product.clean_up_version(params[:version]), arch: params[:arch])
-
-          raise ActionController::TranslatedError.new('Migration target not found') unless upgrade_product
+          upgrade_product = find_product
           return unless upgrade_product.base?
 
           activated_bases = @system.products.where(product_type: 'base')
