@@ -34,15 +34,23 @@ module InstanceVerification
           product = find_product
           return unless product.base?
 
-          is_valid = InstanceVerification.provider.instance_valid?(
+          verification_provider = InstanceVerification.provider.new(
+            logger,
             request,
             params.permit(:identifier, :version, :arch, :release_type).to_h,
             @system.hw_info&.instance_data
           )
 
-          raise 'Unspecified error' unless is_valid
-        rescue StandardError => e
+          raise 'Unspecified error' unless verification_provider.instance_valid?
+        rescue InstanceVerification::Exception => e
           raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
+        rescue StandardError => e
+          logger.error('Unexpected instance verification error has occurred:')
+          logger.error(e.message)
+          logger.error("System login: #{@system.login}, IP: #{request.remote_ip}")
+          logger.error('Backtrace:')
+          logger.error(e.backtrace)
+          raise ActionController::TranslatedError.new('Unexpected instance verification error has occurred')
         end
 
         # Verify that the base product doesn't change in the offline migration

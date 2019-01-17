@@ -21,7 +21,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       let(:system) { FactoryGirl.create(:system) }
 
       it 'class instance verification provider' do
-        expect(InstanceVerification::Providers::Example).to receive(:instance_valid?).with(be_a(ActionDispatch::Request), payload, nil).and_call_original
+        expect(InstanceVerification::Providers::Example).to receive(:new)
+          .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, nil).and_call_original
         post url, params: payload, headers: headers
       end
     end
@@ -38,23 +39,45 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
       context 'when verification provider returns false' do
         before do
-          expect(InstanceVerification::Providers::Example).to receive(:instance_valid?)
-            .with(be_a(ActionDispatch::Request), payload, instance_data).and_return(false)
+          expect(InstanceVerification::Providers::Example).to receive(:new)
+            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
+          expect(plugin_double).to receive(:instance_valid?).and_return(false)
           post url, params: payload, headers: headers
         end
+
+        let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
         it 'renders an error' do
           data = JSON.parse(response.body)
-          expect(data['error']).to eq('Instance verification failed: Unspecified error')
+          expect(data['error']).to eq('Unexpected instance verification error has occurred')
         end
       end
 
-      context 'when verification provider raises an exception' do
+      context 'when verification provider raises an unhandled exception' do
         before do
-          expect(InstanceVerification::Providers::Example).to receive(:instance_valid?)
-            .with(be_a(ActionDispatch::Request), payload, instance_data).and_raise('Custom plugin error')
+          expect(InstanceVerification::Providers::Example).to receive(:new)
+            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
+          expect(plugin_double).to receive(:instance_valid?).and_raise('Custom plugin error')
           post url, params: payload, headers: headers
         end
+
+        let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+
+        it 'renders an error with exception details' do
+          data = JSON.parse(response.body)
+          expect(data['error']).to eq('Unexpected instance verification error has occurred')
+        end
+      end
+
+      context 'when verification provider raises an unhandled exception' do
+        before do
+          expect(InstanceVerification::Providers::Example).to receive(:new)
+            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
+          expect(plugin_double).to receive(:instance_valid?).and_raise(InstanceVerification::Exception, 'Custom plugin error')
+          post url, params: payload, headers: headers
+        end
+
+        let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
         it 'renders an error with exception details' do
           data = JSON.parse(response.body)
@@ -64,10 +87,12 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
       context 'when verification provider returns true' do
         before do
-          expect(InstanceVerification::Providers::Example).to receive(:instance_valid?)
-            .with(be_a(ActionDispatch::Request), payload, instance_data).and_return(true)
+          expect(InstanceVerification::Providers::Example).to receive(:new)
+            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_call_original
           post url, params: payload, headers: headers
         end
+
+        let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
         it 'renders service JSON' do
           expect(response.body).to eq(serialized_service_json)
