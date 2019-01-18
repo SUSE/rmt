@@ -6,6 +6,8 @@ class ServicesController < ApplicationController
 
   include ActionController::MimeResponds
 
+  before_action :authenticate_system, only: %w[legacy_service]
+
   ZYPPER_SERVICE_TTL = 86400
 
   def show
@@ -33,6 +35,37 @@ class ServicesController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     untranslated = N_('Requested service not found')
     render(xml: { error: untranslated, localized_error: _(untranslated) }, status: 404) and return
+  end
+
+  def legacy_service
+    @repos = Repository.joins(services: :activations).where('activations.system_id' => @system.id, mirroring_enabled: true)
+
+    builder = Builder::XmlMarkup.new
+    service_xml = builder.repoindex(ttl: ZYPPER_SERVICE_TTL) do
+      @repos.each do |repo|
+        attributes = {
+          url: make_repo_url(request, repo.local_path, make_smt_service_name(request.base_url)),
+          alias: repo.name,
+          name: repo.name,
+          autorefresh: repo.autorefresh,
+          enabled: repo.enabled
+        }
+
+        builder.repo attributes
+      end
+    end
+
+    render xml: service_xml
+  end
+
+  protected
+
+  def make_repo_url(request, repo_local_path, service_name)
+    RMT::Misc.make_repo_url(request.base_url, repo_local_path, service_name)
+  end
+
+  def make_smt_service_name(url)
+    "SMT-#{url}".gsub!(%r{:*/+}, '_').tr('.', '_').gsub(/_$/, '')
   end
 
 end
