@@ -87,8 +87,8 @@ class Product < ApplicationRecord
     [version, version.tr('-', '.').chomp('.0')].uniq
   end
 
-  def friendly_name
-    "#{name} #{version} #{arch}"
+  def safe_friendly_version
+    friendly_version || version
   end
 
   def product_string

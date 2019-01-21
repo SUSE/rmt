@@ -9,7 +9,7 @@ class RMT::CLI::Decorators::CustomRepositoryProductsDecorator < RMT::CLI::Decora
       [
         product.id,
         product.name,
-        product.version,
+        product.safe_friendly_version,
         product.arch
       ]
     end
@@ -21,7 +21,7 @@ class RMT::CLI::Decorators::CustomRepositoryProductsDecorator < RMT::CLI::Decora
       [
         product.id,
         product.name,
-        product.version,
+        product.safe_friendly_version,
         product.arch
       ]
     end
