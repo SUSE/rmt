@@ -38,8 +38,6 @@ class SMTImporter
     read_csv('enabled_custom_repos').each do |row|
       product_id, repo_name, repo_url = row
 
-      # Add trailing slash if not exists to make sure mirroring in rmt works
-      # properly
       repo_url += '/' unless repo_url.ends_with?('/')
 
       product = Product.find_by(id: product_id)
