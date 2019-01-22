@@ -1,12 +1,33 @@
 -------------------------------------------------------------------
+Fri Jan 18 11:38:24 UTC 2019 - skotov@suse.com
+
+- Fix product version display (bsc#1117722)
+
+-------------------------------------------------------------------
+Tue Jan 15 14:32:07 UTC 2019 - hschmidt@suse.com
+
+- Cut version 1.1.1 
+
+-------------------------------------------------------------------
+Tue Jan  8 14:37:20 UTC 2019 - hschmidt@suse.com
+
+- Fix some migration problems which caused some extensions / modules
+  to be dropped. (bsc#1118584, bsc#1118579)
+
+-------------------------------------------------------------------
+Tue Dec 11 17:04:00 UTC 2018 - tmuntaner@suse.com
+
+- Fix listing of enabled for mirroring for non-mirrored products. (bsc#1102193)
+
+-------------------------------------------------------------------
 Tue Dec 11 14:48:27 UTC 2018 - skotov@suse.com
 
- Include online migration paths into offline migration (bsc#1117106)
+- Include online migration paths into offline migration (bsc#1117106)
 
 -------------------------------------------------------------------
 Tue Dec 11 10:42:33 UTC 2018 - skotov@suse.com
 
-- Sync products that do not have base product (bsc#1109307) 
+- Sync products that do not have base product (bsc#1109307)
 
 -------------------------------------------------------------------
 Fri Dec 7 15:39:00 UTC 2018 - tmuntaner@suse.com

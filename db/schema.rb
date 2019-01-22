@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190102125933) do
+ActiveRecord::Schema.define(version: 20190118125927) do
 
   create_table "activations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "service_id", null: false
@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(version: 20190102125933) do
     t.string "eula_url"
     t.boolean "free"
     t.string "cpe"
+    t.string "friendly_version"
   end
 
   create_table "products_extensions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

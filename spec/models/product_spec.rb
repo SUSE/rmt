@@ -28,7 +28,19 @@ RSpec.describe Product, type: :model do
     context 'without any repositories' do
       let(:product) { create :product }
 
+      it { is_expected.to be false }
+    end
+
+    context 'with disabled mirrored repositories' do
+      let(:product) { create :product, :with_disabled_mirrored_repositories }
+
       it { is_expected.to be true }
+    end
+
+    context 'with disabled not mirrored repositories' do
+      let(:product) { create :product, :with_disabled_not_mirrored_repositories }
+
+      it { is_expected.to be false }
     end
 
     context 'with_not_mirrored_repositories' do
@@ -117,11 +129,17 @@ RSpec.describe Product, type: :model do
   end
 
   describe '.modules_for_migration' do
-    it 'returns auto-selected and recommended modules for provided root products' do
-      root_product = create :product
-      recommended_module = create(:product, :module)
-      autoselected_module = create(:product, :module)
+    subject { described_class.modules_for_migration([root_product]) }
 
+    let(:root_product) { create :product }
+    let(:recommended_module) { create(:product, :module) }
+    let(:autoselected_module) { create(:product, :module) }
+    let(:not_autoselected_module) { create :product, :module }
+    let(:recommended_extension) { create(:product, :extension) }
+    let(:autoselected_extension) { create(:product, :extension) }
+    let(:not_autoselected_extension) { create :product, :extension }
+
+    before do
       ProductsExtensionsAssociation.create(
         product: root_product,
         extension: recommended_module,
@@ -134,9 +152,31 @@ RSpec.describe Product, type: :model do
         root_product: root_product,
         migration_extra: true
       )
-
-      expect(described_class.modules_for_migration([root_product])).to contain_exactly(recommended_module, autoselected_module)
+      ProductsExtensionsAssociation.create(
+        product: root_product,
+        extension: recommended_extension,
+        root_product: root_product,
+        recommended: true
+      )
+      ProductsExtensionsAssociation.create(
+        product: root_product,
+        extension: autoselected_extension,
+        root_product: root_product,
+        migration_extra: true
+      )
+      ProductsExtensionsAssociation.create(
+        product: root_product,
+        extension: not_autoselected_module,
+        root_product: root_product
+      )
+      ProductsExtensionsAssociation.create(
+        product: root_product,
+        extension: not_autoselected_extension,
+        root_product: root_product
+      )
     end
+
+    it { is_expected.to contain_exactly(recommended_module, autoselected_module, recommended_extension, autoselected_extension) }
   end
 
   describe '#recommended_for?' do

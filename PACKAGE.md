@@ -7,7 +7,6 @@ Note: Never push changes to the internal build service `ibs://Devel:SCC:RMT`!
 
 * The package is built in OBS at: https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT/rmt-server
 * To update the version of RMT, you will have to change the following files:
-  * `Makefile`
   * `lib/rmt.rb`
   * `package/rmt-server.spec`
 

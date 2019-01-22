@@ -66,7 +66,16 @@ class Product < ApplicationRecord
   end
 
   def mirror?
-    repositories.where(enabled: true, mirroring_enabled: false).empty?
+    enabled = repositories.select(&:enabled).to_a
+    disabled = repositories.reject(&:enabled).to_a
+
+    # If we have enabled repositories, return true if any are enabled to be mirrored.
+    return enabled.reject(&:mirroring_enabled).empty? unless enabled.empty?
+
+    # If we only have disabled repositories, return true if any are enabled to be mirrored.
+    return disabled.reject(&:mirroring_enabled).empty? unless disabled.empty?
+
+    false
   end
 
   def last_mirrored_at
@@ -78,8 +87,8 @@ class Product < ApplicationRecord
     [version, version.tr('-', '.').chomp('.0')].uniq
   end
 
-  def friendly_name
-    "#{name} #{version} #{arch}"
+  def safe_friendly_version
+    friendly_version || version
   end
 
   def product_string
@@ -103,7 +112,7 @@ class Product < ApplicationRecord
   end
 
   def self.modules_for_migration(root_product_ids)
-    migration_extra(root_product_ids).or(recommended(root_product_ids)).module.distinct
+    migration_extra(root_product_ids).or(recommended(root_product_ids)).distinct
   end
 
   def self.free_and_recommended_modules(root_product_ids)
