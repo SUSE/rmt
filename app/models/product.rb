@@ -87,8 +87,8 @@ class Product < ApplicationRecord
     [version, version.tr('-', '.').chomp('.0')].uniq
   end
 
-  def friendly_name
-    "#{name} #{version} #{arch}"
+  def safe_friendly_version
+    friendly_version || version
   end
 
   def product_string
@@ -112,7 +112,7 @@ class Product < ApplicationRecord
   end
 
   def self.modules_for_migration(root_product_ids)
-    migration_extra(root_product_ids).or(recommended(root_product_ids)).module.distinct
+    migration_extra(root_product_ids).or(recommended(root_product_ids)).distinct
   end
 
   def self.free_and_recommended_modules(root_product_ids)
