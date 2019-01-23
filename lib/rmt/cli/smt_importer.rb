@@ -38,6 +38,8 @@ class SMTImporter
     read_csv('enabled_custom_repos').each do |row|
       product_id, repo_name, repo_url = row
 
+      repo_url += '/' unless repo_url.ends_with?('/')
+
       product = Product.find_by(id: product_id)
       repo = Repository.find_or_create_by(external_url: repo_url) do |repository|
         repository.name = repo_name

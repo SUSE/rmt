@@ -63,7 +63,7 @@ describe SMTImporter do
     end
 
     context 'already created repository' do
-      let(:repo) { create :repository, :custom }
+      let(:repo) { create :repository, :custom, external_url: 'https://something.org/repos/sles15/' }
       let(:product_1) { create :product }
       let(:product_2) { create :product }
 
@@ -87,8 +87,8 @@ describe SMTImporter do
     context 'repository not created yet' do
       let(:product) { create :product }
       let(:repo_name) { 'SAMPLE_REPO' }
-      let(:repo_url) { 'https://SAMPLE_REPO_URL/repo/...' }
-      let(:local_path) { '/srv/repos/SAMPLE_REPO_URL' }
+      let(:repo_url) { 'https://SAMPLE_REPO_URL/repo/' }
+      let(:local_path) { '/srv/repos/repo/' }
 
       let(:enabled_custom_repos) { [[product.id, repo_name, repo_url]] }
 
@@ -102,6 +102,21 @@ describe SMTImporter do
         repo = Repository.find_by(external_url: repo_url, local_path: local_path)
         expect(repo).not_to be_nil
         expect(repo.services.find_by(id: product.service)).not_to be_nil
+      end
+
+      context 'without trailing slash' do
+        let(:repo_url) { 'https://SAMPLE_REPO_URL/repo' }
+
+        it 'adds a trailing slash' do
+          expect(Repository).to receive(:make_local_path).with(repo_url + '/').and_return local_path
+
+          expect { importer.import_custom_repositories }.to output(<<-OUTPUT.strip_heredoc).to_stdout
+            Added association between #{repo_name} and product #{product.id}
+          OUTPUT
+          repo = Repository.find_by(external_url: repo_url + '/', local_path: local_path)
+          expect(repo).not_to be_nil
+          expect(repo.services.find_by(id: product.service)).not_to be_nil
+        end
       end
     end
 
