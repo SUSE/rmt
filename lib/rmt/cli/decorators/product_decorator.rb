@@ -9,7 +9,7 @@ class RMT::CLI::Decorators::ProductDecorator < RMT::CLI::Decorators::Base
       [
         product.id,
         product.shortname,
-        product.version,
+        product.safe_friendly_version,
         product.arch,
         product.product_string,
         product.release_stage,
@@ -25,7 +25,7 @@ class RMT::CLI::Decorators::ProductDecorator < RMT::CLI::Decorators::Base
       [
         product.id,
         "#{product.name}\n#{product.product_string}",
-        product.version,
+        product.safe_friendly_version,
         product.arch,
         product.mirror? ? _('Mirror') : _("Don't Mirror"),
         product.last_mirrored_at
