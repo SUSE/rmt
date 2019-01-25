@@ -5,7 +5,8 @@ class V3::ServiceSerializer < ApplicationSerializer
   has_one :product, serializer: V3::ProductSerializer
 
   def url
-    # credentials parameter is required by Yast, it dies without it
+    # credentials parameter is required by zypper and Yast
+    # it specifies which file to use for storing credentials on the client
     service_url(object, host: base_url, credentials: object.name)
   end
 
