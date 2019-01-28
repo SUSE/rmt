@@ -5,7 +5,6 @@ module ZypperAuth
 
     config.after_initialize do
       ::V3::ServiceSerializer.class_eval do
-
         alias_method :original_url, :url
         def url
           original_url = original_url()
@@ -32,7 +31,7 @@ module ZypperAuth
             status: status,
             susecloud_plugin: instance_data.match(%r{<repoformat>plugin:susecloud</repoformat>})
           )
-          end
+        end
       end
 
       ServicesController.class_eval do
@@ -43,10 +42,9 @@ module ZypperAuth
           return original_url unless request.headers['X-Instance-Data']
 
           url = URI(original_url)
-          return "plugin:/susecloud?credentials=#{service_name}&path=" + url.path
+          "plugin:/susecloud?credentials=#{service_name}&path=" + url.path
         end
       end
-
     end
   end
 end
