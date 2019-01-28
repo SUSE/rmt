@@ -20,7 +20,13 @@ describe RegistrationSharing::Client do
 
   describe '#peer_register_system' do
     let(:client) { described_class.new(peer, system.login) }
-    let(:system) { FactoryGirl.create(:registration_sharing_system, :with_activated_product) }
+    let(:system) do
+      FactoryGirl.create(
+        :registration_sharing_system, :with_activated_product,
+        :with_hw_info, instance_data: instance_data
+      )
+    end
+    let(:instance_data) { '<document>test</document>' }
     let(:expected_payload) do
       {
         'login' => system.login,
@@ -31,7 +37,8 @@ describe RegistrationSharing::Client do
         'last_seen_at' => nil,
         'activations' => [
           { 'product_id' => system.products.first.id, 'created_at' => system.activations.first.created_at }
-        ]
+        ],
+        'instance_data' => instance_data
       }
     end
 

@@ -11,6 +11,7 @@ module RegistrationSharing
     let(:product) { FactoryGirl.create(:product) }
     let(:api_secret) { 's3cr3tt0k3n' }
     let(:request_token) { api_secret }
+    let(:instance_data) { '<document>test</document>' }
 
     before do
       expect(RegistrationSharing).not_to receive(:save_for_sharing)
@@ -32,7 +33,8 @@ module RegistrationSharing
                 product_id: product.id,
                 created_at: created_at
               }
-            ]
+            ],
+            instance_data: instance_data
           },
           headers: { 'Authorization' => "Bearer #{request_token}" }
         )
@@ -59,6 +61,9 @@ module RegistrationSharing
           its(:created_at) { is_expected.to eq(created_at) }
           its(:registered_at) { is_expected.to eq(registered_at) }
           its(:last_seen_at) { is_expected.to eq(last_seen_at) }
+          it 'saves instance data' do
+            expect(system.hw_info.instance_data).to eq(instance_data)
+          end
         end
 
         context 'activation' do

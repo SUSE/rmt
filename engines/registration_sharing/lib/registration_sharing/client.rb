@@ -26,6 +26,8 @@ class RegistrationSharing::Client
       { product_id: a.product.id, created_at: a.created_at }
     end
 
+    params[:instance_data] = system.hw_info&.instance_data
+
     make_request(:post, params)
   end
 

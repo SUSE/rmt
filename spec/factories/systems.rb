@@ -5,6 +5,7 @@ FactoryGirl.define do
 
     transient do
       virtual false
+      instance_data nil
     end
 
     trait :with_activated_base_product do
@@ -25,7 +26,7 @@ FactoryGirl.define do
 
     trait :with_hw_info do
       after :build do |system, evaluator|
-        system.hw_info = FactoryGirl.build(:hw_info, virtual: evaluator.virtual)
+        system.hw_info = FactoryGirl.build(:hw_info, virtual: evaluator.virtual, instance_data: evaluator.instance_data)
       end
     end
   end
