@@ -1,0 +1,2 @@
+# InstanceVerification
+This plugin implements a framework for additional checks during product activation. The checks themselves are provider-specific, see `lib/instance_verification/providers/example.rb` for an example implementation.

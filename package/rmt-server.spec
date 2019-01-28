@@ -302,4 +302,7 @@ fi
 %postun pubcloud
 %service_del_postun rmt-server-regsharing.service
 
+%posttrans pubcloud
+/usr/bin/systemctl try-restart rmt-server.service
+
 %changelog

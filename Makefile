@@ -59,6 +59,9 @@ dist: clean man
 	@rm -rf $(NAME)-$(VERSION)/engines/*/spec
 	@rm -rf $(NAME)-$(VERSION)/engines/*/.gitignore
 
+	# don't package example instance verification provider
+	@rm -rf $(NAME)-$(VERSION)/engines/instance_verification/lib/instance_verification/providers/example.rb
+
 	@mv $(NAME)-$(VERSION)/.bundle/config_packaging $(NAME)-$(VERSION)/.bundle/config
 	cd $(NAME)-$(VERSION) && bundle package --all
 	rm -rf $(NAME)-$(VERSION)/vendor/bundle/

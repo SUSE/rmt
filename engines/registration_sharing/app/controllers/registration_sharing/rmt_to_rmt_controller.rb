@@ -21,6 +21,10 @@ module RegistrationSharing
           )
         end
 
+        system.hw_info ||= HwInfo.create
+        system.hw_info.instance_data = params[:instance_data]
+        system.hw_info.save!
+
         system.save!
       end
     end

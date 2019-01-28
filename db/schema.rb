@@ -39,6 +39,7 @@ ActiveRecord::Schema.define(version: 20190118125927) do
     t.string "uuid"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "instance_data", comment: "Additional client information, e.g. instance identity document"
     t.index ["hypervisor"], name: "index_hw_infos_on_hypervisor"
     t.index ["system_id"], name: "index_hw_infos_on_system_id", unique: true
   end
