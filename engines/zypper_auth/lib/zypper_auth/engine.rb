@@ -45,6 +45,36 @@ module ZypperAuth
           "plugin:/susecloud?credentials=#{service_name}&path=" + url.path
         end
       end
+
+      StrictAuthentication::AuthenticationController.class_eval do
+        alias_method :original_path_allowed?, :path_allowed?
+
+        def path_allowed?(path)
+          return false unless original_path_allowed?(path)
+
+          instance_data = request.headers['X-Instance-Data']
+          return true unless instance_data
+
+          base_product = @system.products.find_by(product_type: 'base')
+          return false unless base_product
+
+          product_hash = base_product.attributes.symbolize_keys
+          product_attributes = %i[identifier version arch release_type]
+
+          cache_key = ([@system.login] + product_attributes.map { |k| product_hash[k] }).join('-')
+
+          verification_provider = InstanceVerification.provider.new(
+            logger,
+            request,
+            product_hash.slice(product_attributes),
+            instance_data
+          )
+
+          Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+            verification_provider.instance_valid?
+          end
+        end
+      end
     end
   end
 end
