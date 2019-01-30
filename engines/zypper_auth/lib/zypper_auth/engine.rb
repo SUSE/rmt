@@ -1,4 +1,42 @@
 module ZypperAuth
+  class << self
+    def verify_instance(request, logger, system)
+      instance_data = request.headers['X-Instance-Data']
+      return true unless instance_data
+
+      base_product = system.products.find_by(product_type: 'base')
+      return false unless base_product
+
+      cache_key = [request.remote_ip, system.login, base_product.id].join('-')
+      cached_result = Rails.cache.fetch(cache_key)
+      return cached_result unless cached_result.nil?
+
+      verification_provider = InstanceVerification.provider.new(
+        logger,
+        request,
+        base_product.attributes.symbolize_keys.slice(:identifier, :version, :arch, :release_type),
+        instance_data
+      )
+
+      is_valid = verification_provider.instance_valid?
+      Rails.cache.write(cache_key, is_valid, expires_in: 1.hour)
+      is_valid
+    rescue InstanceVerification::Exception => e
+      logger.info('Access to the repos denied:')
+      logger.info(e.message)
+      logger.info("System login: #{system.login}, IP: #{request.remote_ip}")
+      Rails.cache.write(cache_key, false, expires_in: 1.hour)
+      false
+    rescue StandardError => e
+      logger.error('Unexpected instance verification error has occurred:')
+      logger.error(e.message)
+      logger.error("System login: #{system.login}, IP: #{request.remote_ip}")
+      logger.error('Backtrace:')
+      logger.error(e.backtrace)
+      false
+    end
+  end
+
   class Engine < ::Rails::Engine
     isolate_namespace ZypperAuth
     config.generators.api_only = true
@@ -44,6 +82,13 @@ module ZypperAuth
           url = URI(original_url)
           "plugin:/susecloud?credentials=#{service_name}&path=" + url.path
         end
+
+        before_action :verify_instance
+        def verify_instance
+          unless ZypperAuth.verify_instance(request, logger, @system)
+            render(xml: { error: 'Instance verification failed' }, status: 403)
+          end
+        end
       end
 
       StrictAuthentication::AuthenticationController.class_eval do
@@ -51,28 +96,7 @@ module ZypperAuth
 
         def path_allowed?(path)
           return false unless original_path_allowed?(path)
-
-          instance_data = request.headers['X-Instance-Data']
-          return true unless instance_data
-
-          base_product = @system.products.find_by(product_type: 'base')
-          return false unless base_product
-
-          product_hash = base_product.attributes.symbolize_keys
-          product_attributes = %i[identifier version arch release_type]
-
-          cache_key = ([@system.login] + product_attributes.map { |k| product_hash[k] }).join('-')
-
-          verification_provider = InstanceVerification.provider.new(
-            logger,
-            request,
-            product_hash.slice(product_attributes),
-            instance_data
-          )
-
-          Rails.cache.fetch(cache_key, expires_in: 1.hour) do
-            verification_provider.instance_valid?
-          end
+          ZypperAuth.verify_instance(request, logger, @system)
         end
       end
     end
