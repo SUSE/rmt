@@ -18,5 +18,9 @@ module RMT
       uri.path = File.join(replacement_uri.path, uri.path)
       uri.to_s
     end
+
+    def self.make_smt_service_name(url)
+      "SMT-#{url}".gsub!(%r{:*/+}, '_').tr('.', '_').gsub(/_$/, '')
+    end
   end
 end
