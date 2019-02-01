@@ -20,6 +20,10 @@ module RMT
     end
 
     def self.make_smt_service_name(url)
+      # SMT service was always accessed via plain HTTP
+      url = URI(url)
+      url.scheme = 'http'
+
       "SMT-#{url}".gsub!(%r{:*/+}, '_').tr('.', '_').gsub(/_$/, '')
     end
   end
