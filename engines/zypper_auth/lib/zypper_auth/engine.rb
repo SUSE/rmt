@@ -37,6 +37,11 @@ module ZypperAuth
       logger.error(e.backtrace)
       false
     end
+
+    def plugin_detected?(system, request)
+      return true if request.headers['X-Instance-Data']
+      system.hw_info&.instance_data.to_s.match(%r{<repoformat>plugin:susecloud</repoformat>})
+    end
   end
 
   class Engine < ::Rails::Engine
@@ -55,13 +60,57 @@ module ZypperAuth
         end
       end
 
+      V3::ProductSerializer.class_eval do
+        def repositories
+          object.repositories.map do |repository|
+            V3::RepositorySerializer.new(
+              repository,
+              base_url: base_url,
+              susecloud_plugin: @instance_options[:susecloud_plugin]
+            )
+          end
+        end
+
+        def extensions
+          object.extensions.for_root_product(root_product).map do |extension|
+            V3::ProductSerializer.new(
+              extension, base_url: base_url,
+              root_product: root_product,
+              susecloud_plugin: @instance_options[:susecloud_plugin]
+            ).attributes
+          end
+        end
+      end
+
+      V3::RepositorySerializer.class_eval do
+        alias_method :original_url, :url
+
+        def url
+          original_url = original_url()
+          return original_url unless @instance_options[:susecloud_plugin]
+
+          url = URI(original_url)
+          'plugin:/susecloud?path=' + url.path
+        end
+      end
+
+      Api::Connect::V3::Systems::ActivationsController.class_eval do
+        def index
+          respond_with(
+            @system.activations,
+            each_serializer: ::V3::ActivationSerializer,
+            base_url: request.base_url,
+            include: '*.*',
+            susecloud_plugin: ZypperAuth.plugin_detected?(@system, request)
+          )
+        end
+      end
+
       Api::Connect::V3::Systems::ProductsController.class_eval do
         def render_service
           status = ((request.put? || request.post?) ? 201 : 200)
           # manually setting request method, so respond_with actually renders content also for PUT
           request.instance_variable_set(:@request_method, 'GET')
-
-          instance_data = (@system.hw_info&.instance_data || request.headers['X-Instance-Data']).to_s
 
           respond_with(
             @product.service,
@@ -69,7 +118,7 @@ module ZypperAuth
             base_url: request.base_url,
             obsoleted_service_name: @obsoleted_service_name,
             status: status,
-            susecloud_plugin: instance_data.match(%r{<repoformat>plugin:susecloud</repoformat>})
+            susecloud_plugin: ZypperAuth.plugin_detected?(@system, request)
           )
         end
       end
