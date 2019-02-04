@@ -4,6 +4,8 @@ module ZypperAuth
       instance_data = request.headers['X-Instance-Data']
       return true unless instance_data
 
+      instance_data = Base64.decode64(instance_data)
+
       base_product = system.products.find_by(product_type: 'base')
       return false unless base_product
 
@@ -59,7 +61,7 @@ module ZypperAuth
           # manually setting request method, so respond_with actually renders content also for PUT
           request.instance_variable_set(:@request_method, 'GET')
 
-          instance_data = @system.hw_info&.instance_data.to_s
+          instance_data = (@system.hw_info&.instance_data || request.headers['X-Instance-Data']).to_s
 
           respond_with(
             @product.service,

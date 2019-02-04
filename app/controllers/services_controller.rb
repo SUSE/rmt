@@ -39,7 +39,7 @@ class ServicesController < ApplicationController
     repos = Repository.joins(services: :activations).where('activations.system_id' => @system.id, mirroring_enabled: true)
 
     builder = Builder::XmlMarkup.new
-    service_xml = builder.repoindex(ttl: ZYPPER_SERVICE_TTL) do
+    service_xml = builder.repoindex do
       repos.each do |repo|
         attributes = {
           url: make_repo_url(
