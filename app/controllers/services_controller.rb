@@ -62,7 +62,7 @@ class ServicesController < ApplicationController
 
   protected
 
-  # overriden by ZypperAuth plugin
+  # overridden by ZypperAuth plugin
   def make_repo_url(base_url, repo_local_path, service_name)
     RMT::Misc.make_repo_url(base_url, repo_local_path, service_name)
   end
