@@ -60,40 +60,6 @@ module ZypperAuth
         end
       end
 
-      V3::ProductSerializer.class_eval do
-        def repositories
-          object.repositories.map do |repository|
-            V3::RepositorySerializer.new(
-              repository,
-              base_url: base_url,
-              susecloud_plugin: @instance_options[:susecloud_plugin]
-            )
-          end
-        end
-
-        def extensions
-          object.extensions.for_root_product(root_product).map do |extension|
-            V3::ProductSerializer.new(
-              extension, base_url: base_url,
-              root_product: root_product,
-              susecloud_plugin: @instance_options[:susecloud_plugin]
-            ).attributes
-          end
-        end
-      end
-
-      V3::RepositorySerializer.class_eval do
-        alias_method :original_url, :url
-
-        def url
-          original_url = original_url()
-          return original_url unless @instance_options[:susecloud_plugin]
-
-          url = URI(original_url)
-          'plugin:/susecloud?path=' + url.path
-        end
-      end
-
       Api::Connect::V3::Systems::ActivationsController.class_eval do
         def index
           respond_with(
