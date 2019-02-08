@@ -42,6 +42,11 @@ module InstanceVerification
           )
 
           raise 'Unspecified error' unless verification_provider.instance_valid?
+
+          cache_key = [request.remote_ip, @system.login, product.id].join('-')
+
+          # caches verification result to be used by zypper auth plugin
+          Rails.cache.write(cache_key, true, expires_in: 1.hour)
         rescue InstanceVerification::Exception => e
           raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
         rescue StandardError => e

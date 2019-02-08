@@ -18,7 +18,7 @@ class ServicesController < ApplicationController
     service_xml = builder.repoindex(ttl: ZYPPER_SERVICE_TTL) do
       repos.each do |repo|
         attributes = {
-          url: RMT::Misc.make_repo_url(request.base_url, repo.local_path, service.name),
+          url: make_repo_url(request.base_url, repo.local_path, service.name),
           alias: repo.name,
           name: repo.name,
           autorefresh: repo.autorefresh,
@@ -39,10 +39,10 @@ class ServicesController < ApplicationController
     repos = Repository.joins(services: :activations).where('activations.system_id' => @system.id, mirroring_enabled: true)
 
     builder = Builder::XmlMarkup.new
-    service_xml = builder.repoindex(ttl: ZYPPER_SERVICE_TTL) do
+    service_xml = builder.repoindex do
       repos.each do |repo|
         attributes = {
-          url: RMT::Misc.make_repo_url(
+          url: make_repo_url(
             request.base_url,
             repo.local_path,
             RMT::Misc.make_smt_service_name(request.base_url)
@@ -58,6 +58,13 @@ class ServicesController < ApplicationController
     end
 
     render xml: service_xml
+  end
+
+  protected
+
+  # overridden by ZypperAuth plugin
+  def make_repo_url(base_url, repo_local_path, service_name)
+    RMT::Misc.make_repo_url(base_url, repo_local_path, service_name)
   end
 
 end
