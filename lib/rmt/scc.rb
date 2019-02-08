@@ -17,7 +17,7 @@ class RMT::SCC
     cleanup_database
 
     @logger.info(_('Downloading data from SCC'))
-    scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
+    scc_api_client = SUSE::Connect::Api.new(RMT::Config.scc.username, RMT::Config.scc.password)
 
     @logger.info(_('Updating products'))
     data = scc_api_client.list_products
@@ -36,7 +36,7 @@ class RMT::SCC
 
     @logger.info _('Exporting data from SCC to %{path}') % { path: path }
 
-    scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
+    scc_api_client = SUSE::Connect::Api.new(RMT::Config.scc.username, RMT::Config.scc.password)
 
     @logger.info(_('Exporting products'))
     File.write(File.join(path, 'organizations_products.json'), scc_api_client.list_products.to_json)
@@ -80,7 +80,7 @@ class RMT::SCC
   protected
 
   def credentials_set?
-    Settings.try(:scc).try(:username) && Settings.try(:scc).try(:password)
+    RMT::Config.scc.username && RMT::Config.scc.password
   end
 
   def cleanup_database

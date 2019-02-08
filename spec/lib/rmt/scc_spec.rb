@@ -97,7 +97,8 @@ describe RMT::SCC do
   describe '#sync' do
     context 'without SCC credentials' do
       before do
-        allow(Settings).to receive(:scc).and_return OpenStruct.new
+        allow(RMT::Config).to receive_message_chain(:scc, :username).and_return nil
+        allow(RMT::Config).to receive_message_chain(:scc, :password).and_return nil
       end
 
       it 'raises an error' do
@@ -107,7 +108,8 @@ describe RMT::SCC do
 
     context 'with SCC credentials' do
       before do
-        allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
+        allow(RMT::Config).to receive_message_chain(:scc, :username).and_return 'foo'
+        allow(RMT::Config).to receive_message_chain(:scc, :password).and_return 'bar'
         described_class.new.sync
       end
 
@@ -123,7 +125,8 @@ describe RMT::SCC do
       let(:sled) { Product.find_by(identifier: 'SLED') }
 
       before do
-        allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
+        allow(RMT::Config).to receive_message_chain(:scc, :username).and_return 'foo'
+        allow(RMT::Config).to receive_message_chain(:scc, :password).and_return 'bar'
         described_class.new.sync
       end
 
@@ -176,7 +179,8 @@ describe RMT::SCC do
       let(:products_with_extra_extension) { products + [extra_product] }
 
       before do
-        allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
+        allow(RMT::Config).to receive_message_chain(:scc, :username).and_return 'foo'
+        allow(RMT::Config).to receive_message_chain(:scc, :password).and_return 'bar'
         allow(api_double).to receive(:list_products).and_return products_with_extra_extension
         allow(api_double).to receive(:list_repositories).and_return repositories_with_extra_repos
         described_class.new.sync
@@ -199,7 +203,8 @@ describe RMT::SCC do
       end
 
       before do
-        allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
+        allow(RMT::Config).to receive_message_chain(:scc, :username).and_return 'foo'
+        allow(RMT::Config).to receive_message_chain(:scc, :password).and_return 'bar'
         described_class.new.sync
       end
 
@@ -231,13 +236,8 @@ describe RMT::SCC do
     end
 
     before do
-      # to prevent 'does not implement' verifying doubles error
-      Settings.class_eval do
-        def scc
-        end
-      end
-
-      allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
+      allow(RMT::Config).to receive_message_chain(:scc, :username).and_return 'foo'
+      allow(RMT::Config).to receive_message_chain(:scc, :password).and_return 'bar'
 
       expect(SUSE::Connect::Api).to receive(:new) { api_double }
       expect(api_double).to receive(:list_products) { [] }
@@ -269,7 +269,8 @@ describe RMT::SCC do
 
     context 'without SCC credentials' do
       before do
-        allow(Settings).to receive(:scc).and_return OpenStruct.new
+        allow(RMT::Config).to receive_message_chain(:scc, :username).and_return nil
+        allow(RMT::Config).to receive_message_chain(:scc, :password).and_return nil
       end
 
       it 'raises an error' do
@@ -279,7 +280,8 @@ describe RMT::SCC do
 
     context 'with SCC credentials' do
       before do
-        allow(Settings).to receive(:scc).and_return(OpenStruct.new(username: 'me', password: 'groot'))
+        allow(RMT::Config).to receive_message_chain(:scc, :username).and_return 'me'
+        allow(RMT::Config).to receive_message_chain(:scc, :password).and_return 'groot'
       end
 
       %w[orders products_unscoped products repositories subscriptions].each do |data|

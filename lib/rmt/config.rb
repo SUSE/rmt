@@ -12,6 +12,15 @@ Config.load_and_set_settings(
 )
 
 module RMT::Config
+  def self.method_missing(key)
+    raise NoMethodError if Settings[key].nil?
+    Settings[key]
+  end
+
+  def self.respond_to_missing?(method, *args)
+    method == :scc or super
+  end
+
   def self.db_config(key = 'database')
     {
       'username' => Settings[key].username,
@@ -31,5 +40,4 @@ module RMT::Config
   def self.deduplication_by_hardlink?
     Settings.try(:mirroring).try(:dedup_method).to_s.to_sym != :copy
   end
-
 end
