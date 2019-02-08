@@ -9,11 +9,12 @@ class RMT::HttpRequest < Typhoeus::Request
 
     super
 
-    options[:proxy] = Settings.try(:http_client).try(:proxy)
-    options[:proxyauth] = Settings.try(:http_client).try(:proxy_auth) ? Settings.try(:http_client).try(:proxy_auth).to_sym : :any
+    options[:proxy] = RMT::Config.http_client.proxy
 
-    if Settings.try(:http_client).try(:proxy_user) && Settings.try(:http_client).try(:proxy_password)
-      options[:proxyuserpwd] = "#{Settings.http_client.proxy_user}:#{Settings.http_client.proxy_password}"
+    options[:proxyauth] = RMT::Config.http_client.proxy_auth ? RMT::Config.http_client.proxy_auth.to_sym : :any
+
+    if RMT::Config.http_client.proxy_user && RMT::Config.http_client.proxy_password
+      options[:proxyuserpwd] = "#{RMT::Config.http_client.proxy_user}:#{RMT::Config.http_client.proxy_password}"
     end
   end
 
