@@ -3,9 +3,17 @@ require_relative '../rmt'
 
 Config.setup do |config|
   config.merge_nil_values = false
+
+  config.schema do
+    required(:scc).schema do
+      required(:username).filled
+      required(:password).filled
+    end
+  end
 end
 
 Config.load_and_set_settings(
+  File.join(__dir__, '../../config/default_rmt.yml'),
   '/etc/rmt.conf',
   File.join(__dir__, '../../config/rmt.yml'),
   File.join(__dir__, '../../config/rmt.local.yml')
