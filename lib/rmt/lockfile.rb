@@ -8,7 +8,8 @@ class RMT::Lockfile
       File.open(RMT::Lockfile::LOCKFILE_LOCATION, File::RDWR | File::CREAT) do |f|
         if f.flock(File::LOCK_EX | File::LOCK_NB)
           f.write(Process.pid.to_s)
-          f.fsync
+          f.flush
+          f.truncate(f.pos)
         else
           pid = File.read(RMT::Lockfile::LOCKFILE_LOCATION)
           raise ExecutionLockedError.new(
