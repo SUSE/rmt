@@ -4,10 +4,12 @@ require_relative '../rmt'
 Config.setup do |config|
   config.merge_nil_values = false
 
-  config.schema do
-    required(:scc).schema do
-      required(:username).filled
-      required(:password).filled
+  unless ENV['RAILS_ENV'] == 'test'
+    config.schema do
+      required(:scc).schema do
+        required(:username).filled
+        required(:password).filled
+      end
     end
   end
 end
