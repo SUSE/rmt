@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Feb 11 12:00:06 UTC 2019 - skotov@suse.com
+
+- Truncate the RMT lockfile when writing a new PID
+
+-------------------------------------------------------------------
 Wed Jan 30 10:40:38 UTC 2019 - ikapelyukhin@suse.com
 
 - Version 1.2.0
