@@ -97,8 +97,8 @@ describe RMT::SCC do
   describe '#sync' do
     context 'without SCC credentials' do
       before do
-        allow(RMT::Config).to receive_message_chain(:scc, :username).and_return nil
-        allow(RMT::Config).to receive_message_chain(:scc, :password).and_return nil
+        options = { username: nil, password: nil }
+        options.each { |key, value| Settings.scc.send("#{key}=", value) }
       end
 
       it 'raises an error' do
@@ -108,8 +108,8 @@ describe RMT::SCC do
 
     context 'with SCC credentials' do
       before do
-        allow(RMT::Config).to receive_message_chain(:scc, :username).and_return 'foo'
-        allow(RMT::Config).to receive_message_chain(:scc, :password).and_return 'bar'
+        options = { username: 'foo', password: 'bar' }
+        options.each { |key, value| Settings.scc.send("#{key}=", value) }
         described_class.new.sync
       end
 
@@ -125,8 +125,8 @@ describe RMT::SCC do
       let(:sled) { Product.find_by(identifier: 'SLED') }
 
       before do
-        allow(RMT::Config).to receive_message_chain(:scc, :username).and_return 'foo'
-        allow(RMT::Config).to receive_message_chain(:scc, :password).and_return 'bar'
+        options = { username: 'foo', password: 'bar' }
+        options.each { |key, value| Settings.scc.send("#{key}=", value) }
         described_class.new.sync
       end
 
@@ -179,8 +179,8 @@ describe RMT::SCC do
       let(:products_with_extra_extension) { products + [extra_product] }
 
       before do
-        allow(RMT::Config).to receive_message_chain(:scc, :username).and_return 'foo'
-        allow(RMT::Config).to receive_message_chain(:scc, :password).and_return 'bar'
+        options = { username: 'foo', password: 'bar' }
+        options.each { |key, value| Settings.scc.send("#{key}=", value) }
         allow(api_double).to receive(:list_products).and_return products_with_extra_extension
         allow(api_double).to receive(:list_repositories).and_return repositories_with_extra_repos
         described_class.new.sync
@@ -203,8 +203,8 @@ describe RMT::SCC do
       end
 
       before do
-        allow(RMT::Config).to receive_message_chain(:scc, :username).and_return 'foo'
-        allow(RMT::Config).to receive_message_chain(:scc, :password).and_return 'bar'
+        options = { username: 'foo', password: 'bar' }
+        options.each { |key, value| Settings.scc.send("#{key}=", value) }
         described_class.new.sync
       end
 
@@ -236,8 +236,8 @@ describe RMT::SCC do
     end
 
     before do
-      allow(RMT::Config).to receive_message_chain(:scc, :username).and_return 'foo'
-      allow(RMT::Config).to receive_message_chain(:scc, :password).and_return 'bar'
+      options = { username: 'foo', password: 'bar' }
+      options.each { |key, value| Settings.scc.send("#{key}=", value) }
 
       expect(SUSE::Connect::Api).to receive(:new) { api_double }
       expect(api_double).to receive(:list_products) { [] }
@@ -269,8 +269,8 @@ describe RMT::SCC do
 
     context 'without SCC credentials' do
       before do
-        allow(RMT::Config).to receive_message_chain(:scc, :username).and_return nil
-        allow(RMT::Config).to receive_message_chain(:scc, :password).and_return nil
+        options = { username: nil, password: nil }
+        options.each { |key, value| Settings.scc.send("#{key}=", value) }
       end
 
       it 'raises an error' do
@@ -280,8 +280,8 @@ describe RMT::SCC do
 
     context 'with SCC credentials' do
       before do
-        allow(RMT::Config).to receive_message_chain(:scc, :username).and_return 'me'
-        allow(RMT::Config).to receive_message_chain(:scc, :password).and_return 'groot'
+        options = { username: 'me', password: 'groot' }
+        options.each { |key, value| Settings.scc.send("#{key}=", value) }
       end
 
       %w[orders products_unscoped products repositories subscriptions].each do |data|

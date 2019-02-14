@@ -4,13 +4,8 @@ require_relative '../rmt'
 Config.setup do |config|
   config.merge_nil_values = false
 
-  unless ENV['RAILS_ENV'] == 'test'
-    config.schema do
-      required(:scc).schema do
-        required(:username).filled
-        required(:password).filled
-      end
-    end
+  config.schema do
+    required(:scc).schema
   end
 end
 
@@ -23,12 +18,15 @@ Config.load_and_set_settings(
 
 module RMT::Config
   def self.method_missing(key)
-    raise NoMethodError if Settings[key].nil?
-    Settings[key]
+    if Settings[key]
+      Settings[key]
+    else
+      super
+    end
   end
 
-  def self.respond_to_missing?(method, *args)
-    method == :scc or super
+  def self.respond_to_missing?
+    super
   end
 
   def self.db_config(key = 'database')
