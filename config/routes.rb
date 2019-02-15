@@ -54,6 +54,7 @@ Rails.application.routes.draw do
 
   get 'services/:id', to: 'services#show', as: :service
   get 'services/:id/repo/repoindex.xml', to: 'services#show'
+  get '/repo/repoindex.xml', to: 'services#legacy_service'
 
   get '/api/health/status', to: 'api/health#status'
 

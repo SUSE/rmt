@@ -1,6 +1,28 @@
 -------------------------------------------------------------------
+Mon Feb 11 12:00:06 UTC 2019 - skotov@suse.com
+
+- Truncate the RMT lockfile when writing a new PID
+
+-------------------------------------------------------------------
+Wed Jan 30 10:40:38 UTC 2019 - ikapelyukhin@suse.com
+
+- Version 1.2.0
+- Legacy zypper XML endpoint for backward compatibility
+  with SMT (fate#326629)
+- Instance verification plugin in rmt-server-pubcloud (fate#326629)
+
+-------------------------------------------------------------------
+Tue Jan 22 11:38:24 UTC 2019 - fschnizlein@suse.com
+
+- Version 1.1.3
+- Fix missing trailing slashes on custom repository import from SMT
+  (bsc#1118745)
+
+
+-------------------------------------------------------------------
 Fri Jan 18 11:38:24 UTC 2019 - skotov@suse.com
 
+- Version 1.1.2
 - Fix product version display (bsc#1117722)
 
 -------------------------------------------------------------------

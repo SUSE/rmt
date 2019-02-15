@@ -38,7 +38,13 @@ RSpec.describe Api::Connect::V3::Systems::ActivationsController do
       describe 'JSON in response' do
         it 'has valid structure' do # TODO: JSON schema tests
           json_response.each do |element|
-            expect(element).to have_key(:service)
+            expect(element).to match(
+              hash_including({
+                service: hash_including({
+                  product: hash_including(:repositories)
+                })
+              })
+            )
           end
         end
 

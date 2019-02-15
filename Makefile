@@ -27,6 +27,7 @@ dist: clean man
 	@cp -r Gemfile.lock $(NAME)-$(VERSION)/
 	@cp -r lib $(NAME)-$(VERSION)/
 	@cp -r engines $(NAME)-$(VERSION)/
+	@cp -r package $(NAME)-$(VERSION)/
 
 	@mkdir $(NAME)-$(VERSION)/log
 	@cp -r log/.keep $(NAME)-$(VERSION)/log
@@ -58,6 +59,9 @@ dist: clean man
 	@rm -rf $(NAME)-$(VERSION)/engines/*/bin
 	@rm -rf $(NAME)-$(VERSION)/engines/*/spec
 	@rm -rf $(NAME)-$(VERSION)/engines/*/.gitignore
+
+	# don't package example instance verification provider
+	@rm -rf $(NAME)-$(VERSION)/engines/instance_verification/lib/instance_verification/providers/example.rb
 
 	@mv $(NAME)-$(VERSION)/.bundle/config_packaging $(NAME)-$(VERSION)/.bundle/config
 	cd $(NAME)-$(VERSION) && bundle package --all

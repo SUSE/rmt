@@ -11,7 +11,8 @@ module StrictAuthentication
       ::ServicesController.class_eval do
         include StrictAuthentication
 
-        prepend_before_action :verify_service_access, :authenticate_system
+        prepend_before_action :verify_service_access, only: %w[show]
+        prepend_before_action :authenticate_system
 
         def verify_service_access
           @system.services.find(params[:id])
