@@ -1,7 +1,11 @@
 -------------------------------------------------------------------
-Mon Feb 11 12:00:06 UTC 2019 - skotov@suse.com
+Mon Feb 18 11:30:19 UTC 2019 - skotov@suse.com
 
-- Truncate the RMT lockfile when writing a new PID
+- Version 1.2.1
+- Truncate the RMT lockfile when writing a new PID (bsc#1125770)
+- Zypper authentication plugin (fate#326629)
+- Fix nested serializers in system/activations
+- Fix HTTP vhost config
 
 -------------------------------------------------------------------
 Wed Jan 30 10:40:38 UTC 2019 - ikapelyukhin@suse.com
@@ -28,7 +32,7 @@ Fri Jan 18 11:38:24 UTC 2019 - skotov@suse.com
 -------------------------------------------------------------------
 Tue Jan 15 14:32:07 UTC 2019 - hschmidt@suse.com
 
-- Cut version 1.1.1 
+- Cut version 1.1.1
 
 -------------------------------------------------------------------
 Tue Jan  8 14:37:20 UTC 2019 - hschmidt@suse.com
