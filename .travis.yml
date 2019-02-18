@@ -3,10 +3,18 @@ rvm:
   # SLES15
   - 2.5.0
 
-script:
-  - bundle exec danger
-  - 'bundle exec rails db:migrate RAILS_ENV=test'
-  - 'bundle exec rake test'
+cache:
+  - bundler
+
+jobs:
+  include:
+    - stage: danger
+      if: fork = false
+      script: 'bundle exec danger'
+    - stage: tests
+      script:
+        - 'bundle exec rails db:migrate RAILS_ENV=test'
+        - 'bundle exec rake test'
 
 services:
   - mysql
