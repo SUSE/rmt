@@ -36,7 +36,7 @@ GEM
     ast (2.4.0)
     awesome_print (1.8.0)
     builder (3.2.3)
-    byebug (10.0.2)
+    byebug (11.0.0)
     case_transform (0.2)
       activesupport
     claide (1.0.2)
