@@ -7,6 +7,6 @@ RSpec.describe ProductPredecessorAssociation, type: :model do
   end
 
   describe 'attributes' do
-    it { is_expected.to define_enum_for(:kind).with(%i[online offline]) }
+    it { is_expected.to define_enum_for(:kind).with_values(%i[online offline]) }
   end
 end
