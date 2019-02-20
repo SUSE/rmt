@@ -25,7 +25,7 @@ module RMT::Config
     end
   end
 
-  def self.respond_to_missing?
+  def self.respond_to_missing?(method, _)
     super
   end
 

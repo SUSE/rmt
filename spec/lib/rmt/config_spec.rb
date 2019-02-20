@@ -27,4 +27,20 @@ RSpec.describe RMT::Config do
       end
     end
   end
+
+  describe '#respond_to_missing?' do
+    context 'when called with a unsupported parameter' do
+      it 'returns false' do
+        expect(described_class.respond_to?(:foo)).to eq(false)
+      end
+    end
+  end
+
+  describe '#method_missing' do
+    context 'when called with a unsupported parameter' do
+      it 'returns an error' do
+        expect{ described_class.foo }.to raise_error(NoMethodError)
+      end
+    end
+  end
 end
