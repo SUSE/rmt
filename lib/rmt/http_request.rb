@@ -15,6 +15,10 @@ class RMT::HttpRequest < Typhoeus::Request
     if Settings.try(:http_client).try(:proxy_user) && Settings.try(:http_client).try(:proxy_password)
       options[:proxyuserpwd] = "#{Settings.http_client.proxy_user}:#{Settings.http_client.proxy_password}"
     end
+
+    # Abort download if speed is below 512 bytes/sec for 120 sec, to prevent downloads from getting stuck
+    options[:low_speed_limit] = 512
+    options[:low_speed_time] = 120
   end
 
 end
