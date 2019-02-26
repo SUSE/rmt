@@ -270,7 +270,7 @@ GEM
       rubocop-rspec (= 1.19)
     sexp_processor (4.11.0)
     shellany (0.0.1)
-    shoulda-matchers (4.0.0)
+    shoulda-matchers (4.0.1)
       activesupport (>= 4.2.0)
     simplecov (0.16.1)
       docile (~> 1.1)
@@ -363,4 +363,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   1.16.1
+   1.16.2
