@@ -24,6 +24,9 @@
 %define rmt_group   nginx
 %if 0%{?suse_version} == 1315
 %define is_sle_12_family 1
+%define ruby_version ruby2.5
+%else
+%define ruby_version %{rb_default_ruby_suffix}
 %endif
 Name:           rmt-server
 Version:        1.2.2
@@ -51,9 +54,6 @@ Source15:       auth-handler.conf
 Source16:       auth-location.conf
 Source17:       rmt-cli_bash-completion.sh
 Source18:       rmt-server.reg
-Patch0:         use-ruby-2.5-in-rmt-cli.patch
-Patch1:         use-ruby-2.5-in-rails.patch
-Patch2:         use-ruby-2.5-in-rmt-data-import.patch
 BuildRequires:  fdupes
 BuildRequires:  gcc
 BuildRequires:  libcurl-devel
@@ -61,14 +61,14 @@ BuildRequires:  libffi-devel
 BuildRequires:  libmysqlclient-devel
 BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
-BuildRequires:  ruby2.5
-BuildRequires:  ruby2.5-devel
-BuildRequires:  ruby2.5-rubygem-bundler
+BuildRequires:  %{ruby_version}
+BuildRequires:  %{ruby_version}-devel
+BuildRequires:  %{rubygem bundler}
 BuildRequires:  systemd
 Requires:       mariadb
 Requires:       nginx
-Requires(post): ruby2.5
-Requires(post): ruby2.5-rubygem-bundler
+Requires(post): %{ruby_version}
+Requires(post): %{rubygem bundler}
 Requires(post): shadow
 Requires(post): timezone
 Requires(post): util-linux
@@ -103,13 +103,11 @@ required for public cloud environments.
 cp -p %{SOURCE2} .
 
 %setup -q
-
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-
+sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/rails
+sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/rmt-cli
+sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/rmt-data-import
 %build
-bundle.ruby2.5 install %{?jobs:--jobs %{jobs}} --without test development --deployment --standalone
+bundle.%{ruby_version} install %{?jobs:--jobs %{jobs}} --without test development --deployment --standalone
 
 %install
 mkdir -p %{buildroot}%{data_dir}
@@ -182,8 +180,8 @@ install -D -m 644 %{SOURCE18} %{buildroot}%{_sysconfdir}/slp.reg.d/rmt-server.re
 
 # cleanup of /usr/bin/env commands
 grep -rl '\/usr\/bin\/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
-    sed -i -e 's@\/usr\/bin\/env ruby.ruby2\.5@\/usr\/bin\/ruby\.ruby2\.5@g' \
-    -e 's@\/usr\/bin\/env ruby@\/usr\/bin\/ruby\.ruby2\.5@g'
+    sed -i -e 's@\/usr\/bin\/env ruby.%{ruby_version}@\/usr\/bin\/ruby\.%{ruby_version}@g' \
+    -e 's@\/usr\/bin\/env ruby@\/usr\/bin\/ruby\.%{ruby_version}@g'
 grep -rl '\/usr\/bin\/env bash' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
     sed -i -e 's@\/usr\/bin\/env bash@\/bin\/bash@g' \
 
