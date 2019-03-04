@@ -54,6 +54,7 @@ Source15:       auth-handler.conf
 Source16:       auth-location.conf
 Source17:       rmt-cli_bash-completion.sh
 Source18:       rmt-server.reg
+Source19:       http-certs.conf
 BuildRequires:  fdupes
 BuildRequires:  gcc
 BuildRequires:  libcurl-devel
