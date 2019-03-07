@@ -125,6 +125,7 @@ mv vendor %{buildroot}%{lib_dir}
 cp -ar . %{buildroot}%{app_dir}
 ln -s %{data_dir}/tmp %{buildroot}%{app_dir}/tmp
 ln -s %{data_dir}/public/repo %{buildroot}%{app_dir}/public/repo
+ln -s %{data_dir}/public/suma %{buildroot}%{app_dir}/public/suma
 mkdir -p %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-cli %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-data-import %{buildroot}%{_bindir}/rmt-data-import

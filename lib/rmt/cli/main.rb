@@ -23,6 +23,8 @@ class RMT::CLI::Main < RMT::CLI::Base
       logger = RMT::Logger.new(STDOUT)
       mirror = RMT::Mirror.new(logger: logger)
 
+      mirror.mirror_suma_product_tree(repository_url: 'https://scc.suse.com/suma/')
+
       repos = Repository.where(mirroring_enabled: true)
 
       raise RMT::CLI::Error.new(_('There are no repositories marked for mirroring.')) if repos.empty?

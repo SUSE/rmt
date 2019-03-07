@@ -39,6 +39,7 @@ dist: clean man
 	@cp -r .bundle $(NAME)-$(VERSION)/
 	@mkdir $(NAME)-$(VERSION)/vendor
 	@mkdir -p $(NAME)-$(VERSION)/public/repo/
+	@mkdir -p $(NAME)-$(VERSION)/public/suma/
 	@cp -r public/tools $(NAME)-$(VERSION)/public/
 
 	# i18n
