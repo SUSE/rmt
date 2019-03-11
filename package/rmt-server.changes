@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Mar 11 15:48:59 UTC 2019 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Added MD5SUMS, SHA1SUMS, and SHA256SUMS for rmt-client-setup.
+
+-------------------------------------------------------------------
 Thu Feb 21 13:48:54 UTC 2019 - ikapelyukhin@suse.com
 
 - Version 1.2.2
