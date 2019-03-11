@@ -294,6 +294,9 @@ fi
 %postun
 %service_del_postun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service
 
+%posttrans
+/usr/bin/systemctl reload nginx.service
+
 %pre pubcloud
 %service_add_pre rmt-server-regsharing.service
 
