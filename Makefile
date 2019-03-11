@@ -40,6 +40,9 @@ dist: clean man
 	@mkdir $(NAME)-$(VERSION)/vendor
 	@mkdir -p $(NAME)-$(VERSION)/public/repo/
 	@cp -r public/tools $(NAME)-$(VERSION)/public/
+	cd public/tools && md5sum * > ../../$(NAME)-$(VERSION)/public/tools/MD5SUMS
+	cd public/tools && sha1sum * > ../../$(NAME)-$(VERSION)/public/tools/SHA1SUMS
+	cd public/tools && sha256sum * > ../../$(NAME)-$(VERSION)/public/tools/SHA256SUMS
 
 	# i18n
 	@cp -r locale $(NAME)-$(VERSION)/
