@@ -25,6 +25,15 @@ module RegistrationSharing
       (peers.class == String) ? [peers] : peers
     end
 
+    # used by model callbacks to prevent triggering registration sharing from registration sharing controllers
+    def called_from_regsharing?(call_data)
+      call_data.each do |location|
+        return true if location.absolute_path =~ /\bregistration_sharing\b/
+      end
+
+      false
+    end
+
     def config_data_dir
       Settings[:regsharing][:data_dir] || RMT_REGSHARING_DEFAULT_DATA_DIR
     rescue StandardError

@@ -14,7 +14,7 @@ describe RegistrationSharing do
     end
 
     let(:time) { Time.zone.now }
-    let(:system) { FactoryGirl.create(:registration_sharing_system) }
+    let(:system) { FactoryGirl.create(:system) }
     let(:temp_dir) { Dir.mktmpdir }
     let(:peers) { [ 'example.org', 'example.com' ] }
     let(:config) { { peers: peers, data_dir: temp_dir } }

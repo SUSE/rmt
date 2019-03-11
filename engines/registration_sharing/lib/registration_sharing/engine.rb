@@ -12,7 +12,7 @@ module RegistrationSharing
         after_commit :share_registration
 
         def share_registration
-          return if self.class == RegistrationSharing::System
+          return if RegistrationSharing.called_from_regsharing?(caller_locations)
           RegistrationSharing.save_for_sharing(self)
         end
       end
@@ -21,7 +21,7 @@ module RegistrationSharing
         after_commit :share_registration
 
         def share_registration
-          return if self.class == RegistrationSharing::Activation
+          return if RegistrationSharing.called_from_regsharing?(caller_locations)
           RegistrationSharing.save_for_sharing(self)
         end
       end

@@ -9,6 +9,7 @@ describe System, type: :model do
   end
 
   it 'triggers registration sharing' do
+    expect(RegistrationSharing).to receive(:called_from_regsharing?).and_return(false)
     expect(RegistrationSharing).to receive(:save_for_sharing).with(system)
     system.save!
   end
