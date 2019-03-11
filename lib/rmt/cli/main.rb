@@ -23,7 +23,11 @@ class RMT::CLI::Main < RMT::CLI::Base
       logger = RMT::Logger.new(STDOUT)
       mirror = RMT::Mirror.new(logger: logger)
 
-      mirror.mirror_suma_product_tree(repository_url: 'https://scc.suse.com/suma/')
+      begin
+        mirror.mirror_suma_product_tree(repository_url: 'https://scc.suse.com/suma/')
+      rescue RMT::Mirror::Exception => e
+        logger.warn(e.message)
+      end
 
       repos = Repository.where(mirroring_enabled: true)
 

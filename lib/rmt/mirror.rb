@@ -27,21 +27,17 @@ class RMT::Mirror
     # however, in offline mode we mirror in the following way
     # base_dir/...
     # we need this extra step to ensure that we write to the public directory
-    base_dir = if @mirroring_base_dir == RMT::DEFAULT_MIRROR_DIR
-                 File.expand_path(File.join(@mirroring_base_dir, '/../')) # /public instead of /public/repo
-               else
-                 @mirroring_base_dir
-               end
+    base_dir = @mirroring_base_dir
+    base_dir = File.expand_path(File.join(@mirroring_base_dir, '/../')) if @mirroring_base_dir == RMT::DEFAULT_MIRROR_DIR
+
     @repository_dir = File.join(base_dir, '/suma/')
     @downloader.repository_url = URI.join(repository_url)
     @downloader.destination_dir = @repository_dir
 
     @logger.info _('Mirroring SUMA product tree to %{dir}') % { dir: @repository_dir }
-    begin
-      @downloader.download('product_tree.json')
-    rescue RMT::Downloader::Exception => e
-      @logger.warn(_(e.message))
-    end
+    @downloader.download('product_tree.json')
+  rescue RMT::Downloader::Exception => e
+    raise RMT::Mirror::Exception.new(_('Could not mirror suma product tree with error: %{error}') % { error: e.message })
   end
 
   def mirror(repository_url:, local_path:, auth_token: nil, repo_name: nil)

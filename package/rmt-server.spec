@@ -120,6 +120,7 @@ mkdir -p %{buildroot}%{data_dir}/regsharing
 mv tmp %{buildroot}%{data_dir}
 mkdir %{buildroot}%{data_dir}/public
 mv public/repo %{buildroot}%{data_dir}/public/
+mv public/suma %{buildroot}%{data_dir}/public/
 mv vendor %{buildroot}%{lib_dir}
 
 cp -ar . %{buildroot}%{app_dir}

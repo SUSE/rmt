@@ -51,6 +51,19 @@ describe RMT::CLI::Import, :with_fakefs do
       end
     end
 
+    context 'suma product tree mirror with exception' do
+      it 'outputs exception message' do
+        expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree).and_raise(RMT::Mirror::Exception, 'black mirror')
+        expect_any_instance_of(RMT::Mirror).to receive(:mirror).twice
+
+        FileUtils.mkdir_p path
+        File.write("#{path}/repos.json", repo_settings.to_json)
+
+        expect_any_instance_of(RMT::Logger).to receive(:warn).with('black mirror')
+        command
+      end
+    end
+
     context 'repository does not exist in database' do
       let(:missing_repo_url) { 'http://foo.bar.missing/repo/bar' }
       let(:missing_local_path) { repo_url_to_local_path(path, missing_repo_url) }
@@ -64,6 +77,7 @@ describe RMT::CLI::Import, :with_fakefs do
         FileUtils.mkdir_p path
         File.write("#{path}/repos.json", repo_settings.to_json)
 
+        expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
         expect { command }.to output(/repository by url #{missing_repo_url} does not exist in database/).to_stderr.and output('').to_stdout
       end
     end
@@ -78,6 +92,7 @@ describe RMT::CLI::Import, :with_fakefs do
           airgap_mode: true
         ).and_return(mirror_double)
 
+        expect(mirror_double).to receive(:mirror_suma_product_tree)
         expect(mirror_double).to receive(:mirror).with(
           repository_url: repo1_local_path,
           local_path: Repository.make_local_path(repo1.external_url),
@@ -113,6 +128,7 @@ describe RMT::CLI::Import, :with_fakefs do
           airgap_mode: true
         ).and_return(mirror_double)
 
+        expect(mirror_double).to receive(:mirror_suma_product_tree)
         expect(mirror_double).to receive(:mirror).with(
           repository_url: repo1_local_path,
           local_path: Repository.make_local_path(repo1.external_url),
