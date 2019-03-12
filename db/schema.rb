@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190118125927) do
+ActiveRecord::Schema.define(version: 20190312110206) do
 
   create_table "activations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "service_id", null: false
@@ -78,6 +78,7 @@ ActiveRecord::Schema.define(version: 20190118125927) do
     t.boolean "recommended"
     t.bigint "root_product_id", null: false
     t.boolean "migration_extra", default: false
+    t.boolean "preinstalled", default: false
     t.index ["extension_id"], name: "index_products_extensions_on_extension_id"
     t.index ["product_id", "extension_id", "root_product_id"], name: "index_products_extensions_on_product_extension_root", unique: true
     t.index ["product_id"], name: "index_products_extensions_on_product_id"
