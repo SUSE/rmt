@@ -33,7 +33,7 @@ class RMT::Mirror
     primary_files, deltainfo_files = mirror_metadata
     mirror_data(primary_files, deltainfo_files)
 
-    replace_directory(@temp_licenses_dir, File.join(@repository_dir, '../product.license/')) if Dir.exist?(@temp_licenses_dir)
+    replace_directory(@temp_licenses_dir, @repository_dir.chomp('/') + '.license/') if Dir.exist?(@temp_licenses_dir)
     replace_directory(File.join(@temp_metadata_dir, 'repodata'), File.join(@repository_dir, 'repodata'))
   ensure
     remove_tmp_directories
@@ -92,9 +92,9 @@ class RMT::Mirror
   end
 
   def mirror_license
-    @downloader.repository_url = URI.join(@repository_url, '../product.license/')
+    @downloader.repository_url = @repository_url.chomp('/') + '.license/'
     @downloader.destination_dir = @temp_licenses_dir
-    @downloader.cache_dir = File.join(@repository_dir, '../product.license/')
+    @downloader.cache_dir = @repository_dir.chomp('/') + '.license/'
 
     begin
       directory_yast = @downloader.download('directory.yast')
