@@ -1,6 +1,7 @@
 -------------------------------------------------------------------
 Tue Mar 12 17:21:47 UTC 2019 - Hernan Schmidt <hschmidt@suse.com>
 
+- Version 1.2.3
 - Fix license mirroring issue in some non-SUSE repositories (bsc#1128858)
 
 -------------------------------------------------------------------
