@@ -17,7 +17,8 @@ class MigrationEngine
   end
 
   def online_migrations
-    generate(migration_kind: :online)
+    migrations = generate(migration_kind: :online)
+    add_preinstalled_modules(migrations)
   end
 
   def offline_migrations(target_base_product)
@@ -102,6 +103,14 @@ class MigrationEngine
     migrations.map do |migration|
       base = migration.first
       migration.concat Product.modules_for_migration(base.id)
+      migration
+    end
+  end
+
+  def add_preinstalled_modules(migrations)
+    migrations.map do |migration|
+      base = migration.first
+      migration.concat(Product.preinstalled_modules(base.id))
       migration
     end
   end

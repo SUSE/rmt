@@ -52,6 +52,10 @@ class Product < ApplicationRecord
     joins(:product_extensions_associations)
     .where(products_extensions: { root_product_id: root_product_ids, recommended: true })
   }
+  scope :preinstalled, lambda { |root_product_ids|
+    joins(:product_extensions_associations)
+    .where(products_extensions: { root_product_id: root_product_ids, preinstalled: true })
+  }
 
   scope :with_release_stage, lambda { |release_stage|
     if release_stage
@@ -113,6 +117,10 @@ class Product < ApplicationRecord
 
   def self.modules_for_migration(root_product_ids)
     migration_extra(root_product_ids).or(recommended(root_product_ids)).distinct
+  end
+
+  def self.preinstalled_modules(root_product_ids)
+    preinstalled(root_product_ids).distinct
   end
 
   def self.free_and_recommended_modules(root_product_ids)

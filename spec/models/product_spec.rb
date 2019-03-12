@@ -179,6 +179,24 @@ RSpec.describe Product, type: :model do
     it { is_expected.to contain_exactly(recommended_module, autoselected_module, recommended_extension, autoselected_extension) }
   end
 
+  describe '.preinstalled_modules' do
+    subject { described_class.preinstalled_modules([root_product]) }
+
+    let(:root_product) { create :product }
+    let(:preinstalled_module) { create(:product, :module) }
+
+    before do
+      ProductsExtensionsAssociation.create(
+        product: root_product,
+        extension: preinstalled_module,
+        root_product: root_product,
+        preinstalled: true
+      )
+    end
+
+    it { is_expected.to contain_exactly(preinstalled_module) }
+  end
+
   describe '#recommended_for?' do
     subject { extension.recommended_for?(queried_base) }
 

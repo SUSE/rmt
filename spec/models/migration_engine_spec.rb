@@ -349,6 +349,21 @@ describe MigrationEngine do
           it 'does not contain offline migrations' do
             is_expected.to contain_exactly([product_b])
           end
+
+          context "modules with a 'preinstalled' flag are added automatically to the migration target" do
+            let!(:target_product_preinstalled_module) do
+              create(:product, :module, :with_mirrored_repositories).tap do |mod|
+                ProductsExtensionsAssociation.create(
+                  product: product_b,
+                  extension: mod,
+                  root_product: product_b,
+                  preinstalled: true
+                )
+              end
+            end
+
+            it { is_expected.to contain_exactly([product_b, target_product_preinstalled_module]) }
+          end
         end
 
         describe '#offline_migrations' do
