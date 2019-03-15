@@ -20,6 +20,7 @@ dist: clean man
 	@mkdir $(NAME)-$(VERSION)/bin
 	@cp -r bin/rails bin/rmt-cli $(NAME)-$(VERSION)/bin
 	@cp -r bin/rmt-data-import $(NAME)-$(VERSION)/bin
+	@cp -r bin/rmt-test-regsharing $(NAME)-$(VERSION)/bin
 	@cp -r config $(NAME)-$(VERSION)/
 	@cp -r config.ru $(NAME)-$(VERSION)/
 	@cp -r db $(NAME)-$(VERSION)/
