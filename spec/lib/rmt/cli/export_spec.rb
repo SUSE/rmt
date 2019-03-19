@@ -51,10 +51,24 @@ describe RMT::CLI::Export, :with_fakefs do
       ]
     end
 
+    context 'suma product tree mirror with exception' do
+      it 'outputs exception message' do
+        expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree).and_raise(RMT::Mirror::Exception, 'black mirror')
+        expect_any_instance_of(RMT::Mirror).to receive(:mirror).twice
+
+        FileUtils.mkdir_p path
+        File.write("#{path}/repos.json", repo_settings.to_json)
+
+        expect_any_instance_of(RMT::Logger).to receive(:warn).with('black mirror')
+        command
+      end
+    end
+
     context 'with missing repos.json file' do
       it 'outputs a warning' do
         FileUtils.mkdir_p path
 
+        expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
         expect { command }.to raise_error(SystemExit).and(output("#{File.join(path, 'repos.json')} does not exist.\n").to_stderr)
       end
     end
@@ -72,6 +86,7 @@ describe RMT::CLI::Export, :with_fakefs do
         FileUtils.mkdir_p path
         File.write("#{path}/repos.json", repo_settings.to_json)
 
+        expect(mirror_double).to receive(:mirror_suma_product_tree)
         expect(mirror_double).to receive(:mirror).with(
           repository_url: 'http://foo.bar/repo1',
           auth_token: 'foobar',
@@ -92,6 +107,7 @@ describe RMT::CLI::Export, :with_fakefs do
           FileUtils.mkdir_p path
           File.write("#{path}/repos.json", repo_settings.to_json)
 
+          expect(mirror_double).to receive(:mirror_suma_product_tree).with({ repository_url: 'https://scc.suse.com/suma/' })
           expect(mirror_double).to receive(:mirror).with(
             repository_url: 'http://foo.bar/repo1',
             auth_token: 'foobar',

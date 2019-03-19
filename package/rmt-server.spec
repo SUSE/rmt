@@ -120,11 +120,13 @@ mkdir -p %{buildroot}%{data_dir}/regsharing
 mv tmp %{buildroot}%{data_dir}
 mkdir %{buildroot}%{data_dir}/public
 mv public/repo %{buildroot}%{data_dir}/public/
+mv public/suma %{buildroot}%{data_dir}/public/
 mv vendor %{buildroot}%{lib_dir}
 
 cp -ar . %{buildroot}%{app_dir}
 ln -s %{data_dir}/tmp %{buildroot}%{app_dir}/tmp
 ln -s %{data_dir}/public/repo %{buildroot}%{app_dir}/public/repo
+ln -s %{data_dir}/public/suma %{buildroot}%{app_dir}/public/suma
 mkdir -p %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-cli %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-data-import %{buildroot}%{_bindir}/rmt-data-import
@@ -291,6 +293,9 @@ fi
 
 %postun
 %service_del_postun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service
+
+%posttrans
+/usr/bin/systemctl reload nginx.service
 
 %pre pubcloud
 %service_add_pre rmt-server-regsharing.service

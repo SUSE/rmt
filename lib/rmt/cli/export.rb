@@ -31,6 +31,12 @@ class RMT::CLI::Export < RMT::CLI::Base
     logger = RMT::Logger.new(STDOUT)
     mirror = RMT::Mirror.new(mirroring_base_dir: path, logger: logger, airgap_mode: true)
 
+    begin
+      mirror.mirror_suma_product_tree(repository_url: 'https://scc.suse.com/suma/')
+    rescue RMT::Mirror::Exception => e
+      logger.warn(e.message)
+    end
+
     repos_file = File.join(path, 'repos.json')
     raise RMT::CLI::Error.new(_('%{file} does not exist.') % { file: repos_file }) unless File.exist?(repos_file)
 

@@ -26,10 +26,26 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
 
       include_examples 'handles lockfile exception'
 
+      context 'suma product tree mirror with exception' do
+        before do
+          create :repository, :with_products, mirroring_enabled: true
+        end
+
+        it 'outputs exception message' do
+          expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree).and_raise(RMT::Mirror::Exception, 'black mirror')
+          expect_any_instance_of(RMT::Mirror).to receive(:mirror)
+          expect_any_instance_of(RMT::Logger).to receive(:warn).with('black mirror')
+          command
+        end
+      end
+
       context 'without repositories marked for mirroring' do
-        before { create :repository, :with_products, mirroring_enabled: false }
+        before do
+          create :repository, :with_products, mirroring_enabled: false
+        end
 
         it 'outputs a warning' do
+          expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
           expect_any_instance_of(RMT::Mirror).not_to receive(:mirror)
           expect { command }.to raise_error(SystemExit).and output("There are no repositories marked for mirroring.\n").to_stderr.and output('').to_stdout
         end
@@ -38,9 +54,10 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
       context 'with repositories marked for mirroring' do
         let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
 
-        before { expect_any_instance_of(RMT::Mirror).to receive(:mirror) }
-
         it 'updates repository mirroring timestamp' do
+          expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
+          expect_any_instance_of(RMT::Mirror).to receive(:mirror)
+
           Timecop.freeze(Time.utc(2018)) do
             expect { command }.to change { repository.reload.last_mirrored_at }.to(DateTime.now.utc)
           end
@@ -50,6 +67,7 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
           before { allow_any_instance_of(RMT::Mirror).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror') }
 
           it 'outputs exception message' do
+            expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
             expect_any_instance_of(RMT::Logger).to receive(:warn).with('black mirror')
             command
           end
