@@ -18,10 +18,10 @@ class RMT::CLI::Base < Thor
       shell.say
       class_options_help(shell)
 
-      shell.say _('Run `%{command}` for more information on a command and its subcommands.') % { command: "#{basename} help [COMMAND]" }
+      shell.say _('Run \'%{command}\' for more information on a command and its subcommands.') % { command: "#{basename} help [COMMAND]" }
 
       shell.say
-      shell.say _('Do you have suggestions for improvement? We would love to hear from you!')
+      shell.say _('Do you have any suggestions for improvement? We would love to hear from you!')
       shell.say _('Check out %{url}') % { url: 'https://github.com/SUSE/rmt/issues/new' }
     end
 
@@ -46,7 +46,8 @@ class RMT::CLI::Base < Thor
     rescue Mysql2::Error => e
       if e.message =~ /^Access denied/
         raise RMT::CLI::Error.new(
-          _('Cannot connect to database server. Ensure its credentials are correctly configured in "%{path}" or configure RMT with YaST (`%{command}`).') % {
+          _('Cannot connect to database server. Ensure its credentials are correctly configured in \'%{path}\' or configure RMT with YaST (\'%{command}\').') \
+          % {
             path: '/etc/rmt.conf',
             command: 'yast2 rmt'
           },
@@ -54,7 +55,7 @@ class RMT::CLI::Base < Thor
         )
       elsif e.message =~ /^Can't connect/
         raise RMT::CLI::Error.new(
-          _('Cannot connect to database server. Make sure it is running and its credentials are configured in "%{path}".') % { path: '/etc/rmt.conf' },
+          _('Cannot connect to database server. Make sure it is running and its credentials are configured in \'%{path}\'.') % { path: '/etc/rmt.conf' },
           RMT::CLI::Error::ERROR_DB
         )
       else
@@ -63,12 +64,12 @@ class RMT::CLI::Base < Thor
       end
     rescue ActiveRecord::NoDatabaseError
       raise RMT::CLI::Error.new(
-        _('The RMT database has not yet been initialized. Run `%{command}` to setup the database.') % { command: 'systemctl start rmt-migration' },
+        _('The RMT database has not yet been initialized. Run \'%{command}\' to setup the database.') % { command: 'systemctl start rmt-migration' },
         RMT::CLI::Error::ERROR_DB
       )
     rescue RMT::SCC::CredentialsError, ::SUSE::Connect::Api::InvalidCredentialsError
       raise RMT::CLI::Error.new(
-        _('The SCC credentials are not configured correctly in "%{path}". You can obtain them from %{url}') % {
+        _('The SCC credentials are not configured correctly in \'%{path}\'. You can obtain them from %{url}') % {
           path: '/etc/rmt.conf',
           url: 'https://scc.suse.com/organization'
         },

@@ -8,7 +8,7 @@ RSpec.describe RMT::CLI::Products do
 
     it 'mentions --all option' do
       expect { described_class.start(argv) }.to output(
-        "Only enabled products are shown by default. Use the `--all` option to see all products.\n"
+        "Only enabled products are shown by default. Use the '--all' option to see all products.\n"
       ).to_stdout.and output(/No matching products found/).to_stderr
     end
 
@@ -26,7 +26,7 @@ RSpec.describe RMT::CLI::Products do
 
         it 'warns about running sync command first' do
           expect { described_class.start(argv) }.to output(
-            "Run `rmt-cli sync` to synchronize with your SUSE Customer Center data first.\n"
+            "Run 'rmt-cli sync' to synchronize with your SUSE Customer Center data first.\n"
           ).to_stderr
         end
 
@@ -45,7 +45,7 @@ RSpec.describe RMT::CLI::Products do
         Terminal::Table.new(
           headings: ['ID', 'Product', 'Version', 'Arch', 'Mirror?', 'Last mirrored'],
           rows: expected_rows
-        ).to_s + "\n" + "Only enabled products are shown by default. Use the `--all` option to see all products.\n"
+        ).to_s + "\n" + "Only enabled products are shown by default. Use the '--all' option to see all products.\n"
       end
 
       context 'with no options' do
@@ -330,7 +330,7 @@ RSpec.describe RMT::CLI::Products do
       let(:target) { 'badproductstring' }
       let(:argv) { ['enable', target] }
       let(:expected_stderr) { "Product #{target} could not be found and was not enabled.\n" }
-      let(:expected_output) { "No product found for target \"#{target}\".\n" }
+      let(:expected_output) { "No product found for target '#{target}'.\n" }
 
       before { allow(described_class).to receive(:exit) }
 
@@ -346,7 +346,7 @@ RSpec.describe RMT::CLI::Products do
       let(:target) { (product.id + 1).to_s }
       let(:argv) { ['enable', target] }
       let(:expected_stderr) { "Product #{target} could not be found and was not enabled.\n" }
-      let(:expected_output) { "Product by id \"#{target}\" not found.\n" }
+      let(:expected_output) { "Product by ID '#{target}' not found.\n" }
 
       before { allow(described_class).to receive(:exit) }
 
@@ -444,7 +444,7 @@ RSpec.describe RMT::CLI::Products do
       before { allow(described_class).to receive(:exit) }
 
       context 'by wrong product ID' do
-        let(:expected_output) { "Product by id \"#{target}\" not found.\n" }
+        let(:expected_output) { "Product by ID '#{target}' not found.\n" }
         let(:target) { (product.id + 1).to_s }
 
         it 'leaves the product repositories enabled' do
@@ -456,7 +456,7 @@ RSpec.describe RMT::CLI::Products do
       end
 
       context 'by wrong product string' do
-        let(:expected_output) { "No product found for target \"#{target}\".\n" }
+        let(:expected_output) { "No product found for target '#{target}'.\n" }
         let(:target) { product.product_string + 'foo' }
 
         it 'leaves the product repositories enabled' do

@@ -19,10 +19,10 @@ class RMT::CLI::Export < RMT::CLI::Base
   desc 'repos PATH', _('Mirror repos at given path')
   long_desc _(<<-REPOS
   Run this command on an online RMT.
-  It will look in PATH for a repos.json file which has to contain a list of repository IDs.
-  Usually, this file gets created by an offline RMT with `export settings`.
+  It will look in PATH for a repos.json file, which has to contain a list of repository IDs.
+  Usually, this file gets created by an offline RMT with "rmt-cli export settings".
 
-  `export repos` will mirror these repositories to this PATH, usually a portable storage device.
+  "rmt-cli export repos" will mirror these repositories to this PATH, usually a portable storage device.
   REPOS
 )
   def repos(path)

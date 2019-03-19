@@ -25,7 +25,7 @@ RSpec.describe RMT::Lockfile do
         expect_any_instance_of(File).to receive(:read).exactly(1).times.and_return('123')
         expect { lock }.to raise_error(
           RMT::Lockfile::ExecutionLockedError,
-          "Process is locked by the application with pid 123. Close this application or wait for it to finish before trying again\n"
+          "Process is locked by the application with pid 123. Close this application or wait for it to finish before trying again.\n"
         )
       end
     end

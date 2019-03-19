@@ -16,9 +16,9 @@ RSpec.describe RMT::CLI::Repos do
       let(:argv) { ['enable', repository.scc_id.to_s, repository_2.scc_id.to_s, repository_3.scc_id.to_s] }
       let(:expected_output) do
         <<-OUTPUT
-Repository by id #{repository.scc_id} successfully enabled.
-Repository by id #{repository_2.scc_id} successfully enabled.
-Repository by id #{repository_3.scc_id} successfully enabled.
+Repository by ID #{repository.scc_id} successfully enabled.
+Repository by ID #{repository_2.scc_id} successfully enabled.
+Repository by ID #{repository_3.scc_id} successfully enabled.
 OUTPUT
       end
 
@@ -56,7 +56,7 @@ OUTPUT
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output("Repository not found by id \"0\".\nRepository 0 could not be found and was not enabled.\n").to_stderr
+        expect { command }.to output("Repository not found by ID '0'.\nRepository 0 could not be found and was not enabled.\n").to_stderr
                                   .and output('').to_stdout
       end
 
@@ -66,7 +66,7 @@ OUTPUT
     context 'by repo id' do
       let(:argv) { ['enable', repository.scc_id.to_s] }
 
-      before { expect { command }.to output("Repository by id #{repository.scc_id} successfully enabled.\n").to_stdout }
+      before { expect { command }.to output("Repository by ID #{repository.scc_id} successfully enabled.\n").to_stdout }
 
       its(:mirroring_enabled) { is_expected.to be(true) }
     end
@@ -87,9 +87,9 @@ OUTPUT
       let(:argv) { ['disable', repository.scc_id.to_s, repository_2.scc_id.to_s, repository_3.scc_id.to_s] }
       let(:expected_output) do
         <<-OUTPUT
-Repository by id #{repository.scc_id} successfully disabled.
-Repository by id #{repository_2.scc_id} successfully disabled.
-Repository by id #{repository_3.scc_id} successfully disabled.
+Repository by ID #{repository.scc_id} successfully disabled.
+Repository by ID #{repository_2.scc_id} successfully disabled.
+Repository by ID #{repository_3.scc_id} successfully disabled.
 OUTPUT
       end
 
@@ -125,7 +125,7 @@ OUTPUT
     context 'repo id does not exist' do
       let(:argv) { ['disable', 0] }
       let(:error_message) do
-        "Repository not found by id \"0\".\nRepository 0 could not be found and was not disabled.\n"
+        "Repository not found by ID '0'.\nRepository 0 could not be found and was not disabled.\n"
       end
 
       before do
@@ -139,7 +139,7 @@ OUTPUT
     context 'by repo id' do
       let(:argv) { ['disable', repository.scc_id.to_s] }
 
-      before { expect { command }.to output("Repository by id #{repository.scc_id} successfully disabled.\n").to_stdout }
+      before { expect { command }.to output("Repository by ID #{repository.scc_id} successfully disabled.\n").to_stdout }
 
       its(:mirroring_enabled) { is_expected.to be(false) }
     end
@@ -154,7 +154,7 @@ OUTPUT
 
         it 'outputs success message' do
           expect { command }.to output(
-            "Only enabled repositories are shown by default. Use the `--all` option to see all repositories.\n"
+            "Only enabled repositories are shown by default. Use the '--all' option to see all repositories.\n"
           ).to_stdout.and output("No repositories enabled.\n").to_stderr
         end
 
@@ -162,7 +162,7 @@ OUTPUT
           let(:argv) { [command_name, '--all'] }
 
           it 'warns about running sync command first' do
-            expect { described_class.start(argv) }.to output("Run `rmt-cli sync` to synchronize with your SUSE Customer Center data first.\n").to_stderr
+            expect { described_class.start(argv) }.to output("Run 'rmt-cli sync' to synchronize with your SUSE Customer Center data first.\n").to_stderr
           end
         end
       end
@@ -186,7 +186,7 @@ OUTPUT
             Terminal::Table.new(
               headings: ['SCC ID', 'Product', 'Mandatory?', 'Mirror?', 'Last mirrored'],
               rows: rows
-            ).to_s + "\n" + 'Only enabled repositories are shown by default. Use the `--all` option to see all repositories.' + "\n"
+            ).to_s + "\n" + 'Only enabled repositories are shown by default. Use the \'--all\' option to see all repositories.' + "\n"
           end
 
           it 'outputs success message' do
@@ -215,7 +215,7 @@ OUTPUT
           end
 
           it 'does not output extra information' do
-            expect { command }.not_to output(/Use the `--all` option to see all repositories/).to_stdout
+            expect { command }.not_to output(/Use the '--all' option to see all repositories/).to_stdout
           end
         end
 
