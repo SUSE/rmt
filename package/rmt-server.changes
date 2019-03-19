@@ -1,11 +1,13 @@
 -------------------------------------------------------------------
 Mon Mar 18 11:41:47 UTC 2019 - tmuntaner@suse.com
 
+- Version 1.2.5
 - Updated rails to version 5.1.6.2 (CVE-2019-5419)
 
 -------------------------------------------------------------------
 Wed Mar 13 12:18:05 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
 
+- Version 1.2.4
 - Supply log severity to journald
 
 -------------------------------------------------------------------
