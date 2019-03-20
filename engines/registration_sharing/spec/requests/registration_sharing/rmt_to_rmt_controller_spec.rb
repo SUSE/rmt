@@ -79,7 +79,7 @@ module RegistrationSharing
     end
 
     describe '#destroy' do
-      let!(:system) { FactoryGirl.create(:registration_sharing_system) }
+      let!(:system) { FactoryGirl.create(:system) }
 
       before do
         delete(

@@ -54,7 +54,7 @@ module RegistrationSharing
         raise "Missing parameter: #{key}" if hash[key].blank?
       end
 
-      system = RegistrationSharing::System.find_or_create_by(login: hash['GUID'])
+      system = System.find_or_create_by(login: hash['GUID'])
       system.password = hash['SECRET']
       system.hostname = hash['HOSTNAME']
       system.last_seen_at = hash['LASTCONTACT']
@@ -69,9 +69,9 @@ module RegistrationSharing
       product = Product.find_by(id: hash['PRODUCTID'])
       raise "Can't find product with ID #{hash['PRODUCTID']}" unless product
 
-      system = RegistrationSharing::System.find_or_create_by(login: hash['GUID'])
+      system = System.find_or_create_by(login: hash['GUID'])
 
-      activation = RegistrationSharing::Activation.find_or_create_by(service_id: product.service.id, system_id: system.id)
+      activation = Activation.find_or_create_by(service_id: product.service.id, system_id: system.id)
       activation.created_at = hash['REGDATE']
       activation.save!
     end
@@ -94,7 +94,7 @@ module RegistrationSharing
 
       raise 'System GUID not found' unless guid
 
-      system = RegistrationSharing::System.find_by(login: guid.text)
+      system = System.find_by(login: guid.text)
       system.destroy if system
     end
   end

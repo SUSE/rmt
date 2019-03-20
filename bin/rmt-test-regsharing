@@ -1,0 +1,86 @@
+#!/usr/bin/env ruby
+
+rmt_path = File.expand_path('..', __dir__)
+require_relative "#{rmt_path}/config/boot"
+require_relative "#{rmt_path}/config/boot_cli_i18n"
+$LOAD_PATH.unshift File.join(rmt_path, 'lib')
+
+require 'etc'
+require 'active_support'
+require 'active_support/core_ext/string'
+require 'active_record'
+require 'erb'
+require 'yaml'
+require 'rmt/config'
+
+relative_load_paths = %w[lib lib/rmt app/models app/services].map { |dir| File.join(rmt_path, dir) }
+ActiveSupport::Dependencies.autoload_paths += relative_load_paths
+
+if RMT::CLI::Base.process_user_name == 'root'
+  # set group and then user, otherwise user cannot change group
+  Process::Sys.setegid(Etc.getgrnam(RMT::DEFAULT_GROUP).gid)
+  Process::Sys.seteuid(Etc.getpwnam(RMT::DEFAULT_USER).uid)
+end
+
+if File.exist?(RMT::DEFAULT_MIRROR_DIR) && !File.writable?(RMT::DEFAULT_MIRROR_DIR)
+  warn "Mirroring base directory (#{RMT::DEFAULT_MIRROR_DIR}) is not writable by user '#{RMT::CLI::Base.process_user_name}'"
+  warn 'Run as root or adjust the permissions.'
+  exit RMT::CLI::Error::ERROR_OTHER
+end
+
+db_config = RMT::Config.db_config
+ActiveRecord::Base.establish_connection(db_config)
+
+#####
+
+require 'optparse'
+require_relative "#{rmt_path}/engines/registration_sharing/lib/registration_sharing"
+require 'registration_sharing/client'
+
+opt_peer = nil
+opt_use_config = nil
+
+opt_parser = OptionParser.new do |opts|
+  opts.banner = "Usage: #{File.basename($PROGRAM_NAME)} [--peer HOSTNAME] [--use-config]"
+  opts.on('-p', '--peer [HOSTNAME]', 'Tests regsharing to a given hostname') { |val| opt_peer = val }
+  opts.on('-c', '--use-config', 'Tests all the peers currently configured in the config') { |val| opt_use_config = val }
+end
+
+opt_parser.parse!
+
+unless (opt_peer || opt_use_config)
+  warn opt_parser.help
+  exit 1
+end
+
+peers = opt_peer ? [opt_peer] : RegistrationSharing.config_peers
+
+timestamp = Time.now.utc
+logger = RMT::Logger.new(STDOUT)
+
+params = {
+  login: 'manual-test-script',
+  password: (0...32).map { rand(65..90).chr }.join,
+  registered_at: timestamp,
+  created_at: timestamp,
+  last_seen_at: timestamp,
+  activations: [
+    { product_id: 1575, created_at: timestamp } # SLES/15/x86_64
+  ],
+  instance_data: '<test>test</test>'
+}
+
+peers.each do |peer|
+  logger.info "Sharing test registration to #{peer}..."
+
+  client = RegistrationSharing::Client.new(peer, nil)
+  client.send(:make_request, :post, params)
+
+  logger.info 'Success!'
+  logger.info "Removing test registration from #{peer}..."
+  client.send(:make_request, :delete, params)
+
+  logger.info 'Success!'
+rescue StandardError => e
+  logger.warn "Failed! Error: #{e}"
+end

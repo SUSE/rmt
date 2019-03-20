@@ -22,7 +22,7 @@ describe RegistrationSharing::Client do
     let(:client) { described_class.new(peer, system.login) }
     let(:system) do
       FactoryGirl.create(
-        :registration_sharing_system, :with_activated_product,
+        :system, :with_activated_product,
         :with_hw_info, instance_data: instance_data
       )
     end

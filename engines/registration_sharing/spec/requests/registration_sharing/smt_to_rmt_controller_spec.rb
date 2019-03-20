@@ -127,7 +127,7 @@ module RegistrationSharing
     end
 
     describe '#delete_registrations' do
-      let!(:system) { FactoryGirl.create(:registration_sharing_system) }
+      let!(:system) { FactoryGirl.create(:system) }
       let(:url) { '/api/regsharing/center/regsvc?command=deltesharedregistration' }
       let(:xml) do
         "<?xml version='1.0' encoding='UTF-8'?>
