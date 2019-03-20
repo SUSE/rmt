@@ -12,6 +12,14 @@ class SMTImporter
   def initialize(data_dir, no_systems)
     @data_dir = data_dir
     @no_systems = no_systems
+    @systems = {}
+    load_systems
+  end
+
+  def load_systems
+    System.all.each do |system|
+      @systems[system.login] = system.id
+    end
   end
 
   def read_csv(file)
@@ -65,44 +73,78 @@ WARNING
   end
 
   def import_systems
+    count = 0
+
+    client = ActiveRecord::Base.connection.raw_connection
+    statement = client.prepare(
+      'INSERT IGNORE INTO systems SET
+        login = ?, password = ?, hostname = ?, registered_at = ?, created_at = NOW(), updated_at = NOW()'
+    )
+
+    last_id = client.prepare('SELECT LAST_INSERT_ID()')
+
     read_csv('systems').each do |row|
       login, password, hostname, registered_at = row
 
-      next unless System.find_by(login: login, password: password).nil?
+      if (@systems[login])
+        warn _('Duplicate entry for system %{system}, skipping') % { system: login }
+        next
+      end
 
-      # rubocop:disable Rails/TimeZone
-      System.create!(
-        login: login,
-        password: password,
-        hostname: hostname,
-        registered_at: Time.at(registered_at.to_i)
-      )
-      # rubocop:enable Rails/TimeZone
-      puts _('Imported system %{system}') % { system: login }
+      statement.execute(login, password, hostname, Time.at(registered_at.to_i).utc)
+      result = last_id.execute
+      system_id = result.first[0]
+
+      #:nocov:
+      if (system_id == 0)
+        warn _('Failed to import system %{system}') % { system: login }
+        next
+      end
+      #:nocov:
+
+      @systems[login] = system_id
+
+      count += 1
+
+      puts "Imported #{count} systems" if (count % 1000 == 0)
     end
+
+    puts "Imported #{count} systems" if (count > 0)
   end
 
   def import_activations
+    products = {}
+    Product.all.each do |product|
+      products[product.id] = product.service.id
+    end
+
+    client = ActiveRecord::Base.connection.raw_connection
+    statement = client.prepare(
+      'INSERT IGNORE INTO activations SET
+        service_id = ?, system_id = ?, created_at = NOW(), updated_at = NOW()'
+    )
+
+    count = 0
     read_csv('activations').each do |row|
       login, product_id = row
 
-      product = Product.find_by(id: product_id)
-      system = System.find_by(login: login)
+      system_id = @systems[login]
+      service_id = products[product_id.to_i]
 
-      if !system
+      if !system_id
         warn _('System %{system} not found') % { system: login }
         next
-      elsif !product
+      elsif !service_id
         warn _('Product %{product} not found') % { product: product_id }
         next
       else
-        activation = Activation.find_by(system: system, service: product.service)
-        unless activation
-          Activation.create!(system: system, service: product.service)
-          puts _('Imported activation of %{product} for %{system}') % { product: product_id, system: login }
-        end
+        statement.execute(service_id, system_id)
+        count += 1
+        puts "Imported #{count} activations" if (count % 1000 == 0)
       end
     end
+
+    puts "Imported #{count} activations" if (count > 0)
   end
 
   def import_hardware_info

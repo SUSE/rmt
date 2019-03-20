@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-# Allow different path variables for development and production
-RMT_PATH = ENV['RMT_PATH'] ? ENV['RMT_PATH'] : '/usr/share/rmt/'
+RMT_PATH = File.expand_path('..', __dir__)
+
 
 # Load initial configuration for rmt
 require_relative "#{RMT_PATH}/config/boot"
@@ -32,6 +32,7 @@ ActiveSupport::Dependencies.autoload_paths += relative_load_paths
 ActiveRecord::Base.establish_connection(db_config)
 
 begin
+  Time.zone ||= 'UTC'
   script = SMTImporter.new(data_dir, no_systems)
   script.run ARGV
 rescue SMTImporter::ImportException
