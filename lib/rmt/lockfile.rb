@@ -13,7 +13,8 @@ class RMT::Lockfile
         else
           pid = File.read(RMT::Lockfile::LOCKFILE_LOCATION)
           raise ExecutionLockedError.new(
-            _('Process is locked by the application with pid %{pid}. Close this application or wait for it to finish before trying again') % { pid: pid } + "\n"
+            _('Process is locked by the application with pid %{pid}. Close this application or wait for it to finish before trying again.') \
+                % { pid: pid } + "\n"
           )
         end
 

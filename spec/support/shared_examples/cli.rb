@@ -28,7 +28,7 @@ shared_examples 'handles lockfile exception' do
     it 'handles lockfile exception' do
       expect(described_class).to receive(:exit)
       expect { command }.to output(
-        "Process is locked by the application with pid #{pid}. Close this application or wait for it to finish before trying again\n"
+        "Process is locked by the application with pid #{pid}. Close this application or wait for it to finish before trying again.\n"
       ).to_stderr
     end
   end

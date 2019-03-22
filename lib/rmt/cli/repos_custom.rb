@@ -52,7 +52,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
     repository = find_repository!(id)
     repository.destroy!
 
-    puts _('Removed custom repository by id "%{id}".') % { id: id }
+    puts _('Removed custom repository by ID %{id}.') % { id: id }
   end
   map 'rm' => :remove
 
@@ -78,7 +78,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
     product = find_product!(product_id)
     repository_service.attach_product!(product, repository)
 
-    puts _('Attached repository to product "%{product_name}".') % { product_name: product.name }
+    puts _("Attached repository to product '%{product_name}'.") % { product_name: product.name }
   end
 
   desc 'detach ID PRODUCT_ID', _('Detach an existing custom repository from a product')
@@ -87,7 +87,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
     product = find_product!(product_id)
     repository_service.detach_product!(product, repository)
 
-    puts _('Detached repository from product "%{product_name}".') % { product_name: product.name }
+    puts _("Detached repository from product '%{product_name}'.") % { product_name: product.name }
   end
 
   private
@@ -104,13 +104,13 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
     raise StandardError unless repository.custom?
     repository
   rescue
-    raise RMT::CLI::Error.new(_('Cannot find custom repository by id "%{id}".') % { id: id })
+    raise RMT::CLI::Error.new(_('Cannot find custom repository by ID %{id}.') % { id: id })
   end
 
   def find_product!(id)
     Product.find_by!(id: id)
   rescue ActiveRecord::RecordNotFound
-    raise RMT::CLI::Error.new(_('Cannot find product by id "%{id}".') % { id: id })
+    raise RMT::CLI::Error.new(_('Cannot find product by ID %{id}.') % { id: id })
   end
 
   def repository_service

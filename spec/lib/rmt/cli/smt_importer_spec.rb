@@ -130,7 +130,7 @@ describe SMTImporter do
           Product 0 not found!
           Tried to attach custom repository #{repo.name} to product 0,
           but that product was not found. Attach it to a different product
-          by running `rmt-cli repos custom attach`
+          by running 'rmt-cli repos custom attach'
         OUTPUT
       end
     end
@@ -284,7 +284,7 @@ describe SMTImporter do
       expect do
         expect { importer.check_products_exist }.to raise_exception SMTImporter::ImportException
       end.to output(<<-OUTPUT.strip_heredoc).to_stderr
-        RMT has not been synced to SCC yet. Please run `rmt-cli sync` before
+        RMT has not been synced to SCC yet. Please run 'rmt-cli sync' before
         importing data from SMT.
       OUTPUT
     end

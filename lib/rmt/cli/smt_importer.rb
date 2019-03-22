@@ -57,7 +57,7 @@ class SMTImporter
 Product %{product} not found!
 Tried to attach custom repository %{repo} to product %{product},
 but that product was not found. Attach it to a different product
-by running `%{command}`
+by running '%{command}'
 WARNING
 ) % { repo: repo.name, product: product_id, command: 'rmt-cli repos custom attach' }
       end
@@ -162,7 +162,7 @@ WARNING
 
   def check_products_exist
     return if Product.count > 0
-    warn _('RMT has not been synced to SCC yet. Please run `%{command}` before') % { command: 'rmt-cli sync' }
+    warn _("RMT has not been synced to SCC yet. Please run '%{command}' before") % { command: 'rmt-cli sync' }
     warn _('importing data from SMT.')
     raise ImportException
   end
