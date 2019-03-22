@@ -1,137 +1,196 @@
 # Japanese translations for rmt package.
-# Copyright (C) 2019 THE PACKAGE'S COPYRIGHT HOLDER
+# Copyright (C) 2018 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the rmt package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2019-03-22 11:56+0100\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Japanese\n"
+"POT-Creation-Date: 2019-03-22 11:56+0100\n"
+"PO-Revision-Date: 2018-11-14 14:03+0000\n"
+"Last-Translator: Yasuhiko Kamata <belphegor@belbel.or.jp>\n"
+"Language-Team: Japanese <https://l10n.opensuse.org/projects/rmt/i18n/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"\n"
+"X-Generator: Weblate 3.3\n"
 
+#, fuzzy
+#| msgid ""
+#| "  Run this command on an online RMT.\n"
+#| "  It will look in PATH for a repos.json file which has to contain a list "
+#| "of repository IDs.\n"
+#| "  Usually, this file gets created by an offline RMT with `export "
+#| "settings`.\n"
+#| "\n"
+#| "  `export repos` will mirror these repositories to this PATH, usually a "
+#| "portable storage device.\n"
 msgid ""
 "  Run this command on an online RMT.\n"
-"  It will look in PATH for a repos.json file, which has to contain a list of repository IDs.\n"
-"  Usually, this file gets created by an offline RMT with 'rmt-cli export settings'.\n"
+"  It will look in PATH for a repos.json file, which has to contain a list of "
+"repository IDs.\n"
+"  Usually, this file gets created by an offline RMT with 'rmt-cli export "
+"settings'.\n"
 "\n"
-"  'rmt-cli export repos' will mirror these repositories to this PATH, usually a portable storage device.\n"
+"  'rmt-cli export repos' will mirror these repositories to this PATH, "
+"usually a portable storage device.\n"
 msgstr ""
+"  このコマンドをオンラインの RMT 上で実行してください。\n"
+"  このコマンドは、リポジトリ ID の一覧が含まれる repos.json ファイルを検索す"
+"る際、 PATH を使用します。\n"
+"  通常、このファイルは `export settings` を利用することで、オフラインの RMT "
+"が作成するものです。\n"
+"\n"
+"  `export repos` は、これらのリポジトリを PATH 内 (通常は可搬性のあるストレー"
+"ジデバイス) にミラーします。\n"
 
 msgid "%s is not yet activated on the system."
-msgstr ""
+msgstr "%s はシステム内でまだ有効化されていません。"
 
 msgid "%{file} - File does not exist"
-msgstr ""
+msgstr "%{file} - ファイルが存在しません"
 
 msgid "%{file} - HTTP request failed with code %{code}"
-msgstr ""
+msgstr "%{file} - HTTP リクエストが %{code} で失敗しました"
 
 msgid "%{file} - return code %{code}"
-msgstr ""
+msgstr "%{file} - 返り値 %{code}"
 
 msgid "%{file} does not exist."
-msgstr ""
+msgstr "%{file} は存在しません。"
 
 msgid "%{path} is not a directory."
-msgstr ""
+msgstr "%{path} はディレクトリではありません。"
 
 msgid "%{path} is not writable by user %{username}."
-msgstr ""
+msgstr "%{path} はユーザ %{username} から書き込むことができません。"
 
 msgid "A repository by the URL %{url} already exists."
-msgstr ""
+msgstr "URL %{url} のリポジトリは既に存在しています。"
 
 msgid "Added association between %{repo} and product %{product}"
-msgstr ""
+msgstr "%{repo} と製品 %{product} の関連付けを追加しました"
 
 msgid "Adding product %{product}"
-msgstr ""
+msgstr "製品 %{product} を追加しています"
 
 msgid "All repositories have already been disabled."
-msgstr ""
+msgstr "全てのリポジトリは既に無効化されています。"
 
 msgid "All repositories have already been enabled."
-msgstr ""
+msgstr "全てのリポジトリは既に有効化されています。"
 
 msgid "Arch"
 msgstr ""
 
 msgid "Attach an existing custom repository to a product"
-msgstr ""
+msgstr "既存の独自のリポジトリを製品に割り当てる"
 
+#, fuzzy
+#| msgid "Attached repository to product \"%{product_name}\"."
 msgid "Attached repository to product '%{product_name}'."
-msgstr ""
+msgstr "リポジトリを製品 \"%{product_name}\" に割り当てました。"
 
 msgid "Authenticated system with login \\\"%{login}\\\""
 msgstr ""
 
-msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
+#, fuzzy
+#| msgid ""
+#| "Cannot connect to database server. Make sure its credentials are "
+#| "configured in \"%{path}\"."
+msgid ""
+"Cannot connect to database server. Ensure its credentials are correctly "
+"configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr ""
+"データベースサーバに接続できません。認証情報が \"%{path}\" 内に設定されている"
+"ことをご確認ください。"
 
-msgid "Cannot connect to database server. Make sure it is running and its credentials are configured in '%{path}'."
+#, fuzzy
+#| msgid ""
+#| "Cannot connect to database server. Make sure it is running and its "
+#| "credentials are configured in \"%{path}\"."
+msgid ""
+"Cannot connect to database server. Make sure it is running and its "
+"credentials are configured in '%{path}'."
 msgstr ""
+"データベースサーバに接続できません。データベースサーバが動作していること、お"
+"よび認証情報が \"%{path}\" 内に設定されていることをご確認ください。"
 
-msgid "Cannot deactivate the product \"%s\". Other activated products depend upon it."
+msgid ""
+"Cannot deactivate the product \"%s\". Other activated products depend upon "
+"it."
 msgstr ""
+"製品 \"%s\" を無効化できません。有効化されている他の製品がその製品に依存して"
+"います。"
 
+#, fuzzy
+#| msgid "Cannot find custom repository by id \"%{id}\"."
 msgid "Cannot find custom repository by ID %{id}."
-msgstr ""
+msgstr "ID \"%{id}\" の独自リポジトリが見つかりません。"
 
+#, fuzzy
+#| msgid "Cannot find product by id \"%{id}\"."
 msgid "Cannot find product by ID %{id}."
-msgstr ""
+msgstr "ID \"%{id}\" の製品が見つかりません。"
 
 msgid "Check out %{url}"
 msgstr ""
 
 msgid "Checksum doesn't match"
-msgstr ""
+msgstr "チェックサムが適合しません"
 
 msgid "Cleaning up the database"
-msgstr ""
+msgstr "データベースを清掃しています"
 
 msgid "Commands:"
-msgstr ""
+msgstr "コマンド:"
 
+#, fuzzy
+#| msgid "Can not create a temporary directory: %{error}"
 msgid "Could not create a temporary directory: %{error}"
-msgstr ""
+msgstr "一時ディレクトリを作成できません: %{error}"
 
 msgid "Could not create deduplication hardlink: %{error}."
-msgstr ""
+msgstr "重複排除のハードリンクを作成できませんでした: %{error} 。"
 
+#, fuzzy
+#| msgid "Can not create a local repository directory: %{error}"
 msgid "Could not create local directory %{dir} with error: %{error}"
-msgstr ""
+msgstr "ローカルのリポジトリディレクトリを作成できません: %{error}"
 
-msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
+msgid ""
+"Could not find system with login \\\"%{login}\\\" and password \\"
+"\"%{password}\\\""
 msgstr ""
 
 msgid "Could not mirror suma product tree with error: %{error}"
 msgstr ""
 
 msgid "Creates a custom repository."
-msgstr ""
+msgstr "独自のリポジトリを作成します。"
 
 msgid "Detach an existing custom repository from a product"
 msgstr ""
 
+#, fuzzy
+#| msgid "Attached repository to product \"%{product_name}\"."
 msgid "Detached repository from product '%{product_name}'."
-msgstr ""
+msgstr "リポジトリを製品 \"%{product_name}\" に割り当てました。"
 
 msgid "Disable mirroring of custom repository by ID"
 msgstr ""
 
-msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
+msgid ""
+"Disable mirroring of product repositories by a list of product IDs or "
+"product strings."
 msgstr ""
 
 msgid ""
-"Disable mirroring of product repositories by a list of product IDs or product strings.\n"
+"Disable mirroring of product repositories by a list of product IDs or "
+"product strings.\n"
 "\n"
 "Examples:\n"
 "\n"
@@ -164,7 +223,8 @@ msgstr ""
 msgid "Do not import the systems that were registered to the SMT"
 msgstr ""
 
-msgid "Do you have any suggestions for improvement? We would love to hear from you!"
+msgid ""
+"Do you have any suggestions for improvement? We would love to hear from you!"
 msgstr ""
 
 msgid "Don't Mirror"
@@ -179,11 +239,14 @@ msgstr ""
 msgid "Enable mirroring of custom repository by ID"
 msgstr ""
 
-msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
+msgid ""
+"Enable mirroring of product repositories by a list of product IDs or product "
+"strings."
 msgstr ""
 
 msgid ""
-"Enable mirroring of product repositories by a list of product IDs or product strings.\n"
+"Enable mirroring of product repositories by a list of product IDs or product "
+"strings.\n"
 "\n"
 "Examples:\n"
 "\n"
@@ -254,7 +317,6 @@ msgstr ""
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Hardware information stored for system %{system}"
 msgstr ""
@@ -289,7 +351,8 @@ msgstr ""
 msgid "List all products, including ones which are not marked to be mirrored"
 msgstr ""
 
-msgid "List all repositories, including ones which are not marked to be mirrored"
+msgid ""
+"List all repositories, including ones which are not marked to be mirrored"
 msgstr ""
 
 msgid "List and modify custom repositories"
@@ -385,13 +448,19 @@ msgstr ""
 msgid "Not provided"
 msgstr ""
 
-msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
+msgid ""
+"Not yet activated Registration Code. Visit https://scc.suse.com to activate "
+"it."
 msgstr ""
 
-msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
+msgid ""
+"Only enabled products are shown by default. Use the '%{command}' option to "
+"see all products."
 msgstr ""
 
-msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
+msgid ""
+"Only enabled repositories are shown by default. Use the '%{option}' option "
+"to see all repositories."
 msgstr ""
 
 msgid "Output data in CSV format"
@@ -400,7 +469,9 @@ msgstr ""
 msgid "Path to unpacked SMT data tarball"
 msgstr ""
 
-msgid "Process is locked by the application with pid %{pid}. Close this application or wait for it to finish before trying again."
+msgid ""
+"Process is locked by the application with pid %{pid}. Close this application "
+"or wait for it to finish before trying again."
 msgstr ""
 
 msgid "Product"
@@ -409,12 +480,10 @@ msgstr ""
 msgid "Product %{products} could not be found and was not disabled."
 msgid_plural "Products %{products} could not be found and were not disabled."
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Product %{products} could not be found and was not enabled."
 msgid_plural "Products %{products} could not be found and were not enabled."
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Product %{product} not found"
 msgstr ""
@@ -426,8 +495,10 @@ msgid ""
 "by running '%{command}'\n"
 msgstr ""
 
+#, fuzzy
+#| msgid "Architecture"
 msgid "Product Architecture"
-msgstr ""
+msgstr "アーキテクチャ"
 
 msgid "Product ID"
 msgstr ""
@@ -450,20 +521,22 @@ msgstr ""
 msgid "Remove a custom repository"
 msgstr ""
 
+#, fuzzy
+#| msgid "Cannot find custom repository by id \"%{id}\"."
 msgid "Removed custom repository by ID %{id}."
-msgstr ""
+msgstr "ID \"%{id}\" の独自リポジトリが見つかりません。"
 
 msgid "Repository %{repos} could not be found and was not disabled."
 msgid_plural "Repositories %{repos} could not be found and were not disabled."
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Repository %{repos} could not be found and was not enabled."
 msgid_plural "Repositories %{repos} could not be found and were not enabled."
 msgstr[0] ""
-msgstr[1] ""
 
-msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
+msgid ""
+"Repository %{repo} was not found in RMT database, perhaps you no longer have "
+"a valid subscription for it"
 msgstr ""
 
 msgid "Repository by ID %{id} successfully disabled."
@@ -493,7 +566,8 @@ msgstr ""
 msgid "Run '%{command}' for more information on a command and its subcommands."
 msgstr ""
 
-msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
+msgid ""
+"Run '%{command}' to synchronize with your SUSE Customer Center data first."
 msgstr ""
 
 msgid "SCC ID"
@@ -523,10 +597,14 @@ msgstr ""
 msgid "System %{system} not found"
 msgstr ""
 
-msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
+msgid ""
+"The RMT database has not yet been initialized. Run '%{command}' to setup the "
+"database."
 msgstr ""
 
-msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
+msgid ""
+"The SCC credentials are not configured correctly in '%{path}'. You can "
+"obtain them from %{url}"
 msgstr ""
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
@@ -571,8 +649,17 @@ msgstr ""
 msgid "importing data from SMT."
 msgstr ""
 
+#, fuzzy
+#| msgid "A repository by the URL %{url} already exists."
 msgid "repository by URL %{url} does not exist in database"
+msgstr "URL %{url} のリポジトリは既に存在しています。"
+
+msgid ""
+"× File does not exist or has wrong filesize, deduplication ignored %{error}."
 msgstr ""
 
-msgid "× File does not exist or has wrong filesize, deduplication ignored %{error}."
-msgstr ""
+#~ msgid "Adding product %{product}\")"
+#~ msgstr "製品 %{product} を追加しています\")"
+
+#~ msgid "Description"
+#~ msgstr "説明"
