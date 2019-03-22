@@ -1,5 +1,4 @@
 # Chinese translations for rmt package
-# rmt 套件的傳統字漢語翻譯.
 # Copyright (C) 2019 THE rmt'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the rmt package.
 # Automatically generated, 2019.
