@@ -20,9 +20,9 @@ class RMT::CLI::Export < RMT::CLI::Base
   long_desc _(<<-REPOS
   Run this command on an online RMT.
   It will look in PATH for a repos.json file, which has to contain a list of repository IDs.
-  Usually, this file gets created by an offline RMT with "rmt-cli export settings".
+  Usually, this file gets created by an offline RMT with 'rmt-cli export settings'.
 
-  "rmt-cli export repos" will mirror these repositories to this PATH, usually a portable storage device.
+  'rmt-cli export repos' will mirror these repositories to this PATH, usually a portable storage device.
   REPOS
 )
   def repos(path)

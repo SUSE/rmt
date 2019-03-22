@@ -56,7 +56,7 @@ OUTPUT
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output("Repository not found by ID '0'.\nRepository 0 could not be found and was not enabled.\n").to_stderr
+        expect { command }.to output("Repository not found by ID 0.\nRepository 0 could not be found and was not enabled.\n").to_stderr
                                   .and output('').to_stdout
       end
 
@@ -125,7 +125,7 @@ OUTPUT
     context 'repo id does not exist' do
       let(:argv) { ['disable', 0] }
       let(:error_message) do
-        "Repository not found by ID '0'.\nRepository 0 could not be found and was not disabled.\n"
+        "Repository not found by ID 0.\nRepository 0 could not be found and was not disabled.\n"
       end
 
       before do

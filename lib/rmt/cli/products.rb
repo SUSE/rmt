@@ -16,7 +16,7 @@ class RMT::CLI::Products < RMT::CLI::Base
 
     if products.empty?
       if options.all
-        warn _('Run \'%{command}\' to synchronize with your SUSE Customer Center data first.') % { command: 'rmt-cli sync' }
+        warn _("Run '%{command}' to synchronize with your SUSE Customer Center data first.") % { command: 'rmt-cli sync' }
       else
         warn _('No matching products found in the database.')
       end
@@ -27,7 +27,7 @@ class RMT::CLI::Products < RMT::CLI::Base
     end
 
     unless options.all || options.csv
-      puts _('Only enabled products are shown by default. Use the \'%{command}\' option to see all products.') % {
+      puts _("Only enabled products are shown by default. Use the '%{command}' option to see all products.") % {
         command: '--all'
       }
     end
@@ -104,7 +104,7 @@ REPOS
 
     # This will return multiple products if 'SLES/15' was used
     base_products = find_products(target)
-    raise ProductNotFoundException.new(_('No product found for target \'%{target}\'.') % { target: target }) if base_products.empty?
+    raise ProductNotFoundException.new(_('No product found for target %{target}.') % { target: target }) if base_products.empty?
     puts n_('Found product by target %{target}: %{products}.', 'Found products by target %{target}: %{products}.', base_products.count) % {
       products: base_products.map(&:friendly_name).join(', '),
       target: target
@@ -161,7 +161,7 @@ REPOS
 
     products
   rescue ActiveRecord::RecordNotFound
-    raise ProductNotFoundException.new(_('Product by ID \'%{id}\' not found.') % { id: product_id })
+    raise ProductNotFoundException.new(_('Product by ID %{id} not found.') % { id: product_id })
   end
 
   def repository_service
