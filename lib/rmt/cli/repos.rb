@@ -17,31 +17,29 @@ class RMT::CLI::Repos < RMT::CLI::Base
   map 'ls' => :list
 
   desc 'enable IDS', _('Enable mirroring of repositories by a list of repository IDs')
-  long_desc _(<<-REPOS
-Enable mirroring of repositories by a list of repository IDs
+  long_desc <<-REPOS
+#{_('Enable mirroring of repositories by a list of repository IDs')}
 
-Examples:
+#{_('Examples:')}
 
 $ rmt-cli repos enable 2526
 
 $ rmt-cli repos enable 2526 3263
 REPOS
-)
   def enable(*ids)
     change_repos(ids, true)
   end
 
   desc 'disable IDS', _('Disable mirroring of repositories by a list of repository IDs')
-  long_desc _(<<-REPOS
-Disable mirroring of repositories by a list of repository IDs
+  long_desc <<-REPOS
+#{_('Disable mirroring of repositories by a list of repository IDs')}
 
-Examples:
+#{_('Examples:')}
 
 $ rmt-cli repos disable 2526
 
 $ rmt-cli repos disable 2526 3263
 REPOS
-)
   def disable(*ids)
     change_repos(ids, false)
   end

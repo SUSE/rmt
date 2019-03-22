@@ -36,10 +36,10 @@ class RMT::CLI::Products < RMT::CLI::Base
 
   desc 'enable TARGETS', _('Enable mirroring of product repositories by a list of product IDs or product strings.')
   option :all_modules, type: :boolean, desc: _('Enables all free modules for a product')
-  long_desc _(<<-REPOS
-Enable mirroring of product repositories by a list of product IDs or product strings.
+  long_desc <<-REPOS
+#{_('Enable mirroring of product repositories by a list of product IDs or product strings.')}
 
-Examples:
+#{_('Examples')}:
 
 $ rmt-cli products enable SLES/15
 
@@ -49,16 +49,15 @@ $ rmt-cli products enable SLES/15/x86_64 1743
 
 $ rmt-cli products enable --all-modules SLES/15
 REPOS
-)
   def enable(*targets)
     change_products(targets, true, options[:all_modules])
   end
 
   desc 'disable TARGETS', _('Disable mirroring of product repositories by a list of product IDs or product strings.')
-  long_desc _(<<-REPOS
-Disable mirroring of product repositories by a list of product IDs or product strings.
+  long_desc <<-REPOS
+#{_('Disable mirroring of product repositories by a list of product IDs or product strings.')}
 
-Examples:
+#{_('Examples')}:
 
 $ rmt-cli products disable SLES/15
 
@@ -66,7 +65,6 @@ $ rmt-cli products disable 1575
 
 $ rmt-cli products disable SLES/15/x86_64 1743
 REPOS
-)
   def disable(*targets)
     change_products(targets, false, false)
   end
