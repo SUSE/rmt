@@ -34,7 +34,7 @@ class RMT::Mirror
     @downloader.repository_url = URI.join(repository_url)
     @downloader.destination_dir = @repository_dir
 
-    @logger.info _('Mirroring SUMA product tree to %{dir}') % { dir: @repository_dir }
+    @logger.info _('Mirroring SUSE Manager product tree to %{dir}') % { dir: @repository_dir }
     @downloader.download('product_tree.json')
   rescue RMT::Downloader::Exception => e
     raise RMT::Mirror::Exception.new(_('Could not mirror suma product tree with error: %{error}') % { error: e.message })
