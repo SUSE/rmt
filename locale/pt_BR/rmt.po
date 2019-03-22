@@ -1,137 +1,199 @@
 # Portuguese translations for rmt package.
 # Copyright (C) 2019 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the rmt package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2019-03-22 11:56+0100\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Portuguese\n"
+"POT-Creation-Date: 2019-03-22 11:56+0100\n"
+"PO-Revision-Date: 2018-12-20 18:00+0000\n"
+"Last-Translator: Rodrigo Macedo <rmsolucoeseminformatic4@gmail.com>\n"
+"Language-Team: Portuguese (Brazil) <https://l10n.opensuse.org/projects/rmt/"
+"i18n/pt_BR/>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 3.3\n"
 
+#, fuzzy
+#| msgid ""
+#| "  Run this command on an online RMT.\n"
+#| "  It will look in PATH for a repos.json file which has to contain a list "
+#| "of repository IDs.\n"
+#| "  Usually, this file gets created by an offline RMT with `export "
+#| "settings`.\n"
+#| "\n"
+#| "  `export repos` will mirror these repositories to this PATH, usually a "
+#| "portable storage device.\n"
 msgid ""
 "  Run this command on an online RMT.\n"
-"  It will look in PATH for a repos.json file, which has to contain a list of repository IDs.\n"
-"  Usually, this file gets created by an offline RMT with 'rmt-cli export settings'.\n"
+"  It will look in PATH for a repos.json file, which has to contain a list of "
+"repository IDs.\n"
+"  Usually, this file gets created by an offline RMT with 'rmt-cli export "
+"settings'.\n"
 "\n"
-"  'rmt-cli export repos' will mirror these repositories to this PATH, usually a portable storage device.\n"
+"  'rmt-cli export repos' will mirror these repositories to this PATH, "
+"usually a portable storage device.\n"
 msgstr ""
+"  Execute este comando em um RMT on-line.\n"
+" Ele procurará no PATH por um arquivo repos.json que deve conter uma lista "
+"de IDs do repositório.\n"
+" Normalmente, esse arquivo é criado por um RMT off-line com `export "
+"settings`. \n"
+"\n"
+"`export repos` irá espelhar estes repositórios para este PATH, geralmente um "
+"dispositivo de armazenamento portátil.\n"
 
 msgid "%s is not yet activated on the system."
-msgstr ""
+msgstr "%s ainda não está ativado no sistema."
 
 msgid "%{file} - File does not exist"
-msgstr ""
+msgstr "%{file} - Arquivo não existe"
 
 msgid "%{file} - HTTP request failed with code %{code}"
-msgstr ""
+msgstr "%{file} -Pedido HTTP falhou com o código %{code}"
 
 msgid "%{file} - return code %{code}"
-msgstr ""
+msgstr "%{file} - retorna código %{code}"
 
 msgid "%{file} does not exist."
-msgstr ""
+msgstr "%{file} não existe."
 
 msgid "%{path} is not a directory."
-msgstr ""
+msgstr "%{path} não é um diretório."
 
 msgid "%{path} is not writable by user %{username}."
-msgstr ""
+msgstr "%{path} não é gravável pelo usuário %{username}."
 
 msgid "A repository by the URL %{url} already exists."
-msgstr ""
+msgstr "Um repositório pelo URL %{url} já existe."
 
 msgid "Added association between %{repo} and product %{product}"
-msgstr ""
+msgstr "Adicionado associação entre %{repo} e produto %{product}"
 
 msgid "Adding product %{product}"
-msgstr ""
+msgstr "Adicionando produto %{product}"
 
 msgid "All repositories have already been disabled."
-msgstr ""
+msgstr "Todos os repositórios já foram desativados."
 
 msgid "All repositories have already been enabled."
-msgstr ""
+msgstr "Todos os repositórios já foram ativados."
 
 msgid "Arch"
 msgstr ""
 
 msgid "Attach an existing custom repository to a product"
-msgstr ""
+msgstr "Anexar um repositório customizado existente a um produto"
 
+#, fuzzy
+#| msgid "Attached repository to product \"%{product_name}\"."
 msgid "Attached repository to product '%{product_name}'."
-msgstr ""
+msgstr "Repositório anexado ao produto \"%{product_name}\"."
 
 msgid "Authenticated system with login \\\"%{login}\\\""
 msgstr ""
 
-msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
+#, fuzzy
+#| msgid ""
+#| "Cannot connect to database server. Make sure its credentials are "
+#| "configured in \"%{path}\"."
+msgid ""
+"Cannot connect to database server. Ensure its credentials are correctly "
+"configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr ""
+"Não é possível conectar-se ao servidor de banco de dados. Certifique-se de "
+"que suas credenciais estejam configuradas \"%{path}\"."
 
-msgid "Cannot connect to database server. Make sure it is running and its credentials are configured in '%{path}'."
+#, fuzzy
+#| msgid ""
+#| "Cannot connect to database server. Make sure it is running and its "
+#| "credentials are configured in \"%{path}\"."
+msgid ""
+"Cannot connect to database server. Make sure it is running and its "
+"credentials are configured in '%{path}'."
 msgstr ""
+"Não é possível conectar-se ao servidor de banco de dados. Verifique se ele "
+"está em execução e se suas credenciais estão configuradas \"%{path}\"."
 
-msgid "Cannot deactivate the product \"%s\". Other activated products depend upon it."
+msgid ""
+"Cannot deactivate the product \"%s\". Other activated products depend upon "
+"it."
 msgstr ""
+"Não é possível desativar o produto \"%s\". Outros produtos ativados dependem "
+"disso."
 
+#, fuzzy
+#| msgid "Cannot find custom repository by id \"%{id}\"."
 msgid "Cannot find custom repository by ID %{id}."
-msgstr ""
+msgstr "Não é possível encontrar repositório personalizado por id \"%{id}\"."
 
+#, fuzzy
+#| msgid "Cannot find product by id \"%{id}\"."
 msgid "Cannot find product by ID %{id}."
-msgstr ""
+msgstr "Não é possível encontrar o produto por id \"%{id}\"."
 
 msgid "Check out %{url}"
-msgstr ""
+msgstr "Confira %{url}"
 
 msgid "Checksum doesn't match"
-msgstr ""
+msgstr "Soma de verificação não corresponde"
 
 msgid "Cleaning up the database"
-msgstr ""
+msgstr "Limpando o banco de dados"
 
 msgid "Commands:"
-msgstr ""
+msgstr "Comandos:"
 
+#, fuzzy
+#| msgid "Can not create a temporary directory: %{error}"
 msgid "Could not create a temporary directory: %{error}"
-msgstr ""
+msgstr "Não é possível criar um diretório temporário: %{error}"
 
 msgid "Could not create deduplication hardlink: %{error}."
-msgstr ""
+msgstr "Não foi possível criar o hardlink de deduplicação: %{error}."
 
+#, fuzzy
+#| msgid "Can not create a local repository directory: %{error}"
 msgid "Could not create local directory %{dir} with error: %{error}"
-msgstr ""
+msgstr "Não é possível criar um diretório de repositório local: %{error}"
 
-msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
+msgid ""
+"Could not find system with login \\\"%{login}\\\" and password \\"
+"\"%{password}\\\""
 msgstr ""
 
 msgid "Could not mirror suma product tree with error: %{error}"
 msgstr ""
 
 msgid "Creates a custom repository."
-msgstr ""
+msgstr "Cria um repositório customizado."
 
 msgid "Detach an existing custom repository from a product"
-msgstr ""
+msgstr "Desanexar um repositório personalizado existente de um produto"
 
+#, fuzzy
+#| msgid "Detached repository from product \"%{product_name}\"."
 msgid "Detached repository from product '%{product_name}'."
-msgstr ""
+msgstr "Desanexar um repositório de um produto \"%{product_name}\"."
 
 msgid "Disable mirroring of custom repository by ID"
-msgstr ""
-
-msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
-msgstr ""
+msgstr "Desativar o espelhamento do repositório personalizado por ID"
 
 msgid ""
-"Disable mirroring of product repositories by a list of product IDs or product strings.\n"
+"Disable mirroring of product repositories by a list of product IDs or "
+"product strings."
+msgstr ""
+"Desative o espelhamento de repositórios de produtos por uma lista de IDs de "
+"produto ou cadeias de produto."
+
+msgid ""
+"Disable mirroring of product repositories by a list of product IDs or "
+"product strings.\n"
 "\n"
 "Examples:\n"
 "\n"
@@ -142,8 +204,10 @@ msgid ""
 "$ rmt-cli products disable SLES/15/x86_64 1743\n"
 msgstr ""
 
+#, fuzzy
+#| msgid "Disable mirroring of repositories by repository ID"
 msgid "Disable mirroring of repositories by a list of repository IDs"
-msgstr ""
+msgstr "Desativar o espelhamento de repositórios por ID de repositório"
 
 msgid ""
 "Disable mirroring of repositories by a list of repository IDs\n"
@@ -156,34 +220,56 @@ msgid ""
 msgstr ""
 
 msgid "Disabled repository %{repository}."
-msgstr ""
+msgstr "Repositório desativado %{repository}."
 
 msgid "Disabling %{product}:"
-msgstr ""
+msgstr "Desabilitando %{product}:"
 
 msgid "Do not import the systems that were registered to the SMT"
-msgstr ""
+msgstr "Não importe os sistemas que foram registrados para o SMT"
 
-msgid "Do you have any suggestions for improvement? We would love to hear from you!"
-msgstr ""
+#, fuzzy
+#| msgid ""
+#| "Do you have suggestions for improvement? We would love to hear from you!"
+msgid ""
+"Do you have any suggestions for improvement? We would love to hear from you!"
+msgstr "Você tem sugestões de melhoria? Gostaríamos muito de ouvir de você!"
 
+#, fuzzy
+#| msgid "Last Mirrored"
 msgid "Don't Mirror"
-msgstr ""
+msgstr "Última espelhada"
 
 msgid "Downloading data from SCC"
-msgstr ""
+msgstr "Download de dados do SCC"
 
 msgid "Enable debug output"
-msgstr ""
+msgstr "Ativar saída de depuração"
 
 msgid "Enable mirroring of custom repository by ID"
-msgstr ""
-
-msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
-msgstr ""
+msgstr "Ativar o espelhamento do repositório customizado por ID"
 
 msgid ""
-"Enable mirroring of product repositories by a list of product IDs or product strings.\n"
+"Enable mirroring of product repositories by a list of product IDs or product "
+"strings."
+msgstr ""
+"Ative o espelhamento de repositórios de produtos por uma lista de IDs de "
+"produto ou cadeias de produto."
+
+#, fuzzy
+#| msgid ""
+#| "Examples:\n"
+#| "\n"
+#| "`rmt-cli products enable SLES/15`\n"
+#| "\n"
+#| "`rmt-cli products enable 1575`\n"
+#| "\n"
+#| "`rmt-cli products enable SLES/15/x86_64,1743`\n"
+#| "\n"
+#| "`rmt-cli products enable --all-modules SLES/15`\n"
+msgid ""
+"Enable mirroring of product repositories by a list of product IDs or product "
+"strings.\n"
 "\n"
 "Examples:\n"
 "\n"
@@ -195,9 +281,20 @@ msgid ""
 "\n"
 "$ rmt-cli products enable --all-modules SLES/15\n"
 msgstr ""
+"Exemplos:\n"
+"\n"
+"`produtos rmt-cli permitem SLES/15`\n"
+"\n"
+"`produtos rmt-cli permitem 1575`\n"
+"\n"
+"`produtos rmt-cli habilitam SLES/15/x86_64,1743`\n"
+"\n"
+"`produtos rmt-cli permitem --all-modules SLES/15`\n"
 
+#, fuzzy
+#| msgid "Enable mirroring of repositories by repository ID"
 msgid "Enable mirroring of repositories by a list of repository IDs"
-msgstr ""
+msgstr "Ativar o espelhamento de repositórios por ID de repositório"
 
 msgid ""
 "Enable mirroring of repositories by a list of repository IDs\n"
@@ -210,369 +307,508 @@ msgid ""
 msgstr ""
 
 msgid "Enabled mirroring for repository %{repo}"
-msgstr ""
+msgstr "Espelhamento ativado para repositório %{repo}"
 
 msgid "Enabled repository %{repository}."
-msgstr ""
+msgstr "Repositório habilitado %{repository}."
 
 msgid "Enables all free modules for a product"
-msgstr ""
+msgstr "Permite que todos os módulos gratuitos de um produto"
 
 msgid "Enabling %{product}:"
-msgstr ""
+msgstr "Habilitando %{product}:"
 
 msgid "Error while mirroring data: %{error}"
-msgstr ""
+msgstr "Erro ao espelhar dados: %{error}"
 
 msgid "Error while mirroring license: %{error}"
-msgstr ""
+msgstr "Erro ao espelhar a licença: %{error}"
 
 msgid "Error while mirroring metadata: %{error}"
-msgstr ""
+msgstr "Erro ao espelhar metadados: %{error}"
 
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
-msgstr ""
+msgstr "Erro ao mover o diretório %{src} para %{dest}: %{error}"
 
 msgid "Export commands for Offline Sync"
-msgstr ""
+msgstr "Exportar comandos para sincronização off-line"
 
 msgid "Exporting data from SCC to %{path}"
-msgstr ""
+msgstr "Exportando dados do SCC para %{path}"
 
 msgid "Exporting orders"
-msgstr ""
+msgstr "Exportando pedidos"
 
 msgid "Exporting products"
-msgstr ""
+msgstr "Exportando produtos"
 
 msgid "Exporting repositories"
-msgstr ""
+msgstr "Exportando repositórios"
 
 msgid "Exporting subscriptions"
-msgstr ""
+msgstr "Exportando assinaturas"
 
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Produto encontrado pela meta %{target}: %{products}."
+msgstr[1] "Produtos encontrados por meta %{target}: %{products}."
 
 msgid "Hardware information stored for system %{system}"
-msgstr ""
+msgstr "Informações de hardware armazenadas para o sistema %{system}"
 
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 msgid "Import commands for Offline Sync"
-msgstr ""
+msgstr "Importar comandos para sincronização off-line"
 
 msgid "Imported activation of %{product} for %{system}"
-msgstr ""
+msgstr "Importar ativação do %{product} para %{system}"
 
 msgid "Imported system %{system}"
-msgstr ""
+msgstr "Sistema importado %{system}"
 
 msgid "Importing SCC data from %{path}"
-msgstr ""
+msgstr "Importando dados do SCC de %{path}"
 
 msgid "Invalid system credentials"
 msgstr ""
 
 msgid "Last Mirrored"
-msgstr ""
+msgstr "Última espelhada"
 
 msgid "Last mirrored"
-msgstr ""
+msgstr "Última espelhada"
 
 msgid "List all custom repositories"
-msgstr ""
+msgstr "Listar todos os repositórios personalizados"
 
 msgid "List all products, including ones which are not marked to be mirrored"
 msgstr ""
+"Listar todos os produtos, incluindo aqueles que não estão marcados para "
+"serem espelhados"
 
-msgid "List all repositories, including ones which are not marked to be mirrored"
+msgid ""
+"List all repositories, including ones which are not marked to be mirrored"
 msgstr ""
+"Listar todos os repositórios, incluindo aqueles que não estão marcados para "
+"serem espelhados"
 
 msgid "List and modify custom repositories"
-msgstr ""
+msgstr "Listar e modificar repositórios personalizados"
 
 msgid "List and modify products"
-msgstr ""
+msgstr "Listar e modificar produtos"
 
 msgid "List and modify repositories"
-msgstr ""
+msgstr "Listar e modificar repositórios"
 
 msgid "List products which are marked to be mirrored."
-msgstr ""
+msgstr "Listar produtos que estão marcados para serem espelhados."
 
 msgid "List repositories which are marked to be mirrored"
-msgstr ""
+msgstr "Listar produtos que estão marcados para serem espelhados"
 
+#, fuzzy
+#| msgid "Mandatory?"
 msgid "Mandatory"
-msgstr ""
+msgstr "Mandatário?"
 
 msgid "Mandatory?"
-msgstr ""
+msgstr "Mandatário?"
 
+#, fuzzy
+#| msgid "Mirror?"
 msgid "Mirror"
-msgstr ""
+msgstr "Espelho?"
 
 msgid "Mirror repos at given path"
-msgstr ""
+msgstr "Repos de espelho em determinado caminho"
 
 msgid "Mirror repos from given path"
-msgstr ""
+msgstr "Repos de espelho em determinado caminho"
 
 msgid "Mirror repositories"
-msgstr ""
+msgstr "Repositórios espelhados"
 
 msgid "Mirror?"
-msgstr ""
+msgstr "Espelho?"
 
+#, fuzzy
+#| msgid "Mirroring repository %{repo} to %{dir}"
 msgid "Mirroring SUMA product tree to %{dir}"
-msgstr ""
+msgstr "Repositório de Espelhamento %{repo} para %{dir}"
 
 msgid "Mirroring repository %{repo} to %{dir}"
-msgstr ""
+msgstr "Repositório de Espelhamento %{repo} para %{dir}"
 
 msgid "Missing data files: %{files}"
-msgstr ""
+msgstr "Arquivos de dados ausentes: %{files}"
 
 msgid "Multiple base products found: '%s'."
-msgstr ""
+msgstr "Vários produtos base encontrados: '%s'."
 
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 msgid "No base product found."
-msgstr ""
+msgstr "Nenhum produto base encontrado."
 
 msgid "No custom repositories found."
-msgstr ""
+msgstr "Nenhum repositório personalizado foi encontrado."
 
 msgid "No matching products found in the database."
-msgstr ""
+msgstr "Nenhum produto correspondente encontrado no banco de dados."
 
+#, fuzzy
+#| msgid "No product ids supplied"
 msgid "No product IDs supplied"
-msgstr ""
+msgstr "Nenhum ID de produto fornecido"
 
 msgid "No product found"
-msgstr ""
+msgstr "Nenhum produto encontrado"
 
+#, fuzzy
+#| msgid "No product found for target \"%{target}\"."
 msgid "No product found for target %{target}."
-msgstr ""
+msgstr "Nenhum produto encontrado para o alvo \"%{target}\"."
 
 msgid "No product found on RMT for: %s"
-msgstr ""
+msgstr "Nenhum produto encontrado em RMT para: %s"
 
 msgid "No products attached to repository."
-msgstr ""
+msgstr "Nenhum produto anexado ao repositório."
 
 msgid "No repositories enabled."
-msgstr ""
+msgstr "Nenhum repositório ativado."
 
 msgid "No repositories found for product: %s"
-msgstr ""
+msgstr "Nenhum repositório encontrado para o produto: %s"
 
+#, fuzzy
+#| msgid "No product ids supplied"
 msgid "No repository ids supplied"
-msgstr ""
+msgstr "Nenhum ID de produto fornecido"
 
+#, fuzzy
+#| msgid "Mandatory?"
 msgid "Not Mandatory"
-msgstr ""
+msgstr "Mandatário?"
 
 msgid "Not all mandatory repositories are mirrored for product %s"
 msgstr ""
+"Nem todos os repositórios obrigatórios são espelhados para o produto %s"
 
 msgid "Not provided"
-msgstr ""
+msgstr "Não fornecido"
 
-msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
+msgid ""
+"Not yet activated Registration Code. Visit https://scc.suse.com to activate "
+"it."
 msgstr ""
+"Código de registro ainda não ativado. Visite https://scc.suse.com para ativá-"
+"lo."
 
-msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
+#, fuzzy
+#| msgid ""
+#| "Only enabled products are shown by default. Use the `%{command}` option "
+#| "to see all products."
+msgid ""
+"Only enabled products are shown by default. Use the '%{command}' option to "
+"see all products."
 msgstr ""
+"Somente produtos ativados são mostrados por padrão. Use a opção '%{command}' "
+"para ver todos os produtos."
 
-msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
+#, fuzzy
+#| msgid ""
+#| "Only enabled repositories are shown by default. Use the `%{option}` "
+#| "option to see all repositories."
+msgid ""
+"Only enabled repositories are shown by default. Use the '%{option}' option "
+"to see all repositories."
 msgstr ""
+"Somente os repositórios ativados são mostrados por padrão. Use o`%{option}` "
+"opção para ver todos os repositórios."
 
 msgid "Output data in CSV format"
-msgstr ""
+msgstr "Dados de saída no formato CSV"
 
 msgid "Path to unpacked SMT data tarball"
-msgstr ""
+msgstr "Caminho para o tarball de dados SMT descompactado"
 
-msgid "Process is locked by the application with pid %{pid}. Close this application or wait for it to finish before trying again."
+#, fuzzy
+#| msgid ""
+#| "Process is locked by the application with pid %{pid}. Close this "
+#| "application or wait for it to finish before trying again"
+msgid ""
+"Process is locked by the application with pid %{pid}. Close this application "
+"or wait for it to finish before trying again."
 msgstr ""
+"O processo é bloqueado pelo aplicativo com pid {pid}. Feche este aplicativo "
+"ou espere que ele termine antes de tentar novamente"
 
+#, fuzzy
+#| msgid "Product string"
 msgid "Product"
-msgstr ""
+msgstr "Cadeia de produto"
 
+#, fuzzy
+#| msgid "Product %{product} not found"
 msgid "Product %{products} could not be found and was not disabled."
 msgid_plural "Products %{products} could not be found and were not disabled."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Produto %{product} não encontrado"
+msgstr[1] "Produto %{product} não encontrado"
 
+#, fuzzy
+#| msgid "Product %{product} not found"
 msgid "Product %{products} could not be found and was not enabled."
 msgid_plural "Products %{products} could not be found and were not enabled."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Produto %{product} não encontrado"
+msgstr[1] "Produto %{product} não encontrado"
 
 msgid "Product %{product} not found"
-msgstr ""
+msgstr "Produto %{product} não encontrado"
 
+#, fuzzy
+#| msgid ""
+#| "Product %{product} not found!\n"
+#| "Tried to attach custom repository %{repo} to product %{product},\n"
+#| "but that product was not found. Attach it to a different product\n"
+#| "by running `%{command}`\n"
 msgid ""
 "Product %{product} not found!\n"
 "Tried to attach custom repository %{repo} to product %{product},\n"
 "but that product was not found. Attach it to a different product\n"
 "by running '%{command}'\n"
 msgstr ""
+"Produto %{product} não encontrado!\n"
+"Tentou anexar o repositório personalizado %{repo} ao produto %{product},\n"
+"mas esse produto não foi encontrado. Anexá-lo a um produto diferente\n"
+"executando `%{command}`\n"
 
+#, fuzzy
+#| msgid "Architecture"
 msgid "Product Architecture"
-msgstr ""
+msgstr "Arquitetura"
 
+#, fuzzy
+#| msgid "Product string"
 msgid "Product ID"
-msgstr ""
+msgstr "Cadeia de produto"
 
+#, fuzzy
+#| msgid "Product string"
 msgid "Product Name"
-msgstr ""
+msgstr "Cadeia de produto"
 
+#, fuzzy
+#| msgid "Product string"
 msgid "Product Version"
-msgstr ""
+msgstr "Cadeia de produto"
 
+#, fuzzy
+#| msgid "Product by id \"%{id}\" not found."
 msgid "Product by ID %{id} not found."
-msgstr ""
+msgstr "Produto por id \"%{id}\" não encontrado."
 
+#, fuzzy
+#| msgid "RMT has not been synced to SCC yet. Please run `%{command}` before"
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr ""
+"O RMT ainda não foi sincronizado com o SCC. Por favor, execute `%{command}` "
+"antes"
 
 msgid "Read SCC data from given path"
-msgstr ""
+msgstr "Ler dados do SCC de determinado caminho"
 
 msgid "Remove a custom repository"
-msgstr ""
+msgstr "Remover um repositório personalizado"
 
+#, fuzzy
+#| msgid "Removed custom repository by id \"%{id}\"."
 msgid "Removed custom repository by ID %{id}."
-msgstr ""
+msgstr "Remover repositório personalizado por id \"%{id}\"."
 
+#, fuzzy
+#| msgid "Repository %{repo} is not available"
 msgid "Repository %{repos} could not be found and was not disabled."
 msgid_plural "Repositories %{repos} could not be found and were not disabled."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Repositório %{repo} não está disponível"
+msgstr[1] "Repositório %{repo} não está disponível"
 
+#, fuzzy
+#| msgid "Repository %{repo} is not available"
 msgid "Repository %{repos} could not be found and was not enabled."
 msgid_plural "Repositories %{repos} could not be found and were not enabled."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Repositório %{repo} não está disponível"
+msgstr[1] "Repositório %{repo} não está disponível"
 
-msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
+msgid ""
+"Repository %{repo} was not found in RMT database, perhaps you no longer have "
+"a valid subscription for it"
 msgstr ""
+"Repositório %{repo} não foi encontrado no banco de dados RMT, talvez você "
+"não tenha mais uma assinatura válida para ele"
 
+#, fuzzy
+#| msgid "Repository successfully disabled."
 msgid "Repository by ID %{id} successfully disabled."
-msgstr ""
+msgstr "Repositório desativado com sucesso."
 
+#, fuzzy
+#| msgid "Repository successfully enabled."
 msgid "Repository by ID %{id} successfully enabled."
-msgstr ""
+msgstr "Repositório habilitado com sucesso."
 
 msgid "Repository metadata signatures are missing"
-msgstr ""
+msgstr "Assinaturas de metadados do repositório estão faltando"
 
+#, fuzzy
+#| msgid "Repository not found by id \"%{id}\"."
 msgid "Repository not found by ID %{id}."
-msgstr ""
+msgstr "Repositório não encontrado por id \"%{id}\"."
 
 msgid "Repository successfully disabled."
-msgstr ""
+msgstr "Repositório desativado com sucesso."
 
 msgid "Repository successfully enabled."
-msgstr ""
+msgstr "Repositório habilitado com sucesso."
 
 msgid "Requested service not found"
-msgstr ""
+msgstr "Serviço solicitado não encontrado"
 
 msgid "Required parameters are missing or empty: %s"
-msgstr ""
+msgstr "Parâmetros necessários estão ausentes ou vazios: %s"
 
+#, fuzzy
+#| msgid ""
+#| "Run `%{command}` for more information on a command and its subcommands."
 msgid "Run '%{command}' for more information on a command and its subcommands."
 msgstr ""
+"Execute o `% {command}` para mais informações sobre um comando e seus "
+"subcomandos."
 
-msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
+#, fuzzy
+#| msgid ""
+#| "Run `%{command}` to synchronize with your SUSE Customer Center data first."
+msgid ""
+"Run '%{command}' to synchronize with your SUSE Customer Center data first."
 msgstr ""
+"Execute `%{command}` para sincronizar primeiro com os dados do SUSE Customer "
+"Center."
 
 msgid "SCC ID"
-msgstr ""
+msgstr "ID SCC"
 
 msgid "Settings saved at %{file}."
-msgstr ""
+msgstr "Configurações salvas em %{file}."
 
 msgid "Show RMT version"
-msgstr ""
+msgstr "Mostrar versão do RMT"
 
 msgid "Shows products attached to a custom repository"
-msgstr ""
+msgstr "Mostra produtos anexados a um repositório personalizado"
 
 msgid "Store SCC data in files at given path"
-msgstr ""
+msgstr "Armazenar dados do SCC em arquivos em determinado caminho"
 
 msgid "Store repository settings at given path"
-msgstr ""
+msgstr "Armazenar configurações do repositório em determinado caminho"
 
 msgid "Successfully added custom repository."
-msgstr ""
+msgstr "Repositório personalizado adicionado com sucesso."
 
 msgid "Sync database with SUSE Customer Center"
-msgstr ""
+msgstr "Sincronizar banco de dados com o SUSE Customer Center"
 
 msgid "System %{system} not found"
-msgstr ""
+msgstr "Sistema %{system} não encontrado"
 
-msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
+#, fuzzy
+#| msgid ""
+#| "The RMT database has not yet been initialized. Run `%{command}` to setup "
+#| "the database."
+msgid ""
+"The RMT database has not yet been initialized. Run '%{command}' to setup the "
+"database."
 msgstr ""
+"O banco de dados do RMT ainda não foi inicializado. Execute o `%{command}` "
+"para configurar o banco de dados."
 
-msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
+#, fuzzy
+#| msgid ""
+#| "The SCC credentials are not configured correctly in \"%{path}\". You can "
+#| "obtain them from %{url}"
+msgid ""
+"The SCC credentials are not configured correctly in '%{path}'. You can "
+"obtain them from %{url}"
 msgstr ""
+"As credenciais do SCC não estão configuradas corretamente em \"%{path}\". "
+"Você pode obtê-los a partir de %{url}"
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
-msgstr ""
+msgstr "O produto \"%s\" é um produto base e não pode ser desativado"
 
 msgid "The requested product '%s' is not activated on this system."
-msgstr ""
+msgstr "O produto solicitado '%s' não está ativado neste sistema."
 
 msgid "The requested products '%s' are not activated on the system."
-msgstr ""
+msgstr "Os produtos solicitados '%s' não estão ativados no sistema."
 
 msgid "There are no repositories marked for mirroring."
-msgstr ""
+msgstr "Não há repositórios marcados para espelhamento."
 
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 msgid "Unknown Registration Code."
-msgstr ""
+msgstr "Código de registro desconhecido."
 
 msgid "Unknown hash function %{checksum_type}"
-msgstr ""
+msgstr "Função hash desconhecida %{checksum_type}"
 
 msgid "Unmet product dependencies, activate one of these products first: %s"
 msgstr ""
+"Dependências de produtos não atendidas, ative um desses produtos primeiro: %s"
 
 msgid "Updated system information for host '%s'"
-msgstr ""
+msgstr "Informações do sistema atualizadas para o host '%s'"
 
 msgid "Updating products"
-msgstr ""
+msgstr "Atualizando produtos"
 
 msgid "Updating repositories"
-msgstr ""
+msgstr "Atualizando repositórios"
 
 msgid "Updating subscriptions"
-msgstr ""
+msgstr "Atualizando assinaturas"
 
 msgid "Version"
-msgstr ""
+msgstr "Versão"
 
 msgid "importing data from SMT."
-msgstr ""
+msgstr "importando dados do SMT."
 
+#, fuzzy
+#| msgid "repository by url %{url} does not exist in database"
 msgid "repository by URL %{url} does not exist in database"
-msgstr ""
+msgstr "repositório por url %{url} não existe na base de dados"
 
-msgid "× File does not exist or has wrong filesize, deduplication ignored %{error}."
+msgid ""
+"× File does not exist or has wrong filesize, deduplication ignored %{error}."
 msgstr ""
+"× O arquivo não existe ou tem tamanho de arquivo incorreto, a deduplicação é "
+"ignorada %{error}."
+
+#~ msgid "Adding product %{product}\")"
+#~ msgstr "Adicionando produto %{product}\")"
+
+#~ msgid "Description"
+#~ msgstr "Descrição"
+
+#~ msgid "No product license found"
+#~ msgstr "Nenhuma licença de produto encontrada"
+
+#~ msgid "Release stage"
+#~ msgstr "Fase de lançamento"
