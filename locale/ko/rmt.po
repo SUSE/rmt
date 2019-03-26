@@ -8,15 +8,17 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-03-22 11:56+0100\n"
-"PO-Revision-Date: 2019-03-22 11:56+0100\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2019-03-26 16:46+0000\n"
+"Last-Translator: Hwajin Kim <hwajin.kim@e4net.net>\n"
+"Language-Team: Korean <https://l10n.opensuse.org/projects/rmt/i18n/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 3.3\n"
 
+#, fuzzy
 msgid ""
 "  Run this command on an online RMT.\n"
 "  It will look in PATH for a repos.json file, which has to contain a list of "
@@ -27,122 +29,166 @@ msgid ""
 "  'rmt-cli export repos' will mirror these repositories to this PATH, "
 "usually a portable storage device.\n"
 msgstr ""
+"  온라인 RMT에서 이 명령을 실행합니다.\n"
+"  리포지토리 ID 목록을 포함해야 하는 repos.json 파일에 대한 경로가 표시됩니다.\n"
+"  일반적으로 이 파일은 'rmt-cli export settings'를 사용하여 오프라인 RMT에 의해 생성됩니다.\n"
+"\n"
+"  'rmt-cli export repos'는 이러한 리포지토리를 일반적으로 휴대용 저장소 장치인 이 경로에 미러합니다.\n"
 
+#, fuzzy
 msgid "%s is not yet activated on the system."
-msgstr ""
+msgstr "%s이(가) 아직 시스템에서 활성화되지 않았습니다."
 
+#, fuzzy
 msgid "%{file} - File does not exist"
-msgstr ""
+msgstr "%{file} - 파일이 없음"
 
+#, fuzzy
 msgid "%{file} - HTTP request failed with code %{code}"
-msgstr ""
+msgstr "%{file} - HTTP 요청에 실패했습니다(코드: %{code})."
 
+#, fuzzy
 msgid "%{file} - return code %{code}"
-msgstr ""
+msgstr "%{file} - 반환 코드 %{code}"
 
+#, fuzzy
 msgid "%{file} does not exist."
-msgstr ""
+msgstr "%{file}이(가) 없습니다."
 
+#, fuzzy
 msgid "%{path} is not a directory."
-msgstr ""
+msgstr "%{path}은(는) 디렉토리가 아닙니다."
 
+#, fuzzy
 msgid "%{path} is not writable by user %{username}."
-msgstr ""
+msgstr "%{path}은(는) %{username} 사용자가 쓸 수 없습니다."
 
+#, fuzzy
 msgid "A repository by the URL %{url} already exists."
-msgstr ""
+msgstr "URL %{url}의 리포지토리가 이미 있습니다."
 
+#, fuzzy
 msgid "Added association between %{repo} and product %{product}"
-msgstr ""
+msgstr "%{repo}과(와) %{product} 제품 사이에 연결이 추가됨"
 
+#, fuzzy
 msgid "Adding product %{product}"
-msgstr ""
+msgstr "%{product} 제품 추가 중"
 
+#, fuzzy
 msgid "All repositories have already been disabled."
-msgstr ""
+msgstr "모든 리포지토리가 이미 비활성화되었습니다."
 
+#, fuzzy
 msgid "All repositories have already been enabled."
-msgstr ""
+msgstr "모든 리포지토리가 이미 활성화되었습니다."
 
+#, fuzzy
 msgid "Arch"
-msgstr ""
+msgstr "Arch"
 
+#, fuzzy
 msgid "Attach an existing custom repository to a product"
-msgstr ""
+msgstr "제품에 기존 사용자 정의 리포지토리 연결"
 
+#, fuzzy
 msgid "Attached repository to product '%{product_name}'."
-msgstr ""
+msgstr "'%{product_name}' 제품에 리포지토리가 연결되었습니다."
 
+#, fuzzy
 msgid "Authenticated system with login \\\"%{login}\\\""
-msgstr ""
+msgstr "\\\"%{login}\\\" 로그인으로 인증된 시스템"
 
+#, fuzzy
 msgid ""
 "Cannot connect to database server. Ensure its credentials are correctly "
 "configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr ""
+"데이터베이스 서버에 연결할 수 없습니다. 해당 자격 증명이 '%{path}'에 올바르게 구성되었는지 확인하거나 RMT를 "
+"YaST('%{command}')로 구성합니다."
 
+#, fuzzy
 msgid ""
 "Cannot connect to database server. Make sure it is running and its "
 "credentials are configured in '%{path}'."
-msgstr ""
+msgstr "데이터베이스 서버에 연결할 수 없습니다. 해당 서버가 실행 중이며 해당 자격 증명이 '%{path}'에 구성되었는지 확인합니다."
 
+#, fuzzy
 msgid ""
 "Cannot deactivate the product \"%s\". Other activated products depend upon "
 "it."
-msgstr ""
+msgstr "\"%s\" 제품을 비활성화할 수 없습니다. 활성화된 다른 제품은 이 제품에 종속됩니다."
 
+#, fuzzy
 msgid "Cannot find custom repository by ID %{id}."
-msgstr ""
+msgstr "ID %{id}(으)로 사용자 정의 리포지토리를 찾을 수 없습니다."
 
+#, fuzzy
 msgid "Cannot find product by ID %{id}."
-msgstr ""
+msgstr "ID %{id}(으)로 제품을 찾을 수 없습니다."
 
+#, fuzzy
 msgid "Check out %{url}"
-msgstr ""
+msgstr "%{url} 체크 아웃"
 
+#, fuzzy
 msgid "Checksum doesn't match"
-msgstr ""
+msgstr "체크섬이 일치하지 않음"
 
+#, fuzzy
 msgid "Cleaning up the database"
-msgstr ""
+msgstr "데이터베이스 정리 중"
 
+#, fuzzy
 msgid "Commands:"
-msgstr ""
+msgstr "명령:"
 
+#, fuzzy
 msgid "Could not create a temporary directory: %{error}"
-msgstr ""
+msgstr "임시 디렉토리를 생성할 수 없습니다. %{error}"
 
+#, fuzzy
 msgid "Could not create deduplication hardlink: %{error}."
-msgstr ""
+msgstr "중복 제거 하드 링크를 생성할 수 없습니다. %{error}."
 
+#, fuzzy
 msgid "Could not create local directory %{dir} with error: %{error}"
-msgstr ""
+msgstr "로컬 디렉토리 %{dir}을(를) 만들 수 없습니다. 오류: %{error}"
 
+#, fuzzy
 msgid ""
 "Could not find system with login \\\"%{login}\\\" and password \\"
 "\"%{password}\\\""
 msgstr ""
+"로그인 \\\"%{login}\\\" 및 비밀번호 \\\"%{password}\\\"을(를) 사용하여 시스템을 찾을 수 없습니다."
 
+#, fuzzy
 msgid "Could not mirror suma product tree with error: %{error}"
-msgstr ""
+msgstr "suma 제품 트리를 미러링할 수 없습니다. 오류: %{error}"
 
+#, fuzzy
 msgid "Creates a custom repository."
-msgstr ""
+msgstr "사용자 정의 리포지토리를 생성합니다."
 
+#, fuzzy
 msgid "Detach an existing custom repository from a product"
-msgstr ""
+msgstr "제품에서 기존 사용자 정의 리포지토리 분리"
 
+#, fuzzy
 msgid "Detached repository from product '%{product_name}'."
-msgstr ""
+msgstr "'%{product_name}' 제품에서 리포지토리를 분리했습니다."
 
+#, fuzzy
 msgid "Disable mirroring of custom repository by ID"
-msgstr ""
+msgstr "ID로 사용자 정의 리포지토리 미러링 비활성화"
 
+#, fuzzy
 msgid ""
 "Disable mirroring of product repositories by a list of product IDs or "
 "product strings."
-msgstr ""
+msgstr "제품 ID 또는 제품 문자열 목록으로 제품 리포지토리 미러링을 비활성화합니다."
 
+#, fuzzy
 msgid ""
 "Disable mirroring of product repositories by a list of product IDs or "
 "product strings.\n"
@@ -155,10 +201,21 @@ msgid ""
 "\n"
 "$ rmt-cli products disable SLES/15/x86_64 1743\n"
 msgstr ""
+"제품 ID 또는 제품 문자열 목록으로 제품 리포지토리 미러링을 비활성화합니다.\n"
+"\n"
+"예:\n"
+"\n"
+"$ rmt-cli products disable SLES/15\n"
+"\n"
+"$ rmt-cli products disable 1575\n"
+"\n"
+"$ rmt-cli products disable SLES/15/x86_64 1743\n"
 
+#, fuzzy
 msgid "Disable mirroring of repositories by a list of repository IDs"
-msgstr ""
+msgstr "리포지토리 ID 목록으로 리포지토리 미러링 비활성화"
 
+#, fuzzy
 msgid ""
 "Disable mirroring of repositories by a list of repository IDs\n"
 "\n"
@@ -168,37 +225,54 @@ msgid ""
 "\n"
 "$ rmt-cli repos disable 2526 3263\n"
 msgstr ""
+"리포지토리 ID 목록으로 리포지토리 미러링 비활성화\n"
+"\n"
+"예:\n"
+"\n"
+"$ rmt-cli repos disable 2526\n"
+"\n"
+"$ rmt-cli repos disable 2526 3263\n"
 
+#, fuzzy
 msgid "Disabled repository %{repository}."
-msgstr ""
+msgstr "%{repository} 리포지토리를 비활성화했습니다."
 
+#, fuzzy
 msgid "Disabling %{product}:"
-msgstr ""
+msgstr "%{product} 비활성화:"
 
+#, fuzzy
 msgid "Do not import the systems that were registered to the SMT"
-msgstr ""
+msgstr "SMT에 등록된 시스템을 임포트하지 않음"
 
+#, fuzzy
 msgid ""
 "Do you have any suggestions for improvement? We would love to hear from you!"
-msgstr ""
+msgstr "개선을 위한 제안 사항이 있습니까? 여러분의 의견을 듣고 싶습니다!"
 
+#, fuzzy
 msgid "Don't Mirror"
-msgstr ""
+msgstr "미러링 안 함"
 
+#, fuzzy
 msgid "Downloading data from SCC"
-msgstr ""
+msgstr "SCC에서 데이터 다운로드 중"
 
+#, fuzzy
 msgid "Enable debug output"
-msgstr ""
+msgstr "디버그 출력 활성화"
 
+#, fuzzy
 msgid "Enable mirroring of custom repository by ID"
-msgstr ""
+msgstr "ID로 사용자 정의 리포지토리 미러링 활성화"
 
+#, fuzzy
 msgid ""
 "Enable mirroring of product repositories by a list of product IDs or product "
 "strings."
-msgstr ""
+msgstr "제품 ID 또는 제품 문자열 목록으로 제품 리포지토리 미러링을 활성화합니다."
 
+#, fuzzy
 msgid ""
 "Enable mirroring of product repositories by a list of product IDs or product "
 "strings.\n"
@@ -213,10 +287,23 @@ msgid ""
 "\n"
 "$ rmt-cli products enable --all-modules SLES/15\n"
 msgstr ""
+"제품 ID 또는 제품 문자열 목록으로 제품 리포지토리 미러링을 활성화합니다.\n"
+"\n"
+"예:\n"
+"\n"
+"$ rmt-cli products enable SLES/15\n"
+"\n"
+"$ rmt-cli products enable 1575\n"
+"\n"
+"$ rmt-cli products enable SLES/15/x86_64 1743\n"
+"\n"
+"$ rmt-cli products enable --all-modules SLES/15\n"
 
+#, fuzzy
 msgid "Enable mirroring of repositories by a list of repository IDs"
-msgstr ""
+msgstr "리포지토리 ID 목록으로 리포지토리 미러링 활성화"
 
+#, fuzzy
 msgid ""
 "Enable mirroring of repositories by a list of repository IDs\n"
 "\n"
@@ -226,149 +313,202 @@ msgid ""
 "\n"
 "$ rmt-cli repos enable 2526 3263\n"
 msgstr ""
+"리포지토리 ID 목록으로 리포지토리 미러링 활성화\n"
+"\n"
+"예:\n"
+"\n"
+"$ rmt-cli repos enable 2526\n"
+"\n"
+"$ rmt-cli repos enable 2526 3263\n"
 
+#, fuzzy
 msgid "Enabled mirroring for repository %{repo}"
-msgstr ""
+msgstr "리포지토리 %{repo}에 대한 미러링이 활성화됨"
 
+#, fuzzy
 msgid "Enabled repository %{repository}."
-msgstr ""
+msgstr "%{repository} 리포지토리를 활성화했습니다."
 
+#, fuzzy
 msgid "Enables all free modules for a product"
-msgstr ""
+msgstr "제품에 대한 모든 무료 모듈 활성화"
 
+#, fuzzy
 msgid "Enabling %{product}:"
-msgstr ""
+msgstr "%{product} 활성화 중:"
 
+#, fuzzy
 msgid "Error while mirroring data: %{error}"
-msgstr ""
+msgstr "데이터를 미러링하는 동안 %{error} 오류 발생"
 
+#, fuzzy
 msgid "Error while mirroring license: %{error}"
-msgstr ""
+msgstr "라이센스를 미러링하는 동안 %{error} 오류 발생"
 
+#, fuzzy
 msgid "Error while mirroring metadata: %{error}"
-msgstr ""
+msgstr "메터데이터를 미러링하는 동안 %{error} 오류 발생"
 
+#, fuzzy
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
-msgstr ""
+msgstr "%{src} 디렉토리를 %{dest}(으)로 이동하는 동안 %{error} 오류 발생"
 
+#, fuzzy
 msgid "Export commands for Offline Sync"
-msgstr ""
+msgstr "오프라인 동기화 중 명령 엑스포트"
 
+#, fuzzy
 msgid "Exporting data from SCC to %{path}"
-msgstr ""
+msgstr "SCC에서 %{path}(으)로 데이터 엑스포트 중"
 
+#, fuzzy
 msgid "Exporting orders"
-msgstr ""
+msgstr "순서 엑스포트 중"
 
+#, fuzzy
 msgid "Exporting products"
-msgstr ""
+msgstr "제품 엑스포트 중"
 
+#, fuzzy
 msgid "Exporting repositories"
-msgstr ""
+msgstr "리포지토리 엑스포트 중"
 
+#, fuzzy
 msgid "Exporting subscriptions"
-msgstr ""
+msgstr "구독 엑스포트 중"
 
+#, fuzzy
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
-msgstr[0] ""
+msgstr[0] "대상 %{target}: %{products}(으)로 제품을 찾았습니다."
 
+#, fuzzy
 msgid "Hardware information stored for system %{system}"
-msgstr ""
+msgstr "%{system} 시스템에 대해 저장된 하드웨어 정보"
 
+#, fuzzy
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
+#, fuzzy
 msgid "Import commands for Offline Sync"
-msgstr ""
+msgstr "오프라인 동기화에 대한 명령 임포트"
 
+#, fuzzy
 msgid "Imported activation of %{product} for %{system}"
-msgstr ""
+msgstr "%{system}에 대한 %{product} 활성화를 임포트함"
 
+#, fuzzy
 msgid "Imported system %{system}"
-msgstr ""
+msgstr "%{system} 시스템을 임포트함"
 
+#, fuzzy
 msgid "Importing SCC data from %{path}"
-msgstr ""
+msgstr "%{path}에서 SCC 데이터를 임포트하는 중"
 
+#, fuzzy
 msgid "Invalid system credentials"
-msgstr ""
+msgstr "시스템 자격 증명이 잘못됨"
 
 msgid "Last Mirrored"
-msgstr ""
+msgstr "마지막으로 미러링됨"
 
+#, fuzzy
 msgid "Last mirrored"
-msgstr ""
+msgstr "마지막으로 미러링됨"
 
+#, fuzzy
 msgid "List all custom repositories"
-msgstr ""
+msgstr "모든 사용자 정의 리포지토리 나열"
 
+#, fuzzy
 msgid "List all products, including ones which are not marked to be mirrored"
-msgstr ""
+msgstr "미러링으로 표시되지 않은 제품을 포함하여 모든 제품 나열"
 
+#, fuzzy
 msgid ""
 "List all repositories, including ones which are not marked to be mirrored"
-msgstr ""
+msgstr "미러링으로 표시되지 않은 리포지토를 포함하여 모든 리포지토리 열거"
 
+#, fuzzy
 msgid "List and modify custom repositories"
-msgstr ""
+msgstr "사용자 정의 리포지토리 나열 및 수정"
 
+#, fuzzy
 msgid "List and modify products"
-msgstr ""
+msgstr "제품 나열 및 수정"
 
+#, fuzzy
 msgid "List and modify repositories"
-msgstr ""
+msgstr "리포지토리 나열 및 수정"
 
+#, fuzzy
 msgid "List products which are marked to be mirrored."
-msgstr ""
+msgstr "미러링으로 표시된 제품을 나열합니다."
 
+#, fuzzy
 msgid "List repositories which are marked to be mirrored"
-msgstr ""
+msgstr "미러링으로 표시된 리포지토리 나열"
 
+#, fuzzy
 msgid "Mandatory"
-msgstr ""
+msgstr "필수"
 
+#, fuzzy
 msgid "Mandatory?"
-msgstr ""
+msgstr "필수입니까?"
 
+#, fuzzy
 msgid "Mirror"
-msgstr ""
+msgstr "미러"
 
+#, fuzzy
 msgid "Mirror repos at given path"
-msgstr ""
+msgstr "제공된 경로에서 리포지토리 미러링"
 
+#, fuzzy
 msgid "Mirror repos from given path"
-msgstr ""
+msgstr "제공된 경로의 리포지토리 미러링"
 
+#, fuzzy
 msgid "Mirror repositories"
-msgstr ""
+msgstr "리포지토리 미러링"
 
+#, fuzzy
 msgid "Mirror?"
-msgstr ""
+msgstr "미러링하시겠습니까?"
 
+#, fuzzy
 msgid "Mirroring SUMA product tree to %{dir}"
-msgstr ""
+msgstr "%{dir}에 SUMA 제품 트리 미러링"
 
+#, fuzzy
 msgid "Mirroring repository %{repo} to %{dir}"
-msgstr ""
+msgstr "%{repo} 리포지토리를 %{dir}에 미러링"
 
+#, fuzzy
 msgid "Missing data files: %{files}"
-msgstr ""
+msgstr "누락된 데이터 파일: %{files}"
 
+#, fuzzy
 msgid "Multiple base products found: '%s'."
-msgstr ""
+msgstr "기본 제품 '%s'이(가) 여러 개 있습니다."
 
+#, fuzzy
 msgid "Name"
-msgstr ""
+msgstr "이름"
 
+#, fuzzy
 msgid "No base product found."
-msgstr ""
+msgstr "기본 제품이 없습니다."
 
+#, fuzzy
 msgid "No custom repositories found."
-msgstr ""
+msgstr "사용자 지정 리포지토리가 없습니다."
 
+#, fuzzy
 msgid "No matching products found in the database."
-msgstr ""
+msgstr "데이터베이스에 일치하는 제품이 없습니다."
 
 msgid "No product IDs supplied"
 msgstr ""
