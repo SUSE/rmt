@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-03-22 11:56+0100\n"
-"PO-Revision-Date: 2018-11-14 14:03+0000\n"
-"Last-Translator: Yasuhiko Kamata <belphegor@belbel.or.jp>\n"
+"PO-Revision-Date: 2019-03-26 16:46+0000\n"
+"Last-Translator: Carina Hagl <vistatec_pm@sunflare.co.jp>\n"
 "Language-Team: Japanese <https://l10n.opensuse.org/projects/rmt/i18n/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -39,63 +39,73 @@ msgid ""
 "usually a portable storage device.\n"
 msgstr ""
 "  このコマンドをオンラインの RMT 上で実行してください。\n"
-"  このコマンドは、リポジトリ ID の一覧が含まれる repos.json ファイルを検索す"
-"る際、 PATH を使用します。\n"
-"  通常、このファイルは `export settings` を利用することで、オフラインの RMT "
-"が作成するものです。\n"
+"  このコマンドは、リポジトリ ID の一覧が含まれる repos.json ファイルを検索する際、 PATH を使用します。\n"
+"  通常、このファイルは `rmt-cli export settings` を利用することで、オフラインの RMT が作成するものです。\n"
 "\n"
-"  `export repos` は、これらのリポジトリを PATH 内 (通常は可搬性のあるストレー"
-"ジデバイス) にミラーします。\n"
+"  `rmt-cli export repos` は、これらのリポジトリを PATH 内 (通常は可搬性のあるストレージデバイス) にミラーします。\n"
 
+#, fuzzy
 msgid "%s is not yet activated on the system."
 msgstr "%s はシステム内でまだ有効化されていません。"
 
 msgid "%{file} - File does not exist"
 msgstr "%{file} - ファイルが存在しません"
 
+#, fuzzy
 msgid "%{file} - HTTP request failed with code %{code}"
-msgstr "%{file} - HTTP リクエストが %{code} で失敗しました"
+msgstr "%{file} - HTTP リクエストがコード %{code} で失敗しました"
 
+#, fuzzy
 msgid "%{file} - return code %{code}"
-msgstr "%{file} - 返り値 %{code}"
+msgstr "%{file} - リターンコード %{code}"
 
+#, fuzzy
 msgid "%{file} does not exist."
 msgstr "%{file} は存在しません。"
 
+#, fuzzy
 msgid "%{path} is not a directory."
 msgstr "%{path} はディレクトリではありません。"
 
 msgid "%{path} is not writable by user %{username}."
 msgstr "%{path} はユーザ %{username} から書き込むことができません。"
 
+#, fuzzy
 msgid "A repository by the URL %{url} already exists."
 msgstr "URL %{url} のリポジトリは既に存在しています。"
 
+#, fuzzy
 msgid "Added association between %{repo} and product %{product}"
 msgstr "%{repo} と製品 %{product} の関連付けを追加しました"
 
+#, fuzzy
 msgid "Adding product %{product}"
 msgstr "製品 %{product} を追加しています"
 
+#, fuzzy
 msgid "All repositories have already been disabled."
 msgstr "全てのリポジトリは既に無効化されています。"
 
+#, fuzzy
 msgid "All repositories have already been enabled."
 msgstr "全てのリポジトリは既に有効化されています。"
 
+#, fuzzy
 msgid "Arch"
-msgstr ""
+msgstr "Arch"
 
+#, fuzzy
 msgid "Attach an existing custom repository to a product"
 msgstr "既存の独自のリポジトリを製品に割り当てる"
 
 #, fuzzy
 #| msgid "Attached repository to product \"%{product_name}\"."
 msgid "Attached repository to product '%{product_name}'."
-msgstr "リポジトリを製品 \"%{product_name}\" に割り当てました。"
+msgstr "リポジトリを製品 '%{product_name}' に割り当てました。"
 
+#, fuzzy
 msgid "Authenticated system with login \\\"%{login}\\\""
-msgstr ""
+msgstr "ログイン \\\"%{login}\\\" を持つ認証済みシステム"
 
 #, fuzzy
 #| msgid ""
@@ -105,8 +115,8 @@ msgid ""
 "Cannot connect to database server. Ensure its credentials are correctly "
 "configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr ""
-"データベースサーバに接続できません。認証情報が \"%{path}\" 内に設定されている"
-"ことをご確認ください。"
+"データベースサーバに接続できません。認証情報が '%{path}' 内に正しく設定されていることをご確認するか、YaST ('%{command}') "
+"を使用して RMT を設定してください。"
 
 #, fuzzy
 #| msgid ""
@@ -116,29 +126,29 @@ msgid ""
 "Cannot connect to database server. Make sure it is running and its "
 "credentials are configured in '%{path}'."
 msgstr ""
-"データベースサーバに接続できません。データベースサーバが動作していること、お"
-"よび認証情報が \"%{path}\" 内に設定されていることをご確認ください。"
+"データベースサーバに接続できません。データベースサーバが動作していること、および認証情報が '%{path}' 内に設定されていることをご確認ください。"
 
+#, fuzzy
 msgid ""
 "Cannot deactivate the product \"%s\". Other activated products depend upon "
 "it."
-msgstr ""
-"製品 \"%s\" を無効化できません。有効化されている他の製品がその製品に依存して"
-"います。"
+msgstr "製品 \"%s\" を無効化できません。有効化されている他の製品がその製品に依存しています。"
 
 #, fuzzy
 #| msgid "Cannot find custom repository by id \"%{id}\"."
 msgid "Cannot find custom repository by ID %{id}."
-msgstr "ID \"%{id}\" の独自リポジトリが見つかりません。"
+msgstr "ID %{id} の独自リポジトリが見つかりません。"
 
 #, fuzzy
 #| msgid "Cannot find product by id \"%{id}\"."
 msgid "Cannot find product by ID %{id}."
-msgstr "ID \"%{id}\" の製品が見つかりません。"
+msgstr "ID %{id} の製品が見つかりません。"
 
+#, fuzzy
 msgid "Check out %{url}"
-msgstr ""
+msgstr "チェックアウト %{url}"
 
+#, fuzzy
 msgid "Checksum doesn't match"
 msgstr "チェックサムが適合しません"
 
@@ -151,7 +161,7 @@ msgstr "コマンド:"
 #, fuzzy
 #| msgid "Can not create a temporary directory: %{error}"
 msgid "Could not create a temporary directory: %{error}"
-msgstr "一時ディレクトリを作成できません: %{error}"
+msgstr "一時ディレクトリを作成できませんでした: %{error}"
 
 msgid "Could not create deduplication hardlink: %{error}."
 msgstr "重複排除のハードリンクを作成できませんでした: %{error} 。"
@@ -159,35 +169,41 @@ msgstr "重複排除のハードリンクを作成できませんでした: %{er
 #, fuzzy
 #| msgid "Can not create a local repository directory: %{error}"
 msgid "Could not create local directory %{dir} with error: %{error}"
-msgstr "ローカルのリポジトリディレクトリを作成できません: %{error}"
+msgstr "ローカルリポジトリ %{dir} がエラー: %{error} で作成できませんでした"
 
+#, fuzzy
 msgid ""
 "Could not find system with login \\\"%{login}\\\" and password \\"
 "\"%{password}\\\""
-msgstr ""
+msgstr "ログイン %{login}\\\" とパスワード \\\"%{password}\\\" を持つシステムが見つかりませんでした"
 
+#, fuzzy
 msgid "Could not mirror suma product tree with error: %{error}"
-msgstr ""
+msgstr "suma製品ツリーがエラー: %{error} でミラーリングできませんでした"
 
 msgid "Creates a custom repository."
 msgstr "独自のリポジトリを作成します。"
 
+#, fuzzy
 msgid "Detach an existing custom repository from a product"
-msgstr ""
+msgstr "製品から既存の独自リポジトリの割り当てを解除する"
 
 #, fuzzy
 #| msgid "Attached repository to product \"%{product_name}\"."
 msgid "Detached repository from product '%{product_name}'."
-msgstr "リポジトリを製品 \"%{product_name}\" に割り当てました。"
+msgstr "リポジトリを製品 '%{product_name}' にから割り当て解除しました。"
 
+#, fuzzy
 msgid "Disable mirroring of custom repository by ID"
-msgstr ""
+msgstr "ID別に独自リポジトリのミラーリングを無効にする"
 
+#, fuzzy
 msgid ""
 "Disable mirroring of product repositories by a list of product IDs or "
 "product strings."
-msgstr ""
+msgstr "製品IDのリストまたは製品文字列別に製品リポジトリのミラーリングを無効にします。"
 
+#, fuzzy
 msgid ""
 "Disable mirroring of product repositories by a list of product IDs or "
 "product strings.\n"
@@ -200,10 +216,21 @@ msgid ""
 "\n"
 "$ rmt-cli products disable SLES/15/x86_64 1743\n"
 msgstr ""
+"製品IDのリストまたは製品文字列別に製品リポジトリのミラーリングを無効にします。\n"
+"\n"
+"例:\n"
+"\n"
+"$ rmt-cli products disable SLES/15\n"
+"\n"
+"$ rmt-cli products disable 1575\n"
+"\n"
+"$ rmt-cli products disable SLES/15/x86_64 1743\n"
 
+#, fuzzy
 msgid "Disable mirroring of repositories by a list of repository IDs"
-msgstr ""
+msgstr "リポジトリIDのリスト別にリポジトリのミラーリングを無効にする"
 
+#, fuzzy
 msgid ""
 "Disable mirroring of repositories by a list of repository IDs\n"
 "\n"
@@ -213,36 +240,51 @@ msgid ""
 "\n"
 "$ rmt-cli repos disable 2526 3263\n"
 msgstr ""
+"リポジトリIDのリスト別にリポジトリのミラーリングを無効にする\n"
+"\n"
+"例:\n"
+"\n"
+"$ rmt-cli repos disable 2526\n"
+"\n"
+"$ rmt-cli repos disable 2526 3263\n"
 
+#, fuzzy
 msgid "Disabled repository %{repository}."
-msgstr ""
+msgstr "無効化されたリポジトリ %{repository}。"
 
 msgid "Disabling %{product}:"
 msgstr ""
 
+#, fuzzy
 msgid "Do not import the systems that were registered to the SMT"
-msgstr ""
+msgstr "SMTに登録されたシステムをインポートしない"
 
+#, fuzzy
 msgid ""
 "Do you have any suggestions for improvement? We would love to hear from you!"
-msgstr ""
+msgstr "改善するためのご提案がありましたらぜひお聞かせください。"
 
+#, fuzzy
 msgid "Don't Mirror"
-msgstr ""
+msgstr "ミラーリングしない"
 
+#, fuzzy
 msgid "Downloading data from SCC"
-msgstr ""
+msgstr "SCCからデータをダウンロードしています"
 
+#, fuzzy
 msgid "Enable debug output"
-msgstr ""
+msgstr "デバッグ出力を有効にする"
 
+#, fuzzy
 msgid "Enable mirroring of custom repository by ID"
-msgstr ""
+msgstr "ID別の独自リポジトリのミラーリングを有効にする"
 
+#, fuzzy
 msgid ""
 "Enable mirroring of product repositories by a list of product IDs or product "
 "strings."
-msgstr ""
+msgstr "製品IDまたは製品文字列のリスト別に製品リポジトリのミラーリングを有効にします。"
 
 msgid ""
 "Enable mirroring of product repositories by a list of product IDs or product "
