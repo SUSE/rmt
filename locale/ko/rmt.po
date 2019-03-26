@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-03-22 11:56+0100\n"
-"PO-Revision-Date: 2019-03-26 16:46+0000\n"
+"PO-Revision-Date: 2019-03-27 22:49+0000\n"
 "Last-Translator: Hwajin Kim <hwajin.kim@e4net.net>\n"
 "Language-Team: Korean <https://l10n.opensuse.org/projects/rmt/i18n/ko/>\n"
 "Language: ko\n"
@@ -30,10 +30,10 @@ msgid ""
 "usually a portable storage device.\n"
 msgstr ""
 "  온라인 RMT에서 이 명령을 실행합니다.\n"
-"  리포지토리 ID 목록을 포함해야 하는 repos.json 파일에 대한 경로가 표시됩니다.\n"
-"  일반적으로 이 파일은 'rmt-cli export settings'를 사용하여 오프라인 RMT에 의해 생성됩니다.\n"
+"  이 명령은 PATH에서 repos.json 파일을 확인합니다. 이 파일에는 리포지토리 ID 목록이 있어야 합니다.\n"
+"  일반적으로 이 파일은 'rmt-cli export settings'를 사용하여 오프라인 RMT에서 생성됩니다.\n"
 "\n"
-"  'rmt-cli export repos'는 이러한 리포지토리를 일반적으로 휴대용 저장소 장치인 이 경로에 미러합니다.\n"
+"  'rmt-cli export repos'는 휴대용 저장소 장치인 이 PATH에 이러한 리포지토리를 미러링합니다.\n"
 
 #, fuzzy
 msgid "%s is not yet activated on the system."
@@ -41,7 +41,7 @@ msgstr "%s이(가) 아직 시스템에서 활성화되지 않았습니다."
 
 #, fuzzy
 msgid "%{file} - File does not exist"
-msgstr "%{file} - 파일이 없음"
+msgstr "%{file} - 파일이 없습니다."
 
 #, fuzzy
 msgid "%{file} - HTTP request failed with code %{code}"
@@ -65,7 +65,7 @@ msgstr "%{path}은(는) %{username} 사용자가 쓸 수 없습니다."
 
 #, fuzzy
 msgid "A repository by the URL %{url} already exists."
-msgstr "URL %{url}의 리포지토리가 이미 있습니다."
+msgstr "URL이 %{url}인 리포지토리가 이미 있습니다."
 
 #, fuzzy
 msgid "Added association between %{repo} and product %{product}"
@@ -89,11 +89,11 @@ msgstr "Arch"
 
 #, fuzzy
 msgid "Attach an existing custom repository to a product"
-msgstr "제품에 기존 사용자 정의 리포지토리 연결"
+msgstr "제품에 기존 사용자 지정 리포지토리 연결"
 
 #, fuzzy
 msgid "Attached repository to product '%{product_name}'."
-msgstr "'%{product_name}' 제품에 리포지토리가 연결되었습니다."
+msgstr "'%{product_name}' 제품에 리포지토리를 연결했습니다."
 
 #, fuzzy
 msgid "Authenticated system with login \\\"%{login}\\\""
@@ -104,14 +104,14 @@ msgid ""
 "Cannot connect to database server. Ensure its credentials are correctly "
 "configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr ""
-"데이터베이스 서버에 연결할 수 없습니다. 해당 자격 증명이 '%{path}'에 올바르게 구성되었는지 확인하거나 RMT를 "
+"데이터베이스 서버에 연결할 수 없습니다. 해당 인증서가 '%{path}'에 올바르게 구성되었는지 확인하거나 RMT를 "
 "YaST('%{command}')로 구성합니다."
 
 #, fuzzy
 msgid ""
 "Cannot connect to database server. Make sure it is running and its "
 "credentials are configured in '%{path}'."
-msgstr "데이터베이스 서버에 연결할 수 없습니다. 해당 서버가 실행 중이며 해당 자격 증명이 '%{path}'에 구성되었는지 확인합니다."
+msgstr "데이터베이스 서버에 연결할 수 없습니다. 해당 서버가 실행 중이며 해당 인증서가 '%{path}'에 구성되었는지 확인합니다."
 
 #, fuzzy
 msgid ""
@@ -121,11 +121,11 @@ msgstr "\"%s\" 제품을 비활성화할 수 없습니다. 활성화된 다른 �
 
 #, fuzzy
 msgid "Cannot find custom repository by ID %{id}."
-msgstr "ID %{id}(으)로 사용자 정의 리포지토리를 찾을 수 없습니다."
+msgstr "ID가 %{id}인 사용자 지정 리포지토리를 찾을 수 없습니다."
 
 #, fuzzy
 msgid "Cannot find product by ID %{id}."
-msgstr "ID %{id}(으)로 제품을 찾을 수 없습니다."
+msgstr "ID가 %{id}인 제품을 찾을 수 없습니다."
 
 #, fuzzy
 msgid "Check out %{url}"
@@ -133,7 +133,7 @@ msgstr "%{url} 체크 아웃"
 
 #, fuzzy
 msgid "Checksum doesn't match"
-msgstr "체크섬이 일치하지 않음"
+msgstr "체크섬이 일치하지 않습니다."
 
 #, fuzzy
 msgid "Cleaning up the database"
@@ -168,11 +168,11 @@ msgstr "suma 제품 트리를 미러링할 수 없습니다. 오류: %{error}"
 
 #, fuzzy
 msgid "Creates a custom repository."
-msgstr "사용자 정의 리포지토리를 생성합니다."
+msgstr "사용자 지정 리포지토리를 생성합니다."
 
 #, fuzzy
 msgid "Detach an existing custom repository from a product"
-msgstr "제품에서 기존 사용자 정의 리포지토리 분리"
+msgstr "제품에서 기존 사용자 지정 리포지토리 분리"
 
 #, fuzzy
 msgid "Detached repository from product '%{product_name}'."
@@ -180,7 +180,7 @@ msgstr "'%{product_name}' 제품에서 리포지토리를 분리했습니다."
 
 #, fuzzy
 msgid "Disable mirroring of custom repository by ID"
-msgstr "ID로 사용자 정의 리포지토리 미러링 비활성화"
+msgstr "ID로 사용자 지정 리포지토리 미러링 비활성화"
 
 #, fuzzy
 msgid ""
@@ -264,7 +264,7 @@ msgstr "디버그 출력 활성화"
 
 #, fuzzy
 msgid "Enable mirroring of custom repository by ID"
-msgstr "ID로 사용자 정의 리포지토리 미러링 활성화"
+msgstr "ID로 사용자 지정 리포지토리 미러링 활성화"
 
 #, fuzzy
 msgid ""
@@ -327,7 +327,7 @@ msgstr "리포지토리 %{repo}에 대한 미러링이 활성화됨"
 
 #, fuzzy
 msgid "Enabled repository %{repository}."
-msgstr "%{repository} 리포지토리를 활성화했습니다."
+msgstr "%{repository} 리포지토리가 활성화되었습니다."
 
 #, fuzzy
 msgid "Enables all free modules for a product"
@@ -339,23 +339,23 @@ msgstr "%{product} 활성화 중:"
 
 #, fuzzy
 msgid "Error while mirroring data: %{error}"
-msgstr "데이터를 미러링하는 동안 %{error} 오류 발생"
+msgstr "데이터를 미러링하는 동안 오류 발생: %{error}"
 
 #, fuzzy
 msgid "Error while mirroring license: %{error}"
-msgstr "라이센스를 미러링하는 동안 %{error} 오류 발생"
+msgstr "라이선스를 미러링하는 동안 오류 발생: %{error}"
 
 #, fuzzy
 msgid "Error while mirroring metadata: %{error}"
-msgstr "메터데이터를 미러링하는 동안 %{error} 오류 발생"
+msgstr "메터데이터를 미러링하는 동안 오류 발생: %{error}"
 
 #, fuzzy
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
-msgstr "%{src} 디렉토리를 %{dest}(으)로 이동하는 동안 %{error} 오류 발생"
+msgstr "%{src} 디렉토리를 %{dest}(으)로 이동하는 동안 오류 발생: %{error}"
 
 #, fuzzy
 msgid "Export commands for Offline Sync"
-msgstr "오프라인 동기화 중 명령 엑스포트"
+msgstr "오프라인 동기화를 위해 명령 엑스포트"
 
 #, fuzzy
 msgid "Exporting data from SCC to %{path}"
@@ -363,7 +363,7 @@ msgstr "SCC에서 %{path}(으)로 데이터 엑스포트 중"
 
 #, fuzzy
 msgid "Exporting orders"
-msgstr "순서 엑스포트 중"
+msgstr "명령 엑스포트 중"
 
 #, fuzzy
 msgid "Exporting products"
@@ -384,7 +384,7 @@ msgstr[0] "대상 %{target}: %{products}(으)로 제품을 찾았습니다."
 
 #, fuzzy
 msgid "Hardware information stored for system %{system}"
-msgstr "%{system} 시스템에 대해 저장된 하드웨어 정보"
+msgstr "%{system} 시스템에 대한 하드웨어 정보가 저장됨"
 
 #, fuzzy
 msgid "ID"
@@ -396,11 +396,11 @@ msgstr "오프라인 동기화에 대한 명령 임포트"
 
 #, fuzzy
 msgid "Imported activation of %{product} for %{system}"
-msgstr "%{system}에 대한 %{product} 활성화를 임포트함"
+msgstr "%{system}에 대한 %{product} 활성화가 임포트됨"
 
 #, fuzzy
 msgid "Imported system %{system}"
-msgstr "%{system} 시스템을 임포트함"
+msgstr "%{system} 시스템이 임포트됨"
 
 #, fuzzy
 msgid "Importing SCC data from %{path}"
@@ -408,7 +408,7 @@ msgstr "%{path}에서 SCC 데이터를 임포트하는 중"
 
 #, fuzzy
 msgid "Invalid system credentials"
-msgstr "시스템 자격 증명이 잘못됨"
+msgstr "잘못된 시스템 인증서입니다."
 
 msgid "Last Mirrored"
 msgstr "마지막으로 미러링됨"
@@ -419,7 +419,7 @@ msgstr "마지막으로 미러링됨"
 
 #, fuzzy
 msgid "List all custom repositories"
-msgstr "모든 사용자 정의 리포지토리 나열"
+msgstr "모든 사용자 지정 리포지토리 나열"
 
 #, fuzzy
 msgid "List all products, including ones which are not marked to be mirrored"
@@ -428,11 +428,11 @@ msgstr "미러링으로 표시되지 않은 제품을 포함하여 모든 제품
 #, fuzzy
 msgid ""
 "List all repositories, including ones which are not marked to be mirrored"
-msgstr "미러링으로 표시되지 않은 리포지토를 포함하여 모든 리포지토리 열거"
+msgstr "미러링으로 표시되지 않은 리포지토를 포함하여 모든 리포지토리 나열"
 
 #, fuzzy
 msgid "List and modify custom repositories"
-msgstr "사용자 정의 리포지토리 나열 및 수정"
+msgstr "사용자 지정 리포지토리 나열 및 수정"
 
 #, fuzzy
 msgid "List and modify products"
@@ -500,249 +500,326 @@ msgstr "이름"
 
 #, fuzzy
 msgid "No base product found."
-msgstr "기본 제품이 없습니다."
+msgstr "기본 제품을 찾을 수 없습니다."
 
 #, fuzzy
 msgid "No custom repositories found."
-msgstr "사용자 지정 리포지토리가 없습니다."
+msgstr "사용자 지정 리포지토리를 찾을 수 없습니다."
 
 #, fuzzy
 msgid "No matching products found in the database."
-msgstr "데이터베이스에 일치하는 제품이 없습니다."
+msgstr "데이터베이스에서 일치하는 제품을 찾을 수 없습니다."
 
+#, fuzzy
 msgid "No product IDs supplied"
-msgstr ""
+msgstr "입력한 제품 ID가 없음"
 
+#, fuzzy
 msgid "No product found"
-msgstr ""
+msgstr "제품을 찾을 수 없음"
 
+#, fuzzy
 msgid "No product found for target %{target}."
-msgstr ""
+msgstr "대상 %{target}에 대한 제품이 없습니다."
 
+#, fuzzy
 msgid "No product found on RMT for: %s"
-msgstr ""
+msgstr "RMT에서 %s에 대한 제품을 찾을 수 없습니다."
 
+#, fuzzy
 msgid "No products attached to repository."
-msgstr ""
+msgstr "리포지토리에 연결된 제품이 없습니다."
 
+#, fuzzy
 msgid "No repositories enabled."
-msgstr ""
+msgstr "활성화된 리포지토리가 없습니다."
 
+#, fuzzy
 msgid "No repositories found for product: %s"
-msgstr ""
+msgstr "%s 제품에 대한 리포지토리가 없습니다."
 
+#, fuzzy
 msgid "No repository ids supplied"
-msgstr ""
+msgstr "입력한 리포지토리 id가 없습니다."
 
+#, fuzzy
 msgid "Not Mandatory"
-msgstr ""
+msgstr "필수가 아님"
 
+#, fuzzy
 msgid "Not all mandatory repositories are mirrored for product %s"
-msgstr ""
+msgstr "%s 제품에 대해 일부 필수 리포지토리가 미러링되지 않았습니다."
 
+#, fuzzy
 msgid "Not provided"
-msgstr ""
+msgstr "제공되지 않음"
 
+#, fuzzy
 msgid ""
 "Not yet activated Registration Code. Visit https://scc.suse.com to activate "
 "it."
-msgstr ""
+msgstr "등록 코드가 아직 활성화되지 않았습니다. 활성화하려면 https://scc.suse.com을 방문하십시오."
 
+#, fuzzy
 msgid ""
 "Only enabled products are shown by default. Use the '%{command}' option to "
 "see all products."
-msgstr ""
+msgstr "활성화된 제품만 기본적으로 표시됩니다. 모든 제품을 표시하려면 '%{command}' 옵션을 사용합니다."
 
+#, fuzzy
 msgid ""
 "Only enabled repositories are shown by default. Use the '%{option}' option "
 "to see all repositories."
-msgstr ""
+msgstr "활성화된 리포지토리만 기본적으로 표시됩니다. 모든 리포지토리를 표시하려면 '%{option}' 옵션을 사용합니다."
 
+#, fuzzy
 msgid "Output data in CSV format"
-msgstr ""
+msgstr "CSV 형식으로 데이터 출력"
 
+#, fuzzy
 msgid "Path to unpacked SMT data tarball"
-msgstr ""
+msgstr "압축을 푼 SMT 데이터 Tarball 경로"
 
+#, fuzzy
 msgid ""
 "Process is locked by the application with pid %{pid}. Close this application "
 "or wait for it to finish before trying again."
 msgstr ""
+"프로세스가 응용 프로그램에서 pid %{pid}과(와) 함께 잠겼습니다. 다시 시도하기 전에 이 응용 프로그램을 닫거나 완료될 때까지 "
+"기다리십시오."
 
+#, fuzzy
 msgid "Product"
-msgstr ""
+msgstr "제품"
 
+#, fuzzy
 msgid "Product %{products} could not be found and was not disabled."
 msgid_plural "Products %{products} could not be found and were not disabled."
-msgstr[0] ""
+msgstr[0] "%{products} 제품이 없어 비활성화되지 않았습니다."
 
+#, fuzzy
 msgid "Product %{products} could not be found and was not enabled."
 msgid_plural "Products %{products} could not be found and were not enabled."
-msgstr[0] ""
+msgstr[0] "%{products} 제품이 없어 활성화되지 않았습니다."
 
+#, fuzzy
 msgid "Product %{product} not found"
-msgstr ""
+msgstr "%{product} 제품을 찾을 수 없습니다."
 
+#, fuzzy
 msgid ""
 "Product %{product} not found!\n"
 "Tried to attach custom repository %{repo} to product %{product},\n"
 "but that product was not found. Attach it to a different product\n"
 "by running '%{command}'\n"
 msgstr ""
+"%{product} 제품을 찾을 수 없습니다!\n"
+"사용자 지정 리포지토리 %{repo}을(를) %{product} 제품에 연결하려고 했지만\n"
+"이 제품을 찾지 못했습니다. '%{command}'을(를) 실행하여 리포지토리를\n"
+"다른 제품에 연결하십시오.\n"
 
+#, fuzzy
 msgid "Product Architecture"
-msgstr ""
+msgstr "제품 아키텍처"
 
+#, fuzzy
 msgid "Product ID"
-msgstr ""
+msgstr "제품 ID"
 
+#, fuzzy
 msgid "Product Name"
-msgstr ""
+msgstr "제품 이름"
 
+#, fuzzy
 msgid "Product Version"
-msgstr ""
+msgstr "제품 버전"
 
+#, fuzzy
 msgid "Product by ID %{id} not found."
-msgstr ""
+msgstr "ID가 %{id}인 제품을 찾을 수 없습니다."
 
+#, fuzzy
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
-msgstr ""
+msgstr "RMT가 아직 SCC에 동기화되지 않았습니다. '%{command}'을(를) 먼저 실행하십시오."
 
+#, fuzzy
 msgid "Read SCC data from given path"
-msgstr ""
+msgstr "제공된 경로에서 SCC 데이터 읽기"
 
+#, fuzzy
 msgid "Remove a custom repository"
-msgstr ""
+msgstr "사용자 지정 리포지토리 제거"
 
+#, fuzzy
 msgid "Removed custom repository by ID %{id}."
-msgstr ""
+msgstr "ID가 %{id}인 사용자 지정 리포지토리를 제거했습니다."
 
+#, fuzzy
 msgid "Repository %{repos} could not be found and was not disabled."
 msgid_plural "Repositories %{repos} could not be found and were not disabled."
-msgstr[0] ""
+msgstr[0] "%{repos} 리포지토리가 없어 비활성화되지 않았습니다."
 
+#, fuzzy
 msgid "Repository %{repos} could not be found and was not enabled."
 msgid_plural "Repositories %{repos} could not be found and were not enabled."
-msgstr[0] ""
+msgstr[0] "%{repos} 리포지토리가 없어 활성화되지 않았습니다."
 
+#, fuzzy
 msgid ""
 "Repository %{repo} was not found in RMT database, perhaps you no longer have "
 "a valid subscription for it"
-msgstr ""
+msgstr "%{repo} 리포지토리를 RMT 데이터베이스에서 찾을 수 없습니다. 이 리포지토리에 대한 유효한 사용권이 없는 것 같습니다."
 
+#, fuzzy
 msgid "Repository by ID %{id} successfully disabled."
-msgstr ""
+msgstr "ID가 %{id}인 리포지토리가 비활성화되었습니다."
 
+#, fuzzy
 msgid "Repository by ID %{id} successfully enabled."
-msgstr ""
+msgstr "ID가 %{id}인 리포지토리가 활성화되었습니다."
 
+#, fuzzy
 msgid "Repository metadata signatures are missing"
-msgstr ""
+msgstr "리포지토리 메타데이터 서명이 누락되었습니다."
 
+#, fuzzy
 msgid "Repository not found by ID %{id}."
-msgstr ""
+msgstr "ID %{id}(으)로 리포지토리를 찾지 못했습니다."
 
+#, fuzzy
 msgid "Repository successfully disabled."
-msgstr ""
+msgstr "리포지토리가 비활성화되었습니다."
 
+#, fuzzy
 msgid "Repository successfully enabled."
-msgstr ""
+msgstr "리포지토리가 활성화되었습니다."
 
+#, fuzzy
 msgid "Requested service not found"
-msgstr ""
+msgstr "요청한 서비스를 찾을 수 없습니다."
 
+#, fuzzy
 msgid "Required parameters are missing or empty: %s"
-msgstr ""
+msgstr "필수 파라미터가 누락되었거나 비어 있습니다. %s"
 
+#, fuzzy
 msgid "Run '%{command}' for more information on a command and its subcommands."
-msgstr ""
+msgstr "명령 및 해당 하위 명령에 대한 자세한 내용을 보려면 '%{command}'을(를) 실행합니다."
 
+#, fuzzy
 msgid ""
 "Run '%{command}' to synchronize with your SUSE Customer Center data first."
-msgstr ""
+msgstr "'%{command}'을(를) 실행하여 SUSE Customer Center 데이터와 먼저 동기화합니다."
 
+#, fuzzy
 msgid "SCC ID"
-msgstr ""
+msgstr "SCC ID"
 
+#, fuzzy
 msgid "Settings saved at %{file}."
-msgstr ""
+msgstr "설정이 %{file}에 저장되었습니다."
 
+#, fuzzy
 msgid "Show RMT version"
-msgstr ""
+msgstr "RMT 버전 표시"
 
+#, fuzzy
 msgid "Shows products attached to a custom repository"
-msgstr ""
+msgstr "사용자 지정 리포지토리에 연결된 제품 표시"
 
+#, fuzzy
 msgid "Store SCC data in files at given path"
-msgstr ""
+msgstr "지정된 경로의 파일에 SCC 데이터 저장"
 
+#, fuzzy
 msgid "Store repository settings at given path"
-msgstr ""
+msgstr "지정된 경로에 리포지토리 설정 저장"
 
+#, fuzzy
 msgid "Successfully added custom repository."
-msgstr ""
+msgstr "사용자 지정 리포지토리가 성공적으로 추가되었습니다."
 
+#, fuzzy
 msgid "Sync database with SUSE Customer Center"
-msgstr ""
+msgstr "SUSE Customer Center와 데이터베이스 동기화"
 
+#, fuzzy
 msgid "System %{system} not found"
-msgstr ""
+msgstr "%{system} 시스템을 찾을 수 없습니다."
 
+#, fuzzy
 msgid ""
 "The RMT database has not yet been initialized. Run '%{command}' to setup the "
 "database."
-msgstr ""
+msgstr "RMT 데이터베이스가 아직 초기화되지 않았습니다. 데이터베이스를 설정하려면 '%{command}'을(를) 실행하십시오."
 
+#, fuzzy
 msgid ""
 "The SCC credentials are not configured correctly in '%{path}'. You can "
 "obtain them from %{url}"
-msgstr ""
+msgstr "SCC 인증서가 '%{path}'에 올바르게 구성되지 않았습니다. 이 인증서를 %{url}에서 가져올 수 있습니다."
 
+#, fuzzy
 msgid "The product \"%s\" is a base product and cannot be deactivated"
-msgstr ""
+msgstr "\"%s\" 제품이 기본 제품이므로 비활성화할 수 없습니다."
 
+#, fuzzy
 msgid "The requested product '%s' is not activated on this system."
-msgstr ""
+msgstr "요청한 제품 '%s'이(가) 이 시스템에서 활성화되지 않았습니다."
 
+#, fuzzy
 msgid "The requested products '%s' are not activated on the system."
-msgstr ""
+msgstr "요청한 제품 '%s'이(가) 시스템에서 활성화되지 않았습니다."
 
+#, fuzzy
 msgid "There are no repositories marked for mirroring."
-msgstr ""
+msgstr "미러링으로 표시된 리포지토리가 없습니다."
 
+#, fuzzy
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
+#, fuzzy
 msgid "Unknown Registration Code."
-msgstr ""
+msgstr "알 수 없는 등록 코드입니다."
 
+#, fuzzy
 msgid "Unknown hash function %{checksum_type}"
-msgstr ""
+msgstr "알 수 없는 해시 함수 %{checksum_type}"
 
+#, fuzzy
 msgid "Unmet product dependencies, activate one of these products first: %s"
-msgstr ""
+msgstr "제품 종속성을 충족하지 않으므로, 먼저 다음 제품 중 하나를 활성화하십시오. %s"
 
+#, fuzzy
 msgid "Updated system information for host '%s'"
-msgstr ""
+msgstr "'%s' 호스트에 대한 시스템 정보가 업데이트되었습니다."
 
+#, fuzzy
 msgid "Updating products"
-msgstr ""
+msgstr "제품 업데이트 중"
 
+#, fuzzy
 msgid "Updating repositories"
-msgstr ""
+msgstr "리포지토리 업데이트 중"
 
+#, fuzzy
 msgid "Updating subscriptions"
-msgstr ""
+msgstr "구독 업데이트 중"
 
+#, fuzzy
 msgid "Version"
-msgstr ""
+msgstr "버전"
 
+#, fuzzy
 msgid "importing data from SMT."
-msgstr ""
+msgstr "SMT에서 데이터를 임포트 중입니다."
 
+#, fuzzy
 msgid "repository by URL %{url} does not exist in database"
-msgstr ""
+msgstr "URL %{url}별 리포지토리가 데이터베이스에 없습니다."
 
+#, fuzzy
 msgid ""
 "× File does not exist or has wrong filesize, deduplication ignored %{error}."
-msgstr ""
+msgstr "× 파일이 없거나 파일에 잘못된 파일 크기가 있으므로, 중복 제거에서 %{error}을(를) 무시했습니다."
