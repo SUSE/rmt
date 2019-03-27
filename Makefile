@@ -29,6 +29,7 @@ dist: clean man
 	@cp -r lib $(NAME)-$(VERSION)/
 	@cp -r engines $(NAME)-$(VERSION)/
 	@cp -r package $(NAME)-$(VERSION)/
+	@cp -r package-sources $(NAME)-$(VERSION)/
 
 	@mkdir $(NAME)-$(VERSION)/log
 	@cp -r log/.keep $(NAME)-$(VERSION)/log
