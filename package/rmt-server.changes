@@ -1,6 +1,7 @@
 -------------------------------------------------------------------
 Thu Mar 21 11:55:02 UTC 2019 - skotov@suse.com
 
+- Version 1.2.7
 - Online migrations will automatically add additional modules
   to the client systems depending on the base product
 
