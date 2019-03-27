@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-03-26 11:32+0100\n"
-"PO-Revision-Date: 2019-03-26 16:46+0000\n"
+"PO-Revision-Date: 2019-03-27 22:49+0000\n"
 "Last-Translator: Franziska Weinberger <f.weinberger@gemino.de>\n"
 "Language-Team: German <https://l10n.opensuse.org/projects/rmt/i18n/de/>\n"
 "Language: de\n"
@@ -28,7 +28,7 @@ msgstr "%{file} – Datei ist nicht vorhanden"
 
 #, fuzzy
 msgid "%{file} - HTTP request failed with code %{code}"
-msgstr "%{file} – HTTP-Anfrage fehlgeschlagen mit dem Code %{code}"
+msgstr "%{file} – HTTP-Anforderung fehlgeschlagen mit dem Code %{code}"
 
 #, fuzzy
 msgid "%{file} - return code %{code}"
@@ -89,7 +89,7 @@ msgid ""
 "configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr ""
 "Keine Verbindung zum Datenbankserver möglich. Stellen Sie sicher, dass der "
-"Berechtigungsnachweis unter '%{path}' richtig konfiguriert ist oder "
+"Berechtigungsnachweis in '%{path}' richtig konfiguriert ist oder "
 "konfigurieren Sie RMT mit YaST ('%{command}')."
 
 #, fuzzy
@@ -127,7 +127,7 @@ msgstr "Prüfsumme stimmt nicht überein"
 
 #, fuzzy
 msgid "Cleaning up the database"
-msgstr "Datenbank wird bereinigt"
+msgstr "Datenbank wird bereinigt."
 
 #, fuzzy
 msgid "Commands:"
@@ -181,7 +181,7 @@ msgid ""
 "product strings."
 msgstr ""
 "Deaktivieren Sie das Spiegeln von Produktrepositorys anhand einer Liste von "
-"Produkt-IDs oder Produktzeichenfolgen."
+"Produkt-IDs oder Produktzeichenketten."
 
 #, fuzzy
 msgid "Disable mirroring of repositories by a list of repository IDs"
@@ -216,7 +216,7 @@ msgstr "Daten werden vom SCC heruntergeladen"
 
 #, fuzzy
 msgid "Enable debug output"
-msgstr "Debug-Ausgabe aktivieren"
+msgstr "Ausgabe der Fehlersuche aktivieren"
 
 #, fuzzy
 msgid "Enable mirroring of custom repository by ID"
@@ -228,12 +228,12 @@ msgid ""
 "strings."
 msgstr ""
 "Aktivieren Sie das Spiegeln von Produkt-Repositorys anhand einer Liste von "
-"Produkt-IDs oder Produktzeichenfolgen."
+"Produkt-IDs oder Produktzeichenketten."
 
 #, fuzzy
 msgid "Enable mirroring of repositories by a list of repository IDs"
 msgstr ""
-"Spiegeln von Repositorys nach einer Liste von Repository-IDs aktivieren"
+"Spiegeln von Repositorys anhand einer Liste von Repository-IDs aktivieren"
 
 #, fuzzy
 msgid "Enabled mirroring for repository %{repo}"
@@ -270,7 +270,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Export commands for Offline Sync"
-msgstr "Exportkommandos für Offline-Synchronisierung"
+msgstr "Kommandos zum Exportieren für die Offline-Synchronisierung"
 
 #, fuzzy
 msgid "Exporting data from SCC to %{path}"
@@ -290,7 +290,7 @@ msgstr "Repositorys werden exportiert"
 
 #, fuzzy
 msgid "Exporting subscriptions"
-msgstr "Abonnements werden exportiert"
+msgstr "Subscriptions werden exportiert"
 
 #, fuzzy
 msgid "Found product by target %{target}: %{products}."
@@ -308,7 +308,7 @@ msgstr "ID"
 
 #, fuzzy
 msgid "Import commands for Offline Sync"
-msgstr "Importkommandos für Offline-Synchronisierung"
+msgstr "Kommandos zum Importieren für die Offline-Synchronisierung"
 
 #, fuzzy
 msgid "Imported activation of %{product} for %{system}"
@@ -320,7 +320,7 @@ msgstr "System %{system} importiert"
 
 #, fuzzy
 msgid "Importing SCC data from %{path}"
-msgstr "SCC-Daten von %{path} werden importiert"
+msgstr "SCC-Daten von %{path} werden importiert."
 
 #, fuzzy
 msgid "Invalid system credentials"
@@ -353,7 +353,7 @@ msgstr ""
 
 #, fuzzy
 msgid "List and modify custom repositories"
-msgstr "Anpassbare Repositorys auflisten und ändern"
+msgstr "Benutzerdefinierte Repositorys auflisten und ändern"
 
 #, fuzzy
 msgid "List and modify products"
@@ -365,7 +365,7 @@ msgstr "Repositorys auflisten und ändern"
 
 #, fuzzy
 msgid "List products which are marked to be mirrored."
-msgstr "Listen Sie alle Produkte auf, die zur Spiegelung markiert sind."
+msgstr "Listen Sie Produkte auf, die zur Spiegelung markiert sind."
 
 #, fuzzy
 msgid "List repositories which are marked to be mirrored"
@@ -385,11 +385,11 @@ msgstr "Spiegeln"
 
 #, fuzzy
 msgid "Mirror repos at given path"
-msgstr "Repositorys im angegebenen Pfad spiegeln"
+msgstr "Repositorys in den angegebenen Pfad spiegeln"
 
 #, fuzzy
 msgid "Mirror repos from given path"
-msgstr "Repositorys aus angegebenem Pfad spiegeln"
+msgstr "Repositorys aus dem angegebenen Pfad spiegeln"
 
 #, fuzzy
 msgid "Mirror repositories"
@@ -469,7 +469,7 @@ msgstr "Nicht obligatorisch"
 #, fuzzy
 msgid "Not all mandatory repositories are mirrored for product %s"
 msgstr ""
-"Nicht alle obligatorischen Repositorys für Produkt %s wurden gespiegelt"
+"Nicht alle obligatorischen Repositorys für Produkt %s wurden gespiegelt."
 
 #, fuzzy
 msgid "Not provided"
@@ -489,7 +489,7 @@ msgid ""
 "see all products."
 msgstr ""
 "Standardmäßig werden nur aktivierte Produkte angezeigt. Verwenden Sie die "
-"Option '%{command}', um alle Produkte zu sehen."
+"Option '%{command}', um alle Produkte anzuzeigen."
 
 #, fuzzy
 msgid ""
@@ -505,7 +505,7 @@ msgstr "Daten in CSV-Format ausgeben"
 
 #, fuzzy
 msgid "Path to unpacked SMT data tarball"
-msgstr "Pfad zum entpackten SMT-Tarball-Datei"
+msgstr "Pfad zur entpackten SMT-Daten-Tarball-Datei"
 
 #, fuzzy
 msgid ""
@@ -513,8 +513,8 @@ msgid ""
 "or wait for it to finish before trying again."
 msgstr ""
 "Der Prozess wird durch die Anwendung mit PID %{pid} gesperrt. Schließen Sie "
-"diese Anwendung oder warten Sie, bis sie beendet ist, bevor Sie es erneut "
-"versuchen."
+"diese Anwendung oder warten Sie, bis der Prozess beendet ist, bevor Sie es "
+"erneut versuchen."
 
 #, fuzzy
 msgid "Product"
@@ -554,7 +554,7 @@ msgstr ""
 "%{product} zu verbinden,\n"
 "das Produkt wurde jedoch nicht gefunden. Verbinden Sie es mit einem anderen "
 "Produkt,\n"
-"indem Sie den Befehl '%{command}' ausführen.\n"
+"indem Sie '%{command}' ausführen.\n"
 
 #, fuzzy
 msgid "Product Architecture"
@@ -618,7 +618,7 @@ msgid ""
 "a valid subscription for it"
 msgstr ""
 "Repository %{repo} wurde in RMT-Datenbank nicht gefunden. Eventuell haben "
-"Sie kein gültiges Abonnement mehr."
+"Sie keine gültige Subscription mehr."
 
 #, fuzzy
 msgid "Repository by ID %{id} successfully disabled."
@@ -760,15 +760,15 @@ msgstr "Systeminformationen für Host '%s' wurden aktualisiert."
 
 #, fuzzy
 msgid "Updating products"
-msgstr "Produkte werden aktualisiert"
+msgstr "Produkte werden aktualisiert."
 
 #, fuzzy
 msgid "Updating repositories"
-msgstr "Repositorys werden aktualisiert"
+msgstr "Repositorys werden aktualisiert."
 
 #, fuzzy
 msgid "Updating subscriptions"
-msgstr "Abonnements werden aktualisiert"
+msgstr "Subscriptions werden aktualisiert."
 
 #, fuzzy
 msgid "Version"
@@ -800,13 +800,13 @@ msgstr ""
 #~ "  'rmt-cli export repos' will mirror these repositories to this PATH, "
 #~ "usually a portable storage device.\n"
 #~ msgstr ""
-#~ "  Führen Sie dieses Kommando auf einem Online-RMT aus.\n"
+#~ "  Führen Sie dieses Kommando in einem Online-RMT aus.\n"
 #~ "  Dadurch wird in PATH nach einer repos.json-Datei gesucht, die eine "
 #~ "Liste von Repository-IDs enthält.\n"
 #~ "  Normalerweise wird diese Datei von einem Offline-RMT mit 'rmt-cli "
 #~ "export settings' erstellt.\n"
 #~ "\n"
-#~ "  'rmt-cli export repos' spiegelt diese Repositories in diesem PATH, "
+#~ "  'rmt-cli export repos' spiegelt diese Repositorys in diesem PATH, "
 #~ "normalerweise einem tragbaren Speichergerät.\n"
 
 #, fuzzy
@@ -823,7 +823,7 @@ msgstr ""
 #~ "$ rmt-cli products disable SLES/15/x86_64 1743\n"
 #~ msgstr ""
 #~ "Deaktivieren Sie das Spiegeln von Produktrepositorys anhand einer Liste "
-#~ "von Produkt-IDs oder Produktzeichenfolgen.\n"
+#~ "von Produkt-IDs oder Produktzeichenketten.\n"
 #~ "\n"
 #~ "Beispiele:\n"
 #~ "\n"
@@ -868,7 +868,7 @@ msgstr ""
 #~ "$ rmt-cli products enable --all-modules SLES/15\n"
 #~ msgstr ""
 #~ "Aktivieren Sie das Spiegeln von Produktrepositorys anhand einer Liste von "
-#~ "Produkt-IDs oder Produktzeichenfolgen.\n"
+#~ "Produkt-IDs oder Produktzeichenketten.\n"
 #~ "\n"
 #~ "Beispiele:\n"
 #~ "\n"
