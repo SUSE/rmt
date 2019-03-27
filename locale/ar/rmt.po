@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-03-22 11:56+0100\n"
-"PO-Revision-Date: 2019-03-26 16:46+0000\n"
+"PO-Revision-Date: 2019-03-27 22:49+0000\n"
 "Last-Translator: George Yacoub <george.yacoub@arabize.com>\n"
 "Language-Team: Arabic <https://l10n.opensuse.org/projects/rmt/i18n/ar/>\n"
 "Language: ar\n"
@@ -19,7 +19,6 @@ msgstr ""
 "&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 "X-Generator: Weblate 3.3\n"
 
-#, fuzzy
 msgid ""
 "  Run this command on an online RMT.\n"
 "  It will look in PATH for a repos.json file, which has to contain a list of "
@@ -31,59 +30,47 @@ msgid ""
 "usually a portable storage device.\n"
 msgstr ""
 "  \"تشغيل هذا الأمر على أداة نسخ المخازن (RMT) على الشبكة.\n"
-"  ستظهر في مسار خاص بملف repos.json، الذي يحتوي بالضرورة على قائمة معرفات "
+"  ستظهر في مسار خاص بملف repos.json، الذي لابد أن يحتوي على قائمة معرفات "
 "المخازن.\n"
 "  يتم تكوين هذا الملف عادةً باستخدام أداة نسخ المخازن (RMT) غير المتصلة على "
-"الشبكة عن طريق الأمر \"\"rmt-cli export settings\"\".\n"
+"الشبكة من خلال الأمر \"\"rmt-cli export settings\"\".\n"
 "\n"
 "  'سيقوم الأمر \"\"rmt-cli export repos\"\" بنسخ هذه المخازن إلى هذا المسار، "
 "وعادةً ما يكون جهاز تخزين محمول.\n"
 
-#, fuzzy
 msgid "%s is not yet activated on the system."
-msgstr "لم يتم تنشيط %s على النظام بعد."
+msgstr "لم يتم تنشيط %s في النظام بعد."
 
-#, fuzzy
 msgid "%{file} - File does not exist"
 msgstr "%{file} - الملف غير موجود"
 
-#, fuzzy
 msgid "%{file} - HTTP request failed with code %{code}"
-msgstr "%{file} - تم فشل طلب بروتوكول نقل النصوص التشعبية (HTTP) بالرمز %{code}"
+msgstr "%{file} - فشل طلب بروتوكول نقل النصوص التشعبية (HTTP) بالرمز %{code}"
 
-#, fuzzy
 msgid "%{file} - return code %{code}"
 msgstr "%{file} - رمز الإرجاع %{code}"
 
-#, fuzzy
 msgid "%{file} does not exist."
 msgstr "ملف %{file} غير موجود."
 
-#, fuzzy
 msgid "%{path} is not a directory."
 msgstr "المسار %{path} ليس دليلاً."
 
-#, fuzzy
 msgid "%{path} is not writable by user %{username}."
-msgstr "المسار %{path} غير قابل للكتابة بواسطة المستخدم %{username}."
+msgstr "لا يمكن للمستخدم %{username} الكتابة على المسار %{path}."
 
-#, fuzzy
 msgid "A repository by the URL %{url} already exists."
 msgstr "المخزن بعنوان URL‏ %{url} موجود بالفعل."
 
-#, fuzzy
 msgid "Added association between %{repo} and product %{product}"
 msgstr "تمت إضافة اقتران بين %{repo} والمنتج %{product}"
 
-#, fuzzy
 msgid "Adding product %{product}"
 msgstr "جارِ إضافة المنتج %{product}"
 
-#, fuzzy
 msgid "All repositories have already been disabled."
 msgstr "تم تعطيل جميع المخازن بالفعل."
 
-#, fuzzy
 msgid "All repositories have already been enabled."
 msgstr "تم تمكين جميع المخازن بالفعل."
 
@@ -91,28 +78,23 @@ msgstr "تم تمكين جميع المخازن بالفعل."
 msgid "Arch"
 msgstr "Arch"
 
-#, fuzzy
 msgid "Attach an existing custom repository to a product"
 msgstr "إرفاق مخزن مخصص حالي بمنتج"
 
-#, fuzzy
 msgid "Attached repository to product '%{product_name}'."
 msgstr "تم إرفاق مخزن بالمنتج '%{product_name}'."
 
-#, fuzzy
 msgid "Authenticated system with login \\\"%{login}\\\""
 msgstr "تم التصديق على النظام باستخدام بيانات تسجيل الدخول \\\"%{login}\\\""
 
-#, fuzzy
 msgid ""
 "Cannot connect to database server. Ensure its credentials are correctly "
 "configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr ""
 "لا يمكن الاتصال بخادم قاعدة البيانات. تأكد من أنه تم تكوين الصلاحيات الخاصة "
 "به بشكل صحيح في المسار '%{path}' أو قم بتكوين أداة نسخ المخازن (RMT) "
-"باستخدام الأمر YaST ('%{command}')."
+"باستخدام الأمر YaST ('%{‏command}')."
 
-#, fuzzy
 msgid ""
 "Cannot connect to database server. Make sure it is running and its "
 "credentials are configured in '%{path}'."
@@ -120,7 +102,6 @@ msgstr ""
 "لا يمكن الاتصال بخادم قاعدة البيانات. تأكد من أنه قيد التشغيل وأنه تم تكوين "
 "الصلاحيات الخاصة به في المسار '%{path}'."
 
-#, fuzzy
 msgid ""
 "Cannot deactivate the product \"%s\". Other activated products depend upon "
 "it."
@@ -128,78 +109,60 @@ msgstr ""
 "لا يمكن إلغاء تنشيط المنتج \"%s\"، لأن المنتجات الأخرى التي تم تنشيطها تعتمد "
 "على هذا المنتج."
 
-#, fuzzy
 msgid "Cannot find custom repository by ID %{id}."
 msgstr "لا يمكن العثور على مخزن مخصص بالمعرف %{id}."
 
-#, fuzzy
 msgid "Cannot find product by ID %{id}."
 msgstr "لا يمكن العثور على منتج بالمعرف %{id}."
 
-#, fuzzy
 msgid "Check out %{url}"
-msgstr "العنوان‏ %{url} الخاص بالسحب"
+msgstr "سحب %{url}"
 
-#, fuzzy
 msgid "Checksum doesn't match"
 msgstr "المجموع الاختباري غير مطابق"
 
-#, fuzzy
 msgid "Cleaning up the database"
 msgstr "جارِ تنظيف قاعدة البيانات"
 
-#, fuzzy
 msgid "Commands:"
 msgstr "الأوامر:"
 
-#, fuzzy
 msgid "Could not create a temporary directory: %{error}"
 msgstr "تعذر تكوين دليل مؤقت: %{error}"
 
-#, fuzzy
 msgid "Could not create deduplication hardlink: %{error}."
-msgstr "تعذر تكوين ارتباط ثابت لإلغاء التكرار: %{error}."
+msgstr "تعذر تكوين ارتباط ثابت للتطابق: %{error}."
 
-#, fuzzy
 msgid "Could not create local directory %{dir} with error: %{error}"
 msgstr "تعذر تكوين الدليل المحلي %{dir} مع وجود الخطأ: %{error}"
 
-#, fuzzy
 msgid ""
 "Could not find system with login \\\"%{login}\\\" and password \\"
 "\"%{password}\\\""
 msgstr ""
-"تعذر العثور على النظام باستخدام بيانات تسجيل الدخول \\\"%{login}\\\" وكلمة "
-"السر \\\"%{password}\\\""
+"تعذر العثور على النظام ببيانات تسجيل الدخول \\\"%{login}\\\" وكلمة السر \\\""
+"%{password}\\\""
 
-#, fuzzy
 msgid "Could not mirror suma product tree with error: %{error}"
-msgstr "تعذر نسخ منتجات Suma مع وجود الخطأ: %{error}"
+msgstr "تعذر نسخ شجرة منتج Suma مع وجود الخطأ: %{error}"
 
-#, fuzzy
 msgid "Creates a custom repository."
 msgstr "تكوين مخزن مخصص."
 
-#, fuzzy
 msgid "Detach an existing custom repository from a product"
 msgstr "فصل مخزن مخصص حالي عن منتج"
 
-#, fuzzy
 msgid "Detached repository from product '%{product_name}'."
 msgstr "تم فصل مخزن عن المنتج '%{product_name}'."
 
-#, fuzzy
 msgid "Disable mirroring of custom repository by ID"
-msgstr "تعطيل نسخ مخزن مخصص باستخدام المعرف"
+msgstr "تعطيل نسخ مخزن مخصص حسب المعرف"
 
-#, fuzzy
 msgid ""
 "Disable mirroring of product repositories by a list of product IDs or "
 "product strings."
-msgstr ""
-"تعطيل نسخ مخازن المنتجات باستخدام قائمة معرفات المنتجات أو سلاسل المنتجات."
+msgstr "تعطيل نسخ مخازن المنتجات حسب قائمة معرفات المنتجات أو سلاسل المنتجات."
 
-#, fuzzy
 msgid ""
 "Disable mirroring of product repositories by a list of product IDs or "
 "product strings.\n"
@@ -212,7 +175,7 @@ msgid ""
 "\n"
 "$ rmt-cli products disable SLES/15/x86_64 1743\n"
 msgstr ""
-"تعطيل نسخ مخازن المنتجات باستخدام قائمة معرفات المنتجات أو سلاسل المنتجات.\n"
+"تعطيل نسخ مخازن المنتجات حسب قائمة معرفات المنتجات أو سلاسل المنتجات.\n"
 "\n"
 "أمثلة:\n"
 "\n"
@@ -222,11 +185,9 @@ msgstr ""
 "\n"
 "$ rmt-cli products disable SLES/15/x86_64 1743\n"
 
-#, fuzzy
 msgid "Disable mirroring of repositories by a list of repository IDs"
-msgstr "تعطيل نسخ المخازن باستخدام قائمة معرفات المخازن"
+msgstr "تعطيل نسخ المخازن حسب قائمة معرفات المخازن"
 
-#, fuzzy
 msgid ""
 "Disable mirroring of repositories by a list of repository IDs\n"
 "\n"
@@ -236,7 +197,7 @@ msgid ""
 "\n"
 "$ rmt-cli repos disable 2526 3263\n"
 msgstr ""
-"تعطيل نسخ المخازن باستخدام قائمة معرفات المخازن\n"
+"تعطيل نسخ المخازن حسب قائمة معرفات المخازن\n"
 "\n"
 "أمثلة:\n"
 "\n"
@@ -244,47 +205,36 @@ msgstr ""
 "\n"
 "$ rmt-cli repos disable 2526 3263\n"
 
-#, fuzzy
 msgid "Disabled repository %{repository}."
 msgstr "تم تعطيل المخزن %{repository}."
 
-#, fuzzy
 msgid "Disabling %{product}:"
 msgstr "جارِ تعطيل %{product}:"
 
-#, fuzzy
 msgid "Do not import the systems that were registered to the SMT"
-msgstr "لا تقم باستيراد الأنظمة التي تم تسجيلها في أداة إدارة الاشتراك (SMT)"
+msgstr "عدم استيراد الأنظمة التي تم تسجيلها في أداة SMT"
 
-#, fuzzy
 msgid ""
 "Do you have any suggestions for improvement? We would love to hear from you!"
 msgstr "هل لديك أي اقتراحات من أجل التحسين؟ يسعدنا التواصل معك!"
 
-#, fuzzy
 msgid "Don't Mirror"
-msgstr "لا تقم بالنسخ"
+msgstr "عدم النسخ"
 
-#, fuzzy
 msgid "Downloading data from SCC"
 msgstr "جارِ تحميل البيانات من مركز SCC"
 
-#, fuzzy
 msgid "Enable debug output"
 msgstr "تمكين تصحيح أخطاء المخرجات"
 
-#, fuzzy
 msgid "Enable mirroring of custom repository by ID"
-msgstr "تمكين نسخ مخزن مخصص باستخدام المعرف"
+msgstr "تمكين نسخ مخزن مخصص حسب المعرف"
 
-#, fuzzy
 msgid ""
 "Enable mirroring of product repositories by a list of product IDs or product "
 "strings."
-msgstr ""
-"تمكين نسخ مخازن المنتجات باستخدام قائمة معرفات المنتجات أو سلاسل المنتجات."
+msgstr "تمكين نسخ مخازن المنتجات حسب قائمة معرفات المنتجات أو سلاسل المنتجات."
 
-#, fuzzy
 msgid ""
 "Enable mirroring of product repositories by a list of product IDs or product "
 "strings.\n"
@@ -299,7 +249,7 @@ msgid ""
 "\n"
 "$ rmt-cli products enable --all-modules SLES/15\n"
 msgstr ""
-"تمكين نسخ مخازن المنتج باستخدام قائمة معرفات المنتجات أو سلاسل المنتجات.\n"
+"تمكين نسخ مخازن المنتجات خسب قائمة معرفات المنتجات أو سلاسل المنتجات.\n"
 "\n"
 "أمثلة:\n"
 "\n"
@@ -311,11 +261,9 @@ msgstr ""
 "\n"
 "$ rmt-cli products enable --all-modules SLES/15\n"
 
-#, fuzzy
 msgid "Enable mirroring of repositories by a list of repository IDs"
-msgstr "تمكين المخازن باستخدام قائمة معرفات المخازن"
+msgstr "تمكين نسخ المخازن باستخدام قائمة معرفات المخازن"
 
-#, fuzzy
 msgid ""
 "Enable mirroring of repositories by a list of repository IDs\n"
 "\n"
@@ -325,7 +273,7 @@ msgid ""
 "\n"
 "$ rmt-cli repos enable 2526 3263\n"
 msgstr ""
-"تمكين نسخ المخازن باستخدام قائمة معرفات المخازن\n"
+"تمكين نسخ المخازن حسب قائمة معرفات المخازن\n"
 "\n"
 "أمثلة:\n"
 "\n"
@@ -333,257 +281,198 @@ msgstr ""
 "\n"
 "$ rmt-cli repos enable 2526 3263\n"
 
-#, fuzzy
 msgid "Enabled mirroring for repository %{repo}"
 msgstr "تم تمكين النسخ للمخزن %{repo}"
 
-#, fuzzy
 msgid "Enabled repository %{repository}."
 msgstr "تم تمكين المخزن %{repository}."
 
-#, fuzzy
 msgid "Enables all free modules for a product"
-msgstr "تمكين كل الوحدات النمطية المجانية لمنتج ما"
+msgstr "تمكين جميع الوحدات النمطية المجانية لمنتج ما"
 
-#, fuzzy
 msgid "Enabling %{product}:"
 msgstr "جارِ تمكين %{product}:"
 
-#, fuzzy
 msgid "Error while mirroring data: %{error}"
-msgstr "حدث خطأ أثناء نسخ البيانات: %{error}"
+msgstr "خطأ أثناء نسخ البيانات: %{error}"
 
-#, fuzzy
 msgid "Error while mirroring license: %{error}"
-msgstr "حدث خطأ أثناء نسخ الترخيص: %{error}"
+msgstr "خطأ أثناء نسخ الترخيص: %{error}"
 
-#, fuzzy
 msgid "Error while mirroring metadata: %{error}"
-msgstr "حدث خطأ أثناء نسخ بيانات التعريف: %{error}"
+msgstr "خطأ أثناء نسخ بيانات التعريف: %{error}"
 
-#, fuzzy
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
-msgstr "حدث خطأ أثناء نقل الدليل %{src} إلى %{dest}‏: %{error}"
+msgstr "خطأ أثناء نقل الدليل %{src} إلى %{dest}‏: %{error}"
 
-#, fuzzy
 msgid "Export commands for Offline Sync"
 msgstr "تصدير الأوامر لأجل المزامنة غير المتصلة على الشبكة"
 
-#, fuzzy
 msgid "Exporting data from SCC to %{path}"
-msgstr "جارِ تصدير البيانات من مركز SCC إلى %{path}"
+msgstr "جارِ تصدير البيانات من مركز SCC إلى المسار %{path}"
 
-#, fuzzy
 msgid "Exporting orders"
 msgstr "جارِ تصدير الأوامر"
 
-#, fuzzy
 msgid "Exporting products"
 msgstr "جارِ تصدير المنتجات"
 
-#, fuzzy
 msgid "Exporting repositories"
 msgstr "جارِ تصدير المخازن"
 
-#, fuzzy
 msgid "Exporting subscriptions"
 msgstr "جارِ تصدير الاشتراكات"
 
 #, fuzzy
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
-msgstr[0] "عثر الهدف %{target} على %{products} من المنتجات."
+msgstr[0] "تم العثور على الهدف %{target}: %{products} من المنتجات."
 msgstr[1] "عثر الهدف %{target} على منتج %{products}."
 msgstr[2] "عثر الهدف %{target} على منتجين %{products}."
-msgstr[3] "عثر الهدف %{target} على %{products} من المنتجات."
-msgstr[4] "عثر الهدف %{target} على %{products} من المنتجات."
+msgstr[3] "عثر الهدف %{target} على %{products} منتجات."
+msgstr[4] "عثر الهدف %{target} على %{products} منتجًا."
 msgstr[5] "عثر الهدف %{target} على %{products} من المنتجات."
 
-#, fuzzy
 msgid "Hardware information stored for system %{system}"
-msgstr "تم تخزين معلومات الأجهزة للنظام %{system}"
+msgstr "تم تخزين معلومات الأجهزة لأجل النظام %{system}"
 
-#, fuzzy
 msgid "ID"
 msgstr "المعرف"
 
-#, fuzzy
 msgid "Import commands for Offline Sync"
-msgstr "تصدير الأوامر لأجل المزامنة غير المتصلة على الشبكة"
+msgstr "استيراد الأوامر لإجراء مزامنة غير متصلة"
 
-#, fuzzy
 msgid "Imported activation of %{product} for %{system}"
-msgstr "تم استيراد تنشيط %{product} لأجل النظام %{system}"
+msgstr "تم استيراد تنشيط المنتج %{product} للنظام %{system}"
 
-#, fuzzy
 msgid "Imported system %{system}"
-msgstr "تم تصدير النظام %{system}"
+msgstr "تم استيراد النظام %{system}"
 
-#, fuzzy
 msgid "Importing SCC data from %{path}"
-msgstr "جارِ استيراد البيانات الخاصة بمركز SCC من المسار %{path}"
+msgstr "جارِ استيراد بيانات SCC من المسار %{path}"
 
-#, fuzzy
 msgid "Invalid system credentials"
 msgstr "صلاحيات النظام غير صالحة"
 
-#, fuzzy
 msgid "Last Mirrored"
 msgstr "آخر نسخ"
 
-#, fuzzy
 msgid "Last mirrored"
 msgstr "آخر نسخ"
 
-#, fuzzy
 msgid "List all custom repositories"
 msgstr "سرد جميع المخازن المخصصة"
 
-#, fuzzy
 msgid "List all products, including ones which are not marked to be mirrored"
 msgstr ""
 "سرد جميع المنتجات، بما في ذلك المنتجات التي لم توضع عليها علامة \"مطلوب "
 "النسخ\""
 
-#, fuzzy
 msgid ""
 "List all repositories, including ones which are not marked to be mirrored"
 msgstr ""
 "سرد جميع المنتجات، بما في ذلك المنتجات التي لم توضع عليها علامة \"مطلوب "
 "النسخ\""
 
-#, fuzzy
 msgid "List and modify custom repositories"
 msgstr "سرد المخازن المخصصة وتعديلها"
 
-#, fuzzy
 msgid "List and modify products"
 msgstr "سرد المنتجات وتعديلها"
 
-#, fuzzy
 msgid "List and modify repositories"
 msgstr "سرد المخازن وتعديلها"
 
-#, fuzzy
 msgid "List products which are marked to be mirrored."
-msgstr "سرد المنتجات التي وضِع عليها علامة \"مطلوب النسخ\"."
+msgstr "سرد المنتجات التي وضِعت عليها علامة \"مطلوب النسخ\"."
 
-#, fuzzy
 msgid "List repositories which are marked to be mirrored"
-msgstr "سرد المخازن التي وضِع عليها علامة \"مطلوب النسخ\""
+msgstr "سرد المخازن التي وضِعت عليها علامة \"مطلوب النسخ\""
 
-#, fuzzy
 msgid "Mandatory"
 msgstr "إلزامي"
 
-#, fuzzy
 msgid "Mandatory?"
 msgstr "إلزامي؟"
 
-#, fuzzy
 msgid "Mirror"
 msgstr "نسخ"
 
-#, fuzzy
 msgid "Mirror repos at given path"
 msgstr "نسخ المخازن إلى مسار محدد"
 
-#, fuzzy
 msgid "Mirror repos from given path"
 msgstr "نسخ المخازن من مسار محدد"
 
-#, fuzzy
 msgid "Mirror repositories"
 msgstr "نسخ المخازن"
 
-#, fuzzy
 msgid "Mirror?"
-msgstr "نسخ؟"
+msgstr "هل تريد النسخ؟"
 
-#, fuzzy
 msgid "Mirroring SUMA product tree to %{dir}"
-msgstr "جارِ نسخ شجرة منتجات SUMA إلى %{dir}"
+msgstr "جارِ نسخ شجرة منتج SUMA إلى %{dir}"
 
-#, fuzzy
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "جارِ نسخ المخزن %{repo} إلى %{dir}"
 
-#, fuzzy
 msgid "Missing data files: %{files}"
 msgstr "ملفات البيانات المفقودة: %{files}"
 
-#, fuzzy
 msgid "Multiple base products found: '%s'."
 msgstr "تم العثور على العديد من المنتجات الأساسية: '%s'."
 
-#, fuzzy
 msgid "Name"
 msgstr "الاسم"
 
-#, fuzzy
 msgid "No base product found."
 msgstr "لم يتم العثور على منتج أساسي."
 
-#, fuzzy
 msgid "No custom repositories found."
 msgstr "لم يتم العثور على مخازن مخصصة."
 
-#, fuzzy
 msgid "No matching products found in the database."
 msgstr "لم يتم العثور على منتجات مطابقة في قاعدة البيانات."
 
-#, fuzzy
 msgid "No product IDs supplied"
 msgstr "لم يتم إدخال أي معرفات للمنتجات"
 
-#, fuzzy
 msgid "No product found"
 msgstr "لم يتم العثور على منتج"
 
-#, fuzzy
 msgid "No product found for target %{target}."
 msgstr "لم يتم العثور على منتج للهدف %{target}."
 
-#, fuzzy
 msgid "No product found on RMT for: %s"
 msgstr "لم يتم العثور على منتج في أداة نسخ المخازن (RMT) لأجل: %s"
 
-#, fuzzy
 msgid "No products attached to repository."
 msgstr "لم يتم إرفاق أي منتجات بالمخزن."
 
-#, fuzzy
 msgid "No repositories enabled."
-msgstr "لم يتم تمكين أي مخازن."
+msgstr "لم يتم تمكين أي مخزن."
 
-#, fuzzy
 msgid "No repositories found for product: %s"
-msgstr "لم يتم العثور على أي مخازن للمنتج:  %s"
+msgstr "لم يتم العثور على مخازن للمنتج: %s"
 
-#, fuzzy
 msgid "No repository ids supplied"
-msgstr "لم يتم إدخال أي معرفات للمخازن"
+msgstr "لم يتم إدخال أي معرفات مخازن"
 
-#, fuzzy
 msgid "Not Mandatory"
 msgstr "غير إلزامي"
 
-#, fuzzy
 msgid "Not all mandatory repositories are mirrored for product %s"
 msgstr "لم يتم نسخ كل المخازن الإلزامية للمنتج %s"
 
-#, fuzzy
 msgid "Not provided"
 msgstr "لم يتم الإدخال"
 
-#, fuzzy
 msgid ""
 "Not yet activated Registration Code. Visit https://scc.suse.com to activate "
 "it."
 msgstr ""
 "لم يتم تنشيط رمز التسجيل بعد. الرجاء زيارة موقع https://scc.suse.com لتنشيطه."
 
-#, fuzzy
 msgid ""
 "Only enabled products are shown by default. Use the '%{command}' option to "
 "see all products."
@@ -591,7 +480,6 @@ msgstr ""
 "لا يتم إظهار سوى المنتجات التي تم تمكينها بشكل افتراضي. استخدم الخيار "
 "'%{command}' لعرض جميع المنتجات."
 
-#, fuzzy
 msgid ""
 "Only enabled repositories are shown by default. Use the '%{option}' option "
 "to see all repositories."
@@ -599,53 +487,43 @@ msgstr ""
 "لا يتم إظهار سوى المخازن التي تم تمكينها بشكل افتراضي. استخدم الخيار "
 "'%{option}' لعرض جميع المخازن."
 
-#, fuzzy
 msgid "Output data in CSV format"
 msgstr "بيانات المخرجات بتنسيق CSV"
 
-#, fuzzy
 msgid "Path to unpacked SMT data tarball"
-msgstr ""
-"المسار الخاص ببيانات أداة إدارة الاشتراك (SMT) الموجودة في ملف TAR المجمع "
-"الذي تم فك حزمته"
+msgstr "مسار إلى ملف tarball الخاص ببيانات SMT الذي تم فك حزمته"
 
-#, fuzzy
 msgid ""
 "Process is locked by the application with pid %{pid}. Close this application "
 "or wait for it to finish before trying again."
 msgstr ""
-"تم قفل المعالجة بواسطة الذي يحتوي على معرف العملية %{pid}. الرجاء إغلاق "
-"التطبيق أو الانتظار حتى الانتهاء قبل إعادة المحاولة مرة أخرى."
+"العملية مقفلة بواسطة التطبيق بمعرف العملية %{pid}. أغلق هذا التطبيق أو انتظر "
+"حتى الانتهاء قبل المحاولة مرة أخرى."
 
-#, fuzzy
 msgid "Product"
 msgstr "المنتج"
 
-#, fuzzy
 msgid "Product %{products} could not be found and was not disabled."
 msgid_plural "Products %{products} could not be found and were not disabled."
-msgstr[0] "لم يتم العثور على %{products} من المنتجات ولم يتم تعطيلها."
-msgstr[1] "لم يتم العثور على منتج %{products} ولم يتم تعطيله."
-msgstr[2] "لم يتم العثور على منتجين %{products} ولم يتم تعطيلهما."
-msgstr[3] "لم يتم العثور على %{products} من المنتجات ولم يتم تعطيلها."
-msgstr[4] "لم يتم العثور على %{products} من المنتجات ولم يتم تعطيلها."
-msgstr[5] "لم يتم العثور على %{products} من المنتجات ولم يتم تعطيلها."
+msgstr[0] "تعذر العثور على %{products} من المنتجات ولم يتم تعطيلها."
+msgstr[1] "تعذر العثور على منتج %{products} ولم يتم تعطيله."
+msgstr[2] "تعذر العثور على منتجين %{products} ولم يتم تعطيلهما."
+msgstr[3] "تعذر العثور على %{products} من المنتجات ولم يتم تعطيلها."
+msgstr[4] "تعذر العثور على %{products} منتجًا ولم يتم تعطيل هذه المنتجات."
+msgstr[5] "تعذر العثور على %{products} من المنتجات ولم يتم تعطيلها."
 
-#, fuzzy
 msgid "Product %{products} could not be found and was not enabled."
 msgid_plural "Products %{products} could not be found and were not enabled."
-msgstr[0] "لم يتم العثور على %{products} من المنتجات ولم يتم تمكينها."
-msgstr[1] "لم يتم العثور على منتج %{products} ولم يتم تمكينه."
-msgstr[2] "لم يتم العثور على منتجين %{products} ولم يتم تمكينهما."
-msgstr[3] "لم يتم العثور على %{products} من المنتجات ولم يتم تمكينها."
-msgstr[4] "لم يتم العثور على %{products} من المنتجات ولم يتم تمكينها."
-msgstr[5] "لم يتم العثور على %{products} من المنتجات ولم يتم تمكينها."
+msgstr[0] "تعذر العثور على %{products} منتج ولم يتم تمكينها."
+msgstr[1] "تعذر العثور على منتج %{products} ولم يتم تمكينه."
+msgstr[2] "تعذر العثور على منتجين %{products} ولم يتم تمكينهما."
+msgstr[3] "تعذر العثور على %{products} منتجات ولم يتم تمكينها."
+msgstr[4] "تعذر العثور على %{products} من المنتجات ولم يتم تمكينها."
+msgstr[5] "تعذر العثور على %{products} من المنتجات ولم يتم تمكينها."
 
-#, fuzzy
 msgid "Product %{product} not found"
 msgstr "لم يتم العثور على المنتج %{product}"
 
-#, fuzzy
 msgid ""
 "Product %{product} not found!\n"
 "Tried to attach custom repository %{repo} to product %{product},\n"
@@ -658,160 +536,227 @@ msgstr ""
 "من خلال تشغيل '%{command}'\n"
 
 msgid "Product Architecture"
-msgstr ""
+msgstr "هيكل المنتج"
 
 msgid "Product ID"
-msgstr ""
+msgstr "معرف المنتج"
 
 msgid "Product Name"
-msgstr ""
+msgstr "اسم المنتج"
 
+#, fuzzy
 msgid "Product Version"
-msgstr ""
+msgstr "نسخة المنتج"
 
+#, fuzzy
 msgid "Product by ID %{id} not found."
-msgstr ""
+msgstr "لم يتم العثور على المنتج بالمعرف %{id}."
 
+#, fuzzy
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr ""
+"لم تتم مزامنة أداة نسخ المخازن (RMT) مع مركز SCC بعد. الرجاء تشغيل "
+"'%{command}' أولاً"
 
+#, fuzzy
 msgid "Read SCC data from given path"
-msgstr ""
+msgstr "قراءة بيانات مركز SCC من المسار المحدد"
 
+#, fuzzy
 msgid "Remove a custom repository"
-msgstr ""
+msgstr "إزالة مخزن مخصص"
 
+#, fuzzy
 msgid "Removed custom repository by ID %{id}."
-msgstr ""
+msgstr "تمت إزالة مخزن محدد بالمعرف %{id}."
 
+#, fuzzy
 msgid "Repository %{repos} could not be found and was not disabled."
 msgid_plural "Repositories %{repos} could not be found and were not disabled."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "تعذر العثور على %{repos} من المخازن ولم يتم تعطيلها."
+msgstr[1] "تعذر الحصول على مخزن %{repos} ولم يتم تعطيله."
+msgstr[2] "تعذر الحصول على مخزنين %{repos} ولم يتم تعطيلهما."
+msgstr[3] "تعذر العثور على %{repos} مخازن ولم يتم تعطيلها."
+msgstr[4] "تعذر العثور على %{repos} مخزنًا ولم يتم تعطيل هذه المخازن."
+msgstr[5] "تعذر العثور على %{repos} من المخازن ولم يتم تعطيلها."
 
+#, fuzzy
 msgid "Repository %{repos} could not be found and was not enabled."
 msgid_plural "Repositories %{repos} could not be found and were not enabled."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "تعذر العثور على %{repos} من المخازن ولم يتم تمكينها."
+msgstr[1] "تعذر العثور على مخزن %{repos} ولم يتم تمكينه."
+msgstr[2] "تعذر العثور على مخزنين %{repos} ولم يتم تمكينهما."
+msgstr[3] "تعذر العثور على %{repos} مخازن ولم يتم تمكينها."
+msgstr[4] "تعذر العثور على %{repos} مخزنًا ولم يتم تمكين هذه المخازن."
+msgstr[5] "تعذر العثور على %{repos} من المخازن ولم يتم تمكينها."
 
+#, fuzzy
 msgid ""
 "Repository %{repo} was not found in RMT database, perhaps you no longer have "
 "a valid subscription for it"
 msgstr ""
+"لم يتم العثور على المخزن %{repo} في قاعدة بيانات أداة نسخ المخازن (RMT)، "
+"ربما لم يعد لديك اشتراك صالح لأجله."
 
+#, fuzzy
 msgid "Repository by ID %{id} successfully disabled."
-msgstr ""
+msgstr "تم تعطيل المخزن بالمعرف %{id} بنجاح."
 
+#, fuzzy
 msgid "Repository by ID %{id} successfully enabled."
-msgstr ""
+msgstr "تم تمكين المخزن بالمعرف %{id} بنجاح."
 
+#, fuzzy
 msgid "Repository metadata signatures are missing"
-msgstr ""
+msgstr "توقيعات بيانات تعريف المخزن مفقودة"
 
+#, fuzzy
 msgid "Repository not found by ID %{id}."
-msgstr ""
+msgstr "لم يتم العثور على المخزن بالمعرف %{id}."
 
+#, fuzzy
 msgid "Repository successfully disabled."
-msgstr ""
+msgstr "تم تعطيل المخزن بنجاح."
 
+#, fuzzy
 msgid "Repository successfully enabled."
-msgstr ""
+msgstr "تم تمكين المخزن بنجاح."
 
+#, fuzzy
 msgid "Requested service not found"
-msgstr ""
+msgstr "لم يتم العثور على الخدمة المطلوبة"
 
+#, fuzzy
 msgid "Required parameters are missing or empty: %s"
-msgstr ""
+msgstr "المعلمات المطلوبة مفقودة أو فارغة: %s"
 
+#, fuzzy
 msgid "Run '%{command}' for more information on a command and its subcommands."
 msgstr ""
+"تشغيل '%{command}' للحصول على مزيد من المعلومات حول أحد الأوامر والأوامر "
+"الفرعية الخاصة به."
 
+#, fuzzy
 msgid ""
 "Run '%{command}' to synchronize with your SUSE Customer Center data first."
 msgstr ""
+"تشغيل '%{command}' للمزامنة مع بيانات SUSE Customer Cente الخاصة بك أولاً."
 
+#, fuzzy
 msgid "SCC ID"
-msgstr ""
+msgstr "معرف مركز SCC"
 
+#, fuzzy
 msgid "Settings saved at %{file}."
-msgstr ""
+msgstr "تم حفظ الإعدادات في %{file}."
 
+#, fuzzy
 msgid "Show RMT version"
-msgstr ""
+msgstr "إظهار نسخة أداة نسخ المخازن (RMT)"
 
+#, fuzzy
 msgid "Shows products attached to a custom repository"
-msgstr ""
+msgstr "إظهار المنتجات المرفقة بمخزن مخصص"
 
+#, fuzzy
 msgid "Store SCC data in files at given path"
-msgstr ""
+msgstr "تخزين بيانات مركز SCC في ملفات في المسار المحدد"
 
+#, fuzzy
 msgid "Store repository settings at given path"
-msgstr ""
+msgstr "تخزين إعدادات المخزن في مسار محدد"
 
+#, fuzzy
 msgid "Successfully added custom repository."
-msgstr ""
+msgstr "تمت إضافة مخزن محدد بنجاح."
 
+#, fuzzy
 msgid "Sync database with SUSE Customer Center"
-msgstr ""
+msgstr "مزامنة قاعدة البيانات مع SUSE Customer Center"
 
+#, fuzzy
 msgid "System %{system} not found"
-msgstr ""
+msgstr "لم يتم العثور على النظام %{system}"
 
+#, fuzzy
 msgid ""
 "The RMT database has not yet been initialized. Run '%{command}' to setup the "
 "database."
 msgstr ""
+"لم تتم تهيئة قاعدة بيانات أداة نسخ المخازن (RMT) بعد. قم بتشغيل '%{command}' "
+"لإعداد قاعدة البيانات."
 
+#, fuzzy
 msgid ""
 "The SCC credentials are not configured correctly in '%{path}'. You can "
 "obtain them from %{url}"
 msgstr ""
+"لم يتم تكوين الصلاحيات الخاصة بمركز SCC بشكل صحيح في المسار '%{path}'. يمكنك "
+"الحصول عليها من %{url}"
 
+#, fuzzy
 msgid "The product \"%s\" is a base product and cannot be deactivated"
-msgstr ""
+msgstr "المنتج \"%s\" هو منتج أساسي ولا يمكن إلغاء تنشيطه"
 
+#, fuzzy
 msgid "The requested product '%s' is not activated on this system."
-msgstr ""
+msgstr "لم يتم تنشيط المنتج المطلوب '%s' في هذا النظام."
 
+#, fuzzy
 msgid "The requested products '%s' are not activated on the system."
-msgstr ""
+msgstr "لم يتم تنشيط المنتجات المطلوبة '%s' في النظام."
 
+#, fuzzy
 msgid "There are no repositories marked for mirroring."
-msgstr ""
+msgstr "لا توجد مخازن عليها علامة \"مطلوب النسخ\"."
 
+#, fuzzy
 msgid "URL"
-msgstr ""
+msgstr "عنوان URL"
 
+#, fuzzy
 msgid "Unknown Registration Code."
-msgstr ""
+msgstr "رمز تسجيل غير معلوم."
 
+#, fuzzy
 msgid "Unknown hash function %{checksum_type}"
-msgstr ""
+msgstr "النوع %{checksum_type} الخاص بدالة التجزئة غير معلوم."
 
+#, fuzzy
 msgid "Unmet product dependencies, activate one of these products first: %s"
-msgstr ""
+msgstr "تبعيات المنتجات غير مستوفية، قم بتنشيط أحد هذه المنتجات أولاً: %s"
 
+#, fuzzy
 msgid "Updated system information for host '%s'"
-msgstr ""
+msgstr "تم تحديث معلومات النظام للمضيف '%s'"
 
+#, fuzzy
 msgid "Updating products"
-msgstr ""
+msgstr "جارِ تحديث المنتجات"
 
+#, fuzzy
 msgid "Updating repositories"
-msgstr ""
+msgstr "جارِ تحديث المخازن"
 
+#, fuzzy
 msgid "Updating subscriptions"
-msgstr ""
+msgstr "جارِ تحديث الاشتراكات"
 
+#, fuzzy
 msgid "Version"
-msgstr ""
+msgstr "النسخة"
 
+#, fuzzy
 msgid "importing data from SMT."
-msgstr ""
+msgstr "جارِ استيراد البيانات من أداة إدارة الاشتراكات (SMT)."
 
+#, fuzzy
 msgid "repository by URL %{url} does not exist in database"
-msgstr ""
+msgstr "المخزن بعنوان URL %{‏url} غير موجود في قاعدة البيانات"
 
+#, fuzzy
 msgid ""
 "× File does not exist or has wrong filesize, deduplication ignored %{error}."
 msgstr ""
+"الملف × غير موجود أو يحتوي على حجم ملف غير صحيح، تم تجاهل إلغاء التكرار مع "
+"وجود الخطأ %{error}."
