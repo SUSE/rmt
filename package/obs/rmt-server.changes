@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Apr 17 10:51:47 UTC 2019 - tmuntaner@suse.com
+
+- Version 2.0.0
+- Breaking Change: Added headers to generated CSV files
+
+-------------------------------------------------------------------
 Tue Apr  2 16:02:04 UTC 2019 - Serhii Kotov <skotov@suse.com>
 
 - Version 1.2.8

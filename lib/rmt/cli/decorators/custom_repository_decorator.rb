@@ -15,7 +15,14 @@ class RMT::CLI::Decorators::CustomRepositoryDecorator < RMT::CLI::Decorators::Ba
         repo.last_mirrored_at
       ]
     end
-    array_to_csv(data)
+    array_to_csv(data, [
+      _('ID'),
+      _('Name'),
+      _('URL'),
+      _('Mandatory?'),
+      _('Mirror?'),
+      _('Last Mirrored')
+    ])
   end
 
   def to_table

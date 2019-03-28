@@ -77,7 +77,7 @@ describe RMT::CLI::ReposCustom do
           ]]
         end
         let(:expected_output) do
-          CSV.generate { |csv| rows.each { |row| csv << row } }
+          CSV.generate { |csv| rows.unshift(['ID', 'Name', 'URL', 'Mandatory?', 'Mirror?', 'Last Mirrored']).each { |row| csv << row } }
         end
 
         it 'outputs expected format' do
@@ -395,7 +395,7 @@ describe RMT::CLI::ReposCustom do
       describe 'products --csv' do
         let(:argv) { ['products', repository.id, '--csv'] }
         let(:expected_output) do
-          CSV.generate { |csv| rows.each { |row| csv << row } }
+          CSV.generate { |csv| rows.unshift(['ID', 'Name', 'Version', 'Architecture']).each { |row| csv << row } }
         end
 
         it 'outputs expected format' do

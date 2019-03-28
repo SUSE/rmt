@@ -207,7 +207,7 @@ OUTPUT
           end
           let(:argv) { [command_name, '--csv'] }
           let(:expected_output) do
-            CSV.generate { |csv| rows.each { |row| csv << row } }
+            CSV.generate { |csv| rows.unshift(['SCC ID', 'Product', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored']).each { |row| csv << row } }
           end
 
           it 'outputs only the expected format' do
