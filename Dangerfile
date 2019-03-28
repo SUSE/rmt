@@ -10,14 +10,14 @@ def check_all_versions_equal
   if spec_version != rmt_version
     error_msg = "The version of RMT is not consistent. These files must specify the same version:\n"
     error_msg << "- `lib/rmt.rb` specifies `#{rmt_version}`\n"
-    error_msg << "- `package/rmt-server.spec` specifies `#{spec_version}`\n"
+    error_msg << "- `package/obs/rmt-server.spec` specifies `#{spec_version}`\n"
     fail(error_msg)
   end
 end
 
 def spec_version
   return @_spec_version if defined?(@_spec_version)
-  @_spec_version = File.open('package/rmt-server.spec', 'r') do |f|
+  @_spec_version = File.open('package/obs/rmt-server.spec', 'r') do |f|
     f.each_line do |line|
       break line.split(':').last.strip if line =~ /^Version/
     end
