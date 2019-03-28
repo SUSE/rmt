@@ -11,13 +11,19 @@ class MigrationEngine
 
   end
 
+  # Python2 module was extracted from legacy module
+  # so that it should be added by default during online migration between SLE 15
+  PYTHON2_MODULE_IDENTIFIER = 'sle-module-python2'.freeze
+
   def initialize(system, provided_installed_products)
     @system = system
     @installed_products = provided_installed_products
   end
 
   def online_migrations
-    generate(migration_kind: :online)
+    migrations = generate(migration_kind: :online)
+    migrations = add_online_dependencies(migrations)
+    migrations
   end
 
   def offline_migrations(target_base_product)
@@ -102,6 +108,22 @@ class MigrationEngine
     migrations.map do |migration|
       base = migration.first
       migration.concat Product.modules_for_migration(base.id)
+      migration
+    end
+  end
+
+  def add_online_dependencies(migrations)
+    migrations.map do |migration|
+      base = migration.first
+      # we need to add python2 module by default
+      if base.version.split('.').first == '15'
+        python2_module = Product.find_by(
+          identifier: PYTHON2_MODULE_IDENTIFIER,
+          arch: base.arch,
+          version: base.version
+        )
+        migration.concat([python2_module]) if python2_module.present?
+      end
       migration
     end
   end
