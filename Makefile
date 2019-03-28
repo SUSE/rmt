@@ -11,7 +11,7 @@ clean:
 
 man:
 	bundle exec ronn --roff --pipe --manual RMT MANUAL.md > rmt-cli.8 && gzip -f rmt-cli.8
-	mv rmt-cli.8.gz package/
+	mv rmt-cli.8.gz package/obs
 
 dist: clean man
 	@mkdir -p $(NAME)-$(VERSION)/
@@ -77,5 +77,5 @@ dist: clean man
 	sed -i '/remote: .*rubygems\.org/d' $(NAME)-$(VERSION)/Gemfile.lock
 
 	find $(NAME)-$(VERSION) -name \*~ -exec rm {} \;
-	tar cfvj package/$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)/
+	tar cfvj package/obs/$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)/
 	rm -rf $(NAME)-$(VERSION)/
