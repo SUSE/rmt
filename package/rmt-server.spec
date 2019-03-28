@@ -185,6 +185,7 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 
 %files
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}
+%exclude %{app_dir}/package-sources/
 %exclude %{app_dir}/engines/
 %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
 %attr(-,%{rmt_user},%{rmt_group}) %{conf_dir}
