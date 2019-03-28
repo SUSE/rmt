@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-03-26 11:32+0100\n"
-"PO-Revision-Date: 2019-03-27 22:49+0000\n"
+"PO-Revision-Date: 2019-03-28 18:42+0000\n"
 "Last-Translator: Franziska Weinberger <f.weinberger@gemino.de>\n"
 "Language-Team: German <https://l10n.opensuse.org/projects/rmt/i18n/de/>\n"
 "Language: de\n"
@@ -18,72 +18,55 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 3.3\n"
 
-#, fuzzy
 msgid "%s is not yet activated on the system."
 msgstr "%s ist auf dem System noch nicht aktiviert."
 
-#, fuzzy
 msgid "%{file} - File does not exist"
 msgstr "%{file} – Datei ist nicht vorhanden"
 
-#, fuzzy
 msgid "%{file} - HTTP request failed with code %{code}"
 msgstr "%{file} – HTTP-Anforderung fehlgeschlagen mit dem Code %{code}"
 
-#, fuzzy
 msgid "%{file} - return code %{code}"
 msgstr "%{file} – Rückgabecode %{code}"
 
-#, fuzzy
 msgid "%{file} does not exist."
 msgstr "%{file} ist nicht vorhanden."
 
-#, fuzzy
 msgid "%{path} is not a directory."
 msgstr "%{path} ist kein Verzeichnis."
 
-#, fuzzy
 msgid "%{path} is not writable by user %{username}."
-msgstr "%{username} kann nicht in %{path} schreiben."
+msgstr "Benutzer %{username} kann nicht in %{path} schreiben."
 
-#, fuzzy
 msgid "A repository by the URL %{url} already exists."
 msgstr "Ein Repository für URL %{url} ist bereits vorhanden."
 
-#, fuzzy
 msgid "Added association between %{repo} and product %{product}"
 msgstr "Zuordnung zwischen %{repo} und Produkt %{product} hinzugefügt"
 
-#, fuzzy
 msgid "Adding product %{product}"
 msgstr "Produkt %{product} wird hinzugefügt"
 
-#, fuzzy
 msgid "All repositories have already been disabled."
 msgstr "Alle Repositorys wurden bereits deaktiviert."
 
-#, fuzzy
 msgid "All repositories have already been enabled."
 msgstr "Alle Repositorys wurden bereits aktiviert."
 
-#, fuzzy
 msgid "Arch"
 msgstr "Arch"
 
-#, fuzzy
 msgid "Attach an existing custom repository to a product"
 msgstr ""
 "Ein vorhandenes benutzerdefiniertes Repository mit einem Produkt verbinden"
 
-#, fuzzy
 msgid "Attached repository to product '%{product_name}'."
 msgstr "Repository wurde mit Produkt '%{product_name}' verbunden."
 
-#, fuzzy
 msgid "Authenticated system with login \\\"%{login}\\\""
 msgstr "Authentifiziertes System mit Anmeldung \\\"%{login}\\\""
 
-#, fuzzy
 msgid ""
 "Cannot connect to database server. Ensure its credentials are correctly "
 "configured in '%{path}' or configure RMT with YaST ('%{command}')."
@@ -92,7 +75,6 @@ msgstr ""
 "Berechtigungsnachweis in '%{path}' richtig konfiguriert ist oder "
 "konfigurieren Sie RMT mit YaST ('%{command}')."
 
-#, fuzzy
 msgid ""
 "Cannot connect to database server. Make sure it is running and its "
 "credentials are configured in '%{path}'."
@@ -100,7 +82,6 @@ msgstr ""
 "Keine Verbindung zu Datenbankserver möglich. Stellen Sie sicher, dass er "
 "ausgeführt wird und der Berechtigungsnachweis in '%{path}' konfiguriert ist."
 
-#, fuzzy
 msgid ""
 "Cannot deactivate the product \"%s\". Other activated products depend upon "
 "it."
@@ -108,46 +89,35 @@ msgstr ""
 "Produkt \"%s\" kann nicht deaktiviert werden. Andere aktivierte Produkte "
 "sind von diesem Produkt abhängig."
 
-#, fuzzy
 msgid "Cannot find custom repository by ID %{id}."
-msgstr ""
-"Benutzerdefiniertes Repository mit ID %{id} kann nicht gefunden werden."
+msgstr "Benutzerdefiniertes Repository mit ID %{id} kann nicht gefunden werden."
 
-#, fuzzy
 msgid "Cannot find product by ID %{id}."
 msgstr "Produkt mit ID %{id} kann nicht gefunden werden."
 
-#, fuzzy
 msgid "Check out %{url}"
 msgstr "Überprüfen Sie %{url}"
 
-#, fuzzy
 msgid "Checksum doesn't match"
 msgstr "Prüfsumme stimmt nicht überein"
 
-#, fuzzy
 msgid "Cleaning up the database"
-msgstr "Datenbank wird bereinigt."
+msgstr "Datenbank wird bereinigt"
 
-#, fuzzy
 msgid "Commands:"
 msgstr "Kommandos:"
 
-#, fuzzy
 msgid "Could not create a temporary directory: %{error}"
 msgstr "Temporäres Verzeichnis konnte nicht erstellt werden: %{error}"
 
-#, fuzzy
 msgid "Could not create deduplication hardlink: %{error}."
 msgstr ""
 "Feste Verknüpfung für Deduplizierung konnte nicht erstellt werden: %{error}."
 
-#, fuzzy
 msgid "Could not create local directory %{dir} with error: %{error}"
 msgstr ""
 "Lokales Verzeichnis %{dir} konnte nicht erstellt werden. Fehler: %{error}"
 
-#, fuzzy
 msgid ""
 "Could not find system with login \\\"%{login}\\\" and password \\"
 "\"%{password}\\\""
@@ -155,27 +125,21 @@ msgstr ""
 "System mit Benutzername \\\"%{login}\\\" und Passwort \\\"%{password}\\\" "
 "nicht gefunden"
 
-#, fuzzy
 msgid "Could not mirror suma product tree with error: %{error}"
 msgstr "SUMA-Produktbaum konnte nicht gespiegelt werden. Fehler: %{error}"
 
-#, fuzzy
 msgid "Creates a custom repository."
-msgstr "Erstellt benutzerdefiniertes Repository."
+msgstr "Erstellt ein benutzerdefiniertes Repository."
 
-#, fuzzy
 msgid "Detach an existing custom repository from a product"
 msgstr "Vorhandenes benutzerdefiniertes Repository von Produkt trennen"
 
-#, fuzzy
 msgid "Detached repository from product '%{product_name}'."
 msgstr "Repository von Produkt '%{product_name}' getrennt."
 
-#, fuzzy
 msgid "Disable mirroring of custom repository by ID"
 msgstr "Spiegeln des benutzerdefinierten Repositorys nach ID deaktivieren"
 
-#, fuzzy
 msgid ""
 "Disable mirroring of product repositories by a list of product IDs or "
 "product strings."
@@ -183,46 +147,36 @@ msgstr ""
 "Deaktivieren Sie das Spiegeln von Produktrepositorys anhand einer Liste von "
 "Produkt-IDs oder Produktzeichenketten."
 
-#, fuzzy
 msgid "Disable mirroring of repositories by a list of repository IDs"
 msgstr ""
 "Spiegeln von Repositorys anhand einer Liste von Repository-IDs deaktivieren"
 
-#, fuzzy
 msgid "Disabled repository %{repository}."
 msgstr "Repository %{repository} deaktiviert."
 
-#, fuzzy
 msgid "Disabling %{product}:"
 msgstr "%{product} wird deaktiviert:"
 
-#, fuzzy
 msgid "Do not import the systems that were registered to the SMT"
 msgstr "Systeme nicht importieren, die im SMT registriert waren"
 
-#, fuzzy
 msgid ""
 "Do you have any suggestions for improvement? We would love to hear from you!"
 msgstr ""
 "Haben Sie Verbesserungsvorschläge? Wir würden uns freuen, von Ihnen zu hören!"
 
-#, fuzzy
 msgid "Don't Mirror"
 msgstr "Nicht spiegeln"
 
-#, fuzzy
 msgid "Downloading data from SCC"
 msgstr "Daten werden vom SCC heruntergeladen"
 
-#, fuzzy
 msgid "Enable debug output"
 msgstr "Ausgabe der Fehlersuche aktivieren"
 
-#, fuzzy
 msgid "Enable mirroring of custom repository by ID"
-msgstr "Spiegeln von benutzerdefiniertem Repository nach ID aktivieren"
+msgstr "Spiegeln von benutzerdefiniertem Repository anhand der ID aktivieren"
 
-#, fuzzy
 msgid ""
 "Enable mirroring of product repositories by a list of product IDs or product "
 "strings."
@@ -230,260 +184,200 @@ msgstr ""
 "Aktivieren Sie das Spiegeln von Produkt-Repositorys anhand einer Liste von "
 "Produkt-IDs oder Produktzeichenketten."
 
-#, fuzzy
 msgid "Enable mirroring of repositories by a list of repository IDs"
 msgstr ""
 "Spiegeln von Repositorys anhand einer Liste von Repository-IDs aktivieren"
 
-#, fuzzy
 msgid "Enabled mirroring for repository %{repo}"
 msgstr "Spiegeln für Repository %{repo} aktiviert"
 
-#, fuzzy
 msgid "Enabled repository %{repository}."
 msgstr "Repository %{repository} aktiviert."
 
-#, fuzzy
 msgid "Enables all free modules for a product"
 msgstr "Aktiviert alle freien Module für ein Produkt"
 
-#, fuzzy
 msgid "Enabling %{product}:"
 msgstr "%{product} wird aktiviert:"
 
-#, fuzzy
 msgid "Error while mirroring data: %{error}"
 msgstr "Fehler beim Spiegeln von Daten: %{error}"
 
-#, fuzzy
 msgid "Error while mirroring license: %{error}"
 msgstr "Fehler beim Spiegeln von Lizenz: %{error}"
 
-#, fuzzy
 msgid "Error while mirroring metadata: %{error}"
 msgstr "Fehler beim Spiegeln von Metadaten: %{error}"
 
-#, fuzzy
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
 msgstr ""
 "Fehler beim Verschieben des Verzeichnisses %{src} nach %{dest}: %{error}"
 
-#, fuzzy
 msgid "Export commands for Offline Sync"
 msgstr "Kommandos zum Exportieren für die Offline-Synchronisierung"
 
-#, fuzzy
 msgid "Exporting data from SCC to %{path}"
-msgstr "Daten werden von SCC nach %{path} exportiert"
+msgstr "Daten werden von SCC nach %{path} exportiert."
 
-#, fuzzy
 msgid "Exporting orders"
-msgstr "Aufträge werden exportiert"
+msgstr "Aufträge werden exportiert."
 
-#, fuzzy
 msgid "Exporting products"
-msgstr "Produkte werden exportiert"
+msgstr "Produkte werden exportiert."
 
-#, fuzzy
 msgid "Exporting repositories"
-msgstr "Repositorys werden exportiert"
+msgstr "Repositorys werden exportiert."
 
-#, fuzzy
 msgid "Exporting subscriptions"
-msgstr "Subscriptions werden exportiert"
+msgstr "Subscriptions werden exportiert."
 
-#, fuzzy
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
 msgstr[0] "Produkt mit Ziel %{target} gefunden: %{products}."
 msgstr[1] "Produkte mit Ziel %{target} gefunden: %{products}."
 
-#, fuzzy
 msgid "Hardware information stored for system %{system}"
 msgstr "Hardwareinformationen für System %{system} gespeichert"
 
-#, fuzzy
 msgid "ID"
 msgstr "ID"
 
-#, fuzzy
 msgid "Import commands for Offline Sync"
 msgstr "Kommandos zum Importieren für die Offline-Synchronisierung"
 
-#, fuzzy
 msgid "Imported activation of %{product} for %{system}"
 msgstr "Aktivierung von %{product} für %{system} importiert"
 
-#, fuzzy
 msgid "Imported system %{system}"
 msgstr "System %{system} importiert"
 
-#, fuzzy
 msgid "Importing SCC data from %{path}"
 msgstr "SCC-Daten von %{path} werden importiert."
 
-#, fuzzy
 msgid "Invalid system credentials"
 msgstr "Ungültiger Systemberechtigungsnachweis"
 
-#, fuzzy
 msgid "Last Mirrored"
 msgstr "Zuletzt gespiegelt"
 
-#, fuzzy
 msgid "Last mirrored"
 msgstr "Zuletzt gespiegelt"
 
-#, fuzzy
 msgid "List all custom repositories"
 msgstr "Alle benutzerdefinierten Repositorys auflisten"
 
-#, fuzzy
 msgid "List all products, including ones which are not marked to be mirrored"
 msgstr ""
 "Alle Produkte auflisten, auch diejenigen, die nicht zur Spiegelung markiert "
 "sind"
 
-#, fuzzy
 msgid ""
 "List all repositories, including ones which are not marked to be mirrored"
 msgstr ""
 "Alle Repositorys auflisten, auch diejenigen, die nicht zur Spiegelung "
 "markiert sind"
 
-#, fuzzy
 msgid "List and modify custom repositories"
 msgstr "Benutzerdefinierte Repositorys auflisten und ändern"
 
-#, fuzzy
 msgid "List and modify products"
 msgstr "Produkte auflisten und ändern"
 
-#, fuzzy
 msgid "List and modify repositories"
 msgstr "Repositorys auflisten und ändern"
 
-#, fuzzy
 msgid "List products which are marked to be mirrored."
-msgstr "Listen Sie Produkte auf, die zur Spiegelung markiert sind."
+msgstr "Produkte auflisten, die zur Spiegelung markiert sind"
 
-#, fuzzy
 msgid "List repositories which are marked to be mirrored"
 msgstr "Repositorys auflisten, die zur Spiegelung markiert sind"
 
-#, fuzzy
 msgid "Mandatory"
 msgstr "Obligatorisch"
 
-#, fuzzy
 msgid "Mandatory?"
 msgstr "Obligatorisch?"
 
-#, fuzzy
 msgid "Mirror"
 msgstr "Spiegeln"
 
-#, fuzzy
 msgid "Mirror repos at given path"
-msgstr "Repositorys in den angegebenen Pfad spiegeln"
+msgstr "Repositorys in angegebenem Pfad spiegeln"
 
-#, fuzzy
 msgid "Mirror repos from given path"
-msgstr "Repositorys aus dem angegebenen Pfad spiegeln"
+msgstr "Repositorys aus angegebenem Pfad spiegeln"
 
-#, fuzzy
 msgid "Mirror repositories"
 msgstr "Repositorys spiegeln"
 
-#, fuzzy
 msgid "Mirror?"
 msgstr "Spiegeln?"
 
 msgid "Mirroring SUSE Manager product tree to %{dir}"
-msgstr ""
+msgstr "SUSE Manager-Produktbaum wird in %{dir} gespiegelt"
 
-#, fuzzy
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "Repository %{repo} wird in %{dir} gespiegelt"
 
-#, fuzzy
 msgid "Missing data files: %{files}"
 msgstr "Fehlende Datendateien: %{files}"
 
-#, fuzzy
 msgid "Multiple base products found: '%s'."
 msgstr "Mehrere Basisprodukte gefunden: '%s'."
 
-#, fuzzy
 msgid "Name"
 msgstr "Name"
 
-#, fuzzy
 msgid "No base product found."
 msgstr "Kein Basisprodukt gefunden."
 
-#, fuzzy
 msgid "No custom repositories found."
 msgstr "Keine benutzerdefinierten Repositorys gefunden."
 
-#, fuzzy
 msgid "No matching products found in the database."
 msgstr "Keine übereinstimmenden Produkte in der Datenbank gefunden."
 
-#, fuzzy
 msgid "No product IDs supplied"
 msgstr "Keine Produkt-IDs angegeben"
 
-#, fuzzy
 msgid "No product found"
 msgstr "Kein Produkt gefunden"
 
-#, fuzzy
 msgid "No product found for target %{target}."
 msgstr "Kein Produkt für Ziel %{target} gefunden."
 
-#, fuzzy
 msgid "No product found on RMT for: %s"
 msgstr "Kein Produkt in RMT gefunden für: %s"
 
-#, fuzzy
 msgid "No products attached to repository."
 msgstr "Keine Produkte mit Repository verbunden."
 
-#, fuzzy
 msgid "No repositories enabled."
 msgstr "Keine Repositorys aktiviert."
 
-#, fuzzy
 msgid "No repositories found for product: %s"
 msgstr "Keine Repositorys gefunden für Produkt: %s"
 
-#, fuzzy
 msgid "No repository ids supplied"
 msgstr "Keine Repository-IDs angegeben"
 
-#, fuzzy
 msgid "Not Mandatory"
 msgstr "Nicht obligatorisch"
 
-#, fuzzy
 msgid "Not all mandatory repositories are mirrored for product %s"
 msgstr ""
 "Nicht alle obligatorischen Repositorys für Produkt %s wurden gespiegelt."
 
-#, fuzzy
 msgid "Not provided"
 msgstr "Nicht angegeben"
 
-#, fuzzy
 msgid ""
 "Not yet activated Registration Code. Visit https://scc.suse.com to activate "
 "it."
 msgstr ""
-"Registrierungscode wurde noch nicht aktiviert. Zum Aktivieren rufen Sie "
+"Registrierungscode wurde noch nicht aktiviert. Rufen Sie zum Aktivieren "
 "https://scc.suse.com auf."
 
-#, fuzzy
 msgid ""
 "Only enabled products are shown by default. Use the '%{command}' option to "
 "see all products."
@@ -491,7 +385,6 @@ msgstr ""
 "Standardmäßig werden nur aktivierte Produkte angezeigt. Verwenden Sie die "
 "Option '%{command}', um alle Produkte anzuzeigen."
 
-#, fuzzy
 msgid ""
 "Only enabled repositories are shown by default. Use the '%{option}' option "
 "to see all repositories."
@@ -499,15 +392,12 @@ msgstr ""
 "Standardmäßig werden nur aktivierte Repositorys angezeigt. Verwenden Sie die "
 "Option '%{option}', um alle Repositorys anzuzeigen."
 
-#, fuzzy
 msgid "Output data in CSV format"
 msgstr "Daten in CSV-Format ausgeben"
 
-#, fuzzy
 msgid "Path to unpacked SMT data tarball"
 msgstr "Pfad zur entpackten SMT-Daten-Tarball-Datei"
 
-#, fuzzy
 msgid ""
 "Process is locked by the application with pid %{pid}. Close this application "
 "or wait for it to finish before trying again."
@@ -516,11 +406,9 @@ msgstr ""
 "diese Anwendung oder warten Sie, bis der Prozess beendet ist, bevor Sie es "
 "erneut versuchen."
 
-#, fuzzy
 msgid "Product"
 msgstr "Produkt"
 
-#, fuzzy
 msgid "Product %{products} could not be found and was not disabled."
 msgid_plural "Products %{products} could not be found and were not disabled."
 msgstr[0] ""
@@ -529,7 +417,6 @@ msgstr[1] ""
 "Produkte %{products} konnten nicht gefunden werden und wurden nicht "
 "deaktiviert."
 
-#, fuzzy
 msgid "Product %{products} could not be found and was not enabled."
 msgid_plural "Products %{products} could not be found and were not enabled."
 msgstr[0] ""
@@ -538,11 +425,9 @@ msgstr[1] ""
 "Produkte %{products} konnten nicht gefunden werden und wurden nicht "
 "aktiviert."
 
-#, fuzzy
 msgid "Product %{product} not found"
 msgstr "Produkt %{product} nicht gefunden"
 
-#, fuzzy
 msgid ""
 "Product %{product} not found!\n"
 "Tried to attach custom repository %{repo} to product %{product},\n"
@@ -556,45 +441,35 @@ msgstr ""
 "Produkt,\n"
 "indem Sie '%{command}' ausführen.\n"
 
-#, fuzzy
 msgid "Product Architecture"
 msgstr "Produktarchitektur"
 
-#, fuzzy
 msgid "Product ID"
 msgstr "Produkt-ID"
 
-#, fuzzy
 msgid "Product Name"
 msgstr "Produktname"
 
-#, fuzzy
 msgid "Product Version"
 msgstr "Produktversion"
 
-#, fuzzy
 msgid "Product by ID %{id} not found."
 msgstr "Produkt mit ID %{id} nicht gefunden."
 
-#, fuzzy
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr ""
 "RMT wurde noch nicht mit SCC synchronisiert. Führen Sie zuvor '%{command}' "
 "aus."
 
-#, fuzzy
 msgid "Read SCC data from given path"
 msgstr "SCC-Daten im angegebenen Pfad lesen"
 
-#, fuzzy
 msgid "Remove a custom repository"
 msgstr "Benutzerdefiniertes Repository entfernen"
 
-#, fuzzy
 msgid "Removed custom repository by ID %{id}."
 msgstr "Benutzerdefiniertes Repository mit ID %{id} wurde entfernt."
 
-#, fuzzy
 msgid "Repository %{repos} could not be found and was not disabled."
 msgid_plural "Repositories %{repos} could not be found and were not disabled."
 msgstr[0] ""
@@ -603,7 +478,6 @@ msgstr[1] ""
 "Repositorys %{repos} konnten nicht gefunden werden und wurden nicht "
 "deaktiviert."
 
-#, fuzzy
 msgid "Repository %{repos} could not be found and was not enabled."
 msgid_plural "Repositories %{repos} could not be found and were not enabled."
 msgstr[0] ""
@@ -612,7 +486,6 @@ msgstr[1] ""
 "Repositorys %{repos} konnten nicht gefunden werden und wurden nicht "
 "aktiviert."
 
-#, fuzzy
 msgid ""
 "Repository %{repo} was not found in RMT database, perhaps you no longer have "
 "a valid subscription for it"
@@ -620,90 +493,70 @@ msgstr ""
 "Repository %{repo} wurde in RMT-Datenbank nicht gefunden. Eventuell haben "
 "Sie keine gültige Subscription mehr."
 
-#, fuzzy
 msgid "Repository by ID %{id} successfully disabled."
 msgstr "Repository mit ID %{id} wurde erfolgreich deaktiviert."
 
-#, fuzzy
 msgid "Repository by ID %{id} successfully enabled."
 msgstr "Repository mit ID %{id} wurde erfolgreich aktiviert."
 
-#, fuzzy
 msgid "Repository metadata signatures are missing"
 msgstr "Repository-Metadatensignaturen fehlen"
 
-#, fuzzy
 msgid "Repository not found by ID %{id}."
 msgstr "Repository mit ID %{id} nicht gefunden."
 
-#, fuzzy
 msgid "Repository successfully disabled."
 msgstr "Repository erfolgreich deaktiviert."
 
-#, fuzzy
 msgid "Repository successfully enabled."
 msgstr "Repository erfolgreich aktiviert."
 
-#, fuzzy
 msgid "Requested service not found"
 msgstr "Angeforderter Dienst wurde nicht gefunden."
 
-#, fuzzy
 msgid "Required parameters are missing or empty: %s"
 msgstr "Erforderliche Parameter fehlen oder sind leer: %s"
 
-#, fuzzy
 msgid "Run '%{command}' for more information on a command and its subcommands."
 msgstr ""
 "Führen Sie '%{command}' aus, um weitere Informationen zu einem Kommando und "
 "seinen untergeordneten Kommandos zu erhalten."
 
-#, fuzzy
 msgid ""
 "Run '%{command}' to synchronize with your SUSE Customer Center data first."
 msgstr ""
 "Führen Sie '%{command}' aus, um zuerst eine Synchronisierung mit Ihren SUSE "
 "Customer Center-Daten durchzuführen."
 
-#, fuzzy
 msgid "SCC ID"
 msgstr "SCC-ID"
 
-#, fuzzy
 msgid "Settings saved at %{file}."
 msgstr "Einstellungen wurden in %{file} gespeichert."
 
-#, fuzzy
 msgid "Show RMT version"
 msgstr "RMT-Version anzeigen"
 
-#, fuzzy
 msgid "Shows products attached to a custom repository"
 msgstr ""
 "Zeigt Produkte an, die mit einem benutzerdefinierten Repository verbunden "
 "sind"
 
-#, fuzzy
 msgid "Store SCC data in files at given path"
 msgstr "SCC-Daten in Dateien im angegebenen Pfad speichern"
 
-#, fuzzy
 msgid "Store repository settings at given path"
 msgstr "Repository-Einstellungen im angegebenen Pfad speichern"
 
-#, fuzzy
 msgid "Successfully added custom repository."
 msgstr "Benutzerdefiniertes Repository erfolgreich hinzugefügt."
 
-#, fuzzy
 msgid "Sync database with SUSE Customer Center"
 msgstr "Datenbank mit SUSE Customer Center synchronisieren"
 
-#, fuzzy
 msgid "System %{system} not found"
 msgstr "System %{system} nicht gefunden"
 
-#, fuzzy
 msgid ""
 "The RMT database has not yet been initialized. Run '%{command}' to setup the "
 "database."
@@ -711,7 +564,6 @@ msgstr ""
 "Die RMT-Datenbank wurde noch nicht initialisiert. Führen Sie '%{command}' "
 "aus, um die Datenbank einzurichten."
 
-#, fuzzy
 msgid ""
 "The SCC credentials are not configured correctly in '%{path}'. You can "
 "obtain them from %{url}"
@@ -719,70 +571,54 @@ msgstr ""
 "Der SCC-Berechtigungsnachweis in '%{path}' ist nicht korrekt konfiguriert. "
 "Sie erhalten den Berechtigungsnachweis unter %{url}."
 
-#, fuzzy
 msgid "The product \"%s\" is a base product and cannot be deactivated"
 msgstr ""
 "Das Produkt \"%s\" ist ein Basisprodukt und kann nicht deaktiviert werden."
 
-#, fuzzy
 msgid "The requested product '%s' is not activated on this system."
 msgstr "Das angeforderte Produkt '%s' ist auf diesem System nicht aktiviert."
 
-#, fuzzy
 msgid "The requested products '%s' are not activated on the system."
 msgstr "Die angeforderten Produkte '%s' sind auf dem System nicht aktiviert."
 
-#, fuzzy
 msgid "There are no repositories marked for mirroring."
 msgstr "Es gibt keine Repositorys, die für die Spiegelung markiert sind."
 
-#, fuzzy
 msgid "URL"
 msgstr "URL"
 
-#, fuzzy
 msgid "Unknown Registration Code."
 msgstr "Unbekannter Registrierungscode."
 
-#, fuzzy
 msgid "Unknown hash function %{checksum_type}"
 msgstr "Unbekannte Hash-Funktion %{checksum_type}"
 
-#, fuzzy
 msgid "Unmet product dependencies, activate one of these products first: %s"
 msgstr ""
 "Unvollständige Produktabhängigkeiten, aktivieren Sie zuerst eines dieser "
 "Produkte: %s"
 
-#, fuzzy
 msgid "Updated system information for host '%s'"
 msgstr "Systeminformationen für Host '%s' wurden aktualisiert."
 
-#, fuzzy
 msgid "Updating products"
-msgstr "Produkte werden aktualisiert."
+msgstr "Produkte werden aktualisiert"
 
-#, fuzzy
 msgid "Updating repositories"
-msgstr "Repositorys werden aktualisiert."
+msgstr "Repositorys werden aktualisiert"
 
-#, fuzzy
 msgid "Updating subscriptions"
-msgstr "Subscriptions werden aktualisiert."
+msgstr "Subscriptions werden aktualisiert"
 
-#, fuzzy
 msgid "Version"
 msgstr "Version"
 
-#, fuzzy
 msgid "importing data from SMT."
 msgstr "Daten aus SMT werden importiert."
 
-#, fuzzy
 msgid "repository by URL %{url} does not exist in database"
 msgstr "Repository mit URL %{url} ist nicht in Datenbank vorhanden."
 
-#, fuzzy
 msgid ""
 "× File does not exist or has wrong filesize, deduplication ignored %{error}."
 msgstr ""
