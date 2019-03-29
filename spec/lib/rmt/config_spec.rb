@@ -5,7 +5,7 @@ RSpec.describe RMT::Config do
     context 'defaults' do
       [nil, ''].each do |dedup_method|
         before { deduplication_method(dedup_method) }
-        it("defaults when supplied #{dedup_method}") { expect(described_class.deduplication_by_hardlink?).to be_truthy }
+        it("defaults when supplied #{dedup_method}") { expect(described_class.deduplication_by_hardlink?).not_to be_truthy }
       end
     end
 
