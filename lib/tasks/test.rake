@@ -10,7 +10,7 @@ RSpec::Core::RakeTask.new('test:core') do |t|
   ENV['SIMPLECOV_CMD'] = 'test:core'
   t.pattern = 'spec'
   t.verbose = false
-  t.fail_on_error = false
+  t.fail_on_error = true
   t.rspec_opts = '--format Fuubar --color'
 end
 
@@ -19,6 +19,6 @@ RSpec::Core::RakeTask.new('test:engines') do |t|
   ENV['SIMPLECOV_CMD'] = 'test:engines'
   t.pattern = 'engines/*/spec/**/**{,/*/**}/*_spec.rb'
   t.verbose = false
-  t.fail_on_error = false
+  t.fail_on_error = true
   t.rspec_opts = '--format Fuubar --color'
 end
