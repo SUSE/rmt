@@ -22,8 +22,8 @@ RSpec.describe RMT::Mirror do
 
     context 'all is well', vcr: { cassette_name: 'mirroring_suma_product_tree' } do
       before do
+        expect(logger).to receive(:info).with(/Mirroring SUSE Manager product tree to/).once
         expect(logger).to receive(:info).with(/↓ product_tree.json/).once
-        expect(logger).to receive(:info).with(/Mirroring SUMA product tree to/).once
       end
 
       it 'downloads the suma product tree' do
