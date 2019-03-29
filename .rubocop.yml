@@ -23,7 +23,7 @@ AllCops:
     - vendor/**/*
     - tmp/**/*
     - lib/locale/*
-    - package/*
+    - package/**/*
 
 Style/TrailingUnderscoreVariable:
   Enabled: false

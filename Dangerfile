@@ -1,4 +1,4 @@
-unless git.modified_files.include?('package/rmt-server.changes')
+unless git.modified_files.include?('package/obs/rmt-server.changes')
   warn("Unless this is a trivial change, please include a CHANGELOG entry.\nRun `osc vc` in the `package` directory to add one.")
 end
 
