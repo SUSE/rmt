@@ -25,7 +25,7 @@
 %define ruby_version %{rb_default_ruby_suffix}
 
 Name:           rmt-server
-Version:        1.2.7
+Version:        1.2.8
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later

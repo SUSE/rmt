@@ -21,9 +21,7 @@ class MigrationEngine
   end
 
   def online_migrations
-    migrations = generate(migration_kind: :online)
-    migrations = add_online_dependencies(migrations)
-    migrations
+    generate(migration_kind: :online)
   end
 
   def offline_migrations(target_base_product)
@@ -54,6 +52,7 @@ class MigrationEngine
     end
 
     migrations = migration_targets(migration_kind: migration_kind)
+    migrations = add_python2_module(migrations)
     remove_incompatible_migrations(migrations)
     migrations = yield(migrations) if block_given?
     # NB: It's possible to migrate to any product that's available on RMT, entitlement checks not needed.
@@ -112,7 +111,7 @@ class MigrationEngine
     end
   end
 
-  def add_online_dependencies(migrations)
+  def add_python2_module(migrations)
     migrations.map do |migration|
       base = migration.first
       # we need to add python2 module by default

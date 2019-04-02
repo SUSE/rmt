@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Apr  2 16:02:04 UTC 2019 - Serhii Kotov <skotov@suse.com>
+
+- Version 1.2.8
+- Offline migration from SLE 15 to SLE 15 SP1 will add Python2 module 
+
+-------------------------------------------------------------------
 Thu Mar 21 11:55:02 UTC 2019 - skotov@suse.com
 
 - Version 1.2.7
