@@ -30,6 +30,15 @@ Note: Never push changes to the internal build service `ibs://Devel:SCC:RMT`!
 6. Stage the changes by running `osc addremove`.
 7. Commit the changes into OBS by running `osc ci`.
 
+#### Tag and Release the New Version on Github
+
+1. Tag the version locally and push it to github:
+    ```
+    git tag -a v<version> # for example git tag -a v1.0.0
+    git push --tags
+    ```
+2. On github, submit a release for the tag. See https://help.github.com/en/articles/creating-releases for assistance.
+
 #### Submit Requests to openSUSE Factory and SLES
 
 To get a maintenance request accepted, each changelog entry needs to have at
