@@ -8,7 +8,7 @@ Note: Never push changes to the internal build service `ibs://Devel:SCC:RMT`!
 * The package is built in OBS at: https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT/rmt-server
 * To update the version of RMT, you will have to change the following files:
   * `lib/rmt.rb`
-  * `package/rmt-server.spec`
+  * `package/obs/rmt-server.spec`
 
 1. Checkout/update OBS working copy:
       * If the OBS project is not checked out, check out working copy of OBS project into a separate directory, e.g.:
@@ -19,7 +19,7 @@ Note: Never push changes to the internal build service `ibs://Devel:SCC:RMT`!
           ```
       * Alternatively, if an OBS working copy is already checked out, update the working copy by running `osc up`
 2. Run `make dist` in your RMT working directory to build a tarball.
-3. Copy the files from the `package` directory to the OBS working directory.
+3. Copy the files from the `package/obs` directory to the OBS working directory.
 4. Build the package with osc:
 
     `osc build <repository> <arch> --no-verify`
@@ -29,6 +29,15 @@ Note: Never push changes to the internal build service `ibs://Devel:SCC:RMT`!
 5. Examine the changes by running `osc status` and `osc diff`.
 6. Stage the changes by running `osc addremove`.
 7. Commit the changes into OBS by running `osc ci`.
+
+#### Tag and Release the New Version on Github
+
+1. Tag the version locally and push it to github:
+    ```
+    git tag -a v<version> # for example git tag -a v1.0.0
+    git push --tags
+    ```
+2. On github, submit a release for the tag. See https://help.github.com/en/articles/creating-releases for assistance.
 
 #### Submit Requests to openSUSE Factory and SLES
 

@@ -18,10 +18,10 @@
 !/tmp/.keep
 
 .byebug_history
-package/*.tar.bz2
-package/.osc
-package/rmt-cli.8.gz
-package/_link
+package/obs/*.tar.bz2
+package/obs/.osc
+package/obs/rmt-cli.8.gz
+package/obs/_link
 
 vendor/
 coverage/

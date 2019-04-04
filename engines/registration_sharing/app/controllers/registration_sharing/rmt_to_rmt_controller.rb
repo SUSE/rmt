@@ -7,7 +7,7 @@ module RegistrationSharing
 
     def create
       System.transaction do
-        system = RegistrationSharing::System.find_or_create_by(login: params[:login])
+        system = System.find_or_create_by(login: params[:login])
         system.update(system_params)
 
         system.activations = []
@@ -15,7 +15,7 @@ module RegistrationSharing
           product = Product.find_by(id: activation[:product_id])
           raise "Product #{product_id} not found" unless product
 
-          system.activations << RegistrationSharing::Activation.new(
+          system.activations << Activation.new(
             service: product.service,
             created_at: activation[:created_at]
           )
@@ -30,7 +30,7 @@ module RegistrationSharing
     end
 
     def destroy
-      system = RegistrationSharing::System.find_by(login: params[:login])
+      system = System.find_by(login: params[:login])
       system.destroy if system
     end
 

@@ -51,7 +51,7 @@ class RegistrationSharing::Client
     response = request.run
 
     unless response.success?
-      raise "Regsharing request failed with code #{response.code}: #{response.body}"
+      raise "Regsharing request failed with code #{response.code}: #{(response.code == 0) ? response.return_message : response.body}"
     end
 
     response

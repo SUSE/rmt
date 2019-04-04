@@ -78,7 +78,7 @@ describe RMT::CLI::Import, :with_fakefs do
         File.write("#{path}/repos.json", repo_settings.to_json)
 
         expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
-        expect { command }.to output(/repository by url #{missing_repo_url} does not exist in database/).to_stderr.and output('').to_stdout
+        expect { command }.to output(/repository by URL #{missing_repo_url} does not exist in database/).to_stderr.and output('').to_stdout
       end
     end
 

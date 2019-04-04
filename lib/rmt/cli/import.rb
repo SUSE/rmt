@@ -29,7 +29,7 @@ class RMT::CLI::Import < RMT::CLI::Base
       repos.each do |repo_json|
         repo = Repository.find_by(external_url: repo_json['url'])
         if repo.nil?
-          warn _('repository by url %{url} does not exist in database') % { url: repo_json['url'] }
+          warn _('repository by URL %{url} does not exist in database') % { url: repo_json['url'] }
           next
         end
 

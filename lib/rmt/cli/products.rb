@@ -16,7 +16,7 @@ class RMT::CLI::Products < RMT::CLI::Base
 
     if products.empty?
       if options.all
-        warn _('Run `%{command}` to synchronize with your SUSE Customer Center data first.') % { command: 'rmt-cli sync' }
+        warn _("Run '%{command}' to synchronize with your SUSE Customer Center data first.") % { command: 'rmt-cli sync' }
       else
         warn _('No matching products found in the database.')
       end
@@ -27,7 +27,7 @@ class RMT::CLI::Products < RMT::CLI::Base
     end
 
     unless options.all || options.csv
-      puts _('Only enabled products are shown by default. Use the `%{command}` option to see all products.') % {
+      puts _("Only enabled products are shown by default. Use the '%{command}' option to see all products.") % {
         command: '--all'
       }
     end
@@ -36,37 +36,35 @@ class RMT::CLI::Products < RMT::CLI::Base
 
   desc 'enable TARGETS', _('Enable mirroring of product repositories by a list of product IDs or product strings.')
   option :all_modules, type: :boolean, desc: _('Enables all free modules for a product')
-  long_desc _(<<-REPOS
-Enable mirroring of product repositories by a list of product IDs or product strings.
+  long_desc <<-REPOS
+#{_('Enable mirroring of product repositories by a list of product IDs or product strings.')}
 
-Examples:
+#{_('Examples')}:
 
-`rmt-cli products enable SLES/15`
+$ rmt-cli products enable SLES/15
 
-`rmt-cli products enable 1575`
+$ rmt-cli products enable 1575
 
-`rmt-cli products enable SLES/15/x86_64 1743`
+$ rmt-cli products enable SLES/15/x86_64 1743
 
-`rmt-cli products enable --all-modules SLES/15`
+$ rmt-cli products enable --all-modules SLES/15
 REPOS
-)
   def enable(*targets)
     change_products(targets, true, options[:all_modules])
   end
 
   desc 'disable TARGETS', _('Disable mirroring of product repositories by a list of product IDs or product strings.')
-  long_desc _(<<-REPOS
-Disable mirroring of product repositories by a list of product IDs or product strings.
+  long_desc <<-REPOS
+#{_('Disable mirroring of product repositories by a list of product IDs or product strings.')}
 
-Examples:
+#{_('Examples')}:
 
-`rmt-cli products disable SLES/15`
+$ rmt-cli products disable SLES/15
 
-`rmt-cli products disable 1575`
+$ rmt-cli products disable 1575
 
-`rmt-cli products disable SLES/15/x86_64 1743`
+$ rmt-cli products disable SLES/15/x86_64 1743
 REPOS
-)
   def disable(*targets)
     change_products(targets, false, false)
   end
@@ -75,7 +73,7 @@ REPOS
 
   def change_products(targets, set_enabled, all_modules)
     targets = clean_target_input(targets)
-    raise RMT::CLI::Error.new(_('No product ids supplied')) if targets.empty?
+    raise RMT::CLI::Error.new(_('No product IDs supplied')) if targets.empty?
 
     failed_targets = []
     targets.each do |target|
@@ -104,7 +102,7 @@ REPOS
 
     # This will return multiple products if 'SLES/15' was used
     base_products = find_products(target)
-    raise ProductNotFoundException.new(_('No product found for target "%{target}".') % { target: target }) if base_products.empty?
+    raise ProductNotFoundException.new(_('No product found for target %{target}.') % { target: target }) if base_products.empty?
     puts n_('Found product by target %{target}: %{products}.', 'Found products by target %{target}: %{products}.', base_products.count) % {
       products: base_products.map(&:friendly_name).join(', '),
       target: target
@@ -161,7 +159,7 @@ REPOS
 
     products
   rescue ActiveRecord::RecordNotFound
-    raise ProductNotFoundException.new(_('Product by id "%{id}" not found.') % { id: product_id })
+    raise ProductNotFoundException.new(_('Product by ID %{id} not found.') % { id: product_id })
   end
 
   def repository_service

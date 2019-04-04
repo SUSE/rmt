@@ -17,31 +17,29 @@ class RMT::CLI::Repos < RMT::CLI::Base
   map 'ls' => :list
 
   desc 'enable IDS', _('Enable mirroring of repositories by a list of repository IDs')
-  long_desc _(<<-REPOS
-Enable mirroring of repositories by a list of repository IDs
+  long_desc <<-REPOS
+#{_('Enable mirroring of repositories by a list of repository IDs')}
 
-Examples:
+#{_('Examples:')}
 
-`rmt-cli repos enable 2526`
+$ rmt-cli repos enable 2526
 
-`rmt-cli repos enable 2526 3263`
+$ rmt-cli repos enable 2526 3263
 REPOS
-)
   def enable(*ids)
     change_repos(ids, true)
   end
 
   desc 'disable IDS', _('Disable mirroring of repositories by a list of repository IDs')
-  long_desc _(<<-REPOS
-Disable mirroring of repositories by a list of repository IDs
+  long_desc <<-REPOS
+#{_('Disable mirroring of repositories by a list of repository IDs')}
 
-Examples:
+#{_('Examples:')}
 
-`rmt-cli repos disable 2526`
+$ rmt-cli repos disable 2526
 
-`rmt-cli repos disable 2526 3263`
+$ rmt-cli repos disable 2526 3263
 REPOS
-)
   def disable(*ids)
     change_repos(ids, false)
   end
@@ -54,7 +52,7 @@ REPOS
 
     if repositories.empty?
       if options.all
-        warn _('Run `%{command}` to synchronize with your SUSE Customer Center data first.') % { command: 'rmt-cli sync' }
+        warn _("Run '%{command}' to synchronize with your SUSE Customer Center data first.") % { command: 'rmt-cli sync' }
       else
         warn _('No repositories enabled.')
       end
@@ -64,7 +62,7 @@ REPOS
       puts decorator.to_table
     end
     unless options.all || options.csv
-      puts _('Only enabled repositories are shown by default. Use the `%{option}` option to see all repositories.') % { option: '--all' }
+      puts _("Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories.") % { option: '--all' }
     end
   end
 
@@ -98,9 +96,9 @@ REPOS
     repository = Repository.find_by!(scc_id: id)
     repository.change_mirroring!(set_enabled)
 
-    puts set_enabled ? _('Repository by id %{id} successfully enabled.') % { id: id } : _('Repository by id %{id} successfully disabled.') % { id: id }
+    puts set_enabled ? _('Repository by ID %{id} successfully enabled.') % { id: id } : _('Repository by ID %{id} successfully disabled.') % { id: id }
   rescue ActiveRecord::RecordNotFound
-    raise RepoNotFoundException.new(_('Repository not found by id "%{id}".') % { id: id })
+    raise RepoNotFoundException.new(_('Repository not found by ID %{id}.') % { id: id })
   end
 
 

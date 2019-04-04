@@ -12,6 +12,7 @@ describe Activation, type: :model do
 
   it 'triggers registration sharing' do
     expect(system).to receive(:share_registration)
+    expect(RegistrationSharing).to receive(:called_from_regsharing?).and_return(false)
     expect(RegistrationSharing).to receive(:save_for_sharing).with(activation)
     activation.save!
   end
