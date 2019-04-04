@@ -8,6 +8,8 @@ class System < ApplicationRecord
   has_many :products, -> { distinct }, through: :services
   has_one :hw_info, dependent: :destroy
 
+  validates :login, uniqueness: { case_sensitive: false }
+
   def init
     self.login ||= System.generate_secure_login
     self.password ||= System.generate_secure_password

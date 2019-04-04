@@ -24,6 +24,10 @@ RSpec.describe System, type: :model do
     its(:length) { is_expected.to eq 16 }
   end
 
+  describe 'validation' do
+    it { is_expected.to validate_uniqueness_of(:login).ignoring_case_sensitivity }
+  end
+
   context 'when system is deleted' do
     context 'activation' do
       let(:activation) do
