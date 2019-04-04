@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190118125927) do
+ActiveRecord::Schema.define(version: 20190320120959) do
 
   create_table "activations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "service_id", null: false
@@ -144,6 +144,7 @@ ActiveRecord::Schema.define(version: 20190118125927) do
     t.datetime "last_seen_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["login"], name: "index_systems_on_login", unique: true
   end
 
   add_foreign_key "activations", "services", on_delete: :cascade
