@@ -235,7 +235,7 @@ describe SMTImporter do
     end
   end
   describe '#run' do
-    context 'without --no-system flag' do
+    context 'without --no-system and --no-hwinfo flags' do
       it 'runs all steps including importing the systems' do
         expect(importer).to receive(:check_products_exist)
         expect(importer).to receive(:import_repositories)
@@ -257,6 +257,17 @@ describe SMTImporter do
         importer.run ['--no-systems', '-d', 'foo']
       end
     end
+    context 'with --no-system flag' do
+      it 'imports repositories and systems without hwinfo' do
+        expect(importer).to receive(:check_products_exist)
+        expect(importer).to receive(:import_repositories)
+        expect(importer).to receive(:import_custom_repositories)
+        expect(importer).to receive(:import_systems)
+        expect(importer).to receive(:import_activations)
+        expect(importer).not_to receive(:import_hardware_info)
+        importer.run ['--no-hwinfo', '-d', 'foo']
+      end
+    end
   end
 
   describe '#parse_cli_arguments' do
@@ -275,6 +286,7 @@ describe SMTImporter do
         Usage: rspec [options]
             -d, --data PATH                  Path to unpacked SMT data tarball
                 --no-systems                 Do not import the systems that were registered to the SMT
+                --no-hwinfo                  Do not import system hardware info from MachineData table
       OUTPUT
     end
   end

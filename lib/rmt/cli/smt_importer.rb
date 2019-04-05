@@ -9,9 +9,10 @@ class SMTImporter
   class ImportException < StandardError
   end
 
-  def initialize(data_dir, no_systems)
+  def initialize(data_dir, no_systems, no_hw_info = false)
     @data_dir = data_dir
     @no_systems = no_systems
+    @no_hw_info = no_hw_info
     @systems = {}
     load_systems
   end
@@ -186,7 +187,7 @@ WARNING
     ActiveRecord::Base.transaction do
       import_systems
       import_activations
-      import_hardware_info
+      import_hardware_info unless @no_hw_info
     end
   end
 
@@ -194,6 +195,7 @@ WARNING
     parser = OptionParser.new do |parser|
       parser.on('-d', '--data PATH', _('Path to unpacked SMT data tarball')) { |path| @data_dir = path }
       parser.on('--no-systems', _('Do not import the systems that were registered to the SMT')) { @no_systems = true }
+      parser.on('--no-hwinfo', _('Do not import system hardware info from MachineData table')) { @no_hw_info = true }
     end
     parser.parse!(argv)
     raise OptionParser::MissingArgument if data_dir.nil?
