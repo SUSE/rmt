@@ -6,4 +6,4 @@ FastGettext.available_locales = FastGettext.default_available_locales = %w[en de
 FastGettext.text_domain = FastGettext.default_text_domain = 'rmt'
 
 # enable comments in .po/.pot files prefixed with i18n tag (see rxgettext -h)
-Rails.application.config.gettext_i18n_rails.xgettext = %w[--add-comments=i18n]
+Rails.application.config.gettext_i18n_rails.xgettext = %w[--add-comments=i18n] if Rails.application
