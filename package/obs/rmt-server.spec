@@ -16,20 +16,16 @@
 #
 
 
-%define app_dir %{_datadir}/rmt
-%define lib_dir %{_libdir}/rmt
-%define data_dir %{_localstatedir}/lib/rmt
-%define conf_dir %{_sysconfdir}/rmt
-%define rmt_user    _rmt
-%define rmt_group   nginx
-%if 0%{?suse_version} == 1315
-%define is_sle_12_family 1
-%define ruby_version ruby2.5
-%else
+%define app_dir      %{_datadir}/rmt
+%define lib_dir      %{_libdir}/rmt
+%define data_dir     %{_localstatedir}/lib/rmt
+%define conf_dir     %{_sysconfdir}/rmt
+%define rmt_user     _rmt
+%define rmt_group    nginx
 %define ruby_version %{rb_default_ruby_suffix}
-%endif
+
 Name:           rmt-server
-Version:        1.2.6
+Version:        1.2.7
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -39,22 +35,6 @@ Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-server-rpmlintrc
 Source2:        rmt.conf
 Source3:        rmt-cli.8.gz
-Source4:        nginx-http.conf
-Source5:        rmt-server-mirror.service
-Source6:        rmt-server-mirror.timer
-Source7:        rmt-server-sync.service
-Source8:        rmt-server-sync.timer
-Source9:        rmt-server.service
-Source10:       rmt-server.target
-Source11:       rmt-server-migration.service
-Source12:       rmt-server-sync-sles12.timer
-Source13:       rmt-server-mirror-sles12.timer
-Source14:       nginx-https.conf
-Source15:       auth-handler.conf
-Source16:       auth-location.conf
-Source17:       rmt-cli_bash-completion.sh
-Source18:       rmt-server.reg
-Source19:       http-certs.conf
 BuildRequires:  fdupes
 BuildRequires:  gcc
 BuildRequires:  libcurl-devel
@@ -134,19 +114,14 @@ install -D -m 644 %{_sourcedir}/rmt-cli.8.gz %{buildroot}%{_mandir}/man8/rmt-cli
 # systemd
 mkdir -p %{buildroot}%{_unitdir}
 
-%if 0%{?is_sle_12_family}
-install -m 444 %{SOURCE12} %{buildroot}%{_unitdir}/rmt-server-sync.timer
-install -m 444 %{SOURCE13} %{buildroot}%{_unitdir}/rmt-server-mirror.timer
-%else
-install -m 444 %{SOURCE6} %{buildroot}%{_unitdir}
-install -m 444 %{SOURCE8} %{buildroot}%{_unitdir}
-%endif
+install -m 444 package/files/systemd/rmt-server-mirror.timer %{buildroot}%{_unitdir}
+install -m 444 package/files/systemd/rmt-server-sync.timer %{buildroot}%{_unitdir}
 
-install -m 444 %{SOURCE5} %{buildroot}%{_unitdir}
-install -m 444 %{SOURCE7} %{buildroot}%{_unitdir}
-install -m 444 %{SOURCE9} %{buildroot}%{_unitdir}
-install -m 444 %{SOURCE10} %{buildroot}%{_unitdir}
-install -m 444 %{SOURCE11} %{buildroot}%{_unitdir}
+install -m 444 package/files/systemd/rmt-server-mirror.service %{buildroot}%{_unitdir}
+install -m 444 package/files/systemd/rmt-server-sync.service %{buildroot}%{_unitdir}
+install -m 444 package/files/systemd/rmt-server.service %{buildroot}%{_unitdir}
+install -m 444 package/files/systemd/rmt-server.target %{buildroot}%{_unitdir}
+install -m 444 package/files/systemd/rmt-server-migration.service %{buildroot}%{_unitdir}
 install -m 444 engines/registration_sharing/package/rmt-server-regsharing.service %{buildroot}%{_unitdir}
 install -m 444 engines/registration_sharing/package/rmt-server-regsharing.timer %{buildroot}%{_unitdir}
 
@@ -161,11 +136,11 @@ mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
 # nginx
-install -D -m 644 %{SOURCE4} %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
-install -D -m 644 %{SOURCE14} %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
-install -D -m 644 %{SOURCE15} %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
-install -D -m 644 %{SOURCE16} %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
-install -D -m 644 package/http-certs.conf %{buildroot}%{_sysconfdir}/nginx/rmt-pubcloud.d/http-certs.conf
+install -D -m 644 package/files/nginx/nginx-http.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
+install -D -m 644 package/files/nginx/nginx-https.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
+install -D -m 644 package/files/nginx/auth-handler.conf %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
+install -D -m 644 package/files/nginx/auth-location.conf %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
+install -D -m 644 package/files/nginx/http-certs.conf %{buildroot}%{_sysconfdir}/nginx/rmt-pubcloud.d/http-certs.conf
 
 sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"' \
     -e 's/^BUNDLE_JOBS: .*/BUNDLE_JOBS: "1"/' \
@@ -176,9 +151,9 @@ mkdir -p %{buildroot}%{_libexecdir}/supportconfig/plugins
 install -D -m 544 support/rmt %{buildroot}%{_libexecdir}/supportconfig/plugins/rmt
 
 # bash completion
-install -D -m 644 %{SOURCE17} %{buildroot}%{_datadir}/bash-completion/completions/rmt-cli
+install -D -m 644 package/files/rmt-cli_bash-completion.sh %{buildroot}%{_datadir}/bash-completion/completions/rmt-cli
 
-install -D -m 644 %{SOURCE18} %{buildroot}%{_sysconfdir}/slp.reg.d/rmt-server.reg
+install -D -m 644 package/files/rmt-server.reg %{buildroot}%{_sysconfdir}/slp.reg.d/rmt-server.reg
 
 # cleanup of /usr/bin/env commands
 grep -rl '\/usr\/bin\/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
@@ -211,6 +186,7 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %files
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}
 %exclude %{app_dir}/engines/
+%exclude %{app_dir}/package/
 %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
 %attr(-,%{rmt_user},%{rmt_group}) %{conf_dir}
 %attr(-,%{rmt_user},%{rmt_group}) /var/lib/rmt

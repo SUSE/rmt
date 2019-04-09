@@ -13,7 +13,7 @@ describe 'rmt-cli' do
     command '/usr/bin/rmt-cli sync', allow_error: true
     its(:stderr) { is_expected.to eq("Process is locked by the application with \
 pid #{`pgrep rmt-cli`.strip}. Close this application or wait for it \
-to finish before trying again\n") }
+to finish before trying again.\n") }
 
     its(:exitstatus) { is_expected.to eq 1 }
   end
