@@ -35,6 +35,7 @@ class RMT::CLI::Decorators::ProductDecorator < RMT::CLI::Decorators::Base
       _('ID'),
       _('Product'),
       _('Version'),
+      # i18n: architecture
       _('Arch'),
       _('Mirror?'),
       _('Last mirrored')
