@@ -21,12 +21,6 @@ if RMT::CLI::Base.process_user_name == 'root'
   Process::Sys.seteuid(Etc.getpwnam(RMT::DEFAULT_USER).uid)
 end
 
-if File.exist?(RMT::DEFAULT_MIRROR_DIR) && !File.writable?(RMT::DEFAULT_MIRROR_DIR)
-  warn "Mirroring base directory (#{RMT::DEFAULT_MIRROR_DIR}) is not writable by user '#{RMT::CLI::Base.process_user_name}'"
-  warn 'Run as root or adjust the permissions.'
-  exit RMT::CLI::Error::ERROR_OTHER
-end
-
 db_config = RMT::Config.db_config
 ActiveRecord::Base.establish_connection(db_config)
 
