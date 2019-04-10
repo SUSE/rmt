@@ -2,7 +2,6 @@
 
 rmt_path = File.expand_path('..', __dir__)
 require_relative "#{rmt_path}/config/boot"
-require_relative "#{rmt_path}/config/boot_cli_i18n"
 $LOAD_PATH.unshift File.join(rmt_path, 'lib')
 
 require 'etc'
@@ -22,12 +21,6 @@ if RMT::CLI::Base.process_user_name == 'root'
   Process::Sys.seteuid(Etc.getpwnam(RMT::DEFAULT_USER).uid)
 end
 
-if File.exist?(RMT::DEFAULT_MIRROR_DIR) && !File.writable?(RMT::DEFAULT_MIRROR_DIR)
-  warn "Mirroring base directory (#{RMT::DEFAULT_MIRROR_DIR}) is not writable by user '#{RMT::CLI::Base.process_user_name}'"
-  warn 'Run as root or adjust the permissions.'
-  exit RMT::CLI::Error::ERROR_OTHER
-end
-
 db_config = RMT::Config.db_config
 ActiveRecord::Base.establish_connection(db_config)
 
@@ -39,27 +32,34 @@ require 'registration_sharing/client'
 
 opt_peer = nil
 opt_use_config = nil
+opt_nagios = nil
 
 opt_parser = OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename($PROGRAM_NAME)} [--peer HOSTNAME] [--use-config]"
   opts.on('-p', '--peer [HOSTNAME]', 'Tests regsharing to a given hostname') { |val| opt_peer = val }
   opts.on('-c', '--use-config', 'Tests all the peers currently configured in the config') { |val| opt_use_config = val }
+  opts.on('-n', '--nagios', 'Output status one line for Nagios') { |val| opt_nagios = val }
 end
 
 opt_parser.parse!
 
 unless (opt_peer || opt_use_config)
   warn opt_parser.help
-  exit 1
+  exit 2
 end
 
 peers = opt_peer ? [opt_peer] : RegistrationSharing.config_peers
 
+if peers.blank?
+  puts 'No peers configured'
+  exit 2
+end
+
 timestamp = Time.now.utc
-logger = RMT::Logger.new(STDOUT)
+logger = RMT::Logger.new(opt_nagios ? IO::NULL : STDOUT)
 
 params = {
-  login: 'manual-test-script',
+  login: 'regsharing-test-script',
   password: (0...32).map { rand(65..90).chr }.join,
   registered_at: timestamp,
   created_at: timestamp,
@@ -69,6 +69,9 @@ params = {
   ],
   instance_data: '<test>test</test>'
 }
+
+exit_code = 0
+status = []
 
 peers.each do |peer|
   logger.info "Sharing test registration to #{peer}..."
@@ -81,6 +84,14 @@ peers.each do |peer|
   client.send(:make_request, :delete, params)
 
   logger.info 'Success!'
+  status << "#{peer}=ok"
 rescue StandardError => e
   logger.warn "Failed! Error: #{e}"
+  status << "#{peer}=err"
+  exit_code = 2
 end
+
+if opt_nagios
+  puts status.join(', ')
+end
+exit(exit_code)

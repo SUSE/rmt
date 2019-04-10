@@ -36,7 +36,7 @@ class RegistrationSharing::Client
   end
 
   def make_request(method, params)
-    request = Typhoeus::Request.new(
+    request = RMT::HttpRequest.new(
       "https://#{@peer}/api/regsharing",
       method: method,
       headers: {
