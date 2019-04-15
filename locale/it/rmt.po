@@ -1,0 +1,720 @@
+# Italian translations for rmt package.
+# Copyright (C) 2019 THE rmt'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the rmt package.
+# Automatically generated, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: rmt 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-26 11:32+0100\n"
+"PO-Revision-Date: 2019-03-28 18:42+0000\n"
+"Last-Translator: Davide Aiello <davidea@novilinguists.com>\n"
+"Language-Team: Italian <https://l10n.opensuse.org/projects/rmt/i18n/it/>\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 3.3\n"
+
+msgid "%s is not yet activated on the system."
+msgstr "%s non è ancora attivato nel sistema."
+
+msgid "%{file} - File does not exist"
+msgstr "%{file} - File inesistente"
+
+msgid "%{file} - HTTP request failed with code %{code}"
+msgstr "%{file} - Richiesta HTTP non riuscita con codice %{code}"
+
+msgid "%{file} - return code %{code}"
+msgstr "%{file} - codice restituito %{code}"
+
+msgid "%{file} does not exist."
+msgstr "%{file} inesistente."
+
+msgid "%{path} is not a directory."
+msgstr "%{path} non è una directory."
+
+msgid "%{path} is not writable by user %{username}."
+msgstr "%{path} non è scrivibile dall'utente %{username}."
+
+msgid "A repository by the URL %{url} already exists."
+msgstr "Esiste già un repository fornito dall'URL %{url}."
+
+msgid "Added association between %{repo} and product %{product}"
+msgstr "Aggiunta associazione tra %{repo} e il prodotto %{product}"
+
+msgid "Adding product %{product}"
+msgstr "Aggiunta del prodotto %{product}"
+
+msgid "All repositories have already been disabled."
+msgstr "Tutti i repository sono già stati disabilitati."
+
+msgid "All repositories have already been enabled."
+msgstr "Tutti i repository sono già stati abilitati."
+
+msgid "Arch"
+msgstr "Arch."
+
+msgid "Attach an existing custom repository to a product"
+msgstr "Asspcoa un repository personalizzato esistente a un prodotto"
+
+msgid "Attached repository to product '%{product_name}'."
+msgstr "Repository associato al prodotto '%{product_name}'."
+
+msgid "Authenticated system with login \\\"%{login}\\\""
+msgstr "Sistema autenticato con login \\\"%{login}\\\""
+
+msgid ""
+"Cannot connect to database server. Ensure its credentials are correctly "
+"configured in '%{path}' or configure RMT with YaST ('%{command}')."
+msgstr ""
+"Connessione al server database impossibile. Assicurarsi che le rispettive "
+"credenziali siano configurate correttamente in '%{path}' o configurare RMT "
+"con YaST ('%{command}')."
+
+msgid ""
+"Cannot connect to database server. Make sure it is running and its "
+"credentials are configured in '%{path}'."
+msgstr ""
+"Connessione al server database impossibile. Assicurarsi che sia in "
+"esecuzione e che le rispettive credenziali siano configurate in '%{path}'."
+
+msgid ""
+"Cannot deactivate the product \"%s\". Other activated products depend upon "
+"it."
+msgstr ""
+"Impossibile disattivare il prodotto \"%s\". Da questo dipendono altri "
+"prodotti attivati."
+
+msgid "Cannot find custom repository by ID %{id}."
+msgstr "Impossibile trovare repository personalizzato in base all'ID %{id}."
+
+msgid "Cannot find product by ID %{id}."
+msgstr "Impossibile trovare il prodotto in base all'ID %{id}."
+
+msgid "Check out %{url}"
+msgstr "Verifica %{url}"
+
+msgid "Checksum doesn't match"
+msgstr "Codice di controllo non corrispondente"
+
+msgid "Cleaning up the database"
+msgstr "Pulizia del database"
+
+msgid "Commands:"
+msgstr "Comandi:"
+
+msgid "Could not create a temporary directory: %{error}"
+msgstr "Impossibile creare una directory temporanea: %{error}"
+
+msgid "Could not create deduplication hardlink: %{error}."
+msgstr "Impossibile creare collegamento reale di deduplicazione: %{error}."
+
+msgid "Could not create local directory %{dir} with error: %{error}"
+msgstr "Impossibile creare directory locale %{dir} con errore: %{error}"
+
+msgid ""
+"Could not find system with login \\\"%{login}\\\" and password \\"
+"\"%{password}\\\""
+msgstr ""
+"Impossibile trovare il sistema con login \\\"%{login}\\\" e password \\"
+"\"%{password}\\\""
+
+msgid "Could not mirror suma product tree with error: %{error}"
+msgstr ""
+"Impossibile eseguire il mirroring dell'albero prodotti suma con errore: "
+"%{error}"
+
+msgid "Creates a custom repository."
+msgstr "Crea un repository personalizzato."
+
+msgid "Detach an existing custom repository from a product"
+msgstr "Dissocia un repository personalizzato esistente da un prodotto"
+
+msgid "Detached repository from product '%{product_name}'."
+msgstr "Repository dissociato dal prodotto '%{product_name}'."
+
+msgid "Disable mirroring of custom repository by ID"
+msgstr "Disabilita mirroring del repository personalizzato per ID"
+
+msgid ""
+"Disable mirroring of product repositories by a list of product IDs or "
+"product strings."
+msgstr ""
+"Disabilita il mirroring dei repository dei prodotti per un elenco di ID "
+"prodotto o stringhe di prodotti."
+
+msgid "Disable mirroring of repositories by a list of repository IDs"
+msgstr "Disabilita mirroring dei repository per un elenco di ID repository"
+
+msgid "Disabled repository %{repository}."
+msgstr "Repository %{repository} disabilitato."
+
+msgid "Disabling %{product}:"
+msgstr "Disabilitazione di %{product}:"
+
+msgid "Do not import the systems that were registered to the SMT"
+msgstr "Non importare sistemi registrati in SMT"
+
+msgid ""
+"Do you have any suggestions for improvement? We would love to hear from you!"
+msgstr "Qualsiasi consiglio di miglioramento sarà molto apprezzato."
+
+msgid "Don't Mirror"
+msgstr "Non eseguire il mirroring"
+
+msgid "Downloading data from SCC"
+msgstr "Download dei dati da SCC"
+
+msgid "Enable debug output"
+msgstr "Abilita output di debug"
+
+msgid "Enable mirroring of custom repository by ID"
+msgstr "Abilita mirroring del repository personalizzato per ID"
+
+msgid ""
+"Enable mirroring of product repositories by a list of product IDs or product "
+"strings."
+msgstr ""
+"Abilita il mirroring dei repository dei prodotti per un elenco di ID "
+"prodotto o stringhe di prodotti."
+
+msgid "Enable mirroring of repositories by a list of repository IDs"
+msgstr "Abilita mirroring dei repository per un elenco di ID repository"
+
+msgid "Enabled mirroring for repository %{repo}"
+msgstr "Mirroring abilitato per repository %{repo}"
+
+msgid "Enabled repository %{repository}."
+msgstr "Repository %{repository} abilitato."
+
+msgid "Enables all free modules for a product"
+msgstr "Abilita tutti i moduli disponibili per un prodotto"
+
+msgid "Enabling %{product}:"
+msgstr "Abilitazione di %{product}:"
+
+msgid "Error while mirroring data: %{error}"
+msgstr "Errore durante il mirroring dei dati: %{error}"
+
+msgid "Error while mirroring license: %{error}"
+msgstr "Errore durante il mirroring della licenza: %{error}"
+
+msgid "Error while mirroring metadata: %{error}"
+msgstr "Errore durante il mirroring dei metadati: %{error}"
+
+msgid "Error while moving directory %{src} to %{dest}: %{error}"
+msgstr ""
+"Errore durante lo spostamento della directory da %{src} a %{dest}: %{error}"
+
+msgid "Export commands for Offline Sync"
+msgstr "Comandi di esportazione per sincronizzazione offline"
+
+msgid "Exporting data from SCC to %{path}"
+msgstr "Esportazione dei dati da SCC a %{path}"
+
+msgid "Exporting orders"
+msgstr "Esportazione di ordini"
+
+msgid "Exporting products"
+msgstr "Esportazione di prodotti"
+
+msgid "Exporting repositories"
+msgstr "Esportazione di repository"
+
+msgid "Exporting subscriptions"
+msgstr "Esportazione di sottoscrizioni"
+
+msgid "Found product by target %{target}: %{products}."
+msgid_plural "Found products by target %{target}: %{products}."
+msgstr[0] "Trovato prodotto per destinazione %{target}: %{products}."
+msgstr[1] "Trovati prodotti per destinazione %{target}: %{products}."
+
+msgid "Hardware information stored for system %{system}"
+msgstr "Informazioni hardware memorizzate per sistema %{system}"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "Import commands for Offline Sync"
+msgstr "Comandi di importazione per sincronizzazione offline"
+
+msgid "Imported activation of %{product} for %{system}"
+msgstr "Attivazione del prodotto %{product} importata per %{system}"
+
+msgid "Imported system %{system}"
+msgstr "Sistema importato %{system}"
+
+msgid "Importing SCC data from %{path}"
+msgstr "Importazione dei dati SCC da %{path}"
+
+msgid "Invalid system credentials"
+msgstr "Credenziali sistema non valide"
+
+msgid "Last Mirrored"
+msgstr "Ultimo mirroring eseguito"
+
+msgid "Last mirrored"
+msgstr "Ultimo mirroring eseguito"
+
+msgid "List all custom repositories"
+msgstr "Elenca i tutti i repository personalizzati"
+
+msgid "List all products, including ones which are not marked to be mirrored"
+msgstr ""
+"Elenca tutti i prodotti, inclusi quelli non contrassegnati per il mirorring"
+
+msgid ""
+"List all repositories, including ones which are not marked to be mirrored"
+msgstr ""
+"Elenca tutti i repository, inclusi quelli non contrassegnati per il mirroring"
+
+msgid "List and modify custom repositories"
+msgstr "Elenca e modifica repository personalizzati"
+
+msgid "List and modify products"
+msgstr "Elenca e modifica prodotti"
+
+msgid "List and modify repositories"
+msgstr "Elenca e modifica repository"
+
+msgid "List products which are marked to be mirrored."
+msgstr "Elenca i prodotti contrassegnati per il mirroring."
+
+msgid "List repositories which are marked to be mirrored"
+msgstr "Elenca i repository contrassegnati per il mirroring"
+
+msgid "Mandatory"
+msgstr "Obbligatorio"
+
+msgid "Mandatory?"
+msgstr "Obbligatorio?"
+
+msgid "Mirror"
+msgstr "Esegui mirroring"
+
+msgid "Mirror repos at given path"
+msgstr "Mirroring dei repository nel percorso specificato"
+
+msgid "Mirror repos from given path"
+msgstr "Mirroring dei repository da percorso specificato"
+
+msgid "Mirror repositories"
+msgstr "Mirroring dei repository"
+
+msgid "Mirror?"
+msgstr "Eseguire il mirroring?"
+
+msgid "Mirroring SUSE Manager product tree to %{dir}"
+msgstr "Mirroring dell'albero prodotti SUSE Manager in %{dir}"
+
+msgid "Mirroring repository %{repo} to %{dir}"
+msgstr "Mirroring repository %{repo} in %{dir}"
+
+msgid "Missing data files: %{files}"
+msgstr "File di dati mancanti: %{files}"
+
+msgid "Multiple base products found: '%s'."
+msgstr "Trovati più prodotti di base: '%s'."
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "No base product found."
+msgstr "Nessun prodotto di base trovato."
+
+msgid "No custom repositories found."
+msgstr "Nessun repository personalizzato trovato."
+
+msgid "No matching products found in the database."
+msgstr "Nessun prodotto corrispondente trovato nel database."
+
+msgid "No product IDs supplied"
+msgstr "Nessun ID prodotto fornito"
+
+msgid "No product found"
+msgstr "Nessun prodotto trovato"
+
+msgid "No product found for target %{target}."
+msgstr "Nessun prodotto trovato per destinazione %{target}."
+
+msgid "No product found on RMT for: %s"
+msgstr "Nessun prodotto trovato in RMT per: %s"
+
+msgid "No products attached to repository."
+msgstr "Nessun prodotto collegato al repository."
+
+msgid "No repositories enabled."
+msgstr "Nessun repository abilitato."
+
+msgid "No repositories found for product: %s"
+msgstr "Nessun repository trovato per il prodotto: %s"
+
+msgid "No repository ids supplied"
+msgstr "Nessun ID repository fornito"
+
+msgid "Not Mandatory"
+msgstr "Non obbligatorio"
+
+msgid "Not all mandatory repositories are mirrored for product %s"
+msgstr ""
+"Per il prodotto %s non viene eseguito il mirroring di tutti i repository "
+"obbligatori"
+
+msgid "Not provided"
+msgstr "Non fornito"
+
+msgid ""
+"Not yet activated Registration Code. Visit https://scc.suse.com to activate "
+"it."
+msgstr ""
+"Codice di registrazione non ancora attivato. Visitare https://scc.suse.com "
+"per attivarlo."
+
+msgid ""
+"Only enabled products are shown by default. Use the '%{command}' option to "
+"see all products."
+msgstr ""
+"Per impostazione predefinita vengono visualizzati solo i prodotti abilitati. "
+"Utilizzare l'opzione '%{command}' per visualizzare tutti i prodotti."
+
+msgid ""
+"Only enabled repositories are shown by default. Use the '%{option}' option "
+"to see all repositories."
+msgstr ""
+"Per impostazione predefinita vengono visualizzati solo i repository "
+"abilitati. Utilizzare l'opzione '%{option}' per visualizzare tutti i "
+"repository."
+
+msgid "Output data in CSV format"
+msgstr "Dati di output in formato CSV"
+
+msgid "Path to unpacked SMT data tarball"
+msgstr "Percorso al tarball dei dati SMT estratti"
+
+msgid ""
+"Process is locked by the application with pid %{pid}. Close this application "
+"or wait for it to finish before trying again."
+msgstr ""
+"Il processo è bloccato dall'applicazione con pid %{pid}. Chiudere "
+"l'applicazione o attendere che termini prima di riprovare."
+
+msgid "Product"
+msgstr "Prodotto"
+
+msgid "Product %{products} could not be found and was not disabled."
+msgid_plural "Products %{products} could not be found and were not disabled."
+msgstr[0] ""
+"Impossibile trovare il prodotto %{products} e questo non è stato "
+"disabilitato."
+msgstr[1] ""
+"Impossibile trovare i prodotti %{products} e questi non sono stati "
+"disabilitati."
+
+msgid "Product %{products} could not be found and was not enabled."
+msgid_plural "Products %{products} could not be found and were not enabled."
+msgstr[0] ""
+"Impossibile trovare il prodotto %{products} e questo non è stato abilitato."
+msgstr[1] ""
+"Impossibile trovare i prodotti %{products} e questi non sono stati abilitati."
+
+msgid "Product %{product} not found"
+msgstr "Prodotto %{product} non trovato"
+
+msgid ""
+"Product %{product} not found!\n"
+"Tried to attach custom repository %{repo} to product %{product},\n"
+"but that product was not found. Attach it to a different product\n"
+"by running '%{command}'\n"
+msgstr ""
+"Prodotto %{product} non trovato.\n"
+"Si è tentato di associare il repository personalizzato %{repo} al prodotto "
+"%{product},\n"
+"ma questo non è stato trovato. Associarlo a un prodotto diverso\n"
+"eseguendo '%{command}'\n"
+
+msgid "Product Architecture"
+msgstr "Architettura prodotto"
+
+msgid "Product ID"
+msgstr "ID prodotto"
+
+msgid "Product Name"
+msgstr "Nome prodotto"
+
+msgid "Product Version"
+msgstr "Versione prodotto"
+
+msgid "Product by ID %{id} not found."
+msgstr "Prodotto per ID %{id} non trovato."
+
+msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
+msgstr ""
+"RMT non è stato ancora sincronizzato con SCC. Eseguire prima '%{command}'"
+
+msgid "Read SCC data from given path"
+msgstr "Leggi dati SCC dal percorso specificato"
+
+msgid "Remove a custom repository"
+msgstr "Rimuovi un repository personalizzato"
+
+msgid "Removed custom repository by ID %{id}."
+msgstr "Repository personalizzato rimosso per ID %{id}."
+
+msgid "Repository %{repos} could not be found and was not disabled."
+msgid_plural "Repositories %{repos} could not be found and were not disabled."
+msgstr[0] ""
+"Impossibile trovare il repository %{repos} e questo non è stato disabilitato."
+msgstr[1] ""
+"Impossibile trovare i repository %{repos} e questi non sono stati "
+"disabilitati."
+
+msgid "Repository %{repos} could not be found and was not enabled."
+msgid_plural "Repositories %{repos} could not be found and were not enabled."
+msgstr[0] ""
+"Impossibile trovare il repository %{repos} e questo non è stato abilitato."
+msgstr[1] ""
+"Impossibile trovare i repository %{repos} e questi non sono stati abilitati."
+
+msgid ""
+"Repository %{repo} was not found in RMT database, perhaps you no longer have "
+"a valid subscription for it"
+msgstr ""
+"Repository %{repo} non trovato nel database RMT, forse la sottoscrizione non "
+"è più valida"
+
+msgid "Repository by ID %{id} successfully disabled."
+msgstr "Disabilitazione del repository per ID %{id} completata."
+
+msgid "Repository by ID %{id} successfully enabled."
+msgstr "Abilitazione del repository per ID %{id} completata."
+
+msgid "Repository metadata signatures are missing"
+msgstr "Firme metadati del repository mancanti"
+
+msgid "Repository not found by ID %{id}."
+msgstr "Repository non trovato per ID %{id}."
+
+msgid "Repository successfully disabled."
+msgstr "Disabilitazione del repository completata."
+
+msgid "Repository successfully enabled."
+msgstr "Abilitazione del repository completata."
+
+msgid "Requested service not found"
+msgstr "Servizio richiesto non trovato"
+
+msgid "Required parameters are missing or empty: %s"
+msgstr "Parametri richiesti mancanti o vuoti: %s"
+
+msgid "Run '%{command}' for more information on a command and its subcommands."
+msgstr ""
+"Eseguire '%{command}' per ulteriori informazioni su un comando e i "
+"rispettivi sottocomandi."
+
+msgid ""
+"Run '%{command}' to synchronize with your SUSE Customer Center data first."
+msgstr ""
+"Eseguire '%{command}' per prima sincronizzarsi con i dati di SUSE Customer "
+"Center."
+
+msgid "SCC ID"
+msgstr "ID SCC"
+
+msgid "Settings saved at %{file}."
+msgstr "Impostazioni salvate in %{file}."
+
+msgid "Show RMT version"
+msgstr "Mostra versione RMT"
+
+msgid "Shows products attached to a custom repository"
+msgstr "Mostra prodotti collegati a un repository personalizzato"
+
+msgid "Store SCC data in files at given path"
+msgstr "Memorizza i dati SCC nei file in un percorso specificato"
+
+msgid "Store repository settings at given path"
+msgstr "Memorizza impostazioni repository in un percorso specificato"
+
+msgid "Successfully added custom repository."
+msgstr "Aggiunta del repository personalizzato completata."
+
+msgid "Sync database with SUSE Customer Center"
+msgstr "Sincronizza database con SUSE Customer Center"
+
+msgid "System %{system} not found"
+msgstr "Sistema%{system} non trovato"
+
+msgid ""
+"The RMT database has not yet been initialized. Run '%{command}' to setup the "
+"database."
+msgstr ""
+"Il database RMT non è stato ancora inizializzato. Eseguire '%{command}' per "
+"configurare il database."
+
+msgid ""
+"The SCC credentials are not configured correctly in '%{path}'. You can "
+"obtain them from %{url}"
+msgstr ""
+"Le credenziali SCC non sono configurate correttamente in '%{path}'. È "
+"possibile ottenerle da %{url}"
+
+msgid "The product \"%s\" is a base product and cannot be deactivated"
+msgstr "\"%s\" è un prodotto di base ed è impossibile disattivarlo"
+
+msgid "The requested product '%s' is not activated on this system."
+msgstr "Il prodotto richiesto '%s' non è attivato nel sistema."
+
+msgid "The requested products '%s' are not activated on the system."
+msgstr "I prodotti richiesti '%s' non sono attivati nel sistema."
+
+msgid "There are no repositories marked for mirroring."
+msgstr "Nessun repository contrassegnato per il mirroring."
+
+msgid "URL"
+msgstr "URL"
+
+msgid "Unknown Registration Code."
+msgstr "Codice di registrazione sconosciuto."
+
+msgid "Unknown hash function %{checksum_type}"
+msgstr "Funzione hash sconosciuta %{checksum_type}"
+
+msgid "Unmet product dependencies, activate one of these products first: %s"
+msgstr ""
+"Dipendenze prodotto non riscontrate, attivare prima uno di questi prodotti: "
+"%s"
+
+msgid "Updated system information for host '%s'"
+msgstr "Informazioni sul sistema aggiornate per host '%s'"
+
+msgid "Updating products"
+msgstr "Aggiornamento dei prodotti"
+
+msgid "Updating repositories"
+msgstr "Aggiornamento dei repository"
+
+msgid "Updating subscriptions"
+msgstr "Aggiornamento delle sottoscrizioni"
+
+msgid "Version"
+msgstr "Versione"
+
+msgid "importing data from SMT."
+msgstr "importazione dei dati da SMT."
+
+msgid "repository by URL %{url} does not exist in database"
+msgstr "repository per URL %{url} inesistente nel database"
+
+msgid ""
+"× File does not exist or has wrong filesize, deduplication ignored %{error}."
+msgstr ""
+"× File inesistente o con dimensioni errate, deduplicazione ignorata %{error}."
+
+#~ msgid ""
+#~ "  Run this command on an online RMT.\n"
+#~ "  It will look in PATH for a repos.json file, which has to contain a list "
+#~ "of repository IDs.\n"
+#~ "  Usually, this file gets created by an offline RMT with 'rmt-cli export "
+#~ "settings'.\n"
+#~ "\n"
+#~ "  'rmt-cli export repos' will mirror these repositories to this PATH, "
+#~ "usually a portable storage device.\n"
+#~ msgstr ""
+#~ "  Eseguire questo comando su un RMT online.\n"
+#~ "  In PATH verrà eseguita la ricerca di un file repos.json, che deve "
+#~ "contenere un elenco di ID repository.\n"
+#~ "  Di norma, questo file viene creato da un RMT offline con 'rmt-cli "
+#~ "export settings'.\n"
+#~ "\n"
+#~ "  'rmt-cli export repos' eseguirà il mirroring di questi repository in "
+#~ "PATH, che solitamente è un dispositivo di memorizzazione portatile.\n"
+
+#~ msgid ""
+#~ "Disable mirroring of product repositories by a list of product IDs or "
+#~ "product strings.\n"
+#~ "\n"
+#~ "Examples:\n"
+#~ "\n"
+#~ "$ rmt-cli products disable SLES/15\n"
+#~ "\n"
+#~ "$ rmt-cli products disable 1575\n"
+#~ "\n"
+#~ "$ rmt-cli products disable SLES/15/x86_64 1743\n"
+#~ msgstr ""
+#~ "Disabilita il mirroring dei repository dei prodotti per un elenco di ID "
+#~ "prodotto o stringhe di prodotti.\n"
+#~ "\n"
+#~ "Esempi:\n"
+#~ "\n"
+#~ "$ I prodotti rmt-cli disabilitano SLES/15\n"
+#~ "\n"
+#~ "$ I prodotti rmt-cli disabilitano 1575\n"
+#~ "\n"
+#~ "$ I prodotti rmt-cli disabilitano SLES/15/x86_64 1743\n"
+
+#~ msgid ""
+#~ "Disable mirroring of repositories by a list of repository IDs\n"
+#~ "\n"
+#~ "Examples:\n"
+#~ "\n"
+#~ "$ rmt-cli repos disable 2526\n"
+#~ "\n"
+#~ "$ rmt-cli repos disable 2526 3263\n"
+#~ msgstr ""
+#~ "Disabilita il mirroring dei repository per un elenco di ID repository\n"
+#~ "\n"
+#~ "Esempi:\n"
+#~ "\n"
+#~ "$ I repository rmt-cli disabilitano 2526\n"
+#~ "\n"
+#~ "$ I repository rmt-cli disabilitano 2526 3263\n"
+
+#~ msgid ""
+#~ "Enable mirroring of product repositories by a list of product IDs or "
+#~ "product strings.\n"
+#~ "\n"
+#~ "Examples:\n"
+#~ "\n"
+#~ "$ rmt-cli products enable SLES/15\n"
+#~ "\n"
+#~ "$ rmt-cli products enable 1575\n"
+#~ "\n"
+#~ "$ rmt-cli products enable SLES/15/x86_64 1743\n"
+#~ "\n"
+#~ "$ rmt-cli products enable --all-modules SLES/15\n"
+#~ msgstr ""
+#~ "Abilita il mirroring dei repository dei prodotti per un elenco di ID "
+#~ "prodotto o stringhe di prodotti.\n"
+#~ "\n"
+#~ "Esempi:\n"
+#~ "\n"
+#~ "$ I prodotti rmt-cli abilitano SLES/15\n"
+#~ "\n"
+#~ "$ I prodotti rmt-cli abilitano 1575\n"
+#~ "\n"
+#~ "$ I prodotti rmt-cli abilitano SLES/15/x86_64 1743\n"
+#~ "\n"
+#~ "$ I prodotti rmt-cli abilitano --all-modules SLES/15\n"
+
+#~ msgid ""
+#~ "Enable mirroring of repositories by a list of repository IDs\n"
+#~ "\n"
+#~ "Examples:\n"
+#~ "\n"
+#~ "$ rmt-cli repos enable 2526\n"
+#~ "\n"
+#~ "$ rmt-cli repos enable 2526 3263\n"
+#~ msgstr ""
+#~ "Abilita il mirroring dei repository per un elenco di ID repository\n"
+#~ "\n"
+#~ "Esempi:\n"
+#~ "\n"
+#~ "$ I repository rmt-cli abilitano 2526\n"
+#~ "\n"
+#~ "$ I repository rmt-cli abilitano 2526 3263\n"
+
+#~ msgid "Mirroring SUMA product tree to %{dir}"
+#~ msgstr "Mirroring albero prodotti SUMA in %{dir}"

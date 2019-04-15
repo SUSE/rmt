@@ -1,0 +1,671 @@
+# Korean translations for rmt package.
+# Copyright (C) 2019 THE rmt'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the rmt package.
+# Automatically generated, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: rmt 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-26 11:32+0100\n"
+"PO-Revision-Date: 2019-03-28 18:42+0000\n"
+"Last-Translator: Hwajin Kim <hwajin.kim@e4net.net>\n"
+"Language-Team: Korean <https://l10n.opensuse.org/projects/rmt/i18n/ko/>\n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 3.3\n"
+
+msgid "%s is not yet activated on the system."
+msgstr "%s이(가) 아직 시스템에서 활성화되지 않았습니다."
+
+msgid "%{file} - File does not exist"
+msgstr "%{file} - 파일이 없습니다"
+
+msgid "%{file} - HTTP request failed with code %{code}"
+msgstr "%{file} - HTTP 요청에 실패했습니다(코드: %{code})"
+
+msgid "%{file} - return code %{code}"
+msgstr "%{file} - 반환 코드 %{code}"
+
+msgid "%{file} does not exist."
+msgstr "%{file}이(가) 없습니다."
+
+msgid "%{path} is not a directory."
+msgstr "%{path}은(는) 디렉토리가 아닙니다."
+
+msgid "%{path} is not writable by user %{username}."
+msgstr "%{path}은(는) %{username} 사용자가 쓸 수 없습니다."
+
+msgid "A repository by the URL %{url} already exists."
+msgstr "URL이 %{url}인 리포지토리가 이미 있습니다."
+
+msgid "Added association between %{repo} and product %{product}"
+msgstr "%{repo}과(와) %{product} 제품 사이에 연결이 추가됨"
+
+msgid "Adding product %{product}"
+msgstr "%{product} 제품 추가 중"
+
+msgid "All repositories have already been disabled."
+msgstr "모든 리포지토리가 이미 비활성화되었습니다."
+
+msgid "All repositories have already been enabled."
+msgstr "모든 리포지토리가 이미 활성화되었습니다."
+
+msgid "Arch"
+msgstr "Arch"
+
+msgid "Attach an existing custom repository to a product"
+msgstr "제품에 기존 사용자 지정 리포지토리 연결"
+
+msgid "Attached repository to product '%{product_name}'."
+msgstr "'%{product_name}' 제품에 리포지토리를 연결했습니다."
+
+msgid "Authenticated system with login \\\"%{login}\\\""
+msgstr "\\\"%{login}\\\" 로그인으로 인증된 시스템"
+
+msgid ""
+"Cannot connect to database server. Ensure its credentials are correctly "
+"configured in '%{path}' or configure RMT with YaST ('%{command}')."
+msgstr ""
+"데이터베이스 서버에 연결할 수 없습니다. 해당 인증서가 '%{path}'에 올바르게 구성되었는지 확인하거나 RMT를 "
+"YaST('%{command}')로 구성하시기 바랍니다."
+
+msgid ""
+"Cannot connect to database server. Make sure it is running and its "
+"credentials are configured in '%{path}'."
+msgstr ""
+"데이터베이스 서버에 연결할 수 없습니다. 해당 서버가 실행 중이며 해당 인증서가 '%{path}'에 구성되었는지 확인하시기 비랍니다."
+
+msgid ""
+"Cannot deactivate the product \"%s\". Other activated products depend upon "
+"it."
+msgstr "\"%s\" 제품을 비활성화할 수 없습니다. 활성화된 다른 제품은 이 제품에 종속됩니다."
+
+msgid "Cannot find custom repository by ID %{id}."
+msgstr "ID가 %{id}인 사용자 지정 리포지토리를 찾을 수 없습니다."
+
+msgid "Cannot find product by ID %{id}."
+msgstr "ID가 %{id}인 제품을 찾을 수 없습니다."
+
+msgid "Check out %{url}"
+msgstr "%{url} 체크 아웃"
+
+msgid "Checksum doesn't match"
+msgstr "체크섬이 일치하지 않습니다"
+
+msgid "Cleaning up the database"
+msgstr "데이터베이스 정리 중"
+
+msgid "Commands:"
+msgstr "명령:"
+
+msgid "Could not create a temporary directory: %{error}"
+msgstr "임시 디렉토리를 생성할 수 없음: %{error}"
+
+msgid "Could not create deduplication hardlink: %{error}."
+msgstr "중복 제거 하드 링크를 생성할 수 없음: %{error}."
+
+msgid "Could not create local directory %{dir} with error: %{error}"
+msgstr "로컬 디렉토리 %{dir}을(를) 만들 수 없는 오류: %{error}"
+
+msgid ""
+"Could not find system with login \\\"%{login}\\\" and password \\"
+"\"%{password}\\\""
+msgstr "로그인 \\\"%{login}\\\" 및 비밀번호 \\\"%{password}\\\"을(를) 사용하여 시스템을 찾을 수 없습니다"
+
+msgid "Could not mirror suma product tree with error: %{error}"
+msgstr "suma 제품 트리를 미러링할 수 없는 오류: %{error}"
+
+msgid "Creates a custom repository."
+msgstr "사용자 지정 리포지토리를 생성합니다."
+
+msgid "Detach an existing custom repository from a product"
+msgstr "제품에서 기존 사용자 지정 리포지토리 분리"
+
+msgid "Detached repository from product '%{product_name}'."
+msgstr "'%{product_name}' 제품에서 리포지토리를 분리했습니다."
+
+msgid "Disable mirroring of custom repository by ID"
+msgstr "ID로 사용자 지정 리포지토리 미러링 비활성화"
+
+msgid ""
+"Disable mirroring of product repositories by a list of product IDs or "
+"product strings."
+msgstr "제품 ID 또는 제품 문자열 목록으로 제품 리포지토리 미러링을 비활성화합니다."
+
+msgid "Disable mirroring of repositories by a list of repository IDs"
+msgstr "리포지토리 ID 목록으로 리포지토리 미러링 비활성화"
+
+msgid "Disabled repository %{repository}."
+msgstr "%{repository} 리포지토리를 비활성화했습니다."
+
+msgid "Disabling %{product}:"
+msgstr "%{product} 비활성화:"
+
+msgid "Do not import the systems that were registered to the SMT"
+msgstr "SMT에 등록된 시스템을 임포트하지 않음"
+
+msgid ""
+"Do you have any suggestions for improvement? We would love to hear from you!"
+msgstr "개선을 위한 제안 사항이 있습니까? 여러분의 의견을 듣고 싶습니다!"
+
+msgid "Don't Mirror"
+msgstr "미러링 안 함"
+
+msgid "Downloading data from SCC"
+msgstr "SCC에서 데이터 다운로드 중"
+
+msgid "Enable debug output"
+msgstr "디버그 출력 활성화"
+
+msgid "Enable mirroring of custom repository by ID"
+msgstr "ID로 사용자 지정 리포지토리 미러링 활성화"
+
+msgid ""
+"Enable mirroring of product repositories by a list of product IDs or product "
+"strings."
+msgstr "제품 ID 또는 제품 문자열 목록으로 제품 리포지토리 미러링을 활성화합니다."
+
+msgid "Enable mirroring of repositories by a list of repository IDs"
+msgstr "리포지토리 ID 목록으로 리포지토리 미러링 활성화"
+
+msgid "Enabled mirroring for repository %{repo}"
+msgstr "리포지토리 %{repo}에 대한 미러링이 활성화됨"
+
+msgid "Enabled repository %{repository}."
+msgstr "%{repository} 리포지토리가 활성화되었습니다."
+
+msgid "Enables all free modules for a product"
+msgstr "제품에 대한 모든 무료 모듈 활성화"
+
+msgid "Enabling %{product}:"
+msgstr "%{product} 활성화 중:"
+
+msgid "Error while mirroring data: %{error}"
+msgstr "데이터를 미러링하는 동안 오류 발생: %{error}"
+
+msgid "Error while mirroring license: %{error}"
+msgstr "라이선스를 미러링하는 동안 오류 발생: %{error}"
+
+msgid "Error while mirroring metadata: %{error}"
+msgstr "메터데이터를 미러링하는 동안 오류 발생: %{error}"
+
+msgid "Error while moving directory %{src} to %{dest}: %{error}"
+msgstr "%{src} 디렉토리를 %{dest}(으)로 이동하는 동안 오류 발생: %{error}"
+
+msgid "Export commands for Offline Sync"
+msgstr "오프라인 동기화를 위해 명령 엑스포트"
+
+msgid "Exporting data from SCC to %{path}"
+msgstr "SCC에서 %{path}(으)로 데이터 엑스포트 중"
+
+msgid "Exporting orders"
+msgstr "명령 엑스포트 중"
+
+msgid "Exporting products"
+msgstr "제품 엑스포트 중"
+
+msgid "Exporting repositories"
+msgstr "리포지토리 엑스포트 중"
+
+msgid "Exporting subscriptions"
+msgstr "구독 엑스포트 중"
+
+msgid "Found product by target %{target}: %{products}."
+msgid_plural "Found products by target %{target}: %{products}."
+msgstr[0] "대상 %{target}: %{products}(으)로 제품을 찾았습니다."
+
+msgid "Hardware information stored for system %{system}"
+msgstr "%{system} 시스템에 대한 하드웨어 정보가 저장됨"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "Import commands for Offline Sync"
+msgstr "오프라인 동기화에 대한 명령 임포트"
+
+msgid "Imported activation of %{product} for %{system}"
+msgstr "%{system}에 대한 %{product} 활성화가 임포트됨"
+
+msgid "Imported system %{system}"
+msgstr "%{system} 시스템이 임포트됨"
+
+msgid "Importing SCC data from %{path}"
+msgstr "%{path}에서 SCC 데이터를 임포트하는 중"
+
+msgid "Invalid system credentials"
+msgstr "잘못된 시스템 인증서입니다"
+
+msgid "Last Mirrored"
+msgstr "마지막으로 미러링됨"
+
+msgid "Last mirrored"
+msgstr "마지막으로 미러링됨"
+
+msgid "List all custom repositories"
+msgstr "모든 사용자 지정 리포지토리 나열"
+
+msgid "List all products, including ones which are not marked to be mirrored"
+msgstr "미러링으로 표시되지 않은 제품을 포함하여 모든 제품 나열"
+
+msgid ""
+"List all repositories, including ones which are not marked to be mirrored"
+msgstr "미러링으로 표시되지 않은 리포지토를 포함하여 모든 리포지토리 나열"
+
+msgid "List and modify custom repositories"
+msgstr "사용자 지정 리포지토리 나열 및 수정"
+
+msgid "List and modify products"
+msgstr "제품 나열 및 수정"
+
+msgid "List and modify repositories"
+msgstr "리포지토리 나열 및 수정"
+
+msgid "List products which are marked to be mirrored."
+msgstr "미러링으로 표시된 제품을 나열합니다."
+
+msgid "List repositories which are marked to be mirrored"
+msgstr "미러링으로 표시된 리포지토리 나열"
+
+msgid "Mandatory"
+msgstr "필수"
+
+msgid "Mandatory?"
+msgstr "필수입니까?"
+
+msgid "Mirror"
+msgstr "미러"
+
+msgid "Mirror repos at given path"
+msgstr "제공된 경로에서 리포지토리 미러링"
+
+msgid "Mirror repos from given path"
+msgstr "제공된 경로의 리포지토리 미러링"
+
+msgid "Mirror repositories"
+msgstr "리포지토리 미러링"
+
+msgid "Mirror?"
+msgstr "미러링하시겠습니까?"
+
+msgid "Mirroring SUSE Manager product tree to %{dir}"
+msgstr "SUSE Manager 제품 트리를 %{dir}에 미러링"
+
+msgid "Mirroring repository %{repo} to %{dir}"
+msgstr "%{repo} 리포지토리를 %{dir}에 미러링"
+
+msgid "Missing data files: %{files}"
+msgstr "누락된 데이터 파일: %{files}"
+
+msgid "Multiple base products found: '%s'."
+msgstr "기본 제품 '%s'이(가) 여러 개 있습니다."
+
+msgid "Name"
+msgstr "이름"
+
+msgid "No base product found."
+msgstr "기본 제품을 찾을 수 없습니다."
+
+msgid "No custom repositories found."
+msgstr "사용자 지정 리포지토리를 찾을 수 없습니다."
+
+msgid "No matching products found in the database."
+msgstr "데이터베이스에서 일치하는 제품을 찾을 수 없습니다."
+
+msgid "No product IDs supplied"
+msgstr "입력한 제품 ID가 없음"
+
+msgid "No product found"
+msgstr "제품을 찾을 수 없음"
+
+msgid "No product found for target %{target}."
+msgstr "대상 %{target}에 대한 제품이 없습니다."
+
+msgid "No product found on RMT for: %s"
+msgstr "RMT에서 %s에 대한 제품을 찾을 수 없습니다"
+
+msgid "No products attached to repository."
+msgstr "리포지토리에 연결된 제품이 없습니다."
+
+msgid "No repositories enabled."
+msgstr "활성화된 리포지토리가 없습니다."
+
+msgid "No repositories found for product: %s"
+msgstr "%s 제품에 대한 리포지토리가 없습니다"
+
+msgid "No repository ids supplied"
+msgstr "입력한 리포지토리 id가 없습니다"
+
+msgid "Not Mandatory"
+msgstr "필수가 아님"
+
+msgid "Not all mandatory repositories are mirrored for product %s"
+msgstr "%s 제품에 대해 일부 필수 리포지토리가 미러링되지 않았습니다"
+
+msgid "Not provided"
+msgstr "제공되지 않음"
+
+msgid ""
+"Not yet activated Registration Code. Visit https://scc.suse.com to activate "
+"it."
+msgstr "등록 코드가 아직 활성화되지 않았습니다. 활성화하려면 https://scc.suse.com을 방문하십시오."
+
+msgid ""
+"Only enabled products are shown by default. Use the '%{command}' option to "
+"see all products."
+msgstr "활성화된 제품만 기본적으로 표시됩니다. 모든 제품을 표시하려면 '%{command}' 옵션을 사용합니다."
+
+msgid ""
+"Only enabled repositories are shown by default. Use the '%{option}' option "
+"to see all repositories."
+msgstr "활성화된 리포지토리만 기본적으로 표시됩니다. 모든 리포지토리를 표시하려면 '%{option}' 옵션을 사용합니다."
+
+msgid "Output data in CSV format"
+msgstr "CSV 형식으로 데이터 출력"
+
+msgid "Path to unpacked SMT data tarball"
+msgstr "압축을 푼 SMT 데이터 Tarball 경로"
+
+msgid ""
+"Process is locked by the application with pid %{pid}. Close this application "
+"or wait for it to finish before trying again."
+msgstr ""
+"프로세스가 응용 프로그램에서 pid %{pid}과(와) 함께 잠겼습니다. 다시 시도하기 전에 이 응용 프로그램을 닫거나 완료될 때까지 "
+"기다리십시오."
+
+msgid "Product"
+msgstr "제품"
+
+msgid "Product %{products} could not be found and was not disabled."
+msgid_plural "Products %{products} could not be found and were not disabled."
+msgstr[0] "%{products} 제품이 없어 비활성화되지 않았습니다."
+
+msgid "Product %{products} could not be found and was not enabled."
+msgid_plural "Products %{products} could not be found and were not enabled."
+msgstr[0] "%{products} 제품이 없어 활성화되지 않았습니다."
+
+msgid "Product %{product} not found"
+msgstr "%{product} 제품을 찾을 수 없습니다"
+
+msgid ""
+"Product %{product} not found!\n"
+"Tried to attach custom repository %{repo} to product %{product},\n"
+"but that product was not found. Attach it to a different product\n"
+"by running '%{command}'\n"
+msgstr ""
+"%{product} 제품을 찾을 수 없습니다!\n"
+"사용자 지정 리포지토리 %{repo}을(를) %{product} 제품에 연결하려고 했지만\n"
+"이 제품을 찾지 못했습니다. '%{command}'을(를) 실행하여 리포지토리를\n"
+"다른 제품에 연결하십시오.\n"
+
+msgid "Product Architecture"
+msgstr "제품 아키텍처"
+
+msgid "Product ID"
+msgstr "제품 ID"
+
+msgid "Product Name"
+msgstr "제품 이름"
+
+msgid "Product Version"
+msgstr "제품 버전"
+
+msgid "Product by ID %{id} not found."
+msgstr "ID가 %{id}인 제품을 찾을 수 없습니다."
+
+msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
+msgstr "RMT가 아직 SCC에 동기화되지 않았습니다. '%{command}'을(를) 먼저 실행하십시오"
+
+msgid "Read SCC data from given path"
+msgstr "제공된 경로에서 SCC 데이터 읽기"
+
+msgid "Remove a custom repository"
+msgstr "사용자 지정 리포지토리 제거"
+
+msgid "Removed custom repository by ID %{id}."
+msgstr "ID가 %{id}인 사용자 지정 리포지토리를 제거했습니다."
+
+msgid "Repository %{repos} could not be found and was not disabled."
+msgid_plural "Repositories %{repos} could not be found and were not disabled."
+msgstr[0] "%{repos} 리포지토리가 없어 비활성화되지 않았습니다."
+
+msgid "Repository %{repos} could not be found and was not enabled."
+msgid_plural "Repositories %{repos} could not be found and were not enabled."
+msgstr[0] "%{repos} 리포지토리가 없어 활성화되지 않았습니다."
+
+msgid ""
+"Repository %{repo} was not found in RMT database, perhaps you no longer have "
+"a valid subscription for it"
+msgstr ""
+"%{repo} 리포지토리를 RMT 데이터베이스에서 찾을 수 없습니다. 이 리포지토리에 대한 유효한 사용권이 만료된 것일 수 있습니다"
+
+msgid "Repository by ID %{id} successfully disabled."
+msgstr "ID가 %{id}인 리포지토리가 비활성화되었습니다."
+
+msgid "Repository by ID %{id} successfully enabled."
+msgstr "ID가 %{id}인 리포지토리가 활성화되었습니다."
+
+msgid "Repository metadata signatures are missing"
+msgstr "리포지토리 메타데이터 서명이 누락되었습니다"
+
+msgid "Repository not found by ID %{id}."
+msgstr "ID %{id}(으)로 리포지토리를 찾지 못했습니다."
+
+msgid "Repository successfully disabled."
+msgstr "리포지토리가 비활성화되었습니다."
+
+msgid "Repository successfully enabled."
+msgstr "리포지토리가 활성화되었습니다."
+
+msgid "Requested service not found"
+msgstr "요청한 서비스를 찾을 수 없습니다"
+
+msgid "Required parameters are missing or empty: %s"
+msgstr "필수 파라미터가 누락되었거나 비어 있음: %s"
+
+msgid "Run '%{command}' for more information on a command and its subcommands."
+msgstr "명령 및 해당 하위 명령에 대한 자세한 내용을 보려면 '%{command}'을(를) 실행합니다."
+
+msgid ""
+"Run '%{command}' to synchronize with your SUSE Customer Center data first."
+msgstr "'%{command}'을(를) 실행하여 SUSE Customer Center 데이터와 먼저 동기화합니다."
+
+msgid "SCC ID"
+msgstr "SCC ID"
+
+msgid "Settings saved at %{file}."
+msgstr "설정이 %{file}에 저장되었습니다."
+
+msgid "Show RMT version"
+msgstr "RMT 버전 표시"
+
+msgid "Shows products attached to a custom repository"
+msgstr "사용자 지정 리포지토리에 연결된 제품 표시"
+
+msgid "Store SCC data in files at given path"
+msgstr "지정된 경로의 파일에 SCC 데이터 저장"
+
+msgid "Store repository settings at given path"
+msgstr "지정된 경로에 리포지토리 설정 저장"
+
+msgid "Successfully added custom repository."
+msgstr "사용자 지정 리포지토리가 성공적으로 추가되었습니다."
+
+msgid "Sync database with SUSE Customer Center"
+msgstr "SUSE Customer Center와 데이터베이스 동기화"
+
+msgid "System %{system} not found"
+msgstr "%{system} 시스템을 찾을 수 없습니다"
+
+msgid ""
+"The RMT database has not yet been initialized. Run '%{command}' to setup the "
+"database."
+msgstr "RMT 데이터베이스가 아직 초기화되지 않았습니다. 데이터베이스를 설정하려면 '%{command}'을(를) 실행하십시오."
+
+msgid ""
+"The SCC credentials are not configured correctly in '%{path}'. You can "
+"obtain them from %{url}"
+msgstr "SCC 인증서가 '%{path}'에 올바르게 구성되지 않았습니다. 이 인증서를 %{url}에서 가져올 수 있습니다."
+
+msgid "The product \"%s\" is a base product and cannot be deactivated"
+msgstr "\"%s\" 제품이 기본 제품이므로 비활성화할 수 없습니다"
+
+msgid "The requested product '%s' is not activated on this system."
+msgstr "요청한 제품 '%s'이(가) 이 시스템에서 활성화되지 않았습니다."
+
+msgid "The requested products '%s' are not activated on the system."
+msgstr "요청한 제품 '%s'이(가) 시스템에서 활성화되지 않았습니다."
+
+msgid "There are no repositories marked for mirroring."
+msgstr "미러링으로 표시된 리포지토리가 없습니다."
+
+msgid "URL"
+msgstr "URL"
+
+msgid "Unknown Registration Code."
+msgstr "알 수 없는 등록 코드입니다."
+
+msgid "Unknown hash function %{checksum_type}"
+msgstr "알 수 없는 해시 함수 %{checksum_type}"
+
+msgid "Unmet product dependencies, activate one of these products first: %s"
+msgstr "제품 종속성을 충족하지 않으므로, 먼저 다음 제품 중 하나를 활성화하십시오: %s"
+
+msgid "Updated system information for host '%s'"
+msgstr "'%s' 호스트에 대한 시스템 정보가 업데이트되었습니다"
+
+msgid "Updating products"
+msgstr "제품 업데이트 중"
+
+msgid "Updating repositories"
+msgstr "리포지토리 업데이트 중"
+
+msgid "Updating subscriptions"
+msgstr "구독 업데이트 중"
+
+msgid "Version"
+msgstr "버전"
+
+msgid "importing data from SMT."
+msgstr "SMT에서 데이터를 임포트 중입니다."
+
+msgid "repository by URL %{url} does not exist in database"
+msgstr "URL %{url}별 리포지토리가 데이터베이스에 없습니다"
+
+msgid ""
+"× File does not exist or has wrong filesize, deduplication ignored %{error}."
+msgstr "× 파일이 없거나 파일에 잘못된 파일 크기가 있으므로, 중복 제거에서 %{error}을(를) 무시했습니다."
+
+#, fuzzy
+#~ msgid ""
+#~ "  Run this command on an online RMT.\n"
+#~ "  It will look in PATH for a repos.json file, which has to contain a list "
+#~ "of repository IDs.\n"
+#~ "  Usually, this file gets created by an offline RMT with 'rmt-cli export "
+#~ "settings'.\n"
+#~ "\n"
+#~ "  'rmt-cli export repos' will mirror these repositories to this PATH, "
+#~ "usually a portable storage device.\n"
+#~ msgstr ""
+#~ "  온라인 RMT에서 이 명령을 실행합니다.\n"
+#~ "  이 명령은 PATH에서 repos.json 파일을 확인합니다. 이 파일에는 리포지토리 "
+#~ "ID 목록이 있어야 합니다.\n"
+#~ "  일반적으로 이 파일은 'rmt-cli export settings'를 사용하여 오프라인 RMT에"
+#~ "서 생성됩니다.\n"
+#~ "\n"
+#~ "  'rmt-cli export repos'는 휴대용 저장소 장치인 이 PATH에 이러한 리포지토"
+#~ "리를 미러링합니다.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Disable mirroring of product repositories by a list of product IDs or "
+#~ "product strings.\n"
+#~ "\n"
+#~ "Examples:\n"
+#~ "\n"
+#~ "$ rmt-cli products disable SLES/15\n"
+#~ "\n"
+#~ "$ rmt-cli products disable 1575\n"
+#~ "\n"
+#~ "$ rmt-cli products disable SLES/15/x86_64 1743\n"
+#~ msgstr ""
+#~ "제품 ID 또는 제품 문자열 목록으로 제품 리포지토리 미러링을 비활성화합니"
+#~ "다.\n"
+#~ "\n"
+#~ "예:\n"
+#~ "\n"
+#~ "$ rmt-cli products disable SLES/15\n"
+#~ "\n"
+#~ "$ rmt-cli products disable 1575\n"
+#~ "\n"
+#~ "$ rmt-cli products disable SLES/15/x86_64 1743\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Disable mirroring of repositories by a list of repository IDs\n"
+#~ "\n"
+#~ "Examples:\n"
+#~ "\n"
+#~ "$ rmt-cli repos disable 2526\n"
+#~ "\n"
+#~ "$ rmt-cli repos disable 2526 3263\n"
+#~ msgstr ""
+#~ "리포지토리 ID 목록으로 리포지토리 미러링 비활성화\n"
+#~ "\n"
+#~ "예:\n"
+#~ "\n"
+#~ "$ rmt-cli repos disable 2526\n"
+#~ "\n"
+#~ "$ rmt-cli repos disable 2526 3263\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Enable mirroring of product repositories by a list of product IDs or "
+#~ "product strings.\n"
+#~ "\n"
+#~ "Examples:\n"
+#~ "\n"
+#~ "$ rmt-cli products enable SLES/15\n"
+#~ "\n"
+#~ "$ rmt-cli products enable 1575\n"
+#~ "\n"
+#~ "$ rmt-cli products enable SLES/15/x86_64 1743\n"
+#~ "\n"
+#~ "$ rmt-cli products enable --all-modules SLES/15\n"
+#~ msgstr ""
+#~ "제품 ID 또는 제품 문자열 목록으로 제품 리포지토리 미러링을 활성화합니다.\n"
+#~ "\n"
+#~ "예:\n"
+#~ "\n"
+#~ "$ rmt-cli products enable SLES/15\n"
+#~ "\n"
+#~ "$ rmt-cli products enable 1575\n"
+#~ "\n"
+#~ "$ rmt-cli products enable SLES/15/x86_64 1743\n"
+#~ "\n"
+#~ "$ rmt-cli products enable --all-modules SLES/15\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Enable mirroring of repositories by a list of repository IDs\n"
+#~ "\n"
+#~ "Examples:\n"
+#~ "\n"
+#~ "$ rmt-cli repos enable 2526\n"
+#~ "\n"
+#~ "$ rmt-cli repos enable 2526 3263\n"
+#~ msgstr ""
+#~ "리포지토리 ID 목록으로 리포지토리 미러링 활성화\n"
+#~ "\n"
+#~ "예:\n"
+#~ "\n"
+#~ "$ rmt-cli repos enable 2526\n"
+#~ "\n"
+#~ "$ rmt-cli repos enable 2526 3263\n"
+
+#, fuzzy
+#~ msgid "Mirroring SUMA product tree to %{dir}"
+#~ msgstr "%{dir}에 SUMA 제품 트리 미러링"

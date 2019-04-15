@@ -1,0 +1,702 @@
+# Czech translations for rmt package.
+# Copyright (C) 2019 THE rmt'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the rmt package.
+# Automatically generated, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: rmt 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-26 11:32+0100\n"
+"PO-Revision-Date: 2019-03-28 18:42+0000\n"
+"Last-Translator: Jakub Muzik <JakubMu@virtus.cz>\n"
+"Language-Team: Czech <https://l10n.opensuse.org/projects/rmt/i18n/cs/>\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Generator: Weblate 3.3\n"
+
+msgid "%s is not yet activated on the system."
+msgstr "%s ještě není v systému aktivováno."
+
+msgid "%{file} - File does not exist"
+msgstr "%{file} – soubor neexistuje"
+
+msgid "%{file} - HTTP request failed with code %{code}"
+msgstr "%{file} – požadavek HTTP selhal s kódem %{code}"
+
+msgid "%{file} - return code %{code}"
+msgstr "%{file} – návratový kód %{code}"
+
+msgid "%{file} does not exist."
+msgstr "Soubor %{file} neexistuje."
+
+msgid "%{path} is not a directory."
+msgstr "%{path} není adresář."
+
+msgid "%{path} is not writable by user %{username}."
+msgstr "Do cesty %{path} nemůže uživatel %{username} zapisovat."
+
+msgid "A repository by the URL %{url} already exists."
+msgstr "Repozitář na adrese URL %{url} už existuje."
+
+msgid "Added association between %{repo} and product %{product}"
+msgstr ""
+"Bylo přidáno přidružení mezi repozitářem %{repo} a produktem %{product}"
+
+msgid "Adding product %{product}"
+msgstr "Přidává se produkt %{product}"
+
+msgid "All repositories have already been disabled."
+msgstr "Všechny repozitáře už byly zakázány."
+
+msgid "All repositories have already been enabled."
+msgstr "Všechny repozitáře už byly povoleny."
+
+msgid "Arch"
+msgstr "Arch"
+
+msgid "Attach an existing custom repository to a product"
+msgstr "Připojit existující vlastní repozitář k produktu"
+
+msgid "Attached repository to product '%{product_name}'."
+msgstr "Byl připojen repozitář k produktu „%{product_name}“."
+
+msgid "Authenticated system with login \\\"%{login}\\\""
+msgstr "Ověřený systém s přihlašovacím jménem „%{login}“"
+
+msgid ""
+"Cannot connect to database server. Ensure its credentials are correctly "
+"configured in '%{path}' or configure RMT with YaST ('%{command}')."
+msgstr ""
+"Nelze se připojit k databázovému serveru. Zkontrolujte, zda jsou v %{path} "
+"správně nakonfigurovány jeho přihlašovací údaje, nebo nakonfigurujte RMT "
+"pomocí YaST (%{command})."
+
+msgid ""
+"Cannot connect to database server. Make sure it is running and its "
+"credentials are configured in '%{path}'."
+msgstr ""
+"Nelze se připojit k databázovému serveru. Zkontrolujte, zda server běží a "
+"zda jsou v %{path} nakonfigurovány jeho přihlašovací údaje."
+
+msgid ""
+"Cannot deactivate the product \"%s\". Other activated products depend upon "
+"it."
+msgstr "Produkt %s nelze deaktivovat. Závisí na něm jiné aktivované produkty."
+
+msgid "Cannot find custom repository by ID %{id}."
+msgstr "Nelze najít vlastní repozitář podle ID %{id}."
+
+msgid "Cannot find product by ID %{id}."
+msgstr "Nelze najít produkt podle ID %{id}."
+
+msgid "Check out %{url}"
+msgstr "Podívejte se na %{url}"
+
+msgid "Checksum doesn't match"
+msgstr "Kontrolní součet neodpovídá"
+
+msgid "Cleaning up the database"
+msgstr "Čištění databáze"
+
+msgid "Commands:"
+msgstr "Příkazy:"
+
+msgid "Could not create a temporary directory: %{error}"
+msgstr "Nelze vytvořit dočasný adresář: %{error}"
+
+msgid "Could not create deduplication hardlink: %{error}."
+msgstr "Nelze vytvořit pevný odkaz deduplikace: %{error}."
+
+msgid "Could not create local directory %{dir} with error: %{error}"
+msgstr "Nelze vytvořit místní adresář %{dir} s chybou: %{error}"
+
+msgid ""
+"Could not find system with login \\\"%{login}\\\" and password \\"
+"\"%{password}\\\""
+msgstr ""
+"Nelze najít systém s přihlašovacím jménem „%{login}“ a heslem „%{password}“"
+
+msgid "Could not mirror suma product tree with error: %{error}"
+msgstr "Nelze zrcadlit produktový strom Suma s chybou: %{error}"
+
+msgid "Creates a custom repository."
+msgstr "Vytvoří vlastní repozitář."
+
+msgid "Detach an existing custom repository from a product"
+msgstr "Odpojit existující vlastní repozitář od produktu"
+
+msgid "Detached repository from product '%{product_name}'."
+msgstr "Byl odpojen repozitář od projektu %{product_name}."
+
+msgid "Disable mirroring of custom repository by ID"
+msgstr "Zakázat zrcadlení vlastního repozitáře podle ID"
+
+msgid ""
+"Disable mirroring of product repositories by a list of product IDs or "
+"product strings."
+msgstr ""
+"Zakázat zrcadlení produktových repozitářů podle seznamu ID produktů nebo "
+"řetězců produktů."
+
+msgid "Disable mirroring of repositories by a list of repository IDs"
+msgstr "Zakázat zrcadlení repozitářů podle seznamu ID repozitářů"
+
+msgid "Disabled repository %{repository}."
+msgstr "Byl zakázán repozitář %{repository}."
+
+msgid "Disabling %{product}:"
+msgstr "Zakazuje se %{product}:"
+
+msgid "Do not import the systems that were registered to the SMT"
+msgstr "Neimportovat systémy, které byly registrovány do SMT"
+
+msgid ""
+"Do you have any suggestions for improvement? We would love to hear from you!"
+msgstr "Máte nějaké návrhy pro zlepšení? Sem s nimi!"
+
+msgid "Don't Mirror"
+msgstr "Nezrcadlit"
+
+msgid "Downloading data from SCC"
+msgstr "Stahují se data z SCC"
+
+msgid "Enable debug output"
+msgstr "Povolit výstup ladění"
+
+msgid "Enable mirroring of custom repository by ID"
+msgstr "Povolit zrcadlení vlastního repozitáře podle ID"
+
+msgid ""
+"Enable mirroring of product repositories by a list of product IDs or product "
+"strings."
+msgstr ""
+"Povolit zrcadlení produktových repozitářů podle seznamu ID produktů nebo "
+"řetězců produktů."
+
+msgid "Enable mirroring of repositories by a list of repository IDs"
+msgstr "Povolit zrcadlení repozitářů podle seznamu ID repozitářů"
+
+msgid "Enabled mirroring for repository %{repo}"
+msgstr "Bylo povoleno zrcadlení pro repozitář %{repo}"
+
+msgid "Enabled repository %{repository}."
+msgstr "Byl povolen repozitář %{repository}."
+
+msgid "Enables all free modules for a product"
+msgstr "Povolí všechny zdarma dostupné moduly pro produkt"
+
+msgid "Enabling %{product}:"
+msgstr "Povoluje se %{product}:"
+
+msgid "Error while mirroring data: %{error}"
+msgstr "Chyba při zrcadlení dat: %{error}"
+
+msgid "Error while mirroring license: %{error}"
+msgstr "Chyba při zrcadlení licence: %{error}"
+
+msgid "Error while mirroring metadata: %{error}"
+msgstr "Chyba při zrcadlení metadat: %{error}"
+
+msgid "Error while moving directory %{src} to %{dest}: %{error}"
+msgstr "Chyba při přesouvání adresáře %{src} do %{dest}: %{error}"
+
+msgid "Export commands for Offline Sync"
+msgstr "Příkazy exportu pro offline synchronizaci"
+
+msgid "Exporting data from SCC to %{path}"
+msgstr "Exportují se data ze SCC do %{path}"
+
+msgid "Exporting orders"
+msgstr "Exportují se objednávky"
+
+msgid "Exporting products"
+msgstr "Exportují se produkty"
+
+msgid "Exporting repositories"
+msgstr "Exportují se repozitáře"
+
+msgid "Exporting subscriptions"
+msgstr "Exportují se předplatná"
+
+msgid "Found product by target %{target}: %{products}."
+msgid_plural "Found products by target %{target}: %{products}."
+msgstr[0] "Nalezené produkty podle cíle %{target}: %{products}."
+msgstr[1] "Nalezené produkty podle cíle %{target}: %{products}."
+msgstr[2] "Nalezené produkty podle cíle %{target}: %{products}."
+
+msgid "Hardware information stored for system %{system}"
+msgstr "Informace o hardwaru uložené pro systém %{system}"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "Import commands for Offline Sync"
+msgstr "Příkazy importu pro offline synchronizaci"
+
+msgid "Imported activation of %{product} for %{system}"
+msgstr "Byla importována aktivace produktu %{product} pro systém %{system}"
+
+msgid "Imported system %{system}"
+msgstr "Byl importován systém %{system}"
+
+msgid "Importing SCC data from %{path}"
+msgstr "Importují se data SCC z %{path}"
+
+msgid "Invalid system credentials"
+msgstr "Neplatné přihlašovací údaje systému"
+
+msgid "Last Mirrored"
+msgstr "Naposledy zrcadleno"
+
+msgid "Last mirrored"
+msgstr "Naposledy zrcadleno"
+
+msgid "List all custom repositories"
+msgstr "Vypsat všechny vlastní repozitáře"
+
+msgid "List all products, including ones which are not marked to be mirrored"
+msgstr "Vypsat všechny produkty včetně produktů neoznačených k zrcadlení"
+
+msgid ""
+"List all repositories, including ones which are not marked to be mirrored"
+msgstr "Vypsat všechny repozitáře včetně repozitářů neoznačených k zrcadlení"
+
+msgid "List and modify custom repositories"
+msgstr "Vypsat a upravit vlastní repozitáře"
+
+msgid "List and modify products"
+msgstr "Vypsat a upravit produkty"
+
+msgid "List and modify repositories"
+msgstr "Vypsat a upravit repozitáře"
+
+msgid "List products which are marked to be mirrored."
+msgstr "Vypsat produkty označené k zrcadlení"
+
+msgid "List repositories which are marked to be mirrored"
+msgstr "Vypsat repozitáře označené k zrcadlení"
+
+msgid "Mandatory"
+msgstr "Povinné"
+
+msgid "Mandatory?"
+msgstr "Povinné?"
+
+msgid "Mirror"
+msgstr "Zrcadlit"
+
+msgid "Mirror repos at given path"
+msgstr "Zrcadlit adresáře v zadané cestě"
+
+msgid "Mirror repos from given path"
+msgstr "Zrcadlit adresáře ze zadané cesty"
+
+msgid "Mirror repositories"
+msgstr "Zrcadlit adresáře"
+
+msgid "Mirror?"
+msgstr "Zrcadlit?"
+
+msgid "Mirroring SUSE Manager product tree to %{dir}"
+msgstr "Zrcadlí se strom produktů SUSE Manager do %{dir}"
+
+msgid "Mirroring repository %{repo} to %{dir}"
+msgstr "Zrcadlí se repozitář %{repo} do %{dir}"
+
+msgid "Missing data files: %{files}"
+msgstr "Chybějící datové soubory: %{files}"
+
+msgid "Multiple base products found: '%s'."
+msgstr "Nalezeno více základních produktů: %s."
+
+msgid "Name"
+msgstr "Název"
+
+msgid "No base product found."
+msgstr "Nebyl nalezen žádný základní produkt."
+
+msgid "No custom repositories found."
+msgstr "Nebyly nalezeny žádné vlastní repozitáře."
+
+msgid "No matching products found in the database."
+msgstr "V databázi nebyly nalezeny žádné odpovídající produkty."
+
+msgid "No product IDs supplied"
+msgstr "Nedodána žádná ID produktů"
+
+msgid "No product found"
+msgstr "Nenalezen žádný produkt"
+
+msgid "No product found for target %{target}."
+msgstr "Nebyl nalezen žádný produkt pro cíl %{target}."
+
+msgid "No product found on RMT for: %s"
+msgstr "Nebyl nalezen žádný produkt na RMT pro: %s"
+
+msgid "No products attached to repository."
+msgstr "K repozitáři nejsou připojeny žádné produkty."
+
+msgid "No repositories enabled."
+msgstr "Nejsou povoleny žádné repozitáře."
+
+msgid "No repositories found for product: %s"
+msgstr "Nebyly nalezeny žádné repozitáře pro produkt: %s"
+
+msgid "No repository ids supplied"
+msgstr "Nebyla dodána žádná ID repozitářů"
+
+msgid "Not Mandatory"
+msgstr "Není povinné"
+
+msgid "Not all mandatory repositories are mirrored for product %s"
+msgstr "Nejsou zrcadleny všechny povinné repozitáře pro produkt %s"
+
+msgid "Not provided"
+msgstr "Není zadáno"
+
+msgid ""
+"Not yet activated Registration Code. Visit https://scc.suse.com to activate "
+"it."
+msgstr ""
+"Ještě není aktivován registrační kód. Navštivte https://scc.suse.com a "
+"aktivujte ho."
+
+msgid ""
+"Only enabled products are shown by default. Use the '%{command}' option to "
+"see all products."
+msgstr ""
+"Ve výchozím nastavení se zobrazují jen povolené produkty. Použitím možnosti "
+"%{command} zobrazíte všechny produkty."
+
+msgid ""
+"Only enabled repositories are shown by default. Use the '%{option}' option "
+"to see all repositories."
+msgstr ""
+"Ve výchozím nastavení se zobrazují jen povolené repozitáře. Použitím "
+"možnosti %{command} zobrazíte všechny repozitáře."
+
+msgid "Output data in CSV format"
+msgstr "Výstup dat ve formátu CSV"
+
+msgid "Path to unpacked SMT data tarball"
+msgstr "Cesta k rozbalenému balíčku TAR dat SMT"
+
+msgid ""
+"Process is locked by the application with pid %{pid}. Close this application "
+"or wait for it to finish before trying again."
+msgstr ""
+"Proces je uzamčen aplikací s PID %{pid}. Zavřete tuto aplikaci nebo "
+"počkejte, až svou činnost dokončí. Pak to zkuste znovu."
+
+msgid "Product"
+msgstr "Produkt"
+
+msgid "Product %{products} could not be found and was not disabled."
+msgid_plural "Products %{products} could not be found and were not disabled."
+msgstr[0] "Produkt %{products} nelze najít a nebyl zakázán."
+msgstr[1] "Produkty %{products} nelze najít a nebyly zakázány."
+msgstr[2] "Produkty %{products} nelze najít a nebyly zakázány."
+
+msgid "Product %{products} could not be found and was not enabled."
+msgid_plural "Products %{products} could not be found and were not enabled."
+msgstr[0] "Produkt %{products} nelze najít a nebyl povolen."
+msgstr[1] "Produkty %{products} nelze najít a nebyly povoleny."
+msgstr[2] "Produkty %{products} nelze najít a nebyly povoleny."
+
+msgid "Product %{product} not found"
+msgstr "Produkt %{products} nebyl nalezen"
+
+msgid ""
+"Product %{product} not found!\n"
+"Tried to attach custom repository %{repo} to product %{product},\n"
+"but that product was not found. Attach it to a different product\n"
+"by running '%{command}'\n"
+msgstr ""
+"Produkt %{product} nebyl nalezen!\n"
+"Zkusili jsme připojit vlastní repozitář %{repo} k produktu %{product},\n"
+"ale tento produkt nebyl nalezen. Připojte ho k jinému produktu\n"
+"spuštěním příkazu %{command}\n"
+
+msgid "Product Architecture"
+msgstr "Architektura produktu"
+
+msgid "Product ID"
+msgstr "ID produktu"
+
+msgid "Product Name"
+msgstr "Název produktu"
+
+msgid "Product Version"
+msgstr "Verze produktu"
+
+msgid "Product by ID %{id} not found."
+msgstr "Produkt podle ID %{id} nebyl nalezen."
+
+msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
+msgstr ""
+"Nástroj RMT nebyl zatím synchronizován s SCC. Spusťte příkaz „%{command}“, "
+"dříve než"
+
+msgid "Read SCC data from given path"
+msgstr "Číst data SCC ze zadané cesty"
+
+msgid "Remove a custom repository"
+msgstr "Odebrat vlastní repozitář"
+
+msgid "Removed custom repository by ID %{id}."
+msgstr "Byl odebrán vlastní repozitář podle ID %{id}."
+
+msgid "Repository %{repos} could not be found and was not disabled."
+msgid_plural "Repositories %{repos} could not be found and were not disabled."
+msgstr[0] "Repozitář %{repos} nebyl nalezen a nebyl zakázán."
+msgstr[1] "Repozitáře %{repos} nebyly nalezeny a nebyly zakázány."
+msgstr[2] "Repozitáře %{repos} nebyly nalezeny a nebyly zakázány."
+
+msgid "Repository %{repos} could not be found and was not enabled."
+msgid_plural "Repositories %{repos} could not be found and were not enabled."
+msgstr[0] "Repozitář %{repos} nebyl nalezen a nebyl povolen."
+msgstr[1] "Repozitáře %{repos} nebyly nalezeny a nebyly povoleny."
+msgstr[2] "Repozitáře %{repos} nebyly nalezeny a nebyly povoleny."
+
+msgid ""
+"Repository %{repo} was not found in RMT database, perhaps you no longer have "
+"a valid subscription for it"
+msgstr ""
+"Repozitář %{repo} nebyl v databázi RMT nalezen. Možná už pro něj nemáte "
+"platné předplatné"
+
+msgid "Repository by ID %{id} successfully disabled."
+msgstr "Repozitář podle ID %{id} byl úspěšně zakázán."
+
+msgid "Repository by ID %{id} successfully enabled."
+msgstr "Repozitář podle ID %{id} byl úspěšně povolen."
+
+msgid "Repository metadata signatures are missing"
+msgstr "Chybí podpisy metadat repozitáře"
+
+msgid "Repository not found by ID %{id}."
+msgstr "Nebyl nalezen repozitář podle ID %{id}."
+
+msgid "Repository successfully disabled."
+msgstr "Repozitář byl úspěšně zakázán."
+
+msgid "Repository successfully enabled."
+msgstr "Repozitář byl úspěšně povolen."
+
+msgid "Requested service not found"
+msgstr "Požadovaná služba nebyla nalezena"
+
+msgid "Required parameters are missing or empty: %s"
+msgstr "Požadované parametry chybí nebo jsou prázdné: %s"
+
+msgid "Run '%{command}' for more information on a command and its subcommands."
+msgstr ""
+"Spuštěním příkazu %{command} zobrazíte další informace o příkazu a jeho "
+"podpříkazech."
+
+msgid ""
+"Run '%{command}' to synchronize with your SUSE Customer Center data first."
+msgstr ""
+"Nejprve spusťte příkaz %{command}, aby se provedla synchronizace s daty SUSE "
+"Customer Center."
+
+msgid "SCC ID"
+msgstr "SCC ID"
+
+msgid "Settings saved at %{file}."
+msgstr "Nastavení byla uložena do souboru %{file}."
+
+msgid "Show RMT version"
+msgstr "Zobrazit verzi RMT"
+
+msgid "Shows products attached to a custom repository"
+msgstr "Zobrazí produkty připojené k vlastnímu repozitáři"
+
+msgid "Store SCC data in files at given path"
+msgstr "Uložit data SCC v souborech v dané cestě"
+
+msgid "Store repository settings at given path"
+msgstr "Uložit nastavení repozitáře v souborech v dané cestě"
+
+msgid "Successfully added custom repository."
+msgstr "Byl úspěšně přidán vlastní repozitář."
+
+msgid "Sync database with SUSE Customer Center"
+msgstr "Synchronizovat databázi se SUSE Customer Center"
+
+msgid "System %{system} not found"
+msgstr "Systém %{system} nebyl nalezen"
+
+msgid ""
+"The RMT database has not yet been initialized. Run '%{command}' to setup the "
+"database."
+msgstr ""
+"Databáze RMT ještě nebyla inicializována. Spusťte příkaz %{command} a "
+"databázi nastavte."
+
+msgid ""
+"The SCC credentials are not configured correctly in '%{path}'. You can "
+"obtain them from %{url}"
+msgstr ""
+"Přihlašovací údaje SCC nejsou v cestě %{path} nakonfigurovány správně. "
+"Můžete je získat z %{url}"
+
+msgid "The product \"%s\" is a base product and cannot be deactivated"
+msgstr "Produkt %s je základní produkt a nelze ho deaktivovat"
+
+msgid "The requested product '%s' is not activated on this system."
+msgstr "Požadovaný produkt %s není na tomto systému aktivován."
+
+msgid "The requested products '%s' are not activated on the system."
+msgstr "Požadované produkty %s nejsou na tomto systému aktivovány."
+
+msgid "There are no repositories marked for mirroring."
+msgstr "Žádné repozitáře nejsou označeny k zrcadlení."
+
+msgid "URL"
+msgstr "URL"
+
+msgid "Unknown Registration Code."
+msgstr "Neznámý registrační kód."
+
+msgid "Unknown hash function %{checksum_type}"
+msgstr "Neznámá funkce hash %{checksum_type}"
+
+msgid "Unmet product dependencies, activate one of these products first: %s"
+msgstr ""
+"Nejsou splněny podmínky závislostí produktu. Nejprve aktivujte jeden z "
+"těchto produktů: %s"
+
+msgid "Updated system information for host '%s'"
+msgstr "Byly aktualizovány systémové informace pro hostitele %s"
+
+msgid "Updating products"
+msgstr "Aktualizují se produkty"
+
+msgid "Updating repositories"
+msgstr "Aktualizují se repozitáře"
+
+msgid "Updating subscriptions"
+msgstr "Aktualizují se předplatná"
+
+msgid "Version"
+msgstr "Verze"
+
+msgid "importing data from SMT."
+msgstr "budete importovat data ze SMT."
+
+msgid "repository by URL %{url} does not exist in database"
+msgstr "repozitář podle URL %{url} v databázi neexistuje"
+
+msgid ""
+"× File does not exist or has wrong filesize, deduplication ignored %{error}."
+msgstr ""
+"× Soubor neexistuje nebo má nesprávnou velikost souboru. Deduplikace byla "
+"ignorována: %{error}."
+
+#~ msgid ""
+#~ "  Run this command on an online RMT.\n"
+#~ "  It will look in PATH for a repos.json file, which has to contain a list "
+#~ "of repository IDs.\n"
+#~ "  Usually, this file gets created by an offline RMT with 'rmt-cli export "
+#~ "settings'.\n"
+#~ "\n"
+#~ "  'rmt-cli export repos' will mirror these repositories to this PATH, "
+#~ "usually a portable storage device.\n"
+#~ msgstr ""
+#~ "  Tento příkaz spusťte na online nástroji RMT.\n"
+#~ "  Bude hledat v cestě PATH soubor repos.json, který musí obsahovat seznam "
+#~ "ID repozitářů.\n"
+#~ "  Tento soubor je obvykle vytvořen offline nástrojem RMT s možností 'rmt-"
+#~ "cli export settings'.\n"
+#~ "\n"
+#~ "  'rmt-cli export repos' provede zrcadlení těchto repozitářů do této "
+#~ "cesty PATH, obvykle přenosné úložné zařízení.\n"
+
+#~ msgid ""
+#~ "Disable mirroring of product repositories by a list of product IDs or "
+#~ "product strings.\n"
+#~ "\n"
+#~ "Examples:\n"
+#~ "\n"
+#~ "$ rmt-cli products disable SLES/15\n"
+#~ "\n"
+#~ "$ rmt-cli products disable 1575\n"
+#~ "\n"
+#~ "$ rmt-cli products disable SLES/15/x86_64 1743\n"
+#~ msgstr ""
+#~ "Zakázat zrcadlení produktových repozitářů podle seznamu ID produktů nebo "
+#~ "řetězců produktů.\n"
+#~ "\n"
+#~ "Příklady:\n"
+#~ "\n"
+#~ "$ rmt-cli products disable SLES/15\n"
+#~ "\n"
+#~ "$ rmt-cli products disable 1575\n"
+#~ "\n"
+#~ "$ rmt-cli products disable SLES/15/x86_64 1743\n"
+
+#~ msgid ""
+#~ "Disable mirroring of repositories by a list of repository IDs\n"
+#~ "\n"
+#~ "Examples:\n"
+#~ "\n"
+#~ "$ rmt-cli repos disable 2526\n"
+#~ "\n"
+#~ "$ rmt-cli repos disable 2526 3263\n"
+#~ msgstr ""
+#~ "Zakázat zrcadlení repozitářů podle seznamu ID repozitářů\n"
+#~ "\n"
+#~ "Příklady:\n"
+#~ "\n"
+#~ "$ rmt-cli repos disable 2526\n"
+#~ "\n"
+#~ "$ rmt-cli repos disable 2526 3263\n"
+
+#~ msgid ""
+#~ "Enable mirroring of product repositories by a list of product IDs or "
+#~ "product strings.\n"
+#~ "\n"
+#~ "Examples:\n"
+#~ "\n"
+#~ "$ rmt-cli products enable SLES/15\n"
+#~ "\n"
+#~ "$ rmt-cli products enable 1575\n"
+#~ "\n"
+#~ "$ rmt-cli products enable SLES/15/x86_64 1743\n"
+#~ "\n"
+#~ "$ rmt-cli products enable --all-modules SLES/15\n"
+#~ msgstr ""
+#~ "Povolit zrcadlení produktových repozitářů podle seznamu ID produktů nebo "
+#~ "řetězců produktů.\n"
+#~ "\n"
+#~ "Příklady:\n"
+#~ "\n"
+#~ "$ rmt-cli products enable SLES/15\n"
+#~ "\n"
+#~ "$ rmt-cli products enable 1575\n"
+#~ "\n"
+#~ "$ rmt-cli products enable SLES/15/x86_64 1743\n"
+#~ "\n"
+#~ "$ rmt-cli products enable --all-modules SLES/15\n"
+
+#~ msgid ""
+#~ "Enable mirroring of repositories by a list of repository IDs\n"
+#~ "\n"
+#~ "Examples:\n"
+#~ "\n"
+#~ "$ rmt-cli repos enable 2526\n"
+#~ "\n"
+#~ "$ rmt-cli repos enable 2526 3263\n"
+#~ msgstr ""
+#~ "Povolit zrcadlení repozitářů podle seznamu ID repozitářů\n"
+#~ "\n"
+#~ "Příklady:\n"
+#~ "\n"
+#~ "$ rmt-cli repos enable 2526\n"
+#~ "\n"
+#~ "$ rmt-cli repos enable 2526 3263\n"
