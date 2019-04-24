@@ -13,7 +13,7 @@ gem 'mysql2', '~> 0.4.10'
 
 # The rest of Gemfile goes as normal
 
-gem 'nokogiri', '~> 1.8.0'
+gem 'nokogiri', '~> 1.10.3'
 gem 'thor'
 gem 'activesupport', '~> 5.1.3'
 gem 'actionpack', '~> 5.1.3'
