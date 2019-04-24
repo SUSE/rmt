@@ -6,7 +6,7 @@ all:
 
 clean:
 	rm -f rmt-cli.8*
-	rm -rf package/*.tar.bz2
+	rm -rf package/obs/*.tar.bz2
 	rm -rf $(NAME)-$(VERSION)/
 
 man:
