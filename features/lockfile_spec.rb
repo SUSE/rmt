@@ -12,7 +12,7 @@ describe 'rmt-cli' do
   describe 'lockfile' do
     command '/usr/bin/rmt-cli sync', allow_error: true
     its(:stderr) { is_expected.to eq("Process is locked by the application with \
-pid #{`pgrep rmt-cli`.strip}. Close this application or wait for it \
+pid #{`pgrep rmt-cli`.strip}. Close this application or wait for it __I_WANT_IT_FAILING__ \
 to finish before trying again.\n") }
 
     its(:exitstatus) { is_expected.to eq 1 }
