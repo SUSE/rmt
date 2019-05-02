@@ -13,22 +13,15 @@ pipeline {
         git url: 'git@github.com:SUSE/rmt.git', branch: "${branch}"
       }
     }
-    stage('docker-compose build') {
+    stage('copy configuration') {
       steps {
-        sh 'docker-compose -f docker-compose-test.yml build'
+        sh 'cp /home/jenkins/options-local-connect-prophet.yml integration/prophet/options-local.yml'
       }
     }
-
-    stage('rmt integration tests') {
+    stage('run prophet') {
       steps {
-        sh 'docker-compose -f docker-compose-test.yml run rmt_test ./integration/run.sh'
+        sh 'ruby ./integration/prophet/prophet.rb'
       }
-    }
-  }
-  post {
-    always {
-      sh 'docker-compose -f docker-compose-test.yml down'
-      sh 'docker system prune -f'
     }
   }
 }

@@ -14,6 +14,6 @@ describe 'enable repos' do
   end
 
   it do
-    expect(`/usr/bin/rmt-cli repos list --csv | wc -l`.strip&.to_i ).to eq(5)
+    expect(`/usr/bin/rmt-cli repos list | wc -l`.strip&.to_i ).to eq(10) # 5 lines for table headers
   end
 end
