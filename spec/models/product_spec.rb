@@ -206,4 +206,33 @@ RSpec.describe Product, type: :model do
       it { is_expected.to be false }
     end
   end
+
+  describe '#service' do
+    context 'when service already exists' do
+      let!(:product) { create :product }
+      let!(:service) { create :service, product_id: product.id }
+
+      it 'returns the existing service' do
+        expect(product.service).to eq(service)
+      end
+    end
+
+    context 'when the matching service ID is already taken' do
+      let!(:product) { create :product }
+      let!(:other_product) { create :product }
+      let!(:other_service) { create :service, id: product.id, product_id: other_product.id }
+
+      it 'creates a service with a random ID' do
+        expect(product.service.id).not_to eq(other_service.id)
+      end
+    end
+
+    context 'when the matching service ID is free' do
+      let!(:product) { create :product }
+
+      it 'creates a service with a matching ID' do
+        expect(product.service.id).to eq(product.id)
+      end
+    end
+  end
 end

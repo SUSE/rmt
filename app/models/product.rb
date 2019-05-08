@@ -127,7 +127,17 @@ class Product < ApplicationRecord
   end
 
   def service
-    Service.find_or_create_by(product_id: id)
+    service = Service.find_by(product_id: id)
+
+    service ||= if Service.find_by(id: id)
+                  # for backward-compatibility: create a service with autoincrement ID, if product.id is already occupied
+                  Service.create!(product_id: id)
+                else
+                  # try to create a service with service.id = product.id for keeping consistent service URLs across RMT instances
+                  Service.create!(id: id, product_id: id)
+                end
+
+    service
   end
 
 end
