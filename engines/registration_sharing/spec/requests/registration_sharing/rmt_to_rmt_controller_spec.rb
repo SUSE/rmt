@@ -8,7 +8,7 @@ module RegistrationSharing
     let(:created_at) { Time.zone.now.round - 60 }
     let(:registered_at) { created_at + 5 }
     let(:last_seen_at) { created_at + 5 }
-    let(:product) { FactoryGirl.create(:product) }
+    let(:product) { FactoryGirl.create(:product, :with_service) }
     let(:api_secret) { 's3cr3tt0k3n' }
     let(:request_token) { api_secret }
     let(:instance_data) { '<document>test</document>' }
