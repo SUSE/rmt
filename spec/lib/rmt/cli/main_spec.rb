@@ -73,6 +73,64 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
           end
         end
       end
+
+      context 'with repositories changing during mirroring' do
+        let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
+        let!(:additional_repository) { create :repository, :with_products, mirroring_enabled: false }
+
+        it 'mirrors additional repositories' do
+          expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
+          expect_any_instance_of(RMT::Mirror).to receive(:mirror).with(
+            repository_url: repository.external_url,
+            local_path: anything,
+            repo_name: anything,
+            auth_token: anything
+          ) do
+            # enable mirroring of the additional repository during mirroring
+            additional_repository.mirroring_enabled = true
+            additional_repository.save!
+          end
+
+          expect_any_instance_of(RMT::Mirror).to receive(:mirror).with(
+            repository_url: additional_repository.external_url,
+            local_path: anything,
+            repo_name: anything,
+            auth_token: anything
+          )
+
+          command
+        end
+      end
+
+      context 'with repositories changing during mirroring and exceptions occur' do
+        let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
+        let!(:additional_repository) { create :repository, :with_products, mirroring_enabled: false }
+
+        it 'handles exceptions and mirrors additional repositories' do
+          expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
+          expect_any_instance_of(RMT::Mirror).to receive(:mirror).with(
+            repository_url: repository.external_url,
+            local_path: anything,
+            repo_name: anything,
+            auth_token: anything
+          ) do
+            # enable mirroring of the additional repository during mirroring
+            additional_repository.mirroring_enabled = true
+            additional_repository.save!
+            raise(RMT::Mirror::Exception, 'black mirror')
+          end
+
+          expect_any_instance_of(RMT::Logger).to receive(:warn).with('black mirror')
+          expect_any_instance_of(RMT::Mirror).to receive(:mirror).with(
+            repository_url: additional_repository.external_url,
+            local_path: anything,
+            repo_name: anything,
+            auth_token: anything
+          )
+
+          command
+        end
+      end
     end
 
     describe 'help' do

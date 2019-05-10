@@ -29,22 +29,28 @@ class RMT::CLI::Main < RMT::CLI::Base
         logger.warn(e.message)
       end
 
-      repos = Repository.where(mirroring_enabled: true)
+      raise RMT::CLI::Error.new(_('There are no repositories marked for mirroring.')) if Repository.where(mirroring_enabled: true).empty?
 
-      raise RMT::CLI::Error.new(_('There are no repositories marked for mirroring.')) if repos.empty?
+      mirrored_repo_ids = []
+      loop do
+        repos = Repository.where(mirroring_enabled: true).where.not(id: mirrored_repo_ids)
+        break if repos.blank?
 
-      repos.each do |repo|
-        begin
-          mirror.mirror(
-            repository_url: repo.external_url,
-            local_path: Repository.make_local_path(repo.external_url),
-            auth_token: repo.auth_token,
-            repo_name: repo.name
-          )
+        repos.each do |repo|
+          begin
+            mirror.mirror(
+              repository_url: repo.external_url,
+              local_path: Repository.make_local_path(repo.external_url),
+              auth_token: repo.auth_token,
+              repo_name: repo.name
+            )
 
-          repo.refresh_timestamp!
-        rescue RMT::Mirror::Exception => e
-          logger.warn e.to_s
+            repo.refresh_timestamp!
+          rescue RMT::Mirror::Exception => e
+            logger.warn e.to_s
+          ensure
+            mirrored_repo_ids << repo.id
+          end
         end
       end
     end
