@@ -148,11 +148,9 @@ describe SMTImporter do
     let(:systems) { [system_1, system_2, system_2, system_3] }
 
     it 'creates new systems for the given credentials' do
-      expect { importer.import_systems }.to output(<<-OUTPUT.strip_heredoc).to_stdout
-        Imported system #{system_1[0]}
-        Imported system #{system_2[0]}
-        Imported system #{system_3[0]}
-      OUTPUT
+      expect { importer.import_systems }.to output("Imported 3 systems\n").to_stdout.and(
+        output("Duplicate entry for system system_2_login, skipping\n").to_stderr
+      )
       expect(System.find_by(login: system_1[0], password: system_1[1])).not_to be_nil
       expect(System.find_by(login: system_3[0], password: system_3[1])).not_to be_nil
       expect(System.find_by(login: system_1[0], password: system_1[1]).registered_at.to_i).to eq(system_1[3].to_i)
@@ -180,11 +178,10 @@ describe SMTImporter do
       end
 
       it 'creates the activations for the systems' do
-        expect { importer.import_activations }.to output(<<-OUTPUT.strip_heredoc).to_stdout
-          Imported activation of #{product.id} for #{system_1.login}
-          Imported activation of #{product.id} for #{system_2.login}
-          Imported activation of #{product.id} for #{system_3.login}
-        OUTPUT
+        expect do
+          importer.load_systems
+          importer.import_activations
+        end.to output("Imported 3 activations\n").to_stdout
         expect(Activation.find_by(system: system_1, service: product.service)).not_to be_nil
         expect(Activation.find_by(system: system_2, service: product.service)).not_to be_nil
         expect(Activation.find_by(system: system_3, service: product.service)).not_to be_nil
@@ -208,7 +205,10 @@ describe SMTImporter do
 
       it 'does not create an activation' do
         expect(Activation).not_to receive(:create)
-        expect { importer.import_activations }.to output(<<-OUTPUT.strip_heredoc).to_stderr
+        expect do
+          importer.load_systems
+          importer.import_activations
+        end.to output(<<-OUTPUT.strip_heredoc).to_stderr
           Product 0 not found
         OUTPUT
       end
@@ -235,7 +235,7 @@ describe SMTImporter do
     end
   end
   describe '#run' do
-    context 'without --no-system flag' do
+    context 'without --no-system and --no-hwinfo flags' do
       it 'runs all steps including importing the systems' do
         expect(importer).to receive(:check_products_exist)
         expect(importer).to receive(:import_repositories)
@@ -257,6 +257,17 @@ describe SMTImporter do
         importer.run ['--no-systems', '-d', 'foo']
       end
     end
+    context 'with --no-system flag' do
+      it 'imports repositories and systems without hwinfo' do
+        expect(importer).to receive(:check_products_exist)
+        expect(importer).to receive(:import_repositories)
+        expect(importer).to receive(:import_custom_repositories)
+        expect(importer).to receive(:import_systems)
+        expect(importer).to receive(:import_activations)
+        expect(importer).not_to receive(:import_hardware_info)
+        importer.run ['--no-hwinfo', '-d', 'foo']
+      end
+    end
   end
 
   describe '#parse_cli_arguments' do
@@ -275,6 +286,7 @@ describe SMTImporter do
         Usage: rspec [options]
             -d, --data PATH                  Path to unpacked SMT data tarball
                 --no-systems                 Do not import the systems that were registered to the SMT
+                --no-hwinfo                  Do not import system hardware info from MachineData table
       OUTPUT
     end
   end
