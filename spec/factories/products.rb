@@ -45,6 +45,12 @@ FactoryGirl.define do
       free true
     end
 
+    trait :with_service do
+      after :create do |product, _evaluator|
+        product.create_service!
+      end
+    end
+
     trait :with_extensions do
       after :create do |product, _evaluator|
         5.times do

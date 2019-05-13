@@ -23,17 +23,15 @@ class RepositoryService
   end
 
   def attach_product!(product, repository)
-    product_service = find_product_service(product)
     RepositoriesServicesAssociation.find_or_create_by!(
-      service_id: product_service.id,
+      service_id: product.service.id,
       repository_id: repository.id
     )
   end
 
   def detach_product!(product, repository)
-    product_service = find_product_service(product)
     association = RepositoriesServicesAssociation.find_by(
-      service_id: product_service.id,
+      service_id: product.service.id,
       repository_id: repository.id
     )
     association.destroy!
@@ -44,11 +42,4 @@ class RepositoryService
     conditions[:enabled] = true if mirroring_enabled
     product.change_repositories_mirroring!(conditions, mirroring_enabled)
   end
-
-  private
-
-  def find_product_service(product)
-    Service.find_or_create_by(product_id: product.id)
-  end
-
 end

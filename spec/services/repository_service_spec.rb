@@ -3,7 +3,7 @@ require 'rails_helper'
 describe RepositoryService do
   subject(:service) { described_class.new }
 
-  let(:product) { create :product }
+  let(:product) { create :product, :with_service }
   let(:custom_repository) { create :repository, :custom }
   let(:suse_repository) { create :repository }
 

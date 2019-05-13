@@ -64,8 +64,8 @@ describe SMTImporter do
 
     context 'already created repository' do
       let(:repo) { create :repository, :custom, external_url: 'https://something.org/repos/sles15/' }
-      let(:product_1) { create :product }
-      let(:product_2) { create :product }
+      let(:product_1) { create :product, :with_service }
+      let(:product_2) { create :product, :with_service }
 
       let(:enabled_custom_repos) do
         [
@@ -85,7 +85,7 @@ describe SMTImporter do
     end
 
     context 'repository not created yet' do
-      let(:product) { create :product }
+      let(:product) { create :product, :with_service }
       let(:repo_name) { 'SAMPLE_REPO' }
       let(:repo_url) { 'https://SAMPLE_REPO_URL/repo/' }
       let(:local_path) { '/srv/repos/repo/' }
@@ -162,7 +162,7 @@ describe SMTImporter do
       allow(importer).to receive(:read_csv).with('activations').and_return activations
     end
 
-    let(:product) { create :product }
+    let(:product) { create :product, :with_service }
 
     context 'with systems' do
       let(:system_1) { create :system }
@@ -302,7 +302,7 @@ describe SMTImporter do
     end
 
     it 'checks if at least one product exists' do
-      create :product
+      create :product, :with_service
       expect { importer.check_products_exist }.not_to raise_error
     end
   end
