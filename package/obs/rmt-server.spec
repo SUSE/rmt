@@ -25,7 +25,7 @@
 %define ruby_version %{rb_default_ruby_suffix}
 
 Name:           rmt-server
-Version:        2.1.3
+Version:        2.1.4
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -140,7 +140,6 @@ install -D -m 644 package/files/nginx/nginx-http.conf %{buildroot}%{_sysconfdir}
 install -D -m 644 package/files/nginx/nginx-https.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
 install -D -m 644 package/files/nginx/auth-handler.conf %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
 install -D -m 644 package/files/nginx/auth-location.conf %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
-install -D -m 644 package/files/nginx/http-certs.conf %{buildroot}%{_sysconfdir}/nginx/rmt-pubcloud.d/http-certs.conf
 
 sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"' \
     -e 's/^BUNDLE_JOBS: .*/BUNDLE_JOBS: "1"/' \
@@ -225,12 +224,10 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %{_bindir}/rmt-test-regsharing
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}/engines/
 %dir %{_sysconfdir}/nginx/rmt-auth.d/
-%dir %{_sysconfdir}/nginx/rmt-pubcloud.d/
 %dir %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}/regsharing
 %exclude %{app_dir}/engines/registration_sharing/package/
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
-%config(noreplace) %{_sysconfdir}/nginx/rmt-pubcloud.d/http-certs.conf
 
 %{_sbindir}/rcrmt-server-regsharing
 %{_unitdir}/rmt-server-regsharing.service
