@@ -86,7 +86,7 @@ You can install and run this wizard like this:
 
   * `rmt-cli mirror`:
     In its default configuration, RMT mirrors its enabled product repositories automatically once every night.
-    This command starts this mirroring process manually.
+    This command starts this mirroring process manually. Changes made to repository mirroring settings while mirroring is in progress are respected by the mirroring process.
 
 When all enabled repositories are fully mirrored, you can register your client systems against RMT by running `SUSEConnect --url https://<RMT hostname>` on the client machine.
 After successful registration the repositories from RMT will be used by `zypper` on the client machine.
