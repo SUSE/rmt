@@ -5,13 +5,8 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-# Those are the gems with native extensions. The versions are locked to exact versions we have in our OBS:
-# https://build.suse.de/project/show/Devel:SCC:SMT-NG
-
 gem 'puma', '3.10.0'
 gem 'mysql2', '~> 0.4.10'
-
-# The rest of Gemfile goes as normal
 
 gem 'nokogiri', '~> 1.10.3'
 gem 'thor'
