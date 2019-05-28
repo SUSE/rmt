@@ -32,27 +32,17 @@ RSpec.describe SUSE::Connect::Api do
     end
 
     context 'when system_uuid file is empty' do
-       before do
+      before do
           allow(File).to receive(:exist?).with(described_class::UUID_FILE_LOCATION).and_return(true)
           allow(File).to receive(:empty?).with(described_class::UUID_FILE_LOCATION).and_return(true)
           allow(SecureRandom).to receive(:uuid).and_return(uuid)
-        end
-
-        it 'overwrites a file' do
-          expect(File).to receive(:write).with(described_class::UUID_FILE_LOCATION, uuid).exactly(1).times
-          expect(method_call).to be(uuid)
-        end
-     end   
-      it 'overwrites a file' do
-        FakeFS.with_fresh do
-          FileUtils.mkdir_p '/var/lib/rmt/'
-          FileUtils.touch '/var/lib/rmt/system_uuid'
-          allow(SecureRandom).to receive(:uuid).and_return(uuid)
-          expect(File).to receive(:write).with(described_class::UUID_FILE_LOCATION, uuid).exactly(1).times
-          expect(method_call).to be(uuid)
-        end
       end
-    end
+
+      it 'overwrites a file' do
+        expect(File).to receive(:write).with(described_class::UUID_FILE_LOCATION, uuid).exactly(1).times
+        expect(method_call).to be(uuid)
+      end
+    end   
   end
 
   context 'api requests' do
