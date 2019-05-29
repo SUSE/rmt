@@ -5,10 +5,10 @@ RMT_PATH = File.expand_path('..', __dir__)
 
 # Load initial configuration for rmt
 require_relative "#{RMT_PATH}/config/boot"
-require_relative "#{RMT_PATH}/config/boot_cli_i18n"
+
 
 # Add rmt_path to library load path
-$LOAD_PATH.unshift File.join(RMT_PATH, 'lib')
+$LOAD_PATH.unshift File.join(RMT_PATH, 'lib') 
 
 require 'optparse'
 require 'ostruct'
