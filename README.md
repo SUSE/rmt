@@ -56,7 +56,7 @@ Supported Ruby versions are 2.5.0 and newer.
 ## Development setup
 
 * Install the dependencies:
-  * `sudo zypper in libxml2-devel libxslt-devel`
+  * `sudo zypper in libxml2-devel libxslt-devel libmariadb-devel`
   * `bundle install`
 * Copy the file `config/rmt.yml` to `config/rmt.local.yml` to override the default settings:
     * Add your organization credentials to `scc` section
