@@ -59,11 +59,15 @@ class RMT::CLI::Main < RMT::CLI::Base
   desc 'export', _('Export commands for Offline Sync')
   subcommand 'export', RMT::CLI::Export
 
+  desc 'registrations', _('Commands for managing registered systems')
+  subcommand 'registrations', RMT::CLI::Registrations
+
   desc 'version', _('Show RMT version')
   def version
     puts RMT::VERSION
   end
 
   map %w[--version -v] => :version
+  map %w[registration] => :registrations
 
 end
