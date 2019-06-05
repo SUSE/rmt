@@ -1,6 +1,5 @@
 require 'csv'
 require 'ostruct'
-require 'fast_gettext'
 require 'initializers/rmt_fast_gettext'
 
 
@@ -8,11 +7,6 @@ class SMTImporter
   attr_accessor :data_dir
   attr_accessor :no_systems
 
-  include FastGettext::Translation
-  locale = (ENV['LANG'] || ENV['LC_CTYPE']).to_s.match(/^([a-z]{2,}(_[A-Z]{2,})?)/).to_a[1] || :en
-  FastGettext.set_locale(locale.to_sym)
-
-  
   class ImportException < StandardError
   end
 
