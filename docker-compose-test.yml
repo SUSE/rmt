@@ -10,8 +10,6 @@ networks:
 
 services:
   db:
-    env_file:
-      - .env
     image: mariadb:10.2
     restart: always
     volumes:
@@ -22,8 +20,6 @@ services:
 
   rmt_test:
     privileged: true
-    env_file:
-      - .env
     volumes:
       - /space/oscbuild:/oscbuild:cached
       - ./:/tmp/workdir:ro
