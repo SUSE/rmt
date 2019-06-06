@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jun  6 13:29:12 UTC 2019 - Leon Schroeder <lschroeder@suse.com>
+
+- Version 2.1.5
+- Fix create UUID when system_uuid file empty
+
+-------------------------------------------------------------------
 Wed May 15 14:36:17 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
 
 - Version 2.1.4
