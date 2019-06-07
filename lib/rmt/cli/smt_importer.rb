@@ -1,7 +1,5 @@
 require 'csv'
 require 'ostruct'
-require 'initializers/rmt_fast_gettext'
-
 
 class SMTImporter
   attr_accessor :data_dir
