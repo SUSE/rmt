@@ -12,8 +12,8 @@ require 'active_record'
 require 'erb'
 require 'yaml'
 require 'rmt/config'
-require 'initializers/rmt_fast_gettext_cli_locale'
 require 'initializers/rmt_fast_gettext'
+require 'initializers/rmt_fast_gettext_cli_locale'
 
 relative_load_paths = %w[lib lib/rmt app/models app/services].map { |dir| File.join(rmt_path, dir) }
 ActiveSupport::Dependencies.autoload_paths += relative_load_paths

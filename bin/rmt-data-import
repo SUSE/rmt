@@ -18,8 +18,8 @@ require 'yaml'
 require 'rmt/config'
 require 'csv'
 require 'json'
-require 'initializers/rmt_fast_gettext_cli_locale'
 require 'initializers/rmt_fast_gettext'
+require 'initializers/rmt_fast_gettext_cli_locale'
 require 'rmt/cli/smt_importer'
 
 no_systems = false
