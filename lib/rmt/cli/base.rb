@@ -64,7 +64,8 @@ class RMT::CLI::Base < Thor
       end
     rescue ActiveRecord::NoDatabaseError
       raise RMT::CLI::Error.new(
-        _("The RMT database has not yet been initialized. Run '%{command}' to setup the database.") % { command: 'systemctl start rmt-migration' },
+        _("The RMT database has not yet been initialized. Run '%{command}' to setup the database.") \
+        % { command: 'systemctl start rmt-server-migration.service' },
         RMT::CLI::Error::ERROR_DB
       )
     rescue RMT::SCC::CredentialsError, ::SUSE::Connect::Api::InvalidCredentialsError
