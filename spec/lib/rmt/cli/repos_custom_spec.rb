@@ -3,7 +3,7 @@ require 'rails_helper'
 describe RMT::CLI::ReposCustom do
   subject(:command) { described_class.start(argv) }
 
-  let(:product) { create :product }
+  let(:product) { create :product, :with_service }
   let(:external_url) { 'http://example.com/repos/' }
   let(:repository_service) { RepositoryService.new }
 

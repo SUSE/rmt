@@ -85,7 +85,7 @@ module SUSE
       private
 
       def system_uuid
-        @system_uuid ||= if File.exist?(UUID_FILE_LOCATION)
+        @system_uuid ||= if File.exist?(UUID_FILE_LOCATION) && !File.empty?(UUID_FILE_LOCATION)
                            File.read(UUID_FILE_LOCATION)
                          else
                            uuid = SecureRandom.uuid

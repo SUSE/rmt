@@ -126,8 +126,18 @@ class Product < ApplicationRecord
     joins(:product_extensions_associations).where(products_extensions: { recommended: true, root_product_id: root_product_ids })
   end
 
-  def service
-    Service.find_or_create_by(product_id: id)
-  end
+  def create_service!
+    service = Service.find_by(product_id: id)
+    return service if service
 
+    service ||= if Service.find_by(id: id)
+                  # for backward-compatibility: create a service with autoincrement ID, if product.id is already occupied
+                  Service.create!(product_id: id)
+                else
+                  # create a service with service.id = product.id for keeping consistent service URLs across RMT instances
+                  Service.create!(id: id, product_id: id)
+                end
+
+    service
+  end
 end

@@ -1,5 +1,6 @@
 require 'rails_helper'
 require 'webmock/rspec'
+require 'fakefs/spec_helpers'
 
 RSpec.describe SUSE::Connect::Api do
   let(:username) { 'scc_user' }
@@ -26,6 +27,19 @@ RSpec.describe SUSE::Connect::Api do
 
         expect(File).to receive(:write).with(described_class::UUID_FILE_LOCATION, uuid).exactly(1).times
         expect(File).not_to receive(:read).with(described_class::UUID_FILE_LOCATION)
+        expect(method_call).to be(uuid)
+      end
+    end
+
+    context 'when system_uuid file is empty' do
+      before do
+        allow(File).to receive(:exist?).with(described_class::UUID_FILE_LOCATION).and_return(true)
+        allow(File).to receive(:empty?).with(described_class::UUID_FILE_LOCATION).and_return(true)
+        allow(SecureRandom).to receive(:uuid).and_return(uuid)
+      end
+
+      it 'overwrites a file' do
+        expect(File).to receive(:write).with(described_class::UUID_FILE_LOCATION, uuid).exactly(1).times
         expect(method_call).to be(uuid)
       end
     end

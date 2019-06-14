@@ -29,11 +29,12 @@ class RMT::CLI::Main < RMT::CLI::Base
         logger.warn(e.message)
       end
 
-      repos = Repository.where(mirroring_enabled: true)
+      raise RMT::CLI::Error.new(_('There are no repositories marked for mirroring.')) if Repository.where(mirroring_enabled: true).empty?
 
-      raise RMT::CLI::Error.new(_('There are no repositories marked for mirroring.')) if repos.empty?
+      mirrored_repo_ids = []
+      until Repository.where(mirroring_enabled: true).where.not(id: mirrored_repo_ids).blank?
+        repo = Repository.where(mirroring_enabled: true).where.not(id: mirrored_repo_ids).first
 
-      repos.each do |repo|
         begin
           mirror.mirror(
             repository_url: repo.external_url,
@@ -45,6 +46,8 @@ class RMT::CLI::Main < RMT::CLI::Base
           repo.refresh_timestamp!
         rescue RMT::Mirror::Exception => e
           logger.warn e.to_s
+        ensure
+          mirrored_repo_ids << repo.id
         end
       end
     end
@@ -56,11 +59,15 @@ class RMT::CLI::Main < RMT::CLI::Base
   desc 'export', _('Export commands for Offline Sync')
   subcommand 'export', RMT::CLI::Export
 
+  desc 'systems', _('List systems')
+  subcommand 'systems', RMT::CLI::Systems
+
   desc 'version', _('Show RMT version')
   def version
     puts RMT::VERSION
   end
 
   map %w[--version -v] => :version
+  map %w[registration] => :registrations
 
 end

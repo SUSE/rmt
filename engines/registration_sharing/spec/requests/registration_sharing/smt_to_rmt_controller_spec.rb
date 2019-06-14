@@ -40,7 +40,7 @@ module RegistrationSharing
     end
 
     describe '#smt_share_registration' do
-      let(:product) { FactoryGirl.create(:product) }
+      let(:product) { FactoryGirl.create(:product, :with_service) }
       let(:login) { 'SCC_00000000000000000000000000000000' }
       let(:password) { 'deadbeefdeadbeefdeadbeefdeadbeef' }
       let(:regdate) { '2018-10-10 10:00:00' }
