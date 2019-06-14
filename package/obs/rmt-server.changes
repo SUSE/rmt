@@ -1,5 +1,5 @@
 -------------------------------------------------------------------
-Tue Jun  4 13:35:11 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+Fri Jun 14 14:37:57 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
 
 - Version 2.2.0
 - Add `rmt-cli systems list` command to list registered systems

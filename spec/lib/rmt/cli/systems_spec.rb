@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe RMT::CLI::Registrations do
+RSpec.describe RMT::CLI::Systems do
   describe '#list' do
     subject(:command) { described_class.start(argv) }
 

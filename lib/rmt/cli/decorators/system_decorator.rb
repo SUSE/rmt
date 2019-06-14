@@ -1,4 +1,4 @@
-class RMT::CLI::Decorators::RegistrationDecorator < RMT::CLI::Decorators::Base
+class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
 
   def initialize(systems)
     @data = systems.map do |system|

@@ -1,4 +1,4 @@
-class RMT::CLI::Registrations < RMT::CLI::Base
+class RMT::CLI::Systems < RMT::CLI::Base
   desc 'list', _('List registered systems.')
   option :limit, aliases: '-l', type: :numeric, default: 20, desc: _('Number of systems to display')
   option :all, aliases: '-a', type: :boolean, desc: _('List all registered systems')
@@ -6,7 +6,7 @@ class RMT::CLI::Registrations < RMT::CLI::Base
 
   def list
     systems = (options.all ? System.all : System.limit(options.limit)).order(id: :desc)
-    decorator = RMT::CLI::Decorators::RegistrationDecorator.new(systems)
+    decorator = RMT::CLI::Decorators::SystemDecorator.new(systems)
 
     if systems.empty?
       warn _('There are no systems registered to this RMT instance.')
@@ -21,5 +21,6 @@ class RMT::CLI::Registrations < RMT::CLI::Base
       end
     end
   end
+  map 'ls' => :list
 
 end
