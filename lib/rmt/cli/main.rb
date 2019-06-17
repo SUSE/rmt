@@ -68,6 +68,5 @@ class RMT::CLI::Main < RMT::CLI::Base
   end
 
   map %w[--version -v] => :version
-  map %w[registration] => :registrations
 
 end
