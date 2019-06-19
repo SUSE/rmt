@@ -46,4 +46,3 @@ services:
       service: base
       file: docker-compose-base.yml
     command: /bin/bash -c 'bundle.ruby2.5 exec rails db:migrate'
-    
