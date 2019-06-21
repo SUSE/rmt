@@ -20,8 +20,7 @@ services:
       - SECRET_KEY_BASE=8ea53ad3bc6c03923e376c8bdd85059c1885524947a7efe53d5e9c9d4e39861106ffd6a2ece82b803072ed701e6c960bade91644979e679416c5f255007237ae
       - SCC_USERNAME=${SCC_USERNAME}
       - SCC_PASSWORD=${SCC_PASSWORD}
-    volumes:
-      - ./public:/srv/www/repo/public/
+      - SYSTEM_UUID=${SYSTEM_UUID}
     depends_on:
       - db
     extends:
@@ -32,7 +31,7 @@ services:
   nginx:
     image: nginx
     volumes:
-      - ./public:/var/www/
+      - /var/www/public
       - ./nginx/default.conf:/tmp/default.template
     ports:
       - "${EXTERNAL_PORT}:80"

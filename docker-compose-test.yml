@@ -9,7 +9,7 @@ networks:
       com.docker.network.driver.mtu: 1350
 
 services:
-  db:
+  db_test:
     image: mariadb:10.2
     restart: always
     volumes:
@@ -23,6 +23,7 @@ services:
     volumes:
       - /space/oscbuild:/oscbuild:cached
       - ./:/tmp/workdir:ro
+      - /tmp/workdir/public/repo
     build:
       context: .
       dockerfile: integration/Dockerfile.test
