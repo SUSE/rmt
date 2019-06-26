@@ -1,4 +1,10 @@
 # Configure fast_gettext for i18n.
+require 'fast_gettext'
+
+# rubocop:disable Style/MixinUsage
+include FastGettext::Translation
+# rubocop:enable Style/MixinUsage
+
 rmt_path = File.expand_path('../../', __dir__)
 FastGettext.add_text_domain('rmt', path: File.join(rmt_path, 'locale'), type: :po, ignore_fuzzy: true, report_warning: false)
 FastGettext.default_locale = :en

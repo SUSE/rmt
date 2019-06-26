@@ -12,18 +12,11 @@ require 'active_record'
 require 'erb'
 require 'yaml'
 require 'rmt/config'
-require 'fast_gettext'
 require 'initializers/rmt_fast_gettext'
+require 'initializers/rmt_fast_gettext_cli_locale'
 
 relative_load_paths = %w[lib lib/rmt app/models app/services].map { |dir| File.join(rmt_path, dir) }
 ActiveSupport::Dependencies.autoload_paths += relative_load_paths
-
-# rubocop:disable Style/MixinUsage
-include FastGettext::Translation
-# rubocop:enable Style/MixinUsage
-
-locale = (ENV['LANG'] || ENV['LC_CTYPE']).to_s.match(/^([a-z]{2,}(_[A-Z]{2,})?)/).to_a[1] || :en
-FastGettext.set_locale(locale.to_sym)
 
 if RMT::CLI::Base.process_user_name == 'root'
   # set group and then user, otherwise user cannot change group
