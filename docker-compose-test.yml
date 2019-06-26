@@ -22,6 +22,7 @@ services:
     privileged: true
     volumes:
       - /space/oscbuild:/oscbuild:cached
+      - ./:/tmp/workdir:ro
     build:
       context: .
       dockerfile: integration/Dockerfile.test

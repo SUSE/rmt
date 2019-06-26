@@ -1,4 +1,10 @@
 #!/bin/sh -xe
+
+# update project
+rm -r /tmp/rmt-server/*
+cp -r /tmp/workdir/* /tmp/rmt-server
+chown -R scc /tmp/rmt-server
+
 make dist
 mkdir ~/obs
 cd ~/obs
