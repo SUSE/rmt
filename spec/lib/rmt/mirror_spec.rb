@@ -51,6 +51,10 @@ RSpec.describe RMT::Mirror do
       FileUtils.remove_entry(@tmp_dir)
     end
 
+    before do
+      allow_any_instance_of(RMT::Gpg).to receive(:verify_signature)
+    end
+
     context 'without auth_token', vcr: { cassette_name: 'mirroring' } do
       let(:rmt_mirror) do
         described_class.new(

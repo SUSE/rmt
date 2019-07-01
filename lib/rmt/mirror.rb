@@ -1,5 +1,6 @@
 require 'rmt/downloader'
 require 'rmt/rpm'
+require 'rmt/gpg'
 require 'time'
 
 class RMT::Mirror
@@ -84,8 +85,13 @@ class RMT::Mirror
     local_filename = @downloader.download('repodata/repomd.xml')
 
     begin
-      @downloader.download('repodata/repomd.xml.key')
-      @downloader.download('repodata/repomd.xml.asc')
+      key_file       = @downloader.download('repodata/repomd.xml.key')
+      signature_file = @downloader.download('repodata/repomd.xml.asc')
+
+      RMT::Gpg.new(
+        metadata_file: local_filename, key_file: key_file,
+        signature_file: signature_file, logger: @logger
+      ).verify_signature
     rescue RMT::Downloader::Exception
       @logger.info(_('Repository metadata signatures are missing'))
     end
