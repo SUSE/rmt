@@ -18,7 +18,7 @@ describe RMT::Gpg do
   describe '#verify' do
     context 'when the signature is valid' do
       it 'returns true' do
-        expect_any_instance_of(Tempfile).to receive(:unlink).and_call_original
+        expect(FileUtils).to receive(:rm_rf).with(/rmt-mirror-gpg/).and_call_original
         expect(verifier.verify_signature).to eq(true)
       end
     end
@@ -27,7 +27,7 @@ describe RMT::Gpg do
       let(:key_file) { File.join(file_fixture('gpg'), 'bad.xml.key') }
 
       it 'raises an exception' do
-        expect_any_instance_of(Tempfile).to receive(:unlink).and_call_original
+        expect(FileUtils).to receive(:rm_rf).with(/rmt-mirror-gpg/).and_call_original
         expect { verifier.verify_signature }.to raise_error(RMT::Gpg::Exception, 'GPG key import failed')
       end
     end
@@ -36,7 +36,7 @@ describe RMT::Gpg do
       let(:signature_file) { File.join(file_fixture('gpg'), 'bad.xml.asc') }
 
       it 'raises an exception' do
-        expect_any_instance_of(Tempfile).to receive(:unlink).and_call_original
+        expect(FileUtils).to receive(:rm_rf).with(/rmt-mirror-gpg/).and_call_original
         expect { verifier.verify_signature }.to raise_error(RMT::Gpg::Exception, 'GPG signature verification failed')
       end
     end

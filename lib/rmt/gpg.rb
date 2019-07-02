@@ -1,4 +1,6 @@
 require 'English'
+require 'fileutils'
+require 'tmpdir'
 
 class RMT::Gpg
   class RMT::Gpg::Exception < RuntimeError
@@ -12,21 +14,21 @@ class RMT::Gpg
   end
 
   def verify_signature
-    @keyring = Tempfile.new('rmt-mirror-keyring')
-    @keyring.close
+    @tmpdir = Dir.mktmpdir('rmt-mirror-gpg')
+    @keyring = File.join(@tmpdir, 'keyring')
 
     run_import_key
     run_verify_signature
 
     true
   ensure
-    @keyring.unlink
+    FileUtils.rm_rf(@tmpdir)
   end
 
   protected
 
   def run_import_key
-    cmd = "gpg --no-default-keyring --keyring #{@keyring.path} --import #{@key_file} 2>&1"
+    cmd = "gpg --homedir #{@tmpdir} --no-default-keyring --keyring #{@keyring} --import #{@key_file} 2>&1"
     out = `#{cmd}`
 
     if $CHILD_STATUS.exitstatus != 0
@@ -37,7 +39,7 @@ class RMT::Gpg
   end
 
   def run_verify_signature
-    cmd = "gpg --no-default-keyring --keyring #{@keyring.path} --verify #{@signature_file} #{@metadata_file} 2>&1"
+    cmd = "gpg --homedir #{@tmpdir} --no-default-keyring --keyring #{@keyring} --verify #{@signature_file} #{@metadata_file} 2>&1"
     out = `#{cmd}`
 
     if $CHILD_STATUS.exitstatus != 0
