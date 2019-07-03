@@ -272,12 +272,20 @@ RSpec.describe RMT::Mirror do
 
       context "when can't download data", vcr: { cassette_name: 'mirroring_product' } do
         it 'handles RMT::Downloader::Exception' do
-          expect_any_instance_of(RMT::Downloader).to receive(:download_multi).and_raise(RMT::Downloader::Exception, "418 - I'm a teapot")
+          allow_any_instance_of(RMT::Downloader).to receive(:download_multi).and_wrap_original do |klass, *args|
+            # raise the exception only for the RPMs
+            raise(RMT::Downloader::Exception, "418 - I'm a teapot") if args[0][0].location =~ /rpm$/
+            klass.call(*args)
+          end
           expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, "Error while mirroring data: 418 - I'm a teapot")
         end
 
         it 'handles RMT::ChecksumVerifier::Exception' do
-          expect_any_instance_of(RMT::Downloader).to receive(:download_multi).and_raise(RMT::ChecksumVerifier::Exception, "Checksum doesn't match")
+          allow_any_instance_of(RMT::Downloader).to receive(:download_multi).and_wrap_original do |klass, *args|
+            # raise the exception only for the RPMs
+            raise(RMT::ChecksumVerifier::Exception, "Checksum doesn't match") if args[0][0].location =~ /rpm$/
+            klass.call(*args)
+          end
           expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, "Error while mirroring data: Checksum doesn't match")
         end
       end
