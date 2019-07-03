@@ -40,5 +40,14 @@ describe RMT::Gpg do
         expect { verifier.verify_signature }.to raise_error(RMT::Gpg::Exception, 'GPG signature verification failed')
       end
     end
+
+    context 'when asc file is missing' do
+      let(:signature_file) { File.join(file_fixture('gpg'), 'non-existent.xml.asc') }
+
+      it 'raises an exception' do
+        expect(FileUtils).to receive(:rm_rf).with(/rmt-mirror-gpg/).and_call_original
+        expect { verifier.verify_signature }.to raise_error(RMT::Gpg::Exception, 'GPG signature verification failed')
+      end
+    end
   end
 end

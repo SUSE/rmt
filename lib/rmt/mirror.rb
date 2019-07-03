@@ -89,12 +89,13 @@ class RMT::Mirror
       signature_file = @downloader.download('repodata/repomd.xml.asc')
 
       RMT::Gpg.new(
-        metadata_file: local_filename, key_file: key_file,
-        signature_file: signature_file, logger: @logger
+        metadata_file: local_filename, key_file: key_file, signature_file: signature_file, logger: @logger
       ).verify_signature
     rescue RMT::Downloader::Exception
       @logger.info(_('Repository metadata signatures are missing'))
     end
+
+    raise 'Incomplete GPG signature' if (key_file && !signature_file)
 
     primary_files = []
     deltainfo_files = []

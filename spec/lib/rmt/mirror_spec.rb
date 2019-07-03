@@ -515,4 +515,46 @@ RSpec.describe RMT::Mirror do
       end
     end
   end
+
+  context 'when GPG signature is incomplete', vcr: { cassette_name: 'mirroring_with_auth_token' } do
+    let(:rmt_mirror) do
+      described_class.new(
+        mirroring_base_dir: @tmp_dir,
+        logger: logger,
+        mirror_src: false
+      )
+    end
+
+    let(:mirror_params) do
+      {
+        repository_url: 'http://localhost/dummy_repo/',
+        local_path: '/dummy_repo',
+        auth_token: 'repo_auth_token'
+      }
+    end
+
+    around do |example|
+      @tmp_dir = Dir.mktmpdir('rmt')
+      example.run
+      FileUtils.remove_entry(@tmp_dir)
+    end
+
+    it 'raises RMT::Mirror::Exception' do
+      expect(logger).to receive(:info).with(/Mirroring repository/).once
+      expect(logger).to receive(:info).with('Repository metadata signatures are missing').once
+      expect(logger).to receive(:info).with(/↓/).at_least(1).times
+
+      allow_any_instance_of(RMT::Downloader).to receive(:download).and_wrap_original do |klass, *args|
+        if args[0] == 'repodata/repomd.xml.key'
+          '/foo/repomd.xml.key'
+        elsif args[0] == 'repodata/repomd.xml.asc'
+          raise RMT::Downloader::Exception.new('404')
+        else
+          klass.call(*args)
+        end
+      end
+
+      expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring metadata: Incomplete GPG signature')
+    end
+  end
 end
