@@ -134,11 +134,8 @@ class RMT::Mirror
       return
     end
 
-    File.open(directory_yast).each_line do |filename|
-      filename.strip!
-      next if filename == 'directory.yast'
-      @downloader.download(filename)
-    end
+    license_files = File.readlines(directory_yast).map(&:strip).reject { |item| item == 'directory.yast' }
+    @downloader.download_multi(license_files)
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring license: %{error}') % { error: e.message })
   end

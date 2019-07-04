@@ -244,8 +244,8 @@ RSpec.describe RMT::Mirror do
 
       context "when can't download some of the license files" do
         before do
-          allow_any_instance_of(RMT::Downloader).to receive(:download).and_wrap_original do |klass, *args|
-            raise RMT::Downloader::Exception.new unless args[0] == 'directory.yast'
+          allow_any_instance_of(RMT::Downloader).to receive(:download_multi).and_wrap_original do |klass, *args|
+            raise RMT::Downloader::Exception.new if args[0][0] =~ /license/
             klass.call(*args)
           end
         end
