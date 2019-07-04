@@ -2,8 +2,8 @@ require 'English'
 require 'fileutils'
 require 'tmpdir'
 
-class RMT::Gpg
-  class RMT::Gpg::Exception < RuntimeError
+class RMT::GPG
+  class RMT::GPG::Exception < RuntimeError
   end
 
   def initialize(metadata_file:, key_file:, signature_file:, logger:)
@@ -34,7 +34,7 @@ class RMT::Gpg
     if $CHILD_STATUS.exitstatus != 0
       @logger.debug "GPG command: #{cmd}"
       @logger.debug "GPG output: #{out}"
-      raise RMT::Gpg::Exception.new(_('GPG key import failed'))
+      raise RMT::GPG::Exception.new(_('GPG key import failed'))
     end
   end
 
@@ -45,7 +45,7 @@ class RMT::Gpg
     if $CHILD_STATUS.exitstatus != 0
       @logger.debug "GPG command: #{cmd}"
       @logger.debug "GPG output: #{out}"
-      raise RMT::Gpg::Exception.new(_('GPG signature verification failed'))
+      raise RMT::GPG::Exception.new(_('GPG signature verification failed'))
     end
   end
 end

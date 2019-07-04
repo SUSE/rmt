@@ -52,7 +52,7 @@ RSpec.describe RMT::Mirror do
     end
 
     before do
-      allow_any_instance_of(RMT::Gpg).to receive(:verify_signature)
+      allow_any_instance_of(RMT::GPG).to receive(:verify_signature)
     end
 
     context 'without auth_token', vcr: { cassette_name: 'mirroring' } do
@@ -539,22 +539,67 @@ RSpec.describe RMT::Mirror do
       FileUtils.remove_entry(@tmp_dir)
     end
 
-    it 'raises RMT::Mirror::Exception' do
-      expect(logger).to receive(:info).with(/Mirroring repository/).once
-      expect(logger).to receive(:info).with('Repository metadata signatures are missing').once
-      expect(logger).to receive(:info).with(/↓/).at_least(1).times
+    context 'when signatures do not exist' do
+      it 'mirrors as normal' do
+        expect(logger).to receive(:info).with(/Mirroring repository/).once
+        expect(logger).to receive(:info).with('Repository metadata signatures are missing').once
+        expect(logger).to receive(:info).with(/↓/).at_least(1).times
 
-      allow_any_instance_of(RMT::Downloader).to receive(:download).and_wrap_original do |klass, *args|
-        if args[0] == 'repodata/repomd.xml.key'
-          '/foo/repomd.xml.key'
-        elsif args[0] == 'repodata/repomd.xml.asc'
-          raise RMT::Downloader::Exception.new('404')
-        else
-          klass.call(*args)
+        allow_any_instance_of(RMT::Downloader).to receive(:download).and_wrap_original do |klass, *args|
+          if args[0] == 'repodata/repomd.xml.key'
+            raise RMT::Downloader::Exception.new('HTTP request failed', 404)
+          else
+            klass.call(*args)
+          end
         end
-      end
 
-      expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring metadata: Incomplete GPG signature')
+        rmt_mirror.mirror(mirror_params)
+      end
+    end
+
+    context 'when one of the signature files is missing' do
+      it 'raises RMT::Mirror::Exception' do
+        expect(logger).to receive(:info).with(/Mirroring repository/).once
+        expect(logger).to receive(:info).with(/Repository metadata signatures are missing/).once
+        expect(logger).to receive(:info).with(/↓/).at_least(1).times
+
+        allow_any_instance_of(RMT::Downloader).to receive(:download).and_wrap_original do |klass, *args|
+          if args[0] == 'repodata/repomd.xml.key'
+            '/foo/repomd.xml.key'
+          elsif args[0] == 'repodata/repomd.xml.asc'
+            raise RMT::Downloader::Exception.new('HTTP request failed', 404)
+          else
+            klass.call(*args)
+          end
+        end
+
+        expect { rmt_mirror.mirror(mirror_params) }.to raise_error(
+          RMT::Mirror::Exception,
+          'Error while mirroring metadata: The repository has an incomplete metadata signature'
+        )
+      end
+    end
+
+    context 'when files fail to download with errors other than 404' do
+      it 'raises RMT::Mirror::Exception' do
+        expect(logger).to receive(:info).with(/Mirroring repository/).once
+        expect(logger).to receive(:info).with(/↓/).at_least(1).times
+
+        allow_any_instance_of(RMT::Downloader).to receive(:download).and_wrap_original do |klass, *args|
+          if args[0] == 'repodata/repomd.xml.key'
+            '/foo/repomd.xml.key'
+          elsif args[0] == 'repodata/repomd.xml.asc'
+            raise RMT::Downloader::Exception.new('HTTP request failed', 502)
+          else
+            klass.call(*args)
+          end
+        end
+
+        expect { rmt_mirror.mirror(mirror_params) }.to raise_error(
+          RMT::Mirror::Exception,
+           'Error while mirroring metadata: Failed to get repository metadata signatures with HTTP code 502'
+        )
+      end
     end
   end
 end

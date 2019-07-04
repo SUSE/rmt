@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe RMT::Gpg do
+describe RMT::GPG do
   let(:metadata_file) { File.join(file_fixture('gpg'), 'dummy.xml') }
   let(:key_file) { File.join(file_fixture('gpg'), 'good.xml.key') }
   let(:signature_file) { File.join(file_fixture('gpg'), 'good.xml.asc') }
@@ -28,7 +28,7 @@ describe RMT::Gpg do
 
       it 'raises an exception' do
         expect(FileUtils).to receive(:rm_rf).with(/rmt-mirror-gpg/).and_call_original
-        expect { verifier.verify_signature }.to raise_error(RMT::Gpg::Exception, 'GPG key import failed')
+        expect { verifier.verify_signature }.to raise_error(RMT::GPG::Exception, 'GPG key import failed')
       end
     end
 
@@ -37,7 +37,7 @@ describe RMT::Gpg do
 
       it 'raises an exception' do
         expect(FileUtils).to receive(:rm_rf).with(/rmt-mirror-gpg/).and_call_original
-        expect { verifier.verify_signature }.to raise_error(RMT::Gpg::Exception, 'GPG signature verification failed')
+        expect { verifier.verify_signature }.to raise_error(RMT::GPG::Exception, 'GPG signature verification failed')
       end
     end
 
@@ -46,7 +46,7 @@ describe RMT::Gpg do
 
       it 'raises an exception' do
         expect(FileUtils).to receive(:rm_rf).with(/rmt-mirror-gpg/).and_call_original
-        expect { verifier.verify_signature }.to raise_error(RMT::Gpg::Exception, 'GPG signature verification failed')
+        expect { verifier.verify_signature }.to raise_error(RMT::GPG::Exception, 'GPG signature verification failed')
       end
     end
   end
