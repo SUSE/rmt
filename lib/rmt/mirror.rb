@@ -107,15 +107,14 @@ class RMT::Mirror
     repomd_parser = RMT::Rpm::RepomdXmlParser.new(local_filename)
     repomd_parser.parse
 
+    metadata_files = []
     repomd_parser.referenced_files.each do |reference|
-      @downloader.download(
-        reference.location,
-          checksum_type: reference.checksum_type,
-          checksum_value: reference.checksum
-      )
+      metadata_files << reference
       primary_files << reference.location if (reference.type == :primary)
       deltainfo_files << reference.location if (reference.type == :deltainfo)
     end
+
+    @downloader.download_multi(metadata_files)
 
     [primary_files, deltainfo_files]
   rescue StandardError => e
@@ -155,7 +154,7 @@ class RMT::Mirror
       )
       parser.parse
       to_download = parsed_files_after_dedup(@repository_dir, parser.referenced_files)
-      @downloader.download_multi(to_download) unless to_download.empty?
+      @downloader.download_multi(to_download, ignore_errors: true) unless to_download.empty?
     end
 
     primary_files.each do |filename|
@@ -165,7 +164,7 @@ class RMT::Mirror
       )
       parser.parse
       to_download = parsed_files_after_dedup(@repository_dir, parser.referenced_files)
-      @downloader.download_multi(to_download) unless to_download.empty?
+      @downloader.download_multi(to_download, ignore_errors: true) unless to_download.empty?
     end
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring data: %{error}') % { error: e.message })

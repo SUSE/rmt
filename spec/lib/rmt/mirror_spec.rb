@@ -273,8 +273,8 @@ RSpec.describe RMT::Mirror do
       context "when can't download data", vcr: { cassette_name: 'mirroring_product' } do
         it 'handles RMT::Downloader::Exception' do
           allow_any_instance_of(RMT::Downloader).to receive(:download_multi).and_wrap_original do |klass, *args|
-            # raise the exception only for the RPMs
-            raise(RMT::Downloader::Exception, "418 - I'm a teapot") if args[0][0].location =~ /rpm$/
+            # raise the exception only for the RPMs/DRPMs
+            raise(RMT::Downloader::Exception, "418 - I'm a teapot") if !args[0][0].is_a?(String) && args[0][0].location =~ /rpm$/
             klass.call(*args)
           end
           expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, "Error while mirroring data: 418 - I'm a teapot")
@@ -282,8 +282,8 @@ RSpec.describe RMT::Mirror do
 
         it 'handles RMT::ChecksumVerifier::Exception' do
           allow_any_instance_of(RMT::Downloader).to receive(:download_multi).and_wrap_original do |klass, *args|
-            # raise the exception only for the RPMs
-            raise(RMT::ChecksumVerifier::Exception, "Checksum doesn't match") if args[0][0].location =~ /rpm$/
+            # raise the exception only for the RPMs/DRPMs
+            raise(RMT::ChecksumVerifier::Exception, "Checksum doesn't match") if !args[0][0].is_a?(String) && args[0][0].location =~ /rpm$/
             klass.call(*args)
           end
           expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, "Error while mirroring data: Checksum doesn't match")
@@ -553,8 +553,8 @@ RSpec.describe RMT::Mirror do
         expect(logger).to receive(:info).with('Repository metadata signatures are missing').once
         expect(logger).to receive(:info).with(/↓/).at_least(1).times
 
-        allow_any_instance_of(RMT::Downloader).to receive(:download).and_wrap_original do |klass, *args|
-          if args[0] == 'repodata/repomd.xml.key'
+        allow_any_instance_of(RMT::Downloader).to receive(:finalize_download).and_wrap_original do |klass, *args|
+          if args[1] == 'repodata/repomd.xml.key'
             raise RMT::Downloader::Exception.new('HTTP request failed', 404)
           else
             klass.call(*args)

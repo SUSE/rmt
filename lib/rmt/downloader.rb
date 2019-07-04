@@ -43,12 +43,12 @@ class RMT::Downloader
     local_filenames.first
   end
 
-  def download_multi(files)
+  def download_multi(files, ignore_errors: false)
     @queue = files
     @hydra = Typhoeus::Hydra.new(max_concurrency: @concurrency)
 
     local_filenames = []
-    failed_downloads = []
+    failed_downloads = ignore_errors ? [] : nil
     @concurrency.times { process_queue(local_filenames, failed_downloads) }
 
     @hydra.run
@@ -70,7 +70,7 @@ class RMT::Downloader
     File.mtime(filename).utc.httpdate if File.exist?(filename)
   end
 
-  # Creates a fiber that wraps RMT::FiberRequest and runs it
+  # Creates a fiber that wraps RMT::FiberRequest and runs it, returning the RMT::FiberRequest object.
   # @param [Array] local_filenames array of paths to downloaded files, passed by reference
   # @param [String] remote_file path of the remote file relative to @repository_url
   # @param [String] checksum_type expected remote file checksum type
@@ -88,6 +88,8 @@ class RMT::Downloader
           cache_timestamp = get_cache_timestamp(cache_filename)
         end
 
+        # make_request will call Fiber.yield on this fiber (request_fiber), returning the request object
+        # this fiber will be resumed by on_body callback once the request is executed
         response = make_request(remote_file, request_fiber, cache_timestamp)
 
         if (response.code == 304)
@@ -114,15 +116,19 @@ class RMT::Downloader
     queue_item = @queue.shift
     return unless queue_item
 
-    @hydra.queue(
-      create_fiber_request(
-        local_filenames,
-        queue_item.location,
-        checksum_type: queue_item.checksum_type,
-        checksum_value: queue_item.checksum,
-        failed_downloads: failed_downloads
+    if queue_item.is_a?(String)
+      @hydra.queue(create_fiber_request(local_filenames, queue_item, failed_downloads: failed_downloads))
+    else
+      @hydra.queue(
+        create_fiber_request(
+          local_filenames,
+          queue_item.location,
+          checksum_type: queue_item.checksum_type,
+          checksum_value: queue_item.checksum,
+          failed_downloads: failed_downloads
+        )
       )
-    )
+    end
   end
 
   def make_request(remote_file, request_fiber, cache_timestamp = nil)
