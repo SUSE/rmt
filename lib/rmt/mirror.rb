@@ -34,6 +34,7 @@ class RMT::Mirror
     @repository_dir = File.join(base_dir, '/suma/')
     @downloader.repository_url = URI.join(repository_url)
     @downloader.destination_dir = @repository_dir
+    @downloader.cache_dir = @repository_dir
 
     @logger.info _('Mirroring SUSE Manager product tree to %{dir}') % { dir: @repository_dir }
     @downloader.download('product_tree.json')
