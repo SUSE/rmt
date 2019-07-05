@@ -52,7 +52,7 @@ class RMT::Downloader
     @concurrency.times { process_queue(local_filenames, failed_downloads) }
 
     @hydra.run
-    local_filenames
+    failed_downloads
   end
 
   def self.make_local_path(root_path, remote_file)
@@ -99,7 +99,7 @@ class RMT::Downloader
         end
 
         local_filenames << local_filename
-      rescue RMT::Downloader::Exception => e
+      rescue RMT::Downloader::Exception, RMT::ChecksumVerifier::Exception => e
         raise(e) unless failed_downloads
 
         @logger.warn("× #{File.basename(local_filename)} - #{e}")

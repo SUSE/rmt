@@ -145,6 +145,7 @@ class RMT::Mirror
     @downloader.destination_dir = @repository_dir
     @downloader.cache_dir = nil
 
+    failed_downloads = []
     deltainfo_files.each do |filename|
       parser = RMT::Rpm::DeltainfoXmlParser.new(
         File.join(@temp_metadata_dir, filename),
@@ -152,7 +153,7 @@ class RMT::Mirror
       )
       parser.parse
       to_download = parsed_files_after_dedup(@repository_dir, parser.referenced_files)
-      @downloader.download_multi(to_download, ignore_errors: true) unless to_download.empty?
+      failed_downloads.concat(@downloader.download_multi(to_download, ignore_errors: true)) unless to_download.empty?
     end
 
     primary_files.each do |filename|
@@ -162,8 +163,10 @@ class RMT::Mirror
       )
       parser.parse
       to_download = parsed_files_after_dedup(@repository_dir, parser.referenced_files)
-      @downloader.download_multi(to_download, ignore_errors: true) unless to_download.empty?
+      failed_downloads.concat(@downloader.download_multi(to_download, ignore_errors: true)) unless to_download.empty?
     end
+
+    raise _('Failed to download %{failed_count} files') % { failed_count: failed_downloads.size } unless failed_downloads.empty?
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring data: %{error}') % { error: e.message })
   end
