@@ -25,7 +25,7 @@
 %define ruby_version %{rb_default_ruby_suffix}
 
 Name:           rmt-server
-Version:        2.2.1
+Version:        2.3.0
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -48,6 +48,7 @@ BuildRequires:  %{rubygem bundler}
 BuildRequires:  systemd
 Requires:       mariadb
 Requires:       nginx
+Requires:       gpg2
 Requires(post): %{ruby_version}
 Requires(post): %{rubygem bundler}
 Requires(post): shadow
