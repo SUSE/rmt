@@ -244,8 +244,8 @@ RSpec.describe RMT::Mirror do
 
       context "when can't download some of the license files" do
         before do
-          allow_any_instance_of(RMT::Downloader).to receive(:download).and_wrap_original do |klass, *args|
-            raise RMT::Downloader::Exception.new unless args[0] == 'directory.yast'
+          allow_any_instance_of(RMT::Downloader).to receive(:download_multi).and_wrap_original do |klass, *args|
+            raise RMT::Downloader::Exception.new if args[0][0] =~ /license/
             klass.call(*args)
           end
         end
@@ -272,13 +272,21 @@ RSpec.describe RMT::Mirror do
 
       context "when can't download data", vcr: { cassette_name: 'mirroring_product' } do
         it 'handles RMT::Downloader::Exception' do
-          expect_any_instance_of(RMT::Downloader).to receive(:download_multi).and_raise(RMT::Downloader::Exception, "418 - I'm a teapot")
-          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, "Error while mirroring data: 418 - I'm a teapot")
+          allow_any_instance_of(RMT::Downloader).to receive(:finalize_download).and_wrap_original do |klass, *args|
+            # raise the exception only for the RPMs/DRPMs
+            raise(RMT::Downloader::Exception, "418 - I'm a teapot") if args[1] =~ /rpm$/
+            klass.call(*args)
+          end
+          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
         end
 
         it 'handles RMT::ChecksumVerifier::Exception' do
-          expect_any_instance_of(RMT::Downloader).to receive(:download_multi).and_raise(RMT::ChecksumVerifier::Exception, "Checksum doesn't match")
-          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, "Error while mirroring data: Checksum doesn't match")
+          allow_any_instance_of(RMT::Downloader).to receive(:finalize_download).and_wrap_original do |klass, *args|
+            # raise the exception only for the RPMs/DRPMs
+            raise(RMT::ChecksumVerifier::Exception, "Checksum doesn't match") if args[1] =~ /rpm$/
+            klass.call(*args)
+          end
+          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
         end
       end
     end
@@ -545,8 +553,8 @@ RSpec.describe RMT::Mirror do
         expect(logger).to receive(:info).with('Repository metadata signatures are missing').once
         expect(logger).to receive(:info).with(/↓/).at_least(1).times
 
-        allow_any_instance_of(RMT::Downloader).to receive(:download).and_wrap_original do |klass, *args|
-          if args[0] == 'repodata/repomd.xml.key'
+        allow_any_instance_of(RMT::Downloader).to receive(:finalize_download).and_wrap_original do |klass, *args|
+          if args[1] == 'repodata/repomd.xml.key'
             raise RMT::Downloader::Exception.new('HTTP request failed', 404)
           else
             klass.call(*args)

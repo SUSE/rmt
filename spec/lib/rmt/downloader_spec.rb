@@ -227,7 +227,7 @@ RSpec.describe RMT::Downloader do
         stub_request(:get, "http://example.com/#{file}").with(headers: headers)
           .to_return(status: 404, body: file, headers: {})
       end
-      downloader.download_multi(queue)
+      downloader.download_multi(queue, ignore_errors: true)
     end
 
     it 'requested all files' do

@@ -19,6 +19,7 @@ class RMT::HttpRequest < Typhoeus::Request
     # Abort download if speed is below 512 bytes/sec for 120 sec, to prevent downloads from getting stuck
     options[:low_speed_limit] = 512
     options[:low_speed_time] = 120
+    options[:accept_encoding] = 'gzip'
   end
 
 end
