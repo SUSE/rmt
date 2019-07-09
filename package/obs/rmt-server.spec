@@ -25,7 +25,7 @@
 %define ruby_version %{rb_default_ruby_suffix}
 
 Name:           rmt-server
-Version:        2.2.1
+Version:        2.3.0
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -48,6 +48,8 @@ BuildRequires:  %{rubygem bundler}
 BuildRequires:  systemd
 Requires:       mariadb
 Requires:       nginx
+Requires:       gpg2
+Requires:       rmt-server-configuration
 Requires(post): %{ruby_version}
 Requires(post): %{rubygem bundler}
 Requires(post): shadow
@@ -55,6 +57,7 @@ Requires(post): timezone
 Requires(post): util-linux
 Conflicts:      yast2-rmt < 1.0.3
 Recommends:     yast2-rmt >= 1.0.3
+Recommends:     rmt-server-config
 # Does not build for i586 and s390 and is not supported on those architectures
 ExcludeArch:    %{ix86} s390
 
@@ -71,10 +74,22 @@ subscription information, and to mirror SUSE repositories.
 
 RMT supersedes the main functionality of SMT in SLES 15.
 
+%package config
+Summary:        RMT default configuration
+Group:          Productivity/Networking/Web/Proxy
+Requires:       rmt-server = %version
+Provides:       rmt-server-configuration
+Conflicts:      rmt-server-configuration
+
+%description config
+Summary:        Default nginx configuration for RMT.
+
 %package pubcloud
 Summary:        RMT pubcloud extensions
 Group:          Productivity/Networking/Web/Proxy
 Requires:       rmt-server = %version
+Provides:       rmt-server-configuration
+Conflicts:      rmt-server-configuration
 
 %description pubcloud
 This package extends the basic RMT functionality with capabilities
@@ -138,8 +153,11 @@ mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 # nginx
 install -D -m 644 package/files/nginx/nginx-http.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
 install -D -m 644 package/files/nginx/nginx-https.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
-install -D -m 644 package/files/nginx/auth-handler.conf %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
-install -D -m 644 package/files/nginx/auth-location.conf %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
+
+install -D -m 644 package/files/nginx-pubcloud/nginx-http.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-pubcloud-http.conf
+install -D -m 644 package/files/nginx-pubcloud/nginx-https.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-pubcloud-https.conf
+install -D -m 644 package/files/nginx-pubcloud/auth-handler.conf %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
+install -D -m 644 package/files/nginx-pubcloud/auth-location.conf %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
 
 sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"' \
     -e 's/^BUNDLE_JOBS: .*/BUNDLE_JOBS: "1"/' \
@@ -196,8 +214,6 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %dir /var/lib/rmt
 %dir %{_sysconfdir}/slp.reg.d
 %config(noreplace) %attr(0640, %{rmt_user},root) %{_sysconfdir}/rmt.conf
-%config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
-%config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
 %config(noreplace) %{_sysconfdir}/slp.reg.d/rmt-server.reg
 %{_mandir}/man8/rmt-cli.8%{?ext_man}
 %{_bindir}/rmt-cli
@@ -220,12 +236,18 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %{_libdir}/rmt
 %{_libexecdir}/supportconfig/plugins/rmt
 
+%files config
+%config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
+%config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
+
 %files pubcloud
 %{_bindir}/rmt-test-regsharing
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}/engines/
 %dir %{_sysconfdir}/nginx/rmt-auth.d/
 %dir %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}/regsharing
 %exclude %{app_dir}/engines/registration_sharing/package/
+%config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-pubcloud-http.conf
+%config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-pubcloud-https.conf
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
 

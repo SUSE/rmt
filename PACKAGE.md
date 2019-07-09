@@ -43,6 +43,8 @@ Note: Never push changes to the internal build service `ibs://Devel:SCC:RMT`!
 
 To get a maintenance request accepted, each changelog entry needs to have at
 least one reference to a bug or feature request like `bsc#123` or `fate#123`.
+CVEs must be accompanied with the corresponding bsc#, even if it is not reported
+vs rmt-server.
 
 Note: If you want to disable automatic changes made by osc (e.g. License string)
       use the `--no-cleanup` switch. Can be used with commands like `osc mr`, `osc sr`
