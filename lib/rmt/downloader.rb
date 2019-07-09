@@ -8,8 +8,14 @@ require 'rmt/fiber_request'
 require 'rmt/deduplicator'
 
 class RMT::Downloader
-  class Exception < RuntimeError; end
-  class NotModifiedException < RuntimeError; end
+  class Exception < RuntimeError
+    attr_reader :http_code
+
+    def initialize(message, http_code = nil)
+      @http_code = http_code
+      super(message)
+    end
+  end
 
   attr_accessor :repository_url, :destination_dir, :concurrency, :logger, :auth_token, :cache_dir
 
@@ -127,7 +133,10 @@ class RMT::Downloader
 
   def finalize_download(request, local_file, checksum_type = nil, checksum_value = nil)
     if (URI(request.base_url).scheme != 'file' && request.response.code != 200)
-      raise RMT::Downloader::Exception.new(_('%{file} - HTTP request failed with code %{code}') % { file: request.remote_file, code: request.response.code })
+      raise RMT::Downloader::Exception.new(
+        _('%{file} - HTTP request failed with code %{code}') % { file: request.remote_file, code: request.response.code },
+        request.response.code
+      )
     end
 
     RMT::ChecksumVerifier.verify_checksum(checksum_type, checksum_value, request.download_path) if (checksum_type && checksum_value)

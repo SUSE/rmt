@@ -126,7 +126,7 @@ GEM
     ffaker (2.11.0)
     ffi (1.9.25)
     formatador (0.2.5)
-    fuubar (2.4.0)
+    fuubar (2.4.1)
       rspec-core (~> 3.0)
       ruby-progressbar (~> 1.4)
     gettext (3.2.9)
@@ -217,9 +217,9 @@ GEM
     rb-inotify (0.10.0)
       ffi (~> 1.0)
     rdiscount (2.2.0.1)
-    responders (2.4.1)
-      actionpack (>= 4.2.0, < 6.0)
-      railties (>= 4.2.0, < 6.0)
+    responders (3.0.0)
+      actionpack (>= 5.0)
+      railties (>= 5.0)
     ronn (0.7.3)
       hpricot (>= 0.8.2)
       mustache (>= 0.7.0)
@@ -310,7 +310,7 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
-    yard (0.9.19)
+    yard (0.9.20)
 
 PLATFORMS
   ruby
@@ -366,4 +366,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   1.16.2
+   1.17.3

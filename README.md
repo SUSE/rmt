@@ -22,7 +22,7 @@ End-user documentation can be found in [RMT Guide](https://www.suse.com/document
 
 ## Manual installation and configuration
 
-RMT currently gets built for these distributions: `SLE_15`, `SLE_12_SP2`, `SLE_12_SP3`, `openSUSE_Leap_42.2`, `openSUSE_Leap_42.3`, `openSUSE_Tumbleweed`.
+RMT currently gets built for these distributions: `SLE_15`, `SLE_15_SP1`, `openSUSE_Leap_15.0`, `openSUSE_Leap_15.1`, `openSUSE_Tumbleweed`.
 To add the repository, call: (replace `<dist>` with your distribution)
 
 `zypper ar -f https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/<dist>/systemsmanagement:SCC:RMT.repo`
