@@ -34,6 +34,7 @@ class RMT::Mirror
     @repository_dir = File.join(base_dir, '/suma/')
     @downloader.repository_url = URI.join(repository_url)
     @downloader.destination_dir = @repository_dir
+    @downloader.cache_dir = @repository_dir
 
     @logger.info _('Mirroring SUSE Manager product tree to %{dir}') % { dir: @repository_dir }
     @downloader.download('product_tree.json')
@@ -107,15 +108,14 @@ class RMT::Mirror
     repomd_parser = RMT::Rpm::RepomdXmlParser.new(local_filename)
     repomd_parser.parse
 
+    metadata_files = []
     repomd_parser.referenced_files.each do |reference|
-      @downloader.download(
-        reference.location,
-          checksum_type: reference.checksum_type,
-          checksum_value: reference.checksum
-      )
+      metadata_files << reference
       primary_files << reference.location if (reference.type == :primary)
       deltainfo_files << reference.location if (reference.type == :deltainfo)
     end
+
+    @downloader.download_multi(metadata_files)
 
     [primary_files, deltainfo_files]
   rescue StandardError => e
@@ -134,11 +134,8 @@ class RMT::Mirror
       return
     end
 
-    File.open(directory_yast).each_line do |filename|
-      filename.strip!
-      next if filename == 'directory.yast'
-      @downloader.download(filename)
-    end
+    license_files = File.readlines(directory_yast).map(&:strip).reject { |item| item == 'directory.yast' }
+    @downloader.download_multi(license_files)
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring license: %{error}') % { error: e.message })
   end
@@ -148,6 +145,7 @@ class RMT::Mirror
     @downloader.destination_dir = @repository_dir
     @downloader.cache_dir = nil
 
+    failed_downloads = []
     deltainfo_files.each do |filename|
       parser = RMT::Rpm::DeltainfoXmlParser.new(
         File.join(@temp_metadata_dir, filename),
@@ -155,7 +153,7 @@ class RMT::Mirror
       )
       parser.parse
       to_download = parsed_files_after_dedup(@repository_dir, parser.referenced_files)
-      @downloader.download_multi(to_download) unless to_download.empty?
+      failed_downloads.concat(@downloader.download_multi(to_download, ignore_errors: true)) unless to_download.empty?
     end
 
     primary_files.each do |filename|
@@ -165,8 +163,10 @@ class RMT::Mirror
       )
       parser.parse
       to_download = parsed_files_after_dedup(@repository_dir, parser.referenced_files)
-      @downloader.download_multi(to_download) unless to_download.empty?
+      failed_downloads.concat(@downloader.download_multi(to_download, ignore_errors: true)) unless to_download.empty?
     end
+
+    raise _('Failed to download %{failed_count} files') % { failed_count: failed_downloads.size } unless failed_downloads.empty?
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring data: %{error}') % { error: e.message })
   end
