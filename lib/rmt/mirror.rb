@@ -119,7 +119,11 @@ class RMT::Mirror
 
     [primary_files, deltainfo_files]
   rescue StandardError => e
-    raise RMT::Mirror::Exception.new(_('Error while mirroring metadata: %{error}') % { error: e.message })
+    if e.message.include?('Undefined namespace prefix')
+      raise RMT::Mirror::Exception.new(_('Error while mirroring metadata: %{error}. XML file: %{xml}') % { error: e.message, xml: File.read(local_filename) })
+    else
+      raise RMT::Mirror::Exception.new(_('Error while mirroring metadata: %{error}') % { error: e.message })
+    end
   end
 
   def mirror_license
