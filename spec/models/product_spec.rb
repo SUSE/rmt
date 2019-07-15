@@ -128,6 +128,17 @@ RSpec.describe Product, type: :model do
     end
   end
 
+  describe '#friendly_name' do
+    subject { create(:product, product_attrs).friendly_name }
+
+    let(:product_attrs) { { name: 'Dummy Product', friendly_version: '99', release_type: 'Bar', arch: 'x86_64', release_stage: 'bazinga!' } }
+
+    it {
+      is_expected.to eq 'Dummy Product 99 Bar x86_64'
+      is_expected.not_to include 'bazinga!'
+    }
+  end
+
   describe '.modules_for_migration' do
     subject { described_class.modules_for_migration([root_product]) }
 
