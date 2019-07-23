@@ -208,39 +208,78 @@ RSpec.describe RMT::Downloader do
     end
   end
 
-  describe '#download_multi handles exceptions properly' do
-    let(:files) { %w[package1 package2 package3] }
-    let(:checksum_type) { 'SHA256' }
-    let(:queue) do
-      files.map do |file|
-        RMT::Rpm::FileEntry.new(
-          file,
-          checksum_type,
-          Digest.const_get(checksum_type).hexdigest(file),
-          :rpm
-        )
+  describe '#download_multi' do
+    context 'when download exceptions occur when ignore_errors is true' do
+      let(:files) { %w[package1 package2 package3] }
+      let(:checksum_type) { 'SHA256' }
+      let(:queue) do
+        files.map do |file|
+          RMT::Rpm::FileEntry.new(
+            file,
+            checksum_type,
+            Digest.const_get(checksum_type).hexdigest(file),
+            :rpm
+          )
+        end
+      end
+
+      before do
+        files.each do |file|
+          stub_request(:get, "http://example.com/#{file}").with(headers: headers)
+            .to_return(status: 404, body: file, headers: {})
+        end
+        downloader.download_multi(queue, ignore_errors: true)
+      end
+
+      it 'requested all files' do
+        files.each do |file|
+          expect(WebMock).to(
+            have_requested(:get, "http://example.com/#{file}").with(headers: headers)
+          )
+        end
+      end
+
+      it 'but no files were actually saved' do
+        files.each do |file|
+          expect(File.exist?(File.join(dir, file))).to eq(false)
+        end
       end
     end
 
-    before do
-      files.each do |file|
-        stub_request(:get, "http://example.com/#{file}").with(headers: headers)
-          .to_return(status: 404, body: file, headers: {})
-      end
-      downloader.download_multi(queue, ignore_errors: true)
-    end
+    describe 'when download exceptions occur when ignore_errors is false' do
+      let(:files) { %w[package1 package2 package3] }
+      let(:checksum_type) { 'SHA256' }
 
-    it 'requested all files' do
-      files.each do |file|
-        expect(WebMock).to(
-          have_requested(:get, "http://example.com/#{file}").with(headers: headers)
-        )
+      before do
+        files.each do |file|
+          stub_request(:get, "http://example.com/#{file}").with(headers: headers)
+            .to_return(
+              status: 404,
+              body: lambda do |_|
+                # This is a hack to inject something into the queue
+                # It seems like WebMock doesn't populate it the same way as it normally would be populated.
+                downloader.instance_variable_get(:@hydra).multi.easy_handles << Ethon::Easy.new(url: 'www.example.com')
+                'dummy'
+              end,
+              headers: {}
+            )
+        end
       end
-    end
 
-    it 'but no files were actually saved' do
-      files.each do |file|
-        expect(File.exist?(File.join(dir, file))).to eq(false)
+      it 'raises an exception' do
+        expect do
+          downloader.download_multi(files, ignore_errors: false)
+        end.to raise_error('package1 - HTTP request failed with code 404')
+      end
+
+      it 'cleans up the queue of downloads' do
+        expect do
+          downloader.concurrency = 1
+          downloader.download_multi(files, ignore_errors: false)
+        end.to raise_error('package1 - HTTP request failed with code 404')
+
+        expect(downloader.instance_variable_get(:@hydra).multi.easy_handles).to eq([])
+        expect(downloader.instance_variable_get(:@queue)).to eq([])
       end
     end
   end
