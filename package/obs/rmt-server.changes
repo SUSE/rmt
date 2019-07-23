@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Thu Jul 18 08:13:11 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.3.2
+- PubCloud nginx config improvements:
+  * Proxy only the known routes to the backend
+  * Disable error logging for /repo
+  * Serve smt.crt over HTTPS
+
+-------------------------------------------------------------------
 Fri Jul  5 10:36:48 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
 
 - Version 2.3.1
