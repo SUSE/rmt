@@ -100,7 +100,17 @@ class RMT::Downloader
 
         local_filenames << local_filename
       rescue RMT::Downloader::Exception, RMT::ChecksumVerifier::Exception => e
-        raise(e) unless failed_downloads
+        unless failed_downloads
+          # Clean up downloads queued in Ethon::Multi and @queue
+          if @hydra
+            @queue = []
+            @hydra.multi.easy_handles.each do |handle|
+              @hydra.multi.delete(handle)
+            end
+          end
+
+          raise(e)
+        end
 
         @logger.warn("× #{File.basename(local_filename)} - #{e}")
         failed_downloads << remote_file
