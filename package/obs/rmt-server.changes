@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Jul 24 08:19:18 UTC 2019 - Leon Schroeder <lschroeder@suse.com>
+
+- Version 2.3.3
+- Removed release stage from names to be consistent with SCC (bsc#1136168)
+  * Generate friendly_name as needed
+  * Drops friendly_name column from database
+
+-------------------------------------------------------------------
 Thu Jul 18 08:13:11 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
 
 - Version 2.3.2
