@@ -95,6 +95,10 @@ class Product < ApplicationRecord
     [identifier, version, arch].join('/')
   end
 
+  def friendly_name
+    [name, friendly_version, release_type, (arch if arch != 'unknown')].compact.join(' ')
+  end
+
   def change_repositories_mirroring!(conditions, mirroring_enabled)
     repos = repositories.where(conditions)
     repo_names = repos.pluck(:name)
