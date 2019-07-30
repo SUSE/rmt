@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jul 24 11:16:47 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.3.4
+- Clean up download queue on metadata download errors (bsc#1142641)
+
+-------------------------------------------------------------------
 Wed Jul 24 08:19:18 UTC 2019 - Leon Schroeder <lschroeder@suse.com>
 
 - Version 2.3.3
