@@ -468,4 +468,46 @@ RSpec.describe RMT::CLI::Products do
       end
     end
   end
+
+  describe '#show' do
+    subject(:command) { described_class.start(argv) }
+
+    context 'with products in DB' do
+      let(:product) { create :product, :with_mirrored_repositories }
+      let(:target) { product.id.to_s }
+      let(:argv) { ['show', target] }
+      let(:expected_output) do
+        "Product: #{product.name}.\n" \
+        "Description: #{product.description}.\n" \
+        "Repositories:\n" \
+        "SCC ID,Product,Description,Mandatory?,Mirror?,Last mirrored\n" +
+            CSV.generate { |csv| expected_rows.each { |row| csv << row } }
+      end
+      let(:expected_rows) do
+        product.repositories.map do |repo|
+          [
+              repo.scc_id,
+              repo.name,
+              repo.description,
+              repo.enabled,
+              repo.mirroring_enabled,
+              repo.last_mirrored_at
+          ]
+        end
+      end
+
+      it 'shows all the repositories with product details' do
+        expect { described_class.start(argv) }.to output(expected_output).to_stdout
+      end
+    end
+
+    context 'with no matching product' do
+      let(:target) { '123' }
+      let(:argv) { ['show', target] }
+
+      it 'warns about no matches' do
+        expect { described_class.start(argv) }.to raise_exception(_('Product by ID 123 not found.'))
+      end
+    end
+  end
 end
