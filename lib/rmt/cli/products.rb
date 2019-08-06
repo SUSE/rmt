@@ -5,6 +5,26 @@ class RMT::CLI::Products < RMT::CLI::Base
   class ProductNotFoundException < StandardError
   end
 
+  desc 'show PRODUCT', _('Shows details of a product and its repositories.')
+  long_desc <<-REPOS
+#{_('Shows details of a product and its repositories.')}
+#{_('Examples')}:
+
+$ rmt-cli products enable product1-3/42/x86_64
+REPOS
+  def show(target)
+    product = find_products(target).last
+    if product.nil?
+      warn _('No matching products found in the database.')
+    else
+      decorator = ::RMT::CLI::Decorators::RepositoryDecorator.new(product.repositories)
+      puts _('Product: %{name}.') % { name: product.name }
+      puts _('Description: %{description}.') % { description: product.description }
+      puts _('Repositories:')
+      puts decorator.to_csv
+    end
+  end
+
   desc 'list', _('List products which are marked to be mirrored.')
   option :all, aliases: '-a', type: :boolean, desc: _('List all products, including ones which are not marked to be mirrored')
   option :release_stage, aliases: '-r', type: :string, desc: 'beta, released'
