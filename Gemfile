@@ -51,6 +51,8 @@ group :development do
   gem 'spring-commands-rspec'
   gem 'ronn'
   gem 'guard-rspec', require: false
+  gem 'rb-readline'
+  gem 'pry'
 end
 
 group :test do
