@@ -1,7 +1,6 @@
 require 'csv'
 require 'ostruct'
 
-
 class SMTImporter
   attr_accessor :data_dir
   attr_accessor :no_systems

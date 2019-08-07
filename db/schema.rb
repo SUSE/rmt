@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190320120959) do
+ActiveRecord::Schema.define(version: 20190717114051) do
 
   create_table "activations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "service_id", null: false
@@ -56,7 +56,6 @@ ActiveRecord::Schema.define(version: 20190320120959) do
   create_table "products", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "name"
     t.text "description"
-    t.string "friendly_name"
     t.string "shortname"
     t.string "former_identifier"
     t.string "product_type"

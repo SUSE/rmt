@@ -35,6 +35,15 @@ describe V3::ProductSerializer do
     end
   end
 
+  describe '#friendly_name' do
+    subject { described_class.new(product).as_json[:friendly_name] }
+
+    let(:release_stage) { 'foo' }
+    let(:product) { create :product, release_stage: release_stage }
+
+    it { is_expected.not_to include(release_stage) }
+  end
+
   describe 'SLES extension tree' do
     subject(:serializer) { described_class.new(sles15, root_product: sles15, base_url: base_url) }
 

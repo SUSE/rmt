@@ -49,6 +49,16 @@ RSpec.describe Api::Connect::V4::Repositories::InstallerController do
       its(:code) { is_expected.to eq('200') }
     end
 
+    context 'with known product and empty string as release_type' do
+      let(:product) { FactoryGirl.create(:product, :with_not_mirrored_repositories) }
+      let(:params) { { identifier: product.identifier, version: product.version, arch: product.arch, release_type: '' } }
+
+      before { get url, params: params }
+
+      its(:body) { is_expected.to eq '[]' }
+      its(:code) { is_expected.to eq('200') }
+    end
+
     describe 'response with "-" in product version' do
       let(:product) { FactoryGirl.create(:product, :with_not_mirrored_repositories, version: '24.0') }
       let(:params) { { identifier: product.identifier, version: '24.0-0', arch: product.arch } }
