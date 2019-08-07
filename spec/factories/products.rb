@@ -8,7 +8,7 @@ FactoryGirl.define do
     free false
     product_type :base
     sequence(:description) { FFaker::Lorem.sentence }
-    release_type ''
+    release_type nil
     version 42
     arch 'x86_64'
     release_stage 'released'
