@@ -20,15 +20,15 @@ Note: Never push changes to the internal build service `ibs://Devel:SCC:RMT`!
       * Alternatively, if an OBS working copy is already checked out, update the working copy by running `osc up`
 2. Run `make dist` in your RMT working directory to build a tarball.
 3. Copy the files from the `package/obs` directory to the OBS working directory.
-4. Build the package with osc:
+4. Examine the changes by running `osc status` and `osc diff`.
+5. Stage the changes by running `osc addremove`.
+6. Build the package with osc:
 
     `osc build <repository> <arch> --no-verify`
 
     The list of all build targets and architectures that are configured for the project can be obtained by running `osc repos`.
 
-5. Examine the changes by running `osc status` and `osc diff`.
-6. Stage the changes by running `osc addremove`.
-7. Commit the changes into OBS by running `osc ci`.
+7. After the code is reviewed + merged in the git repository: Commit the changes into OBS by running `osc ci`.
 
 #### Tag and Release the New Version on Github
 
