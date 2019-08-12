@@ -22,6 +22,7 @@ package/obs/*.tar.bz2
 package/obs/.osc
 package/obs/rmt-cli.8.gz
 package/obs/_link
+package/systemsmanagement:SCC:RMT
 
 vendor/
 coverage/
