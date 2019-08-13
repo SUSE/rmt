@@ -18,40 +18,7 @@ class RMT::CLI::Main < RMT::CLI::Base
   subcommand 'repos', RMT::CLI::Repos
 
   desc 'mirror', _('Mirror repositories')
-  def mirror
-    RMT::Lockfile.lock do
-      logger = RMT::Logger.new(STDOUT)
-      mirror = RMT::Mirror.new(logger: logger, mirror_src: RMT::Config.mirror_src_files?)
-
-      begin
-        mirror.mirror_suma_product_tree(repository_url: 'https://scc.suse.com/suma/')
-      rescue RMT::Mirror::Exception => e
-        logger.warn(e.message)
-      end
-
-      raise RMT::CLI::Error.new(_('There are no repositories marked for mirroring.')) if Repository.where(mirroring_enabled: true).empty?
-
-      mirrored_repo_ids = []
-      until Repository.where(mirroring_enabled: true).where.not(id: mirrored_repo_ids).blank?
-        repo = Repository.where(mirroring_enabled: true).where.not(id: mirrored_repo_ids).first
-
-        begin
-          mirror.mirror(
-            repository_url: repo.external_url,
-            local_path: Repository.make_local_path(repo.external_url),
-            auth_token: repo.auth_token,
-            repo_name: repo.name
-          )
-
-          repo.refresh_timestamp!
-        rescue RMT::Mirror::Exception => e
-          logger.warn e.to_s
-        ensure
-          mirrored_repo_ids << repo.id
-        end
-      end
-    end
-  end
+  subcommand 'mirror', RMT::CLI::Mirror
 
   desc 'import', _('Import commands for Offline Sync')
   subcommand 'import', RMT::CLI::Import

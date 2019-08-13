@@ -144,4 +144,21 @@ class Product < ApplicationRecord
 
     service
   end
+
+  def self.get_by_target!(target)
+    product_id = Integer(target, 10) rescue nil
+
+    products = []
+    if product_id
+      product = find(product_id)
+      products << product unless product.nil?
+    else
+      identifier, version, arch = target.split('/')
+      conditions = { identifier: identifier, version: version }
+      conditions[:arch] = arch if arch
+      products = where(conditions).to_a
+    end
+
+    products
+  end
 end
