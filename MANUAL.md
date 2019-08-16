@@ -58,6 +58,15 @@ You can install and run this wizard like this:
     `rmt-cli products disable 1575`
 
     `rmt-cli products disable SLES/15/x86_64 1743`
+  
+  * `rmt-cli products show <id | string>`:
+  	Displays product with all its repositories and their attributes.
+  	
+  	Examples:
+  	
+  	`rmt-cli products show SLES/15/x86_64`
+  	
+  	`rmt-cli products show 1575`
 
   * `rmt-cli repos list [--all] [--csv]`:
     Lists the repositories that are enabled for mirroring.
