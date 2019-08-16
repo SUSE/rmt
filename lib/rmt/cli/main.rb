@@ -21,7 +21,7 @@ class RMT::CLI::Main < RMT::CLI::Base
   def mirror
     RMT::Lockfile.lock do
       logger = RMT::Logger.new(STDOUT)
-      mirror = RMT::Mirror.new(logger: logger)
+      mirror = RMT::Mirror.new(logger: logger, mirror_src: RMT::Config.mirror_src_files?)
 
       begin
         mirror.mirror_suma_product_tree(repository_url: 'https://scc.suse.com/suma/')
