@@ -140,6 +140,17 @@ RSpec.describe RMT::CLI::Mirror do
       end
     end
 
+    context 'when an exception is raised during mirroring' do
+      let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
+      let(:argv) { ['repository', repository.scc_id] }
+
+      it 'handles the exception and outputs a warning' do
+        expect_any_instance_of(RMT::Mirror).to receive(:mirror).at_least(:once).and_raise(RMT::Mirror::Exception, 'Dummy')
+        expect_any_instance_of(RMT::Logger).to receive(:warn).at_least(:once).with('Dummy')
+        command
+      end
+    end
+
     context 'when repository mirroring is disabled' do
       let!(:repository) { create :repository, :with_products, mirroring_enabled: false }
       let(:argv) { ['repository', repository.scc_id] }
@@ -209,6 +220,17 @@ RSpec.describe RMT::CLI::Mirror do
           )
         end
 
+        command
+      end
+    end
+
+    context 'when an exception is raised during mirroring' do
+      let(:product) { create :product, :with_mirrored_repositories }
+      let(:argv) { ['product', [product.identifier, product.version, product.arch].join('/')] }
+
+      it 'handles the exception and outputs a warning' do
+        expect_any_instance_of(RMT::Mirror).to receive(:mirror).at_least(:once).and_raise(RMT::Mirror::Exception, 'Dummy')
+        expect_any_instance_of(RMT::Logger).to receive(:warn).at_least(:once).with('Dummy')
         command
       end
     end
