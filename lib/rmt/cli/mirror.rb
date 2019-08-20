@@ -50,6 +50,8 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
       repos.each do |repo|
         mirror_repo!(mirror, repo)
+      rescue RMT::Mirror::Exception => e
+        logger.warn e.to_s
       end
     end
   end
@@ -78,6 +80,8 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
       repos.each do |repo|
         mirror_repo!(mirror, repo)
+      rescue RMT::Mirror::Exception => e
+        logger.warn e.to_s
       end
     end
   end
