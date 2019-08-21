@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Aug 21 10:13:45 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.4.1
+- Preserve cached metadata timestamps (bsc#1146611)
+
+-------------------------------------------------------------------
 Tue Aug 20 11:12:58 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
 
 - Version 2.4.0
