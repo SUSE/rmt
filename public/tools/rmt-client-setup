@@ -23,7 +23,7 @@ if [ -d "/etc/pki/trust/anchors/" ] && [ -x "/usr/sbin/update-ca-certificates" ]
 elif [ -d "/etc/pki/ca-trust/source/anchors/" ] && [ -x "/usr/bin/update-ca-trust" ]; then
     # this path is used on RES8
     CA_TRUSTSTORE="/etc/pki/ca-trust/source/anchors/"
-    CA_GEN_TRUSTSTORE_CMD="/usr/sbin/update-ca-certificates"
+    CA_GEN_TRUSTSTORE_CMD="/usr/bin/update-ca-trust"
 elif [ -d $CA_TRUSTSTORE ] && [ -x $CA_GEN_TRUSTSTORE_CMD ]; then
     CA_GEN_TRUSTSTORE_CMD="$CA_GEN_TRUSTSTORE_CMD $CA_TRUSTSTORE"
 fi
