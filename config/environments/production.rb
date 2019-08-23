@@ -19,7 +19,13 @@ Rails.application.configure do
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
-  config.log_level = :debug
+
+  log_level = Settings&.log_level&.rails&.to_s&.upcase
+  config.log_level = if RMT::Logger::LABEL_TO_SEVERITY_MAPPING[log_level]
+                       log_level
+                     else
+                       :debug
+                     end
 
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
