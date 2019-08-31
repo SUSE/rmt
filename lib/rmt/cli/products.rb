@@ -69,7 +69,38 @@ class RMT::CLI::Products < RMT::CLI::Base
     change_products(targets, false, false)
   end
 
+  desc 'show TARGET', _('Displays product with all its repositories and their attributes.')
+  long_desc <<~SHOW
+    #{_('Displays product with all its repositories and their attributes.')}
+
+    #{_('Examples')}:
+
+    $ rmt-cli products show SLES/15/x86_64
+  SHOW
+  def show(target)
+    show_product(target)
+  end
+
   protected
+
+  def show_product(target)
+    product = find_products(target).first
+
+    raise ProductNotFoundException.new(_('No product found for target %{target}.') % { target: target }) if product.blank?
+
+    puts _('Product: %{name} (id: %{id})') % { name: product.friendly_name, id: product.id }
+    puts _('Description: %{description}') % { description: product.description }
+    show_product_repos(product)
+  rescue ProductNotFoundException => e
+    puts e.message
+  end
+
+  def show_product_repos(product)
+    repos = product.repositories
+    puts repos.present? ? _('Repositories:') : _('Repositories are not available for this product.')
+    decorator = ::RMT::CLI::Decorators::RepositoryDecorator.new(repos)
+    decorator.to_tty
+  end
 
   def change_products(targets, set_enabled, all_modules)
     targets = clean_target_input(targets)
