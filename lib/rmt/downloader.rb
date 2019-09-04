@@ -168,7 +168,7 @@ class RMT::Downloader
   end
 
   def copy_from_cache(cache_filename, local_filename)
-    FileUtils.cp(cache_filename, local_filename) unless (cache_filename == local_filename)
+    FileUtils.cp(cache_filename, local_filename, preserve: true) unless (cache_filename == local_filename)
     @logger.info("→ #{File.basename(local_filename)}")
     local_filename
   end

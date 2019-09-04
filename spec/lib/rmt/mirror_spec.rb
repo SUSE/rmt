@@ -455,8 +455,11 @@ RSpec.describe RMT::Mirror do
         }
       end
 
+      let(:timestamp) { 'Mon, 01 Jan 2018 10:10:00 GMT' }
+
       before do
-        allow_any_instance_of(RMT::Downloader).to receive(:get_cache_timestamp) { 'Mon, 01 Jan 2018 10:10:00 GMT' }
+        expect_any_instance_of(RMT::Downloader).to receive(:get_cache_timestamp).at_least(:once) { timestamp }
+        FileUtils.touch "#{mirroring_dir}/dummy_product/product/repodata/repomd.xml", mtime: Time.parse(timestamp).utc
 
         VCR.use_cassette 'mirroring_product_with_cached_metadata' do
           rmt_mirror.mirror(mirror_params)
@@ -466,6 +469,10 @@ RSpec.describe RMT::Mirror do
       it 'downloads rpm files' do
         rpm_entries = Dir.entries(File.join(@tmp_dir, 'dummy_product/product/')).select { |entry| entry =~ /\.rpm$/ }
         expect(rpm_entries.length).to eq(4)
+      end
+
+      it 'preserves metadata timestamps' do
+        expect(File.mtime("#{mirroring_dir}/dummy_product/product/repodata/repomd.xml")).to eq(Time.parse(timestamp).utc)
       end
     end
   end
