@@ -123,7 +123,7 @@ GEM
     faraday-http-cache (2.0.0)
       faraday (~> 0.8)
     fast_gettext (2.0.1)
-    ffaker (2.11.0)
+    ffaker (2.12.0)
     ffi (1.9.25)
     formatador (0.2.5)
     fuubar (2.4.1)
