@@ -7,7 +7,7 @@ class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
         system.hostname,
         system.registered_at,
         system.last_seen_at,
-        system.products.map { |p| p.identifier.downcase + '/' + p.version + '/' + p.arch }.join("\n")
+        system.products.map(&:product_string).join("\n")
       ]
     end
     @headers = [ _('Login'), _('Hostname'), _('Registration time'), _('Last seen'), _('Products') ]
