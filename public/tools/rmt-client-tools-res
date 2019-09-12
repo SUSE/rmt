@@ -51,7 +51,7 @@ while true ; do
         --yes) AUTOACCEPT="Y";;
         "") break ;;
         -h|--help) usage;;
-        https://*) RMTNAME=${REGURL:8};
+        https://*) RMTNAME=${1:8};
                    REGURL="http://${RMTNAME}";;
         http://*) REGURL=$1;
                   RMTNAME=${REGURL:7};;
