@@ -103,7 +103,7 @@ TMP=`rpm -q librepo`;
 if [ $TMP = "librepo-1.9.2-1.el8.x86_64" ]; then 
    $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/RES/8/x86_64/update
    $DNF update ${AUTOACCEPT} librepo
-   $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_RES-AS_8_x86_64_update"
+   $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_RES_8_x86_64_update"
 fi
 
 $CURL -s -S $REGURL/tools/rmt-client-setup --output rmt-client-setup
