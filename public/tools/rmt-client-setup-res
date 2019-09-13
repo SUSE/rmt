@@ -98,7 +98,7 @@ if [ ! -x $SUSECONNECT ]; then
 fi
 
 #iso we ship has old version of librepo installed that doesn't handle tokens in url properly
-$TMP=`rpm -q librepo`;
+TMP=`rpm -q librepo`;
 if [ $TMP = "librepo-1.9.2-1.el8.x86_64" ]; then 
    $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/RES/8/x86_64/update
    $DNF update librepo
