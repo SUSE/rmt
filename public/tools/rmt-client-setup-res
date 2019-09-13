@@ -37,6 +37,7 @@ EOT
 # We need only REGURL and RMTNAME, all other parameters are just passed to rmt-client-setup script
 REGURL=""
 RMTNAME=""
+AUTOACCEPT=""
 
 while true ; do
     case "$1" in
@@ -48,7 +49,7 @@ while true ; do
              REGURL="http://${RMTNAME}";
              shift;;
         --de-register) DE_REGISTER="Y";;
-        --yes) AUTOACCEPT="Y";;
+        --yes) AUTOACCEPT="--assumeyes";;
         "") break ;;
         -h|--help) usage;;
         https://*) RMTNAME=${1:8};
@@ -92,7 +93,7 @@ if [ ! -x $SUSECONNECT ]; then
 
     $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/RES/8/x86_64/update
     $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/RES-AS/8/x86_64/update
-    $DNF install SUSEConnect sles_es-release librepo-1.9.2
+    $DNF install ${AUTOACCEPT} SUSEConnect sles_es-release librepo-1.9.2
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_RES_8_x86_64_update"
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_RES-AS_8_x86_64_update"
 fi
@@ -101,7 +102,7 @@ fi
 TMP=`rpm -q librepo`;
 if [ $TMP = "librepo-1.9.2-1.el8.x86_64" ]; then 
    $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/RES/8/x86_64/update
-   $DNF update librepo
+   $DNF update ${AUTOACCEPT} librepo
    $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_RES-AS_8_x86_64_update"
 fi
 
