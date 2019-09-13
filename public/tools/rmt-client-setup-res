@@ -105,7 +105,7 @@ if [ $TMP = "librepo-1.9.2-1.el8.x86_64" ]; then
    $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_RES-AS_8_x86_64_update"
 fi
 
-$CURL $REGURL/tools/rmt-client-setup --output rmt-client-setup
+$CURL -s -S $REGURL/tools/rmt-client-setup --output rmt-client-setup
 echo "Running rmt-client-setup $PARAMS"
 sh rmt-client-setup $PARAMS
 
