@@ -1,8 +1,8 @@
 #! /bin/sh
 #
-# rmt-client-setup-res: client use rmt-client-setup script to register with rmt. 
-# But This script assumes SUSEConnect is already installed on the system. 
-# That is not true for RHEL, CentOS or Fedora, so this tiny wrapper script just sets up repositories on rmt, 
+# rmt-client-setup-res: client use rmt-client-setup script to register with rmt.
+# But This script assumes SUSEConnect is already installed on the system.
+# That is not true for RHEL, CentOS or Fedora, so this tiny wrapper script just sets up repositories on rmt,
 # installs SUSEConnect and its dependencies and downloads and calls rmt-client-setupA script
 #
 
@@ -11,13 +11,13 @@ RPM=/usr/bin/rpm
 DNF=/usr/bin/dnf
 CURL=/usr/bin/curl
 
-PARAMS=$@ 
+PARAMS=$@
 
 function usage()
 {
     cat << EOT >&2
 
-   $1 
+   $1
 
    $0 script installs SUSEConnect and its dependencies and calls rmt-client-setup script that registers to rmt
 
@@ -100,7 +100,8 @@ fi
 
 #iso we ship has old version of librepo installed that doesn't handle tokens in url properly
 TMP=`rpm -q librepo`;
-if [ $TMP = "librepo-1.9.2-1.el8.x86_64" ]; then 
+
+if [ $TMP = "librepo-1.9.2-1.el8.x86_64" ]; then
    $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/RES/8/x86_64/update
    $DNF update ${AUTOACCEPT} librepo
    $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_RES_8_x86_64_update"
@@ -109,4 +110,3 @@ fi
 $CURL -s -S $REGURL/tools/rmt-client-setup --output rmt-client-setup
 echo "Running rmt-client-setup $PARAMS"
 sh rmt-client-setup $PARAMS
-
