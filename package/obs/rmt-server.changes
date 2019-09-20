@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Sep 16 11:00:45 UTC 2019 - José D. Gómez R. <jgomez@suse.com>
+
+- Version 2.4.2
+- Fixed system listing when architecture is not well referenced
+  (bsc#1141122)
+- Added rmt-client-setup-res for RES8 systems
+
+-------------------------------------------------------------------
 Wed Aug 21 10:13:45 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
 
 - Version 2.4.1
