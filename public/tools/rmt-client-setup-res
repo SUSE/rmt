@@ -3,8 +3,8 @@
 # rmt-client-setup-res: client use rmt-client-setup script to register with rmt.
 # But This script assumes SUSEConnect is already installed on the system.
 # That is not true for RHEL, CentOS or Fedora, so this tiny wrapper script just sets up repositories on rmt,
-# installs SUSEConnect and its dependencies and downloads and calls rmt-client-setupA script
-#
+# installs SUSEConnect and its dependencies and downloads and calls rmt-client-setup script
+# (maintained by zpetrova@suse.com)
 
 SUSECONNECT=/usr/bin/SUSEConnect
 RPM=/usr/bin/rpm
