@@ -2,6 +2,7 @@ module ZypperAuth
   class << self
     def auth_logger
       @logger ||= RMT::Logger.new('/var/lib/rmt/zypper_auth.log')
+      @logger.reopen
       @logger
     end
 
