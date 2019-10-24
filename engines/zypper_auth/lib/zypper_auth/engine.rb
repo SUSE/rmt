@@ -7,10 +7,7 @@ module ZypperAuth
     end
 
     def verify_instance(request, logger, system)
-      instance_data = request.headers['X-Instance-Data']
-      return true unless instance_data
-
-      instance_data = Base64.decode64(instance_data)
+      instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
 
       base_product = system.products.find_by(product_type: 'base')
       return false unless base_product
