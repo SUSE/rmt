@@ -86,8 +86,8 @@ class RMT::Mirror
     local_filename = @downloader.download('repodata/repomd.xml')
 
     begin
-      key_file       = @downloader.download('repodata/repomd.xml.key')
       signature_file = @downloader.download('repodata/repomd.xml.asc')
+      key_file       = @downloader.download('repodata/repomd.xml.key')
 
       RMT::GPG.new(
         metadata_file: local_filename, key_file: key_file, signature_file: signature_file, logger: @logger
