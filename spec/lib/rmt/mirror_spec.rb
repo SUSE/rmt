@@ -572,25 +572,6 @@ RSpec.describe RMT::Mirror do
       end
     end
 
-    context 'when one of the signature files is missing' do
-      it 'raises RMT::Mirror::Exception' do
-        expect(logger).to receive(:info).with(/Mirroring repository/).once
-        expect(logger).to receive(:info).with(/Repository metadata signatures are missing/).once
-        expect(logger).to receive(:info).with(/↓/).at_least(1).times
-
-        allow_any_instance_of(RMT::Downloader).to receive(:download).and_wrap_original do |klass, *args|
-          if args[0] == 'repodata/repomd.xml.key'
-            '/foo/repomd.xml.key'
-          elsif args[0] == 'repodata/repomd.xml.asc'
-            raise RMT::Downloader::Exception.new('HTTP request failed', 404)
-          else
-            klass.call(*args)
-          end
-        end
-
-      end
-    end
-
     context 'when files fail to download with errors other than 404' do
       it 'raises RMT::Mirror::Exception' do
         expect(logger).to receive(:info).with(/Mirroring repository/).once
