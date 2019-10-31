@@ -100,8 +100,6 @@ class RMT::Mirror
       end
     end
 
-    raise _('The repository has an incomplete metadata signature') if (key_file && !signature_file)
-
     primary_files = []
     deltainfo_files = []
 

@@ -588,10 +588,6 @@ RSpec.describe RMT::Mirror do
           end
         end
 
-        expect { rmt_mirror.mirror(mirror_params) }.to raise_error(
-          RMT::Mirror::Exception,
-          'Error while mirroring metadata: The repository has an incomplete metadata signature'
-        )
       end
     end
 
