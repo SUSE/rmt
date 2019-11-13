@@ -15,7 +15,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri }) }
 
         before do
-          expect_any_instance_of(InstanceVerification::Providers::Example).not_to receive(:instance_valid?)
+          expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(false)
           get '/api/auth/check', headers: headers
         end
 
@@ -31,7 +31,12 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           get '/api/auth/check', headers: headers
         end
 
-        it { is_expected.to have_http_status(403) }
+        it { is_expected.to have_http_status(200) } # allowed temporarily
+
+        it do
+          skip('Disabled temporarily')
+          is_expected.to have_http_status(403)
+        end
       end
 
       context 'with instance_data headers and instance data is valid' do

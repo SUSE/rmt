@@ -1,10 +1,13 @@
 module ZypperAuth
   class << self
-    def verify_instance(request, logger, system)
-      instance_data = request.headers['X-Instance-Data']
-      return true unless instance_data
+    def auth_logger
+      @logger ||= ::Logger.new('/var/lib/rmt/zypper_auth.log')
+      @logger.reopen
+      @logger
+    end
 
-      instance_data = Base64.decode64(instance_data)
+    def verify_instance(request, logger, system)
+      instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
 
       base_product = system.products.find_by(product_type: 'base')
       return false unless base_product
@@ -20,15 +23,23 @@ module ZypperAuth
         instance_data
       )
 
-      is_valid = verification_provider.instance_valid?
+      verification_provider.instance_valid?
+      is_valid = true # log the error only, don't raise auth error (for now)
       Rails.cache.write(cache_key, is_valid, expires_in: 1.hour)
       is_valid
     rescue InstanceVerification::Exception => e
-      logger.info('Access to the repos denied:')
-      logger.info(e.message)
-      logger.info("System login: #{system.login}, IP: #{request.remote_ip}")
-      Rails.cache.write(cache_key, false, expires_in: 1.hour)
-      false
+      details = [ "System login: #{system.login}", "IP: #{request.remote_ip}" ]
+      details << "Instance ID: #{verification_provider.instance_id}" if verification_provider.instance_id
+      details << "Billing info: #{verification_provider.instance_billing_info}" if verification_provider.instance_billing_info
+
+      ZypperAuth.auth_logger.info <<~LOGMSG
+        Access to the repos denied: #{e.message}
+        #{details.join(', ')}
+      LOGMSG
+
+      is_valid = true # log the error only, don't raise auth error (for now)
+      Rails.cache.write(cache_key, is_valid, expires_in: 10.minutes)
+      is_valid
     rescue StandardError => e
       logger.error('Unexpected instance verification error has occurred:')
       logger.error(e.message)
@@ -60,6 +71,7 @@ module ZypperAuth
         end
       end
 
+      # replaces URLs in API response JSON
       Api::Connect::V3::Systems::ActivationsController.class_eval do
         def index
           respond_with(
@@ -72,6 +84,7 @@ module ZypperAuth
         end
       end
 
+      # replaces URLs in API response JSON
       Api::Connect::V3::Systems::ProductsController.class_eval do
         def render_service
           status = ((request.put? || request.post?) ? 201 : 200)
@@ -92,6 +105,7 @@ module ZypperAuth
       ServicesController.class_eval do
         alias_method :original_make_repo_url, :make_repo_url
 
+        # replaces URLs in zypper service XML
         def make_repo_url(base_url, repo_local_path, service_name)
           original_url = original_make_repo_url(base_url, repo_local_path, service_name)
           return original_url unless request.headers['X-Instance-Data']
@@ -100,20 +114,22 @@ module ZypperAuth
           "plugin:/susecloud?credentials=#{service_name}&path=" + url.path
         end
 
+        # additional validation for zypper service XML controller
         before_action :verify_instance
         def verify_instance
-          unless ZypperAuth.verify_instance(request, logger, @system)
-            render(xml: { error: 'Instance verification failed' }, status: 403)
-          end
+          ZypperAuth.verify_instance(request, logger, @system)
+          true # don't raise auth errors (for now)
         end
       end
 
       StrictAuthentication::AuthenticationController.class_eval do
         alias_method :original_path_allowed?, :path_allowed?
 
+        # additional validation for strict_authentication auth subrequest
         def path_allowed?(path)
           return false unless original_path_allowed?(path)
           ZypperAuth.verify_instance(request, logger, @system)
+          true # don't raise auth errors (for now)
         end
       end
     end
