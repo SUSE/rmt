@@ -1,8 +1,9 @@
 -------------------------------------------------------------------
-Wed Oct 23 07:17:56 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+Wed Nov 13 13:39:20 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
 
 - Version 2.4.3
-- Relax zypper auth plugin checks; produce detailed logs
+- rmt-server-pubcloud: Relax zypper auth plugin checks; produce detailed logs
+- rmt-server-pubcloud: Allow access to SLES 12 SP1 repos when SLES 11 was activated
 
 -------------------------------------------------------------------
 Mon Sep 16 11:00:45 UTC 2019 - José D. Gómez R. <jgomez@suse.com>
