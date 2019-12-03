@@ -1,4 +1,7 @@
 class RMT::CLI::Mirror < RMT::CLI::Base
+  desc 'custom', _('Mirror custom repositories')
+  subcommand 'custom', RMT::CLI::MirrorCustom
+
   desc 'all', _('Mirror all enabled repositories')
   def all
     RMT::Lockfile.lock do
