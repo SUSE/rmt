@@ -84,7 +84,7 @@ class RMT::CLI::Base < Thor
     rescue SUSE::Connect::Api::RequestError => e
       raise RMT::CLI::Error.new(
         _("SCC API request failed. Error details:\nRequest URL: %{url}\nResponse code: %{code}\nResponse body:\n%{body}") % {
-          url: e.response.request.url, 
+          url: e.response.request.url,
           code: e.response.code,
           body: e.response.body
         },

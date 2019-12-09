@@ -146,10 +146,10 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
           it 'outputs custom error message' do
             expect { command }.to output(
               "SCC API request failed. Error details:\n" \
-                      "Request URL: http://example.com/api\n" \
-                      "Response code: 503\n" \
-                      "Response body:\n" \
-                      "A terrible error has occurred!\n"
+              "Request URL: http://example.com/api\n" \
+              "Response code: 503\n" \
+              "Response body:\n" \
+              "A terrible error has occurred!\n"
             ).to_stderr
           end
         end
