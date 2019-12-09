@@ -168,4 +168,64 @@ RSpec.describe SUSE::Connect::Api do
       it { is_expected.to eq([ { endpoint: 'organizations/subscriptions' } ]) }
     end
   end
+
+  describe '.make_request' do
+    let(:url) { 'http://example.com' }
+    let(:expected_request_headers) do
+      {
+        'Authorization' => 'Basic ' + Base64.encode64("#{username}:#{password}").strip,
+        'User-Agent' => "RMT/#{RMT::VERSION}",
+        'RMT' => uuid
+      }
+    end
+
+    context 'on successful request' do
+      before do
+        allow_any_instance_of(described_class).to receive(:system_uuid).and_return(uuid)
+
+        stub_request(:GET, 'http://example.org/api_method')
+          .to_return(
+            status: 200,
+            body: response_data,
+            headers: {}
+          )
+      end
+
+      subject { api_client.send(:make_request, 'GET', 'http://example.org/api_method', {}) }
+
+      let(:response_data) { "Everything's great!" }
+
+      it { is_expected.to be_a(Typhoeus::Response) }
+      its(:body) { is_expected.to eq(response_data) }
+    end
+
+    context 'on error' do
+      before do
+        allow_any_instance_of(described_class).to receive(:system_uuid).and_return(uuid)
+
+        stub_request(:GET, 'http://example.org/api_method')
+          .to_return(
+            status: 503,
+            body: response_data,
+            headers: {}
+          )
+      end
+
+      subject(:api_request) { api_client.send(:make_request, 'GET', 'http://example.org/api_method', {}) }
+
+      let(:response_data) { 'Something went terribly wrong!' }
+
+      it 'raises APIRequestError' do
+        expect { api_request }.to raise_error(
+          an_instance_of(SUSE::Connect::Api::RequestError).and(
+            having_attributes(
+              response: an_instance_of(Typhoeus::Response).and(
+                having_attributes(body: response_data)
+              )
+            )
+          )
+        )
+      end
+    end
+  end
 end

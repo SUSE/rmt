@@ -127,6 +127,32 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
             ).to_stderr
           end
         end
+
+        describe 'SUSE::Connect::Api::RequestError with request error' do
+          let(:exception_class) do
+            SUSE::Connect::Api::RequestError.new(
+              instance_double(
+                Typhoeus::Response,
+                request: instance_double(
+                  Typhoeus::Request,
+                  url: 'http://example.com/api'
+                ),
+                body: 'A terrible error has occurred!',
+                code: 503
+              )
+            )
+          end
+
+          it 'outputs custom error message' do
+            expect { command }.to output(
+              "SCC API request failed. Error details:\n" \
+                      "Request URL: http://example.com/api\n" \
+                      "Response code: 503\n" \
+                      "Response body:\n" \
+                      "A terrible error has occurred!\n"
+            ).to_stderr
+          end
+        end
       end
     end
 
