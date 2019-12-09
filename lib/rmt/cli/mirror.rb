@@ -85,6 +85,32 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       end
     end
   end
+  
+  desc 'customrepository IDS', _('Mirror enabled custom repositories with given repository IDs')
+  def customrepository(*ids)
+    RMT::Lockfile.lock do
+      logger = RMT::Logger.new(STDOUT)
+      mirror = RMT::Mirror.new(logger: logger, mirror_src: RMT::Config.mirror_src_files?)
+
+      ids = clean_target_input(ids)
+      raise RMT::CLI::Error.new(_('No custom repository IDs supplied')) if ids.empty?
+
+      repos = []
+      ids.each do |id|
+        repo = Repository.find_by!(id: id)
+        raise RMT::CLI::Error.new(_('Mirroring of custom repository with ID %{repo_id} is not enabled') % { repo_id: id }) unless repo.mirroring_enabled
+        repos << repo
+      rescue ActiveRecord::RecordNotFound
+        raise RMT::CLI::Error.new(_('Custom repository with ID %{repo_id} not found') % { repo_id: id })
+      end
+
+      repos.each do |repo|
+        mirror_repo!(mirror, repo)
+      rescue RMT::Mirror::Exception => e
+        logger.warn e.to_s
+      end
+    end
+  end
 
   protected
 
