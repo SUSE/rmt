@@ -46,6 +46,26 @@ module StrictAuthentication
           its(:code) { is_expected.to eq '200' }
         end
 
+        context 'when accessing product with repos with special characters' do
+          let(:product) do
+            product = FactoryGirl.create(:product, :with_service)
+            product.service.repositories << repository
+            product
+          end
+
+          let(:repository) do
+            FactoryGirl.create(
+              :repository,
+              external_url: 'https://updates.suse.com/$path/*with/.funky/(characters)/'
+            )
+          end
+
+          let(:system) { FactoryGirl.create(:system, :with_activated_product, product: product) }
+          let(:requested_uri) { '/repo/$path/*with/.funky/(characters)/repodata/repomd.xml' }
+
+          its(:code) { is_expected.to eq '200' }
+        end
+
         context 'when accessing SLES12SP1 repos and SLES 11 is activated' do
           let(:system) { FactoryGirl.create(:system, :with_activated_product, product: product) }
           let(:product) do
