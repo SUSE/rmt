@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190717114051) do
+ActiveRecord::Schema.define(version: 20191211104218) do
 
   create_table "activations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "service_id", null: false
@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(version: 20190717114051) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "instance_data", comment: "Additional client information, e.g. instance identity document"
+    t.string "cloud_provider"
     t.index ["hypervisor"], name: "index_hw_infos_on_hypervisor"
     t.index ["system_id"], name: "index_hw_infos_on_system_id", unique: true
   end
