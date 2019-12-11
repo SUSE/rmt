@@ -25,7 +25,7 @@ module StrictAuthentication
       return true if (has_sles11 && (path =~ %r{/12/} || path =~ %r{/12-SP1/}))
 
       @system.repositories.pluck(:local_path).each do |allowed_path|
-        return true if path =~ /^#{allowed_path}/
+        return true if path =~ /^#{Regexp.escape(allowed_path)}/
       end
 
       false
