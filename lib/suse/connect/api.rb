@@ -7,6 +7,15 @@ module SUSE
     class Api
 
       class InvalidCredentialsError < StandardError; end
+      class RequestError < StandardError
+        attr_reader :response
+
+        def initialize(response)
+          @response = response
+          super()
+        end
+      end
+
       CONNECT_API_URL = 'https://scc.suse.com/connect'.freeze
       UUID_FILE_LOCATION = '/var/lib/rmt/system_uuid'.freeze
 
@@ -53,7 +62,7 @@ module SUSE
 
         response = RMT::HttpRequest.new(url, options).run
         raise InvalidCredentialsError if (response.code == 401)
-        raise response.body unless (response.code >= 200 && response.code < 300)
+        raise RequestError.new(response) unless (response.code >= 200 && response.code < 300)
 
         response
       end
