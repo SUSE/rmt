@@ -121,7 +121,8 @@ RSpec.describe SUSE::Connect::Api do
       {
         'Authorization' => 'Basic ' + Base64.encode64("#{username}:#{password}").strip,
         'User-Agent' => "RMT/#{RMT::VERSION}",
-        'RMT' => uuid
+        'RMT' => uuid,
+        'Accept' => 'application/vnd.scc.suse.com.v4+json'
       }
     end
     let(:response_data) { { foo: 'bar' } }
@@ -166,6 +167,60 @@ RSpec.describe SUSE::Connect::Api do
       subject { api_client.list_subscriptions }
 
       it { is_expected.to eq([ { endpoint: 'organizations/subscriptions' } ]) }
+    end
+
+    describe '#forward_system_activations' do
+      subject { api_client.forward_system_activations(system) }
+
+      before do
+        stub_request(:post, 'https://scc.suse.com/connect/organizations/systems')
+          .with(
+            headers: expected_request_headers,
+            body: expected_body
+          )
+          .to_return(
+            status: 200,
+            body: expected_response.to_json,
+            headers: {}
+          )
+      end
+
+      context 'when system has no hw_info and no activations' do
+        let(:system) { FactoryGirl.create(:system) }
+        let(:expected_response) { { login: system.login, password: system.password } }
+        let(:expected_body) do
+          {
+            login: system.login,
+            password: system.password,
+            hostname: nil,
+            regcodes: [],
+            products: [],
+            hwinfo: nil
+          }
+        end
+
+        it { is_expected.to eq(expected_response) }
+      end
+
+      context 'when system has hw_info and no activations' do
+        let(:system) { FactoryGirl.create(:system, :with_activated_product, :with_hw_info) }
+        let(:product) { system.products.first }
+        let(:hw_info) { system.hw_info }
+        let(:expected_response) { { login: system.login, password: system.password } }
+        let(:expected_body) do
+          {
+            login: system.login,
+            password: system.password,
+            hostname: nil,
+            regcodes: [],
+            products: [ %i[id identifier version arch].reduce({}) { |h, k| h[k] = product.send(k); h } ],
+            hwinfo: %i[cpus sockets hypervisor arch uuid cloud_provider].reduce({}) { |h, k| h[k] = hw_info.send(k); h }
+          }
+        end
+
+        it { is_expected.to eq(expected_response) }
+      end
+
     end
   end
 

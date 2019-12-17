@@ -44,6 +44,28 @@ module SUSE
         make_paginated_request(:get, "#{CONNECT_API_URL}/organizations/subscriptions")
       end
 
+      def forward_system_activations(system)
+        product_keys = %i[id identifier version arch]
+        hw_info_keys = %i[cpus sockets hypervisor arch uuid cloud_provider]
+
+        hw_info = system.hw_info ? system.hw_info.attributes.symbolize_keys.slice(*hw_info_keys) : nil
+
+        params = {
+          login: system.login,
+          password: system.password,
+          hostname: system.hostname,
+          regcodes: [],
+          products: system.products.select(*product_keys).map { |i| i.attributes.symbolize_keys },
+          hwinfo: hw_info
+        }
+
+        make_single_request(
+          :post,
+          "#{CONNECT_API_URL}/organizations/systems",
+          { body: params.to_json }
+        )
+      end
+
       protected
 
       def process_rels(response)
@@ -58,7 +80,11 @@ module SUSE
         options[:userpwd] = "#{@username}:#{@password}" unless options[:userpwd]
         options[:method] = method
         options[:accept_encoding] = 'gzip, deflate'
-        options[:headers] = { 'RMT' => system_uuid }
+        options[:headers] = {
+          'RMT' => system_uuid.strip,
+          'Accept' => 'application/vnd.scc.suse.com.v4+json',
+          'Content-Type' => 'application/json'
+        }
 
         response = RMT::HttpRequest.new(url, options).run
         raise InvalidCredentialsError if (response.code == 401)
