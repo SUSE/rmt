@@ -29,6 +29,9 @@ class RMT::CLI::Main < RMT::CLI::Base
   desc 'systems', _('List systems')
   subcommand 'systems', RMT::CLI::Systems
 
+  desc 'scc', _('SCC sync commands')
+  subcommand 'scc', RMT::CLI::Scc
+
   desc 'version', _('Show RMT version')
   def version
     puts RMT::VERSION

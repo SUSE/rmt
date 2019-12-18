@@ -16,6 +16,8 @@ describe RMT::SCC do
     end
   end
   let(:api_double) { instance_double 'SUSE::Connect::Api' }
+  let(:logger) { instance_double('RMT::Logger').as_null_object }
+
 
   shared_examples 'saves in database' do
     it 'saves products to the DB' do
@@ -90,8 +92,7 @@ describe RMT::SCC do
     allow(STDOUT).to receive(:puts)
     allow(STDOUT).to receive(:write)
     # disable Logger output while running tests
-    logger = instance_double('Logger').as_null_object
-    allow(Logger).to receive(:new).and_return(logger)
+    allow(RMT::Logger).to receive(:new).and_return(logger)
   end
 
   describe '#sync' do
@@ -321,6 +322,41 @@ describe RMT::SCC do
       end
 
       include_examples 'saves in database'
+    end
+  end
+
+  describe '#sync_systems' do
+    context 'when syncing succeeds' do
+      before do
+        allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
+        expect(api_double).to receive(:forward_system_activations).with(system)
+        expect(logger).to receive(:info).with(/Syncing system/)
+        described_class.new.sync_systems
+      end
+
+      let(:system) { FactoryGirl.create(:system) }
+
+      it 'updates system.scc_registered_at' do
+        system.reload
+        expect(system.scc_registered_at).not_to be(nil)
+      end
+    end
+
+    context 'when syncing fails' do
+      before do
+        allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
+        expect(api_double).to receive(:forward_system_activations).with(system).and_raise('Sync error')
+        expect(logger).to receive(:info).with(/Syncing system/)
+        expect(logger).to receive(:error).with(/Failed to sync system/)
+        described_class.new.sync_systems
+      end
+
+      let(:system) { FactoryGirl.create(:system) }
+
+      it "doesn't update system.scc_registered_at" do
+        system.reload
+        expect(system.scc_registered_at).to be(nil)
+      end
     end
   end
 

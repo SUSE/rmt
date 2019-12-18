@@ -213,14 +213,13 @@ RSpec.describe SUSE::Connect::Api do
             password: system.password,
             hostname: nil,
             regcodes: [],
-            products: [ %i[id identifier version arch].reduce({}) { |h, k| h[k] = product.send(k); h } ],
-            hwinfo: %i[cpus sockets hypervisor arch uuid cloud_provider].reduce({}) { |h, k| h[k] = hw_info.send(k); h }
+            products: [ %i[id identifier version arch].each_with_object({}) { |k, h| h[k] = product.send(k) } ],
+            hwinfo: %i[cpus sockets hypervisor arch uuid cloud_provider].each_with_object({}) { |k, h| h[k] = hw_info.send(k) }
           }
         end
 
         it { is_expected.to eq(expected_response) }
       end
-
     end
   end
 

@@ -77,6 +77,22 @@ class RMT::SCC
     update_subscriptions(JSON.parse(File.read(File.join(path, 'organizations_subscriptions.json')), symbolize_names: true))
   end
 
+  def sync_systems
+    credentials_set? || (raise CredentialsError, 'SCC credentials not set.')
+    scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
+
+    System.where(scc_registered_at: nil).find_in_batches(batch_size: 20) do |batch|
+      batch.each do |system|
+        @logger.info("Syncing system #{system.login} to SCC")
+        scc_api_client.forward_system_activations(system)
+        system.scc_registered_at = Time.zone.now
+        system.save!(touch: false)
+      rescue StandardError => e
+        @logger.error("Failed to sync system #{system.login}: #{e}")
+      end
+    end
+  end
+
   protected
 
   def credentials_set?
