@@ -78,6 +78,11 @@ class RMT::SCC
   end
 
   def sync_systems
+    unless Settings.scc.sync_systems
+      @logger.warn _('Syncing systems to SCC is disabled by the configuration file, exiting.')
+      return
+    end
+
     credentials_set? || (raise CredentialsError, 'SCC credentials not set.')
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 

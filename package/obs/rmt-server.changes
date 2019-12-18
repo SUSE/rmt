@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Dec 18 14:51:40 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.5.0
+- Add `rmt-cli scc sync-systems` command
+
+-------------------------------------------------------------------
 Tue Dec 10 11:39:24 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
 
 - Version 2.4.5

@@ -25,7 +25,7 @@
 %define ruby_version %{rb_default_ruby_suffix}
 
 Name:           rmt-server
-Version:        2.4.5
+Version:        2.5.0
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -131,9 +131,11 @@ mkdir -p %{buildroot}%{_unitdir}
 
 install -m 444 package/files/systemd/rmt-server-mirror.timer %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server-sync.timer %{buildroot}%{_unitdir}
+install -m 444 package/files/systemd/rmt-server-scc-sync-systems.timer %{buildroot}%{_unitdir}
 
 install -m 444 package/files/systemd/rmt-server-mirror.service %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server-sync.service %{buildroot}%{_unitdir}
+install -m 444 package/files/systemd/rmt-server-scc-sync-systems.service %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server.service %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server.target %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server-migration.service %{buildroot}%{_unitdir}
@@ -229,6 +231,8 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %{_unitdir}/rmt-server-mirror.timer
 %{_unitdir}/rmt-server-sync.service
 %{_unitdir}/rmt-server-sync.timer
+%{_unitdir}/rmt-server-scc-sync-systems.service
+%{_unitdir}/rmt-server-scc-sync-systems.timer
 %dir %{_datadir}/bash-completion/
 %dir %{_datadir}/bash-completion/completions/
 %{_datadir}/bash-completion/completions/rmt-cli
