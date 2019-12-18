@@ -85,8 +85,9 @@ class RMT::SCC
       batch.each do |system|
         @logger.info("Syncing system #{system.login} to SCC")
         scc_api_client.forward_system_activations(system)
-        system.scc_registered_at = Time.zone.now
-        system.save!(touch: false)
+        # Update scc_registered_at without triggering after_update callback
+        # (which resets it to nil)
+        system.update_column(:scc_registered_at, Time.zone.now)
       rescue StandardError => e
         @logger.error("Failed to sync system #{system.login}: #{e}")
       end

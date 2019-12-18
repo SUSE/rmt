@@ -52,4 +52,22 @@ RSpec.describe System, type: :model do
       end
     end
   end
+
+  describe 'triggers scc_registered_at hook' do
+    before do
+      system.update_column(:scc_registered_at, Time.zone.now)
+    end
+
+    it 'scc_registered_at is not null before update' do
+      system.reload
+      expect(system.scc_registered_at).not_to be(nil)
+    end
+
+    it 'scc_registered_at is null after update' do
+      system.updated_at = Time.zone.now
+      system.save!
+      system.reload
+      expect(system.scc_registered_at).to be(nil)
+    end
+  end
 end
