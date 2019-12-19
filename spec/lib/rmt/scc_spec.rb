@@ -372,7 +372,7 @@ describe RMT::SCC do
 
       context 'when syncing fails' do
         before do
-          expect(api_double).to receive(:forward_system_activations).with(system).and_raise('Sync error')
+          expect(api_double).to receive(:forward_system_activations).with(system).and_raise(SUSE::Connect::Api::RequestError, 'Sync error')
           expect(logger).to receive(:info).with(/Syncing system/)
           expect(logger).to receive(:error).with(/Failed to sync system/)
           described_class.new.sync_systems

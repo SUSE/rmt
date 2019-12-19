@@ -12,7 +12,7 @@ class RMT::SCC
   end
 
   def sync
-    credentials_set? || (raise CredentialsError, 'SCC credentials not set.')
+    credentials_set? || (raise CredentialsError, _('SCC credentials not set.'))
 
     cleanup_database
 
@@ -83,18 +83,18 @@ class RMT::SCC
       return
     end
 
-    credentials_set? || (raise CredentialsError, 'SCC credentials not set.')
+    credentials_set? || (raise CredentialsError, _('SCC credentials not set.'))
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
     System.where(scc_registered_at: nil).find_in_batches(batch_size: 20) do |batch|
       batch.each do |system|
-        @logger.info("Syncing system #{system.login} to SCC")
+        @logger.info(_('Syncing system %{login} to SCC') % { login: system.login })
         scc_api_client.forward_system_activations(system)
         # Update scc_registered_at without triggering after_update callback
         # (which resets it to nil)
-        system.update_column(:scc_registered_at, Time.zone.now)
-      rescue StandardError => e
-        @logger.error("Failed to sync system #{system.login}: #{e}")
+        system.touch(:scc_registered_at)
+      rescue SUSE::Connect::Api::RequestError => e
+        @logger.error(_('Failed to sync system %{login}: %{error}') % { login: system.login, error: e.to_s })
       end
     end
   end
