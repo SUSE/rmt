@@ -41,4 +41,9 @@ class System < ApplicationRecord
     system.scc_registered_at = nil
   end
 
+  after_destroy do |system|
+    if system.scc_system_id
+      DeregisteredSystem.find_or_create_by(scc_system_id: system.scc_system_id)
+    end
+  end
 end

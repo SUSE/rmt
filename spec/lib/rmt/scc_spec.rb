@@ -357,16 +357,32 @@ describe RMT::SCC do
 
       context 'when syncing succeeds' do
         before do
-          expect(api_double).to receive(:forward_system_activations).with(system)
+          expect(api_double).to receive(:forward_system_activations).with(system).and_return(
+            {
+              id: scc_system_id,
+              login: 'test',
+              password: 'test'
+            }
+          )
+          expect(api_double).to receive(:forward_system_deregistration).with(deregistered_system.scc_system_id)
+
           expect(logger).to receive(:info).with(/Syncing system/)
+          expect(logger).to receive(:info).with(/Syncing de-registered system/)
           described_class.new.sync_systems
         end
 
         let(:system) { FactoryGirl.create(:system) }
+        let(:scc_system_id) { 9000 }
+        let(:deregistered_system) { FactoryGirl.create(:deregistered_system) }
 
-        it 'updates system.scc_registered_at' do
+        it 'updates system.scc_registered_at field' do
           system.reload
           expect(system.scc_registered_at).not_to be(nil)
+        end
+
+        it 'updates system.scc_system_id field' do
+          system.reload
+          expect(system.scc_system_id).to be(scc_system_id)
         end
       end
 

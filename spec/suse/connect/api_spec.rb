@@ -187,7 +187,7 @@ RSpec.describe SUSE::Connect::Api do
 
       context 'when system has no hw_info and no activations' do
         let(:system) { FactoryGirl.create(:system) }
-        let(:expected_response) { { login: system.login, password: system.password } }
+        let(:expected_response) { { id: 9000, login: system.login, password: system.password } }
         let(:expected_body) do
           {
             login: system.login,
@@ -221,7 +221,40 @@ RSpec.describe SUSE::Connect::Api do
         it { is_expected.to eq(expected_response) }
       end
     end
+
+    describe '#forward_system_deregistration' do
+      before do
+        stub_request(:delete, "https://scc.suse.com/connect/organizations/systems/#{scc_system_id}")
+          .with(
+            headers: expected_request_headers,
+            body: ''
+          )
+          .to_return(
+            status: expected_status,
+            body: ''
+          )
+      end
+
+      let(:scc_system_id) { 9000 }
+
+      context 'when system is found on SCC' do
+        let(:expected_status) { 204 }
+
+        it "doesn't raise errors" do
+          expect { api_client.forward_system_deregistration(scc_system_id) }.not_to raise_error
+        end
+      end
+
+      context 'when system is not found on SCC' do
+        let(:expected_status) { 404 }
+
+        it "doesn't raise errors" do
+          expect { api_client.forward_system_deregistration(scc_system_id) }.not_to raise_error
+        end
+      end
+    end
   end
+
 
   describe '.make_request' do
     let(:url) { 'http://example.com' }

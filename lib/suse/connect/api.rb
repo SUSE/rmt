@@ -66,6 +66,13 @@ module SUSE
         )
       end
 
+      def forward_system_deregistration(scc_system_id)
+        make_request(:delete, "#{CONNECT_API_URL}/organizations/systems/#{scc_system_id}")
+      rescue RequestError => e
+        # don't raise an exception if the system was already deleted from SCC
+        raise e unless e.response.code == 404
+      end
+
       protected
 
       def process_rels(response)
@@ -76,7 +83,7 @@ module SUSE
         Hash[*links.flatten]
       end
 
-      def make_request(method, url, options)
+      def make_request(method, url, options = {})
         options[:userpwd] = "#{@username}:#{@password}" unless options[:userpwd]
         options[:method] = method
         options[:accept_encoding] = 'gzip, deflate'
