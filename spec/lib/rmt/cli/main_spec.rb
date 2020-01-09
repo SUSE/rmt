@@ -21,118 +21,6 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
       end
     end
 
-    describe 'mirror' do
-      let(:argv) { ['mirror'] }
-
-      include_examples 'handles lockfile exception'
-
-      context 'suma product tree mirror with exception' do
-        before do
-          create :repository, :with_products, mirroring_enabled: true
-        end
-
-        it 'outputs exception message' do
-          expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree).and_raise(RMT::Mirror::Exception, 'black mirror')
-          expect_any_instance_of(RMT::Mirror).to receive(:mirror)
-          expect_any_instance_of(RMT::Logger).to receive(:warn).with('black mirror')
-          command
-        end
-      end
-
-      context 'without repositories marked for mirroring' do
-        before do
-          create :repository, :with_products, mirroring_enabled: false
-        end
-
-        it 'outputs a warning' do
-          expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
-          expect_any_instance_of(RMT::Mirror).not_to receive(:mirror)
-          expect { command }.to raise_error(SystemExit).and output("There are no repositories marked for mirroring.\n").to_stderr.and output('').to_stdout
-        end
-      end
-
-      context 'with repositories marked for mirroring' do
-        let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
-
-        it 'updates repository mirroring timestamp' do
-          expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
-          expect_any_instance_of(RMT::Mirror).to receive(:mirror)
-
-          Timecop.freeze(Time.utc(2018)) do
-            expect { command }.to change { repository.reload.last_mirrored_at }.to(DateTime.now.utc)
-          end
-        end
-
-        context 'with exceptions during mirroring' do
-          before { allow_any_instance_of(RMT::Mirror).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror') }
-
-          it 'outputs exception message' do
-            expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
-            expect_any_instance_of(RMT::Logger).to receive(:warn).with('black mirror')
-            command
-          end
-        end
-      end
-
-      context 'with repositories changing during mirroring' do
-        let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
-        let!(:additional_repository) { create :repository, :with_products, mirroring_enabled: false }
-
-        it 'mirrors additional repositories' do
-          expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
-          expect_any_instance_of(RMT::Mirror).to receive(:mirror).with(
-            repository_url: repository.external_url,
-            local_path: anything,
-            repo_name: anything,
-            auth_token: anything
-          ) do
-            # enable mirroring of the additional repository during mirroring
-            additional_repository.mirroring_enabled = true
-            additional_repository.save!
-          end
-
-          expect_any_instance_of(RMT::Mirror).to receive(:mirror).with(
-            repository_url: additional_repository.external_url,
-            local_path: anything,
-            repo_name: anything,
-            auth_token: anything
-          )
-
-          command
-        end
-      end
-
-      context 'with repositories changing during mirroring and exceptions occur' do
-        let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
-        let!(:additional_repository) { create :repository, :with_products, mirroring_enabled: false }
-
-        it 'handles exceptions and mirrors additional repositories' do
-          expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
-          expect_any_instance_of(RMT::Mirror).to receive(:mirror).with(
-            repository_url: repository.external_url,
-            local_path: anything,
-            repo_name: anything,
-            auth_token: anything
-          ) do
-            # enable mirroring of the additional repository during mirroring
-            additional_repository.mirroring_enabled = true
-            additional_repository.save!
-            raise(RMT::Mirror::Exception, 'black mirror')
-          end
-
-          expect_any_instance_of(RMT::Logger).to receive(:warn).with('black mirror')
-          expect_any_instance_of(RMT::Mirror).to receive(:mirror).with(
-            repository_url: additional_repository.external_url,
-            local_path: anything,
-            repo_name: anything,
-            auth_token: anything
-          )
-
-          command
-        end
-      end
-    end
-
     describe 'help' do
       let(:argv) { ['help'] }
 
@@ -236,6 +124,32 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
           it 'outputs custom error message' do
             expect { command }.to output(
               "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization\n"
+            ).to_stderr
+          end
+        end
+
+        describe 'SUSE::Connect::Api::RequestError with request error' do
+          let(:exception_class) do
+            SUSE::Connect::Api::RequestError.new(
+              instance_double(
+                Typhoeus::Response,
+                request: instance_double(
+                  Typhoeus::Request,
+                  url: 'http://example.com/api'
+                ),
+                body: 'A terrible error has occurred!',
+                code: 503
+              )
+            )
+          end
+
+          it 'outputs custom error message' do
+            expect { command }.to output(
+              "SCC API request failed. Error details:\n" \
+              "Request URL: http://example.com/api\n" \
+              "Response code: 503\n" \
+              "Response body:\n" \
+              "A terrible error has occurred!\n"
             ).to_stderr
           end
         end

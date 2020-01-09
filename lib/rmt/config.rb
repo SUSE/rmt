@@ -32,4 +32,8 @@ module RMT::Config
     Settings.try(:mirroring).try(:dedup_method).to_s.to_sym != :copy
   end
 
+  def self.mirror_src_files?
+    ActiveModel::Type::Boolean.new.cast(Settings.try(:mirroring).try(:mirror_src))
+  end
+
 end

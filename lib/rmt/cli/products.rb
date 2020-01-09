@@ -144,22 +144,9 @@ REPOS
   private
 
   def find_products(target)
-    product_id = Integer(target, 10) rescue nil
-
-    products = []
-    if product_id
-      product = Product.find(product_id)
-      products << product unless product.nil?
-    else
-      identifier, version, arch = target.split('/')
-      conditions = { identifier: identifier, version: version }
-      conditions[:arch] = arch if arch
-      products = Product.where(conditions).to_a
-    end
-
-    products
+    Product.get_by_target!(target)
   rescue ActiveRecord::RecordNotFound
-    raise ProductNotFoundException.new(_('Product by ID %{id} not found.') % { id: product_id })
+    raise ProductNotFoundException.new(_('Product by ID %{id} not found.') % { id: target })
   end
 
   def repository_service
