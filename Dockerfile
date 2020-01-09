@@ -25,6 +25,11 @@ RUN sed -i 's/#!\/usr\/bin\/env ruby/#!\/usr\/bin\/ruby.ruby2.5/g' /srv/www/rmt/
 RUN ln -s /srv/www/rmt/bin/rmt-cli /usr/bin
 RUN bundle
 
+# Setup permissions to run rmt-cli
+RUN groupadd -r nginx
+RUN useradd -g nginx -s /bin/false -r -c "user for RMT" _rmt
+RUN chown _rmt /srv/www/rmt/public/repo 
+
 RUN printf "database: &database\n\
   host: <%%= ENV['MYSQL_HOST'] %%>\n\
   username: <%%= ENV['MYSQL_USER'] %%>\n\
