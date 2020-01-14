@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Jan 10 13:47:22 UTC 2020 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.5.1
+- Relax systemd units dependencies (bsc#1160673)
+
+-------------------------------------------------------------------
 Wed Dec 18 14:51:40 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
 
 - Version 2.5.0

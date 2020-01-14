@@ -1,7 +1,7 @@
 [Unit]
 Description=Mirror RMT
 After=rmt-server.service
-Requires=rmt-server.service
+Wants=rmt-server.service
 
 [Service]
 Type=simple
