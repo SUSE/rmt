@@ -106,4 +106,13 @@ RSpec.describe RMT::CLI::Systems do
       end
     end
   end
+
+  describe '#scc-sync' do
+    subject(:command) { described_class.start(['scc-sync']) }
+
+    it 'runs sync_systems' do
+      expect_any_instance_of(RMT::SCC).to receive(:sync_systems)
+      command
+    end
+  end
 end

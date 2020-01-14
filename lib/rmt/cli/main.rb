@@ -26,11 +26,8 @@ class RMT::CLI::Main < RMT::CLI::Base
   desc 'export', _('Export commands for Offline Sync')
   subcommand 'export', RMT::CLI::Export
 
-  desc 'systems', _('List systems')
+  desc 'systems', _('List and manipulate registered systems')
   subcommand 'systems', RMT::CLI::Systems
-
-  desc 'scc', _('SCC sync commands')
-  subcommand 'scc', RMT::CLI::Scc
 
   desc 'version', _('Show RMT version')
   def version
