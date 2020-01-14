@@ -14,7 +14,7 @@ cp obs/* ~/obs/systemsmanagement:SCC:RMT/rmt-server
 cd ~/obs/systemsmanagement:SCC:RMT/rmt-server && osc addremove && osc build SLE_15 x86_64 --no-verify --trust-all-projects && cd .. &&
 find /oscbuild/SLE_15-x86_64/home/abuild/rpmbuild/RPMS/x86_64/ -name '*.rpm' -not -name '*pubcloud*' -exec zypper --non-interactive --no-gpg-checks in --no-recommends {} \+
 cd /usr/share/rmt
-RAILS_ENV=production /usr/share/rmt/bin/rails db:drop db:create db:migrate
+RAILS_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 /usr/share/rmt/bin/rails db:drop db:create db:migrate
 /usr/bin/rmt-cli sync
 cd /tmp/rmt-server/
 NO_COVERAGE=true rspec features/
