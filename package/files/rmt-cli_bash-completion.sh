@@ -21,7 +21,7 @@ _rmt-cli()
 		: # these subcommands can't currently be completed further
 	elif _rmt-cli-default-completion "${options[@]}" $depth ; then
 		:
-	elif [[ ${subcommand} =~ ^(product|products|repo|repos|systems|import|export)$ ]] ; then
+	elif [[ ${subcommand} =~ ^(products|repos|systems|import|export)$ ]] ; then
 		((depth++))
 		_rmt-cli_$subcommand $depth
 	fi
@@ -144,17 +144,6 @@ _rmt-cli_export()
 	elif [[ ${COMP_CWORD} == 3 ]] ; then
 		COMPREPLY=( $(compgen -f ${current_word}) )
 	fi
-}
-
-# alias functions:
-_rmt-cli_repo()
-{
-	_rmt-cli_repos
-}
-
-_rmt-cli_product()
-{
-	_rmt-cli_products
 }
 
 complete -F _rmt-cli rmt-cli
