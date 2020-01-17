@@ -56,7 +56,7 @@ Requires(post): shadow
 Requires(post): timezone
 Requires(post): util-linux
 Conflicts:      yast2-rmt < 1.0.3
-Recommends:     yast2-rmt >= 1.0.3
+Recommends:     yast2-rmt >= 1.3.0
 Recommends:     rmt-server-config
 # Does not build for i586 and s390 and is not supported on those architectures
 ExcludeArch:    %{ix86} s390
