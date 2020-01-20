@@ -1,0 +1,2 @@
+class DeregisteredSystem < ApplicationRecord
+end
