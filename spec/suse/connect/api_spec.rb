@@ -121,7 +121,8 @@ RSpec.describe SUSE::Connect::Api do
       {
         'Authorization' => 'Basic ' + Base64.encode64("#{username}:#{password}").strip,
         'User-Agent' => "RMT/#{RMT::VERSION}",
-        'RMT' => uuid
+        'RMT' => uuid,
+        'Accept' => 'application/vnd.scc.suse.com.v4+json'
       }
     end
     let(:response_data) { { foo: 'bar' } }
@@ -166,6 +167,152 @@ RSpec.describe SUSE::Connect::Api do
       subject { api_client.list_subscriptions }
 
       it { is_expected.to eq([ { endpoint: 'organizations/subscriptions' } ]) }
+    end
+
+    describe '#forward_system_activations' do
+      subject { api_client.forward_system_activations(system) }
+
+      before do
+        stub_request(:post, 'https://scc.suse.com/connect/organizations/systems')
+          .with(
+            headers: expected_request_headers,
+            body: expected_body
+          )
+          .to_return(
+            status: 200,
+            body: expected_response.to_json,
+            headers: {}
+          )
+      end
+
+      context 'when system has no hw_info and no activations' do
+        let(:system) { FactoryGirl.create(:system) }
+        let(:expected_response) { { id: 9000, login: system.login, password: system.password } }
+        let(:expected_body) do
+          {
+            login: system.login,
+            password: system.password,
+            hostname: nil,
+            regcodes: [],
+            products: [],
+            hwinfo: nil
+          }
+        end
+
+        it { is_expected.to eq(expected_response) }
+      end
+
+      context 'when system has hw_info and no activations' do
+        let(:system) { FactoryGirl.create(:system, :with_activated_product, :with_hw_info) }
+        let(:product) { system.products.first }
+        let(:hw_info) { system.hw_info }
+        let(:expected_response) { { login: system.login, password: system.password } }
+        let(:expected_body) do
+          {
+            login: system.login,
+            password: system.password,
+            hostname: nil,
+            regcodes: [],
+            products: [ %i[id identifier version arch].each_with_object({}) { |k, h| h[k] = product.send(k) } ],
+            hwinfo: %i[cpus sockets hypervisor arch uuid cloud_provider].each_with_object({}) { |k, h| h[k] = hw_info.send(k) }
+          }
+        end
+
+        it { is_expected.to eq(expected_response) }
+      end
+    end
+
+    describe '#forward_system_deregistration' do
+      before do
+        stub_request(:delete, "https://scc.suse.com/connect/organizations/systems/#{scc_system_id}")
+          .with(
+            headers: expected_request_headers,
+            body: ''
+          )
+          .to_return(
+            status: expected_status,
+            body: ''
+          )
+      end
+
+      let(:scc_system_id) { 9000 }
+
+      context 'when system is found on SCC' do
+        let(:expected_status) { 204 }
+
+        it "doesn't raise errors" do
+          expect { api_client.forward_system_deregistration(scc_system_id) }.not_to raise_error
+        end
+      end
+
+      context 'when system is not found on SCC' do
+        let(:expected_status) { 404 }
+
+        it "doesn't raise errors" do
+          expect { api_client.forward_system_deregistration(scc_system_id) }.not_to raise_error
+        end
+      end
+    end
+  end
+
+
+  describe '.make_request' do
+    let(:url) { 'http://example.com' }
+    let(:expected_request_headers) do
+      {
+        'Authorization' => 'Basic ' + Base64.encode64("#{username}:#{password}").strip,
+        'User-Agent' => "RMT/#{RMT::VERSION}",
+        'RMT' => uuid
+      }
+    end
+
+    context 'on successful request' do
+      before do
+        allow_any_instance_of(described_class).to receive(:system_uuid).and_return(uuid)
+
+        stub_request(:GET, 'http://example.org/api_method')
+          .to_return(
+            status: 200,
+            body: response_data,
+            headers: {}
+          )
+      end
+
+      subject { api_client.send(:make_request, 'GET', 'http://example.org/api_method', {}) }
+
+      let(:response_data) { "Everything's great!" }
+
+      it { is_expected.to be_a(Typhoeus::Response) }
+      its(:body) { is_expected.to eq(response_data) }
+    end
+
+    context 'on error' do
+      before do
+        allow_any_instance_of(described_class).to receive(:system_uuid).and_return(uuid)
+
+        stub_request(:GET, 'http://example.org/api_method')
+          .to_return(
+            status: 503,
+            body: response_data,
+            headers: {}
+          )
+      end
+
+      subject(:api_request) { api_client.send(:make_request, 'GET', 'http://example.org/api_method', {}) }
+
+      let(:response_data) { 'Something went terribly wrong!' }
+
+      it 'raises APIRequestError' do
+        expect { api_request }.to raise_error(
+          an_instance_of(SUSE::Connect::Api::RequestError).and(
+            having_attributes(
+              response: an_instance_of(Typhoeus::Response).and(
+                having_attributes(body: response_data)
+              )
+            )
+          )
+        )
+      end
     end
   end
 end

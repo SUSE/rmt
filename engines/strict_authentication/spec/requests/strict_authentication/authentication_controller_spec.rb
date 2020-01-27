@@ -45,6 +45,76 @@ module StrictAuthentication
 
           its(:code) { is_expected.to eq '200' }
         end
+
+        context 'when accessing product with repos with special characters' do
+          let(:product) do
+            product = FactoryGirl.create(:product, :with_service)
+            product.service.repositories << repository
+            product
+          end
+
+          let(:repository) do
+            FactoryGirl.create(
+              :repository,
+              external_url: 'https://updates.suse.com/$path/*with/.funky/(characters)/'
+            )
+          end
+
+          let(:system) { FactoryGirl.create(:system, :with_activated_product, product: product) }
+          let(:requested_uri) { '/repo/$path/*with/.funky/(characters)/repodata/repomd.xml' }
+
+          its(:code) { is_expected.to eq '200' }
+        end
+
+        context 'when accessing SLES12SP1 repos and SLES 11 is activated' do
+          let(:system) { FactoryGirl.create(:system, :with_activated_product, product: product) }
+          let(:product) do
+            FactoryGirl.create(
+              :product, :with_mirrored_repositories,
+              identifier: 'SUSE_SLES', version: '11.4', arch: 'x86_64'
+            )
+          end
+
+          context 'when requested path is not activated' do
+            let(:requested_uri) { '/repo/SUSE/Products/SLE-Product-SLES/15/x86_64/product' }
+
+            its(:code) { is_expected.to eq '403' }
+          end
+
+          context 'when requested path is version 12' do
+            let(:requested_uri) { '/repo/SUSE/Updates/SLE-Module-Adv-Systems-Management/12/x86_64/update' }
+
+            its(:code) { is_expected.to eq '200' }
+          end
+
+          context 'when requested path is version 12.1' do
+            let(:requested_uri) { '/repo/SUSE/Products/SLE-SERVER/12-SP1/x86_64/product' }
+
+            its(:code) { is_expected.to eq '200' }
+          end
+        end
+
+        context 'when accessing SLES12SP1 repos and SLES 11 is not activated' do
+          let(:system) { FactoryGirl.create(:system, :with_activated_product, product: product) }
+          let(:product) do
+            FactoryGirl.create(
+              :product, :with_mirrored_repositories,
+              identifier: 'SLES', version: '15', arch: 'x86_64'
+            )
+          end
+
+          context 'when requested path is version 12' do
+            let(:requested_uri) { '/repo/SUSE/Updates/SLE-Module-Adv-Systems-Management/12/x86_64/update' }
+
+            its(:code) { is_expected.to eq '403' }
+          end
+
+          context 'when requested path is version 12.1' do
+            let(:requested_uri) { '/repo/SUSE/Products/SLE-SERVER/12-SP1/x86_64/product' }
+
+            its(:code) { is_expected.to eq '403' }
+          end
+        end
       end
     end
   end

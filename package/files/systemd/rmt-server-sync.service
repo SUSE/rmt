@@ -1,7 +1,7 @@
 [Unit]
-Description=Sync RMT from scc
+Description=Synchronize RMT with SCC
 After=rmt-server.service
-Requires=rmt-server.service
+Wants=rmt-server.service
 
 [Service]
 Type=simple

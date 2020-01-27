@@ -7,7 +7,17 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
   let(:system) { FactoryGirl.create(:system, :with_hw_info, hostname: 'initial') }
   let(:url) { '/connect/systems' }
   let(:headers) { auth_header.merge(version_header) }
-  let(:payload) { { hostname: 'test', hwinfo: { cpus: 16, sockets: 1, arch: 'x86_64', hypervisor: 'XEN', uuid: 'f46906c5-d87d-4e4c-894b-851e80376003' } } }
+  let(:hwinfo) do
+    {
+      cpus: 16,
+      sockets: 1,
+      arch: 'x86_64',
+      hypervisor: 'XEN',
+      uuid: 'f46906c5-d87d-4e4c-894b-851e80376003',
+      cloud_provider: 'testcloud'
+    }
+  end
+  let(:payload) { { hostname: 'test', hwinfo: hwinfo } }
 
   describe '#update' do
     subject(:update_action) { put url, params: payload, headers: headers }
@@ -20,7 +30,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
       it do
         update_action
 
-        expect(system.reload.hostname).to eq('test') # FIXME: should detect the hostname instead
+        expect(system.reload.hostname).to eq('test')
         expect(response.body).to be_empty
         expect(response.status).to eq(204)
       end
@@ -33,6 +43,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
             expect(system.hw_info.reload.arch).to eq('x86_64')
             expect(system.hw_info.reload.hypervisor).to eq('XEN')
             expect(system.hw_info.reload.uuid).to eq('f46906c5-d87d-4e4c-894b-851e80376003')
+            expect(system.hw_info.reload.cloud_provider).to eq('testcloud')
           end
 
           it 'updates initial hardware info' do
@@ -49,6 +60,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
             expect(system.hw_info.reload.arch).to eq('x86_64')
             expect(system.hw_info.reload.hypervisor).to eq('XEN')
             expect(system.hw_info.reload.uuid).to eq('f46906c5-d87d-4e4c-894b-851e80376003')
+            expect(system.hw_info.reload.cloud_provider).to eq('testcloud')
           end
 
           it 'creates hardware info record' do
@@ -59,7 +71,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
     end
 
     context 'when hostname is not provided' do
-      let(:payload) { { hwinfo: { cpus: 16, sockets: 1, arch: 'x86_64', hypervisor: 'XEN', uuid: 'f46906c5-d87d-4e4c-894b-851e80376003' } } }
+      let(:payload) { { hwinfo: hwinfo } }
 
       it do
         update_action
@@ -76,6 +88,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
           expect(system.hw_info.reload.arch).to eq('x86_64')
           expect(system.hw_info.reload.hypervisor).to eq('XEN')
           expect(system.hw_info.reload.uuid).to eq('f46906c5-d87d-4e4c-894b-851e80376003')
+          expect(system.hw_info.reload.cloud_provider).to eq('testcloud')
         end
 
         it 'updates initial hardware info' do

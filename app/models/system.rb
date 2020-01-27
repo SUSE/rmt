@@ -36,4 +36,14 @@ class System < ApplicationRecord
     SecureRandom.uuid.delete('-')
   end
 
+  before_update do |system|
+    # reset SCC sync timestamp so that the system can be re-synced on change
+    system.scc_registered_at = nil
+  end
+
+  after_destroy do |system|
+    if system.scc_system_id
+      DeregisteredSystem.find_or_create_by(scc_system_id: system.scc_system_id)
+    end
+  end
 end
