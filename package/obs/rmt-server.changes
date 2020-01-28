@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jan 28 14:00:37 UTC 2020 - Felix Schnizlein <fschnizlein@suse.com>
+
+- Version 2.5.2
+- low_speed_time and low_speed_limit can be configured
+
+-------------------------------------------------------------------
 Fri Jan 10 13:47:22 UTC 2020 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
 
 - Version 2.5.1
