@@ -1,5 +1,4 @@
 require 'rmt/downloader'
-require 'rmt/rpm'
 require 'rmt/gpg'
 require 'repomd_parser'
 require 'time'
