@@ -16,6 +16,7 @@ gem 'actionview', '~> 5.1.3'
 gem 'activemodel', '~> 5.1.3'
 gem 'activerecord', '~> 5.1.3'
 gem 'railties', '~> 5.1.3'
+gem 'repomd_parser', '~> 0.1.4'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
