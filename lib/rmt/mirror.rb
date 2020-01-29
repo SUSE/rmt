@@ -1,6 +1,7 @@
 require 'rmt/downloader'
 require 'rmt/rpm'
 require 'rmt/gpg'
+require 'repomd_parser'
 require 'time'
 
 class RMT::Mirror
@@ -103,12 +104,10 @@ class RMT::Mirror
     primary_files = []
     deltainfo_files = []
 
-    repomd_parser = RMT::Rpm::RepomdXmlParser.new(local_filename)
-    repomd_parser.parse
+    repomd_parser = RepomdParser::RepomdXmlParser.new(local_filename)
 
-    metadata_files = []
-    repomd_parser.referenced_files.each do |reference|
-      metadata_files << reference
+    metadata_files = repomd_parser.parse
+    metadata_files.each do |reference|
       primary_files << reference.location if (reference.type == :primary)
       deltainfo_files << reference.location if (reference.type == :deltainfo)
     end
