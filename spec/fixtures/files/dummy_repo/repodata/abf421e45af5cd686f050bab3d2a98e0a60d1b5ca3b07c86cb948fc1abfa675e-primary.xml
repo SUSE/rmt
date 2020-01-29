@@ -108,4 +108,58 @@
     </rpm:requires>
   </format>
 </package>
+<package type="rpm">
+  <name>blueberries</name>
+  <arch>src</arch>
+  <version epoch="0" ver="0.1" rel="0"/>
+  <checksum type="sha256" pkgid="YES">4fc09dcf9a3fc850137e6ea12244e340cab6a72e388dfbe83b8e3a7677ec410a</checksum>
+  <summary>Blueberries dummy RPM</summary>
+  <description>Dummy blueberries RPM</description>
+  <packager></packager>
+  <url></url>
+  <time file="1500453495" build="1500453483"/>
+  <size package="26" installed="14" archive="268"/>
+<location href="blueberries-0.1-0.src.rpm"/>
+  <format>
+    <rpm:license>Public</rpm:license>
+    <rpm:vendor>obs://build.suse.de/Devel:SCC:rmt-dummy</rpm:vendor>
+    <rpm:group>Dummy/Blueberries</rpm:group>
+    <rpm:buildhost>g87</rpm:buildhost>
+    <rpm:sourcerpm>blueberries-0.1-0.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="280" end="1820"/>
+    <rpm:provides>
+      <rpm:entry name="blueberries" flags="EQ" epoch="0" ver="0.1" rel="0"/>
+      <rpm:entry name="blueberries(src)" flags="EQ" epoch="0" ver="0.1" rel="0"/>
+    </rpm:provides>
+    <rpm:requires>
+    </rpm:requires>
+  </format>
+</package>
+<package type="rpm">
+  <name>blueberries</name>
+  <arch>src</arch>
+  <version epoch="0" ver="0.2" rel="0"/>
+  <checksum type="sha256" pkgid="YES">fa187961e03774224cd9b8f910a8856164ba404ad3f2a63d503dd794aa7c17ed</checksum>
+  <summary>Blueberries dummy RPM</summary>
+  <description>Dummy blueberries RPM</description>
+  <packager></packager>
+  <url></url>
+  <time file="1500453592" build="1500453559"/>
+  <size package="26" installed="31" archive="284"/>
+<location href="blueberries-0.2-0.src.rpm"/>
+  <format>
+    <rpm:license>Public</rpm:license>
+    <rpm:vendor>obs://build.suse.de/Devel:SCC:rmt-dummy</rpm:vendor>
+    <rpm:group>Dummy/Blueberries</rpm:group>
+    <rpm:buildhost>g87</rpm:buildhost>
+    <rpm:sourcerpm>blueberries-0.2-0.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="280" end="1820"/>
+    <rpm:provides>
+      <rpm:entry name="blueberries" flags="EQ" epoch="0" ver="0.2" rel="0"/>
+      <rpm:entry name="blueberries(src)" flags="EQ" epoch="0" ver="0.2" rel="0"/>
+    </rpm:provides>
+    <rpm:requires>
+    </rpm:requires>
+  </format>
+</package>
 </metadata>
