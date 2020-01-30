@@ -100,16 +100,9 @@ class RMT::Mirror
       end
     end
 
-    primary_files = []
-    deltainfo_files = []
-
-    repomd_parser = RepomdParser::RepomdXmlParser.new(local_filename)
-
-    metadata_files = repomd_parser.parse
-    metadata_files.each do |reference|
-      primary_files << reference.location if (reference.type == :primary)
-      deltainfo_files << reference.location if (reference.type == :deltainfo)
-    end
+    metadata_files = RepomdParser::RepomdXmlParser.new(local_filename).parse
+    primary_files = metadata_files.select { |reference| reference.type == :primary }
+    deltainfo_files = metadata_files.select { |reference| reference.type == :deltainfo }
 
     @downloader.download_multi(metadata_files)
 
@@ -141,34 +134,33 @@ class RMT::Mirror
     @downloader.destination_dir = @repository_dir
     @downloader.cache_dir = nil
 
-    failed_downloads = []
-    deltainfo_files.each do |filename|
-      parser = RepomdParser::DeltainfoXmlParser.new(
-        File.join(@temp_metadata_dir, filename)
-      )
-      referenced_files = filter_eligible_files(parser.parse)
-      to_download = parsed_files_after_dedup(@repository_dir, referenced_files)
-      failed_downloads.concat(@downloader.download_multi(to_download, ignore_errors: true)) unless to_download.empty?
-    end
-
-    primary_files.each do |filename|
-      parser = RepomdParser::PrimaryXmlParser.new(
-        File.join(@temp_metadata_dir, filename)
-      )
-      referenced_files = filter_eligible_files(parser.parse)
-      to_download = parsed_files_after_dedup(@repository_dir, referenced_files)
-      failed_downloads.concat(@downloader.download_multi(to_download, ignore_errors: true)) unless to_download.empty?
-    end
+    package_files =
+      parse_mirror_data_files(deltainfo_files, RepomdParser::DeltainfoXmlParser) +
+      parse_mirror_data_files(primary_files, RepomdParser::PrimaryXmlParser)
+    failed_downloads = download_package_files(package_files)
 
     raise _('Failed to download %{failed_count} files') % { failed_count: failed_downloads.size } unless failed_downloads.empty?
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring data: %{error}') % { error: e.message })
   end
 
-  def filter_eligible_files(referenced_files)
-    referenced_files.reject do |parsed_file|
-      parsed_file.arch == 'src' && !@mirror_src
+  def parse_mirror_data_files(references, xml_parser_class)
+    references.map do |reference|
+      xml_parser_class.new(File.join(@temp_metadata_dir, reference.location)).parse
+    end.flatten
+  end
+
+  def download_package_files(package_references)
+    packages_to_download = filter_eligible_packages(package_references)
+    return [] if packages_to_download.empty?
+    @downloader.download_multi(packages_to_download, ignore_errors: true)
+  end
+
+  def filter_eligible_packages(package_references)
+    parsed_files = package_references.reject do |package|
+      package.arch == 'src' && !@mirror_src
     end
+    parsed_files_after_dedup(@repository_dir, parsed_files)
   end
 
   def replace_directory(source_dir, destination_dir)
@@ -198,9 +190,7 @@ class RMT::Mirror
   def parsed_files_after_dedup(root_path, referenced_files)
     files = referenced_files.map do |parsed_file|
       local_file = ::RMT::Downloader.make_local_path(root_path, parsed_file.location)
-      if File.exist?(local_file) || deduplicate(parsed_file.checksum_type, parsed_file.checksum, local_file)
-        nil
-      else
+      unless File.exist?(local_file) || deduplicate(parsed_file.checksum_type, parsed_file.checksum, local_file)
         parsed_file
       end
     end
