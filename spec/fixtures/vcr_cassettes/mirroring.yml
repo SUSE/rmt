@@ -19,7 +19,7 @@ http_interactions:
       Server:
       - SimpleHTTP/0.6 Python/3.7.5
       Date:
-      - Wed, 29 Jan 2020 18:41:21 GMT
+      - Thu, 30 Jan 2020 12:38:15 GMT
       Connection:
       - close
       Content-Type:
@@ -46,7 +46,7 @@ http_interactions:
     http_version: '1.0'
     adapter_metadata:
       effective_url: http://localhost/dummy_repo.license/directory.yast
-  recorded_at: Wed, 29 Jan 2020 18:41:21 GMT
+  recorded_at: Thu, 30 Jan 2020 12:38:15 GMT
 - request:
     method: get
     uri: http://localhost/dummy_repo/repodata/repomd.xml
@@ -66,13 +66,13 @@ http_interactions:
       Server:
       - SimpleHTTP/0.6 Python/3.7.5
       Date:
-      - Wed, 29 Jan 2020 18:41:21 GMT
+      - Thu, 30 Jan 2020 12:38:15 GMT
       Content-type:
       - text/xml
       Content-Length:
-      - '1939'
+      - '1940'
       Last-Modified:
-      - Wed, 29 Jan 2020 18:40:31 GMT
+      - Wed, 29 Jan 2020 23:06:22 GMT
     body:
       encoding: UTF-8
       string: |
@@ -100,7 +100,7 @@ http_interactions:
           <open-checksum type="sha256">e490571870df62fa9f96b9bf4f5904c6f49987288758cac5f4a5b16300a64e8f</open-checksum>
           <location href="repodata/2d12587a74d924bad597fd8e25b8955270dfbe7591e020f9093edbb4a0d04444-other.xml.gz"/>
           <timestamp>1500454273</timestamp>
-          <size>379</size>
+          <size>552</size>
           <open-size>791</open-size>
         </data>
         <data type="primary">
@@ -108,14 +108,14 @@ http_interactions:
           <open-checksum type="sha256">cceefe3857696a694110fc35bf14f8e2b77a1ed8aee1d422f0e99be20a3fc42f</open-checksum>
           <location href="repodata/abf421e45af5cd686f050bab3d2a98e0a60d1b5ca3b07c86cb948fc1abfa675e-primary.xml.gz"/>
           <timestamp>1500454273</timestamp>
-          <size>920</size>
+          <size>1195</size>
           <open-size>4399</open-size>
         </data>
         </repomd>
     http_version: '1.0'
     adapter_metadata:
       effective_url: http://localhost/dummy_repo/repodata/repomd.xml
-  recorded_at: Wed, 29 Jan 2020 18:41:21 GMT
+  recorded_at: Thu, 30 Jan 2020 12:38:15 GMT
 - request:
     method: get
     uri: http://localhost/dummy_repo/repodata/repomd.xml.asc
@@ -135,7 +135,7 @@ http_interactions:
       Server:
       - SimpleHTTP/0.6 Python/3.7.5
       Date:
-      - Wed, 29 Jan 2020 18:41:21 GMT
+      - Thu, 30 Jan 2020 12:38:15 GMT
       Connection:
       - close
       Content-Type:
@@ -162,7 +162,7 @@ http_interactions:
     http_version: '1.0'
     adapter_metadata:
       effective_url: http://localhost/dummy_repo/repodata/repomd.xml.asc
-  recorded_at: Wed, 29 Jan 2020 18:41:21 GMT
+  recorded_at: Thu, 30 Jan 2020 12:38:15 GMT
 - request:
     method: get
     uri: http://localhost/dummy_repo/repodata/a546b430098b8a3fb7d65493a9ce608fafcb32f451d0ce8bf85410191f347cc3-deltainfo.xml.gz
@@ -182,7 +182,7 @@ http_interactions:
       Server:
       - SimpleHTTP/0.6 Python/3.7.5
       Date:
-      - Wed, 29 Jan 2020 18:41:21 GMT
+      - Thu, 30 Jan 2020 12:38:15 GMT
       Content-type:
       - application/gzip
       Content-Length:
@@ -196,7 +196,7 @@ http_interactions:
     http_version: '1.0'
     adapter_metadata:
       effective_url: http://localhost/dummy_repo/repodata/a546b430098b8a3fb7d65493a9ce608fafcb32f451d0ce8bf85410191f347cc3-deltainfo.xml.gz
-  recorded_at: Wed, 29 Jan 2020 18:41:21 GMT
+  recorded_at: Thu, 30 Jan 2020 12:38:15 GMT
 - request:
     method: get
     uri: http://localhost/dummy_repo/repodata/837fb50abc9680b1e11e050901a56721855a5e854e85e46ceaad2c6816297e69-filelists.xml.gz
@@ -216,7 +216,7 @@ http_interactions:
       Server:
       - SimpleHTTP/0.6 Python/3.7.5
       Date:
-      - Wed, 29 Jan 2020 18:41:21 GMT
+      - Thu, 30 Jan 2020 12:38:15 GMT
       Content-type:
       - application/gzip
       Content-Length:
@@ -230,41 +230,7 @@ http_interactions:
     http_version: '1.0'
     adapter_metadata:
       effective_url: http://localhost/dummy_repo/repodata/837fb50abc9680b1e11e050901a56721855a5e854e85e46ceaad2c6816297e69-filelists.xml.gz
-  recorded_at: Wed, 29 Jan 2020 18:41:21 GMT
-- request:
-    method: get
-    uri: http://localhost/dummy_repo/repodata/abf421e45af5cd686f050bab3d2a98e0a60d1b5ca3b07c86cb948fc1abfa675e-primary.xml.gz
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - RMT/2.5.2
-      Expect:
-      - ''
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Server:
-      - SimpleHTTP/0.6 Python/3.7.5
-      Date:
-      - Wed, 29 Jan 2020 18:41:21 GMT
-      Content-type:
-      - application/gzip
-      Content-Length:
-      - '1195'
-      Last-Modified:
-      - Wed, 29 Jan 2020 18:39:14 GMT
-    body:
-      encoding: ASCII-8BIT
-      string: !binary |-
-        H4sICFLRMV4AA2FiZjQyMWU0NWFmNWNkNjg2ZjA1MGJhYjNkMmE5OGUwYTYwZDFiNWNhM2IwN2M4NmNiOTQ4ZmMxYWJmYTY3NWUtcHJpbWFyeS54bWwA5ZlLc9s2EMfv/hQcntKDRbwBeiRm8uqtk7RpDz11QGBpcUyRKkl54n76LB+yJHuUSPFLnRxsEssFsLtc/PTXaPr6y6IIrqFu8qqchXRCwgBKV/m8vJyFf/3567kJXydn0wW01tvWBuheNrNw3rbLiygq8nL1ZeJXVzABv4rWXpGrFouqDAfvi2bVwO2UsrqGopigR7S07spewmZa53hnbr1cfHc39AmDcTGMTYQY8DgM2psl7t15JGdBMC3tAhK7XBbQTKN+0Flt7ebJF6P+UWIa9YPOOlYlgGXl5rMQK4MWvE5oGNRQdJaod3RzcFfNajFu1swtkwojurrM/Sz8+8PnMJFOAM8sVUyknnEmKYDz3sZOZw4y64mQcSxtDBa8ZNoT5b2RlLgMGF6n0XqTfke8Lmx9k7zpMwk8Dm+CPz79No3WTzovD42r82WLSSTve5ch88Fz+2nnPVasTqbR7W1nX9UFmrr/3ajNFxBkeYF5Ukkwas40C4N0lRd+Y5J8LE2T/wfrV4OPYy7CIC+b1hYFdP447OqdX+NTpkw3a1pUznZRBfMaslk4xHyOZce/4SVNuvc5bJBV9cK23S0O0HxR5A7KBpJPqxRvp9G2beN1DaWv6qRKG+yrPvhJ13wTD9F7wAa9+Pzu3UW9aM/70g6rjHM2i1zW1Wo5VDZ6M/bUxr7x69efV02bXBo9uGxMG7emWtUO8C7ZSbmpXZfvMG/js5k3B+uhPq9tif2Opa1brKXpD3JXYsPGPh3dl3V1nePLH0yjEcq2vgm6A7EueBhkhb3E4/Th9/C7R+Ab67zCV3auxC9Hrjekuxtrv0MN/67y+tYU3bVNo3VL3PbxE+OAHY8DG2feSUl1JoxnKWVOG+IhJYY4YxWNM+6FIClJJXHMcby6mEvCJfOpUPyEccCluIsDLsQeHEiygwNOt3FgxDdxwH4+HLBTxQF7ZBzcW+8ZcVD1lXteeWC58UBcLDg3hjKdoi4QCrTWzKtYECnBMSk1UeBQN0jFs1RKT3lKaCqyfTz4OKRyOBDG3B+XCCKWd4kgzF6BwI8WCGPQp64QPq776lGYsJv0s0Nh3P7hImFc6PRVwoOx8AMywXMUA6lCQa1AaCoFcYDfCaTSWlCKasALri3VWnFhtSbG+CzVHPADV9GM65PGgozvfW+QMt6DBREfLRQ2J+SklcJTYeFFtMJBWDhELByFhZdUC2mxghTqOr+PBqz+E8kFkTkSe5fFlmfOSEK5BgWWMiYEHn7ibKqsZsB7IIDhqQFuNWIDnKDE7uHC200uh7NhqwAvJhuYOlo0bIW9+xl6Ynh4u91fj4KIvZk/Hya2Qni4gtha7BVmcsIS4uGs+AENkVlqdKwoEI6qAQnhfJyaLEYMGCMVVSK1ggjrecas4l4S7r2OhbXaUQ3+f8GKI7TEHVYcoiR2Twz7aVnxIpLiYFYcIiuOY8VT64rbXzCSs6+vqlWWiBkAAA==
-    http_version: '1.0'
-    adapter_metadata:
-      effective_url: http://localhost/dummy_repo/repodata/abf421e45af5cd686f050bab3d2a98e0a60d1b5ca3b07c86cb948fc1abfa675e-primary.xml.gz
-  recorded_at: Wed, 29 Jan 2020 18:41:21 GMT
+  recorded_at: Thu, 30 Jan 2020 12:38:15 GMT
 - request:
     method: get
     uri: http://localhost/dummy_repo/repodata/2d12587a74d924bad597fd8e25b8955270dfbe7591e020f9093edbb4a0d04444-other.xml.gz
@@ -284,7 +250,7 @@ http_interactions:
       Server:
       - SimpleHTTP/0.6 Python/3.7.5
       Date:
-      - Wed, 29 Jan 2020 18:41:21 GMT
+      - Thu, 30 Jan 2020 12:38:15 GMT
       Content-type:
       - application/gzip
       Content-Length:
@@ -298,10 +264,10 @@ http_interactions:
     http_version: '1.0'
     adapter_metadata:
       effective_url: http://localhost/dummy_repo/repodata/2d12587a74d924bad597fd8e25b8955270dfbe7591e020f9093edbb4a0d04444-other.xml.gz
-  recorded_at: Wed, 29 Jan 2020 18:41:21 GMT
+  recorded_at: Thu, 30 Jan 2020 12:38:15 GMT
 - request:
     method: get
-    uri: http://localhost/dummy_repo/oranges-0.1-0.x86_64.drpm
+    uri: http://localhost/dummy_repo/repodata/abf421e45af5cd686f050bab3d2a98e0a60d1b5ca3b07c86cb948fc1abfa675e-primary.xml.gz
     body:
       encoding: US-ASCII
       string: ''
@@ -318,21 +284,21 @@ http_interactions:
       Server:
       - SimpleHTTP/0.6 Python/3.7.5
       Date:
-      - Wed, 29 Jan 2020 18:41:21 GMT
+      - Thu, 30 Jan 2020 12:38:15 GMT
       Content-type:
-      - application/octet-stream
+      - application/gzip
       Content-Length:
-      - '2083'
+      - '1195'
       Last-Modified:
-      - Wed, 29 Jan 2020 16:49:37 GMT
+      - Wed, 29 Jan 2020 18:39:14 GMT
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        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
+        H4sICFLRMV4AA2FiZjQyMWU0NWFmNWNkNjg2ZjA1MGJhYjNkMmE5OGUwYTYwZDFiNWNhM2IwN2M4NmNiOTQ4ZmMxYWJmYTY3NWUtcHJpbWFyeS54bWwA5ZlLc9s2EMfv/hQcntKDRbwBeiRm8uqtk7RpDz11QGBpcUyRKkl54n76LB+yJHuUSPFLnRxsEssFsLtc/PTXaPr6y6IIrqFu8qqchXRCwgBKV/m8vJyFf/3567kJXydn0wW01tvWBuheNrNw3rbLiygq8nL1ZeJXVzABv4rWXpGrFouqDAfvi2bVwO2UsrqGopigR7S07spewmZa53hnbr1cfHc39AmDcTGMTYQY8DgM2psl7t15JGdBMC3tAhK7XBbQTKN+0Flt7ebJF6P+UWIa9YPOOlYlgGXl5rMQK4MWvE5oGNRQdJaod3RzcFfNajFu1swtkwojurrM/Sz8+8PnMJFOAM8sVUyknnEmKYDz3sZOZw4y64mQcSxtDBa8ZNoT5b2RlLgMGF6n0XqTfke8Lmx9k7zpMwk8Dm+CPz79No3WTzovD42r82WLSSTve5ch88Fz+2nnPVasTqbR7W1nX9UFmrr/3ajNFxBkeYF5Ukkwas40C4N0lRd+Y5J8LE2T/wfrV4OPYy7CIC+b1hYFdP447OqdX+NTpkw3a1pUznZRBfMaslk4xHyOZce/4SVNuvc5bJBV9cK23S0O0HxR5A7KBpJPqxRvp9G2beN1DaWv6qRKG+yrPvhJ13wTD9F7wAa9+Pzu3UW9aM/70g6rjHM2i1zW1Wo5VDZ6M/bUxr7x69efV02bXBo9uGxMG7emWtUO8C7ZSbmpXZfvMG/js5k3B+uhPq9tif2Opa1brKXpD3JXYsPGPh3dl3V1nePLH0yjEcq2vgm6A7EueBhkhb3E4/Th9/C7R+Ab67zCV3auxC9Hrjekuxtrv0MN/67y+tYU3bVNo3VL3PbxE+OAHY8DG2feSUl1JoxnKWVOG+IhJYY4YxWNM+6FIClJJXHMcby6mEvCJfOpUPyEccCluIsDLsQeHEiygwNOt3FgxDdxwH4+HLBTxQF7ZBzcW+8ZcVD1lXteeWC58UBcLDg3hjKdoi4QCrTWzKtYECnBMSk1UeBQN0jFs1RKT3lKaCqyfTz4OKRyOBDG3B+XCCKWd4kgzF6BwI8WCGPQp64QPq776lGYsJv0s0Nh3P7hImFc6PRVwoOx8AMywXMUA6lCQa1AaCoFcYDfCaTSWlCKasALri3VWnFhtSbG+CzVHPADV9GM65PGgozvfW+QMt6DBREfLRQ2J+SklcJTYeFFtMJBWDhELByFhZdUC2mxghTqOr+PBqz+E8kFkTkSe5fFlmfOSEK5BgWWMiYEHn7ibKqsZsB7IIDhqQFuNWIDnKDE7uHC200uh7NhqwAvJhuYOlo0bIW9+xl6Ynh4u91fj4KIvZk/Hya2Qni4gtha7BVmcsIS4uGs+AENkVlqdKwoEI6qAQnhfJyaLEYMGCMVVSK1ggjrecas4l4S7r2OhbXaUQ3+f8GKI7TEHVYcoiR2Twz7aVnxIpLiYFYcIiuOY8VT64rbXzCSs6+vqlWWiBkAAA==
     http_version: '1.0'
     adapter_metadata:
-      effective_url: http://localhost/dummy_repo/oranges-0.1-0.x86_64.drpm
-  recorded_at: Wed, 29 Jan 2020 18:41:21 GMT
+      effective_url: http://localhost/dummy_repo/repodata/abf421e45af5cd686f050bab3d2a98e0a60d1b5ca3b07c86cb948fc1abfa675e-primary.xml.gz
+  recorded_at: Thu, 30 Jan 2020 12:38:15 GMT
 - request:
     method: get
     uri: http://localhost/dummy_repo/apples-0.1-0.x86_64.drpm
@@ -352,7 +318,7 @@ http_interactions:
       Server:
       - SimpleHTTP/0.6 Python/3.7.5
       Date:
-      - Wed, 29 Jan 2020 18:41:21 GMT
+      - Thu, 30 Jan 2020 12:38:15 GMT
       Content-type:
       - application/octet-stream
       Content-Length:
@@ -366,10 +332,10 @@ http_interactions:
     http_version: '1.0'
     adapter_metadata:
       effective_url: http://localhost/dummy_repo/apples-0.1-0.x86_64.drpm
-  recorded_at: Wed, 29 Jan 2020 18:41:21 GMT
+  recorded_at: Thu, 30 Jan 2020 12:38:15 GMT
 - request:
     method: get
-    uri: http://localhost/dummy_repo/apples-0.2-0.x86_64.rpm
+    uri: http://localhost/dummy_repo/blueberries-0.1-0.src.drpm
     body:
       encoding: US-ASCII
       string: ''
@@ -386,21 +352,56 @@ http_interactions:
       Server:
       - SimpleHTTP/0.6 Python/3.7.5
       Date:
-      - Wed, 29 Jan 2020 18:41:21 GMT
+      - Thu, 30 Jan 2020 12:38:15 GMT
       Content-type:
-      - application/x-rpm
+      - application/octet-stream
       Content-Length:
-      - '1950'
+      - '22'
+      Last-Modified:
+      - Wed, 29 Jan 2020 17:19:24 GMT
+    body:
+      encoding: UTF-8
+      string: 'Blueberries Delta RPM
+
+'
+    http_version: '1.0'
+    adapter_metadata:
+      effective_url: http://localhost/dummy_repo/blueberries-0.1-0.src.drpm
+  recorded_at: Thu, 30 Jan 2020 12:38:15 GMT
+- request:
+    method: get
+    uri: http://localhost/dummy_repo/oranges-0.1-0.x86_64.drpm
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - RMT/2.5.2
+      Expect:
+      - ''
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - SimpleHTTP/0.6 Python/3.7.5
+      Date:
+      - Thu, 30 Jan 2020 12:38:15 GMT
+      Content-type:
+      - application/octet-stream
+      Content-Length:
+      - '2083'
       Last-Modified:
       - Wed, 29 Jan 2020 16:49:37 GMT
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        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
+        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
     http_version: '1.0'
     adapter_metadata:
-      effective_url: http://localhost/dummy_repo/apples-0.2-0.x86_64.rpm
-  recorded_at: Wed, 29 Jan 2020 18:41:21 GMT
+      effective_url: http://localhost/dummy_repo/oranges-0.1-0.x86_64.drpm
+  recorded_at: Thu, 30 Jan 2020 12:38:15 GMT
 - request:
     method: get
     uri: http://localhost/dummy_repo/apples-0.1-0.x86_64.rpm
@@ -420,7 +421,7 @@ http_interactions:
       Server:
       - SimpleHTTP/0.6 Python/3.7.5
       Date:
-      - Wed, 29 Jan 2020 18:41:21 GMT
+      - Thu, 30 Jan 2020 12:38:15 GMT
       Content-type:
       - application/x-rpm
       Content-Length:
@@ -434,7 +435,41 @@ http_interactions:
     http_version: '1.0'
     adapter_metadata:
       effective_url: http://localhost/dummy_repo/apples-0.1-0.x86_64.rpm
-  recorded_at: Wed, 29 Jan 2020 18:41:21 GMT
+  recorded_at: Thu, 30 Jan 2020 12:38:15 GMT
+- request:
+    method: get
+    uri: http://localhost/dummy_repo/apples-0.2-0.x86_64.rpm
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - RMT/2.5.2
+      Expect:
+      - ''
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - SimpleHTTP/0.6 Python/3.7.5
+      Date:
+      - Thu, 30 Jan 2020 12:38:15 GMT
+      Content-type:
+      - application/x-rpm
+      Content-Length:
+      - '1950'
+      Last-Modified:
+      - Wed, 29 Jan 2020 16:49:37 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        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
+    http_version: '1.0'
+    adapter_metadata:
+      effective_url: http://localhost/dummy_repo/apples-0.2-0.x86_64.rpm
+  recorded_at: Thu, 30 Jan 2020 12:38:15 GMT
 - request:
     method: get
     uri: http://localhost/dummy_repo/oranges-0.1-0.x86_64.rpm
@@ -454,7 +489,7 @@ http_interactions:
       Server:
       - SimpleHTTP/0.6 Python/3.7.5
       Date:
-      - Wed, 29 Jan 2020 18:41:21 GMT
+      - Thu, 30 Jan 2020 12:38:15 GMT
       Content-type:
       - application/x-rpm
       Content-Length:
@@ -468,7 +503,7 @@ http_interactions:
     http_version: '1.0'
     adapter_metadata:
       effective_url: http://localhost/dummy_repo/oranges-0.1-0.x86_64.rpm
-  recorded_at: Wed, 29 Jan 2020 18:41:21 GMT
+  recorded_at: Thu, 30 Jan 2020 12:38:15 GMT
 - request:
     method: get
     uri: http://localhost/dummy_repo/oranges-0.2-0.x86_64.rpm
@@ -488,7 +523,7 @@ http_interactions:
       Server:
       - SimpleHTTP/0.6 Python/3.7.5
       Date:
-      - Wed, 29 Jan 2020 18:41:21 GMT
+      - Thu, 30 Jan 2020 12:38:15 GMT
       Content-type:
       - application/x-rpm
       Content-Length:
@@ -502,5 +537,75 @@ http_interactions:
     http_version: '1.0'
     adapter_metadata:
       effective_url: http://localhost/dummy_repo/oranges-0.2-0.x86_64.rpm
-  recorded_at: Wed, 29 Jan 2020 18:41:21 GMT
+  recorded_at: Thu, 30 Jan 2020 12:38:15 GMT
+- request:
+    method: get
+    uri: http://localhost/dummy_repo/blueberries-0.2-0.src.rpm
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - RMT/2.5.2
+      Expect:
+      - ''
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - SimpleHTTP/0.6 Python/3.7.5
+      Date:
+      - Thu, 30 Jan 2020 12:38:15 GMT
+      Content-type:
+      - application/x-rpm
+      Content-Length:
+      - '26'
+      Last-Modified:
+      - Wed, 29 Jan 2020 17:36:37 GMT
+    body:
+      encoding: UTF-8
+      string: 'Blueberries 0.2.0 package
+
+'
+    http_version: '1.0'
+    adapter_metadata:
+      effective_url: http://localhost/dummy_repo/blueberries-0.2-0.src.rpm
+  recorded_at: Thu, 30 Jan 2020 12:38:15 GMT
+- request:
+    method: get
+    uri: http://localhost/dummy_repo/blueberries-0.1-0.src.rpm
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - RMT/2.5.2
+      Expect:
+      - ''
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - SimpleHTTP/0.6 Python/3.7.5
+      Date:
+      - Thu, 30 Jan 2020 12:38:15 GMT
+      Content-type:
+      - application/x-rpm
+      Content-Length:
+      - '26'
+      Last-Modified:
+      - Wed, 29 Jan 2020 17:36:31 GMT
+    body:
+      encoding: UTF-8
+      string: 'Blueberries 0.1.0 package
+
+'
+    http_version: '1.0'
+    adapter_metadata:
+      effective_url: http://localhost/dummy_repo/blueberries-0.1-0.src.rpm
+  recorded_at: Thu, 30 Jan 2020 12:38:15 GMT
 recorded_with: VCR 4.0.0
