@@ -146,7 +146,7 @@ class RMT::Mirror
       parser = RepomdParser::DeltainfoXmlParser.new(
         File.join(@temp_metadata_dir, filename)
       )
-      referenced_files = filter_elegible_files(parser.parse)
+      referenced_files = filter_eligible_files(parser.parse)
       to_download = parsed_files_after_dedup(@repository_dir, referenced_files)
       failed_downloads.concat(@downloader.download_multi(to_download, ignore_errors: true)) unless to_download.empty?
     end
@@ -155,7 +155,7 @@ class RMT::Mirror
       parser = RepomdParser::PrimaryXmlParser.new(
         File.join(@temp_metadata_dir, filename)
       )
-      referenced_files = filter_elegible_files(parser.parse)
+      referenced_files = filter_eligible_files(parser.parse)
       to_download = parsed_files_after_dedup(@repository_dir, referenced_files)
       failed_downloads.concat(@downloader.download_multi(to_download, ignore_errors: true)) unless to_download.empty?
     end
@@ -165,7 +165,7 @@ class RMT::Mirror
     raise RMT::Mirror::Exception.new(_('Error while mirroring data: %{error}') % { error: e.message })
   end
 
-  def filter_elegible_files(referenced_files)
+  def filter_eligible_files(referenced_files)
     referenced_files.reject do |parsed_file|
       parsed_file.arch == 'src' && !@mirror_src
     end
