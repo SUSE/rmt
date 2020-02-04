@@ -53,7 +53,6 @@ class MigrationEngine
 
     migrations = migration_targets(migration_kind: migration_kind)
     migrations = add_python2_module(migrations)
-    remove_incompatible_migrations(migrations)
     migrations = yield(migrations) if block_given?
     # NB: It's possible to migrate to any product that's available on RMT, entitlement checks not needed.
 
@@ -77,29 +76,18 @@ class MigrationEngine
     installed_extensions = @installed_products.reject { |product| product == base_product }
     base_successors = base_product.successors.merge(migration_path_scope).to_a
     base_successors.push(base_product) if migration_kind == :online
-    extension_successors = installed_extensions.map do |e|
-      successors = e.successors.merge(migration_path_scope)
-      successors += [e] if migration_kind == :online
-      successors
-    end
-    # full set of migrations
-    migrations = base_successors.product(*extension_successors)
-    migrations.delete([base_product] + installed_extensions)
-    migrations
-  end
-
-  # removes product combinations that include incompatible base-extension combinations
-  def remove_incompatible_migrations(migrations)
-    migrations.clone.each do |migration|
-      migration_root_product = migration.first
-      (migration - [migration_root_product]).each do |extension|
-        # remove migration if it does not include a valid root product for the current extension
-        if (extension.available_for.map(&:id) & migration.map(&:id)).empty?
-          migrations.delete(migration)
-          break
-        end
+    combinations = []
+    # adding all valid combinations of extension successors to the base successors
+    base_successors.each do |base|
+      extensions_successors = installed_extensions.map do |ext|
+        options = ext.successors.merge(migration_path_scope)
+        options += [ext] if migration_kind == :online
+        options.select { |succ| succ.available_for?(base) }
       end
+      combinations += [base].product(*extensions_successors)
     end
+    combinations.delete([base_product] + installed_extensions)
+    combinations
   end
 
   # automatically add modules that are flagged as `migration_extra` or `recommended`
