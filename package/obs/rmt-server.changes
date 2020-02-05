@@ -1,8 +1,15 @@
 -------------------------------------------------------------------
 Tue Jan 28 14:00:37 UTC 2020 - Felix Schnizlein <fschnizlein@suse.com>
 
-- Version 2.5.2
+- Version 2.5.3
 - low_speed_time and low_speed_limit can be configured
+
+-------------------------------------------------------------------
+Tue Jan 21 13:05:15 UTC 2020 - Jens Mammen <jmammen@suse.com>
+
+- Version 2.5.2
+- Fix offline migration (CVE-2019-18904: bsc#1160922) 
+- Ensure download of signature file from custom repositories
 
 -------------------------------------------------------------------
 Fri Jan 10 13:47:22 UTC 2020 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
