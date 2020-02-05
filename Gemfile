@@ -40,6 +40,7 @@ group :development, :test do
   gem 'memory_profiler'
   gem 'danger'
   gem 'danger-rubocop'
+  gem 'strong_migrations'
 end
 
 group :development do
