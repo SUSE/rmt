@@ -101,14 +101,22 @@ class RMT::Mirror
     end
 
     metadata_files = RepomdParser::RepomdXmlParser.new(local_filename).parse
-    primary_files = metadata_files.select { |reference| reference.type == :primary }
-    deltainfo_files = metadata_files.select { |reference| reference.type == :deltainfo }
+    primary_files = select_primary_files(metadata_files)
+    deltainfo_files = select_deltainfo_files(metadata_files)
 
     @downloader.download_multi(metadata_files)
 
     [primary_files, deltainfo_files]
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring metadata: %{error}') % { error: e.message })
+  end
+
+  def select_primary_files(metadata_files)
+    metadata_files.select { |reference| reference.type == :primary }
+  end
+
+  def select_deltainfo_files(metadata_files)
+    metadata_files.select { |reference| reference.type == :deltainfo }
   end
 
   def mirror_license
@@ -134,14 +142,17 @@ class RMT::Mirror
     @downloader.destination_dir = @repository_dir
     @downloader.cache_dir = nil
 
-    package_files =
-      parse_mirror_data_files(deltainfo_files, RepomdParser::DeltainfoXmlParser) +
-      parse_mirror_data_files(primary_files, RepomdParser::PrimaryXmlParser)
+    package_files = parse_package_files(primary_files, deltainfo_files)
     failed_downloads = download_package_files(package_files)
 
     raise _('Failed to download %{failed_count} files') % { failed_count: failed_downloads.size } unless failed_downloads.empty?
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring data: %{error}') % { error: e.message })
+  end
+
+  def parse_package_files(primary_files, deltainfo_files)
+    parse_mirror_data_files(primary_files, RepomdParser::PrimaryXmlParser) +
+      parse_mirror_data_files(deltainfo_files, RepomdParser::DeltainfoXmlParser)
   end
 
   def parse_mirror_data_files(references, xml_parser_class)
