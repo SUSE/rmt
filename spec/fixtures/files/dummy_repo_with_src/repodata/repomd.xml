@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repomd xmlns="http://linux.duke.edu/metadata/repo" xmlns:rpm="http://linux.duke.edu/metadata/rpm">
+  <revision>1581130612</revision>
+  <tags>
+    <repo>obsrepository://build.opensuse.org/home:ikapelyukhin:dummy_repo/openSUSE_Leap_15.1</repo>
+    <repo>obsbuildid:1580990394</repo>
+  </tags>
+  <data type="primary">
+    <checksum type="sha256">360c5ae3148c7e194348935b98bd80056f4fc991e0e865e4aa2fa1a541fa4805</checksum>
+    <open-checksum type="sha256">aaa804c1db6b997a692e58ecc11b3fe7a3ae152f1f98f4238d859a71b3ab205b</open-checksum>
+    <location href="repodata/360c5ae3148c7e194348935b98bd80056f4fc991e0e865e4aa2fa1a541fa4805-primary.xml.gz"/>
+    <timestamp>1581130612</timestamp>
+    <size>997</size>
+    <open-size>4204</open-size>
+  </data>
+  <data type="filelists">
+    <checksum type="sha256">44d990e1d1d6ff48ce8a59058edadd35460fc74426ed1daf28333d61cda85721</checksum>
+    <open-checksum type="sha256">15c78fb785d65ea99a15e6fb68c1110ee871a64ddf5a3164a9dd7c02a5412cbf</open-checksum>
+    <location href="repodata/44d990e1d1d6ff48ce8a59058edadd35460fc74426ed1daf28333d61cda85721-filelists.xml.gz"/>
+    <timestamp>1581130612</timestamp>
+    <size>448</size>
+    <open-size>1004</open-size>
+  </data>
+  <data type="other">
+    <checksum type="sha256">e587bdb63d42bf5ef93f8cf941b9d297c4c8e5eaf176e6548911223d73708adf</checksum>
+    <open-checksum type="sha256">f8755e6a1c25c7a18ffd8289cf372c60ec626b4742622a58725bfa9223ac1db4</open-checksum>
+    <location href="repodata/e587bdb63d42bf5ef93f8cf941b9d297c4c8e5eaf176e6548911223d73708adf-other.xml.gz"/>
+    <timestamp>1581130612</timestamp>
+    <size>393</size>
+    <open-size>809</open-size>
+  </data>
+  <data type="deltainfo">
+    <checksum type="sha256">bbeb1f0d149effef12333eee9df208b102c8322b1d97ed2437c34db450a646ba</checksum>
+    <open-checksum type="sha256">9b5f9bc71aa64fc6510ff03e325a13e2b96fc9518649e321440fbda110c63669</open-checksum>
+    <location href="repodata/bbeb1f0d149effef12333eee9df208b102c8322b1d97ed2437c34db450a646ba-deltainfo.xml.gz"/>
+    <timestamp>1581130612</timestamp>
+    <size>298</size>
+    <open-size>500</open-size>
+  </data>
+</repomd>

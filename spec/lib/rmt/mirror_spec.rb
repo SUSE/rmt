@@ -60,7 +60,7 @@ RSpec.describe RMT::Mirror do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
           logger: logger,
-          mirror_src: mirror_src
+          mirror_src: false
         )
       end
 
@@ -75,17 +75,48 @@ RSpec.describe RMT::Mirror do
         rmt_mirror.mirror(mirror_params)
       end
 
+      it 'downloads rpm files' do
+        rpm_entries = Dir.entries(File.join(@tmp_dir, 'dummy_repo')).select { |entry| entry =~ /\.rpm$/ }
+        expect(rpm_entries.length).to eq(4)
+      end
+
+      it 'downloads drpm files' do
+        rpm_entries = Dir.entries(File.join(@tmp_dir, 'dummy_repo')).select { |entry| entry =~ /\.drpm$/ }
+        expect(rpm_entries.length).to eq(2)
+      end
+    end
+
+    context 'without auth_token and with source packages', vcr: { cassette_name: 'mirroring_with_src' } do
+      let(:rmt_mirror) do
+        described_class.new(
+          mirroring_base_dir: @tmp_dir,
+          logger: logger,
+          mirror_src: mirror_src
+        )
+      end
+
+      let(:mirror_params) do
+        {
+          repository_url: 'http://localhost/dummy_repo_with_src/',
+          local_path: '/dummy_repo'
+        }
+      end
+
+      before do
+        rmt_mirror.mirror(mirror_params)
+      end
+
       context 'when mirror_src is false' do
         let(:mirror_src) { false }
 
         it 'downloads rpm files' do
-          rpm_entries = Dir.entries(File.join(@tmp_dir, 'dummy_repo')).select { |entry| entry =~ /\.rpm$/ }
-          expect(rpm_entries.length).to eq(4)
+          rpm_entries = Dir.glob(File.join(@tmp_dir, 'dummy_repo', '**', '*.rpm'))
+          expect(rpm_entries.length).to eq(2)
         end
 
         it 'downloads drpm files' do
-          rpm_entries = Dir.entries(File.join(@tmp_dir, 'dummy_repo')).select { |entry| entry =~ /\.drpm$/ }
-          expect(rpm_entries.length).to eq(2)
+          rpm_entries = Dir.glob(File.join(@tmp_dir, 'dummy_repo', '**', '*.drpm'))
+          expect(rpm_entries.length).to eq(1)
         end
       end
 
@@ -93,13 +124,13 @@ RSpec.describe RMT::Mirror do
         let(:mirror_src) { true }
 
         it 'downloads rpm files' do
-          rpm_entries = Dir.entries(File.join(@tmp_dir, 'dummy_repo')).select { |entry| entry =~ /\.rpm$/ }
-          expect(rpm_entries.length).to eq(6)
+          rpm_entries = Dir.glob(File.join(@tmp_dir, 'dummy_repo', '**', '*.rpm'))
+          expect(rpm_entries.length).to eq(4)
         end
 
         it 'downloads drpm files' do
-          rpm_entries = Dir.entries(File.join(@tmp_dir, 'dummy_repo')).select { |entry| entry =~ /\.drpm$/ }
-          expect(rpm_entries.length).to eq(3)
+          rpm_entries = Dir.glob(File.join(@tmp_dir, 'dummy_repo', '**', '*.drpm'))
+          expect(rpm_entries.length).to eq(1)
         end
       end
     end
