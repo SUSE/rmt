@@ -14,14 +14,14 @@ _rmt-cli()
 
 	current_word=${COMP_WORDS[COMP_CWORD]}
 	subcommand=${COMP_WORDS[1]}
-	options="sync products repos mirror import export version help"
+	options="sync products repos systems mirror import export version help"
 	depth=1
 
 	if [[ ${subcommand} =~ ^(sync|mirror|version)$ ]] ; then
 		: # these subcommands can't currently be completed further
 	elif _rmt-cli-default-completion "${options[@]}" $depth ; then
 		:
-	elif [[ ${subcommand} =~ ^(product|products|repo|repos|import|export)$ ]] ; then
+	elif [[ ${subcommand} =~ ^(products|repos|systems|import|export)$ ]] ; then
 		((depth++))
 		_rmt-cli_$subcommand $depth
 	fi
@@ -87,6 +87,22 @@ _rmt-cli_repos()
 	fi
 }
 
+_rmt-cli_systems()
+{
+	local current_word options flags depth
+
+	current_word=${COMP_WORDS[COMP_CWORD]}
+	options="list help scc-sync"
+	flags="--all --csv --limit="
+	depth=$1
+	if _rmt-cli-default-completion "${options[@]}" $depth ; then
+		:
+	elif [[ ${current_word} == -* && ${COMP_WORDS[2]} =~ ^(list|ls)$ ]] ; then
+		COMPREPLY=( $(compgen -W "${flags}" -- ${current_word}) )
+		[[ $COMPREPLY == "--limit=" ]] && compopt -o nospace
+	fi
+}
+
 _rmt-cli_repos_custom()
 {
 	local current_word options flags
@@ -128,17 +144,6 @@ _rmt-cli_export()
 	elif [[ ${COMP_CWORD} == 3 ]] ; then
 		COMPREPLY=( $(compgen -f ${current_word}) )
 	fi
-}
-
-# alias functions:
-_rmt-cli_repo()
-{
-	_rmt-cli_repos
-}
-
-_rmt-cli_product()
-{
-	_rmt-cli_products
 }
 
 complete -F _rmt-cli rmt-cli

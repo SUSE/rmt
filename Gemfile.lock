@@ -117,7 +117,7 @@ GEM
     factory_girl_rails (4.8.0)
       factory_girl (~> 4.8.0)
       railties (>= 3.0.0)
-    fakefs (0.20.1)
+    fakefs (1.0.0)
     faraday (0.17.3)
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (2.0.0)
@@ -287,6 +287,8 @@ GEM
     spring-watcher-listen (2.0.1)
       listen (>= 2.7, < 4.0)
       spring (>= 1.2, < 3.0)
+    strong_migrations (0.3.1)
+      activerecord (>= 3.2.0)
     term-ansicolor (1.7.1)
       tins (~> 1.0)
     terminal-table (1.8.0)
@@ -356,6 +358,7 @@ DEPENDENCIES
   spring
   spring-commands-rspec
   spring-watcher-listen (~> 2.0.0)
+  strong_migrations
   terminal-table (~> 1.8)
   thor
   timecop

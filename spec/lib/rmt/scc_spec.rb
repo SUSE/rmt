@@ -16,6 +16,8 @@ describe RMT::SCC do
     end
   end
   let(:api_double) { instance_double 'SUSE::Connect::Api' }
+  let(:logger) { instance_double('RMT::Logger').as_null_object }
+
 
   shared_examples 'saves in database' do
     it 'saves products to the DB' do
@@ -90,8 +92,7 @@ describe RMT::SCC do
     allow(STDOUT).to receive(:puts)
     allow(STDOUT).to receive(:write)
     # disable Logger output while running tests
-    logger = instance_double('Logger').as_null_object
-    allow(Logger).to receive(:new).and_return(logger)
+    allow(RMT::Logger).to receive(:new).and_return(logger)
   end
 
   describe '#sync' do
@@ -321,6 +322,85 @@ describe RMT::SCC do
       end
 
       include_examples 'saves in database'
+    end
+  end
+
+  describe '#sync_systems' do
+    context 'when system syncing is disabled' do
+      before do
+        allow(Settings).to receive(:scc).and_return OpenStruct.new(
+          username: 'foo',
+          password: 'bar',
+          sync_systems: false
+        )
+      end
+
+      it "doesn't sync systems" do
+        expect(api_double).not_to receive(:forward_system_activations)
+        described_class.new.sync_systems
+      end
+
+      it 'produces a warning' do
+        expect(logger).to receive(:warn).with(/Syncing systems to SCC is disabled by the configuration file, exiting/)
+        described_class.new.sync_systems
+      end
+    end
+
+    context 'when system syncing is enabled' do
+      before do
+        allow(Settings).to receive(:scc).and_return OpenStruct.new(
+          username: 'foo',
+          password: 'bar',
+          sync_systems: true
+        )
+      end
+
+      context 'when syncing succeeds' do
+        before do
+          expect(api_double).to receive(:forward_system_activations).with(system).and_return(
+            {
+              id: scc_system_id,
+              login: 'test',
+              password: 'test'
+            }
+          )
+          expect(api_double).to receive(:forward_system_deregistration).with(deregistered_system.scc_system_id)
+
+          expect(logger).to receive(:info).with(/Syncing system/)
+          expect(logger).to receive(:info).with(/Syncing de-registered system/)
+          described_class.new.sync_systems
+        end
+
+        let(:system) { FactoryGirl.create(:system) }
+        let(:scc_system_id) { 9000 }
+        let(:deregistered_system) { FactoryGirl.create(:deregistered_system) }
+
+        it 'updates system.scc_registered_at field' do
+          system.reload
+          expect(system.scc_registered_at).not_to be(nil)
+        end
+
+        it 'updates system.scc_system_id field' do
+          system.reload
+          expect(system.scc_system_id).to be(scc_system_id)
+        end
+      end
+
+      context 'when syncing fails' do
+        before do
+          expect(api_double).to receive(:forward_system_activations).with(system).and_raise(SUSE::Connect::Api::RequestError, 'Sync error')
+          expect(logger).to receive(:info).with(/Syncing system/)
+          expect(logger).to receive(:error).with(/Failed to sync system/)
+          described_class.new.sync_systems
+        end
+
+        let(:system) { FactoryGirl.create(:system) }
+
+        it "doesn't update system.scc_registered_at" do
+          system.reload
+          expect(system.scc_registered_at).to be(nil)
+        end
+      end
     end
   end
 
