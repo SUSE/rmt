@@ -20,6 +20,6 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
   private
 
   def hw_info_params
-    params.require(:hwinfo).permit(:cpus, :sockets, :arch, :hypervisor, :uuid)
+    params.require(:hwinfo).permit(:cpus, :sockets, :arch, :hypervisor, :uuid, :cloud_provider)
   end
 end

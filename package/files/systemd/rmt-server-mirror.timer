@@ -1,7 +1,5 @@
 [Unit]
 Description=RMT Mirror timer
-After=rmt-server.service
-Requires=rmt-server.service
 
 [Timer]
 OnCalendar=*-*-* 02:00:00

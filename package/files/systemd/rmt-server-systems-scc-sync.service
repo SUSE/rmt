@@ -1,5 +1,5 @@
 [Unit]
-Description=Mirror RMT
+Description=Sync RMT systems to SCC
 After=rmt-server.service
 Wants=rmt-server.service
 
@@ -7,7 +7,7 @@ Wants=rmt-server.service
 Type=simple
 Restart=no
 Environment="LOG_TO_JOURNALD=1" "LANG=en"
-ExecStart=/usr/share/rmt/bin/rmt-cli mirror
+ExecStart=/usr/share/rmt/bin/rmt-cli systems scc-sync
 
 [Install]
 WantedBy=multi-user.target

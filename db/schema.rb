@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190717114051) do
+ActiveRecord::Schema.define(version: 20200205123840) do
 
   create_table "activations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "service_id", null: false
@@ -20,6 +20,13 @@ ActiveRecord::Schema.define(version: 20190717114051) do
     t.index ["service_id"], name: "fk_rails_5ad14bc754"
     t.index ["system_id", "service_id"], name: "index_activations_on_system_id_and_service_id", unique: true
     t.index ["system_id"], name: "index_activations_on_system_id"
+  end
+
+  create_table "deregistered_systems", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "scc_system_id", null: false, comment: "SCC IDs of deregistered systems; used for forwarding to SCC"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["scc_system_id"], name: "index_deregistered_systems_on_scc_system_id", unique: true
   end
 
   create_table "downloaded_files", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -40,6 +47,7 @@ ActiveRecord::Schema.define(version: 20190717114051) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "instance_data", comment: "Additional client information, e.g. instance identity document"
+    t.string "cloud_provider"
     t.index ["hypervisor"], name: "index_hw_infos_on_hypervisor"
     t.index ["system_id"], name: "index_hw_infos_on_system_id", unique: true
   end
@@ -143,6 +151,8 @@ ActiveRecord::Schema.define(version: 20190717114051) do
     t.datetime "last_seen_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "scc_registered_at"
+    t.bigint "scc_system_id", comment: "System ID in SCC (if the system registration was forwarded; needed for forwarding de-registrations)"
     t.index ["login"], name: "index_systems_on_login", unique: true
   end
 
