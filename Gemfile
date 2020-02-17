@@ -6,7 +6,7 @@ git_source(:github) do |repo_name|
 end
 
 gem 'puma', '3.12.2'
-gem 'mysql2', '~> 0.4.10'
+gem 'mysql2', '~> 0.5.3'
 
 gem 'nokogiri', '~> 1.10.3'
 gem 'thor'
