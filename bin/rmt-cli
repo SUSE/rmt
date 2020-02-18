@@ -15,7 +15,7 @@ require 'rmt/config'
 require 'initializers/rmt_fast_gettext'
 require 'initializers/rmt_fast_gettext_cli_locale'
 
-relative_load_paths = %w[lib lib/rmt app/models app/services].map { |dir| File.join(rmt_path, dir) }
+relative_load_paths = %w[lib lib/rmt app/models app/services app/validators].map { |dir| File.join(rmt_path, dir) }
 ActiveSupport::Dependencies.autoload_paths += relative_load_paths
 
 if RMT::CLI::Base.process_user_name == 'root'

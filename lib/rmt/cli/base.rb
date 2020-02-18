@@ -81,6 +81,15 @@ class RMT::CLI::Base < Thor
         e.message,
         RMT::CLI::Error::ERROR_OTHER
       )
+    rescue SUSE::Connect::Api::RequestError => e
+      raise RMT::CLI::Error.new(
+        _("SCC API request failed. Error details:\nRequest URL: %{url}\nResponse code: %{code}\nResponse body:\n%{body}") % {
+          url: e.response.request.url,
+          code: e.response.code,
+          body: e.response.body
+        },
+        RMT::CLI::Error::ERROR_OTHER
+      )
     end
 
     # These methods are needed to properly format the hint outputs for `rmt-cli repos custom`. This is a workaround

@@ -16,6 +16,9 @@ class Product < ApplicationRecord
            class_name: 'ProductsExtensionsAssociation',
            foreign_key: :product_id
 
+  has_many :root_products, -> { distinct },
+           through: :product_extensions_associations
+
   has_many :extensions, -> { distinct },
     through: :extension_products_associations,
     source: :extension do
@@ -111,8 +114,8 @@ class Product < ApplicationRecord
     product_extensions_associations.where(recommended: true).where(root_product: root_product).present?
   end
 
-  def available_for
-    product_extensions_associations.includes(:root_product).map(&:root_product).uniq
+  def available_for?(product)
+    root_products.include?(product) || product == self
   end
 
   def self.modules_for_migration(root_product_ids)
