@@ -86,8 +86,8 @@ class RMT::Mirror
     local_filename = @downloader.download('repodata/repomd.xml')
 
     begin
-      key_file       = @downloader.download('repodata/repomd.xml.key')
       signature_file = @downloader.download('repodata/repomd.xml.asc')
+      key_file       = @downloader.download('repodata/repomd.xml.key')
 
       RMT::GPG.new(
         metadata_file: local_filename, key_file: key_file, signature_file: signature_file, logger: @logger
@@ -99,8 +99,6 @@ class RMT::Mirror
         raise(_('Failed to get repository metadata signatures with HTTP code %{http_code}') % { http_code: e.http_code })
       end
     end
-
-    raise _('The repository has an incomplete metadata signature') if (key_file && !signature_file)
 
     primary_files = []
     deltainfo_files = []
