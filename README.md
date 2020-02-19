@@ -6,7 +6,7 @@
 This tool allows you to mirror RPM repositories in your own private network.
 Organization (mirroring) credentials are required to mirror SUSE repositories.
 
-End-user documentation can be found in [RMT Guide](https://www.suse.com/documentation/sles-15/singlehtml/book_rmt/book_rmt.html). `man` pages for `rmt-cli` can be found [here](MANUAL.md).
+End-user documentation can be found in [RMT Guide](https://documentation.suse.com/sles/15-SP1/html/SLES-all/book-rmt.html). `man` pages for `rmt-cli` can be found [here](MANUAL.md).
 
 ## Installation on SLE15
 
