@@ -2,6 +2,7 @@ require 'rmt/downloader'
 require 'rmt/rpm'
 require 'rmt/gpg'
 require 'time'
+require 'repomd_parser'
 
 class RMT::Mirror
   class RMT::Mirror::Exception < RuntimeError
@@ -155,12 +156,11 @@ class RMT::Mirror
     end
 
     primary_files.each do |filename|
-      parser = RMT::Rpm::PrimaryXmlParser.new(
-        File.join(@temp_metadata_dir, filename),
-        @mirror_src
-      )
-      parser.parse
-      to_download = parsed_files_after_dedup(@repository_dir, parser.referenced_files)
+      #parser = RMT::Rpm::PrimaryXmlParser.new(
+      referenced_files = RepomdParser::PrimaryXmlParser.new(
+        File.join(@temp_metadata_dir, filename)
+      ).parse
+      to_download = parsed_files_after_dedup(@repository_dir, referenced_files)
       failed_downloads.concat(@downloader.download_multi(to_download, ignore_errors: true)) unless to_download.empty?
     end
 
@@ -196,7 +196,7 @@ class RMT::Mirror
   def parsed_files_after_dedup(root_path, referenced_files)
     files = referenced_files.map do |parsed_file|
       local_file = ::RMT::Downloader.make_local_path(root_path, parsed_file.location)
-      if File.exist?(local_file) || deduplicate(parsed_file[:checksum_type], parsed_file[:checksum], local_file)
+      if File.exist?(local_file) || deduplicate(parsed_file.checksum_type, parsed_file.checksum, local_file)
         nil
       else
         parsed_file

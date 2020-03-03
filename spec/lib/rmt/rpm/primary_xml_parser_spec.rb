@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe RMT::Rpm::PrimaryXmlParser do
+RSpec.describe RepomdParser::PrimaryXmlParser do
   describe '#parse' do
     let(:expected_result) do
       [
