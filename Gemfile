@@ -88,3 +88,4 @@ gem 'terminal-table', '~> 1.8'
 
 # needed by rmt-server-pubcloud
 gem 'jwt', '~> 2.1'
+gem 'repomd_parser'
