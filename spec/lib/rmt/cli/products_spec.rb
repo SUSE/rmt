@@ -468,4 +468,101 @@ RSpec.describe RMT::CLI::Products do
       end
     end
   end
+
+  describe '#show' do
+    let(:product) { create :product, :with_disabled_not_mirrored_repositories }
+    let(:repos) { product.repositories }
+    let(:target) { product.id.to_s }
+    let(:argv) { ['show', target] }
+    let(:expected_output) do
+      output = "Product: #{product.friendly_name} (id: #{target})\n"
+      output += "Description: #{product.description}\n"
+      output += "Repositories:\n"
+      repos.each do |repo|
+        mandatory = repo.enabled ? 'mandatory' : 'non-mandatory'
+        enabled = repo.mirroring_enabled ? 'enabled' : 'not enabled'
+        mirrored = repo.last_mirrored_at.present? ? "last mirrored at #{repo.last_mirrored_at.strftime('%Y-%m-%d %H:%M:%S %Z')}" : 'not mirrored'
+        output += "* #{repo.name} (id: #{repo.scc_id}) (#{mandatory}, #{enabled}, #{mirrored})\n"
+      end
+      output
+    end
+
+    describe 'success' do
+      context 'with disabled and not mirrored repos' do
+        it 'shows details of a product and its repos' do
+          expect { described_class.start(argv) }
+            .to output(expected_output).to_stdout
+            .and output('').to_stderr
+        end
+      end
+
+      context 'with disabled and mirrored repos' do
+        let(:product) { create :product, :with_disabled_mirrored_repositories }
+
+        it 'shows details of a product and its repos' do
+          expect { described_class.start(argv) }
+            .to output(expected_output).to_stdout
+            .and output('').to_stderr
+        end
+      end
+
+      context 'with enabled and not mirrored repos' do
+        let(:product) { create :product, :with_not_mirrored_repositories }
+
+        it 'shows details of a product and its repos' do
+          expect { described_class.start(argv) }
+            .to output(expected_output).to_stdout
+            .and output('').to_stderr
+        end
+      end
+
+      context 'with enabled and mirrored repositories' do
+        let(:product) { create :product, :with_mirrored_repositories }
+
+        it 'shows details of a product and its repos' do
+          expect { described_class.start(argv) }
+            .to output(expected_output).to_stdout
+            .and output('').to_stderr
+        end
+      end
+
+      context 'without the repos' do
+        let(:product) { create :product }
+        let(:expected_output) do
+          output = "Product: #{product.friendly_name} (id: #{target})\n"
+          output += "Description: #{product.description}\n"
+          output += "Repositories are not available for this product.\n"
+          output
+        end
+
+        it 'shows details of a product and its repos' do
+          expect { described_class.start(argv) }
+            .to output(expected_output).to_stdout
+            .and output('').to_stderr
+        end
+      end
+    end
+
+    describe 'failure' do
+      context 'with wrong ID string' do
+        let(:target) { '1234' }
+        let(:expected_output) { "Product by ID #{target} not found.\n" }
+
+        it 'raises a ProductNotFoundException' do
+          expect { described_class.start(argv) }
+            .to output(expected_output).to_stdout
+        end
+      end
+
+      context 'with wrong product string' do
+        let(:target) { product.product_string + 'foo' }
+        let(:expected_output) { "No product found for target #{target}.\n" }
+
+        it 'raises an ProductNotFoundException' do
+          expect { described_class.start(argv) }
+            .to output(expected_output).to_stdout
+        end
+      end
+    end
+  end
 end
