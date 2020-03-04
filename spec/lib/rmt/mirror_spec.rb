@@ -255,7 +255,7 @@ RSpec.describe RMT::Mirror do
       end
 
       context "when can't parse metadata", vcr: { cassette_name: 'mirroring_product' } do
-        before { allow_any_instance_of(RMT::Rpm::RepomdXmlParser).to receive(:parse).and_raise('Parse error') }
+        before { allow_any_instance_of(RepomdParser::RepomdXmlParser).to receive(:parse).and_raise('Parse error') }
         it 'removes the temporary metadata directory' do
           expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring metadata: Parse error')
           expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
@@ -263,7 +263,7 @@ RSpec.describe RMT::Mirror do
       end
 
       context 'when Interrupt is raised', vcr: { cassette_name: 'mirroring_product' } do
-        before { allow_any_instance_of(RMT::Rpm::RepomdXmlParser).to receive(:parse).and_raise(Interrupt.new) }
+        before { allow_any_instance_of(RepomdParser::RepomdXmlParser).to receive(:parse).and_raise(Interrupt.new) }
         it 'removes the temporary metadata directory' do
           expect { rmt_mirror.mirror(mirror_params) }.to raise_error(Interrupt)
           expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
