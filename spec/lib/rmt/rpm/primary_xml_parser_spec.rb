@@ -4,29 +4,33 @@ RSpec.describe RMT::Rpm::PrimaryXmlParser do
   describe '#parse' do
     let(:expected_result) do
       [
-        RMT::Rpm::FileEntry.new(
-          'apples-0.1-0.x86_64.rpm',
-          'sha256',
-          '5c4e3fa1624bd23251eecdda9c7fcefad045995a9eaed527d06dd8510cfe2851',
-          :rpm
+        RepomdParser::Reference.new(
+          location: 'apples-0.1-0.x86_64.rpm',
+          checksum_type: 'sha256',
+          checksum: '5c4e3fa1624bd23251eecdda9c7fcefad045995a9eaed527d06dd8510cfe2851',
+          size: 1934,
+          type: :rpm
         ),
-        RMT::Rpm::FileEntry.new(
-          'apples-0.2-0.x86_64.rpm',
-          'sha256',
-          'a9fdc5517f48d2b12c780deb080c8a619f3d440b0b50c2c30b5c9350352db463',
-          :rpm
+        RepomdParser::Reference.new(
+          location: 'apples-0.2-0.x86_64.rpm',
+          checksum_type: 'sha256',
+          checksum: 'a9fdc5517f48d2b12c780deb080c8a619f3d440b0b50c2c30b5c9350352db463',
+          size: 1950,
+          type: :rpm
         ),
-        RMT::Rpm::FileEntry.new(
-          'oranges-0.1-0.x86_64.rpm',
-          'sha256',
-          'a38de0c943388127b9c746e7772d694055ec255706ececd563fb55d13b01b4f3',
-          :rpm
+        RepomdParser::Reference.new(
+          location: 'oranges-0.1-0.x86_64.rpm',
+          checksum_type: 'sha256',
+          checksum: 'a38de0c943388127b9c746e7772d694055ec255706ececd563fb55d13b01b4f3',
+          size: 1933,
+          type: :rpm
         ),
-        RMT::Rpm::FileEntry.new(
-          'oranges-0.2-0.x86_64.rpm',
-          'sha256',
-          'd38a6b65326e471540ce5105677411035d437a177634a77088dfb73e34461f37',
-          :rpm
+        RepomdParser::Reference.new(
+          location: 'oranges-0.2-0.x86_64.rpm',
+          checksum_type: 'sha256',
+          checksum: 'd38a6b65326e471540ce5105677411035d437a177634a77088dfb73e34461f37',
+          size: 1949,
+          type: :rpm
         )
       ]
     end

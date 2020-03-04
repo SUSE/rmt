@@ -11,17 +11,19 @@ RSpec.describe RMT::Rpm::DeltainfoXmlParser do
 
   it 'references drpm files' do
     expect(parser.referenced_files).to eq [
-      RMT::Rpm::FileEntry.new(
-        'apples-0.1-0.x86_64.drpm',
-        'sha256',
-        'd5da95c8606a3de101d543e7d90c96f59b9f7cf50a8c944cbee889505401565e',
-        :drpm
+      RepomdParser::Reference.new(
+        location: 'apples-0.1-0.x86_64.drpm',
+        checksum_type: 'sha256',
+        checksum: 'd5da95c8606a3de101d543e7d90c96f59b9f7cf50a8c944cbee889505401565e',
+        type: :drpm,
+        size: 2087
       ),
-      RMT::Rpm::FileEntry.new(
-        'oranges-0.1-0.x86_64.drpm',
-        'sha256',
-        'b0ec989937ef76c88cedb50848cc111bf2f3bcbb490fa8c8c1180aa4a9a63d73',
-        :drpm
+      RepomdParser::Reference.new(
+        location: 'oranges-0.1-0.x86_64.drpm',
+        checksum_type: 'sha256',
+        checksum: 'b0ec989937ef76c88cedb50848cc111bf2f3bcbb490fa8c8c1180aa4a9a63d73',
+           type: :drpm,
+           size: 2083
       )
     ]
   end

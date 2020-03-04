@@ -11,11 +11,12 @@ class RMT::Rpm::DeltainfoXmlParser < RepomdParser::DeltainfoXmlParser
         # Call the end_element from RepomdParser::DeltainfoXmlParser
         super.end_element(name)
       else
-        @referenced_files << RMT::Rpm::FileEntry.new(
-          @delta[:location],
-          @delta[:checksum_type],
-          @delta[:checksum],
-          :drpm
+        @referenced_files << RepomdParser::Reference.new(
+          location: @delta[:location],
+          checksum_type: @delta[:checksum_type],
+          checksum: @delta[:checksum],
+          type: :drpm,
+          size: @delta[:size].to_i || nil
         )
       end
     end

@@ -214,11 +214,12 @@ RSpec.describe RMT::Downloader do
       let(:checksum_type) { 'SHA256' }
       let(:queue) do
         files.map do |file|
-          RMT::Rpm::FileEntry.new(
-            file,
-            checksum_type,
-            Digest.const_get(checksum_type).hexdigest(file),
-            :rpm
+          RepomdParser::Reference.new(
+            location: file,
+            checksum_type: checksum_type,
+            checksum: Digest.const_get(checksum_type).hexdigest(file),
+            type: :rpm,
+            size: nil
           )
         end
       end

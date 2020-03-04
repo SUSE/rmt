@@ -11,12 +11,13 @@ class RMT::Rpm::PrimaryXmlParser < RepomdParser::PrimaryXmlParser
         # Call Parent class end_element in general cases
         super.end_element(name)
       else
-        @referenced_files << RMT::Rpm::FileEntry.new(
-          @package[:location],
-          @package[:checksum_type],
-          @package[:checksum],
-          :rpm
-         )
+        @referenced_files << RepomdParser::Reference.new(
+          location: @package[:location],
+          checksum_type: @package[:checksum_type],
+          checksum: @package[:checksum],
+             type: :rpm,
+             size: @package[:size].to_i || nil
+       )
       end
     end
   end

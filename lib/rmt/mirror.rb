@@ -196,7 +196,7 @@ class RMT::Mirror
   def parsed_files_after_dedup(root_path, referenced_files)
     files = referenced_files.map do |parsed_file|
       local_file = ::RMT::Downloader.make_local_path(root_path, parsed_file.location)
-      if File.exist?(local_file) || deduplicate(parsed_file[:checksum_type], parsed_file[:checksum], local_file)
+      if File.exist?(local_file) || deduplicate(parsed_file.checksum_type, parsed_file.checksum, local_file)
         nil
       else
         parsed_file
