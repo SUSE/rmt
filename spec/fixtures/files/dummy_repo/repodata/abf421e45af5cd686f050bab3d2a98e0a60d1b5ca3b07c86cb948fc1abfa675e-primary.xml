@@ -83,7 +83,7 @@
 </package>
 <package type="rpm">
   <name>oranges</name>
-  <arch>x86_64</arch>
+  <arch>src</arch>
   <version epoch="0" ver="0.2" rel="0"/>
   <checksum type="sha256" pkgid="YES">d38a6b65326e471540ce5105677411035d437a177634a77088dfb73e34461f37</checksum>
   <summary>Oranges dummy RPM</summary>
