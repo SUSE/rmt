@@ -3,5 +3,6 @@ module RMT
   end
 end
 
+require_relative 'rpm/utils_mixin'
 require_relative 'rpm/deltainfo_xml_parser'
 require_relative 'rpm/primary_xml_parser'
