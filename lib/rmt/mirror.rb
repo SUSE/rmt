@@ -143,8 +143,9 @@ class RMT::Mirror
 
     failed_downloads = []
     deltainfo_files.each do |filename|
-      referenced_files = RepomdParser::DeltainfoXmlParser.new(
-        File.join(@temp_metadata_dir, filename)
+      referenced_files = RMT::Rpm::ModifiedDeltainfoXmlParser.new(
+        File.join(@temp_metadata_dir, filename),
+        @mirror_src
       ).parse
       to_download = parsed_files_after_dedup(@repository_dir, referenced_files)
       failed_downloads.concat(@downloader.download_multi(to_download, ignore_errors: true)) unless to_download.empty?

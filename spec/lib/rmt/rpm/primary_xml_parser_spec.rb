@@ -64,6 +64,7 @@ RSpec.describe RMT::Rpm::ModifiedPrimaryXmlParser do
       end
 
       it 'references rpm files with mirror=false' do
+        # the last element should be removed from the expected results as it has arch=src
         expect(references).to eq(expected_result.first expected_result.size - 1)
       end
     end
@@ -77,7 +78,7 @@ RSpec.describe RMT::Rpm::ModifiedPrimaryXmlParser do
       end
 
       it 'references rpm files with mirror=true' do
-        # the last element shouldn't be removed from the expected results this time as mirror=true
+        # all the packages should be returned this time as mirror=true
         # even though arch=src for the last package
         expect(references).to eq(expected_result)
       end
@@ -92,7 +93,6 @@ RSpec.describe RMT::Rpm::ModifiedPrimaryXmlParser do
       end
 
       it 'references rpm files with mirror=false' do
-        # the last element should be removed from the expected results as it has arch=src
         expect(references).to eq(expected_result.first expected_result.size - 1)
       end
     end

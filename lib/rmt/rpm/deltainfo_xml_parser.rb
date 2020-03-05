@@ -1,3 +1,5 @@
+require 'repomd_parser'
+
 class RMT::Rpm::ModifiedDeltainfoXmlParser < RepomdParser::DeltainfoXmlParser
 
   def initialize(filename, mirror_src = false)
