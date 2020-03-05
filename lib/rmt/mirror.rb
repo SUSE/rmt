@@ -2,6 +2,8 @@ require 'rmt/downloader'
 require 'rmt/rpm'
 require 'rmt/gpg'
 require 'time'
+require 'repomd_parser'
+
 
 class RMT::Mirror
   class RMT::Mirror::Exception < RuntimeError
@@ -103,12 +105,8 @@ class RMT::Mirror
     primary_files = []
     deltainfo_files = []
 
-    repomd_parser = RMT::Rpm::RepomdXmlParser.new(local_filename)
-    repomd_parser.parse
-
-    metadata_files = []
-    repomd_parser.referenced_files.each do |reference|
-      metadata_files << reference
+    metadata_files = RepomdParser::RepomdXmlParser.new(local_filename).parse
+    metadata_files.each do |reference|
       primary_files << reference.location if (reference.type == :primary)
       deltainfo_files << reference.location if (reference.type == :deltainfo)
     end
@@ -145,22 +143,18 @@ class RMT::Mirror
 
     failed_downloads = []
     deltainfo_files.each do |filename|
-      parser = RMT::Rpm::DeltainfoXmlParser.new(
-        File.join(@temp_metadata_dir, filename),
-        @mirror_src
-      )
-      parser.parse
-      to_download = parsed_files_after_dedup(@repository_dir, parser.referenced_files)
+      referenced_files = RepomdParser::DeltainfoXmlParser.new(
+        File.join(@temp_metadata_dir, filename)
+      ).parse
+      to_download = parsed_files_after_dedup(@repository_dir, referenced_files)
       failed_downloads.concat(@downloader.download_multi(to_download, ignore_errors: true)) unless to_download.empty?
     end
 
     primary_files.each do |filename|
-      parser = RMT::Rpm::PrimaryXmlParser.new(
-        File.join(@temp_metadata_dir, filename),
-        @mirror_src
-      )
-      parser.parse
-      to_download = parsed_files_after_dedup(@repository_dir, parser.referenced_files)
+      referenced_files = RepomdParser::PrimaryXmlParser.new(
+        File.join(@temp_metadata_dir, filename)
+      ).parse
+      to_download = parsed_files_after_dedup(@repository_dir, referenced_files)
       failed_downloads.concat(@downloader.download_multi(to_download, ignore_errors: true)) unless to_download.empty?
     end
 
@@ -196,7 +190,7 @@ class RMT::Mirror
   def parsed_files_after_dedup(root_path, referenced_files)
     files = referenced_files.map do |parsed_file|
       local_file = ::RMT::Downloader.make_local_path(root_path, parsed_file.location)
-      if File.exist?(local_file) || deduplicate(parsed_file[:checksum_type], parsed_file[:checksum], local_file)
+      if File.exist?(local_file) || deduplicate(parsed_file.checksum_type, parsed_file.checksum, local_file)
         nil
       else
         parsed_file
