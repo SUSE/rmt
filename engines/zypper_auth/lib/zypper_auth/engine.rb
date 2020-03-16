@@ -23,8 +23,7 @@ module ZypperAuth
         instance_data
       )
 
-      verification_provider.instance_valid?
-      is_valid = true # log the error only, don't raise auth error (for now)
+      is_valid = verification_provider.instance_valid?
       Rails.cache.write(cache_key, is_valid, expires_in: 1.hour)
       is_valid
     rescue InstanceVerification::Exception => e
@@ -37,9 +36,8 @@ module ZypperAuth
         #{details.join(', ')}
       LOGMSG
 
-      is_valid = true # log the error only, don't raise auth error (for now)
-      Rails.cache.write(cache_key, is_valid, expires_in: 10.minutes)
-      is_valid
+      Rails.cache.write(cache_key, false, expires_in: 10.minutes)
+      false
     rescue StandardError => e
       logger.error('Unexpected instance verification error has occurred:')
       logger.error(e.message)
@@ -117,8 +115,9 @@ module ZypperAuth
         # additional validation for zypper service XML controller
         before_action :verify_instance
         def verify_instance
-          ZypperAuth.verify_instance(request, logger, @system)
-          true # don't raise auth errors (for now)
+          unless ZypperAuth.verify_instance(request, logger, @system)
+            render(xml: { error: 'Instance verification failed' }, status: 403)
+          end
         end
       end
 
@@ -129,7 +128,6 @@ module ZypperAuth
         def path_allowed?(path)
           return false unless original_path_allowed?(path)
           ZypperAuth.verify_instance(request, logger, @system)
-          true # don't raise auth errors (for now)
         end
       end
     end
