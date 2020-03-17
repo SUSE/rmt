@@ -19,7 +19,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           get '/api/auth/check', headers: headers
         end
 
-        it { is_expected.to have_http_status(200) }
+        it { is_expected.to have_http_status(403) }
       end
 
       context 'with instance_data headers and instance data is invalid' do

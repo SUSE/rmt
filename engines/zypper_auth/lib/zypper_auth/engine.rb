@@ -46,11 +46,6 @@ module ZypperAuth
       logger.error(e.backtrace)
       false
     end
-
-    def plugin_detected?(system, request)
-      return true if request.headers['X-Instance-Data']
-      system.hw_info&.instance_data.to_s.match(%r{<repoformat>plugin:susecloud</repoformat>})
-    end
   end
 
   class Engine < ::Rails::Engine
@@ -62,8 +57,6 @@ module ZypperAuth
         alias_method :original_url, :url
         def url
           original_url = original_url()
-          return original_url unless @instance_options[:susecloud_plugin]
-
           url = URI(original_url)
           "plugin:/susecloud?credentials=#{object.name}&path=" + url.path
         end
@@ -76,8 +69,7 @@ module ZypperAuth
             @system.activations,
             each_serializer: ::V3::ActivationSerializer,
             base_url: request.base_url,
-            include: '*.*',
-            susecloud_plugin: ZypperAuth.plugin_detected?(@system, request)
+            include: '*.*'
           )
         end
       end
@@ -94,8 +86,7 @@ module ZypperAuth
             serializer: ::V3::ServiceSerializer,
             base_url: request.base_url,
             obsoleted_service_name: @obsoleted_service_name,
-            status: status,
-            susecloud_plugin: ZypperAuth.plugin_detected?(@system, request)
+            status: status
           )
         end
       end
@@ -106,8 +97,6 @@ module ZypperAuth
         # replaces URLs in zypper service XML
         def make_repo_url(base_url, repo_local_path, service_name)
           original_url = original_make_repo_url(base_url, repo_local_path, service_name)
-          return original_url unless request.headers['X-Instance-Data']
-
           url = URI(original_url)
           "plugin:/susecloud?credentials=#{service_name}&path=" + url.path
         end
