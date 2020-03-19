@@ -5,7 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'puma', '3.12.2'
+gem 'puma', '3.12.4'
 gem 'mysql2', '~> 0.5.3'
 
 gem 'nokogiri', '~> 1.10.3'
@@ -40,10 +40,10 @@ group :development, :test do
   gem 'memory_profiler'
   gem 'danger'
   gem 'danger-rubocop'
+  gem 'strong_migrations'
 end
 
 group :development do
-  gem 'strong_migrations'
   gem 'awesome_print'
   gem 'listen', '>= 3.0.5', '< 3.2'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
