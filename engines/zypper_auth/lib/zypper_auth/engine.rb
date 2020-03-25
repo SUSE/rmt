@@ -91,16 +91,19 @@ module ZypperAuth
         end
       end
 
-      ServicesController.class_eval do
-        alias_method :original_make_repo_url, :make_repo_url
+      RMT::Misc.class_eval do
+        class << self
+          alias_method :original_make_repo_url, :make_repo_url
 
-        # replaces URLs in zypper service XML
-        def make_repo_url(base_url, repo_local_path, service_name)
-          original_url = original_make_repo_url(base_url, repo_local_path, service_name)
-          url = URI(original_url)
-          "plugin:/susecloud?credentials=#{service_name}&path=" + url.path
+          def make_repo_url(base_url, repo_local_path, service_name = nil)
+            original_url = original_make_repo_url(base_url, repo_local_path, service_name)
+            url = URI(original_url)
+            "plugin:/susecloud?credentials=#{service_name}&path=" + url.path
+          end
         end
+      end
 
+      ServicesController.class_eval do
         # additional validation for zypper service XML controller
         before_action :verify_instance
         def verify_instance
