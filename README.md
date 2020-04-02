@@ -67,7 +67,7 @@ Supported Ruby versions are 2.5.0 and newer.
 * Grant the just configured database user access to your database. The following command will grant access to the default user `rmt` with password `rmt` (run it as root):
 
 ```
-mysql -u root <<EOFF
+mysql -u root -p <<EOFF
 GRANT ALL PRIVILEGES ON \`rmt%\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
 FLUSH PRIVILEGES;
 EOFF
