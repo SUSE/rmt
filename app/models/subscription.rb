@@ -1,7 +1,13 @@
 class Subscription < ApplicationRecord
 
   # we avoid to name enum key 'test' because it will override existing private method
-  enum kind: { is_test: 'test', full: 'full', evaluation: 'evaluation', oem: 'oem', provisional: 'provisional', internal: 'internal' }
+  # The different subscription types are documented in:
+  # https://github.com/SUSE/scc-docs/blob/master/projects/scc/architecture/business-logic/subscription-types.md
+  # we avoid to name enum key 'test' because it will override existing private method
+  enum kind: {
+    is_test: 'test', full: 'full', evaluation: 'evaluation', oem: 'oem', internal: 'internal', partner: 'partner'
+  }
+
   enum status: { expired: 'EXPIRED', active: 'ACTIVE', notactivated: 'NOTACTIVATED' }
 
   validates :regcode, presence: true
