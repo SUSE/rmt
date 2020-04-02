@@ -38,7 +38,7 @@ After installation configure your RMT instance:
     * Create a MySQL/MariaDB user with the following command:
     ```
     mysql -u root -p <<EOFF
-    GRANT ALL PRIVILEGES ON \`rmt\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
+    GRANT ALL PRIVILEGES ON \`rmt%\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
     FLUSH PRIVILEGES;
     EOFF
     ```
