@@ -1,7 +1,7 @@
 #
 # spec file for package rmt-server
 #
-# Copyright (c) 2019 SUSE LINUX GmbH, Nuernberg, Germany.
+# Copyright (c) 2020 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -12,7 +12,7 @@
 # license that conforms to the Open Source Definition (Version 1.9)
 # published by the Open Source Initiative.
 
-# Please submit bugfixes or comments via http://bugs.opensuse.org/
+# Please submit bugfixes or comments via https://bugs.opensuse.org/
 #
 
 
@@ -25,7 +25,7 @@
 %define ruby_version %{rb_default_ruby_suffix}
 
 Name:           rmt-server
-Version:        2.5.5
+Version:        2.5.6
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -35,6 +35,9 @@ Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-server-rpmlintrc
 Source2:        rmt.conf
 Source3:        rmt-cli.8.gz
+BuildRequires:  %{ruby_version}
+BuildRequires:  %{ruby_version}-devel
+BuildRequires:  %{rubygem bundler}
 BuildRequires:  fdupes
 BuildRequires:  gcc
 BuildRequires:  libcurl-devel
@@ -42,13 +45,10 @@ BuildRequires:  libffi-devel
 BuildRequires:  libmysqlclient-devel
 BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
-BuildRequires:  %{ruby_version}
-BuildRequires:  %{ruby_version}-devel
-BuildRequires:  %{rubygem bundler}
 BuildRequires:  systemd
+Requires:       gpg2
 Requires:       mariadb
 Requires:       nginx
-Requires:       gpg2
 Requires:       rmt-server-configuration
 Requires(post): %{ruby_version}
 Requires(post): %{rubygem bundler}
@@ -82,7 +82,7 @@ Provides:       rmt-server-configuration
 Conflicts:      rmt-server-configuration
 
 %description config
-Summary:        Default nginx configuration for RMT.
+Default nginx configuration for RMT.
 
 %package pubcloud
 Summary:        RMT pubcloud extensions
@@ -100,6 +100,7 @@ cp -p %{SOURCE2} .
 
 %setup -q
 sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
+
 %build
 bundle.%{ruby_version} install %{?jobs:--jobs %{jobs}} --without test development --deployment --standalone
 
