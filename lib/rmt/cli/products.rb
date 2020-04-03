@@ -36,40 +36,71 @@ class RMT::CLI::Products < RMT::CLI::Base
 
   desc 'enable TARGETS', _('Enable mirroring of product repositories by a list of product IDs or product strings.')
   option :all_modules, type: :boolean, desc: _('Enables all free modules for a product')
-  long_desc <<-REPOS
-#{_('Enable mirroring of product repositories by a list of product IDs or product strings.')}
+  long_desc <<~REPOS
+    #{_('Enable mirroring of product repositories by a list of product IDs or product strings.')}
 
-#{_('Examples')}:
+    #{_('Examples')}:
 
-$ rmt-cli products enable SLES/15
+    $ rmt-cli products enable SLES/15
 
-$ rmt-cli products enable 1575
+    $ rmt-cli products enable 1575
 
-$ rmt-cli products enable SLES/15/x86_64 1743
+    $ rmt-cli products enable SLES/15/x86_64 1743
 
-$ rmt-cli products enable --all-modules SLES/15
-REPOS
+    $ rmt-cli products enable --all-modules SLES/15
+  REPOS
   def enable(*targets)
     change_products(targets, true, options[:all_modules])
   end
 
   desc 'disable TARGETS', _('Disable mirroring of product repositories by a list of product IDs or product strings.')
-  long_desc <<-REPOS
-#{_('Disable mirroring of product repositories by a list of product IDs or product strings.')}
+  long_desc <<~REPOS
+    #{_('Disable mirroring of product repositories by a list of product IDs or product strings.')}
 
-#{_('Examples')}:
+    #{_('Examples')}:
 
-$ rmt-cli products disable SLES/15
+    $ rmt-cli products disable SLES/15
 
-$ rmt-cli products disable 1575
+    $ rmt-cli products disable 1575
 
-$ rmt-cli products disable SLES/15/x86_64 1743
-REPOS
+    $ rmt-cli products disable SLES/15/x86_64 1743
+  REPOS
   def disable(*targets)
     change_products(targets, false, false)
   end
 
+  desc 'show TARGET', _('Displays product with all its repositories and their attributes.')
+  long_desc <<~SHOW
+    #{_('Displays product with all its repositories and their attributes.')}
+
+    #{_('Examples')}:
+
+    $ rmt-cli products show SLES/15/x86_64
+  SHOW
+  def show(target)
+    show_product(target)
+  end
+
   protected
+
+  def show_product(target)
+    product = find_products(target).first
+
+    raise ProductNotFoundException.new(_('No product found for target %{target}.') % { target: target }) if product.blank?
+
+    puts _('Product: %{name} (id: %{id})') % { name: product.friendly_name, id: product.id }
+    puts _('Description: %{description}') % { description: product.description }
+    show_product_repos(product)
+  rescue ProductNotFoundException => e
+    puts e.message
+  end
+
+  def show_product_repos(product)
+    repos = product.repositories
+    puts repos.present? ? _('Repositories:') : _('Repositories are not available for this product.')
+    decorator = ::RMT::CLI::Decorators::RepositoryDecorator.new(repos)
+    decorator.to_tty
+  end
 
   def change_products(targets, set_enabled, all_modules)
     targets = clean_target_input(targets)

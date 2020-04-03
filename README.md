@@ -6,7 +6,7 @@
 This tool allows you to mirror RPM repositories in your own private network.
 Organization (mirroring) credentials are required to mirror SUSE repositories.
 
-End-user documentation can be found in [RMT Guide](https://www.suse.com/documentation/sles-15/singlehtml/book_rmt/book_rmt.html). `man` pages for `rmt-cli` can be found [here](MANUAL.md).
+End-user documentation can be found in [RMT Guide](https://documentation.suse.com/sles/15-SP1/html/SLES-all/book-rmt.html). `man` pages for `rmt-cli` can be found [here](MANUAL.md).
 
 ## Installation on SLE15
 
@@ -38,7 +38,7 @@ After installation configure your RMT instance:
     * Create a MySQL/MariaDB user with the following command:
     ```
     mysql -u root -p <<EOFF
-    GRANT ALL PRIVILEGES ON \`rmt\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
+    GRANT ALL PRIVILEGES ON \`rmt%\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
     FLUSH PRIVILEGES;
     EOFF
     ```
@@ -67,7 +67,7 @@ Supported Ruby versions are 2.5.0 and newer.
 * Grant the just configured database user access to your database. The following command will grant access to the default user `rmt` with password `rmt` (run it as root):
 
 ```
-mysql -u root <<EOFF
+mysql -u root -p <<EOFF
 GRANT ALL PRIVILEGES ON \`rmt%\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
 FLUSH PRIVILEGES;
 EOFF

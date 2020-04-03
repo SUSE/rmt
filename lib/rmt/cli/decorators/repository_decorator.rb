@@ -44,4 +44,25 @@ class RMT::CLI::Decorators::RepositoryDecorator < RMT::CLI::Decorators::Base
     ])
   end
 
+  def to_tty
+    # disabled due to the rare bug in rubocop up to 0.59.1
+    # https://github.com/department-of-veterans-affairs/caseflow/issues/8488
+    # rubocop:disable Style/FormatStringToken
+    data = @repositories.map do |repo|
+      [
+        repo.name,
+        repo.scc_id,
+        repo.enabled ? _('mandatory') : _('non-mandatory'),
+        repo.mirroring_enabled ? _('enabled') : _('not enabled'),
+        repo.last_mirrored_at.present? ? _('mirrored at %{time}') % { time: repo.last_mirrored_at.strftime('%Y-%m-%d %H:%M:%S %Z') } : _('not mirrored')
+      ]
+    end
+    data.each do |entry|
+      template = _('* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})')
+      template_data = { name: entry[0], id: entry[1], mandatory: entry[2], enabled: entry[3], mirrored_at: entry[4] }
+      puts template % template_data
+    end
+    # rubocop:enable Style/FormatStringToken
+  end
+
 end
