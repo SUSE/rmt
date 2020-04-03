@@ -1,4 +1,19 @@
 -------------------------------------------------------------------
+Fri Apr  3 09:29:07 UTC 2020 - Thomas Schmidt <tschmidt@suse.com>
+
+- Version 2.5.6
+- Align supported subscription types with SCC:
+  'test', 'full', 'evaluation', 'oem', 'internal', 'partner'
+  (bsc#1168554)
+
+-------------------------------------------------------------------
+Wed Feb  5 12:55:32 UTC 2020 - Felix Schnizlein <fschnizlein@suse.com>
+
+- Version 2.5.5
+- Add `rmt-cli products show` command to show detailed product information
+
+
+-------------------------------------------------------------------
 Wed Feb  5 12:55:32 UTC 2020 - Serhii Kotov <skotov@suse.com>
 
 - Version 2.5.4
