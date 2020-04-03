@@ -20,6 +20,12 @@ Wed Feb  5 12:55:32 UTC 2020 - Serhii Kotov <skotov@suse.com>
 - Fix migrations in case adding migration_extra column failed (bsc#1162296)
 
 -------------------------------------------------------------------
+Mon Feb  3 16:24:45 UTC 2020 - Dominique Leuenberger <dimstar@opensuse.org>
+
+- BuildRequire pkgconfig(systemd) instead of systemd: allow OBS to
+  shortcut through the -mini flavors.
+
+-------------------------------------------------------------------
 Tue Jan 28 14:00:37 UTC 2020 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Version 2.5.3
