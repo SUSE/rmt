@@ -45,7 +45,7 @@ BuildRequires:  libffi-devel
 BuildRequires:  libmysqlclient-devel
 BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
-BuildRequires:  systemd
+BuildRequires:  pkgconfig(systemd)
 Requires:       gpg2
 Requires:       mariadb
 Requires:       nginx
