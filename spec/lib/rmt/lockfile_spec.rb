@@ -1,43 +1,54 @@
 require 'rails_helper'
 
 RSpec.describe RMT::Lockfile do
-  let(:lockfile) { RMT::Lockfile::LOCKFILE_LOCATION }
+  let(:lock_name) { nil }
 
-  describe '#lock', :with_fakefs do
-    subject(:lock) { described_class.lock { nil } }
+  describe '#lock' do
+    subject(:lock) { described_class.lock(lock_name) { nil } }
 
-    context 'without file' do
-      it 'does not raise exception' do
-        expect { lock }.not_to raise_error
+    context 'with an unnamed lock' do
+      context 'without a lock' do
+        it 'does not raise exception' do
+          expect { lock }.not_to raise_error
+        end
+
+        it 'obtains a lock' do
+          expect(described_class).to receive(:obtain_lock).exactly(1).times.and_call_original
+          expect_any_instance_of(ActiveRecord::ConnectionAdapters::Mysql2Adapter).to receive(:execute)
+              .exactly(1).with("SELECT GET_LOCK('rmt-cli', 1)").times.and_call_original
+          expect_any_instance_of(ActiveRecord::ConnectionAdapters::Mysql2Adapter).to receive(:execute)
+              .exactly(1).with("SELECT RELEASE_LOCK('rmt-cli')").times.and_call_original
+          lock
+        end
       end
+    end
 
-      it 'creates a file and locks it' do
-        allow(File).to receive(:open).with(lockfile, 66).exactly(1).times.and_call_original
-        expect_any_instance_of(File).to receive(:flock).exactly(1).times.and_call_original
-        expect_any_instance_of(File).to receive(:truncate).exactly(1).times.and_call_original
-        lock
+    context 'with a named lock' do
+      let(:lock_name) { 'test' }
+
+      context 'without a lock' do
+        it 'does not raise exception' do
+          expect { lock }.not_to raise_error
+        end
+
+        it 'obtains a lock' do
+          expect(described_class).to receive(:obtain_lock).exactly(1).times.and_call_original
+          expect_any_instance_of(ActiveRecord::ConnectionAdapters::Mysql2Adapter).to receive(:execute)
+              .exactly(1).with("SELECT GET_LOCK('rmt-cli-test', 1)").times.and_call_original
+          expect_any_instance_of(ActiveRecord::ConnectionAdapters::Mysql2Adapter).to receive(:execute)
+              .exactly(1).with("SELECT RELEASE_LOCK('rmt-cli-test')").times.and_call_original
+          lock
+        end
       end
     end
 
     context 'with locked file' do
       it 'raises exception' do
-        expect_any_instance_of(File).to receive(:flock).exactly(1).times.and_return(false)
-        expect_any_instance_of(File).to receive(:read).exactly(1).times.and_return('123')
+        expect(described_class).to receive(:obtain_lock).exactly(1).times.and_return(false)
         expect { lock }.to raise_error(
           RMT::Lockfile::ExecutionLockedError,
-          "Process is locked by the application with pid 123. Close this application or wait for it to finish before trying again.\n"
+          'Another instance of this command is already running. Terminate the other instance or wait for it to finish.'
         )
-      end
-    end
-
-    context 'with existing file and log pid' do
-      before { File.write(lockfile, 'long_text_but_not_the_process_id') }
-      after { File.delete(lockfile) }
-
-      it 'writes proper pid to file' do
-        allow(File).to receive(:open).with(lockfile, 66).exactly(1).times.and_call_original
-        lock
-        expect(File.read(lockfile)).to eq(Process.pid.to_s)
       end
     end
   end
