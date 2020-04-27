@@ -4,9 +4,6 @@ class RMT::CLI::Systems < RMT::CLI::Base
   option :all, aliases: '-a', type: :boolean, desc: _('List all registered systems')
   option :csv, type: :boolean, desc: _('Output data in CSV format')
 
-  class SystemNotFoundException < StandardError; end
-  class SystemNotDestroyedException < StandardError; end
-
   def list
     systems = (options.all ? System.all : System.limit(options.limit)).order(id: :desc)
     decorator = RMT::CLI::Decorators::SystemDecorator.new(systems)
@@ -40,30 +37,11 @@ class RMT::CLI::Systems < RMT::CLI::Base
     $ rmt-cli systems remove uniqueLogin
   REMOVE
   def remove(target)
-    purge_system(target)
-  end
-
-  protected
-
-  def purge_system(target)
-    system = find_system(target)
-    destroy_system!(system)
+    target_system = System.find_by(login: target)
+    raise RMT::CLI::Error.new(_('System with login %{login} not found.') % { login: target }) unless target_system
+    target_system.destroy!
     puts _('Successfully removed system with login %{login}') % { login: target }
-  rescue SystemNotFoundException, SystemNotDestroyedException => e
-    puts e.message
-  end
-
-  private
-
-  def find_system(target)
-    System.find_by!(login: target)
-  rescue ActiveRecord::RecordNotFound
-    raise SystemNotFoundException.new(_('System with login %{login} not found.') % { login: target })
-  end
-
-  def destroy_system!(system)
-    system.destroy!
   rescue ActiveRecord::RecordNotDestroyed
-    raise SystemNotDestroyedException.new(_('System with login %{login} cannot be removed.') % { login: system.login })
+    raise RMT::CLI::Error.new(_('System with login %{login} cannot be removed.') % { login: target })
   end
 end

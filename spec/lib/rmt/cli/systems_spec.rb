@@ -140,23 +140,23 @@ RSpec.describe RMT::CLI::Systems do
         let(:argv) { ['remove', '1'] }
         let(:expected_output) { "System with login 1 not found.\n" }
 
-        it 'raises SystemNotFoundException' do
+        it 'raises ActiveRecord::RecordNotFound' do
           expect { described_class.start(argv) }
-            .to output(expected_output).to_stdout
-            .and output('').to_stderr
+            .to output(expected_output).to_stderr
+            .and output('').to_stdout
         end
       end
 
-      context "when the record can't be destroyed" do
+      context 'when the record can\'t be destroyed' do
         let(:argv) { ['remove', system.login] }
         let(:expected_output) { "System with login #{system.login} cannot be removed.\n" }
         let(:system) { create :system, :with_activated_product }
 
-        it 'raises SystemNotFoundException' do
+        it 'raises ActiveRecord::RecordNotDestroyed' do
           expect_any_instance_of(System).to receive(:destroy!).and_raise(ActiveRecord::RecordNotDestroyed)
           expect { described_class.start(argv) }
-              .to output(expected_output).to_stdout
-              .and output('').to_stderr
+            .to output(expected_output).to_stderr
+            .and output('').to_stdout
         end
       end
     end
