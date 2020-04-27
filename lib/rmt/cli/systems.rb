@@ -37,11 +37,12 @@ class RMT::CLI::Systems < RMT::CLI::Base
     $ rmt-cli systems remove uniqueLogin
   REMOVE
   def remove(target)
-    target_system = System.find_by(login: target)
-    raise RMT::CLI::Error.new(_('System with login %{login} not found.') % { login: target }) unless target_system
+    target_system = System.find_by!(login: target)
     target_system.destroy!
     puts _('Successfully removed system with login %{login}') % { login: target }
   rescue ActiveRecord::RecordNotDestroyed
-    raise RMT::CLI::Error.new(_('System with login %{login} cannot be removed.') % { login: target })
+    puts _('System with login %{login} cannot be removed.') % { login: target }
+  rescue ActiveRecord::RecordNotFound
+    puts _('System with login %{login} not found.') % { login: target }
   end
 end

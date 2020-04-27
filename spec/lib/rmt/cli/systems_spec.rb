@@ -142,8 +142,8 @@ RSpec.describe RMT::CLI::Systems do
 
         it 'raises ActiveRecord::RecordNotFound' do
           expect { described_class.start(argv) }
-            .to output(expected_output).to_stderr
-            .and output('').to_stdout
+            .to output(expected_output).to_stdout
+            .and output('').to_stderr
         end
       end
 
@@ -155,8 +155,8 @@ RSpec.describe RMT::CLI::Systems do
         it 'raises ActiveRecord::RecordNotDestroyed' do
           expect_any_instance_of(System).to receive(:destroy!).and_raise(ActiveRecord::RecordNotDestroyed)
           expect { described_class.start(argv) }
-            .to output(expected_output).to_stderr
-            .and output('').to_stdout
+            .to output(expected_output).to_stdout
+            .and output('').to_stderr
         end
       end
     end
