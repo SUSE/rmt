@@ -64,6 +64,6 @@ class RMT::CLI::Systems < RMT::CLI::Base
   def destroy_system!(system)
     system.destroy!
   rescue ActiveRecord::RecordNotDestroyed
-    raise SystemNotDestroyedException.new(_('System with login %{login} cannot be removed') % { login: target })
+    raise SystemNotDestroyedException.new(_('System with login %{login} cannot be removed.') % { login: system.login })
   end
 end
