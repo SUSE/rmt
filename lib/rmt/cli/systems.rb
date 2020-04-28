@@ -41,8 +41,8 @@ class RMT::CLI::Systems < RMT::CLI::Base
     target_system.destroy!
     puts _('Successfully removed system with login %{login}') % { login: target }
   rescue ActiveRecord::RecordNotDestroyed
-    puts _('System with login %{login} cannot be removed.') % { login: target }
+    raise RMT::CLI::Error.new(_('System with login %{login} cannot be removed.') % { login: target })
   rescue ActiveRecord::RecordNotFound
-    puts _('System with login %{login} not found.') % { login: target }
+    raise RMT::CLI::Error.new(_('System with login %{login} not found.') % { login: target })
   end
 end
