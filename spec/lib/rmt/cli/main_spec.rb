@@ -170,5 +170,16 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
         end
       end
     end
+
+    describe 'Thor default behaviour when errors' do
+      let(:argv) { ['asdasdas'] }
+      let(:error_message) { "Could not find command \"asdasdas\".\n" }
+
+      it 'exits with status 1' do
+        expect { command }
+          .to raise_error(SystemExit)
+          .and output(error_message).to_stderr
+      end
+    end
   end
 end
