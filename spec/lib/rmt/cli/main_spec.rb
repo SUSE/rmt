@@ -177,7 +177,7 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
 
       it 'exits with status 1' do
         expect { command }
-          .to raise_error(SystemExit)
+          .to raise_error(SystemExit) { |e| expect(e.status).to eq 1 }
           .and output(error_message).to_stderr
       end
     end
