@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Apr 17 03:25:20 UTC 2020 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.5.7
+- Use DB locks intead of lockfiles (bsc#1165548)
+
+-------------------------------------------------------------------
 Fri Apr  3 09:29:07 UTC 2020 - Thomas Schmidt <tschmidt@suse.com>
 
 - Version 2.5.6

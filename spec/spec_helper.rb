@@ -97,7 +97,6 @@ RSpec.configure do |config|
 
   config.around(:each, :with_fakefs) do |example|
     FakeFS.with_fresh do
-      FileUtils.mkdir_p(File.dirname(RMT::Lockfile::LOCKFILE_LOCATION))
       example.run
     end
   end
