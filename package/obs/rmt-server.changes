@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue May 19 12:31:53 UTC 2020 - Luís Caparroz <lcaparroz@suse.com>
+
+- Version 2.5.8
+- Use repomd_parser gem to remove repository metadata parsing code
+  (GitHub issue gh#233).
+
+-------------------------------------------------------------------
 Fri Apr 17 03:25:20 UTC 2020 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
 
 - Version 2.5.7
