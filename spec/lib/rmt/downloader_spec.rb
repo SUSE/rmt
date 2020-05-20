@@ -212,10 +212,10 @@ RSpec.describe RMT::Downloader do
     context 'when download exceptions occur when ignore_errors is true' do
       let(:files) { %w[package1 package2 package3] }
       let(:checksum_type) { 'SHA256' }
-      let(:file_entry_classe) { Struct.new(:location, :checksum_type, :checksum, :type) }
+      let(:file_entry_class) { Struct.new(:location, :checksum_type, :checksum, :type) }
       let(:queue) do
         files.map do |file|
-          file_entry_classe.new(
+          file_entry_class.new(
             file,
             checksum_type,
             Digest.const_get(checksum_type).hexdigest(file),
