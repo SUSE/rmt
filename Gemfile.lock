@@ -122,7 +122,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (2.1.0)
       faraday (~> 0.8)
-    fast_gettext (2.0.1)
+    fast_gettext (2.0.3)
     ffaker (2.14.0)
     ffi (1.9.25)
     formatador (0.2.5)
