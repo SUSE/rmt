@@ -24,7 +24,7 @@ module ZypperAuth
       )
 
       is_valid = verification_provider.instance_valid?
-      Rails.cache.write(cache_key, is_valid, expires_in: 1.hour)
+      Rails.cache.write(cache_key, is_valid, expires_in: 20.minutes)
       is_valid
     rescue InstanceVerification::Exception => e
       details = [ "System login: #{system.login}", "IP: #{request.remote_ip}" ]
@@ -36,7 +36,7 @@ module ZypperAuth
         #{details.join(', ')}
       LOGMSG
 
-      Rails.cache.write(cache_key, false, expires_in: 10.minutes)
+      Rails.cache.write(cache_key, false, expires_in: 2.minutes)
       false
     rescue StandardError => e
       logger.error('Unexpected instance verification error has occurred:')
