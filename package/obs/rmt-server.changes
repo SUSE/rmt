@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Tue Jun  9 07:16:15 UTC 2020 - Thorsten Kukuk <kukuk@suse.com>
+
+- Move nginx/vhosts.d directory to correct sub-package. They
+  are needed together with nginx, not rmt-server.
+- Fix dependencies especially for containerized usage:
+  - mariadb and nginx are not hard requires, could run on another host
+- Fix generic dependencies:
+  - systemd ordering was missing
+  - shadow is required for pre-install
+
+-------------------------------------------------------------------
 Tue May 19 12:31:53 UTC 2020 - Luís Caparroz <lcaparroz@suse.com>
 
 - Version 2.5.8
