@@ -22,10 +22,14 @@
 %define conf_dir     %{_sysconfdir}/rmt
 %define rmt_user     _rmt
 %define rmt_group    nginx
-%define ruby_version %{rb_default_ruby_suffix}
+
+# Only build for the distribution default Ruby version
+%define rb_build_versions     %{rb_default_ruby}
+%define rb_build_ruby_abis    %{rb_default_ruby_abi}
+%define ruby_version          %{rb_default_ruby_suffix}
 
 Name:           rmt-server
-Version:        2.5.8
+Version:        2.5.9
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -37,7 +41,7 @@ Source2:        rmt.conf
 Source3:        rmt-cli.8.gz
 BuildRequires:  %{ruby_version}
 BuildRequires:  %{ruby_version}-devel
-BuildRequires:  %{rubygem bundler}
+BuildRequires:  %{ruby_version}-rubygem-bundler
 BuildRequires:  fdupes
 BuildRequires:  gcc
 BuildRequires:  libcurl-devel
@@ -52,7 +56,7 @@ Recommends:     nginx
 # The config is not really required by rmt-server, but by nginx ...
 Requires:       rmt-server-configuration
 Requires(post): %{ruby_version}
-Requires(post): %{rubygem bundler}
+Requires:       %{ruby_version}-rubygem-bundler
 Requires(pre):  shadow
 Requires(post): timezone
 Requires(post): util-linux
@@ -104,7 +108,9 @@ cp -p %{SOURCE2} .
 sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
 
 %build
-bundle.%{ruby_version} install %{?jobs:--jobs %{jobs}} --without test development --deployment --standalone
+bundle.%{ruby_version} config set deployment 'true'
+bundle.%{ruby_version} config set without 'test development'
+bundle.%{ruby_version} install %{?jobs:--jobs %{jobs}}
 
 %install
 mkdir -p %{buildroot}%{data_dir}
