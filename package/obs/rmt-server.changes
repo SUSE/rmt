@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Tue Jun 16 13:05:49 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
 
-- Version 2.5.9
+- Version 2.5.10
 - Support rmt-server to run with Ruby 2.7 (Factory/Tumbleweed):
   - Bump gem 'config' version from 1.7.2 to 2.2.1 to fix incompatibility Ruby
     2.7 OpenStruct class;
