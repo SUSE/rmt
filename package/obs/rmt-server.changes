@@ -1,4 +1,21 @@
 -------------------------------------------------------------------
+Tue Jun 16 13:05:49 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
+
+- Version 2.5.10
+- Support rmt-server to run with Ruby 2.7 (Factory/Tumbleweed):
+  - Bump gem 'config' version from 1.7.2 to 2.2.1 to fix incompatibility Ruby
+    2.7 OpenStruct class;
+  - Bump gem 'typhoeus' version from 1.3.1 to 1.4.0 in order to also bump gem
+    'ethon' version, which caused a 'rb_safe_level' warning on Ruby 2.7;
+  - Fix "last arg as keyword arg" Ruby 2.7 warning on source code;
+  - Disable "deprecated" warnings from Ruby 2.7; Rails 5.1 generates a lot of
+    warnings with Ruby 2.7, mainly due to "capturing the given block with
+    Proc.new", which is deprecated;
+  - Improve RPM spec to consider only the distribution default Ruby version
+    configured in OBS;
+  - Improve RPM spec to remove Ruby 2.7 warnings regarding 'bundler.
+
+-------------------------------------------------------------------
 Tue Jun  9 07:16:15 UTC 2020 - Thorsten Kukuk <kukuk@suse.com>
 
 - Move nginx/vhosts.d directory to correct sub-package. They
