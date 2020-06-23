@@ -25,7 +25,7 @@ class SMTImporter
   def read_csv(file)
     # set the quote char to something not used to make sure the csv parser is not interfering with the
     # JSON quoting.
-    CSV.open(File.join(data_dir, file + '.csv'), 'r', { col_sep: "\t", quote_char: "\x00" })
+    CSV.open(File.join(data_dir, file + '.csv'), 'r', **{ col_sep: "\t", quote_char: "\x00" })
   end
 
   def import_repositories

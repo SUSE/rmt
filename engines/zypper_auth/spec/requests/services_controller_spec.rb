@@ -56,18 +56,11 @@ describe ServicesController do
           get "/services/#{service.id}", headers: headers
         end
 
-        # allowed temporarily
-        it 'request responds with 200' do
-          expect(response).to have_http_status(200)
-        end
-
         it 'request fails with 403' do
-          skip('Disabled temporarily')
           expect(response).to have_http_status(403)
         end
 
         it 'reports an error' do
-          skip('Disabled temporarily')
           expect(response.body).to match(/Instance verification failed/)
         end
       end
@@ -78,18 +71,11 @@ describe ServicesController do
           get "/services/#{service.id}", headers: headers
         end
 
-        # allowed temporarily
-        it 'request responds with 200' do
-          expect(response).to have_http_status(200)
-        end
-
         it 'request fails with 403' do
-          skip('Disabled temporarily')
           expect(response).to have_http_status(403)
         end
 
         it 'reports an error' do
-          skip('Disabled temporarily')
           expect(response.body).to match(/Instance verification failed/)
         end
       end
@@ -100,18 +86,11 @@ describe ServicesController do
           get "/services/#{service.id}", headers: headers
         end
 
-        # allowed temporarily
-        it 'request responds with 200' do
-          expect(response).to have_http_status(200)
-        end
-
         it 'request fails with 403' do
-          skip('Disabled temporarily')
           expect(response).to have_http_status(403)
         end
 
         it 'reports an error' do
-          skip('Disabled temporarily')
           expect(response.body).to match(/Instance verification failed/)
         end
       end

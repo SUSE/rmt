@@ -24,7 +24,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       let(:system) { FactoryGirl.create(:system, :with_hw_info, instance_data: '<document>test</document>') }
 
       it 'service url has http scheme' do
-        expect(service_url).to match(%r{^http://})
+        expect(service_url).to match(%r{^plugin:/susecloud})
       end
     end
 
