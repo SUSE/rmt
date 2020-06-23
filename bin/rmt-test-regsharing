@@ -11,6 +11,7 @@ require 'active_record'
 require 'erb'
 require 'yaml'
 require 'rmt/config'
+require 'initializers/disable_deprecation_warnings'
 
 relative_load_paths = %w[lib lib/rmt app/models app/services].map { |dir| File.join(rmt_path, dir) }
 ActiveSupport::Dependencies.autoload_paths += relative_load_paths
