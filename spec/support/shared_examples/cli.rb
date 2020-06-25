@@ -18,17 +18,14 @@ end
 
 shared_examples 'handles lockfile exception' do
   context 'with existing lockfile' do
-    let(:pid) { 42 }
-
     before do
-      allow_any_instance_of(FakeFS::File).to receive(:flock).and_return(false)
-      allow(FakeFS::File).to receive(:read).with(::RMT::Lockfile::LOCKFILE_LOCATION).and_return(pid)
+      allow(RMT::Lockfile).to receive(:obtain_lock).and_return(false)
     end
 
     it 'handles lockfile exception' do
       expect(described_class).to receive(:exit)
       expect { command }.to output(
-        "Process is locked by the application with pid #{pid}. Close this application or wait for it to finish before trying again.\n"
+        "Another instance of this command is already running. Terminate the other instance or wait for it to finish.\n"
       ).to_stderr
     end
   end

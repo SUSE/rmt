@@ -1,7 +1,7 @@
 class RMT::CLI::Mirror < RMT::CLI::Base
   desc 'all', _('Mirror all enabled repositories')
   def all
-    RMT::Lockfile.lock do
+    RMT::Lockfile.lock('mirror') do
       logger = RMT::Logger.new(STDOUT)
       mirror = RMT::Mirror.new(logger: logger, mirror_src: RMT::Config.mirror_src_files?)
 
@@ -32,7 +32,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
   desc 'repository IDS', _('Mirror enabled repositories with given repository IDs')
   def repository(*ids)
-    RMT::Lockfile.lock do
+    RMT::Lockfile.lock('mirror') do
       logger = RMT::Logger.new(STDOUT)
       mirror = RMT::Mirror.new(logger: logger, mirror_src: RMT::Config.mirror_src_files?)
 
@@ -58,7 +58,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
   desc 'product IDS', _('Mirror enabled repositories for a product with given product IDs')
   def product(*targets)
-    RMT::Lockfile.lock do
+    RMT::Lockfile.lock('mirror') do
       logger = RMT::Logger.new(STDOUT)
       mirror = RMT::Mirror.new(logger: logger, mirror_src: RMT::Config.mirror_src_files?)
 

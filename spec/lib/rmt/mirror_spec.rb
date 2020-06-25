@@ -72,7 +72,7 @@ RSpec.describe RMT::Mirror do
       end
 
       before do
-        rmt_mirror.mirror(mirror_params)
+        rmt_mirror.mirror(**mirror_params)
       end
 
       it 'downloads rpm files' do
@@ -83,6 +83,55 @@ RSpec.describe RMT::Mirror do
       it 'downloads drpm files' do
         rpm_entries = Dir.entries(File.join(@tmp_dir, 'dummy_repo')).select { |entry| entry =~ /\.drpm$/ }
         expect(rpm_entries.length).to eq(2)
+      end
+    end
+
+    context 'without auth_token and with source packages', vcr: { cassette_name: 'mirroring_with_src' } do
+      let(:rmt_mirror) do
+        described_class.new(
+          mirroring_base_dir: @tmp_dir,
+          logger: logger,
+          mirror_src: mirror_src
+        )
+      end
+
+      let(:mirror_params) do
+        {
+          repository_url: 'http://localhost/dummy_repo_with_src/',
+          local_path: '/dummy_repo'
+        }
+      end
+
+      before do
+        rmt_mirror.mirror(**mirror_params)
+      end
+
+      context 'when mirror_src is false' do
+        let(:mirror_src) { false }
+
+        it 'downloads rpm files' do
+          rpm_entries = Dir.glob(File.join(@tmp_dir, 'dummy_repo', '**', '*.rpm'))
+          expect(rpm_entries.length).to eq(2)
+        end
+
+        it 'downloads drpm files' do
+          rpm_entries = Dir.glob(File.join(@tmp_dir, 'dummy_repo', '**', '*.drpm'))
+          expect(rpm_entries.length).to eq(1)
+        end
+      end
+
+      context 'when mirror_src is true' do
+        let(:mirror_src) { true }
+
+        it 'downloads rpm files' do
+          rpm_entries = Dir.glob(File.join(@tmp_dir, 'dummy_repo', '**', '*.rpm'))
+          expect(rpm_entries.length).to eq(4)
+        end
+
+        it 'downloads drpm files' do
+          rpm_entries = Dir.glob(File.join(@tmp_dir, 'dummy_repo', '**', '*.drpm'))
+          expect(rpm_entries.length).to eq(1)
+        end
       end
     end
 
@@ -107,7 +156,7 @@ RSpec.describe RMT::Mirror do
         expect(logger).to receive(:info).with(/Mirroring repository/).once
         expect(logger).to receive(:info).with('Repository metadata signatures are missing').once
         expect(logger).to receive(:info).with(/↓/).at_least(1).times
-        rmt_mirror.mirror(mirror_params)
+        rmt_mirror.mirror(**mirror_params)
       end
 
       it 'downloads rpm files' do
@@ -141,7 +190,7 @@ RSpec.describe RMT::Mirror do
       before do
         expect(logger).to receive(:info).with(/Mirroring repository/).once
         expect(logger).to receive(:info).with(/↓/).at_least(1).times
-        rmt_mirror.mirror(mirror_params)
+        rmt_mirror.mirror(**mirror_params)
       end
 
       it 'downloads rpm files' do
@@ -189,14 +238,14 @@ RSpec.describe RMT::Mirror do
         let(:mirroring_dir) { '/non/existent/path' }
 
         it 'raises exception', vcr: { cassette_name: 'mirroring_product' } do
-          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception)
+          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception)
         end
       end
 
       context "when can't create tmp dir", vcr: { cassette_name: 'mirroring_product' } do
         before { allow(Dir).to receive(:mktmpdir).and_raise('mktmpdir exception') }
         it 'handles the exception' do
-          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception)
+          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception)
         end
       end
 
@@ -206,7 +255,7 @@ RSpec.describe RMT::Mirror do
           expect_any_instance_of(RMT::Downloader).to receive(:download).with('repodata/repomd.xml').and_raise(RMT::Downloader::Exception, "418 - I'm a teapot")
         end
         it 'handles RMT::Downloader::Exception' do
-          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, "Error while mirroring metadata: 418 - I'm a teapot")
+          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, "Error while mirroring metadata: 418 - I'm a teapot")
         end
       end
 
@@ -227,16 +276,16 @@ RSpec.describe RMT::Mirror do
         end
 
         it 'does not error out' do
-          expect { rmt_mirror.mirror(mirror_params) }.not_to raise_error
+          expect { rmt_mirror.mirror(**mirror_params) }.not_to raise_error
         end
 
         it 'does not create a product.licenses directory' do
-          rmt_mirror.mirror(mirror_params)
+          rmt_mirror.mirror(**mirror_params)
           expect(Dir).not_to exist(File.join(@tmp_dir, 'dummy_product', 'product.license'))
         end
 
         it 'removes the temporary licenses directory' do
-          rmt_mirror.mirror(mirror_params)
+          rmt_mirror.mirror(**mirror_params)
           tmpdir = rmt_mirror.instance_variable_get('@temp_licenses_dir')
           expect(Dir).not_to exist tmpdir
         end
@@ -250,22 +299,22 @@ RSpec.describe RMT::Mirror do
           end
         end
         it 'handles RMT::Downloader::Exception', vcr: { cassette_name: 'mirroring_product' } do
-          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, /Error while mirroring license:/)
+          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, /Error while mirroring license:/)
         end
       end
 
       context "when can't parse metadata", vcr: { cassette_name: 'mirroring_product' } do
-        before { allow_any_instance_of(RMT::Rpm::RepomdXmlParser).to receive(:parse).and_raise('Parse error') }
+        before { allow_any_instance_of(RepomdParser::RepomdXmlParser).to receive(:parse).and_raise('Parse error') }
         it 'removes the temporary metadata directory' do
-          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring metadata: Parse error')
+          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring metadata: Parse error')
           expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
         end
       end
 
       context 'when Interrupt is raised', vcr: { cassette_name: 'mirroring_product' } do
-        before { allow_any_instance_of(RMT::Rpm::RepomdXmlParser).to receive(:parse).and_raise(Interrupt.new) }
+        before { allow_any_instance_of(RepomdParser::RepomdXmlParser).to receive(:parse).and_raise(Interrupt.new) }
         it 'removes the temporary metadata directory' do
-          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(Interrupt)
+          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(Interrupt)
           expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
         end
       end
@@ -277,7 +326,7 @@ RSpec.describe RMT::Mirror do
             raise(RMT::Downloader::Exception, "418 - I'm a teapot") if args[1] =~ /rpm$/
             klass.call(*args)
           end
-          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
+          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
         end
 
         it 'handles RMT::ChecksumVerifier::Exception' do
@@ -286,7 +335,7 @@ RSpec.describe RMT::Mirror do
             raise(RMT::ChecksumVerifier::Exception, "Checksum doesn't match") if args[1] =~ /rpm$/
             klass.call(*args)
           end
-          expect { rmt_mirror.mirror(mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
+          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
         end
       end
     end
@@ -398,8 +447,8 @@ RSpec.describe RMT::Mirror do
         before do
           deduplication_method(:copy)
           VCR.use_cassette 'mirroring_product_with_dedup' do
-            rmt_source_mirror.mirror(mirror_params_source)
-            rmt_dedup_mirror.mirror(mirror_params_dedup)
+            rmt_source_mirror.mirror(**mirror_params_source)
+            rmt_dedup_mirror.mirror(**mirror_params_dedup)
           end
         end
 
@@ -410,8 +459,8 @@ RSpec.describe RMT::Mirror do
         before do
           deduplication_method(:hardlink)
           VCR.use_cassette 'mirroring_product_with_dedup' do
-            rmt_source_mirror.mirror(mirror_params_source)
-            rmt_dedup_mirror.mirror(mirror_params_dedup)
+            rmt_source_mirror.mirror(**mirror_params_source)
+            rmt_dedup_mirror.mirror(**mirror_params_dedup)
           end
         end
 
@@ -422,11 +471,11 @@ RSpec.describe RMT::Mirror do
         before do
           deduplication_method(:copy)
           VCR.use_cassette 'mirroring_product_with_dedup' do
-            rmt_source_mirror.mirror(mirror_params_source)
+            rmt_source_mirror.mirror(**mirror_params_source)
             Dir.entries(source_path).select { |entry| entry =~ /(\.drpm|\.rpm)$/ }.each do |filename|
               File.open(source_path + filename, 'w') { |f| f.write('corruption') }
             end
-            rmt_dedup_mirror.mirror(mirror_params_dedup)
+            rmt_dedup_mirror.mirror(**mirror_params_dedup)
           end
         end
 
@@ -462,7 +511,7 @@ RSpec.describe RMT::Mirror do
         FileUtils.touch "#{mirroring_dir}/dummy_product/product/repodata/repomd.xml", mtime: Time.parse(timestamp).utc
 
         VCR.use_cassette 'mirroring_product_with_cached_metadata' do
-          rmt_mirror.mirror(mirror_params)
+          rmt_mirror.mirror(**mirror_params)
         end
       end
 
@@ -568,7 +617,7 @@ RSpec.describe RMT::Mirror do
           end
         end
 
-        rmt_mirror.mirror(mirror_params)
+        rmt_mirror.mirror(**mirror_params)
       end
     end
 
@@ -587,7 +636,7 @@ RSpec.describe RMT::Mirror do
           end
         end
 
-        expect { rmt_mirror.mirror(mirror_params) }.to raise_error(
+        expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(
           RMT::Mirror::Exception,
            'Error while mirroring metadata: Failed to get repository metadata signatures with HTTP code 502'
         )
