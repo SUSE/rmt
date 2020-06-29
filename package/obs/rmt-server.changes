@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+
+Thu Jul 30 08:20:37 UTC 2020 - Thorsten Kukuk <kukuk@suse.com>
+
+- Move the nginx reload to the configuration package which contain
+  nginx config files, don't reload nginx unconditionally from main
+  package.
+
+-------------------------------------------------------------------
 Thu Jul  9 17:39:04 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
 
 - Version 2.5.12
