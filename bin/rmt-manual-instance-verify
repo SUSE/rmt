@@ -1,0 +1,119 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'ostruct'
+require 'logger'
+
+options = {}
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: #{$PROGRAM_NAME} [options]"
+
+  opts.on('-i', '--instance-data INSTANCE_DATA', 'Path to instance data file') do |val|
+    options[:instance_data] = val
+  end
+  opts.on('-m', '--module MODULE', 'Path to instance verification module') do |val|
+    options[:module] = val
+  end
+  opts.on('-c', '--client-ip CLIENT_IP', 'Client instance IP address (needed for some modules)') do |val|
+    options[:client_ip] = val
+  end
+  opts.on('-p', '--product PRODUCT', 'Base product identifier (e.g., SLES or SLES_SAP)') do |val|
+    options[:product] = val
+  end
+end
+
+parser.parse!
+
+unless options[:instance_data] || options[:client_ip]
+  puts 'Missing either --instance-data or --client-ip parameter'
+  exit 1
+end
+
+unless options[:product]
+  puts 'Missing required parameter --product'
+  exit 1
+end
+
+logger = Logger.new($stdout)
+logger.formatter = proc do |severity, _time, _progname, msg|
+  called_from = caller.map do |c|
+    arr = c.split(':')
+    arr[0] = File.basename(arr[0])
+    arr[0..1].join(':')
+  end
+
+  called_from = called_from.reject { |c| c =~ /^logger.rb\:/ }.first
+
+  "[#{called_from}] #{sprintf('%05s', severity)}: #{msg}\n"
+end
+
+
+request = if options[:client_ip]
+            OpenStruct.new(remote_ip: options[:client_ip])
+          else
+            Class.new do
+              def remote_ip
+                raise "Instance verification module is trying to access client IP address, which wasn't supplied."
+              end
+            end.new
+          end
+product_hash = { identifier: options[:product] }
+instance_data = options[:instance_data] ? File.read(options[:instance_data]) : ''
+
+# Bootstrapping dependencies bundled with RMT
+
+RMT_PATH = '/usr/share/rmt'.freeze
+$LOAD_PATH.unshift File.join(RMT_PATH, 'lib')
+
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path('./Gemfile', RMT_PATH)
+
+require 'bundler/setup'
+require 'active_support'
+
+load_paths = %w[lib lib/rmt app/models app/services app/validators engines/instance_verification/lib].map do |dir|
+  File.join(RMT_PATH, dir)
+end
+ActiveSupport::Dependencies.autoload_paths += load_paths
+
+module InstanceVerification
+  class << self
+    attr_accessor :provider
+  end
+
+  class Exception < RuntimeError; end
+end
+
+module InstanceVerification::Providers
+end
+
+# Loading instance verification module
+if options[:module]
+  raise "File #{options[:module]} doesn't exist" unless File.exist?(options[:module])
+
+  puts "Loading instance verification module: #{options[:module]}"
+  require_relative options[:module]
+else
+  providers = Dir.glob(File.join(RMT_PATH, 'engines/instance_verification/lib/instance_verification/providers/*.rb'))
+  raise 'Too many instance verification providers found' if providers.size > 1
+
+  providers.each do |f|
+    puts "Loading instance verification module: #{f}"
+    require_relative f
+    break
+  end
+end
+
+raise 'Instance verification provider is missing or failed to initialize' unless InstanceVerification.provider
+puts "Loaded instance verification module: #{InstanceVerification.provider}"
+
+# Verifying instance data
+provider = InstanceVerification.provider.new(logger, request, product_hash, instance_data)
+
+begin
+  provider.instance_valid?
+  puts 'Instance verification result: OK'
+rescue InstanceVerification::Exception => e
+  puts "Instance verification exception: #{e.message}"
+  puts 'Instance verification result: ERROR'
+  exit 1
+end
