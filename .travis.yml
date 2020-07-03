@@ -2,6 +2,9 @@ language: ruby
 rvm:
   # SLES15
   - 2.5.0
+  # Factory/Tumbleweed
+  - 2.6.0
+  - 2.7.0
 
 cache:
   - bundler
