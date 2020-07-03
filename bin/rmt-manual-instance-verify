@@ -11,7 +11,10 @@ parser = OptionParser.new do |opts|
   opts.on('-i', '--instance-data INSTANCE_DATA', 'Path to instance data file') do |val|
     options[:instance_data] = val
   end
-  opts.on('-m', '--module MODULE', 'Path to instance verification module') do |val|
+  opts.on(
+    '-m', '--module MODULE', 'Path to instance verification module. By default the ' \
+        'verification module on the server will be loaded. (Optional)'
+  ) do |val|
     options[:module] = val
   end
   opts.on('-c', '--client-ip CLIENT_IP', 'Client instance IP address (needed for some modules)') do |val|
