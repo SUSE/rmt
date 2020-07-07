@@ -5,7 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'puma', '3.12.4'
+gem 'puma', '3.12.6'
 gem 'mysql2', '~> 0.5.3'
 
 gem 'nokogiri', '~> 1.10.3'
@@ -84,7 +84,7 @@ gem 'active_model_serializers'
 gem 'fast_gettext'
 gem 'gettext_i18n_rails'
 
-gem 'config', '~> 1.0'
+gem 'config', '~> 2.2', '>= 2.2.1'
 gem 'terminal-table', '~> 1.8'
 
 # needed by rmt-server-pubcloud
