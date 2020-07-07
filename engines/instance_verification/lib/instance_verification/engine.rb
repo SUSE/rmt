@@ -46,7 +46,7 @@ module InstanceVerification
           cache_key = [request.remote_ip, @system.login, product.id].join('-')
 
           # caches verification result to be used by zypper auth plugin
-          Rails.cache.write(cache_key, true, expires_in: 1.hour)
+          Rails.cache.write(cache_key, true, expires_in: 20.minutes)
         rescue InstanceVerification::Exception => e
           raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
         rescue StandardError => e
