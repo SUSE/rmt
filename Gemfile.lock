@@ -126,7 +126,7 @@ GEM
     factory_girl_rails (4.8.0)
       factory_girl (~> 4.8.0)
       railties (>= 3.0.0)
-    fakefs (1.2.0)
+    fakefs (1.2.2)
     faraday (0.17.3)
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (2.1.0)
