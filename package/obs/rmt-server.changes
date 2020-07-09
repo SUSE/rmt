@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Thu Jul  9 17:39:04 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
+
+- Version 2.5.11
+- Update the Ruby gem `responders` to version 3.0.1: the previous version on the
+  project was using the gem 'rack' version 2.1.4, which had a security
+  vulnerability reported on CVE-2020-8184.
+- Upgrade Rails from version 5.1.6.2 to 5.2.4.3, due to several vulnerabilities
+  which were fixed in the later version
+  (https://github.com/rails/rails/releases/tag/v5.2.4.3).
+
+-------------------------------------------------------------------
 Tue Jun 16 13:05:49 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
 
 - Version 2.5.10
