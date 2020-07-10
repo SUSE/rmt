@@ -133,6 +133,7 @@ mkdir -p %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-cli %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-data-import %{buildroot}%{_bindir}/rmt-data-import
 ln -s %{app_dir}/bin/rmt-test-regsharing %{buildroot}%{_bindir}
+ln -s %{app_dir}/bin/rmt-manual-instance-verify %{buildroot}%{_bindir}
 install -D -m 644 %{_sourcedir}/rmt-cli.8.gz %{buildroot}%{_mandir}/man8/rmt-cli.8.gz
 
 # systemd
@@ -257,6 +258,7 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 
 %files pubcloud
 %{_bindir}/rmt-test-regsharing
+%{_bindir}/rmt-manual-instance-verify
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}/engines/
 %dir %{_sysconfdir}/nginx/rmt-auth.d/
 %dir %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}/regsharing
