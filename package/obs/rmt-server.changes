@@ -10,6 +10,15 @@ Thu Jul  9 17:39:04 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
   - actionview (CVE-2020-8167: bsc#1172184)
 
 -------------------------------------------------------------------
+Wed Jul  8 05:38:52 UTC 2020 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.5.11
+- rmt-server-pubcloud:
+  - SLES11 EOL
+  - Extension activation verification based on the available subscriptions
+  - Added a manual instance verification script
+
+-------------------------------------------------------------------
 Tue Jun 16 13:05:49 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
 
 - Version 2.5.10
