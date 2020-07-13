@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Thu Jul  9 17:39:04 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
+
+- Version 2.5.12
+- Update rack to version 2.2.3 (CVE-2020-8184: bsc#1173351)
+- Update Rails to version 5.2.4.3:
+  - actionpack (CVE-2020-8164: bsc#1172177)
+  - actionpack (CVE-2020-8166: bsc#1172182)
+  - activesupport (CVE-2020-8165: bsc#1172186)
+  - actionview (CVE-2020-8167: bsc#1172184)
+
+-------------------------------------------------------------------
 Wed Jul  8 05:38:52 UTC 2020 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
 
 - Version 2.5.11

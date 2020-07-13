@@ -10,7 +10,7 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
       before { post url }
       subject { response }
 
-      it { is_expected.to be_success }
+      it { is_expected.to be_successful }
 
       describe 'JSON response' do
         subject { json_response }
@@ -24,7 +24,7 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
       before { post url, params: { payload: { hostname: 'testhost' } }.to_json, headers: headers }
       subject { response }
 
-      it { is_expected.to be_success }
+      it { is_expected.to be_successful }
       its(:status) { is_expected.to eq 201 }
 
       describe 'JSON response' do
@@ -66,7 +66,7 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
       context 'with hw_info parameters' do
         subject { response }
 
-        it { is_expected.to be_success }
+        it { is_expected.to be_successful }
         its(:status) { is_expected.to eq 201 }
 
         describe 'stored hw_info' do
