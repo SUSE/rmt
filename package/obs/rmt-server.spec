@@ -29,7 +29,7 @@
 %define ruby_version          %{rb_default_ruby_suffix}
 
 Name:           rmt-server
-Version:        2.5.10
+Version:        2.5.12
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -133,6 +133,7 @@ mkdir -p %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-cli %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-data-import %{buildroot}%{_bindir}/rmt-data-import
 ln -s %{app_dir}/bin/rmt-test-regsharing %{buildroot}%{_bindir}
+ln -s %{app_dir}/bin/rmt-manual-instance-verify %{buildroot}%{_bindir}
 install -D -m 644 %{_sourcedir}/rmt-cli.8.gz %{buildroot}%{_mandir}/man8/rmt-cli.8.gz
 
 # systemd
@@ -257,6 +258,7 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 
 %files pubcloud
 %{_bindir}/rmt-test-regsharing
+%{_bindir}/rmt-manual-instance-verify
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}/engines/
 %dir %{_sysconfdir}/nginx/rmt-auth.d/
 %dir %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}/regsharing
@@ -281,8 +283,8 @@ getent passwd %{rmt_user} >/dev/null || \
 
 %post
 %service_add_post rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
-cd %{_datadir}/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails secrets:setup >/dev/null
-cd %{_datadir}/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails runner -e production "Rails::Secrets.write({'production' => {'secret_key_base' => SecureRandom.hex(64)}}.to_yaml)" >/dev/null
+cd %{_datadir}/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails rmt:secrets:create_encryption_key >/dev/null RAILS_ENV=production
+cd %{_datadir}/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails rmt:secrets:create_secret_key_base >/dev/null RAILS_ENV=production
 
 # Run only on install
 if [ $1 -eq 1 ]; then
