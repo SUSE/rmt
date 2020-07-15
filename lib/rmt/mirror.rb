@@ -12,6 +12,7 @@ class RMT::Mirror
     @mirror_src = mirror_src
     @logger = logger
     @force_dedup_by_copy = airgap_mode
+    @track_download_files_locally = !airgap_mode # we don't want to track airgap files in our database
 
     @downloader = RMT::Downloader.new(
       repository_url: @repository_url,
@@ -179,7 +180,9 @@ class RMT::Mirror
   end
 
   def deduplicate(checksum_type, checksum_value, destination)
-    return false unless ::RMT::Deduplicator.deduplicate(checksum_type, checksum_value, destination, force_copy: @force_dedup_by_copy)
+    return false unless ::RMT::Deduplicator.deduplicate(checksum_type, checksum_value, destination,
+                                                        force_copy: @force_dedup_by_copy,
+                                                        track: @track_download_files_locally)
     @logger.info("→ #{File.basename(destination)}")
     true
   rescue ::RMT::Deduplicator::MismatchException => e

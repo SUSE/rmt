@@ -357,6 +357,15 @@ RSpec.describe RMT::Mirror do
         )
       end
 
+      let(:rmt_dedup_airgap_mirror) do
+        described_class.new(
+          mirroring_base_dir: @tmp_dir,
+          logger: RMT::Logger.new('/dev/null'),
+          mirror_src: false,
+          airgap_mode: true
+        )
+      end
+
       let(:mirror_params_source) do
         {
           repository_url: 'http://localhost/dummy_product/product/',
@@ -386,7 +395,6 @@ RSpec.describe RMT::Mirror do
           rpm_entries = Dir.entries(File.join(dedup_path)).select { |entry| entry =~ /\.rpm$/ }
           expect(rpm_entries.length).to eq(4)
         end
-
 
         it 'has correct content for deduplicated rpm files' do
           Dir.entries(File.join(dedup_path)).select { |entry| entry =~ /\.rpm$/ }.each do |file|
@@ -465,6 +473,32 @@ RSpec.describe RMT::Mirror do
         end
 
         it_behaves_like 'a deduplicated run', 2, 2, true
+      end
+
+      context 'tracking downloaded files' do
+        before do
+          deduplication_method(:hardlink)
+        end
+
+        it 'tracks deduplicated files' do
+          VCR.use_cassette 'mirroring_product_with_dedup' do
+            rmt_source_mirror.mirror(**mirror_params_source)
+            rmt_dedup_mirror.mirror(**mirror_params_dedup)
+          end
+          rpm_entries = Dir.entries(File.join(source_path)).select { |entry| entry =~ /\.rpm$/ }
+          count = rpm_entries.inject(0) { |count, entry| count + DownloadedFile.where("local_path like '%#{entry}'").count }
+          expect(count).to eq(8)
+        end
+
+        it 'does not track airgap deduplicated files' do
+          VCR.use_cassette 'mirroring_product_with_dedup' do
+            rmt_source_mirror.mirror(**mirror_params_source)
+            rmt_dedup_airgap_mirror.mirror(**mirror_params_dedup)
+          end
+          rpm_entries = Dir.entries(File.join(source_path)).select { |entry| entry =~ /\.rpm$/ }
+          count = rpm_entries.inject(0) { |count, entry| count + DownloadedFile.where("local_path like '%#{entry}'").count }
+          expect(count).to eq(4)
+        end
       end
 
       context 'by copy with corruption' do

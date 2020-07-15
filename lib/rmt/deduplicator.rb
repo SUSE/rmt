@@ -29,7 +29,7 @@ class RMT::Deduplicator
     DownloadedFile.add_file(checksum_type, checksum, file_size, path)
   end
 
-  def self.deduplicate(checksum_type, checksum_value, destination, force_copy: false)
+  def self.deduplicate(checksum_type, checksum_value, destination, force_copy: false, track: true)
     src = DownloadedFile.get_local_path_by_checksum(checksum_type, checksum_value)
 
     if src.nil?
@@ -43,6 +43,8 @@ class RMT::Deduplicator
     else
       copy(src.local_path, destination)
     end
+
+    add_local(destination, checksum_type, checksum_value) if track
 
     true
   end

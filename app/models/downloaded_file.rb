@@ -7,8 +7,6 @@ class DownloadedFile < ApplicationRecord
                             checksum: checksum,
                             local_path: local_path,
                             file_size: file_size })
-  rescue ActiveRecord::RecordNotUnique
-    nil
   end
 
   def self.get_local_path_by_checksum(checksum_type, checksum)
