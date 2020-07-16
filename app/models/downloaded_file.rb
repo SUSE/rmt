@@ -1,8 +1,9 @@
 class DownloadedFile < ApplicationRecord
 
-  def self.add_file(checksum_type, checksum, file_size, local_path)
+  def self.add_file(checksum_type, checksum, local_path)
     return unless local_path.match?(/\.(rpm|drpm)$/)
 
+    file_size = File.size(local_path)
     DownloadedFile.create({ checksum_type: checksum_type,
                             checksum: checksum,
                             local_path: local_path,

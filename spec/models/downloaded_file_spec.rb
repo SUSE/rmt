@@ -16,8 +16,16 @@ describe DownloadedFile, type: :model do
       expect(DownloadedFile.find_by(checksum_type: 'foo', checksum: 'bar').local_path).to eq(test_file_1_path)
     end
 
+    it 'has the file size of file1' do
+      expect(DownloadedFile.find_by(checksum_type: 'foo', checksum: 'bar').file_size).to eq(File.size(test_file_1_path))
+    end
+
     it 'has file2' do
       expect(DownloadedFile.find_by(checksum_type: 'foobar', checksum: 'barfoo').local_path).to eq(test_file_2_path)
+    end
+
+    it 'has the file size of file2' do
+      expect(DownloadedFile.find_by(checksum_type: 'foobar', checksum: 'barfoo').file_size).to eq(File.size(test_file_2_path))
     end
 
     it 'handles duplicates' do

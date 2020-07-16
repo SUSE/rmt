@@ -18,6 +18,23 @@ RSpec.describe RMT::Deduplicator do
       FileUtils.remove_entry(dir)
     end
 
+    context 'file tracking' do
+      before do
+        deduplication_method(:copy)
+        add_downloaded_file(checksum_type, checksum, source_path)
+      end
+
+      it 'tracks files when we ask it to' do
+        deduplicate(checksum_type, checksum, dest_path, track: true)
+        expect(DownloadedFile.where(local_path: dest_path).count).to eq(1)
+      end
+
+      it 'does not track unless we say not to' do
+        deduplicate(checksum_type, checksum, dest_path, track: false)
+        expect(DownloadedFile.where(local_path: dest_path).count).to eq(0)
+      end
+    end
+
     context 'copy' do
       before do
         deduplication_method(:copy)
