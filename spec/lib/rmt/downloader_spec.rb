@@ -68,7 +68,7 @@ RSpec.describe RMT::Downloader do
         it 'raises an exception' do
           expect do
             downloader.download('/repomd.xml', checksum_type: 'SHA256', checksum_value: '0xDEADBEEF')
-          end.to raise_error(RMT::ChecksumVerifier::Exception, 'Checksum doesn\'t match')
+          end.to raise_error(RMT::Downloader::Exception, 'Checksum doesn\'t match')
         end
       end
 
