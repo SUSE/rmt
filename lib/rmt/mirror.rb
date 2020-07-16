@@ -161,7 +161,8 @@ class RMT::Mirror
     parsed_files = package_references.reject do |package|
       package.arch == 'src' && !@mirror_src
     end
-    parsed_files_after_dedup(@repository_dir, parsed_files)
+
+    filter_downloadable_files(@repository_dir, parsed_files)
   end
 
   def replace_directory(source_dir, destination_dir)
@@ -179,10 +180,12 @@ class RMT::Mirror
     })
   end
 
-  def deduplicate(checksum_type, checksum_value, destination)
-    return false unless ::RMT::Deduplicator.deduplicate(checksum_type, checksum_value, destination,
-                                                        force_copy: @force_dedup_by_copy,
-                                                        track: @track_download_files)
+  def deduplicate(parsed_file, destination)
+    return false unless ::RMT::Deduplicator
+      .deduplicate(parsed_file.checksum_type, parsed_file.checksum, destination,
+                   force_copy: @force_dedup_by_copy,
+                   track: @track_download_files)
+
     @logger.info("→ #{File.basename(destination)}")
     true
   rescue ::RMT::Deduplicator::MismatchException => e
@@ -190,19 +193,33 @@ class RMT::Mirror
     false
   end
 
-  def parsed_files_after_dedup(root_path, referenced_files)
-    files = referenced_files.map do |parsed_file|
+  def filter_downloadable_files(root_path, referenced_files)
+    referenced_files.reject do |parsed_file|
       local_file = ::RMT::Downloader.make_local_path(root_path, parsed_file.location)
-      unless File.exist?(local_file) || deduplicate(parsed_file.checksum_type, parsed_file.checksum, local_file)
-        parsed_file
-      end
+
+      match_existing_file(parsed_file, local_file) || deduplicate(parsed_file, local_file)
     end
-    files.compact
+  end
+
+  def match_existing_file(parsed_file, destination)
+    return false unless File.exist?(destination)
+
+    if match_checksum?(parsed_file, destination)
+      # ::DownloadedFile.add_file(parsed_file.checksum_type, parsed_file.checksum, destination)
+      return true
+    end
+
+    false
+  end
+
+  def match_checksum?(parsed_file, destination)
+    RMT::ChecksumVerifier.match_checksum?(parsed_file.checksum_type,
+                                          parsed_file.checksum,
+                                          destination)
   end
 
   def remove_tmp_directories
     FileUtils.remove_entry(@temp_licenses_dir) if @temp_licenses_dir && Dir.exist?(@temp_licenses_dir)
     FileUtils.remove_entry(@temp_metadata_dir) if @temp_metadata_dir && Dir.exist?(@temp_metadata_dir)
   end
-
 end
