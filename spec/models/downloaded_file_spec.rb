@@ -34,6 +34,42 @@ describe DownloadedFile, type: :model do
     end
   end
 
+  describe '#valid_local_file?' do
+    let(:checksum_type) { 'SHA256' }
+    let(:checksum) { '5c4e3fa1624bd23251eecdda9c7fcefad045995a9eaed527d06dd8510cfe2851' }
+    let(:test_file_path) { file_fixture('dummy_product/product/apples-0.1-0.x86_64.rpm').to_s }
+
+    it 'returns true if the file is valid' do
+      add_downloaded_file(checksum_type, checksum, test_file_path)
+      expect(DownloadedFile.valid_local_file?(checksum_type, checksum, test_file_path)).to be(true)
+    end
+
+    it 'returns false for invalid files' do
+      add_downloaded_file(checksum_type, checksum, test_file_path)
+      expect(DownloadedFile.valid_local_file?(checksum_type, checksum.sub('5', '2'), test_file_path)).to be(false)
+    end
+
+    it 'returns false when file does not exist yet' do
+      expect(DownloadedFile.valid_local_file?(checksum_type, checksum, 'foo.rpm')).to be(false)
+    end
+
+    it 'tracks the file again if not yet tracked' do
+      file = add_downloaded_file(checksum_type, checksum, test_file_path)
+      file.destroy
+
+      expect(DownloadedFile.where(local_path: test_file_path).count).to eq(0)
+      expect(DownloadedFile.valid_local_file?(checksum_type, checksum, test_file_path)).to be(true)
+      expect(DownloadedFile.where(local_path: test_file_path).count).to eq(1)
+    end
+
+    it 'stops tracking invalid files' do
+      add_downloaded_file(checksum_type, checksum.sub('5', '2'), test_file_path)
+      expect(DownloadedFile.where(local_path: test_file_path).count).to eq(1)
+      expect(DownloadedFile.valid_local_file?(checksum_type, checksum, test_file_path)).to be(false)
+      expect(DownloadedFile.where(local_path: test_file_path).count).to eq(0)
+    end
+  end
+
   describe '#get_local_path_by_checksum' do
     let(:checksum_type) { 'SHA256' }
     let(:checksum) { '5c4e3fa1624bd23251eecdda9c7fcefad045995a9eaed527d06dd8510cfe2851' }
