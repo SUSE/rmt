@@ -197,25 +197,12 @@ class RMT::Mirror
     referenced_files.reject do |parsed_file|
       local_file = ::RMT::Downloader.make_local_path(root_path, parsed_file.location)
 
-      match_existing_file(parsed_file, local_file) || deduplicate(parsed_file, local_file)
+      valid_local_file?(parsed_file, local_file) || deduplicate(parsed_file, local_file)
     end
   end
 
-  def match_existing_file(parsed_file, destination)
-    return false unless File.exist?(destination)
-
-    if match_checksum?(parsed_file, destination)
-      # ::DownloadedFile.add_file(parsed_file.checksum_type, parsed_file.checksum, destination)
-      return true
-    end
-
-    false
-  end
-
-  def match_checksum?(parsed_file, destination)
-    RMT::ChecksumVerifier.match_checksum?(parsed_file.checksum_type,
-                                          parsed_file.checksum,
-                                          destination)
+  def valid_local_file?(parsed_file, destination)
+    ::DownloadedFile.valid_local_file?(parsed_file.checksum_type, parsed_file.checksum, destination)
   end
 
   def remove_tmp_directories
