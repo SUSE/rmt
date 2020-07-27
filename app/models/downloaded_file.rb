@@ -1,16 +1,6 @@
 class DownloadedFile < ApplicationRecord
   class << self
 
-    def add_file(checksum_type, checksum, local_path)
-      return unless local_path.match?(/\.(rpm|drpm)$/)
-
-      file_size = File.size(local_path)
-      DownloadedFile.find_or_create_by({ checksum_type: checksum_type,
-                                         checksum: checksum,
-                                         local_path: local_path,
-                                         file_size: file_size })
-    end
-
     def get_local_path_by_checksum(checksum_type, checksum)
       DownloadedFile.find_by({ checksum_type: checksum_type, checksum: checksum })
     end
@@ -23,11 +13,31 @@ class DownloadedFile < ApplicationRecord
       matched_tracked_file = matches_tracked_file?(tracked_file, checksum_type, checksum_value)
 
       return true if valid_checksum && matched_tracked_file
-      return !add_file(checksum_type, checksum_value, path).nil? if valid_checksum && tracked_file.nil?
+
+      if valid_checksum && tracked_file.nil?
+        return !track_file(checksum_type: checksum_type,
+                           checksum: checksum_value,
+                           local_path: path,
+                           size: File.size(path)).nil?
+      end
 
       FileUtils.remove_file(path, force: true)
       tracked_file.destroy unless tracked_file.nil?
       false
+    end
+
+    def track_file(checksum_type:, checksum:, local_path:, size:)
+      find_or_initialize_by(local_path: local_path).tap do |record|
+        record.checksum_type = checksum_type
+        record.checksum = checksum
+        record.file_size = size
+
+        record.save if record.changed?
+      end.persisted?
+    end
+
+    def untrack_file(local_path)
+      where(local_path: local_path).destroy_all
     end
 
     private

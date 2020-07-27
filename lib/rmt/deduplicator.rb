@@ -39,7 +39,12 @@ class RMT::Deduplicator
       copy(src.local_path, destination)
     end
 
-    DownloadedFile.add_file(checksum_type, checksum_value, destination) if track
+    if track
+      ::DownloadedFile.track_file(checksum: checksum_value,
+                                  checksum_type: checksum_type,
+                                  local_path: destination,
+                                  size: File.size(destination))
+    end
 
     true
   end

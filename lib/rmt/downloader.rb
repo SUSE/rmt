@@ -186,7 +186,12 @@ class RMT::Downloader
     FileUtils.mv(request.download_path.path, local_file)
     File.chmod(0o644, local_file)
 
-    ::DownloadedFile.add_file(checksum_type, checksum_value, local_file) if @track_files
+    if @track_files
+      ::DownloadedFile.track_file(checksum: checksum_value,
+                                  checksum_type: checksum_type,
+                                  local_path: local_file,
+                                  size: File.size(local_file))
+    end
 
     @logger.info("↓ #{File.basename(local_file)}")
   rescue StandardError => e
