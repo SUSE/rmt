@@ -19,26 +19,20 @@ class DownloadedFile < ApplicationRecord
       return false unless File.exist?(path)
 
       valid_checksum = RMT::ChecksumVerifier.match_checksum?(checksum_type, checksum_value, path)
-      file_db_entries = where(local_path: path)
-      matched_tracked_file = file_db_entries.find do |entry|
-        match_tracked_file?(entry, checksum_type, checksum_value)
-      end
-
-      duplicated_entries = file_db_entries.select { |entry| entry != matched_tracked_file }
-      duplicated_entries.each(&:destroy)
+      tracked_file = find_by(local_path: path)
+      matched_tracked_file = matches_tracked_file?(tracked_file, checksum_type, checksum_value)
 
       return true if valid_checksum && matched_tracked_file
-      return !add_file(checksum_type, checksum_value, path).nil? if valid_checksum && matched_tracked_file.nil?
+      return !add_file(checksum_type, checksum_value, path).nil? if valid_checksum && tracked_file.nil?
 
       FileUtils.remove_file(path, force: true)
-      matched_tracked_file.destroy unless matched_tracked_file.nil?
-
+      tracked_file.destroy unless tracked_file.nil?
       false
     end
 
     private
 
-    def match_tracked_file?(tracked_file, checksum_type, checksum_value)
+    def matches_tracked_file?(tracked_file, checksum_type, checksum_value)
       return false if tracked_file.nil? || tracked_file.checksum_type != checksum_type || tracked_file.checksum != checksum_value
       true
     end

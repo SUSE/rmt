@@ -7,29 +7,34 @@ describe DownloadedFile, type: :model do
     let(:test_file_1_path) { file_fixture('dummy_product/product/apples-0.1-0.x86_64.rpm').to_s }
     let(:test_file_2_path) { file_fixture('dummy_product/product/apples-0.2-0.x86_64.rpm').to_s }
 
-    before do
-      add_downloaded_file('foo', 'bar', test_file_1_path)
-      add_downloaded_file('foobar', 'barfoo', test_file_2_path)
-    end
-
     it 'has file1' do
+      add_downloaded_file('foo', 'bar', test_file_1_path)
+
       expect(DownloadedFile.find_by(checksum_type: 'foo', checksum: 'bar').local_path).to eq(test_file_1_path)
     end
 
     it 'has the file size of file1' do
+      add_downloaded_file('foo', 'bar', test_file_1_path)
+
       expect(DownloadedFile.find_by(checksum_type: 'foo', checksum: 'bar').file_size).to eq(File.size(test_file_1_path))
     end
 
     it 'has file2' do
+      add_downloaded_file('foobar', 'barfoo', test_file_2_path)
+
       expect(DownloadedFile.find_by(checksum_type: 'foobar', checksum: 'barfoo').local_path).to eq(test_file_2_path)
     end
 
     it 'has the file size of file2' do
+      add_downloaded_file('foobar', 'barfoo', test_file_2_path)
+
       expect(DownloadedFile.find_by(checksum_type: 'foobar', checksum: 'barfoo').file_size).to eq(File.size(test_file_2_path))
     end
 
     it 'allows checksum duplicates' do
+      add_downloaded_file('foo', 'bar', test_file_1_path)
       add_downloaded_file('foo', 'bar', test_file_2_path)
+
       expect(DownloadedFile.where(checksum_type: 'foo', checksum: 'bar').count).to eq(2)
     end
   end
@@ -87,56 +92,6 @@ describe DownloadedFile, type: :model do
 
         expect(DownloadedFile.where(local_path: test_file_path).count).to eq(0)
         expect(File.exist?(test_file_path)).to be(false)
-      end
-    end
-
-    context 'when there are duplicated entries (same local path) on db' do
-      context 'and at least one entry matches a valid local file and the checksum metadata' do
-        it 'removes other duplicated entries' do
-          add_downloaded_file(checksum_type, checksum, test_file_path)
-          add_downloaded_file(checksum_type, checksum.sub('5', '2'), test_file_path)
-          add_downloaded_file(checksum_type, checksum.sub('5', '3'), test_file_path)
-
-          expect(DownloadedFile.where(local_path: test_file_path).count).to eq(3)
-          expect(File.exist?(test_file_path)).to be(true)
-
-          expect(DownloadedFile.valid_local_file?(checksum_type, checksum, test_file_path)).to be(true)
-
-          expect(DownloadedFile.where(local_path: test_file_path).count).to eq(1)
-          expect(File.exist?(test_file_path)).to be(true)
-        end
-      end
-
-      context 'and at least one entry matches the checksum metadata but not the local file' do
-        it 'removes all duplicated entries and mismatched file' do
-          add_downloaded_file(checksum_type, checksum.sub('5', '1'), test_file_path)
-          add_downloaded_file(checksum_type, checksum.sub('5', '2'), test_file_path)
-          add_downloaded_file(checksum_type, checksum.sub('5', '3'), test_file_path)
-
-          expect(DownloadedFile.where(local_path: test_file_path).count).to eq(3)
-          expect(File.exist?(test_file_path)).to be(true)
-
-          expect(DownloadedFile.valid_local_file?(checksum_type, checksum.sub('5', '1'), test_file_path)).to be(false)
-
-          expect(DownloadedFile.where(local_path: test_file_path).count).to eq(0)
-          expect(File.exist?(test_file_path)).to be(false)
-        end
-      end
-
-      context 'and no entries match a local file neither the checksum metadata' do
-        it 'removes all duplicated entries and mismatched file' do
-          add_downloaded_file(checksum_type, checksum.sub('5', '1'), test_file_path)
-          add_downloaded_file(checksum_type, checksum.sub('5', '2'), test_file_path)
-          add_downloaded_file(checksum_type, checksum.sub('5', '3'), test_file_path)
-
-          expect(DownloadedFile.where(local_path: test_file_path).count).to eq(3)
-          expect(File.exist?(test_file_path)).to be(true)
-
-          expect(DownloadedFile.valid_local_file?(checksum_type, checksum.sub('5', '4'), test_file_path)).to be(false)
-
-          expect(DownloadedFile.where(local_path: test_file_path).count).to eq(0)
-          expect(File.exist?(test_file_path)).to be(false)
-        end
       end
     end
   end
