@@ -195,14 +195,14 @@ class RMT::Mirror
 
   def filter_downloadable_files(root_path, referenced_files)
     referenced_files.reject do |parsed_file|
-      local_file = ::RMT::Downloader.make_local_path(root_path, parsed_file.location)
+      local_file, valid_file = ::RMT::FileValidator.validate_local_file(
+        repository_dir: @repository_dir, metadata: parsed_file, deep_verify: false
+      )
 
-      valid_local_file?(parsed_file, local_file) || deduplicate(parsed_file, local_file)
+      ::RMT::Downloader.make_local_path(root_path, parsed_file.location) unless valid_file
+
+      valid_file || deduplicate(parsed_file, local_file)
     end
-  end
-
-  def valid_local_file?(parsed_file, destination)
-    ::DownloadedFile.valid_local_file?(parsed_file.checksum_type, parsed_file.checksum, destination)
   end
 
   def remove_tmp_directories
