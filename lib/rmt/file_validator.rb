@@ -3,54 +3,49 @@ require 'rmt/checksum_verifier'
 
 class RMT::FileValidator
   class << self
-    def validate_local_file(repository_dir:, metadata:, deep_verify:)
-      verify_file_on_disk(repository_dir, metadata, deep_verify).tap do |(file_path, valid_file)|
-        verify_file_on_database(file_path, valid_file, metadata)
+    def validate_local_file(file_reference, deep_verify:)
+      verify_file_on_disk(file_reference, deep_verify).tap do |valid_on_disk|
+        verify_file_on_database(file_reference, valid_on_disk)
       end
     end
 
     private
 
-    def verify_file_on_disk(repository_dir, metadata, deep_verify)
-      path = local_path(repository_dir, metadata)
-      file_exist = File.exist?(path)
-      match_metadata = file_exist ? file_match_metadata?(path, metadata, deep_verify) : false
+    def verify_file_on_disk(file, deep_verify)
+      file_exist = File.exist?(file.local_path)
+      match_metadata = file_exist ? file_match_metadata?(file, deep_verify) : false
 
-      return [path, true] if match_metadata
+      return true if match_metadata
 
-      FileUtils.remove_file(path, force: true) if file_exist
+      FileUtils.remove_file(file.local_path, force: true) if file_exist
 
-      [path, false]
+      false
     end
 
-    def verify_file_on_database(file_path, valid_file, metadata)
-      if valid_file
+    def verify_file_on_database(file, valid_on_disk)
+      if valid_on_disk
         ::DownloadedFile.track_file(
-          checksum: metadata.checksum,
-          checksum_type: metadata.checksum_type,
-          local_path: file_path,
-          size: metadata.size
+          checksum: file.checksum,
+          checksum_type: file.checksum_type,
+          local_path: file.local_path,
+          size: file.size
         )
 
         return
       end
 
-      ::DownloadedFile.untrack_file(file_path)
+      ::DownloadedFile.untrack_file(file.local_path)
     end
 
-    def local_path(repository_dir, metadata)
-      File.join(repository_dir, metadata.location.gsub(/\.\./, '__'))
+    def file_match_metadata?(file, deep_verify)
+      File.size(file.local_path) == file.size && file_match_checksum?(file, deep_verify)
     end
 
-    def file_match_metadata?(path, metadata, deep_verify)
-      File.size(path) == metadata.size && file_match_checksum?(path, metadata, deep_verify)
-    end
-
-    def file_match_checksum?(path, metadata, deep_verify)
+    def file_match_checksum?(file, deep_verify)
       return true unless deep_verify
 
       ::RMT::ChecksumVerifier
-        .match_checksum?(metadata.checksum_type, metadata.checksum, path)
+        .match_checksum?(file.checksum_type, file.checksum, file.local_path)
     end
   end
 end

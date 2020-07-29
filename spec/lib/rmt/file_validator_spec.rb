@@ -8,26 +8,27 @@ RSpec.describe RMT::FileValidator do
 
   describe '.validate_local_file' do
     let!(:tmp_dir) { Dir.mktmpdir('rmt') }
+    let(:file_relative_remote_path) { 'dummy_product/product/apples-0.1-0.x86_64.rpm' }
+    let(:file_local_path) { File.join(tmp_dir, file_relative_remote_path) }
 
-    let(:metadata) do
+    let(:file) do
       instance_double(
-        '::RepomdParser::Reference',
+        '::RMT::FileReference',
+        local_path: file_local_path,
         checksum: expected_metadata[:checksum],
         checksum_type: expected_metadata[:checksum_type],
-        location: 'dummy_product/product/apples-0.1-0.x86_64.rpm',
+        location: file_relative_remote_path,
         size: expected_metadata[:file_size]
       )
     end
-
-    let(:file_local_path) { File.join(tmp_dir, metadata.location) }
 
     # File on disk shared contexts/examples
 
     shared_context 'file on disk' do
       before do
-        fixture_path = file_fixture(metadata.location).to_s
+        fixture_path = file_fixture(file.location).to_s
 
-        File.join(tmp_dir, metadata.location).tap do |file|
+        file.local_path.tap do |file|
           FileUtils.mkdir_p(File.dirname(file))
           FileUtils.cp(fixture_path, file)
         end
@@ -47,61 +48,30 @@ RSpec.describe RMT::FileValidator do
     end
 
     shared_examples 'no files on disk' do
-      it 'returns file path and invalid file status' do
-        path, valid_file = described_class.validate_local_file(
-          repository_dir: tmp_dir,
-          metadata: metadata,
-          deep_verify: deep_verify
-        )
-
-        expect(path).to eq(file_local_path)
-        expect(valid_file).to be false
+      it 'returns invalid file status' do
+        is_expected.to be false
       end
     end
 
     shared_examples 'invalid file on disk' do
-      it 'returns file path and invalid file status' do
-        path, valid_file = described_class.validate_local_file(
-          repository_dir: tmp_dir,
-          metadata: metadata,
-          deep_verify: deep_verify
-        )
-
-        expect(path).to eq(file_local_path)
-        expect(valid_file).to be false
+      it 'returns invalid file status' do
+        is_expected.to be false
       end
 
       it 'removes the local file' do
-        expect do
-          described_class.validate_local_file(
-            repository_dir: tmp_dir,
-            metadata: metadata,
-            deep_verify: deep_verify
-          )
-        end.to change { File.exist?(file_local_path) }.from(true).to(false)
+        expect { validate_local_file }
+          .to change { File.exist?(file.local_path) }.from(true).to(false)
       end
     end
 
     shared_examples 'valid file on disk' do
-      it 'returns file path and valid file status' do
-        path, valid_file = described_class.validate_local_file(
-          repository_dir: tmp_dir,
-          metadata: metadata,
-          deep_verify: deep_verify
-        )
-
-        expect(path).to eq(file_local_path)
-        expect(valid_file).to be true
+      it 'returns valid file status' do
+        is_expected.to be true
       end
 
       it 'does not remove the local file from the disk' do
-        expect do
-          described_class.validate_local_file(
-            repository_dir: tmp_dir,
-            metadata: metadata,
-            deep_verify: deep_verify
-          )
-        end.not_to change { File.exist?(file_local_path) == true }
+        expect { validate_local_file }
+          .not_to change { File.exist?(file.local_path) == true }
       end
     end
 
@@ -110,69 +80,54 @@ RSpec.describe RMT::FileValidator do
     shared_context 'file record on database' do
       before do
         ::DownloadedFile.track_file(
-          checksum: metadata.checksum,
-          checksum_type: metadata.checksum_type,
-          local_path: file_local_path,
-          size: metadata.size
+          checksum: file.checksum,
+          checksum_type: file.checksum_type,
+          local_path: file.local_path,
+          size: file.size
         )
       end
     end
 
     shared_examples 'invalid tracked file on database' do
       it 'untracks the file in the database' do
-        expect do
-          described_class.validate_local_file(
-            repository_dir: tmp_dir,
-            metadata: metadata,
-            deep_verify: deep_verify
-          )
-        end.to change { ::DownloadedFile.where(local_path: file_local_path).count }
+        expect { validate_local_file }
+          .to change { ::DownloadedFile.where(local_path: file.local_path).count }
           .from(1).to(0)
       end
     end
 
     shared_examples 'valid untracked file on disk' do
       it 'start tracking the local file in the database' do
-        expect do
-          described_class.validate_local_file(
-            repository_dir: tmp_dir,
-            metadata: metadata,
-            deep_verify: deep_verify
-          )
-        end.to change { ::DownloadedFile.where(local_path: file_local_path).count }
+        expect { validate_local_file }
+          .to change { ::DownloadedFile.where(local_path: file.local_path).count }
           .from(0).to(1)
 
-        file_record = ::DownloadedFile.find_by(local_path: file_local_path)
+        file_record = ::DownloadedFile.find_by(local_path: file.local_path)
 
         expect(file_record).to have_attributes(
-          checksum: metadata.checksum,
-          checksum_type: metadata.checksum_type,
-          local_path: file_local_path,
-          file_size: metadata.size
+          checksum: file.checksum,
+          checksum_type: file.checksum_type,
+          local_path: file.local_path,
+          file_size: file.size
         )
       end
     end
 
     shared_examples 'valid tracked file on disk' do
       it 'updates the database without creating a new record' do
-        file_record_id = ::DownloadedFile.find_by(local_path: file_local_path).id
+        file_record_id = ::DownloadedFile.find_by(local_path: file.local_path).id
 
-        expect do
-          described_class.validate_local_file(
-            repository_dir: tmp_dir,
-            metadata: metadata,
-            deep_verify: deep_verify
-          )
-        end.not_to change { ::DownloadedFile.where(local_path: file_local_path).count }
+        expect { validate_local_file }
+          .not_to change { ::DownloadedFile.where(local_path: file.local_path).count }
 
-        updated_file_record = ::DownloadedFile.find_by(local_path: file_local_path)
+        updated_file_record = ::DownloadedFile.find_by(local_path: file.local_path)
 
         expect(updated_file_record).to have_attributes(
           id: file_record_id,
-          checksum: metadata.checksum,
-          checksum_type: metadata.checksum_type,
-          local_path: file_local_path,
-          file_size: metadata.size
+          checksum: file.checksum,
+          checksum_type: file.checksum_type,
+          local_path: file.local_path,
+          file_size: file.size
         )
       end
     end
@@ -180,6 +135,10 @@ RSpec.describe RMT::FileValidator do
     # File and database verification
 
     shared_examples 'file/database integrity verification' do
+      subject(:validate_local_file) do
+        described_class.validate_local_file(file, deep_verify: deep_verify)
+      end
+
       context 'no files on disk, untracked on database' do
         include_examples 'no files on disk'
       end
@@ -226,8 +185,8 @@ RSpec.describe RMT::FileValidator do
         before do
           ::DownloadedFile.track_file(
             checksum: 'invalid_checksum',
-            checksum_type: metadata.checksum_type,
-            local_path: file_local_path,
+            checksum_type: file.checksum_type,
+            local_path: file.local_path,
             size: 2020
           )
         end
