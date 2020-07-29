@@ -2,16 +2,32 @@ require 'rails_helper'
 
 RSpec.describe RMT::Deduplicator do
   describe '#deduplicate' do
+    subject(:deduplicate) do
+      described_class.deduplicate(file, track: track_files)
+    end
+
+    let(:track_files) { false }
     let(:dir) { Dir.mktmpdir }
     let(:dest_path) { File.join(dir, 'foo2.rpm') }
     let(:checksum_type) { 'SHA256' }
     let(:checksum) { 'c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2' }
+    let(:size) { 6 }
     let(:source_path) do
       # files need to be in same filesystem for hardlinks
       file_src = file_fixture('checksum_verifier/file')
       file_dest = File.join(dir, 'foo.rpm')
       FileUtils.cp(file_src, file_dest)
       file_dest
+    end
+
+    let(:file) do
+      instance_double(
+        '::RMT::FileReference',
+        local_path: dest_path,
+        checksum: checksum,
+        checksum_type: checksum_type,
+        size: size
+      )
     end
 
     after do
@@ -21,76 +37,104 @@ RSpec.describe RMT::Deduplicator do
     context 'file tracking' do
       before do
         deduplication_method(:copy)
-        add_downloaded_file(checksum_type, checksum, source_path)
+        add_downloaded_file(file.checksum_type, file.checksum, source_path)
       end
 
-      it 'tracks files when we ask it to' do
-        deduplicate(checksum_type, checksum, dest_path, track: true)
-        expect(DownloadedFile.where(local_path: dest_path).count).to eq(1)
+      context 'when file tracking is enabled' do
+        let(:track_files) { true }
+
+        it 'tracks files on database' do
+          deduplicate
+
+          expect(DownloadedFile.where(local_path: dest_path).count).to eq(1)
+        end
       end
 
-      it 'does not track unless we say not to' do
-        deduplicate(checksum_type, checksum, dest_path, track: false)
-        expect(DownloadedFile.where(local_path: dest_path).count).to eq(0)
+      context 'when file tracking is enabled' do
+        let(:track_files) { false }
+
+        it 'does not track files on database' do
+          deduplicate
+
+          expect(DownloadedFile.where(local_path: dest_path).count).to eq(0)
+        end
       end
     end
 
     context 'copy' do
       before do
         deduplication_method(:copy)
-        add_downloaded_file(checksum_type, checksum, source_path)
-        deduplicate(checksum_type, checksum, dest_path)
+        add_downloaded_file(file.checksum_type, file.checksum, source_path)
       end
 
-      it('duplicates file') { expect(File.read(dest_path)).to eq(File.read(source_path)) }
-      it('duplicated file with copy') { expect(File.stat(source_path).nlink).to eq(1) }
-    end
+      context 'when there is a valid source file' do
+        it 'duplicates file without hardlink' do
+          deduplicate
 
-    context 'copy with changed file' do
-      before do
-        deduplication_method(:copy)
-        add_downloaded_file(checksum_type, 'foo', source_path)
-        File.open(source_path, 'a') { |f| f.puts 'this is a change' }
-        deduplicate(checksum_type, 'foo', dest_path)
+          expect(File.read(dest_path)).to eq(File.read(source_path))
+          expect(File.stat(source_path).nlink).to eq(1)
+        end
       end
 
-      it('duplicates file') { expect(File.exist?(dest_path)).to be_falsey }
-      it('source is not linked') { expect(File.stat(source_path).nlink).to eq(1) }
-    end
+      context 'when there is not a valid source file' do
+        before do
+          deduplication_method(:copy)
+          add_downloaded_file(file.checksum_type, 'foo', source_path)
+          File.open(source_path, 'a') { |f| f.puts 'this is a change' }
+        end
 
-    context 'hardlink with proper checksum' do
-      before do
-        deduplication_method(:hardlink)
-        add_downloaded_file(checksum_type, checksum, source_path)
-        deduplicate(checksum_type, checksum, dest_path)
-      end
+        let(:checksum) { 'foo' }
 
-      it('duplicates file') { expect(File.read(dest_path)).to eq(File.read(source_path)) }
-      it('duplicated file with copy') { expect(File.stat(source_path).nlink).to eq(2) }
-    end
-
-    context 'hardlink not supported' do
-      before do
-        deduplication_method(:hardlink)
-        add_downloaded_file(checksum_type, checksum, source_path)
-        allow(::FileUtils).to receive(:ln).and_raise(StandardError)
-      end
-
-      it('throws hardlink exception') do
-        expect { deduplicate(checksum_type, checksum, dest_path) }.to raise_error(::RMT::Deduplicator::HardlinkException)
+        it 'does not duplicate file' do
+          expect { deduplicate }.to raise_error(::RMT::Deduplicator::MismatchException)
+          expect(File.exist?(dest_path)).to be_falsey
+          expect(File.stat(source_path).nlink).to eq(1)
+        end
       end
     end
 
-    context 'hardlink with changed file' do
-      before do
-        deduplication_method(:hardlink)
-        add_downloaded_file(checksum_type, 'foo', source_path)
-        File.open(source_path, 'a') { |f| f.puts 'this is a change' }
-        deduplicate(checksum_type, 'foo', dest_path)
+    context 'hardlink' do
+      context 'when there is a valid source file' do
+        before do
+          deduplication_method(:hardlink)
+          add_downloaded_file(file.checksum_type, file.checksum, source_path)
+        end
+
+        it 'duplicates file' do
+          deduplicate
+
+          expect(File.read(dest_path)).to eq(File.read(source_path))
+          expect(File.stat(source_path).nlink).to eq(2)
+        end
       end
 
-      it('duplicates file') { expect(File.exist?(dest_path)).to be_falsey }
-      it('source is not linked') { expect(File.stat(source_path).nlink).to eq(1) }
+      context 'when the system does not support hardlink' do
+        before do
+          deduplication_method(:hardlink)
+          add_downloaded_file(file.checksum_type, file.checksum, source_path)
+          allow(::FileUtils).to receive(:ln).and_raise(StandardError)
+        end
+
+        it('throws hardlink exception') do
+          expect { deduplicate }.to raise_error(::RMT::Deduplicator::HardlinkException)
+        end
+      end
+
+      context 'when there is not a valid source file' do
+        before do
+          deduplication_method(:hardlink)
+          add_downloaded_file(file.checksum_type, 'foo', source_path)
+          File.open(source_path, 'a') { |f| f.puts 'this is a change' }
+        end
+
+        let(:checksum) { 'foo' }
+
+        it 'does not duplicate file' do
+          expect { deduplicate }.to raise_error(::RMT::Deduplicator::MismatchException)
+          expect(File.exist?(dest_path)).to be_falsey
+          expect(File.stat(source_path).nlink).to eq(1)
+        end
+      end
     end
   end
 end

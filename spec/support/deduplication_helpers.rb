@@ -9,8 +9,6 @@ def add_downloaded_file(checksum_type, checksum, path)
                             checksum_type: checksum_type,
                             local_path: path,
                             size: size)
-rescue StandardError
-  nil
 end
 
 def deduplicate(checksum_type, checksum, path, track: true)

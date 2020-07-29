@@ -25,7 +25,7 @@ describe DownloadedFile, type: :model do
     end
 
     it 'handles missing files' do
-      add_downloaded_file(checksum_type, checksum, '/foo/bar')
+      DownloadedFile.destroy_all
       expect(DownloadedFile.get_local_path_by_checksum(checksum_type, checksum)).to be_nil
     end
   end

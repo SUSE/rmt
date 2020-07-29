@@ -211,7 +211,7 @@ class RMT::Mirror
 
   def deduplicate(file_reference)
     return false unless ::RMT::Deduplicator
-      .deduplicate(file_reference.checksum_type, file_reference.checksum, file_reference.local_path,
+      .deduplicate(file_reference,
                    force_copy: @force_dedup_by_copy,
                    track: @track_download_files)
 
@@ -225,8 +225,6 @@ class RMT::Mirror
   def filter_downloadable_files(file_references)
     file_references.reject do |file|
       valid_file = ::RMT::FileValidator.validate_local_file(file, deep_verify: false)
-
-      ::RMT::Downloader.make_local_path(@repository_dir, file.location) unless valid_file
 
       valid_file || deduplicate(file)
     end
