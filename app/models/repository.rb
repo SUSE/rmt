@@ -10,6 +10,7 @@ class Repository < ApplicationRecord
   scope :only_enabled, -> { where(enabled: true) }
   scope :only_custom, -> { where(scc_id: nil) }
   scope :only_scc, -> { where.not(scc_id: nil) }
+  scope :exclude_installer_updates, -> { where(installer_updates: false) }
 
   validates :name, presence: true
   validates :external_url, presence: true

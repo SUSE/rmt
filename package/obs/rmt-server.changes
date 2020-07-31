@@ -1,4 +1,40 @@
 -------------------------------------------------------------------
+Tue Aug 25 10:27:33 UTC 2020 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Version 2.5.15
+- Exclude installer updates repos to registered machines.
+
+-------------------------------------------------------------------
+Mon Aug 24 10:04:26 UTC 2020 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Version 2.5.14
+- Enable 'Installer-Updates' repositories by default
+
+-------------------------------------------------------------------
+Fri Aug 21 17:33:19 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Fixed deprecation warning when thor encountered an error. Also,
+  instead of returning 0 for thor errors, rmt-cli will return 1
+  instead.
+
+-------------------------------------------------------------------
+Fri Aug 14 14:57:19 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.5.13
+- Added `rmt-cli repos clean` command to remove locally mirrored files
+  of repositories which are not marked to be mirrored.
+- Previously, RMT didn't track deduplicated files in its database. Now,
+  to accommodate `rmt-cli repos clean`, RMT will track all mirrored
+  files.
+
+-------------------------------------------------------------------
+Thu Jul 30 08:20:37 UTC 2020 - Thorsten Kukuk <kukuk@suse.com>
+
+- Move the nginx reload to the configuration package which contain
+  nginx config files, don't reload nginx unconditionally from main
+  package.
+
+-------------------------------------------------------------------
 Thu Jul  9 17:39:04 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
 
 - Version 2.5.12
