@@ -20,4 +20,8 @@ class DownloadedFile < ApplicationRecord
     end
 
   end
+
+  def size
+    file_size
+  end
 end

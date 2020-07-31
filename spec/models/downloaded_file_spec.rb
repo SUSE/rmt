@@ -30,7 +30,7 @@ describe DownloadedFile, type: :model do
     end
   end
 
-  describe '#track_file' do
+  describe '.track_file' do
     let(:test_file) { file_fixture('dummy_product/product/apples-0.1-0.x86_64.rpm').to_s }
     let(:file_attributes) do
       {
@@ -114,7 +114,7 @@ describe DownloadedFile, type: :model do
     end
   end
 
-  describe '#untrack_file' do
+  describe '.untrack_file' do
     let(:test_file) { file_fixture('dummy_product/product/apples-0.1-0.x86_64.rpm').to_s }
 
     context 'when there are no records with the specified local path' do
@@ -140,6 +140,21 @@ describe DownloadedFile, type: :model do
 
         expect(described_class.where(local_path: test_file).count).to eq(0)
       end
+    end
+  end
+
+  describe '#size' do
+    let(:test_file) { file_fixture('dummy_product/product/apples-0.1-0.x86_64.rpm').to_s }
+
+    it 'returns the same value as #file_size (alias)' do
+      downloaded_file = described_class.create(
+        checksum_type: 'SHA256',
+        checksum: '5c4e3fa1624bd23251eecdda9c7fcefad045995a9eaed527d06dd8510cfe2851',
+        local_path: test_file,
+        file_size: 1934
+      )
+
+      expect(downloaded_file.size).to eq(downloaded_file.file_size)
     end
   end
 end
