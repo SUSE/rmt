@@ -6,8 +6,8 @@ require 'time'
 class RMT::Mirror
   class FileReference
     class << self
-      def build_from_metadata(metadata, base_dir:, base_url:)
-        new(base_dir: base_dir, base_url: base_url, relative_remote_path: metadata.location)
+      def build_from_metadata(metadata, base_dir:)
+        new(base_dir: base_dir, relative_remote_path: metadata.location)
           .tap do |file|
             file.arch = metadata.arch
             file.checksum = metadata.checksum
@@ -17,14 +17,13 @@ class RMT::Mirror
       end
     end
 
-    attr_reader :local_path, :relative_remote_path, :remote_path
+    attr_reader :local_path, :relative_remote_path
     attr_accessor :arch, :checksum, :checksum_type, :size
     alias location relative_remote_path
 
-    def initialize(base_dir:, base_url:, relative_remote_path:)
+    def initialize(base_dir:, relative_remote_path:)
       @local_path = File.join(base_dir, relative_remote_path.gsub(/\.\./, '__'))
       @relative_remote_path = relative_remote_path
-      @remote_path = URI.join(base_url, relative_remote_path)
     end
   end
 
@@ -165,8 +164,7 @@ class RMT::Mirror
 
     package_files = package_references.map do |reference|
       FileReference.build_from_metadata(reference,
-                                        base_dir: @repository_dir,
-                                        base_url: @repository_url)
+                                        base_dir: @repository_dir)
     end
 
     failed_downloads = download_package_files(package_files)
