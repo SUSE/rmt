@@ -177,7 +177,7 @@ class RMT::Downloader
     FileUtils.mv(request.download_path.path, local_file)
     File.chmod(0o644, local_file)
 
-    if @track_files
+    if @track_files && local_file.match?(/\.(rpm|drpm)$/)
       ::DownloadedFile.track_file(checksum: checksum_value,
                                   checksum_type: checksum_type,
                                   local_path: local_file,
