@@ -55,15 +55,6 @@ class RMT::Downloader
     failed_downloads
   end
 
-  def self.make_local_path(root_path, remote_file)
-    filename = File.join(root_path, remote_file.gsub(/\.\./, '__'))
-    dirname = File.dirname(filename)
-
-    FileUtils.mkdir_p(dirname)
-
-    filename
-  end
-
   protected
 
   def get_cache_timestamp(filename)
@@ -78,7 +69,7 @@ class RMT::Downloader
   # @param [Array] failed_downloads array of remote files that have failed downloads, passed by reference, prevents from raising RMT::Downloader exceptions
   # @return [RMT::FiberRequest] a request that can be run individually or with Typhoeus::Hydra
   def create_fiber_request(local_filenames, remote_file, checksum_type: nil, checksum_value: nil, failed_downloads: nil)
-    local_filename = self.class.make_local_path(@destination_dir, remote_file)
+    local_filename = make_local_path(@destination_dir, remote_file)
 
     request_fiber = Fiber.new do
       begin
@@ -205,5 +196,14 @@ class RMT::Downloader
     unless RMT::ChecksumVerifier.match_checksum?(checksum_type, checksum_value, download_path)
       raise RMT::Downloader::Exception.new(_("Checksum doesn't match"))
     end
+  end
+
+  def make_local_path(root_path, remote_file)
+    filename = File.join(root_path, remote_file.gsub(/\.\./, '__'))
+    dirname = File.dirname(filename)
+
+    FileUtils.mkdir_p(dirname)
+
+    filename
   end
 end

@@ -183,15 +183,18 @@ class RMT::Mirror
   end
 
   def download_package_files(file_references)
-    files_to_download = filter_eligible_packages(file_references)
+    files_to_download = file_references.select { |file| need_to_download?(file) }
     return [] if files_to_download.empty?
+
     @downloader.download_multi(files_to_download, ignore_errors: true)
   end
 
-  def filter_eligible_packages(file_references)
-    parsed_files = file_references.reject { |file| file.arch == 'src' && !@mirror_src }
+  def need_to_download?(file)
+    return false if file.arch == 'src' && !@mirror_src
+    return false if ::RMT::FileValidator.validate_local_file(file, deep_verify: false)
+    return false if deduplicate(file)
 
-    filter_downloadable_files(parsed_files)
+    true
   end
 
   def replace_directory(source_dir, destination_dir)
@@ -218,14 +221,6 @@ class RMT::Mirror
 
     @logger.info("→ #{File.basename(file_reference.local_path)}")
     true
-  end
-
-  def filter_downloadable_files(file_references)
-    file_references.reject do |file|
-      valid_file = ::RMT::FileValidator.validate_local_file(file, deep_verify: false)
-
-      valid_file || deduplicate(file)
-    end
   end
 
   def remove_tmp_directories

@@ -1,10 +1,5 @@
 class DownloadedFile < ApplicationRecord
   class << self
-
-    def get_local_path_by_checksum(checksum_type, checksum)
-      DownloadedFile.find_by({ checksum_type: checksum_type, checksum: checksum })
-    end
-
     def track_file(checksum_type:, checksum:, local_path:, size:)
       find_or_initialize_by(local_path: local_path).tap do |record|
         record.checksum_type = checksum_type
