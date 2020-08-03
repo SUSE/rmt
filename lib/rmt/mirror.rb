@@ -210,16 +210,14 @@ class RMT::Mirror
   end
 
   def deduplicate(file_reference)
-    return false unless ::RMT::Deduplicator
-      .deduplicate(file_reference,
-                   force_copy: @force_dedup_by_copy,
-                   track: @track_download_files)
+    deduplicated = ::RMT::Deduplicator.deduplicate(
+      file_reference, force_copy: @force_dedup_by_copy, track: @track_download_files
+    )
+
+    return false unless deduplicated
 
     @logger.info("→ #{File.basename(file_reference.local_path)}")
     true
-  rescue ::RMT::Deduplicator::MismatchException => e
-    @logger.debug(_('× File does not exist or has wrong filesize, deduplication ignored %{error}.') % { error: e.message })
-    false
   end
 
   def filter_downloadable_files(file_references)

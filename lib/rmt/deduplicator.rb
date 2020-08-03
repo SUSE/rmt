@@ -2,30 +2,24 @@ require 'fileutils'
 
 class RMT::Deduplicator
 
-  class MismatchException < RuntimeError
-  end
-
   class HardlinkException < RuntimeError
   end
 
   class << self
 
     def deduplicate(target_file, force_copy: false, track: true)
-      src = DownloadedFile.get_local_path_by_checksum(target_file.checksum_type,
-                                                      target_file.checksum)
+      source_file_path = ::RMT::FileValidator.find_valid_file_by_checksum(
+        target_file.checksum, target_file.checksum_type, deep_verify: false
+      )
 
-      if src.nil?
-        return false
-      elsif !File.exist?(src.local_path) || (src.file_size != File.size(src.local_path))
-        raise MismatchException.new(src.local_path)
-      end
+      return false if source_file_path.nil?
 
       make_file_dir(target_file.local_path)
 
       if RMT::Config.deduplication_by_hardlink? && !force_copy
-        hardlink(src.local_path, target_file.local_path)
+        hardlink(source_file_path, target_file.local_path)
       else
-        copy(src.local_path, target_file.local_path)
+        copy(source_file_path, target_file.local_path)
       end
 
       if track

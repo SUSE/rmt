@@ -50,7 +50,7 @@ RSpec.describe RMT::Deduplicator do
         end
       end
 
-      context 'when file tracking is enabled' do
+      context 'when file tracking is disabled' do
         let(:track_files) { false }
 
         it 'does not track files on database' do
@@ -85,10 +85,24 @@ RSpec.describe RMT::Deduplicator do
 
         let(:checksum) { 'foo' }
 
+        it('returns false') { is_expected.to be false }
+
         it 'does not duplicate file' do
-          expect { deduplicate }.to raise_error(::RMT::Deduplicator::MismatchException)
-          expect(File.exist?(dest_path)).to be_falsey
-          expect(File.stat(source_path).nlink).to eq(1)
+          deduplicate
+
+          expect(File.exist?(dest_path)).to be false
+        end
+
+        it 'removes invalid source files' do
+          deduplicate
+
+          expect(File.exist?(source_path)).to be false
+        end
+
+        it 'untracks invalid source files' do
+          expect { deduplicate }
+            .to change { DownloadedFile.where(local_path: source_path).count }
+            .from(1).to(0)
         end
       end
     end
@@ -129,10 +143,24 @@ RSpec.describe RMT::Deduplicator do
 
         let(:checksum) { 'foo' }
 
+        it('returns false') { is_expected.to be false }
+
         it 'does not duplicate file' do
-          expect { deduplicate }.to raise_error(::RMT::Deduplicator::MismatchException)
-          expect(File.exist?(dest_path)).to be_falsey
-          expect(File.stat(source_path).nlink).to eq(1)
+          deduplicate
+
+          expect(File.exist?(dest_path)).to be false
+        end
+
+        it 'removes invalid source files' do
+          deduplicate
+
+          expect(File.exist?(source_path)).to be false
+        end
+
+        it 'untracks invalid source files' do
+          expect { deduplicate }
+            .to change { DownloadedFile.where(local_path: source_path).count }
+            .from(1).to(0)
         end
       end
     end

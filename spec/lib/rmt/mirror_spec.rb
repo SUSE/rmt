@@ -502,6 +502,13 @@ RSpec.describe RMT::Mirror do
       end
 
       context 'by copy with corruption' do
+        subject(:deduplicate_mirror) do
+          VCR.use_cassette 'mirroring_product_with_dedup' do
+            deduplication_method(:copy)
+            rmt_dedup_mirror.mirror(**mirror_params_dedup)
+          end
+        end
+
         before do
           deduplication_method(:copy)
           VCR.use_cassette 'mirroring_product_with_dedup' do
@@ -509,11 +516,94 @@ RSpec.describe RMT::Mirror do
             Dir.entries(source_path).select { |entry| entry =~ /(\.drpm|\.rpm)$/ }.each do |filename|
               File.open(source_path + filename, 'w') { |f| f.write('corruption') }
             end
-            rmt_dedup_mirror.mirror(**mirror_params_dedup)
           end
         end
 
-        it_behaves_like 'a deduplicated run', 1, 1, false
+        let(:list_source_rpm_files) do
+          -> { Dir.glob(File.join(source_path, '**', '*.rpm')) }
+        end
+
+        let(:list_source_drpm_files) do
+          -> { Dir.glob(File.join(source_path, '**', '*.drpm')) }
+        end
+
+        let(:list_dedup_rpm_files) do
+          -> { Dir.glob(File.join(dedup_path, '**', '*.rpm')) }
+        end
+
+        let(:list_dedup_drpm_files) do
+          -> { Dir.glob(File.join(dedup_path, '**', '*.drpm')) }
+        end
+
+        it 'removes corrupted source rpm files' do
+          expect { deduplicate_mirror }
+            .to change { list_source_rpm_files.call.length }
+            .from(4).to(0)
+        end
+
+        it 'untracks corrupted source rpm files in the database' do
+          expect { deduplicate_mirror }
+            .to change { DownloadedFile.where(local_path: list_source_rpm_files.call).length }
+            .from(4).to(0)
+        end
+
+        it 'removes corrupted source drpm files' do
+          expect { deduplicate_mirror }
+            .to change { list_source_drpm_files.call.length }
+            .from(2).to(0)
+        end
+
+        it 'untracks corrupted source drpm files in the database' do
+          expect { deduplicate_mirror }
+            .to change { DownloadedFile.where(local_path: list_source_drpm_files.call).length }
+            .from(2).to(0)
+        end
+
+        it 'downloads new rpm files instead of deduplicating from corrupted ones' do
+          source_files_content = list_source_rpm_files.call
+            .map { |file| [File.basename(file), File.read(file)] }
+
+          deduplicate_mirror
+
+          aggregate_failures 'compare files content' do
+            list_dedup_rpm_files.call.each do |target_file|
+              _, source_content = source_files_content
+                .find { |name, _| target_file.include?(name) }
+
+              expect(File.read(target_file)).not_to eq(source_content)
+              expect(File.stat(target_file).nlink).to eq(1)
+            end
+          end
+        end
+
+        it 'tracks new rpm files which would be deduplicated' do
+          expect { deduplicate_mirror }
+            .to change { list_dedup_rpm_files.call.length }
+            .from(0).to(4)
+        end
+
+        it 'downloads new drpm files instead of deduplicating from corrupted ones' do
+          source_files_content = list_source_drpm_files.call
+            .map { |file| [File.basename(file), File.read(file)] }
+
+          deduplicate_mirror
+
+          aggregate_failures 'compare files content' do
+            list_dedup_drpm_files.call.each do |target_file|
+              _, source_content = source_files_content
+                .find { |name, _| target_file.include?(name) }
+
+              expect(File.read(target_file)).not_to eq(source_content)
+              expect(File.stat(target_file).nlink).to eq(1)
+            end
+          end
+        end
+
+        it 'tracks new drpm files which would be deduplicated' do
+          expect { deduplicate_mirror }
+            .to change { list_dedup_drpm_files.call.length }
+            .from(0).to(2)
+        end
       end
     end
 
