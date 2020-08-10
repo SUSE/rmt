@@ -178,10 +178,10 @@ class RMT::Downloader
     File.chmod(0o644, local_file)
 
     if @track_files && local_file.match?(/\.(rpm|drpm)$/)
-      ::DownloadedFile.track_file(checksum: checksum_value,
-                                  checksum_type: checksum_type,
-                                  local_path: local_file,
-                                  size: File.size(local_file))
+      DownloadedFile.track_file(checksum: checksum_value,
+                                checksum_type: checksum_type,
+                                local_path: local_file,
+                                size: File.size(local_file))
     end
 
     @logger.info("↓ #{File.basename(local_file)}")

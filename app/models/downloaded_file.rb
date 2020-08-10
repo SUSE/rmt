@@ -7,13 +7,8 @@ class DownloadedFile < ApplicationRecord
         record.file_size = size
 
         record.save if record.changed?
-      end.persisted?
+      end
     end
-
-    def untrack_file(local_path)
-      where(local_path: local_path).destroy_all
-    end
-
   end
 
   def size

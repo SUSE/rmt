@@ -79,7 +79,7 @@ RSpec.describe RMT::FileValidator do
 
     shared_context 'file record on database' do
       before do
-        ::DownloadedFile.track_file(
+        DownloadedFile.track_file(
           checksum: file.checksum,
           checksum_type: file.checksum_type,
           local_path: file.local_path,
@@ -91,7 +91,7 @@ RSpec.describe RMT::FileValidator do
     shared_examples 'invalid tracked file on database' do
       it 'untracks the file in the database' do
         expect { validate_local_file }
-          .to change { ::DownloadedFile.where(local_path: file.local_path).count }
+          .to change { DownloadedFile.where(local_path: file.local_path).count }
           .from(1).to(0)
       end
     end
@@ -99,10 +99,10 @@ RSpec.describe RMT::FileValidator do
     shared_examples 'valid untracked file on disk' do
       it 'start tracking the local file in the database' do
         expect { validate_local_file }
-          .to change { ::DownloadedFile.where(local_path: file.local_path).count }
+          .to change { DownloadedFile.where(local_path: file.local_path).count }
           .from(0).to(1)
 
-        file_record = ::DownloadedFile.find_by(local_path: file.local_path)
+        file_record = DownloadedFile.find_by(local_path: file.local_path)
 
         expect(file_record).to have_attributes(
           checksum: file.checksum,
@@ -115,12 +115,12 @@ RSpec.describe RMT::FileValidator do
 
     shared_examples 'valid tracked file on disk' do
       it 'updates the database without creating a new record' do
-        file_record_id = ::DownloadedFile.find_by(local_path: file.local_path).id
+        file_record_id = DownloadedFile.find_by(local_path: file.local_path).id
 
         expect { validate_local_file }
-          .not_to change { ::DownloadedFile.where(local_path: file.local_path).count }
+          .not_to change { DownloadedFile.where(local_path: file.local_path).count }
 
-        updated_file_record = ::DownloadedFile.find_by(local_path: file.local_path)
+        updated_file_record = DownloadedFile.find_by(local_path: file.local_path)
 
         expect(updated_file_record).to have_attributes(
           id: file_record_id,
@@ -183,7 +183,7 @@ RSpec.describe RMT::FileValidator do
         include_context 'file on disk'
 
         before do
-          ::DownloadedFile.track_file(
+          DownloadedFile.track_file(
             checksum: 'invalid_checksum',
             checksum_type: file.checksum_type,
             local_path: file.local_path,

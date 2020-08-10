@@ -23,10 +23,10 @@ class RMT::Deduplicator
       end
 
       if track
-        ::DownloadedFile.track_file(checksum: target_file.checksum,
-                                    checksum_type: target_file.checksum_type,
-                                    local_path: target_file.local_path,
-                                    size: File.size(target_file.local_path))
+        DownloadedFile.track_file(checksum: target_file.checksum,
+                                  checksum_type: target_file.checksum_type,
+                                  local_path: target_file.local_path,
+                                  size: File.size(target_file.local_path))
       end
 
       true
@@ -35,13 +35,13 @@ class RMT::Deduplicator
     private
 
     def hardlink(src, dest)
-      ::FileUtils.ln(src, dest)
+      FileUtils.ln(src, dest)
     rescue StandardError
-      raise ::RMT::Deduplicator::HardlinkException.new("#{src} → #{dest}")
+      raise RMT::Deduplicator::HardlinkException.new("#{src} → #{dest}")
     end
 
     def copy(src, dest)
-      ::FileUtils.cp(src, dest)
+      FileUtils.cp(src, dest)
     end
 
     def make_file_dir(file_path)
