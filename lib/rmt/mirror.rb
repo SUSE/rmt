@@ -7,7 +7,7 @@ class RMT::Mirror
   class FileReference
     class << self
       def build_from_metadata(metadata, base_dir:)
-        new(base_dir: base_dir, relative_remote_path: metadata.location)
+        new(base_dir: base_dir, location: metadata.location)
           .tap do |file|
             file.arch = metadata.arch
             file.checksum = metadata.checksum
@@ -17,13 +17,12 @@ class RMT::Mirror
       end
     end
 
-    attr_reader :local_path, :relative_remote_path
+    attr_reader :local_path, :location
     attr_accessor :arch, :checksum, :checksum_type, :size
-    alias location relative_remote_path
 
-    def initialize(base_dir:, relative_remote_path:)
-      @local_path = File.join(base_dir, relative_remote_path.gsub(/\.\./, '__'))
-      @relative_remote_path = relative_remote_path
+    def initialize(base_dir:, location:)
+      @local_path = File.join(base_dir, location.gsub(/\.\./, '__'))
+      @location = location
     end
   end
 
@@ -189,7 +188,7 @@ class RMT::Mirror
 
   def need_to_download?(file)
     return false if file.arch == 'src' && !@mirror_src
-    return false if ::RMT::FileValidator.validate_local_file(file, deep_verify: false)
+    return false if RMT::FileValidator.validate_local_file(file, deep_verify: false)
     return false if deduplicate(file)
 
     true
@@ -211,7 +210,7 @@ class RMT::Mirror
   end
 
   def deduplicate(file_reference)
-    deduplicated = ::RMT::Deduplicator.deduplicate(
+    deduplicated = RMT::Deduplicator.deduplicate(
       file_reference, force_copy: @force_dedup_by_copy, track: @track_download_files
     )
 
