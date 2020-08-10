@@ -227,7 +227,31 @@ RSpec.describe RMT::FileValidator do
     end
   end
 
-  describe '.find_valid_file_by_checksum' do
+  RSpec::Matchers.define :contain_records_like do |expected|
+    match do |actual|
+      record_struct = Struct.new(:local_path, :checksum, :checksum_type, :size)
+
+      @actual = actual.map { |r| record_struct.new(r.local_path, r.checksum, r.checksum_type, r.size) }
+      @expected = expected.map { |r| record_struct.new(r.local_path, r.checksum, r.checksum_type, r.size) }
+
+      actual.all? do |record|
+        expected.any? do |object|
+          record.local_path == object.local_path &&
+            record.checksum == object.checksum &&
+            record.checksum_type == object.checksum_type &&
+            record.size == object.size
+        end
+      end
+    end
+
+    failure_message do |actual|
+      "expected that collection #{actual} would contain #{expected}"
+    end
+
+    diffable
+  end
+
+  describe '.find_valid_files_by_checksum' do
     let(:valid_file) do
       fixture_path = file_fixture('dummy_product/product/apples-0.1-0.x86_64.rpm').to_s
       file = instance_double(
@@ -311,7 +335,7 @@ RSpec.describe RMT::FileValidator do
       it 'removes invalid file records from the database' do
         invalid_record_paths = invalid_records.map { |f| f[:file].local_path }
 
-        expect { find_valid_file_by_checksum }
+        expect { find_valid_files_by_checksum }
           .to change { DownloadedFile.count }.by(-invalid_records.count)
           .and change {
             DownloadedFile.where(local_path: invalid_record_paths).count
@@ -324,7 +348,7 @@ RSpec.describe RMT::FileValidator do
         previous_state = invalid_files.map { |f| [f[:file].local_path, true] }.to_h
         expected_state = invalid_files.map { |f| [f[:file].local_path, false] }.to_h
 
-        expect { find_valid_file_by_checksum }
+        expect { find_valid_files_by_checksum }
           .to change {
             invalid_files.map do |f|
               [f[:file].local_path, File.exist?(f[:file].local_path)]
@@ -348,28 +372,28 @@ RSpec.describe RMT::FileValidator do
 
     shared_examples 'valid files on both database and disk' do
       it 'returns a valid file path' do
-        response = find_valid_file_by_checksum
+        response = find_valid_files_by_checksum
 
-        expect(valid_files.map { |f| f[:file].local_path }).to include(response)
+        expect(response).to contain_records_like(valid_files.map { |f| f[:file] })
       end
     end
 
     shared_examples 'finding valid files by checksum' do
-      subject(:find_valid_file_by_checksum) do
-        described_class.find_valid_file_by_checksum(checksum,
+      subject(:find_valid_files_by_checksum) do
+        described_class.find_valid_files_by_checksum(checksum,
                                                     checksum_type,
                                                     deep_verify: deep_verify)
       end
 
       context 'when no records on database match the given checksum' do
-        it('returns nil') { is_expected.to be_nil }
+        it('returns nil') { is_expected.to be_empty }
       end
 
       context 'when two or more files on database match the checksum' do
         context 'and none of the files are valid on disk' do
           include_context 'create invalid tracked files'
 
-          it('returns nil') { is_expected.to be_nil }
+          it('returns nil') { is_expected.to be_empty }
 
           include_examples 'invalid file records on database'
           include_examples 'invalid files on disk'

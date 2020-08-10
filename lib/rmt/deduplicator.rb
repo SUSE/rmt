@@ -8,13 +8,14 @@ class RMT::Deduplicator
   class << self
 
     def deduplicate(target_file, force_copy: false, track: true)
-      source_file_path = ::RMT::FileValidator.find_valid_file_by_checksum(
+      source_files = ::RMT::FileValidator.find_valid_files_by_checksum(
         target_file.checksum, target_file.checksum_type, deep_verify: false
       )
 
-      return false if source_file_path.nil?
+      return false if source_files.empty?
 
       make_file_dir(target_file.local_path)
+      source_file_path = source_files.first.local_path
 
       if RMT::Config.deduplication_by_hardlink? && !force_copy
         hardlink(source_file_path, target_file.local_path)
