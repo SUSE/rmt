@@ -157,16 +157,16 @@ class RMT::Mirror
     @downloader.destination_dir = @repository_dir
     @downloader.cache_dir = nil
 
-    package_references =
+    package_repomd_references =
       parse_mirror_data_files(deltainfo_files, RepomdParser::DeltainfoXmlParser) +
       parse_mirror_data_files(primary_files, RepomdParser::PrimaryXmlParser)
 
-    package_files = package_references.map do |reference|
+    package_file_references = package_repomd_references.map do |reference|
       FileReference.build_from_metadata(reference,
                                         base_dir: @repository_dir)
     end
 
-    failed_downloads = download_package_files(package_files)
+    failed_downloads = download_package_files(package_file_references)
 
     raise _('Failed to download %{failed_count} files') % { failed_count: failed_downloads.size } unless failed_downloads.empty?
   rescue StandardError => e

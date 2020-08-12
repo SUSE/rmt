@@ -18,17 +18,17 @@ class RMT::FileValidator
     end
 
     def find_valid_files_by_checksum(checksum, checksum_type, deep_verify:)
-      valid_files_on_disk = DownloadedFile
-        .where(checksum: checksum, checksum_type: checksum_type)
-        .group_by { |f| valid_on_disk?(f, deep_verify) }
+      files = DownloadedFile
+        .where(checksum: checksum, checksum_type: checksum_type).to_a
 
-      # Remove invalid files/DB entries as soon as they are found
-      valid_files_on_disk[false]&.each do |file|
+      files.delete_if do |file|
+        next false if valid_on_disk?(file, deep_verify)
+
+        # Remove invalid files/DB entries as soon as they are found
         FileUtils.remove_file(file.local_path, force: true)
         file.destroy
+        true
       end
-
-      valid_files_on_disk[true] || []
     end
 
     private
