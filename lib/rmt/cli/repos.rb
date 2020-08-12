@@ -16,6 +16,49 @@ class RMT::CLI::Repos < RMT::CLI::Base
   end
   map 'ls' => :list
 
+  desc 'clean', _('Remove un-mirrored repositories from the local disk.')
+  def clean
+    base_directory = RMT::DEFAULT_MIRROR_DIR
+
+    repos_to_delete = Repository.where(mirroring_enabled: false).map do |repo|
+      repository_dir = File.join(base_directory, repo.local_path)
+      Dir.exist?(repository_dir) ? repo : nil
+    end.compact
+
+    if repos_to_delete.empty?
+      puts _('No un-mirrored repositories found on local disk.')
+      return
+    end
+
+    puts _('RMT found the following un-mirrored repositories:')
+    print "\n\e[31m"
+    repos_to_delete.each do |repo|
+      puts repo.description
+    end
+    print "\n\e[0m\e[1m"
+    print _('Would you like to continue and remove these directories from your local disk?')
+    print "\n\e[22m\s\s"
+    print _("Only '%{input}' will be accepted.") % { input: 'yes' }
+    print "\n\n\s\s\e[1m"
+    print _('Enter a value:')
+    print "\e[22m\s\s"
+
+    input = $stdin.gets.to_s.strip
+    if input != 'yes'
+      puts "\n" + _('Clean cancelled.')
+      return
+    end
+
+    repos_to_delete.each do |repo|
+      path = File.join(base_directory, repo.local_path)
+      FileUtils.rm_r(path, secure: true)
+    end
+
+    print "\n\e[32m"
+    print _('Clean finished.')
+    print "\e[0m\n"
+  end
+
   desc 'enable IDS', _('Enable mirroring of repositories by a list of repository IDs')
   long_desc <<-REPOS
 #{_('Enable mirroring of repositories by a list of repository IDs')}
@@ -42,6 +85,8 @@ $ rmt-cli repos disable 2526 3263
 REPOS
   def disable(*ids)
     change_repos(ids, false)
+
+    puts "\n\e[1m" + _("To clean up downloaded files, please run '%{command}'") % { command: 'rmt-cli repos clean' } + "\e[22m"
   end
 
   protected

@@ -1,6 +1,107 @@
 require 'rails_helper'
 
 RSpec.describe RMT::CLI::Repos do
+  describe '#clean' do
+    let(:repository_1) { create :repository, mirroring_enabled: false }
+    let(:repository_2) { create :repository, mirroring_enabled: false }
+    let(:repository_3) { create :repository, mirroring_enabled: true }
+
+    let(:argv) { ['clean'] }
+    let(:input) { 'yes' }
+    let(:dir) { Dir.mktmpdir }
+    let(:repo_1_path) { File.join(dir, repository_1.local_path) }
+    let(:repo_2_path) { File.join(dir, repository_2.local_path) }
+    let(:repo_3_path) { File.join(dir, repository_3.local_path) }
+
+    let(:command) do
+      described_class.start(argv)
+    end
+
+    let(:expected_output) do
+      <<-OUTPUT
+RMT found the following un-mirrored repositories:
+
+\e[31m#{repository_1.description}
+#{repository_2.description}
+
+\e[0m\e[1mWould you like to continue and remove these directories from your local disk?
+\e[22m\s\sOnly 'yes' will be accepted.
+
+  \e[1mEnter a value:\e[22m\s\s
+\e[32mClean finished.\e[0m
+      OUTPUT
+    end
+
+    before do
+      RMT.send(:remove_const, 'DEFAULT_MIRROR_DIR')
+      RMT.const_set('DEFAULT_MIRROR_DIR', dir)
+      FileUtils.mkdir_p(repo_1_path)
+      FileUtils.mkdir_p(repo_2_path)
+      FileUtils.mkdir_p(repo_3_path)
+      $stdin = StringIO.new("#{input}\n")
+    end
+
+    after do
+      FileUtils.rm_r(repo_1_path) if Dir.exist?(repo_1_path)
+      FileUtils.rm_r(repo_2_path) if Dir.exist?(repo_2_path)
+      FileUtils.rm_r(repo_3_path) if Dir.exist?(repo_3_path)
+      $stdin = STDIN
+    end
+
+    it 'deletes repository non-mirrored repository directories' do
+      expect { command }.to output(expected_output).to_stdout.and output('').to_stderr
+
+      expect(Dir.exist?(repo_1_path)).to be(false)
+      expect(Dir.exist?(repo_2_path)).to be(false)
+      expect(Dir.exist?(repo_3_path)).to be(true)
+    end
+
+    context 'cancelled task' do
+      let(:input) { 'no' }
+      let(:expected_output) do
+        <<-OUTPUT
+RMT found the following un-mirrored repositories:
+
+\e[31m#{repository_1.description}
+#{repository_2.description}
+
+\e[0m\e[1mWould you like to continue and remove these directories from your local disk?
+\e[22m\s\sOnly 'yes' will be accepted.
+
+\s\s\e[1mEnter a value:\e[22m\s\s
+Clean cancelled.
+        OUTPUT
+      end
+
+      it 'does not delete repository directories when cancelled' do
+        expect { command }.to output(expected_output).to_stdout.and output('').to_stderr
+
+        expect(Dir.exist?(repo_1_path)).to be(true)
+        expect(Dir.exist?(repo_2_path)).to be(true)
+        expect(Dir.exist?(repo_3_path)).to be(true)
+      end
+    end
+
+    context 'all repositories are mirrored' do
+      let(:repository_1) { create :repository, mirroring_enabled: true }
+      let(:repository_2) { create :repository, mirroring_enabled: true }
+      let(:repository_3) { create :repository, mirroring_enabled: true }
+      let(:expected_output) do
+        <<-OUTPUT
+No un-mirrored repositories found on local disk.
+        OUTPUT
+      end
+
+      it 'does not delete repositories from the disk when they are marked to be mirrored' do
+        expect { command }.to output(expected_output).to_stdout.and output('').to_stderr
+
+        expect(Dir.exist?(repo_1_path)).to be(true)
+        expect(Dir.exist?(repo_2_path)).to be(true)
+        expect(Dir.exist?(repo_3_path)).to be(true)
+      end
+    end
+  end
+
   describe '#enable' do
     subject(:repository) { create :repository, :with_products }
 
@@ -19,7 +120,7 @@ RSpec.describe RMT::CLI::Repos do
 Repository by ID #{repository.scc_id} successfully enabled.
 Repository by ID #{repository_2.scc_id} successfully enabled.
 Repository by ID #{repository_3.scc_id} successfully enabled.
-OUTPUT
+        OUTPUT
       end
 
       it 'enables repository' do
@@ -90,7 +191,9 @@ OUTPUT
 Repository by ID #{repository.scc_id} successfully disabled.
 Repository by ID #{repository_2.scc_id} successfully disabled.
 Repository by ID #{repository_3.scc_id} successfully disabled.
-OUTPUT
+
+\e[1mTo clean up downloaded files, please run 'rmt-cli repos clean'\e[22m
+        OUTPUT
       end
 
       it 'disables repository' do
@@ -138,8 +241,15 @@ OUTPUT
 
     context 'by repo id' do
       let(:argv) { ['disable', repository.scc_id.to_s] }
+      let(:expected_output) do
+        <<-OUTPUT
+Repository by ID #{repository.scc_id} successfully disabled.
 
-      before { expect { command }.to output("Repository by ID #{repository.scc_id} successfully disabled.\n").to_stdout }
+\e[1mTo clean up downloaded files, please run 'rmt-cli repos clean'\e[22m
+        OUTPUT
+      end
+
+      before { expect { command }.to output(expected_output).to_stdout }
 
       its(:mirroring_enabled) { is_expected.to be(false) }
     end
