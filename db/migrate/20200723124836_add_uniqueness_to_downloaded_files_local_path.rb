@@ -3,14 +3,11 @@ class AddUniquenessToDownloadedFilesLocalPath < ActiveRecord::Migration[5.2]
     # Remove duplicates before adding uniqueness to `local_path`
     ActiveRecord::Base.connection.execute(
       <<~SQL
-        DELETE FROM `downloaded_files`
-        WHERE `downloaded_files`.`id` NOT IN (
-            SELECT * FROM (
-                SELECT max(`files`.`id`) AS unique_id FROM `downloaded_files` AS `files`
-                INNER JOIN `downloaded_files` ON `downloaded_files`.`id`=`files`.`id`
-                GROUP BY `files`.`local_path`
-            ) as tmp
-        )
+        DELETE df1 FROM
+            downloaded_files AS df1,
+            downloaded_files AS df2
+            WHERE df1.id < df2.id AND
+                df1.local_path = df2.local_path
       SQL
     )
 
