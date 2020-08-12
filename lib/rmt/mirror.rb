@@ -29,12 +29,15 @@ class RMT::Mirror
   class RMT::Mirror::Exception < RuntimeError
   end
 
+  include RMT::Deduplicator
+  include RMT::FileValidator
+
   def initialize(mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, logger:, mirror_src: false, airgap_mode: false)
     @mirroring_base_dir = mirroring_base_dir
-    @mirror_src = mirror_src
     @logger = logger
-    @force_dedup_by_copy = airgap_mode
-    @track_download_files = !airgap_mode # we don't want to track airgap files in our database
+    @mirror_src = mirror_src
+    @airgap_mode = airgap_mode
+    @deep_verify = false
 
     @downloader = RMT::Downloader.new(
       repository_url: @repository_url,
@@ -85,6 +88,8 @@ class RMT::Mirror
   end
 
   protected
+
+  attr_reader :airgap_mode, :deep_verify, :logger
 
   def create_directories
     begin
@@ -188,7 +193,7 @@ class RMT::Mirror
 
   def need_to_download?(file)
     return false if file.arch == 'src' && !@mirror_src
-    return false if RMT::FileValidator.validate_local_file(file, deep_verify: false)
+    return false if validate_local_file(file)
     return false if deduplicate(file)
 
     true
@@ -207,17 +212,6 @@ class RMT::Mirror
       dest: destination_dir,
       error: e.message
     })
-  end
-
-  def deduplicate(file_reference)
-    deduplicated = RMT::Deduplicator.deduplicate(
-      file_reference, force_copy: @force_dedup_by_copy, track: @track_download_files
-    )
-
-    return false unless deduplicated
-
-    @logger.info("→ #{File.basename(file_reference.local_path)}")
-    true
   end
 
   def remove_tmp_directories

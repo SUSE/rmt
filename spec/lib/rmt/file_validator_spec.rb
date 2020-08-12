@@ -7,8 +7,19 @@ RSpec.describe RMT::FileValidator do
   end
 
   let!(:tmp_dir) { Dir.mktmpdir('rmt') }
+  let(:dummy_class) do
+    Class.new do
+      include RMT::FileValidator
 
-  describe '.validate_local_file' do
+      attr_reader :deep_verify
+
+      def initialize(deep_verify)
+        @deep_verify = deep_verify
+      end
+    end
+  end
+
+  describe '#validate_local_file' do
     let(:file_relative_remote_path) { 'dummy_product/product/apples-0.1-0.x86_64.rpm' }
     let(:file_local_path) { File.join(tmp_dir, file_relative_remote_path) }
 
@@ -136,7 +147,7 @@ RSpec.describe RMT::FileValidator do
 
     shared_examples 'file/database integrity verification' do
       subject(:validate_local_file) do
-        described_class.validate_local_file(file, deep_verify: deep_verify)
+        dummy_class.new(deep_verify).send(:validate_local_file, file)
       end
 
       context 'no files on disk, untracked on database' do
@@ -251,7 +262,7 @@ RSpec.describe RMT::FileValidator do
     diffable
   end
 
-  describe '.find_valid_files_by_checksum' do
+  describe '#find_valid_files_by_checksum' do
     let(:valid_file) do
       fixture_path = file_fixture('dummy_product/product/apples-0.1-0.x86_64.rpm').to_s
       file = instance_double(
@@ -380,9 +391,8 @@ RSpec.describe RMT::FileValidator do
 
     shared_examples 'finding valid files by checksum' do
       subject(:find_valid_files_by_checksum) do
-        described_class.find_valid_files_by_checksum(checksum,
-                                                    checksum_type,
-                                                    deep_verify: deep_verify)
+        dummy_class.new(deep_verify)
+          .send(:find_valid_files_by_checksum, checksum, checksum_type)
       end
 
       context 'when no records on database match the given checksum' do

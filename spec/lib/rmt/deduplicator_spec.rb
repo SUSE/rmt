@@ -3,10 +3,25 @@ require 'rails_helper'
 RSpec.describe RMT::Deduplicator do
   describe '#deduplicate' do
     subject(:deduplicate) do
-      described_class.deduplicate(file, track: track_files)
+      dummy_class.new(airgap_mode).send(:deduplicate, file)
     end
 
-    let(:track_files) { false }
+    let(:dummy_class) do
+      Class.new do
+        include RMT::Deduplicator
+        include RMT::FileValidator
+
+        attr_reader :airgap_mode, :deep_verify, :logger
+
+        def initialize(airgap_mode)
+          @airgap_mode = airgap_mode
+          @deep_verify = false
+          @logger = RMT::Logger.new('/dev/null')
+        end
+      end
+    end
+
+    let(:airgap_mode) { false }
     let(:dir) { Dir.mktmpdir }
     let(:dest_path) { File.join(dir, 'foo2.rpm') }
     let(:checksum_type) { 'SHA256' }
@@ -29,6 +44,7 @@ RSpec.describe RMT::Deduplicator do
         size: size
       )
     end
+    let(:file_basename) { File.basename(file.local_path) }
 
     after do
       FileUtils.remove_entry(dir)
@@ -40,8 +56,8 @@ RSpec.describe RMT::Deduplicator do
         add_downloaded_file(file.checksum_type, file.checksum, source_path)
       end
 
-      context 'when file tracking is enabled' do
-        let(:track_files) { true }
+      context 'when airgap mode is disabled' do
+        let(:airgap_mode) { false }
 
         it 'tracks files on database' do
           deduplicate
@@ -50,8 +66,8 @@ RSpec.describe RMT::Deduplicator do
         end
       end
 
-      context 'when file tracking is disabled' do
-        let(:track_files) { false }
+      context 'when airgap mode is enabled' do
+        let(:airgap_mode) { true }
 
         it 'does not track files on database' do
           deduplicate
@@ -69,6 +85,9 @@ RSpec.describe RMT::Deduplicator do
 
       context 'when there is a valid source file' do
         it 'duplicates file without hardlink' do
+          expect_any_instance_of(RMT::Logger).to receive(:info)
+            .with(/→ #{file_basename}/).once
+
           deduplicate
 
           expect(File.read(dest_path)).to eq(File.read(source_path))
@@ -88,6 +107,8 @@ RSpec.describe RMT::Deduplicator do
         it('returns false') { is_expected.to be false }
 
         it 'does not duplicate file' do
+          expect_any_instance_of(RMT::Logger).not_to receive(:info)
+
           deduplicate
 
           expect(File.exist?(dest_path)).to be false
@@ -115,6 +136,9 @@ RSpec.describe RMT::Deduplicator do
         end
 
         it 'duplicates file' do
+          expect_any_instance_of(RMT::Logger).to receive(:info)
+            .with(/→ #{file_basename}/).once
+
           deduplicate
 
           expect(File.read(dest_path)).to eq(File.read(source_path))
@@ -130,6 +154,8 @@ RSpec.describe RMT::Deduplicator do
         end
 
         it('throws hardlink exception') do
+          expect_any_instance_of(RMT::Logger).not_to receive(:info)
+
           expect { deduplicate }.to raise_error(::RMT::Deduplicator::HardlinkException)
         end
       end
@@ -146,6 +172,8 @@ RSpec.describe RMT::Deduplicator do
         it('returns false') { is_expected.to be false }
 
         it 'does not duplicate file' do
+          expect_any_instance_of(RMT::Logger).not_to receive(:info)
+
           deduplicate
 
           expect(File.exist?(dest_path)).to be false
