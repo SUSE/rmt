@@ -19,17 +19,17 @@ RSpec.describe RMT::CLI::Repos do
 
     let(:expected_output) do
       <<-OUTPUT
-RMT found the following un-mirrored repositories:
+RMT found locally mirrored files from the following repositories which are not marked to be mirrored:
 
 \e[31m#{repository_1.description}
 #{repository_2.description}
 
-\e[0m\e[1mWould you like to continue and remove these directories from your local disk?
+\e[0m\e[1mWould you like to continue and remove the locally mirrored files of these repositories?
 \e[22m\s\sOnly 'yes' will be accepted.
 
   \e[1mEnter a value:\e[22m\s\s
-Deleted repository '#{repository_1.description}'.
-Deleted repository '#{repository_2.description}'.
+Deleted locally mirrored files from repository '#{repository_1.description}'.
+Deleted locally mirrored files from repository '#{repository_2.description}'.
 
 \e[32mClean finished.\e[0m
       OUTPUT
@@ -72,12 +72,12 @@ Deleted repository '#{repository_2.description}'.
       let(:input) { 'no' }
       let(:expected_output) do
         <<-OUTPUT
-RMT found the following un-mirrored repositories:
+RMT found locally mirrored files from the following repositories which are not marked to be mirrored:
 
 \e[31m#{repository_1.description}
 #{repository_2.description}
 
-\e[0m\e[1mWould you like to continue and remove these directories from your local disk?
+\e[0m\e[1mWould you like to continue and remove the locally mirrored files of these repositories?
 \e[22m\s\sOnly 'yes' will be accepted.
 
 \s\s\e[1mEnter a value:\e[22m\s\s
@@ -108,7 +108,7 @@ Clean cancelled.
       let(:repository_3) { create :repository, mirroring_enabled: true }
       let(:expected_output) do
         <<-OUTPUT
-No un-mirrored repositories found on local disk.
+RMT only found locally mirrored files of repositories that are marked to be mirrored.
         OUTPUT
       end
 

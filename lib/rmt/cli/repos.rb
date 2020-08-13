@@ -16,7 +16,7 @@ class RMT::CLI::Repos < RMT::CLI::Base
   end
   map 'ls' => :list
 
-  desc 'clean', _('Removes un-mirrored repositories from the local disk.')
+  desc 'clean', _('Removes locally mirrored files of repositories which are not marked to be mirrored')
   def clean
     base_directory = RMT::DEFAULT_MIRROR_DIR
 
@@ -26,17 +26,17 @@ class RMT::CLI::Repos < RMT::CLI::Base
     end.compact
 
     if repos_to_delete.empty?
-      puts _('No un-mirrored repositories found on local disk.')
+      puts _('RMT only found locally mirrored files of repositories that are marked to be mirrored.')
       return
     end
 
-    puts _('RMT found the following un-mirrored repositories:')
+    puts _('RMT found locally mirrored files from the following repositories which are not marked to be mirrored:')
     print "\n\e[31m"
     repos_to_delete.each do |repo|
       puts repo.description
     end
     print "\n\e[0m\e[1m"
-    print _('Would you like to continue and remove these directories from your local disk?')
+    print _('Would you like to continue and remove the locally mirrored files of these repositories?')
     print "\n\e[22m\s\s"
     print _("Only '%{input}' will be accepted.") % { input: 'yes' }
     print "\n\n\s\s\e[1m"
@@ -54,7 +54,7 @@ class RMT::CLI::Repos < RMT::CLI::Base
       path = File.join(base_directory, repo.local_path)
       FileUtils.rm_r(path, secure: true)
       DownloadedFile.where('local_path LIKE ?', "#{path}%").destroy_all
-      puts _("Deleted repository '%{repo}'.") % { repo: repo.description }
+      puts _("Deleted locally mirrored files from repository '%{repo}'.") % { repo: repo.description }
     end
 
     print "\n\e[32m"

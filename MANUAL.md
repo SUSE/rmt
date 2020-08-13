@@ -67,7 +67,7 @@ You can install and run this wizard like this:
   	`rmt-cli products show SLES/15/x86_64`
 
   * `rmt-cli repos clean`:
-    Remove un-mirrored repositories from the local disk.
+    Removes locally mirrored files of repositories which are not marked to be mirrored.
 
   * `rmt-cli repos list [--all] [--csv]`:
     Lists the repositories that are enabled for mirroring.
