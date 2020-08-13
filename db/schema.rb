@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_15_151211) do
+ActiveRecord::Schema.define(version: 2020_07_23_124836) do
 
   create_table "activations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "service_id", null: false
@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(version: 2020_07_15_151211) do
     t.string "local_path"
     t.bigint "file_size", unsigned: true
     t.index ["checksum_type", "checksum"], name: "index_downloaded_files_on_checksum_type_and_checksum"
+    t.index ["local_path"], name: "index_downloaded_files_on_local_path", unique: true
   end
 
   create_table "hw_infos", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

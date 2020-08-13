@@ -4,15 +4,40 @@ require 'repomd_parser'
 require 'time'
 
 class RMT::Mirror
+  class FileReference
+    class << self
+      def build_from_metadata(metadata, base_dir:)
+        new(base_dir: base_dir, location: metadata.location)
+          .tap do |file|
+            file.arch = metadata.arch
+            file.checksum = metadata.checksum
+            file.checksum_type = metadata.checksum_type
+            file.size = metadata.size
+          end
+      end
+    end
+
+    attr_reader :local_path, :location
+    attr_accessor :arch, :checksum, :checksum_type, :size
+
+    def initialize(base_dir:, location:)
+      @local_path = File.join(base_dir, location.gsub(/\.\./, '__'))
+      @location = location
+    end
+  end
+
   class RMT::Mirror::Exception < RuntimeError
   end
 
+  include RMT::Deduplicator
+  include RMT::FileValidator
+
   def initialize(mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, logger:, mirror_src: false, airgap_mode: false)
     @mirroring_base_dir = mirroring_base_dir
-    @mirror_src = mirror_src
     @logger = logger
-    @force_dedup_by_copy = airgap_mode
-    @track_download_files = !airgap_mode # we don't want to track airgap files in our database
+    @mirror_src = mirror_src
+    @airgap_mode = airgap_mode
+    @deep_verify = false
 
     @downloader = RMT::Downloader.new(
       repository_url: @repository_url,
@@ -63,6 +88,8 @@ class RMT::Mirror
   end
 
   protected
+
+  attr_reader :airgap_mode, :deep_verify, :logger
 
   def create_directories
     begin
@@ -135,10 +162,16 @@ class RMT::Mirror
     @downloader.destination_dir = @repository_dir
     @downloader.cache_dir = nil
 
-    package_files =
+    package_repomd_references =
       parse_mirror_data_files(deltainfo_files, RepomdParser::DeltainfoXmlParser) +
       parse_mirror_data_files(primary_files, RepomdParser::PrimaryXmlParser)
-    failed_downloads = download_package_files(package_files)
+
+    package_file_references = package_repomd_references.map do |reference|
+      FileReference.build_from_metadata(reference,
+                                        base_dir: @repository_dir)
+    end
+
+    failed_downloads = download_package_files(package_file_references)
 
     raise _('Failed to download %{failed_count} files') % { failed_count: failed_downloads.size } unless failed_downloads.empty?
   rescue StandardError => e
@@ -151,18 +184,19 @@ class RMT::Mirror
     end.flatten
   end
 
-  def download_package_files(package_references)
-    packages_to_download = filter_eligible_packages(package_references)
-    return [] if packages_to_download.empty?
-    @downloader.download_multi(packages_to_download, ignore_errors: true)
+  def download_package_files(file_references)
+    files_to_download = file_references.select { |file| need_to_download?(file) }
+    return [] if files_to_download.empty?
+
+    @downloader.download_multi(files_to_download, ignore_errors: true)
   end
 
-  def filter_eligible_packages(package_references)
-    parsed_files = package_references.reject do |package|
-      package.arch == 'src' && !@mirror_src
-    end
+  def need_to_download?(file)
+    return false if file.arch == 'src' && !@mirror_src
+    return false if validate_local_file(file)
+    return false if deduplicate(file)
 
-    filter_downloadable_files(@repository_dir, parsed_files)
+    true
   end
 
   def replace_directory(source_dir, destination_dir)
@@ -178,31 +212,6 @@ class RMT::Mirror
       dest: destination_dir,
       error: e.message
     })
-  end
-
-  def deduplicate(parsed_file, destination)
-    return false unless ::RMT::Deduplicator
-      .deduplicate(parsed_file.checksum_type, parsed_file.checksum, destination,
-                   force_copy: @force_dedup_by_copy,
-                   track: @track_download_files)
-
-    @logger.info("→ #{File.basename(destination)}")
-    true
-  rescue ::RMT::Deduplicator::MismatchException => e
-    @logger.debug(_('× File does not exist or has wrong filesize, deduplication ignored %{error}.') % { error: e.message })
-    false
-  end
-
-  def filter_downloadable_files(root_path, referenced_files)
-    referenced_files.reject do |parsed_file|
-      local_file = ::RMT::Downloader.make_local_path(root_path, parsed_file.location)
-
-      valid_local_file?(parsed_file, local_file) || deduplicate(parsed_file, local_file)
-    end
-  end
-
-  def valid_local_file?(parsed_file, destination)
-    ::DownloadedFile.valid_local_file?(parsed_file.checksum_type, parsed_file.checksum, destination)
   end
 
   def remove_tmp_directories

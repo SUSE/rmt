@@ -3,8 +3,14 @@ require 'webmock/rspec'
 
 RSpec.describe RMT::Downloader do
   let(:dir) { Dir.mktmpdir }
-  let(:downloader) { described_class.new(repository_url: 'http://example.com', destination_dir: dir, logger: RMT::Logger.new('/dev/null')) }
   let(:headers) { { 'User-Agent' => "RMT/#{RMT::VERSION}" } }
+  let(:track_files) { false }
+  let(:downloader) do
+    described_class.new(repository_url: 'http://example.com',
+                        destination_dir: dir,
+                        logger: RMT::Logger.new('/dev/null'),
+                        track_files: track_files)
+  end
 
   after do
     FileUtils.remove_entry(dir)
@@ -76,6 +82,44 @@ RSpec.describe RMT::Downloader do
         let(:filename) { downloader.download('/repomd.xml', checksum_type: checksum_type, checksum_value: checksum) }
 
         it('has correct content') { expect(File.read(filename)).to eq(content) }
+      end
+
+      context 'tracking files' do
+        before do
+          stub_request(:get, 'http://example.com/package.rpm')
+            .with(headers: headers)
+            .to_return(status: 200, body: 'rpm package', headers: {})
+
+          stub_request(:get, 'http://example.com/package.drpm')
+            .with(headers: headers)
+            .to_return(status: 200, body: 'drpm package', headers: {})
+
+          downloader.download('/repomd.xml', checksum_type: checksum_type, checksum_value: checksum)
+          downloader.download(
+            '/package.rpm',
+            checksum_type: 'SHA256',
+            checksum_value: '7e97688a22a5a97a59900c062f36ff7437e86fe4f6758cdf68d78fa6d41b05f8'
+          )
+          downloader.download(
+            '/package.drpm',
+            checksum_type: 'SHA256',
+            checksum_value: '352ee1d1675387e0ba917c3fabdb15211214f1bbd7c87099b346b7c342ed1f06'
+          )
+        end
+
+        let(:track_files) { true }
+
+        it 'does not track .xml files' do
+          expect(DownloadedFile.where("local_path like '%.xml'").count).to eq(0)
+        end
+
+        it 'tracks .rpm files' do
+          expect(DownloadedFile.where("local_path like '%.rpm'").count).to eq(1)
+        end
+
+        it 'tracks .drpm files' do
+          expect(DownloadedFile.where("local_path like '%.drpm'").count).to eq(1)
+        end
       end
     end
 
