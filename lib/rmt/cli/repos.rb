@@ -49,9 +49,12 @@ class RMT::CLI::Repos < RMT::CLI::Base
       return
     end
 
+    print "\n"
     repos_to_delete.each do |repo|
       path = File.join(base_directory, repo.local_path)
       FileUtils.rm_r(path, secure: true)
+      DownloadedFile.where('local_path LIKE ?', "#{path}%").destroy_all
+      puts _("Deleted repository '%{repo}'.") % { repo: repo.description }
     end
 
     print "\n\e[32m"

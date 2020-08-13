@@ -28,6 +28,9 @@ RMT found the following un-mirrored repositories:
 \e[22m\s\sOnly 'yes' will be accepted.
 
   \e[1mEnter a value:\e[22m\s\s
+Deleted repository '#{repository_1.description}'.
+Deleted repository '#{repository_2.description}'.
+
 \e[32mClean finished.\e[0m
       OUTPUT
     end
@@ -38,6 +41,7 @@ RMT found the following un-mirrored repositories:
       FileUtils.mkdir_p(repo_1_path)
       FileUtils.mkdir_p(repo_2_path)
       FileUtils.mkdir_p(repo_3_path)
+      [repo_1_path, repo_2_path, repo_3_path].each { |path| create_repository_file(path) }
       $stdin = StringIO.new("#{input}\n")
     end
 
@@ -46,6 +50,14 @@ RMT found the following un-mirrored repositories:
       FileUtils.rm_r(repo_2_path) if Dir.exist?(repo_2_path)
       FileUtils.rm_r(repo_3_path) if Dir.exist?(repo_3_path)
       $stdin = STDIN
+    end
+
+    it 'delete downloaded files for non-mirrored repositories' do
+      expect { command }.to output(expected_output).to_stdout.and output('').to_stderr
+
+      expect(DownloadedFile.where('local_path LIKE ?', "#{repo_1_path}%").count).to eq(0)
+      expect(DownloadedFile.where('local_path LIKE ?', "#{repo_2_path}%").count).to eq(0)
+      expect(DownloadedFile.where('local_path LIKE ?', "#{repo_3_path}%").count).to eq(1)
     end
 
     it 'deletes repository non-mirrored repository directories' do
@@ -80,6 +92,14 @@ Clean cancelled.
         expect(Dir.exist?(repo_2_path)).to be(true)
         expect(Dir.exist?(repo_3_path)).to be(true)
       end
+
+      it 'does not delete downloaded files when cancelled' do
+        expect { command }.to output(expected_output).to_stdout.and output('').to_stderr
+
+        expect(DownloadedFile.where('local_path LIKE ?', "#{repo_1_path}%").count).to eq(1)
+        expect(DownloadedFile.where('local_path LIKE ?', "#{repo_2_path}%").count).to eq(1)
+        expect(DownloadedFile.where('local_path LIKE ?', "#{repo_3_path}%").count).to eq(1)
+      end
     end
 
     context 'all repositories are mirrored' do
@@ -90,6 +110,14 @@ Clean cancelled.
         <<-OUTPUT
 No un-mirrored repositories found on local disk.
         OUTPUT
+      end
+
+      it 'does not delete downloaded files when the repositories are marked to be mirrored' do
+        expect { command }.to output(expected_output).to_stdout.and output('').to_stderr
+
+        expect(DownloadedFile.where('local_path LIKE ?', "#{repo_1_path}%").count).to eq(1)
+        expect(DownloadedFile.where('local_path LIKE ?', "#{repo_2_path}%").count).to eq(1)
+        expect(DownloadedFile.where('local_path LIKE ?', "#{repo_3_path}%").count).to eq(1)
       end
 
       it 'does not delete repositories from the disk when they are marked to be mirrored' do
