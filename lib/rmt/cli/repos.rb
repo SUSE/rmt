@@ -16,7 +16,7 @@ class RMT::CLI::Repos < RMT::CLI::Base
   end
   map 'ls' => :list
 
-  desc 'clean', _('Remove un-mirrored repositories from the local disk.')
+  desc 'clean', _('Removes un-mirrored repositories from the local disk.')
   def clean
     base_directory = RMT::DEFAULT_MIRROR_DIR
 
