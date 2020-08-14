@@ -11,7 +11,5 @@ class DownloadedFile < ApplicationRecord
     end
   end
 
-  def size
-    file_size
-  end
+  alias_attribute :size, :file_size
 end

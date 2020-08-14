@@ -172,7 +172,7 @@ class RMT::Downloader
       )
     end
 
-    verify_checksum!(checksum_type, checksum_value, request.download_path)
+    handle_checksum_verification!(checksum_type, checksum_value, request.download_path)
 
     FileUtils.mv(request.download_path.path, local_file)
     File.chmod(0o644, local_file)
@@ -190,7 +190,7 @@ class RMT::Downloader
     raise e
   end
 
-  def verify_checksum!(checksum_type, checksum_value, download_path)
+  def handle_checksum_verification!(checksum_type, checksum_value, download_path)
     return unless (checksum_type && checksum_value)
 
     unless RMT::ChecksumVerifier.match_checksum?(checksum_type, checksum_value, download_path)
