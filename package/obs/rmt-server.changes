@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Fri Aug 14 14:57:19 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.5.13
+- Added `rmt-cli repos clean` command to remove locally mirrored files
+  of repositories which are not marked to be mirrored.
+- Previously, RMT didn't track deduplicated files in its database. Now,
+  to accommodate `rmt-cli repos clean`, RMT will track all mirrored
+  files.
+
+-------------------------------------------------------------------
 
 Thu Jul 30 08:20:37 UTC 2020 - Thorsten Kukuk <kukuk@suse.com>
 
