@@ -12,10 +12,6 @@ If you would like to contribute to RMT, please see our [contribution guide](docs
 
 If you would like to compare RMT to its predecessor SMT, please see our [writeup](docs/smt_and_rmt.md).
 
-## Dependencies
-
-Supported Ruby versions are 2.5.0 and newer.
-
 ## Installation of RMT
 
 Please view our [guide](docs/installation.md) to assist you in the RMT installation process.
