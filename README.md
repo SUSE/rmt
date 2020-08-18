@@ -8,7 +8,9 @@ Organization (mirroring) credentials are required to mirror SUSE repositories.
 
 The [SLE RMT Book](https://documentation.suse.com/sles/15-SP2/html/SLES-all/book-rmt.html) contains the end-user documentation for RMT. `man` pages for `rmt-cli` are located in the file [MANUAL.md](MANUAL.md).
 
-If you would like to compare RMT and its predecessor SMT, please see our [writeup](docs/smt_and_rmt.md).
+If you would like to contribute to RMT, please see our [contribution guide](docs/CONTRIBUTING.md).
+
+If you would like to compare RMT to its predecessor SMT, please see our [writeup](docs/smt_and_rmt.md).
 
 ## Dependencies
 
