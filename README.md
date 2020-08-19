@@ -18,21 +18,48 @@ Please view our [guide](docs/installation.md) to assist you in the RMT installat
 
 ## Development Setup
 
-* Install the dependencies:
-    * `sudo zypper in libxml2-devel libxslt-devel libmariadb-devel`
-    * `bundle install`
-* Setup MySQL/MariaDB. The following command creates a user rmt with the password rmt and grants it access to any database starting with word `rmt`:
+1. Install the system dependencies:
+    ```
+    sudo zypper in libxml2-devel libxslt-devel libmariadb-devel gcc
+    ```
+2. Install the ruby version specified in the `.ruby-version` [file](.ruby-version).
+3. Install and start either the MariaDB or MySQL server:
+    ```
+    sudo zypper in mariadb
+    sudo systemctl enable mariadb
+    sudo systemctl start mariadb
+    ```
+4. Log into the MariaDB or MySQL server as root and create the RMT database user:
     ```
     mysql -u root -p <<EOFF
     GRANT ALL PRIVILEGES ON \`rmt%\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
     FLUSH PRIVILEGES;
     EOFF
     ```
-* Copy the file `config/rmt.yml` to `config/rmt.local.yml`. With this file, override the following default settings:
+5. Clone the RMT repository:
+    ```
+    git clone git@github.com:SUSE/rmt.git
+    ```
+6. Install the ruby dependencies:
+    ```
+    cd rmt
+    bundle install
+    ```
+7. Copy the file `config/rmt.yml` to `config/rmt.local.yml`. With this file, override the following default settings:
     * Add your organization credentials to `scc` section.
-    * Add your MySQL credentials to the database section.
-* Create the development database by running the command `rails db:create db:migrate`.
-* Run the command `rails server` to start the web server.
+    * Ensure that the `database` section is correct.
+8. Create the directory `/var/lib/rmt` and ensure that your current user owns it.
+    ```
+    sudo mkdir /var/lib/rmt
+    sudo chown -R $(id -u):$(id -g) /var/lib/rmt
+    ```
+9. Create the development database:
+    ```
+    bin/rails db:create db:migrate
+    ```
+10. Verify that RMT works:
+    * Run the command `bin/rails server -b 0.0.0.0` to start the web server.
+    * Run the command `bin/rmt-cli sync` to sync RMT with SCC.
 
 ### Running with docker-compose
 
