@@ -61,19 +61,21 @@ Please view our [guide](docs/installation.md) to assist you in the RMT installat
     * Run the command `bin/rails server -b 0.0.0.0` to start the web server.
     * Run the command `bin/rmt-cli sync` to sync RMT with SCC.
 
-### Running with docker-compose
+### Development Setup - docker-compose
 
 In order to run the application locally using docker-compose:
 
-1. Copy `.env.example` file to `.env`;
-2. Add your organization credentials to `.env` file. Mirroring credentials can be obtained from the [SUSE Customer Center](https://scc.suse.com/organization);
-3. Start the containers by running `docker-compose up`. Running `docker-compose up -d` will start the containers in the background;
-4. Execute commands in the container, e.g.:
-    ```bash
-    docker-compose exec rmt rmt-cli repos --help
+1. Copy the `.env.example` file to `.env`.
+2. Add your organization credentials to `.env` file. Mirroring credentials can be obtained from the [SUSE Customer Center](https://scc.suse.com/organization).
+3. Start `docker-compose` and build the containers:
     ```
-    Alternatively, running `docker-compose exec rmt bash` will start the shell inside the container.
-5. The web server will be accessible at [http://localhost:8080/](http://localhost:8080/), this URL can be used for registering clients.
+    docker-compose up --build
+    ```
+4. The web server is accessible at [http://localhost:8080/](http://localhost:8080/). This URL can be used for registering clients.
+5. To start a shell inside the RMT docker container, run the following command:
+    ```
+    docker-compose exec rmt bash
+    ```
 
 ## API documentation
 
