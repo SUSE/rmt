@@ -1,5 +1,12 @@
 # Installation of RMT
 
+RMT is tested on SLES and openSUSE. We recommend installing RMT on either operating system, however, you always have the option to install it manually elsewhere.
+
+**Notes:**
+
+* You can find a recent openSUSE iso at https://www.opensuse.org/.
+* You can get a trial SLES subscription at https://www.suse.com/trials/.
+
 ## Installation on SLE 15
 
 1. If your server isn't activated yet, activate it with the command `SUSEConnect -r <regcode>`.
