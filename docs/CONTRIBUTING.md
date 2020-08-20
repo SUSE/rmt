@@ -26,6 +26,7 @@ Before you submit a pull request, it's recommended to submit an issue first to g
 | `duplicate` | This is an issue which was already previously reported. |
 | `enhancement` | This is a usability improvement or feature request. |
 | `help-wanted` | This is an issue which can be worked on by a first time contributor. |
+| `good first issue` | This is an good first issue for a new contributor. |
 | `question` | This is an open question which needs to gather more feedback or research. |
 | `user-feedback` | This is an issue or feature request from users of RMT. |
 | `WIP` | This is a work in progress and should not be merged. |
