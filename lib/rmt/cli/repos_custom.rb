@@ -45,6 +45,8 @@ class RMT::CLI::ReposCustom < RMT::CLI::Base
   desc 'disable ID', _('Disable mirroring of custom repository by ID')
   def disable(id)
     change_mirroring(id, false)
+
+    puts "\n\e[1m" + _("To clean up downloaded files, please run '%{command}'") % { command: 'rmt-cli repos clean' } + "\e[22m"
   end
 
   desc 'remove ID', _('Remove a custom repository')
