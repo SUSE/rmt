@@ -107,6 +107,9 @@ class RMT::CLI::Base < Thor
       Etc.getpwuid(Process.euid).name
     end
 
+    def exit_on_failure?
+      true
+    end
   end
 
   private
