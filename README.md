@@ -143,3 +143,7 @@ Do you have suggestions for improvement? Let us know!
 Go to [Issues](https://github.com/SUSE/rmt/issues/new), create a new issue and describe what you think could be improved.
 
 Feedback is always welcome!
+
+## Security Policy
+
+Please see our [security policy](docs/SECURITY.md) for more information.
