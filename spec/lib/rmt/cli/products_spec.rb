@@ -380,6 +380,7 @@ RSpec.describe RMT::CLI::Products do
       output += "Disabling #{product.friendly_name}:\n"
       output += "  #{product.friendly_name}:\n"
       repos.pluck(:name).sort.each { |repo| output += "    Disabled repository #{repo}.\n" } unless repos.empty?
+      output += "\n\e[1mTo clean up downloaded files, please run 'rmt-cli repos clean'\e[22m\n"
       output
     end
 
@@ -392,6 +393,7 @@ RSpec.describe RMT::CLI::Products do
         output += "Disabling #{product.friendly_name}:\n"
         output += "  #{product.friendly_name}:\n"
         output += "    All repositories have already been disabled.\n"
+        output += "\n\e[1mTo clean up downloaded files, please run 'rmt-cli repos clean'\e[22m\n"
         output
       end
 
