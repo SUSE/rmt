@@ -1,34 +1,32 @@
-FROM opensuse/amd64:42.3
+FROM opensuse/leap:15.2
 
-RUN zypper --non-interactive install --no-recommend timezone wget \
-    gcc-c++ libffi-devel git-core zlib-devel libxml2-devel libxslt-devel cron libmariadb-devel \
-    mariadb-client vim &&\
+RUN zypper --non-interactive install --no-recommends timezone wget gcc-c++ libffi-devel git-core zlib-devel \
+        libxml2-devel libxslt-devel cron libmariadb-devel mariadb-client vim ruby2.5 ruby2.5-devel ruby2.5-rubygem-bundler &&\
     zypper --non-interactive install -t pattern devel_basis
-
-RUN zypper --gpg-auto-import-keys ar -f https://download.opensuse.org/repositories/systemsmanagement:/SCC:/rubies/openSUSE_Leap_42.3/systemsmanagement:SCC:rubies.repo  &&\
-    zypper --non-interactive --gpg-auto-import-keys ref &&\
-    zypper --non-interactive install ruby2.5 ruby2.5-devel ruby2.5-rubygem-bundler
 
 ENV DOCKERIZE_VERSION v0.6.0
 RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-RUN bundle.ruby2.5 config build.nokogiri --use-system-libraries
-
 ENV RAILS_ENV production
 
-COPY . /srv/www/rmt/
 WORKDIR /srv/www/rmt/
 
-RUN sed -i 's/#!\/usr\/bin\/env ruby/#!\/usr\/bin\/ruby.ruby2.5/g' /srv/www/rmt/bin/rmt-cli
-RUN ln -s /srv/www/rmt/bin/rmt-cli /usr/bin
-RUN bundle
+COPY Gemfile* /srv/www/rmt/
 
-# Setup permissions to run rmt-cli
-RUN groupadd -r nginx
-RUN useradd -g nginx -s /bin/false -r -c "user for RMT" _rmt
-RUN chown _rmt /srv/www/rmt/public/repo 
+RUN bundle.ruby2.5 config build.nokogiri --use-system-libraries && \
+    bundle install
+
+COPY . /srv/www/rmt/
+
+RUN sed -i 's/#!\/usr\/bin\/env ruby/#!\/usr\/bin\/ruby.ruby2.5/g' /srv/www/rmt/bin/rmt-cli && \
+    ln -s /srv/www/rmt/bin/rmt-cli /usr/bin && \
+    mkdir /var/lib/rmt/ && \
+    groupadd -r nginx && \
+    useradd -g nginx -s /bin/false -r -c "user for RMT" _rmt && \
+    chown _rmt /srv/www/rmt/public/repo && \
+    chown _rmt /srv/www/rmt/public/suma
 
 RUN printf "database: &database\n\
   host: <%%= ENV['MYSQL_HOST'] %%>\n\
