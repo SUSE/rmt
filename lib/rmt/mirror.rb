@@ -1,23 +1,49 @@
 require 'rmt/downloader'
-require 'rmt/rpm'
 require 'rmt/gpg'
+require 'repomd_parser'
 require 'time'
 
 class RMT::Mirror
+  class FileReference
+    class << self
+      def build_from_metadata(metadata, base_dir:)
+        new(base_dir: base_dir, location: metadata.location)
+          .tap do |file|
+            file.arch = metadata.arch
+            file.checksum = metadata.checksum
+            file.checksum_type = metadata.checksum_type
+            file.size = metadata.size
+          end
+      end
+    end
+
+    attr_reader :local_path, :location
+    attr_accessor :arch, :checksum, :checksum_type, :size
+
+    def initialize(base_dir:, location:)
+      @local_path = File.join(base_dir, location.gsub(/\.\./, '__'))
+      @location = location
+    end
+  end
+
   class RMT::Mirror::Exception < RuntimeError
   end
 
+  include RMT::Deduplicator
+  include RMT::FileValidator
+
   def initialize(mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, logger:, mirror_src: false, airgap_mode: false)
     @mirroring_base_dir = mirroring_base_dir
-    @mirror_src = mirror_src
     @logger = logger
-    @force_dedup_by_copy = airgap_mode
+    @mirror_src = mirror_src
+    @airgap_mode = airgap_mode
+    @deep_verify = false
 
     @downloader = RMT::Downloader.new(
       repository_url: @repository_url,
       destination_dir: @repository_dir,
       logger: @logger,
-      save_for_dedup: !airgap_mode # don't save files for deduplication when in offline mode
+      track_files: !airgap_mode # don't save files for deduplication when in offline mode
     )
   end
 
@@ -63,6 +89,8 @@ class RMT::Mirror
 
   protected
 
+  attr_reader :airgap_mode, :deep_verify, :logger
+
   def create_directories
     begin
       FileUtils.mkpath(@repository_dir) unless Dir.exist?(@repository_dir)
@@ -100,18 +128,9 @@ class RMT::Mirror
       end
     end
 
-    primary_files = []
-    deltainfo_files = []
-
-    repomd_parser = RMT::Rpm::RepomdXmlParser.new(local_filename)
-    repomd_parser.parse
-
-    metadata_files = []
-    repomd_parser.referenced_files.each do |reference|
-      metadata_files << reference
-      primary_files << reference.location if (reference.type == :primary)
-      deltainfo_files << reference.location if (reference.type == :deltainfo)
-    end
+    metadata_files = RepomdParser::RepomdXmlParser.new(local_filename).parse
+    primary_files = metadata_files.select { |reference| reference.type == :primary }
+    deltainfo_files = metadata_files.select { |reference| reference.type == :deltainfo }
 
     @downloader.download_multi(metadata_files)
 
@@ -143,30 +162,41 @@ class RMT::Mirror
     @downloader.destination_dir = @repository_dir
     @downloader.cache_dir = nil
 
-    failed_downloads = []
-    deltainfo_files.each do |filename|
-      parser = RMT::Rpm::DeltainfoXmlParser.new(
-        File.join(@temp_metadata_dir, filename),
-        @mirror_src
-      )
-      parser.parse
-      to_download = parsed_files_after_dedup(@repository_dir, parser.referenced_files)
-      failed_downloads.concat(@downloader.download_multi(to_download, ignore_errors: true)) unless to_download.empty?
+    package_repomd_references =
+      parse_mirror_data_files(deltainfo_files, RepomdParser::DeltainfoXmlParser) +
+      parse_mirror_data_files(primary_files, RepomdParser::PrimaryXmlParser)
+
+    package_file_references = package_repomd_references.map do |reference|
+      FileReference.build_from_metadata(reference,
+                                        base_dir: @repository_dir)
     end
 
-    primary_files.each do |filename|
-      parser = RMT::Rpm::PrimaryXmlParser.new(
-        File.join(@temp_metadata_dir, filename),
-        @mirror_src
-      )
-      parser.parse
-      to_download = parsed_files_after_dedup(@repository_dir, parser.referenced_files)
-      failed_downloads.concat(@downloader.download_multi(to_download, ignore_errors: true)) unless to_download.empty?
-    end
+    failed_downloads = download_package_files(package_file_references)
 
     raise _('Failed to download %{failed_count} files') % { failed_count: failed_downloads.size } unless failed_downloads.empty?
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring data: %{error}') % { error: e.message })
+  end
+
+  def parse_mirror_data_files(references, xml_parser_class)
+    references.map do |reference|
+      xml_parser_class.new(File.join(@temp_metadata_dir, reference.location)).parse
+    end.flatten
+  end
+
+  def download_package_files(file_references)
+    files_to_download = file_references.select { |file| need_to_download?(file) }
+    return [] if files_to_download.empty?
+
+    @downloader.download_multi(files_to_download, ignore_errors: true)
+  end
+
+  def need_to_download?(file)
+    return false if file.arch == 'src' && !@mirror_src
+    return false if validate_local_file(file)
+    return false if deduplicate(file)
+
+    true
   end
 
   def replace_directory(source_dir, destination_dir)
@@ -184,30 +214,8 @@ class RMT::Mirror
     })
   end
 
-  def deduplicate(checksum_type, checksum_value, destination)
-    return false unless ::RMT::Deduplicator.deduplicate(checksum_type, checksum_value, destination, force_copy: @force_dedup_by_copy)
-    @logger.info("→ #{File.basename(destination)}")
-    true
-  rescue ::RMT::Deduplicator::MismatchException => e
-    @logger.debug(_('× File does not exist or has wrong filesize, deduplication ignored %{error}.') % { error: e.message })
-    false
-  end
-
-  def parsed_files_after_dedup(root_path, referenced_files)
-    files = referenced_files.map do |parsed_file|
-      local_file = ::RMT::Downloader.make_local_path(root_path, parsed_file.location)
-      if File.exist?(local_file) || deduplicate(parsed_file[:checksum_type], parsed_file[:checksum], local_file)
-        nil
-      else
-        parsed_file
-      end
-    end
-    files.compact
-  end
-
   def remove_tmp_directories
     FileUtils.remove_entry(@temp_licenses_dir) if @temp_licenses_dir && Dir.exist?(@temp_licenses_dir)
     FileUtils.remove_entry(@temp_metadata_dir) if @temp_metadata_dir && Dir.exist?(@temp_metadata_dir)
   end
-
 end

@@ -95,6 +95,88 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     end
   end
 
+  context 'when activating extensions' do
+    let(:instance_data) { 'dummy_instance_data' }
+    let(:system) do
+      FactoryGirl.create(
+        :system, :with_hw_info, :with_activated_product, product: base_product, instance_data: instance_data
+      )
+    end
+    let(:serialized_service_json) do
+      V3::ServiceSerializer.new(
+        product.service,
+          base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
+      ).to_json
+    end
+
+    before do
+      FactoryGirl.create(:subscription, product_classes: product_classes)
+      expect(InstanceVerification::Providers::Example).not_to receive(:new)
+      post url, params: payload, headers: headers
+    end
+
+    context 'when the extension is not free' do
+      let(:base_product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
+
+      context 'when a suitable subscription is not found' do
+        let(:product) do
+          FactoryGirl.create(
+            :product, :with_mirrored_repositories, :extension, free: false, base_products: [base_product]
+          )
+        end
+        let(:product_classes) { [base_product.product_class] }
+
+        it 'reports an error' do
+          data = JSON.parse(response.body)
+          expect(data['error']).to eq('Instance verification failed: The product is not available for this instance')
+        end
+      end
+
+      context 'when a suitable subscription is found' do
+        let(:product) do
+          FactoryGirl.create(
+            :product, :with_mirrored_repositories, :extension, free: false, base_products: [base_product]
+          )
+        end
+        let(:product_classes) { [base_product.product_class, product.product_class] }
+
+        it 'returns service JSON' do
+          expect(response.body).to eq(serialized_service_json)
+        end
+      end
+    end
+
+    context 'when the extension is free' do
+      let(:base_product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
+      let(:product) do
+        FactoryGirl.create(
+          :product, :with_mirrored_repositories, :extension, free: true, base_products: [base_product]
+        )
+      end
+      let(:product_classes) { [base_product.product_class] }
+
+      it 'returns service JSON' do
+        expect(response.body).to eq(serialized_service_json)
+      end
+    end
+
+
+    context 'when the base product subscription is missing' do
+      let(:base_product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
+      let(:product) do
+        FactoryGirl.create(
+          :product, :with_mirrored_repositories, :extension, free: false, base_products: [base_product]
+        )
+      end
+      let(:product_classes) { [] }
+
+      it 'reports an error' do
+        data = JSON.parse(response.body)
+        expect(data['error']).to eq('Unexpected instance verification error has occurred')
+      end
+    end
+  end
+
   describe '#upgrade' do
     subject { response }
 

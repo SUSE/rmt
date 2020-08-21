@@ -13,7 +13,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
     context 'without X-Instance-Data headers or hw_info' do
       it 'has service URLs with HTTP scheme' do
         data = JSON.parse(response.body)
-        expect(data[0]['service']['url']).to match(/^http/)
+        expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
       end
     end
 
