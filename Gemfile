@@ -5,7 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'puma', '3.12.6'
+gem 'puma', '4.3.5'
 gem 'mysql2', '~> 0.5.3'
 
 gem 'nokogiri', '~> 1.10.3'
