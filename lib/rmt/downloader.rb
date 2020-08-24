@@ -19,7 +19,7 @@ class RMT::Downloader
 
   attr_accessor :repository_url, :destination_dir, :concurrency, :logger, :auth_token, :cache_dir
 
-  def initialize(repository_url:, destination_dir:, logger:, auth_token: nil, cache_dir: nil, save_for_dedup: true)
+  def initialize(repository_url:, destination_dir:, logger:, auth_token: nil, cache_dir: nil, track_files: true)
     Typhoeus::Config.user_agent = "RMT/#{RMT::VERSION}"
     @repository_url = repository_url
     @destination_dir = destination_dir
@@ -27,7 +27,7 @@ class RMT::Downloader
     @auth_token = auth_token
     @logger = logger
     @cache_dir = cache_dir
-    @save_for_dedup = save_for_dedup
+    @track_files = track_files
     @queue = []
   end
 
@@ -55,15 +55,6 @@ class RMT::Downloader
     failed_downloads
   end
 
-  def self.make_local_path(root_path, remote_file)
-    filename = File.join(root_path, remote_file.gsub(/\.\./, '__'))
-    dirname = File.dirname(filename)
-
-    FileUtils.mkdir_p(dirname)
-
-    filename
-  end
-
   protected
 
   def get_cache_timestamp(filename)
@@ -78,7 +69,7 @@ class RMT::Downloader
   # @param [Array] failed_downloads array of remote files that have failed downloads, passed by reference, prevents from raising RMT::Downloader exceptions
   # @return [RMT::FiberRequest] a request that can be run individually or with Typhoeus::Hydra
   def create_fiber_request(local_filenames, remote_file, checksum_type: nil, checksum_value: nil, failed_downloads: nil)
-    local_filename = self.class.make_local_path(@destination_dir, remote_file)
+    local_filename = make_local_path(@destination_dir, remote_file)
 
     request_fiber = Fiber.new do
       begin
@@ -181,12 +172,17 @@ class RMT::Downloader
       )
     end
 
-    RMT::ChecksumVerifier.verify_checksum(checksum_type, checksum_value, request.download_path) if (checksum_type && checksum_value)
+    handle_checksum_verification!(checksum_type, checksum_value, request.download_path)
 
     FileUtils.mv(request.download_path.path, local_file)
     File.chmod(0o644, local_file)
 
-    ::RMT::Deduplicator.add_local(local_file, checksum_type, checksum_value) if @save_for_dedup
+    if @track_files && local_file.match?(/\.(rpm|drpm)$/)
+      DownloadedFile.track_file(checksum: checksum_value,
+                                checksum_type: checksum_type,
+                                local_path: local_file,
+                                size: File.size(local_file))
+    end
 
     @logger.info("↓ #{File.basename(local_file)}")
   rescue StandardError => e
@@ -194,4 +190,20 @@ class RMT::Downloader
     raise e
   end
 
+  def handle_checksum_verification!(checksum_type, checksum_value, download_path)
+    return unless (checksum_type && checksum_value)
+
+    unless RMT::ChecksumVerifier.match_checksum?(checksum_type, checksum_value, download_path)
+      raise RMT::Downloader::Exception.new(_("Checksum doesn't match"))
+    end
+  end
+
+  def make_local_path(root_path, remote_file)
+    filename = File.join(root_path, remote_file.gsub(/\.\./, '__'))
+    dirname = File.dirname(filename)
+
+    FileUtils.mkdir_p(dirname)
+
+    filename
+  end
 end

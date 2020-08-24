@@ -9,7 +9,7 @@ RSpec.describe RMT::ChecksumVerifier do
   context 'hash function is unknown' do
     it 'raises an exception' do
       expect do
-        described_class.verify_checksum('CHUNKYBACON42', '0xDEADBEEF', test_file_path)
+        described_class.match_checksum?('CHUNKYBACON42', '0xDEADBEEF', test_file_path)
       end.to raise_error(RMT::ChecksumVerifier::Exception, 'Unknown hash function CHUNKYBACON42')
     end
   end
@@ -17,7 +17,7 @@ RSpec.describe RMT::ChecksumVerifier do
   context 'defaults' do
     it 'handles SHA -> SHA1' do
       expect do
-        described_class.verify_checksum('SHA', '8843d7f92416211de9ebb963ff4ce28125932878', test_file_path)
+        described_class.match_checksum?('SHA', '8843d7f92416211de9ebb963ff4ce28125932878', test_file_path)
       end.not_to raise_error
     end
   end
@@ -52,18 +52,22 @@ RSpec.describe RMT::ChecksumVerifier do
     context test_data[:checksum_type] do
       context 'checksum is wrong' do
         it 'raises an exception' do
-          expect do
-            described_class.verify_checksum(test_data[:checksum_type], '0xDEADBEEF', test_file_path)
-          end.to raise_error(RMT::ChecksumVerifier::Exception, 'Checksum doesn\'t match')
+          match = described_class.match_checksum?(test_data[:checksum_type],
+                                                  '0xDEADBEEF',
+                                                  test_file_path)
+
+          expect(match).to be false
         end
       end
 
       context 'checksum is correct' do
         test_data[:checksum_type_variants].each do |checksum_type|
-          it "does not raises a exception for checksum type - #{checksum_type}" do
-            expect do
-              described_class.verify_checksum(checksum_type, test_data[:checksum], test_file_path)
-            end.not_to raise_error
+          it 'returns true' do
+            match = described_class.match_checksum?(checksum_type,
+                                                    test_data[:checksum],
+                                                    test_file_path)
+
+            expect(match).to be true
           end
         end
       end
