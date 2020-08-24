@@ -66,7 +66,7 @@ group :test do
   gem 'webmock'
   gem 'fuubar'
   gem 'timecop'
-  gem 'vcr', '~> 4.0'
+  gem 'vcr', '~> 6.0'
   gem 'coveralls', '~> 0.8.21', require: false
 end
 
