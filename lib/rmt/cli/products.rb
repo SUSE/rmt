@@ -68,7 +68,7 @@ class RMT::CLI::Products < RMT::CLI::Base
   def disable(*targets)
     change_products(targets, false, false)
 
-    puts "\n\e[1m" + _("To clean up downloaded files, please run '%{command}'") % { command: 'rmt-cli repos clean' } + "\e[22m"
+    puts "\n\e[1m" + _("To clean up downloaded files, run '%{command}'") % { command: 'rmt-cli repos clean' } + "\e[22m"
   end
 
   desc 'show TARGET', _('Displays product with all its repositories and their attributes.')
