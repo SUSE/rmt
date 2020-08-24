@@ -29,7 +29,7 @@
 %define ruby_version          %{rb_default_ruby_suffix}
 
 Name:           rmt-server
-Version:        2.5.12
+Version:        2.5.13
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -308,7 +308,7 @@ fi
 %postun
 %service_del_postun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
 
-%posttrans
+%posttrans config
 /usr/bin/systemctl reload nginx.service
 
 %pre pubcloud
@@ -325,5 +325,6 @@ fi
 
 %posttrans pubcloud
 /usr/bin/systemctl try-restart rmt-server.service
+/usr/bin/systemctl reload nginx.service
 
 %changelog

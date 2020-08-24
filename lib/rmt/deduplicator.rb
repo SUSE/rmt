@@ -1,50 +1,52 @@
 require 'fileutils'
 
-class RMT::Deduplicator
-
-  class MismatchException < RuntimeError
-  end
-
+module RMT::Deduplicator
   class HardlinkException < RuntimeError
   end
 
-  class << self
+  private
 
-    private
+  def deduplicate(target_file)
+    source_files = find_valid_files_by_checksum(
+      target_file.checksum, target_file.checksum_type
+    )
 
-    def hardlink(src, dest)
-      ::FileUtils.ln(src, dest)
-    rescue StandardError
-      raise ::RMT::Deduplicator::HardlinkException.new("#{src} → #{dest}")
-    end
+    return false if source_files.empty?
 
-    def copy(src, dest)
-      ::FileUtils.cp(src, dest)
-    end
+    make_file_dir(target_file.local_path)
+    source_file_path = source_files.first.local_path
 
-  end
-
-  def self.add_local(path, checksum_type, checksum)
-    file_size = File.size(path)
-    DownloadedFile.add_file(checksum_type, checksum, file_size, path)
-  end
-
-  def self.deduplicate(checksum_type, checksum_value, destination, force_copy: false)
-    src = DownloadedFile.get_local_path_by_checksum(checksum_type, checksum_value)
-
-    if src.nil?
-      return false
-    elsif !File.exist?(src.local_path) || (src.file_size != File.size(src.local_path))
-      raise MismatchException.new(src.local_path)
-    end
-
-    if RMT::Config.deduplication_by_hardlink? && !force_copy
-      hardlink(src.local_path, destination)
+    if RMT::Config.deduplication_by_hardlink? && !airgap_mode
+      hardlink(source_file_path, target_file.local_path)
     else
-      copy(src.local_path, destination)
+      copy(source_file_path, target_file.local_path)
     end
 
+    # we don't want to track airgap files in our database
+    unless airgap_mode
+      DownloadedFile.track_file(checksum: target_file.checksum,
+                                checksum_type: target_file.checksum_type,
+                                local_path: target_file.local_path,
+                                size: File.size(target_file.local_path))
+    end
+
+    logger.info("→ #{File.basename(target_file.local_path)}")
     true
   end
 
+  def hardlink(src, dest)
+    FileUtils.ln(src, dest)
+  rescue StandardError
+    raise RMT::Deduplicator::HardlinkException.new("#{src} → #{dest}")
+  end
+
+  def copy(src, dest)
+    FileUtils.cp(src, dest)
+  end
+
+  def make_file_dir(file_path)
+    dirname = File.dirname(file_path)
+
+    FileUtils.mkdir_p(dirname)
+  end
 end

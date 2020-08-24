@@ -35,7 +35,7 @@ Lint/MissingCopEnableDirective:
 # Offense count: 2
 # Configuration parameters: CountComments.
 Metrics/ClassLength:
-  Max: 165
+  Max: 166
 
 # Offense count: 1
 # Configuration parameters: CountComments.
