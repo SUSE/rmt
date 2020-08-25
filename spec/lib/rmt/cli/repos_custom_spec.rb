@@ -178,8 +178,15 @@ describe RMT::CLI::ReposCustom do
 
     context 'by repo id' do
       let(:argv) { ['disable', repository.id.to_s] }
+      let(:expected_output) do
+        <<-OUTPUT
+Repository successfully disabled.
 
-      before { expect { command }.to output("Repository successfully disabled.\n").to_stdout }
+\e[1mTo clean up downloaded files, please run 'rmt-cli repos clean'\e[22m
+        OUTPUT
+      end
+
+      before { expect { command }.to output(expected_output).to_stdout }
 
       its(:mirroring_enabled) { is_expected.to be(false) }
     end

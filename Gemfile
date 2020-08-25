@@ -46,7 +46,7 @@ end
 
 group :development do
   gem 'awesome_print'
-  gem 'listen', '>= 3.0.5', '< 3.2'
+  gem 'listen', '>= 3.0.5', '<= 3.2.1'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
@@ -57,8 +57,8 @@ end
 
 group :test do
   gem 'rspec-command', '1.0.3'
-  gem 'rspec-rails', '~> 3.5'
-  gem 'factory_girl_rails', '4.8.0'
+  gem 'rspec-rails', '~> 4.0'
+  gem 'factory_girl_rails', '4.9.0'
   gem 'ffaker'
   gem 'rspec-its'
   gem 'fakefs', require: 'fakefs/safe'
@@ -66,7 +66,7 @@ group :test do
   gem 'webmock'
   gem 'fuubar'
   gem 'timecop'
-  gem 'vcr', '~> 4.0'
+  gem 'vcr', '~> 6.0'
   gem 'coveralls', '~> 0.8.21', require: false
 end
 
