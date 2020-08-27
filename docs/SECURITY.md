@@ -6,4 +6,4 @@ Currently, only the latest version of RMT is supported. Whenever we release a ne
 
 ## Reporting a Vulnerability
 
-**DO NOT CREATE AN ISSUE** to report a security problem. Instead, please contact the [SUSE Security Team](https://www.suse.com/support/security/contact/) instead.
+**DO NOT CREATE AN ISSUE** to report a security problem. Instead, please contact the [SUSE Security Team](https://www.suse.com/support/security/contact/).
