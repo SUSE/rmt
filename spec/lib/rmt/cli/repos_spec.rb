@@ -12,6 +12,12 @@ RSpec.describe RMT::CLI::Repos do
     let(:repo_1_path) { File.join(dir, repository_1.local_path) }
     let(:repo_2_path) { File.join(dir, repository_2.local_path) }
     let(:repo_3_path) { File.join(dir, repository_3.local_path) }
+    let(:total_removed_file_size) do
+      Repository.where(mirroring_enabled: false).map(&:local_path).reduce(0) do |sum, repo_path|
+        local_path = File.join(dir, repo_path)
+        sum + DownloadedFile.where('local_path LIKE ?', "#{local_path}%").sum(:file_size)
+      end
+    end
 
     let(:command) do
       described_class.start(argv)
@@ -31,7 +37,7 @@ RMT found locally mirrored files from the following repositories which are not m
 Deleted locally mirrored files from repository '#{repository_1.description}'.
 Deleted locally mirrored files from repository '#{repository_2.description}'.
 
-\e[32mClean finished.\e[0m
+\e[32mClean finished. An estimated #{ActiveSupport::NumberHelper.number_to_human_size(total_removed_file_size)} were removed.\e[0m
       OUTPUT
     end
 
