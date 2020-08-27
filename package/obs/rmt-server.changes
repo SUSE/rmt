@@ -1,8 +1,8 @@
 -------------------------------------------------------------------
-Tue Aug 25 10:27:33 UTC 2020 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+Tue Sep 2 10:27:33 UTC 2020 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
-- Version 2.5.15
-- Exclude installer updates repos to registered machines.
+- Version 2.5.17
+- RMT no longer provides the installer updates repository to systems via its zypper service. This repository is used during the installation process, as it provides an up-to-date installation experience, but it has no use on an already installed system.
 
 -------------------------------------------------------------------
 Mon Aug 24 10:04:26 UTC 2020 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
