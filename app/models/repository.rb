@@ -7,6 +7,7 @@ class Repository < ApplicationRecord
 
   scope :only_installer_updates, -> { where(installer_updates: true) }
   scope :only_mirrored, -> { where(mirroring_enabled: true) }
+  scope :only_fully_mirrored, -> { where(mirroring_enabled: true).where.not(last_mirrored_at: nil) }
   scope :only_enabled, -> { where(enabled: true) }
   scope :only_custom, -> { where(scc_id: nil) }
   scope :only_scc, -> { where.not(scc_id: nil) }
