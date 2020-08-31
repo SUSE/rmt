@@ -27,6 +27,16 @@ RSpec.describe Repository, type: :model do
       it { is_expected.to contain_exactly(mirrored) }
     end
 
+    describe '.only_fully_mirrored' do
+      subject { described_class.only_fully_mirrored }
+
+      let!(:mirrored) { create :repository, mirroring_enabled: true, last_mirrored_at: Time.zone.now }
+
+      before { create :repository, mirroring_enabled: true }
+
+      it { is_expected.to contain_exactly(mirrored) }
+    end
+
     describe '.only_enabled' do
       subject { described_class.only_enabled }
 
