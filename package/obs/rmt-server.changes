@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Mon Aug 31 14:04:20 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.5.15
+- RMT now checks if repositories are fully mirrored during the
+  activation process. Previously, RMT only checked if the repositories
+  were enabled to be mirrored, but not that they were actually mirrored.
+  In this case, RMTs were not able to provide the repository data which
+  systems assumed it had.
+
+-------------------------------------------------------------------
 Mon Aug 24 10:04:26 UTC 2020 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
 - Version 2.5.14
