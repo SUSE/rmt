@@ -17,8 +17,8 @@ RSpec.describe Repository, type: :model do
   it { is_expected.to have_db_column(:external_url).of_type(:string).with_options(null: false) }
 
   describe 'scopes' do
-    describe '.only_mirrored' do
-      subject { described_class.only_mirrored }
+    describe '.only_mirroring_enabled' do
+      subject { described_class.only_mirroring_enabled }
 
       let!(:mirrored) { create :repository, mirroring_enabled: true }
 
