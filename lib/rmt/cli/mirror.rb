@@ -14,6 +14,9 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
       raise RMT::CLI::Error.new(_('There are no repositories marked for mirroring.')) if Repository.only_mirroring_enabled.empty?
 
+      # The set of repositories to be mirrored can change while the command is
+      # mirroring. Hence, the iteration uses a until loop to ensure no
+      # repositories have been left unmirrored.
       mirrored_repo_ids = []
       until (repos = Repository.only_mirroring_enabled.where.not(id: mirrored_repo_ids)).empty?
         repo_ids, repo_errors = mirror_repos!(mirror, repos)
