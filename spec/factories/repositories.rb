@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :repository do
     sequence(:scc_id) { |n| n }
     sequence(:name) { |n| "Repository #{n}" }

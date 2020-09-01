@@ -3,7 +3,7 @@ require 'rails_helper'
 describe StrictAuthentication::AuthenticationController, type: :request do
   subject { response }
 
-  let(:system) { FactoryGirl.create(:system, :with_activated_product) }
+  let(:system) { FactoryBot.create(:system, :with_activated_product) }
 
   describe '#check' do
     context 'with valid credentials' do

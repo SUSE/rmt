@@ -6,18 +6,18 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
 
   let(:url) { connect_systems_products_url }
   let(:headers) { auth_header.merge(version_header) }
-  let(:system) { FactoryGirl.create(:system, :with_activated_base_product) }
+  let(:system) { FactoryBot.create(:system, :with_activated_base_product) }
 
   describe '#destroy' do
     it_behaves_like 'products controller action' do
-      let(:product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
+      let(:product) { FactoryBot.create(:product, :with_mirrored_repositories) }
       let(:verb) { 'delete' }
     end
 
     context 'when the product is a base product' do
       subject { response }
 
-      let(:product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
+      let(:product) { FactoryBot.create(:product, :with_mirrored_repositories) }
       let(:payload) { { identifier: product.identifier, version: product.version, arch: product.arch } }
 
       before { delete url, headers: headers, params: payload }
@@ -38,7 +38,7 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
       before { delete url, headers: headers, params: payload }
 
       context 'and it is not activated' do
-        let(:product) { FactoryGirl.create(:product, :extension, :with_mirrored_repositories) }
+        let(:product) { FactoryBot.create(:product, :extension, :with_mirrored_repositories) }
 
         its(:code) { is_expected.to eq('422') }
 
@@ -51,8 +51,8 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
 
       context 'and the system has other extensions that depend on this one' do
         let(:product) do
-          product = FactoryGirl.create(:product, :extension, :with_mirrored_repositories, :activated, system: system)
-          FactoryGirl.create(:product, :extension, :with_mirrored_repositories, :activated, system: system, base_products: [product])
+          product = FactoryBot.create(:product, :extension, :with_mirrored_repositories, :activated, system: system)
+          FactoryBot.create(:product, :extension, :with_mirrored_repositories, :activated, system: system, base_products: [product])
           product
         end
 
@@ -66,8 +66,8 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
       end
 
       context 'and it is activated' do
-        let(:system) { FactoryGirl.create(:system) }
-        let(:product) { FactoryGirl.create(:product, :extension, :with_mirrored_repositories, :activated, system: system) }
+        let(:system) { FactoryBot.create(:system) }
+        let(:product) { FactoryBot.create(:product, :extension, :with_mirrored_repositories, :activated, system: system) }
         let(:serialized_json) do
           V3::ServiceSerializer.new(
             product.service,
@@ -83,7 +83,7 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
   end
 
   describe '#synchronize' do
-    let!(:additional_activation) { FactoryGirl.create(:activation, system: system) }
+    let!(:additional_activation) { FactoryBot.create(:activation, system: system) }
     let(:path) { '/connect/systems/products/synchronize' }
 
     # context 'without products param' do

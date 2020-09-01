@@ -312,8 +312,8 @@ Repository by ID #{repository.scc_id} successfully disabled.
       end
 
       context 'with enabled repositories' do
-        let!(:repository_one) { FactoryGirl.create :repository, :with_products, mirroring_enabled: true }
-        let!(:repository_two) { FactoryGirl.create :repository, :with_products, mirroring_enabled: false }
+        let!(:repository_one) { FactoryBot.create :repository, :with_products, mirroring_enabled: true }
+        let!(:repository_two) { FactoryBot.create :repository, :with_products, mirroring_enabled: false }
         let(:rows) do
           [[
             repository_one.scc_id,
