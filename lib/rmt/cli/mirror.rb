@@ -9,7 +9,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       begin
         mirror.mirror_suma_product_tree(repository_url: 'https://scc.suse.com/suma/')
       rescue RMT::Mirror::Exception => e
-        logger.warn(e.message)
+        errors << _('Mirroring SUMA product tree failed: %{error_message}') % { error_message: e.message }
       end
 
       raise RMT::CLI::Error.new(_('There are no repositories marked for mirroring.')) if Repository.only_mirroring_enabled.empty?

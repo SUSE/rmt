@@ -13,15 +13,46 @@ RSpec.describe RMT::CLI::Mirror do
     end
 
     context 'suma product tree mirror with exception' do
-      before do
-        create :repository, :with_products, mirroring_enabled: true
+      let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
+      let(:error_message) { 'mirroring SUMA failed' }
+
+      it 'handles the exception and raises an error after mirroring all repos' do
+        expect_any_instance_of(RMT::Mirror)
+          .to receive(:mirror_suma_product_tree)
+          .and_raise(RMT::Mirror::Exception, error_message)
+        expect_any_instance_of(RMT::Mirror).to receive(:mirror)
+
+        expected_message = <<~MSG
+          The following errors ocurred while mirroring:
+          Mirroring SUMA product tree failed: #{error_message}
+        MSG
+
+        expect { command }
+          .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+          .and output(expected_message).to_stderr
+          .and output('').to_stdout
       end
 
-      it 'outputs exception message' do
-        expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree).and_raise(RMT::Mirror::Exception, 'black mirror')
-        expect_any_instance_of(RMT::Mirror).to receive(:mirror)
-        expect_any_instance_of(RMT::Logger).to receive(:warn).with('black mirror')
-        command
+      context 'with repository exceptions during mirroring' do
+        it 'handles the exception and raises an error after mirroring all repos' do
+          expect_any_instance_of(RMT::Mirror)
+            .to receive(:mirror_suma_product_tree)
+            .and_raise(RMT::Mirror::Exception, error_message)
+          expect_any_instance_of(RMT::Mirror)
+            .to receive(:mirror).at_least(:once)
+            .and_raise(RMT::Mirror::Exception, error_message)
+
+          expected_message = <<~MSG
+            The following errors ocurred while mirroring:
+            Mirroring SUMA product tree failed: #{error_message}
+            Repository '#{repository.name}' (#{repository.id}): #{error_message}
+          MSG
+
+          expect { command }
+            .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+            .and output(expected_message).to_stderr
+            .and output('').to_stdout
+        end
       end
     end
 
