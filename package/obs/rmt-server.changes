@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Mon Sep 1 13:24:23 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.5.16
+- Updated RMT's rails and puma dependencies.
+  - puma (CVE-2020-11076, CVE-2020-11077, CVE-2020-5249, CVE-2020-5247
+    CVE-2019-16770)
+  - actionpack (CVE-2020-8185, CVE-2020-8164, CVE-2020-8166)
+  - actionview (CVE-2020-8167, CVE-2020-5267, CVE-2019-5418, CVE-2019-5419)
+  - activesupport (CVE-2020-8165)
+  - railties (CVE-2019-5420)
+
+-------------------------------------------------------------------
 Mon Aug 31 14:04:20 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
 
 - Version 2.5.15
