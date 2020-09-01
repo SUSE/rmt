@@ -21,7 +21,6 @@ require 'json'
 require_relative '../config/initializers_cli/disable_deprecation_warnings'
 require_relative '../config/initializers_cli/rmt_fast_gettext'
 require_relative '../config/initializers_cli/rmt_fast_gettext_cli_locale'
-require 'rmt/cli/smt_importer'
 
 no_systems = false
 data_dir = nil
@@ -35,8 +34,8 @@ ActiveRecord::Base.establish_connection(db_config)
 
 begin
   Time.zone ||= 'UTC'
-  script = SMTImporter.new(data_dir, no_systems)
+  script = RMT::CLI::SMTImporter.new(data_dir, no_systems)
   script.run ARGV
-rescue SMTImporter::ImportException
+rescue RMT::CLI::SMTImporter::ImportException
   exit 1
 end
