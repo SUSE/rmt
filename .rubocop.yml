@@ -10,11 +10,6 @@ inherit_mode:
 
 AllCops:
   TargetRubyVersion: 2.5
-  Include:
-    - Gemfile
-    - Rakefile
-    - config.ru
-    - '**/*.rake'
   Exclude:
     - .bundle/**/*
     - db/schema.rb
@@ -36,7 +31,7 @@ Rails/Output:
   Exclude:
     - lib/rmt/cli/**/*
 
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
   AllowedNames:
   - to
   - id
