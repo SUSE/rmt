@@ -30,10 +30,14 @@ RSpec.describe RMT::CLI::Mirror do
         create :repository, :with_products, mirroring_enabled: false
       end
 
-      it 'outputs a warning' do
+      it 'raises an error' do
         expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
         expect_any_instance_of(RMT::Mirror).not_to receive(:mirror)
-        expect { command }.to raise_error(SystemExit).and output("There are no repositories marked for mirroring.\n").to_stderr.and output('').to_stdout
+
+        expect { command }
+          .to raise_error(SystemExit)
+          .and output("There are no repositories marked for mirroring.\n").to_stderr
+          .and output('').to_stdout
       end
     end
 
@@ -50,12 +54,26 @@ RSpec.describe RMT::CLI::Mirror do
       end
 
       context 'with exceptions during mirroring' do
-        before { allow_any_instance_of(RMT::Mirror).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror') }
+        before do
+          allow_any_instance_of(RMT::Mirror)
+            .to receive(:mirror)
+            .and_raise(RMT::Mirror::Exception, error_message)
+        end
 
-        it 'outputs exception message' do
+        let(:error_message) { 'mirroring failed' }
+
+        it 'raises an error' do
           expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
-          expect_any_instance_of(RMT::Logger).to receive(:warn).with('black mirror')
-          command
+
+          expected_message = <<~MSG
+            The following errors ocurred while mirroring:
+            Repository '#{repository.name}' (#{repository.id}): #{error_message}
+          MSG
+
+          expect { command }
+            .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+            .and output(expected_message).to_stderr
+            .and output('').to_stdout
         end
       end
     end
@@ -91,6 +109,7 @@ RSpec.describe RMT::CLI::Mirror do
     context 'with repositories changing during mirroring and exceptions occur' do
       let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
       let!(:additional_repository) { create :repository, :with_products, mirroring_enabled: false }
+      let(:error_message) { 'mirroring failed' }
 
       it 'handles exceptions and mirrors additional repositories' do
         expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
@@ -103,10 +122,9 @@ RSpec.describe RMT::CLI::Mirror do
           # enable mirroring of the additional repository during mirroring
           additional_repository.mirroring_enabled = true
           additional_repository.save!
-          raise(RMT::Mirror::Exception, 'black mirror')
+          raise(RMT::Mirror::Exception, error_message)
         end
 
-        expect_any_instance_of(RMT::Logger).to receive(:warn).with('black mirror')
         expect_any_instance_of(RMT::Mirror).to receive(:mirror).with(
           repository_url: additional_repository.external_url,
           local_path: anything,
@@ -114,7 +132,15 @@ RSpec.describe RMT::CLI::Mirror do
           auth_token: anything
         )
 
-        command
+        expected_message = <<~MSG
+          The following errors ocurred while mirroring:
+          Repository '#{repository.name}' (#{repository.id}): #{error_message}
+        MSG
+
+        expect { command }
+          .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+          .and output(expected_message).to_stderr
+          .and output('').to_stdout
       end
     end
   end
@@ -143,11 +169,22 @@ RSpec.describe RMT::CLI::Mirror do
     context 'when an exception is raised during mirroring' do
       let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
       let(:argv) { ['repository', repository.scc_id] }
+      let(:error_message) { 'mirroring failed' }
 
-      it 'handles the exception and outputs a warning' do
-        expect_any_instance_of(RMT::Mirror).to receive(:mirror).at_least(:once).and_raise(RMT::Mirror::Exception, 'Dummy')
-        expect_any_instance_of(RMT::Logger).to receive(:warn).at_least(:once).with('Dummy')
-        command
+      it 'handles the exception and raises an error after mirroring all repos' do
+        expect_any_instance_of(RMT::Mirror)
+          .to receive(:mirror).at_least(:once)
+          .and_raise(RMT::Mirror::Exception, error_message)
+
+        expected_message = <<~MSG
+          The following errors ocurred while mirroring:
+          Repository '#{repository.name}' (#{repository.id}): #{error_message}
+        MSG
+
+        expect { command }
+          .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+          .and output(expected_message).to_stderr
+          .and output('').to_stdout
       end
     end
 
@@ -227,11 +264,22 @@ RSpec.describe RMT::CLI::Mirror do
     context 'when an exception is raised during mirroring' do
       let(:product) { create :product, :with_mirrored_repositories }
       let(:argv) { ['product', [product.identifier, product.version, product.arch].join('/')] }
+      let(:error_message) { 'mirroring failed' }
 
-      it 'handles the exception and outputs a warning' do
-        expect_any_instance_of(RMT::Mirror).to receive(:mirror).at_least(:once).and_raise(RMT::Mirror::Exception, 'Dummy')
-        expect_any_instance_of(RMT::Logger).to receive(:warn).at_least(:once).with('Dummy')
-        command
+      it 'handles the exception and raises an error after mirroring all repos' do
+        expect_any_instance_of(RMT::Mirror)
+          .to receive(:mirror).at_least(:once)
+          .and_raise(RMT::Mirror::Exception, error_message)
+
+        expected_message = <<~MSG
+          The following errors ocurred while mirroring:
+          #{product.repositories.map { |r| "Repository '#{r.name}' (#{r.id}): #{error_message}" }.join("\n")}
+        MSG
+
+        expect { command }
+          .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+          .and output(expected_message).to_stderr
+          .and output('').to_stdout
       end
     end
 
