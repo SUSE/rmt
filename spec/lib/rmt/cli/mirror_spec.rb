@@ -120,14 +120,14 @@ RSpec.describe RMT::CLI::Mirror do
   end
 
   describe 'mirror repository' do
+    let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
+    let(:argv) { ['repository', repository.scc_id] }
+
     context 'lockfiles', :with_fakefs do
       include_examples 'handles lockfile exception'
     end
 
     context 'when repository mirroring is enabled' do
-      let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
-      let(:argv) { ['repository', repository.scc_id] }
-
       it 'mirrors the repository' do
         expect_any_instance_of(RMT::Mirror).to receive(:mirror).with(
           repository_url: repository.external_url,
@@ -138,31 +138,62 @@ RSpec.describe RMT::CLI::Mirror do
 
         command
       end
+
+      context 'by external url' do
+        let(:argv) { ['repository', repository.external_url] }
+
+        it 'mirrors the repository' do
+          expect_any_instance_of(RMT::Mirror).to receive(:mirror).with(
+            repository_url: repository.external_url,
+            local_path: anything,
+            repo_name: anything,
+            auth_token: anything
+          )
+
+          command
+        end
+      end
     end
 
     context 'when an exception is raised during mirroring' do
-      let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
-      let(:argv) { ['repository', repository.scc_id] }
-
       it 'handles the exception and outputs a warning' do
         expect_any_instance_of(RMT::Mirror).to receive(:mirror).at_least(:once).and_raise(RMT::Mirror::Exception, 'Dummy')
         expect_any_instance_of(RMT::Logger).to receive(:warn).at_least(:once).with('Dummy')
         command
       end
-    end
 
-    context 'when repository mirroring is disabled' do
-      let!(:repository) { create :repository, :with_products, mirroring_enabled: false }
-      let(:argv) { ['repository', repository.scc_id] }
+      context 'by external url' do
+        let(:argv) { ['repository', repository.external_url] }
 
-      it 'raises an error' do
-        expect { command }.to raise_error(SystemExit).and \
-          output("Mirroring of repository with ID #{repository.scc_id} is not enabled\n").to_stderr.and \
-            output('').to_stdout
+        it 'handles the exception and outputs a warning' do
+          expect_any_instance_of(RMT::Mirror).to receive(:mirror).at_least(:once).and_raise(RMT::Mirror::Exception, 'Dummy')
+          expect_any_instance_of(RMT::Logger).to receive(:warn).at_least(:once).with('Dummy')
+          command
+        end
       end
     end
 
-    context 'when no repository IDs given' do
+    context 'when repository mirroring is disabled by id' do
+      let!(:repository) { create :repository, :with_products, mirroring_enabled: false }
+
+      it 'raises an error' do
+        expect { command }.to raise_error(SystemExit).and \
+          output("Mirroring of repository by target #{repository.scc_id} is not enabled\n").to_stderr.and \
+            output('').to_stdout
+      end
+
+      context 'by external url' do
+        let(:argv) { ['repository', repository.external_url] }
+
+        it 'raises an error' do
+          expect { command }.to raise_error(SystemExit).and \
+            output("Mirroring of repository by target #{repository.external_url} is not enabled\n").to_stderr.and \
+              output('').to_stdout
+        end
+      end
+    end
+
+    context 'when no repository IDs are given' do
       let(:argv) { ['repository'] }
 
       it 'raises an error' do
@@ -172,12 +203,12 @@ RSpec.describe RMT::CLI::Mirror do
       end
     end
 
-    context 'when repository with given ID is not found' do
+    context 'when repository with given target is not found' do
       let(:argv) { ['repository', -42] }
 
       it 'raises an error' do
         expect { command }.to raise_error(SystemExit).and \
-          output("Repository with ID -42 not found\n").to_stderr.and \
+          output("Repository by target -42 not found\n").to_stderr.and \
             output('').to_stdout
       end
     end

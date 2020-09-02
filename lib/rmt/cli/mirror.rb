@@ -30,22 +30,33 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
   default_task :all
 
-  desc 'repository IDS', _('Mirror enabled repositories with given repository IDs')
-  def repository(*ids)
+  desc 'repository TARGETS', _('Mirror enabled repositories by given targets (SCC IDs or URLs)')
+  long_desc <<~REPOS
+    #{_('Mirror enabled repositories by given targets: SCC IDs or URLs.')}
+
+    #{_('Examples')}:
+
+    $ rmt-cli mirror repository 2526
+
+    $ rmt-cli mirror repository https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/openSUSE_Tumbleweed/
+
+    $ rmt-cli mirror repository 2526 https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/openSUSE_Tumbleweed/
+  REPOS
+  def repository(*targets)
     RMT::Lockfile.lock('mirror') do
       logger = RMT::Logger.new(STDOUT)
       mirror = RMT::Mirror.new(logger: logger, mirror_src: RMT::Config.mirror_src_files?)
 
-      ids = clean_target_input(ids)
-      raise RMT::CLI::Error.new(_('No repository IDs supplied')) if ids.empty?
+      targets = clean_target_input(targets)
+      raise RMT::CLI::Error.new(_('No repository IDs supplied')) if targets.empty?
 
       repos = []
-      ids.each do |id|
-        repo = Repository.find_by!(scc_id: id)
-        raise RMT::CLI::Error.new(_('Mirroring of repository with ID %{repo_id} is not enabled') % { repo_id: id }) unless repo.mirroring_enabled
+      targets.each do |target|
+        repo = find_repo_by_target(target)
+        raise RMT::CLI::Error.new(_('Mirroring of repository by target %{target} is not enabled') % { target: target }) unless repo.mirroring_enabled
         repos << repo
       rescue ActiveRecord::RecordNotFound
-        raise RMT::CLI::Error.new(_('Repository with ID %{repo_id} not found') % { repo_id: id })
+        raise RMT::CLI::Error.new(_('Repository by target %{target} not found') % { target: target })
       end
 
       repos.each do |repo|
@@ -99,5 +110,14 @@ class RMT::CLI::Mirror < RMT::CLI::Base
     repo.refresh_timestamp!
   end
 
+  def find_repo_by_target(target)
+    repository_id = Integer(target, 10) rescue nil
+
+    if repository_id
+      return Repository.find_by!(scc_id: repository_id)
+    end
+
+    Repository.find_by!(external_url: target)
+  end
 
 end
