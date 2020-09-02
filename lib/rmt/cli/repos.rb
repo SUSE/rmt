@@ -50,15 +50,18 @@ class RMT::CLI::Repos < RMT::CLI::Base
     end
 
     print "\n"
+    total_size = 0
     repos_to_delete.each do |repo|
       path = File.join(base_directory, repo.local_path)
+      downloaded_files = DownloadedFile.where('local_path LIKE ?', "#{path}%")
+      total_size += downloaded_files.sum(:file_size)
       FileUtils.rm_r(path, secure: true)
-      DownloadedFile.where('local_path LIKE ?', "#{path}%").destroy_all
+      downloaded_files.destroy_all
       puts _("Deleted locally mirrored files from repository '%{repo}'.") % { repo: repo.description }
     end
 
     print "\n\e[32m"
-    print _('Clean finished.')
+    print _('Clean finished. An estimated %{total_file_size} were removed.') % { total_file_size: ActiveSupport::NumberHelper.number_to_human_size(total_size) }
     print "\e[0m\n"
   end
 
@@ -95,7 +98,7 @@ REPOS
   protected
 
   def list_repositories(scope: :enabled)
-    repositories = ((scope == :all) ? Repository.only_scc : Repository.only_scc.only_mirrored).order(:name, :description)
+    repositories = ((scope == :all) ? Repository.only_scc : Repository.only_scc.only_mirroring_enabled).order(:name, :description)
     decorator = ::RMT::CLI::Decorators::RepositoryDecorator.new(repositories)
 
     if repositories.empty?
