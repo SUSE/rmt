@@ -55,15 +55,17 @@ RSpec.describe RMT::Mirror do
       allow_any_instance_of(RMT::GPG).to receive(:verify_signature)
     end
 
-    context 'without auth_token', vcr: { cassette_name: 'mirroring' } do
-      let(:rmt_mirror) do
-        described_class.new(
-          mirroring_base_dir: @tmp_dir,
-          logger: logger,
-          mirror_src: false
-        )
-      end
+    let(:mirror_src) { false }
+    let(:mirroring_dir) { @tmp_dir }
+    let(:rmt_mirror) do
+      described_class.new(
+        mirroring_base_dir: mirroring_dir,
+        logger: logger,
+        mirror_src: mirror_src
+      )
+    end
 
+    context 'without auth_token', vcr: { cassette_name: 'mirroring' } do
       let(:mirror_params) do
         {
           repository_url: 'http://localhost/dummy_repo/',
@@ -87,14 +89,6 @@ RSpec.describe RMT::Mirror do
     end
 
     context 'without auth_token and with source packages', vcr: { cassette_name: 'mirroring_with_src' } do
-      let(:rmt_mirror) do
-        described_class.new(
-          mirroring_base_dir: @tmp_dir,
-          logger: logger,
-          mirror_src: mirror_src
-        )
-      end
-
       let(:mirror_params) do
         {
           repository_url: 'http://localhost/dummy_repo_with_src/',
@@ -136,14 +130,6 @@ RSpec.describe RMT::Mirror do
     end
 
     context 'with auth_token', vcr: { cassette_name: 'mirroring_with_auth_token' } do
-      let(:rmt_mirror) do
-        described_class.new(
-          mirroring_base_dir: @tmp_dir,
-          logger: logger,
-          mirror_src: false
-        )
-      end
-
       let(:mirror_params) do
         {
           repository_url: 'http://localhost/dummy_repo/',
@@ -171,14 +157,6 @@ RSpec.describe RMT::Mirror do
     end
 
     context 'product with license and signatures', vcr: { cassette_name: 'mirroring_product' } do
-      let(:rmt_mirror) do
-        described_class.new(
-          mirroring_base_dir: @tmp_dir,
-          logger: logger,
-          mirror_src: false
-        )
-      end
-
       let(:mirror_params) do
         {
           repository_url: 'http://localhost/dummy_product/product/',
@@ -217,15 +195,6 @@ RSpec.describe RMT::Mirror do
     end
 
     context 'when an error occurs' do
-      let(:mirroring_dir) { @tmp_dir }
-      let(:rmt_mirror) do
-        described_class.new(
-          mirroring_base_dir: mirroring_dir,
-          logger: logger,
-          mirror_src: false
-        )
-      end
-
       let(:mirror_params) do
         {
           repository_url: 'http://localhost/dummy_product/product/',
@@ -260,14 +229,6 @@ RSpec.describe RMT::Mirror do
       end
 
       context "when there's no licenses to download", vcr: { cassette_name: 'mirroring' } do
-        let(:rmt_mirror) do
-          described_class.new(
-            mirroring_base_dir: @tmp_dir,
-            logger: logger,
-            mirror_src: false
-          )
-        end
-
         let(:mirror_params) do
           {
             repository_url: 'http://localhost/dummy_repo/',
@@ -294,7 +255,7 @@ RSpec.describe RMT::Mirror do
       context "when can't download some of the license files" do
         before do
           allow_any_instance_of(RMT::Downloader).to receive(:download_multi).and_wrap_original do |klass, *args|
-            raise RMT::Downloader::Exception.new if args[0][0] =~ /license/
+            raise RMT::Downloader::Exception.new('Error') if args[0][0] =~ /license/
             klass.call(*args)
           end
         end
