@@ -2,10 +2,6 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   desc 'all', _('Mirror all enabled repositories')
   def all
     RMT::Lockfile.lock('mirror') do
-      logger = RMT::Logger.new(STDOUT)
-      mirror = RMT::Mirror.new(logger: logger, mirror_src: RMT::Config.mirror_src_files?)
-      errors = []
-
       begin
         mirror.mirror_suma_product_tree(repository_url: 'https://scc.suse.com/suma/')
       rescue RMT::Mirror::Exception => e
@@ -19,13 +15,12 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       # repositories have been left unmirrored.
       mirrored_repo_ids = []
       until (repos = Repository.only_mirroring_enabled.where.not(id: mirrored_repo_ids)).empty?
-        repo_ids, repo_errors = mirror_repos!(mirror, repos)
+        repo_ids = mirror_repos!(repos)
 
         mirrored_repo_ids.concat(repo_ids)
-        errors.concat(repo_errors)
       end
 
-      handle_errors!(errors)
+      handle_errors!
     end
   end
 
@@ -34,28 +29,21 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   desc 'repository IDS', _('Mirror enabled repositories with given repository IDs')
   def repository(*ids)
     RMT::Lockfile.lock('mirror') do
-      logger = RMT::Logger.new(STDOUT)
-      mirror = RMT::Mirror.new(logger: logger, mirror_src: RMT::Config.mirror_src_files?)
-
       ids = clean_target_input(ids)
       raise RMT::CLI::Error.new(_('No repository IDs supplied')) if ids.empty?
 
-      _, repo_errors = mirror_repos!(mirror, ids)
-      handle_errors!(repo_errors)
+      mirror_repos!(ids)
+      handle_errors!
     end
   end
 
   desc 'product IDS', _('Mirror enabled repositories for a product with given product IDs')
   def product(*targets)
     RMT::Lockfile.lock('mirror') do
-      logger = RMT::Logger.new(STDOUT)
-      mirror = RMT::Mirror.new(logger: logger, mirror_src: RMT::Config.mirror_src_files?)
-
       targets = clean_target_input(targets)
       raise RMT::CLI::Error.new(_('No product IDs supplied')) if targets.empty?
 
       repos = []
-      errors = []
       targets.each do |target|
         products = Product.get_by_target!(target)
         errors << _('Product for target %{target} not found') % { target: target } if products.empty?
@@ -68,23 +56,31 @@ class RMT::CLI::Mirror < RMT::CLI::Base
         errors << _('Product with ID %{target} not found') % { target: target }
       end
 
-      _, repo_errors = mirror_repos!(mirror, repos)
-      handle_errors!(errors.concat(repo_errors))
+      mirror_repos!(repos)
+      handle_errors!
     end
   end
 
   protected
 
-  def mirror_repos!(mirror, targets)
+  def logger
+    @logger ||= RMT::Logger.new(STDOUT)
+  end
+
+  def mirror
+    @mirror ||= RMT::Mirror.new(logger: logger, mirror_src: RMT::Config.mirror_src_files?)
+  end
+
+  def errors
+    @errors ||= []
+  end
+
+  def mirror_repos!(targets)
     mirrored_repo_ids = []
-    errors = []
 
     targets.each do |target|
       repo, repo_error = find_repo_by_target(target)
-      if repo_error
-        errors << repo_error
-        next
-      end
+      next (errors << repo_error) if repo_error
 
       mirror.mirror(
         repository_url: repo.external_url,
@@ -101,7 +97,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       mirrored_repo_ids << repo.id if repo
     end
 
-    [mirrored_repo_ids, errors]
+    mirrored_repo_ids
   end
 
   def find_repo_by_target(target)
@@ -119,7 +115,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
     [repo, error]
   end
 
-  def handle_errors!(errors)
+  def handle_errors!
     return if errors.empty?
 
     raise RMT::CLI::Error.new(
