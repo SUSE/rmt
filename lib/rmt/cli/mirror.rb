@@ -40,16 +40,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       ids = clean_target_input(ids)
       raise RMT::CLI::Error.new(_('No repository IDs supplied')) if ids.empty?
 
-      repos = []
-      ids.each do |id|
-        repo = Repository.find_by!(scc_id: id)
-        raise RMT::CLI::Error.new(_('Mirroring of repository with ID %{repo_id} is not enabled') % { repo_id: id }) unless repo.mirroring_enabled
-        repos << repo
-      rescue ActiveRecord::RecordNotFound
-        raise RMT::CLI::Error.new(_('Repository with ID %{repo_id} not found') % { repo_id: id })
-      end
-
-      _, repo_errors = mirror_repos!(mirror, repos)
+      _, repo_errors = mirror_repos!(mirror, ids)
       handle_errors!(repo_errors)
     end
   end
@@ -64,30 +55,37 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       raise RMT::CLI::Error.new(_('No product IDs supplied')) if targets.empty?
 
       repos = []
+      errors = []
       targets.each do |target|
         products = Product.get_by_target!(target)
-        raise RMT::CLI::Error.new(_('Product for target %{target} not found') % { target: target }) if products.empty?
+        errors << _('Product for target %{target} not found') % { target: target } if products.empty?
         products.each do |product|
           product_repos = product.repositories.only_mirroring_enabled
-          raise RMT::CLI::Error.new(_('Product %{target} has no repositories enabled') % { target: target }) if product_repos.empty?
+          errors << _('Product %{target} has no repositories enabled') % { target: target } if product_repos.empty?
           repos += product_repos.to_a
         end
       rescue ActiveRecord::RecordNotFound
-        raise RMT::CLI::Error.new(_('Product with ID %{target} not found') % { target: target })
+        errors << _('Product with ID %{target} not found') % { target: target }
       end
 
       _, repo_errors = mirror_repos!(mirror, repos)
-      handle_errors!(repo_errors)
+      handle_errors!(errors.concat(repo_errors))
     end
   end
 
   protected
 
-  def mirror_repos!(mirror, repos)
+  def mirror_repos!(mirror, targets)
     mirrored_repo_ids = []
     errors = []
 
-    repos.each do |repo|
+    targets.each do |target|
+      repo, repo_error = find_repo_by_target(target)
+      if repo_error
+        errors << repo_error
+        next
+      end
+
       mirror.mirror(
         repository_url: repo.external_url,
         local_path: Repository.make_local_path(repo.external_url),
@@ -100,10 +98,25 @@ class RMT::CLI::Mirror < RMT::CLI::Base
         repo_id: repo.id, repo_name: repo.name, error_message: e.message
       }
     ensure
-      mirrored_repo_ids << repo.id
+      mirrored_repo_ids << repo.id if repo
     end
 
     [mirrored_repo_ids, errors]
+  end
+
+  def find_repo_by_target(target)
+    repo = target.is_a?(Repository) ? target : Repository.find_by(scc_id: target)
+
+    error =
+      if repo.nil?
+        _('Repository with ID %{repo_id} not found') % { repo_id: target }
+      elsif repo.mirroring_enabled
+        nil
+      else
+        _('Mirroring of repository with ID %{repo_id} is not enabled') % { repo_id: repo.scc_id }
+      end
+
+    [repo, error]
   end
 
   def handle_errors!(errors)

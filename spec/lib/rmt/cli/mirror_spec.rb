@@ -224,9 +224,15 @@ RSpec.describe RMT::CLI::Mirror do
       let(:argv) { ['repository', repository.scc_id] }
 
       it 'raises an error' do
-        expect { command }.to raise_error(SystemExit).and \
-          output("Mirroring of repository with ID #{repository.scc_id} is not enabled\n").to_stderr.and \
-            output('').to_stdout
+        expected_message = <<~MSG
+          The following errors ocurred while mirroring:
+          Mirroring of repository with ID #{repository.scc_id} is not enabled
+        MSG
+
+        expect { command }
+          .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+          .and output(expected_message).to_stderr
+          .and output('').to_stdout
       end
     end
 
@@ -244,9 +250,15 @@ RSpec.describe RMT::CLI::Mirror do
       let(:argv) { ['repository', -42] }
 
       it 'raises an error' do
-        expect { command }.to raise_error(SystemExit).and \
-          output("Repository with ID -42 not found\n").to_stderr.and \
-            output('').to_stdout
+        expected_message = <<~MSG
+          The following errors ocurred while mirroring:
+          Repository with ID -42 not found
+        MSG
+
+        expect { command }
+          .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+          .and output(expected_message)
+          .to_stderr.and output('').to_stdout
       end
     end
   end
@@ -319,9 +331,15 @@ RSpec.describe RMT::CLI::Mirror do
       let(:argv) { ['product', product.id] }
 
       it 'raises an error' do
-        expect { command }.to raise_error(SystemExit).and \
-          output("Product #{product.id} has no repositories enabled\n").to_stderr.and \
-            output('').to_stdout
+        expected_message = <<~MSG
+          The following errors ocurred while mirroring:
+          Product #{product.id} has no repositories enabled
+        MSG
+
+        expect { command }
+          .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+          .and output(expected_message)
+          .to_stderr.and output('').to_stdout
       end
     end
 
@@ -339,9 +357,15 @@ RSpec.describe RMT::CLI::Mirror do
       let(:argv) { ['product', 0] }
 
       it 'raises an error' do
-        expect { command }.to raise_error(SystemExit).and \
-          output("Product with ID 0 not found\n").to_stderr.and \
-            output('').to_stdout
+        expected_message = <<~MSG
+          The following errors ocurred while mirroring:
+          Product with ID 0 not found
+        MSG
+
+        expect { command }
+          .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+          .and output(expected_message)
+          .to_stderr.and output('').to_stdout
       end
     end
 
@@ -350,9 +374,15 @@ RSpec.describe RMT::CLI::Mirror do
       let(:argv) { ['product', target] }
 
       it 'raises an error' do
-        expect { command }.to raise_error(SystemExit).and \
-          output("Product for target #{target} not found\n").to_stderr.and \
-            output('').to_stdout
+        expected_message = <<~MSG
+          The following errors ocurred while mirroring:
+          Product for target #{target} not found
+        MSG
+
+        expect { command }
+          .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+          .and output(expected_message)
+          .to_stderr.and output('').to_stdout
       end
     end
   end
