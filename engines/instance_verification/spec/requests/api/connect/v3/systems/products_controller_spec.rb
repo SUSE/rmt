@@ -67,7 +67,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
       end
 
-      context 'when verification provider raises an unhandled exception' do
+      context 'when verification provider raises an instance verification exception' do
         before do
           expect(InstanceVerification::Providers::Example).to receive(:new)
             .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
