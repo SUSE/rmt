@@ -13,7 +13,10 @@ RSpec.describe RMT::CLI::Mirror do
     end
 
     context 'suma product tree mirror with exception' do
-      let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
+      before do
+        create :repository, :with_products, mirroring_enabled: true
+      end
+
       let(:error_message) { 'mirroring SUMA failed' }
 
       it 'handles the exception and raises an error after mirroring all repos' do
@@ -23,36 +26,15 @@ RSpec.describe RMT::CLI::Mirror do
         expect_any_instance_of(RMT::Mirror).to receive(:mirror)
 
         expected_message = <<~MSG
+          \e[33mMirroring completed with errors.\e[0m
           The following errors ocurred while mirroring:
-          Mirroring SUMA product tree failed: #{error_message}
+          \e[31mMirroring SUMA product tree failed: #{error_message}.\e[0m
         MSG
 
         expect { command }
           .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
           .and output(expected_message).to_stderr
           .and output('').to_stdout
-      end
-
-      context 'with repository exceptions during mirroring' do
-        it 'handles the exception and raises an error after mirroring all repos' do
-          expect_any_instance_of(RMT::Mirror)
-            .to receive(:mirror_suma_product_tree)
-            .and_raise(RMT::Mirror::Exception, error_message)
-          expect_any_instance_of(RMT::Mirror)
-            .to receive(:mirror).at_least(:once)
-            .and_raise(RMT::Mirror::Exception, error_message)
-
-          expected_message = <<~MSG
-            The following errors ocurred while mirroring:
-            Mirroring SUMA product tree failed: #{error_message}
-            Repository '#{repository.name}' (#{repository.id}): #{error_message}
-          MSG
-
-          expect { command }
-            .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
-            .and output(expected_message).to_stderr
-            .and output('').to_stdout
-        end
       end
     end
 
@@ -80,7 +62,9 @@ RSpec.describe RMT::CLI::Mirror do
         expect_any_instance_of(RMT::Mirror).to receive(:mirror)
 
         Timecop.freeze(Time.utc(2018)) do
-          expect { command }.to change { repository.reload.last_mirrored_at }.to(Time.now.utc)
+          expect { command }
+            .to change { repository.reload.last_mirrored_at }.to(Time.now.utc)
+            .and output(/\e\[32mMirroring complete.\e\[0m/).to_stdout
         end
       end
 
@@ -97,8 +81,9 @@ RSpec.describe RMT::CLI::Mirror do
           expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
 
           expected_message = <<~MSG
+            \e[33mMirroring completed with errors.\e[0m
             The following errors ocurred while mirroring:
-            Repository '#{repository.name}' (#{repository.id}): #{error_message}
+            \e[31mRepository '#{repository.name}' (#{repository.id}): #{error_message}.\e[0m
           MSG
 
           expect { command }
@@ -133,7 +118,7 @@ RSpec.describe RMT::CLI::Mirror do
           auth_token: anything
         )
 
-        command
+        expect { command }.to output(/\e\[32mMirroring complete.\e\[0m/).to_stdout
       end
     end
 
@@ -164,8 +149,9 @@ RSpec.describe RMT::CLI::Mirror do
         )
 
         expected_message = <<~MSG
+          \e[33mMirroring completed with errors.\e[0m
           The following errors ocurred while mirroring:
-          Repository '#{repository.name}' (#{repository.id}): #{error_message}
+          \e[31mRepository '#{repository.name}' (#{repository.id}): #{error_message}.\e[0m
         MSG
 
         expect { command }
@@ -193,7 +179,7 @@ RSpec.describe RMT::CLI::Mirror do
           auth_token: anything
         )
 
-        command
+        expect { command }.to output(/\e\[32mMirroring complete.\e\[0m/).to_stdout
       end
     end
 
@@ -208,8 +194,9 @@ RSpec.describe RMT::CLI::Mirror do
           .and_raise(RMT::Mirror::Exception, error_message)
 
         expected_message = <<~MSG
+          \e[33mMirroring completed with errors.\e[0m
           The following errors ocurred while mirroring:
-          Repository '#{repository.name}' (#{repository.id}): #{error_message}
+          \e[31mRepository '#{repository.name}' (#{repository.id}): #{error_message}.\e[0m
         MSG
 
         expect { command }
@@ -225,8 +212,9 @@ RSpec.describe RMT::CLI::Mirror do
 
       it 'raises an error' do
         expected_message = <<~MSG
+          \e[33mMirroring completed with errors.\e[0m
           The following errors ocurred while mirroring:
-          Mirroring of repository with ID #{repository.scc_id} is not enabled
+          \e[31mMirroring of repository with ID #{repository.scc_id} is not enabled.\e[0m
         MSG
 
         expect { command }
@@ -240,9 +228,10 @@ RSpec.describe RMT::CLI::Mirror do
       let(:argv) { ['repository'] }
 
       it 'raises an error' do
-        expect { command }.to raise_error(SystemExit).and \
-          output("No repository IDs supplied\n").to_stderr.and \
-            output('').to_stdout
+        expect { command }
+          .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+          .and output("No repository IDs supplied\n")
+          .to_stderr.and output('').to_stdout
       end
     end
 
@@ -251,14 +240,15 @@ RSpec.describe RMT::CLI::Mirror do
 
       it 'raises an error' do
         expected_message = <<~MSG
+          \e[33mMirroring completed with errors.\e[0m
           The following errors ocurred while mirroring:
-          Repository with ID -42 not found
+          \e[31mRepository with ID -42 not found.\e[0m
         MSG
 
         expect { command }
           .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
-          .and output(expected_message)
-          .to_stderr.and output('').to_stdout
+          .and output(expected_message).to_stderr
+          .and output('').to_stdout
       end
     end
   end
@@ -282,7 +272,7 @@ RSpec.describe RMT::CLI::Mirror do
           )
         end
 
-        command
+        expect { command }.to output(/\e\[32mMirroring complete.\e\[0m/).to_stdout
       end
     end
 
@@ -300,7 +290,7 @@ RSpec.describe RMT::CLI::Mirror do
           )
         end
 
-        command
+        expect { command }.to output(/\e\[32mMirroring complete.\e\[0m/).to_stdout
       end
     end
 
@@ -315,8 +305,9 @@ RSpec.describe RMT::CLI::Mirror do
           .and_raise(RMT::Mirror::Exception, error_message)
 
         expected_message = <<~MSG
+          \e[33mMirroring completed with errors.\e[0m
           The following errors ocurred while mirroring:
-          #{product.repositories.map { |r| "Repository '#{r.name}' (#{r.id}): #{error_message}" }.join("\n")}
+          \e[31m#{product.repositories.map { |r| "Repository '#{r.name}' (#{r.id}): #{error_message}." }.join("\n")}\e[0m
         MSG
 
         expect { command }
@@ -332,8 +323,9 @@ RSpec.describe RMT::CLI::Mirror do
 
       it 'raises an error' do
         expected_message = <<~MSG
+          \e[33mMirroring completed with errors.\e[0m
           The following errors ocurred while mirroring:
-          Product #{product.id} has no repositories enabled
+          \e[31mProduct #{product.id} has no repositories enabled.\e[0m
         MSG
 
         expect { command }
@@ -347,9 +339,10 @@ RSpec.describe RMT::CLI::Mirror do
       let(:argv) { ['product'] }
 
       it 'raises an error' do
-        expect { command }.to raise_error(SystemExit).and \
-          output("No product IDs supplied\n").to_stderr.and \
-            output('').to_stdout
+        expect { command }
+          .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+          .and output("No product IDs supplied\n")
+          .to_stderr.and output('').to_stdout
       end
     end
 
@@ -358,8 +351,9 @@ RSpec.describe RMT::CLI::Mirror do
 
       it 'raises an error' do
         expected_message = <<~MSG
+          \e[33mMirroring completed with errors.\e[0m
           The following errors ocurred while mirroring:
-          Product with ID 0 not found
+          \e[31mProduct with ID 0 not found.\e[0m
         MSG
 
         expect { command }
@@ -375,8 +369,9 @@ RSpec.describe RMT::CLI::Mirror do
 
       it 'raises an error' do
         expected_message = <<~MSG
+          \e[33mMirroring completed with errors.\e[0m
           The following errors ocurred while mirroring:
-          Product for target #{target} not found
+          \e[31mProduct for target #{target} not found.\e[0m
         MSG
 
         expect { command }

@@ -20,7 +20,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
         mirrored_repo_ids.concat(repo_ids)
       end
 
-      handle_errors!
+      finish_execution
     end
   end
 
@@ -33,7 +33,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       raise RMT::CLI::Error.new(_('No repository IDs supplied')) if ids.empty?
 
       mirror_repos!(ids)
-      handle_errors!
+      finish_execution
     end
   end
 
@@ -57,14 +57,14 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       end
 
       mirror_repos!(repos)
-      handle_errors!
+      finish_execution
     end
   end
 
   protected
 
   def logger
-    @logger ||= RMT::Logger.new(STDOUT)
+    @logger ||= RMT::Logger.new($stdout)
   end
 
   def mirror
@@ -115,13 +115,17 @@ class RMT::CLI::Mirror < RMT::CLI::Base
     [repo, error]
   end
 
-  def handle_errors!
-    return if errors.empty?
-
-    raise RMT::CLI::Error.new(
-      _('The following errors ocurred while mirroring:%{errors_list}') % {
-        errors_list: "\n" + errors.join("\n")
-      }
-    )
+  def finish_execution
+    if errors.empty?
+      logger.info("\e[32m" + _('Mirroring complete.') + "\e[0m")
+    else
+      errors_list = errors.map { |e| e.end_with?('.') ? e : e + '.' }.join("\n")
+      raise RMT::CLI::Error.new(
+        "\e[33m" + _('Mirroring completed with errors.') + "\e[0m\n" +
+        _('The following errors ocurred while mirroring:%{errors_list}') % {
+          errors_list: "\n\e[31m" + errors_list + "\e[0m"
+        }
+      )
+    end
   end
 end
