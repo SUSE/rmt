@@ -12,12 +12,13 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
       # The set of repositories to be mirrored can change while the command is
       # mirroring. Hence, the iteration uses a until loop to ensure no
-      # repositories have been left unmirrored.
+      # repositories have been left unmirrored. The ActiveRecord::Relation is
+      # loaded before being used to avoid querying twice in the block, which
+      # could lead to different Repositories sets where it's used.
       mirrored_repo_ids = []
-      until (repos = Repository.only_mirroring_enabled.where.not(id: mirrored_repo_ids)).empty?
-        repo_ids = mirror_repos!(repos)
-
-        mirrored_repo_ids.concat(repo_ids)
+      until (repos = Repository.only_mirroring_enabled.where.not(id: mirrored_repo_ids).load).empty?
+        mirror_repos!(repos)
+        mirrored_repo_ids.concat(repos.pluck(:id))
       end
 
       finish_execution
@@ -32,7 +33,14 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       ids = clean_target_input(ids)
       raise RMT::CLI::Error.new(_('No repository IDs supplied')) if ids.empty?
 
-      mirror_repos!(ids)
+      repos = ids.map do |id|
+        repo = Repository.find_by(scc_id: id)
+        errors << _('Repository with ID %{repo_id} not found') % { repo_id: id } if repo.nil?
+
+        repo
+      end
+
+      mirror_repos!(repos)
       finish_execution
     end
   end
@@ -75,12 +83,12 @@ class RMT::CLI::Mirror < RMT::CLI::Base
     @errors ||= []
   end
 
-  def mirror_repos!(targets)
-    mirrored_repo_ids = []
-
-    targets.each do |target|
-      repo, repo_error = find_repo_by_target(target)
-      next (errors << repo_error) if repo_error
+  def mirror_repos!(repos)
+    repos.compact.each do |repo|
+      unless repo.mirroring_enabled
+        errors << _('Mirroring of repository with ID %{repo_id} is not enabled') % { repo_id: repo.scc_id }
+        next
+      end
 
       mirror.mirror(
         repository_url: repo.external_url,
@@ -93,26 +101,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       errors << _("Repository '%{repo_name}' (%{repo_id}): %{error_message}") % {
         repo_id: repo.id, repo_name: repo.name, error_message: e.message
       }
-    ensure
-      mirrored_repo_ids << repo.id if repo
     end
-
-    mirrored_repo_ids
-  end
-
-  def find_repo_by_target(target)
-    repo = target.is_a?(Repository) ? target : Repository.find_by(scc_id: target)
-
-    error =
-      if repo.nil?
-        _('Repository with ID %{repo_id} not found') % { repo_id: target }
-      elsif repo.mirroring_enabled
-        nil
-      else
-        _('Mirroring of repository with ID %{repo_id} is not enabled') % { repo_id: repo.scc_id }
-      end
-
-    [repo, error]
   end
 
   def finish_execution
