@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe ServicesController do
   describe '#show' do
-    let(:service) { FactoryGirl.create(:service, :with_repositories) }
+    let(:service) { FactoryBot.create(:service, :with_repositories) }
 
     describe 'HTTP response' do
       subject { response }
@@ -46,20 +46,20 @@ RSpec.describe ServicesController do
     subject { response }
 
     let(:product1) do
-      product = FactoryGirl.create(:product, :with_mirrored_repositories)
+      product = FactoryBot.create(:product, :with_mirrored_repositories)
       product.repositories.where(enabled: false).update(mirroring_enabled: false)
       product
     end
     let(:product2) do
-      product = FactoryGirl.create(:product, :with_mirrored_repositories)
+      product = FactoryBot.create(:product, :with_mirrored_repositories)
       product.repositories.where(enabled: false).update(mirroring_enabled: false)
       product
     end
     let(:system) do
-      system = FactoryGirl.create(:system)
+      system = FactoryBot.create(:system)
       system.activations << [
-        FactoryGirl.create(:activation, system: system, service: product1.service),
-        FactoryGirl.create(:activation, system: system, service: product2.service)
+        FactoryBot.create(:activation, system: system, service: product1.service),
+        FactoryBot.create(:activation, system: system, service: product2.service)
       ]
       system
     end
