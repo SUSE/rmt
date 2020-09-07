@@ -120,7 +120,7 @@ RSpec.describe RMT::CLI::Systems do
     describe 'success' do
       let(:system) { create :system, :with_activated_product, hostname: 'host1', last_seen_at: Time.now.utc - 3, scc_system_id: '123123' }
       let(:argv) { ['remove', system.login] }
-      let(:expected_output) { "Successfully removed system with login #{system.login}\n" }
+      let(:expected_output) { "Successfully removed system with login #{system.login}.\n" }
 
       it 'removes the system with all its products, repositories, activations and services' do
         expect { described_class.start(argv) }

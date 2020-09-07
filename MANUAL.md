@@ -26,6 +26,21 @@ You can install and run this wizard like this:
     RMT comes with a preconfigured systemd timer to automatically get the latest product and repository data from the SUSE Customer Center over night.
     This command triggers the same synchronization instantly.
 
+  * `rmt-cli systems list`:
+    Lists systems registered against RMT.
+
+    Use the `--all` flag to list all systems.
+
+  * `rmt-cli systems scc-sync`:
+    Forwards local RMT systems to SCC.
+
+  * `rmt-cli systems remove TARGET`:
+    Removes a system and its activations from RMT.
+
+    Example:
+
+    `rmt-cli systems remove SCC_e740f34145b84523a184ace764d0d597`
+
   * `rmt-cli products list [--all] [--csv]`:
     Lists the products that are enabled for mirroring.
 
