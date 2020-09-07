@@ -4,10 +4,10 @@ require 'rails_helper'
 
 RSpec.describe ServicesController, type: :request do
   describe '#show' do
-    let(:system) { FactoryGirl.create(:system) }
-    let(:service) { FactoryGirl.create(:service, :with_repositories) }
+    let(:system) { FactoryBot.create(:system) }
+    let(:service) { FactoryBot.create(:service, :with_repositories) }
     let(:activated_service) do
-      service = FactoryGirl.create(:service, :with_repositories)
+      service = FactoryBot.create(:service, :with_repositories)
       system.services << service
       system.save!
       service

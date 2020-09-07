@@ -50,7 +50,7 @@ shared_examples 'product must have mirrored repositories' do
   subject { response }
 
   context 'but the product has no repos' do
-    let(:product_without_repos) { FactoryGirl.create(:product) }
+    let(:product_without_repos) { FactoryBot.create(:product) }
     let(:payload) do
       {
         identifier: product_without_repos.identifier,
@@ -71,7 +71,7 @@ shared_examples 'product must have mirrored repositories' do
   context "but the product's mandatory repos aren't mirrored" do
     subject { response }
 
-    let(:product) { FactoryGirl.create(:product, :with_not_mirrored_repositories) }
+    let(:product) { FactoryBot.create(:product, :with_not_mirrored_repositories) }
     let(:error_json) do
       {
         type: 'error',

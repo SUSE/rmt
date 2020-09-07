@@ -4,7 +4,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
   include_context 'auth header', :system, :login, :password
   include_context 'version header', 3
 
-  let(:system) { FactoryGirl.create(:system, :with_hw_info, hostname: 'initial') }
+  let(:system) { FactoryBot.create(:system, :with_hw_info, hostname: 'initial') }
   let(:url) { '/connect/systems' }
   let(:headers) { auth_header.merge(version_header) }
   let(:hwinfo) do
@@ -52,7 +52,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
         end
 
         context 'with new hardware info' do
-          let(:system) { FactoryGirl.create(:system, hostname: 'initial') }
+          let(:system) { FactoryBot.create(:system, hostname: 'initial') }
 
           it do
             update_action

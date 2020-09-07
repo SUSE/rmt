@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe System, type: :model do
-  let(:system) { FactoryGirl.build(:system) }
+  let(:system) { FactoryBot.build(:system) }
 
   it 'triggers after_commit callback' do
     expect(system).to receive(:share_registration)
