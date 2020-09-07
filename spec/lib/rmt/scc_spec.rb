@@ -79,9 +79,9 @@ describe RMT::SCC do
       end
     end
 
-    it 'enables installer-updates repos for mirroring by default in the DB' do
+    it 'enables installer-updates repos by default in the DB' do
       db_repository = Repository.find_by(installer_updates: true)
-      expect(db_repository.mirroring_enabled).to be(true)
+      expect(db_repository.enabled).to be(true)
     end
   end
 
