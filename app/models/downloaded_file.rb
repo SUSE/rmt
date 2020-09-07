@@ -1,18 +1,15 @@
 class DownloadedFile < ApplicationRecord
+  class << self
+    def track_file(checksum_type:, checksum:, local_path:, size:)
+      find_or_initialize_by(local_path: local_path).tap do |record|
+        record.checksum_type = checksum_type
+        record.checksum = checksum
+        record.file_size = size
 
-  def self.add_file(checksum_type, checksum, file_size, local_path)
-    return unless local_path.match?(/\.(rpm|drpm)$/)
-
-    DownloadedFile.create({ checksum_type: checksum_type,
-                            checksum: checksum,
-                            local_path: local_path,
-                            file_size: file_size })
-  rescue ActiveRecord::RecordNotUnique
-    nil
+        record.save if record.changed?
+      end
+    end
   end
 
-  def self.get_local_path_by_checksum(checksum_type, checksum)
-    DownloadedFile.find_by({ checksum_type: checksum_type, checksum: checksum })
-  end
-
+  alias_attribute :size, :file_size
 end

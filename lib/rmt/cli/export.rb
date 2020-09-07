@@ -11,7 +11,7 @@ class RMT::CLI::Export < RMT::CLI::Base
     needs_path(path, writable: true)
     filename = File.join(path, 'repos.json')
 
-    data = Repository.only_mirrored.inject([]) { |data, repo| data << { url: repo.external_url, auth_token: repo.auth_token.to_s } }
+    data = Repository.only_mirroring_enabled.inject([]) { |data, repo| data << { url: repo.external_url, auth_token: repo.auth_token.to_s } }
     File.write(filename, data.to_json)
     puts _('Settings saved at %{file}.') % { file: filename }
   end

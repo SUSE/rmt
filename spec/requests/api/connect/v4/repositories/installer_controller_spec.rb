@@ -40,7 +40,7 @@ RSpec.describe Api::Connect::V4::Repositories::InstallerController do
     end
 
     context 'with known product with not mirrored repositories' do
-      let(:product) { FactoryGirl.create(:product, :with_not_mirrored_repositories) }
+      let(:product) { FactoryBot.create(:product, :with_not_mirrored_repositories) }
       let(:params) { { identifier: product.identifier, version: product.version, arch: product.arch } }
 
       before { get url, params: params }
@@ -50,7 +50,7 @@ RSpec.describe Api::Connect::V4::Repositories::InstallerController do
     end
 
     context 'with known product and empty string as release_type' do
-      let(:product) { FactoryGirl.create(:product, :with_not_mirrored_repositories) }
+      let(:product) { FactoryBot.create(:product, :with_not_mirrored_repositories) }
       let(:params) { { identifier: product.identifier, version: product.version, arch: product.arch, release_type: '' } }
 
       before { get url, params: params }
@@ -60,7 +60,7 @@ RSpec.describe Api::Connect::V4::Repositories::InstallerController do
     end
 
     describe 'response with "-" in product version' do
-      let(:product) { FactoryGirl.create(:product, :with_not_mirrored_repositories, version: '24.0') }
+      let(:product) { FactoryBot.create(:product, :with_not_mirrored_repositories, version: '24.0') }
       let(:params) { { identifier: product.identifier, version: '24.0-0', arch: product.arch } }
 
       before { get url, params: params }
@@ -70,7 +70,7 @@ RSpec.describe Api::Connect::V4::Repositories::InstallerController do
     end
 
     context 'with known product with mirrored installer update repositories' do
-      let(:product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
+      let(:product) { FactoryBot.create(:product, :with_mirrored_repositories) }
       let(:params) { { identifier: product.identifier, version: product.version, arch: product.arch } }
       let(:serialized_response) do
         ActiveModel::Serializer::CollectionSerializer.new(

@@ -12,7 +12,7 @@ describe ServicesController do
       repo_items.map { |r| r.attr(:url) }
     end
 
-    let(:system) { FactoryGirl.create(:system, :with_activated_product) }
+    let(:system) { FactoryBot.create(:system, :with_activated_product) }
     let(:service) { system.products.first.service }
 
     context 'without X-Instance-Data header' do
@@ -56,18 +56,11 @@ describe ServicesController do
           get "/services/#{service.id}", headers: headers
         end
 
-        # allowed temporarily
-        it 'request responds with 200' do
-          expect(response).to have_http_status(200)
-        end
-
         it 'request fails with 403' do
-          skip('Disabled temporarily')
           expect(response).to have_http_status(403)
         end
 
         it 'reports an error' do
-          skip('Disabled temporarily')
           expect(response.body).to match(/Instance verification failed/)
         end
       end
@@ -78,18 +71,11 @@ describe ServicesController do
           get "/services/#{service.id}", headers: headers
         end
 
-        # allowed temporarily
-        it 'request responds with 200' do
-          expect(response).to have_http_status(200)
-        end
-
         it 'request fails with 403' do
-          skip('Disabled temporarily')
           expect(response).to have_http_status(403)
         end
 
         it 'reports an error' do
-          skip('Disabled temporarily')
           expect(response.body).to match(/Instance verification failed/)
         end
       end
@@ -100,18 +86,11 @@ describe ServicesController do
           get "/services/#{service.id}", headers: headers
         end
 
-        # allowed temporarily
-        it 'request responds with 200' do
-          expect(response).to have_http_status(200)
-        end
-
         it 'request fails with 403' do
-          skip('Disabled temporarily')
           expect(response).to have_http_status(403)
         end
 
         it 'reports an error' do
-          skip('Disabled temporarily')
           expect(response.body).to match(/Instance verification failed/)
         end
       end

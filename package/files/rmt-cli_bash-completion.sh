@@ -73,7 +73,7 @@ _rmt-cli_repos()
 	local current_word options flags depth
 
 	current_word=${COMP_WORDS[COMP_CWORD]}
-	options="list enable disable custom help"
+	options="list enable disable custom clean help"
 	flags="--all --csv"
 	depth=$1
 

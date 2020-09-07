@@ -78,6 +78,11 @@ describe RMT::SCC do
         expect(Subscription.statuses[db_subscription.status]).to eq(subscription[:status])
       end
     end
+
+    it 'enables installer-updates repos for mirroring by default in the DB' do
+      db_repository = Repository.find_by(installer_updates: true)
+      expect(db_repository.mirroring_enabled).to be(true)
+    end
   end
 
   before do
@@ -213,9 +218,9 @@ describe RMT::SCC do
 
   describe '#remove_suse_repos_without_tokens' do
     let(:api_double) { double }
-    let!(:suse_repo_with_token) { FactoryGirl.create(:repository, :with_products, auth_token: 'auth_token') }
+    let!(:suse_repo_with_token) { FactoryBot.create(:repository, :with_products, auth_token: 'auth_token') }
     let!(:suse_repo_without_token) do
-      FactoryGirl.create(
+      FactoryBot.create(
         :repository,
         :with_products,
         auth_token: nil,
@@ -223,7 +228,7 @@ describe RMT::SCC do
       )
     end
     let!(:other_repo_without_token) do
-      FactoryGirl.create(
+      FactoryBot.create(
         :repository,
         :with_products,
         auth_token: nil,
@@ -371,9 +376,9 @@ describe RMT::SCC do
           described_class.new.sync_systems
         end
 
-        let(:system) { FactoryGirl.create(:system) }
+        let(:system) { FactoryBot.create(:system) }
         let(:scc_system_id) { 9000 }
-        let(:deregistered_system) { FactoryGirl.create(:deregistered_system) }
+        let(:deregistered_system) { FactoryBot.create(:deregistered_system) }
 
         it 'updates system.scc_registered_at field' do
           system.reload
@@ -394,7 +399,7 @@ describe RMT::SCC do
           described_class.new.sync_systems
         end
 
-        let(:system) { FactoryGirl.create(:system) }
+        let(:system) { FactoryBot.create(:system) }
 
         it "doesn't update system.scc_registered_at" do
           system.reload
