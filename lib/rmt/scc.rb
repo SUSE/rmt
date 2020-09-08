@@ -171,7 +171,7 @@ class RMT::SCC
   def create_service(item, product)
     product.create_service!
     item[:repositories].each do |repo_item|
-      repo_item[:mirroring_enabled] = true if repo_item[:installer_updates]
+      repo_item[:enabled] = true if repo_item[:installer_updates]
       repository_service.create_repository!(product, repo_item[:url], repo_item)
     end
   end
