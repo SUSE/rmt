@@ -47,4 +47,5 @@ class RMT::CLI::Systems < RMT::CLI::Base
   rescue ActiveRecord::RecordNotFound
     raise RMT::CLI::Error.new(_('System with login %{login} not found.') % { login: target })
   end
+  map 'rm' => :remove
 end
