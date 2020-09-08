@@ -5,7 +5,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
   include_context 'version header', 3
 
   describe '#activations' do
-    let(:system) { FactoryGirl.create(:system, :with_activated_product) }
+    let(:system) { FactoryBot.create(:system, :with_activated_product) }
     let(:headers) { auth_header.merge(version_header) }
 
     before { get '/connect/systems/activations', headers: headers }
@@ -18,7 +18,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
     end
 
     context 'with instance_data in hw_info' do
-      let(:system) { FactoryGirl.create(:system, :with_activated_product, :with_hw_info, instance_data: '<repoformat>plugin:susecloud</repoformat>') }
+      let(:system) { FactoryBot.create(:system, :with_activated_product, :with_hw_info, instance_data: '<repoformat>plugin:susecloud</repoformat>') }
 
       it 'has service URLs with HTTP scheme' do
         data = JSON.parse(response.body)

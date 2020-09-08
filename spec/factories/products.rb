@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :product do
     sequence(:name) { |n| "Product #{n}" }
     sequence(:identifier) { |n| "product-#{n}" }
@@ -94,7 +94,7 @@ FactoryGirl.define do
     trait :with_mirrored_repositories do
       after :create do |product, _evaluator|
         unless Service.find_by(product_id: product.id)
-          FactoryGirl.create(:service, :with_repositories, product: product, mirroring_enabled: true)
+          FactoryBot.create(:service, :with_repositories, product: product, mirroring_enabled: true)
         end
       end
     end
@@ -102,7 +102,7 @@ FactoryGirl.define do
     trait :with_disabled_mirrored_repositories do
       after :create do |product, _evaluator|
         unless Service.find_by(product_id: product.id)
-          FactoryGirl.create(:service, :with_disabled_repositories, product: product, mirroring_enabled: true)
+          FactoryBot.create(:service, :with_disabled_repositories, product: product, mirroring_enabled: true)
         end
       end
     end
@@ -110,7 +110,7 @@ FactoryGirl.define do
     trait :with_disabled_not_mirrored_repositories do
       after :create do |product, _evaluator|
         unless Service.find_by(product_id: product.id)
-          FactoryGirl.create(:service, :with_disabled_repositories, product: product, mirroring_enabled: false)
+          FactoryBot.create(:service, :with_disabled_repositories, product: product, mirroring_enabled: false)
         end
       end
     end
@@ -118,7 +118,7 @@ FactoryGirl.define do
     trait :with_not_mirrored_repositories do
       after :create do |product, _evaluator|
         unless Service.find_by(product_id: product.id)
-          FactoryGirl.create(:service, :with_repositories, product: product, mirroring_enabled: false)
+          FactoryBot.create(:service, :with_repositories, product: product, mirroring_enabled: false)
         end
       end
     end
@@ -138,7 +138,7 @@ FactoryGirl.define do
       after :create do |product, evaluator|
         if evaluator.system
           unless evaluator.system.activations.map(&:product).flatten.include?(product)
-            evaluator.system.activations << FactoryGirl.create(:activation, system: evaluator.system, service: product.service)
+            evaluator.system.activations << FactoryBot.create(:activation, system: evaluator.system, service: product.service)
           end
         else
           fail 'activated requires a system'

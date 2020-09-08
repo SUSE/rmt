@@ -18,9 +18,9 @@ require 'yaml'
 require 'rmt/config'
 require 'csv'
 require 'json'
-require 'initializers/disable_deprecation_warnings'
-require 'initializers/rmt_fast_gettext'
-require 'initializers/rmt_fast_gettext_cli_locale'
+require_relative '../config/initializers_cli/disable_deprecation_warnings'
+require_relative '../config/initializers_cli/rmt_fast_gettext'
+require_relative '../config/initializers_cli/rmt_fast_gettext_cli_locale'
 require 'rmt/cli/smt_importer'
 
 no_systems = false
