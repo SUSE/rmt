@@ -110,10 +110,10 @@ class RMT::CLI::Mirror < RMT::CLI::Base
     else
       errors_list = errors.map { |e| e.end_with?('.') ? e : e + '.' }.join("\n")
       raise RMT::CLI::Error.new(
-        "\e[33m" + _('Mirroring completed with errors.') + "\e[0m\n" +
-        _('The following errors ocurred while mirroring:%{errors_list}') % {
-          errors_list: "\n\e[31m" + errors_list + "\e[0m"
-        }
+        "\e[31m" +
+        _('The following errors occurred while mirroring:%{errors_list}') % {
+          errors_list: "\n" + errors_list
+        } + "\e[0m\n\e[33m" + _('Mirroring completed with errors.') + "\e[0m"
       )
     end
   end
