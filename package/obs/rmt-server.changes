@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Tue Sep  8 18:10:19 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
+
+- Version 2.5.18
+- Fixed exit code for `rmt-cli mirror` and its subcommands. Now it exits with 1
+  whenever an error occurrs during mirroring
+- Improved message logging for `rtm-cli mirror`. Instead of logging an error
+  when it occurs, the command summarize all errors at the end of execution. Now
+  log messages have colors to better identify failure/success.
+
+-------------------------------------------------------------------
 Mon Aug 31 14:04:20 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
 
 - Version 2.5.15
