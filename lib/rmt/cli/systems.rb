@@ -28,4 +28,21 @@ class RMT::CLI::Systems < RMT::CLI::Base
     RMT::SCC.new(options).sync_systems
   end
 
+  desc 'remove TARGET', _('Permanently removes system with all its subscriptions and products.')
+  long_desc <<~REMOVE
+    #{_('Permanently removes selected system by login with all its subscriptions and products by login.')}
+
+    #{_('Examples')}:
+
+    $ rmt-cli systems remove uniqueLogin
+  REMOVE
+  def remove(target)
+    target_system = System.find_by!(login: target)
+    target_system.destroy!
+    puts _('Successfully removed system with login %{login}') % { login: target }
+  rescue ActiveRecord::RecordNotDestroyed
+    raise RMT::CLI::Error.new(_('System with login %{login} cannot be removed.') % { login: target })
+  rescue ActiveRecord::RecordNotFound
+    raise RMT::CLI::Error.new(_('System with login %{login} not found.') % { login: target })
+  end
 end
