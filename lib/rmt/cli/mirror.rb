@@ -108,13 +108,10 @@ class RMT::CLI::Mirror < RMT::CLI::Base
     if errors.empty?
       logger.info("\e[32m" + _('Mirroring complete.') + "\e[0m")
     else
-      errors_list = errors.map { |e| e.end_with?('.') ? e : e + '.' }.join("\n")
-      raise RMT::CLI::Error.new(
-        "\e[31m" +
-        _('The following errors occurred while mirroring:%{errors_list}') % {
-          errors_list: "\n" + errors_list
-        } + "\e[0m\n\e[33m" + _('Mirroring completed with errors.') + "\e[0m"
-      )
+      logger.warn("\e[31m" + _('The following errors occurred while mirroring:') + "\e[0m")
+      errors.each { |e| logger.warn("\e[31m" + (e.end_with?('.') ? e : e + '.') + "\e[0m") }
+      logger.warn("\e[33m" + _('Mirroring completed with errors.') + "\e[0m")
+      raise RMT::CLI::Error.new('The command exited with errors.')
     end
   end
 end
