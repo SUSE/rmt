@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'rmt/cli/smt_importer'
 
-describe SMTImporter do
+describe RMT::CLI::SMTImporter do
   let(:data_dir) { File.join(Dir.pwd, 'spec/fixtures/files/csv') }
   let(:no_systems) { false }
   let(:importer) { described_class.new(data_dir, no_systems) }
@@ -281,7 +281,7 @@ describe SMTImporter do
 
     it 'shows the help output when invalid arguments supplied' do
       expect do
-        expect { importer.parse_cli_arguments ['--nope-nope'] }.to raise_exception SMTImporter::ImportException
+        expect { importer.parse_cli_arguments ['--nope-nope'] }.to raise_exception RMT::CLI::SMTImporter::ImportException
       end.to output(<<-OUTPUT.strip_heredoc).to_stdout
         Usage: rspec [options]
             -d, --data PATH                  Path to unpacked SMT data tarball
@@ -294,7 +294,7 @@ describe SMTImporter do
   describe '#check_products_exist' do
     it 'warns and exits if no product exists' do
       expect do
-        expect { importer.check_products_exist }.to raise_exception SMTImporter::ImportException
+        expect { importer.check_products_exist }.to raise_exception RMT::CLI::SMTImporter::ImportException
       end.to output(<<-OUTPUT.strip_heredoc).to_stderr
         RMT has not been synced to SCC yet. Please run 'rmt-cli sync' before
         importing data from SMT.

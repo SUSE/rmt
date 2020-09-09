@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe System, type: :model do
   subject { system }
 
-  let(:system) { FactoryGirl.create(:system, :with_activated_base_product) }
+  let(:system) { FactoryBot.create(:system, :with_activated_base_product) }
   let(:login) { described_class.generate_secure_login }
   let(:password) { described_class.generate_secure_password }
 

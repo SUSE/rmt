@@ -12,7 +12,7 @@ class ServicesController < ApplicationController
 
   def show
     service = Service.find(params[:id])
-    repos = service.repositories
+    repos = service.repositories.exclude_installer_updates
 
     builder = Builder::XmlMarkup.new
     service_xml = builder.repoindex(ttl: ZYPPER_SERVICE_TTL) do
