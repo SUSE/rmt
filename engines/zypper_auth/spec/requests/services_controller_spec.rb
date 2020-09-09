@@ -12,7 +12,7 @@ describe ServicesController do
       repo_items.map { |r| r.attr(:url) }
     end
 
-    let(:system) { FactoryGirl.create(:system, :with_activated_product) }
+    let(:system) { FactoryBot.create(:system, :with_activated_product) }
     let(:service) { system.products.first.service }
 
     context 'without X-Instance-Data header' do

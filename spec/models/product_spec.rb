@@ -79,13 +79,13 @@ RSpec.describe Product, type: :model do
   end
 
   describe '#extensions' do
-    let(:base_a) { FactoryGirl.create(:product) }
-    let(:base_b) { FactoryGirl.create(:product) }
+    let(:base_a) { FactoryBot.create(:product) }
+    let(:base_b) { FactoryBot.create(:product) }
 
-    let(:level_one_extension) { FactoryGirl.create(:product, :extension, base_products: [base_a, base_b]) }
+    let(:level_one_extension) { FactoryBot.create(:product, :extension, base_products: [base_a, base_b]) }
 
-    let!(:level_two_extension_a) { FactoryGirl.create(:product, :extension, base_products: [level_one_extension], root_product: base_a) }
-    let!(:level_two_extension_b) { FactoryGirl.create(:product, :extension, base_products: [level_one_extension], root_product: base_b) }
+    let!(:level_two_extension_a) { FactoryBot.create(:product, :extension, base_products: [level_one_extension], root_product: base_a) }
+    let!(:level_two_extension_b) { FactoryBot.create(:product, :extension, base_products: [level_one_extension], root_product: base_b) }
 
     it 'returns correct extensions for base A' do
       expect(level_one_extension.extensions.for_root_product(base_a)).to eq([level_two_extension_a])
@@ -97,19 +97,19 @@ RSpec.describe Product, type: :model do
   end
 
   describe '#mirrored_extensions' do
-    let(:base_a) { FactoryGirl.create(:product) }
-    let(:base_b) { FactoryGirl.create(:product) }
+    let(:base_a) { FactoryBot.create(:product) }
+    let(:base_b) { FactoryBot.create(:product) }
 
-    let(:level_one_extension) { FactoryGirl.create(:product, :extension, base_products: [base_a, base_b]) }
+    let(:level_one_extension) { FactoryBot.create(:product, :extension, base_products: [base_a, base_b]) }
 
-    let(:level_two_extension_a_not_mirrored) { FactoryGirl.create(:product, :extension, base_products: [level_one_extension], root_product: base_a) }
-    let(:level_two_extension_b_not_mirrored) { FactoryGirl.create(:product, :extension, base_products: [level_one_extension], root_product: base_b) }
+    let(:level_two_extension_a_not_mirrored) { FactoryBot.create(:product, :extension, base_products: [level_one_extension], root_product: base_a) }
+    let(:level_two_extension_b_not_mirrored) { FactoryBot.create(:product, :extension, base_products: [level_one_extension], root_product: base_b) }
 
     let(:level_two_extension_a_mirrored) do
-      FactoryGirl.create(:product, :extension, :with_mirrored_repositories, base_products: [level_one_extension], root_product: base_a)
+      FactoryBot.create(:product, :extension, :with_mirrored_repositories, base_products: [level_one_extension], root_product: base_a)
     end
     let(:level_two_extension_b_mirrored) do
-      FactoryGirl.create(:product, :extension, :with_mirrored_repositories, base_products: [level_one_extension], root_product: base_b)
+      FactoryBot.create(:product, :extension, :with_mirrored_repositories, base_products: [level_one_extension], root_product: base_b)
     end
 
     before do

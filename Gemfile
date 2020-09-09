@@ -5,17 +5,17 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'puma', '3.12.6'
+gem 'puma', '~> 4.3.5'
 gem 'mysql2', '~> 0.5.3'
 
 gem 'nokogiri', '~> 1.10.3'
 gem 'thor'
-gem 'activesupport', '~> 5.2.4'
-gem 'actionpack', '~> 5.2.4'
-gem 'actionview', '~> 5.2.4'
-gem 'activemodel', '~> 5.2.4'
-gem 'activerecord', '~> 5.2.4'
-gem 'railties', '~> 5.2.4'
+gem 'activesupport', '~> 6.0.3'
+gem 'actionpack', '~> 6.0.3'
+gem 'actionview', '~> 6.0.3'
+gem 'activemodel', '~> 6.0.3'
+gem 'activerecord', '~> 6.0.3'
+gem 'railties', '~> 6.0.3'
 gem 'repomd_parser', '~> 0.1.4'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -58,7 +58,7 @@ end
 group :test do
   gem 'rspec-command', '1.0.3'
   gem 'rspec-rails', '~> 4.0'
-  gem 'factory_girl_rails', '4.9.0'
+  gem 'factory_bot_rails', '~> 4.10.0'
   gem 'ffaker'
   gem 'rspec-its'
   gem 'fakefs', require: 'fakefs/safe'

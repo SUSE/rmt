@@ -98,7 +98,7 @@ REPOS
   protected
 
   def list_repositories(scope: :enabled)
-    repositories = ((scope == :all) ? Repository.only_scc : Repository.only_scc.only_mirrored).order(:name, :description)
+    repositories = ((scope == :all) ? Repository.only_scc : Repository.only_scc.only_mirroring_enabled).order(:name, :description)
     decorator = ::RMT::CLI::Decorators::RepositoryDecorator.new(repositories)
 
     if repositories.empty?

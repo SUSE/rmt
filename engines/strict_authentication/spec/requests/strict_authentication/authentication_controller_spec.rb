@@ -4,7 +4,7 @@ module StrictAuthentication
   RSpec.describe AuthenticationController, type: :request do
     subject { response }
 
-    let(:system) { FactoryGirl.create(:system, :with_activated_product) }
+    let(:system) { FactoryBot.create(:system, :with_activated_product) }
 
     describe '#check' do
       context 'without authentication' do
@@ -48,28 +48,28 @@ module StrictAuthentication
 
         context 'when accessing product with repos with special characters' do
           let(:product) do
-            product = FactoryGirl.create(:product, :with_service)
+            product = FactoryBot.create(:product, :with_service)
             product.service.repositories << repository
             product
           end
 
           let(:repository) do
-            FactoryGirl.create(
+            FactoryBot.create(
               :repository,
               external_url: 'https://updates.suse.com/$path/*with/.funky/(characters)/'
             )
           end
 
-          let(:system) { FactoryGirl.create(:system, :with_activated_product, product: product) }
+          let(:system) { FactoryBot.create(:system, :with_activated_product, product: product) }
           let(:requested_uri) { '/repo/$path/*with/.funky/(characters)/repodata/repomd.xml' }
 
           its(:code) { is_expected.to eq '200' }
         end
 
         context 'when accessing SLES12SP1 repos and SLES 11 is activated' do
-          let(:system) { FactoryGirl.create(:system, :with_activated_product, product: product) }
+          let(:system) { FactoryBot.create(:system, :with_activated_product, product: product) }
           let(:product) do
-            FactoryGirl.create(
+            FactoryBot.create(
               :product, :with_mirrored_repositories,
               identifier: 'SUSE_SLES', version: '11.4', arch: 'x86_64'
             )
@@ -95,9 +95,9 @@ module StrictAuthentication
         end
 
         context 'when accessing SLES12SP1 repos and SLES 11 is not activated' do
-          let(:system) { FactoryGirl.create(:system, :with_activated_product, product: product) }
+          let(:system) { FactoryBot.create(:system, :with_activated_product, product: product) }
           let(:product) do
-            FactoryGirl.create(
+            FactoryBot.create(
               :product, :with_mirrored_repositories,
               identifier: 'SLES', version: '15', arch: 'x86_64'
             )
