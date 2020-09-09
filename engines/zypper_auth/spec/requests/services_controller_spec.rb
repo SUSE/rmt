@@ -42,7 +42,7 @@ describe ServicesController do
         end
 
         it 'XML has all product repos' do
-          expect(xml_urls.size).to eq(system.products.first.repositories.size)
+          expect(xml_urls.size).to eq(system.products.first.repositories.size - 1)
         end
 
         it 'repo URLs have plugin:/susecloud scheme' do

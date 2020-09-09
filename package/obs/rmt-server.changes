@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Sep 2 10:27:33 UTC 2020 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Version 2.5.17
+- RMT no longer provides the installer updates repository to systems via its zypper service. This repository is used during the installation process, as it provides an up-to-date installation experience, but it has no use on an already installed system.
+
+-------------------------------------------------------------------
 Mon Sep 1 13:24:23 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
 
 - Version 2.5.16

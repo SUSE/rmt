@@ -30,12 +30,12 @@ RSpec.describe ServicesController do
       end
 
       let(:model_urls) do
-        service.repositories.map do |repo|
+        service.repositories.select{ |repo| not repo.installer_updates }.map do |repo|
           RMT::Misc.make_repo_url('http://www.example.com', repo.local_path, service.name)
         end
       end
 
-      its(:length) { is_expected.to eq(service.repositories.length) }
+      its(:length) { is_expected.to eq(service.repositories.length - 1) }
       it { is_expected.to eq(model_urls) }
     end
   end
