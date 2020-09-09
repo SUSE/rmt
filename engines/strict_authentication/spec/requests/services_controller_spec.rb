@@ -67,7 +67,7 @@ RSpec.describe ServicesController, type: :request do
       end
 
       let(:model_urls) do
-        activated_service.repositories.select{ |repo| not repo.installer_updates }.map do |repo|
+        activated_service.repositories.reject(&:installer_updates).map do |repo|
           RMT::Misc.make_repo_url('http://www.example.com', repo.local_path, activated_service.name)
         end
       end
