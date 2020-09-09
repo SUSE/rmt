@@ -4,10 +4,10 @@ require 'rails_helper'
 
 RSpec.describe ServicesController, type: :request do
   describe '#show' do
-    let(:system) { FactoryGirl.create(:system) }
-    let(:service) { FactoryGirl.create(:service, :with_repositories) }
+    let(:system) { FactoryBot.create(:system) }
+    let(:service) { FactoryBot.create(:service, :with_repositories) }
     let(:activated_service) do
-      service = FactoryGirl.create(:service, :with_repositories)
+      service = FactoryBot.create(:service, :with_repositories)
       system.services << service
       system.save!
       service
@@ -67,12 +67,12 @@ RSpec.describe ServicesController, type: :request do
       end
 
       let(:model_urls) do
-        activated_service.repositories.map do |repo|
+        activated_service.repositories.select{ |repo| not repo.installer_updates }.map do |repo|
           RMT::Misc.make_repo_url('http://www.example.com', repo.local_path, activated_service.name)
         end
       end
 
-      its(:length) { is_expected.to eq(service.repositories.length) }
+      its(:length) { is_expected.to eq(service.repositories.length - 1) }
       it { is_expected.to eq(model_urls) }
     end
   end

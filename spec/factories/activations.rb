@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :activation do
     association :system
     association :service, factory: %i[service with_repositories]

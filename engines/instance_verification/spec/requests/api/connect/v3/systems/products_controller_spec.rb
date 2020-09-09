@@ -6,7 +6,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
   let(:url) { connect_systems_products_url }
   let(:headers) { auth_header.merge(version_header) }
-  let(:product) { FactoryGirl.create(:product, :with_mirrored_repositories, :with_mirrored_extensions) }
+  let(:product) { FactoryBot.create(:product, :with_mirrored_repositories, :with_mirrored_extensions) }
 
   let(:payload) do
     {
@@ -20,7 +20,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
     context "when system doesn't have hw_info" do
-      let(:system) { FactoryGirl.create(:system) }
+      let(:system) { FactoryBot.create(:system) }
 
       it 'class instance verification provider' do
         expect(InstanceVerification::Providers::Example).to receive(:new)
@@ -31,7 +31,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
     context 'when system has hw_info' do
       let(:instance_data) { 'dummy_instance_data' }
-      let(:system) { FactoryGirl.create(:system, :with_hw_info, instance_data: instance_data) }
+      let(:system) { FactoryBot.create(:system, :with_hw_info, instance_data: instance_data) }
       let(:serialized_service_json) do
         V3::ServiceSerializer.new(
           product.service,
@@ -98,7 +98,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
   context 'when activating extensions' do
     let(:instance_data) { 'dummy_instance_data' }
     let(:system) do
-      FactoryGirl.create(
+      FactoryBot.create(
         :system, :with_hw_info, :with_activated_product, product: base_product, instance_data: instance_data
       )
     end
@@ -110,17 +110,17 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     end
 
     before do
-      FactoryGirl.create(:subscription, product_classes: product_classes)
+      FactoryBot.create(:subscription, product_classes: product_classes)
       expect(InstanceVerification::Providers::Example).not_to receive(:new)
       post url, params: payload, headers: headers
     end
 
     context 'when the extension is not free' do
-      let(:base_product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
+      let(:base_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
 
       context 'when a suitable subscription is not found' do
         let(:product) do
-          FactoryGirl.create(
+          FactoryBot.create(
             :product, :with_mirrored_repositories, :extension, free: false, base_products: [base_product]
           )
         end
@@ -134,7 +134,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
       context 'when a suitable subscription is found' do
         let(:product) do
-          FactoryGirl.create(
+          FactoryBot.create(
             :product, :with_mirrored_repositories, :extension, free: false, base_products: [base_product]
           )
         end
@@ -147,9 +147,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     end
 
     context 'when the extension is free' do
-      let(:base_product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
+      let(:base_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
       let(:product) do
-        FactoryGirl.create(
+        FactoryBot.create(
           :product, :with_mirrored_repositories, :extension, free: true, base_products: [base_product]
         )
       end
@@ -162,9 +162,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
 
     context 'when the base product subscription is missing' do
-      let(:base_product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
+      let(:base_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
       let(:product) do
-        FactoryGirl.create(
+        FactoryBot.create(
           :product, :with_mirrored_repositories, :extension, free: false, base_products: [base_product]
         )
       end
@@ -180,9 +180,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
   describe '#upgrade' do
     subject { response }
 
-    let(:system) { FactoryGirl.create(:system) }
+    let(:system) { FactoryBot.create(:system) }
     let(:request) { put url, headers: headers, params: payload }
-    let!(:old_product) { FactoryGirl.create(:product, :with_mirrored_repositories, :activated, system: system) }
+    let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system) }
     let(:payload) do
       {
         identifier: new_product.identifier,
@@ -194,7 +194,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     before { request }
 
     context "when migration target base product doesn't have an activated successor/predecessor" do
-      let(:new_product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
+      let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
 
       it 'HTTP response code is 422' do
         expect(response).to have_http_status(422)
@@ -208,7 +208,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
     context 'when migration target base product has a different identifier' do
       let(:new_product) do
-        FactoryGirl.create(
+        FactoryBot.create(
           :product, :with_mirrored_repositories,
           identifier: old_product.identifier + '-foo', predecessors: [ old_product ]
         )
@@ -226,7 +226,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
     context 'when migration target base product has the same identifier' do
       let(:new_product) do
-        FactoryGirl.create(
+        FactoryBot.create(
           :product, :with_mirrored_repositories, identifier: old_product.identifier,
           version: '999', predecessors: [ old_product ]
         )

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :subscription do
     sequence(:regcode) { |n| n.to_s.ljust(13, 'A') }
     sequence(:name) { |n| "Subscription #{n}" }
@@ -20,7 +20,7 @@ FactoryGirl.define do
     after :create do |subscription, evaluator|
       if evaluator.product_classes
         evaluator.product_classes.each do |product_class|
-          FactoryGirl.create(:subscription_product_class, product_class: product_class, subscription_id: subscription.id)
+          FactoryBot.create(:subscription_product_class, product_class: product_class, subscription_id: subscription.id)
         end
       end
     end
@@ -28,8 +28,8 @@ FactoryGirl.define do
     trait :with_products do
       after :create do |subscription, _evaluator|
         2.times do
-          product_class = FactoryGirl.create(:subscription_product_class, subscription_id: subscription.id)
-          FactoryGirl.create(:product, :with_mirrored_repositories, product_class: product_class.product_class)
+          product_class = FactoryBot.create(:subscription_product_class, subscription_id: subscription.id)
+          FactoryBot.create(:product, :with_mirrored_repositories, product_class: product_class.product_class)
         end
       end
     end

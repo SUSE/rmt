@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :system do
     sequence(:login) { |n| "login#{n}" }
     sequence(:password) { |n| "password#{n}" }
@@ -26,7 +26,7 @@ FactoryGirl.define do
 
     trait :with_hw_info do
       after :build do |system, evaluator|
-        system.hw_info = FactoryGirl.build(:hw_info, virtual: evaluator.virtual, instance_data: evaluator.instance_data)
+        system.hw_info = FactoryBot.build(:hw_info, virtual: evaluator.virtual, instance_data: evaluator.instance_data)
       end
     end
   end

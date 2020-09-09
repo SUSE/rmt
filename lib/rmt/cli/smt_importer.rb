@@ -1,7 +1,7 @@
 require 'csv'
 require 'ostruct'
 
-class SMTImporter
+class RMT::CLI::SMTImporter
   attr_accessor :data_dir
   attr_accessor :no_systems
 

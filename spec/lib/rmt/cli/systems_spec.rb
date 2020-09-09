@@ -115,4 +115,50 @@ RSpec.describe RMT::CLI::Systems do
       command
     end
   end
+
+  describe '#remove' do
+    describe 'success' do
+      let(:system) { create :system, :with_activated_product, hostname: 'host1', last_seen_at: Time.now.utc - 3, scc_system_id: '123123' }
+      let(:argv) { ['remove', system.login] }
+      let(:expected_output) { "Successfully removed system with login #{system.login}\n" }
+
+      it 'removes the system with all its products, repositories, activations and services' do
+        expect { described_class.start(argv) }
+          .to output(expected_output).to_stdout
+          .and output('').to_stderr
+          .and change { System.count }.from(1).to(0)
+          .and change { system.products.count }.from(1).to(0)
+          .and change { system.activations.count }.from(1).to(0)
+          .and change { system.repositories.count }.from(4).to(0)
+          .and change { system.services.count }.from(1).to(0)
+          .and change { DeregisteredSystem.count }.by(1)
+      end
+    end
+
+    describe 'failure' do
+      context 'with wrong target string' do
+        let(:argv) { ['remove', '1'] }
+        let(:expected_output) { "System with login 1 not found.\n" }
+
+        it 'raises ActiveRecord::RecordNotFound' do
+          expect { described_class.start(argv) }
+            .to raise_error(SystemExit)
+            .and output(expected_output).to_stderr
+        end
+      end
+
+      context 'when the record can\'t be destroyed' do
+        let(:argv) { ['remove', system.login] }
+        let(:expected_output) { "System with login #{system.login} cannot be removed.\n" }
+        let(:system) { create :system, :with_activated_product }
+
+        it 'raises ActiveRecord::RecordNotDestroyed' do
+          expect_any_instance_of(System).to receive(:destroy!).and_raise(ActiveRecord::RecordNotDestroyed)
+          expect { described_class.start(argv) }
+            .to raise_error(SystemExit)
+            .and output(expected_output).to_stderr
+        end
+      end
+    end
+  end
 end
