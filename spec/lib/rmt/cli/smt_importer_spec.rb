@@ -257,7 +257,7 @@ describe RMT::CLI::SMTImporter do
         importer.run ['--no-systems', '-d', 'foo']
       end
     end
-    context 'with --no-system flag' do
+    context 'with --no-hwinfo flag' do
       it 'imports repositories and systems without hwinfo' do
         expect(importer).to receive(:check_products_exist)
         expect(importer).to receive(:import_repositories)

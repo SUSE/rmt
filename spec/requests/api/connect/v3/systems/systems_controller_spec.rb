@@ -35,37 +35,35 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
         expect(response.status).to eq(204)
       end
 
-      context 'hardware info' do
-        context 'with existing hardware info' do
-          it do
-            update_action
+      context 'with existing hardware info' do
+        it do
+          update_action
 
-            expect(system.hw_info.reload.arch).to eq('x86_64')
-            expect(system.hw_info.reload.hypervisor).to eq('XEN')
-            expect(system.hw_info.reload.uuid).to eq('f46906c5-d87d-4e4c-894b-851e80376003')
-            expect(system.hw_info.reload.cloud_provider).to eq('testcloud')
-          end
-
-          it 'updates initial hardware info' do
-            expect { update_action }.to change { system.hw_info.reload.cpus }.from(2).to(16)
-          end
+          expect(system.hw_info.reload.arch).to eq('x86_64')
+          expect(system.hw_info.reload.hypervisor).to eq('XEN')
+          expect(system.hw_info.reload.uuid).to eq('f46906c5-d87d-4e4c-894b-851e80376003')
+          expect(system.hw_info.reload.cloud_provider).to eq('testcloud')
         end
 
-        context 'with new hardware info' do
-          let(:system) { FactoryBot.create(:system, hostname: 'initial') }
+        it 'updates initial hardware info' do
+          expect { update_action }.to change { system.hw_info.reload.cpus }.from(2).to(16)
+        end
+      end
 
-          it do
-            update_action
+      context 'with new hardware info' do
+        let(:system) { FactoryBot.create(:system, hostname: 'initial') }
 
-            expect(system.hw_info.reload.arch).to eq('x86_64')
-            expect(system.hw_info.reload.hypervisor).to eq('XEN')
-            expect(system.hw_info.reload.uuid).to eq('f46906c5-d87d-4e4c-894b-851e80376003')
-            expect(system.hw_info.reload.cloud_provider).to eq('testcloud')
-          end
+        it do
+          update_action
 
-          it 'creates hardware info record' do
-            expect { update_action }.to change { HwInfo.count }.by(1)
-          end
+          expect(system.hw_info.reload.arch).to eq('x86_64')
+          expect(system.hw_info.reload.hypervisor).to eq('XEN')
+          expect(system.hw_info.reload.uuid).to eq('f46906c5-d87d-4e4c-894b-851e80376003')
+          expect(system.hw_info.reload.cloud_provider).to eq('testcloud')
+        end
+
+        it 'creates hardware info record' do
+          expect { update_action }.to change { HwInfo.count }.by(1)
         end
       end
     end
