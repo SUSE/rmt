@@ -16,7 +16,7 @@ class Subscription < ApplicationRecord
   validates :status, presence: true
   validates :system_limit, presence: true
 
-  has_many :product_classes, foreign_key: 'subscription_id', class_name: 'SubscriptionProductClass'
+  has_many :product_classes, class_name: 'SubscriptionProductClass'
   has_many :products, through: :product_classes
 
 end

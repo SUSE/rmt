@@ -131,7 +131,6 @@ class RMT::CLI::Products < RMT::CLI::Base
   end
 
   def change_product(target, set_enabled, all_modules)
-    # rubocop:disable Lint/ParenthesesAsGroupedExpression
 
     # This will return multiple products if 'SLES/15' was used
     base_products = find_products(target)
@@ -169,8 +168,6 @@ class RMT::CLI::Products < RMT::CLI::Base
           end
         end
       end
-
-      # rubocop:enable Lint/ParenthesesAsGroupedExpression
     end
   end
 
