@@ -73,9 +73,9 @@ GEM
       no_proxy_fix
       octokit (~> 4.7)
       terminal-table (~> 1)
-    danger-rubocop (0.8.1)
+    danger-rubocop (0.9.0)
       danger
-      rubocop
+      rubocop (~> 0.83)
     deep_merge (1.2.1)
     diff-lcs (1.4.4)
     docile (1.3.2)
@@ -277,7 +277,7 @@ GEM
       rubocop-ast (>= 0.0.3, < 1.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 2.0)
-    rubocop-ast (0.3.0)
+    rubocop-ast (0.4.0)
       parser (>= 2.7.1.4)
     rubocop-performance (1.6.1)
       rubocop (>= 0.71.0)
@@ -337,7 +337,7 @@ GEM
       activesupport (>= 3)
       railties (>= 3)
       yard (~> 0.9.20)
-    webmock (3.8.3)
+    webmock (3.9.0)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
