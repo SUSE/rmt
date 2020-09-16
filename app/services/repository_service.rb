@@ -9,7 +9,13 @@ class RepositoryService
     repository.attributes = attributes.select do |k, _|
       repository.attributes.keys.member?(k.to_s) && k.to_s != 'id'
     end
-    repository.scc_id = attributes[:id] unless custom
+
+    if custom
+      repository.friendly_id = attributes[:id].to_s != '' ? attributes[:id] : Repository.make_friendly_url_id(url)
+    else
+      repository.scc_id = attributes[:id]
+      repository.friendly_id = attributes[:id]
+    end
 
     repository.external_url = url
     repository.local_path = Repository.make_local_path(url)

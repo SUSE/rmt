@@ -34,7 +34,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       raise RMT::CLI::Error.new(_('No repository IDs supplied')) if ids.empty?
 
       repos = ids.map do |id|
-        repo = Repository.find_by(scc_id: id)
+        repo = Repository.find_by(friendly_id: id)
         errors << _('Repository with ID %{repo_id} not found') % { repo_id: id } if repo.nil?
 
         repo
@@ -86,7 +86,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   def mirror_repos!(repos)
     repos.compact.each do |repo|
       unless repo.mirroring_enabled
-        errors << _('Mirroring of repository with ID %{repo_id} is not enabled') % { repo_id: repo.scc_id }
+        errors << _('Mirroring of repository with ID %{repo_id} is not enabled') % { repo_id: repo.friendly_id }
         next
       end
 

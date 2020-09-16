@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_16_104804) do
+ActiveRecord::Schema.define(version: 2020_09_16_120607) do
 
   create_table "activations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "service_id", null: false
@@ -104,7 +104,9 @@ ActiveRecord::Schema.define(version: 2020_09_16_104804) do
     t.boolean "mirroring_enabled", default: false, null: false
     t.string "local_path", null: false
     t.datetime "last_mirrored_at"
+    t.string "friendly_id"
     t.index ["external_url"], name: "index_repositories_on_external_url", unique: true
+    t.index ["friendly_id"], name: "index_repositories_on_friendly_id", unique: true
     t.index ["scc_id"], name: "index_repositories_on_scc_id", unique: true
   end
 

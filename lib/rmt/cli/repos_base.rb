@@ -1,0 +1,50 @@
+class RMT::CLI::ReposBase < RMT::CLI::Base
+
+  class RepoNotFoundException < StandardError
+  end
+
+  protected
+
+  def change_repos(ids, set_enabled, custom: false)
+    ids = clean_target_input(ids)
+    raise RMT::CLI::Error.new(_('No repository ids supplied')) if ids.empty?
+
+    failed_repos = []
+    ids.each do |id|
+      change_repo(id, set_enabled, custom: custom)
+    rescue RepoNotFoundException => e
+      warn e.message
+      failed_repos << id
+    end
+
+    unless failed_repos.empty?
+      message = if set_enabled
+                  n_('Repository by ID %{repos} could not be found and was not enabled.',
+                     'Repositories by IDs %{repos} could not be found and were not enabled.',
+                     failed_repos.count) % { repos: failed_repos.join(', ') }
+                else
+                  n_('Repository by ID %{repos} could not be found and was not disabled.',
+                     'Repositories by IDs %{repos} could not be found and were not disabled.',
+                     failed_repos.count) % { repos: failed_repos.join(', ') }
+                end
+      raise RMT::CLI::Error.new(message)
+    end
+  end
+
+  def change_repo(id, set_enabled, custom: false)
+    repository = find_repository!(id, custom: custom)
+    repository.change_mirroring!(set_enabled)
+
+    puts set_enabled ? _('Repository by ID %{id} successfully enabled.') % { id: id } : _('Repository by ID %{id} successfully disabled.') % { id: id }
+  end
+
+  def find_repository!(id, custom: false)
+    repository = Repository.find_by!(friendly_id: id)
+    raise StandardError if custom && !repository.custom?
+
+    repository
+  rescue ActiveRecord::RecordNotFound, StandardError
+    raise RepoNotFoundException.new(_('Repository by ID %{id} not found.') % { id: id })
+  end
+
+end

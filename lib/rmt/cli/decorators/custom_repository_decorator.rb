@@ -7,7 +7,7 @@ class RMT::CLI::Decorators::CustomRepositoryDecorator < RMT::CLI::Decorators::Ba
   def to_csv
     data = @repositories.map do |repo|
       [
-        repo.id,
+        repo.friendly_id,
         repo.name,
         repo.external_url,
         repo.enabled,
@@ -28,7 +28,7 @@ class RMT::CLI::Decorators::CustomRepositoryDecorator < RMT::CLI::Decorators::Ba
   def to_table
     data = @repositories.map do |repo|
       [
-        repo.id,
+        repo.friendly_id,
         repo.name,
         repo.external_url,
         repo.enabled ? _('Mandatory') : _('Not Mandatory'),

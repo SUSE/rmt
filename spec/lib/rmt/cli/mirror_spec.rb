@@ -159,7 +159,7 @@ RSpec.describe RMT::CLI::Mirror do
 
     context 'when repository mirroring is enabled' do
       let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
-      let(:argv) { ['repository', repository.scc_id] }
+      let(:argv) { ['repository', repository.friendly_id] }
 
       it 'mirrors the repository' do
         expect_any_instance_of(RMT::Mirror).to receive(:mirror).with(
@@ -175,7 +175,7 @@ RSpec.describe RMT::CLI::Mirror do
 
     context 'when an exception is raised during mirroring' do
       let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
-      let(:argv) { ['repository', repository.scc_id] }
+      let(:argv) { ['repository', repository.friendly_id] }
       let(:mirroring_error) { 'mirroring failed' }
       let(:error_messages) { /Repository '#{repository.name}' \(#{repository.id}\): #{mirroring_error}\./ }
 
@@ -193,8 +193,8 @@ RSpec.describe RMT::CLI::Mirror do
 
     context 'when repository mirroring is disabled' do
       let!(:repository) { create :repository, :with_products, mirroring_enabled: false }
-      let(:argv) { ['repository', repository.scc_id] }
-      let(:error_messages) { "Mirroring of repository with ID #{repository.scc_id} is not enabled." }
+      let(:argv) { ['repository', repository.friendly_id] }
+      let(:error_messages) { "Mirroring of repository with ID #{repository.friendly_id} is not enabled." }
 
       it 'raises an error' do
         expect { command }
