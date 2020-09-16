@@ -1,9 +1,9 @@
 module ZypperAuth
   class << self
     def auth_logger
-      @logger ||= ::Logger.new('/var/lib/rmt/zypper_auth.log')
-      @logger.reopen
-      @logger
+      Thread.current[:logger] ||= ::Logger.new('/var/lib/rmt/zypper_auth.log')
+      Thread.current[:logger].reopen
+      Thread.current[:logger]
     end
 
     def verify_instance(request, logger, system)

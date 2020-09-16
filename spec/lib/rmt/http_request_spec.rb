@@ -36,6 +36,7 @@ RSpec.describe RMT::HttpRequest do
   describe 'when request is too slow' do
     let(:port) { 55555 }
     let(:server_thread) do
+      # rubocop:disable ThreadSafety/NewThread
       Thread.new do
         dev_null = WEBrick::Log.new('/dev/null', 7)
 
@@ -50,6 +51,7 @@ RSpec.describe RMT::HttpRequest do
           Port: port
         )
       end
+      # rubocop:enable ThreadSafety/NewThread
     end
     let(:request) do
       request = described_class.new("http://localhost:#{port}/")
