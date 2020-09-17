@@ -66,7 +66,13 @@ module SCC
   # CiExecutor
   class CiExecutor
     class << self
-      attr_accessor :logger
+      def logger
+        Thread.current[:logger]
+      end
+
+      def logger=(logger)
+        Thread.current[:logger] = logger
+      end
     end
 
     attr_accessor :status, :projects, :logger, :fail_message
