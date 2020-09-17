@@ -6,23 +6,30 @@ require 'time'
 class RMT::Mirror
   class FileReference
     class << self
-      def build_from_metadata(metadata, base_dir:)
-        new(base_dir: base_dir, location: metadata.location)
+      def build_from_metadata(metadata, base_dir:, base_url:, cache_dir: nil)
+        new(base_dir: base_dir, base_url: base_url, cache_dir: cache_dir, location: metadata.location)
           .tap do |file|
             file.arch = metadata.arch
             file.checksum = metadata.checksum
             file.checksum_type = metadata.checksum_type
             file.size = metadata.size
+            file.type = metadata.type
           end
       end
     end
 
-    attr_reader :local_path, :location
-    attr_accessor :arch, :checksum, :checksum_type, :size
+    attr_reader :cache_path, :local_path, :remote_path, :location
+    attr_accessor :arch, :checksum, :checksum_type, :size, :type
 
-    def initialize(base_dir:, location:)
+    def initialize(base_dir:, base_url:, cache_dir: nil, location:)
+      @cache_path = (cache_dir ? File.join(cache_dir, location) : nil)
       @local_path = File.join(base_dir, location.gsub(/\.\./, '__'))
+      @remote_path = URI.join(base_url, location)
       @location = location
+    end
+
+    def cache_timestamp
+      File.mtime(cache_path).utc.httpdate if cache_path && File.exist?(cache_path)
     end
   end
 
@@ -40,8 +47,6 @@ class RMT::Mirror
     @deep_verify = false
 
     @downloader = RMT::Downloader.new(
-      repository_url: @repository_url,
-      destination_dir: @repository_dir,
       logger: @logger,
       track_files: !airgap_mode # don't save files for deduplication when in offline mode
     )
@@ -58,12 +63,15 @@ class RMT::Mirror
     base_dir = File.expand_path(File.join(@mirroring_base_dir, '/../')) if @mirroring_base_dir == RMT::DEFAULT_MIRROR_DIR
 
     @repository_dir = File.join(base_dir, '/suma/')
-    @downloader.repository_url = URI.join(repository_url)
-    @downloader.destination_dir = @repository_dir
-    @downloader.cache_dir = @repository_dir
+    mirroring_paths = {
+      base_url: URI.join(repository_url),
+      base_dir: @repository_dir,
+      cache_dir: @repository_dir
+    }
 
     @logger.info _('Mirroring SUSE Manager product tree to %{dir}') % { dir: @repository_dir }
-    @downloader.download('product_tree.json')
+    product_tree = FileReference.new(location: 'product_tree.json', **mirroring_paths)
+    @downloader.download(product_tree)
   rescue RMT::Downloader::Exception => e
     raise RMT::Mirror::Exception.new(_('Could not mirror SUSE Manager product tree with error: %{error}') % { error: e.message })
   end
@@ -107,18 +115,26 @@ class RMT::Mirror
   end
 
   def mirror_metadata
-    @downloader.repository_url = URI.join(@repository_url)
-    @downloader.destination_dir = @temp_metadata_dir
-    @downloader.cache_dir = @repository_dir
+    mirroring_paths = {
+      base_url: URI.join(@repository_url),
+      base_dir: @temp_metadata_dir,
+      cache_dir: @repository_dir
+    }
 
-    local_filename = @downloader.download('repodata/repomd.xml')
+    repomd_xml = FileReference.new(location: 'repodata/repomd.xml', **mirroring_paths)
+    @downloader.download(repomd_xml)
 
     begin
-      signature_file = @downloader.download('repodata/repomd.xml.asc')
-      key_file       = @downloader.download('repodata/repomd.xml.key')
+      signature_file = FileReference.new(location: 'repodata/repomd.xml.asc', **mirroring_paths)
+      key_file       = FileReference.new(location: 'repodata/repomd.xml.key', **mirroring_paths)
+      @downloader.download(signature_file)
+      @downloader.download(key_file)
 
       RMT::GPG.new(
-        metadata_file: local_filename, key_file: key_file, signature_file: signature_file, logger: @logger
+        metadata_file: repomd_xml.local_path,
+        key_file: key_file.local_path,
+        signature_file: signature_file.local_path,
+        logger: @logger
       ).verify_signature
     rescue RMT::Downloader::Exception => e
       if (e.http_code == 404)
@@ -128,7 +144,8 @@ class RMT::Mirror
       end
     end
 
-    metadata_files = RepomdParser::RepomdXmlParser.new(local_filename).parse
+    metadata_files = RepomdParser::RepomdXmlParser.new(repomd_xml.local_path).parse
+      .map { |reference| FileReference.build_from_metadata(reference, **mirroring_paths) }
     primary_files = metadata_files.select { |reference| reference.type == :primary }
     deltainfo_files = metadata_files.select { |reference| reference.type == :deltainfo }
 
@@ -140,35 +157,37 @@ class RMT::Mirror
   end
 
   def mirror_license
-    @downloader.repository_url = @repository_url.chomp('/') + '.license/'
-    @downloader.destination_dir = @temp_licenses_dir
-    @downloader.cache_dir = @repository_dir.chomp('/') + '.license/'
+    mirroring_paths = {
+      base_url: @repository_url.chomp('/') + '.license/',
+      base_dir: @temp_licenses_dir,
+      cache_dir: @repository_dir.chomp('/') + '.license/'
+    }
 
     begin
-      directory_yast = @downloader.download('directory.yast')
+      directory_yast = FileReference.new(location: 'directory.yast', **mirroring_paths)
+      @downloader.download(directory_yast)
     rescue RMT::Downloader::Exception
       FileUtils.remove_entry(@temp_licenses_dir) # the repository would have an empty licenses directory unless removed
       return
     end
 
-    license_files = File.readlines(directory_yast).map(&:strip).reject { |item| item == 'directory.yast' }
+    license_files = File.readlines(directory_yast.local_path)
+      .map(&:strip).reject { |item| item == 'directory.yast' }
+      .map { |location| FileReference.new(location: location, **mirroring_paths) }
     @downloader.download_multi(license_files)
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring license: %{error}') % { error: e.message })
   end
 
   def mirror_data(primary_files, deltainfo_files)
-    @downloader.repository_url = @repository_url
-    @downloader.destination_dir = @repository_dir
-    @downloader.cache_dir = nil
-
     package_repomd_references =
       parse_mirror_data_files(deltainfo_files, RepomdParser::DeltainfoXmlParser) +
       parse_mirror_data_files(primary_files, RepomdParser::PrimaryXmlParser)
 
     package_file_references = package_repomd_references.map do |reference|
       FileReference.build_from_metadata(reference,
-                                        base_dir: @repository_dir)
+                                        base_dir: @repository_dir,
+                                        base_url: @repository_url)
     end
 
     failed_downloads = download_package_files(package_file_references)
