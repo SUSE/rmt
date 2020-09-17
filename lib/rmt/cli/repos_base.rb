@@ -39,12 +39,13 @@ class RMT::CLI::ReposBase < RMT::CLI::Base
   end
 
   def find_repository!(id, custom: false)
-    repository = Repository.find_by!(friendly_id: id)
-    raise StandardError if custom && !repository.custom?
+    repository = Repository.find_by(id: id) if custom # allow fallback for old IDs when dealing with custom repos
+    repository ||= Repository.find_by(friendly_id: id)
+
+    if repository.nil? || (custom && !repository.custom?)
+      raise RepoNotFoundException.new(_('Repository by ID %{id} not found.') % { id: id })
+    end
 
     repository
-  rescue ActiveRecord::RecordNotFound, StandardError
-    raise RepoNotFoundException.new(_('Repository by ID %{id} not found.') % { id: id })
   end
-
 end

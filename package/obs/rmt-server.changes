@@ -15,6 +15,8 @@ Mon Sep 21 16:44:23 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
 
   Deprecation Warnings:
   * RMT now uses a different ID for custom repositories than before.
+    RMT still supports that old ID, but it's recommended to start
+    using the new ID to ensure future compatibility.
 
 -------------------------------------------------------------------
 Mon Sep 10 14:10:45 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>

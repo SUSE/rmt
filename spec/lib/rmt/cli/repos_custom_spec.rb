@@ -174,6 +174,14 @@ describe RMT::CLI::ReposCustom do
       its(:mirroring_enabled) { is_expected.to be(false) }
     end
 
+    context 'by repo id' do
+      let(:argv) { ['enable', repository.id] }
+
+      before { expect { command }.to output("Repository by ID #{repository.id} successfully enabled.\n").to_stdout }
+
+      its(:mirroring_enabled) { is_expected.to be(true) }
+    end
+
     context 'by repo friendly_id' do
       let(:argv) { ['enable', repository.friendly_id] }
 
@@ -213,6 +221,21 @@ describe RMT::CLI::ReposCustom do
       end
 
       its(:mirroring_enabled) { is_expected.to be(true) }
+    end
+
+    context 'by repo id' do
+      let(:argv) { ['disable', repository.id] }
+      let(:expected_output) do
+        <<-OUTPUT
+Repository by ID #{repository.id} successfully disabled.
+
+\e[1mTo clean up downloaded files, please run 'rmt-cli repos clean'\e[22m
+        OUTPUT
+      end
+
+      before { expect { command }.to output(expected_output).to_stdout }
+
+      its(:mirroring_enabled) { is_expected.to be(false) }
     end
 
     context 'by repo friendly_id' do
@@ -266,7 +289,19 @@ Repository by ID #{repository.friendly_id} successfully disabled.
         end
       end
 
-      context 'custom repository' do
+      context 'custom repository by id' do
+        let(:argv) { [command, custom_repository.id] }
+
+        before do
+          expect { described_class.start(argv) }.to output("Removed custom repository by ID #{custom_repository.id}.\n").to_stdout
+        end
+
+        it 'deletes custom repository' do
+          expect(Repository.find_by(id: custom_repository.id)).to be_nil
+        end
+      end
+
+      context 'custom repository by friendly_id' do
         let(:argv) { [command, custom_repository.friendly_id] }
 
         before do
@@ -319,7 +354,19 @@ Repository by ID #{repository.friendly_id} successfully disabled.
       end
     end
 
-    context 'product and repo exist' do
+    context 'product and repo exist by id' do
+      let(:repository) { create :repository, :custom }
+      let(:argv) { ['attach', repository.id, product.id] }
+
+      it('does not have an attached product') { expect(repository.products.count).to eq(0) }
+
+      it 'attaches the repository to the product' do
+        expect { described_class.start(argv) }.to output('').to_stderr.and output("Attached repository to product '#{product.name}'.\n").to_stdout
+        expect(repository.products.first.id).to eq(product.id)
+      end
+    end
+
+    context 'product and repo exist by friendly_id' do
       let(:repository) { create :repository, :custom }
       let(:argv) { ['attach', repository.friendly_id, product.id] }
 
@@ -376,7 +423,23 @@ Repository by ID #{repository.friendly_id} successfully disabled.
       end
     end
 
-    context 'product and repo exist' do
+    context 'product and repo exist by id' do
+      let(:repository) { create :repository, :custom }
+      let(:argv) { ['detach', repository.id, product.id] }
+
+      before do
+        repository_service.attach_product!(product, repository)
+      end
+
+      it('has an attached product') { expect(repository.products.count).to eq(1) }
+
+      it 'detaches the repository from the product' do
+        expect { described_class.start(argv) }.to output('').to_stderr.and output("Detached repository from product '#{product.name}'.\n").to_stdout
+        expect(repository.products.count).to eq(0)
+      end
+    end
+
+    context 'product and repo exist by friendly_id' do
       let(:repository) { create :repository, :custom }
       let(:argv) { ['detach', repository.friendly_id, product.id] }
 
