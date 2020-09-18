@@ -16,7 +16,7 @@ RSpec.describe RMT::Downloader do
   let(:expected_checksum_type) { nil }
   let(:repomd_xml_file) do
     RMT::Mirror::FileReference.new(
-      location: 'repomd.xml',
+      relative_path: 'repomd.xml',
       base_url: repository_url,
       base_dir: repository_dir,
       cache_dir: cache_dir
@@ -106,7 +106,7 @@ RSpec.describe RMT::Downloader do
         let(:rpm_package_content) { 'rpm package' }
         let(:rpm_package_file) do
           RMT::Mirror::FileReference.new(
-            location: 'package.rpm',
+            relative_path: 'package.rpm',
             base_url: repository_url,
             base_dir: repository_dir
           ).tap do |file|
@@ -117,7 +117,7 @@ RSpec.describe RMT::Downloader do
         let(:drpm_package_content) { 'drpm package' }
         let(:drpm_package_file) do
           RMT::Mirror::FileReference.new(
-            location: 'package.drpm',
+            relative_path: 'package.drpm',
             base_url: repository_url,
             base_dir: repository_dir
           ).tap do |file|
@@ -228,7 +228,7 @@ RSpec.describe RMT::Downloader do
       context "a file doesn't exist in cache" do
         let(:another_file) do
           RMT::Mirror::FileReference.new(
-            location: 'another_file.xml',
+            relative_path: 'another_file.xml',
             base_url: repository_url,
             base_dir: repository_dir,
             cache_dir: cache_dir
@@ -258,7 +258,7 @@ RSpec.describe RMT::Downloader do
     let(:downloader) { described_class.new(logger: RMT::Logger.new('/dev/null')) }
     let(:repomd_xml_file) do
       RMT::Mirror::FileReference.new(
-        location: 'repodata/repomd.xml',
+        relative_path: 'repodata/repomd.xml',
         base_url: repository_url,
         base_dir: repository_dir
       )
@@ -294,7 +294,7 @@ RSpec.describe RMT::Downloader do
     let(:queue) do
       files.map do |file|
         RMT::Mirror::FileReference.new(
-          location: file,
+          relative_path: file,
           base_url: repository_url,
           base_dir: repository_dir
         ).tap do |file_ref|

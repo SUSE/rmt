@@ -39,7 +39,7 @@ class RMT::Mirror
     }
 
     logger.info _('Mirroring SUSE Manager product tree to %{dir}') % { dir: repository_dir }
-    downloader.download(FileReference.new(location: 'product_tree.json', **mirroring_paths))
+    downloader.download(FileReference.new(relative_path: 'product_tree.json', **mirroring_paths))
   rescue RMT::Downloader::Exception => e
     raise RMT::Mirror::Exception.new(_('Could not mirror SUSE Manager product tree with error: %{error}') % { error: e.message })
   end
@@ -90,12 +90,12 @@ class RMT::Mirror
       cache_dir: repository_dir
     }
 
-    repomd_xml = FileReference.new(location: 'repodata/repomd.xml', **mirroring_paths)
+    repomd_xml = FileReference.new(relative_path: 'repodata/repomd.xml', **mirroring_paths)
     downloader.download(repomd_xml)
 
     begin
-      signature_file = FileReference.new(location: 'repodata/repomd.xml.asc', **mirroring_paths)
-      key_file       = FileReference.new(location: 'repodata/repomd.xml.key', **mirroring_paths)
+      signature_file = FileReference.new(relative_path: 'repodata/repomd.xml.asc', **mirroring_paths)
+      key_file       = FileReference.new(relative_path: 'repodata/repomd.xml.key', **mirroring_paths)
       downloader.download(signature_file)
       downloader.download(key_file)
 
@@ -131,7 +131,7 @@ class RMT::Mirror
     }
 
     begin
-      directory_yast = FileReference.new(location: 'directory.yast', **mirroring_paths)
+      directory_yast = FileReference.new(relative_path: 'directory.yast', **mirroring_paths)
       downloader.download(directory_yast)
     rescue RMT::Downloader::Exception
       FileUtils.remove_entry(temp_licenses_dir) # the repository would have an empty licenses directory unless removed
@@ -140,7 +140,7 @@ class RMT::Mirror
 
     license_files = File.readlines(directory_yast.local_path)
       .map(&:strip).reject { |item| item == 'directory.yast' }
-      .map { |location| FileReference.new(location: location, **mirroring_paths) }
+      .map { |relative_path| FileReference.new(relative_path: relative_path, **mirroring_paths) }
     downloader.download_multi(license_files)
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring license: %{error}') % { error: e.message })
