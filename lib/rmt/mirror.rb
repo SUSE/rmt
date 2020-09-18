@@ -68,8 +68,7 @@ class RMT::Mirror
     }
 
     logger.info _('Mirroring SUSE Manager product tree to %{dir}') % { dir: repository_dir }
-    product_tree = FileReference.new(location: 'product_tree.json', **mirroring_paths)
-    downloader.download(product_tree)
+    downloader.download(FileReference.new(location: 'product_tree.json', **mirroring_paths))
   rescue RMT::Downloader::Exception => e
     raise RMT::Mirror::Exception.new(_('Could not mirror SUSE Manager product tree with error: %{error}') % { error: e.message })
   end
@@ -81,17 +80,18 @@ class RMT::Mirror
 
     create_repository_dir(repository_dir)
     temp_licenses_dir = create_temp_dir
-    temp_metadata_dir = create_temp_dir
-    mirror_license(repository_dir, repository_url, temp_licenses_dir)
     # downloading license doesn't require an auth token
+    mirror_license(repository_dir, repository_url, temp_licenses_dir)
+
     downloader.auth_token = auth_token
-    primary_files, deltainfo_files = mirror_metadata(repository_dir, repository_url, temp_metadata_dir)
-    mirror_data(primary_files, deltainfo_files, repository_dir, repository_url)
+    temp_metadata_dir = create_temp_dir
+    metadata_files = mirror_metadata(repository_dir, repository_url, temp_metadata_dir)
+    mirror_packages(metadata_files, repository_dir, repository_url)
 
     replace_directory(temp_licenses_dir, repository_dir.chomp('/') + '.license/') if Dir.exist?(temp_licenses_dir)
     replace_directory(File.join(temp_metadata_dir, 'repodata'), File.join(repository_dir, 'repodata'))
   ensure
-    remove_tmp_directories(temp_licenses_dir, temp_metadata_dir)
+    [temp_licenses_dir, temp_metadata_dir].each { |dir| FileUtils.remove_entry(dir, true) }
   end
 
   protected
@@ -144,12 +144,10 @@ class RMT::Mirror
 
     metadata_files = RepomdParser::RepomdXmlParser.new(repomd_xml.local_path).parse
       .map { |reference| FileReference.build_from_metadata(reference, **mirroring_paths) }
-    primary_files = metadata_files.select { |reference| reference.type == :primary }
-    deltainfo_files = metadata_files.select { |reference| reference.type == :deltainfo }
 
-    downloader.download_multi(metadata_files)
+    downloader.download_multi(metadata_files.dup)
 
-    [primary_files, deltainfo_files]
+    metadata_files
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring metadata: %{error}') % { error: e.message })
   end
@@ -177,12 +175,10 @@ class RMT::Mirror
     raise RMT::Mirror::Exception.new(_('Error while mirroring license: %{error}') % { error: e.message })
   end
 
-  def mirror_data(primary_files, deltainfo_files, repository_dir, repository_url)
-    package_repomd_references =
-      parse_mirror_data_files(deltainfo_files, RepomdParser::DeltainfoXmlParser) +
-      parse_mirror_data_files(primary_files, RepomdParser::PrimaryXmlParser)
+  def mirror_packages(metadata_files, repository_dir, repository_url)
+    package_references = parse_packages_metadata(metadata_files)
 
-    package_file_references = package_repomd_references.map do |reference|
+    package_file_references = package_references.map do |reference|
       FileReference.build_from_metadata(reference,
                                         base_dir: repository_dir,
                                         base_url: repository_url)
@@ -195,10 +191,13 @@ class RMT::Mirror
     raise RMT::Mirror::Exception.new(_('Error while mirroring data: %{error}') % { error: e.message })
   end
 
-  def parse_mirror_data_files(references, xml_parser_class)
-    references.map do |reference|
-      xml_parser_class.new(File.join(reference.local_path)).parse
-    end.flatten
+  def parse_packages_metadata(metadata_references)
+    xml_parsers = { deltainfo: RepomdParser::DeltainfoXmlParser,
+                    primary: RepomdParser::PrimaryXmlParser }
+
+    metadata_references
+      .map { |file| xml_parsers[file.type]&.new(file.local_path) }.compact
+      .map(&:parse).flatten
   end
 
   def download_package_files(file_references)
@@ -229,10 +228,5 @@ class RMT::Mirror
       dest: destination_dir,
       error: e.message
     })
-  end
-
-  def remove_tmp_directories(temp_licenses_dir, temp_metadata_dir)
-    FileUtils.remove_entry(temp_licenses_dir) if temp_licenses_dir && Dir.exist?(temp_licenses_dir)
-    FileUtils.remove_entry(temp_metadata_dir) if temp_metadata_dir && Dir.exist?(temp_metadata_dir)
   end
 end
