@@ -110,12 +110,7 @@ class RMT::Downloader
   end
 
   def make_request(file, request_fiber)
-    uri = URI.join(file.remote_path)
-    uri.query = @auth_token if (@auth_token && uri.scheme != 'file')
-
-    if URI(uri).scheme == 'file' && !File.exist?(uri.path)
-      raise RMT::Downloader::Exception.new(_('%{file} - File does not exist') % { file: file.remote_path })
-    end
+    uri = request_uri(file)
 
     downloaded_file = Tempfile.new('rmt', Dir.tmpdir, mode: File::BINARY, encoding: 'ascii-8bit')
 
@@ -126,13 +121,23 @@ class RMT::Downloader
       uri.to_s,
       download_path: downloaded_file,
       request_fiber: request_fiber,
-      remote_file: file.remote_path,
       followlocation: true,
       headers: headers
     )
 
     request.receive_headers
     request.receive_body
+  end
+
+  def request_uri(file)
+    uri = URI.join(file.remote_path)
+    uri.query = @auth_token if (@auth_token && uri.scheme != 'file')
+
+    if URI(uri).scheme == 'file' && !File.exist?(uri.path)
+      raise RMT::Downloader::Exception.new(_('%{file} - File does not exist') % { file: file.remote_path })
+    end
+
+    uri.to_s
   end
 
   def copy_from_cache(file)
