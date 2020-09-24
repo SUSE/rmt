@@ -12,14 +12,14 @@ Prophet.setup do |config|
   if File.exist?(CONFIG_FILE)
     options = YAML.load_file(CONFIG_FILE)
     # The GitHub (GH) username/password to use for commenting on a successful run.
-    config.username = options['default']['gh_username']
-    config.password = options['default']['gh_password']
+    config.username_pass = options['default']['gh_username']
+    config.access_token_pass = options['default']['gh_token']
 
     # The GH credentials for commenting on failing runs (can be the same as above).
     # NOTE: If you specify two different accounts with different avatars, it's
     # a lot easier to spot failing test runs at first glance.
     config.username_fail = options['default']['gh_username_fail']
-    config.password_fail = options['default']['gh_password_fail']
+    config.access_token_fail = options['default']['gh_token_fail']
   end
 
   # Setup logging.
