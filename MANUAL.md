@@ -128,6 +128,8 @@ After successful registration the repositories from RMT will be used by `zypper`
     Adds a new custom repository, for example:
 
     `rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers`
+    
+    `rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers --id containers_sle_12_sp3`
 
   * `rmt-cli repos custom enable <id>`:
     Enables mirroring for a custom repository.

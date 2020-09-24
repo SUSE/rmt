@@ -16,6 +16,7 @@ class Repository < ApplicationRecord
   validates :name, presence: true
   validates :external_url, presence: true
   validates :local_path, presence: true
+  validates :friendly_id, presence: true
 
   before_destroy :ensure_destroy_possible
 
@@ -45,6 +46,10 @@ class Repository < ApplicationRecord
 
   def custom?
     scc_id.nil?
+  end
+
+  def self.make_friendly_url_id(url)
+    Digest::MD5.hexdigest(url)
   end
 
   private

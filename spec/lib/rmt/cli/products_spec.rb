@@ -484,7 +484,7 @@ RSpec.describe RMT::CLI::Products do
         mandatory = repo.enabled ? 'mandatory' : 'non-mandatory'
         enabled = repo.mirroring_enabled ? 'enabled' : 'not enabled'
         mirrored = repo.last_mirrored_at.present? ? "mirrored at #{repo.last_mirrored_at.strftime('%Y-%m-%d %H:%M:%S %Z')}" : 'not mirrored'
-        output += "* #{repo.name} (id: #{repo.scc_id}) (#{mandatory}, #{enabled}, #{mirrored})\n"
+        output += "* #{repo.name} (id: #{repo.friendly_id}) (#{mandatory}, #{enabled}, #{mirrored})\n"
       end
       output
     end

@@ -52,10 +52,11 @@ describe RMT::SCC do
       all_repositories.map.each do |repository|
         db_repository = Repository.find_by(scc_id: repository[:id])
 
-        (db_repository.attributes.keys - %w[id scc_id external_url mirroring_enabled local_path auth_token]).each do |key|
+        (db_repository.attributes.keys - %w[id scc_id external_url mirroring_enabled local_path auth_token friendly_id]).each do |key|
           expect(db_repository[key].to_s).to eq(repository[key.to_sym].to_s)
         end
         expect(db_repository[:scc_id]).to eq(repository[:id])
+        expect(db_repository[:friendly_id].to_s).to eq(repository[:id].to_s)
 
         uri = URI(repository[:url])
         auth_token = uri.query

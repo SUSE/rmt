@@ -34,12 +34,12 @@ describe RMT::CLI::SMTImporter do
     let(:repo_2) { create :repository }
 
     context 'when repository exists' do
-      let(:enabled_repos) { [repo_1.scc_id, repo_2.scc_id] }
+      let(:enabled_repos) { [repo_1.friendly_id, repo_2.friendly_id] }
 
       it 'enables mirroring for given repositories' do
         expect { importer.import_repositories }.to output(<<-OUTPUT.strip_heredoc).to_stdout
-          Enabled mirroring for repository #{repo_1.scc_id}
-          Enabled mirroring for repository #{repo_2.scc_id}
+          Enabled mirroring for repository #{repo_1.friendly_id}
+          Enabled mirroring for repository #{repo_2.friendly_id}
         OUTPUT
 
         expect(repo_1.reload.mirroring_enabled).to be(true)
