@@ -29,21 +29,25 @@ class RMT::Downloader
   end
 
   def download(file_reference)
+    uncached_files, _ = try_copying_from_cache([file_reference])
+    return file_reference.local_path if uncached_files.empty?
+
     local_filenames = []
-    fiber_request = create_fiber_request(
-      local_filenames,
-      file_reference
-    )
+    fiber_request = create_fiber_request(local_filenames, file_reference)
     fiber_request.run
     local_filenames.first
   end
 
   def download_multi(files, ignore_errors: false)
-    @queue = files
+    uncached_files, failed_files =
+      try_copying_from_cache(files, ignore_errors: ignore_errors)
+    return failed_files if uncached_files.empty?
+
+    @queue = uncached_files
     @hydra = Typhoeus::Hydra.new(max_concurrency: @concurrency)
 
     local_filenames = []
-    failed_downloads = ignore_errors ? [] : nil
+    failed_downloads = ignore_errors ? failed_files : nil
     @concurrency.times { process_queue(local_filenames, failed_downloads) }
 
     @hydra.run
@@ -65,12 +69,7 @@ class RMT::Downloader
         # make_request will call Fiber.yield on this fiber (request_fiber), returning the request object
         # this fiber will be resumed by on_body callback once the request is executed
         response = make_request(file_reference, request_fiber)
-
-        if (response.code == 304)
-          copy_from_cache(file_reference)
-        else
-          finalize_download(response.request, file_reference)
-        end
+        finalize_download(response.request, file_reference)
 
         local_filenames << file_reference.local_path
       rescue RMT::Downloader::Exception, RMT::ChecksumVerifier::Exception => e
@@ -110,56 +109,83 @@ class RMT::Downloader
   end
 
   def make_request(file, request_fiber)
-    uri = request_uri(file)
-
     downloaded_file = Tempfile.new('rmt', Dir.tmpdir, mode: File::BINARY, encoding: 'ascii-8bit')
 
-    headers = {}
-    headers['If-Modified-Since'] = file.cache_timestamp if file.cache_timestamp
-
     request = RMT::FiberRequest.new(
-      uri.to_s,
+      request_uri(file).to_s,
       download_path: downloaded_file,
       request_fiber: request_fiber,
-      followlocation: true,
-      headers: headers
+      followlocation: true
     )
 
     request.receive_headers
     request.receive_body
   end
 
-  def request_uri(file)
-    uri = URI.join(file.remote_path)
-    uri.query = @auth_token if (@auth_token && uri.scheme != 'file')
+  def try_copying_from_cache(files, ignore_errors: false)
+    cacheable_files = files.group_by { |file| !file.cache_timestamp.nil? }
+    uncached_files = cacheable_files.fetch(false, [])
+    cacheable_files = cacheable_files.fetch(true, [])
+      .map { |file| [file, head_request(file)] }.to_h
 
-    if URI(uri).scheme == 'file' && !File.exist?(uri.path)
-      raise RMT::Downloader::Exception.new(_('%{file} - File does not exist') % { file: file.remote_path })
+    return [uncached_files, []] if cacheable_files.empty?
+
+    if cacheable_files.count > 1
+      hydra = Typhoeus::Hydra.new(max_concurrency: @concurrency)
+      cacheable_files.each_value { |request| hydra.queue(request) }
+      hydra.run
+    else
+      cacheable_files.values.first.run
     end
 
-    uri.to_s
+    failed_files = []
+    cacheable_files.each do |(file, request)|
+      next uncached_files << file unless valid_cached_file?(file, request.response)
+
+      copy_from_cache(file)
+    rescue RMT::Downloader::Exception => e
+      next failed_files << file.local_path if ignore_errors
+
+      raise e
+    end
+
+    [uncached_files, failed_files]
+  end
+
+  def head_request(file)
+    RMT::HttpRequest.new(request_uri(file).to_s, method: :head, followlocation: true)
+  end
+
+  def valid_cached_file?(file, response)
+    raise http_error(file.remote_path, response.code) if (response.code != 200)
+
+    # response.headers returns Typhoeus::Response::Headers, which takes care of
+    # case-sensitive concerns with the header's key
+    last_modified_header = response.headers['Last-Modified']
+    return false unless last_modified_header
+
+    file.cache_timestamp == Time.parse(last_modified_header).utc
   end
 
   def copy_from_cache(file)
+    make_file_dir(file.local_path)
     FileUtils.cp(file.cache_path, file.local_path, preserve: true) unless (file.cache_path == file.local_path)
     @logger.info("→ #{File.basename(file.local_path)}")
   end
 
   def finalize_download(request, file)
     if (URI(request.base_url).scheme != 'file' && request.response.code != 200)
-      raise RMT::Downloader::Exception.new(
-        _('%{file} - HTTP request failed with code %{code}') % {
-          file: request.remote_file,
-          code: request.response.code
-        },
-        request.response.code
-      )
+      raise http_error(request.remote_file, request.response.code)
     end
 
     handle_checksum_verification!(file.checksum_type, file.checksum, request.download_path)
 
     FileUtils.mv(request.download_path.path, file.local_path)
     File.chmod(0o644, file.local_path)
+    if (last_modified = request.response.headers['Last-Modified'])
+      timestamp = Time.parse(last_modified).utc
+      File.utime(timestamp, timestamp, file.local_path)
+    end
 
     if @track_files && file.local_path.match?(/\.(rpm|drpm)$/)
       DownloadedFile.track_file(checksum: file.checksum,
@@ -180,6 +206,24 @@ class RMT::Downloader
     unless RMT::ChecksumVerifier.match_checksum?(checksum_type, checksum_value, download_path)
       raise RMT::Downloader::Exception.new(_("Checksum doesn't match"))
     end
+  end
+
+  def http_error(remote_file, http_code)
+    RMT::Downloader::Exception.new(
+      _('%{file} - HTTP request failed with code %{code}') % { file: remote_file, code: http_code },
+      http_code
+    )
+  end
+
+  def request_uri(file)
+    uri = URI.join(file.remote_path)
+    uri.query = @auth_token if (@auth_token && uri.scheme != 'file')
+
+    if URI(uri).scheme == 'file' && !File.exist?(uri.path)
+      raise RMT::Downloader::Exception.new(_('%{file} - File does not exist') % { file: file.remote_path })
+    end
+
+    uri.to_s
   end
 
   def make_file_dir(file_path)

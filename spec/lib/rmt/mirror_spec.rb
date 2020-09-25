@@ -652,10 +652,14 @@ RSpec.describe RMT::Mirror do
         }
       end
 
-      let(:timestamp) { 'Mon, 01 Jan 2018 10:10:00 GMT' }
+      let(:timestamp) { 'Mon, 18 May 2020 09:24:25 GMT' }
 
       before do
-        FileUtils.touch "#{mirroring_dir}/dummy_product/product/repodata/repomd.xml", mtime: Time.parse(timestamp).utc
+        metadata_files = [
+          File.join(mirroring_dir, 'dummy_product', 'product.license', '**'),
+          File.join(mirroring_dir, 'dummy_product', 'product', 'repodata', '**')
+        ].reduce([]) { |files, path| files + Dir.glob(path) }
+        metadata_files.each { |file| FileUtils.touch(file, mtime: Time.parse(timestamp).utc) }
 
         VCR.use_cassette 'mirroring_product_with_cached_metadata' do
           rmt_mirror.mirror(**mirror_params)

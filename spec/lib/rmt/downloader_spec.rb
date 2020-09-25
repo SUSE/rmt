@@ -187,16 +187,10 @@ RSpec.describe RMT::Downloader do
       end
     end
 
-    describe '#download with If-Modified-Since' do
+    describe '#download with cacheable file' do
       let(:cache_dir) { Dir.mktmpdir }
       let(:repository_dir) { Dir.mktmpdir }
       let(:time) { Time.utc(2018, 1, 1, 10, 10, 0) }
-      let(:if_modified_headers) do
-        {
-          'User-Agent' => "RMT/#{RMT::VERSION}",
-          'If-Modified-Since' => 'Mon, 01 Jan 2018 10:10:00 GMT'
-        }
-      end
       let(:downloaded_file) { downloader.download(repomd_xml_file) }
       let(:cached_content) { 'cached_content' }
       let(:fresh_content) { 'fresh_content' }
@@ -205,10 +199,12 @@ RSpec.describe RMT::Downloader do
         before do
           File.open(repomd_xml_file.cache_path, 'w') { |file| file.write(cached_content) }
           File.utime(time, time, repomd_xml_file.cache_path)
-          stub_request(:get, 'http://example.com/repomd.xml')
-              .with(headers: if_modified_headers)
-              .to_return(status: 304, body: '', headers: {})
+          stub_request(:head, 'http://example.com/repomd.xml')
+            .with(headers: headers)
+            .to_return(status: 200, headers: { 'Last-Modified': last_modified_header })
         end
+
+        let(:last_modified_header) { 'Mon, 01 Jan 2018 10:10:00 GMT' }
 
         it('has correct content') { expect(File.read(downloaded_file)).to eq(cached_content) }
       end
@@ -217,12 +213,51 @@ RSpec.describe RMT::Downloader do
         before do
           File.open(repomd_xml_file.cache_path, 'w') { |file| file.write(cached_content) }
           File.utime(time, time, repomd_xml_file.cache_path)
+          stub_request(:head, 'http://example.com/repomd.xml')
+            .with(headers: headers)
+            .to_return(status: 200, headers: { 'Last-Modified': last_modified_header })
           stub_request(:get, 'http://example.com/repomd.xml')
-              .with(headers: if_modified_headers)
-              .to_return(status: 200, body: fresh_content, headers: {})
+            .with(headers: headers)
+            .to_return(status: 200, body: fresh_content, headers: {})
         end
 
+        let(:last_modified_header) { 'Tue, 02 Jan 2018 10:10:00 GMT' }
+
         it('has correct content') { expect(File.read(downloaded_file)).to eq(fresh_content) }
+      end
+
+      context "a file exists in cache and its mtime is greater than 'Last-Modified' time" do
+        before do
+          File.open(repomd_xml_file.cache_path, 'w') { |file| file.write(cached_content) }
+          File.utime(time, time, repomd_xml_file.cache_path)
+          stub_request(:head, 'http://example.com/repomd.xml')
+            .with(headers: headers)
+            .to_return(status: 200, headers: { 'Last-Modified': last_modified_header })
+          stub_request(:get, 'http://example.com/repomd.xml')
+            .with(headers: headers)
+            .to_return(status: 200, body: fresh_content, headers: {})
+        end
+
+        let(:last_modified_header) { 'Sun, 31 Dec 2017 10:10:00 GMT' }
+
+        it('has correct content') { expect(File.read(downloaded_file)).to eq(fresh_content) }
+      end
+
+      context 'a file exists in cache but the HEAD request fails' do
+        before do
+          File.open(repomd_xml_file.cache_path, 'w') { |file| file.write(cached_content) }
+          File.utime(time, time, repomd_xml_file.cache_path)
+          stub_request(:head, 'http://example.com/repomd.xml')
+            .with(headers: headers)
+            .to_return(status: 404)
+        end
+
+        it 'raises an error' do
+          expect { downloaded_file }.to raise_error(
+            RMT::Downloader::Exception,
+            'http://example.com/repomd.xml - HTTP request failed with code 404'
+          )
+        end
       end
 
       context "a file doesn't exist in cache" do
@@ -231,7 +266,7 @@ RSpec.describe RMT::Downloader do
             relative_path: 'another_file.xml',
             base_url: repository_url,
             base_dir: repository_dir,
-            cache_dir: cache_dir
+            cache_dir: nil
           ).tap do |file|
             file.checksum = expected_checksum
             file.checksum_type = expected_checksum_type
@@ -241,8 +276,8 @@ RSpec.describe RMT::Downloader do
 
         before do
           stub_request(:get, 'http://example.com/another_file.xml')
-              .with(headers: headers)
-              .to_return(status: 200, body: fresh_content, headers: {})
+            .with(headers: headers)
+            .to_return(status: 200, body: fresh_content, headers: {})
         end
 
         it('has correct content') { expect(File.read(downloaded_file)).to eq(fresh_content) }
@@ -296,7 +331,8 @@ RSpec.describe RMT::Downloader do
         RMT::Mirror::FileReference.new(
           relative_path: file,
           base_url: repository_url,
-          base_dir: repository_dir
+          base_dir: repository_dir,
+          cache_dir: cache_dir
         ).tap do |file_ref|
           file_ref.checksum = Digest.const_get(checksum_type).hexdigest(file)
           file_ref.checksum_type = checksum_type
@@ -363,6 +399,43 @@ RSpec.describe RMT::Downloader do
 
         expect(downloader.instance_variable_get(:@hydra).multi.easy_handles).to eq([])
         expect(downloader.instance_variable_get(:@queue)).to eq([])
+      end
+    end
+
+    context 'when there are cached files' do
+      let(:cache_dir) { Dir.mktmpdir }
+
+      context 'when a HEAD request fails and the ignore_erros = false' do
+        before do
+          queue.each do |file|
+            FileUtils.touch(file.cache_path)
+            stub_request(:head, file.remote_path.to_s).with(headers: headers)
+              .to_return(status: 404, body: 'Not Found', headers: {})
+          end
+        end
+
+        it 'raises an error' do
+          expect { downloader.download_multi(queue.dup, ignore_errors: false) }
+            .to raise_error(
+              RMT::Downloader::Exception,
+              %r{http://example.com/package[1-3] - HTTP request failed with code 404}
+            )
+        end
+      end
+
+      context 'when a HEAD request fails and the ignore_erros = true' do
+        before do
+          queue.each do |file|
+            FileUtils.touch(file.cache_path)
+            stub_request(:head, file.remote_path.to_s).with(headers: headers)
+              .to_return(status: 404, body: 'Not Found', headers: {})
+          end
+        end
+
+        it 'raises an error' do
+          failed_downloads = downloader.download_multi(queue.dup, ignore_errors: true)
+          expect(failed_downloads).to match_array(queue.map(&:local_path))
+        end
       end
     end
   end
