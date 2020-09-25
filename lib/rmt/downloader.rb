@@ -32,23 +32,21 @@ class RMT::Downloader
     uncached_files, _ = try_copying_from_cache([file_reference])
     return file_reference.local_path if uncached_files.empty?
 
-    local_filenames = []
-    fiber_request = create_fiber_request(local_filenames, file_reference)
+    fiber_request = create_fiber_request(file_reference)
     fiber_request.run
-    local_filenames.first
+    file_reference.local_path
   end
 
   def download_multi(files, ignore_errors: false)
-    uncached_files, failed_files =
+    uncached_files, failed_cache =
       try_copying_from_cache(files, ignore_errors: ignore_errors)
-    return failed_files if uncached_files.empty?
+    return failed_cache if uncached_files.empty?
 
     @queue = uncached_files
     @hydra = Typhoeus::Hydra.new(max_concurrency: @concurrency)
 
-    local_filenames = []
-    failed_downloads = ignore_errors ? failed_files : nil
-    @concurrency.times { process_queue(local_filenames, failed_downloads) }
+    failed_downloads = ignore_errors ? failed_cache : nil
+    @concurrency.times { process_queue(failed_downloads) }
 
     @hydra.run
     failed_downloads
@@ -57,11 +55,10 @@ class RMT::Downloader
   protected
 
   # Creates a fiber that wraps RMT::FiberRequest and runs it, returning the RMT::FiberRequest object.
-  # @param [Array] local_filenames array of paths to downloaded files, passed by reference
   # @param [RMT::Mirror::FileReference] PORO with all file metadata attributes and paths (remote, local, cache)
   # @param [Array] failed_downloads array of remote files that have failed downloads, passed by reference, prevents from raising RMT::Downloader exceptions
   # @return [RMT::FiberRequest] a request that can be run individually or with Typhoeus::Hydra
-  def create_fiber_request(local_filenames, file_reference, failed_downloads: nil)
+  def create_fiber_request(file_reference, failed_downloads: nil)
     make_file_dir(file_reference.local_path)
 
     request_fiber = Fiber.new do
@@ -70,8 +67,6 @@ class RMT::Downloader
         # this fiber will be resumed by on_body callback once the request is executed
         response = make_request(file_reference, request_fiber)
         finalize_download(response.request, file_reference)
-
-        local_filenames << file_reference.local_path
       rescue RMT::Downloader::Exception, RMT::ChecksumVerifier::Exception => e
         unless failed_downloads
           # Clean up downloads queued in Ethon::Multi and @queue
@@ -88,24 +83,19 @@ class RMT::Downloader
         @logger.warn("× #{File.basename(file_reference.local_path)} - #{e}")
         failed_downloads << file_reference.local_path
       ensure
-        process_queue(local_filenames, failed_downloads)
+        process_queue(failed_downloads)
       end
     end
 
     request_fiber.resume
   end
 
-  def process_queue(local_filenames, failed_downloads = nil)
+  def process_queue(failed_downloads = nil)
     queue_item = @queue.shift
     return unless queue_item
 
-    @hydra.queue(
-      create_fiber_request(
-        local_filenames,
-        queue_item,
-        failed_downloads: failed_downloads
-      )
-    )
+    request = create_fiber_request(queue_item, failed_downloads: failed_downloads)
+    @hydra.queue(request)
   end
 
   def make_request(file, request_fiber)
