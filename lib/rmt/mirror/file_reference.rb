@@ -26,6 +26,6 @@ class RMT::Mirror::FileReference
   end
 
   def cache_timestamp
-    File.mtime(cache_path).utc.httpdate if cache_path && File.exist?(cache_path)
+    File.mtime(cache_path).utc if cache_path && File.exist?(cache_path)
   end
 end
