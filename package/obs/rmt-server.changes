@@ -1,4 +1,24 @@
 -------------------------------------------------------------------
+Mon Sep 21 16:44:23 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.6.0
+- Friendlier IDs for custom repositories:
+  In an effort to simplify the handling of SCC and custom repositories,
+  RMT now has friendly IDs. For SCC repositories, it's the same SCC ID
+  as before. For custom repositories, it can either be user provided
+  or RMT generated (MD5 of the provided URL).
+
+  Benefits:
+  * `rmt-cli mirror repositories` now works for custom repositories.
+  * Custom repository IDs can be the same across RMT instances.
+  * No more confusing "SCC ID" vs "ID" in `rmt-cli` output.
+
+  Deprecation Warnings:
+  * RMT now uses a different ID for custom repositories than before.
+    RMT still supports that old ID, but it's recommended to start
+    using the new ID to ensure future compatibility.
+
+-------------------------------------------------------------------
 Mon Sep 10 14:10:45 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
 
 - Version 2.5.20
