@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Sep 29 10:19:12 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.6.1
+- Fixed an issue where relative paths supplied to `rmt-cli import repos`
+  caused the command to fail.
+
+-------------------------------------------------------------------
 Mon Sep 21 16:44:23 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
 
 - Version 2.6.0
