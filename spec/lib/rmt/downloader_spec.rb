@@ -412,7 +412,7 @@ RSpec.describe RMT::Downloader do
     context 'when there are cached files' do
       let(:cache_dir) { Dir.mktmpdir }
 
-      context 'when a HEAD request fails and the ignore_erros = false' do
+      context 'when a HEAD request fails and the ignore_errors = false' do
         before do
           queue.each do |file|
             FileUtils.touch(file.cache_path)
@@ -430,7 +430,7 @@ RSpec.describe RMT::Downloader do
         end
       end
 
-      context 'when a HEAD request fails and the ignore_erros = true' do
+      context 'when a HEAD request fails and the ignore_errors = true' do
         before do
           queue.each do |file|
             FileUtils.touch(file.cache_path)
@@ -439,7 +439,7 @@ RSpec.describe RMT::Downloader do
           end
         end
 
-        it 'raises an error' do
+        it 'returns a list of failed downloads' do
           failed_downloads = downloader.download_multi(queue.dup, ignore_errors: true)
           expect(failed_downloads).to match_array(queue.map(&:local_path))
         end

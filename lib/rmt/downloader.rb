@@ -29,8 +29,8 @@ class RMT::Downloader
   end
 
   def download(file_reference)
-    uncached_files, _ = try_copying_from_cache([file_reference])
-    return file_reference.local_path if uncached_files.empty?
+    downloads_needed, _ = try_copying_from_cache([file_reference])
+    return file_reference.local_path if downloads_needed.empty?
 
     fiber_request = create_fiber_request(file_reference)
     fiber_request.run
@@ -38,11 +38,11 @@ class RMT::Downloader
   end
 
   def download_multi(files, ignore_errors: false)
-    uncached_files, failed_cache =
+    downloads_needed, failed_cache =
       try_copying_from_cache(files, ignore_errors: ignore_errors)
-    return failed_cache if uncached_files.empty?
+    return failed_cache if downloads_needed.empty?
 
-    @queue = uncached_files
+    @queue = downloads_needed
     @hydra = Typhoeus::Hydra.new(max_concurrency: @concurrency)
 
     failed_downloads = ignore_errors ? failed_cache : nil
@@ -113,19 +113,22 @@ class RMT::Downloader
   end
 
   def try_copying_from_cache(files, ignore_errors: false)
-    files_to_requests = files.map { |file| [file, cache_head_request(file)] }.to_h
-    requests = files_to_requests.compact.values
+    # We need to verify if the cached copy is still relevant
+    # Create a HTTP/HTTPS HEAD request if possible, return nil if not
+    cache_requests = files.map { |file| [file, cache_head_request(file)] }.to_h
+    available_in_cache = cache_requests.compact.values
 
-    return [files, []] if requests.empty?
+    # Download everything if the cache is empty
+    return [files, []] if available_in_cache.empty?
 
     Typhoeus::Hydra.new(max_concurrency: @concurrency)
-      .tap { |hydra| requests.each { |request| hydra.queue(request) } }.run
+      .tap { |hydra| available_in_cache.each { |request| hydra.queue(request) } }.run
 
-    uncached_files = []
+    downloads_needed = []
     failed_files = []
-    files_to_requests.each do |file, request|
-      next uncached_files << file if request.nil?
-      next uncached_files << file unless valid_cached_file?(file, request.response)
+    cache_requests.each do |file, request|
+      next downloads_needed << file if request.nil?
+      next downloads_needed << file unless valid_cached_file?(file, request.response)
 
       copy_from_cache(file)
     rescue RMT::Downloader::Exception => e
@@ -134,12 +137,12 @@ class RMT::Downloader
       raise e
     end
 
-    [uncached_files, failed_files]
+    [downloads_needed, failed_files]
   end
 
   def cache_head_request(file)
     # RMT must not make HEAD requests when importing repos (file://)
-    return nil if file.remote_path.scheme == 'file'
+    return nil unless %w[http https].include?(file.remote_path.scheme)
     return nil if file.cache_timestamp.nil?
 
     RMT::HttpRequest.new(request_uri(file).to_s, method: :head, followlocation: true)
@@ -163,7 +166,7 @@ class RMT::Downloader
   end
 
   def finalize_download(request, file)
-    if (URI(request.base_url).scheme != 'file' && request.response.code != 200)
+    if (URI(request.base_url).scheme != 'file') && request.response.code != 200
       raise http_error(request.remote_file, request.response.code)
     end
 
@@ -171,7 +174,9 @@ class RMT::Downloader
 
     FileUtils.mv(request.download_path.path, file.local_path)
     File.chmod(0o644, file.local_path)
-    if (last_modified = request.response.headers['Last-Modified'])
+
+    last_modified = request.response.headers['Last-Modified']
+    if last_modified
       timestamp = Time.parse(last_modified).utc
       File.utime(timestamp, timestamp, file.local_path)
     end
