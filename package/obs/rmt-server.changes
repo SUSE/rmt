@@ -1,4 +1,20 @@
 -------------------------------------------------------------------
+Tue Sep 29 14:53:12 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
+
+- Version 2.6.2
+- Fix RMT file caching based on timestamps:
+
+  Previously, RMT sent GET requests with the header 'If-Modified-Since' to a
+  repository server and if the response had a 304 (Not Modified), it would copy
+  a file from the local cache instead of downloading. However, if the local file
+  timestamp accidentally changed to a date newer than the one on the repository
+  server, RMT would have an outdated file, which caused some errors.
+
+  Now, RMT makes HEAD requests to the repositories servers and inspect the
+  'Last-Modified' header to decide whether to download a file or copy it from
+  cache, by comparing the equalness of timestamps.
+
+-------------------------------------------------------------------
 Mon Sep 21 16:44:23 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
 
 - Version 2.6.0
