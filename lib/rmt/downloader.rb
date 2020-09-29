@@ -55,7 +55,7 @@ class RMT::Downloader
   protected
 
   # Creates a fiber that wraps RMT::FiberRequest and runs it, returning the RMT::FiberRequest object.
-  # @param [RMT::Mirror::FileReference] PORO with all file metadata attributes and paths (remote, local, cache)
+  # @param [RMT::Mirror::FileReference] file_reference with all file metadata attributes and paths (remote, local, cache)
   # @param [Array] failed_downloads array of remote files that have failed downloads, passed by reference, prevents from raising RMT::Downloader exceptions
   # @return [RMT::FiberRequest] a request that can be run individually or with Typhoeus::Hydra
   def create_fiber_request(file_reference, failed_downloads: nil)
@@ -113,28 +113,18 @@ class RMT::Downloader
   end
 
   def try_copying_from_cache(files, ignore_errors: false)
+    files_to_requests = files.map { |file| [file, cache_head_request(file)] }.to_h
+    requests = files_to_requests.compact.values
+
+    return [files, []] if requests.empty?
+
+    Typhoeus::Hydra.new(max_concurrency: @concurrency)
+      .tap { |hydra| requests.each { |request| hydra.queue(request) } }.run
+
     uncached_files = []
-    cacheable_files = {}
-    files.each do |file|
-      # RMT must not make HEAD requests when importing repos (file://)
-      next uncached_files << file if file.remote_path.scheme == 'file'
-      next uncached_files << file if file.cache_timestamp.nil?
-
-      cacheable_files[file] = head_request(file)
-    end
-
-    return [uncached_files, []] if cacheable_files.empty?
-
-    if cacheable_files.count > 1
-      hydra = Typhoeus::Hydra.new(max_concurrency: @concurrency)
-      cacheable_files.each_value { |request| hydra.queue(request) }
-      hydra.run
-    else
-      cacheable_files.values.first.run
-    end
-
     failed_files = []
-    cacheable_files.each do |(file, request)|
+    files_to_requests.each do |file, request|
+      next uncached_files << file if request.nil?
       next uncached_files << file unless valid_cached_file?(file, request.response)
 
       copy_from_cache(file)
@@ -147,7 +137,11 @@ class RMT::Downloader
     [uncached_files, failed_files]
   end
 
-  def head_request(file)
+  def cache_head_request(file)
+    # RMT must not make HEAD requests when importing repos (file://)
+    return nil if file.remote_path.scheme == 'file'
+    return nil if file.cache_timestamp.nil?
+
     RMT::HttpRequest.new(request_uri(file).to_s, method: :head, followlocation: true)
   end
 
