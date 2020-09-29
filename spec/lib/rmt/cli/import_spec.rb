@@ -24,6 +24,17 @@ describe RMT::CLI::Import, :with_fakefs do
         expect { command }.to raise_error(RuntimeError)
       end
     end
+
+    context 'with relative path' do
+      let(:path) { '/mnt/usb/../usb' }
+
+      it 'triggers import to path' do
+        FileUtils.mkdir_p path
+
+        expect_any_instance_of(RMT::SCC).to receive(:import).with('/mnt/usb')
+        command
+      end
+    end
   end
 
   describe 'repos' do
@@ -42,6 +53,66 @@ describe RMT::CLI::Import, :with_fakefs do
         { url: repo1.external_url, auth_token: repo1.auth_token.to_s },
         { url: repo2.external_url, auth_token: repo2.auth_token.to_s }
       ]
+    end
+
+    it 'mirrors repo1 and repo2' do
+      FileUtils.mkdir_p path
+      File.write("#{path}/repos.json", repo_settings.to_json)
+
+      expect(RMT::Mirror).to receive(:new).with(
+        logger: instance_of(RMT::Logger),
+        airgap_mode: true
+      ).and_return(mirror_double)
+
+      expect(mirror_double).to receive(:mirror_suma_product_tree)
+      expect(mirror_double).to receive(:mirror).with(
+        repository_url: repo1_local_path,
+        local_path: Repository.make_local_path(repo1.external_url),
+        auth_token: repo1.auth_token,
+        repo_name: repo1.name
+      )
+
+      expect(mirror_double).to receive(:mirror).with(
+        repository_url: repo2_local_path,
+        local_path: Repository.make_local_path(repo2.external_url),
+        auth_token: repo2.auth_token,
+        repo_name: repo2.name
+      )
+
+      command
+    end
+
+    context 'with relative path' do
+      let(:path) { '/mnt/usb/../usb' }
+      let(:repo1_local_path) { repo_url_to_local_path('/mnt/usb', repo1.external_url) }
+      let(:repo2_local_path) { repo_url_to_local_path('/mnt/usb', repo2.external_url) }
+
+      it 'mirrors repo1 and repo2' do
+        FileUtils.mkdir_p path
+        File.write("#{path}/repos.json", repo_settings.to_json)
+
+        expect(RMT::Mirror).to receive(:new).with(
+          logger: instance_of(RMT::Logger),
+          airgap_mode: true
+        ).and_return(mirror_double)
+
+        expect(mirror_double).to receive(:mirror_suma_product_tree)
+        expect(mirror_double).to receive(:mirror).with(
+          repository_url: repo1_local_path,
+          local_path: Repository.make_local_path(repo1.external_url),
+          auth_token: repo1.auth_token,
+          repo_name: repo1.name
+        )
+
+        expect(mirror_double).to receive(:mirror).with(
+          repository_url: repo2_local_path,
+          local_path: Repository.make_local_path(repo2.external_url),
+          auth_token: repo2.auth_token,
+          repo_name: repo2.name
+        )
+
+        command
+      end
     end
 
     context 'no repos.json file' do
@@ -79,35 +150,6 @@ describe RMT::CLI::Import, :with_fakefs do
 
         expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
         expect { command }.to output(/repository by URL #{missing_repo_url} does not exist in database/).to_stderr.and output('').to_stdout
-      end
-    end
-
-    context 'without exception' do
-      it 'mirrors repo1 and repo2' do
-        FileUtils.mkdir_p path
-        File.write("#{path}/repos.json", repo_settings.to_json)
-
-        expect(RMT::Mirror).to receive(:new).with(
-          logger: instance_of(RMT::Logger),
-          airgap_mode: true
-        ).and_return(mirror_double)
-
-        expect(mirror_double).to receive(:mirror_suma_product_tree)
-        expect(mirror_double).to receive(:mirror).with(
-          repository_url: repo1_local_path,
-          local_path: Repository.make_local_path(repo1.external_url),
-          auth_token: repo1.auth_token,
-          repo_name: repo1.name
-        )
-
-        expect(mirror_double).to receive(:mirror).with(
-          repository_url: repo2_local_path,
-          local_path: Repository.make_local_path(repo2.external_url),
-          auth_token: repo2.auth_token,
-          repo_name: repo2.name
-        )
-
-        command
       end
     end
 
