@@ -1,6 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe RMT::Mirror do
+  RSpec::Matchers.define :file_reference_containing_path do |expected|
+    match do |actual|
+      actual.local_path.include?(expected)
+    end
+
+    failure_message do |actual|
+      "expected that file path #{actual.local_path} would contain #{expected}"
+    end
+  end
+
   let(:logger) { RMT::Logger.new('/dev/null') }
 
   describe '#mirror_suma_product_tree' do
@@ -53,6 +63,11 @@ RSpec.describe RMT::Mirror do
 
     before do
       allow_any_instance_of(RMT::GPG).to receive(:verify_signature)
+    end
+
+    after do
+      Dir.glob(File.join(Dir.tmpdir, 'rmt_mirror_*', '**'))
+        .each { |tmpdir| FileUtils.remove_entry(tmpdir, true) }
     end
 
     context 'without auth_token', vcr: { cassette_name: 'mirroring' } do
@@ -252,10 +267,14 @@ RSpec.describe RMT::Mirror do
       context "when can't download metadata", vcr: { cassette_name: 'mirroring_product' } do
         before do
           allow_any_instance_of(RMT::Downloader).to receive(:download).and_call_original
-          expect_any_instance_of(RMT::Downloader).to receive(:download).with('repodata/repomd.xml').and_raise(RMT::Downloader::Exception, "418 - I'm a teapot")
+          expect_any_instance_of(RMT::Downloader)
+            .to receive(:download)
+            .with(file_reference_containing_path('repodata/repomd.xml'))
+            .and_raise(RMT::Downloader::Exception, "418 - I'm a teapot")
         end
         it 'handles RMT::Downloader::Exception' do
-          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, "Error while mirroring metadata: 418 - I'm a teapot")
+          expect { rmt_mirror.mirror(**mirror_params) }
+            .to raise_error(RMT::Mirror::Exception, "Error while mirroring metadata: 418 - I'm a teapot")
         end
       end
 
@@ -286,15 +305,15 @@ RSpec.describe RMT::Mirror do
 
         it 'removes the temporary licenses directory' do
           rmt_mirror.mirror(**mirror_params)
-          tmpdir = rmt_mirror.instance_variable_get('@temp_licenses_dir')
-          expect(Dir).not_to exist tmpdir
+          tmp_dir_glob = Dir.glob(File.join(Dir.tmpdir, 'rmt_mirror_*', '**'))
+          expect(tmp_dir_glob.length).to eq(0)
         end
       end
 
       context "when can't download some of the license files" do
         before do
           allow_any_instance_of(RMT::Downloader).to receive(:download_multi).and_wrap_original do |klass, *args|
-            raise RMT::Downloader::Exception.new if args[0][0] =~ /license/
+            raise RMT::Downloader::Exception.new if args[0][0].local_path =~ /license/
             klass.call(*args)
           end
         end
@@ -306,8 +325,11 @@ RSpec.describe RMT::Mirror do
       context "when can't parse metadata", vcr: { cassette_name: 'mirroring_product' } do
         before { allow_any_instance_of(RepomdParser::RepomdXmlParser).to receive(:parse).and_raise('Parse error') }
         it 'removes the temporary metadata directory' do
-          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring metadata: Parse error')
-          expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
+          expect { rmt_mirror.mirror(**mirror_params) }
+            .to raise_error(RMT::Mirror::Exception, 'Error while mirroring metadata: Parse error')
+
+          tmp_dir_glob = Dir.glob(File.join(Dir.tmpdir, 'rmt_mirror_*', '**'))
+          expect(tmp_dir_glob.length).to eq(0)
         end
       end
 
@@ -315,7 +337,9 @@ RSpec.describe RMT::Mirror do
         before { allow_any_instance_of(RepomdParser::RepomdXmlParser).to receive(:parse).and_raise(Interrupt.new) }
         it 'removes the temporary metadata directory' do
           expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(Interrupt)
-          expect(File.exist?(rmt_mirror.instance_variable_get(:@temp_metadata_dir))).to be(false)
+
+          tmp_dir_glob = Dir.glob(File.join(Dir.tmpdir, 'rmt_mirror_*', '**'))
+          expect(tmp_dir_glob.length).to eq(0)
         end
       end
 
@@ -323,7 +347,7 @@ RSpec.describe RMT::Mirror do
         it 'handles RMT::Downloader::Exception' do
           allow_any_instance_of(RMT::Downloader).to receive(:finalize_download).and_wrap_original do |klass, *args|
             # raise the exception only for the RPMs/DRPMs
-            raise(RMT::Downloader::Exception, "418 - I'm a teapot") if args[1] =~ /rpm$/
+            raise(RMT::Downloader::Exception, "418 - I'm a teapot") if args[1].local_path =~ /rpm$/
             klass.call(*args)
           end
           expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
@@ -332,7 +356,7 @@ RSpec.describe RMT::Mirror do
         it 'handles RMT::ChecksumVerifier::Exception' do
           allow_any_instance_of(RMT::Downloader).to receive(:finalize_download).and_wrap_original do |klass, *args|
             # raise the exception only for the RPMs/DRPMs
-            raise(RMT::ChecksumVerifier::Exception, "Checksum doesn't match") if args[1] =~ /rpm$/
+            raise(RMT::ChecksumVerifier::Exception, "Checksum doesn't match") if args[1].local_path =~ /rpm$/
             klass.call(*args)
           end
           expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
@@ -631,7 +655,6 @@ RSpec.describe RMT::Mirror do
       let(:timestamp) { 'Mon, 01 Jan 2018 10:10:00 GMT' }
 
       before do
-        expect_any_instance_of(RMT::Downloader).to receive(:get_cache_timestamp).at_least(:once) { timestamp }
         FileUtils.touch "#{mirroring_dir}/dummy_product/product/repodata/repomd.xml", mtime: Time.parse(timestamp).utc
 
         VCR.use_cassette 'mirroring_product_with_cached_metadata' do
@@ -734,7 +757,7 @@ RSpec.describe RMT::Mirror do
         expect(logger).to receive(:info).with(/↓/).at_least(1).times
 
         allow_any_instance_of(RMT::Downloader).to receive(:finalize_download).and_wrap_original do |klass, *args|
-          if args[1] == 'repodata/repomd.xml.key'
+          if args[1].local_path.include?('repodata/repomd.xml.key')
             raise RMT::Downloader::Exception.new('HTTP request failed', 404)
           else
             klass.call(*args)
@@ -751,9 +774,7 @@ RSpec.describe RMT::Mirror do
         expect(logger).to receive(:info).with(/↓/).at_least(1).times
 
         allow_any_instance_of(RMT::Downloader).to receive(:download).and_wrap_original do |klass, *args|
-          if args[0] == 'repodata/repomd.xml.key'
-            '/foo/repomd.xml.key'
-          elsif args[0] == 'repodata/repomd.xml.asc'
+          if args[0].local_path.include?('repodata/repomd.xml.asc')
             raise RMT::Downloader::Exception.new('HTTP request failed', 502)
           else
             klass.call(*args)
