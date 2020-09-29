@@ -46,11 +46,11 @@ RSpec.describe RMT::Mirror::FileReference do
       before do
         absolute_path = File.join(cache_dir, relative_path)
         FileUtils.mkpath(File.dirname(absolute_path))
-        FileUtils.touch(absolute_path, mtime: Time.parse(timestamp).utc)
+        FileUtils.touch(absolute_path, mtime: timestamp)
       end
 
       let(:cache_dir) { tmp_dir }
-      let(:timestamp) { 'Fri, 18 Sep 2020 18:13:57 GMT' }
+      let(:timestamp) { Time.parse('Fri, 18 Sep 2020 18:13:57 GMT').utc }
 
       it "returns the file's mtime" do
         expect(file_reference.cache_timestamp).to eq(timestamp)

@@ -2,11 +2,11 @@
 class RMT::FiberRequest < RMT::HttpRequest
   attr_accessor :base_url, :download_path, :remote_file
 
-  def initialize(base_url, download_path:, request_fiber:, remote_file:, **options)
+  def initialize(base_url, download_path:, request_fiber:, **options)
     @base_url = base_url
     @download_path = download_path
     @request_fiber = request_fiber
-    @remote_file = remote_file
+    @remote_file = base_url.split('?').first
 
     super(base_url, options)
 
