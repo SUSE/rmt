@@ -13,6 +13,13 @@ Tue Sep 29 14:53:12 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
   Now, RMT makes HEAD requests to the repositories servers and inspect the
   'Last-Modified' header to decide whether to download a file or copy it from
   cache, by comparing the equalness of timestamps.
+  
+-------------------------------------------------------------------
+Mon Sep 29 10:19:12 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.6.1
+- Fixed an issue where relative paths supplied to `rmt-cli import repos`
+  caused the command to fail.
 
 -------------------------------------------------------------------
 Mon Sep 21 16:44:23 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
