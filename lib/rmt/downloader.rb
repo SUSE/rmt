@@ -113,10 +113,15 @@ class RMT::Downloader
   end
 
   def try_copying_from_cache(files, ignore_errors: false)
-    cacheable_files = files.group_by { |file| !file.cache_timestamp.nil? }
-    uncached_files = cacheable_files.fetch(false, [])
-    cacheable_files = cacheable_files.fetch(true, [])
-      .map { |file| [file, head_request(file)] }.to_h
+    uncached_files = []
+    cacheable_files = {}
+    files.each do |file|
+      # RMT must not make HEAD requests when importing repos (file://)
+      next uncached_files << file if file.remote_path.scheme == 'file'
+      next uncached_files << file if file.cache_timestamp.nil?
+
+      cacheable_files[file] = head_request(file)
+    end
 
     return [uncached_files, []] if cacheable_files.empty?
 

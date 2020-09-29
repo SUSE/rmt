@@ -289,14 +289,21 @@ RSpec.describe RMT::Downloader do
     subject(:download) { downloader.download(repomd_xml_file) }
 
     let(:repository_dir) { Dir.mktmpdir }
-    let(:repository_url) { 'file://' + File.expand_path(file_fixture('dummy_repo/')) + '/' }
+    let(:repository_url_local_path) { File.expand_path(file_fixture('dummy_repo/')) + '/' }
+    let(:repository_url) { URI.join('file://', repository_url_local_path) }
     let(:downloader) { described_class.new(logger: RMT::Logger.new('/dev/null')) }
     let(:repomd_xml_file) do
       RMT::Mirror::FileReference.new(
         relative_path: 'repodata/repomd.xml',
         base_url: repository_url,
-        base_dir: repository_dir
+        base_dir: repository_dir,
+        cache_dir: repository_url_local_path
       )
+    end
+
+    before do
+      stub_request(:head, /#{repository_url_local_path}/)
+        .to_raise('should not make HEAD requests')
     end
 
     # WebMock doesn't work nicely with file://
