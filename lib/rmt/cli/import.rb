@@ -3,7 +3,7 @@ class RMT::CLI::Import < RMT::CLI::Base
   desc 'data PATH', _('Read SCC data from given path')
   def data(path)
     RMT::Lockfile.lock do
-      needs_path(path)
+      path = needs_path(path)
       RMT::SCC.new(options).import(path)
     end
   end
@@ -11,7 +11,7 @@ class RMT::CLI::Import < RMT::CLI::Base
   desc 'repos PATH', _('Mirror repos from given path')
   def repos(path)
     RMT::Lockfile.lock do
-      needs_path(path)
+      path = needs_path(path)
 
       logger = RMT::Logger.new(STDOUT)
       mirror = RMT::Mirror.new(logger: logger, airgap_mode: true)
