@@ -52,7 +52,7 @@ class RMT::CLI::SMTImporter
       repo = Repository.find_or_create_by(external_url: repo_url) do |repository|
         repository.name = repo_name
         repository.local_path = Repository.make_local_path(repo_url)
-        repository.friendly_id = Repository.make_friendly_url_id(repo_url)
+        repository.friendly_id ||= Repository.make_friendly_id(repo_name)
       end
 
       if product

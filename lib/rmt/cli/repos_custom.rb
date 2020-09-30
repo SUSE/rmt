@@ -26,7 +26,7 @@ $ rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualiza
     end
 
     repository_service.create_repository!(nil, url, {
-      name: name,
+      name: name.strip,
       mirroring_enabled: true,
       autorefresh: true,
       enabled: 0,
