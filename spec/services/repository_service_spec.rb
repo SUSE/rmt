@@ -4,10 +4,10 @@ describe RepositoryService do
   subject(:service) { described_class.new }
 
   let(:product) { create :product, :with_service }
-  let(:custom_repository) { create :repository, :custom }
-  let(:suse_repository) { create :repository }
 
   describe '#create_repository' do
+    subject(:repository) { service.create_repository!(product, url, attributes, custom: custom).reload }
+
     let(:attributes) do
       {
         name: 'foo',
@@ -15,28 +15,88 @@ describe RepositoryService do
         description: 'foo',
         autorefresh: true,
         enabled: false,
-        id: 50
+        id: id
       }
     end
+    let(:url) { 'http://foo.bar/repos' }
+    let(:custom) { false }
+    let(:id) { '50' }
 
-    context 'scc repositories' do
-      before do
-        service.create_repository!(product, 'http://foo.bar/repos', attributes)
+    shared_examples 'scc repositories' do
+      it('creates the repository') { expect(repository.name).to eq('foo') }
+
+      it('has the correct URL') { expect(repository.external_url).to eq(url) }
+
+      it('has the correct friendly_id') { expect(repository.friendly_id).to eq('50') }
+
+      it('has the correct scc_id') { expect(repository.friendly_id).to eq(id) }
+
+      it('is not custom') { expect(repository.custom?).to eq(false) }
+    end
+
+    it_behaves_like 'scc repositories'
+
+    context 'URLs of SCC repositories changes' do
+      subject(:repository) do
+        service.create_repository!(product, old_url, attributes, custom: custom)
+        expect(Repository.find_by(external_url: old_url)).not_to eq(nil)
+
+        service.create_repository!(product, url, attributes, custom: custom).reload
       end
 
-      it('creates the repository') { expect(Repository.find_by(external_url: 'http://foo.bar/repos').name).to eq('foo') }
+      let(:old_url) { 'https://foo.bar.com/bar/foo' }
 
-      it('has the correct friendly_id') { expect(Repository.find_by(external_url: 'http://foo.bar/repos').friendly_id).to eq('50') }
+      it_behaves_like 'scc repositories'
+
+      it('does not have a repository by the old URL') { expect(Repository.find_by(external_url: old_url)).to eq(nil) }
+    end
+
+    context 'self heals SCC repos' do
+      subject(:repository) do
+        service.create_repository!(product, url, attributes, custom: custom).update(scc_id: old_scc_id)
+        expect(Repository.find_by(scc_id: old_scc_id)).not_to eq(nil)
+
+        service.create_repository!(product, url, attributes, custom: custom).reload
+      end
+
+      let(:old_scc_id) { 666 }
+
+      it_behaves_like 'scc repositories'
+
+      it('does not have a repository by the old scc_id') { expect(Repository.find_by(scc_id: old_scc_id)).to eq(nil) }
+    end
+
+    context 'custom repo with same url' do
+      subject(:repository) do
+        service.create_repository!(product, url, attributes, custom: custom).update(scc_id: nil)
+        service.create_repository!(product, url, attributes, custom: custom).reload
+      end
+
+      it_behaves_like 'scc repositories'
     end
 
     context 'custom repositories' do
-      before do
-        service.create_repository!(nil, 'http://foo.bar/repos', attributes, custom: true)
+      let(:product) { nil }
+      let(:custom) { true }
+      let(:id) { 'foo-bar' }
+
+      it('creates the repository') { expect(repository.name).to eq('foo') }
+
+      it('has the correct URL') { expect(repository.external_url).to eq(url) }
+
+      it('has the correct friendly_id') { expect(repository.friendly_id).to eq('foo-bar') }
+
+      it('is not custom') { expect(repository.custom?).to eq(true) }
+
+      context 'already existing repositories with changing URL' do
+        subject(:repository) do
+          service.create_repository!(product, url, attributes, custom: custom).reload
+          url = 'https://foo.bar.com/bar/foo'
+          service.create_repository!(product, url, attributes, custom: custom).reload
+        end
+
+        it('raises error when the id is the same') { expect { repository }.to raise_error(/Duplicate entry/) }
       end
-
-      it('creates the repository') { expect(Repository.find_by(external_url: 'http://foo.bar/repos').name).to eq('foo') }
-
-      it('has the correct friendly_id') { expect(Repository.find_by(external_url: 'http://foo.bar/repos').friendly_id).to eq('50') }
     end
   end
 

@@ -14,7 +14,7 @@ $ rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualiza
   def add(url, name)
     url += '/' unless url.end_with?('/')
     friendly_id = options.id
-    friendly_id ||= name.strip
+    friendly_id ||= Repository.make_friendly_id(name)
 
     if Repository.find_by(external_url: url)
       raise RMT::CLI::Error.new(_('A repository by the URL %{url} already exists.') % { url: url })
