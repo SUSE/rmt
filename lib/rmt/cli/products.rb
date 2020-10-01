@@ -148,7 +148,7 @@ class RMT::CLI::Products < RMT::CLI::Base
         repo_names = repository_service.change_mirroring_by_product!(set_enabled, product)
         if repo_names.empty?
           puts set_enabled ? _('All repositories have already been enabled.').indent(4) : _('All repositories have already been disabled.').indent(4)
-          continue
+          next
         end
 
         repo_names.each do |repo_name|
