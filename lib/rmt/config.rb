@@ -36,4 +36,28 @@ module RMT::Config
     ActiveModel::Type::Boolean.new.cast(Settings.try(:mirroring).try(:mirror_src))
   end
 
+  class << self
+    WebServerConfig = Struct.new(
+      'WebServerConfig',
+      :max_threads, :min_threads, :workers,
+      keyword_init: true
+    )
+
+    def web_server
+      WebServerConfig.new(
+        max_threads: validate_int(Settings.try(:web_server).try(:max_threads)) || 5,
+        min_threads: validate_int(Settings.try(:web_server).try(:min_threads)) || 5,
+        workers:     validate_int(Settings.try(:web_server).try(:workers))     || 2
+      )
+    end
+
+    private
+
+    def validate_int(value)
+      converted_value = Integer(value) rescue nil
+      return nil if converted_value.nil? || converted_value < 1
+
+      converted_value
+    end
+  end
 end

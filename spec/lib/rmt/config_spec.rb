@@ -50,4 +50,89 @@ RSpec.describe RMT::Config do
       end
     end
   end
+
+  describe '.web_server' do
+    let(:default_config) do
+      { max_threads: 5, min_threads: 5, workers: 2 }
+    end
+
+    context 'defaults' do
+      shared_examples 'default web server config' do |config_provided|
+        it 'returns the default configuration when none is provided' do
+          Settings['web_server'] = config_provided
+
+          expect(described_class.web_server).to have_attributes(default_config)
+        end
+      end
+
+      include_examples 'default web server config', nil
+      include_examples 'default web server config', ''
+    end
+
+    context 'valid configuration provided' do
+      shared_examples 'valid web server config' do |config_provided|
+        it 'returns the provided configuration' do
+          Settings['web_server'] = Config::Options.new(config_provided)
+
+          expect(described_class.web_server).to have_attributes(config_provided)
+        end
+      end
+
+      include_examples 'valid web server config', { max_threads: 4,  min_threads: 4, workers: 3 }
+      include_examples 'valid web server config', { max_threads: 9,  min_threads: 3, workers: 1 }
+      include_examples 'valid web server config', { max_threads: 10, min_threads: 2, workers: 4 }
+    end
+
+    context 'invalid configuration provided' do
+      shared_examples 'invalid web server configuration' do |config|
+        it 'returns a configur with default values instead of invalid ones' do
+          config_provided = config.fetch(:provided)
+          Settings['web_server'] = Config::Options.new(config_provided)
+
+          expected_config = config_provided
+            .merge(default_config.slice(*config.fetch(:invalid)))
+            .transform_values(&:to_i)
+
+          expect(described_class.web_server).to have_attributes(expected_config)
+        end
+      end
+
+      include_examples 'invalid web server configuration', {
+        provided: { max_threads: 0, min_threads: 0, workers: 0 },
+        invalid: %i[max_threads min_threads workers]
+      }
+      include_examples 'invalid web server configuration', {
+        provided: { max_threads: -1, min_threads: -1, workers: -1 },
+        invalid: %i[max_threads min_threads workers]
+      }
+      include_examples 'invalid web server configuration', {
+        provided: { max_threads: -1000, min_threads: -1000, workers: -1000 },
+        invalid: %i[max_threads min_threads workers]
+      }
+      include_examples 'invalid web server configuration', {
+        provided: { max_threads: 'a', min_threads: 'b', workers: 'c' },
+        invalid: %i[max_threads min_threads workers]
+      }
+      include_examples 'invalid web server configuration', {
+        provided: { max_threads: '', min_threads: '', workers: '' },
+        invalid: %i[max_threads min_threads workers]
+      }
+      include_examples 'invalid web server configuration', {
+        provided: { max_threads: nil, min_threads: nil, workers: nil },
+        invalid: %i[max_threads min_threads workers]
+      }
+      include_examples 'invalid web server configuration', {
+        provided: { max_threads: true, min_threads: 'true', workers: 2 },
+        invalid: %i[max_threads min_threads]
+      }
+      include_examples 'invalid web server configuration', {
+        provided: { max_threads: 'false', min_threads: false, workers: 2 },
+        invalid: %i[max_threads min_threads]
+      }
+      include_examples 'invalid web server configuration', {
+        provided: { max_threads: '10', min_threads: '3', workers: '0' },
+        invalid: %i[workers]
+      }
+    end
+  end
 end
