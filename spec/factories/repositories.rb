@@ -1,6 +1,7 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :repository do
     sequence(:scc_id) { |n| n }
+    sequence(:friendly_id) { |n| "aRepO#{n}" }
     sequence(:name) { |n| "Repository #{n}" }
     sequence(:description) { |n| "Repository #{n}" }
     sequence(:external_url) { |n| "https://updates.suse.com/suse/repository_#{n}" }

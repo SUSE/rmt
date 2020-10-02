@@ -6,7 +6,7 @@ class Api::Connect::V4::Repositories::InstallerController < Api::Connect::BaseCo
 
     if product
       respond_with ActiveModel::Serializer::CollectionSerializer.new(
-        product.repositories.only_installer_updates.only_mirrored,
+        product.repositories.only_installer_updates.only_mirroring_enabled,
         serializer: ::V3::RepositorySerializer,
         base_url: request.base_url
       )

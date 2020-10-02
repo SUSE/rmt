@@ -1,4 +1,115 @@
 -------------------------------------------------------------------
+Tue Sep 29 14:53:12 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
+
+- Version 2.6.2
+- Fix RMT file caching based on timestamps:
+
+  Previously, RMT sent GET requests with the header 'If-Modified-Since' to a
+  repository server and if the response had a 304 (Not Modified), it would copy
+  a file from the local cache instead of downloading. However, if the local file
+  timestamp accidentally changed to a date newer than the one on the repository
+  server, RMT would have an outdated file, which caused some errors.
+
+  Now, RMT makes HEAD requests to the repositories servers and inspect the
+  'Last-Modified' header to decide whether to download a file or copy it from
+  cache, by comparing the equalness of timestamps.
+  
+-------------------------------------------------------------------
+Mon Sep 29 10:19:12 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.6.1
+- Fixed an issue where relative paths supplied to `rmt-cli import repos`
+  caused the command to fail.
+
+-------------------------------------------------------------------
+Mon Sep 21 16:44:23 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.6.0
+- Friendlier IDs for custom repositories:
+  In an effort to simplify the handling of SCC and custom repositories,
+  RMT now has friendly IDs. For SCC repositories, it's the same SCC ID
+  as before. For custom repositories, it can either be user provided
+  or RMT generated (MD5 of the provided URL).
+
+  Benefits:
+  * `rmt-cli mirror repositories` now works for custom repositories.
+  * Custom repository IDs can be the same across RMT instances.
+  * No more confusing "SCC ID" vs "ID" in `rmt-cli` output.
+
+  Deprecation Warnings:
+  * RMT now uses a different ID for custom repositories than before.
+    RMT still supports that old ID, but it's recommended to start
+    using the new ID to ensure future compatibility.
+
+-------------------------------------------------------------------
+Mon Sep 10 14:10:45 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.5.20
+- Updated rails from 6.0.3.2 to 6.0.3.3:
+  - actionview (CVE-2020-15169)
+
+-------------------------------------------------------------------
+Mon Sep 9 13:22:10 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.5.19
+- RMT now has the ability to remove local systems with the command
+  `rmt-cli systems remove`.
+
+-------------------------------------------------------------------
+Tue Sep  8 18:10:19 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
+
+- Version 2.5.18
+- Fixed exit code for `rmt-cli mirror` and its subcommands. Now it exits with 1
+  whenever an error occurrs during mirroring
+- Improved message logging for `rtm-cli mirror`. Instead of logging an error
+  when it occurs, the command summarize all errors at the end of execution. Now
+  log messages have colors to better identify failure/success.
+
+-------------------------------------------------------------------
+Tue Sep 2 10:27:33 UTC 2020 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Version 2.5.17
+- RMT no longer provides the installer updates repository to systems via its
+  zypper service. This repository is used during the installation process, as
+  it provides an up-to-date installation experience, but it has no use on an
+  already installed system.
+
+-------------------------------------------------------------------
+Mon Sep 1 13:24:23 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.5.16
+- Updated RMT's rails and puma dependencies.
+  - puma (CVE-2020-11076, CVE-2020-11077, CVE-2020-5249, CVE-2020-5247
+    CVE-2019-16770)
+  - actionpack (CVE-2020-8185, CVE-2020-8164, CVE-2020-8166)
+  - actionview (CVE-2020-8167, CVE-2020-5267, CVE-2019-5418, CVE-2019-5419)
+  - activesupport (CVE-2020-8165)
+  - railties (CVE-2019-5420)
+
+-------------------------------------------------------------------
+Mon Aug 31 14:04:20 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.5.15
+- RMT now checks if repositories are fully mirrored during the
+  activation process. Previously, RMT only checked if the repositories
+  were enabled to be mirrored, but not that they were actually mirrored.
+  In this case, RMTs were not able to provide the repository data which
+  systems assumed it had.
+
+-------------------------------------------------------------------
+Mon Aug 24 10:04:26 UTC 2020 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Version 2.5.14
+- Enable 'Installer-Updates' repositories by default
+
+-------------------------------------------------------------------
+Fri Aug 21 17:33:19 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Fixed deprecation warning when thor encountered an error. Also,
+  instead of returning 0 for thor errors, rmt-cli will return 1
+  instead.
+
+-------------------------------------------------------------------
 Fri Aug 14 14:57:19 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
 
 - Version 2.5.13
@@ -9,7 +120,6 @@ Fri Aug 14 14:57:19 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
   files.
 
 -------------------------------------------------------------------
-
 Thu Jul 30 08:20:37 UTC 2020 - Thorsten Kukuk <kukuk@suse.com>
 
 - Move the nginx reload to the configuration package which contain

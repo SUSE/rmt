@@ -12,7 +12,7 @@ describe ServicesController do
       repo_items.map { |r| r.attr(:url) }
     end
 
-    let(:system) { FactoryGirl.create(:system, :with_activated_product) }
+    let(:system) { FactoryBot.create(:system, :with_activated_product) }
     let(:service) { system.products.first.service }
 
     context 'without X-Instance-Data header' do
@@ -42,7 +42,7 @@ describe ServicesController do
         end
 
         it 'XML has all product repos' do
-          expect(xml_urls.size).to eq(system.products.first.repositories.size)
+          expect(xml_urls.size).to eq(system.products.first.repositories.size - 1)
         end
 
         it 'repo URLs have plugin:/susecloud scheme' do

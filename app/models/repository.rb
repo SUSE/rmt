@@ -6,14 +6,17 @@ class Repository < ApplicationRecord
   has_many :products, -> { distinct }, through: :services
 
   scope :only_installer_updates, -> { where(installer_updates: true) }
-  scope :only_mirrored, -> { where(mirroring_enabled: true) }
+  scope :only_mirroring_enabled, -> { where(mirroring_enabled: true) }
+  scope :only_fully_mirrored, -> { where(mirroring_enabled: true).where.not(last_mirrored_at: nil) }
   scope :only_enabled, -> { where(enabled: true) }
   scope :only_custom, -> { where(scc_id: nil) }
   scope :only_scc, -> { where.not(scc_id: nil) }
+  scope :exclude_installer_updates, -> { where(installer_updates: false) }
 
   validates :name, presence: true
   validates :external_url, presence: true
   validates :local_path, presence: true
+  validates :friendly_id, presence: true
 
   before_destroy :ensure_destroy_possible
 
@@ -43,6 +46,10 @@ class Repository < ApplicationRecord
 
   def custom?
     scc_id.nil?
+  end
+
+  def self.make_friendly_url_id(url)
+    Digest::MD5.hexdigest(url)
   end
 
   private

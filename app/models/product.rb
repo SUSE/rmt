@@ -13,8 +13,7 @@ class Product < ApplicationRecord
 
   # Product extensions - get list of product extensions
   has_many :extension_products_associations,
-           class_name: 'ProductsExtensionsAssociation',
-           foreign_key: :product_id
+           class_name: 'ProductsExtensionsAssociation'
 
   has_many :root_products, -> { distinct },
            through: :product_extensions_associations

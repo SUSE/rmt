@@ -17,12 +17,22 @@ RSpec.describe Repository, type: :model do
   it { is_expected.to have_db_column(:external_url).of_type(:string).with_options(null: false) }
 
   describe 'scopes' do
-    describe '.only_mirrored' do
-      subject { described_class.only_mirrored }
+    describe '.only_mirroring_enabled' do
+      subject { described_class.only_mirroring_enabled }
 
       let!(:mirrored) { create :repository, mirroring_enabled: true }
 
       before { create :repository, mirroring_enabled: false }
+
+      it { is_expected.to contain_exactly(mirrored) }
+    end
+
+    describe '.only_fully_mirrored' do
+      subject { described_class.only_fully_mirrored }
+
+      let!(:mirrored) { create :repository, mirroring_enabled: true, last_mirrored_at: Time.zone.now }
+
+      before { create :repository, mirroring_enabled: true }
 
       it { is_expected.to contain_exactly(mirrored) }
     end

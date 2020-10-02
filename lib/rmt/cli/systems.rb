@@ -28,4 +28,24 @@ class RMT::CLI::Systems < RMT::CLI::Base
     RMT::SCC.new(options).sync_systems
   end
 
+  desc 'remove TARGET', _('Removes a system and its activations from RMT')
+  long_desc <<~REMOVE
+    #{_('Removes a system and its activations from RMT.')}
+
+    #{_('To target a system for removal, use the command "%{command}" for a list of systems with their corresponding logins.') % { command: 'rmt-cli systems list' }}
+
+    #{_('Examples')}:
+
+    $ rmt-cli systems remove SCC_e740f34145b84523a184ace764d0d597
+  REMOVE
+  def remove(target)
+    target_system = System.find_by!(login: target)
+    target_system.destroy!
+    puts _('Successfully removed system with login %{login}.') % { login: target }
+  rescue ActiveRecord::RecordNotDestroyed
+    raise RMT::CLI::Error.new(_('System with login %{login} cannot be removed.') % { login: target })
+  rescue ActiveRecord::RecordNotFound
+    raise RMT::CLI::Error.new(_('System with login %{login} not found.') % { login: target })
+  end
+  map 'rm' => :remove
 end

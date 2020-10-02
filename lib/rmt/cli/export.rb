@@ -2,16 +2,16 @@ class RMT::CLI::Export < RMT::CLI::Base
 
   desc 'data PATH', _('Store SCC data in files at given path')
   def data(path)
-    needs_path(path, writable: true)
+    path = needs_path(path, writable: true)
     RMT::SCC.new(options).export(path)
   end
 
   desc 'settings PATH', _('Store repository settings at given path')
   def settings(path)
-    needs_path(path, writable: true)
+    path = needs_path(path, writable: true)
     filename = File.join(path, 'repos.json')
 
-    data = Repository.only_mirrored.inject([]) { |data, repo| data << { url: repo.external_url, auth_token: repo.auth_token.to_s } }
+    data = Repository.only_mirroring_enabled.inject([]) { |data, repo| data << { url: repo.external_url, auth_token: repo.auth_token.to_s } }
     File.write(filename, data.to_json)
     puts _('Settings saved at %{file}.') % { file: filename }
   end
@@ -28,7 +28,7 @@ class RMT::CLI::Export < RMT::CLI::Base
    #{_('RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device.' % { file: 'repos.json' })}
   REPOS
   def repos(path)
-    needs_path(path, writable: true)
+    path = needs_path(path, writable: true)
 
     logger = RMT::Logger.new(STDOUT)
     mirror = RMT::Mirror.new(mirroring_base_dir: path, logger: logger, airgap_mode: true)

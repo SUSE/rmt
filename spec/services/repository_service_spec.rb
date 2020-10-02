@@ -8,17 +8,36 @@ describe RepositoryService do
   let(:suse_repository) { create :repository }
 
   describe '#create_repository' do
-    before do
-      service.create_repository!(product, 'http://foo.bar/repos', {
+    let(:attributes) do
+      {
         name: 'foo',
         mirroring_enabled: true,
         description: 'foo',
         autorefresh: true,
-        enabled: false
-      })
+        enabled: false,
+        id: 50
+      }
     end
 
-    it('creates the repository') { expect(Repository.find_by(external_url: 'http://foo.bar/repos').name).to eq('foo') }
+    context 'scc repositories' do
+      before do
+        service.create_repository!(product, 'http://foo.bar/repos', attributes)
+      end
+
+      it('creates the repository') { expect(Repository.find_by(external_url: 'http://foo.bar/repos').name).to eq('foo') }
+
+      it('has the correct friendly_id') { expect(Repository.find_by(external_url: 'http://foo.bar/repos').friendly_id).to eq('50') }
+    end
+
+    context 'custom repositories' do
+      before do
+        service.create_repository!(nil, 'http://foo.bar/repos', attributes, custom: true)
+      end
+
+      it('creates the repository') { expect(Repository.find_by(external_url: 'http://foo.bar/repos').name).to eq('foo') }
+
+      it('has the correct friendly_id') { expect(Repository.find_by(external_url: 'http://foo.bar/repos').friendly_id).to eq('50') }
+    end
   end
 
   describe '#add_product' do

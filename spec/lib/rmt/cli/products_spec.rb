@@ -380,6 +380,7 @@ RSpec.describe RMT::CLI::Products do
       output += "Disabling #{product.friendly_name}:\n"
       output += "  #{product.friendly_name}:\n"
       repos.pluck(:name).sort.each { |repo| output += "    Disabled repository #{repo}.\n" } unless repos.empty?
+      output += "\n\e[1mTo clean up downloaded files, run 'rmt-cli repos clean'\e[22m\n"
       output
     end
 
@@ -392,6 +393,7 @@ RSpec.describe RMT::CLI::Products do
         output += "Disabling #{product.friendly_name}:\n"
         output += "  #{product.friendly_name}:\n"
         output += "    All repositories have already been disabled.\n"
+        output += "\n\e[1mTo clean up downloaded files, run 'rmt-cli repos clean'\e[22m\n"
         output
       end
 
@@ -481,8 +483,8 @@ RSpec.describe RMT::CLI::Products do
       repos.each do |repo|
         mandatory = repo.enabled ? 'mandatory' : 'non-mandatory'
         enabled = repo.mirroring_enabled ? 'enabled' : 'not enabled'
-        mirrored = repo.last_mirrored_at.present? ? "last mirrored at #{repo.last_mirrored_at.strftime('%Y-%m-%d %H:%M:%S %Z')}" : 'not mirrored'
-        output += "* #{repo.name} (id: #{repo.scc_id}) (#{mandatory}, #{enabled}, #{mirrored})\n"
+        mirrored = repo.last_mirrored_at.present? ? "mirrored at #{repo.last_mirrored_at.strftime('%Y-%m-%d %H:%M:%S %Z')}" : 'not mirrored'
+        output += "* #{repo.name} (id: #{repo.friendly_id}) (#{mandatory}, #{enabled}, #{mirrored})\n"
       end
       output
     end

@@ -67,6 +67,8 @@ class RMT::CLI::Products < RMT::CLI::Base
   REPOS
   def disable(*targets)
     change_products(targets, false, false)
+
+    puts "\n\e[1m" + _("To clean up downloaded files, run '%{command}'") % { command: 'rmt-cli repos clean' } + "\e[22m"
   end
 
   desc 'show TARGET', _('Displays product with all its repositories and their attributes.')
@@ -129,27 +131,16 @@ class RMT::CLI::Products < RMT::CLI::Base
   end
 
   def change_product(target, set_enabled, all_modules)
-    # rubocop:disable Lint/ParenthesesAsGroupedExpression
-
-    # This will return multiple products if 'SLES/15' was used
-    base_products = find_products(target)
-    raise ProductNotFoundException.new(_('No product found for target %{target}.') % { target: target }) if base_products.empty?
-    puts n_('Found product by target %{target}: %{products}.', 'Found products by target %{target}: %{products}.', base_products.count) % {
-      products: base_products.map(&:friendly_name).join(', '),
-      target: target
-    }
+    base_products = fetch_base_product target
 
     base_products.each do |base_product|
-      if set_enabled
-        puts _('Enabling %{product}:') % { product: base_product.friendly_name }
-      else
-        puts _('Disabling %{product}:') % { product: base_product.friendly_name }
-      end
-
       products = [base_product]
       if set_enabled
+        puts _('Enabling %{product}:') % { product: base_product.friendly_name }
         extensions = all_modules ? Product.free_and_recommended_modules(base_product.id).to_a : Product.recommended_extensions(base_product.id).to_a
         products.push(*extensions) unless extensions.empty?
+      else
+        puts _('Disabling %{product}:') % { product: base_product.friendly_name }
       end
 
       products.each do |product|
@@ -157,22 +148,32 @@ class RMT::CLI::Products < RMT::CLI::Base
         repo_names = repository_service.change_mirroring_by_product!(set_enabled, product)
         if repo_names.empty?
           puts set_enabled ? _('All repositories have already been enabled.').indent(4) : _('All repositories have already been disabled.').indent(4)
-        else
-          repo_names.each do |repo_name|
-            if set_enabled
-              puts (_('Enabled repository %{repository}.') % { repository: repo_name }).indent(4)
-            else
-              puts (_('Disabled repository %{repository}.') % { repository: repo_name }).indent(4)
-            end
+          next
+        end
+
+        repo_names.each do |repo_name|
+          if set_enabled
+            puts (_('Enabled repository %{repository}.') % { repository: repo_name }).indent(4)
+          else
+            puts (_('Disabled repository %{repository}.') % { repository: repo_name }).indent(4)
           end
         end
       end
-
-      # rubocop:enable Lint/ParenthesesAsGroupedExpression
     end
   end
 
   private
+
+  def fetch_base_product(target)
+    # This will return multiple products if 'SLES/15' was used
+    base_products = find_products(target)
+    raise ProductNotFoundException.new(_('No product found for target %{target}.') % { target: target }) if base_products.empty?
+    puts n_('Found product by target %{target}: %{products}.', 'Found products by target %{target}: %{products}.', base_products.count) % {
+      products: base_products.map(&:friendly_name).join(', '),
+      target: target
+    }
+    base_products
+  end
 
   def find_products(target)
     Product.get_by_target!(target)

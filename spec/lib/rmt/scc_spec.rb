@@ -52,10 +52,11 @@ describe RMT::SCC do
       all_repositories.map.each do |repository|
         db_repository = Repository.find_by(scc_id: repository[:id])
 
-        (db_repository.attributes.keys - %w[id scc_id external_url mirroring_enabled local_path auth_token]).each do |key|
+        (db_repository.attributes.keys - %w[id scc_id external_url mirroring_enabled local_path auth_token friendly_id]).each do |key|
           expect(db_repository[key].to_s).to eq(repository[key.to_sym].to_s)
         end
         expect(db_repository[:scc_id]).to eq(repository[:id])
+        expect(db_repository[:friendly_id].to_s).to eq(repository[:id].to_s)
 
         uri = URI(repository[:url])
         auth_token = uri.query
@@ -77,6 +78,11 @@ describe RMT::SCC do
         expect(db_subscription[:kind]).to eq(subscription[:type])
         expect(Subscription.statuses[db_subscription.status]).to eq(subscription[:status])
       end
+    end
+
+    it 'enables installer-updates repos by default in the DB' do
+      db_repository = Repository.find_by(installer_updates: true)
+      expect(db_repository.enabled).to be(true)
     end
   end
 
@@ -213,9 +219,9 @@ describe RMT::SCC do
 
   describe '#remove_suse_repos_without_tokens' do
     let(:api_double) { double }
-    let!(:suse_repo_with_token) { FactoryGirl.create(:repository, :with_products, auth_token: 'auth_token') }
+    let!(:suse_repo_with_token) { FactoryBot.create(:repository, :with_products, auth_token: 'auth_token') }
     let!(:suse_repo_without_token) do
-      FactoryGirl.create(
+      FactoryBot.create(
         :repository,
         :with_products,
         auth_token: nil,
@@ -223,7 +229,7 @@ describe RMT::SCC do
       )
     end
     let!(:other_repo_without_token) do
-      FactoryGirl.create(
+      FactoryBot.create(
         :repository,
         :with_products,
         auth_token: nil,
@@ -371,9 +377,9 @@ describe RMT::SCC do
           described_class.new.sync_systems
         end
 
-        let(:system) { FactoryGirl.create(:system) }
+        let(:system) { FactoryBot.create(:system) }
         let(:scc_system_id) { 9000 }
-        let(:deregistered_system) { FactoryGirl.create(:deregistered_system) }
+        let(:deregistered_system) { FactoryBot.create(:deregistered_system) }
 
         it 'updates system.scc_registered_at field' do
           system.reload
@@ -394,7 +400,7 @@ describe RMT::SCC do
           described_class.new.sync_systems
         end
 
-        let(:system) { FactoryGirl.create(:system) }
+        let(:system) { FactoryBot.create(:system) }
 
         it "doesn't update system.scc_registered_at" do
           system.reload

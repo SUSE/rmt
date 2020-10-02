@@ -12,6 +12,12 @@ RSpec.describe RMT::CLI::Repos do
     let(:repo_1_path) { File.join(dir, repository_1.local_path) }
     let(:repo_2_path) { File.join(dir, repository_2.local_path) }
     let(:repo_3_path) { File.join(dir, repository_3.local_path) }
+    let(:total_removed_file_size) do
+      Repository.where(mirroring_enabled: false).map(&:local_path).reduce(0) do |sum, repo_path|
+        local_path = File.join(dir, repo_path)
+        sum + DownloadedFile.where('local_path LIKE ?', "#{local_path}%").sum(:file_size)
+      end
+    end
 
     let(:command) do
       described_class.start(argv)
@@ -31,7 +37,7 @@ RMT found locally mirrored files from the following repositories which are not m
 Deleted locally mirrored files from repository '#{repository_1.description}'.
 Deleted locally mirrored files from repository '#{repository_2.description}'.
 
-\e[32mClean finished.\e[0m
+\e[32mClean finished. An estimated #{ActiveSupport::NumberHelper.number_to_human_size(total_removed_file_size)} were removed.\e[0m
       OUTPUT
     end
 
@@ -142,12 +148,12 @@ RMT only found locally mirrored files of repositories that are marked to be mirr
     context 'with multiple ids' do
       let(:repository_2) { create :repository, :with_products }
       let(:repository_3) { create :repository, :with_products }
-      let(:argv) { ['enable', repository.scc_id.to_s, repository_2.scc_id.to_s, repository_3.scc_id.to_s] }
+      let(:argv) { ['enable', repository.friendly_id, repository_2.friendly_id, repository_3.friendly_id] }
       let(:expected_output) do
         <<-OUTPUT
-Repository by ID #{repository.scc_id} successfully enabled.
-Repository by ID #{repository_2.scc_id} successfully enabled.
-Repository by ID #{repository_3.scc_id} successfully enabled.
+Repository by ID #{repository.friendly_id} successfully enabled.
+Repository by ID #{repository_2.friendly_id} successfully enabled.
+Repository by ID #{repository_3.friendly_id} successfully enabled.
         OUTPUT
       end
 
@@ -185,7 +191,7 @@ Repository by ID #{repository_3.scc_id} successfully enabled.
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output("Repository not found by ID 0.\nRepository 0 could not be found and was not enabled.\n").to_stderr
+        expect { command }.to output("Repository by ID 0 not found.\nRepository by ID 0 could not be found and was not enabled.\n").to_stderr
                                   .and output('').to_stdout
       end
 
@@ -193,9 +199,9 @@ Repository by ID #{repository_3.scc_id} successfully enabled.
     end
 
     context 'by repo id' do
-      let(:argv) { ['enable', repository.scc_id.to_s] }
+      let(:argv) { ['enable', repository.friendly_id] }
 
-      before { expect { command }.to output("Repository by ID #{repository.scc_id} successfully enabled.\n").to_stdout }
+      before { expect { command }.to output("Repository by ID #{repository.friendly_id} successfully enabled.\n").to_stdout }
 
       its(:mirroring_enabled) { is_expected.to be(true) }
     end
@@ -213,12 +219,12 @@ Repository by ID #{repository_3.scc_id} successfully enabled.
     context 'with multiple ids' do
       let(:repository_2) { create :repository, :with_products, mirroring_enabled: true  }
       let(:repository_3) { create :repository, :with_products, mirroring_enabled: true  }
-      let(:argv) { ['disable', repository.scc_id.to_s, repository_2.scc_id.to_s, repository_3.scc_id.to_s] }
+      let(:argv) { ['disable', repository.friendly_id, repository_2.friendly_id, repository_3.friendly_id] }
       let(:expected_output) do
         <<-OUTPUT
-Repository by ID #{repository.scc_id} successfully disabled.
-Repository by ID #{repository_2.scc_id} successfully disabled.
-Repository by ID #{repository_3.scc_id} successfully disabled.
+Repository by ID #{repository.friendly_id} successfully disabled.
+Repository by ID #{repository_2.friendly_id} successfully disabled.
+Repository by ID #{repository_3.friendly_id} successfully disabled.
 
 \e[1mTo clean up downloaded files, please run 'rmt-cli repos clean'\e[22m
         OUTPUT
@@ -256,7 +262,7 @@ Repository by ID #{repository_3.scc_id} successfully disabled.
     context 'repo id does not exist' do
       let(:argv) { ['disable', 0] }
       let(:error_message) do
-        "Repository not found by ID 0.\nRepository 0 could not be found and was not disabled.\n"
+        "Repository by ID 0 not found.\nRepository by ID 0 could not be found and was not disabled.\n"
       end
 
       before do
@@ -268,10 +274,10 @@ Repository by ID #{repository_3.scc_id} successfully disabled.
     end
 
     context 'by repo id' do
-      let(:argv) { ['disable', repository.scc_id.to_s] }
+      let(:argv) { ['disable', repository.friendly_id] }
       let(:expected_output) do
         <<-OUTPUT
-Repository by ID #{repository.scc_id} successfully disabled.
+Repository by ID #{repository.friendly_id} successfully disabled.
 
 \e[1mTo clean up downloaded files, please run 'rmt-cli repos clean'\e[22m
         OUTPUT
@@ -306,11 +312,11 @@ Repository by ID #{repository.scc_id} successfully disabled.
       end
 
       context 'with enabled repositories' do
-        let!(:repository_one) { FactoryGirl.create :repository, :with_products, mirroring_enabled: true }
-        let!(:repository_two) { FactoryGirl.create :repository, :with_products, mirroring_enabled: false }
+        let!(:repository_one) { FactoryBot.create :repository, :with_products, mirroring_enabled: true }
+        let!(:repository_two) { FactoryBot.create :repository, :with_products, mirroring_enabled: false }
         let(:rows) do
           [[
-            repository_one.scc_id,
+            repository_one.friendly_id,
             repository_one.description,
             repository_one.enabled ? 'Mandatory' : 'Not Mandatory',
             repository_one.mirroring_enabled ? 'Mirror' : "Don't Mirror",
@@ -322,7 +328,7 @@ Repository by ID #{repository.scc_id} successfully disabled.
           let(:argv) { [command_name] }
           let(:expected_output) do
             Terminal::Table.new(
-              headings: ['SCC ID', 'Product', 'Mandatory?', 'Mirror?', 'Last mirrored'],
+              headings: ['ID', 'Product', 'Mandatory?', 'Mirror?', 'Last mirrored'],
               rows: rows
             ).to_s + "\n" + 'Only enabled repositories are shown by default. Use the \'--all\' option to see all repositories.' + "\n"
           end
@@ -335,7 +341,7 @@ Repository by ID #{repository.scc_id} successfully disabled.
         describe "#{command_name} --csv" do
           let(:rows) do
             [[
-              repository_one.scc_id,
+              repository_one.friendly_id,
               repository_one.name,
               repository_one.description,
               repository_one.enabled,
@@ -345,7 +351,7 @@ Repository by ID #{repository.scc_id} successfully disabled.
           end
           let(:argv) { [command_name, '--csv'] }
           let(:expected_output) do
-            CSV.generate { |csv| rows.unshift(['SCC ID', 'Product', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored']).each { |row| csv << row } }
+            CSV.generate { |csv| rows.unshift(['ID', 'Product', 'Description', 'Mandatory?', 'Mirror?', 'Last mirrored']).each { |row| csv << row } }
           end
 
           it 'outputs only the expected format' do
@@ -362,21 +368,21 @@ Repository by ID #{repository.scc_id} successfully disabled.
           let(:expected_output) do
             rows = []
             rows << [
-              repository_one.scc_id,
+              repository_one.friendly_id,
               repository_one.description,
               repository_one.enabled ? 'Mandatory' : 'Not Mandatory',
               repository_one.mirroring_enabled ? 'Mirror' : "Don't Mirror",
               repository_one.last_mirrored_at
             ]
             rows << [
-              repository_two.scc_id,
+              repository_two.friendly_id,
               repository_two.description,
               repository_two.enabled ? 'Mandatory' : 'Not Mandatory',
               repository_two.mirroring_enabled ? 'Mirror' : "Don't Mirror",
               repository_two.last_mirrored_at
             ]
             Terminal::Table.new(
-              headings: ['SCC ID', 'Product', 'Mandatory?', 'Mirror?', 'Last mirrored'],
+              headings: ['ID', 'Product', 'Mandatory?', 'Mirror?', 'Last mirrored'],
               rows: rows
             ).to_s + "\n"
           end
