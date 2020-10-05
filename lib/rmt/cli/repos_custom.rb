@@ -13,16 +13,18 @@ $ rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualiza
   REPOS
   def add(url, name)
     url += '/' unless url.end_with?('/')
-    friendly_id = options.id.to_s
+    friendly_id = options.id
+    friendly_id ||= name.strip
 
     if Repository.find_by(external_url: url)
       raise RMT::CLI::Error.new(_('A repository by the URL %{url} already exists.') % { url: url })
+    elsif Repository.find_by(friendly_id: options.id.to_s)
+      # When given an ID by a user, don't append to it to make a unique ID.
+      raise RMT::CLI::Error.new(_('A repository by the ID %{id} already exists.') % { id: friendly_id })
     end
 
     if /^[0-9]+$/.match?(friendly_id) # numeric IDs are reserved for SCC repositories
       raise RMT::CLI::Error.new(_('Please provide a non-numeric ID for your custom repository.'))
-    elsif Repository.find_by(friendly_id: friendly_id)
-      raise RMT::CLI::Error.new(_('A repository by the ID %{id} already exists.') % { id: friendly_id })
     end
 
     repository_service.create_repository!(nil, url, {
