@@ -85,7 +85,7 @@ RSpec.describe RMT::Config do
 
     context 'invalid configuration provided' do
       shared_examples 'invalid web server configuration' do |config|
-        it 'returns a configur with default values instead of invalid ones' do
+        it 'returns a config with default values instead of invalid ones' do
           config_provided = config.fetch(:provided)
           Settings['web_server'] = Config::Options.new(config_provided)
 

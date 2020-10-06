@@ -219,7 +219,7 @@ The `mirroring` section lets you adjust mirroring behavior.
   * `mirroring.mirror_src`:
     Whether to mirror source (arch = `src`) RPM packages or not.
   * `mirroring.dedup_method`:
-    Whether to deduplicate files by hardlink or by copy, possible values are:
+    Whether to deduplicate files by a hardlink or copy. Possible values are:
     `hardlink`, `copy`
 
 **HTTP client settings**
@@ -232,8 +232,7 @@ The `http_client` section defines RMT's global HTTP connection settings.
 
 **Web server settings**
 
-The `web_server` section lets you tune the performance of the RMT server, by
-combining threads and workers to configure concurrency.
+The `web_server` section lets you tune the performance of your RMT server.
 
   * `web_server.min_threads` setting:
     Specifies the minimum threads count a RMT server worker should spawn.
@@ -242,7 +241,7 @@ combining threads and workers to configure concurrency.
     Specifies the maximum threads count a RMT server worker should spawn.
     Acceptable values: Integer greater than or equal to 1.
   * `web_server.workers` setting:
-    Specifies the exact number of workers RTM web server should boot.
+    Specifies the number of web workers for RMT.
     Acceptable values: Integer greater than or equal to 1.
 
 **Settings for accessing SUSE repositories**
