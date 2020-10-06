@@ -8,6 +8,13 @@ Fri Oct  2 13:24:17 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
   the number of web server workers to be booted through /etc/rmt.conf.
 
 -------------------------------------------------------------------
+Mon Sep 30 16:19:36 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.6.3
+- Instead of using an MD5 of URLs for custom repository friendly_ids,
+  RMT now builds an ID from the name.
+
+-------------------------------------------------------------------
 Tue Sep 29 14:53:12 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
 
 - Version 2.6.2

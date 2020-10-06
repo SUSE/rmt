@@ -124,7 +124,7 @@ After successful registration the repositories from RMT will be used by `zypper`
 
     Use the `--csv` flag to output the list in CSV format.
 
-  * `rmt-cli repos custom add <url> <name>`:
+  * `rmt-cli repos custom add <url> <name> [--id]`:
     Adds a new custom repository, for example:
 
     `rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers`
