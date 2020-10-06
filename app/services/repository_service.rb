@@ -11,7 +11,8 @@ class RepositoryService
     end
 
     if custom
-      repository.friendly_id = attributes[:id].to_s != '' ? attributes[:id] : Repository.make_friendly_url_id(url)
+      id_source = attributes[:id].to_s != '' ? attributes[:id] : attributes[:name]
+      repository.friendly_id ||= Repository.make_friendly_id(id_source)
     else
       repository.scc_id = attributes[:id]
       repository.friendly_id = attributes[:id]
