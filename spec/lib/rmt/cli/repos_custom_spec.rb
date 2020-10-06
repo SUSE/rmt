@@ -15,6 +15,24 @@ describe RMT::CLI::ReposCustom do
       expect(Repository.find_by(external_url: external_url)).not_to be_nil
     end
 
+    context '--id parameter' do
+      subject(:custom_repo) { Repository.find_by(external_url: external_url) }
+
+      let(:argv) { ['add', external_url, 'bar', '--id', 'foo'] }
+
+      before do
+        expect { described_class.start(argv) }.to output("Successfully added custom repository.\n").to_stdout.and output('').to_stderr
+      end
+
+      it 'sets the name' do
+        expect(custom_repo.name).to eq('bar')
+      end
+
+      it 'sets the friendly_id' do
+        expect(custom_repo.friendly_id).to eq('foo')
+      end
+    end
+
     context 'numeric IDs' do
       let(:argv) { ['add', external_url, 'foo', '--id', '123'] }
 
@@ -22,6 +40,17 @@ describe RMT::CLI::ReposCustom do
         expect(described_class).to receive(:exit)
         expect { described_class.start(argv) }.to output("Please provide a non-numeric ID for your custom repository.\n").to_stderr
             .and output('').to_stdout
+        expect(Repository.find_by(external_url: external_url)).to be_nil
+      end
+    end
+
+    context 'numeric name' do
+      let(:argv) { ['add', external_url, '123'] }
+
+      it 'adds the repository to the database' do
+        expect(described_class).to receive(:exit)
+        expect { described_class.start(argv) }.to output("Please provide a non-numeric ID for your custom repository.\n").to_stderr
+                                                      .and output('').to_stdout
         expect(Repository.find_by(external_url: external_url)).to be_nil
       end
     end
@@ -34,10 +63,31 @@ describe RMT::CLI::ReposCustom do
       end
     end
 
-    context 'duplicate ID' do
-      let(:argv) { ['add', external_url, 'foo', '--id', 'foo'] }
+    context 'duplicate name' do
+      subject(:custom_repo) { Repository.find_by(external_url: external_url) }
 
-      it 'does not create a repository by the same friendly_id' do
+      let(:argv) { ['add', external_url, 'foo'] }
+
+      before do
+        create :repository, external_url: 'http://foo.bar', name: 'foobar', friendly_id: 'foo'
+        expect { described_class.start(argv) }.to output("Successfully added custom repository.\n").to_stdout.and output('').to_stderr
+      end
+
+      it 'appends to the name to make the unique id' do
+        expect(custom_repo.friendly_id).to eq('foo-1')
+      end
+
+      it 'keeps the name' do
+        expect(custom_repo.name).to eq('foo')
+      end
+    end
+
+    context 'duplicate id' do
+      subject(:custom_repo) { Repository.find_by(external_url: external_url) }
+
+      let(:argv) { ['add', external_url, 'bar', '--id', 'foo'] }
+
+      it 'does not create a repository by the same id' do
         expect(described_class).to receive(:exit)
         expect do
           create :repository, external_url: 'http://foo.bar', name: 'foobar', friendly_id: 'foo'

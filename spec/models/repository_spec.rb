@@ -118,6 +118,75 @@ RSpec.describe Repository, type: :model do
     end
   end
 
+  describe '#make_friendly_id' do
+    subject(:friendly_id) { described_class.make_friendly_id(input) }
+
+    let(:input) { 'my repo' }
+
+    it 'creates a friendly_id' do
+      expect(friendly_id).to eq('my-repo')
+    end
+
+    it 'will take the requested friendly_id if it can' do
+      create(:repository, friendly_id: 'my-repo-1')
+      expect(friendly_id).to eq('my-repo')
+    end
+
+    it 'will append to the requested friendly_id if taken' do
+      create(:repository, friendly_id: 'my-repo')
+      expect(friendly_id).to eq('my-repo-1')
+    end
+
+    it 'will append to the requested friendly_id if taken with complexity' do
+      create(:repository, friendly_id: 'my-repo')
+      create(:repository, friendly_id: 'my-repo-1')
+      create(:repository, friendly_id: 'my-repo-1-1')
+      create(:repository, friendly_id: 'my-repo-3')
+      create(:repository, friendly_id: 'my-repo-99999')
+      expect(friendly_id).to eq('my-repo-100000')
+    end
+
+    it 'does not consider negative numbers in appends' do
+      create(:repository, friendly_id: 'my-repo')
+      create(:repository, friendly_id: 'my-repo--1')
+      expect(friendly_id).to eq('my-repo-1')
+    end
+
+    context 'id is not in english' do
+      let(:input) { 'モルモット' }
+
+      it 'allows characters from other languages' do
+        expect(friendly_id).to eq('モルモット')
+      end
+
+      it 'will append to non-english friendly_ids' do
+        create(:repository, friendly_id: 'モルモット')
+        expect(friendly_id).to eq('モルモット-1')
+      end
+    end
+
+    context 'numeric friendly_ids' do
+      let(:input) { '9999' }
+
+      it 'accepts a numeric id' do
+        expect(friendly_id).to eq('9999')
+      end
+
+      it 'does not append to a numeirc id' do
+        create(:repository, friendly_id: '9999')
+        expect(friendly_id).to eq('9999')
+      end
+
+      it 'does not append to a numeric id with complexity' do
+        create(:repository, friendly_id: '9999')
+        create(:repository, friendly_id: '9999-1')
+        create(:repository, friendly_id: '9999-1-1')
+        create(:repository, friendly_id: '9999-9999')
+        expect(friendly_id).to eq('9999')
+      end
+    end
+  end
+
   describe '#destroy' do
     context 'when it is an official repository' do
       subject { repository.destroy }
