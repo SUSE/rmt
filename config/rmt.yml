@@ -35,3 +35,8 @@ http_client:
   proxy_auth:
   proxy_user:
   proxy_password:
+
+web_server:
+  min_threads: 5
+  max_threads: 5
+  workers: 2
