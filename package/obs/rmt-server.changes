@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Oct  7 17:11:15 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.6.5
+- Solved potential bug of SCC repository URLs changing over time. RMT
+  now self heals by removing the previous invalid repository and
+  creating the correct one.
+
+-------------------------------------------------------------------
 Fri Oct  2 13:24:17 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
 
 - Version 2.6.4
@@ -8,7 +16,7 @@ Fri Oct  2 13:24:17 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
   the number of web server workers to be booted through /etc/rmt.conf.
 
 -------------------------------------------------------------------
-Mon Sep 30 16:19:36 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+Wed Sep 30 16:19:36 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
 
 - Version 2.6.3
 - Instead of using an MD5 of URLs for custom repository friendly_ids,
@@ -31,7 +39,7 @@ Tue Sep 29 14:53:12 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
   cache, by comparing the equalness of timestamps.
   
 -------------------------------------------------------------------
-Mon Sep 29 10:19:12 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+Tue Sep 29 10:19:12 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
 
 - Version 2.6.1
 - Fixed an issue where relative paths supplied to `rmt-cli import repos`
@@ -58,14 +66,14 @@ Mon Sep 21 16:44:23 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
     using the new ID to ensure future compatibility.
 
 -------------------------------------------------------------------
-Mon Sep 10 14:10:45 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+Thu Sep 10 14:10:45 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
 
 - Version 2.5.20
 - Updated rails from 6.0.3.2 to 6.0.3.3:
   - actionview (CVE-2020-15169)
 
 -------------------------------------------------------------------
-Mon Sep 9 13:22:10 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+Wed Sep 9 13:22:10 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
 
 - Version 2.5.19
 - RMT now has the ability to remove local systems with the command
@@ -82,7 +90,7 @@ Tue Sep  8 18:10:19 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
   log messages have colors to better identify failure/success.
 
 -------------------------------------------------------------------
-Tue Sep 2 10:27:33 UTC 2020 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+Wed Sep 2 10:27:33 UTC 2020 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
 - Version 2.5.17
 - RMT no longer provides the installer updates repository to systems via its
@@ -91,7 +99,7 @@ Tue Sep 2 10:27:33 UTC 2020 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
   already installed system.
 
 -------------------------------------------------------------------
-Mon Sep 1 13:24:23 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+Tue Sep 1 13:24:23 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
 
 - Version 2.5.16
 - Updated RMT's rails and puma dependencies.
