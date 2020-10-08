@@ -34,6 +34,22 @@ class Repository < ApplicationRecord
       (path == '') ? '/' : path
     end
 
+    def make_friendly_id(input)
+      sanitized_input = input.to_s.strip.gsub(/\s+/, '-').gsub(/[^[:alnum:]\-_]/, '')
+
+      # Don't modify numeric input (scc_ids) and, if the friendly_id doesn't exist yet, allow it without a postfix
+      return sanitized_input if /^[0-9]+$/.match?(sanitized_input) || Repository.default_scoped.where(friendly_id: sanitized_input).empty?
+
+      # The requested friendly_id was taken, so we need to find a working number to append
+      append_base = "#{sanitized_input}-"
+      regexp = /#{append_base}(\d+)\z/
+      potential_conflicts = Repository.default_scoped.select(:friendly_id).where('friendly_id LIKE ?', "#{append_base}%").collect(&:friendly_id)
+      conflicts = potential_conflicts.select { |conflict| conflict.match?(regexp) }
+      max_append = conflicts.map { |conflict| conflict.match(regexp)[1].to_i }.max.to_i
+
+      "#{append_base}#{max_append + 1}"
+    end
+
   end
 
   def refresh_timestamp!
@@ -46,10 +62,6 @@ class Repository < ApplicationRecord
 
   def custom?
     scc_id.nil?
-  end
-
-  def self.make_friendly_url_id(url)
-    Digest::MD5.hexdigest(url)
   end
 
   private

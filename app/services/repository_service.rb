@@ -4,14 +4,23 @@ class RepositoryService
   end
 
   def create_repository!(product, url, attributes, custom: false)
-    repository = Repository.find_or_initialize_by(external_url: url)
+    repository = if custom
+                   Repository.find_or_initialize_by(external_url: url)
+                 else
+                   # Self Heal and guard against a custom repository with the same URL as the SCC repository
+                   # See the migration 20200916104804_make_scc_id_unique.rb for an instance where this is possible
+                   Repository.where(external_url: url).where.not(scc_id: attributes[:id]).update(scc_id: nil)
+                   Repository.only_custom.where(external_url: url).delete_all
+
+                   Repository.find_or_initialize_by(scc_id: attributes[:id])
+                 end
 
     repository.attributes = attributes.select do |k, _|
       repository.attributes.keys.member?(k.to_s) && k.to_s != 'id'
     end
 
     if custom
-      repository.friendly_id = attributes[:id].to_s != '' ? attributes[:id] : Repository.make_friendly_url_id(url)
+      repository.friendly_id ||= attributes[:id]
     else
       repository.scc_id = attributes[:id]
       repository.friendly_id = attributes[:id]

@@ -5,7 +5,7 @@ class AddFriendlyTargetToRepositories < ActiveRecord::Migration[6.0]
 
     Repository.all.each do |repo|
       if repo.custom?
-        repo.update(friendly_id: Repository.make_friendly_url_id(repo.external_url))
+        repo.update(friendly_id: Repository.make_friendly_id(repo.name))
       else
         repo.update(friendly_id: repo.scc_id)
       end
