@@ -4,8 +4,8 @@ FactoryBot.define do
     sequence(:password) { |n| "password#{n}" }
 
     transient do
-      virtual false
-      instance_data nil
+      virtual { false }
+      instance_data { nil }
     end
 
     trait :with_activated_base_product do

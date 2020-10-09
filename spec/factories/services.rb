@@ -4,7 +4,7 @@ FactoryBot.define do
 
     trait :with_repositories do
       transient do
-        mirroring_enabled false
+        mirroring_enabled { false }
       end
 
       after :create do |service, evaluator|
@@ -36,7 +36,7 @@ FactoryBot.define do
 
     trait :with_disabled_repositories do
       transient do
-        mirroring_enabled false
+        mirroring_enabled { false }
       end
 
       after :create do |service, evaluator|
