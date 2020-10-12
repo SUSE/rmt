@@ -35,19 +35,24 @@ class Repository < ApplicationRecord
     end
 
     def make_friendly_id(input)
-      sanitized_input = input.to_s.strip.gsub(/\s+/, '-').gsub(/[^[:alnum:]\-_]/, '')
+      sanitized_input = input.to_s.strip.gsub(/\s+/, '-').gsub(/[^[:alnum:]\-_]/, '').downcase
 
       # Don't modify numeric input (scc_ids) and, if the friendly_id doesn't exist yet, allow it without a postfix
       return sanitized_input if /^[0-9]+$/.match?(sanitized_input) || Repository.default_scoped.where(friendly_id: sanitized_input).empty?
 
       # The requested friendly_id was taken, so we need to find a working number to append
       append_base = "#{sanitized_input}-"
-      regexp = /#{append_base}(\d+)\z/
-      potential_conflicts = Repository.default_scoped.select(:friendly_id).where('friendly_id LIKE ?', "#{append_base}%").collect(&:friendly_id)
-      conflicts = potential_conflicts.select { |conflict| conflict.match?(regexp) }
-      max_append = conflicts.map { |conflict| conflict.match(regexp)[1].to_i }.max.to_i
+      regexp = /(.*)-(\d+)\z/
 
-      "#{append_base}#{max_append + 1}"
+      potential_conflicts = Repository.default_scoped.select(:friendly_id).where('friendly_id LIKE ?', "#{append_base}%").collect(&:friendly_id)
+      max = potential_conflicts.map do |conflict|
+        match = conflict.match(regexp)
+        sql = sanitize_sql_array(['SELECT ? = ?', sanitized_input, match[1].to_s])
+        connection.execute(sql).first[0] == 1 ? match[2].to_i : 0
+      end.max
+      max ||= 0
+
+      "#{append_base}#{max + 1}"
     end
 
   end
