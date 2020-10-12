@@ -38,7 +38,8 @@ describe RMT::CLI::ReposCustom do
 
       it 'adds the repository to the database' do
         expect(described_class).to receive(:exit)
-        expect { described_class.start(argv) }.to output("Please provide a non-numeric ID for your custom repository.\n").to_stderr
+        expect { described_class.start(argv) }
+            .to output("\e[31mPlease provide a non-numeric ID for your custom repository.\e[0m\nCouldn't add custom repository.\n").to_stderr
             .and output('').to_stdout
         expect(Repository.find_by(external_url: external_url)).to be_nil
       end
@@ -49,8 +50,9 @@ describe RMT::CLI::ReposCustom do
 
       it 'adds the repository to the database' do
         expect(described_class).to receive(:exit)
-        expect { described_class.start(argv) }.to output("Please provide a non-numeric ID for your custom repository.\n").to_stderr
-                                                      .and output('').to_stdout
+        expect { described_class.start(argv) }
+            .to output("\e[31mPlease provide a non-numeric ID for your custom repository.\e[0m\nCouldn't add custom repository.\n").to_stderr
+            .and output('').to_stdout
         expect(Repository.find_by(external_url: external_url)).to be_nil
       end
     end
@@ -92,7 +94,7 @@ describe RMT::CLI::ReposCustom do
         expect do
           create :repository, external_url: 'http://foo.bar', name: 'foobar', friendly_id: 'foo'
           described_class.start(argv)
-        end.to output("A repository by the ID foo already exists.\n").to_stderr.and output('').to_stdout
+        end.to output("\e[31mA repository by the ID foo already exists.\e[0m\nCouldn't add custom repository.\n").to_stderr.and output('').to_stdout
         expect(Repository.find_by(external_url: external_url)).to be_nil
       end
     end
@@ -105,7 +107,9 @@ describe RMT::CLI::ReposCustom do
         expect do
           create :repository, external_url: external_url, name: 'foobar'
           described_class.start(argv)
-        end.to output("A repository by the URL #{external_url} already exists.\n").to_stderr.and output('').to_stdout
+        end.to output("\e[31mA repository by the URL #{external_url} already exists.\e[0m\nCouldn't add custom repository.\n")
+                   .to_stderr
+                   .and output('').to_stdout
         expect(Repository.find_by(external_url: external_url).name).to eq('foobar')
       end
 
@@ -118,7 +122,9 @@ describe RMT::CLI::ReposCustom do
 
         expect do
           described_class.start(%w[add http://example.com/repo foo])
-        end.to output("A repository by the URL http://example.com/repo/ already exists.\n").to_stderr.and output('').to_stdout
+        end.to output("\e[31mA repository by the URL http://example.com/repo/ already exists.\e[0m\nCouldn't add custom repository.\n")
+                   .to_stderr
+                   .and output('').to_stdout
       end
 
       it 'does not update previous repository if custom' do
@@ -126,7 +132,9 @@ describe RMT::CLI::ReposCustom do
         expect do
           create :repository, :custom, external_url: external_url, name: 'foobar'
           described_class.start(argv)
-        end.to output("A repository by the URL #{external_url} already exists.\n").to_stderr.and output('').to_stdout
+        end.to output("\e[31mA repository by the URL #{external_url} already exists.\e[0m\nCouldn't add custom repository.\n")
+                   .to_stderr
+                   .and output('').to_stdout
         expect(Repository.find_by(external_url: external_url).name).to eq('foobar')
       end
     end
@@ -217,7 +225,8 @@ describe RMT::CLI::ReposCustom do
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output("Repository by ID 0 not found.\nRepository by ID 0 could not be found and was not enabled.\n").to_stderr
+        expect { command }.to output("Repository by ID 0 not found.\nRepository by ID 0 could not be found and was not enabled.\n")
+                                  .to_stderr
                                   .and output('').to_stdout
       end
 

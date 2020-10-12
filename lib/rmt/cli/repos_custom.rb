@@ -16,15 +16,20 @@ $ rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualiza
     friendly_id = options.id
     friendly_id ||= Repository.make_friendly_id(name)
 
+    error = nil
     if Repository.find_by(external_url: url)
-      raise RMT::CLI::Error.new(_('A repository by the URL %{url} already exists.') % { url: url })
+      error = _('A repository by the URL %{url} already exists.') % { url: url }
     elsif Repository.find_by(friendly_id: options.id.to_s)
       # When given an ID by a user, don't append to it to make a unique ID.
-      raise RMT::CLI::Error.new(_('A repository by the ID %{id} already exists.') % { id: friendly_id })
+      error = _('A repository by the ID %{id} already exists.') % { id: friendly_id }
+    elsif /^[0-9]+$/.match?(friendly_id)
+      # numeric IDs are reserved for SCC repositories
+      error = _('Please provide a non-numeric ID for your custom repository.')
     end
 
-    if /^[0-9]+$/.match?(friendly_id) # numeric IDs are reserved for SCC repositories
-      raise RMT::CLI::Error.new(_('Please provide a non-numeric ID for your custom repository.'))
+    unless error.nil?
+      warn "\e[31m" + error + "\e[0m"
+      raise RMT::CLI::Error.new(_("Couldn't add custom repository."))
     end
 
     repository_service.create_repository!(nil, url, {
