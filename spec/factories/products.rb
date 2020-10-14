@@ -5,20 +5,20 @@ FactoryBot.define do
     sequence(:cpe) { |n| "cpe:/o:product:#{n}" }
     sequence(:shortname) { |n| "Product #{n}" }
     sequence(:product_class) { |n| n.to_s.ljust(5, 'A') }
-    free false
-    product_type :base
+    free { false }
+    product_type { :base }
     sequence(:description) { FFaker::Lorem.sentence }
-    release_type nil
-    version 42
-    arch 'x86_64'
-    release_stage 'released'
+    release_type { nil }
+    version { 42 }
+    arch { 'x86_64' }
+    release_stage { 'released' }
 
     transient do
-      base_products []
-      root_product nil
-      recommended false
-      migration_kind :online
-      predecessors [ ]
+      base_products { [] }
+      root_product { nil }
+      recommended { false }
+      migration_kind { :online }
+      predecessors { [] }
     end
 
     after :create do |product, evaluator|
@@ -36,12 +36,12 @@ FactoryBot.define do
     end
 
     trait :extension do
-      product_type 'extension'
+      product_type { 'extension' }
     end
 
     trait :module do
-      product_type 'module'
-      free true
+      product_type { 'module' }
+      free { true }
     end
 
     trait :with_service do
@@ -77,7 +77,7 @@ FactoryBot.define do
 
     trait :cloned do
       transient do
-        from nil
+        from { nil }
       end
       after :build do |product, evaluator|
         if evaluator.from
@@ -132,7 +132,7 @@ FactoryBot.define do
 
     trait :activated do
       transient do
-        system nil
+        system { nil }
       end
 
       after :create do |product, evaluator|
