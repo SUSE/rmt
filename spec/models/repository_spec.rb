@@ -146,10 +146,49 @@ RSpec.describe Repository, type: :model do
       expect(friendly_id).to eq('my-repo-100000')
     end
 
+    it 'appends with unicode within the chain' do
+      create(:repository, friendly_id: 'my-repo')
+      create(:repository, friendly_id: 'my-repö-1')
+      expect(friendly_id).to eq('my-repo-2')
+    end
+
     it 'does not consider negative numbers in appends' do
       create(:repository, friendly_id: 'my-repo')
       create(:repository, friendly_id: 'my-repo--1')
       expect(friendly_id).to eq('my-repo-1')
+    end
+
+    context 'id is unicode' do
+      let(:input) { 'dümmy-repö' }
+
+      it 'takes input' do
+        expect(friendly_id).to eq('dümmy-repö')
+      end
+
+      it 'appends with unicode within the chain' do
+        create(:repository, friendly_id: 'dummy-repo')
+        create(:repository, friendly_id: 'dümmy-repö-1')
+        expect(friendly_id).to eq('dümmy-repö-2')
+      end
+
+      it 'correctly appends' do
+        create(:repository, friendly_id: 'dummy-repo')
+        create(:repository, friendly_id: 'dummy-repo-1')
+        expect(friendly_id).to eq('dümmy-repö-2')
+      end
+    end
+
+    context 'capital letters' do
+      let(:input) { 'DUMMY-rEPO' }
+
+      it 'takes input' do
+        expect(friendly_id).to eq('dummy-repo')
+      end
+
+      it 'correctly appends' do
+        create(:repository, friendly_id: 'dummy-repo')
+        expect(friendly_id).to eq('dummy-repo-1')
+      end
     end
 
     context 'id is not in english' do
