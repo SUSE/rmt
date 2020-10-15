@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :activation do
     association :system
-    association :service, factory: %i[service with_repositories]
+    association :service, factory: %i[service with_repositories], strategy: :create
 
     factory :activation_free_product do
       after :build do |activation, _evaluator|
