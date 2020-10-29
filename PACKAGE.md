@@ -93,6 +93,10 @@ Using target project 'SUSE:Maintenance'
 17362323
 ```
 
+**Note:**
+
+* When asked whether or not to supersede a request, the answer is usually "no". Saying "yes" would overwrite the previous request made, cancelling the release process for its codestream.
+
 You can check the status of your requests [here](https://build.opensuse.org/package/requests/systemsmanagement:SCC:RMT/rmt-server) and [here](https://build.suse.de/package/requests/Devel:SCC:RMT/rmt-server).
 
 After your requests have been accepted, they still have to pass maintenance testing before they are released to customers. You can check their progress at [maintenance.suse.de](https://maintenance.suse.de/search/?q=rmt-server). If you still need help, the maintenance team can be reached at [maint-coord@suse.de](maint-coord@suse.de) or #maintenance on irc.suse.de.
