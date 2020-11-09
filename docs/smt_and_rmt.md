@@ -26,7 +26,7 @@ RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Follo
 |Red Hat 8 support ([Expanded Support](https://www.suse.com/products/expandedsupport/))|:heavy_check_mark:|:heavy_check_mark:||Files deduplication|:heavy_check_mark:|:heavy_check_mark:|
 |Files deduplication|:heavy_check_mark:|:heavy_check_mark:|
 |Data transfer from SMT to RMT|-|:heavy_check_mark:|
-|Transfer registration data to SCC|:heavy_check_mark:|:x:<sup>[2](#regup)</sup>|
+|Transfer registration data to SCC|:heavy_check_mark:|:heavy_check_mark:|
 |Reporting|:heavy_check_mark:|:x:|
 |Custom TLS certificates for web-server|:heavy_check_mark:|:heavy_check_mark:|
 |Webserver|Apache2|Nginx|
@@ -34,4 +34,3 @@ RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Follo
 |Platform|Perl|Ruby|
 
 <a name="staging">1</a>: Functionality is offered by [SUSE Manager](https://www.suse.com/documentation/suse-best-practices/susemanager/data/susemanager.html).
-<a name="regup">2</a>: Registration data transfer to SCC is planned for SLES15 SP2.
