@@ -9,7 +9,7 @@ RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Follo
 |Available on SLES15|:x:|:heavy_check_mark:|
 |Sync products data from SCC|:heavy_check_mark:|:heavy_check_mark:|
 |Mirror RPMs from repositories|:heavy_check_mark:|:heavy_check_mark:|
-|Selective mirroring(which products to mirror)|:heavy_check_mark:|:heavy_check_mark:|
+|Select which products to mirror|:heavy_check_mark:|:heavy_check_mark:|
 |Serve RPMs via http|:heavy_check_mark:|:heavy_check_mark:|
 |Registration of SLE 15 systems|:heavy_check_mark:|:heavy_check_mark:|
 |Registration of SLE 12 systems|:heavy_check_mark:|:heavy_check_mark:|
