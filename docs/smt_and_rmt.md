@@ -7,6 +7,7 @@ From SUSE Linux Enterprise Server 15 onward, only RMT is available.
 
 > Note: RMT is fully maintained and receives new features, bug fixes, and perfomance improvements.
 > SMT no longer receives new features, only critical security and bug fixes.
+> You can [migrate an SMT server to RMT](https://documentation.suse.com/sles/15-SP2/html/SLES-all/cha-rmt-migrate.html).
 
 | Feature/Tech      | SMT           | RMT           |
 |-------------------|:-------------:|:-------------:|
@@ -32,7 +33,6 @@ From SUSE Linux Enterprise Server 15 onward, only RMT is available.
 |Red Hat 7 and earlier support ([Expanded Support](https://www.suse.com/products/expandedsupport/))|:heavy_check_mark:|:x:|
 |Red Hat 8 support ([Expanded Support](https://www.suse.com/products/expandedsupport/))|:heavy_check_mark:|:heavy_check_mark:||Files deduplication|:heavy_check_mark:|:heavy_check_mark:|
 |Files deduplication|:heavy_check_mark:|:heavy_check_mark:|
-|Data transfer from SMT to RMT|-|:heavy_check_mark:|
 |Transfer registration data to SCC|:heavy_check_mark:|:heavy_check_mark:|
 |Reporting|:heavy_check_mark:|:x:|
 |Custom TLS certificates for web-server|:heavy_check_mark:|:heavy_check_mark:|
