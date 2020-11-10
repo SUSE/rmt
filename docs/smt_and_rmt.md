@@ -1,12 +1,15 @@
 ## RMT and SMT
 
-RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Following table outlines differences and similarities between the two tools. Last SLE version where SMT is available is 12. From version 15 onward only RMT is offered.
+RMT replaces some functionality of [SMT](https://github.com/SUSE/smt).
+The following table outlines the differences and similarities between the two tools.
+The last SUSE Linux Enterprise Server version where SMT is available is 12 SP5.
+From SUSE Linux Enterprise Server 15 onward, only RMT is available.
 
 | Feature/Tech      | SMT           | RMT           |
 |-------------------|:-------------:|:-------------:|
-|Available on SLES11|:heavy_check_mark:|:x:|
-|Available on SLES12|:heavy_check_mark:|:x:|
-|Available on SLES15|:x:|:heavy_check_mark:|
+|Available on SLES 11|:heavy_check_mark:|:x:|
+|Available on SLES 12|:heavy_check_mark:|:x:|
+|Available on SLES 15|:x:|:heavy_check_mark:|
 |Sync products data from SCC|:heavy_check_mark:|:heavy_check_mark:|
 |Mirror RPMs from repositories|:heavy_check_mark:|:heavy_check_mark:|
 |Select which products to mirror|:heavy_check_mark:|:heavy_check_mark:|
@@ -32,7 +35,6 @@ RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Follo
 |Clean up data from repositories that are not used any longer|:heavy_check_mark:|:heavy_check_mark:|
 |Bash completion|:x:|:heavy_check_mark:|
 |Available on [openSUSE Leap 15](https://github.com/SUSE/rmt/blob/master/docs/installation.md#installation-on-opensuse-leap-15)|:x:|:heavy_check_mark:<sup>[2](#self-support)</sup>|
-|Easy development setup + [contribution guide](https://github.com/SUSE/rmt/blob/master/docs/CONTRIBUTING.md)|:x:|:heavy_check_mark:|
 |Option to [run as container](https://github.com/SUSE/rmt/blob/master/README.md#development-setup---docker-compose)|:x:|:heavy_check_mark:<sup>[2](#self-support)</sup>|
 |Easy development setup + [contribution guide](https://github.com/SUSE/rmt/blob/master/docs/CONTRIBUTING.md)|:x:|:heavy_check_mark:|
 |100% test [coverage](https://coveralls.io/github/SUSE/rmt?branch=master)|:x:|:heavy_check_mark:|
