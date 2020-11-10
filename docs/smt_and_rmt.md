@@ -29,8 +29,17 @@ RMT is replacing some functionality of [SMT](https://github.com/SUSE/smt). Follo
 |Transfer registration data to SCC|:heavy_check_mark:|:heavy_check_mark:|
 |Reporting|:heavy_check_mark:|:x:|
 |Custom TLS certificates for web-server|:heavy_check_mark:|:heavy_check_mark:|
+|Clean up data from repositories that are not used any longer|:heavy_check_mark:|:heavy_check_mark:|
+|Bash completion|:x:|:heavy_check_mark:|
+|Available on [openSUSE Leap 15](https://github.com/SUSE/rmt/blob/master/docs/installation.md#installation-on-opensuse-leap-15)|:x:|:heavy_check_mark:<sup>[2](#self-support)</sup>|
+|Easy development setup + [contribution guide](https://github.com/SUSE/rmt/blob/master/docs/CONTRIBUTING.md)|:x:|:heavy_check_mark:|
+|Option to [run as container](https://github.com/SUSE/rmt/blob/master/README.md#development-setup---docker-compose)|:x:|:heavy_check_mark:<sup>[2](#self-support)</sup>|
+|Easy development setup + [contribution guide](https://github.com/SUSE/rmt/blob/master/docs/CONTRIBUTING.md)|:x:|:heavy_check_mark:|
+|100% test [coverage](https://coveralls.io/github/SUSE/rmt?branch=master)|:x:|:heavy_check_mark:|
+|[Plugin functionality](https://github.com/SUSE/rmt/blob/master/docs/PLUGINS.md)|:x:|:heavy_check_mark:|
 |Webserver|Apache2|Nginx|
 |Database|MariaDB|MariaDB|
 |Platform|Perl|Ruby|
 
-<a name="staging">1</a>: Functionality is offered by [SUSE Manager](https://www.suse.com/documentation/suse-best-practices/susemanager/data/susemanager.html).
+<a name="staging">1</a>: This functionality is offered by [SUSE Manager](https://www.suse.com/documentation/suse-best-practices/susemanager/data/susemanager.html).\
+<a name="self-support">2</a>: Only available with [self-support](https://www.suse.com/support/self-support/).
