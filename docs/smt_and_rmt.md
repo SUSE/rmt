@@ -5,6 +5,9 @@ The following table outlines the differences and similarities between the two to
 The last SUSE Linux Enterprise Server version where SMT is available is 12 SP5.
 From SUSE Linux Enterprise Server 15 onward, only RMT is available.
 
+> Note: RMT is fully maintained and receives new features, bug fixes, and perfomance improvements.
+> SMT no longer receives new features, only critical security and bug fixes.
+
 | Feature/Tech      | SMT           | RMT           |
 |-------------------|:-------------:|:-------------:|
 |Available on SLES 11|:heavy_check_mark:|:x:|
