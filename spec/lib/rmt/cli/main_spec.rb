@@ -113,7 +113,7 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
 
           it 'outputs custom error message' do
             expect { command }.to output(
-              "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization\n"
+              "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com\n"
             ).to_stderr
           end
         end
@@ -123,7 +123,7 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
 
           it 'outputs custom error message' do
             expect { command }.to output(
-              "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization\n"
+              "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com\n"
             ).to_stderr
           end
         end
