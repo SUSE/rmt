@@ -98,8 +98,8 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       )
       repo.refresh_timestamp!
     rescue RMT::Mirror::Exception => e
-      errors << _("Repository '%{repo_name}' (%{repo_id}): %{error_message}") % {
-        repo_id: repo.id, repo_name: repo.name, error_message: e.message
+      errors << _("Repository '%{repo_name}' (id=%{repo_id}): %{error_message}") % {
+        repo_id: repo.friendly_id, repo_name: repo.name, error_message: e.message
       }
     end
   end
