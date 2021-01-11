@@ -48,11 +48,11 @@ You can install and run this wizard like this:
 
     Use the `--csv` flag to output the list in CSV format.
 
-	Use the `--name name` flag to list all products whose name match `name`.
+    Use the `--name name` flag to list all products whose name match `name`.
 
-	Use the `--version ver` flag to list all products whose version match `version`.
+    Use the `--version ver` flag to list all products whose version match `version`.
 
-	Use the `--arch arch` flag to list all products whose architecture  match `arch`.
+    Use the `--arch arch` flag to list all products whose architecture  match `arch`.
 
   * `rmt-cli products enable <id | string>...`:
     Enable mirroring of product repositories by a list of product IDs or product strings.
