@@ -1,9 +1,10 @@
 #!/bin/sh -xe
 SUSEConnect -r $REGCODE
+zypper --gpg-auto-import-keys ref
 SUSEConnect -p sle-module-desktop-applications/15/x86_64
 SUSEConnect -p sle-module-development-tools/15/x86_64 # this and above is needed for 'rpm-build' package
 zypper --non-interactive ar http://download.opensuse.org/repositories/openSUSE:/Tools/SLE_15/openSUSE:Tools.repo
-zypper --non-interactive --gpg-auto-import-keys ref
+zypper --non-interactive --no-gpg-checks ref
 zypper --non-interactive up
 zypper --non-interactive in -t pattern devel_osc_build
 zypper --non-interactive install --no-recommend wget curl timezone \
