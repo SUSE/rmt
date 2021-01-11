@@ -34,8 +34,8 @@ RMT found locally mirrored files from the following repositories which are not m
 \e[22m\s\sOnly 'yes' will be accepted.
 
   \e[1mEnter a value:\e[22m\s\s
-Deleted locally mirrored files from repository '#{repository_1.description}'.
-Deleted locally mirrored files from repository '#{repository_2.description}'.
+Deleting locally mirrored files from repository '#{repository_1.description}'...
+Deleting locally mirrored files from repository '#{repository_2.description}'...
 
 \e[32mClean finished. An estimated #{ActiveSupport::NumberHelper.number_to_human_size(total_removed_file_size)} were removed.\e[0m
       OUTPUT
