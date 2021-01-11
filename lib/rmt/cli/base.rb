@@ -72,7 +72,7 @@ class RMT::CLI::Base < Thor
       raise RMT::CLI::Error.new(
         _("The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}") % {
           path: '/etc/rmt.conf',
-          url: 'https://scc.suse.com/organization'
+          url: 'https://scc.suse.com'
         },
         RMT::CLI::Error::ERROR_SCC
       )
