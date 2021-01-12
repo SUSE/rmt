@@ -34,6 +34,16 @@ RSpec.describe RMT::CLI::Products do
           expect { described_class.start(argv) }.to output('').to_stdout.and output(/rmt-cli sync/).to_stderr
         end
       end
+
+      context 'with --all option and --name' do
+        let(:argv) { ['list', '--all', '--name', 'foo'] }
+
+        it 'warns about no matches' do
+          expect { described_class.start(argv) }.to output(
+            "No matching products found in the database.\n"
+          ).to_stderr
+        end
+      end
     end
 
     context 'with products in database' do
