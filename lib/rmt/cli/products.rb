@@ -21,15 +21,10 @@ class RMT::CLI::Products < RMT::CLI::Base
     decorator = ::RMT::CLI::Decorators::ProductDecorator.new(products)
 
     if products.empty?
-      no_match_prod_db_message = 'No matching products found in the database.'
-      if options.all
-        if options.name.blank? && options.version.blank? && options.arch.blank?
-          warn _("Run '%{command}' to synchronize with your SUSE Customer Center data first.") % { command: 'rmt-cli sync' }
-        else
-          warn _(no_match_prod_db_message)
-        end
+      if options.all && options.name.blank? && options.version.blank? && options.arch.blank?
+        warn _("Run '%{command}' to synchronize with your SUSE Customer Center data first.") % { command: 'rmt-cli sync' }
       else
-        warn _(no_match_prod_db_message)
+        warn _('No matching products found in the database.')
       end
     elsif options.csv
       puts decorator.to_csv
