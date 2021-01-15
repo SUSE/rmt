@@ -49,12 +49,12 @@ class RMT::CLI::Repos < RMT::CLI::ReposBase
     print "\n"
     total_size = 0
     repos_to_delete.each do |repo|
+      puts _("Deleting locally mirrored files from repository '%{repo}'...") % { repo: repo.description }
       path = File.join(base_directory, repo.local_path)
       downloaded_files = DownloadedFile.where('local_path LIKE ?', "#{path}%")
       total_size += downloaded_files.sum(:file_size)
       FileUtils.rm_r(path, secure: true)
       downloaded_files.destroy_all
-      puts _("Deleted locally mirrored files from repository '%{repo}'.") % { repo: repo.description }
     end
 
     print "\n\e[32m"
