@@ -1,4 +1,4 @@
-FROM registry.scc.suse.de/suse/sles15:ga
+FROM registry.scc.suse.de/suse/sles15:15.2
 
 RUN useradd --no-log-init --create-home scc
 
