@@ -38,6 +38,13 @@ msgstr "%{path} är inte en katalog."
 msgid "%{path} is not writable by user %{username}."
 msgstr "%{path} är inte skrivbar av användare %{username}."
 
+msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
+msgstr ""
+
+#, fuzzy
+msgid "A repository by the ID %{id} already exists."
+msgstr "Det finns redan en lagringsplats med webbadressen %{url}."
+
 msgid "A repository by the URL %{url} already exists."
 msgstr "Det finns redan en lagringsplats med webbadressen %{url}."
 
@@ -53,7 +60,15 @@ msgstr "Alla lagringsplatser har redan inaktiverats."
 msgid "All repositories have already been enabled."
 msgstr "Alla lagringsplatser har redan aktiverats."
 
+msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
+msgstr ""
+
+#. i18n: architecture
 msgid "Arch"
+msgstr "Båge"
+
+#, fuzzy
+msgid "Architecture"
 msgstr "Båge"
 
 msgid "Attach an existing custom repository to a product"
@@ -66,23 +81,13 @@ msgid "Authenticated system with login \\\"%{login}\\\""
 msgstr "Autentiserat system med inloggningen \\\"%{login}\\\""
 
 msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
-msgstr ""
-"Det går inte att ansluta till databasservern. Se att inloggningsuppgifterna "
-"är korrekt konfigurerade i '%{path}' eller konfigurera RMT med YaST "
-"('%{command}')."
+msgstr "Det går inte att ansluta till databasservern. Se att inloggningsuppgifterna är korrekt konfigurerade i '%{path}' eller konfigurera RMT med YaST ('%{command}')."
 
 msgid "Cannot connect to database server. Make sure it is running and its credentials are configured in '%{path}'."
-msgstr ""
-"Det går inte att ansluta till databasservern. Se till att den körs och att "
-"inloggningsuppgifterna är konfigurerade i '%{path}'."
+msgstr "Det går inte att ansluta till databasservern. Se till att den körs och att inloggningsuppgifterna är konfigurerade i '%{path}'."
 
 msgid "Cannot deactivate the product \"%s\". Other activated products depend upon it."
-msgstr ""
-"Det går inte att inaktivera produkten \"%s\". Andra aktiverade produkter är "
-"beroende av den."
-
-msgid "Cannot find custom repository by ID %{id}."
-msgstr "Det går inte att hitta anpassade lagringsplatsen med ID %{id}."
+msgstr "Det går inte att inaktivera produkten \"%s\". Andra aktiverade produkter är beroende av den."
 
 msgid "Cannot find product by ID %{id}."
 msgstr "Det går inte att hitta produkten med ID %{id}."
@@ -92,6 +97,12 @@ msgstr "Kontrollera %{url}"
 
 msgid "Checksum doesn't match"
 msgstr "Kontrollsumman matchar inte"
+
+msgid "Clean cancelled."
+msgstr ""
+
+msgid "Clean finished. An estimated %{total_file_size} were removed."
+msgstr ""
 
 msgid "Cleaning up the database"
 msgstr "Rensar databasen"
@@ -109,15 +120,27 @@ msgid "Could not create local directory %{dir} with error: %{error}"
 msgstr "Det gick inte att skapa lokala katalogen %{dir} med felet: %{error}"
 
 msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
-msgstr ""
-"Det gick inte att hitta ett system med inloggningen \\\"%{login}\\\" och "
-"lösenordet \\\"%{password}\\\""
+msgstr "Det gick inte att hitta ett system med inloggningen \\\"%{login}\\\" och lösenordet \\\"%{password}\\\""
 
-msgid "Could not mirror suma product tree with error: %{error}"
+#, fuzzy
+msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "Det gick inte att spegla suma-produktträd med felet: %{error}"
+
+#, fuzzy
+msgid "Couldn't add custom repository."
+msgstr "Skapar en anpassad lagringsplats."
 
 msgid "Creates a custom repository."
 msgstr "Skapar en anpassad lagringsplats."
+
+msgid "Deleting locally mirrored files from repository '%{repo}'..."
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Description: %{description}"
+msgstr ""
 
 msgid "Detach an existing custom repository from a product"
 msgstr "Koppla från en befintlig anpassad lagringsplats från en produkt"
@@ -125,23 +148,31 @@ msgstr "Koppla från en befintlig anpassad lagringsplats från en produkt"
 msgid "Detached repository from product '%{product_name}'."
 msgstr "Kopplade från lagringsplats från produkten '%{product_name}'."
 
-msgid "Disable mirroring of custom repository by ID"
+#, fuzzy
+msgid "Disable mirroring of custom repositories by a list of IDs"
+msgstr "Inaktivera spegling av anpassad lagringsplats efter ID"
+
+#, fuzzy
+msgid "Disable mirroring of custom repository by a list of IDs"
 msgstr "Inaktivera spegling av anpassad lagringsplats efter ID"
 
 msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
-msgstr ""
-"Inaktivera spegling av produktlagringsplatser efter en lista med produkt-ID "
-"eller produktsträngar."
+msgstr "Inaktivera spegling av produktlagringsplatser efter en lista med produkt-ID eller produktsträngar."
 
 msgid "Disable mirroring of repositories by a list of repository IDs"
-msgstr ""
-"Inaktivera spegling av lagringsplatser efter en lista med lagringsplats-ID"
+msgstr "Inaktivera spegling av lagringsplatser efter en lista med lagringsplats-ID"
 
 msgid "Disabled repository %{repository}."
 msgstr "Inaktiverade lagringsplatsen %{repository}."
 
 msgid "Disabling %{product}:"
 msgstr "Inaktiverar %{product}:"
+
+msgid "Displays product with all its repositories and their attributes."
+msgstr ""
+
+msgid "Do not import system hardware info from MachineData table"
+msgstr ""
 
 msgid "Do not import the systems that were registered to the SMT"
 msgstr "Importera inte systemen som var registrerade till SMT"
@@ -155,20 +186,21 @@ msgstr "Spegla inte"
 msgid "Downloading data from SCC"
 msgstr "Ladda ned data från SCC"
 
+msgid "Duplicate entry for system %{system}, skipping"
+msgstr ""
+
 msgid "Enable debug output"
 msgstr "Aktivera felsökningsutdata"
 
-msgid "Enable mirroring of custom repository by ID"
+#, fuzzy
+msgid "Enable mirroring of custom repositories by a list of IDs"
 msgstr "Aktivera spegling av anpassad lagringsplats efter ID"
 
 msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
-msgstr ""
-"Aktivera spegling av produktlagringsplatser efter en lista med produkt-ID "
-"eller produktsträngar."
+msgstr "Aktivera spegling av produktlagringsplatser efter en lista med produkt-ID eller produktsträngar."
 
 msgid "Enable mirroring of repositories by a list of repository IDs"
-msgstr ""
-"Aktivera spegling av lagringsplatser efter en lista med lagringsplats-ID"
+msgstr "Aktivera spegling av lagringsplatser efter en lista med lagringsplats-ID"
 
 msgid "Enabled mirroring for repository %{repo}"
 msgstr "Aktiverade spegling för lagringsplatsen %{repo}"
@@ -182,6 +214,9 @@ msgstr "Aktiverar alla lediga moduler för en produkt"
 msgid "Enabling %{product}:"
 msgstr "Aktiverar %{product}:"
 
+msgid "Enter a value:"
+msgstr ""
+
 msgid "Error while mirroring data: %{error}"
 msgstr "Fel vid spegling av data: %{error}"
 
@@ -193,6 +228,12 @@ msgstr "Fel vid spegling av metadata: %{error}"
 
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
 msgstr "Fel vid flytt av katalogen %{src} till %{dest}: %{error}"
+
+msgid "Examples"
+msgstr ""
+
+msgid "Examples:"
+msgstr ""
 
 msgid "Export commands for Offline Sync"
 msgstr "Exportera kommandon för Offline Sync"
@@ -212,25 +253,43 @@ msgstr "Exporterar lagringsplatser"
 msgid "Exporting subscriptions"
 msgstr "Exporterar abonnemang"
 
+msgid "Failed to download %{failed_count} files"
+msgstr ""
+
+msgid "Failed to get repository metadata signatures with HTTP code %{http_code}"
+msgstr ""
+
+msgid "Failed to import system %{system}"
+msgstr ""
+
+msgid "Failed to sync system %{login}: %{error}"
+msgstr ""
+
+msgid "Forward registered systems data to SCC"
+msgstr ""
+
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
 msgstr[0] "Hittade produkt efter mål %{target}: %{products}."
 msgstr[1] "Hittade produkter efter mål %{target}: %{products}."
 
+msgid "GPG key import failed"
+msgstr ""
+
+msgid "GPG signature verification failed"
+msgstr ""
+
 msgid "Hardware information stored for system %{system}"
 msgstr "Maskinvaruinformation lagrad för systemet %{system}"
+
+msgid "Hostname"
+msgstr ""
 
 msgid "ID"
 msgstr "ID"
 
 msgid "Import commands for Offline Sync"
 msgstr "Importera kommandon för Offline Sync"
-
-msgid "Imported activation of %{product} for %{system}"
-msgstr "Importerade aktivering av %{product} för %{system}"
-
-msgid "Imported system %{system}"
-msgstr "Importerade system %{system}"
 
 msgid "Importing SCC data from %{path}"
 msgstr "Importerar SCC-data från %{path}"
@@ -244,15 +303,23 @@ msgstr "Senast speglad"
 msgid "Last mirrored"
 msgstr "Senast speglad"
 
+msgid "Last seen"
+msgstr ""
+
 msgid "List all custom repositories"
 msgstr "Lista alla anpassade lagringsplatser"
 
 msgid "List all products, including ones which are not marked to be mirrored"
 msgstr "Lista alla produkter, inklusive de som inte är markerade för spegling"
 
-msgid "List all repositories, including ones which are not marked to be mirrored"
+msgid "List all registered systems"
 msgstr ""
-"Lista alla lagringsplatser, inklusive de som inte är markerade för spegling"
+
+msgid "List all repositories, including ones which are not marked to be mirrored"
+msgstr "Lista alla lagringsplatser, inklusive de som inte är markerade för spegling"
+
+msgid "List and manipulate registered systems"
+msgstr ""
 
 msgid "List and modify custom repositories"
 msgstr "Lista och ändra anpassade lagringsplatser"
@@ -266,8 +333,14 @@ msgstr "Lista och ändra lagringsplatser"
 msgid "List products which are marked to be mirrored."
 msgstr "Lista produkter som är markerade för spegling."
 
+msgid "List registered systems."
+msgstr ""
+
 msgid "List repositories which are marked to be mirrored"
 msgstr "Lista lagringsplatser som är markerade för spegling"
+
+msgid "Login"
+msgstr ""
 
 msgid "Mandatory"
 msgstr "Obligatoriskt"
@@ -276,6 +349,18 @@ msgid "Mandatory?"
 msgstr "Obligatoriskt?"
 
 msgid "Mirror"
+msgstr "Spegla"
+
+#, fuzzy
+msgid "Mirror all enabled repositories"
+msgstr "Spegla"
+
+#, fuzzy
+msgid "Mirror enabled repositories for a product with given product IDs"
+msgstr "Spegla"
+
+#, fuzzy
+msgid "Mirror enabled repositories with given repository IDs"
 msgstr "Spegla"
 
 msgid "Mirror repos at given path"
@@ -290,8 +375,24 @@ msgstr "Spegla lagringsplatser"
 msgid "Mirror?"
 msgstr "Spegla?"
 
+#, fuzzy
+msgid "Mirroring SUMA product tree failed: %{error_message}"
+msgstr "Spegla"
+
 msgid "Mirroring SUSE Manager product tree to %{dir}"
 msgstr "Speglar SUSE Manager-produktträd till %{dir}"
+
+#, fuzzy
+msgid "Mirroring complete."
+msgstr "Spegla"
+
+#, fuzzy
+msgid "Mirroring completed with errors."
+msgstr "Spegla"
+
+#, fuzzy
+msgid "Mirroring of repository with ID %{repo_id} is not enabled"
+msgstr "Spegla"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "Speglar lagringsplatsen %{repo} till %{dir}"
@@ -335,6 +436,10 @@ msgstr "Inga lagringsplatser är aktiverade."
 msgid "No repositories found for product: %s"
 msgstr "Inga lagringsplatser hittades för produkten: %s"
 
+#, fuzzy
+msgid "No repository IDs supplied"
+msgstr "Inga lagringsplats-ID levererades"
+
 msgid "No repository ids supplied"
 msgstr "Inga lagringsplats-ID levererades"
 
@@ -348,19 +453,19 @@ msgid "Not provided"
 msgstr "Inte levererat"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
+msgstr "Registreringskoden är inte aktiverad ännu. Gå till https://scc.suse.com för att aktivera den."
+
+msgid "Number of systems to display"
 msgstr ""
-"Registreringskoden är inte aktiverad ännu. Gå till https://scc.suse.com för "
-"att aktivera den."
+
+msgid "Only '%{input}' will be accepted."
+msgstr ""
 
 msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
-msgstr ""
-"Endast aktiverade produkter visas som standard. Använd alternativet "
-"'%{command}' för att visa alla produkter."
+msgstr "Endast aktiverade produkter visas som standard. Använd alternativet '%{command}' för att visa alla produkter."
 
 msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
-msgstr ""
-"Endast aktiverade lagringsplatser visas som standard. Använd alternativet "
-"'%{option}' för att visa alla lagringsplatser."
+msgstr "Endast aktiverade lagringsplatser visas som standard. Använd alternativet '%{option}' för att visa alla lagringsplatser."
 
 msgid "Output data in CSV format"
 msgstr "Utdata i CSV-format"
@@ -368,10 +473,9 @@ msgstr "Utdata i CSV-format"
 msgid "Path to unpacked SMT data tarball"
 msgstr "Sökväg till icke inpackad tarball för SMT-data"
 
-msgid "Process is locked by the application with pid %{pid}. Close this application or wait for it to finish before trying again."
-msgstr ""
-"Processen är låst av programmet med pid %{pid}. Stäng detta program eller "
-"vänta tills det är slutfört innan du försöker igen."
+#, fuzzy
+msgid "Please provide a non-numeric ID for your custom repository."
+msgstr "ID"
 
 msgid "Product"
 msgstr "Produkt"
@@ -396,10 +500,13 @@ msgid ""
 "by running '%{command}'\n"
 msgstr ""
 "Produkten %{product} hittades inte!\n"
-"Försökte bifoga anpassade lagringsplatsen %{repo} till produkten %{product},"
-"\n"
+"Försökte bifoga anpassade lagringsplatsen %{repo} till produkten %{product},\n"
 "men den produkten hittades inte. Bifoga till en annan produkt\n"
 "genom att köra '%{command}'\n"
+
+#, fuzzy
+msgid "Product %{target} has no repositories enabled"
+msgstr "Produkt"
 
 msgid "Product Architecture"
 msgstr "Produktarkitektur"
@@ -410,17 +517,68 @@ msgstr "Produkt-ID"
 msgid "Product Name"
 msgstr "Produktnamn"
 
+#, fuzzy
+msgid "Product String"
+msgstr "Produkt"
+
 msgid "Product Version"
 msgstr "Produktversion"
+
+#, fuzzy
+msgid "Product architecture (e.g.: x86_64, aarch64)"
+msgstr "Produkt"
 
 msgid "Product by ID %{id} not found."
 msgstr "Produkt efter ID %{id} hittades inte."
 
+#, fuzzy
+msgid "Product for target %{target} not found"
+msgstr "Produkt"
+
+#, fuzzy
+msgid "Product name (e.g.: Basesystem, SLES)"
+msgstr "Produkt"
+
+#, fuzzy
+msgid "Product version (e.g.: 15, 15.1, '12 SP4')"
+msgstr "Produkt"
+
+#, fuzzy
+msgid "Product with ID %{target} not found"
+msgstr "Produkt efter ID %{id} hittades inte."
+
+#, fuzzy
+msgid "Product: %{name} (id: %{id})"
+msgstr "Produkt"
+
+#, fuzzy
+msgid "Products"
+msgstr "Produkt"
+
+#, fuzzy
+msgid "Provide a custom ID instead of allowing RMT to generate one."
+msgstr "ID"
+
+msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
+msgstr ""
+
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr "RMT har inte synkats till SCC ännu. Kör först '%{command}'"
 
+msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
+msgstr ""
+
+msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
+msgstr ""
+
 msgid "Read SCC data from given path"
 msgstr "Läs SCC-data från angiven sökväg"
+
+msgid "Registration time"
+msgstr ""
+
+msgid "Release Stage"
+msgstr ""
 
 msgid "Remove a custom repository"
 msgstr "Ta bort en anpassad lagringsplats"
@@ -428,20 +586,30 @@ msgstr "Ta bort en anpassad lagringsplats"
 msgid "Removed custom repository by ID %{id}."
 msgstr "Tog bort anpassad lagringsplats efter ID %{id}."
 
-msgid "Repository %{repos} could not be found and was not disabled."
-msgid_plural "Repositories %{repos} could not be found and were not disabled."
-msgstr[0] "Lagringsplatsen %{repos} hittades inte och var inte inaktiverad."
-msgstr[1] "Lagringsplatserna %{repos} hittades inte och var inte inaktiverade."
+msgid "Removes a system and its activations from RMT"
+msgstr ""
 
-msgid "Repository %{repos} could not be found and was not enabled."
-msgid_plural "Repositories %{repos} could not be found and were not enabled."
-msgstr[0] "Lagringsplatsen %{repos} hittades inte och var inte aktiverad."
-msgstr[1] "Lagringsplatserna %{repos} hittades inte och var inte aktiverade."
+msgid "Removes a system and its activations from RMT."
+msgstr ""
+
+msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
+msgstr ""
+
+msgid "Repositories are not available for this product."
+msgstr ""
+
+msgid "Repositories:"
+msgstr ""
 
 msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
+msgstr "Lagringsplatsen %{repo} hittades inte i RMT-databasen, du kanske inte längre har ett giltigt abonnemang för den"
+
+msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
 msgstr ""
-"Lagringsplatsen %{repo} hittades inte i RMT-databasen, du kanske inte längre "
-"har ett giltigt abonnemang för den"
+
+#, fuzzy
+msgid "Repository by ID %{id} not found."
+msgstr "Produkt efter ID %{id} hittades inte."
 
 msgid "Repository by ID %{id} successfully disabled."
 msgstr "Lagringsplats med ID %{id} har inaktiverats."
@@ -449,17 +617,24 @@ msgstr "Lagringsplats med ID %{id} har inaktiverats."
 msgid "Repository by ID %{id} successfully enabled."
 msgstr "Lagringsplats med ID %{id} har aktiverats."
 
+#, fuzzy
+msgid "Repository by ID %{repos} could not be found and was not disabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
+msgstr[0] "Lagringsplatsen %{repos} hittades inte och var inte inaktiverad."
+msgstr[1] "Lagringsplatserna %{repos} hittades inte och var inte inaktiverade."
+
+#, fuzzy
+msgid "Repository by ID %{repos} could not be found and was not enabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
+msgstr[0] "Lagringsplatsen %{repos} hittades inte och var inte aktiverad."
+msgstr[1] "Lagringsplatserna %{repos} hittades inte och var inte aktiverade."
+
 msgid "Repository metadata signatures are missing"
 msgstr "Signaturer saknas för lagringsplatsmetadata"
 
-msgid "Repository not found by ID %{id}."
-msgstr "Lagringsplatsen hittades inte med ID %{id}."
-
-msgid "Repository successfully disabled."
-msgstr "Lagringsplatsen har inaktiverats."
-
-msgid "Repository successfully enabled."
-msgstr "Lagringsplatsen har aktiverats."
+#, fuzzy
+msgid "Repository with ID %{repo_id} not found"
+msgstr "ID"
 
 msgid "Requested service not found"
 msgstr "Det gick inte att hitta begärd tjänst"
@@ -468,21 +643,34 @@ msgid "Required parameters are missing or empty: %s"
 msgstr "Begärda parametrar saknas eller är tomma: %s"
 
 msgid "Run '%{command}' for more information on a command and its subcommands."
-msgstr ""
-"Kör '%{command}' för mer information om ett kommando och dess delkommandon."
+msgstr "Kör '%{command}' för mer information om ett kommando och dess delkommandon."
 
 msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
-msgstr ""
-"Kör '%{command}' för att först synkronisera med dina SUSE-kundtjänstdata."
+msgstr "Kör '%{command}' för att först synkronisera med dina SUSE-kundtjänstdata."
 
-msgid "SCC ID"
-msgstr "SCC ID"
+msgid "Run this command on an online RMT."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"SCC API request failed. Error details:\n"
+"Request URL: %{url}\n"
+"Response code: %{code}\n"
+"Response body:\n"
+"%{body}"
+msgstr "Webbadress"
+
+msgid "SCC credentials not set."
+msgstr ""
 
 msgid "Settings saved at %{file}."
 msgstr "Inställningar sparade i %{file}."
 
 msgid "Show RMT version"
 msgstr "Visa RMT-version"
+
+msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
+msgstr ""
 
 msgid "Shows products attached to a custom repository"
 msgstr "Visar produkter kopplade till en anpassad lagringsplats"
@@ -496,21 +684,38 @@ msgstr "Lagra lagringsplatsinställningar på angiven sökväg"
 msgid "Successfully added custom repository."
 msgstr "Anpassad lagringsplats har lagts till."
 
+msgid "Successfully removed system with login %{login}."
+msgstr ""
+
 msgid "Sync database with SUSE Customer Center"
 msgstr "Synka databas med SUSE-kundtjänst"
+
+msgid "Syncing de-registered system %{scc_system_id} to SCC"
+msgstr ""
+
+msgid "Syncing system %{login} to SCC"
+msgstr ""
+
+msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
+msgstr ""
 
 msgid "System %{system} not found"
 msgstr "Det gick inte att hitta systemet %{system}"
 
-msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
+msgid "System with login %{login} cannot be removed."
 msgstr ""
-"RMT-databasen har inte initierats ännu. Kör '%{command}' för att konfigurera "
-"databasen."
+
+msgid "System with login %{login} not found."
+msgstr ""
+
+msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
+msgstr "RMT-databasen har inte initierats ännu. Kör '%{command}' för att konfigurera databasen."
 
 msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
+msgstr "SCC-uppgifter är inte korrekt konfigurerade i '%{path}'. Du kan hämta dem från %{url}"
+
+msgid "The following errors occurred while mirroring:"
 msgstr ""
-"SCC-uppgifter är inte korrekt konfigurerade i '%{path}'. Du kan hämta dem "
-"från %{url}"
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
 msgstr "Produkten \"%s\" är en basprodukt och kan inte inaktiveras"
@@ -521,8 +726,23 @@ msgstr "Den begärda produkten '%s' är inte aktiverad på detta system."
 msgid "The requested products '%s' are not activated on the system."
 msgstr "Begärda produkter '%s' är inte aktiverade på systemet."
 
+msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
+msgstr ""
+
 msgid "There are no repositories marked for mirroring."
 msgstr "Det finns inga lagringsplatser som är markerade för spegling."
+
+msgid "There are no systems registered to this RMT instance."
+msgstr ""
+
+msgid "To clean up downloaded files, please run '%{command}'"
+msgstr ""
+
+msgid "To clean up downloaded files, run '%{command}'"
+msgstr ""
+
+msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
+msgstr ""
 
 msgid "URL"
 msgstr "Webbadress"
@@ -534,8 +754,7 @@ msgid "Unknown hash function %{checksum_type}"
 msgstr "Okänd hash-funktion %{checksum_type}"
 
 msgid "Unmet product dependencies, activate one of these products first: %s"
-msgstr ""
-"Produktberoenden har inte uppfyllts, aktivera en av dessa produkter först: %s"
+msgstr "Produktberoenden har inte uppfyllts, aktivera en av dessa produkter först: %s"
 
 msgid "Updated system information for host '%s'"
 msgstr "Uppdaterad systeminformation för värden '%s'"
@@ -552,12 +771,32 @@ msgstr "Uppdaterar abonnemang"
 msgid "Version"
 msgstr "Version"
 
+msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
+msgstr ""
+
+msgid "enabled"
+msgstr ""
+
 msgid "importing data from SMT."
 msgstr "importerar data från SMT."
 
+#, fuzzy
+msgid "mandatory"
+msgstr "Obligatoriskt"
+
+msgid "mirrored at %{time}"
+msgstr ""
+
+#, fuzzy
+msgid "non-mandatory"
+msgstr "Inte obligatoriskt"
+
+msgid "not enabled"
+msgstr ""
+
+#, fuzzy
+msgid "not mirrored"
+msgstr "Senast speglad"
+
 msgid "repository by URL %{url} does not exist in database"
 msgstr "lagringsplats med webbadressen %{url} finns inte i databasen"
-
-msgid "× File does not exist or has wrong filesize, deduplication ignored %{error}."
-msgstr ""
-"×-fil finns inte eller har fel filstorlek, avduplicering ignoreras %{error}."

@@ -7,7 +7,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-26 11:32+0100\n"
 "PO-Revision-Date: 2019-03-28 18:42+0000\n"
 "Last-Translator: George Yacoub <george.yacoub@arabize.com>\n"
 "Language-Team: Arabic <https://l10n.opensuse.org/projects/rmt/i18n/ar/>\n"
@@ -15,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
-"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && "
+"n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 "X-Generator: Weblate 3.3\n"
 
 msgid "%s is not yet activated on the system."
@@ -40,6 +39,13 @@ msgstr "المسار %{path} ليس دليلاً."
 msgid "%{path} is not writable by user %{username}."
 msgstr "لا يمكن للمستخدم %{username} الكتابة على المسار %{path}."
 
+msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
+msgstr ""
+
+#, fuzzy
+msgid "A repository by the ID %{id} already exists."
+msgstr "المخزن بعنوان URL‏ %{url} موجود بالفعل."
+
 msgid "A repository by the URL %{url} already exists."
 msgstr "المخزن بعنوان URL‏ %{url} موجود بالفعل."
 
@@ -55,7 +61,15 @@ msgstr "تم تعطيل جميع المخازن بالفعل."
 msgid "All repositories have already been enabled."
 msgstr "تم تمكين جميع المخازن بالفعل."
 
+msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
+msgstr ""
+
+#. i18n: architecture
 msgid "Arch"
+msgstr "Arch"
+
+#, fuzzy
+msgid "Architecture"
 msgstr "Arch"
 
 msgid "Attach an existing custom repository to a product"
@@ -67,30 +81,14 @@ msgstr "تم إرفاق مخزن بالمنتج '%{product_name}'."
 msgid "Authenticated system with login \\\"%{login}\\\""
 msgstr "تم التصديق على النظام باستخدام بيانات تسجيل الدخول \\\"%{login}\\\""
 
-msgid ""
-"Cannot connect to database server. Ensure its credentials are correctly "
-"configured in '%{path}' or configure RMT with YaST ('%{command}')."
-msgstr ""
-"لا يمكن الاتصال بخادم قاعدة البيانات. تأكد من أنه تم تكوين الصلاحيات الخاصة "
-"به بشكل صحيح في المسار '%{path}' أو قم بتكوين أداة نسخ المخازن (RMT) "
-"باستخدام الأمر YaST ('%{‏command}')."
+msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
+msgstr "لا يمكن الاتصال بخادم قاعدة البيانات. تأكد من أنه تم تكوين الصلاحيات الخاصة به بشكل صحيح في المسار '%{path}' أو قم بتكوين أداة نسخ المخازن (RMT) باستخدام الأمر YaST ('%{‏command}')."
 
-msgid ""
-"Cannot connect to database server. Make sure it is running and its "
-"credentials are configured in '%{path}'."
-msgstr ""
-"لا يمكن الاتصال بخادم قاعدة البيانات. تأكد من أنه قيد التشغيل وأنه تم تكوين "
-"الصلاحيات الخاصة به في المسار '%{path}'."
+msgid "Cannot connect to database server. Make sure it is running and its credentials are configured in '%{path}'."
+msgstr "لا يمكن الاتصال بخادم قاعدة البيانات. تأكد من أنه قيد التشغيل وأنه تم تكوين الصلاحيات الخاصة به في المسار '%{path}'."
 
-msgid ""
-"Cannot deactivate the product \"%s\". Other activated products depend upon "
-"it."
-msgstr ""
-"لا يمكن إلغاء تنشيط المنتج \"%s\"، لأن المنتجات الأخرى التي تم تنشيطها تعتمد "
-"على هذا المنتج."
-
-msgid "Cannot find custom repository by ID %{id}."
-msgstr "لا يمكن العثور على مخزن مخصص بالمعرف %{id}."
+msgid "Cannot deactivate the product \"%s\". Other activated products depend upon it."
+msgstr "لا يمكن إلغاء تنشيط المنتج \"%s\"، لأن المنتجات الأخرى التي تم تنشيطها تعتمد على هذا المنتج."
 
 msgid "Cannot find product by ID %{id}."
 msgstr "لا يمكن العثور على منتج بالمعرف %{id}."
@@ -100,6 +98,12 @@ msgstr "سحب %{url}"
 
 msgid "Checksum doesn't match"
 msgstr "المجموع الاختباري غير مطابق"
+
+msgid "Clean cancelled."
+msgstr ""
+
+msgid "Clean finished. An estimated %{total_file_size} were removed."
+msgstr ""
 
 msgid "Cleaning up the database"
 msgstr "جارِ تنظيف قاعدة البيانات"
@@ -116,18 +120,28 @@ msgstr "تعذر تكوين ارتباط ثابت للتطابق: %{error}."
 msgid "Could not create local directory %{dir} with error: %{error}"
 msgstr "تعذر تكوين الدليل المحلي %{dir} مع وجود الخطأ: %{error}"
 
-msgid ""
-"Could not find system with login \\\"%{login}\\\" and password \\"
-"\"%{password}\\\""
-msgstr ""
-"تعذر العثور على النظام ببيانات تسجيل الدخول \\\"%{login}\\\" وكلمة السر \\"
-"\"%{password}\\\""
+msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
+msgstr "تعذر العثور على النظام ببيانات تسجيل الدخول \\\"%{login}\\\" وكلمة السر \\\"%{password}\\\""
 
-msgid "Could not mirror suma product tree with error: %{error}"
+#, fuzzy
+msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "تعذر نسخ شجرة منتج Suma مع وجود الخطأ: %{error}"
+
+#, fuzzy
+msgid "Couldn't add custom repository."
+msgstr "تكوين مخزن مخصص."
 
 msgid "Creates a custom repository."
 msgstr "تكوين مخزن مخصص."
+
+msgid "Deleting locally mirrored files from repository '%{repo}'..."
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Description: %{description}"
+msgstr ""
 
 msgid "Detach an existing custom repository from a product"
 msgstr "فصل مخزن مخصص حالي عن منتج"
@@ -135,12 +149,15 @@ msgstr "فصل مخزن مخصص حالي عن منتج"
 msgid "Detached repository from product '%{product_name}'."
 msgstr "تم فصل مخزن عن المنتج '%{product_name}'."
 
-msgid "Disable mirroring of custom repository by ID"
+#, fuzzy
+msgid "Disable mirroring of custom repositories by a list of IDs"
 msgstr "تعطيل نسخ مخزن مخصص حسب المعرف"
 
-msgid ""
-"Disable mirroring of product repositories by a list of product IDs or "
-"product strings."
+#, fuzzy
+msgid "Disable mirroring of custom repository by a list of IDs"
+msgstr "تعطيل نسخ مخزن مخصص حسب المعرف"
+
+msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
 msgstr "تعطيل نسخ مخازن المنتجات حسب قائمة معرفات المنتجات أو سلاسل المنتجات."
 
 msgid "Disable mirroring of repositories by a list of repository IDs"
@@ -152,11 +169,16 @@ msgstr "تم تعطيل المخزن %{repository}."
 msgid "Disabling %{product}:"
 msgstr "جارِ تعطيل %{product}:"
 
+msgid "Displays product with all its repositories and their attributes."
+msgstr ""
+
+msgid "Do not import system hardware info from MachineData table"
+msgstr ""
+
 msgid "Do not import the systems that were registered to the SMT"
 msgstr "عدم استيراد الأنظمة التي تم تسجيلها في أداة SMT"
 
-msgid ""
-"Do you have any suggestions for improvement? We would love to hear from you!"
+msgid "Do you have any suggestions for improvement? We would love to hear from you!"
 msgstr "هل لديك أي اقتراحات من أجل التحسين؟ يسعدنا التواصل معك!"
 
 msgid "Don't Mirror"
@@ -165,15 +187,17 @@ msgstr "عدم النسخ"
 msgid "Downloading data from SCC"
 msgstr "جارِ تحميل البيانات من مركز SCC"
 
+msgid "Duplicate entry for system %{system}, skipping"
+msgstr ""
+
 msgid "Enable debug output"
 msgstr "تمكين تصحيح أخطاء المخرجات"
 
-msgid "Enable mirroring of custom repository by ID"
+#, fuzzy
+msgid "Enable mirroring of custom repositories by a list of IDs"
 msgstr "تمكين نسخ مخزن مخصص حسب المعرف"
 
-msgid ""
-"Enable mirroring of product repositories by a list of product IDs or product "
-"strings."
+msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
 msgstr "تمكين نسخ مخازن المنتجات حسب قائمة معرفات المنتجات أو سلاسل المنتجات."
 
 msgid "Enable mirroring of repositories by a list of repository IDs"
@@ -191,6 +215,9 @@ msgstr "تمكين جميع الوحدات النمطية المجانية لم�
 msgid "Enabling %{product}:"
 msgstr "جارِ تمكين %{product}:"
 
+msgid "Enter a value:"
+msgstr ""
+
 msgid "Error while mirroring data: %{error}"
 msgstr "خطأ أثناء نسخ البيانات: %{error}"
 
@@ -202,6 +229,12 @@ msgstr "خطأ أثناء نسخ بيانات التعريف: %{error}"
 
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
 msgstr "خطأ أثناء نقل الدليل %{src} إلى %{dest}‏: %{error}"
+
+msgid "Examples"
+msgstr ""
+
+msgid "Examples:"
+msgstr ""
 
 msgid "Export commands for Offline Sync"
 msgstr "تصدير الأوامر لأجل المزامنة غير المتصلة على الشبكة"
@@ -221,6 +254,21 @@ msgstr "جارِ تصدير المخازن"
 msgid "Exporting subscriptions"
 msgstr "جارِ تصدير الاشتراكات"
 
+msgid "Failed to download %{failed_count} files"
+msgstr ""
+
+msgid "Failed to get repository metadata signatures with HTTP code %{http_code}"
+msgstr ""
+
+msgid "Failed to import system %{system}"
+msgstr ""
+
+msgid "Failed to sync system %{login}: %{error}"
+msgstr ""
+
+msgid "Forward registered systems data to SCC"
+msgstr ""
+
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
 msgstr[0] "تم العثور على الهدف %{target}: %{products} من المنتجات."
@@ -230,20 +278,23 @@ msgstr[3] "عثر الهدف %{target} على %{products} منتجات."
 msgstr[4] "عثر الهدف %{target} على %{products} منتجًا."
 msgstr[5] "عثر الهدف %{target} على %{products} من المنتجات."
 
+msgid "GPG key import failed"
+msgstr ""
+
+msgid "GPG signature verification failed"
+msgstr ""
+
 msgid "Hardware information stored for system %{system}"
 msgstr "تم تخزين معلومات الأجهزة لأجل النظام %{system}"
+
+msgid "Hostname"
+msgstr ""
 
 msgid "ID"
 msgstr "المعرف"
 
 msgid "Import commands for Offline Sync"
 msgstr "استيراد الأوامر لإجراء مزامنة غير متصلة"
-
-msgid "Imported activation of %{product} for %{system}"
-msgstr "تم استيراد تنشيط المنتج %{product} للنظام %{system}"
-
-msgid "Imported system %{system}"
-msgstr "تم استيراد النظام %{system}"
 
 msgid "Importing SCC data from %{path}"
 msgstr "جارِ استيراد بيانات SCC من المسار %{path}"
@@ -257,19 +308,23 @@ msgstr "آخر نسخ"
 msgid "Last mirrored"
 msgstr "آخر نسخ"
 
+msgid "Last seen"
+msgstr ""
+
 msgid "List all custom repositories"
 msgstr "سرد جميع المخازن المخصصة"
 
 msgid "List all products, including ones which are not marked to be mirrored"
-msgstr ""
-"سرد جميع المنتجات، بما في ذلك المنتجات التي لم توضع عليها علامة \"مطلوب النسخ"
-"\""
+msgstr "سرد جميع المنتجات، بما في ذلك المنتجات التي لم توضع عليها علامة \"مطلوب النسخ\""
 
-msgid ""
-"List all repositories, including ones which are not marked to be mirrored"
+msgid "List all registered systems"
 msgstr ""
-"سرد جميع المنتجات، بما في ذلك المنتجات التي لم توضع عليها علامة \"مطلوب النسخ"
-"\""
+
+msgid "List all repositories, including ones which are not marked to be mirrored"
+msgstr "سرد جميع المنتجات، بما في ذلك المنتجات التي لم توضع عليها علامة \"مطلوب النسخ\""
+
+msgid "List and manipulate registered systems"
+msgstr ""
 
 msgid "List and modify custom repositories"
 msgstr "سرد المخازن المخصصة وتعديلها"
@@ -283,8 +338,14 @@ msgstr "سرد المخازن وتعديلها"
 msgid "List products which are marked to be mirrored."
 msgstr "سرد المنتجات التي وضِعت عليها علامة \"مطلوب النسخ\"."
 
+msgid "List registered systems."
+msgstr ""
+
 msgid "List repositories which are marked to be mirrored"
 msgstr "سرد المخازن التي وضِعت عليها علامة \"مطلوب النسخ\""
+
+msgid "Login"
+msgstr ""
 
 msgid "Mandatory"
 msgstr "إلزامي"
@@ -293,6 +354,18 @@ msgid "Mandatory?"
 msgstr "إلزامي؟"
 
 msgid "Mirror"
+msgstr "نسخ"
+
+#, fuzzy
+msgid "Mirror all enabled repositories"
+msgstr "نسخ"
+
+#, fuzzy
+msgid "Mirror enabled repositories for a product with given product IDs"
+msgstr "نسخ"
+
+#, fuzzy
+msgid "Mirror enabled repositories with given repository IDs"
 msgstr "نسخ"
 
 msgid "Mirror repos at given path"
@@ -307,8 +380,24 @@ msgstr "نسخ المخازن"
 msgid "Mirror?"
 msgstr "هل تريد النسخ؟"
 
+#, fuzzy
+msgid "Mirroring SUMA product tree failed: %{error_message}"
+msgstr "نسخ"
+
 msgid "Mirroring SUSE Manager product tree to %{dir}"
 msgstr "نسخ شجرة منتج SUSE Manager إلى %{dir}"
+
+#, fuzzy
+msgid "Mirroring complete."
+msgstr "نسخ"
+
+#, fuzzy
+msgid "Mirroring completed with errors."
+msgstr "نسخ"
+
+#, fuzzy
+msgid "Mirroring of repository with ID %{repo_id} is not enabled"
+msgstr "نسخ"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "جارِ نسخ المخزن %{repo} إلى %{dir}"
@@ -352,6 +441,10 @@ msgstr "لم يتم تمكين أي مخزن."
 msgid "No repositories found for product: %s"
 msgstr "لم يتم العثور على مخازن للمنتج: %s"
 
+#, fuzzy
+msgid "No repository IDs supplied"
+msgstr "لم يتم إدخال أي معرفات مخازن"
+
 msgid "No repository ids supplied"
 msgstr "لم يتم إدخال أي معرفات مخازن"
 
@@ -364,25 +457,20 @@ msgstr "لم يتم نسخ كل المخازن الإلزامية للمنتج %
 msgid "Not provided"
 msgstr "لم يتم الإدخال"
 
-msgid ""
-"Not yet activated Registration Code. Visit https://scc.suse.com to activate "
-"it."
-msgstr ""
-"لم يتم تنشيط رمز التسجيل بعد. الرجاء زيارة موقع https://scc.suse.com لتنشيطه."
+msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
+msgstr "لم يتم تنشيط رمز التسجيل بعد. الرجاء زيارة موقع https://scc.suse.com لتنشيطه."
 
-msgid ""
-"Only enabled products are shown by default. Use the '%{command}' option to "
-"see all products."
+msgid "Number of systems to display"
 msgstr ""
-"لا يتم إظهار سوى المنتجات التي تم تمكينها بشكل افتراضي. استخدم الخيار "
-"'%{command}' لعرض جميع المنتجات."
 
-msgid ""
-"Only enabled repositories are shown by default. Use the '%{option}' option "
-"to see all repositories."
+msgid "Only '%{input}' will be accepted."
 msgstr ""
-"لا يتم إظهار سوى المخازن التي تم تمكينها بشكل افتراضي. استخدم الخيار "
-"'%{option}' لعرض جميع المخازن."
+
+msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
+msgstr "لا يتم إظهار سوى المنتجات التي تم تمكينها بشكل افتراضي. استخدم الخيار '%{command}' لعرض جميع المنتجات."
+
+msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
+msgstr "لا يتم إظهار سوى المخازن التي تم تمكينها بشكل افتراضي. استخدم الخيار '%{option}' لعرض جميع المخازن."
 
 msgid "Output data in CSV format"
 msgstr "بيانات المخرجات بتنسيق CSV"
@@ -390,12 +478,9 @@ msgstr "بيانات المخرجات بتنسيق CSV"
 msgid "Path to unpacked SMT data tarball"
 msgstr "مسار إلى ملف tarball الخاص ببيانات SMT الذي تم فك حزمته"
 
-msgid ""
-"Process is locked by the application with pid %{pid}. Close this application "
-"or wait for it to finish before trying again."
-msgstr ""
-"العملية مقفلة بواسطة التطبيق بمعرف العملية %{pid}. أغلق هذا التطبيق أو انتظر "
-"حتى الانتهاء قبل المحاولة مرة أخرى."
+#, fuzzy
+msgid "Please provide a non-numeric ID for your custom repository."
+msgstr "المعرف"
 
 msgid "Product"
 msgstr "المنتج"
@@ -432,6 +517,10 @@ msgstr ""
 "لكن لم يتم العثور على هذا المنتج. الرجاء إرفاقه بمنتج آخر\n"
 "من خلال تشغيل '%{command}'\n"
 
+#, fuzzy
+msgid "Product %{target} has no repositories enabled"
+msgstr "المنتج"
+
 msgid "Product Architecture"
 msgstr "هيكل المنتج"
 
@@ -441,17 +530,68 @@ msgstr "معرف المنتج"
 msgid "Product Name"
 msgstr "اسم المنتج"
 
+#, fuzzy
+msgid "Product String"
+msgstr "المنتج"
+
 msgid "Product Version"
 msgstr "إصدار المنتج"
+
+#, fuzzy
+msgid "Product architecture (e.g.: x86_64, aarch64)"
+msgstr "المنتج"
 
 msgid "Product by ID %{id} not found."
 msgstr "لم يتم العثور على منتج بالمعرف %{id}."
 
+#, fuzzy
+msgid "Product for target %{target} not found"
+msgstr "المنتج"
+
+#, fuzzy
+msgid "Product name (e.g.: Basesystem, SLES)"
+msgstr "المنتج"
+
+#, fuzzy
+msgid "Product version (e.g.: 15, 15.1, '12 SP4')"
+msgstr "المنتج"
+
+#, fuzzy
+msgid "Product with ID %{target} not found"
+msgstr "لم يتم العثور على منتج بالمعرف %{id}."
+
+#, fuzzy
+msgid "Product: %{name} (id: %{id})"
+msgstr "المنتج"
+
+#, fuzzy
+msgid "Products"
+msgstr "المنتج"
+
+#, fuzzy
+msgid "Provide a custom ID instead of allowing RMT to generate one."
+msgstr "المعرف"
+
+msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
+msgstr ""
+
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr "لم تتم مزامنة أداة RMT مع مركز SCC بعد. الرجاء تشغيل '%{command}' أولاً"
 
+msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
+msgstr ""
+
+msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
+msgstr ""
+
 msgid "Read SCC data from given path"
 msgstr "قراءة بيانات مركز SCC من المسار المحدد"
+
+msgid "Registration time"
+msgstr ""
+
+msgid "Release Stage"
+msgstr ""
 
 msgid "Remove a custom repository"
 msgstr "إزالة مخزن مخصص"
@@ -459,30 +599,30 @@ msgstr "إزالة مخزن مخصص"
 msgid "Removed custom repository by ID %{id}."
 msgstr "تمت إزالة مخزن مخصص بالمعرف %{id}."
 
-msgid "Repository %{repos} could not be found and was not disabled."
-msgid_plural "Repositories %{repos} could not be found and were not disabled."
-msgstr[0] "تعذر العثور على %{repos} من المخازن ولم يتم تعطيلها."
-msgstr[1] "تعذر الحصول على مخزن %{repos} ولم يتم تعطيله."
-msgstr[2] "تعذر الحصول على مخزنين %{repos} ولم يتم تعطيلهما."
-msgstr[3] "تعذر العثور على %{repos} من المخازن ولم يتم تعطيلها."
-msgstr[4] "تعذر العثور على %{repos} من المخازن ولم يتم تعطيلها."
-msgstr[5] "تعذر العثور على %{repos} من المخازن ولم يتم تعطيلها."
-
-msgid "Repository %{repos} could not be found and was not enabled."
-msgid_plural "Repositories %{repos} could not be found and were not enabled."
-msgstr[0] "تعذر العثور على %{repos} من المخازن ولم يتم تمكينها."
-msgstr[1] "تعذر العثور على مخزن %{repos} ولم يتم تمكينه."
-msgstr[2] "تعذر العثور على مخزنين %{repos} ولم يتم تمكينهما."
-msgstr[3] "تعذر العثور على %{repos} مخازن ولم يتم تمكينها."
-msgstr[4] "تعذر العثور على %{repos} مخزنًا ولم يتم تمكين هذه المخازن."
-msgstr[5] "تعذر العثور على %{repos} من المخازن ولم يتم تمكينها."
-
-msgid ""
-"Repository %{repo} was not found in RMT database, perhaps you no longer have "
-"a valid subscription for it"
+msgid "Removes a system and its activations from RMT"
 msgstr ""
-"لم يتم العثور على المخزن %{repo} في قاعدة بيانات RMT، ربما لم يعد لديك "
-"اشتراك صالح له"
+
+msgid "Removes a system and its activations from RMT."
+msgstr ""
+
+msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
+msgstr ""
+
+msgid "Repositories are not available for this product."
+msgstr ""
+
+msgid "Repositories:"
+msgstr ""
+
+msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
+msgstr "لم يتم العثور على المخزن %{repo} في قاعدة بيانات RMT، ربما لم يعد لديك اشتراك صالح له"
+
+msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
+msgstr ""
+
+#, fuzzy
+msgid "Repository by ID %{id} not found."
+msgstr "لم يتم العثور على منتج بالمعرف %{id}."
 
 msgid "Repository by ID %{id} successfully disabled."
 msgstr "تم تعطيل المخزن بالمعرف %{id} بنجاح."
@@ -490,17 +630,32 @@ msgstr "تم تعطيل المخزن بالمعرف %{id} بنجاح."
 msgid "Repository by ID %{id} successfully enabled."
 msgstr "تم تمكين المخزن بالمعرف %{id} بنجاح."
 
+#, fuzzy
+msgid "Repository by ID %{repos} could not be found and was not disabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
+msgstr[0] "تعذر العثور على %{repos} من المخازن ولم يتم تعطيلها."
+msgstr[1] "تعذر الحصول على مخزن %{repos} ولم يتم تعطيله."
+msgstr[2] "تعذر الحصول على مخزنين %{repos} ولم يتم تعطيلهما."
+msgstr[3] "تعذر العثور على %{repos} من المخازن ولم يتم تعطيلها."
+msgstr[4] "تعذر العثور على %{repos} من المخازن ولم يتم تعطيلها."
+msgstr[5] "تعذر العثور على %{repos} من المخازن ولم يتم تعطيلها."
+
+#, fuzzy
+msgid "Repository by ID %{repos} could not be found and was not enabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
+msgstr[0] "تعذر العثور على %{repos} من المخازن ولم يتم تمكينها."
+msgstr[1] "تعذر العثور على مخزن %{repos} ولم يتم تمكينه."
+msgstr[2] "تعذر العثور على مخزنين %{repos} ولم يتم تمكينهما."
+msgstr[3] "تعذر العثور على %{repos} مخازن ولم يتم تمكينها."
+msgstr[4] "تعذر العثور على %{repos} مخزنًا ولم يتم تمكين هذه المخازن."
+msgstr[5] "تعذر العثور على %{repos} من المخازن ولم يتم تمكينها."
+
 msgid "Repository metadata signatures are missing"
 msgstr "توقيعات بيانات تعريف المخزن مفقودة"
 
-msgid "Repository not found by ID %{id}."
-msgstr "لم يتم العثور على المخزن بالمعرف %{id}."
-
-msgid "Repository successfully disabled."
-msgstr "تم تعطيل المخزن بنجاح."
-
-msgid "Repository successfully enabled."
-msgstr "تم تمكين المخزن بنجاح."
+#, fuzzy
+msgid "Repository with ID %{repo_id} not found"
+msgstr "المعرف"
 
 msgid "Requested service not found"
 msgstr "لم يتم العثور على الخدمة المطلوبة"
@@ -509,23 +664,34 @@ msgid "Required parameters are missing or empty: %s"
 msgstr "المعلمات المطلوبة مفقودة أو فارغة: %s"
 
 msgid "Run '%{command}' for more information on a command and its subcommands."
-msgstr ""
-"تشغيل '%{command}' للحصول على مزيد من المعلومات حول أحد الأوامر والأوامر "
-"الفرعية الخاصة به."
+msgstr "تشغيل '%{command}' للحصول على مزيد من المعلومات حول أحد الأوامر والأوامر الفرعية الخاصة به."
 
+msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
+msgstr "تشغيل '%{command}' للمزامنة مع بيانات SUSE Customer Center الخاصة بك أولاً."
+
+msgid "Run this command on an online RMT."
+msgstr ""
+
+#, fuzzy
 msgid ""
-"Run '%{command}' to synchronize with your SUSE Customer Center data first."
-msgstr ""
-"تشغيل '%{command}' للمزامنة مع بيانات SUSE Customer Center الخاصة بك أولاً."
+"SCC API request failed. Error details:\n"
+"Request URL: %{url}\n"
+"Response code: %{code}\n"
+"Response body:\n"
+"%{body}"
+msgstr "عنوان URL"
 
-msgid "SCC ID"
-msgstr "معرف مركز SCC"
+msgid "SCC credentials not set."
+msgstr ""
 
 msgid "Settings saved at %{file}."
 msgstr "تم حفظ الإعدادات في %{file}."
 
 msgid "Show RMT version"
 msgstr "إظهار إصدار RMT"
+
+msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
+msgstr ""
 
 msgid "Shows products attached to a custom repository"
 msgstr "إظهار المنتجات المرفقة بمخزن مخصص"
@@ -539,25 +705,38 @@ msgstr "تخزين إعدادات المخزن في مسار محدد"
 msgid "Successfully added custom repository."
 msgstr "تمت إضافة مخزن مخصص بنجاح."
 
+msgid "Successfully removed system with login %{login}."
+msgstr ""
+
 msgid "Sync database with SUSE Customer Center"
 msgstr "مزامنة قاعدة البيانات مع SUSE Customer Center"
+
+msgid "Syncing de-registered system %{scc_system_id} to SCC"
+msgstr ""
+
+msgid "Syncing system %{login} to SCC"
+msgstr ""
+
+msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
+msgstr ""
 
 msgid "System %{system} not found"
 msgstr "لم يتم العثور على النظام %{system}"
 
-msgid ""
-"The RMT database has not yet been initialized. Run '%{command}' to setup the "
-"database."
+msgid "System with login %{login} cannot be removed."
 msgstr ""
-"لم تتم تهيئة قاعدة بيانات RMT بعد. قم بتشغيل '%{command}' لإعداد قاعدة "
-"البيانات."
 
-msgid ""
-"The SCC credentials are not configured correctly in '%{path}'. You can "
-"obtain them from %{url}"
+msgid "System with login %{login} not found."
 msgstr ""
-"لم يتم تكوين الصلاحيات الخاصة بمركز SCC بشكل صحيح في المسار '%{path}'. يمكنك "
-"الحصول عليها من %{url}"
+
+msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
+msgstr "لم تتم تهيئة قاعدة بيانات RMT بعد. قم بتشغيل '%{command}' لإعداد قاعدة البيانات."
+
+msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
+msgstr "لم يتم تكوين الصلاحيات الخاصة بمركز SCC بشكل صحيح في المسار '%{path}'. يمكنك الحصول عليها من %{url}"
+
+msgid "The following errors occurred while mirroring:"
+msgstr ""
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
 msgstr "المنتج \"%s\" هو منتج أساسي ولا يمكن إلغاء تنشيطه"
@@ -568,8 +747,23 @@ msgstr "لم يتم تنشيط المنتج المطلوب '%s' في هذا ال
 msgid "The requested products '%s' are not activated on the system."
 msgstr "لم يتم تنشيط المنتجات المطلوبة '%s' في النظام."
 
+msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
+msgstr ""
+
 msgid "There are no repositories marked for mirroring."
 msgstr "لا توجد مخازن عليها علامة لنسخها."
+
+msgid "There are no systems registered to this RMT instance."
+msgstr ""
+
+msgid "To clean up downloaded files, please run '%{command}'"
+msgstr ""
+
+msgid "To clean up downloaded files, run '%{command}'"
+msgstr ""
+
+msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
+msgstr ""
 
 msgid "URL"
 msgstr "عنوان URL"
@@ -598,118 +792,32 @@ msgstr "جارِ تحديث الاشتراكات"
 msgid "Version"
 msgstr "الإصدار"
 
+msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
+msgstr ""
+
+msgid "enabled"
+msgstr ""
+
 msgid "importing data from SMT."
 msgstr "جارِ استيراد البيانات من أداة إدارة الاشتراكات SMT."
 
+#, fuzzy
+msgid "mandatory"
+msgstr "إلزامي"
+
+msgid "mirrored at %{time}"
+msgstr ""
+
+#, fuzzy
+msgid "non-mandatory"
+msgstr "غير إلزامي"
+
+msgid "not enabled"
+msgstr ""
+
+#, fuzzy
+msgid "not mirrored"
+msgstr "آخر نسخ"
+
 msgid "repository by URL %{url} does not exist in database"
 msgstr "المخزن بعنوان URL %{‏url} غير موجود في قاعدة البيانات"
-
-msgid ""
-"× File does not exist or has wrong filesize, deduplication ignored %{error}."
-msgstr ""
-"الملف × غير موجود أو أن حجم الملف غير صحيح، تم تجاهل إلغاء التكرار بسبب "
-"الخطأ %{error}."
-
-#~ msgid ""
-#~ "  Run this command on an online RMT.\n"
-#~ "  It will look in PATH for a repos.json file, which has to contain a list "
-#~ "of repository IDs.\n"
-#~ "  Usually, this file gets created by an offline RMT with 'rmt-cli export "
-#~ "settings'.\n"
-#~ "\n"
-#~ "  'rmt-cli export repos' will mirror these repositories to this PATH, "
-#~ "usually a portable storage device.\n"
-#~ msgstr ""
-#~ "  \"تشغيل هذا الأمر على أداة نسخ المخازن (RMT) على الشبكة.\n"
-#~ "  ستظهر في مسار خاص بملف repos.json، الذي لابد أن يحتوي على قائمة معرفات "
-#~ "المخازن.\n"
-#~ "  يتم تكوين هذا الملف عادةً باستخدام أداة نسخ المخازن (RMT) غير المتصلة "
-#~ "على الشبكة من خلال الأمر \"\"rmt-cli export settings\"\".\n"
-#~ "\n"
-#~ "  'سيقوم الأمر \"\"rmt-cli export repos\"\" بنسخ هذه المخازن إلى هذا "
-#~ "المسار، وعادةً ما يكون جهاز تخزين محمول.\n"
-
-#~ msgid ""
-#~ "Disable mirroring of product repositories by a list of product IDs or "
-#~ "product strings.\n"
-#~ "\n"
-#~ "Examples:\n"
-#~ "\n"
-#~ "$ rmt-cli products disable SLES/15\n"
-#~ "\n"
-#~ "$ rmt-cli products disable 1575\n"
-#~ "\n"
-#~ "$ rmt-cli products disable SLES/15/x86_64 1743\n"
-#~ msgstr ""
-#~ "تعطيل نسخ مخازن المنتجات حسب قائمة معرفات المنتجات أو سلاسل المنتجات.\n"
-#~ "\n"
-#~ "أمثلة:\n"
-#~ "\n"
-#~ "$ rmt-cli products disable SLES/15\n"
-#~ "\n"
-#~ "$ rmt-cli products disable 1575\n"
-#~ "\n"
-#~ "$ rmt-cli products disable SLES/15/x86_64 1743\n"
-
-#~ msgid ""
-#~ "Disable mirroring of repositories by a list of repository IDs\n"
-#~ "\n"
-#~ "Examples:\n"
-#~ "\n"
-#~ "$ rmt-cli repos disable 2526\n"
-#~ "\n"
-#~ "$ rmt-cli repos disable 2526 3263\n"
-#~ msgstr ""
-#~ "تعطيل نسخ المخازن حسب قائمة معرفات المخازن\n"
-#~ "\n"
-#~ "أمثلة:\n"
-#~ "\n"
-#~ "$ rmt-cli repos disable 2526\n"
-#~ "\n"
-#~ "$ rmt-cli repos disable 2526 3263\n"
-
-#~ msgid ""
-#~ "Enable mirroring of product repositories by a list of product IDs or "
-#~ "product strings.\n"
-#~ "\n"
-#~ "Examples:\n"
-#~ "\n"
-#~ "$ rmt-cli products enable SLES/15\n"
-#~ "\n"
-#~ "$ rmt-cli products enable 1575\n"
-#~ "\n"
-#~ "$ rmt-cli products enable SLES/15/x86_64 1743\n"
-#~ "\n"
-#~ "$ rmt-cli products enable --all-modules SLES/15\n"
-#~ msgstr ""
-#~ "تمكين نسخ مخازن المنتجات خسب قائمة معرفات المنتجات أو سلاسل المنتجات.\n"
-#~ "\n"
-#~ "أمثلة:\n"
-#~ "\n"
-#~ "$ rmt-cli products enable SLES/15\n"
-#~ "\n"
-#~ "$ rmt-cli products enable 1575\n"
-#~ "\n"
-#~ "$ rmt-cli products enable SLES/15/x86_64 1743\n"
-#~ "\n"
-#~ "$ rmt-cli products enable --all-modules SLES/15\n"
-
-#~ msgid ""
-#~ "Enable mirroring of repositories by a list of repository IDs\n"
-#~ "\n"
-#~ "Examples:\n"
-#~ "\n"
-#~ "$ rmt-cli repos enable 2526\n"
-#~ "\n"
-#~ "$ rmt-cli repos enable 2526 3263\n"
-#~ msgstr ""
-#~ "تمكين نسخ المخازن حسب قائمة معرفات المخازن\n"
-#~ "\n"
-#~ "أمثلة:\n"
-#~ "\n"
-#~ "$ rmt-cli repos enable 2526\n"
-#~ "\n"
-#~ "$ rmt-cli repos enable 2526 3263\n"
-
-#~ msgid "Mirroring SUMA product tree to %{dir}"
-#~ msgstr "جارِ نسخ شجرة منتج SUMA إلى %{dir}"

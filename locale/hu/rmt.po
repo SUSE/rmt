@@ -7,7 +7,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-26 11:32+0100\n"
 "PO-Revision-Date: 2019-03-28 18:42+0000\n"
 "Last-Translator: Robert Taisz <robert.taisz@emerald.hu>\n"
 "Language-Team: Hungarian <https://l10n.opensuse.org/projects/rmt/i18n/hu/>\n"
@@ -39,12 +38,18 @@ msgstr "A(z) %{path} nem könyvtár."
 msgid "%{path} is not writable by user %{username}."
 msgstr "A(z) %{path} elérési út nem írható %{username} felhasználó számára."
 
+msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
+msgstr ""
+
+#, fuzzy
+msgid "A repository by the ID %{id} already exists."
+msgstr "A(z) %{url} URL-cím által megadott adattár már létezik."
+
 msgid "A repository by the URL %{url} already exists."
 msgstr "A(z) %{url} URL-cím által megadott adattár már létezik."
 
 msgid "Added association between %{repo} and product %{product}"
-msgstr ""
-"A(z) %{repo} adattár és a(z) %{product} termék közötti társítás hozzáadva"
+msgstr "A(z) %{repo} adattár és a(z) %{product} termék közötti társítás hozzáadva"
 
 msgid "Adding product %{product}"
 msgstr "A(z) %{product} termék hozzáadása"
@@ -55,7 +60,15 @@ msgstr "Már az összes adattár le lett tiltva."
 msgid "All repositories have already been enabled."
 msgstr "Már az összes adattár engedélyezve lett."
 
+msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
+msgstr ""
+
+#. i18n: architecture
 msgid "Arch"
+msgstr "Arch."
+
+#, fuzzy
+msgid "Architecture"
 msgstr "Arch."
 
 msgid "Attach an existing custom repository to a product"
@@ -67,30 +80,14 @@ msgstr "Az adattár hozzá lett csatolva a(z) „%{product_name}” termékhez."
 msgid "Authenticated system with login \\\"%{login}\\\""
 msgstr "Hitelesített rendszer „%{login}” bejelentkezéssel"
 
-msgid ""
-"Cannot connect to database server. Ensure its credentials are correctly "
-"configured in '%{path}' or configure RMT with YaST ('%{command}')."
-msgstr ""
-"Nem lehet csatlakozni az adatbázis-kiszolgálóhoz. Ellenőrizze, hogy a "
-"hitelesítő adatok helyesen vannak-e megadva a(z) „%{path}” elérési úthoz, "
-"vagy konfigurálja az RMT-t a YaST („%{command}”) használatával."
+msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
+msgstr "Nem lehet csatlakozni az adatbázis-kiszolgálóhoz. Ellenőrizze, hogy a hitelesítő adatok helyesen vannak-e megadva a(z) „%{path}” elérési úthoz, vagy konfigurálja az RMT-t a YaST („%{command}”) használatával."
 
-msgid ""
-"Cannot connect to database server. Make sure it is running and its "
-"credentials are configured in '%{path}'."
-msgstr ""
-"Nem lehet csatlakozni az adatbázis-kiszolgálóhoz. Ellenőrizze, hogy fut-e a "
-"kiszolgáló, és a hitelesítő adatai meg vannak-e adva a(z) „%{path}” elérési "
-"úthoz."
+msgid "Cannot connect to database server. Make sure it is running and its credentials are configured in '%{path}'."
+msgstr "Nem lehet csatlakozni az adatbázis-kiszolgálóhoz. Ellenőrizze, hogy fut-e a kiszolgáló, és a hitelesítő adatai meg vannak-e adva a(z) „%{path}” elérési úthoz."
 
-msgid ""
-"Cannot deactivate the product \"%s\". Other activated products depend upon "
-"it."
-msgstr ""
-"Nem lehet inaktiválni a(z) „%s” terméket. Más aktivált termékek függnek tőle."
-
-msgid "Cannot find custom repository by ID %{id}."
-msgstr "Nem található egyéni adattár a(z) %{id} azonosító alapján."
+msgid "Cannot deactivate the product \"%s\". Other activated products depend upon it."
+msgstr "Nem lehet inaktiválni a(z) „%s” terméket. Más aktivált termékek függnek tőle."
 
 msgid "Cannot find product by ID %{id}."
 msgstr "Nem található termék a(z) %{id} azonosító alapján."
@@ -100,6 +97,12 @@ msgstr "Ellenőrizze a(z) %{url} URL-címet."
 
 msgid "Checksum doesn't match"
 msgstr "Az ellenőrző összeg nem egyezik."
+
+msgid "Clean cancelled."
+msgstr ""
+
+msgid "Clean finished. An estimated %{total_file_size} were removed."
+msgstr ""
 
 msgid "Cleaning up the database"
 msgstr "Az adatbázis tisztítása"
@@ -116,18 +119,28 @@ msgstr "Nem sikerült létrehozni a deduplikálási kódolt hivatkozást: %{erro
 msgid "Could not create local directory %{dir} with error: %{error}"
 msgstr "Nem sikerült létrehozni a helyi %{dir} könyvtárat, hiba: %{error}"
 
-msgid ""
-"Could not find system with login \\\"%{login}\\\" and password \\"
-"\"%{password}\\\""
-msgstr ""
-"Nem sikerült megtalálni a rendszert, bejelentkezési név: „%{login}”, jelszó: "
-"„%{password}”"
+msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
+msgstr "Nem sikerült megtalálni a rendszert, bejelentkezési név: „%{login}”, jelszó: „%{password}”"
 
-msgid "Could not mirror suma product tree with error: %{error}"
+#, fuzzy
+msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "Nem sikerült tükrözni a SUMA-termékfát, hiba: %{error}"
+
+#, fuzzy
+msgid "Couldn't add custom repository."
+msgstr "Egyéni adattárat hoz létre."
 
 msgid "Creates a custom repository."
 msgstr "Egyéni adattárat hoz létre."
+
+msgid "Deleting locally mirrored files from repository '%{repo}'..."
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Description: %{description}"
+msgstr ""
 
 msgid "Detach an existing custom repository from a product"
 msgstr "Meglévő egyéni adattár leválasztása termékről"
@@ -135,20 +148,19 @@ msgstr "Meglévő egyéni adattár leválasztása termékről"
 msgid "Detached repository from product '%{product_name}'."
 msgstr "Az adattár le lett választva a(z) „%{product_name}” termékről."
 
-msgid "Disable mirroring of custom repository by ID"
+#, fuzzy
+msgid "Disable mirroring of custom repositories by a list of IDs"
 msgstr "Egyéni adattár tükrözésének letiltása azonosító alapján"
 
-msgid ""
-"Disable mirroring of product repositories by a list of product IDs or "
-"product strings."
-msgstr ""
-"Tiltsa le a termékadattárak tükrözését a termékazonosítók vagy a "
-"termékkarakterláncok listájának használatával."
+#, fuzzy
+msgid "Disable mirroring of custom repository by a list of IDs"
+msgstr "Egyéni adattár tükrözésének letiltása azonosító alapján"
+
+msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
+msgstr "Tiltsa le a termékadattárak tükrözését a termékazonosítók vagy a termékkarakterláncok listájának használatával."
 
 msgid "Disable mirroring of repositories by a list of repository IDs"
-msgstr ""
-"Tiltsa le a termékadattárak tükrözését az adattárazonosítók listájának "
-"használatával."
+msgstr "Tiltsa le a termékadattárak tükrözését az adattárazonosítók listájának használatával."
 
 msgid "Disabled repository %{repository}."
 msgstr "A(z) %{repository} adattár le lett tiltva."
@@ -156,12 +168,16 @@ msgstr "A(z) %{repository} adattár le lett tiltva."
 msgid "Disabling %{product}:"
 msgstr "%{product} termék letiltása:"
 
-msgid "Do not import the systems that were registered to the SMT"
+msgid "Displays product with all its repositories and their attributes."
 msgstr ""
-"Ne importálja azokat a rendszereket, amelyek regisztrálva lettek az SMT-be"
 
-msgid ""
-"Do you have any suggestions for improvement? We would love to hear from you!"
+msgid "Do not import system hardware info from MachineData table"
+msgstr ""
+
+msgid "Do not import the systems that were registered to the SMT"
+msgstr "Ne importálja azokat a rendszereket, amelyek regisztrálva lettek az SMT-be"
+
+msgid "Do you have any suggestions for improvement? We would love to hear from you!"
 msgstr "Fejlesztési javaslata van? Örömmel vesszük a visszajelzését."
 
 msgid "Don't Mirror"
@@ -170,23 +186,21 @@ msgstr "Ne tükrözze"
 msgid "Downloading data from SCC"
 msgstr "Adatok letöltése az SCC-ből"
 
+msgid "Duplicate entry for system %{system}, skipping"
+msgstr ""
+
 msgid "Enable debug output"
 msgstr "Hibakeresési kimenet engedélyezése"
 
-msgid "Enable mirroring of custom repository by ID"
+#, fuzzy
+msgid "Enable mirroring of custom repositories by a list of IDs"
 msgstr "Egyéni adattár azonosító alapján történő tükrözésének engedélyezése"
 
-msgid ""
-"Enable mirroring of product repositories by a list of product IDs or product "
-"strings."
-msgstr ""
-"Engedélyezze a termékadattárak türközését a termékazonosítók vagy a "
-"termékkarakterláncok listája alapján."
+msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
+msgstr "Engedélyezze a termékadattárak türközését a termékazonosítók vagy a termékkarakterláncok listája alapján."
 
 msgid "Enable mirroring of repositories by a list of repository IDs"
-msgstr ""
-"Engedélyezze a termékadattárak türközését az adattár-azonosítók listája "
-"alapján."
+msgstr "Engedélyezze a termékadattárak türközését az adattár-azonosítók listája alapján."
 
 msgid "Enabled mirroring for repository %{repo}"
 msgstr "A(z) %{repo} adattár tükrözése engedélyezve"
@@ -200,6 +214,9 @@ msgstr "Engedélyezi a termékek összes ingyenes modulját."
 msgid "Enabling %{product}:"
 msgstr "A(z) %{product} engedélyezése:"
 
+msgid "Enter a value:"
+msgstr ""
+
 msgid "Error while mirroring data: %{error}"
 msgstr "Hiba történt az adatok tükrözése közben: %{error}"
 
@@ -210,9 +227,13 @@ msgid "Error while mirroring metadata: %{error}"
 msgstr "Hiba történt a metaadatok tükrözése közben: %{error}"
 
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
+msgstr "Hiba történt a könyvtár áthelyezése közben, forrás: %{src}, cél: %{dest}, hiba: %{error}"
+
+msgid "Examples"
 msgstr ""
-"Hiba történt a könyvtár áthelyezése közben, forrás: %{src}, cél: %{dest}, "
-"hiba: %{error}"
+
+msgid "Examples:"
+msgstr ""
 
 msgid "Export commands for Offline Sync"
 msgstr "Offline szinkronizálás exportálási parancsai"
@@ -232,26 +253,43 @@ msgstr "Adattárak exportálása"
 msgid "Exporting subscriptions"
 msgstr "Előfizetések exportálása"
 
+msgid "Failed to download %{failed_count} files"
+msgstr ""
+
+msgid "Failed to get repository metadata signatures with HTTP code %{http_code}"
+msgstr ""
+
+msgid "Failed to import system %{system}"
+msgstr ""
+
+msgid "Failed to sync system %{login}: %{error}"
+msgstr ""
+
+msgid "Forward registered systems data to SCC"
+msgstr ""
+
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
 msgstr[0] "A(z) %{target} cél alapján talált termék: %{products}."
 msgstr[1] "A(z) %{target} cél alapján talált termékek: %{products}."
 
+msgid "GPG key import failed"
+msgstr ""
+
+msgid "GPG signature verification failed"
+msgstr ""
+
 msgid "Hardware information stored for system %{system}"
 msgstr "A(z) %{system} hardverinformációi tárolva."
+
+msgid "Hostname"
+msgstr ""
 
 msgid "ID"
 msgstr "Azonosító"
 
 msgid "Import commands for Offline Sync"
 msgstr "Offline szinkronizálás importálási parancsai"
-
-msgid "Imported activation of %{product} for %{system}"
-msgstr ""
-"A(z) %{product} termék %{system} rendszerhez történt aktiválása importálva"
-
-msgid "Imported system %{system}"
-msgstr "A(z) %{system} rendszer importálva"
 
 msgid "Importing SCC data from %{path}"
 msgstr "SCC-adatok importálása a(z) %{path} elérési útról"
@@ -265,19 +303,23 @@ msgstr "Utoljára tükrözött"
 msgid "Last mirrored"
 msgstr "Utoljára tükrözött"
 
+msgid "Last seen"
+msgstr ""
+
 msgid "List all custom repositories"
 msgstr "Összes egyéni adattár listázása"
 
 msgid "List all products, including ones which are not marked to be mirrored"
-msgstr ""
-"Az összes termék listázása, beleértve azokat is, amelyek nincsenek "
-"tükrözésre jelölve"
+msgstr "Az összes termék listázása, beleértve azokat is, amelyek nincsenek tükrözésre jelölve"
 
-msgid ""
-"List all repositories, including ones which are not marked to be mirrored"
+msgid "List all registered systems"
 msgstr ""
-"Az összes adattár listázása, beleértve azokat is, amelyek nincsenek "
-"tükrözésre jelölve"
+
+msgid "List all repositories, including ones which are not marked to be mirrored"
+msgstr "Az összes adattár listázása, beleértve azokat is, amelyek nincsenek tükrözésre jelölve"
+
+msgid "List and manipulate registered systems"
+msgstr ""
 
 msgid "List and modify custom repositories"
 msgstr "Egyéni adattárak listázása és módosítása"
@@ -291,8 +333,14 @@ msgstr "Adattárak listázása és módosítása"
 msgid "List products which are marked to be mirrored."
 msgstr "A tükrözésre jelölt termékek listázása"
 
+msgid "List registered systems."
+msgstr ""
+
 msgid "List repositories which are marked to be mirrored"
 msgstr "A tükrözésre jelölt adattárak listázása"
+
+msgid "Login"
+msgstr ""
 
 msgid "Mandatory"
 msgstr "Kötelező"
@@ -301,6 +349,18 @@ msgid "Mandatory?"
 msgstr "Kötelező?"
 
 msgid "Mirror"
+msgstr "Tükrözés"
+
+#, fuzzy
+msgid "Mirror all enabled repositories"
+msgstr "Tükrözés"
+
+#, fuzzy
+msgid "Mirror enabled repositories for a product with given product IDs"
+msgstr "Tükrözés"
+
+#, fuzzy
+msgid "Mirror enabled repositories with given repository IDs"
 msgstr "Tükrözés"
 
 msgid "Mirror repos at given path"
@@ -315,8 +375,24 @@ msgstr "Adattárak tükrözése"
 msgid "Mirror?"
 msgstr "Tükrözés?"
 
+#, fuzzy
+msgid "Mirroring SUMA product tree failed: %{error_message}"
+msgstr "Tükrözés"
+
 msgid "Mirroring SUSE Manager product tree to %{dir}"
 msgstr "SUSE Manager termékfájának tükrözése a(z) %{dir} könyvtárba"
+
+#, fuzzy
+msgid "Mirroring complete."
+msgstr "Tükrözés"
+
+#, fuzzy
+msgid "Mirroring completed with errors."
+msgstr "Tükrözés"
+
+#, fuzzy
+msgid "Mirroring of repository with ID %{repo_id} is not enabled"
+msgstr "Tükrözés"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "%{repo} adattár tükrözése a(z) %{dir} könyvtárba"
@@ -360,6 +436,10 @@ msgstr "Nincsenek engedélyezett adattárak."
 msgid "No repositories found for product: %s"
 msgstr "Nem találhatók adattárak a termékhez: %s"
 
+#, fuzzy
+msgid "No repository IDs supplied"
+msgstr "Nincsenek megadva adattár-azonosítók."
+
 msgid "No repository ids supplied"
 msgstr "Nincsenek megadva adattár-azonosítók."
 
@@ -372,26 +452,20 @@ msgstr "Nem az összes kötelező adattár van tükrözve a(z) %s terméknél."
 msgid "Not provided"
 msgstr "Nincs megadva"
 
-msgid ""
-"Not yet activated Registration Code. Visit https://scc.suse.com to activate "
-"it."
-msgstr ""
-"A regisztrációs kód még nincs aktiválva. Az aktiválásához keresse fel a "
-"https://scc.suse.com webhelyet."
+msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
+msgstr "A regisztrációs kód még nincs aktiválva. Az aktiválásához keresse fel a https://scc.suse.com webhelyet."
 
-msgid ""
-"Only enabled products are shown by default. Use the '%{command}' option to "
-"see all products."
+msgid "Number of systems to display"
 msgstr ""
-"Alapértelmezés szerint csak az engedélyezett termékek vannak megjelenítve. "
-"Az összes termék megtekintéséhez használja a(z) „%{command}” lehetőséget."
 
-msgid ""
-"Only enabled repositories are shown by default. Use the '%{option}' option "
-"to see all repositories."
+msgid "Only '%{input}' will be accepted."
 msgstr ""
-"Alapértelmezés szerint csak az engedélyezett adattárak vannak megjelenítve. "
-"Az összes adattár megtekintéséhez használja a(z) „%{command}” lehetőséget."
+
+msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
+msgstr "Alapértelmezés szerint csak az engedélyezett termékek vannak megjelenítve. Az összes termék megtekintéséhez használja a(z) „%{command}” lehetőséget."
+
+msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
+msgstr "Alapértelmezés szerint csak az engedélyezett adattárak vannak megjelenítve. Az összes adattár megtekintéséhez használja a(z) „%{command}” lehetőséget."
 
 msgid "Output data in CSV format"
 msgstr "Kimeneti adatok CSV formátumban"
@@ -399,13 +473,9 @@ msgstr "Kimeneti adatok CSV formátumban"
 msgid "Path to unpacked SMT data tarball"
 msgstr "Nem csomagolt SMT-adatcsomag elérési útja"
 
-msgid ""
-"Process is locked by the application with pid %{pid}. Close this application "
-"or wait for it to finish before trying again."
-msgstr ""
-"A folyamatot zárolta a(z) %{pid} azonosítójú alkalmazás. Zárja be ezt az "
-"alkalmazást, vagy várja meg, hogy befejezze a műveletet, és ezután próbálja "
-"újra."
+#, fuzzy
+msgid "Please provide a non-numeric ID for your custom repository."
+msgstr "Azonosító"
 
 msgid "Product"
 msgstr "Termék"
@@ -418,8 +488,7 @@ msgstr[1] "A(z) %{products} termékek nem találhatók, és nem lettek letiltva.
 msgid "Product %{products} could not be found and was not enabled."
 msgid_plural "Products %{products} could not be found and were not enabled."
 msgstr[0] "A(z) %{products} termék nem található, és nem lett engedélyezve."
-msgstr[1] ""
-"A(z) %{products} termékek nem találhatók, és nem lettek engedélyezve."
+msgstr[1] "A(z) %{products} termékek nem találhatók, és nem lettek engedélyezve."
 
 msgid "Product %{product} not found"
 msgstr "A(z) %{product} termék nem található."
@@ -435,6 +504,10 @@ msgstr ""
 "csatolni, de ez a termék nem található. Csatolja egy másik termékhez \n"
 "a(z) „%{command}” parancs futtatásával.\n"
 
+#, fuzzy
+msgid "Product %{target} has no repositories enabled"
+msgstr "Termék"
+
 msgid "Product Architecture"
 msgstr "Termékarchitektúra"
 
@@ -444,19 +517,68 @@ msgstr "Termékazonosító"
 msgid "Product Name"
 msgstr "Terméknév"
 
+#, fuzzy
+msgid "Product String"
+msgstr "Termék"
+
 msgid "Product Version"
 msgstr "Termékverzió"
+
+#, fuzzy
+msgid "Product architecture (e.g.: x86_64, aarch64)"
+msgstr "Termék"
 
 msgid "Product by ID %{id} not found."
 msgstr "A(z) %{id} azonosítójú termék nem található."
 
-msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
+#, fuzzy
+msgid "Product for target %{target} not found"
+msgstr "Termék"
+
+#, fuzzy
+msgid "Product name (e.g.: Basesystem, SLES)"
+msgstr "Termék"
+
+#, fuzzy
+msgid "Product version (e.g.: 15, 15.1, '12 SP4')"
+msgstr "Termék"
+
+#, fuzzy
+msgid "Product with ID %{target} not found"
+msgstr "A(z) %{id} azonosítójú termék nem található."
+
+#, fuzzy
+msgid "Product: %{name} (id: %{id})"
+msgstr "Termék"
+
+#, fuzzy
+msgid "Products"
+msgstr "Termék"
+
+#, fuzzy
+msgid "Provide a custom ID instead of allowing RMT to generate one."
+msgstr "Azonosító"
+
+msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr ""
-"Az RMT még nincs szinkronizálva az SCC-vel. Előbb futtassa a(z) „%{command}” "
-"parancsot."
+
+msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
+msgstr "Az RMT még nincs szinkronizálva az SCC-vel. Előbb futtassa a(z) „%{command}” parancsot."
+
+msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
+msgstr ""
+
+msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
+msgstr ""
 
 msgid "Read SCC data from given path"
 msgstr "SCC-adatok olvasása a megadott elérési útról"
+
+msgid "Registration time"
+msgstr ""
+
+msgid "Release Stage"
+msgstr ""
 
 msgid "Remove a custom repository"
 msgstr "Egyéni adattár eltávolítása"
@@ -464,22 +586,30 @@ msgstr "Egyéni adattár eltávolítása"
 msgid "Removed custom repository by ID %{id}."
 msgstr "A(z) %{id} azonosítójú egyéni adattár eltávolítva."
 
-msgid "Repository %{repos} could not be found and was not disabled."
-msgid_plural "Repositories %{repos} could not be found and were not disabled."
-msgstr[0] "A(z) %{repos} adattár nem található, és nem lett letiltva."
-msgstr[1] "A(z) %{repos} adattárak nem találhatók, és nem lettek letiltva."
-
-msgid "Repository %{repos} could not be found and was not enabled."
-msgid_plural "Repositories %{repos} could not be found and were not enabled."
-msgstr[0] "A(z) %{repos} adattár nem található, és nem lett engedélyezve."
-msgstr[1] "A(z) %{repos} adattárak nem találhatók, és nem lettek engedélyezve."
-
-msgid ""
-"Repository %{repo} was not found in RMT database, perhaps you no longer have "
-"a valid subscription for it"
+msgid "Removes a system and its activations from RMT"
 msgstr ""
-"A(z) %{repo} adattár nem található RMT-adatbázisban, valószínűleg már nincs "
-"hozzá érvényes előfizetése hozzá."
+
+msgid "Removes a system and its activations from RMT."
+msgstr ""
+
+msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
+msgstr ""
+
+msgid "Repositories are not available for this product."
+msgstr ""
+
+msgid "Repositories:"
+msgstr ""
+
+msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
+msgstr "A(z) %{repo} adattár nem található RMT-adatbázisban, valószínűleg már nincs hozzá érvényes előfizetése hozzá."
+
+msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
+msgstr ""
+
+#, fuzzy
+msgid "Repository by ID %{id} not found."
+msgstr "A(z) %{id} azonosítójú termék nem található."
 
 msgid "Repository by ID %{id} successfully disabled."
 msgstr "A(z) %{id} azonosítójú adattár letiltása megtörtént."
@@ -487,17 +617,24 @@ msgstr "A(z) %{id} azonosítójú adattár letiltása megtörtént."
 msgid "Repository by ID %{id} successfully enabled."
 msgstr "A(z) %{id} azonosítójú adattár engedélyezése megtörtént."
 
+#, fuzzy
+msgid "Repository by ID %{repos} could not be found and was not disabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
+msgstr[0] "A(z) %{repos} adattár nem található, és nem lett letiltva."
+msgstr[1] "A(z) %{repos} adattárak nem találhatók, és nem lettek letiltva."
+
+#, fuzzy
+msgid "Repository by ID %{repos} could not be found and was not enabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
+msgstr[0] "A(z) %{repos} adattár nem található, és nem lett engedélyezve."
+msgstr[1] "A(z) %{repos} adattárak nem találhatók, és nem lettek engedélyezve."
+
 msgid "Repository metadata signatures are missing"
 msgstr "Az adattár metaadatainak aláírásai hiányoznak."
 
-msgid "Repository not found by ID %{id}."
-msgstr "A(z) %{id} azonosítójú adattár nem található."
-
-msgid "Repository successfully disabled."
-msgstr "Az adattár letiltása megtörtént."
-
-msgid "Repository successfully enabled."
-msgstr "Az adattár engedélyezése megtörtént."
+#, fuzzy
+msgid "Repository with ID %{repo_id} not found"
+msgstr "Azonosító"
 
 msgid "Requested service not found"
 msgstr "A kért szolgáltatás nem található."
@@ -506,24 +643,34 @@ msgid "Required parameters are missing or empty: %s"
 msgstr "A szükséges paraméterek hiányoznak vagy üresek: %s"
 
 msgid "Run '%{command}' for more information on a command and its subcommands."
-msgstr ""
-"Futtassa a(z) „%{command}” parancsot a parancsok és az alparancsok részletes "
-"ismertetésének megtekintéséhez."
+msgstr "Futtassa a(z) „%{command}” parancsot a parancsok és az alparancsok részletes ismertetésének megtekintéséhez."
 
+msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
+msgstr "Előbb futtassa a(z) „%{command}” parancsot a SUSE Ügyfélközpont adataival való szinkronizáláshoz."
+
+msgid "Run this command on an online RMT."
+msgstr ""
+
+#, fuzzy
 msgid ""
-"Run '%{command}' to synchronize with your SUSE Customer Center data first."
-msgstr ""
-"Előbb futtassa a(z) „%{command}” parancsot a SUSE Ügyfélközpont adataival "
-"való szinkronizáláshoz."
+"SCC API request failed. Error details:\n"
+"Request URL: %{url}\n"
+"Response code: %{code}\n"
+"Response body:\n"
+"%{body}"
+msgstr "URL-cím"
 
-msgid "SCC ID"
-msgstr "SCC-azonosító"
+msgid "SCC credentials not set."
+msgstr ""
 
 msgid "Settings saved at %{file}."
 msgstr "A beállítások mentve a(z) %{file} fájlban."
 
 msgid "Show RMT version"
 msgstr "RMT-verzió megjelenítése"
+
+msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
+msgstr ""
 
 msgid "Shows products attached to a custom repository"
 msgstr "Egyéni adattárhoz csatolt termékek megjelenítése"
@@ -537,25 +684,38 @@ msgstr "Adattár-beállítások tárolása a megadott elérési úton"
 msgid "Successfully added custom repository."
 msgstr "Az egyéni adattár hozzáadása megtörtént."
 
+msgid "Successfully removed system with login %{login}."
+msgstr ""
+
 msgid "Sync database with SUSE Customer Center"
 msgstr "Adatbázis szinkronizálása a SUSE Ügyfélközponttal"
+
+msgid "Syncing de-registered system %{scc_system_id} to SCC"
+msgstr ""
+
+msgid "Syncing system %{login} to SCC"
+msgstr ""
+
+msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
+msgstr ""
 
 msgid "System %{system} not found"
 msgstr "A(z) %{system} rendszer nem található."
 
-msgid ""
-"The RMT database has not yet been initialized. Run '%{command}' to setup the "
-"database."
+msgid "System with login %{login} cannot be removed."
 msgstr ""
-"Az RMT-adatbázis még nincs inicializálva. Futtassa a(z) „%{command}” "
-"parancsot az adatbázis beállításához."
 
-msgid ""
-"The SCC credentials are not configured correctly in '%{path}'. You can "
-"obtain them from %{url}"
+msgid "System with login %{login} not found."
 msgstr ""
-"Az SCC hitelesítő adatok helytelenül vannak konfigurálva a(z) „%{path}” "
-"elérési úton. Az adatokat a(z) %{url} címről kérheti le."
+
+msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
+msgstr "Az RMT-adatbázis még nincs inicializálva. Futtassa a(z) „%{command}” parancsot az adatbázis beállításához."
+
+msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
+msgstr "Az SCC hitelesítő adatok helytelenül vannak konfigurálva a(z) „%{path}” elérési úton. Az adatokat a(z) %{url} címről kérheti le."
+
+msgid "The following errors occurred while mirroring:"
+msgstr ""
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
 msgstr "A(z) „%s” termék alaptermék, nem lehet inaktiválni."
@@ -566,8 +726,23 @@ msgstr "A kért „%s” termék nincs aktiválva ebben a rendszerben."
 msgid "The requested products '%s' are not activated on the system."
 msgstr "A kért „%s” termékek nincsenek aktiválva a rendszerben."
 
+msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
+msgstr ""
+
 msgid "There are no repositories marked for mirroring."
 msgstr "Nincsenek tükrözésre jelölt adattárak."
+
+msgid "There are no systems registered to this RMT instance."
+msgstr ""
+
+msgid "To clean up downloaded files, please run '%{command}'"
+msgstr ""
+
+msgid "To clean up downloaded files, run '%{command}'"
+msgstr ""
+
+msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
+msgstr ""
 
 msgid "URL"
 msgstr "URL-cím"
@@ -579,9 +754,7 @@ msgid "Unknown hash function %{checksum_type}"
 msgstr "Ismeretlen kivonatoló algoritmus: %{checksum_type}"
 
 msgid "Unmet product dependencies, activate one of these products first: %s"
-msgstr ""
-"A termékek függőségei nem megfelelőek, előbb aktiválja a következő termékek "
-"egyikét: %s"
+msgstr "A termékek függőségei nem megfelelőek, előbb aktiválja a következő termékek egyikét: %s"
 
 msgid "Updated system information for host '%s'"
 msgstr "A(z) „%s” állomás rendszeradatai frissítve."
@@ -598,122 +771,32 @@ msgstr "Előfizetések frissítése"
 msgid "Version"
 msgstr "Verzió"
 
+msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
+msgstr ""
+
+msgid "enabled"
+msgstr ""
+
 msgid "importing data from SMT."
 msgstr "Adatok importálása az SMT-ből."
 
+#, fuzzy
+msgid "mandatory"
+msgstr "Kötelező"
+
+msgid "mirrored at %{time}"
+msgstr ""
+
+#, fuzzy
+msgid "non-mandatory"
+msgstr "Nem kötelező"
+
+msgid "not enabled"
+msgstr ""
+
+#, fuzzy
+msgid "not mirrored"
+msgstr "Utoljára tükrözött"
+
 msgid "repository by URL %{url} does not exist in database"
 msgstr "%{url} URL-című adattár nem létezik az adatbázisban."
-
-msgid ""
-"× File does not exist or has wrong filesize, deduplication ignored %{error}."
-msgstr ""
-"× A fájl nem létezik, vagy helytelen a mérete. A deduplikálás figyelmen "
-"kívül hagyva, hiba: %{error}."
-
-#~ msgid ""
-#~ "  Run this command on an online RMT.\n"
-#~ "  It will look in PATH for a repos.json file, which has to contain a list "
-#~ "of repository IDs.\n"
-#~ "  Usually, this file gets created by an offline RMT with 'rmt-cli export "
-#~ "settings'.\n"
-#~ "\n"
-#~ "  'rmt-cli export repos' will mirror these repositories to this PATH, "
-#~ "usually a portable storage device.\n"
-#~ msgstr ""
-#~ "  Futtassa ezt a parancsot egy RMT-n.\n"
-#~ "  Ez a PATH által megadott helyen repos.json fájlt keres, amelynek az "
-#~ "adattár-azonosítók listáját kell tartalmaznia.\n"
-#~ "  Ezt a fájlt általában egy offline RMT hozza létre az „rmt-cli export "
-#~ "settings” használatával.\n"
-#~ "\n"
-#~ "  Az „rmt-cli export repos” tükrözni fogja ezeket az adattárakat a PATH "
-#~ "által megadott helyre, ami általában egy hordozható tárolóeszköz.\n"
-
-#~ msgid ""
-#~ "Disable mirroring of product repositories by a list of product IDs or "
-#~ "product strings.\n"
-#~ "\n"
-#~ "Examples:\n"
-#~ "\n"
-#~ "$ rmt-cli products disable SLES/15\n"
-#~ "\n"
-#~ "$ rmt-cli products disable 1575\n"
-#~ "\n"
-#~ "$ rmt-cli products disable SLES/15/x86_64 1743\n"
-#~ msgstr ""
-#~ "Tiltsa le a termékadattárak tükrözését a termékazonosítók vagy a "
-#~ "termékkarakterláncok listájának használatával.\n"
-#~ "\n"
-#~ "Példák:\n"
-#~ "\n"
-#~ "$ rmt-cli products disable SLES/15\n"
-#~ "\n"
-#~ "$ rmt-cli products disable 1575\n"
-#~ "\n"
-#~ "$ rmt-cli products disable SLES/15/x86_64 1743\n"
-
-#~ msgid ""
-#~ "Disable mirroring of repositories by a list of repository IDs\n"
-#~ "\n"
-#~ "Examples:\n"
-#~ "\n"
-#~ "$ rmt-cli repos disable 2526\n"
-#~ "\n"
-#~ "$ rmt-cli repos disable 2526 3263\n"
-#~ msgstr ""
-#~ "Tiltsa le a termékadattárak tükrözését az adattárazonosítók listájának "
-#~ "használatával.\n"
-#~ "\n"
-#~ "Példák:\n"
-#~ "\n"
-#~ "$ rmt-cli repos disable 2526\n"
-#~ "\n"
-#~ "$ rmt-cli repos disable 2526 3263\n"
-
-#~ msgid ""
-#~ "Enable mirroring of product repositories by a list of product IDs or "
-#~ "product strings.\n"
-#~ "\n"
-#~ "Examples:\n"
-#~ "\n"
-#~ "$ rmt-cli products enable SLES/15\n"
-#~ "\n"
-#~ "$ rmt-cli products enable 1575\n"
-#~ "\n"
-#~ "$ rmt-cli products enable SLES/15/x86_64 1743\n"
-#~ "\n"
-#~ "$ rmt-cli products enable --all-modules SLES/15\n"
-#~ msgstr ""
-#~ "Engedélyezze a termékadattárak türközését a termékazonosítók vagy a "
-#~ "termékkarakterláncok listája alapján.\n"
-#~ "\n"
-#~ "Példák:\n"
-#~ "\n"
-#~ "$ rmt-cli products enable SLES/15\n"
-#~ "\n"
-#~ "$ rmt-cli products enable 1575\n"
-#~ "\n"
-#~ "$ rmt-cli products enable SLES/15/x86_64 1743\n"
-#~ "\n"
-#~ "$ rmt-cli products enable --all-modules SLES/15\n"
-
-#~ msgid ""
-#~ "Enable mirroring of repositories by a list of repository IDs\n"
-#~ "\n"
-#~ "Examples:\n"
-#~ "\n"
-#~ "$ rmt-cli repos enable 2526\n"
-#~ "\n"
-#~ "$ rmt-cli repos enable 2526 3263\n"
-#~ msgstr ""
-#~ "Engedélyezze a termékadattárak türközését az adattár-azonosítók listája "
-#~ "alapján.\n"
-#~ "\n"
-#~ "Példák:\n"
-#~ "\n"
-#~ "$ rmt-cli repos enable 2526\n"
-#~ "\n"
-#~ "$ rmt-cli repos enable 2526 3263\n"
-
-#~ msgid "Mirroring SUMA product tree to %{dir}"
-#~ msgstr "SUMA-termékfa tükrözése a(z) %{dir} könyvtárba"

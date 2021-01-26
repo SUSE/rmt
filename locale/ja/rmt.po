@@ -7,7 +7,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-26 11:32+0100\n"
 "PO-Revision-Date: 2019-03-28 18:42+0000\n"
 "Last-Translator: Carina Hagl <vistatec_pm@sunflare.co.jp>\n"
 "Language-Team: Japanese <https://l10n.opensuse.org/projects/rmt/i18n/ja/>\n"
@@ -39,6 +38,13 @@ msgstr "%{path} はディレクトリではありません。"
 msgid "%{path} is not writable by user %{username}."
 msgstr "%{path} はユーザ %{username} による書き込みはできません。"
 
+msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
+msgstr ""
+
+#, fuzzy
+msgid "A repository by the ID %{id} already exists."
+msgstr "URL %{url} のリポジトリはすでに存在しています。"
+
 msgid "A repository by the URL %{url} already exists."
 msgstr "URL %{url} のリポジトリはすでに存在しています。"
 
@@ -54,7 +60,15 @@ msgstr "すべてのリポジトリはすでに無効化されています。"
 msgid "All repositories have already been enabled."
 msgstr "すべてのリポジトリはすでに有効化されています。"
 
+msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
+msgstr ""
+
+#. i18n: architecture
 msgid "Arch"
+msgstr "アーチ"
+
+#, fuzzy
+msgid "Architecture"
 msgstr "アーチ"
 
 msgid "Attach an existing custom repository to a product"
@@ -66,29 +80,14 @@ msgstr "リポジトリを製品「%{product_name}」にアタッチしました
 msgid "Authenticated system with login \\\"%{login}\\\""
 msgstr "ログイン「%{login}」を使用する認証済みシステム"
 
-msgid ""
-"Cannot connect to database server. Ensure its credentials are correctly "
-"configured in '%{path}' or configure RMT with YaST ('%{command}')."
-msgstr ""
-"データベースサーバに接続できません。資格情報が「%{path}」で正しく設定されてい"
-"ることを確認するか、YaST (「%{command}」) を使用してRMTを設定してください。"
+msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
+msgstr "データベースサーバに接続できません。資格情報が「%{path}」で正しく設定されていることを確認するか、YaST (「%{command}」) を使用してRMTを設定してください。"
 
-msgid ""
-"Cannot connect to database server. Make sure it is running and its "
-"credentials are configured in '%{path}'."
-msgstr ""
-"データベースサーバに接続できません。データベースサーバが動作していること、お"
-"よびその資格情報が「%{path}」で設定されていることを確認してください。"
+msgid "Cannot connect to database server. Make sure it is running and its credentials are configured in '%{path}'."
+msgstr "データベースサーバに接続できません。データベースサーバが動作していること、およびその資格情報が「%{path}」で設定されていることを確認してください。"
 
-msgid ""
-"Cannot deactivate the product \"%s\". Other activated products depend upon "
-"it."
-msgstr ""
-"製品「%s」を非アクティブ化できません。アクティブ化されている他の製品がその製"
-"品に依存しています。"
-
-msgid "Cannot find custom repository by ID %{id}."
-msgstr "ID %{id} のカスタムリポジトリが見つかりません。"
+msgid "Cannot deactivate the product \"%s\". Other activated products depend upon it."
+msgstr "製品「%s」を非アクティブ化できません。アクティブ化されている他の製品がその製品に依存しています。"
 
 msgid "Cannot find product by ID %{id}."
 msgstr "ID %{id} の製品が見つかりません。"
@@ -98,6 +97,12 @@ msgstr "チェックアウト %{url}"
 
 msgid "Checksum doesn't match"
 msgstr "チェックサムが一致しません"
+
+msgid "Clean cancelled."
+msgstr ""
+
+msgid "Clean finished. An estimated %{total_file_size} were removed."
+msgstr ""
 
 msgid "Cleaning up the database"
 msgstr "データベースをクリーンアップしています"
@@ -114,18 +119,28 @@ msgstr "重複排除のハードリンクを作成できませんでした: %{er
 msgid "Could not create local directory %{dir} with error: %{error}"
 msgstr "ローカルディレクトリ %{dir} がエラー: %{error} で作成できませんでした"
 
-msgid ""
-"Could not find system with login \\\"%{login}\\\" and password \\"
-"\"%{password}\\\""
-msgstr ""
-"ログイン「%{login}」とパスワード「%{password}」を持つシステムが見つかりません"
-"でした"
+msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
+msgstr "ログイン「%{login}」とパスワード「%{password}」を持つシステムが見つかりませんでした"
 
-msgid "Could not mirror suma product tree with error: %{error}"
+#, fuzzy
+msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "suma製品ツリーがエラー: %{error} でミラーリングできませんでした"
+
+#, fuzzy
+msgid "Couldn't add custom repository."
+msgstr "カスタムリポジトリを作成します。"
 
 msgid "Creates a custom repository."
 msgstr "カスタムリポジトリを作成します。"
+
+msgid "Deleting locally mirrored files from repository '%{repo}'..."
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Description: %{description}"
+msgstr ""
 
 msgid "Detach an existing custom repository from a product"
 msgstr "製品から既存のカスタムリポジトリをデタッチする"
@@ -133,15 +148,16 @@ msgstr "製品から既存のカスタムリポジトリをデタッチする"
 msgid "Detached repository from product '%{product_name}'."
 msgstr "リポジトリを製品「%{product_name}」からデタッチしました。"
 
-msgid "Disable mirroring of custom repository by ID"
+#, fuzzy
+msgid "Disable mirroring of custom repositories by a list of IDs"
 msgstr "IDによりカスタムリポジトリのミラーリングを無効にする"
 
-msgid ""
-"Disable mirroring of product repositories by a list of product IDs or "
-"product strings."
-msgstr ""
-"製品IDまたは製品文字列のリストにより、製品リポジトリのミラーリングを無効にし"
-"ます。"
+#, fuzzy
+msgid "Disable mirroring of custom repository by a list of IDs"
+msgstr "IDによりカスタムリポジトリのミラーリングを無効にする"
+
+msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
+msgstr "製品IDまたは製品文字列のリストにより、製品リポジトリのミラーリングを無効にします。"
 
 msgid "Disable mirroring of repositories by a list of repository IDs"
 msgstr "リポジトリIDのリストによりリポジトリのミラーリングを無効にする"
@@ -152,11 +168,16 @@ msgstr "無効化されたリポジトリ %{repository}。"
 msgid "Disabling %{product}:"
 msgstr "%{product} の無効化:"
 
+msgid "Displays product with all its repositories and their attributes."
+msgstr ""
+
+msgid "Do not import system hardware info from MachineData table"
+msgstr ""
+
 msgid "Do not import the systems that were registered to the SMT"
 msgstr "SMTに登録されたシステムをインポートしない"
 
-msgid ""
-"Do you have any suggestions for improvement? We would love to hear from you!"
+msgid "Do you have any suggestions for improvement? We would love to hear from you!"
 msgstr "改善するためのご提案がございましたらぜひお聞かせください!"
 
 msgid "Don't Mirror"
@@ -165,18 +186,18 @@ msgstr "ミラーリングしない"
 msgid "Downloading data from SCC"
 msgstr "SCCからデータをダウンロードしています"
 
+msgid "Duplicate entry for system %{system}, skipping"
+msgstr ""
+
 msgid "Enable debug output"
 msgstr "デバッグ出力を有効にする"
 
-msgid "Enable mirroring of custom repository by ID"
+#, fuzzy
+msgid "Enable mirroring of custom repositories by a list of IDs"
 msgstr "IDによりカスタムリポジトリのミラーリングを有効にする"
 
-msgid ""
-"Enable mirroring of product repositories by a list of product IDs or product "
-"strings."
-msgstr ""
-"製品IDまたは製品文字列のリストにより製品リポジトリのミラーリングを有効にす"
-"る。"
+msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
+msgstr "製品IDまたは製品文字列のリストにより製品リポジトリのミラーリングを有効にする。"
 
 msgid "Enable mirroring of repositories by a list of repository IDs"
 msgstr "リポジトリIDのリストによりリポジトリのミラーリングを有効にする"
@@ -193,6 +214,9 @@ msgstr "製品のすべての無料モジュールを有効にする"
 msgid "Enabling %{product}:"
 msgstr "%{product} の有効化:"
 
+msgid "Enter a value:"
+msgstr ""
+
 msgid "Error while mirroring data: %{error}"
 msgstr "データをミラーリング中にエラーが発生しました: %{error}"
 
@@ -203,8 +227,13 @@ msgid "Error while mirroring metadata: %{error}"
 msgstr "メタデータのミラーリング中にエラーが発生しました: %{error}"
 
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
+msgstr "ディレクトリ %{src} から %{dest} への移動中にエラーが発生しました: %{error}"
+
+msgid "Examples"
 msgstr ""
-"ディレクトリ %{src} から %{dest} への移動中にエラーが発生しました: %{error}"
+
+msgid "Examples:"
+msgstr ""
 
 msgid "Export commands for Offline Sync"
 msgstr "オフライン同期用コマンドのエクスポート"
@@ -224,24 +253,42 @@ msgstr "リポジトリをエクスポートしています"
 msgid "Exporting subscriptions"
 msgstr "サブスクリプションをエクスポートしています"
 
+msgid "Failed to download %{failed_count} files"
+msgstr ""
+
+msgid "Failed to get repository metadata signatures with HTTP code %{http_code}"
+msgstr ""
+
+msgid "Failed to import system %{system}"
+msgstr ""
+
+msgid "Failed to sync system %{login}: %{error}"
+msgstr ""
+
+msgid "Forward registered systems data to SCC"
+msgstr ""
+
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
 msgstr[0] "ターゲット %{target} により製品を検出しました: %{products}。"
 
+msgid "GPG key import failed"
+msgstr ""
+
+msgid "GPG signature verification failed"
+msgstr ""
+
 msgid "Hardware information stored for system %{system}"
 msgstr "システム %{system} に保存されるハードウェア情報"
+
+msgid "Hostname"
+msgstr ""
 
 msgid "ID"
 msgstr "ID"
 
 msgid "Import commands for Offline Sync"
 msgstr "オフライン同期用コマンドのインポート"
-
-msgid "Imported activation of %{product} for %{system}"
-msgstr "%{system} の %{product} のインポート済みアクティベーション"
-
-msgid "Imported system %{system}"
-msgstr "インポート済みシステム %{system}"
 
 msgid "Importing SCC data from %{path}"
 msgstr "%{path} からSCCデータをインポートしています"
@@ -255,19 +302,23 @@ msgstr "前回のミラーリング"
 msgid "Last mirrored"
 msgstr "前回のミラーリング"
 
+msgid "Last seen"
+msgstr ""
+
 msgid "List all custom repositories"
 msgstr "すべてのカスタムリポジトリを一覧表示する"
 
 msgid "List all products, including ones which are not marked to be mirrored"
-msgstr ""
-"ミラーリング対象にマーク付けされていない製品を含む、すべての製品を一覧表示す"
-"る"
+msgstr "ミラーリング対象にマーク付けされていない製品を含む、すべての製品を一覧表示する"
 
-msgid ""
-"List all repositories, including ones which are not marked to be mirrored"
+msgid "List all registered systems"
 msgstr ""
-"ミラーリング対象にマーク付けされていないリポジトリを含む、すべてのリポジトリ"
-"を一覧表示する"
+
+msgid "List all repositories, including ones which are not marked to be mirrored"
+msgstr "ミラーリング対象にマーク付けされていないリポジトリを含む、すべてのリポジトリを一覧表示する"
+
+msgid "List and manipulate registered systems"
+msgstr ""
 
 msgid "List and modify custom repositories"
 msgstr "カスタムリポジトリを一覧表示および変更する"
@@ -281,8 +332,14 @@ msgstr "リポジトリを一覧表示および変更する"
 msgid "List products which are marked to be mirrored."
 msgstr "ミラーリング対象にマーク付けされている製品を一覧表示します。"
 
+msgid "List registered systems."
+msgstr ""
+
 msgid "List repositories which are marked to be mirrored"
 msgstr "ミラーリング対象にマーク付けされているリポジトリを一覧表示します"
+
+msgid "Login"
+msgstr ""
 
 msgid "Mandatory"
 msgstr "必須"
@@ -291,6 +348,18 @@ msgid "Mandatory?"
 msgstr "必須ですか?"
 
 msgid "Mirror"
+msgstr "ミラーリング"
+
+#, fuzzy
+msgid "Mirror all enabled repositories"
+msgstr "ミラーリング"
+
+#, fuzzy
+msgid "Mirror enabled repositories for a product with given product IDs"
+msgstr "ミラーリング"
+
+#, fuzzy
+msgid "Mirror enabled repositories with given repository IDs"
 msgstr "ミラーリング"
 
 msgid "Mirror repos at given path"
@@ -305,8 +374,24 @@ msgstr "リポジトリをミラーリングする"
 msgid "Mirror?"
 msgstr "ミラーリングしますか?"
 
+#, fuzzy
+msgid "Mirroring SUMA product tree failed: %{error_message}"
+msgstr "ミラーリング"
+
 msgid "Mirroring SUSE Manager product tree to %{dir}"
 msgstr "SUSE Manager製品ツリーを %{dir} にミラーリングしています"
+
+#, fuzzy
+msgid "Mirroring complete."
+msgstr "ミラーリング"
+
+#, fuzzy
+msgid "Mirroring completed with errors."
+msgstr "ミラーリング"
+
+#, fuzzy
+msgid "Mirroring of repository with ID %{repo_id} is not enabled"
+msgstr "ミラーリング"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "リポジトリ %{repo} から %{dir} にミラーリングしています"
@@ -350,6 +435,10 @@ msgstr "リポジトリが有効化されていません。"
 msgid "No repositories found for product: %s"
 msgstr "製品: %s のリポジトリが見つかりません"
 
+#, fuzzy
+msgid "No repository IDs supplied"
+msgstr "リポジトリIDが提供されていません"
+
 msgid "No repository ids supplied"
 msgstr "リポジトリIDが提供されていません"
 
@@ -357,32 +446,25 @@ msgid "Not Mandatory"
 msgstr "必須ではありません"
 
 msgid "Not all mandatory repositories are mirrored for product %s"
-msgstr ""
-"すべての必須リポジトリが製品 %s 用にミラーリングされるわけではありません"
+msgstr "すべての必須リポジトリが製品 %s 用にミラーリングされるわけではありません"
 
 msgid "Not provided"
 msgstr "提供されていません"
 
-msgid ""
-"Not yet activated Registration Code. Visit https://scc.suse.com to activate "
-"it."
-msgstr ""
-"登録コードがまだアクティブ化されていません。https://scc.suse.comにアクセスし"
-"てアクティブ化してください。"
+msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
+msgstr "登録コードがまだアクティブ化されていません。https://scc.suse.comにアクセスしてアクティブ化してください。"
 
-msgid ""
-"Only enabled products are shown by default. Use the '%{command}' option to "
-"see all products."
+msgid "Number of systems to display"
 msgstr ""
-"有効な製品のみがデフォルトで表示されます。すべての製品を表示するには"
-"「%{command}」オプションを使用します。"
 
-msgid ""
-"Only enabled repositories are shown by default. Use the '%{option}' option "
-"to see all repositories."
+msgid "Only '%{input}' will be accepted."
 msgstr ""
-"有効なリポジトリのみがデフォルトで表示されます。すべてのリポジトリを表示する"
-"には「%{command}」オプションを使用します。"
+
+msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
+msgstr "有効な製品のみがデフォルトで表示されます。すべての製品を表示するには「%{command}」オプションを使用します。"
+
+msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
+msgstr "有効なリポジトリのみがデフォルトで表示されます。すべてのリポジトリを表示するには「%{command}」オプションを使用します。"
 
 msgid "Output data in CSV format"
 msgstr "CSVフォーマットの出力データ"
@@ -390,12 +472,9 @@ msgstr "CSVフォーマットの出力データ"
 msgid "Path to unpacked SMT data tarball"
 msgstr "展開したSMTデータtarballへのパス"
 
-msgid ""
-"Process is locked by the application with pid %{pid}. Close this application "
-"or wait for it to finish before trying again."
-msgstr ""
-"pid %{pid} を使用してアプリケーションによりプロセスがロックされています。この"
-"アプリケーションを閉じるか、完了するのを待ってから再試行してください。"
+#, fuzzy
+msgid "Please provide a non-numeric ID for your custom repository."
+msgstr "ID"
 
 msgid "Product"
 msgstr "製品"
@@ -422,6 +501,10 @@ msgstr ""
 "しましたが、その製品が見つかりませんでした。コマンド「%{command}」\n"
 "を実行して別の製品にアタッチしてください。\n"
 
+#, fuzzy
+msgid "Product %{target} has no repositories enabled"
+msgstr "製品"
+
 msgid "Product Architecture"
 msgstr "製品アーキテクチャ"
 
@@ -431,18 +514,68 @@ msgstr "製品ID"
 msgid "Product Name"
 msgstr "製品名"
 
+#, fuzzy
+msgid "Product String"
+msgstr "製品"
+
 msgid "Product Version"
 msgstr "製品バージョン"
+
+#, fuzzy
+msgid "Product architecture (e.g.: x86_64, aarch64)"
+msgstr "製品"
 
 msgid "Product by ID %{id} not found."
 msgstr "ID %{id} の製品が見つかりません。"
 
-msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
+#, fuzzy
+msgid "Product for target %{target} not found"
+msgstr "製品"
+
+#, fuzzy
+msgid "Product name (e.g.: Basesystem, SLES)"
+msgstr "製品"
+
+#, fuzzy
+msgid "Product version (e.g.: 15, 15.1, '12 SP4')"
+msgstr "製品"
+
+#, fuzzy
+msgid "Product with ID %{target} not found"
+msgstr "ID %{id} の製品が見つかりません。"
+
+#, fuzzy
+msgid "Product: %{name} (id: %{id})"
+msgstr "製品"
+
+#, fuzzy
+msgid "Products"
+msgstr "製品"
+
+#, fuzzy
+msgid "Provide a custom ID instead of allowing RMT to generate one."
+msgstr "ID"
+
+msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr ""
-"RMTがまだSCCと同期されていません。その前に「%{command}」を実行してください"
+
+msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
+msgstr "RMTがまだSCCと同期されていません。その前に「%{command}」を実行してください"
+
+msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
+msgstr ""
+
+msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
+msgstr ""
 
 msgid "Read SCC data from given path"
 msgstr "指定されたパスから SCC データを読み込む"
+
+msgid "Registration time"
+msgstr ""
+
+msgid "Release Stage"
+msgstr ""
 
 msgid "Remove a custom repository"
 msgstr "カスタムリポジトリを削除する"
@@ -450,21 +583,30 @@ msgstr "カスタムリポジトリを削除する"
 msgid "Removed custom repository by ID %{id}."
 msgstr "ID %{id} によりカスタムリポジトリを削除しました。"
 
-msgid "Repository %{repos} could not be found and was not disabled."
-msgid_plural "Repositories %{repos} could not be found and were not disabled."
-msgstr[0] ""
-"リポジトリ %{repos} が見つかりませんでしたが、無効になっていません。"
-
-msgid "Repository %{repos} could not be found and was not enabled."
-msgid_plural "Repositories %{repos} could not be found and were not enabled."
-msgstr[0] "リポジトリ %{repos} が見つかりませんでした。有効になっていません。"
-
-msgid ""
-"Repository %{repo} was not found in RMT database, perhaps you no longer have "
-"a valid subscription for it"
+msgid "Removes a system and its activations from RMT"
 msgstr ""
-"リポジトリ %{repo} がRMTデータベースで見つかりませんでした。それに対する有効"
-"なサブスクリプションがない可能性があります"
+
+msgid "Removes a system and its activations from RMT."
+msgstr ""
+
+msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
+msgstr ""
+
+msgid "Repositories are not available for this product."
+msgstr ""
+
+msgid "Repositories:"
+msgstr ""
+
+msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
+msgstr "リポジトリ %{repo} がRMTデータベースで見つかりませんでした。それに対する有効なサブスクリプションがない可能性があります"
+
+msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
+msgstr ""
+
+#, fuzzy
+msgid "Repository by ID %{id} not found."
+msgstr "ID %{id} の製品が見つかりません。"
 
 msgid "Repository by ID %{id} successfully disabled."
 msgstr "ID %{id} によりリポジトリが正常に無効化されました。"
@@ -472,17 +614,22 @@ msgstr "ID %{id} によりリポジトリが正常に無効化されました。
 msgid "Repository by ID %{id} successfully enabled."
 msgstr "ID %{id} のリポジトリが正常に有効化されました。"
 
+#, fuzzy
+msgid "Repository by ID %{repos} could not be found and was not disabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
+msgstr[0] "リポジトリ %{repos} が見つかりませんでしたが、無効になっていません。"
+
+#, fuzzy
+msgid "Repository by ID %{repos} could not be found and was not enabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
+msgstr[0] "リポジトリ %{repos} が見つかりませんでした。有効になっていません。"
+
 msgid "Repository metadata signatures are missing"
 msgstr "リポジトリメタデータの署名がありません"
 
-msgid "Repository not found by ID %{id}."
-msgstr "ID %{id} のリポジトリが見つかりません。"
-
-msgid "Repository successfully disabled."
-msgstr "リポジトリが正常に無効化されました。"
-
-msgid "Repository successfully enabled."
-msgstr "リポジトリが正常に有効化されました。"
+#, fuzzy
+msgid "Repository with ID %{repo_id} not found"
+msgstr "ID"
 
 msgid "Requested service not found"
 msgstr "要求されたサービスが見つかりません"
@@ -491,24 +638,34 @@ msgid "Required parameters are missing or empty: %s"
 msgstr "必須パラメータがないか空です: %s"
 
 msgid "Run '%{command}' for more information on a command and its subcommands."
-msgstr ""
-"コマンドおよびそのサブコマンドの詳細については、「%{command}」を実行してくだ"
-"さい。"
+msgstr "コマンドおよびそのサブコマンドの詳細については、「%{command}」を実行してください。"
 
+msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
+msgstr "SUSE Customer Centerデータと同期するには、まず「%{command}」を実行してください。"
+
+msgid "Run this command on an online RMT."
+msgstr ""
+
+#, fuzzy
 msgid ""
-"Run '%{command}' to synchronize with your SUSE Customer Center data first."
-msgstr ""
-"SUSE Customer Centerデータと同期するには、まず「%{command}」を実行してくださ"
-"い。"
+"SCC API request failed. Error details:\n"
+"Request URL: %{url}\n"
+"Response code: %{code}\n"
+"Response body:\n"
+"%{body}"
+msgstr "URL"
 
-msgid "SCC ID"
-msgstr "SCC ID"
+msgid "SCC credentials not set."
+msgstr ""
 
 msgid "Settings saved at %{file}."
 msgstr "%{file} に設定が保存されました。"
 
 msgid "Show RMT version"
 msgstr "RMTバージョンの表示"
+
+msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
+msgstr ""
 
 msgid "Shows products attached to a custom repository"
 msgstr "カスタムリポジトリにアタッチされた製品を表示します"
@@ -522,25 +679,38 @@ msgstr "指定されたパスにリポジトリ設定を保存する"
 msgid "Successfully added custom repository."
 msgstr "カスタムリポジトリが正常に追加されました。"
 
+msgid "Successfully removed system with login %{login}."
+msgstr ""
+
 msgid "Sync database with SUSE Customer Center"
 msgstr "SUSE Customer Centerとデータベースを同期する"
+
+msgid "Syncing de-registered system %{scc_system_id} to SCC"
+msgstr ""
+
+msgid "Syncing system %{login} to SCC"
+msgstr ""
+
+msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
+msgstr ""
 
 msgid "System %{system} not found"
 msgstr "システム %{system} が見つかりません"
 
-msgid ""
-"The RMT database has not yet been initialized. Run '%{command}' to setup the "
-"database."
+msgid "System with login %{login} cannot be removed."
 msgstr ""
-"RMTデータベースはまだ初期化されていません。データベースをセットアップするに"
-"は、「%{command}」を実行してください。"
 
-msgid ""
-"The SCC credentials are not configured correctly in '%{path}'. You can "
-"obtain them from %{url}"
+msgid "System with login %{login} not found."
 msgstr ""
-"SCC資格情報が「%{path}」で正しく設定されていません。それらの資格情報は "
-"%{url} から取得できます"
+
+msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
+msgstr "RMTデータベースはまだ初期化されていません。データベースをセットアップするには、「%{command}」を実行してください。"
+
+msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
+msgstr "SCC資格情報が「%{path}」で正しく設定されていません。それらの資格情報は %{url} から取得できます"
+
+msgid "The following errors occurred while mirroring:"
+msgstr ""
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
 msgstr "製品「%s」は基本製品であるため、非アクティブ化できません"
@@ -551,8 +721,23 @@ msgstr "要求された製品「%s」はこのシステムでアクティブ化�
 msgid "The requested products '%s' are not activated on the system."
 msgstr "要求された製品「%s」はシステムでアクティブ化されていません。"
 
+msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
+msgstr ""
+
 msgid "There are no repositories marked for mirroring."
 msgstr "ミラーリング用にマーク付けされたリポジトリはありません。"
+
+msgid "There are no systems registered to this RMT instance."
+msgstr ""
+
+msgid "To clean up downloaded files, please run '%{command}'"
+msgstr ""
+
+msgid "To clean up downloaded files, run '%{command}'"
+msgstr ""
+
+msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
+msgstr ""
 
 msgid "URL"
 msgstr "URL"
@@ -564,9 +749,7 @@ msgid "Unknown hash function %{checksum_type}"
 msgstr "不明なハッシュ関数 %{checksum_type}"
 
 msgid "Unmet product dependencies, activate one of these products first: %s"
-msgstr ""
-"製品の依存関係が満たされていません。まずこれらの製品のいずれかをアクティブ化"
-"してください: %s"
+msgstr "製品の依存関係が満たされていません。まずこれらの製品のいずれかをアクティブ化してください: %s"
 
 msgid "Updated system information for host '%s'"
 msgstr "ホスト「%s」の更新されたシステム情報"
@@ -583,126 +766,32 @@ msgstr "サブスクリプションを更新しています"
 msgid "Version"
 msgstr "バージョン"
 
+msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
+msgstr ""
+
+msgid "enabled"
+msgstr ""
+
 msgid "importing data from SMT."
 msgstr "SMTからデータをインポートしています。"
 
+#, fuzzy
+msgid "mandatory"
+msgstr "必須"
+
+msgid "mirrored at %{time}"
+msgstr ""
+
+#, fuzzy
+msgid "non-mandatory"
+msgstr "必須ではありません"
+
+msgid "not enabled"
+msgstr ""
+
+#, fuzzy
+msgid "not mirrored"
+msgstr "前回のミラーリング"
+
 msgid "repository by URL %{url} does not exist in database"
 msgstr "URL %{url} のリポジトリはデータベースに存在しません"
-
-msgid ""
-"× File does not exist or has wrong filesize, deduplication ignored %{error}."
-msgstr ""
-"× ファイルは存在していないかファイルサイズが間違っています。重複排除は無視さ"
-"れました: %{error}。"
-
-#~ msgid ""
-#~ "  Run this command on an online RMT.\n"
-#~ "  It will look in PATH for a repos.json file, which has to contain a list "
-#~ "of repository IDs.\n"
-#~ "  Usually, this file gets created by an offline RMT with 'rmt-cli export "
-#~ "settings'.\n"
-#~ "\n"
-#~ "  'rmt-cli export repos' will mirror these repositories to this PATH, "
-#~ "usually a portable storage device.\n"
-#~ msgstr ""
-#~ "  このコマンドをオンラインのRMT上で実行してください。\n"
-#~ "  このコマンドは、リポジトリIDのリストが含まれる必要があるrepos.jsonファイ"
-#~ "ルについてPATHを検索します。\n"
-#~ "  通常、このファイルは「rmt-cli export settings」を使用してオフラインのRMT"
-#~ "で作成されます。\n"
-#~ "\n"
-#~ "  「rmt-cli export repos」は、これらのリポジトリをこのPATH内 (通常は可搬性"
-#~ "のあるストレージデバイス) にミラーリングします。\n"
-
-#~ msgid ""
-#~ "Disable mirroring of product repositories by a list of product IDs or "
-#~ "product strings.\n"
-#~ "\n"
-#~ "Examples:\n"
-#~ "\n"
-#~ "$ rmt-cli products disable SLES/15\n"
-#~ "\n"
-#~ "$ rmt-cli products disable 1575\n"
-#~ "\n"
-#~ "$ rmt-cli products disable SLES/15/x86_64 1743\n"
-#~ msgstr ""
-#~ "製品IDまたは製品文字列のリストにより製品リポジトリのミラーリングを無効にし"
-#~ "ます。\n"
-#~ "\n"
-#~ "例:\n"
-#~ "\n"
-#~ "$ rmt-cli products disable SLES/15\n"
-#~ "\n"
-#~ "$ rmt-cli products disable 1575\n"
-#~ "\n"
-#~ "$ rmt-cli products disable SLES/15/x86_64 1743\n"
-
-#~ msgid ""
-#~ "Disable mirroring of repositories by a list of repository IDs\n"
-#~ "\n"
-#~ "Examples:\n"
-#~ "\n"
-#~ "$ rmt-cli repos disable 2526\n"
-#~ "\n"
-#~ "$ rmt-cli repos disable 2526 3263\n"
-#~ msgstr ""
-#~ "リポジトリIDのリストによりリポジトリのミラーリングを無効にします\n"
-#~ "\n"
-#~ "例:\n"
-#~ "\n"
-#~ "$ rmt-cli repos disable 2526\n"
-#~ "\n"
-#~ "$ rmt-cli repos disable 2526 3263\n"
-
-#~ msgid ""
-#~ "Enable mirroring of product repositories by a list of product IDs or "
-#~ "product strings.\n"
-#~ "\n"
-#~ "Examples:\n"
-#~ "\n"
-#~ "$ rmt-cli products enable SLES/15\n"
-#~ "\n"
-#~ "$ rmt-cli products enable 1575\n"
-#~ "\n"
-#~ "$ rmt-cli products enable SLES/15/x86_64 1743\n"
-#~ "\n"
-#~ "$ rmt-cli products enable --all-modules SLES/15\n"
-#~ msgstr ""
-#~ "製品IDまたは製品文字列のリストにより製品リポジトリのミラーリングを有効にし"
-#~ "ます。\n"
-#~ "\n"
-#~ "例:\n"
-#~ "\n"
-#~ "$ rmt-cli products enable SLES/15\n"
-#~ "\n"
-#~ "$ rmt-cli products enable 1575\n"
-#~ "\n"
-#~ "$ rmt-cli products enable SLES/15/x86_64 1743\n"
-#~ "\n"
-#~ "$ rmt-cli products enable --all-modules SLES/15\n"
-
-#~ msgid ""
-#~ "Enable mirroring of repositories by a list of repository IDs\n"
-#~ "\n"
-#~ "Examples:\n"
-#~ "\n"
-#~ "$ rmt-cli repos enable 2526\n"
-#~ "\n"
-#~ "$ rmt-cli repos enable 2526 3263\n"
-#~ msgstr ""
-#~ "リポジトリIDのリストによりリポジトリのミラーリングを有効にします\n"
-#~ "\n"
-#~ "例:\n"
-#~ "\n"
-#~ "$ rmt-cli repos enable 2526\n"
-#~ "\n"
-#~ "$ rmt-cli repos enable 2526 3263\n"
-
-#~ msgid "Mirroring SUMA product tree to %{dir}"
-#~ msgstr "SUMA製品ツリーを %{dir} にミラーリングしています"
-
-#~ msgid "Adding product %{product}\")"
-#~ msgstr "製品 %{product} を追加しています\")"
-
-#~ msgid "Description"
-#~ msgstr "説明"
