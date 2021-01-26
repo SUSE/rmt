@@ -4,12 +4,27 @@ class RepositoryService
   end
 
   def create_repository!(product, url, attributes, custom: false)
-    repository = Repository.find_or_initialize_by(external_url: url)
+    repository = if custom
+                   Repository.find_or_initialize_by(external_url: url)
+                 else
+                   # Self Heal and guard against a custom repository with the same URL as the SCC repository
+                   # See the migration 20200916104804_make_scc_id_unique.rb for an instance where this is possible
+                   Repository.where(external_url: url).where.not(scc_id: attributes[:id]).update(scc_id: nil)
+                   Repository.only_custom.where(external_url: url).delete_all
+
+                   Repository.find_or_initialize_by(scc_id: attributes[:id])
+                 end
 
     repository.attributes = attributes.select do |k, _|
       repository.attributes.keys.member?(k.to_s) && k.to_s != 'id'
     end
-    repository.scc_id = attributes[:id] unless custom
+
+    if custom
+      repository.friendly_id ||= attributes[:id]
+    else
+      repository.scc_id = attributes[:id]
+      repository.friendly_id = attributes[:id]
+    end
 
     repository.external_url = url
     repository.local_path = Repository.make_local_path(url)
@@ -23,17 +38,15 @@ class RepositoryService
   end
 
   def attach_product!(product, repository)
-    product_service = find_product_service(product)
     RepositoriesServicesAssociation.find_or_create_by!(
-      service_id: product_service.id,
+      service_id: product.service.id,
       repository_id: repository.id
     )
   end
 
   def detach_product!(product, repository)
-    product_service = find_product_service(product)
     association = RepositoriesServicesAssociation.find_by(
-      service_id: product_service.id,
+      service_id: product.service.id,
       repository_id: repository.id
     )
     association.destroy!
@@ -44,11 +57,4 @@ class RepositoryService
     conditions[:enabled] = true if mirroring_enabled
     product.change_repositories_mirroring!(conditions, mirroring_enabled)
   end
-
-  private
-
-  def find_product_service(product)
-    Service.find_or_create_by(product_id: product.id)
-  end
-
 end

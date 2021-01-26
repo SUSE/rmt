@@ -1,0 +1,5 @@
+projects:
+  rmt:
+    docker-compose-build-images: docker-compose -f docker-compose-test.yml build
+    docker-compose-run-tests: docker-compose -f docker-compose-test.yml run rmt_test ./integration/run.sh
+    docker-compose-cleanup: docker-compose -f docker-compose-test.yml down -v --rmi all --remove-orphans

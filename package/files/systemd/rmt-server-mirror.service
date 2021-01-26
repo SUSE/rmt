@@ -1,0 +1,13 @@
+[Unit]
+Description=Mirror RMT
+After=rmt-server.service
+Wants=rmt-server.service
+
+[Service]
+Type=simple
+Restart=no
+Environment="LOG_TO_JOURNALD=1" "LANG=en"
+ExecStart=/usr/share/rmt/bin/rmt-cli mirror
+
+[Install]
+WantedBy=multi-user.target

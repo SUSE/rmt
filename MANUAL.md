@@ -26,12 +26,33 @@ You can install and run this wizard like this:
     RMT comes with a preconfigured systemd timer to automatically get the latest product and repository data from the SUSE Customer Center over night.
     This command triggers the same synchronization instantly.
 
-  * `rmt-cli products list [--all] [--csv]`:
+  * `rmt-cli systems list`:
+    Lists systems registered against RMT.
+
+    Use the `--all` flag to list all systems.
+
+  * `rmt-cli systems scc-sync`:
+    Forwards local RMT systems to SCC.
+
+  * `rmt-cli systems remove TARGET`:
+    Removes a system and its activations from RMT.
+
+    Example:
+
+    `rmt-cli systems remove SCC_e740f34145b84523a184ace764d0d597`
+
+  * `rmt-cli products list [--all] [--csv] [--name name] [--version version] [--arch arch]`:
     Lists the products that are enabled for mirroring.
 
     Use the `--all` flag to list all available products.
 
     Use the `--csv` flag to output the list in CSV format.
+
+    Use the `--name name` flag to list all products whose name match `name`.
+
+    Use the `--version ver` flag to list all products whose version match `version`.
+
+    Use the `--arch arch` flag to list all products whose architecture  match `arch`.
 
   * `rmt-cli products enable <id | string>...`:
     Enable mirroring of product repositories by a list of product IDs or product strings.
@@ -58,6 +79,16 @@ You can install and run this wizard like this:
     `rmt-cli products disable 1575`
 
     `rmt-cli products disable SLES/15/x86_64 1743`
+
+  * `rmt-cli products show <id | string>`:
+  	Displays product with all its repositories and their attributes.
+
+  	Examples:
+
+  	`rmt-cli products show SLES/15/x86_64`
+
+  * `rmt-cli repos clean`:
+    Removes locally mirrored files of repositories which are not marked to be mirrored.
 
   * `rmt-cli repos list [--all] [--csv]`:
     Lists the repositories that are enabled for mirroring.
@@ -86,7 +117,7 @@ You can install and run this wizard like this:
 
   * `rmt-cli mirror`:
     In its default configuration, RMT mirrors its enabled product repositories automatically once every night.
-    This command starts this mirroring process manually.
+    This command starts this mirroring process manually. Changes made to repository mirroring settings while mirroring is in progress are respected by the mirroring process.
 
 When all enabled repositories are fully mirrored, you can register your client systems against RMT by running `SUSEConnect --url https://<RMT hostname>` on the client machine.
 After successful registration the repositories from RMT will be used by `zypper` on the client machine.
@@ -99,10 +130,12 @@ After successful registration the repositories from RMT will be used by `zypper`
 
     Use the `--csv` flag to output the list in CSV format.
 
-  * `rmt-cli repos custom add <url> <name>`:
+  * `rmt-cli repos custom add <url> <name> [--id]`:
     Adds a new custom repository, for example:
 
     `rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers`
+
+    `rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers --id containers_sle_12_sp3`
 
   * `rmt-cli repos custom enable <id>`:
     Enables mirroring for a custom repository.
@@ -191,6 +224,9 @@ The `mirroring` section lets you adjust mirroring behavior.
 
   * `mirroring.mirror_src`:
     Whether to mirror source (arch = `src`) RPM packages or not.
+  * `mirroring.dedup_method`:
+    Whether to deduplicate files by a hardlink or copy. Possible values are:
+    `hardlink`, `copy`
 
 **HTTP client settings**
 
@@ -199,6 +235,20 @@ The `http_client` section defines RMT's global HTTP connection settings.
   * `http_client.proxy_auth` setting:
     Determines proxy authentication mechanism, possible values are:
     `none`, `basic`, `digest`, `gssnegotiate`, `ntlm`, `digest_ie`, `ntlm_wb`
+
+**Web server settings**
+
+The `web_server` section lets you tune the performance of your RMT server.
+
+  * `web_server.min_threads` setting:
+    Specifies the minimum threads count a RMT server worker should spawn.
+    Acceptable values: Integer greater than or equal to 1.
+  * `web_server.max_threads` setting:
+    Specifies the maximum threads count a RMT server worker should spawn.
+    Acceptable values: Integer greater than or equal to 1.
+  * `web_server.workers` setting:
+    Specifies the number of web workers for RMT.
+    Acceptable values: Integer greater than or equal to 1.
 
 **Settings for accessing SUSE repositories**
 

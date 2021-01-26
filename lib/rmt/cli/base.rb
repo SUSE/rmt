@@ -64,14 +64,15 @@ class RMT::CLI::Base < Thor
       end
     rescue ActiveRecord::NoDatabaseError
       raise RMT::CLI::Error.new(
-        _("The RMT database has not yet been initialized. Run '%{command}' to setup the database.") % { command: 'systemctl start rmt-migration' },
+        _("The RMT database has not yet been initialized. Run '%{command}' to setup the database.") \
+        % { command: 'systemctl start rmt-server-migration.service' },
         RMT::CLI::Error::ERROR_DB
       )
     rescue RMT::SCC::CredentialsError, ::SUSE::Connect::Api::InvalidCredentialsError
       raise RMT::CLI::Error.new(
         _("The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}") % {
           path: '/etc/rmt.conf',
-          url: 'https://scc.suse.com/organization'
+          url: 'https://scc.suse.com'
         },
         RMT::CLI::Error::ERROR_SCC
       )
@@ -80,17 +81,25 @@ class RMT::CLI::Base < Thor
         e.message,
         RMT::CLI::Error::ERROR_OTHER
       )
+    rescue SUSE::Connect::Api::RequestError => e
+      raise RMT::CLI::Error.new(
+        _("SCC API request failed. Error details:\nRequest URL: %{url}\nResponse code: %{code}\nResponse body:\n%{body}") % {
+          url: e.response.request.url,
+          code: e.response.code,
+          body: e.response.body
+        },
+        RMT::CLI::Error::ERROR_OTHER
+      )
     end
 
     # These methods are needed to properly format the hint outputs for `rmt-cli repos custom`. This is a workaround
     # taken and adapted from https://github.com/erikhuda/thor/issues/261, as Thor does not seem to handle nested subcommands
     # the way we expect it to.
     def banner(command, _namespace = nil, _subcommand = false)
-      "#{basename} #{subcommand_prefix} #{command.usage}"
+      (name == RMT::CLI::Main.name) ? "#{basename} #{command.usage}" : "#{basename} #{subcommand_prefix} #{command.usage}"
     end
 
     def subcommand_prefix
-      return "\b" if name == RMT::CLI::Main.name
       name.gsub(/.*::/, '').gsub(/^[A-Z]/) { |match| match[0].downcase }.gsub(/[A-Z]/) { |match| " #{match[0].downcase}" }
     end
 
@@ -103,7 +112,11 @@ class RMT::CLI::Base < Thor
   private
 
   def needs_path(path, writable: false)
+    # expand the path to make it easier to work with
+    path = File.expand_path(path)
+
     raise RMT::CLI::Error.new(_('%{path} is not a directory.') % { path: path }) unless File.directory?(path)
+
     if writable
       unless File.writable?(path)
         raise RMT::CLI::Error.new(_('%{path} is not writable by user %{username}.') % {
@@ -112,6 +125,8 @@ class RMT::CLI::Base < Thor
         })
       end
     end
+
+    path
   end
 
   # Allows to have any type of multi input that you want:

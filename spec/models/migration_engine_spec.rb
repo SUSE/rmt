@@ -14,7 +14,7 @@ describe MigrationEngine do
     subject(:migrations) { engine.generate }
 
     let(:sle12sub) { create(:subscription, product_classes: [sle12.product_class]) }
-    let(:system) { FactoryGirl.create(:system, :with_activated_base_product) }
+    let(:system) { FactoryBot.create(:system, :with_activated_base_product) }
     let!(:activation) { create :activation, system: system, service: sle12.service }
 
     context 'error handling' do
@@ -59,7 +59,7 @@ describe MigrationEngine do
     context 'with no upgradeable products' do
       let!(:slepos) { create(:product, :with_mirrored_repositories, name: 'SLEPOS') }
       let!(:slepossub) { create(:subscription, product_classes: [slepos.product_class]) }
-      let!(:system) { FactoryGirl.create(:system, :with_activated_base_product) }
+      let!(:system) { FactoryBot.create(:system, :with_activated_base_product) }
       let!(:activation) { create :activation, system: system, service: slepos.service }
       let(:installed_products) { [slepos] }
 
@@ -349,6 +349,30 @@ describe MigrationEngine do
           it 'does not contain offline migrations' do
             is_expected.to contain_exactly([product_b])
           end
+
+          context 'python2 module gets added to SLE 15 online migrations' do
+            let(:installed_products) { [sle15] }
+            let(:system) { create :system, :with_activated_product, product: sle15 }
+
+            let!(:sle15) do
+              create :product, :with_mirrored_repositories,
+                name: 'sle15', version: '15'
+            end
+            let!(:sle15_sp1) do
+              create :product, :with_mirrored_repositories,
+                :cloned, from: sle15,
+                name: 'sle15-sp1', version: '15.1', predecessors: [sle15]
+            end
+            let!(:python2_module) do
+              create :product, :module, :with_mirrored_repositories,
+                identifier: 'sle-module-python2', version: '15.1', base_products: [sle15_sp1],
+                arch: sle15.arch
+            end
+
+            it 'contains python2 module' do
+              is_expected.to contain_exactly([sle15_sp1, python2_module])
+            end
+          end
         end
 
         describe '#offline_migrations' do
@@ -479,6 +503,31 @@ describe MigrationEngine do
 
             it { is_expected.to contain_exactly([product_c, target_product_extra_module, target_product_extra_module_child]) }
           end
+
+          context 'python2 module gets added to SLE 15 offline migrations' do
+            let(:installed_products) { [sle15] }
+            let(:target_base_product) { sle15_sp1 }
+            let(:system) { create :system, :with_activated_product, product: sle15 }
+
+            let!(:sle15) do
+              create :product, :with_mirrored_repositories,
+                name: 'sle15', version: '15'
+            end
+            let!(:sle15_sp1) do
+              create :product, :with_mirrored_repositories,
+                :cloned, from: sle15,
+                name: 'sle15-sp1', version: '15.1', predecessors: [sle15]
+            end
+            let!(:python2_module) do
+              create :product, :module, :with_mirrored_repositories,
+                identifier: 'sle-module-python2', version: '15.1', base_products: [sle15_sp1],
+                arch: sle15.arch
+            end
+
+            it 'contains python2 module' do
+              is_expected.to contain_exactly([sle15_sp1, python2_module])
+            end
+          end
         end
       end
     end
@@ -486,7 +535,7 @@ describe MigrationEngine do
 
   describe '#sort_migrations' do
     let(:installed_products) { [sle12] }
-    let(:system) { FactoryGirl.create(:system, :with_activated_base_product) }
+    let(:system) { FactoryBot.create(:system, :with_activated_base_product) }
 
     it 'removes duplicate migration paths' do
       expect(engine.send(:sort_migrations, [[sle12], [sle12], [sle12]])).to eq([[sle12]])

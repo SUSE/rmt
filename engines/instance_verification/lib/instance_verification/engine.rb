@@ -16,7 +16,7 @@ module InstanceVerification
       end
 
       Api::Connect::V3::Systems::ProductsController.class_eval do
-        before_action :verify_base_product_activation, only: %i[activate]
+        before_action :verify_product_activation, only: %i[activate]
         before_action :verify_base_product_upgrade, only: %i[upgrade]
 
         def find_product
@@ -30,10 +30,49 @@ module InstanceVerification
           product
         end
 
-        def verify_base_product_activation
+        def verify_product_activation
           product = find_product
-          return unless product.base?
 
+          if product.base?
+            verify_base_product_activation(product)
+          else
+            verify_extension_activation(product)
+          end
+        rescue InstanceVerification::Exception => e
+          raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
+        rescue StandardError => e
+          logger.error('Unexpected instance verification error has occurred:')
+          logger.error(e.message)
+          logger.error("System login: #{@system.login}, IP: #{request.remote_ip}")
+          logger.error('Backtrace:')
+          logger.error(e.backtrace)
+          raise ActionController::TranslatedError.new('Unexpected instance verification error has occurred')
+        end
+
+        def verify_extension_activation(product)
+          return if product.free?
+
+          base_product = @system.products.find_by(product_type: :base)
+
+          subscription = Subscription.joins(:product_classes).find_by(
+            subscription_product_classes: {
+              product_class: base_product.product_class
+            }
+          )
+
+          # This error would occur only if there's a problem with subscription setup on SCC side
+          raise "Can't find a subscription for base product #{base_product.product_string}" unless subscription
+
+          allowed_product_classes = subscription.product_classes.pluck(:product_class)
+
+          unless allowed_product_classes.include?(product.product_class)
+            raise InstanceVerification::Exception.new(
+              'The product is not available for this instance'
+            )
+          end
+        end
+
+        def verify_base_product_activation(product)
           verification_provider = InstanceVerification.provider.new(
             logger,
             request,
@@ -46,16 +85,7 @@ module InstanceVerification
           cache_key = [request.remote_ip, @system.login, product.id].join('-')
 
           # caches verification result to be used by zypper auth plugin
-          Rails.cache.write(cache_key, true, expires_in: 1.hour)
-        rescue InstanceVerification::Exception => e
-          raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
-        rescue StandardError => e
-          logger.error('Unexpected instance verification error has occurred:')
-          logger.error(e.message)
-          logger.error("System login: #{@system.login}, IP: #{request.remote_ip}")
-          logger.error('Backtrace:')
-          logger.error(e.backtrace)
-          raise ActionController::TranslatedError.new('Unexpected instance verification error has occurred')
+          Rails.cache.write(cache_key, true, expires_in: 20.minutes)
         end
 
         # Verify that the base product doesn't change in the offline migration

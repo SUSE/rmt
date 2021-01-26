@@ -2,6 +2,9 @@ language: ruby
 rvm:
   # SLES15
   - 2.5.0
+  # Factory/Tumbleweed
+  - 2.6.0
+  - 2.7.0
 
 cache:
   - bundler
@@ -19,6 +22,8 @@ jobs:
 services:
   - mysql
 before_script:
+  - sudo mkdir -p /var/lib/rmt
+  - sudo chown -R travis:travis /var/lib/rmt
   - mysql -e 'CREATE DATABASE rmt_test;'
   - mysql -e $'GRANT ALL PRIVILEGES ON `rmt\_%` .  * TO rmt@localhost identified by \'rmt\';'
   - ruby -e "require 'yaml'; puts({'database_test'=>{'host'=>'localhost','username'=>'rmt','password'=>'rmt','database'=>'rmt_test','adapter'=>'mysql2','encoding'=>'utf8','timeout'=>5000,'pool'=>5}}.to_yaml)" > config/rmt.local.yml

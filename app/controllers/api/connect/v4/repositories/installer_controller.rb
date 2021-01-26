@@ -6,7 +6,7 @@ class Api::Connect::V4::Repositories::InstallerController < Api::Connect::BaseCo
 
     if product
       respond_with ActiveModel::Serializer::CollectionSerializer.new(
-        product.repositories.only_installer_updates.only_mirrored,
+        product.repositories.only_installer_updates.only_mirroring_enabled,
         serializer: ::V3::RepositorySerializer,
         base_url: request.base_url
       )
@@ -23,6 +23,7 @@ class Api::Connect::V4::Repositories::InstallerController < Api::Connect::BaseCo
 
   def product_params
     hash = params.permit(:identifier, :version, :arch, :release_type)
+    hash[:release_type] = nil if hash[:release_type].blank?
     hash[:version] = Product.clean_up_version(hash[:version])
     hash.to_h.symbolize_keys
   end

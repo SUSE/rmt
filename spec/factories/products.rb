@@ -1,25 +1,24 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :product do
     sequence(:name) { |n| "Product #{n}" }
     sequence(:identifier) { |n| "product-#{n}" }
     sequence(:cpe) { |n| "cpe:/o:product:#{n}" }
     sequence(:shortname) { |n| "Product #{n}" }
-    sequence(:friendly_name) { |n| "Product #{n}" }
     sequence(:product_class) { |n| n.to_s.ljust(5, 'A') }
-    free false
-    product_type :base
+    free { false }
+    product_type { :base }
     sequence(:description) { FFaker::Lorem.sentence }
-    release_type ''
-    version 42
-    arch 'x86_64'
-    release_stage 'released'
+    release_type { nil }
+    version { 42 }
+    arch { 'x86_64' }
+    release_stage { 'released' }
 
     transient do
-      base_products []
-      root_product nil
-      recommended false
-      migration_kind :online
-      predecessors [ ]
+      base_products { [] }
+      root_product { nil }
+      recommended { false }
+      migration_kind { :online }
+      predecessors { [] }
     end
 
     after :create do |product, evaluator|
@@ -37,12 +36,18 @@ FactoryGirl.define do
     end
 
     trait :extension do
-      product_type 'extension'
+      product_type { 'extension' }
     end
 
     trait :module do
-      product_type 'module'
-      free true
+      product_type { 'module' }
+      free { true }
+    end
+
+    trait :with_service do
+      after :create do |product, _evaluator|
+        product.create_service!
+      end
     end
 
     trait :with_extensions do
@@ -72,7 +77,7 @@ FactoryGirl.define do
 
     trait :cloned do
       transient do
-        from nil
+        from { nil }
       end
       after :build do |product, evaluator|
         if evaluator.from
@@ -89,7 +94,7 @@ FactoryGirl.define do
     trait :with_mirrored_repositories do
       after :create do |product, _evaluator|
         unless Service.find_by(product_id: product.id)
-          FactoryGirl.create(:service, :with_repositories, product: product, mirroring_enabled: true)
+          FactoryBot.create(:service, :with_repositories, product: product, mirroring_enabled: true)
         end
       end
     end
@@ -97,7 +102,7 @@ FactoryGirl.define do
     trait :with_disabled_mirrored_repositories do
       after :create do |product, _evaluator|
         unless Service.find_by(product_id: product.id)
-          FactoryGirl.create(:service, :with_disabled_repositories, product: product, mirroring_enabled: true)
+          FactoryBot.create(:service, :with_disabled_repositories, product: product, mirroring_enabled: true)
         end
       end
     end
@@ -105,7 +110,7 @@ FactoryGirl.define do
     trait :with_disabled_not_mirrored_repositories do
       after :create do |product, _evaluator|
         unless Service.find_by(product_id: product.id)
-          FactoryGirl.create(:service, :with_disabled_repositories, product: product, mirroring_enabled: false)
+          FactoryBot.create(:service, :with_disabled_repositories, product: product, mirroring_enabled: false)
         end
       end
     end
@@ -113,7 +118,7 @@ FactoryGirl.define do
     trait :with_not_mirrored_repositories do
       after :create do |product, _evaluator|
         unless Service.find_by(product_id: product.id)
-          FactoryGirl.create(:service, :with_repositories, product: product, mirroring_enabled: false)
+          FactoryBot.create(:service, :with_repositories, product: product, mirroring_enabled: false)
         end
       end
     end
@@ -127,13 +132,13 @@ FactoryGirl.define do
 
     trait :activated do
       transient do
-        system nil
+        system { nil }
       end
 
       after :create do |product, evaluator|
         if evaluator.system
           unless evaluator.system.activations.map(&:product).flatten.include?(product)
-            evaluator.system.activations << FactoryGirl.create(:activation, system: evaluator.system, service: product.service)
+            evaluator.system.activations << FactoryBot.create(:activation, system: evaluator.system, service: product.service)
           end
         else
           fail 'activated requires a system'

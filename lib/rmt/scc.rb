@@ -12,7 +12,7 @@ class RMT::SCC
   end
 
   def sync
-    credentials_set? || (raise CredentialsError, 'SCC credentials not set.')
+    credentials_set? || (raise CredentialsError, _('SCC credentials not set.'))
 
     cleanup_database
 
@@ -77,6 +77,39 @@ class RMT::SCC
     update_subscriptions(JSON.parse(File.read(File.join(path, 'organizations_subscriptions.json')), symbolize_names: true))
   end
 
+  def sync_systems
+    unless Settings.scc.sync_systems
+      @logger.warn _('Syncing systems to SCC is disabled by the configuration file, exiting.')
+      return
+    end
+
+    credentials_set? || (raise CredentialsError, _('SCC credentials not set.'))
+    scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
+
+    System.where(scc_registered_at: nil).find_in_batches(batch_size: 20) do |batch|
+      batch.each do |system|
+        @logger.info(_('Syncing system %{login} to SCC') % { login: system.login })
+        response = scc_api_client.forward_system_activations(system)
+        # Update attributes without triggering after_update callback (which resets scc_registered_at to nil)
+        system.update_columns(scc_system_id: response[:id], scc_registered_at: Time.current)
+      rescue SUSE::Connect::Api::RequestError => e
+        @logger.error(_('Failed to sync system %{login}: %{error}') % { login: system.login, error: e.to_s })
+      end
+    end
+
+    DeregisteredSystem.find_in_batches(batch_size: 20) do |batch|
+      batch.each do |deregistered_system|
+        @logger.info(
+          _('Syncing de-registered system %{scc_system_id} to SCC') % {
+            scc_system_id: deregistered_system.scc_system_id
+          }
+        )
+        scc_api_client.forward_system_deregistration(deregistered_system.scc_system_id)
+        deregistered_system.destroy!
+      end
+    end
+  end
+
   protected
 
   def credentials_set?
@@ -107,34 +140,38 @@ class RMT::SCC
   end
 
   def create_product(item, root_product_id = nil, base_product = nil, recommended = false, migration_extra = false)
-    @logger.debug _('Adding product %{product}') % { product: "#{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}" }
+    ActiveRecord::Base.transaction do
+      @logger.debug _('Adding product %{product}') % { product: "#{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}" }
 
-    product = get_product(item[:id])
-    product.attributes = item.select { |k, _| product.attributes.keys.member?(k.to_s) }
-    product.save!
+      product = get_product(item[:id])
+      product.attributes = item.select { |k, _| product.attributes.keys.member?(k.to_s) }
+      product.save!
 
-    create_service(item, product)
+      create_service(item, product)
 
-    if root_product_id
-      ProductsExtensionsAssociation.create(
-        product_id: base_product,
-        extension_id: product.id,
-        root_product_id: root_product_id,
-        recommended: recommended,
-        migration_extra: migration_extra
-      )
-    else
-      root_product_id = product.id
-      ProductsExtensionsAssociation.where(root_product_id: root_product_id).destroy_all
-    end
+      if root_product_id
+        ProductsExtensionsAssociation.create(
+          product_id: base_product,
+          extension_id: product.id,
+          root_product_id: root_product_id,
+          recommended: recommended,
+          migration_extra: migration_extra
+        )
+      else
+        root_product_id = product.id
+        ProductsExtensionsAssociation.where(root_product_id: root_product_id).destroy_all
+      end
 
-    item[:extensions].each do |ext_item|
-      create_product(ext_item, root_product_id, product.id, ext_item[:recommended], ext_item[:migration_extra])
+      item[:extensions].each do |ext_item|
+        create_product(ext_item, root_product_id, product.id, ext_item[:recommended], ext_item[:migration_extra])
+      end
     end
   end
 
   def create_service(item, product)
+    product.create_service!
     item[:repositories].each do |repo_item|
+      repo_item[:enabled] = true if repo_item[:installer_updates]
       repository_service.create_repository!(product, repo_item[:url], repo_item)
     end
   end

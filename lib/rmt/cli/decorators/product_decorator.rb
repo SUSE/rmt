@@ -17,7 +17,16 @@ class RMT::CLI::Decorators::ProductDecorator < RMT::CLI::Decorators::Base
         product.last_mirrored_at
       ]
     end
-    array_to_csv(data)
+    array_to_csv(data, [
+      _('ID'),
+      _('Product'),
+      _('Version'),
+      _('Arch'),
+      _('Product String'),
+      _('Release Stage'),
+      _('Mirror?'),
+      _('Last mirrored')
+    ])
   end
 
   def to_table
@@ -35,6 +44,7 @@ class RMT::CLI::Decorators::ProductDecorator < RMT::CLI::Decorators::Base
       _('ID'),
       _('Product'),
       _('Version'),
+      # i18n: architecture
       _('Arch'),
       _('Mirror?'),
       _('Last mirrored')

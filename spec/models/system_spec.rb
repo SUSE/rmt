@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe System, type: :model do
   subject { system }
 
-  let(:system) { FactoryGirl.create(:system, :with_activated_base_product) }
+  let(:system) { FactoryBot.create(:system, :with_activated_base_product) }
   let(:login) { described_class.generate_secure_login }
   let(:password) { described_class.generate_secure_password }
 
@@ -24,13 +24,16 @@ RSpec.describe System, type: :model do
     its(:length) { is_expected.to eq 16 }
   end
 
+  describe 'validation' do
+    it { is_expected.to validate_uniqueness_of(:login).ignoring_case_sensitivity }
+  end
+
   context 'when system is deleted' do
     context 'activation' do
       let(:activation) do
         activation = create(:activation)
         activation.system.destroy
       end
-
 
       it 'activation is also deleted' do
         expect { activation.reload }.to raise_error ActiveRecord::RecordNotFound
@@ -46,6 +49,36 @@ RSpec.describe System, type: :model do
       it 'hw_info is also deleted' do
         expect { hw_info.reload }.to raise_error ActiveRecord::RecordNotFound
       end
+    end
+
+    context 'when scc_system_id is set' do
+      before do
+        DeregisteredSystem.where(scc_system_id: 9000).delete_all
+        system.update_column(:scc_system_id, 9000)
+      end
+
+      it 'scc_registered_at is not null before update' do
+        system.destroy
+        expect(DeregisteredSystem.find_by(scc_system_id: 9000)).not_to be(nil)
+      end
+    end
+  end
+
+  describe 'when system is updated' do
+    before do
+      system.update_column(:scc_registered_at, Time.zone.now)
+    end
+
+    it 'scc_registered_at is not null before update' do
+      system.reload
+      expect(system.scc_registered_at).not_to be(nil)
+    end
+
+    it 'scc_registered_at is null after update' do
+      system.updated_at = Time.zone.now
+      system.save!
+      system.reload
+      expect(system.scc_registered_at).to be(nil)
     end
   end
 end

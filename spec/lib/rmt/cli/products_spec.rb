@@ -34,10 +34,20 @@ RSpec.describe RMT::CLI::Products do
           expect { described_class.start(argv) }.to output('').to_stdout.and output(/rmt-cli sync/).to_stderr
         end
       end
+
+      context 'with --all option and --name' do
+        let(:argv) { ['list', '--all', '--name', 'foo'] }
+
+        it 'warns about no matches' do
+          expect { described_class.start(argv) }.to output(
+            "No matching products found in the database.\n"
+          ).to_stderr
+        end
+      end
     end
 
     context 'with products in database' do
-      let!(:disabled_product) { create :product } # rubocop:disable RSpec/LetSetup
+      let!(:disabled_product) { create :product }
       let!(:enabled_product) { create :product, :with_mirrored_repositories }
       let!(:beta_product) { create :product, release_stage: 'beta' }
 
@@ -84,7 +94,7 @@ RSpec.describe RMT::CLI::Products do
         end
 
         it 'lists all products' do
-          expect { described_class.start(argv) }.to output(/.*#{expected_output}.*/).to_stdout.and output('').to_stderr
+          expect { described_class.start(argv) }.to output(/#{expected_output}/).to_stdout.and output('').to_stderr
         end
 
         it 'does not mention --all option' do
@@ -138,6 +148,218 @@ RSpec.describe RMT::CLI::Products do
         end
 
         it 'lists only products in that release stage' do
+          expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
+        end
+      end
+
+      context 'with --all and --name' do
+        let(:name) { disabled_product.name.split(' ')[0] }
+        let(:expected_output) do
+          Terminal::Table.new(
+            headings: ['ID', 'Product', 'Version', 'Arch', 'Mirror?', 'Last mirrored'],
+            rows: expected_rows
+          ).to_s + "\n"
+        end
+        let(:argv) { ['list', '--all', '--name', name] }
+        let(:expected_rows) do
+          Product.all.map do |product|
+            if product.name.include? name
+              [
+                product.id,
+                "#{product.name}\n#{product.product_string}",
+                product.version,
+                product.arch,
+                product.mirror? ? 'Mirror' : "Don't Mirror",
+                product.last_mirrored_at
+              ]
+            end
+          end
+        end
+
+        it 'lists only products that match product identifier' do
+          expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
+        end
+      end
+
+      context 'with --all and --name as identifier' do
+        let(:name) { disabled_product.identifier }
+        let(:expected_output) do
+          Terminal::Table.new(
+            headings: ['ID', 'Product', 'Version', 'Arch', 'Mirror?', 'Last mirrored'],
+            rows: expected_rows
+          ).to_s + "\n"
+        end
+        let(:argv) { ['list', '--all', '--name', name] }
+        let(:expected_rows) do
+          Product.all.map do |product|
+            if product.identifier.include? name
+              return [[
+                product.id,
+                "#{product.name}\n#{product.product_string}",
+                product.version,
+                product.arch,
+                product.mirror? ? 'Mirror' : "Don't Mirror",
+                product.last_mirrored_at
+              ]]
+            end
+          end
+        end
+
+
+        it 'lists only products that match product identifier' do
+          expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
+        end
+      end
+
+      context 'with --all empty --name' do
+        let(:name) { '' }
+        let(:expected_output) do
+          Terminal::Table.new(
+            headings: ['ID', 'Product', 'Version', 'Arch', 'Mirror?', 'Last mirrored'],
+            rows: expected_rows
+          ).to_s + "\n"
+        end
+        let(:argv) { ['list', '--all', '--name', name] }
+        let(:expected_rows) do
+          Product.all.map do |product|
+            [
+              product.id,
+              "#{product.name}\n#{product.product_string}",
+              product.version,
+              product.arch,
+              product.mirror? ? 'Mirror' : "Don't Mirror",
+              product.last_mirrored_at
+            ]
+          end
+        end
+
+
+        it 'lists all products' do
+          expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
+        end
+      end
+
+      context 'with --all and --version' do
+        let(:expected_output) do
+          Terminal::Table.new(
+            headings: ['ID', 'Product', 'Version', 'Arch', 'Mirror?', 'Last mirrored'],
+            rows: expected_rows
+          ).to_s + "\n"
+        end
+        let(:argv) { ['list', '--all', '--version', disabled_product.version] }
+        let(:expected_rows) do
+          Product.all.map do |product|
+            if product.version == disabled_product.version
+              [
+                product.id,
+                "#{product.name}\n#{product.product_string}",
+                product.version,
+                product.arch,
+                product.mirror? ? 'Mirror' : "Don't Mirror",
+                product.last_mirrored_at
+              ]
+            end
+          end
+        end
+
+
+        it 'lists all products that match product version' do
+          expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
+        end
+      end
+
+      context 'with --all and empty --version' do
+        let(:expected_output) do
+          Terminal::Table.new(
+            headings: ['ID', 'Product', 'Version', 'Arch', 'Mirror?', 'Last mirrored'],
+            rows: expected_rows
+          ).to_s + "\n"
+        end
+        let(:argv) { ['list', '--all', '--version', ''] }
+        let(:expected_rows) do
+          Product.all.map do |product|
+            [
+              product.id,
+              "#{product.name}\n#{product.product_string}",
+              product.version,
+              product.arch,
+              product.mirror? ? 'Mirror' : "Don't Mirror",
+              product.last_mirrored_at
+            ]
+          end
+        end
+
+
+        it 'lists all products as no version given' do
+          expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
+        end
+      end
+
+      context 'with --all and --arch' do
+        let(:expected_output) do
+          Terminal::Table.new(
+            headings: ['ID', 'Product', 'Version', 'Arch', 'Mirror?', 'Last mirrored'],
+            rows: expected_rows
+          ).to_s + "\n"
+        end
+        let(:argv) { ['list', '--all', '--arch', disabled_product.arch] }
+        let(:expected_rows) do
+          Product.all.map do |product|
+            if product.arch == disabled_product.arch
+              [
+                product.id,
+                "#{product.name}\n#{product.product_string}",
+                product.version,
+                product.arch,
+                product.mirror? ? 'Mirror' : "Don't Mirror",
+                product.last_mirrored_at
+              ]
+            end
+          end
+        end
+
+
+        it 'lists all products that match product architecture' do
+          expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
+        end
+      end
+
+      context 'with --all, --name, --version and --arch' do
+        let(:name) { enabled_product.name.split(' ')[0] }
+        let(:expected_output) do
+          Terminal::Table.new(
+            headings: ['ID', 'Product', 'Version', 'Arch', 'Mirror?', 'Last mirrored'],
+            rows: expected_rows
+          ).to_s + "\n"
+        end
+        let(:argv) do
+          [
+            'list', '--all',
+            '--name', name,
+            '--version', disabled_product.version,
+            '--arch', disabled_product.arch
+          ]
+        end
+
+        let(:expected_rows) do
+          Product.all.map do |product|
+            if (product.name.include? name) &&
+              (product.version == product.version) &&
+              (product.arch == disabled_product.arch)
+              [
+                product.id,
+                "#{product.name}\n#{product.product_string}",
+                product.version,
+                product.arch,
+                product.mirror? ? 'Mirror' : "Don't Mirror",
+                product.last_mirrored_at
+              ]
+            end
+          end
+        end
+
+
+        it 'lists only products that match  name, version and architecture' do
           expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
         end
       end
@@ -380,6 +602,7 @@ RSpec.describe RMT::CLI::Products do
       output += "Disabling #{product.friendly_name}:\n"
       output += "  #{product.friendly_name}:\n"
       repos.pluck(:name).sort.each { |repo| output += "    Disabled repository #{repo}.\n" } unless repos.empty?
+      output += "\n\e[1mTo clean up downloaded files, run 'rmt-cli repos clean'\e[22m\n"
       output
     end
 
@@ -392,6 +615,7 @@ RSpec.describe RMT::CLI::Products do
         output += "Disabling #{product.friendly_name}:\n"
         output += "  #{product.friendly_name}:\n"
         output += "    All repositories have already been disabled.\n"
+        output += "\n\e[1mTo clean up downloaded files, run 'rmt-cli repos clean'\e[22m\n"
         output
       end
 
@@ -464,6 +688,103 @@ RSpec.describe RMT::CLI::Products do
           product.repositories.each do |repository|
             expect(repository.mirroring_enabled).to eq(true)
           end
+        end
+      end
+    end
+  end
+
+  describe '#show' do
+    let(:product) { create :product, :with_disabled_not_mirrored_repositories }
+    let(:repos) { product.repositories }
+    let(:target) { product.id.to_s }
+    let(:argv) { ['show', target] }
+    let(:expected_output) do
+      output = "Product: #{product.friendly_name} (id: #{target})\n"
+      output += "Description: #{product.description}\n"
+      output += "Repositories:\n"
+      repos.each do |repo|
+        mandatory = repo.enabled ? 'mandatory' : 'non-mandatory'
+        enabled = repo.mirroring_enabled ? 'enabled' : 'not enabled'
+        mirrored = repo.last_mirrored_at.present? ? "mirrored at #{repo.last_mirrored_at.strftime('%Y-%m-%d %H:%M:%S %Z')}" : 'not mirrored'
+        output += "* #{repo.name} (id: #{repo.friendly_id}) (#{mandatory}, #{enabled}, #{mirrored})\n"
+      end
+      output
+    end
+
+    describe 'success' do
+      context 'with disabled and not mirrored repos' do
+        it 'shows details of a product and its repos' do
+          expect { described_class.start(argv) }
+            .to output(expected_output).to_stdout
+            .and output('').to_stderr
+        end
+      end
+
+      context 'with disabled and mirrored repos' do
+        let(:product) { create :product, :with_disabled_mirrored_repositories }
+
+        it 'shows details of a product and its repos' do
+          expect { described_class.start(argv) }
+            .to output(expected_output).to_stdout
+            .and output('').to_stderr
+        end
+      end
+
+      context 'with enabled and not mirrored repos' do
+        let(:product) { create :product, :with_not_mirrored_repositories }
+
+        it 'shows details of a product and its repos' do
+          expect { described_class.start(argv) }
+            .to output(expected_output).to_stdout
+            .and output('').to_stderr
+        end
+      end
+
+      context 'with enabled and mirrored repositories' do
+        let(:product) { create :product, :with_mirrored_repositories }
+
+        it 'shows details of a product and its repos' do
+          expect { described_class.start(argv) }
+            .to output(expected_output).to_stdout
+            .and output('').to_stderr
+        end
+      end
+
+      context 'without the repos' do
+        let(:product) { create :product }
+        let(:expected_output) do
+          output = "Product: #{product.friendly_name} (id: #{target})\n"
+          output += "Description: #{product.description}\n"
+          output += "Repositories are not available for this product.\n"
+          output
+        end
+
+        it 'shows details of a product and its repos' do
+          expect { described_class.start(argv) }
+            .to output(expected_output).to_stdout
+            .and output('').to_stderr
+        end
+      end
+    end
+
+    describe 'failure' do
+      context 'with wrong ID string' do
+        let(:target) { '1234' }
+        let(:expected_output) { "Product by ID #{target} not found.\n" }
+
+        it 'raises a ProductNotFoundException' do
+          expect { described_class.start(argv) }
+            .to output(expected_output).to_stdout
+        end
+      end
+
+      context 'with wrong product string' do
+        let(:target) { product.product_string + 'foo' }
+        let(:expected_output) { "No product found for target #{target}.\n" }
+
+        it 'raises an ProductNotFoundException' do
+          expect { described_class.start(argv) }
+            .to output(expected_output).to_stdout
         end
       end
     end

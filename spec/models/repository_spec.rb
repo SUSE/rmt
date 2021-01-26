@@ -17,12 +17,22 @@ RSpec.describe Repository, type: :model do
   it { is_expected.to have_db_column(:external_url).of_type(:string).with_options(null: false) }
 
   describe 'scopes' do
-    describe '.only_mirrored' do
-      subject { described_class.only_mirrored }
+    describe '.only_mirroring_enabled' do
+      subject { described_class.only_mirroring_enabled }
 
       let!(:mirrored) { create :repository, mirroring_enabled: true }
 
       before { create :repository, mirroring_enabled: false }
+
+      it { is_expected.to contain_exactly(mirrored) }
+    end
+
+    describe '.only_fully_mirrored' do
+      subject { described_class.only_fully_mirrored }
+
+      let!(:mirrored) { create :repository, mirroring_enabled: true, last_mirrored_at: Time.zone.now }
+
+      before { create :repository, mirroring_enabled: true }
 
       it { is_expected.to contain_exactly(mirrored) }
     end
@@ -105,6 +115,114 @@ RSpec.describe Repository, type: :model do
       let(:url) { 'http://localhost.com/foo/bar' }
 
       it { is_expected.to eq '/foo/bar' }
+    end
+  end
+
+  describe '#make_friendly_id' do
+    subject(:friendly_id) { described_class.make_friendly_id(input) }
+
+    let(:input) { 'my repo' }
+
+    it 'creates a friendly_id' do
+      expect(friendly_id).to eq('my-repo')
+    end
+
+    it 'will take the requested friendly_id if it can' do
+      create(:repository, friendly_id: 'my-repo-1')
+      expect(friendly_id).to eq('my-repo')
+    end
+
+    it 'will append to the requested friendly_id if taken' do
+      create(:repository, friendly_id: 'my-repo')
+      expect(friendly_id).to eq('my-repo-1')
+    end
+
+    it 'will append to the requested friendly_id if taken with complexity' do
+      create(:repository, friendly_id: 'my-repo')
+      create(:repository, friendly_id: 'my-repo-1')
+      create(:repository, friendly_id: 'my-repo-1-1')
+      create(:repository, friendly_id: 'my-repo-3')
+      create(:repository, friendly_id: 'my-repo-99999')
+      expect(friendly_id).to eq('my-repo-100000')
+    end
+
+    it 'appends with unicode within the chain' do
+      create(:repository, friendly_id: 'my-repo')
+      create(:repository, friendly_id: 'my-repö-1')
+      expect(friendly_id).to eq('my-repo-2')
+    end
+
+    it 'does not consider negative numbers in appends' do
+      create(:repository, friendly_id: 'my-repo')
+      create(:repository, friendly_id: 'my-repo--1')
+      expect(friendly_id).to eq('my-repo-1')
+    end
+
+    context 'id is unicode' do
+      let(:input) { 'dümmy-repö' }
+
+      it 'takes input' do
+        expect(friendly_id).to eq('dümmy-repö')
+      end
+
+      it 'appends with unicode within the chain' do
+        create(:repository, friendly_id: 'dummy-repo')
+        create(:repository, friendly_id: 'dümmy-repö-1')
+        expect(friendly_id).to eq('dümmy-repö-2')
+      end
+
+      it 'correctly appends' do
+        create(:repository, friendly_id: 'dummy-repo')
+        create(:repository, friendly_id: 'dummy-repo-1')
+        expect(friendly_id).to eq('dümmy-repö-2')
+      end
+    end
+
+    context 'capital letters' do
+      let(:input) { 'DUMMY-rEPO' }
+
+      it 'takes input' do
+        expect(friendly_id).to eq('dummy-repo')
+      end
+
+      it 'correctly appends' do
+        create(:repository, friendly_id: 'dummy-repo')
+        expect(friendly_id).to eq('dummy-repo-1')
+      end
+    end
+
+    context 'id is not in english' do
+      let(:input) { 'モルモット' }
+
+      it 'allows characters from other languages' do
+        expect(friendly_id).to eq('モルモット')
+      end
+
+      it 'will append to non-english friendly_ids' do
+        create(:repository, friendly_id: 'モルモット')
+        expect(friendly_id).to eq('モルモット-1')
+      end
+    end
+
+    context 'numeric friendly_ids' do
+      let(:input) { '9999' }
+
+      it 'accepts a numeric id' do
+        expect(friendly_id).to eq('9999')
+      end
+
+      it 'does not append to a numeirc id' do
+        create(:repository, friendly_id: '9999')
+        expect(friendly_id).to eq('9999')
+      end
+
+      it 'does not append to a numeric id with complexity' do
+        create(:repository, friendly_id: '9999')
+        create(:repository, friendly_id: '9999-1')
+        create(:repository, friendly_id: '9999-1-1')
+        create(:repository, friendly_id: '9999-9999')
+        expect(friendly_id).to eq('9999')
+      end
     end
   end
 
