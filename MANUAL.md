@@ -41,12 +41,18 @@ You can install and run this wizard like this:
 
     `rmt-cli systems remove SCC_e740f34145b84523a184ace764d0d597`
 
-  * `rmt-cli products list [--all] [--csv]`:
+  * `rmt-cli products list [--all] [--csv] [--name name] [--version version] [--arch arch]`:
     Lists the products that are enabled for mirroring.
 
     Use the `--all` flag to list all available products.
 
     Use the `--csv` flag to output the list in CSV format.
+
+    Use the `--name name` flag to list all products whose name match `name`.
+
+    Use the `--version ver` flag to list all products whose version match `version`.
+
+    Use the `--arch arch` flag to list all products whose architecture  match `arch`.
 
   * `rmt-cli products enable <id | string>...`:
     Enable mirroring of product repositories by a list of product IDs or product strings.
@@ -73,12 +79,12 @@ You can install and run this wizard like this:
     `rmt-cli products disable 1575`
 
     `rmt-cli products disable SLES/15/x86_64 1743`
-  
+
   * `rmt-cli products show <id | string>`:
   	Displays product with all its repositories and their attributes.
-  	
+
   	Examples:
-  	
+
   	`rmt-cli products show SLES/15/x86_64`
 
   * `rmt-cli repos clean`:
@@ -128,7 +134,7 @@ After successful registration the repositories from RMT will be used by `zypper`
     Adds a new custom repository, for example:
 
     `rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers`
-    
+
     `rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers --id containers_sle_12_sp3`
 
   * `rmt-cli repos custom enable <id>`:

@@ -56,7 +56,7 @@ _rmt-cli_products()
 
 	current_word=${COMP_WORDS[COMP_CWORD]}
 	options="list enable disable help"
-	flags="--all --csv --release-stage="
+	flags="--all --csv --release-stage= --name= --version= --arch="
 
 	if _rmt-cli-default-completion "${options[@]}" $1 ; then
 		:

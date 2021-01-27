@@ -63,6 +63,27 @@ class Product < ApplicationRecord
     end
   }
 
+  scope :with_name_filter, lambda { |name|
+    return if name.blank?
+
+    where(
+      [
+        '(products.name LIKE :name OR products.identifier = :ident)', {
+          name: "%#{name}%",
+          ident: name
+        }
+      ]
+    )
+  }
+
+  scope :with_version_filter, lambda { |version|
+    where(version: version.gsub(/\s*SP\s*/i, '.')) if version.present?
+  }
+
+  scope :with_arch_filter, lambda { |arch|
+    where(arch: arch) if arch.present?
+  }
+
   def has_extension?
     ProductsExtensionsAssociation.exists?(product_id: id)
   end
