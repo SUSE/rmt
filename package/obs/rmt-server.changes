@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Feb 12 15:13:14 UTC 2021 - Natnael Getahun <natnael.getahun@suse.com>
+
+- Version 2.6.6
+- Add filter options for product listing and bash completion for new flags
+
+-------------------------------------------------------------------
 Wed Oct  7 17:11:15 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
 
 - Version 2.6.5
