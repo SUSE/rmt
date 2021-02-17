@@ -213,6 +213,9 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 
 %fdupes %{buildroot}/%{lib_dir}
 
+chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/mysql2/mysql2.so || true
+chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/mysql2-*/lib/mysql2/mysql
+
 %files
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}
 %exclude %{app_dir}/engines/
