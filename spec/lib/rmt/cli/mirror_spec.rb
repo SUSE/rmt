@@ -89,6 +89,38 @@ RSpec.describe RMT::CLI::Mirror do
       end
     end
 
+    context 'with repositories in alpha or beta stage' do
+      before do
+        allow_any_instance_of(RMT::Mirror)
+          .to receive(:mirror)
+          .and_raise(RMT::Mirror::Exception, mirroring_error)
+      end
+
+      let(:product) { create :beta, :with_mirrored_repositories }
+      let(:repos) { product.repositories }
+      let(:repos_id) { repos.each { |repo| repo.id } }
+
+      let(:mirroring_error) { 'mirroring failed' }
+      let(:error_log) { /.*#{error_log_begin}\n#{error_messages}#{error_log_end}/ }
+      let(:error_messages) {
+        full_message = Regexp.new ''
+        repos.each do |repo|
+          repo_error = /.*\e\[31mRepository '#{repo.name}' \(#{repo.id}\): #{mirroring_error}\.\e\[0m\n.*/
+          full_message = Regexp.new(full_message.source + repo_error.source)
+        end
+        full_message
+      }
+
+      context 'using --do-not-raise-unpublished flag' do
+        let(:argv) { ['all', '--do-not-raise-unpublished'] }
+
+        it 'log the warning and does not raise an error' do
+          allow_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
+          expect { command }.to output(error_log).to_stdout
+        end
+      end
+    end
+
     context 'with repositories changing during mirroring' do
       let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
       let!(:additional_repository) { create :repository, :with_products, mirroring_enabled: false }
