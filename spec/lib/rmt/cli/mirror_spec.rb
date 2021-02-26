@@ -98,18 +98,18 @@ RSpec.describe RMT::CLI::Mirror do
 
       let(:product) { create :beta, :with_mirrored_repositories }
       let(:repos) { product.repositories }
-      let(:repos_id) { repos.each { |repo| repo.id } }
+      let(:repos_id) { repos.each(&:id) }
 
       let(:mirroring_error) { 'mirroring failed' }
       let(:error_log) { /.*#{error_log_begin}\n#{error_messages}#{error_log_end}/ }
-      let(:error_messages) {
+      let(:error_messages) do
         full_message = Regexp.new ''
         repos.each do |repo|
           repo_error = /.*\e\[31mRepository '#{repo.name}' \(#{repo.id}\): #{mirroring_error}\.\e\[0m\n.*/
           full_message = Regexp.new(full_message.source + repo_error.source)
         end
         full_message
-      }
+      end
 
       context 'using --do-not-raise-unpublished flag' do
         let(:argv) { ['all', '--do-not-raise-unpublished'] }

@@ -38,7 +38,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
       repos = ids.map do |id|
         repo = Repository.find_by(friendly_id: id)
-        errored_repos_id << id if options[:do_not_raise_unpublished] and repo.nil?
+        errored_repos_id << id if options[:do_not_raise_unpublished] && repo.nil?
         errors << _('Repository with ID %{repo_id} not found') % { repo_id: id } if repo.nil?
         repo
       end
@@ -100,28 +100,31 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
   def in_alpha_or_beta?
     products = []
-    products = Product.joins(:repositories).where(
-      'repositories.id' => errored_repos_id
-    ) unless errored_repos_id.empty?
-    products = Product.where(id: errored_products_id) unless errored_products_id.empty?
-
+    unless errored_products_id.empty?
+      products = Product.joins(:repositories).where(
+        'repositories.id' => errored_repos_id
+      )
+    end
+    unless errored_products_id.empty?
+      products = Product.where(id: errored_products_id)
+    end
     return false if products.empty?
 
     ignore_stages = ['alpha', 'beta']
     products.each do |product|
-      unless product.base?
+      if product.base?
+        return false unless ignore_stages.include? product.release_stage
+      else
         root_products = Product.where(id: product.root_products.ids)
         root_products.each do |root_product|
           if root_product.base?
             return false unless ignore_stages.include? root_product.release_stage
           end
         end
-      else
-        return false unless ignore_stages.include? product.release_stage
       end
     end
     # if not empty means there is missing info because of alpha/beta
-    return true
+    true
   end
 
   def mirror_repos!(repos)
@@ -153,7 +156,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       logger.warn("\e[31m" + _('The following errors occurred while mirroring:') + "\e[0m")
       errors.each { |e| logger.warn("\e[31m" + (e.end_with?('.') ? e : e + '.') + "\e[0m") }
       logger.warn("\e[33m" + _('Mirroring completed with errors.') + "\e[0m")
-      raise RMT::CLI::Error.new('The command exited with errors.')  unless options[:do_not_raise_unpublished] && in_alpha_or_beta?
+      raise RMT::CLI::Error.new('The command exited with errors.') unless options[:do_not_raise_unpublished] && in_alpha_or_beta?
     end
   end
 end
