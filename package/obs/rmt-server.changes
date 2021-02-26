@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Fri Feb 26 18:56:56 UTC 2021 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Version 2.6.7
+- Do not raise an exception when mirroring 
+  if info missing is in alpha or beta stage
+
+  This references bsc#1180018 
+
+-------------------------------------------------------------------
 Mon Feb 15 12:22:08 UTC 2021 - Natnael Getahun <natnael.getahun@suse.com>
 
 - Version 2.6.6
