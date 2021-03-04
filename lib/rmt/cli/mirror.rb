@@ -100,7 +100,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
   def in_alpha_or_beta?
     products = []
-    unless errored_products_id.empty?
+    unless errored_repos_id.empty?
       products = Product.joins(:repositories).where(
         'repositories.id' => errored_repos_id
       )
