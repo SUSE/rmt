@@ -1,0 +1,18 @@
+[Unit]
+Description=RMT API server
+Requires=mysql.service
+Requires=rmt-server-migration.service
+Wants=nginx.service
+After=rmt-server-migration.service
+
+[Service]
+Type=simple
+User=_rmt
+PrivateTmp=yes
+Environment="LOG_TO_JOURNALD=1" "LANG=en"
+WorkingDirectory=/usr/share/rmt
+ExecStart=/usr/share/rmt/bin/rails server -e production -b 127.0.0.1
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

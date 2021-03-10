@@ -8,7 +8,7 @@
 # Modified:    2018 April 18
 #############################################################
 
-SVER=0.0.1
+SVER=0.0.2
 RCFILE="/usr/lib/supportconfig/resources/scplugin.rc"
 
 [ -s $RCFILE ] && . $RCFILE || { echo "ERROR: Initializing resource file: $RCFILE"; exit 1; }
@@ -81,7 +81,7 @@ done
 
 plugin_tag "Custom Repos"
 plugin_command "rmt-cli repos custom list"
-custom_repos=$(rmt-cli repos custom list --csv 2>/dev/null | cut -d ',' -f 1)
+custom_repos=$(rmt-cli repos custom list --csv 2>/dev/null | sed 1d | cut -d ',' -f 1)
 if [ -n "$custom_repos" ]; then
   for custom in $custom_repos; do
     echo "Products bound to custom repo id: $custom"

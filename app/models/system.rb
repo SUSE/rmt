@@ -8,6 +8,8 @@ class System < ApplicationRecord
   has_many :products, -> { distinct }, through: :services
   has_one :hw_info, dependent: :destroy
 
+  validates :login, uniqueness: { case_sensitive: false }
+
   def init
     self.login ||= System.generate_secure_login
     self.password ||= System.generate_secure_password
@@ -34,4 +36,14 @@ class System < ApplicationRecord
     SecureRandom.uuid.delete('-')
   end
 
+  before_update do |system|
+    # reset SCC sync timestamp so that the system can be re-synced on change
+    system.scc_registered_at = nil
+  end
+
+  after_destroy do |system|
+    if system.scc_system_id
+      DeregisteredSystem.find_or_create_by(scc_system_id: system.scc_system_id)
+    end
+  end
 end

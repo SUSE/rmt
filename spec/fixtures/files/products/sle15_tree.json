@@ -22,7 +22,15 @@
     ],
     "shortname": null,
     "recommended": false,
-    "repositories": [],
+    "repositories": [{
+      "id": 20000,
+      "url": "https://example.com/sle-15-x86_64/",
+      "name": "Installer Updates",
+      "description": "Installer Updates",
+      "enabled": false,
+      "autorefresh": false,
+      "installer_updates": true
+    }],
     "extensions": [
       {
         "id": 10001,

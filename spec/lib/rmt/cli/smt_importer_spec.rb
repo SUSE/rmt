@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'rmt/cli/smt_importer'
 
-describe SMTImporter do
+describe RMT::CLI::SMTImporter do
   let(:data_dir) { File.join(Dir.pwd, 'spec/fixtures/files/csv') }
   let(:no_systems) { false }
   let(:importer) { described_class.new(data_dir, no_systems) }
@@ -34,12 +34,12 @@ describe SMTImporter do
     let(:repo_2) { create :repository }
 
     context 'when repository exists' do
-      let(:enabled_repos) { [repo_1.scc_id, repo_2.scc_id] }
+      let(:enabled_repos) { [repo_1.friendly_id, repo_2.friendly_id] }
 
       it 'enables mirroring for given repositories' do
         expect { importer.import_repositories }.to output(<<-OUTPUT.strip_heredoc).to_stdout
-          Enabled mirroring for repository #{repo_1.scc_id}
-          Enabled mirroring for repository #{repo_2.scc_id}
+          Enabled mirroring for repository #{repo_1.friendly_id}
+          Enabled mirroring for repository #{repo_2.friendly_id}
         OUTPUT
 
         expect(repo_1.reload.mirroring_enabled).to be(true)
@@ -64,8 +64,8 @@ describe SMTImporter do
 
     context 'already created repository' do
       let(:repo) { create :repository, :custom, external_url: 'https://something.org/repos/sles15/' }
-      let(:product_1) { create :product }
-      let(:product_2) { create :product }
+      let(:product_1) { create :product, :with_service }
+      let(:product_2) { create :product, :with_service }
 
       let(:enabled_custom_repos) do
         [
@@ -85,7 +85,7 @@ describe SMTImporter do
     end
 
     context 'repository not created yet' do
-      let(:product) { create :product }
+      let(:product) { create :product, :with_service }
       let(:repo_name) { 'SAMPLE_REPO' }
       let(:repo_url) { 'https://SAMPLE_REPO_URL/repo/' }
       let(:local_path) { '/srv/repos/repo/' }
@@ -148,11 +148,9 @@ describe SMTImporter do
     let(:systems) { [system_1, system_2, system_2, system_3] }
 
     it 'creates new systems for the given credentials' do
-      expect { importer.import_systems }.to output(<<-OUTPUT.strip_heredoc).to_stdout
-        Imported system #{system_1[0]}
-        Imported system #{system_2[0]}
-        Imported system #{system_3[0]}
-      OUTPUT
+      expect { importer.import_systems }.to output("Imported 3 systems\n").to_stdout.and(
+        output("Duplicate entry for system system_2_login, skipping\n").to_stderr
+      )
       expect(System.find_by(login: system_1[0], password: system_1[1])).not_to be_nil
       expect(System.find_by(login: system_3[0], password: system_3[1])).not_to be_nil
       expect(System.find_by(login: system_1[0], password: system_1[1]).registered_at.to_i).to eq(system_1[3].to_i)
@@ -164,7 +162,7 @@ describe SMTImporter do
       allow(importer).to receive(:read_csv).with('activations').and_return activations
     end
 
-    let(:product) { create :product }
+    let(:product) { create :product, :with_service }
 
     context 'with systems' do
       let(:system_1) { create :system }
@@ -180,11 +178,10 @@ describe SMTImporter do
       end
 
       it 'creates the activations for the systems' do
-        expect { importer.import_activations }.to output(<<-OUTPUT.strip_heredoc).to_stdout
-          Imported activation of #{product.id} for #{system_1.login}
-          Imported activation of #{product.id} for #{system_2.login}
-          Imported activation of #{product.id} for #{system_3.login}
-        OUTPUT
+        expect do
+          importer.load_systems
+          importer.import_activations
+        end.to output("Imported 3 activations\n").to_stdout
         expect(Activation.find_by(system: system_1, service: product.service)).not_to be_nil
         expect(Activation.find_by(system: system_2, service: product.service)).not_to be_nil
         expect(Activation.find_by(system: system_3, service: product.service)).not_to be_nil
@@ -208,7 +205,10 @@ describe SMTImporter do
 
       it 'does not create an activation' do
         expect(Activation).not_to receive(:create)
-        expect { importer.import_activations }.to output(<<-OUTPUT.strip_heredoc).to_stderr
+        expect do
+          importer.load_systems
+          importer.import_activations
+        end.to output(<<-OUTPUT.strip_heredoc).to_stderr
           Product 0 not found
         OUTPUT
       end
@@ -235,7 +235,7 @@ describe SMTImporter do
     end
   end
   describe '#run' do
-    context 'without --no-system flag' do
+    context 'without --no-system and --no-hwinfo flags' do
       it 'runs all steps including importing the systems' do
         expect(importer).to receive(:check_products_exist)
         expect(importer).to receive(:import_repositories)
@@ -257,6 +257,17 @@ describe SMTImporter do
         importer.run ['--no-systems', '-d', 'foo']
       end
     end
+    context 'with --no-hwinfo flag' do
+      it 'imports repositories and systems without hwinfo' do
+        expect(importer).to receive(:check_products_exist)
+        expect(importer).to receive(:import_repositories)
+        expect(importer).to receive(:import_custom_repositories)
+        expect(importer).to receive(:import_systems)
+        expect(importer).to receive(:import_activations)
+        expect(importer).not_to receive(:import_hardware_info)
+        importer.run ['--no-hwinfo', '-d', 'foo']
+      end
+    end
   end
 
   describe '#parse_cli_arguments' do
@@ -270,11 +281,12 @@ describe SMTImporter do
 
     it 'shows the help output when invalid arguments supplied' do
       expect do
-        expect { importer.parse_cli_arguments ['--nope-nope'] }.to raise_exception SMTImporter::ImportException
+        expect { importer.parse_cli_arguments ['--nope-nope'] }.to raise_exception RMT::CLI::SMTImporter::ImportException
       end.to output(<<-OUTPUT.strip_heredoc).to_stdout
         Usage: rspec [options]
             -d, --data PATH                  Path to unpacked SMT data tarball
                 --no-systems                 Do not import the systems that were registered to the SMT
+                --no-hwinfo                  Do not import system hardware info from MachineData table
       OUTPUT
     end
   end
@@ -282,7 +294,7 @@ describe SMTImporter do
   describe '#check_products_exist' do
     it 'warns and exits if no product exists' do
       expect do
-        expect { importer.check_products_exist }.to raise_exception SMTImporter::ImportException
+        expect { importer.check_products_exist }.to raise_exception RMT::CLI::SMTImporter::ImportException
       end.to output(<<-OUTPUT.strip_heredoc).to_stderr
         RMT has not been synced to SCC yet. Please run 'rmt-cli sync' before
         importing data from SMT.
@@ -290,7 +302,7 @@ describe SMTImporter do
     end
 
     it 'checks if at least one product exists' do
-      create :product
+      create :product, :with_service
       expect { importer.check_products_exist }.not_to raise_error
     end
   end

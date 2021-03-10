@@ -16,6 +16,8 @@ describe RMT::SCC do
     end
   end
   let(:api_double) { instance_double 'SUSE::Connect::Api' }
+  let(:logger) { instance_double('RMT::Logger').as_null_object }
+
 
   shared_examples 'saves in database' do
     it 'saves products to the DB' do
@@ -50,10 +52,11 @@ describe RMT::SCC do
       all_repositories.map.each do |repository|
         db_repository = Repository.find_by(scc_id: repository[:id])
 
-        (db_repository.attributes.keys - %w[id scc_id external_url mirroring_enabled local_path auth_token]).each do |key|
+        (db_repository.attributes.keys - %w[id scc_id external_url mirroring_enabled local_path auth_token friendly_id]).each do |key|
           expect(db_repository[key].to_s).to eq(repository[key.to_sym].to_s)
         end
         expect(db_repository[:scc_id]).to eq(repository[:id])
+        expect(db_repository[:friendly_id].to_s).to eq(repository[:id].to_s)
 
         uri = URI(repository[:url])
         auth_token = uri.query
@@ -76,6 +79,11 @@ describe RMT::SCC do
         expect(Subscription.statuses[db_subscription.status]).to eq(subscription[:status])
       end
     end
+
+    it 'enables installer-updates repos by default in the DB' do
+      db_repository = Repository.find_by(installer_updates: true)
+      expect(db_repository.enabled).to be(true)
+    end
   end
 
   before do
@@ -90,8 +98,7 @@ describe RMT::SCC do
     allow(STDOUT).to receive(:puts)
     allow(STDOUT).to receive(:write)
     # disable Logger output while running tests
-    logger = instance_double('Logger').as_null_object
-    allow(Logger).to receive(:new).and_return(logger)
+    allow(RMT::Logger).to receive(:new).and_return(logger)
   end
 
   describe '#sync' do
@@ -212,9 +219,9 @@ describe RMT::SCC do
 
   describe '#remove_suse_repos_without_tokens' do
     let(:api_double) { double }
-    let!(:suse_repo_with_token) { FactoryGirl.create(:repository, :with_products, auth_token: 'auth_token') }
+    let!(:suse_repo_with_token) { FactoryBot.create(:repository, :with_products, auth_token: 'auth_token') }
     let!(:suse_repo_without_token) do
-      FactoryGirl.create(
+      FactoryBot.create(
         :repository,
         :with_products,
         auth_token: nil,
@@ -222,7 +229,7 @@ describe RMT::SCC do
       )
     end
     let!(:other_repo_without_token) do
-      FactoryGirl.create(
+      FactoryBot.create(
         :repository,
         :with_products,
         auth_token: nil,
@@ -321,6 +328,85 @@ describe RMT::SCC do
       end
 
       include_examples 'saves in database'
+    end
+  end
+
+  describe '#sync_systems' do
+    context 'when system syncing is disabled' do
+      before do
+        allow(Settings).to receive(:scc).and_return OpenStruct.new(
+          username: 'foo',
+          password: 'bar',
+          sync_systems: false
+        )
+      end
+
+      it "doesn't sync systems" do
+        expect(api_double).not_to receive(:forward_system_activations)
+        described_class.new.sync_systems
+      end
+
+      it 'produces a warning' do
+        expect(logger).to receive(:warn).with(/Syncing systems to SCC is disabled by the configuration file, exiting/)
+        described_class.new.sync_systems
+      end
+    end
+
+    context 'when system syncing is enabled' do
+      before do
+        allow(Settings).to receive(:scc).and_return OpenStruct.new(
+          username: 'foo',
+          password: 'bar',
+          sync_systems: true
+        )
+      end
+
+      context 'when syncing succeeds' do
+        before do
+          expect(api_double).to receive(:forward_system_activations).with(system).and_return(
+            {
+              id: scc_system_id,
+              login: 'test',
+              password: 'test'
+            }
+          )
+          expect(api_double).to receive(:forward_system_deregistration).with(deregistered_system.scc_system_id)
+
+          expect(logger).to receive(:info).with(/Syncing system/)
+          expect(logger).to receive(:info).with(/Syncing de-registered system/)
+          described_class.new.sync_systems
+        end
+
+        let(:system) { FactoryBot.create(:system) }
+        let(:scc_system_id) { 9000 }
+        let(:deregistered_system) { FactoryBot.create(:deregistered_system) }
+
+        it 'updates system.scc_registered_at field' do
+          system.reload
+          expect(system.scc_registered_at).not_to be(nil)
+        end
+
+        it 'updates system.scc_system_id field' do
+          system.reload
+          expect(system.scc_system_id).to be(scc_system_id)
+        end
+      end
+
+      context 'when syncing fails' do
+        before do
+          expect(api_double).to receive(:forward_system_activations).with(system).and_raise(SUSE::Connect::Api::RequestError, 'Sync error')
+          expect(logger).to receive(:info).with(/Syncing system/)
+          expect(logger).to receive(:error).with(/Failed to sync system/)
+          described_class.new.sync_systems
+        end
+
+        let(:system) { FactoryBot.create(:system) }
+
+        it "doesn't update system.scc_registered_at" do
+          system.reload
+          expect(system.scc_registered_at).to be(nil)
+        end
+      end
     end
   end
 

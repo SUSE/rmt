@@ -11,7 +11,9 @@ RSpec.describe RMT::HttpRequest do
         proxy: 'http://localhost:3128',
         proxy_auth: :ntlm,
         proxy_user: 'login',
-        proxy_password: 'password'
+        proxy_password: 'password',
+        low_speed_limit: 1337,
+        low_speed_time: 42
       }
       options.each { |key, value| Settings.http_client.send("#{key}=", value) }
       options
@@ -27,13 +29,14 @@ RSpec.describe RMT::HttpRequest do
       expect(request.options[:headers]['User-Agent']).to eq("RMT/#{RMT::VERSION}")
     end
 
-    its([:low_speed_limit]) { is_expected.to eq(512) }
-    its([:low_speed_time]) { is_expected.to eq(120) }
+    its([:low_speed_limit]) { is_expected.to eq(1337) }
+    its([:low_speed_time]) { is_expected.to eq(42) }
   end
 
   describe 'when request is too slow' do
     let(:port) { 55555 }
     let(:server_thread) do
+      # rubocop:disable ThreadSafety/NewThread
       Thread.new do
         dev_null = WEBrick::Log.new('/dev/null', 7)
 
@@ -48,6 +51,7 @@ RSpec.describe RMT::HttpRequest do
           Port: port
         )
       end
+      # rubocop:enable ThreadSafety/NewThread
     end
     let(:request) do
       request = described_class.new("http://localhost:#{port}/")

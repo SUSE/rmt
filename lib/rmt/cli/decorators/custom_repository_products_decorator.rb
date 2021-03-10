@@ -13,7 +13,12 @@ class RMT::CLI::Decorators::CustomRepositoryProductsDecorator < RMT::CLI::Decora
         product.arch
       ]
     end
-    array_to_csv(data)
+    array_to_csv(data, [
+      _('ID'),
+      _('Name'),
+      _('Version'),
+      _('Architecture')
+    ])
   end
 
   def to_table

@@ -21,60 +21,6 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
       end
     end
 
-    describe 'mirror' do
-      let(:argv) { ['mirror'] }
-
-      include_examples 'handles lockfile exception'
-
-      context 'suma product tree mirror with exception' do
-        before do
-          create :repository, :with_products, mirroring_enabled: true
-        end
-
-        it 'outputs exception message' do
-          expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree).and_raise(RMT::Mirror::Exception, 'black mirror')
-          expect_any_instance_of(RMT::Mirror).to receive(:mirror)
-          expect_any_instance_of(RMT::Logger).to receive(:warn).with('black mirror')
-          command
-        end
-      end
-
-      context 'without repositories marked for mirroring' do
-        before do
-          create :repository, :with_products, mirroring_enabled: false
-        end
-
-        it 'outputs a warning' do
-          expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
-          expect_any_instance_of(RMT::Mirror).not_to receive(:mirror)
-          expect { command }.to raise_error(SystemExit).and output("There are no repositories marked for mirroring.\n").to_stderr.and output('').to_stdout
-        end
-      end
-
-      context 'with repositories marked for mirroring' do
-        let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
-
-        it 'updates repository mirroring timestamp' do
-          expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
-          expect_any_instance_of(RMT::Mirror).to receive(:mirror)
-
-          Timecop.freeze(Time.utc(2018)) do
-            expect { command }.to change { repository.reload.last_mirrored_at }.to(DateTime.now.utc)
-          end
-        end
-
-        context 'with exceptions during mirroring' do
-          before { allow_any_instance_of(RMT::Mirror).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror') }
-
-          it 'outputs exception message' do
-            expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
-            expect_any_instance_of(RMT::Logger).to receive(:warn).with('black mirror')
-            command
-          end
-        end
-      end
-    end
-
     describe 'help' do
       let(:argv) { ['help'] }
 
@@ -157,7 +103,7 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
 
           it 'outputs custom error message' do
             expect { command }.to output(
-              "The RMT database has not yet been initialized. Run 'systemctl start rmt-migration' to setup the database.\n"
+              "The RMT database has not yet been initialized. Run 'systemctl start rmt-server-migration.service' to setup the database.\n"
             ).to_stderr
           end
         end
@@ -167,7 +113,7 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
 
           it 'outputs custom error message' do
             expect { command }.to output(
-              "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization\n"
+              "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com\n"
             ).to_stderr
           end
         end
@@ -177,7 +123,33 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
 
           it 'outputs custom error message' do
             expect { command }.to output(
-              "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization\n"
+              "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com\n"
+            ).to_stderr
+          end
+        end
+
+        describe 'SUSE::Connect::Api::RequestError with request error' do
+          let(:exception_class) do
+            SUSE::Connect::Api::RequestError.new(
+              instance_double(
+                Typhoeus::Response,
+                request: instance_double(
+                  Typhoeus::Request,
+                  url: 'http://example.com/api'
+                ),
+                body: 'A terrible error has occurred!',
+                code: 503
+              )
+            )
+          end
+
+          it 'outputs custom error message' do
+            expect { command }.to output(
+              "SCC API request failed. Error details:\n" \
+              "Request URL: http://example.com/api\n" \
+              "Response code: 503\n" \
+              "Response body:\n" \
+              "A terrible error has occurred!\n"
             ).to_stderr
           end
         end
@@ -196,6 +168,17 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
         it 'raises an exception' do
           expect { command }.to raise_exception(Mysql2::Error)
         end
+      end
+    end
+
+    describe 'Thor default behaviour when errors' do
+      let(:argv) { ['asdasdas'] }
+      let(:error_message) { "Could not find command \"asdasdas\".\n" }
+
+      it 'exits with status 1' do
+        expect { command }
+          .to raise_error(SystemExit) { |e| expect(e.status).to eq 1 }
+          .and output(error_message).to_stderr
       end
     end
   end

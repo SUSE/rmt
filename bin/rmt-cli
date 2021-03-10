@@ -2,7 +2,7 @@
 
 rmt_path = File.expand_path('..', __dir__)
 require_relative '../config/boot'
-require_relative '../config/boot_cli_i18n'
+
 $LOAD_PATH.unshift File.join(rmt_path, 'lib')
 
 require 'etc'
@@ -12,13 +12,18 @@ require 'active_record'
 require 'erb'
 require 'yaml'
 require 'rmt/config'
+require_relative '../config/initializers_cli/disable_deprecation_warnings'
+require_relative '../config/initializers_cli/rmt_fast_gettext'
+require_relative '../config/initializers_cli/rmt_fast_gettext_cli_locale'
 
-relative_load_paths = %w[lib lib/rmt app/models app/services].map { |dir| File.join(rmt_path, dir) }
+relative_load_paths = %w[lib lib/rmt app/models app/services app/validators].map { |dir| File.join(rmt_path, dir) }
 ActiveSupport::Dependencies.autoload_paths += relative_load_paths
 
 if RMT::CLI::Base.process_user_name == 'root'
   # set group and then user, otherwise user cannot change group
   Process::Sys.setegid(Etc.getgrnam(RMT::DEFAULT_GROUP).gid)
+  # GPG needs ruid to be set
+  Process::Sys.setuid(Etc.getpwnam(RMT::DEFAULT_USER).uid)
   Process::Sys.seteuid(Etc.getpwnam(RMT::DEFAULT_USER).uid)
 end
 

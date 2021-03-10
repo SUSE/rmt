@@ -40,7 +40,7 @@ module RegistrationSharing
     end
 
     describe '#smt_share_registration' do
-      let(:product) { FactoryGirl.create(:product) }
+      let(:product) { FactoryBot.create(:product, :with_service) }
       let(:login) { 'SCC_00000000000000000000000000000000' }
       let(:password) { 'deadbeefdeadbeefdeadbeefdeadbeef' }
       let(:regdate) { '2018-10-10 10:00:00' }
@@ -127,7 +127,7 @@ module RegistrationSharing
     end
 
     describe '#delete_registrations' do
-      let!(:system) { FactoryGirl.create(:system) }
+      let!(:system) { FactoryBot.create(:system) }
       let(:url) { '/api/regsharing/center/regsvc?command=deltesharedregistration' }
       let(:xml) do
         "<?xml version='1.0' encoding='UTF-8'?>

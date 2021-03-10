@@ -9,7 +9,7 @@ module RegistrationSharing
 
     config.after_initialize do
       ::System.class_eval do
-        after_commit :share_registration
+        after_commit :share_registration, on: %i[create destroy]
 
         def share_registration
           return if RegistrationSharing.called_from_regsharing?(caller_locations)
@@ -18,7 +18,7 @@ module RegistrationSharing
       end
 
       ::Activation.class_eval do
-        after_commit :share_registration
+        after_commit :share_registration, on: %i[create destroy]
 
         def share_registration
           return if RegistrationSharing.called_from_regsharing?(caller_locations)

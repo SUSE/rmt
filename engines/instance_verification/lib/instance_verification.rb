@@ -2,7 +2,13 @@ $LOAD_PATH.push File.expand_path(__dir__, '..')
 
 module InstanceVerification
   class << self
-    attr_accessor :provider
+    def provider
+      Thread.current[:provider]
+    end
+
+    def provider=(provider)
+      Thread.current[:provider] = provider
+    end
   end
 
   class Exception < RuntimeError; end

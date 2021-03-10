@@ -7,13 +7,16 @@ describe 'rmt-cli' do
     `/usr/bin/rmt-cli sync > /dev/null &`
   end
   # kill running process to let further specs pass
-  after { `kill -9 $(cat /tmp/rmt.lock)` }
+  after { `pkill -9 -f rmt-cli` }
 
   describe 'lockfile' do
     command '/usr/bin/rmt-cli sync', allow_error: true
-    its(:stderr) { is_expected.to eq("Process is locked by the application with \
-pid #{`pgrep rmt-cli`.strip}. Close this application or wait for it \
-to finish before trying again\n") }
+    its(:stderr) do
+      is_expected.to eq(
+        "Another instance of this command is already running. Terminate" \
+        " the other instance or wait for it to finish.\n"
+      )
+    end
 
     its(:exitstatus) { is_expected.to eq 1 }
   end

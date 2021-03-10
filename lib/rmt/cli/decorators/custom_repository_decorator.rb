@@ -7,7 +7,7 @@ class RMT::CLI::Decorators::CustomRepositoryDecorator < RMT::CLI::Decorators::Ba
   def to_csv
     data = @repositories.map do |repo|
       [
-        repo.id,
+        repo.friendly_id,
         repo.name,
         repo.external_url,
         repo.enabled,
@@ -15,13 +15,20 @@ class RMT::CLI::Decorators::CustomRepositoryDecorator < RMT::CLI::Decorators::Ba
         repo.last_mirrored_at
       ]
     end
-    array_to_csv(data)
+    array_to_csv(data, [
+      _('ID'),
+      _('Name'),
+      _('URL'),
+      _('Mandatory?'),
+      _('Mirror?'),
+      _('Last Mirrored')
+    ])
   end
 
   def to_table
     data = @repositories.map do |repo|
       [
-        repo.id,
+        repo.friendly_id,
         repo.name,
         repo.external_url,
         repo.enabled ? _('Mandatory') : _('Not Mandatory'),

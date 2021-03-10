@@ -43,7 +43,7 @@ RSpec.describe Api::Connect::V4::Subscriptions::ProductsController, type: :reque
       let(:condition) { {} }
 
       context 'not activated' do
-        let(:subscription) { FactoryGirl.create(:subscription, status: 'NOTACTIVATED') }
+        let(:subscription) { FactoryBot.create(:subscription, status: 'NOTACTIVATED') }
         let(:error_reponse) do
           {
             type: 'error',
@@ -57,14 +57,14 @@ RSpec.describe Api::Connect::V4::Subscriptions::ProductsController, type: :reque
       end
 
       context 'expired' do
-        let(:subscription) { FactoryGirl.create(:subscription, :with_products, :expired) }
+        let(:subscription) { FactoryBot.create(:subscription, :with_products, :expired) }
 
         its(:code) { is_expected.to eq '200' }
         its(:body) { is_expected.to eq(serialized_response) }
       end
 
       context 'valid' do
-        let(:subscription) { FactoryGirl.create(:subscription, :with_products) }
+        let(:subscription) { FactoryBot.create(:subscription, :with_products) }
 
         its(:code) { is_expected.to eq '200' }
         its(:body) { is_expected.to eq(serialized_response) }
@@ -73,7 +73,7 @@ RSpec.describe Api::Connect::V4::Subscriptions::ProductsController, type: :reque
       context 'valid with query params' do
         before { get url, headers: headers, params: condition }
 
-        let(:subscription) { FactoryGirl.create(:subscription, :with_products) }
+        let(:subscription) { FactoryBot.create(:subscription, :with_products) }
         let(:product) { subscription.products.first }
         let(:condition) { { identifier: product.identifier, version: product.version, arch: product.arch } }
 

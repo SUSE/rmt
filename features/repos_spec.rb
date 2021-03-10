@@ -14,6 +14,9 @@ describe 'enable repos' do
   end
 
   it do
-    expect(`/usr/bin/rmt-cli repos list --csv | wc -l`.strip&.to_i ).to eq(5)
+    # We need to remove the Installer-Updates from our list of repos because they are added by default.
+    # We cannot just keep them and change the expectation because the number will grow with every newly released product
+    # and break this test.
+    expect(`/usr/bin/rmt-cli repos list | grep -v Installer-Updates | wc -l`.strip&.to_i).to eq(10) # 5 lines for table headers
   end
 end

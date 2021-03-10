@@ -3,7 +3,7 @@ require 'rails_helper'
 describe StrictAuthentication::AuthenticationController, type: :request do
   subject { response }
 
-  let(:system) { FactoryGirl.create(:system, :with_activated_product) }
+  let(:system) { FactoryBot.create(:system, :with_activated_product) }
 
   describe '#check' do
     context 'with valid credentials' do
@@ -15,11 +15,11 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri }) }
 
         before do
-          expect_any_instance_of(InstanceVerification::Providers::Example).not_to receive(:instance_valid?)
+          expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(false)
           get '/api/auth/check', headers: headers
         end
 
-        it { is_expected.to have_http_status(200) }
+        it { is_expected.to have_http_status(403) }
       end
 
       context 'with instance_data headers and instance data is invalid' do
@@ -31,7 +31,9 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           get '/api/auth/check', headers: headers
         end
 
-        it { is_expected.to have_http_status(403) }
+        it do
+          is_expected.to have_http_status(403)
+        end
       end
 
       context 'with instance_data headers and instance data is valid' do

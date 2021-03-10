@@ -12,14 +12,14 @@ describe ServicesController do
       repo_items.map { |r| r.attr(:url) }
     end
 
-    let(:system) { FactoryGirl.create(:system, :with_activated_product) }
+    let(:system) { FactoryBot.create(:system, :with_activated_product) }
     let(:service) { system.products.first.service }
 
     context 'without X-Instance-Data header' do
       let(:headers) { auth_header }
 
       before do
-        expect_any_instance_of(InstanceVerification::Providers::Example).not_to receive(:instance_valid?)
+        expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(false)
         get "/services/#{service.id}", headers: headers
       end
 
@@ -42,7 +42,7 @@ describe ServicesController do
         end
 
         it 'XML has all product repos' do
-          expect(xml_urls.size).to eq(system.products.first.repositories.size)
+          expect(xml_urls.size).to eq(system.products.first.repositories.size - 1)
         end
 
         it 'repo URLs have plugin:/susecloud scheme' do

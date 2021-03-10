@@ -1,12 +1,14 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :repository do
     sequence(:scc_id) { |n| n }
+    sequence(:friendly_id) { |n| "aRepO#{n}" }
     sequence(:name) { |n| "Repository #{n}" }
+    sequence(:description) { |n| "Repository #{n}" }
     sequence(:external_url) { |n| "https://updates.suse.com/suse/repository_#{n}" }
-    enabled true
-    autorefresh true
-    mirroring_enabled false
-    installer_updates false
+    enabled { true }
+    autorefresh { true }
+    mirroring_enabled { false }
+    installer_updates { false }
 
     after(:build) do |obj|
       obj.local_path = Repository.make_local_path(obj.external_url)
@@ -17,12 +19,12 @@ FactoryGirl.define do
     end
 
     trait :custom do
-      scc_id nil
+      scc_id { nil }
     end
 
     trait :with_products do
       transient do
-        products_count 1
+        products_count { 1 }
       end
 
       after :create do |repository, evaluator|

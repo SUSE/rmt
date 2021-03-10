@@ -38,6 +38,12 @@ msgstr ""
 msgid "%{path} is not writable by user %{username}."
 msgstr ""
 
+msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
+msgstr ""
+
+msgid "A repository by the ID %{id} already exists."
+msgstr ""
+
 msgid "A repository by the URL %{url} already exists."
 msgstr ""
 
@@ -53,7 +59,14 @@ msgstr ""
 msgid "All repositories have already been enabled."
 msgstr ""
 
+msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
+msgstr ""
+
+#. i18n: architecture
 msgid "Arch"
+msgstr ""
+
+msgid "Architecture"
 msgstr ""
 
 msgid "Attach an existing custom repository to a product"
@@ -74,9 +87,6 @@ msgstr ""
 msgid "Cannot deactivate the product \"%s\". Other activated products depend upon it."
 msgstr ""
 
-msgid "Cannot find custom repository by ID %{id}."
-msgstr ""
-
 msgid "Cannot find product by ID %{id}."
 msgstr ""
 
@@ -84,6 +94,12 @@ msgid "Check out %{url}"
 msgstr ""
 
 msgid "Checksum doesn't match"
+msgstr ""
+
+msgid "Clean cancelled."
+msgstr ""
+
+msgid "Clean finished. An estimated %{total_file_size} were removed."
 msgstr ""
 
 msgid "Cleaning up the database"
@@ -104,10 +120,22 @@ msgstr ""
 msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
 msgstr ""
 
-msgid "Could not mirror suma product tree with error: %{error}"
+msgid "Could not mirror SUSE Manager product tree with error: %{error}"
+msgstr ""
+
+msgid "Couldn't add custom repository."
 msgstr ""
 
 msgid "Creates a custom repository."
+msgstr ""
+
+msgid "Deleting locally mirrored files from repository '%{repo}'..."
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Description: %{description}"
 msgstr ""
 
 msgid "Detach an existing custom repository from a product"
@@ -116,7 +144,10 @@ msgstr ""
 msgid "Detached repository from product '%{product_name}'."
 msgstr ""
 
-msgid "Disable mirroring of custom repository by ID"
+msgid "Disable mirroring of custom repositories by a list of IDs"
+msgstr ""
+
+msgid "Disable mirroring of custom repository by a list of IDs"
 msgstr ""
 
 msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
@@ -131,6 +162,12 @@ msgstr ""
 msgid "Disabling %{product}:"
 msgstr ""
 
+msgid "Displays product with all its repositories and their attributes."
+msgstr ""
+
+msgid "Do not import system hardware info from MachineData table"
+msgstr ""
+
 msgid "Do not import the systems that were registered to the SMT"
 msgstr ""
 
@@ -143,10 +180,13 @@ msgstr ""
 msgid "Downloading data from SCC"
 msgstr ""
 
+msgid "Duplicate entry for system %{system}, skipping"
+msgstr ""
+
 msgid "Enable debug output"
 msgstr ""
 
-msgid "Enable mirroring of custom repository by ID"
+msgid "Enable mirroring of custom repositories by a list of IDs"
 msgstr ""
 
 msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
@@ -167,6 +207,9 @@ msgstr ""
 msgid "Enabling %{product}:"
 msgstr ""
 
+msgid "Enter a value:"
+msgstr ""
+
 msgid "Error while mirroring data: %{error}"
 msgstr ""
 
@@ -177,6 +220,12 @@ msgid "Error while mirroring metadata: %{error}"
 msgstr ""
 
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
+msgstr ""
+
+msgid "Examples"
+msgstr ""
+
+msgid "Examples:"
 msgstr ""
 
 msgid "Export commands for Offline Sync"
@@ -197,24 +246,42 @@ msgstr ""
 msgid "Exporting subscriptions"
 msgstr ""
 
+msgid "Failed to download %{failed_count} files"
+msgstr ""
+
+msgid "Failed to get repository metadata signatures with HTTP code %{http_code}"
+msgstr ""
+
+msgid "Failed to import system %{system}"
+msgstr ""
+
+msgid "Failed to sync system %{login}: %{error}"
+msgstr ""
+
+msgid "Forward registered systems data to SCC"
+msgstr ""
+
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
 msgstr[0] ""
 msgstr[1] ""
 
+msgid "GPG key import failed"
+msgstr ""
+
+msgid "GPG signature verification failed"
+msgstr ""
+
 msgid "Hardware information stored for system %{system}"
+msgstr ""
+
+msgid "Hostname"
 msgstr ""
 
 msgid "ID"
 msgstr ""
 
 msgid "Import commands for Offline Sync"
-msgstr ""
-
-msgid "Imported activation of %{product} for %{system}"
-msgstr ""
-
-msgid "Imported system %{system}"
 msgstr ""
 
 msgid "Importing SCC data from %{path}"
@@ -229,13 +296,22 @@ msgstr ""
 msgid "Last mirrored"
 msgstr ""
 
+msgid "Last seen"
+msgstr ""
+
 msgid "List all custom repositories"
 msgstr ""
 
 msgid "List all products, including ones which are not marked to be mirrored"
 msgstr ""
 
+msgid "List all registered systems"
+msgstr ""
+
 msgid "List all repositories, including ones which are not marked to be mirrored"
+msgstr ""
+
+msgid "List and manipulate registered systems"
 msgstr ""
 
 msgid "List and modify custom repositories"
@@ -250,7 +326,13 @@ msgstr ""
 msgid "List products which are marked to be mirrored."
 msgstr ""
 
+msgid "List registered systems."
+msgstr ""
+
 msgid "List repositories which are marked to be mirrored"
+msgstr ""
+
+msgid "Login"
 msgstr ""
 
 msgid "Mandatory"
@@ -260,6 +342,15 @@ msgid "Mandatory?"
 msgstr ""
 
 msgid "Mirror"
+msgstr ""
+
+msgid "Mirror all enabled repositories"
+msgstr ""
+
+msgid "Mirror enabled repositories for a product with given product IDs"
+msgstr ""
+
+msgid "Mirror enabled repositories with given repository IDs"
 msgstr ""
 
 msgid "Mirror repos at given path"
@@ -274,7 +365,19 @@ msgstr ""
 msgid "Mirror?"
 msgstr ""
 
+msgid "Mirroring SUMA product tree failed: %{error_message}"
+msgstr ""
+
 msgid "Mirroring SUSE Manager product tree to %{dir}"
+msgstr ""
+
+msgid "Mirroring complete."
+msgstr ""
+
+msgid "Mirroring completed with errors."
+msgstr ""
+
+msgid "Mirroring of repository with ID %{repo_id} is not enabled"
 msgstr ""
 
 msgid "Mirroring repository %{repo} to %{dir}"
@@ -319,6 +422,9 @@ msgstr ""
 msgid "No repositories found for product: %s"
 msgstr ""
 
+msgid "No repository IDs supplied"
+msgstr ""
+
 msgid "No repository ids supplied"
 msgstr ""
 
@@ -334,6 +440,12 @@ msgstr ""
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr ""
 
+msgid "Number of systems to display"
+msgstr ""
+
+msgid "Only '%{input}' will be accepted."
+msgstr ""
+
 msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
 msgstr ""
 
@@ -346,7 +458,7 @@ msgstr ""
 msgid "Path to unpacked SMT data tarball"
 msgstr ""
 
-msgid "Process is locked by the application with pid %{pid}. Close this application or wait for it to finish before trying again."
+msgid "Please provide a non-numeric ID for your custom repository."
 msgstr ""
 
 msgid "Product"
@@ -372,6 +484,9 @@ msgid ""
 "by running '%{command}'\n"
 msgstr ""
 
+msgid "Product %{target} has no repositories enabled"
+msgstr ""
+
 msgid "Product Architecture"
 msgstr ""
 
@@ -381,16 +496,58 @@ msgstr ""
 msgid "Product Name"
 msgstr ""
 
+msgid "Product String"
+msgstr ""
+
 msgid "Product Version"
+msgstr ""
+
+msgid "Product architecture (e.g.: x86_64, aarch64)"
 msgstr ""
 
 msgid "Product by ID %{id} not found."
 msgstr ""
 
+msgid "Product for target %{target} not found"
+msgstr ""
+
+msgid "Product name (e.g.: Basesystem, SLES)"
+msgstr ""
+
+msgid "Product version (e.g.: 15, 15.1, '12 SP4')"
+msgstr ""
+
+msgid "Product with ID %{target} not found"
+msgstr ""
+
+msgid "Product: %{name} (id: %{id})"
+msgstr ""
+
+msgid "Products"
+msgstr ""
+
+msgid "Provide a custom ID instead of allowing RMT to generate one."
+msgstr ""
+
+msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
+msgstr ""
+
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr ""
 
+msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
+msgstr ""
+
+msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
+msgstr ""
+
 msgid "Read SCC data from given path"
+msgstr ""
+
+msgid "Registration time"
+msgstr ""
+
+msgid "Release Stage"
 msgstr ""
 
 msgid "Remove a custom repository"
@@ -399,17 +556,28 @@ msgstr ""
 msgid "Removed custom repository by ID %{id}."
 msgstr ""
 
-msgid "Repository %{repos} could not be found and was not disabled."
-msgid_plural "Repositories %{repos} could not be found and were not disabled."
-msgstr[0] ""
-msgstr[1] ""
+msgid "Removes a system and its activations from RMT"
+msgstr ""
 
-msgid "Repository %{repos} could not be found and was not enabled."
-msgid_plural "Repositories %{repos} could not be found and were not enabled."
-msgstr[0] ""
-msgstr[1] ""
+msgid "Removes a system and its activations from RMT."
+msgstr ""
+
+msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
+msgstr ""
+
+msgid "Repositories are not available for this product."
+msgstr ""
+
+msgid "Repositories:"
+msgstr ""
 
 msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
+msgstr ""
+
+msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
+msgstr ""
+
+msgid "Repository by ID %{id} not found."
 msgstr ""
 
 msgid "Repository by ID %{id} successfully disabled."
@@ -418,16 +586,20 @@ msgstr ""
 msgid "Repository by ID %{id} successfully enabled."
 msgstr ""
 
+msgid "Repository by ID %{repos} could not be found and was not disabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Repository by ID %{repos} could not be found and was not enabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
+msgstr[0] ""
+msgstr[1] ""
+
 msgid "Repository metadata signatures are missing"
 msgstr ""
 
-msgid "Repository not found by ID %{id}."
-msgstr ""
-
-msgid "Repository successfully disabled."
-msgstr ""
-
-msgid "Repository successfully enabled."
+msgid "Repository with ID %{repo_id} not found"
 msgstr ""
 
 msgid "Requested service not found"
@@ -442,13 +614,27 @@ msgstr ""
 msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
 msgstr ""
 
-msgid "SCC ID"
+msgid "Run this command on an online RMT."
+msgstr ""
+
+msgid ""
+"SCC API request failed. Error details:\n"
+"Request URL: %{url}\n"
+"Response code: %{code}\n"
+"Response body:\n"
+"%{body}"
+msgstr ""
+
+msgid "SCC credentials not set."
 msgstr ""
 
 msgid "Settings saved at %{file}."
 msgstr ""
 
 msgid "Show RMT version"
+msgstr ""
+
+msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
 msgstr ""
 
 msgid "Shows products attached to a custom repository"
@@ -463,16 +649,37 @@ msgstr ""
 msgid "Successfully added custom repository."
 msgstr ""
 
+msgid "Successfully removed system with login %{login}."
+msgstr ""
+
 msgid "Sync database with SUSE Customer Center"
 msgstr ""
 
+msgid "Syncing de-registered system %{scc_system_id} to SCC"
+msgstr ""
+
+msgid "Syncing system %{login} to SCC"
+msgstr ""
+
+msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
+msgstr ""
+
 msgid "System %{system} not found"
+msgstr ""
+
+msgid "System with login %{login} cannot be removed."
+msgstr ""
+
+msgid "System with login %{login} not found."
 msgstr ""
 
 msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
 msgstr ""
 
 msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
+msgstr ""
+
+msgid "The following errors occurred while mirroring:"
 msgstr ""
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
@@ -484,7 +691,22 @@ msgstr ""
 msgid "The requested products '%s' are not activated on the system."
 msgstr ""
 
+msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
+msgstr ""
+
 msgid "There are no repositories marked for mirroring."
+msgstr ""
+
+msgid "There are no systems registered to this RMT instance."
+msgstr ""
+
+msgid "To clean up downloaded files, please run '%{command}'"
+msgstr ""
+
+msgid "To clean up downloaded files, run '%{command}'"
+msgstr ""
+
+msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr ""
 
 msgid "URL"
@@ -514,11 +736,29 @@ msgstr ""
 msgid "Version"
 msgstr ""
 
+msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
+msgstr ""
+
+msgid "enabled"
+msgstr ""
+
 msgid "importing data from SMT."
 msgstr ""
 
-msgid "repository by URL %{url} does not exist in database"
+msgid "mandatory"
 msgstr ""
 
-msgid "× File does not exist or has wrong filesize, deduplication ignored %{error}."
+msgid "mirrored at %{time}"
+msgstr ""
+
+msgid "non-mandatory"
+msgstr ""
+
+msgid "not enabled"
+msgstr ""
+
+msgid "not mirrored"
+msgstr ""
+
+msgid "repository by URL %{url} does not exist in database"
 msgstr ""

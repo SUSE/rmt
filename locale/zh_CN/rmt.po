@@ -7,11 +7,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-26 11:32+0100\n"
 "PO-Revision-Date: 2019-05-23 18:05+0000\n"
 "Last-Translator: Marguerite Su <i@marguerite.su>\n"
-"Language-Team: Chinese (China) <https://l10n.opensuse.org/projects/rmt/i18n/"
-"zh_CN/>\n"
+"Language-Team: Chinese (China) <https://l10n.opensuse.org/projects/rmt/i18n/zh"
+"_CN/>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -40,6 +39,13 @@ msgstr "%{path} 不是目录。"
 msgid "%{path} is not writable by user %{username}."
 msgstr "用户 %{username} 不允许向 %{path} 写入数据。"
 
+msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
+msgstr ""
+
+#, fuzzy
+msgid "A repository by the ID %{id} already exists."
+msgstr "URL 为 %{url} 的储存库已存在。"
+
 msgid "A repository by the URL %{url} already exists."
 msgstr "URL 为 %{url} 的储存库已存在。"
 
@@ -55,7 +61,15 @@ msgstr "已禁用所有储存库。"
 msgid "All repositories have already been enabled."
 msgstr "已启用所有储存库。"
 
+msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
+msgstr ""
+
+#. i18n: architecture
 msgid "Arch"
+msgstr "体系结构"
+
+#, fuzzy
+msgid "Architecture"
 msgstr "体系结构"
 
 msgid "Attach an existing custom repository to a product"
@@ -67,27 +81,14 @@ msgstr "已将储存库关联到产品“%{product_name}”。"
 msgid "Authenticated system with login \\\"%{login}\\\""
 msgstr "已使用登录名“%{login}”通过系统的身份验证"
 
-msgid ""
-"Cannot connect to database server. Ensure its credentials are correctly "
-"configured in '%{path}' or configure RMT with YaST ('%{command}')."
-msgstr ""
-"无法连接到数据库服务器。请确保已在“%{path}”中正确配置其身份凭证，或使用 "
-"YaST（运行 %{command}）来配置 RMT。"
+msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
+msgstr "无法连接到数据库服务器。请确保已在“%{path}”中正确配置其身份凭证，或使用 YaST（运行 %{command}）来配置 RMT。"
 
-msgid ""
-"Cannot connect to database server. Make sure it is running and its "
-"credentials are configured in '%{path}'."
-msgstr ""
-"无法连接到数据库服务器。请确保该服务器正在运行且已在“%{path}”中配置其身份凭"
-"证。"
+msgid "Cannot connect to database server. Make sure it is running and its credentials are configured in '%{path}'."
+msgstr "无法连接到数据库服务器。请确保该服务器正在运行且已在“%{path}”中配置其身份凭证。"
 
-msgid ""
-"Cannot deactivate the product \"%s\". Other activated products depend upon "
-"it."
+msgid "Cannot deactivate the product \"%s\". Other activated products depend upon it."
 msgstr "无法停用产品“%s”。其他的已激活产品依赖于该产品。"
-
-msgid "Cannot find custom repository by ID %{id}."
-msgstr "找不到 ID 为 %{id} 的自定义储存库。"
 
 msgid "Cannot find product by ID %{id}."
 msgstr "找不到 ID 为 %{id} 的产品。"
@@ -97,6 +98,12 @@ msgstr "查看 %{url}"
 
 msgid "Checksum doesn't match"
 msgstr "校验和不匹配"
+
+msgid "Clean cancelled."
+msgstr ""
+
+msgid "Clean finished. An estimated %{total_file_size} were removed."
+msgstr ""
 
 msgid "Cleaning up the database"
 msgstr "正在清理数据库"
@@ -113,16 +120,28 @@ msgstr "无法创建去重硬链接：%{error}。"
 msgid "Could not create local directory %{dir} with error: %{error}"
 msgstr "无法创建本地目录 %{dir}，发生错误：%{error}"
 
-msgid ""
-"Could not find system with login \\\"%{login}\\\" and password \\"
-"\"%{password}\\\""
+msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
 msgstr "通过登录名“%{login}”和密码“%{password}”找不到系统"
 
-msgid "Could not mirror suma product tree with error: %{error}"
+#, fuzzy
+msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "无法镜像 suma 产品树，发生错误：%{error}"
+
+#, fuzzy
+msgid "Couldn't add custom repository."
+msgstr "创建自定义储存库。"
 
 msgid "Creates a custom repository."
 msgstr "创建自定义储存库。"
+
+msgid "Deleting locally mirrored files from repository '%{repo}'..."
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Description: %{description}"
+msgstr ""
 
 msgid "Detach an existing custom repository from a product"
 msgstr "将现有自定义储存库与产品解除关联"
@@ -130,12 +149,15 @@ msgstr "将现有自定义储存库与产品解除关联"
 msgid "Detached repository from product '%{product_name}'."
 msgstr "已将储存库与产品“%{product_name}”解除关联。"
 
-msgid "Disable mirroring of custom repository by ID"
+#, fuzzy
+msgid "Disable mirroring of custom repositories by a list of IDs"
 msgstr "根据 ID 禁用自定义储存库镜像"
 
-msgid ""
-"Disable mirroring of product repositories by a list of product IDs or "
-"product strings."
+#, fuzzy
+msgid "Disable mirroring of custom repository by a list of IDs"
+msgstr "根据 ID 禁用自定义储存库镜像"
+
+msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
 msgstr "根据产品 ID 列表或产品字符串禁用产品储存库镜像。"
 
 msgid "Disable mirroring of repositories by a list of repository IDs"
@@ -147,11 +169,16 @@ msgstr "已禁用储存库 %{repository}。"
 msgid "Disabling %{product}:"
 msgstr "正在禁用 %{product}："
 
+msgid "Displays product with all its repositories and their attributes."
+msgstr ""
+
+msgid "Do not import system hardware info from MachineData table"
+msgstr ""
+
 msgid "Do not import the systems that were registered to the SMT"
 msgstr "不导入已在 SMT 中注册的系统"
 
-msgid ""
-"Do you have any suggestions for improvement? We would love to hear from you!"
+msgid "Do you have any suggestions for improvement? We would love to hear from you!"
 msgstr "如您有任何有关改进产品和服务的建议，我们将非常乐意听取！"
 
 msgid "Don't Mirror"
@@ -160,15 +187,17 @@ msgstr "不镜像"
 msgid "Downloading data from SCC"
 msgstr "正在从 SCC 下载数据"
 
+msgid "Duplicate entry for system %{system}, skipping"
+msgstr ""
+
 msgid "Enable debug output"
 msgstr "启用调试输出"
 
-msgid "Enable mirroring of custom repository by ID"
+#, fuzzy
+msgid "Enable mirroring of custom repositories by a list of IDs"
 msgstr "根据 ID 启用自定义储存库镜像"
 
-msgid ""
-"Enable mirroring of product repositories by a list of product IDs or product "
-"strings."
+msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
 msgstr "根据产品 ID 列表或产品字符串启用产品储存库镜像。"
 
 msgid "Enable mirroring of repositories by a list of repository IDs"
@@ -186,6 +215,9 @@ msgstr "启用产品的所有免费模块"
 msgid "Enabling %{product}:"
 msgstr "正在启用 %{product}："
 
+msgid "Enter a value:"
+msgstr ""
+
 msgid "Error while mirroring data: %{error}"
 msgstr "镜像数据时发生错误：%{error}"
 
@@ -197,6 +229,12 @@ msgstr "镜像元数据时发生错误：%{error}"
 
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
 msgstr "将目录 %{src} 移至 %{dest} 时发生错误：%{error}"
+
+msgid "Examples"
+msgstr ""
+
+msgid "Examples:"
+msgstr ""
 
 msgid "Export commands for Offline Sync"
 msgstr "导出脱机同步的命令"
@@ -216,24 +254,42 @@ msgstr "正在导出储存库"
 msgid "Exporting subscriptions"
 msgstr "正在导出订阅"
 
+msgid "Failed to download %{failed_count} files"
+msgstr ""
+
+msgid "Failed to get repository metadata signatures with HTTP code %{http_code}"
+msgstr ""
+
+msgid "Failed to import system %{system}"
+msgstr ""
+
+msgid "Failed to sync system %{login}: %{error}"
+msgstr ""
+
+msgid "Forward registered systems data to SCC"
+msgstr ""
+
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
 msgstr[0] "根据目标 %{target} 找到以下产品：%{products}。"
 
+msgid "GPG key import failed"
+msgstr ""
+
+msgid "GPG signature verification failed"
+msgstr ""
+
 msgid "Hardware information stored for system %{system}"
 msgstr "储存的有关系统 %{system} 的硬件信息"
+
+msgid "Hostname"
+msgstr ""
 
 msgid "ID"
 msgstr "ID"
 
 msgid "Import commands for Offline Sync"
 msgstr "导入脱机同步的命令"
-
-msgid "Imported activation of %{product} for %{system}"
-msgstr "已为 %{system} 导入 %{product} 的激活码"
-
-msgid "Imported system %{system}"
-msgstr "已导入系统 %{system}"
 
 msgid "Importing SCC data from %{path}"
 msgstr "正在从 %{path} 导入 SCC 数据"
@@ -247,15 +303,23 @@ msgstr "上次镜像时间"
 msgid "Last mirrored"
 msgstr "上次镜像时间"
 
+msgid "Last seen"
+msgstr ""
+
 msgid "List all custom repositories"
 msgstr "列出所有自定义储存库"
 
 msgid "List all products, including ones which are not marked to be mirrored"
 msgstr "列出所有产品，包括未标记为要镜像的产品"
 
-msgid ""
-"List all repositories, including ones which are not marked to be mirrored"
+msgid "List all registered systems"
+msgstr ""
+
+msgid "List all repositories, including ones which are not marked to be mirrored"
 msgstr "列出所有储存库，包括未标记为要镜像的储存库"
+
+msgid "List and manipulate registered systems"
+msgstr ""
 
 msgid "List and modify custom repositories"
 msgstr "列出并修改自定义储存库"
@@ -269,8 +333,14 @@ msgstr "列出并修改储存库"
 msgid "List products which are marked to be mirrored."
 msgstr "列出标记为要镜像的产品。"
 
+msgid "List registered systems."
+msgstr ""
+
 msgid "List repositories which are marked to be mirrored"
 msgstr "列出标记为要镜像的储存库"
+
+msgid "Login"
+msgstr ""
 
 msgid "Mandatory"
 msgstr "强制"
@@ -279,6 +349,18 @@ msgid "Mandatory?"
 msgstr "是否为强制？"
 
 msgid "Mirror"
+msgstr "镜像"
+
+#, fuzzy
+msgid "Mirror all enabled repositories"
+msgstr "镜像"
+
+#, fuzzy
+msgid "Mirror enabled repositories for a product with given product IDs"
+msgstr "镜像"
+
+#, fuzzy
+msgid "Mirror enabled repositories with given repository IDs"
 msgstr "镜像"
 
 msgid "Mirror repos at given path"
@@ -293,8 +375,24 @@ msgstr "镜像储存库"
 msgid "Mirror?"
 msgstr "是否镜像？"
 
+#, fuzzy
+msgid "Mirroring SUMA product tree failed: %{error_message}"
+msgstr "镜像"
+
 msgid "Mirroring SUSE Manager product tree to %{dir}"
 msgstr "正在将 SUSE Manager 产品树镜像至 %{dir}"
+
+#, fuzzy
+msgid "Mirroring complete."
+msgstr "镜像"
+
+#, fuzzy
+msgid "Mirroring completed with errors."
+msgstr "镜像"
+
+#, fuzzy
+msgid "Mirroring of repository with ID %{repo_id} is not enabled"
+msgstr "镜像"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "正在将储存库 %{repo} 镜像到 %{dir}"
@@ -338,6 +436,10 @@ msgstr "未启用任何储存库。"
 msgid "No repositories found for product: %s"
 msgstr "找不到产品 %s 的储存库"
 
+#, fuzzy
+msgid "No repository IDs supplied"
+msgstr "未提供储存库 ID"
+
 msgid "No repository ids supplied"
 msgstr "未提供储存库 ID"
 
@@ -350,19 +452,19 @@ msgstr "未为产品 %s 镜像所有强制储存库"
 msgid "Not provided"
 msgstr "未提供"
 
-msgid ""
-"Not yet activated Registration Code. Visit https://scc.suse.com to activate "
-"it."
+msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "尚未激活注册代码。请访问 https://scc.suse.com 激活。"
 
-msgid ""
-"Only enabled products are shown by default. Use the '%{command}' option to "
-"see all products."
+msgid "Number of systems to display"
+msgstr ""
+
+msgid "Only '%{input}' will be accepted."
+msgstr ""
+
+msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
 msgstr "默认仅会显示启用的产品。使用“%{command}”选项可列出所有产品。"
 
-msgid ""
-"Only enabled repositories are shown by default. Use the '%{option}' option "
-"to see all repositories."
+msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
 msgstr "默认仅会显示启用的储存库。使用“%{option}”选项可列出所有储存库。"
 
 msgid "Output data in CSV format"
@@ -371,11 +473,9 @@ msgstr "以 CSV 格式输出数据"
 msgid "Path to unpacked SMT data tarball"
 msgstr "解压缩的 SMT 数据 Tarball 的路径"
 
-msgid ""
-"Process is locked by the application with pid %{pid}. Close this application "
-"or wait for it to finish before trying again."
-msgstr ""
-"进程已被 PID 为 %{pid} 的应用程序锁定。请关闭此应用程序或等待其完成再重试。"
+#, fuzzy
+msgid "Please provide a non-numeric ID for your custom repository."
+msgstr "ID"
 
 msgid "Product"
 msgstr "产品"
@@ -402,6 +502,10 @@ msgstr ""
 "但找不到该产品。请运行 %{command} 将该储存库关联到\n"
 "其他产品\n"
 
+#, fuzzy
+msgid "Product %{target} has no repositories enabled"
+msgstr "产品"
+
 msgid "Product Architecture"
 msgstr "产品体系结构"
 
@@ -411,17 +515,68 @@ msgstr "产品 ID"
 msgid "Product Name"
 msgstr "产品名称"
 
+#, fuzzy
+msgid "Product String"
+msgstr "产品"
+
 msgid "Product Version"
 msgstr "产品版本"
+
+#, fuzzy
+msgid "Product architecture (e.g.: x86_64, aarch64)"
+msgstr "产品"
 
 msgid "Product by ID %{id} not found."
 msgstr "找不到 ID 为 %{id} 的产品。"
 
+#, fuzzy
+msgid "Product for target %{target} not found"
+msgstr "产品"
+
+#, fuzzy
+msgid "Product name (e.g.: Basesystem, SLES)"
+msgstr "产品"
+
+#, fuzzy
+msgid "Product version (e.g.: 15, 15.1, '12 SP4')"
+msgstr "产品"
+
+#, fuzzy
+msgid "Product with ID %{target} not found"
+msgstr "找不到 ID 为 %{id} 的产品。"
+
+#, fuzzy
+msgid "Product: %{name} (id: %{id})"
+msgstr "产品"
+
+#, fuzzy
+msgid "Products"
+msgstr "产品"
+
+#, fuzzy
+msgid "Provide a custom ID instead of allowing RMT to generate one."
+msgstr "ID"
+
+msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
+msgstr ""
+
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr "RMT 尚未同步至  SCC。请先运行 %{command}"
 
+msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
+msgstr ""
+
+msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
+msgstr ""
+
 msgid "Read SCC data from given path"
 msgstr "从给定路径读取 SCC 数据"
+
+msgid "Registration time"
+msgstr ""
+
+msgid "Release Stage"
+msgstr ""
 
 msgid "Remove a custom repository"
 msgstr "去除自定义储存库"
@@ -429,19 +584,30 @@ msgstr "去除自定义储存库"
 msgid "Removed custom repository by ID %{id}."
 msgstr "已去除 ID 为 %{id} 的自定义储存库。"
 
-msgid "Repository %{repos} could not be found and was not disabled."
-msgid_plural "Repositories %{repos} could not be found and were not disabled."
-msgstr[0] "找不到储存库 %{repos}，未将其禁用。"
-
-msgid "Repository %{repos} could not be found and was not enabled."
-msgid_plural "Repositories %{repos} could not be found and were not enabled."
-msgstr[0] "找不到储存库 %{repos}，未将其启用。"
-
-msgid ""
-"Repository %{repo} was not found in RMT database, perhaps you no longer have "
-"a valid subscription for it"
+msgid "Removes a system and its activations from RMT"
 msgstr ""
-"在 RMT 数据库中找不到储存库 %{repo}，可能是因为您的该储存库订阅不再有效"
+
+msgid "Removes a system and its activations from RMT."
+msgstr ""
+
+msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
+msgstr ""
+
+msgid "Repositories are not available for this product."
+msgstr ""
+
+msgid "Repositories:"
+msgstr ""
+
+msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
+msgstr "在 RMT 数据库中找不到储存库 %{repo}，可能是因为您的该储存库订阅不再有效"
+
+msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
+msgstr ""
+
+#, fuzzy
+msgid "Repository by ID %{id} not found."
+msgstr "找不到 ID 为 %{id} 的产品。"
 
 msgid "Repository by ID %{id} successfully disabled."
 msgstr "已成功禁用 ID 为 %{id} 的储存库。"
@@ -449,17 +615,22 @@ msgstr "已成功禁用 ID 为 %{id} 的储存库。"
 msgid "Repository by ID %{id} successfully enabled."
 msgstr "已成功启用 ID 为 %{id} 的储存库。"
 
+#, fuzzy
+msgid "Repository by ID %{repos} could not be found and was not disabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
+msgstr[0] "找不到储存库 %{repos}，未将其禁用。"
+
+#, fuzzy
+msgid "Repository by ID %{repos} could not be found and was not enabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
+msgstr[0] "找不到储存库 %{repos}，未将其启用。"
+
 msgid "Repository metadata signatures are missing"
 msgstr "缺少储存库元数据签名"
 
-msgid "Repository not found by ID %{id}."
-msgstr "找不到 ID 为 %{id} 的储存库。"
-
-msgid "Repository successfully disabled."
-msgstr "已成功禁用储存库。"
-
-msgid "Repository successfully enabled."
-msgstr "已成功启用储存库。"
+#, fuzzy
+msgid "Repository with ID %{repo_id} not found"
+msgstr "ID"
 
 msgid "Requested service not found"
 msgstr "找不到请求的服务"
@@ -470,18 +641,32 @@ msgstr "所需参数缺失或为空：%s"
 msgid "Run '%{command}' for more information on a command and its subcommands."
 msgstr "运行 %{command} 可获取某个命令及其子命令的详细信息。"
 
-msgid ""
-"Run '%{command}' to synchronize with your SUSE Customer Center data first."
+msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
 msgstr "请运行 %{command} 先与您的 SUSE Customer Center 数据同步。"
 
-msgid "SCC ID"
-msgstr "SCC ID"
+msgid "Run this command on an online RMT."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"SCC API request failed. Error details:\n"
+"Request URL: %{url}\n"
+"Response code: %{code}\n"
+"Response body:\n"
+"%{body}"
+msgstr "URL"
+
+msgid "SCC credentials not set."
+msgstr ""
 
 msgid "Settings saved at %{file}."
 msgstr "设置已保存在 %{file} 中。"
 
 msgid "Show RMT version"
 msgstr "显示 RMT 版本"
+
+msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
+msgstr ""
 
 msgid "Shows products attached to a custom repository"
 msgstr "显示关联到自定义储存库的产品"
@@ -495,21 +680,38 @@ msgstr "将储存库设置储存在给定路径"
 msgid "Successfully added custom repository."
 msgstr "已成功添加自定义储存库。"
 
+msgid "Successfully removed system with login %{login}."
+msgstr ""
+
 msgid "Sync database with SUSE Customer Center"
 msgstr "将数据库与 SUSE Customer Center 同步"
+
+msgid "Syncing de-registered system %{scc_system_id} to SCC"
+msgstr ""
+
+msgid "Syncing system %{login} to SCC"
+msgstr ""
+
+msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
+msgstr ""
 
 msgid "System %{system} not found"
 msgstr "找不到系统 %{system}"
 
-msgid ""
-"The RMT database has not yet been initialized. Run '%{command}' to setup the "
-"database."
+msgid "System with login %{login} cannot be removed."
+msgstr ""
+
+msgid "System with login %{login} not found."
+msgstr ""
+
+msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
 msgstr "RMT 数据库尚未初始化。请运行“%{command}”设置该数据库。"
 
-msgid ""
-"The SCC credentials are not configured correctly in '%{path}'. You can "
-"obtain them from %{url}"
+msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
 msgstr "未在“%{path}”中正确配置 SCC 身份凭证。您可以从 %{url} 获取相应身份凭证"
+
+msgid "The following errors occurred while mirroring:"
+msgstr ""
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
 msgstr "产品“%s”是基础产品，无法停用"
@@ -520,8 +722,23 @@ msgstr "请求的产品“%s”未在此系统上激活。"
 msgid "The requested products '%s' are not activated on the system."
 msgstr "请求的产品“%s”未在此系统上激活。"
 
+msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
+msgstr ""
+
 msgid "There are no repositories marked for mirroring."
 msgstr "没有标记为要镜像的储存库。"
+
+msgid "There are no systems registered to this RMT instance."
+msgstr ""
+
+msgid "To clean up downloaded files, please run '%{command}'"
+msgstr ""
+
+msgid "To clean up downloaded files, run '%{command}'"
+msgstr ""
+
+msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
+msgstr ""
 
 msgid "URL"
 msgstr "URL"
@@ -550,115 +767,32 @@ msgstr "正在更新订阅"
 msgid "Version"
 msgstr "版本"
 
+msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
+msgstr ""
+
+msgid "enabled"
+msgstr ""
+
 msgid "importing data from SMT."
 msgstr "正在从 SMT 导入数据。"
 
+#, fuzzy
+msgid "mandatory"
+msgstr "强制"
+
+msgid "mirrored at %{time}"
+msgstr ""
+
+#, fuzzy
+msgid "non-mandatory"
+msgstr "非强制"
+
+msgid "not enabled"
+msgstr ""
+
+#, fuzzy
+msgid "not mirrored"
+msgstr "上次镜像时间"
+
 msgid "repository by URL %{url} does not exist in database"
 msgstr "数据库中不存在 URL 为 %{url} 的储存库"
-
-msgid ""
-"× File does not exist or has wrong filesize, deduplication ignored %{error}."
-msgstr "× 文件不存在或文件大小有误，去重功能已忽略 %{error}。"
-
-#~ msgid ""
-#~ "  Run this command on an online RMT.\n"
-#~ "  It will look in PATH for a repos.json file, which has to contain a list "
-#~ "of repository IDs.\n"
-#~ "  Usually, this file gets created by an offline RMT with 'rmt-cli export "
-#~ "settings'.\n"
-#~ "\n"
-#~ "  'rmt-cli export repos' will mirror these repositories to this PATH, "
-#~ "usually a portable storage device.\n"
-#~ msgstr ""
-#~ "  在联机 RMT 上运行此命令。\n"
-#~ "  该命令会在 PATH 中查找一定会包含储存库 ID 列表的 repos.json 文件。\n"
-#~ "  通常情况下，此文件是通过运行“rmt-cli export settings”由脱机 RMT 创建"
-#~ "的。\n"
-#~ "\n"
-#~ "  “rmt-cli export repos”命令会将这些储存库镜像到此 PATH（通常为一台便携设"
-#~ "备）。\n"
-
-#~ msgid ""
-#~ "Disable mirroring of product repositories by a list of product IDs or "
-#~ "product strings.\n"
-#~ "\n"
-#~ "Examples:\n"
-#~ "\n"
-#~ "$ rmt-cli products disable SLES/15\n"
-#~ "\n"
-#~ "$ rmt-cli products disable 1575\n"
-#~ "\n"
-#~ "$ rmt-cli products disable SLES/15/x86_64 1743\n"
-#~ msgstr ""
-#~ "根据产品 ID 列表或产品字符串禁用产品储存库镜像。\n"
-#~ "\n"
-#~ "示例：\n"
-#~ "\n"
-#~ "$ rmt-cli products disable SLES/15\n"
-#~ "\n"
-#~ "$ rmt-cli products disable 1575\n"
-#~ "\n"
-#~ "$ rmt-cli products disable SLES/15/x86_64 1743\n"
-
-#~ msgid ""
-#~ "Disable mirroring of repositories by a list of repository IDs\n"
-#~ "\n"
-#~ "Examples:\n"
-#~ "\n"
-#~ "$ rmt-cli repos disable 2526\n"
-#~ "\n"
-#~ "$ rmt-cli repos disable 2526 3263\n"
-#~ msgstr ""
-#~ "根据储存库 ID 列表禁用储存库镜像\n"
-#~ "\n"
-#~ "示例：\n"
-#~ "\n"
-#~ "$ rmt-cli repos disable 2526\n"
-#~ "\n"
-#~ "$ rmt-cli repos disable 2526 3263\n"
-
-#~ msgid ""
-#~ "Enable mirroring of product repositories by a list of product IDs or "
-#~ "product strings.\n"
-#~ "\n"
-#~ "Examples:\n"
-#~ "\n"
-#~ "$ rmt-cli products enable SLES/15\n"
-#~ "\n"
-#~ "$ rmt-cli products enable 1575\n"
-#~ "\n"
-#~ "$ rmt-cli products enable SLES/15/x86_64 1743\n"
-#~ "\n"
-#~ "$ rmt-cli products enable --all-modules SLES/15\n"
-#~ msgstr ""
-#~ "根据产品 ID 列表或产品字符串启用产品储存库镜像。\n"
-#~ "\n"
-#~ "示例：\n"
-#~ "\n"
-#~ "$ rmt-cli products enable SLES/15\n"
-#~ "\n"
-#~ "$ rmt-cli products enable 1575\n"
-#~ "\n"
-#~ "$ rmt-cli products enable SLES/15/x86_64 1743\n"
-#~ "\n"
-#~ "$ rmt-cli products enable --all-modules SLES/15\n"
-
-#~ msgid ""
-#~ "Enable mirroring of repositories by a list of repository IDs\n"
-#~ "\n"
-#~ "Examples:\n"
-#~ "\n"
-#~ "$ rmt-cli repos enable 2526\n"
-#~ "\n"
-#~ "$ rmt-cli repos enable 2526 3263\n"
-#~ msgstr ""
-#~ "根据储存库 ID 列表启用储存库镜像\n"
-#~ "\n"
-#~ "示例：\n"
-#~ "\n"
-#~ "$ rmt-cli repos enable 2526\n"
-#~ "\n"
-#~ "$ rmt-cli repos enable 2526 3263\n"
-
-#~ msgid "Mirroring SUMA product tree to %{dir}"
-#~ msgstr "正在将 SUMA 产品树镜像到 %{dir}"

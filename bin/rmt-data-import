@@ -1,11 +1,10 @@
 #!/usr/bin/env ruby
 
-# Allow different path variables for development and production
-RMT_PATH = ENV['RMT_PATH'] ? ENV['RMT_PATH'] : '/usr/share/rmt/'
+RMT_PATH = File.expand_path('..', __dir__)
+
 
 # Load initial configuration for rmt
 require_relative "#{RMT_PATH}/config/boot"
-require_relative "#{RMT_PATH}/config/boot_cli_i18n"
 
 # Add rmt_path to library load path
 $LOAD_PATH.unshift File.join(RMT_PATH, 'lib')
@@ -19,7 +18,9 @@ require 'yaml'
 require 'rmt/config'
 require 'csv'
 require 'json'
-require 'rmt/cli/smt_importer'
+require_relative '../config/initializers_cli/disable_deprecation_warnings'
+require_relative '../config/initializers_cli/rmt_fast_gettext'
+require_relative '../config/initializers_cli/rmt_fast_gettext_cli_locale'
 
 no_systems = false
 data_dir = nil
@@ -32,8 +33,9 @@ ActiveSupport::Dependencies.autoload_paths += relative_load_paths
 ActiveRecord::Base.establish_connection(db_config)
 
 begin
-  script = SMTImporter.new(data_dir, no_systems)
+  Time.zone ||= 'UTC'
+  script = RMT::CLI::SMTImporter.new(data_dir, no_systems)
   script.run ARGV
-rescue SMTImporter::ImportException
+rescue RMT::CLI::SMTImporter::ImportException
   exit 1
 end

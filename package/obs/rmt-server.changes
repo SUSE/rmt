@@ -1,0 +1,857 @@
+-------------------------------------------------------------------
+Wed Oct  7 17:11:15 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.6.5
+- Solved potential bug of SCC repository URLs changing over time. RMT
+  now self heals by removing the previous invalid repository and
+  creating the correct one.
+
+-------------------------------------------------------------------
+Fri Oct  2 13:24:17 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
+
+- Version 2.6.4
+- Add web server settings to /etc/rmt.conf:
+
+  Now it's possible to configure the minimum and maximum threads count as well
+  the number of web server workers to be booted through /etc/rmt.conf.
+
+-------------------------------------------------------------------
+Wed Sep 30 16:19:36 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.6.3
+- Instead of using an MD5 of URLs for custom repository friendly_ids,
+  RMT now builds an ID from the name.
+
+-------------------------------------------------------------------
+Tue Sep 29 14:53:12 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
+
+- Version 2.6.2
+- Fix RMT file caching based on timestamps:
+
+  Previously, RMT sent GET requests with the header 'If-Modified-Since' to a
+  repository server and if the response had a 304 (Not Modified), it would copy
+  a file from the local cache instead of downloading. However, if the local file
+  timestamp accidentally changed to a date newer than the one on the repository
+  server, RMT would have an outdated file, which caused some errors.
+
+  Now, RMT makes HEAD requests to the repositories servers and inspect the
+  'Last-Modified' header to decide whether to download a file or copy it from
+  cache, by comparing the equalness of timestamps.
+  
+-------------------------------------------------------------------
+Tue Sep 29 10:19:12 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.6.1
+- Fixed an issue where relative paths supplied to `rmt-cli import repos`
+  caused the command to fail.
+
+-------------------------------------------------------------------
+Mon Sep 21 16:44:23 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.6.0
+- Friendlier IDs for custom repositories:
+  In an effort to simplify the handling of SCC and custom repositories,
+  RMT now has friendly IDs. For SCC repositories, it's the same SCC ID
+  as before. For custom repositories, it can either be user provided
+  or RMT generated (MD5 of the provided URL).
+
+  Benefits:
+  * `rmt-cli mirror repositories` now works for custom repositories.
+  * Custom repository IDs can be the same across RMT instances.
+  * No more confusing "SCC ID" vs "ID" in `rmt-cli` output.
+
+  Deprecation Warnings:
+  * RMT now uses a different ID for custom repositories than before.
+    RMT still supports that old ID, but it's recommended to start
+    using the new ID to ensure future compatibility.
+
+-------------------------------------------------------------------
+Thu Sep 10 14:10:45 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.5.20
+- Updated rails from 6.0.3.2 to 6.0.3.3:
+  - actionview (CVE-2020-15169)
+
+-------------------------------------------------------------------
+Wed Sep 9 13:22:10 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.5.19
+- RMT now has the ability to remove local systems with the command
+  `rmt-cli systems remove`.
+
+-------------------------------------------------------------------
+Tue Sep  8 18:10:19 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
+
+- Version 2.5.18
+- Fixed exit code for `rmt-cli mirror` and its subcommands. Now it exits with 1
+  whenever an error occurrs during mirroring
+- Improved message logging for `rtm-cli mirror`. Instead of logging an error
+  when it occurs, the command summarize all errors at the end of execution. Now
+  log messages have colors to better identify failure/success.
+
+-------------------------------------------------------------------
+Wed Sep 2 10:27:33 UTC 2020 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Version 2.5.17
+- RMT no longer provides the installer updates repository to systems via its
+  zypper service. This repository is used during the installation process, as
+  it provides an up-to-date installation experience, but it has no use on an
+  already installed system.
+
+-------------------------------------------------------------------
+Tue Sep 1 13:24:23 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.5.16
+- Updated RMT's rails and puma dependencies.
+  - puma (CVE-2020-11076, CVE-2020-11077, CVE-2020-5249, CVE-2020-5247
+    CVE-2019-16770)
+  - actionpack (CVE-2020-8185, CVE-2020-8164, CVE-2020-8166)
+  - actionview (CVE-2020-8167, CVE-2020-5267, CVE-2019-5418, CVE-2019-5419)
+  - activesupport (CVE-2020-8165)
+  - railties (CVE-2019-5420)
+
+-------------------------------------------------------------------
+Mon Aug 31 14:04:20 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.5.15
+- RMT now checks if repositories are fully mirrored during the
+  activation process. Previously, RMT only checked if the repositories
+  were enabled to be mirrored, but not that they were actually mirrored.
+  In this case, RMTs were not able to provide the repository data which
+  systems assumed it had.
+
+-------------------------------------------------------------------
+Mon Aug 24 10:04:26 UTC 2020 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Version 2.5.14
+- Enable 'Installer-Updates' repositories by default
+
+-------------------------------------------------------------------
+Fri Aug 21 17:33:19 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Fixed deprecation warning when thor encountered an error. Also,
+  instead of returning 0 for thor errors, rmt-cli will return 1
+  instead.
+
+-------------------------------------------------------------------
+Fri Aug 14 14:57:19 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.5.13
+- Added `rmt-cli repos clean` command to remove locally mirrored files
+  of repositories which are not marked to be mirrored.
+- Previously, RMT didn't track deduplicated files in its database. Now,
+  to accommodate `rmt-cli repos clean`, RMT will track all mirrored
+  files.
+
+-------------------------------------------------------------------
+Thu Jul 30 08:20:37 UTC 2020 - Thorsten Kukuk <kukuk@suse.com>
+
+- Move the nginx reload to the configuration package which contain
+  nginx config files, don't reload nginx unconditionally from main
+  package.
+
+-------------------------------------------------------------------
+Thu Jul  9 17:39:04 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
+
+- Version 2.5.12
+- Update rack to version 2.2.3 (CVE-2020-8184: bsc#1173351)
+- Update Rails to version 5.2.4.3:
+  - actionpack (CVE-2020-8164: bsc#1172177)
+  - actionpack (CVE-2020-8166: bsc#1172182)
+  - activesupport (CVE-2020-8165: bsc#1172186)
+  - actionview (CVE-2020-8167: bsc#1172184)
+
+-------------------------------------------------------------------
+Wed Jul  8 05:38:52 UTC 2020 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.5.11
+- rmt-server-pubcloud:
+  - SLES11 EOL
+  - Extension activation verification based on the available subscriptions
+  - Added a manual instance verification script
+
+-------------------------------------------------------------------
+Tue Jun 16 13:05:49 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
+
+- Version 2.5.10
+- Support rmt-server to run with Ruby 2.7 (Factory/Tumbleweed):
+  - Bump gem 'config' version from 1.7.2 to 2.2.1 to fix incompatibility Ruby
+    2.7 OpenStruct class;
+  - Bump gem 'typhoeus' version from 1.3.1 to 1.4.0 in order to also bump gem
+    'ethon' version, which caused a 'rb_safe_level' warning on Ruby 2.7;
+  - Fix "last arg as keyword arg" Ruby 2.7 warning on source code;
+  - Disable "deprecated" warnings from Ruby 2.7; Rails 5.1 generates a lot of
+    warnings with Ruby 2.7, mainly due to "capturing the given block with
+    Proc.new", which is deprecated;
+  - Improve RPM spec to consider only the distribution default Ruby version
+    configured in OBS;
+  - Improve RPM spec to remove Ruby 2.7 warnings regarding 'bundler.
+
+-------------------------------------------------------------------
+Tue Jun  9 07:16:15 UTC 2020 - Thorsten Kukuk <kukuk@suse.com>
+
+- Move nginx/vhosts.d directory to correct sub-package. They
+  are needed together with nginx, not rmt-server.
+- Fix dependencies especially for containerized usage:
+  - mariadb and nginx are not hard requires, could run on another host
+- Fix generic dependencies:
+  - systemd ordering was missing
+  - shadow is required for pre-install
+
+-------------------------------------------------------------------
+Fri May 29 14:54:06 UTC 2020 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.5.9
+- rmt-server-pubcloud: enforce strict authentication
+
+-------------------------------------------------------------------
+Tue May 19 12:31:53 UTC 2020 - Luís Caparroz <lcaparroz@suse.com>
+
+- Version 2.5.8
+- Use repomd_parser gem to remove repository metadata parsing code.
+
+-------------------------------------------------------------------
+Fri Apr 17 03:25:20 UTC 2020 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.5.7
+- Use DB locks intead of lockfiles (bsc#1165548)
+
+-------------------------------------------------------------------
+Fri Apr  3 09:29:07 UTC 2020 - Thomas Schmidt <tschmidt@suse.com>
+
+- Version 2.5.6
+- Align supported subscription types with SCC:
+  'test', 'full', 'evaluation', 'oem', 'internal', 'partner'
+  (bsc#1168554)
+
+-------------------------------------------------------------------
+Wed Feb  5 12:55:32 UTC 2020 - Felix Schnizlein <fschnizlein@suse.com>
+
+- Version 2.5.5
+- Add `rmt-cli products show` command to show detailed product information
+
+
+-------------------------------------------------------------------
+Wed Feb  5 12:55:32 UTC 2020 - Serhii Kotov <skotov@suse.com>
+
+- Version 2.5.4
+- Fix migrations in case adding migration_extra column failed (bsc#1162296)
+
+-------------------------------------------------------------------
+Mon Feb  3 16:24:45 UTC 2020 - Dominique Leuenberger <dimstar@opensuse.org>
+
+- BuildRequire pkgconfig(systemd) instead of systemd: allow OBS to
+  shortcut through the -mini flavors.
+
+-------------------------------------------------------------------
+Tue Jan 28 14:00:37 UTC 2020 - Felix Schnizlein <fschnizlein@suse.com>
+
+- Version 2.5.3
+- low_speed_time and low_speed_limit can be configured
+
+-------------------------------------------------------------------
+Tue Jan 21 13:05:15 UTC 2020 - Jens Mammen <jmammen@suse.com>
+
+- Version 2.5.2
+- Fix offline migration (CVE-2019-18904: bsc#1160922)
+- Ensure download of signature file from custom repositories
+
+-------------------------------------------------------------------
+Fri Jan 10 13:47:22 UTC 2020 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.5.1
+- Relax systemd units dependencies (bsc#1160673)
+
+-------------------------------------------------------------------
+Wed Dec 18 14:51:40 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.5.0
+- Add `rmt-cli scc sync-systems` command
+
+-------------------------------------------------------------------
+Tue Dec 10 11:39:24 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.4.5
+- rmt-server-pubcloud: escape paths in regex
+
+-------------------------------------------------------------------
+Mon Dec  9 15:37:43 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.4.4
+- Verbose error reporting for SCC API errors (bsc#1157119)
+
+-------------------------------------------------------------------
+Wed Nov 13 13:39:20 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.4.3
+- rmt-server-pubcloud: Relax zypper auth plugin checks; produce detailed logs
+- rmt-server-pubcloud: Allow access to SLES 12 SP1 repos when SLES 11 was activated
+
+-------------------------------------------------------------------
+Mon Sep 16 11:00:45 UTC 2019 - José D. Gómez R. <jgomez@suse.com>
+
+- Version 2.4.2
+- Fixed system listing when architecture is not well referenced
+  (bsc#1141122)
+- Added rmt-client-setup-res for RES8 systems
+
+-------------------------------------------------------------------
+Wed Aug 21 10:13:45 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.4.1
+- Preserve cached metadata timestamps (bsc#1146611)
+
+-------------------------------------------------------------------
+Tue Aug 20 11:12:58 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.4.0
+- Allow to mirror individual products/repositories (bsc#1138863)
+
+-------------------------------------------------------------------
+Fri Aug  16 11:07:26 UTC 2019 - tmuntaner@suse.com
+
+- Version 2.3.7
+- RMT now uses mirror_src to determine whether or not to download
+  source packages. (bsc#1145688)
+
+-------------------------------------------------------------------
+Thu Aug  8 10:50:26 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.3.6
+- Make Rails log level configurable; set default log level to INFO
+
+-------------------------------------------------------------------
+Wed Aug  7 12:43:02 UTC 2019 - Thomas Schmidt <tschmidt@suse.com>
+
+- Version 2.3.5
+- Fix RMT installer_repo call for empty release_type parameter (bsc#1136178)
+
+-------------------------------------------------------------------
+Tue Jul 30 15:57:29 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.3.4
+- Clean up download queue on metadata download errors (bsc#1142641)
+- Fix plain HTTP PubCloud config
+
+-------------------------------------------------------------------
+Wed Jul 24 08:19:18 UTC 2019 - Leon Schroeder <lschroeder@suse.com>
+
+- Version 2.3.3
+- Removed release stage from names to be consistent with SCC (bsc#1136168)
+  * Generate friendly_name as needed
+  * Drops friendly_name column from database
+
+-------------------------------------------------------------------
+Thu Jul 18 08:13:11 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.3.2
+- PubCloud nginx config improvements:
+  * Proxy only the known routes to the backend
+  * Disable error logging for /repo
+  * Serve smt.crt over HTTPS
+
+-------------------------------------------------------------------
+Fri Jul  5 10:36:48 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.3.1
+- Fix mirroring logic when errors are encountered (bsc#1140492)
+- Refactor RMT::Mirror to download metadata/licenses in parallel
+
+-------------------------------------------------------------------
+Mon Jul  1 11:36:11 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.3.0
+- Check repo metadata GPG signatures during mirroring (bsc#1132690)
+- Add rmt-server-config subpackage with nginx configs (fate#327816, bsc#1136081)
+
+-------------------------------------------------------------------
+Wed Jun 26 12:14:44 UTC 2019 - Serhii Kotov <skotov@suse.com>
+- Version 2.2.1
+- Fix dependency to removed boot_cli_i18n file (bsc#1136020)
+
+-------------------------------------------------------------------
+Fri Jun 14 14:37:57 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.2.0
+- Add `rmt-cli systems list` command to list registered systems
+
+-------------------------------------------------------------------
+Thu Jun  6 13:29:12 UTC 2019 - Leon Schroeder <lschroeder@suse.com>
+
+- Version 2.1.5
+- Fix create UUID when system_uuid file empty (bsc#1138316)
+
+-------------------------------------------------------------------
+Wed May 15 14:36:17 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.1.4
+- Fix duplicate nginx location in rmt-server-pubcloud (bsc#1135222)
+
+-------------------------------------------------------------------
+Mon May 13 12:09:59 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.1.3
+- Mirror additional repos that were enabled during mirroring (bsc#1132690)
+
+-------------------------------------------------------------------
+Wed May  8 10:06:23 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.1.2
+- Make service IDs consistent across different RMT instances (bsc#1134428)
+
+-------------------------------------------------------------------
+Mon May  6 11:07:36 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.1.1
+- Make SMT data import scripts faster (bsc#1134190)
+
+-------------------------------------------------------------------
+Wed Apr 24 09:29:14 UTC 2019 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Version 2.1.0
+- Updated dependency nokogiri to 1.10.3 (CVE-2019-11068: bsc#1132160)
+- Allow RMT registration to work under HTTP as well as HTTPS.
+
+-------------------------------------------------------------------
+Wed Apr 17 10:51:47 UTC 2019 - tmuntaner@suse.com
+
+- Version 2.0.0
+- Breaking Change: Added headers to generated CSV files
+
+-------------------------------------------------------------------
+Tue Apr  2 16:02:04 UTC 2019 - Serhii Kotov <skotov@suse.com>
+
+- Version 1.2.8
+- Offline migration from SLE 15 to SLE 15 SP1 will add Python2 module
+
+-------------------------------------------------------------------
+Thu Mar 21 11:55:02 UTC 2019 - skotov@suse.com
+
+- Version 1.2.7
+- Online migrations will automatically add additional modules
+  to the client systems depending on the base product
+
+-------------------------------------------------------------------
+Wed Mar 20 16:14:09 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 1.2.6
+- Fix incorrect triggering of registration sharing (bsc#1129392)
+- Add a script to manually test registration sharing
+
+-------------------------------------------------------------------
+Mon Mar 18 11:41:47 UTC 2019 - tmuntaner@suse.com
+
+- Version 1.2.5
+- Updated rails to version 5.1.6.2 (CVE-2019-5419: bsc#1129271)
+
+-------------------------------------------------------------------
+Wed Mar 13 12:18:05 UTC 2019 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 1.2.4
+- Supply log severity to journald
+
+-------------------------------------------------------------------
+Tue Mar 12 17:21:47 UTC 2019 - Hernan Schmidt <hschmidt@suse.com>
+
+- Version 1.2.3
+- Fix license mirroring issue in some non-SUSE repositories (bsc#1128858)
+
+-------------------------------------------------------------------
+Mon Mar 11 14:16:31 UTC 2019 - Thomas Muntaner <tmuntaner@suse.com>
+
+- Added the ability to mirror the SUMA product tree.
+
+-------------------------------------------------------------------
+Thu Feb 21 13:48:54 UTC 2019 - ikapelyukhin@suse.com
+
+- Version 1.2.2
+- Set CURLOPT_LOW_SPEED_LIMIT to prevent downloads from getting stuck (bsc#1107806)
+- Removed use-ruby-2.5-in-rails.patch, use-ruby-2.5-in-rmt-data-import.patch and
+   use-ruby-2.5-in-rmt-cli.patch as they are no longer needed.
+
+-------------------------------------------------------------------
+Mon Feb 18 11:30:19 UTC 2019 - skotov@suse.com
+
+- Version 1.2.1
+- Truncate the RMT lockfile when writing a new PID (bsc#1125770)
+- Zypper authentication plugin (fate#326629)
+- Fix nested serializers in system/activations
+- Fix HTTP vhost config
+
+-------------------------------------------------------------------
+Wed Jan 30 10:40:38 UTC 2019 - ikapelyukhin@suse.com
+
+- Version 1.2.0
+- Legacy zypper XML endpoint for backward compatibility
+  with SMT (fate#326629)
+- Instance verification plugin in rmt-server-pubcloud (fate#326629)
+
+-------------------------------------------------------------------
+Tue Jan 22 11:38:24 UTC 2019 - fschnizlein@suse.com
+
+- Version 1.1.3
+- Fix missing trailing slashes on custom repository import from SMT
+  (bsc#1118745)
+
+
+-------------------------------------------------------------------
+Fri Jan 18 11:38:24 UTC 2019 - skotov@suse.com
+
+- Version 1.1.2
+- Fix product version display (bsc#1117722)
+
+-------------------------------------------------------------------
+Tue Jan 15 14:32:07 UTC 2019 - hschmidt@suse.com
+
+- Cut version 1.1.1
+
+-------------------------------------------------------------------
+Tue Jan  8 14:37:20 UTC 2019 - hschmidt@suse.com
+
+- Fix some migration problems which caused some extensions / modules
+  to be dropped. (bsc#1118584, bsc#1118579)
+
+-------------------------------------------------------------------
+Tue Dec 11 17:04:00 UTC 2018 - tmuntaner@suse.com
+
+- Fix listing of enabled for mirroring for non-mirrored products. (bsc#1102193)
+
+-------------------------------------------------------------------
+Tue Dec 11 14:48:27 UTC 2018 - skotov@suse.com
+
+- Include online migration paths into offline migration (bsc#1117106)
+
+-------------------------------------------------------------------
+Tue Dec 11 10:42:33 UTC 2018 - skotov@suse.com
+
+- Sync products that do not have base product (bsc#1109307)
+
+-------------------------------------------------------------------
+Fri Dec 7 15:39:00 UTC 2018 - tmuntaner@suse.com
+
+- Repository table using context relevant values instead of true and
+  false.
+
+-------------------------------------------------------------------
+Thu Dec 6 15:00:00 UTC 2018 - tmuntaner@suse.com
+
+- Version 1.1.0
+
+-------------------------------------------------------------------
+Wed Dec 5 14:30:00 UTC 2018 - tmuntaner@suse.com
+
+- Bugfix: Alias commands in short form no longer raise an exception
+  * remove -> rm -> r
+  * list -> ls -> l
+
+-------------------------------------------------------------------
+Mon Dec 3 17:00:00 UTC 2018 - tmuntaner@suse.com
+
+- Added ability to enable/disable multiple repositories at the
+  same time.
+
+-------------------------------------------------------------------
+Mon Dec 3 16:08:00 UTC 2018 - tmuntaner@suse.com
+
+- The command `rmt-cli products list` is more compact for smaller
+  screens.
+
+-------------------------------------------------------------------
+Thu Nov 22 15:31:29 UTC 2018 - hschmidt@suse.com
+
+- Remove the "No product license found" message when mirroring.
+  It's not useful for users, and it was just causing confusion,
+  as many people mistook it for an error.
+
+-------------------------------------------------------------------
+Thu Nov 22 11:23:18 UTC 2018 - wstephenson@suse.com
+
+- Register to SLP if a server running on this host (bsc#1113760)
+
+-------------------------------------------------------------------
+Wed Nov 21 10:30:44 UTC 2018 - skotov@suse.com
+
+- Modules for migration are being sorted in the correct order
+
+-------------------------------------------------------------------
+Tue Nov 20 11:57:10 UTC 2018 - tmuntaner@suse.com
+
+- Added the ability to localize RMT
+
+-------------------------------------------------------------------
+Fri Nov  9 13:24:52 UTC 2018 - sschricker@suse.de
+
+- Add bash completion for rmt-cli
+
+-------------------------------------------------------------------
+Thu Nov  8 15:37:57 UTC 2018 - tmuntaner@suse.com
+
+- Added ability to enable/disable multiple products at the same time
+
+-------------------------------------------------------------------
+Tue Oct 30 15:35:17 UTC 2018 - skotov@suse.com
+
+- Version 1.0.7
+- Import migration_extra attribute from SCC API
+- Offline migrations will automatically add additional modules
+  to the client systems depending on the base product
+- Dependency gems security updates:
+  - Update loofah to 2.2.3 (CVE-2018-16468)
+  - Update rack to 2.0.6 (CVE-2018-16470)
+  - Update nokogiri to 1.8.5 (CVE-2018-14404)
+
+-------------------------------------------------------------------
+Tue Oct 30 14:18:13 UTC 2018 - tmuntaner@suse.com
+
+- Added flag `--all-modules` to the `products enable` command to
+  enable all free modules/extensions.
+
+-------------------------------------------------------------------
+Thu Sep 27 15:35:29 UTC 2018 - ikapelyukhin@suse.com
+
+- Improved exception handling when HTTP request fails due to
+  a network or SSL validity issue
+
+-------------------------------------------------------------------
+Thu Aug  2 16:19:35 UTC 2018 - fschnizlein@suse.com
+
+- Version 1.0.6
+- Change file paths to new locations to make RMT work with
+  read-only rootfs (bsc#1102198)
+- Change file permissions for rmt.conf (bsc#1104232)
+- Nginx forwards to IPv4 address only (bsc#1107100)
+
+-------------------------------------------------------------------
+Thu Jul 19 12:27:23 UTC 2018 - wstephenson@suse.com
+
+- Version 1.0.5
+- sort all list outputs alphabetically (bsc#1088680)
+- Include 'last_seen_at' field in API systems output, for
+  consistency with SCC
+
+-------------------------------------------------------------------
+Wed Jul  4 15:32:13 UTC 2018 - fschueller@suse.com
+
+- Version 1.0.4
+- Only show post-install message on initial install
+
+-------------------------------------------------------------------
+Wed Jun 27 12:18:16 UTC 2018 - ikapelyukhin@suse.com
+
+- Version 1.0.3
+- Fix duplicate migration paths (bsc#1097824)
+
+-------------------------------------------------------------------
+Tue Jun 19 15:01:19 UTC 2018 - ikapelyukhin@suse.com
+
+- Version 1.0.2
+- Improved handling of errors during mirroring (bsc#1096967)
+- Set correct permissions for product.license directory (bsc#1097367)
+- Log version on service startup
+
+-------------------------------------------------------------------
+Fri Jun  1 12:50:03 UTC 2018 - wstephenson@suse.com
+
+- Version 1.0.1
+- Use curl instead of wget in rmt-client-setup (bsc#1094348)
+
+-------------------------------------------------------------------
+Fri May 18 08:24:11 UTC 2018 - skotov@suse.com
+
+- Bump version to 1.0.0 (bsc#1093879)
+- Make rmt-server recommend yast2-rmt
+- Add the post-install message about running yast2-rmt
+- Add new script rmt-data-import for migration from SMT to RMT
+- Split off usage instruction into MANUAL.md
+- Squash migrations into one
+- Small improvements on CLI responses
+- Rename clientSetup4RMT.sh => rmt-client-setup
+- Add use-ruby-2.5-in-rmt-data-import.patch
+
+-------------------------------------------------------------------
+Fri May 11 15:54:46 UTC 2018 - hschmidt@suse.com
+
+- Don't check if a product has repos and that they are mirrored
+  when deactivating.
+  See: https://github.com/SUSE/rmt/pull/168
+
+-------------------------------------------------------------------
+Wed May  9 09:36:02 UTC 2018 - wstephenson@suse.com
+
+- Show custom repositories and product bindings in supportconfig
+  plugin output
+- Add CSV output option
+  See: https://github.com/SUSE/rmt/pull/158
+
+-------------------------------------------------------------------
+Tue May  8 09:58:29 UTC 2018 - tmuntaner@suse.com
+
+- Rename of service files
+  rmt.service -> rmt-server.service
+  rmt-migration.service -> rmt-server-migration.service
+  See: https://github.com/SUSE/rmt/pull/159
+
+-------------------------------------------------------------------
+Mon May  7 10:55:19 UTC 2018 - tmuntaner@suse.com
+
+- RMT server binds to 127.0.0.1, not 0.0.0.0
+  See: https://github.com/SUSE/rmt/pull/158
+-------------------------------------------------------------------
+Mon May  7 10:30:58 UTC 2018 - skotov@suse.com
+
+- Lockfile handling with File#flock
+  See: https://github.com/SUSE/rmt/pull/157
+
+-------------------------------------------------------------------
+Thu May  3 15:27:58 UTC 2018 - skotov@suse.com
+
+- Added lockfile feature for mirror, sync & import commands
+
+-------------------------------------------------------------------
+Thu May  3 08:50:43 UTC 2018 - tmuntaner@suse.com
+
+- Removed ability to change user/group through configuration (GH-144)
+  See: https://github.com/SUSE/rmt/pull/154
+
+-------------------------------------------------------------------
+Thu Apr 26 14:58:45 UTC 2018 - tmuntaner@suse.com
+
+- Added supportconfig plugin
+  See: https://github.com/SUSE/rmt/pull/146
+- Rename organizations_products.json to organizations_products_unscoped.json (fixes bsc#1088687)
+  See: https://github.com/SUSE/rmt/pull/151
+- Improved log formatting in journald
+  See: https://github.com/SUSE/rmt/pull/145
+
+-------------------------------------------------------------------
+Wed Apr 25 14:47:18 UTC 2018 - tmuntaner@suse.com
+
+- version 0.0.7
+- Fixed offline repository sync with usb (bsc#1089038)
+  See: https://github.com/SUSE/rmt/pull/147
+- Removed unique index for uuid in HwInfo table
+  See: https://github.com/SUSE/rmt/pull/142
+- "rmt-cli products enable ..." enables recommended extensions in SLE 15
+  See: https://github.com/SUSE/rmt/pull/141
+- Added RMT header in requests for Connect API
+  See: https://github.com/SUSE/rmt/pull/139
+
+-------------------------------------------------------------------
+Thu Apr 19 15:09:41 UTC 2018 - skotov@suse.com
+
+- version 0.0.6
+- storing hardware info
+  https://github.com/SUSE/rmt/pull/138
+
+-------------------------------------------------------------------
+Mon Apr  9 14:40:39 UTC 2018 - tmuntaner@suse.com
+
+- Only enable free modules in migrations for SLE 15
+  https://github.com/SUSE/rmt/pull/132
+
+-------------------------------------------------------------------
+Mon Apr  9 09:58:02 UTC 2018 - ikapelyukhin@suse.com
+
+- version 0.0.5
+- Allow access to the API only via HTTPS, add directories to store SSL
+  keys & certificates, add clientSetup4RMT.sh script
+  https://github.com/SUSE/rmt/pull/122
+
+-------------------------------------------------------------------
+Fri Apr  6 13:45:21 UTC 2018 - hschmidt@suse.com
+
+- Add the offline migration endpoint for upgrading major SLES versions.
+  https://github.com/SUSE/rmt/pull/121
+- Use the recommended systemd service type ("simple" instead of
+  "forking").
+  https://github.com/SUSE/rmt/pull/129
+- Don't create a local licenses directory if the repo has no licenses.
+  Closes bsc#1087707.
+  https://github.com/SUSE/rmt/pull/126
+- Don't allow duplicate activations to exist in the DB.
+  https://github.com/SUSE/rmt/pull/119
+
+-------------------------------------------------------------------
+Fri Mar 23 10:51:14 UTC 2018 - hschmidt@suse.com
+
+- Version 0.0.4
+- Fix nginx config to point to correct root location
+  See: https://github.com/SUSE/rmt/issues/113
+- Add message to help output about collecting feedback from users
+- Only allow one activation to exist for a given system-service
+  combination.
+- Update loofah and rails-html-sanitizer gems due to CVEs.
+- Add proper foreign key constraints where applicable.
+
+-------------------------------------------------------------------
+Thu Feb 22 13:37:01 UTC 2018 - tschmidt@suse.com
+
+- Do not build for s390 (bsc#1082150)
+
+-------------------------------------------------------------------
+Fri Feb 16 11:20:33 UTC 2018 - tmuntaner@suse.com
+
+- Use correct service for systemd timers
+
+-------------------------------------------------------------------
+Fri Feb 16 09:44:26 UTC 2018 - tschmidt@suse.com
+
+- RMT on SLE12 also uses ruby 2.5
+  - Removed use-ruby-2.4-in-rails.patch and use-ruby-2.4-in-rmt-cli.patch as
+    they are no longer needed.
+
+-------------------------------------------------------------------
+Wed Feb 14 18:19:19 UTC 2018 - tmuntaner@suse.com
+
+- Fixed systemd timers for SLES 12 and Leap
+
+-------------------------------------------------------------------
+Mon Feb 12 13:28:36 UTC 2018 - tmuntaner@suse.com
+
+- version 0.0.3
+- Added nginx integration
+- Added systemd timers for rmt-server-sync and rmt-server-mirror
+- Added custom repository integration
+
+-------------------------------------------------------------------
+Wed Jan 24 12:03:41 UTC 2018 - ikapelyukhin@suse.com
+
+- version 0.0.2
+- Use cached metadata when possible (bsc#1066669)
+
+-------------------------------------------------------------------
+Sat Dec 16 08:36:05 UTC 2017 - bwiedemann@suse.com
+
+- Dont package build logs to make build reproducible
+
+-------------------------------------------------------------------
+Wed Dec  6 10:31:02 UTC 2017 - dimstar@opensuse.org
+
+- Exclude Build for i586: does not build and is not supported on
+  32bit intel archs.
+
+-------------------------------------------------------------------
+Thu Nov 30 17:32:15 UTC 2017 - tschmidt@suse.com
+
+- Change package name to `rmt-server` to not conflict with the unix tool `rmt`
+
+-------------------------------------------------------------------
+Mon Oct 16 11:16:02 UTC 2017 - ikapelyukhin@suse.com
+
+- Update summary and description
+- Fix 'env-script-interpreter' rpmlint error
+- Ignore 'env-script-interpreter' for bundled scripts
+- Remove leftover .keep files
+
+-------------------------------------------------------------------
+Thu Oct 12 18:41:49 UTC 2017 - jengelh@inai.de
+
+- Replace %__-type macro indirections.
+- Do not ignore errors from useradd/groupadd.
+- Avoid running fdupes over partition boundaries.
+- Compact description, find-delete calls and %systemd_* calls.
+
+-------------------------------------------------------------------
+Tue Jun  6 09:43:04 UTC 2017 - ikapelyukhin@suse.com
+
+- Initial version 0.0.1

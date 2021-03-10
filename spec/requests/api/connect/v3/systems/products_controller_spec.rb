@@ -6,8 +6,8 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
 
   let(:url) { connect_systems_products_url }
   let(:headers) { auth_header.merge(version_header) }
-  let(:system) { FactoryGirl.create(:system) }
-  let(:product) { FactoryGirl.create(:product, :with_mirrored_repositories, :with_mirrored_extensions) }
+  let(:system) { FactoryBot.create(:system) }
+  let(:product) { FactoryBot.create(:product, :with_mirrored_repositories, :with_mirrored_extensions) }
 
   let(:payload) do
     {
@@ -29,7 +29,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
     context 'when product has unmet dependencies' do
       subject { response }
 
-      let(:base_product) { FactoryGirl.create(:product, :with_not_mirrored_repositories, :with_mirrored_extensions) }
+      let(:base_product) { FactoryBot.create(:product, :with_not_mirrored_repositories, :with_mirrored_extensions) }
       let(:product) { base_product.extensions[0] }
       let(:error_json) do
         {
@@ -59,7 +59,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       its(:body) { is_expected.to eq(serialized_json) }
 
       context 'response with "-" in version' do
-        let(:product) { FactoryGirl.create(:product, :with_mirrored_repositories, :with_mirrored_extensions, version: '24.0') }
+        let(:product) { FactoryBot.create(:product, :with_mirrored_repositories, :with_mirrored_extensions, version: '24.0') }
 
         let(:payload) do
           {
@@ -99,7 +99,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
   end
 
   describe '#show' do
-    let(:activation) { FactoryGirl.create(:activation, :with_mirrored_product) }
+    let(:activation) { FactoryBot.create(:activation, :with_mirrored_product) }
 
     it_behaves_like 'products controller action' do
       let(:verb) { 'get' }
@@ -210,7 +210,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
     subject { response }
 
     let(:request) { put url, headers: headers, params: payload }
-    let(:new_product) { FactoryGirl.create(:product, :with_mirrored_repositories) }
+    let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
     let(:payload) do
       {
         identifier: new_product.identifier,
@@ -246,8 +246,8 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
     end
 
     context 'with activated previous product' do
-      let!(:old_product) { FactoryGirl.create(:product, :with_mirrored_repositories, :activated, system: system) }
-      let(:new_product) { FactoryGirl.create(:product, :with_mirrored_repositories, predecessors: [old_product]) }
+      let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system) }
+      let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories, predecessors: [old_product]) }
       let(:serialized_json) do
         V3::ServiceSerializer.new(
           new_product.service,
@@ -268,7 +268,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
     end
 
     context 'with "-" in product version' do
-      let(:new_product) { FactoryGirl.create(:product, :with_mirrored_repositories, version: '24.0') }
+      let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories, version: '24.0') }
       let(:payload) do
         {
           identifier: new_product.identifier,
@@ -318,7 +318,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       end
 
       context 'with not activated product in installed_products' do
-        let(:product) { FactoryGirl.create(:product, :with_mirrored_repositories, product_type: 'base') }
+        let(:product) { FactoryBot.create(:product, :with_mirrored_repositories, product_type: 'base') }
         let(:payload) do
           {
             'installed_products': [
@@ -342,8 +342,8 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       end
 
       context 'with multiple base products in installed_products' do
-        let(:first_product) { FactoryGirl.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'base') }
-        let(:second_product) { FactoryGirl.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'base') }
+        let(:first_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'base') }
+        let(:second_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'base') }
         let(:payload) do
           {
             'installed_products': [
@@ -376,9 +376,9 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       end
 
       context 'with a proper set of products in installed_products' do
-        let(:first_product) { FactoryGirl.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'base') }
+        let(:first_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'base') }
         let(:second_product) do
-          FactoryGirl.create(
+          FactoryBot.create(
             :product,
             :with_mirrored_repositories,
             product_type: 'base',
@@ -476,9 +476,9 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       end
 
       context 'with "-0" version suffix' do
-        let(:first_product) { FactoryGirl.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'base') }
+        let(:first_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'base') }
         let(:second_product) do
-          FactoryGirl.create(
+          FactoryBot.create(
             :product,
             :with_mirrored_repositories,
             product_type: 'base',
