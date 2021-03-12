@@ -393,30 +393,55 @@ describe MigrationEngine do
             it { is_expected.to be_empty }
           end
 
-          # Example: SLES 15 system gets upgraded to SLES 15 SP1
-          # The SLES 15 SP1 recommended modules should not be offered in this case,
-          # since recommended modules should only get added when doing a major upgrade (12 to 15)
           context 'when doing an offline upgrade to the next service pack' do
             let!(:product_d) do
               create :product, :with_mirrored_repositories, predecessors: [product_c],
               migration_kind: :online
             end
-            let!(:target_product_recommended_module) do
-              create(:product, :module, :with_mirrored_repositories).tap do |mod|
-                ProductsExtensionsAssociation.create(
-                  product: product_d,
-                  extension: mod,
-                  root_product: product_d,
-                  recommended: true
-                )
-              end
-            end
             let(:installed_products) { [product_c] }
             let(:target_base_product) { product_d }
             let(:system) { create :system, :with_activated_product, product: product_c }
 
-            it 'does not include recommended modules' do
-              is_expected.to contain_exactly([product_d])
+            context 'with the target having recommended modules' do
+              let!(:recommended_module) do
+                create(:product, :module, :with_repositories).tap do |mod|
+                  ProductsExtensionsAssociation.create(
+                    product: target_base_product,
+                    extension: mod,
+                    root_product: target_base_product,
+                    recommended: true
+                  )
+                end
+              end
+
+              # Example: SLES 15 system gets upgraded to SLES 15 SP1, excluding SLES 15 SP1 recommended modules,
+              # since recommended modules should only get added when doing a major upgrade (12 to 15)
+              it 'does not include recommended modules that weren\'t installed before' do
+                is_expected.to contain_exactly([product_d])
+              end
+            end
+
+            context 'with the target base product sharing modules with the installed base product' do
+              let!(:installed_module) do
+                create(:product, :module, :with_repositories, name: 'cross version module').tap do |mod|
+                  ProductsExtensionsAssociation.create(
+                    product: product_c,
+                    extension: mod,
+                    root_product: product_c
+                  )
+                  ProductsExtensionsAssociation.create(
+                    product: target_base_product,
+                    extension: mod,
+                    root_product: target_base_product
+                  )
+                  system.activations << create(:activation, system: system, service: mod.service, subscription: nil)
+                end
+              end
+              let(:installed_products) { [product_c, installed_module] }
+
+              it 'keeps modules that are installed and compatible with the new base' do
+                is_expected.to contain_exactly([target_base_product, installed_module])
+              end
             end
           end
 

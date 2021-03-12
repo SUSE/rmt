@@ -81,7 +81,7 @@ class MigrationEngine
     base_successors.each do |base|
       extensions_successors = installed_extensions.map do |ext|
         options = ext.successors.merge(migration_path_scope)
-        options += [ext] if migration_kind == :online
+        options += [ext]
         options.select { |succ| succ.available_for?(base) }
       end
       combinations += [base].product(*extensions_successors)
