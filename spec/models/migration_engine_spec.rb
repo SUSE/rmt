@@ -434,7 +434,7 @@ describe MigrationEngine do
                     extension: mod,
                     root_product: target_base_product
                   )
-                  system.activations << create(:activation, system: system, service: mod.service, subscription: nil)
+                  system.activations << create(:activation, system: system, service: mod.service)
                 end
               end
               let(:installed_products) { [product_c, installed_module] }
