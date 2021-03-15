@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2019-03-28 18:42+0000\n"
-"Last-Translator: Carina Hagl <vistatec_pm@sunflare.co.jp>\n"
+"PO-Revision-Date: 2021-03-15 13:56+0000\n"
+"Last-Translator: Yasuhiko Kamata <belphegor@belbel.or.jp>\n"
 "Language-Team: Japanese <https://l10n.opensuse.org/projects/rmt/i18n/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 3.3\n"
+"X-Generator: Weblate 3.6.1\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "%s はシステム上でまだ有効化されていません。"
@@ -39,11 +39,10 @@ msgid "%{path} is not writable by user %{username}."
 msgstr "%{path} はユーザ %{username} による書き込みはできません。"
 
 msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
-msgstr ""
+msgstr "* %{name} (ID: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 
-#, fuzzy
 msgid "A repository by the ID %{id} already exists."
-msgstr "URL %{url} のリポジトリはすでに存在しています。"
+msgstr "ID %{id} のリポジトリはすでに存在しています。"
 
 msgid "A repository by the URL %{url} already exists."
 msgstr "URL %{url} のリポジトリはすでに存在しています。"
@@ -61,15 +60,14 @@ msgid "All repositories have already been enabled."
 msgstr "すべてのリポジトリはすでに有効化されています。"
 
 msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
-msgstr ""
+msgstr "同じコマンドが既に動作しています。既に実行されているほうを終了するか、処理が完了するまでお待ちください。"
 
 #. i18n: architecture
 msgid "Arch"
 msgstr "アーチ"
 
-#, fuzzy
 msgid "Architecture"
-msgstr "アーチ"
+msgstr "アーキテクチャ"
 
 msgid "Attach an existing custom repository to a product"
 msgstr "既存のカスタムリポジトリを製品にアタッチする"
@@ -99,10 +97,10 @@ msgid "Checksum doesn't match"
 msgstr "チェックサムが一致しません"
 
 msgid "Clean cancelled."
-msgstr ""
+msgstr "クリーンアップをキャンセルしました。"
 
 msgid "Clean finished. An estimated %{total_file_size} were removed."
-msgstr ""
+msgstr "クリーンアップが完了しました。おおよそ %{total_file_size} が削除されました。"
 
 msgid "Cleaning up the database"
 msgstr "データベースをクリーンアップしています"
@@ -122,25 +120,23 @@ msgstr "ローカルディレクトリ %{dir} がエラー: %{error} で作成�
 msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
 msgstr "ログイン「%{login}」とパスワード「%{password}」を持つシステムが見つかりませんでした"
 
-#, fuzzy
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
-msgstr "suma製品ツリーがエラー: %{error} でミラーリングできませんでした"
+msgstr "SUSE Manager 製品ツリーが下記のエラーでミラーリングできませんでした: %{error}"
 
-#, fuzzy
 msgid "Couldn't add custom repository."
-msgstr "カスタムリポジトリを作成します。"
+msgstr "カスタムリポジトリを追加できませんでした。"
 
 msgid "Creates a custom repository."
 msgstr "カスタムリポジトリを作成します。"
 
 msgid "Deleting locally mirrored files from repository '%{repo}'..."
-msgstr ""
+msgstr "リポジトリ '%{repo}' から、ローカルにミラーされているファイルを削除しています..."
 
 msgid "Description"
-msgstr ""
+msgstr "説明"
 
 msgid "Description: %{description}"
-msgstr ""
+msgstr "説明: %{description}"
 
 msgid "Detach an existing custom repository from a product"
 msgstr "製品から既存のカスタムリポジトリをデタッチする"
@@ -148,13 +144,11 @@ msgstr "製品から既存のカスタムリポジトリをデタッチする"
 msgid "Detached repository from product '%{product_name}'."
 msgstr "リポジトリを製品「%{product_name}」からデタッチしました。"
 
-#, fuzzy
 msgid "Disable mirroring of custom repositories by a list of IDs"
-msgstr "IDによりカスタムリポジトリのミラーリングを無効にする"
+msgstr "ID によるカスタムリポジトリのミラーリングを無効化する"
 
-#, fuzzy
 msgid "Disable mirroring of custom repository by a list of IDs"
-msgstr "IDによりカスタムリポジトリのミラーリングを無効にする"
+msgstr "ID リストによるカスタムリポジトリのミラーリングを無効化する"
 
 msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
 msgstr "製品IDまたは製品文字列のリストにより、製品リポジトリのミラーリングを無効にします。"
@@ -169,13 +163,13 @@ msgid "Disabling %{product}:"
 msgstr "%{product} の無効化:"
 
 msgid "Displays product with all its repositories and their attributes."
-msgstr ""
+msgstr "製品に対応する全てのリポジトリと、それらの属性を表示しています。"
 
 msgid "Do not import system hardware info from MachineData table"
-msgstr ""
+msgstr "MachineData テーブルからシステムハードウエアの情報を取り込まない"
 
 msgid "Do not import the systems that were registered to the SMT"
-msgstr "SMTに登録されたシステムをインポートしない"
+msgstr "SMT に登録されたシステムをインポートしない"
 
 msgid "Do you have any suggestions for improvement? We would love to hear from you!"
 msgstr "改善するためのご提案がございましたらぜひお聞かせください!"
@@ -187,14 +181,13 @@ msgid "Downloading data from SCC"
 msgstr "SCCからデータをダウンロードしています"
 
 msgid "Duplicate entry for system %{system}, skipping"
-msgstr ""
+msgstr "システム %{system} に対する項目が重複しているため、読み飛ばしています"
 
 msgid "Enable debug output"
 msgstr "デバッグ出力を有効にする"
 
-#, fuzzy
 msgid "Enable mirroring of custom repositories by a list of IDs"
-msgstr "IDによりカスタムリポジトリのミラーリングを有効にする"
+msgstr "ID のリストによるカスタムリポジトリのミラーリングを有効化する"
 
 msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
 msgstr "製品IDまたは製品文字列のリストにより製品リポジトリのミラーリングを有効にする。"
@@ -215,7 +208,7 @@ msgid "Enabling %{product}:"
 msgstr "%{product} の有効化:"
 
 msgid "Enter a value:"
-msgstr ""
+msgstr "値を入力してください:"
 
 msgid "Error while mirroring data: %{error}"
 msgstr "データをミラーリング中にエラーが発生しました: %{error}"
@@ -230,10 +223,10 @@ msgid "Error while moving directory %{src} to %{dest}: %{error}"
 msgstr "ディレクトリ %{src} から %{dest} への移動中にエラーが発生しました: %{error}"
 
 msgid "Examples"
-msgstr ""
+msgstr "例"
 
 msgid "Examples:"
-msgstr ""
+msgstr "例:"
 
 msgid "Export commands for Offline Sync"
 msgstr "オフライン同期用コマンドのエクスポート"
@@ -254,35 +247,35 @@ msgid "Exporting subscriptions"
 msgstr "サブスクリプションをエクスポートしています"
 
 msgid "Failed to download %{failed_count} files"
-msgstr ""
+msgstr "%{failed_count} 個のファイルのダウンロードに失敗しました"
 
 msgid "Failed to get repository metadata signatures with HTTP code %{http_code}"
-msgstr ""
+msgstr "HTTP コード %{http_code} でリポジトリメタデータの署名取得に失敗しました"
 
 msgid "Failed to import system %{system}"
-msgstr ""
+msgstr "システム %{system} の取り込みに失敗しました"
 
 msgid "Failed to sync system %{login}: %{error}"
-msgstr ""
+msgstr "システムの同期に失敗しました %{login}: %{error}"
 
 msgid "Forward registered systems data to SCC"
-msgstr ""
+msgstr "SCC に登録済みのシステムを転送する"
 
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
 msgstr[0] "ターゲット %{target} により製品を検出しました: %{products}。"
 
 msgid "GPG key import failed"
-msgstr ""
+msgstr "GPG 鍵の取り込みに失敗しました"
 
 msgid "GPG signature verification failed"
-msgstr ""
+msgstr "GPG の署名検証に失敗しました"
 
 msgid "Hardware information stored for system %{system}"
 msgstr "システム %{system} に保存されるハードウェア情報"
 
 msgid "Hostname"
-msgstr ""
+msgstr "ホスト名"
 
 msgid "ID"
 msgstr "ID"
@@ -303,7 +296,7 @@ msgid "Last mirrored"
 msgstr "前回のミラーリング"
 
 msgid "Last seen"
-msgstr ""
+msgstr "最終確認"
 
 msgid "List all custom repositories"
 msgstr "すべてのカスタムリポジトリを一覧表示する"
@@ -312,13 +305,13 @@ msgid "List all products, including ones which are not marked to be mirrored"
 msgstr "ミラーリング対象にマーク付けされていない製品を含む、すべての製品を一覧表示する"
 
 msgid "List all registered systems"
-msgstr ""
+msgstr "全登録済みシステムの一覧"
 
 msgid "List all repositories, including ones which are not marked to be mirrored"
 msgstr "ミラーリング対象にマーク付けされていないリポジトリを含む、すべてのリポジトリを一覧表示する"
 
 msgid "List and manipulate registered systems"
-msgstr ""
+msgstr "登録済みシステムの一覧表示と操作"
 
 msgid "List and modify custom repositories"
 msgstr "カスタムリポジトリを一覧表示および変更する"
@@ -333,13 +326,13 @@ msgid "List products which are marked to be mirrored."
 msgstr "ミラーリング対象にマーク付けされている製品を一覧表示します。"
 
 msgid "List registered systems."
-msgstr ""
+msgstr "登録済みのシステムを一覧表示します。"
 
 msgid "List repositories which are marked to be mirrored"
 msgstr "ミラーリング対象にマーク付けされているリポジトリを一覧表示します"
 
 msgid "Login"
-msgstr ""
+msgstr "ログイン"
 
 msgid "Mandatory"
 msgstr "必須"
@@ -350,17 +343,14 @@ msgstr "必須ですか?"
 msgid "Mirror"
 msgstr "ミラーリング"
 
-#, fuzzy
 msgid "Mirror all enabled repositories"
-msgstr "ミラーリング"
+msgstr "有効化されている全てのリポジトリをミラーリングする"
 
-#, fuzzy
 msgid "Mirror enabled repositories for a product with given product IDs"
-msgstr "ミラーリング"
+msgstr "指定された ID を持つ製品向けの有効化されたリポジトリをミラーリングする"
 
-#, fuzzy
 msgid "Mirror enabled repositories with given repository IDs"
-msgstr "ミラーリング"
+msgstr "指定された ID を持つ有効化されたリポジトリをミラーリングする"
 
 msgid "Mirror repos at given path"
 msgstr "指定されたパスのリポジトリをミラーリングする"
@@ -374,24 +364,20 @@ msgstr "リポジトリをミラーリングする"
 msgid "Mirror?"
 msgstr "ミラーリングしますか?"
 
-#, fuzzy
 msgid "Mirroring SUMA product tree failed: %{error_message}"
-msgstr "ミラーリング"
+msgstr "SUMA 製品ツリーのミラーリングに失敗しました: %{error_message}"
 
 msgid "Mirroring SUSE Manager product tree to %{dir}"
 msgstr "SUSE Manager製品ツリーを %{dir} にミラーリングしています"
 
-#, fuzzy
 msgid "Mirroring complete."
-msgstr "ミラーリング"
+msgstr "ミラーリングが完了しました。"
 
-#, fuzzy
 msgid "Mirroring completed with errors."
-msgstr "ミラーリング"
+msgstr "ミラーリングがエラーで終了しました。"
 
-#, fuzzy
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
-msgstr "ミラーリング"
+msgstr "ID %{repo_id} のリポジトリのミラーリングは有効化されていません"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "リポジトリ %{repo} から %{dir} にミラーリングしています"
@@ -435,9 +421,8 @@ msgstr "リポジトリが有効化されていません。"
 msgid "No repositories found for product: %s"
 msgstr "製品: %s のリポジトリが見つかりません"
 
-#, fuzzy
 msgid "No repository IDs supplied"
-msgstr "リポジトリIDが提供されていません"
+msgstr "リポジトリ ID が指定されていません"
 
 msgid "No repository ids supplied"
 msgstr "リポジトリIDが提供されていません"
@@ -455,10 +440,10 @@ msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activa
 msgstr "登録コードがまだアクティブ化されていません。https://scc.suse.comにアクセスしてアクティブ化してください。"
 
 msgid "Number of systems to display"
-msgstr ""
+msgstr "表示するシステムの数"
 
 msgid "Only '%{input}' will be accepted."
-msgstr ""
+msgstr "'%{input}' のみを受け付けることができます。"
 
 msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
 msgstr "有効な製品のみがデフォルトで表示されます。すべての製品を表示するには「%{command}」オプションを使用します。"
@@ -472,9 +457,8 @@ msgstr "CSVフォーマットの出力データ"
 msgid "Path to unpacked SMT data tarball"
 msgstr "展開したSMTデータtarballへのパス"
 
-#, fuzzy
 msgid "Please provide a non-numeric ID for your custom repository."
-msgstr "ID"
+msgstr "カスタムリポジトリに対する数字ではない ID を入力してください。"
 
 msgid "Product"
 msgstr "製品"
@@ -501,9 +485,8 @@ msgstr ""
 "しましたが、その製品が見つかりませんでした。コマンド「%{command}」\n"
 "を実行して別の製品にアタッチしてください。\n"
 
-#, fuzzy
 msgid "Product %{target} has no repositories enabled"
-msgstr "製品"
+msgstr "製品 %{target} には有効化されているリポジトリがありません"
 
 msgid "Product Architecture"
 msgstr "製品アーキテクチャ"
@@ -514,68 +497,59 @@ msgstr "製品ID"
 msgid "Product Name"
 msgstr "製品名"
 
-#, fuzzy
 msgid "Product String"
-msgstr "製品"
+msgstr "製品文字列"
 
 msgid "Product Version"
 msgstr "製品バージョン"
 
-#, fuzzy
 msgid "Product architecture (e.g.: x86_64, aarch64)"
-msgstr "製品"
+msgstr "製品アーキテクチャ (例: x86_64, aarch64)"
 
 msgid "Product by ID %{id} not found."
 msgstr "ID %{id} の製品が見つかりません。"
 
-#, fuzzy
 msgid "Product for target %{target} not found"
-msgstr "製品"
+msgstr "ターゲット %{target} に対する製品が見つかりませんでした"
 
-#, fuzzy
 msgid "Product name (e.g.: Basesystem, SLES)"
-msgstr "製品"
+msgstr "製品名 (例: Basesystem, SLES)"
 
-#, fuzzy
 msgid "Product version (e.g.: 15, 15.1, '12 SP4')"
-msgstr "製品"
+msgstr "製品バージョン (例: 15, 15.1, '12 SP4')"
 
-#, fuzzy
 msgid "Product with ID %{target} not found"
-msgstr "ID %{id} の製品が見つかりません。"
+msgstr "ID %{target} の製品が見つかりませんでした"
 
-#, fuzzy
 msgid "Product: %{name} (id: %{id})"
-msgstr "製品"
+msgstr "製品: %{name} (ID: %{id})"
 
-#, fuzzy
 msgid "Products"
 msgstr "製品"
 
-#, fuzzy
 msgid "Provide a custom ID instead of allowing RMT to generate one."
-msgstr "ID"
+msgstr "RMT に生成させるのではなく、独自の ID を指定してください。"
 
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
-msgstr ""
+msgstr "RMT は下記のリポジトリ内に、ミラーリング対象としてマークされていないミラー済みファイルを検出しました:"
 
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr "RMTがまだSCCと同期されていません。その前に「%{command}」を実行してください"
 
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
-msgstr ""
+msgstr "RMT はミラーリング対象としてマークされているリポジトリのファイルのみを検出しました。"
 
 msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
-msgstr ""
+msgstr "RMT は %{file} 内にある指定リポジトリを PATH にミラーします。通常は可搬型のストレージデバイスです。"
 
 msgid "Read SCC data from given path"
 msgstr "指定されたパスから SCC データを読み込む"
 
 msgid "Registration time"
-msgstr ""
+msgstr "登録日時"
 
 msgid "Release Stage"
-msgstr ""
+msgstr "リリースステージ"
 
 msgid "Remove a custom repository"
 msgstr "カスタムリポジトリを削除する"
@@ -584,29 +558,28 @@ msgid "Removed custom repository by ID %{id}."
 msgstr "ID %{id} によりカスタムリポジトリを削除しました。"
 
 msgid "Removes a system and its activations from RMT"
-msgstr ""
+msgstr "RMT からシステムを削除しアクティベーションを解除する"
 
 msgid "Removes a system and its activations from RMT."
-msgstr ""
+msgstr "RMT からシステムを削除しアクティベーションを解除します。"
 
 msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
-msgstr ""
+msgstr "ミラーリング対象としてマークされていないリポジトリのミラー済みファイルを削除します"
 
 msgid "Repositories are not available for this product."
-msgstr ""
+msgstr "この製品に対してはリポジトリが提供されていません。"
 
 msgid "Repositories:"
-msgstr ""
+msgstr "リポジトリ:"
 
 msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
 msgstr "リポジトリ %{repo} がRMTデータベースで見つかりませんでした。それに対する有効なサブスクリプションがない可能性があります"
 
 msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
-msgstr ""
+msgstr "リポジトリ '%{repo_name}' (%{repo_id}): %{error_message}"
 
-#, fuzzy
 msgid "Repository by ID %{id} not found."
-msgstr "ID %{id} の製品が見つかりません。"
+msgstr "ID %{id} のリポジトリが見つかりません。"
 
 msgid "Repository by ID %{id} successfully disabled."
 msgstr "ID %{id} によりリポジトリが正常に無効化されました。"
@@ -614,22 +587,19 @@ msgstr "ID %{id} によりリポジトリが正常に無効化されました。
 msgid "Repository by ID %{id} successfully enabled."
 msgstr "ID %{id} のリポジトリが正常に有効化されました。"
 
-#, fuzzy
 msgid "Repository by ID %{repos} could not be found and was not disabled."
 msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
-msgstr[0] "リポジトリ %{repos} が見つかりませんでしたが、無効になっていません。"
+msgstr[0] "リポジトリ %{repos} が見つからなかったため、無効化されていません。"
 
-#, fuzzy
 msgid "Repository by ID %{repos} could not be found and was not enabled."
 msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
-msgstr[0] "リポジトリ %{repos} が見つかりませんでした。有効になっていません。"
+msgstr[0] "リポジトリ %{repos} が見つからなかったため、有効化されていません。"
 
 msgid "Repository metadata signatures are missing"
 msgstr "リポジトリメタデータの署名がありません"
 
-#, fuzzy
 msgid "Repository with ID %{repo_id} not found"
-msgstr "ID"
+msgstr "ID %{repo_id} のリポジトリが見つかりませんでした"
 
 msgid "Requested service not found"
 msgstr "要求されたサービスが見つかりません"
@@ -644,19 +614,23 @@ msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first
 msgstr "SUSE Customer Centerデータと同期するには、まず「%{command}」を実行してください。"
 
 msgid "Run this command on an online RMT."
-msgstr ""
+msgstr "このコマンドをオンラインの RMT で実行してください。"
 
-#, fuzzy
 msgid ""
 "SCC API request failed. Error details:\n"
 "Request URL: %{url}\n"
 "Response code: %{code}\n"
 "Response body:\n"
 "%{body}"
-msgstr "URL"
+msgstr ""
+"SCC API リクエストが失敗しました。エラーの詳細:\n"
+"リクエスト URL: %{url}\n"
+"レスポンスコード: %{code}\n"
+"レスポンスボディ:\n"
+"%{body}"
 
 msgid "SCC credentials not set."
-msgstr ""
+msgstr "SCC 資格情報が設定されていません。"
 
 msgid "Settings saved at %{file}."
 msgstr "%{file} に設定が保存されました。"
@@ -666,6 +640,7 @@ msgstr "RMTバージョンの表示"
 
 msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
 msgstr ""
+"直近の %{limit} 件の登録のみを表示しています。全ての登録済みシステムを表示したい場合は、 '--all' オプションを指定してください。"
 
 msgid "Shows products attached to a custom repository"
 msgstr "カスタムリポジトリにアタッチされた製品を表示します"
@@ -680,28 +655,28 @@ msgid "Successfully added custom repository."
 msgstr "カスタムリポジトリが正常に追加されました。"
 
 msgid "Successfully removed system with login %{login}."
-msgstr ""
+msgstr "ログイン %{login} のシステムを削除しました。"
 
 msgid "Sync database with SUSE Customer Center"
 msgstr "SUSE Customer Centerとデータベースを同期する"
 
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
-msgstr ""
+msgstr "システム %{scc_system_id} の登録解除情報を SCC と同期しています"
 
 msgid "Syncing system %{login} to SCC"
-msgstr ""
+msgstr "システム %{login} を SCC と同期しています"
 
 msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
-msgstr ""
+msgstr "SCC とのシステム同期は設定ファイルで無効化されています。終了します。"
 
 msgid "System %{system} not found"
 msgstr "システム %{system} が見つかりません"
 
 msgid "System with login %{login} cannot be removed."
-msgstr ""
+msgstr "ログイン %{login} のシステムは削除できません。"
 
 msgid "System with login %{login} not found."
-msgstr ""
+msgstr "ログイン %{login} のシステムが見つかりませんでした。"
 
 msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
 msgstr "RMTデータベースはまだ初期化されていません。データベースをセットアップするには、「%{command}」を実行してください。"
@@ -710,7 +685,7 @@ msgid "The SCC credentials are not configured correctly in '%{path}'. You can ob
 msgstr "SCC資格情報が「%{path}」で正しく設定されていません。それらの資格情報は %{url} から取得できます"
 
 msgid "The following errors occurred while mirroring:"
-msgstr ""
+msgstr "ミラーリング時に下記のエラーが発生しました:"
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
 msgstr "製品「%s」は基本製品であるため、非アクティブ化できません"
@@ -723,21 +698,23 @@ msgstr "要求された製品「%s」はシステムでアクティブ化され�
 
 msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
 msgstr ""
+"指定した PATH には %{file} ファイルが含まれていなければなりません。オフライン版の RMT でこのファイルを作成したい場合は、 "
+"%{command}' コマンドを実行してください。"
 
 msgid "There are no repositories marked for mirroring."
 msgstr "ミラーリング用にマーク付けされたリポジトリはありません。"
 
 msgid "There are no systems registered to this RMT instance."
-msgstr ""
+msgstr "この RMT インスタンスに登録すべきシステムはありません。"
 
 msgid "To clean up downloaded files, please run '%{command}'"
-msgstr ""
+msgstr "ダウンロードしたファイルをクリーンアップするには、 '%{command}' を実行してください"
 
 msgid "To clean up downloaded files, run '%{command}'"
-msgstr ""
+msgstr "ダウンロードしたファイルをクリーンアップするには、 '%{command}' を実行してください"
 
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
-msgstr ""
+msgstr "システムの削除を行なうには、対応するログイン情報を指定して \"%{command}\" コマンドを実行してください。"
 
 msgid "URL"
 msgstr "URL"
@@ -767,31 +744,28 @@ msgid "Version"
 msgstr "バージョン"
 
 msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
-msgstr ""
+msgstr "続行してこれらのリポジトリのミラー済みファイルを削除しますか？"
 
 msgid "enabled"
-msgstr ""
+msgstr "有効"
 
 msgid "importing data from SMT."
 msgstr "SMTからデータをインポートしています。"
 
-#, fuzzy
 msgid "mandatory"
 msgstr "必須"
 
 msgid "mirrored at %{time}"
-msgstr ""
+msgstr "%{time} にミラー済み"
 
-#, fuzzy
 msgid "non-mandatory"
-msgstr "必須ではありません"
+msgstr "非必須"
 
 msgid "not enabled"
-msgstr ""
+msgstr "有効化されていません"
 
-#, fuzzy
 msgid "not mirrored"
-msgstr "前回のミラーリング"
+msgstr "ミラーリングされていません"
 
 msgid "repository by URL %{url} does not exist in database"
 msgstr "URL %{url} のリポジトリはデータベースに存在しません"
