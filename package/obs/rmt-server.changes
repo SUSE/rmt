@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Mar 16 08:20:24 UTC 2021 - Jens Mammen <jmammen@suse.com>
+
+- Include installed modules to the solution tree when doing
+  an offline migration.
+
+-------------------------------------------------------------------
 Mon Feb 15 12:22:08 UTC 2021 - Natnael Getahun <natnael.getahun@suse.com>
 
 - Version 2.6.6
