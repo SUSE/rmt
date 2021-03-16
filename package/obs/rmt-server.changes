@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Feb 18 14:20:53 UTC 2021 - Natnael Getahun <natnael.getahun@suse.com>
+
+- Fix rpath build issues
+- Resubmit version 2.6.6 
+
+-------------------------------------------------------------------
 Mon Feb 15 12:22:08 UTC 2021 - Natnael Getahun <natnael.getahun@suse.com>
 
 - Version 2.6.6
