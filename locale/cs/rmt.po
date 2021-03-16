@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2019-03-28 18:42+0000\n"
-"Last-Translator: Jakub Muzik <JakubMu@virtus.cz>\n"
+"PO-Revision-Date: 2021-03-16 22:56+0000\n"
+"Last-Translator: Aleš Kastner <alkas@volny.cz>\n"
 "Language-Team: Czech <https://l10n.opensuse.org/projects/rmt/i18n/cs/>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 3.3\n"
+"X-Generator: Weblate 3.6.1\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "%s ještě není v systému aktivováno."
@@ -39,11 +39,10 @@ msgid "%{path} is not writable by user %{username}."
 msgstr "Do cesty %{path} nemůže uživatel %{username} zapisovat."
 
 msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
-msgstr ""
+msgstr "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 
-#, fuzzy
 msgid "A repository by the ID %{id} already exists."
-msgstr "Repozitář na adrese URL %{url} už existuje."
+msgstr "Úložiště s ID %{url} už existuje."
 
 msgid "A repository by the URL %{url} already exists."
 msgstr "Repozitář na adrese URL %{url} už existuje."
@@ -62,14 +61,15 @@ msgstr "Všechny repozitáře už byly povoleny."
 
 msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
 msgstr ""
+"Je již spuštěna jiná instance tohoto příkazu. Ukončete jinou instanci nebo "
+"počkejte, až skončí."
 
 #. i18n: architecture
 msgid "Arch"
 msgstr "Arch"
 
-#, fuzzy
 msgid "Architecture"
-msgstr "Arch"
+msgstr "Architektura"
 
 msgid "Attach an existing custom repository to a product"
 msgstr "Připojit existující vlastní repozitář k produktu"
@@ -99,10 +99,10 @@ msgid "Checksum doesn't match"
 msgstr "Kontrolní součet neodpovídá"
 
 msgid "Clean cancelled."
-msgstr ""
+msgstr "Vyčistění zrušeno."
 
 msgid "Clean finished. An estimated %{total_file_size} were removed."
-msgstr ""
+msgstr "Vyčistění dokončeno. Celkem bylo odstraněno %{total_file_size}."
 
 msgid "Cleaning up the database"
 msgstr "Čištění databáze"
@@ -122,25 +122,23 @@ msgstr "Nelze vytvořit místní adresář %{dir} s chybou: %{error}"
 msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
 msgstr "Nelze najít systém s přihlašovacím jménem „%{login}“ a heslem „%{password}“"
 
-#, fuzzy
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
-msgstr "Nelze zrcadlit produktový strom Suma s chybou: %{error}"
+msgstr "Nelze zrcadlit produkt SUSE Manager s chybou: %{error}"
 
-#, fuzzy
 msgid "Couldn't add custom repository."
-msgstr "Vytvoří vlastní repozitář."
+msgstr "Nelze přidat vlastní úložiště."
 
 msgid "Creates a custom repository."
 msgstr "Vytvoří vlastní repozitář."
 
 msgid "Deleting locally mirrored files from repository '%{repo}'..."
-msgstr ""
+msgstr "Odstraňuji lokálně zrcadlené soubory z úložiště '%{repo}'..."
 
 msgid "Description"
-msgstr ""
+msgstr "Popis"
 
 msgid "Description: %{description}"
-msgstr ""
+msgstr "Popis: %{description}"
 
 msgid "Detach an existing custom repository from a product"
 msgstr "Odpojit existující vlastní repozitář od produktu"
@@ -148,9 +146,8 @@ msgstr "Odpojit existující vlastní repozitář od produktu"
 msgid "Detached repository from product '%{product_name}'."
 msgstr "Byl odpojen repozitář od projektu %{product_name}."
 
-#, fuzzy
 msgid "Disable mirroring of custom repositories by a list of IDs"
-msgstr "Zakázat zrcadlení vlastního repozitáře podle ID"
+msgstr "Zakázat zrcadlení vlastního úložiště podle seznamu ID"
 
 #, fuzzy
 msgid "Disable mirroring of custom repository by a list of IDs"
