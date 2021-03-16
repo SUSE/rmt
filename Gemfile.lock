@@ -188,7 +188,7 @@ GEM
     mysql2 (0.5.3)
     nap (1.1.0)
     nenv (0.3.0)
-    nio4r (2.5.4)
+    nio4r (2.5.7)
     no_proxy_fix (0.1.2)
     nokogiri (1.11.2)
       mini_portile2 (~> 2.5.0)
@@ -207,7 +207,7 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
     public_suffix (4.0.6)
-    puma (5.0.2)
+    puma (5.2.2)
       nio4r (~> 2.0)
     racc (1.5.2)
     rack (2.2.3)
@@ -380,7 +380,7 @@ DEPENDENCIES
   memory_profiler
   mysql2 (~> 0.5.3)
   nokogiri (~> 1.11.2)
-  puma (~> 5.0.2)
+  puma (~> 5.2.2)
   railties (~> 6.0.3)
   repomd_parser (~> 0.1.4)
   responders
