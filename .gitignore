@@ -27,6 +27,7 @@ package/systemsmanagement:SCC:RMT
 vendor/
 coverage/
 .idea/
+integration/prophet/options-local.yml
 
 # Ignore encrypted secrets key file.
 config/secrets.yml.key
