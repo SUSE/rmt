@@ -58,6 +58,14 @@ FactoryBot.define do
       end
     end
 
+    trait :with_repositories do
+      after :create do |product, _evaluator|
+        unless Service.find_by(product_id: product.id)
+          FactoryBot.create(:service, :with_repositories, product: product)
+        end
+      end
+    end
+
     trait :with_mirrored_extensions do
       after :create do |product, _evaluator|
         5.times do
