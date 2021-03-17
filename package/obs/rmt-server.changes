@@ -5,6 +5,11 @@ Tue Mar 16 19:53:15 UTC 2021 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
 - Clean out `subscriptions` table only if replacement data is already
   available (bsc#1183615)
 
+Thu Feb 18 14:20:53 UTC 2021 - Natnael Getahun <natnael.getahun@suse.com>
+
+- Fix rpath build issues
+- Resubmit version 2.6.6 
+
 -------------------------------------------------------------------
 Mon Feb 15 12:22:08 UTC 2021 - Natnael Getahun <natnael.getahun@suse.com>
 
