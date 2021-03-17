@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2021-03-17 10:34+0000\n"
+"PO-Revision-Date: 2021-03-17 11:37+0000\n"
 "Last-Translator: Aleš Kastner <alkas@volny.cz>\n"
 "Language-Team: Czech <https://l10n.opensuse.org/projects/rmt/i18n/cs/>\n"
 "Language: cs\n"
@@ -561,9 +561,8 @@ msgstr "Číst data SCC ze zadané cesty"
 msgid "Registration time"
 msgstr "Čas registrace"
 
-#, fuzzy
 msgid "Release Stage"
-msgstr "Uvolnit etapu"
+msgstr "Etapa vydání"
 
 msgid "Remove a custom repository"
 msgstr "Odebrat vlastní repozitář"
@@ -674,28 +673,29 @@ msgid "Successfully added custom repository."
 msgstr "Byl úspěšně přidán vlastní repozitář."
 
 msgid "Successfully removed system with login %{login}."
-msgstr ""
+msgstr "Systém s přihlášením %{login} byl úspěšně odebrán."
 
 msgid "Sync database with SUSE Customer Center"
 msgstr "Synchronizovat databázi se SUSE Customer Center"
 
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
-msgstr ""
+msgstr "Synchronizace odregistrovaného systému %{scc_system_id} do SCC"
 
 msgid "Syncing system %{login} to SCC"
-msgstr ""
+msgstr "Synchronizace systému %{login} do SCC"
 
 msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
 msgstr ""
+"Synchronizace systémů do SCC je zakázána konfiguračním souborem; končím akci."
 
 msgid "System %{system} not found"
 msgstr "Systém %{system} nebyl nalezen"
 
 msgid "System with login %{login} cannot be removed."
-msgstr ""
+msgstr "Systém s přihlášením %{login} nelze odebrat."
 
 msgid "System with login %{login} not found."
-msgstr ""
+msgstr "Systém s přihlášením %{login} nebyl nalezen."
 
 msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
 msgstr "Databáze RMT ještě nebyla inicializována. Spusťte příkaz %{command} a databázi nastavte."
@@ -704,7 +704,7 @@ msgid "The SCC credentials are not configured correctly in '%{path}'. You can ob
 msgstr "Přihlašovací údaje SCC nejsou v cestě %{path} nakonfigurovány správně. Můžete je získat z %{url}"
 
 msgid "The following errors occurred while mirroring:"
-msgstr ""
+msgstr "Při zrcadlení došlo k následujícím chybám:"
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
 msgstr "Produkt %s je základní produkt a nelze ho deaktivovat"
@@ -717,21 +717,25 @@ msgstr "Požadované produkty %s nejsou na tomto systému aktivovány."
 
 msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
 msgstr ""
+"Zadaná PATH musí obsahovat soubor %{file}. Offline RMT může tento soubor "
+"vytvořit příkazem '%{command}'."
 
 msgid "There are no repositories marked for mirroring."
 msgstr "Žádné repozitáře nejsou označeny k zrcadlení."
 
 msgid "There are no systems registered to this RMT instance."
-msgstr ""
+msgstr "K této instanci RMT nejsou registrovány žádné systémy."
 
 msgid "To clean up downloaded files, please run '%{command}'"
-msgstr ""
+msgstr "Chcete-li vyčistit stažené soubory, spusťte '%{command}'"
 
 msgid "To clean up downloaded files, run '%{command}'"
-msgstr ""
+msgstr "Chcete-li vyčistit stažené soubory, spusťte '%{command}'"
 
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr ""
+"Chcete-li označit systém k odstranění, použijte příkaz \"% {command}\" pro "
+"výpis systémů s jejichi přihlašovacími údaji."
 
 msgid "URL"
 msgstr "URL"
@@ -761,31 +765,28 @@ msgid "Version"
 msgstr "Verze"
 
 msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
-msgstr ""
+msgstr "Chcete pokračovat a odstranit lokálně zrcadlené soubory těchto úložišť?"
 
 msgid "enabled"
-msgstr ""
+msgstr "povoleno"
 
 msgid "importing data from SMT."
 msgstr "budete importovat data ze SMT."
 
-#, fuzzy
 msgid "mandatory"
-msgstr "Povinné"
+msgstr "povinné"
 
 msgid "mirrored at %{time}"
-msgstr ""
+msgstr "odzrcadleno v %{time}"
 
-#, fuzzy
 msgid "non-mandatory"
-msgstr "Není povinné"
+msgstr "nepovinné"
 
 msgid "not enabled"
-msgstr ""
+msgstr "nepovoleno"
 
-#, fuzzy
 msgid "not mirrored"
-msgstr "Naposledy zrcadleno"
+msgstr "neodzrcadleno"
 
 msgid "repository by URL %{url} does not exist in database"
 msgstr "repozitář podle URL %{url} v databázi neexistuje"
