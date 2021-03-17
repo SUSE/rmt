@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2021-03-16 22:56+0000\n"
+"PO-Revision-Date: 2021-03-17 10:34+0000\n"
 "Last-Translator: Aleš Kastner <alkas@volny.cz>\n"
 "Language-Team: Czech <https://l10n.opensuse.org/projects/rmt/i18n/cs/>\n"
 "Language: cs\n"
@@ -149,9 +149,8 @@ msgstr "Byl odpojen repozitář od projektu %{product_name}."
 msgid "Disable mirroring of custom repositories by a list of IDs"
 msgstr "Zakázat zrcadlení vlastního úložiště podle seznamu ID"
 
-#, fuzzy
 msgid "Disable mirroring of custom repository by a list of IDs"
-msgstr "Zakázat zrcadlení vlastního repozitáře podle ID"
+msgstr "Zakázat zrcadlení vlastního úložiště podle seznamu ID"
 
 msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
 msgstr "Zakázat zrcadlení produktových repozitářů podle seznamu ID produktů nebo řetězců produktů."
@@ -166,10 +165,10 @@ msgid "Disabling %{product}:"
 msgstr "Zakazuje se %{product}:"
 
 msgid "Displays product with all its repositories and their attributes."
-msgstr ""
+msgstr "Zobrazí produkt se všemi jeho úložišti a jejich atributy."
 
 msgid "Do not import system hardware info from MachineData table"
-msgstr ""
+msgstr "Neimportujte informace o hardwaru systému z tabulky MachineData"
 
 msgid "Do not import the systems that were registered to the SMT"
 msgstr "Neimportovat systémy, které byly registrovány do SMT"
@@ -184,14 +183,13 @@ msgid "Downloading data from SCC"
 msgstr "Stahují se data z SCC"
 
 msgid "Duplicate entry for system %{system}, skipping"
-msgstr ""
+msgstr "Duplicitní položka pro systém %{system} přeskočena"
 
 msgid "Enable debug output"
 msgstr "Povolit výstup ladění"
 
-#, fuzzy
 msgid "Enable mirroring of custom repositories by a list of IDs"
-msgstr "Povolit zrcadlení vlastního repozitáře podle ID"
+msgstr "Povolit zrcadlení vlastního úložiště podle seznamu ID"
 
 msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
 msgstr "Povolit zrcadlení produktových repozitářů podle seznamu ID produktů nebo řetězců produktů."
@@ -212,7 +210,7 @@ msgid "Enabling %{product}:"
 msgstr "Povoluje se %{product}:"
 
 msgid "Enter a value:"
-msgstr ""
+msgstr "Zadejte hodnotu:"
 
 msgid "Error while mirroring data: %{error}"
 msgstr "Chyba při zrcadlení dat: %{error}"
@@ -227,10 +225,10 @@ msgid "Error while moving directory %{src} to %{dest}: %{error}"
 msgstr "Chyba při přesouvání adresáře %{src} do %{dest}: %{error}"
 
 msgid "Examples"
-msgstr ""
+msgstr "Příklady"
 
 msgid "Examples:"
-msgstr ""
+msgstr "Příklady:"
 
 msgid "Export commands for Offline Sync"
 msgstr "Příkazy exportu pro offline synchronizaci"
@@ -251,19 +249,19 @@ msgid "Exporting subscriptions"
 msgstr "Exportují se předplatná"
 
 msgid "Failed to download %{failed_count} files"
-msgstr ""
+msgstr "Nepodařilo se stáhnout %{failed_count} souborů"
 
 msgid "Failed to get repository metadata signatures with HTTP code %{http_code}"
-msgstr ""
+msgstr "Nepodařilo se získat podpisy metadat úložiště s kódem HTTP %{http_code}"
 
 msgid "Failed to import system %{system}"
-msgstr ""
+msgstr "Nepodařilo se importovat systém %{system}"
 
 msgid "Failed to sync system %{login}: %{error}"
-msgstr ""
+msgstr "Nepodařilo se synchronizovat systém %{login}: %{error}"
 
 msgid "Forward registered systems data to SCC"
-msgstr ""
+msgstr "Přeposlat data registrovaných systémů do SCC"
 
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
@@ -272,16 +270,16 @@ msgstr[1] "Nalezené produkty podle cíle %{target}: %{products}."
 msgstr[2] "Nalezené produkty podle cíle %{target}: %{products}."
 
 msgid "GPG key import failed"
-msgstr ""
+msgstr "Import klíče GPG se nezdařil"
 
 msgid "GPG signature verification failed"
-msgstr ""
+msgstr "Ověření podpisu GPG se nezdařilo"
 
 msgid "Hardware information stored for system %{system}"
 msgstr "Informace o hardwaru uložené pro systém %{system}"
 
 msgid "Hostname"
-msgstr ""
+msgstr "Název hostitele"
 
 msgid "ID"
 msgstr "ID"
@@ -302,7 +300,7 @@ msgid "Last mirrored"
 msgstr "Naposledy zrcadleno"
 
 msgid "Last seen"
-msgstr ""
+msgstr "Naposledy spatřen"
 
 msgid "List all custom repositories"
 msgstr "Vypsat všechny vlastní repozitáře"
@@ -311,13 +309,13 @@ msgid "List all products, including ones which are not marked to be mirrored"
 msgstr "Vypsat všechny produkty včetně produktů neoznačených k zrcadlení"
 
 msgid "List all registered systems"
-msgstr ""
+msgstr "Seznam všech registrovaných systémů"
 
 msgid "List all repositories, including ones which are not marked to be mirrored"
 msgstr "Vypsat všechny repozitáře včetně repozitářů neoznačených k zrcadlení"
 
 msgid "List and manipulate registered systems"
-msgstr ""
+msgstr "Seznam registrovaných systémů a manipulace s nimi"
 
 msgid "List and modify custom repositories"
 msgstr "Vypsat a upravit vlastní repozitáře"
@@ -332,13 +330,13 @@ msgid "List products which are marked to be mirrored."
 msgstr "Vypsat produkty označené k zrcadlení"
 
 msgid "List registered systems."
-msgstr ""
+msgstr "Seznam registrovaných systémů."
 
 msgid "List repositories which are marked to be mirrored"
 msgstr "Vypsat repozitáře označené k zrcadlení"
 
 msgid "Login"
-msgstr ""
+msgstr "Přihlášení"
 
 msgid "Mandatory"
 msgstr "Povinné"
@@ -349,17 +347,14 @@ msgstr "Povinné?"
 msgid "Mirror"
 msgstr "Zrcadlit"
 
-#, fuzzy
 msgid "Mirror all enabled repositories"
-msgstr "Zrcadlit"
+msgstr "Zrcadlit všechna povolená úložiště"
 
-#, fuzzy
 msgid "Mirror enabled repositories for a product with given product IDs"
-msgstr "Zrcadlit"
+msgstr "Zrcadlit povolená úložiště pro produkt s danými ID"
 
-#, fuzzy
 msgid "Mirror enabled repositories with given repository IDs"
-msgstr "Zrcadlit"
+msgstr "Zrcadlit povolená úložiště s danými ID úložiště"
 
 msgid "Mirror repos at given path"
 msgstr "Zrcadlit adresáře v zadané cestě"
@@ -373,24 +368,20 @@ msgstr "Zrcadlit adresáře"
 msgid "Mirror?"
 msgstr "Zrcadlit?"
 
-#, fuzzy
 msgid "Mirroring SUMA product tree failed: %{error_message}"
-msgstr "Zrcadlit"
+msgstr "Zrcadlení stromu produktu SUMA se nezdařilo: %{error_message}"
 
 msgid "Mirroring SUSE Manager product tree to %{dir}"
 msgstr "Zrcadlí se strom produktů SUSE Manager do %{dir}"
 
-#, fuzzy
 msgid "Mirroring complete."
-msgstr "Zrcadlit"
+msgstr "Zrcadlení dokončeno."
 
-#, fuzzy
 msgid "Mirroring completed with errors."
-msgstr "Zrcadlit"
+msgstr "Zrcadlení dokončeno s chybami."
 
-#, fuzzy
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
-msgstr "Zrcadlit"
+msgstr "Zrcadlení úložiště s ID %{repo_id} není povoleno"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "Zrcadlí se repozitář %{repo} do %{dir}"
@@ -434,9 +425,8 @@ msgstr "Nejsou povoleny žádné repozitáře."
 msgid "No repositories found for product: %s"
 msgstr "Nebyly nalezeny žádné repozitáře pro produkt: %s"
 
-#, fuzzy
 msgid "No repository IDs supplied"
-msgstr "Nebyla dodána žádná ID repozitářů"
+msgstr "Nebyla zadána žádná ID úložišť"
 
 msgid "No repository ids supplied"
 msgstr "Nebyla dodána žádná ID repozitářů"
@@ -454,10 +444,10 @@ msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activa
 msgstr "Ještě není aktivován registrační kód. Navštivte https://scc.suse.com a aktivujte ho."
 
 msgid "Number of systems to display"
-msgstr ""
+msgstr "Počet systémů k zobrazení"
 
 msgid "Only '%{input}' will be accepted."
-msgstr ""
+msgstr "Přijat bude pouze '%{input}'."
 
 msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
 msgstr "Ve výchozím nastavení se zobrazují jen povolené produkty. Použitím možnosti %{command} zobrazíte všechny produkty."
@@ -471,9 +461,8 @@ msgstr "Výstup dat ve formátu CSV"
 msgid "Path to unpacked SMT data tarball"
 msgstr "Cesta k rozbalenému balíčku TAR dat SMT"
 
-#, fuzzy
 msgid "Please provide a non-numeric ID for your custom repository."
-msgstr "ID"
+msgstr "Uveďte nečíselný ID svého vlastního úložiště."
 
 msgid "Product"
 msgstr "Produkt"
@@ -504,9 +493,8 @@ msgstr ""
 "ale tento produkt nebyl nalezen. Připojte ho k jinému produktu\n"
 "spuštěním příkazu %{command}\n"
 
-#, fuzzy
 msgid "Product %{target} has no repositories enabled"
-msgstr "Produkt"
+msgstr "Produkt %{target} nemá povolena žádná úložiště"
 
 msgid "Product Architecture"
 msgstr "Architektura produktu"
@@ -517,68 +505,65 @@ msgstr "ID produktu"
 msgid "Product Name"
 msgstr "Název produktu"
 
-#, fuzzy
 msgid "Product String"
-msgstr "Produkt"
+msgstr "Řetězec produktu"
 
 msgid "Product Version"
 msgstr "Verze produktu"
 
-#, fuzzy
 msgid "Product architecture (e.g.: x86_64, aarch64)"
-msgstr "Produkt"
+msgstr "Architektura produktu (např.: x86_64, aarch64)"
 
 msgid "Product by ID %{id} not found."
 msgstr "Produkt podle ID %{id} nebyl nalezen."
 
-#, fuzzy
 msgid "Product for target %{target} not found"
-msgstr "Produkt"
+msgstr "Produkt pro cíl %{target} nebyl nalezen"
 
-#, fuzzy
 msgid "Product name (e.g.: Basesystem, SLES)"
-msgstr "Produkt"
+msgstr "Název produktu (např.: Základní systém, SLES)"
 
-#, fuzzy
 msgid "Product version (e.g.: 15, 15.1, '12 SP4')"
-msgstr "Produkt"
+msgstr "Vetrze produktu (např.: 15, 15.1, '12 SP4')"
 
-#, fuzzy
 msgid "Product with ID %{target} not found"
-msgstr "Produkt podle ID %{id} nebyl nalezen."
+msgstr "Produkt s ID %{target} nebyl nalezen"
 
-#, fuzzy
 msgid "Product: %{name} (id: %{id})"
-msgstr "Produkt"
+msgstr "Produkt: %{name} (ID: %{id})"
 
-#, fuzzy
 msgid "Products"
-msgstr "Produkt"
+msgstr "Produkty"
 
-#, fuzzy
 msgid "Provide a custom ID instead of allowing RMT to generate one."
-msgstr "ID"
+msgstr "Místo povolení RMT generovat ID zadejte vlastní ID."
 
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr ""
+"RMT našel lokálně zrcadlené soubory z těchto úložišť neoznačených jako "
+"zrcadlená:"
 
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr "Nástroj RMT nebyl zatím synchronizován s SCC. Spusťte příkaz „%{command}“, dříve než"
 
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
 msgstr ""
+"RMT našel pouze lokálně zrcadlené soubory úložišť označených jako zrcadlená."
 
 msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
 msgstr ""
+"RMT odzrcadlí úložiště zadaná v %{file} do PATH - obvykle na přenosné "
+"paměťové zařízení."
 
 msgid "Read SCC data from given path"
 msgstr "Číst data SCC ze zadané cesty"
 
 msgid "Registration time"
-msgstr ""
+msgstr "Čas registrace"
 
+#, fuzzy
 msgid "Release Stage"
-msgstr ""
+msgstr "Uvolnit etapu"
 
 msgid "Remove a custom repository"
 msgstr "Odebrat vlastní repozitář"
@@ -587,29 +572,28 @@ msgid "Removed custom repository by ID %{id}."
 msgstr "Byl odebrán vlastní repozitář podle ID %{id}."
 
 msgid "Removes a system and its activations from RMT"
-msgstr ""
+msgstr "Odebere systém a jeho aktivace z RMT"
 
 msgid "Removes a system and its activations from RMT."
-msgstr ""
+msgstr "Odebere systém a jeho aktivace z RMT."
 
 msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
-msgstr ""
+msgstr "Odebere lokálně zrcadlené soubory z úložišť neoznačených jako zrcadlená"
 
 msgid "Repositories are not available for this product."
-msgstr ""
+msgstr "Pro tento produkt nejsou úložiště k dispozici."
 
 msgid "Repositories:"
-msgstr ""
+msgstr "Úložiště:"
 
 msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
 msgstr "Repozitář %{repo} nebyl v databázi RMT nalezen. Možná už pro něj nemáte platné předplatné"
 
 msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
-msgstr ""
+msgstr "Úložiště '%{repo_name}' (%{repo_id}): %{error_message}"
 
-#, fuzzy
 msgid "Repository by ID %{id} not found."
-msgstr "Produkt podle ID %{id} nebyl nalezen."
+msgstr "Úložiště s ID %{id} nebylo nalezeno."
 
 msgid "Repository by ID %{id} successfully disabled."
 msgstr "Repozitář podle ID %{id} byl úspěšně zakázán."
@@ -617,26 +601,23 @@ msgstr "Repozitář podle ID %{id} byl úspěšně zakázán."
 msgid "Repository by ID %{id} successfully enabled."
 msgstr "Repozitář podle ID %{id} byl úspěšně povolen."
 
-#, fuzzy
 msgid "Repository by ID %{repos} could not be found and was not disabled."
 msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
-msgstr[0] "Repozitář %{repos} nebyl nalezen a nebyl zakázán."
-msgstr[1] "Repozitáře %{repos} nebyly nalezeny a nebyly zakázány."
-msgstr[2] "Repozitáře %{repos} nebyly nalezeny a nebyly zakázány."
+msgstr[0] "Úložiště %{repos} nebylo nalezeno a nebylo zakázáno."
+msgstr[1] "Úložiště %{repos} nebyla nalezena a nebyla zakázána."
+msgstr[2] "Úložiště %{repos} nebyla nalezena a nebyla zakázána."
 
-#, fuzzy
 msgid "Repository by ID %{repos} could not be found and was not enabled."
 msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
-msgstr[0] "Repozitář %{repos} nebyl nalezen a nebyl povolen."
-msgstr[1] "Repozitáře %{repos} nebyly nalezeny a nebyly povoleny."
-msgstr[2] "Repozitáře %{repos} nebyly nalezeny a nebyly povoleny."
+msgstr[0] "Úložiště %{repos} nebylo nalezeno a nebylo povoleno."
+msgstr[1] "Úložiště %{repos} nebyla nalezena a nebyla povolena."
+msgstr[2] "Úložiště %{repos} nebyla nalezena a nebyla povolena."
 
 msgid "Repository metadata signatures are missing"
 msgstr "Chybí podpisy metadat repozitáře"
 
-#, fuzzy
 msgid "Repository with ID %{repo_id} not found"
-msgstr "ID"
+msgstr "Úložiště s ID %{repo_id} nebylo nalezeno"
 
 msgid "Requested service not found"
 msgstr "Požadovaná služba nebyla nalezena"
@@ -651,19 +632,23 @@ msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first
 msgstr "Nejprve spusťte příkaz %{command}, aby se provedla synchronizace s daty SUSE Customer Center."
 
 msgid "Run this command on an online RMT."
-msgstr ""
+msgstr "Spusťte tento příkaz na online RMT."
 
-#, fuzzy
 msgid ""
 "SCC API request failed. Error details:\n"
 "Request URL: %{url}\n"
 "Response code: %{code}\n"
 "Response body:\n"
 "%{body}"
-msgstr "URL"
+msgstr ""
+"Žádost SCC API selhala. Podrobnosti chyby:\n"
+"URL žádosti: %{url}\n"
+"Kód odpovědi: %{code}\n"
+"Obsah odpovědi:\n"
+"%{body}"
 
 msgid "SCC credentials not set."
-msgstr ""
+msgstr "Pověření SCC nejsou nastavena."
 
 msgid "Settings saved at %{file}."
 msgstr "Nastavení byla uložena do souboru %{file}."
@@ -673,6 +658,8 @@ msgstr "Zobrazit verzi RMT"
 
 msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
 msgstr ""
+"Zobrazeno posledních %{limit} registrací. Všechny registrované systémy "
+"zobrazíte volbou '--all'."
 
 msgid "Shows products attached to a custom repository"
 msgstr "Zobrazí produkty připojené k vlastnímu repozitáři"
