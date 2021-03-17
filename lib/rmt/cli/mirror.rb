@@ -1,5 +1,5 @@
 class RMT::CLI::Mirror < RMT::CLI::Base
-  class_option :do_not_raise_unpublished, desc: _('Do not fail the command if info is in alpha or beta stage'), type: :boolean, required: false
+  class_option :do_not_raise_unpublished, desc: _('Do not fail the command if product is in alpha or beta stage'), type: :boolean, required: false
 
   desc 'all', _('Mirror all enabled repositories')
   def all
