@@ -4,6 +4,8 @@ Tue Mar 16 19:53:15 UTC 2021 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
 - Version 2.6.7
 - Clean out `subscriptions` table only if replacement data is already
   available (bsc#1183615)
+- Raise an error when there is an extension activated which has no
+  migration successor (like LTSS)
 
 -------------------------------------------------------------------
 Tue Mar 16 08:20:24 UTC 2021 - Jens Mammen <jmammen@suse.com>
