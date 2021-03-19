@@ -473,6 +473,48 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
             is_expected.to eq(expected_response)
           end
         end
+
+        context 'when not all products are upgradeable' do
+          let(:first_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'base') }
+          let(:module_without_successor) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'module') }
+          let(:second_product) do
+            FactoryBot.create(
+              :product,
+              :with_mirrored_repositories,
+              product_type: 'base',
+              predecessors: [first_product],
+              migration_kind: migration_kind
+            )
+          end
+          let(:payload) do
+            product = second_product.predecessors.first # For initializing everything in the correct order
+            {
+              'installed_products': [ {
+                'identifier': product.identifier,
+                'version': product.version,
+                'arch': product.arch,
+                'release_type': product.release_type
+              },
+                                      {
+                                        'identifier': module_without_successor.identifier,
+                                        'version': module_without_successor.version,
+                                        'arch': module_without_successor.arch,
+                                        'release_type': module_without_successor.release_type
+                                      } ],
+              'target_base_product': {
+                'identifier': second_product.identifier,
+                'version': second_product.version,
+                'arch': second_product.arch,
+                'release_type': second_product.release_type
+              }
+            }
+          end
+
+          its(:code) { is_expected.to eq('422') }
+          its(:body) do
+            is_expected.to match(/The product\(s\) are '#{module_without_successor.friendly_name}'/)
+          end
+        end
       end
 
       context 'with "-0" version suffix' do
