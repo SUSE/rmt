@@ -12,6 +12,13 @@ Tue Mar 16 08:20:24 UTC 2021 - Jens Mammen <jmammen@suse.com>
   an offline migration. (bsc#1179523)
 
 -------------------------------------------------------------------
+Fri Feb 26 18:56:56 UTC 2021 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Do not raise an exception when mirroring 
+  if info missing is in alpha or beta stage
+  This references bsc#1180018 
+
+-------------------------------------------------------------------
 Thu Feb 18 14:20:53 UTC 2021 - Natnael Getahun <natnael.getahun@suse.com>
 
 - Fix rpath build issues

@@ -13,6 +13,10 @@ FactoryBot.define do
     arch { 'x86_64' }
     release_stage { 'released' }
 
+    factory :beta do
+      release_stage { 'beta' }
+    end
+
     transient do
       base_products { [] }
       root_product { nil }
