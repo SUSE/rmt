@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2021-03-23 12:57+0000\n"
+"PO-Revision-Date: 2021-03-23 16:56+0000\n"
 "Last-Translator: Davide Aiello <davide.aiello@novilingulists.com>\n"
 "Language-Team: Italian <https://l10n.opensuse.org/projects/rmt/i18n/it/>\n"
 "Language: it\n"
@@ -146,12 +146,14 @@ msgstr "Crea un repository personalizzato."
 #, fuzzy
 msgid "Deleting locally mirrored files from repository '%{repo}'..."
 msgstr ""
-"Eliminazione dei file sottoposti a mirroring in locale dal repository "
-"'%{repo}' in corso..."
+"Eliminazione dei file con mirroring in locale dal repository '%{repo}' in "
+"corso..."
 
+#, fuzzy
 msgid "Description"
 msgstr "Descrizione"
 
+#, fuzzy
 msgid "Description: %{description}"
 msgstr "Descrizione: %{description}"
 
@@ -181,9 +183,11 @@ msgstr "Repository %{repository} disabilitato."
 msgid "Disabling %{product}:"
 msgstr "Disabilitazione di %{product}:"
 
+#, fuzzy
 msgid "Displays product with all its repositories and their attributes."
 msgstr "Visualizza il prodotto con tutti i relativi repository e gli attributi."
 
+#, fuzzy
 msgid "Do not import system hardware info from MachineData table"
 msgstr ""
 "Non importare le informazioni sull'hardware di sistema dalla tabella "
@@ -201,6 +205,7 @@ msgstr "Non eseguire il mirroring"
 msgid "Downloading data from SCC"
 msgstr "Download dei dati da SCC"
 
+#, fuzzy
 msgid "Duplicate entry for system %{system}, skipping"
 msgstr "Voce duplicata per il sistema %{system}: verrà ignorata"
 
@@ -229,6 +234,7 @@ msgstr "Abilita tutti i moduli disponibili per un prodotto"
 msgid "Enabling %{product}:"
 msgstr "Abilitazione di %{product}:"
 
+#, fuzzy
 msgid "Enter a value:"
 msgstr "Immettere un valore:"
 
@@ -244,9 +250,11 @@ msgstr "Errore durante il mirroring dei metadati: %{error}"
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
 msgstr "Errore durante lo spostamento della directory da %{src} a %{dest}: %{error}"
 
+#, fuzzy
 msgid "Examples"
 msgstr "Esempi"
 
+#, fuzzy
 msgid "Examples:"
 msgstr "Esempi:"
 
@@ -268,20 +276,25 @@ msgstr "Esportazione di repository"
 msgid "Exporting subscriptions"
 msgstr "Esportazione di sottoscrizioni"
 
+#, fuzzy
 msgid "Failed to download %{failed_count} files"
 msgstr "Download di %{failed_count} file non riuscito"
 
+#, fuzzy
 msgid "Failed to get repository metadata signatures with HTTP code %{http_code}"
 msgstr ""
 "Ottenimento delle firme metadati del repository con il codice HTTP "
 "%{http_code} non riuscito"
 
+#, fuzzy
 msgid "Failed to import system %{system}"
 msgstr "Importazione del sistema %{system} non riuscita"
 
+#, fuzzy
 msgid "Failed to sync system %{login}: %{error}"
 msgstr "Sincronizzazione del sistema %{login} non riuscita: %{error}"
 
+#, fuzzy
 msgid "Forward registered systems data to SCC"
 msgstr "Inoltra dati del sistema registrati a SCC"
 
@@ -290,15 +303,19 @@ msgid_plural "Found products by target %{target}: %{products}."
 msgstr[0] "Trovato prodotto per destinazione %{target}: %{products}."
 msgstr[1] "Trovati prodotti per destinazione %{target}: %{products}."
 
+#, fuzzy
 msgid "GPG key import failed"
 msgstr "Importazione della chiave GPG non riuscita"
 
+#, fuzzy
 msgid "GPG signature verification failed"
 msgstr "Verifica della firma GPG non riuscita"
 
+#, fuzzy
 msgid "Hardware information stored for system %{system}"
 msgstr "Informazioni hardware memorizzate per il sistema %{system}"
 
+#, fuzzy
 msgid "Hostname"
 msgstr "Nome host"
 
@@ -320,6 +337,7 @@ msgstr "Ultimo mirroring eseguito"
 msgid "Last mirrored"
 msgstr "Ultimo mirroring eseguito"
 
+#, fuzzy
 msgid "Last seen"
 msgstr "Ultima visualizzazione"
 
@@ -329,15 +347,18 @@ msgstr "Elenca i tutti i repository personalizzati"
 msgid "List all products, including ones which are not marked to be mirrored"
 msgstr "Elenca tutti i prodotti, inclusi quelli non contrassegnati per il mirorring"
 
+#, fuzzy
 msgid "List all registered systems"
 msgstr "Elenca tutti i sistemi registrati"
 
 msgid "List all repositories, including ones which are not marked to be mirrored"
 msgstr "Elenca tutti i repository, inclusi quelli non contrassegnati per il mirroring"
 
+#, fuzzy
 msgid "List and manipulate registered systems"
 msgstr "Elenca e modifica sistemi registrati"
 
+#, fuzzy
 msgid "List and modify custom repositories"
 msgstr "Elenca e modifica repository personalizzati"
 
@@ -350,12 +371,14 @@ msgstr "Elenca e modifica repository"
 msgid "List products which are marked to be mirrored."
 msgstr "Elenca i prodotti contrassegnati per il mirroring."
 
+#, fuzzy
 msgid "List registered systems."
 msgstr "Elenca i sistemi registrati."
 
 msgid "List repositories which are marked to be mirrored"
 msgstr "Elenca i repository contrassegnati per il mirroring"
 
+#, fuzzy
 msgid "Login"
 msgstr "Login"
 
@@ -370,22 +393,24 @@ msgstr "Esegui mirroring"
 
 #, fuzzy
 msgid "Mirror all enabled repositories"
-msgstr "Esegui il mirroring di tutti i repository abilitati"
+msgstr "Esegui mirroring di tutti i repository abilitati"
 
 #, fuzzy
 msgid "Mirror enabled repositories for a product with given product IDs"
 msgstr ""
-"Esegui il mirroring dei repository abilitati per un prodotto con gli ID "
+"Esegui mirroring dei repository abilitati per un prodotto con gli ID "
 "prodotto specificati"
 
 #, fuzzy
 msgid "Mirror enabled repositories with given repository IDs"
 msgstr ""
-"Esegui il mirroring dei repository abilitati con ID repository specificati"
+"Esegui mirroring dei repository abilitati con gli ID repository specificati"
 
+#, fuzzy
 msgid "Mirror repos at given path"
 msgstr "Esegui mirroring dei repository nel percorso specificato"
 
+#, fuzzy
 msgid "Mirror repos from given path"
 msgstr "Esegui mirroring dei repository dal percorso specificato"
 
@@ -475,9 +500,11 @@ msgstr "Non fornito"
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "Codice di registrazione non ancora attivato. Visitare https://scc.suse.com per attivarlo."
 
+#, fuzzy
 msgid "Number of systems to display"
 msgstr "Numero di sistemi da visualizzare"
 
+#, fuzzy
 msgid "Only '%{input}' will be accepted."
 msgstr "Sarà accettato solo il valore '%{input}'."
 
@@ -541,6 +568,7 @@ msgstr "Nome prodotto"
 msgid "Product String"
 msgstr "Stringa prodotto"
 
+#, fuzzy
 msgid "Product Version"
 msgstr "Versione prodotto"
 
@@ -577,19 +605,22 @@ msgstr "Prodotti"
 
 #, fuzzy
 msgid "Provide a custom ID instead of allowing RMT to generate one."
-msgstr "Fornire un ID personalizzato invece di consentire RMT to generarne uno."
+msgstr ""
+"Fornire un ID personalizzato invece di consentire a RMT di generarne uno."
 
+#, fuzzy
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr ""
-"RMT ha trovato file sottoposti a mirroring in locale provenienti dai "
-"repository seguenti che non sono stati contrassegnati per il mirroring:"
+"RMT ha trovato file con mirroring in locale provenienti dai repository "
+"seguenti che non sono contrassegnati per il mirroring:"
 
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr "RMT non è stato ancora sincronizzato con SCC. Eseguire prima '%{command}'"
 
+#, fuzzy
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
 msgstr ""
-"RMT ha trovato soltanto file sottoposti a mirroring in locale dei repository "
+"RMT ha trovato soltanto file con mirroring in locale dei repository "
 "contrassegnati per il mirroring."
 
 #, fuzzy
@@ -626,7 +657,7 @@ msgstr "Rimuove un sistema e le relative attivazioni da RMT."
 #, fuzzy
 msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
 msgstr ""
-"Rimuove i file sottoposti a mirroring in locale dei repository che non sono "
+"Rimuove i file con mirroring in locale dei repository che non sono "
 "contrassegnati per il mirroring"
 
 #, fuzzy
@@ -760,7 +791,7 @@ msgstr "Sincronizzazione del sistema %{login} su SCC"
 msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
 msgstr ""
 "La sincronizzazione dei sistemi su SCC è disabilitata nel file di "
-"configurazione: uscita in corso."
+"configurazione: uscita."
 
 msgid "System %{system} not found"
 msgstr "Sistema%{system} non trovato"
@@ -850,8 +881,7 @@ msgstr "Versione"
 #, fuzzy
 msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
 msgstr ""
-"Continuare e rimuovere tutti i file con mirroring in locale di questi "
-"repository?"
+"Continuare e rimuovere i file con mirroring in locale di questi repository?"
 
 #, fuzzy
 msgid "enabled"
