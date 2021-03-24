@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2019-03-28 18:42+0000\n"
-"Last-Translator: Franziska Weinberger <f.weinberger@gemino.de>\n"
+"PO-Revision-Date: 2021-03-24 14:56+0000\n"
+"Last-Translator: Gemineo <vistatec@gemineo.de>\n"
 "Language-Team: German <https://l10n.opensuse.org/projects/rmt/i18n/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.3\n"
+"X-Generator: Weblate 3.6.1\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "%s ist auf dem System noch nicht aktiviert."
@@ -39,11 +39,10 @@ msgid "%{path} is not writable by user %{username}."
 msgstr "Benutzer %{username} kann nicht in %{path} schreiben."
 
 msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
-msgstr ""
+msgstr "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 
-#, fuzzy
 msgid "A repository by the ID %{id} already exists."
-msgstr "Ein Repository für URL %{url} ist bereits vorhanden."
+msgstr "Ein Repository durch ID %{url} ist bereits vorhanden."
 
 msgid "A repository by the URL %{url} already exists."
 msgstr "Ein Repository für URL %{url} ist bereits vorhanden."
@@ -62,14 +61,15 @@ msgstr "Alle Repositorys wurden bereits aktiviert."
 
 msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
 msgstr ""
+"Eine andere Instanz dieses Befehls wird bereits ausgeführt. Beenden Sie die "
+"andere Instanz oder warten Sie, bis sie beendet ist."
 
 #. i18n: architecture
 msgid "Arch"
 msgstr "Arch"
 
-#, fuzzy
 msgid "Architecture"
-msgstr "Arch"
+msgstr "Architektur"
 
 msgid "Attach an existing custom repository to a product"
 msgstr "Ein vorhandenes benutzerdefiniertes Repository mit einem Produkt verbinden"
@@ -99,10 +99,10 @@ msgid "Checksum doesn't match"
 msgstr "Prüfsumme stimmt nicht überein"
 
 msgid "Clean cancelled."
-msgstr ""
+msgstr "Bereinigung abgebrochen."
 
 msgid "Clean finished. An estimated %{total_file_size} were removed."
-msgstr ""
+msgstr "Bereinigung beendet. Es wurden etwa %{total_file_size} entfernt."
 
 msgid "Cleaning up the database"
 msgstr "Datenbank wird bereinigt"
@@ -122,25 +122,24 @@ msgstr "Lokales Verzeichnis %{dir} konnte nicht erstellt werden. Fehler: %{error
 msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
 msgstr "System mit Benutzername \\\"%{login}\\\" und Passwort \\\"%{password}\\\" nicht gefunden"
 
-#, fuzzy
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
-msgstr "SUMA-Produktbaum konnte nicht gespiegelt werden. Fehler: %{error}"
+msgstr ""
+"SUSE Manager-Produktbaum konnte nicht gespiegelt werden. Fehler: %{error}"
 
-#, fuzzy
 msgid "Couldn't add custom repository."
-msgstr "Erstellt ein benutzerdefiniertes Repository."
+msgstr "Benutzerdefiniertes Repository konnte nicht hinzugefügt werden."
 
 msgid "Creates a custom repository."
 msgstr "Erstellt ein benutzerdefiniertes Repository."
 
 msgid "Deleting locally mirrored files from repository '%{repo}'..."
-msgstr ""
+msgstr "Löschen von lokal gespiegelten Dateien aus dem Repository '%{repo}'..."
 
 msgid "Description"
-msgstr ""
+msgstr "Beschreibung"
 
 msgid "Description: %{description}"
-msgstr ""
+msgstr "Beschreibung: %{description}"
 
 msgid "Detach an existing custom repository from a product"
 msgstr "Vorhandenes benutzerdefiniertes Repository von Produkt trennen"
@@ -148,13 +147,11 @@ msgstr "Vorhandenes benutzerdefiniertes Repository von Produkt trennen"
 msgid "Detached repository from product '%{product_name}'."
 msgstr "Repository von Produkt '%{product_name}' getrennt."
 
-#, fuzzy
 msgid "Disable mirroring of custom repositories by a list of IDs"
-msgstr "Spiegeln des benutzerdefinierten Repositorys nach ID deaktivieren"
+msgstr "Spiegeln des benutzerdefinierten Repositorys nach IDs deaktivieren"
 
-#, fuzzy
 msgid "Disable mirroring of custom repository by a list of IDs"
-msgstr "Spiegeln des benutzerdefinierten Repositorys nach ID deaktivieren"
+msgstr "Spiegeln des benutzerdefinierten Repositorys nach IDs deaktivieren"
 
 msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
 msgstr "Deaktivieren Sie das Spiegeln von Produktrepositorys anhand einer Liste von Produkt-IDs oder Produktzeichenketten."
@@ -169,10 +166,11 @@ msgid "Disabling %{product}:"
 msgstr "%{product} wird deaktiviert:"
 
 msgid "Displays product with all its repositories and their attributes."
-msgstr ""
+msgstr "Zeigt das Produkt mit allen Repositorys und deren Attributen an."
 
 msgid "Do not import system hardware info from MachineData table"
 msgstr ""
+"System-Hardware-Informationen nicht aus der MachineData-Tabelle importieren"
 
 msgid "Do not import the systems that were registered to the SMT"
 msgstr "Systeme nicht importieren, die im SMT registriert waren"
@@ -187,7 +185,7 @@ msgid "Downloading data from SCC"
 msgstr "Daten werden vom SCC heruntergeladen"
 
 msgid "Duplicate entry for system %{system}, skipping"
-msgstr ""
+msgstr "Duplizierter Eintrag für System %{system}, Überspringen"
 
 msgid "Enable debug output"
 msgstr "Ausgabe der Fehlersuche aktivieren"
@@ -215,7 +213,7 @@ msgid "Enabling %{product}:"
 msgstr "%{product} wird aktiviert:"
 
 msgid "Enter a value:"
-msgstr ""
+msgstr "Wert eingeben:"
 
 msgid "Error while mirroring data: %{error}"
 msgstr "Fehler beim Spiegeln von Daten: %{error}"
@@ -230,10 +228,10 @@ msgid "Error while moving directory %{src} to %{dest}: %{error}"
 msgstr "Fehler beim Verschieben des Verzeichnisses %{src} nach %{dest}: %{error}"
 
 msgid "Examples"
-msgstr ""
+msgstr "Beispiele"
 
 msgid "Examples:"
-msgstr ""
+msgstr "Beispiele:"
 
 msgid "Export commands for Offline Sync"
 msgstr "Kommandos zum Exportieren für die Offline-Synchronisierung"
@@ -254,19 +252,21 @@ msgid "Exporting subscriptions"
 msgstr "Subscriptions werden exportiert."
 
 msgid "Failed to download %{failed_count} files"
-msgstr ""
+msgstr "%{failed_count} Dateien konnten nicht heruntergeladen werden"
 
 msgid "Failed to get repository metadata signatures with HTTP code %{http_code}"
 msgstr ""
+"Repository-Metadaten-Signaturen mit HTTP-Code %{http_code} konnten nicht "
+"abgerufen werden"
 
 msgid "Failed to import system %{system}"
-msgstr ""
+msgstr "%{system} konnte nicht importiert werden"
 
 msgid "Failed to sync system %{login}: %{error}"
-msgstr ""
+msgstr "System %{login} konnte nicht synchronisiert werden: %{error}"
 
 msgid "Forward registered systems data to SCC"
-msgstr ""
+msgstr "Weiterleitung der registrierten Systemdaten an SCC"
 
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
@@ -274,16 +274,16 @@ msgstr[0] "Produkt mit Ziel %{target} gefunden: %{products}."
 msgstr[1] "Produkte mit Ziel %{target} gefunden: %{products}."
 
 msgid "GPG key import failed"
-msgstr ""
+msgstr "GPG-Schlüssel konnte nicht importiert werden"
 
 msgid "GPG signature verification failed"
-msgstr ""
+msgstr "GPG-Signatur konnte nicht verifiziert werden"
 
 msgid "Hardware information stored for system %{system}"
 msgstr "Hardwareinformationen für System %{system} gespeichert"
 
 msgid "Hostname"
-msgstr ""
+msgstr "Hostname"
 
 msgid "ID"
 msgstr "ID"
@@ -304,7 +304,7 @@ msgid "Last mirrored"
 msgstr "Zuletzt gespiegelt"
 
 msgid "Last seen"
-msgstr ""
+msgstr "Zuletzt angezeigt"
 
 msgid "List all custom repositories"
 msgstr "Alle benutzerdefinierten Repositorys auflisten"
@@ -313,13 +313,13 @@ msgid "List all products, including ones which are not marked to be mirrored"
 msgstr "Alle Produkte auflisten, auch diejenigen, die nicht zur Spiegelung markiert sind"
 
 msgid "List all registered systems"
-msgstr ""
+msgstr "Alle registrierten Systeme auflisten"
 
 msgid "List all repositories, including ones which are not marked to be mirrored"
 msgstr "Alle Repositorys auflisten, auch diejenigen, die nicht zur Spiegelung markiert sind"
 
 msgid "List and manipulate registered systems"
-msgstr ""
+msgstr "Registrierte Systeme auflisten und manipulieren"
 
 msgid "List and modify custom repositories"
 msgstr "Benutzerdefinierte Repositorys auflisten und ändern"
@@ -334,13 +334,13 @@ msgid "List products which are marked to be mirrored."
 msgstr "Produkte auflisten, die zur Spiegelung markiert sind"
 
 msgid "List registered systems."
-msgstr ""
+msgstr "Lassen Sie die registrierten Systeme auflisten."
 
 msgid "List repositories which are marked to be mirrored"
 msgstr "Repositorys auflisten, die zur Spiegelung markiert sind"
 
 msgid "Login"
-msgstr ""
+msgstr "Anmelden"
 
 msgid "Mandatory"
 msgstr "Obligatorisch"
@@ -456,10 +456,10 @@ msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activa
 msgstr "Registrierungscode wurde noch nicht aktiviert. Rufen Sie zum Aktivieren https://scc.suse.com auf."
 
 msgid "Number of systems to display"
-msgstr ""
+msgstr "Anzahl der anzuzeigenden Systeme"
 
 msgid "Only '%{input}' will be accepted."
-msgstr ""
+msgstr "Nur '%{input}' wird akzeptiert."
 
 msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
 msgstr "Standardmäßig werden nur aktivierte Produkte angezeigt. Verwenden Sie die Option '%{command}', um alle Produkte anzuzeigen."
@@ -561,24 +561,30 @@ msgstr "ID"
 
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr ""
+"RMT fand lokal gespiegelte Dateien aus den folgenden Repositorys, die nicht "
+"zum Spiegeln markiert sind:"
 
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr "RMT wurde noch nicht mit SCC synchronisiert. Führen Sie zuvor '%{command}' aus."
 
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
 msgstr ""
+"RMT fand nur lokal gespiegelte Dateien von Repositorys, die zum Spiegeln "
+"markiert sind."
 
 msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
 msgstr ""
+"RMT spiegelt die angegebenen Repositorys in %{Datei} auf PATH, normalerweise "
+"ein tragbares Speichergerät."
 
 msgid "Read SCC data from given path"
 msgstr "SCC-Daten im angegebenen Pfad lesen"
 
 msgid "Registration time"
-msgstr ""
+msgstr "Registrierungszeit"
 
 msgid "Release Stage"
-msgstr ""
+msgstr "Versionsphase"
 
 msgid "Remove a custom repository"
 msgstr "Benutzerdefiniertes Repository entfernen"
@@ -587,25 +593,27 @@ msgid "Removed custom repository by ID %{id}."
 msgstr "Benutzerdefiniertes Repository mit ID %{id} wurde entfernt."
 
 msgid "Removes a system and its activations from RMT"
-msgstr ""
+msgstr "Entfernt ein System und seine Aktivierungen aus RMT"
 
 msgid "Removes a system and its activations from RMT."
-msgstr ""
+msgstr "Entfernt ein System und seine Aktivierungen aus RMT."
 
 msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
 msgstr ""
+"Entfernt lokal gespiegelte Dateien von Repositorys, die nicht zum Spiegeln "
+"markiert sind"
 
 msgid "Repositories are not available for this product."
-msgstr ""
+msgstr "Für dieses Produkt sind keine Repositorys verfügbar."
 
 msgid "Repositories:"
-msgstr ""
+msgstr "Repositorys:"
 
 msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
 msgstr "Repository %{repo} wurde in RMT-Datenbank nicht gefunden. Eventuell haben Sie keine gültige Subscription mehr."
 
 msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
-msgstr ""
+msgstr "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
 
 #, fuzzy
 msgid "Repository by ID %{id} not found."
@@ -649,7 +657,7 @@ msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first
 msgstr "Führen Sie '%{command}' aus, um zuerst eine Synchronisierung mit Ihren SUSE Customer Center-Daten durchzuführen."
 
 msgid "Run this command on an online RMT."
-msgstr ""
+msgstr "Führen Sie diesen Befehl bei einem Online-RMT aus."
 
 #, fuzzy
 msgid ""
@@ -661,7 +669,7 @@ msgid ""
 msgstr "URL"
 
 msgid "SCC credentials not set."
-msgstr ""
+msgstr "SCC-Anmeldeberechtigung nicht eingestellt."
 
 msgid "Settings saved at %{file}."
 msgstr "Einstellungen wurden in %{file} gespeichert."
@@ -671,6 +679,8 @@ msgstr "RMT-Version anzeigen"
 
 msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
 msgstr ""
+"Zeigt die letzten %{limit} Registrierungen an. Verwenden Sie die Option '--"
+"all', um alle registrierten Systeme anzuzeigen."
 
 msgid "Shows products attached to a custom repository"
 msgstr "Zeigt Produkte an, die mit einem benutzerdefinierten Repository verbunden sind"
@@ -685,28 +695,30 @@ msgid "Successfully added custom repository."
 msgstr "Benutzerdefiniertes Repository erfolgreich hinzugefügt."
 
 msgid "Successfully removed system with login %{login}."
-msgstr ""
+msgstr "System mit Login %{login} erfolgreich entfernt."
 
 msgid "Sync database with SUSE Customer Center"
 msgstr "Datenbank mit SUSE Customer Center synchronisieren"
 
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
-msgstr ""
+msgstr "Synchronisieren des abgemeldeten Systems %{scc_system_id} mit SCC"
 
 msgid "Syncing system %{login} to SCC"
-msgstr ""
+msgstr "Synchronisieren des Systems %{login} mit SCC"
 
 msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
 msgstr ""
+"Das Synchronisieren von Systemen mit SCC wird durch die Konfigurationsdatei "
+"deaktiviert und beendet."
 
 msgid "System %{system} not found"
 msgstr "System %{system} nicht gefunden"
 
 msgid "System with login %{login} cannot be removed."
-msgstr ""
+msgstr "System mit Anmeldung %{login} kann nicht entfernt werden."
 
 msgid "System with login %{login} not found."
-msgstr ""
+msgstr "System mit Anmeldung %{login} nicht gefunden."
 
 msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
 msgstr "Die RMT-Datenbank wurde noch nicht initialisiert. Führen Sie '%{command}' aus, um die Datenbank einzurichten."
@@ -715,7 +727,7 @@ msgid "The SCC credentials are not configured correctly in '%{path}'. You can ob
 msgstr "Der SCC-Berechtigungsnachweis in '%{path}' ist nicht korrekt konfiguriert. Sie erhalten den Berechtigungsnachweis unter %{url}."
 
 msgid "The following errors occurred while mirroring:"
-msgstr ""
+msgstr "Beim Spiegeln sind folgende Fehler aufgetreten:"
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
 msgstr "Das Produkt \"%s\" ist ein Basisprodukt und kann nicht deaktiviert werden."
@@ -728,21 +740,25 @@ msgstr "Die angeforderten Produkte '%s' sind auf dem System nicht aktiviert."
 
 msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
 msgstr ""
+"Der angegebene PATH muss eine %{file}-Datei enthalten. Ein Offline-RMT kann "
+"diese Datei mit dem Befehl '%{command}' erstellen."
 
 msgid "There are no repositories marked for mirroring."
 msgstr "Es gibt keine Repositorys, die für die Spiegelung markiert sind."
 
 msgid "There are no systems registered to this RMT instance."
-msgstr ""
+msgstr "Bei dieser RMT-Instanz sind keine Systeme registriert."
 
 msgid "To clean up downloaded files, please run '%{command}'"
-msgstr ""
+msgstr "Führen Sie zum Bereinigen heruntergeladener Dateien '%{command}' aus"
 
 msgid "To clean up downloaded files, run '%{command}'"
-msgstr ""
+msgstr "Führen Sie zum Bereinigen heruntergeladener Dateien '%{command}' aus"
 
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr ""
+"Um ein System gezielt zu entfernen, verwenden Sie den Befehl \"%{command}\" "
+"für eine Liste von Systemen mit den entsprechenden Anmeldungen."
 
 msgid "URL"
 msgstr "URL"
@@ -773,9 +789,11 @@ msgstr "Version"
 
 msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
 msgstr ""
+"Möchten Sie fortfahren und die lokal gespiegelten Dateien dieser Repositorys "
+"entfernen?"
 
 msgid "enabled"
-msgstr ""
+msgstr "aktiviert"
 
 msgid "importing data from SMT."
 msgstr "Daten aus SMT werden importiert."
@@ -785,14 +803,14 @@ msgid "mandatory"
 msgstr "Obligatorisch"
 
 msgid "mirrored at %{time}"
-msgstr ""
+msgstr "um %{time} gespiegelt"
 
 #, fuzzy
 msgid "non-mandatory"
 msgstr "Nicht obligatorisch"
 
 msgid "not enabled"
-msgstr ""
+msgstr "nicht aktiviert"
 
 #, fuzzy
 msgid "not mirrored"
