@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2019-04-04 18:33+0000\n"
-"Last-Translator: Christine Gabriel <christine@stoquart.com>\n"
+"PO-Revision-Date: 2021-03-24 18:56+0000\n"
+"Last-Translator: Sophie Leroy <sophie@stoquart.com>\n"
 "Language-Team: French <https://l10n.opensuse.org/projects/rmt/i18n/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 3.3\n"
+"X-Generator: Weblate 3.6.1\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "%s n'est pas encore activé(e) sur le système."
@@ -39,11 +39,10 @@ msgid "%{path} is not writable by user %{username}."
 msgstr "%{path} n'est pas accessible en écriture par l'utilisateur %{username}."
 
 msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
-msgstr ""
+msgstr "* %{name} (ID : %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 
-#, fuzzy
 msgid "A repository by the ID %{id} already exists."
-msgstr "Un dépôt existe déjà au niveau de l'URL %{url}."
+msgstr "Un dépôt portant l'ID %{id} existe déjà."
 
 msgid "A repository by the URL %{url} already exists."
 msgstr "Un dépôt existe déjà au niveau de l'URL %{url}."
@@ -62,14 +61,15 @@ msgstr "Tous les dépôts ont déjà été activés."
 
 msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
 msgstr ""
+"Une autre instance de cette commande est déjà en cours d'exécution. Mettez "
+"fin à cette autre instance ou attendez qu'elle soit terminée."
 
 #. i18n: architecture
 msgid "Arch"
 msgstr "Arch"
 
-#, fuzzy
 msgid "Architecture"
-msgstr "Arch"
+msgstr "Architecture"
 
 msgid "Attach an existing custom repository to a product"
 msgstr "Attacher un dépôt personnalisé existant à un produit"
@@ -99,10 +99,11 @@ msgid "Checksum doesn't match"
 msgstr "La somme de contrôle ne correspond pas"
 
 msgid "Clean cancelled."
-msgstr ""
+msgstr "Nettoyage annulé."
 
 msgid "Clean finished. An estimated %{total_file_size} were removed."
 msgstr ""
+"Nettoyage terminé. Un total estimé de %{total_file_size} a été supprimé."
 
 msgid "Cleaning up the database"
 msgstr "Nettoyage de la base de données"
@@ -122,25 +123,25 @@ msgstr "Impossible de créer le répertoire local %{dir} - Erreur : %{error}"
 msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
 msgstr "Impossible de trouver le système avec le nom de connexion \\\"%{login}\\\" et le mot de passe \\\"%{password}\\\""
 
-#, fuzzy
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
-msgstr "Impossible de mettre en miroir l'arborescence du produit SUMA - Erreur : %{error}"
+msgstr ""
+"Impossible de mettre en miroir l'arborescence du produit SUSE Manager - "
+"Erreur : %{error}"
 
-#, fuzzy
 msgid "Couldn't add custom repository."
-msgstr "Crée un dépôt personnalisé."
+msgstr "Impossible d'ajouter un dépôt personnalisé."
 
 msgid "Creates a custom repository."
 msgstr "Crée un dépôt personnalisé."
 
 msgid "Deleting locally mirrored files from repository '%{repo}'..."
-msgstr ""
+msgstr "Suppression des fichiers mis en miroir localement du dépôt '%{repo}'..."
 
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 msgid "Description: %{description}"
-msgstr ""
+msgstr "Description : %{description}"
 
 msgid "Detach an existing custom repository from a product"
 msgstr "Détacher un dépôt personnalisé existant d'un produit"
@@ -148,13 +149,15 @@ msgstr "Détacher un dépôt personnalisé existant d'un produit"
 msgid "Detached repository from product '%{product_name}'."
 msgstr "Le dépôt a été détaché du produit '%{product_name}'."
 
-#, fuzzy
 msgid "Disable mirroring of custom repositories by a list of IDs"
-msgstr "Désactiver la mise en miroir du dépôt personnalisé en fonction de l'ID"
+msgstr ""
+"Désactiver la mise en miroir des dépôts personnalisés en fonction d'une "
+"liste d'ID"
 
-#, fuzzy
 msgid "Disable mirroring of custom repository by a list of IDs"
-msgstr "Désactiver la mise en miroir du dépôt personnalisé en fonction de l'ID"
+msgstr ""
+"Désactiver la mise en miroir du dépôt personnalisé en fonction d'une liste "
+"d'ID"
 
 msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
 msgstr "Désactivez la mise en miroir de dépôts de produits selon une liste d'ID ou de chaînes de produits."
@@ -169,10 +172,12 @@ msgid "Disabling %{product}:"
 msgstr "Désactivation du produit %{product} :"
 
 msgid "Displays product with all its repositories and their attributes."
-msgstr ""
+msgstr "Affiche le produit avec tous ses dépôts et leurs attributs."
 
 msgid "Do not import system hardware info from MachineData table"
 msgstr ""
+"Ne pas importer les informations relatives au matériel du système à partir "
+"de la table MachineData"
 
 msgid "Do not import the systems that were registered to the SMT"
 msgstr "Ne pas importer les systèmes qui ont été enregistrés auprès de SMT"
@@ -187,14 +192,14 @@ msgid "Downloading data from SCC"
 msgstr "Téléchargement des données à partir de SCC"
 
 msgid "Duplicate entry for system %{system}, skipping"
-msgstr ""
+msgstr "Entrée en double pour le système %{system} - Ignorée"
 
 msgid "Enable debug output"
 msgstr "Activer la sortie de débogage"
 
-#, fuzzy
 msgid "Enable mirroring of custom repositories by a list of IDs"
-msgstr "Activer la mise en miroir de dépôt personnalisé selon l'ID"
+msgstr ""
+"Activer la mise en miroir des dépôt personnalisé en fonction d'une liste d'ID"
 
 msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
 msgstr "Activez la mise en miroir de dépôts de produits selon une liste d'ID ou de chaînes de produits."
@@ -215,7 +220,7 @@ msgid "Enabling %{product}:"
 msgstr "Activation du produit %{product} :"
 
 msgid "Enter a value:"
-msgstr ""
+msgstr "Entrez une valeur :"
 
 msgid "Error while mirroring data: %{error}"
 msgstr "Erreur lors de la mise en miroir des données : %{error}"
@@ -230,10 +235,10 @@ msgid "Error while moving directory %{src} to %{dest}: %{error}"
 msgstr "Erreur lors du déplacement du répertoire %{src} vers %{dest} : %{error}"
 
 msgid "Examples"
-msgstr ""
+msgstr "Exemples"
 
 msgid "Examples:"
-msgstr ""
+msgstr "Exemples :"
 
 msgid "Export commands for Offline Sync"
 msgstr "Commandes d'exportation pour la synchronisation hors ligne"
@@ -254,19 +259,21 @@ msgid "Exporting subscriptions"
 msgstr "Exportation des abonnements"
 
 msgid "Failed to download %{failed_count} files"
-msgstr ""
+msgstr "Échec du téléchargement de %{failed_count} fichiers"
 
 msgid "Failed to get repository metadata signatures with HTTP code %{http_code}"
 msgstr ""
+"Échec de l'obtention des signatures de métadonnées de dépôt avec le code "
+"HTTP %{http_code}"
 
 msgid "Failed to import system %{system}"
-msgstr ""
+msgstr "Échec de l'importation du système %{system}"
 
 msgid "Failed to sync system %{login}: %{error}"
-msgstr ""
+msgstr "Échec de la synchronisation du système %{login} : %{error}"
 
 msgid "Forward registered systems data to SCC"
-msgstr ""
+msgstr "Transférer les données des systèmes enregistrés vers SCC"
 
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
@@ -274,16 +281,16 @@ msgstr[0] "Un produit a été trouvé avec la cible %{target} : %{products}."
 msgstr[1] "Des produits ont été trouvés avec la cible %{target}: %{products}."
 
 msgid "GPG key import failed"
-msgstr ""
+msgstr "Échec de l'importation de la clé GPG"
 
 msgid "GPG signature verification failed"
-msgstr ""
+msgstr "Échec de la vérification de la signature GPG"
 
 msgid "Hardware information stored for system %{system}"
 msgstr "Les informations sur le matériel ont été enregistrées pour le système %{system}"
 
 msgid "Hostname"
-msgstr ""
+msgstr "Nom d'hôte"
 
 msgid "ID"
 msgstr "ID"
@@ -304,7 +311,7 @@ msgid "Last mirrored"
 msgstr "Dernière mise en miroir"
 
 msgid "Last seen"
-msgstr ""
+msgstr "Dernier affichage"
 
 msgid "List all custom repositories"
 msgstr "Lister tous les dépôts personnalisés"
@@ -313,13 +320,13 @@ msgid "List all products, including ones which are not marked to be mirrored"
 msgstr "Lister tous les produits, y compris ceux qui ne sont pas marqués pour la mise en miroir"
 
 msgid "List all registered systems"
-msgstr ""
+msgstr "Lister tous les systèmes enregistrés"
 
 msgid "List all repositories, including ones which are not marked to be mirrored"
 msgstr "Lister tous les dépôts, y compris ceux qui ne sont pas marqués pour la mise en miroir"
 
 msgid "List and manipulate registered systems"
-msgstr ""
+msgstr "Lister et manipuler les systèmes enregistrés"
 
 msgid "List and modify custom repositories"
 msgstr "Lister et modifier les répertoires personnalisés"
@@ -334,13 +341,13 @@ msgid "List products which are marked to be mirrored."
 msgstr "Liste les produits marqués pour la mise en miroir."
 
 msgid "List registered systems."
-msgstr ""
+msgstr "Liste les systèmes enregistrés."
 
 msgid "List repositories which are marked to be mirrored"
 msgstr "Lister les dépôts qui sont marqués pour la mise en miroir"
 
 msgid "Login"
-msgstr ""
+msgstr "Connexion"
 
 msgid "Mandatory"
 msgstr "Obligatoire"
@@ -351,17 +358,16 @@ msgstr "Obligatoire ?"
 msgid "Mirror"
 msgstr "Mettre en miroir"
 
-#, fuzzy
 msgid "Mirror all enabled repositories"
-msgstr "Mettre en miroir"
+msgstr "Mettre en miroir tous les dépôts activés"
 
-#, fuzzy
 msgid "Mirror enabled repositories for a product with given product IDs"
-msgstr "Mettre en miroir"
+msgstr ""
+"Mettre en miroir les dépôts activés pour un produit avec les ID produit "
+"spécifiés"
 
-#, fuzzy
 msgid "Mirror enabled repositories with given repository IDs"
-msgstr "Mettre en miroir"
+msgstr "Mettre en miroir les dépôts activés avec les ID de dépôt spécifiés"
 
 msgid "Mirror repos at given path"
 msgstr "Mettre en miroir les dépôts à l'emplacement spécifié"
@@ -375,24 +381,22 @@ msgstr "Mettre en miroir les dépôts"
 msgid "Mirror?"
 msgstr "Mettre en miroir ?"
 
-#, fuzzy
 msgid "Mirroring SUMA product tree failed: %{error_message}"
-msgstr "Mettre en miroir"
+msgstr ""
+"Échec de la mise en miroir de l'arborescence du produit SUMA : "
+"%{error_message}"
 
 msgid "Mirroring SUSE Manager product tree to %{dir}"
 msgstr "Mise en miroir de l'arborescence du produit SUSE Manager vers %{dir}"
 
-#, fuzzy
 msgid "Mirroring complete."
-msgstr "Mettre en miroir"
+msgstr "Mise en miroir terminée."
 
-#, fuzzy
 msgid "Mirroring completed with errors."
-msgstr "Mettre en miroir"
+msgstr "Mise en miroir terminée avec des erreurs."
 
-#, fuzzy
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
-msgstr "Mettre en miroir"
+msgstr "La mise en miroir du dépôt portant l'ID %{repo_id} n'est pas activée"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "Mise en miroir du dépôt %{repo} vers %{dir}"
@@ -436,7 +440,6 @@ msgstr "Aucun dépôt activé."
 msgid "No repositories found for product: %s"
 msgstr "Aucun dépôt trouvé pour le produit : %s"
 
-#, fuzzy
 msgid "No repository IDs supplied"
 msgstr "Aucun ID de dépôt fourni"
 
@@ -456,10 +459,10 @@ msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activa
 msgstr "Le code d'enregistrement n'a pas encore été activé. Visitez le site https://scc.suse.com pour l'activer."
 
 msgid "Number of systems to display"
-msgstr ""
+msgstr "Nombre de systèmes à afficher"
 
 msgid "Only '%{input}' will be accepted."
-msgstr ""
+msgstr "Seul '%{input}' sera accepté."
 
 msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
 msgstr "Seuls les produits activés sont affichés par défaut. Utilisez l'option '%{command}' pour afficher tous les produits."
@@ -473,9 +476,8 @@ msgstr "Données de sortie au format CSV"
 msgid "Path to unpacked SMT data tarball"
 msgstr "Chemin vers le fichier Tarball des données SMT décompressées"
 
-#, fuzzy
 msgid "Please provide a non-numeric ID for your custom repository."
-msgstr "ID"
+msgstr "Spécifiez un ID non numérique pour votre dépôt personnalisé."
 
 msgid "Product"
 msgstr "Produit"
@@ -504,9 +506,8 @@ msgstr ""
 "mais ce dernier est introuvable. Attachez-le à un autre produit\n"
 "en exécutant la commande '%{command}'\n"
 
-#, fuzzy
 msgid "Product %{target} has no repositories enabled"
-msgstr "Produit"
+msgstr "Le produit %{target} ne comporte aucun dépôt activé"
 
 msgid "Product Architecture"
 msgstr "Architecture du produit"
@@ -517,68 +518,65 @@ msgstr "ID du produit"
 msgid "Product Name"
 msgstr "Nom du produit"
 
-#, fuzzy
 msgid "Product String"
-msgstr "Produit"
+msgstr "Chaîne du produit"
 
 msgid "Product Version"
 msgstr "Version du produit"
 
-#, fuzzy
 msgid "Product architecture (e.g.: x86_64, aarch64)"
-msgstr "Produit"
+msgstr "Architecture du produit (p. ex. : x86_64, aarch64)"
 
 msgid "Product by ID %{id} not found."
 msgstr "Produit portant l'ID %{id} introuvable."
 
-#, fuzzy
 msgid "Product for target %{target} not found"
-msgstr "Produit"
+msgstr "Produit pour la cible %{target} introuvable"
 
-#, fuzzy
 msgid "Product name (e.g.: Basesystem, SLES)"
-msgstr "Produit"
+msgstr "Nom du produit (p. ex. : Basesystem, SLES)"
 
-#, fuzzy
 msgid "Product version (e.g.: 15, 15.1, '12 SP4')"
-msgstr "Produit"
+msgstr "Version du produit (p. ex. : 15, 15.1, '12 SP4')"
 
-#, fuzzy
 msgid "Product with ID %{target} not found"
-msgstr "Produit portant l'ID %{id} introuvable."
+msgstr "Produit portant l'ID %{target} introuvable"
 
-#, fuzzy
 msgid "Product: %{name} (id: %{id})"
-msgstr "Produit"
+msgstr "Produit : %{name} (ID : %{id})"
 
-#, fuzzy
 msgid "Products"
-msgstr "Produit"
+msgstr "Produits"
 
-#, fuzzy
 msgid "Provide a custom ID instead of allowing RMT to generate one."
-msgstr "ID"
+msgstr "Spécifiez un ID personnalisé au lieu d'autoriser RMT à en générer un."
 
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr ""
+"RMT a trouvé des fichiers mis en miroir localement à partir des dépôts "
+"suivants, qui ne sont pas marqués comme mis en miroir :"
 
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr "RMT n'a pas encore été synchronisé avec SCC. Exécutez d'abord la commande '%{command}'"
 
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
 msgstr ""
+"RMT a trouvé uniquement des fichiers de dépôts mis en miroir localement qui "
+"sont marqués comme mis en miroir."
 
 msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
 msgstr ""
+"RMT mettra en miroir les dépôts spécifiés dans %{file} vers CHEMIN, "
+"généralement un périphérique de stockage portable."
 
 msgid "Read SCC data from given path"
 msgstr "Lire les données SCC à partir du chemin spécifié"
 
 msgid "Registration time"
-msgstr ""
+msgstr "Heure d'enregistrement"
 
 msgid "Release Stage"
-msgstr ""
+msgstr "Étape de version"
 
 msgid "Remove a custom repository"
 msgstr "Supprimer un dépôt personnalisé"
@@ -587,29 +585,30 @@ msgid "Removed custom repository by ID %{id}."
 msgstr "Le dépôt personnalisé portant l'ID %{id} a été supprimé."
 
 msgid "Removes a system and its activations from RMT"
-msgstr ""
+msgstr "Supprime un système et ses activations de RMT"
 
 msgid "Removes a system and its activations from RMT."
-msgstr ""
+msgstr "Supprime un système et ses activations de RMT."
 
 msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
 msgstr ""
+"Supprime les fichiers de dépôts mis en miroir localement qui ne sont pas "
+"marqués comme mis en miroir"
 
 msgid "Repositories are not available for this product."
-msgstr ""
+msgstr "Les dépôts ne sont pas disponibles pour ce produit."
 
 msgid "Repositories:"
-msgstr ""
+msgstr "Dépôts :"
 
 msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
 msgstr "Le dépôt %{repo} est introuvable dans la base de données RMT. Il se peut que vous n'ayez plus d'abonnement valide pour ce dépôt"
 
 msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
-msgstr ""
+msgstr "Dépôt '%{repo_name}' (%{repo_id}) : %{error_message}"
 
-#, fuzzy
 msgid "Repository by ID %{id} not found."
-msgstr "Produit portant l'ID %{id} introuvable."
+msgstr "Dépôt portant l'ID %{id} introuvable."
 
 msgid "Repository by ID %{id} successfully disabled."
 msgstr "Le dépôt portant l'ID %{id} a bien été désactivé."
@@ -617,24 +616,26 @@ msgstr "Le dépôt portant l'ID %{id} a bien été désactivé."
 msgid "Repository by ID %{id} successfully enabled."
 msgstr "Le dépôt portant l'ID %{id} a bien été activé."
 
-#, fuzzy
 msgid "Repository by ID %{repos} could not be found and was not disabled."
 msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
-msgstr[0] "Le dépôt %{repos} est introuvable et n'a pas été désactivé."
-msgstr[1] "Les dépôts %{repos} sont introuvables et n'ont pas été désactivés."
+msgstr[0] ""
+"Le dépôt portant l'ID %{repos} est introuvable et n'a pas été désactivé."
+msgstr[1] ""
+"Les dépôts portant les ID %{repos} sont introuvables et n'ont pas été "
+"désactivés."
 
-#, fuzzy
 msgid "Repository by ID %{repos} could not be found and was not enabled."
 msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
-msgstr[0] "Le dépôt %{repos} est introuvable et n'a pas été activé."
-msgstr[1] "Les dépôts %{repos} sont introuvables et n'ont pas été activés."
+msgstr[0] "Le dépôt portant l'ID %{repos} est introuvable et n'a pas été activé."
+msgstr[1] ""
+"Les dépôts portant les ID %{repos} sont introuvables et n'ont pas été "
+"activés."
 
 msgid "Repository metadata signatures are missing"
 msgstr "Des signatures des métadonnées de dépôt sont manquantes"
 
-#, fuzzy
 msgid "Repository with ID %{repo_id} not found"
-msgstr "ID"
+msgstr "Dépôt portant l'ID %{repo_id} introuvable"
 
 msgid "Requested service not found"
 msgstr "Service demandé introuvable"
@@ -649,19 +650,23 @@ msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first
 msgstr "Exécutez '%{command}' pour effectuer au préalable une synchronisation avec vos données SUSE Customer Center."
 
 msgid "Run this command on an online RMT."
-msgstr ""
+msgstr "Exécutez cette commande sur une instance RMT en ligne."
 
-#, fuzzy
 msgid ""
 "SCC API request failed. Error details:\n"
 "Request URL: %{url}\n"
 "Response code: %{code}\n"
 "Response body:\n"
 "%{body}"
-msgstr "URL"
+msgstr ""
+"Échec de la requête SCC API. Détails de l'erreur :\n"
+"URL de la requête : %{url}\n"
+"Code de réponse : %{code}\n"
+"Corps de la réponse :\n"
+"%{body}"
 
 msgid "SCC credentials not set."
-msgstr ""
+msgstr "Informations d'identification SCC non définies."
 
 msgid "Settings saved at %{file}."
 msgstr "Paramètres enregistrés dans %{file}."
@@ -671,6 +676,8 @@ msgstr "Afficher la version de RMT"
 
 msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
 msgstr ""
+"Affichage des %{limit} derniers enregistrements. Utilisez l'option '--all' "
+"pour afficher tous les systèmes enregistrés."
 
 msgid "Shows products attached to a custom repository"
 msgstr "Affiche les produits attachés à un dépôt personnalisé"
@@ -685,28 +692,32 @@ msgid "Successfully added custom repository."
 msgstr "Le dépôt personnalisé a bien été ajouté."
 
 msgid "Successfully removed system with login %{login}."
-msgstr ""
+msgstr "Le système avec la connexion %{login} a bien été supprimé."
 
 msgid "Sync database with SUSE Customer Center"
 msgstr "Synchroniser la base de données avec SUSE Customer Center"
 
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
 msgstr ""
+"Synchronisation avec SCC du système %{scc_system_id} dont l'enregistrement a "
+"été annulé"
 
 msgid "Syncing system %{login} to SCC"
-msgstr ""
+msgstr "Synchronisation du système %{login} avec SCC"
 
 msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
 msgstr ""
+"La synchronisation des systèmes avec SCC est désactivée par le fichier de "
+"configuration. Fermeture en cours."
 
 msgid "System %{system} not found"
 msgstr "Système %{system} introuvable"
 
 msgid "System with login %{login} cannot be removed."
-msgstr ""
+msgstr "Impossible de supprimer le système avec la connexion %{login}."
 
 msgid "System with login %{login} not found."
-msgstr ""
+msgstr "Le système avec la connexion %{login} est introuvable."
 
 msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
 msgstr "La base de données RMT n'a pas encore été initialisée. Exécutez '%{command}' pour configurer la base de données."
@@ -715,7 +726,7 @@ msgid "The SCC credentials are not configured correctly in '%{path}'. You can ob
 msgstr "Les références de SCC ne sont pas configurées correctement dans '%{path}'. Vous pouvez vous les procurer à l'adresse %{url}"
 
 msgid "The following errors occurred while mirroring:"
-msgstr ""
+msgstr "Les erreurs suivantes se sont produites lors de la mise en miroir :"
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
 msgstr "Le produit \"%s\" est un produit de base et ne peut pas être désactivé"
@@ -728,6 +739,8 @@ msgstr "Les produits demandés '%s' ne sont pas activés sur le système."
 
 msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
 msgstr ""
+"La variable PATH spécifiée doit contenir un fichier %{file}. Une instance "
+"RMT hors ligne peut créer ce fichier avec la commande '%{command}'."
 
 msgid "There are no repositories marked for mirroring."
 msgstr "Aucun dépôt n'est marqué pour la mise en miroir."
