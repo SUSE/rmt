@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2021-03-24 18:56+0000\n"
+"PO-Revision-Date: 2021-03-25 11:56+0000\n"
 "Last-Translator: Sophie Leroy <sophie@stoquart.com>\n"
 "Language-Team: French <https://l10n.opensuse.org/projects/rmt/i18n/fr/>\n"
 "Language: fr\n"
@@ -746,16 +746,19 @@ msgid "There are no repositories marked for mirroring."
 msgstr "Aucun dépôt n'est marqué pour la mise en miroir."
 
 msgid "There are no systems registered to this RMT instance."
-msgstr ""
+msgstr "Aucun système n'est enregistré auprès de cette instance RMT."
 
 msgid "To clean up downloaded files, please run '%{command}'"
-msgstr ""
+msgstr "Pour nettoyer les fichiers téléchargés, exécutez '%{command}'"
 
 msgid "To clean up downloaded files, run '%{command}'"
-msgstr ""
+msgstr "Pour nettoyer les fichiers téléchargés, exécutez '%{command}'"
 
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr ""
+"Pour cibler un système en vue de la suppression, utilisez la commande \""
+"%{command}\" pour une liste de systèmes avec leurs connexions "
+"correspondantes."
 
 msgid "URL"
 msgstr "URL"
@@ -786,30 +789,29 @@ msgstr "Version"
 
 msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
 msgstr ""
+"Voulez-vous poursuivre et supprimer les fichiers de ces dépôts mis en miroir "
+"localement ?"
 
 msgid "enabled"
-msgstr ""
+msgstr "activé"
 
 msgid "importing data from SMT."
 msgstr "importation des données à partir de SMT."
 
-#, fuzzy
 msgid "mandatory"
-msgstr "Obligatoire"
+msgstr "obligatoire"
 
 msgid "mirrored at %{time}"
-msgstr ""
+msgstr "mis en miroir à %{time}"
 
-#, fuzzy
 msgid "non-mandatory"
-msgstr "Non obligatoire"
+msgstr "non obligatoire"
 
 msgid "not enabled"
-msgstr ""
+msgstr "non activé"
 
-#, fuzzy
 msgid "not mirrored"
-msgstr "Dernière mise en miroir"
+msgstr "non mis en miroir"
 
 msgid "repository by URL %{url} does not exist in database"
 msgstr "le dépôt ayant l'URL %{url} n'existe pas dans la base de données"
