@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2021-03-24 14:56+0000\n"
+"PO-Revision-Date: 2021-03-25 11:56+0000\n"
 "Last-Translator: Gemineo <vistatec@gemineo.de>\n"
 "Language-Team: German <https://l10n.opensuse.org/projects/rmt/i18n/de/>\n"
 "Language: de\n"
@@ -61,8 +61,8 @@ msgstr "Alle Repositorys wurden bereits aktiviert."
 
 msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
 msgstr ""
-"Eine andere Instanz dieses Befehls wird bereits ausgeführt. Beenden Sie die "
-"andere Instanz oder warten Sie, bis sie beendet ist."
+"Mindestens ein ausgewähltes Gerät ist bereits konfiguriert.\n"
+"Möchten Sie die Konfiguration zur Bindung anpassen?"
 
 #. i18n: architecture
 msgid "Arch"
@@ -127,7 +127,7 @@ msgstr ""
 "SUSE Manager-Produktbaum konnte nicht gespiegelt werden. Fehler: %{error}"
 
 msgid "Couldn't add custom repository."
-msgstr "Benutzerdefiniertes Repository konnte nicht hinzugefügt werden."
+msgstr "Das benutzerdefinierte Repository konnte nicht hinzugefügt werden."
 
 msgid "Creates a custom repository."
 msgstr "Erstellt ein benutzerdefiniertes Repository."
@@ -190,7 +190,6 @@ msgstr "Duplizierter Eintrag für System %{system}, Überspringen"
 msgid "Enable debug output"
 msgstr "Ausgabe der Fehlersuche aktivieren"
 
-#, fuzzy
 msgid "Enable mirroring of custom repositories by a list of IDs"
 msgstr "Spiegeln von benutzerdefiniertem Repository anhand der ID aktivieren"
 
@@ -351,17 +350,15 @@ msgstr "Obligatorisch?"
 msgid "Mirror"
 msgstr "Spiegeln"
 
-#, fuzzy
 msgid "Mirror all enabled repositories"
-msgstr "Spiegeln"
+msgstr "Alle aktivierten Repositories spiegeln"
 
-#, fuzzy
 msgid "Mirror enabled repositories for a product with given product IDs"
-msgstr "Spiegeln"
+msgstr ""
+"Spiegeln aktivierter Repositories für ein Produkt mit angegebenen Produkt-IDs"
 
-#, fuzzy
 msgid "Mirror enabled repositories with given repository IDs"
-msgstr "Spiegeln"
+msgstr "Spiegeln von aktivierten Repositories mit angegebenen Repository-IDs"
 
 msgid "Mirror repos at given path"
 msgstr "Repositorys in angegebenem Pfad spiegeln"
@@ -375,24 +372,21 @@ msgstr "Repositorys spiegeln"
 msgid "Mirror?"
 msgstr "Spiegeln?"
 
-#, fuzzy
 msgid "Mirroring SUMA product tree failed: %{error_message}"
-msgstr "Spiegeln"
+msgstr "Spiegeln des SUMA-Produktbaums fehlgeschlagen: %{error_message}"
 
 msgid "Mirroring SUSE Manager product tree to %{dir}"
 msgstr "SUSE Manager-Produktbaum wird in %{dir} gespiegelt"
 
-#, fuzzy
 msgid "Mirroring complete."
-msgstr "Spiegeln"
+msgstr "Spiegeln abgeschlossen."
 
-#, fuzzy
 msgid "Mirroring completed with errors."
-msgstr "Spiegeln"
+msgstr "Spiegeln mit Fehlern abgeschlossen."
 
-#, fuzzy
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
-msgstr "Spiegeln"
+msgstr ""
+"Die Spiegelung des Repositorys mit der ID %{repo_id} ist nicht aktiviert"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "Repository %{repo} wird in %{dir} gespiegelt"
@@ -436,7 +430,6 @@ msgstr "Keine Repositorys aktiviert."
 msgid "No repositories found for product: %s"
 msgstr "Keine Repositorys gefunden für Produkt: %s"
 
-#, fuzzy
 msgid "No repository IDs supplied"
 msgstr "Keine Repository-IDs angegeben"
 
@@ -473,9 +466,10 @@ msgstr "Daten in CSV-Format ausgeben"
 msgid "Path to unpacked SMT data tarball"
 msgstr "Pfad zur entpackten SMT-Daten-Tarball-Datei"
 
-#, fuzzy
 msgid "Please provide a non-numeric ID for your custom repository."
-msgstr "ID"
+msgstr ""
+"Bitte geben Sie eine nicht numerische ID für Ihr benutzerdefiniertes "
+"Repository an."
 
 msgid "Product"
 msgstr "Produkt"
@@ -504,9 +498,8 @@ msgstr ""
 "das Produkt wurde jedoch nicht gefunden. Verbinden Sie es mit einem anderen Produkt,\n"
 "indem Sie '%{command}' ausführen.\n"
 
-#, fuzzy
 msgid "Product %{target} has no repositories enabled"
-msgstr "Produkt"
+msgstr "Produkt %{target} hat keine Repositories aktiviert"
 
 msgid "Product Architecture"
 msgstr "Produktarchitektur"
@@ -517,47 +510,40 @@ msgstr "Produkt-ID"
 msgid "Product Name"
 msgstr "Produktname"
 
-#, fuzzy
 msgid "Product String"
-msgstr "Produkt"
+msgstr "Produkt-String"
 
 msgid "Product Version"
 msgstr "Produktversion"
 
-#, fuzzy
 msgid "Product architecture (e.g.: x86_64, aarch64)"
-msgstr "Produkt"
+msgstr "Produkt-Architektur (z. B.: x86_64, aarch64)"
 
 msgid "Product by ID %{id} not found."
 msgstr "Produkt mit ID %{id} nicht gefunden."
 
-#, fuzzy
 msgid "Product for target %{target} not found"
-msgstr "Produkt"
+msgstr "Produkt für Ziel %{target} nicht gefunden"
 
-#, fuzzy
 msgid "Product name (e.g.: Basesystem, SLES)"
-msgstr "Produkt"
+msgstr "Produktname (z. B.: Basesystem, SLES)"
 
-#, fuzzy
 msgid "Product version (e.g.: 15, 15.1, '12 SP4')"
-msgstr "Produkt"
+msgstr "Produktversion (z. B.: 15, 15.1, '12 SP4')"
 
-#, fuzzy
 msgid "Product with ID %{target} not found"
-msgstr "Produkt mit ID %{id} nicht gefunden."
+msgstr "Produkt mit ID %{id} nicht gefunden"
 
-#, fuzzy
 msgid "Product: %{name} (id: %{id})"
-msgstr "Produkt"
+msgstr "Produkt: %{name} (id: %{id})"
 
-#, fuzzy
 msgid "Products"
-msgstr "Produkt"
+msgstr "Produkte"
 
-#, fuzzy
 msgid "Provide a custom ID instead of allowing RMT to generate one."
-msgstr "ID"
+msgstr ""
+"Geben Sie eine benutzerdefinierte ID an, anstatt eine von RMT generieren zu "
+"lassen."
 
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr ""
@@ -615,7 +601,6 @@ msgstr "Repository %{repo} wurde in RMT-Datenbank nicht gefunden. Eventuell habe
 msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
 msgstr "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
 
-#, fuzzy
 msgid "Repository by ID %{id} not found."
 msgstr "Produkt mit ID %{id} nicht gefunden."
 
@@ -625,24 +610,27 @@ msgstr "Repository mit ID %{id} wurde erfolgreich deaktiviert."
 msgid "Repository by ID %{id} successfully enabled."
 msgstr "Repository mit ID %{id} wurde erfolgreich aktiviert."
 
-#, fuzzy
 msgid "Repository by ID %{repos} could not be found and was not disabled."
 msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
-msgstr[0] "Repository %{repos} konnte nicht gefunden werden und wurde nicht deaktiviert."
-msgstr[1] "Repositorys %{repos} konnten nicht gefunden werden und wurden nicht deaktiviert."
+msgstr[0] ""
+"Repository %{repos} konnte nicht gefunden werden und wurde nicht deaktiviert."
+msgstr[1] ""
+"Repositorys %{repos} konnten nicht gefunden werden und wurden nicht "
+"deaktiviert."
 
-#, fuzzy
 msgid "Repository by ID %{repos} could not be found and was not enabled."
 msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
-msgstr[0] "Repository %{repos} konnte nicht gefunden werden und wurde nicht aktiviert."
-msgstr[1] "Repositorys %{repos} konnten nicht gefunden werden und wurden nicht aktiviert."
+msgstr[0] ""
+"Repository %{repos} konnte nicht gefunden werden und wurde nicht aktiviert."
+msgstr[1] ""
+"Repositorys %{repos} konnten nicht gefunden werden und wurden nicht "
+"aktiviert."
 
 msgid "Repository metadata signatures are missing"
 msgstr "Repository-Metadatensignaturen fehlen"
 
-#, fuzzy
 msgid "Repository with ID %{repo_id} not found"
-msgstr "ID"
+msgstr "Repository mit ID %{repo_id} nicht gefunden"
 
 msgid "Requested service not found"
 msgstr "Angeforderter Dienst wurde nicht gefunden."
@@ -659,14 +647,18 @@ msgstr "Führen Sie '%{command}' aus, um zuerst eine Synchronisierung mit Ihren 
 msgid "Run this command on an online RMT."
 msgstr "Führen Sie diesen Befehl bei einem Online-RMT aus."
 
-#, fuzzy
 msgid ""
 "SCC API request failed. Error details:\n"
 "Request URL: %{url}\n"
 "Response code: %{code}\n"
 "Response body:\n"
 "%{body}"
-msgstr "URL"
+msgstr ""
+"SCC-API-Anforderung fehlgeschlagen. Fehlerdetails:\n"
+"Anfrage-URL: %{url}\n"
+"Antwort-Code: %{code}\n"
+"Antwort-Text:\n"
+"%{body}"
 
 msgid "SCC credentials not set."
 msgstr "SCC-Anmeldeberechtigung nicht eingestellt."
@@ -798,21 +790,18 @@ msgstr "aktiviert"
 msgid "importing data from SMT."
 msgstr "Daten aus SMT werden importiert."
 
-#, fuzzy
 msgid "mandatory"
 msgstr "Obligatorisch"
 
 msgid "mirrored at %{time}"
 msgstr "um %{time} gespiegelt"
 
-#, fuzzy
 msgid "non-mandatory"
 msgstr "Nicht obligatorisch"
 
 msgid "not enabled"
 msgstr "nicht aktiviert"
 
-#, fuzzy
 msgid "not mirrored"
 msgstr "Zuletzt gespiegelt"
 
