@@ -41,7 +41,7 @@ class RMT::CLI::ReposBase < RMT::CLI::Base
   def is_numeric_id?(str)
     # Check if given string is a plain number without any additional characters
     # like '15sp3-ptf-repo-id'.
-    !!Integer(str) rescue false
+    Integer(str) rescue false
   end
 
   def find_repository!(id, custom: false)
