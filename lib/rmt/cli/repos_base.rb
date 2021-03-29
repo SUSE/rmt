@@ -38,8 +38,18 @@ class RMT::CLI::ReposBase < RMT::CLI::Base
     puts set_enabled ? _('Repository by ID %{id} successfully enabled.') % { id: id } : _('Repository by ID %{id} successfully disabled.') % { id: id }
   end
 
+  def is_numeric_id?(str)
+    # Check if given string is a plain number without any additional characters
+    # like '15sp3-ptf-repo-id'.
+    !!Integer(str) rescue false
+  end
+
   def find_repository!(id, custom: false)
-    repository = Repository.find_by(id: id) if custom # allow fallback for old IDs when dealing with custom repos
+    # allow fallback for old IDs when dealing with custom repos
+    if is_numeric_id?(id) && custom
+      repository = Repository.find_by(id: id)
+    end
+
     repository ||= Repository.find_by(friendly_id: id)
 
     if repository.nil? || (custom && !repository.custom?)
