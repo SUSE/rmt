@@ -14,7 +14,7 @@ describe MigrationEngine do
     subject(:migrations) { engine.generate }
 
     let(:sle12sub) { create(:subscription, product_classes: [sle12.product_class]) }
-    let(:system) { FactoryBot.create(:system, :with_activated_base_product) }
+    let(:system) { FactoryBot.create(:system) }
     let!(:activation) { create :activation, system: system, service: sle12.service }
 
     context 'error handling' do
@@ -59,7 +59,7 @@ describe MigrationEngine do
     context 'with no upgradeable products' do
       let!(:slepos) { create(:product, :with_mirrored_repositories, name: 'SLEPOS') }
       let!(:slepossub) { create(:subscription, product_classes: [slepos.product_class]) }
-      let!(:system) { FactoryBot.create(:system, :with_activated_base_product) }
+      let!(:system) { FactoryBot.create(:system) }
       let!(:activation) { create :activation, system: system, service: slepos.service }
       let(:installed_products) { [slepos] }
 
@@ -274,15 +274,15 @@ describe MigrationEngine do
       end
 
       context 'when not all products are upgradeable' do
-        let(:slewe12) do
-          create(
-            :product, :with_mirrored_repositories, :activated,
-            system: system, base_products: [sle12], name: 'slewe12', product_type: 'extension'
-          )
-        end
-        let(:installed_products) { [sle12, slewe12] }
+        let(:sle12ltss) { create :product, :extension, :with_repositories, :activated, system: system, base_products: [sle12], name: 'sle12ltss' }
+        let(:installed_products) { [sle12, sle12ltss] }
 
-        it { is_expected.to be_empty }
+        it 'raises error with help message' do
+          expect { migrations }.to raise_error do |error|
+            expect(error).to be_a(MigrationEngine::MigrationEngineError)
+            expect(error.data).to eq(sle12ltss.friendly_name)
+          end
+        end
       end
 
       context 'with base plus free extension of beta class' do

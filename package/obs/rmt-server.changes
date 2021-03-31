@@ -1,21 +1,30 @@
 -------------------------------------------------------------------
+Tue Mar 16 19:53:15 UTC 2021 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+
+- Version 2.6.7
+- Clean out `subscriptions` table only if replacement data is already
+  available (bsc#1183615)
+- Raise an error when there is an extension activated which has no
+  migration successor (like LTSS)
+
+-------------------------------------------------------------------
 Tue Mar 16 08:20:24 UTC 2021 - Jens Mammen <jmammen@suse.com>
 
 - Include installed modules to the solution tree when doing
   an offline migration. (bsc#1179523)
 
 -------------------------------------------------------------------
-Tue Mar 16 19:53:15 UTC 2021 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
+Fri Feb 26 18:56:56 UTC 2021 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
-- Version 2.6.7
-- Clean out `subscriptions` table only if replacement data is already
-  available (bsc#1183615)
+- Do not raise an exception when mirroring 
+  if info missing is in alpha or beta stage
+  This references bsc#1180018 
 
 -------------------------------------------------------------------
 Thu Feb 18 14:20:53 UTC 2021 - Natnael Getahun <natnael.getahun@suse.com>
 
 - Fix rpath build issues
-- Resubmit version 2.6.6 
+- Resubmit version 2.6.6
 
 -------------------------------------------------------------------
 Mon Feb 15 12:22:08 UTC 2021 - Natnael Getahun <natnael.getahun@suse.com>
@@ -62,7 +71,7 @@ Tue Sep 29 14:53:12 UTC 2020 - Luís Caparroz <luis.caparroz@suse.com>
   Now, RMT makes HEAD requests to the repositories servers and inspect the
   'Last-Modified' header to decide whether to download a file or copy it from
   cache, by comparing the equalness of timestamps.
-  
+
 -------------------------------------------------------------------
 Tue Sep 29 10:19:12 UTC 2020 - Thomas Muntaner <tmuntaner@suse.com>
 
