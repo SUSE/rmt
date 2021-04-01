@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2019-03-28 18:42+0000\n"
-"Last-Translator: Samanta Magalhaes <samanta@texttrans.com>\n"
-"Language-Team: Portuguese (Brazil) <https://l10n.opensuse.org/projects/rmt/i18"
-"n/pt_BR/>\n"
+"PO-Revision-Date: 2021-04-01 14:57+0000\n"
+"Last-Translator: Rodrigo Macedo <rmsolucoeseminformatic4@gmail.com>\n"
+"Language-Team: Portuguese (Brazil) <https://l10n.opensuse.org/projects/rmt/"
+"i18n/pt_BR/>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 3.3\n"
+"X-Generator: Weblate 3.6.1\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "%s ainda não está ativado no sistema."
@@ -41,10 +41,10 @@ msgstr "%{path} não é gravável pelo usuário %{username}."
 
 msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 msgstr ""
+"* %{name} (identificação: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 
-#, fuzzy
 msgid "A repository by the ID %{id} already exists."
-msgstr "Um repositório pelo URL %{url} já existe."
+msgstr "Um repositório pelo ID %{url} já existe."
 
 msgid "A repository by the URL %{url} already exists."
 msgstr "Um repositório pelo URL %{url} já existe."
@@ -63,14 +63,15 @@ msgstr "Todos os repositórios já foram ativados."
 
 msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
 msgstr ""
+"Outra instância deste comando já está em execução. Encerre a outra instância "
+"ou aguarde sua conclusão."
 
 #. i18n: architecture
 msgid "Arch"
-msgstr "Arch"
+msgstr "Arquitetura"
 
-#, fuzzy
 msgid "Architecture"
-msgstr "Arch"
+msgstr "Arquitetura"
 
 msgid "Attach an existing custom repository to a product"
 msgstr "Anexar um repositório customizado existente a um produto"
@@ -100,10 +101,10 @@ msgid "Checksum doesn't match"
 msgstr "Soma de verificação não corresponde"
 
 msgid "Clean cancelled."
-msgstr ""
+msgstr "Limpeza cancelada."
 
 msgid "Clean finished. An estimated %{total_file_size} were removed."
-msgstr ""
+msgstr "Limpeza finalizada. Estima-se que %{total_file_size} foram removidos."
 
 msgid "Cleaning up the database"
 msgstr "Limpando o banco de dados"
@@ -123,25 +124,24 @@ msgstr "Não foi possível criar o diretório local %{dir} com o erro: %{error}"
 msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
 msgstr "Não foi possível encontrar o sistema com login \\\"%{login}\\\" e senha \\\"%{password}\\\""
 
-#, fuzzy
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
-msgstr "Não foi possível espelhar a árvore do produto suma com o erro: %{error}"
+msgstr ""
+"Não foi possível espelhar a árvore do produto SUSE Manager com erro: %{error}"
 
-#, fuzzy
 msgid "Couldn't add custom repository."
-msgstr "Cria um repositório customizado."
+msgstr "Não foi possível adicionar repositório personalizado."
 
 msgid "Creates a custom repository."
 msgstr "Cria um repositório customizado."
 
 msgid "Deleting locally mirrored files from repository '%{repo}'..."
-msgstr ""
+msgstr "Excluindo arquivos espelhados localmente do repositório '%{repo}'..."
 
 msgid "Description"
-msgstr ""
+msgstr "Descrição"
 
 msgid "Description: %{description}"
-msgstr ""
+msgstr "Descrição: %{description}"
 
 msgid "Detach an existing custom repository from a product"
 msgstr "Desanexar um repositório personalizado existente de um produto"
@@ -149,13 +149,12 @@ msgstr "Desanexar um repositório personalizado existente de um produto"
 msgid "Detached repository from product '%{product_name}'."
 msgstr "Repositório desanexado do produto '%{product_name}'."
 
-#, fuzzy
 msgid "Disable mirroring of custom repositories by a list of IDs"
 msgstr "Desativar o espelhamento do repositório personalizado por ID"
 
-#, fuzzy
 msgid "Disable mirroring of custom repository by a list of IDs"
-msgstr "Desativar o espelhamento do repositório personalizado por ID"
+msgstr ""
+"Desative o espelhamento do repositório personalizado por uma lista de IDs"
 
 msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
 msgstr "Desative o espelhamento de repositórios de produtos por uma lista de IDs de produto ou cadeias de produto."
@@ -170,10 +169,10 @@ msgid "Disabling %{product}:"
 msgstr "Desabilitando %{product}:"
 
 msgid "Displays product with all its repositories and their attributes."
-msgstr ""
+msgstr "Exibe o produto com todos os seus repositórios e seus atributos."
 
 msgid "Do not import system hardware info from MachineData table"
-msgstr ""
+msgstr "Não importe informações de hardware do sistema da tabela MachineData"
 
 msgid "Do not import the systems that were registered to the SMT"
 msgstr "Não importe os sistemas que foram registrados para o SMT"
@@ -188,14 +187,14 @@ msgid "Downloading data from SCC"
 msgstr "Download de dados do SCC"
 
 msgid "Duplicate entry for system %{system}, skipping"
-msgstr ""
+msgstr "Entrada duplicada para o sistema %{system}, pulando"
 
 msgid "Enable debug output"
 msgstr "Ativar saída de depuração"
 
-#, fuzzy
 msgid "Enable mirroring of custom repositories by a list of IDs"
-msgstr "Ativar o espelhamento do repositório customizado por ID"
+msgstr ""
+"Habilite o espelhamento de repositórios personalizados por uma lista de IDs"
 
 msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
 msgstr "Ative o espelhamento de repositórios de produtos por uma lista de IDs de produto ou cadeias de produto."
@@ -216,7 +215,7 @@ msgid "Enabling %{product}:"
 msgstr "Habilitando %{product}:"
 
 msgid "Enter a value:"
-msgstr ""
+msgstr "Introduza um valor:"
 
 msgid "Error while mirroring data: %{error}"
 msgstr "Erro ao espelhar dados: %{error}"
@@ -231,10 +230,10 @@ msgid "Error while moving directory %{src} to %{dest}: %{error}"
 msgstr "Erro ao mover o diretório %{src} para %{dest}: %{error}"
 
 msgid "Examples"
-msgstr ""
+msgstr "Exemplos"
 
 msgid "Examples:"
-msgstr ""
+msgstr "Exemplos:"
 
 msgid "Export commands for Offline Sync"
 msgstr "Exportar comandos para sincronização off-line"
@@ -255,10 +254,12 @@ msgid "Exporting subscriptions"
 msgstr "Exportando assinaturas"
 
 msgid "Failed to download %{failed_count} files"
-msgstr ""
+msgstr "Falha ao baixar %{failed_count} arquivos"
 
 msgid "Failed to get repository metadata signatures with HTTP code %{http_code}"
 msgstr ""
+"Falha ao obter assinaturas de metadados do repositório com o código HTTP "
+"%{http_code}"
 
 msgid "Failed to import system %{system}"
 msgstr ""
