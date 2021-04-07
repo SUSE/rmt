@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2021-04-07 16:57+0000\n"
+"PO-Revision-Date: 2021-04-07 19:57+0000\n"
 "Last-Translator: Rodrigo Macedo <rmsolucoeseminformatic4@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://l10n.opensuse.org/projects/rmt/"
 "i18n/pt_BR/>\n"
@@ -265,10 +265,10 @@ msgid "Failed to import system %{system}"
 msgstr "Falha ao importar sistema %{system}"
 
 msgid "Failed to sync system %{login}: %{error}"
-msgstr ""
+msgstr "Falha ao sincronizar o sistema %{login}: %{error}"
 
 msgid "Forward registered systems data to SCC"
-msgstr ""
+msgstr "Encaminhar dados de sistemas registrados para SCC"
 
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
@@ -276,16 +276,16 @@ msgstr[0] "Produto encontrado pela meta %{target}: %{products}."
 msgstr[1] "Produtos encontrados por meta %{target}: %{products}."
 
 msgid "GPG key import failed"
-msgstr ""
+msgstr "A importação da chave GPG falhou"
 
 msgid "GPG signature verification failed"
-msgstr ""
+msgstr "Falha na verificação da assinatura GPG"
 
 msgid "Hardware information stored for system %{system}"
 msgstr "Informações de hardware armazenadas para o sistema %{system}"
 
 msgid "Hostname"
-msgstr ""
+msgstr "Nome do host"
 
 msgid "ID"
 msgstr "ID"
@@ -306,7 +306,7 @@ msgid "Last mirrored"
 msgstr "Última espelhada"
 
 msgid "Last seen"
-msgstr ""
+msgstr "Visto pela última vez"
 
 msgid "List all custom repositories"
 msgstr "Listar todos os repositórios personalizados"
@@ -315,13 +315,13 @@ msgid "List all products, including ones which are not marked to be mirrored"
 msgstr "Listar todos os produtos, incluindo aqueles que não estão marcados para serem espelhados"
 
 msgid "List all registered systems"
-msgstr ""
+msgstr "Liste todos os sistemas registrados"
 
 msgid "List all repositories, including ones which are not marked to be mirrored"
 msgstr "Listar todos os repositórios, incluindo aqueles que não estão marcados para serem espelhados"
 
 msgid "List and manipulate registered systems"
-msgstr ""
+msgstr "Listar e manipular sistemas registrados"
 
 msgid "List and modify custom repositories"
 msgstr "Listar e modificar repositórios personalizados"
@@ -336,7 +336,7 @@ msgid "List products which are marked to be mirrored."
 msgstr "Listar produtos que estão marcados para serem espelhados."
 
 msgid "List registered systems."
-msgstr ""
+msgstr "Lista os sistemas registrados."
 
 msgid "List repositories which are marked to be mirrored"
 msgstr "Listar produtos que estão marcados para serem espelhados"
