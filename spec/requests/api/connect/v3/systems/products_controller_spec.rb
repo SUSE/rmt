@@ -474,7 +474,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
           end
         end
 
-        context 'when not all products are upgradeable' do
+        context 'when not all extensions are upgradeable' do
           let(:first_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'base') }
           let(:module_without_successor) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'module') }
           let(:second_product) do
