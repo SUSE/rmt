@@ -55,7 +55,13 @@ class MigrationEngine
     migrations = add_python2_module(migrations)
     migrations = yield(migrations) if block_given?
     # NB: It's possible to migrate to any product that's available on RMT, entitlement checks not needed.
-
+    extensions_without_successor = (@system.products - [base_product]).select { |p| p.successors.empty? }
+    if migrations.empty? && extensions_without_successor.present?
+      raise MigrationEngineError.new(
+        N_("There are activated extensions/modules on this system which cannot be migrated. De-activate them first, and then try migrating again. \n" \
+              "The product(s) are '%s'."), extensions_without_successor.map(&:friendly_name).join(', ')
+)
+    end
     # Offering the most recent products first
     sort_migrations(migrations)
   end
@@ -81,7 +87,7 @@ class MigrationEngine
     base_successors.each do |base|
       extensions_successors = installed_extensions.map do |ext|
         options = ext.successors.merge(migration_path_scope)
-        options += [ext] if migration_kind == :online
+        options += [ext]
         options.select { |succ| succ.available_for?(base) }
       end
       combinations += [base].product(*extensions_successors)

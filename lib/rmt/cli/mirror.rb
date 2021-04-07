@@ -1,4 +1,6 @@
 class RMT::CLI::Mirror < RMT::CLI::Base
+  class_option :do_not_raise_unpublished, desc: _('Do not fail the command if product is in alpha or beta stage'), type: :boolean, required: false
+
   desc 'all', _('Mirror all enabled repositories')
   def all
     RMT::Lockfile.lock('mirror') do
@@ -27,6 +29,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
   default_task :all
 
+
   desc 'repository IDS', _('Mirror enabled repositories with given repository IDs')
   def repository(*ids)
     RMT::Lockfile.lock('mirror') do
@@ -35,8 +38,8 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
       repos = ids.map do |id|
         repo = Repository.find_by(friendly_id: id)
+        errored_repos_id << id if options[:do_not_raise_unpublished] && repo.nil?
         errors << _('Repository with ID %{repo_id} not found') % { repo_id: id } if repo.nil?
-
         repo
       end
 
@@ -57,11 +60,15 @@ class RMT::CLI::Mirror < RMT::CLI::Base
         errors << _('Product for target %{target} not found') % { target: target } if products.empty?
         products.each do |product|
           product_repos = product.repositories.only_mirroring_enabled
-          errors << _('Product %{target} has no repositories enabled') % { target: target } if product_repos.empty?
+          if product_repos.empty?
+            errors << _('Product %{target} has no repositories enabled') % { target: target }
+            errored_products_id << target if options[:do_not_raise_unpublished]
+          end
           repos += product_repos.to_a
         end
       rescue ActiveRecord::RecordNotFound
         errors << _('Product with ID %{target} not found') % { target: target }
+        errored_products_id << target if options[:do_not_raise_unpublished]
       end
 
       mirror_repos!(repos)
@@ -83,6 +90,43 @@ class RMT::CLI::Mirror < RMT::CLI::Base
     @errors ||= []
   end
 
+  def errored_repos_id
+    @errored_repos_id ||= []
+  end
+
+  def errored_products_id
+    @errored_products_id ||= []
+  end
+
+  def in_alpha_or_beta?
+    products = []
+    unless errored_repos_id.empty?
+      products = Product.joins(:repositories).where(
+        'repositories.id' => errored_repos_id
+      )
+    end
+    unless errored_products_id.empty?
+      products = Product.where(id: errored_products_id)
+    end
+    return false if products.empty?
+
+    ignore_stages = ['alpha', 'beta']
+    products.each do |product|
+      if product.base?
+        return false unless ignore_stages.include? product.release_stage
+      else
+        root_products = Product.where(id: product.root_products.ids)
+        root_products.each do |root_product|
+          if root_product.base?
+            return false unless ignore_stages.include? root_product.release_stage
+          end
+        end
+      end
+    end
+    # if not empty means there is missing info because of alpha/beta
+    true
+  end
+
   def mirror_repos!(repos)
     repos.compact.each do |repo|
       unless repo.mirroring_enabled
@@ -101,6 +145,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       errors << _("Repository '%{repo_name}' (%{repo_id}): %{error_message}") % {
         repo_id: repo.friendly_id, repo_name: repo.name, error_message: e.message
       }
+      errored_repos_id << repo.id if options[:do_not_raise_unpublished]
     end
   end
 
@@ -111,7 +156,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       logger.warn("\e[31m" + _('The following errors occurred while mirroring:') + "\e[0m")
       errors.each { |e| logger.warn("\e[31m" + (e.end_with?('.') ? e : e + '.') + "\e[0m") }
       logger.warn("\e[33m" + _('Mirroring completed with errors.') + "\e[0m")
-      raise RMT::CLI::Error.new('The command exited with errors.')
+      raise RMT::CLI::Error.new('The command exited with errors.') unless options[:do_not_raise_unpublished] && in_alpha_or_beta?
     end
   end
 end

@@ -1,7 +1,7 @@
 #
 # spec file for package rmt-server
 #
-# Copyright (c) 2020 SUSE LLC
+# Copyright (c) 2021 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -29,7 +29,7 @@
 %define ruby_version          %{rb_default_ruby_suffix}
 
 Name:           rmt-server
-Version:        2.6.5
+Version:        2.6.7
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -42,6 +42,7 @@ Source3:        rmt-cli.8.gz
 BuildRequires:  %{ruby_version}
 BuildRequires:  %{ruby_version}-devel
 BuildRequires:  %{ruby_version}-rubygem-bundler
+BuildRequires:  chrpath
 BuildRequires:  fdupes
 BuildRequires:  gcc
 BuildRequires:  libcurl-devel
@@ -212,6 +213,10 @@ rm -f %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/*/mkmf.log
 find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod 644 -- {} +
 
 %fdupes %{buildroot}/%{lib_dir}
+
+# drop custom rpath from native gems
+chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/mysql2-*/lib/mysql2/mysql2.so
+chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/mysql2/mysql2.so
 
 %files
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}

@@ -13,6 +13,10 @@ FactoryBot.define do
     arch { 'x86_64' }
     release_stage { 'released' }
 
+    factory :beta do
+      release_stage { 'beta' }
+    end
+
     transient do
       base_products { [] }
       root_product { nil }
@@ -54,6 +58,14 @@ FactoryBot.define do
       after :create do |product, _evaluator|
         5.times do
           create(:product, :extension, base_products: [product])
+        end
+      end
+    end
+
+    trait :with_repositories do
+      after :create do |product, _evaluator|
+        unless Service.find_by(product_id: product.id)
+          FactoryBot.create(:service, :with_repositories, product: product)
         end
       end
     end

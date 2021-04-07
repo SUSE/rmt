@@ -89,6 +89,38 @@ RSpec.describe RMT::CLI::Mirror do
       end
     end
 
+    context 'with repositories in alpha or beta stage' do
+      before do
+        allow_any_instance_of(RMT::Mirror)
+          .to receive(:mirror)
+          .and_raise(RMT::Mirror::Exception, mirroring_error)
+      end
+
+      let(:product) { create :beta }
+      let(:mirrored) { create(:product, :module, :with_mirrored_repositories, base_products: [product], root_product: product, recommended: true) }
+      let(:repos) { mirrored.repositories }
+
+      let(:mirroring_error) { 'mirroring failed' }
+      let(:error_log) { /.*#{error_log_begin}\n#{error_messages}#{error_log_end}/ }
+      let(:error_messages) do
+        full_message = Regexp.new ''
+        repos.each do |repo|
+          repo_error = /.*\e\[31mRepository '#{repo.name}' \(#{repo.id}\): #{mirroring_error}\.\e\[0m\n.*/
+          full_message = Regexp.new(full_message.source + repo_error.source)
+        end
+        full_message
+      end
+
+      context 'using --do-not-raise-unpublished flag' do
+        let(:argv) { ['all', '--do-not-raise-unpublished'] }
+
+        it 'log the warning and does not raise an error' do
+          allow_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
+          expect { command }.to output(error_log).to_stdout
+        end
+      end
+    end
+
     context 'with repositories changing during mirroring' do
       let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
       let!(:additional_repository) { create :repository, :with_products, mirroring_enabled: false }
@@ -337,6 +369,21 @@ RSpec.describe RMT::CLI::Mirror do
           .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
           .and output(error_log).to_stdout
           .and output(exit_with_error_message).to_stderr
+      end
+    end
+
+    context 'with repositories in alpha or beta stage' do
+      let(:product) { create(:beta) }
+      let(:mirroring_error) { 'has no repositories enabled' }
+      let(:error_log) { /.*#{error_log_begin}\n#{error_messages}#{error_log_end}/ }
+      let(:error_messages) { /.*\e\[31mProduct #{product.id} #{mirroring_error}\.\e\[0m\n.*/ }
+      let(:argv) { ['product', product.id, '--do-not-raise-unpublished'] }
+
+      context 'mirror product using --do-not-raise-unpublished flag' do
+        it 'log the warning and does not raise an error' do
+          allow_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
+          expect { command }.to output(error_log).to_stdout
+        end
       end
     end
   end

@@ -8,7 +8,7 @@ end
 gem 'puma', '~> 5.0.2'
 gem 'mysql2', '~> 0.5.3'
 
-gem 'nokogiri', '~> 1.10.3'
+gem 'nokogiri', '~> 1.11.2'
 gem 'thor'
 gem 'activesupport', '~> 6.0.3'
 gem 'actionpack', '~> 6.0.3'
@@ -42,11 +42,11 @@ group :development, :test do
   gem 'danger'
   gem 'danger-rubocop'
   gem 'strong_migrations'
+  gem 'awesome_print'
 end
 
 group :development do
-  gem 'awesome_print'
-  gem 'listen', '>= 3.0.5', '<= 3.2.1'
+  gem 'listen', '>= 3.0.5', '<= 3.5.1'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
