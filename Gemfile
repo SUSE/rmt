@@ -84,8 +84,10 @@ gem 'active_model_serializers'
 gem 'fast_gettext'
 gem 'gettext_i18n_rails'
 
-gem 'config', '~> 2.2', '>= 2.2.1'
+gem 'config', '~> 3.0', '>= 2.2.1'
 gem 'terminal-table', '~> 3.0'
+
+
 
 # needed by rmt-server-pubcloud
 gem 'jwt', '~> 2.1'
