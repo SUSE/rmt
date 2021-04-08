@@ -371,6 +371,21 @@ Repository by ID #{repository.friendly_id} successfully disabled.
           expect(Repository.find_by(id: custom_repository.id)).to be_nil
         end
       end
+
+      context 'custom repository with id starting with numbers' do
+        let(:friendly_id) { "#{suse_repository.id}-repo-name" }
+        let(:custom) { create :repository, :custom, friendly_id: friendly_id }
+
+        let(:argv) { [command, custom.friendly_id] }
+
+        before do
+          expect { described_class.start(argv) }.to output("Removed custom repository by ID #{friendly_id}.\n").to_stdout
+        end
+
+        it 'deletes custom repository' do
+          expect(Repository.find_by(friendly_id: friendly_id)).to be_nil
+        end
+      end
     end
 
     it_behaves_like 'rmt-cli custom repos remove', 'remove'
