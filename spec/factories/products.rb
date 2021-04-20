@@ -23,6 +23,7 @@ FactoryBot.define do
       recommended { false }
       migration_kind { :online }
       predecessors { [] }
+      installer_updates { false }
     end
 
     after :create do |product, evaluator|
@@ -128,9 +129,9 @@ FactoryBot.define do
     end
 
     trait :with_not_mirrored_repositories do
-      after :create do |product, _evaluator|
+      after :create do |product, evaluator|
         unless Service.find_by(product_id: product.id)
-          FactoryBot.create(:service, :with_repositories, product: product, mirroring_enabled: false)
+          FactoryBot.create(:service, :with_repositories, product: product, mirroring_enabled: false, installer_updates: evaluator.installer_updates)
         end
       end
     end

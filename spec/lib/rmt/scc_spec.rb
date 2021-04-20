@@ -79,11 +79,6 @@ describe RMT::SCC do
         expect(Subscription.statuses[db_subscription.status]).to eq(subscription[:status])
       end
     end
-
-    it 'enables installer-updates repos by default in the DB' do
-      db_repository = Repository.find_by(installer_updates: true)
-      expect(db_repository.enabled).to be(true)
-    end
   end
 
   before do
