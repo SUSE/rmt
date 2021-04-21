@@ -699,7 +699,7 @@ RSpec.describe RMT::CLI::Products do
     let(:target) { product.id.to_s }
     let(:argv) { ['show', target] }
     let(:expected_output) do
-      output = "Product: #{product.friendly_name} (id: #{target})\n"
+      output = "Product: #{product.friendly_name} (ID: #{target})\n"
       output += "Description: #{product.description}\n"
       output += "Repositories:\n"
       repos.each do |repo|
@@ -753,7 +753,7 @@ RSpec.describe RMT::CLI::Products do
       context 'without the repos' do
         let(:product) { create :product }
         let(:expected_output) do
-          output = "Product: #{product.friendly_name} (id: #{target})\n"
+          output = "Product: #{product.friendly_name} (ID: #{target})\n"
           output += "Description: #{product.description}\n"
           output += "Repositories are not available for this product.\n"
           output
