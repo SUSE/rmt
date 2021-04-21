@@ -105,7 +105,7 @@ RSpec.describe RMT::CLI::Mirror do
       let(:error_messages) do
         full_message = Regexp.new ''
         repos.each do |repo|
-          repo_error = /.*\e\[31mRepository '#{repo.name}' \(#{repo.id}\): #{mirroring_error}\.\e\[0m\n.*/
+          repo_error = /.*\e\[31mRepository '#{repo.name}' \(#{repo.friendly_id}\): #{mirroring_error}\.\e\[0m\n.*/
           full_message = Regexp.new(full_message.source + repo_error.source)
         end
         full_message
