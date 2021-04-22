@@ -9,6 +9,14 @@ Thu Apr 22 11:18:33 UTC 2021 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
   This references bsc#1184814
 
 -------------------------------------------------------------------
+Thu Apr 22 11:10:11 UTC 2021 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Version 2.6.9
+- Add enabled attribute to syncing process
+  This fixes wrong marked repositories when syncing
+  This references bsc#1184814
+
+-------------------------------------------------------------------
 Mon Mar 29 10:51:13 UTC 2021 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Version 2.6.8
