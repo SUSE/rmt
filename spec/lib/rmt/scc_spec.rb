@@ -162,7 +162,8 @@ describe RMT::SCC do
         {
           id: 999999,
           url: 'http://example.com/extension-without-base',
-          name: 'Repo of an extension without base'
+          name: 'Repo of an extension without base',
+          enabled: true
         }
       end
       let(:extra_product) do
@@ -176,7 +177,8 @@ describe RMT::SCC do
           repositories: [ extra_repo ],
           extensions: [],
           online_predecessor_ids: [],
-          offline_predecessor_ids: []
+          offline_predecessor_ids: [],
+          enabled: true
         }
       end
       let(:repositories_with_extra_repos) { all_repositories + [extra_repo] }
