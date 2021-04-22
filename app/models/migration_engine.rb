@@ -55,7 +55,6 @@ class MigrationEngine
     migrations = add_python2_module(migrations)
     migrations = yield(migrations) if block_given?
     # NB: It's possible to migrate to any product that's available on RMT, entitlement checks not needed.
-
     # Offering the most recent products first
     sort_migrations(migrations)
   end
@@ -74,20 +73,36 @@ class MigrationEngine
   def migration_targets(migration_kind: :online)
     migration_path_scope = (migration_kind == :online) ? ProductPredecessorAssociation.online : ProductPredecessorAssociation.all
     installed_extensions = @installed_products.reject { |product| product == base_product }
-    base_successors = base_product.successors.merge(migration_path_scope).to_a
+    base_successors = base_successors(migration_path_scope)
     base_successors.push(base_product) if migration_kind == :online
     combinations = []
     # adding all valid combinations of extension successors to the base successors
     base_successors.each do |base|
       extensions_successors = installed_extensions.map do |ext|
         options = ext.successors.merge(migration_path_scope)
-        options += [ext] if migration_kind == :online
+        options += [ext]
         options.select { |succ| succ.available_for?(base) }
       end
       combinations += [base].product(*extensions_successors)
     end
     combinations.delete([base_product] + installed_extensions)
+
+    if base_successors(migration_path_scope).present? && combinations.empty?
+      extensions_without_successor = installed_extensions.select { |ext| ext.successors.empty? }
+      uninstall_command = extensions_without_successor.map { |p| "SUSEConnect -d -p #{p.identifier}/#{p.version}/#{p.arch}" }.join('\n ')
+      raise MigrationEngineError.new(
+        N_("There are activated extensions/modules on this system which cannot be migrated. \n" \
+           "De-activate them first, and then try migrating again. \n" \
+           "The product(s) are '%s'. \n" \
+           "You can de-activate them with: \n%s"), [extensions_without_successor.map(&:friendly_name).join(', '), uninstall_command]
+         )
+    end
+
     combinations
+  end
+
+  def base_successors(migration_path_scope)
+    base_product.successors.merge(migration_path_scope).to_a
   end
 
   # automatically add modules that are flagged as `migration_extra` or `recommended`

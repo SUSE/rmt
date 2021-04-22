@@ -1,4 +1,5 @@
 #!/bin/sh -xe
+zypper rm -y container-suseconnect
 SUSEConnect -r $REGCODE
 SUSEConnect -p sle-module-desktop-applications/15.2/x86_64
 SUSEConnect -p sle-module-development-tools/15.2/x86_64 # this and above is needed for 'rpm-build' package
