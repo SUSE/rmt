@@ -115,7 +115,7 @@ class RMT::SCC
   def update_repositories(repos)
     @logger.info _('Updating repositories')
     repos.each do |item|
-      update_auth_token(item)
+      update_auth_token_enabled_attr(item)
     end
   end
 
@@ -168,11 +168,11 @@ class RMT::SCC
     end
   end
 
-  def update_auth_token(item)
+  def update_auth_token_enabled_attr(item)
     uri = URI(item[:url])
     auth_token = uri.query
 
-    Repository.find_by!(scc_id: item[:id]).update! auth_token: auth_token
+    Repository.find_by!(scc_id: item[:id]).update! auth_token: auth_token, enabled: item[:enabled]
   end
 
   def create_subscription(item)

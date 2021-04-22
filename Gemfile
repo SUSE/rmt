@@ -5,7 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'puma', '~> 5.0.2'
+gem 'puma', '~> 5.2.2'
 gem 'mysql2', '~> 0.5.3'
 
 gem 'nokogiri', '~> 1.11.2'
@@ -57,7 +57,7 @@ end
 
 group :test do
   gem 'rspec-command', '1.0.3'
-  gem 'rspec-rails', '~> 4.0'
+  gem 'rspec-rails', '~> 5.0'
   gem 'factory_bot_rails', '~> 6.1.0'
   gem 'ffaker'
   gem 'rspec-its'
