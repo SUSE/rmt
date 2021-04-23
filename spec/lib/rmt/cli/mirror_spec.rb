@@ -76,7 +76,7 @@ RSpec.describe RMT::CLI::Mirror do
         end
 
         let(:mirroring_error) { 'mirroring failed' }
-        let(:error_messages) { /Repository '#{repository.name}' \(#{repository.id}\): #{mirroring_error}\./ }
+        let(:error_messages) { /Repository '#{repository.name}' \(#{repository.friendly_id}\): #{mirroring_error}\./ }
 
         it 'raises an error' do
           expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
@@ -105,7 +105,7 @@ RSpec.describe RMT::CLI::Mirror do
       let(:error_messages) do
         full_message = Regexp.new ''
         repos.each do |repo|
-          repo_error = /.*\e\[31mRepository '#{repo.name}' \(#{repo.id}\): #{mirroring_error}\.\e\[0m\n.*/
+          repo_error = /.*\e\[31mRepository '#{repo.name}' \(#{repo.friendly_id}\): #{mirroring_error}\.\e\[0m\n.*/
           full_message = Regexp.new(full_message.source + repo_error.source)
         end
         full_message
@@ -153,7 +153,7 @@ RSpec.describe RMT::CLI::Mirror do
       let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
       let!(:additional_repository) { create :repository, :with_products, mirroring_enabled: false }
       let(:mirroring_error) { 'mirroring failed' }
-      let(:error_messages) { /Repository '#{repository.name}' \(#{repository.id}\): #{mirroring_error}\./ }
+      let(:error_messages) { /Repository '#{repository.name}' \(#{repository.friendly_id}\): #{mirroring_error}\./ }
 
       it 'handles exceptions and mirrors additional repositories' do
         expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
@@ -209,7 +209,7 @@ RSpec.describe RMT::CLI::Mirror do
       let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
       let(:argv) { ['repository', repository.friendly_id] }
       let(:mirroring_error) { 'mirroring failed' }
-      let(:error_messages) { /Repository '#{repository.name}' \(#{repository.id}\): #{mirroring_error}\./ }
+      let(:error_messages) { /Repository '#{repository.name}' \(#{repository.friendly_id}\): #{mirroring_error}\./ }
 
       it 'handles the exception and raises an error after mirroring all repos' do
         expect_any_instance_of(RMT::Mirror)
@@ -307,7 +307,7 @@ RSpec.describe RMT::CLI::Mirror do
       let(:mirroring_error) { 'mirroring failed' }
       let(:error_messages) do
         product.repositories
-          .map { |r| /Repository '#{r.name}' \(#{r.id}\): #{mirroring_error}\./ }
+          .map { |repo| /Repository '#{repo.name}' \(#{repo.friendly_id}\): #{mirroring_error}\./ }
           .reduce { |acc, e| /#{acc}\e\[0m\n.*\e\[31m#{e}/ }
       end
 
