@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Fri Jun  5 13:41:29 UTC 2020 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
-- Version 2.5.10
+- Version 2.5.9
 - Set cloud_povider info when registering the instance
 
 -------------------------------------------------------------------
