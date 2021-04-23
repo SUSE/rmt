@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe ServicesController do
   describe '#show' do
-    let(:service) { FactoryBot.create(:service, :with_repositories) }
+    let(:service) { FactoryBot.create(:service, :with_repositories, installer_updates: true) }
 
     describe 'HTTP response' do
       subject { response }
