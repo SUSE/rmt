@@ -76,7 +76,7 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
         its(:cpus) { is_expected.to eql hw_info[:cpus] }
         its(:sockets) { is_expected.to eql hw_info[:sockets] }
         its(:arch) { is_expected.to eql hw_info[:arch] }
-        # its(:cloud_provider) { is_expected.to eql hw_info[:cloud_provider] }
+        its(:cloud_provider) { is_expected.to eql hw_info[:cloud_provider] }
         its(:uuid) { is_expected.to eql uuid }
       end
     end
