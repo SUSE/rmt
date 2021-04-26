@@ -21,7 +21,7 @@
 			"description": "DTP Updates",
 			"enabled": true,
 			"autorefresh": true,
-			"installer_updates": false
+			"installer_updates": true
 		}],
 		"product_type": "base",
 		"predecessor_ids": [],

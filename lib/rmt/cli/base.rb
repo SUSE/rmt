@@ -72,7 +72,7 @@ class RMT::CLI::Base < Thor
       raise RMT::CLI::Error.new(
         _("The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}") % {
           path: '/etc/rmt.conf',
-          url: 'https://scc.suse.com/organization'
+          url: 'https://scc.suse.com'
         },
         RMT::CLI::Error::ERROR_SCC
       )
@@ -112,7 +112,11 @@ class RMT::CLI::Base < Thor
   private
 
   def needs_path(path, writable: false)
+    # expand the path to make it easier to work with
+    path = File.expand_path(path)
+
     raise RMT::CLI::Error.new(_('%{path} is not a directory.') % { path: path }) unless File.directory?(path)
+
     if writable
       unless File.writable?(path)
         raise RMT::CLI::Error.new(_('%{path} is not writable by user %{username}.') % {
@@ -121,6 +125,8 @@ class RMT::CLI::Base < Thor
         })
       end
     end
+
+    path
   end
 
   # Allows to have any type of multi input that you want:

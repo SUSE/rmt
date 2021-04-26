@@ -91,9 +91,9 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     end
 
     mandatory_repos = @product.repositories.only_enabled
-    mirrored_repos = @product.repositories.only_enabled.only_mirrored
+    mirrored_repos = @product.repositories.only_enabled.only_fully_mirrored
 
-    unless (mandatory_repos.size == mirrored_repos.size)
+    unless mandatory_repos.size == mirrored_repos.size
       fail ActionController::TranslatedError.new(N_('Not all mandatory repositories are mirrored for product %s'), @product.friendly_name)
     end
   end

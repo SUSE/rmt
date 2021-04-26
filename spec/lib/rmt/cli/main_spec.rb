@@ -113,7 +113,7 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
 
           it 'outputs custom error message' do
             expect { command }.to output(
-              "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization\n"
+              "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com\n"
             ).to_stderr
           end
         end
@@ -123,7 +123,7 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
 
           it 'outputs custom error message' do
             expect { command }.to output(
-              "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com/organization\n"
+              "The SCC credentials are not configured correctly in '/etc/rmt.conf'. You can obtain them from https://scc.suse.com\n"
             ).to_stderr
           end
         end
@@ -168,6 +168,17 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
         it 'raises an exception' do
           expect { command }.to raise_exception(Mysql2::Error)
         end
+      end
+    end
+
+    describe 'Thor default behaviour when errors' do
+      let(:argv) { ['asdasdas'] }
+      let(:error_message) { "Could not find command \"asdasdas\".\n" }
+
+      it 'exits with status 1' do
+        expect { command }
+          .to raise_error(SystemExit) { |e| expect(e.status).to eq 1 }
+          .and output(error_message).to_stderr
       end
     end
   end

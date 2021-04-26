@@ -17,88 +17,56 @@ class RMT::Downloader
     end
   end
 
-  attr_accessor :repository_url, :destination_dir, :concurrency, :logger, :auth_token, :cache_dir
+  attr_accessor :concurrency, :logger, :auth_token
 
-  def initialize(repository_url:, destination_dir:, logger:, auth_token: nil, cache_dir: nil, save_for_dedup: true)
+  def initialize(logger:, auth_token: nil, track_files: true)
     Typhoeus::Config.user_agent = "RMT/#{RMT::VERSION}"
-    @repository_url = repository_url
-    @destination_dir = destination_dir
     @concurrency = 4
     @auth_token = auth_token
     @logger = logger
-    @cache_dir = cache_dir
-    @save_for_dedup = save_for_dedup
+    @track_files = track_files
     @queue = []
   end
 
-  def download(remote_file, checksum_type: nil, checksum_value: nil)
-    local_filenames = []
-    fiber_request = create_fiber_request(
-      local_filenames,
-      remote_file,
-      checksum_type: checksum_type,
-      checksum_value: checksum_value
-    )
+  def download(file_reference)
+    downloads_needed, _ = try_copying_from_cache([file_reference])
+    return file_reference.local_path if downloads_needed.empty?
+
+    fiber_request = create_fiber_request(file_reference)
     fiber_request.run
-    local_filenames.first
+    file_reference.local_path
   end
 
   def download_multi(files, ignore_errors: false)
-    @queue = files
+    downloads_needed, failed_cache =
+      try_copying_from_cache(files, ignore_errors: ignore_errors)
+    return failed_cache if downloads_needed.empty?
+
+    @queue = downloads_needed
     @hydra = Typhoeus::Hydra.new(max_concurrency: @concurrency)
 
-    local_filenames = []
-    failed_downloads = ignore_errors ? [] : nil
-    @concurrency.times { process_queue(local_filenames, failed_downloads) }
+    failed_downloads = ignore_errors ? failed_cache : nil
+    @concurrency.times { process_queue(failed_downloads) }
 
     @hydra.run
     failed_downloads
   end
 
-  def self.make_local_path(root_path, remote_file)
-    filename = File.join(root_path, remote_file.gsub(/\.\./, '__'))
-    dirname = File.dirname(filename)
-
-    FileUtils.mkdir_p(dirname)
-
-    filename
-  end
-
   protected
 
-  def get_cache_timestamp(filename)
-    File.mtime(filename).utc.httpdate if File.exist?(filename)
-  end
-
   # Creates a fiber that wraps RMT::FiberRequest and runs it, returning the RMT::FiberRequest object.
-  # @param [Array] local_filenames array of paths to downloaded files, passed by reference
-  # @param [String] remote_file path of the remote file relative to @repository_url
-  # @param [String] checksum_type expected remote file checksum type
-  # @param [String] checksum_value expected remote file checksum value
+  # @param [RMT::Mirror::FileReference] file_reference with all file metadata attributes and paths (remote, local, cache)
   # @param [Array] failed_downloads array of remote files that have failed downloads, passed by reference, prevents from raising RMT::Downloader exceptions
   # @return [RMT::FiberRequest] a request that can be run individually or with Typhoeus::Hydra
-  def create_fiber_request(local_filenames, remote_file, checksum_type: nil, checksum_value: nil, failed_downloads: nil)
-    local_filename = self.class.make_local_path(@destination_dir, remote_file)
+  def create_fiber_request(file_reference, failed_downloads: nil)
+    make_file_dir(file_reference.local_path)
 
     request_fiber = Fiber.new do
       begin
-        cache_timestamp = nil
-        if @cache_dir
-          cache_filename = File.join(@cache_dir, remote_file)
-          cache_timestamp = get_cache_timestamp(cache_filename)
-        end
-
         # make_request will call Fiber.yield on this fiber (request_fiber), returning the request object
         # this fiber will be resumed by on_body callback once the request is executed
-        response = make_request(remote_file, request_fiber, cache_timestamp)
-
-        if (response.code == 304)
-          copy_from_cache(cache_filename, local_filename)
-        else
-          finalize_download(response.request, local_filename, checksum_type, checksum_value)
-        end
-
-        local_filenames << local_filename
+        response = make_request(file_reference, request_fiber)
+        finalize_download(response.request, file_reference)
       rescue RMT::Downloader::Exception, RMT::ChecksumVerifier::Exception => e
         unless failed_downloads
           # Clean up downloads queued in Ethon::Multi and @queue
@@ -112,86 +80,149 @@ class RMT::Downloader
           raise(e)
         end
 
-        @logger.warn("× #{File.basename(local_filename)} - #{e}")
-        failed_downloads << remote_file
+        @logger.warn("× #{File.basename(file_reference.local_path)} - #{e}")
+        failed_downloads << file_reference.local_path
       ensure
-        process_queue(local_filenames, failed_downloads)
+        process_queue(failed_downloads)
       end
     end
 
     request_fiber.resume
   end
 
-  def process_queue(local_filenames, failed_downloads = nil)
+  def process_queue(failed_downloads = nil)
     queue_item = @queue.shift
     return unless queue_item
 
-    if queue_item.is_a?(String)
-      @hydra.queue(create_fiber_request(local_filenames, queue_item, failed_downloads: failed_downloads))
-    else
-      @hydra.queue(
-        create_fiber_request(
-          local_filenames,
-          queue_item.location,
-          checksum_type: queue_item.checksum_type,
-          checksum_value: queue_item.checksum,
-          failed_downloads: failed_downloads
-        )
-      )
-    end
+    request = create_fiber_request(queue_item, failed_downloads: failed_downloads)
+    @hydra.queue(request)
   end
 
-  def make_request(remote_file, request_fiber, cache_timestamp = nil)
-    uri = URI.join(@repository_url, remote_file)
-    uri.query = @auth_token if (@auth_token && uri.scheme != 'file')
-
-    if URI(uri).scheme == 'file' && !File.exist?(uri.path)
-      raise RMT::Downloader::Exception.new(_('%{file} - File does not exist') % { file: remote_file })
-    end
-
+  def make_request(file, request_fiber)
     downloaded_file = Tempfile.new('rmt', Dir.tmpdir, mode: File::BINARY, encoding: 'ascii-8bit')
 
-    headers = {}
-    headers['If-Modified-Since'] = cache_timestamp if cache_timestamp
-
     request = RMT::FiberRequest.new(
-      uri.to_s,
+      request_uri(file).to_s,
       download_path: downloaded_file,
       request_fiber: request_fiber,
-      remote_file: remote_file,
-      followlocation: true,
-      headers: headers
+      followlocation: true
     )
 
     request.receive_headers
     request.receive_body
   end
 
-  def copy_from_cache(cache_filename, local_filename)
-    FileUtils.cp(cache_filename, local_filename, preserve: true) unless (cache_filename == local_filename)
-    @logger.info("→ #{File.basename(local_filename)}")
-    local_filename
-  end
+  def try_copying_from_cache(files, ignore_errors: false)
+    # We need to verify if the cached copy is still relevant
+    # Create a HTTP/HTTPS HEAD request if possible, return nil if not
+    cache_requests = files.map { |file| [file, cache_head_request(file)] }.to_h
+    available_in_cache = cache_requests.compact.values
 
-  def finalize_download(request, local_file, checksum_type = nil, checksum_value = nil)
-    if (URI(request.base_url).scheme != 'file' && request.response.code != 200)
-      raise RMT::Downloader::Exception.new(
-        _('%{file} - HTTP request failed with code %{code}') % { file: request.remote_file, code: request.response.code },
-        request.response.code
-      )
+    # Download everything if the cache is empty
+    return [files, []] if available_in_cache.empty?
+
+    Typhoeus::Hydra.new(max_concurrency: @concurrency)
+      .tap { |hydra| available_in_cache.each { |request| hydra.queue(request) } }.run
+
+    downloads_needed = []
+    failed_files = []
+    cache_requests.each do |file, request|
+      next downloads_needed << file if request.nil?
+      next downloads_needed << file unless valid_cached_file?(file, request.response)
+
+      copy_from_cache(file)
+    rescue RMT::Downloader::Exception => e
+      next failed_files << file.local_path if ignore_errors
+
+      raise e
     end
 
-    RMT::ChecksumVerifier.verify_checksum(checksum_type, checksum_value, request.download_path) if (checksum_type && checksum_value)
+    [downloads_needed, failed_files]
+  end
 
-    FileUtils.mv(request.download_path.path, local_file)
-    File.chmod(0o644, local_file)
+  def cache_head_request(file)
+    # RMT must not make HEAD requests when importing repos (file://)
+    return nil unless %w[http https].include?(file.remote_path.scheme)
+    return nil if file.cache_timestamp.nil?
 
-    ::RMT::Deduplicator.add_local(local_file, checksum_type, checksum_value) if @save_for_dedup
+    RMT::HttpRequest.new(request_uri(file).to_s, method: :head, followlocation: true)
+  end
 
-    @logger.info("↓ #{File.basename(local_file)}")
+  def valid_cached_file?(file, response)
+    raise http_error(file.remote_path, response.code) if (response.code != 200)
+
+    # response.headers returns Typhoeus::Response::Headers, which takes care of
+    # case-sensitive concerns with the header's key
+    last_modified_header = response.headers['Last-Modified']
+    return false unless last_modified_header
+
+    file.cache_timestamp == Time.parse(last_modified_header).utc
+  end
+
+  def copy_from_cache(file)
+    make_file_dir(file.local_path)
+    FileUtils.cp(file.cache_path, file.local_path, preserve: true) unless (file.cache_path == file.local_path)
+    @logger.info("→ #{File.basename(file.local_path)}")
+  end
+
+  def finalize_download(request, file)
+    if (URI(request.base_url).scheme != 'file') && request.response.code != 200
+      raise http_error(request.remote_file, request.response.code)
+    end
+
+    handle_checksum_verification!(file.checksum_type, file.checksum, request.download_path)
+
+    FileUtils.mv(request.download_path.path, file.local_path)
+    File.chmod(0o644, file.local_path)
+
+    last_modified = request.response.headers['Last-Modified']
+    if last_modified
+      timestamp = Time.parse(last_modified).utc
+      File.utime(timestamp, timestamp, file.local_path)
+    end
+
+    if @track_files && file.local_path.match?(/\.(rpm|drpm)$/)
+      DownloadedFile.track_file(checksum: file.checksum,
+                                checksum_type: file.checksum_type,
+                                local_path: file.local_path,
+                                size: File.size(file.local_path))
+    end
+
+    @logger.info("↓ #{File.basename(file.local_path)}")
   rescue StandardError => e
     request.download_path.unlink
     raise e
   end
 
+  def handle_checksum_verification!(checksum_type, checksum_value, download_path)
+    return unless (checksum_type && checksum_value)
+
+    unless RMT::ChecksumVerifier.match_checksum?(checksum_type, checksum_value, download_path)
+      raise RMT::Downloader::Exception.new(_("Checksum doesn't match"))
+    end
+  end
+
+  def http_error(remote_file, http_code)
+    RMT::Downloader::Exception.new(
+      _('%{file} - HTTP request failed with code %{code}') % { file: remote_file, code: http_code },
+      http_code
+    )
+  end
+
+  def request_uri(file)
+    uri = URI.join(file.remote_path)
+    uri.query = @auth_token if (@auth_token && uri.scheme != 'file')
+
+    if URI(uri).scheme == 'file' && !File.exist?(uri.path)
+      raise RMT::Downloader::Exception.new(_('%{file} - File does not exist') % { file: file.remote_path })
+    end
+
+    uri.to_s
+  end
+
+  def make_file_dir(file_path)
+    dirname = File.dirname(file_path)
+
+    FileUtils.mkdir_p(dirname)
+  end
 end

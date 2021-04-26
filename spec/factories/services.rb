@@ -1,29 +1,33 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :service do
     association :product
 
     trait :with_repositories do
       transient do
-        mirroring_enabled false
+        mirroring_enabled { false }
+        installer_updates { true }
       end
 
       after :create do |service, evaluator|
         name_prefix = service.product.name
+        last_mirrored_at = evaluator.mirroring_enabled ? Time.zone.now : nil
 
         service.repositories << [
-          FactoryGirl.create(:repository, name: "#{name_prefix}-Pool", mirroring_enabled: evaluator.mirroring_enabled),
-          FactoryGirl.create(:repository, name: "#{name_prefix}-Updates", mirroring_enabled: evaluator.mirroring_enabled),
-          FactoryGirl.create(
+          FactoryBot.create(:repository, name: "#{name_prefix}-Pool", mirroring_enabled: evaluator.mirroring_enabled, last_mirrored_at: last_mirrored_at),
+          FactoryBot.create(:repository, name: "#{name_prefix}-Updates", mirroring_enabled: evaluator.mirroring_enabled, last_mirrored_at: last_mirrored_at),
+          FactoryBot.create(
             :repository,
             name: "#{name_prefix}-Installer-Updates",
             mirroring_enabled: evaluator.mirroring_enabled,
-            installer_updates: true,
+            last_mirrored_at: last_mirrored_at,
+            installer_updates: evaluator.installer_updates,
             enabled: false
           ),
-          FactoryGirl.create(
+          FactoryBot.create(
             :repository,
             name: "#{name_prefix}-Debuginfo-Updates",
             mirroring_enabled: evaluator.mirroring_enabled,
+            last_mirrored_at: last_mirrored_at,
             installer_updates: false,
             enabled: false
           )
@@ -33,24 +37,27 @@ FactoryGirl.define do
 
     trait :with_disabled_repositories do
       transient do
-        mirroring_enabled false
+        mirroring_enabled { false }
       end
 
       after :create do |service, evaluator|
         name_prefix = service.product.name
+        last_mirrored_at = evaluator.mirroring_enabled ? Time.zone.now : nil
 
         service.repositories << [
-          FactoryGirl.create(
+          FactoryBot.create(
             :repository,
             name: "#{name_prefix}-Installer-Updates",
             mirroring_enabled: evaluator.mirroring_enabled,
+            last_mirrored_at: last_mirrored_at,
             installer_updates: true,
             enabled: false
           ),
-          FactoryGirl.create(
+          FactoryBot.create(
             :repository,
             name: "#{name_prefix}-Debuginfo-Updates",
             mirroring_enabled: evaluator.mirroring_enabled,
+            last_mirrored_at: last_mirrored_at,
             installer_updates: false,
             enabled: false
           )

@@ -1,7 +1,7 @@
 #
 # spec file for package rmt-server
 #
-# Copyright (c) 2020 SUSE LLC
+# Copyright (c) 2021 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -22,10 +22,14 @@
 %define conf_dir     %{_sysconfdir}/rmt
 %define rmt_user     _rmt
 %define rmt_group    nginx
-%define ruby_version %{rb_default_ruby_suffix}
+
+# Only build for the distribution default Ruby version
+%define rb_build_versions     %{rb_default_ruby}
+%define rb_build_ruby_abis    %{rb_default_ruby_abi}
+%define ruby_version          %{rb_default_ruby_suffix}
 
 Name:           rmt-server
-Version:        2.5.8
+Version:        2.6.10
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -37,7 +41,8 @@ Source2:        rmt.conf
 Source3:        rmt-cli.8.gz
 BuildRequires:  %{ruby_version}
 BuildRequires:  %{ruby_version}-devel
-BuildRequires:  %{rubygem bundler}
+BuildRequires:  %{ruby_version}-rubygem-bundler
+BuildRequires:  chrpath
 BuildRequires:  fdupes
 BuildRequires:  gcc
 BuildRequires:  libcurl-devel
@@ -47,12 +52,13 @@ BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
 BuildRequires:  pkgconfig(systemd)
 Requires:       gpg2
-Requires:       mariadb
-Requires:       nginx
+Recommends:     mariadb
+Recommends:     nginx
+# The config is not really required by rmt-server, but by nginx ...
 Requires:       rmt-server-configuration
 Requires(post): %{ruby_version}
-Requires(post): %{rubygem bundler}
-Requires(post): shadow
+Requires:       %{ruby_version}-rubygem-bundler
+Requires(pre):  shadow
 Requires(post): timezone
 Requires(post): util-linux
 Conflicts:      yast2-rmt < 1.0.3
@@ -60,6 +66,7 @@ Recommends:     yast2-rmt >= 1.3.0
 Recommends:     rmt-server-config
 # Does not build for i586 and s390 and is not supported on those architectures
 ExcludeArch:    %{ix86} s390
+%{systemd_ordering}
 
 %description
 This package provides a mirroring tool for RPM repositories and a registration
@@ -102,7 +109,9 @@ cp -p %{SOURCE2} .
 sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
 
 %build
-bundle.%{ruby_version} install %{?jobs:--jobs %{jobs}} --without test development --deployment --standalone
+bundle.%{ruby_version} config set deployment 'true'
+bundle.%{ruby_version} config set without 'test development'
+bundle.%{ruby_version} install %{?jobs:--jobs %{jobs}}
 
 %install
 mkdir -p %{buildroot}%{data_dir}
@@ -125,6 +134,7 @@ mkdir -p %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-cli %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-data-import %{buildroot}%{_bindir}/rmt-data-import
 ln -s %{app_dir}/bin/rmt-test-regsharing %{buildroot}%{_bindir}
+ln -s %{app_dir}/bin/rmt-manual-instance-verify %{buildroot}%{_bindir}
 install -D -m 644 %{_sourcedir}/rmt-cli.8.gz %{buildroot}%{_mandir}/man8/rmt-cli.8.gz
 
 # systemd
@@ -204,6 +214,10 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 
 %fdupes %{buildroot}/%{lib_dir}
 
+# drop custom rpath from native gems
+chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/mysql2-*/lib/mysql2/mysql2.so
+chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/mysql2/mysql2.so
+
 %files
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}
 %exclude %{app_dir}/engines/
@@ -213,8 +227,6 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %attr(-,%{rmt_user},%{rmt_group}) /var/lib/rmt
 %dir %{_libexecdir}/supportconfig
 %dir %{_libexecdir}/supportconfig/plugins
-%dir %{_sysconfdir}/nginx
-%dir %{_sysconfdir}/nginx/vhosts.d
 %dir /var/lib/rmt
 %dir %{_sysconfdir}/slp.reg.d
 %config(noreplace) %attr(0640, %{rmt_user},root) %{_sysconfdir}/rmt.conf
@@ -244,15 +256,20 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 %{_libexecdir}/supportconfig/plugins/rmt
 
 %files config
+%dir %{_sysconfdir}/nginx
+%dir %{_sysconfdir}/nginx/vhosts.d
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
 
 %files pubcloud
 %{_bindir}/rmt-test-regsharing
+%{_bindir}/rmt-manual-instance-verify
 %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}/engines/
 %dir %{_sysconfdir}/nginx/rmt-auth.d/
 %dir %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}/regsharing
 %exclude %{app_dir}/engines/registration_sharing/package/
+%dir %{_sysconfdir}/nginx
+%dir %{_sysconfdir}/nginx/vhosts.d
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-pubcloud-http.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-pubcloud-https.conf
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
@@ -271,8 +288,8 @@ getent passwd %{rmt_user} >/dev/null || \
 
 %post
 %service_add_post rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
-cd %{_datadir}/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails secrets:setup >/dev/null
-cd %{_datadir}/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails runner -e production "Rails::Secrets.write({'production' => {'secret_key_base' => SecureRandom.hex(64)}}.to_yaml)" >/dev/null
+cd %{_datadir}/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails rmt:secrets:create_encryption_key >/dev/null RAILS_ENV=production
+cd %{_datadir}/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails rmt:secrets:create_secret_key_base >/dev/null RAILS_ENV=production
 
 # Run only on install
 if [ $1 -eq 1 ]; then
@@ -296,7 +313,7 @@ fi
 %postun
 %service_del_postun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
 
-%posttrans
+%posttrans config
 /usr/bin/systemctl reload nginx.service
 
 %pre pubcloud
@@ -313,5 +330,6 @@ fi
 
 %posttrans pubcloud
 /usr/bin/systemctl try-restart rmt-server.service
+/usr/bin/systemctl reload nginx.service
 
 %changelog

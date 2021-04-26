@@ -1,7 +1,4 @@
-class RMT::CLI::Repos < RMT::CLI::Base
-
-  class RepoNotFoundException < StandardError
-  end
+class RMT::CLI::Repos < RMT::CLI::ReposBase
 
   desc 'custom', _('List and modify custom repositories')
   subcommand 'custom', RMT::CLI::ReposCustom
@@ -15,6 +12,55 @@ class RMT::CLI::Repos < RMT::CLI::Base
     list_repositories(scope: scope)
   end
   map 'ls' => :list
+
+  desc 'clean', _('Removes locally mirrored files of repositories which are not marked to be mirrored')
+  def clean
+    base_directory = RMT::DEFAULT_MIRROR_DIR
+
+    repos_to_delete = Repository.where(mirroring_enabled: false).map do |repo|
+      repository_dir = File.join(base_directory, repo.local_path)
+      Dir.exist?(repository_dir) ? repo : nil
+    end.compact
+
+    if repos_to_delete.empty?
+      puts _('RMT only found locally mirrored files of repositories that are marked to be mirrored.')
+      return
+    end
+
+    puts _('RMT found locally mirrored files from the following repositories which are not marked to be mirrored:')
+    print "\n\e[31m"
+    repos_to_delete.each do |repo|
+      puts repo.description
+    end
+    print "\n\e[0m\e[1m"
+    print _('Would you like to continue and remove the locally mirrored files of these repositories?')
+    print "\n\e[22m\s\s"
+    print _("Only '%{input}' will be accepted.") % { input: 'yes' }
+    print "\n\n\s\s\e[1m"
+    print _('Enter a value:')
+    print "\e[22m\s\s"
+
+    input = $stdin.gets.to_s.strip
+    if input != 'yes'
+      puts "\n" + _('Clean cancelled.')
+      return
+    end
+
+    print "\n"
+    total_size = 0
+    repos_to_delete.each do |repo|
+      puts _("Deleting locally mirrored files from repository '%{repo}'...") % { repo: repo.description }
+      path = File.join(base_directory, repo.local_path)
+      downloaded_files = DownloadedFile.where('local_path LIKE ?', "#{path}%")
+      total_size += downloaded_files.sum(:file_size)
+      FileUtils.rm_r(path, secure: true)
+      downloaded_files.destroy_all
+    end
+
+    print "\n\e[32m"
+    print _('Clean finished. An estimated %{total_file_size} were removed.') % { total_file_size: ActiveSupport::NumberHelper.number_to_human_size(total_size) }
+    print "\e[0m\n"
+  end
 
   desc 'enable IDS', _('Enable mirroring of repositories by a list of repository IDs')
   long_desc <<-REPOS
@@ -42,12 +88,14 @@ $ rmt-cli repos disable 2526 3263
 REPOS
   def disable(*ids)
     change_repos(ids, false)
+
+    puts "\n\e[1m" + _("To clean up downloaded files, please run '%{command}'") % { command: 'rmt-cli repos clean' } + "\e[22m"
   end
 
   protected
 
   def list_repositories(scope: :enabled)
-    repositories = ((scope == :all) ? Repository.only_scc : Repository.only_scc.only_mirrored).order(:name, :description)
+    repositories = ((scope == :all) ? Repository.only_scc : Repository.only_scc.only_mirroring_enabled).order(:name, :description)
     decorator = ::RMT::CLI::Decorators::RepositoryDecorator.new(repositories)
 
     if repositories.empty?
@@ -65,41 +113,5 @@ REPOS
       puts _("Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories.") % { option: '--all' }
     end
   end
-
-  def change_repos(ids, set_enabled)
-    ids = clean_target_input(ids)
-    raise RMT::CLI::Error.new(_('No repository ids supplied')) if ids.empty?
-
-    failed_repos = []
-    ids.each do |id|
-      change_repo(id, set_enabled)
-    rescue RepoNotFoundException => e
-      warn e.message
-      failed_repos << id
-    end
-
-    unless failed_repos.empty?
-      message = if set_enabled
-                  n_('Repository %{repos} could not be found and was not enabled.',
-                     'Repositories %{repos} could not be found and were not enabled.',
-                     failed_repos.count) % { repos: failed_repos.join(', ') }
-                else
-                  n_('Repository %{repos} could not be found and was not disabled.',
-                     'Repositories %{repos} could not be found and were not disabled.',
-                     failed_repos.count) % { repos: failed_repos.join(', ') }
-                end
-      raise RMT::CLI::Error.new(message)
-    end
-  end
-
-  def change_repo(id, set_enabled)
-    repository = Repository.find_by!(scc_id: id)
-    repository.change_mirroring!(set_enabled)
-
-    puts set_enabled ? _('Repository by ID %{id} successfully enabled.') % { id: id } : _('Repository by ID %{id} successfully disabled.') % { id: id }
-  rescue ActiveRecord::RecordNotFound
-    raise RepoNotFoundException.new(_('Repository not found by ID %{id}.') % { id: id })
-  end
-
 
 end

@@ -13,8 +13,7 @@ class Product < ApplicationRecord
 
   # Product extensions - get list of product extensions
   has_many :extension_products_associations,
-           class_name: 'ProductsExtensionsAssociation',
-           foreign_key: :product_id
+           class_name: 'ProductsExtensionsAssociation'
 
   has_many :root_products, -> { distinct },
            through: :product_extensions_associations
@@ -64,6 +63,27 @@ class Product < ApplicationRecord
     end
   }
 
+  scope :with_name_filter, lambda { |name|
+    return if name.blank?
+
+    where(
+      [
+        '(products.name LIKE :name OR products.identifier = :ident)', {
+          name: "%#{name}%",
+          ident: name
+        }
+      ]
+    )
+  }
+
+  scope :with_version_filter, lambda { |version|
+    where(version: version.gsub(/\s*SP\s*/i, '.')) if version.present?
+  }
+
+  scope :with_arch_filter, lambda { |arch|
+    where(arch: arch) if arch.present?
+  }
+
   def has_extension?
     ProductsExtensionsAssociation.exists?(product_id: id)
   end
@@ -103,7 +123,7 @@ class Product < ApplicationRecord
   end
 
   def change_repositories_mirroring!(conditions, mirroring_enabled)
-    repos = repositories.where(conditions)
+    repos = repositories.where(conditions).or(repositories.where(installer_updates: true, mirroring_enabled: !mirroring_enabled))
     repo_names = repos.pluck(:name)
     repos.update_all(mirroring_enabled: mirroring_enabled)
 

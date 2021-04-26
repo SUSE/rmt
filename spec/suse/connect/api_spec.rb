@@ -186,7 +186,7 @@ RSpec.describe SUSE::Connect::Api do
       end
 
       context 'when system has no hw_info and no activations' do
-        let(:system) { FactoryGirl.create(:system) }
+        let(:system) { FactoryBot.create(:system) }
         let(:expected_response) { { id: 9000, login: system.login, password: system.password } }
         let(:expected_body) do
           {
@@ -203,7 +203,7 @@ RSpec.describe SUSE::Connect::Api do
       end
 
       context 'when system has hw_info and no activations' do
-        let(:system) { FactoryGirl.create(:system, :with_activated_product, :with_hw_info) }
+        let(:system) { FactoryBot.create(:system, :with_activated_product, :with_hw_info) }
         let(:product) { system.products.first }
         let(:hw_info) { system.hw_info }
         let(:expected_response) { { login: system.login, password: system.password } }

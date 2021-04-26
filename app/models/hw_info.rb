@@ -6,7 +6,7 @@ class HwInfo < ApplicationRecord
 
   # We store UUID as a downcased string. Please take that in account in finders
   validates :uuid, uuid_format: true
-  validates :system, uniqueness: true, presence: true
+  validates :system, uniqueness: { case_sensitive: false }, presence: true
 
   before_save -> { uuid.try(:downcase!) }
 

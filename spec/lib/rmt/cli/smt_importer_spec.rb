@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'rmt/cli/smt_importer'
 
-describe SMTImporter do
+describe RMT::CLI::SMTImporter do
   let(:data_dir) { File.join(Dir.pwd, 'spec/fixtures/files/csv') }
   let(:no_systems) { false }
   let(:importer) { described_class.new(data_dir, no_systems) }
@@ -34,12 +34,12 @@ describe SMTImporter do
     let(:repo_2) { create :repository }
 
     context 'when repository exists' do
-      let(:enabled_repos) { [repo_1.scc_id, repo_2.scc_id] }
+      let(:enabled_repos) { [repo_1.friendly_id, repo_2.friendly_id] }
 
       it 'enables mirroring for given repositories' do
         expect { importer.import_repositories }.to output(<<-OUTPUT.strip_heredoc).to_stdout
-          Enabled mirroring for repository #{repo_1.scc_id}
-          Enabled mirroring for repository #{repo_2.scc_id}
+          Enabled mirroring for repository #{repo_1.friendly_id}
+          Enabled mirroring for repository #{repo_2.friendly_id}
         OUTPUT
 
         expect(repo_1.reload.mirroring_enabled).to be(true)
@@ -257,7 +257,7 @@ describe SMTImporter do
         importer.run ['--no-systems', '-d', 'foo']
       end
     end
-    context 'with --no-system flag' do
+    context 'with --no-hwinfo flag' do
       it 'imports repositories and systems without hwinfo' do
         expect(importer).to receive(:check_products_exist)
         expect(importer).to receive(:import_repositories)
@@ -281,7 +281,7 @@ describe SMTImporter do
 
     it 'shows the help output when invalid arguments supplied' do
       expect do
-        expect { importer.parse_cli_arguments ['--nope-nope'] }.to raise_exception SMTImporter::ImportException
+        expect { importer.parse_cli_arguments ['--nope-nope'] }.to raise_exception RMT::CLI::SMTImporter::ImportException
       end.to output(<<-OUTPUT.strip_heredoc).to_stdout
         Usage: rspec [options]
             -d, --data PATH                  Path to unpacked SMT data tarball
@@ -294,7 +294,7 @@ describe SMTImporter do
   describe '#check_products_exist' do
     it 'warns and exits if no product exists' do
       expect do
-        expect { importer.check_products_exist }.to raise_exception SMTImporter::ImportException
+        expect { importer.check_products_exist }.to raise_exception RMT::CLI::SMTImporter::ImportException
       end.to output(<<-OUTPUT.strip_heredoc).to_stderr
         RMT has not been synced to SCC yet. Please run 'rmt-cli sync' before
         importing data from SMT.

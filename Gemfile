@@ -5,17 +5,17 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'puma', '3.12.4'
+gem 'puma', '~> 5.2.2'
 gem 'mysql2', '~> 0.5.3'
 
-gem 'nokogiri', '~> 1.10.3'
+gem 'nokogiri', '~> 1.11.2'
 gem 'thor'
-gem 'activesupport', '~> 5.1.3'
-gem 'actionpack', '~> 5.1.3'
-gem 'actionview', '~> 5.1.3'
-gem 'activemodel', '~> 5.1.3'
-gem 'activerecord', '~> 5.1.3'
-gem 'railties', '~> 5.1.3'
+gem 'activesupport', '~> 6.0.3'
+gem 'actionpack', '~> 6.0.3'
+gem 'actionview', '~> 6.0.3'
+gem 'activemodel', '~> 6.0.3'
+gem 'activerecord', '~> 6.0.3'
+gem 'railties', '~> 6.0.3'
 gem 'repomd_parser', '~> 0.1.4'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -42,11 +42,11 @@ group :development, :test do
   gem 'danger'
   gem 'danger-rubocop'
   gem 'strong_migrations'
+  gem 'awesome_print'
 end
 
 group :development do
-  gem 'awesome_print'
-  gem 'listen', '>= 3.0.5', '< 3.2'
+  gem 'listen', '>= 3.0.5', '<= 3.5.1'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
@@ -57,8 +57,8 @@ end
 
 group :test do
   gem 'rspec-command', '1.0.3'
-  gem 'rspec-rails', '~> 3.5'
-  gem 'factory_girl_rails', '4.8.0'
+  gem 'rspec-rails', '~> 5.0'
+  gem 'factory_bot_rails', '~> 6.1.0'
   gem 'ffaker'
   gem 'rspec-its'
   gem 'fakefs', require: 'fakefs/safe'
@@ -66,7 +66,7 @@ group :test do
   gem 'webmock'
   gem 'fuubar'
   gem 'timecop'
-  gem 'vcr', '~> 4.0'
+  gem 'vcr', '~> 6.0'
   gem 'coveralls', '~> 0.8.21', require: false
 end
 
@@ -84,8 +84,10 @@ gem 'active_model_serializers'
 gem 'fast_gettext'
 gem 'gettext_i18n_rails'
 
-gem 'config', '~> 1.0'
-gem 'terminal-table', '~> 1.8'
+gem 'config', '~> 3.0', '>= 2.2.1'
+gem 'terminal-table', '~> 3.0'
+
+
 
 # needed by rmt-server-pubcloud
 gem 'jwt', '~> 2.1'

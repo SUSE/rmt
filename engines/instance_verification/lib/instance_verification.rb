@@ -2,7 +2,11 @@ $LOAD_PATH.push File.expand_path(__dir__, '..')
 
 module InstanceVerification
   class << self
+    # The public cloud instance verification is relying on
+    # this variable being shared across threads (https://bugzilla.suse.com/show_bug.cgi?id=1183413)
+    # rubocop:disable ThreadSafety/ClassAndModuleAttributes
     attr_accessor :provider
+    # rubocop:enable ThreadSafety/ClassAndModuleAttributes
   end
 
   class Exception < RuntimeError; end

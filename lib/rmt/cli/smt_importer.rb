@@ -1,7 +1,7 @@
 require 'csv'
 require 'ostruct'
 
-class SMTImporter
+class RMT::CLI::SMTImporter
   attr_accessor :data_dir
   attr_accessor :no_systems
 
@@ -25,13 +25,13 @@ class SMTImporter
   def read_csv(file)
     # set the quote char to something not used to make sure the csv parser is not interfering with the
     # JSON quoting.
-    CSV.open(File.join(data_dir, file + '.csv'), 'r', { col_sep: "\t", quote_char: "\x00" })
+    CSV.open(File.join(data_dir, file + '.csv'), 'r', **{ col_sep: "\t", quote_char: "\x00" })
   end
 
   def import_repositories
     read_csv('enabled_repos').each do |row|
       repo_id, _ = row
-      repo = Repository.find_by(scc_id: repo_id)
+      repo = Repository.find_by(friendly_id: repo_id)
       if repo
         repo.mirroring_enabled = true
         repo.save!
@@ -52,6 +52,7 @@ class SMTImporter
       repo = Repository.find_or_create_by(external_url: repo_url) do |repository|
         repository.name = repo_name
         repository.local_path = Repository.make_local_path(repo_url)
+        repository.friendly_id ||= Repository.make_friendly_id(repo_name)
       end
 
       if product

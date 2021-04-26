@@ -7,7 +7,7 @@ class RMT::CLI::Decorators::RepositoryDecorator < RMT::CLI::Decorators::Base
   def to_csv
     data = @repositories.map do |repo|
       [
-        repo.scc_id,
+        repo.friendly_id,
         repo.name,
         repo.description,
         repo.enabled,
@@ -16,7 +16,7 @@ class RMT::CLI::Decorators::RepositoryDecorator < RMT::CLI::Decorators::Base
       ]
     end
     array_to_csv(data, [
-      _('SCC ID'),
+      _('ID'),
       _('Product'),
       _('Description'),
       _('Mandatory?'),
@@ -28,7 +28,7 @@ class RMT::CLI::Decorators::RepositoryDecorator < RMT::CLI::Decorators::Base
   def to_table
     data = @repositories.map do |repo|
       [
-        repo.scc_id,
+        repo.friendly_id,
         repo.description,
         repo.enabled ? _('Mandatory') : _('Not Mandatory'),
         repo.mirroring_enabled ? _('Mirror') : _("Don't Mirror"),
@@ -36,7 +36,7 @@ class RMT::CLI::Decorators::RepositoryDecorator < RMT::CLI::Decorators::Base
       ]
     end
     array_to_table(data, [
-      _('SCC ID'),
+      _('ID'),
       _('Product'),
       _('Mandatory?'),
       _('Mirror?'),
@@ -51,7 +51,7 @@ class RMT::CLI::Decorators::RepositoryDecorator < RMT::CLI::Decorators::Base
     data = @repositories.map do |repo|
       [
         repo.name,
-        repo.scc_id,
+        repo.friendly_id,
         repo.enabled ? _('mandatory') : _('non-mandatory'),
         repo.mirroring_enabled ? _('enabled') : _('not enabled'),
         repo.last_mirrored_at.present? ? _('mirrored at %{time}') % { time: repo.last_mirrored_at.strftime('%Y-%m-%d %H:%M:%S %Z') } : _('not mirrored')

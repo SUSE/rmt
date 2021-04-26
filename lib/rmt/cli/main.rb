@@ -36,4 +36,7 @@ class RMT::CLI::Main < RMT::CLI::Base
 
   map %w[--version -v] => :version
 
+  def self.exit_on_failure?
+    true
+  end
 end
