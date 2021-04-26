@@ -257,6 +257,11 @@ Tue Jun  9 07:16:15 UTC 2020 - Thorsten Kukuk <kukuk@suse.com>
   - shadow is required for pre-install
 
 -------------------------------------------------------------------
+Fri Jun  5 13:41:29 UTC 2020 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Set cloud_povider info when registering the instance
+
+-------------------------------------------------------------------
 Fri May 29 14:54:06 UTC 2020 - Ivan Kapelyukhin <ikapelyukhin@suse.com>
 
 - Version 2.5.9

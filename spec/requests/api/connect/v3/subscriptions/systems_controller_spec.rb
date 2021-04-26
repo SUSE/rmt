@@ -56,7 +56,7 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
     end
 
     context 'with hw_info' do
-      let(:hw_info) { { cpus: 8, sockets: 1, arch: 'x86_64', hypervisor: 'XEN', uuid: uuid } }
+      let(:hw_info) { { cpus: 8, sockets: 1, arch: 'x86_64', hypervisor: 'XEN', uuid: uuid, cloud_provider: 'cloud' } }
       let(:uuid) { 'f46906c5-d87d-4e4c-894b-851e80376003' }
 
       before do
@@ -76,6 +76,7 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
         its(:cpus) { is_expected.to eql hw_info[:cpus] }
         its(:sockets) { is_expected.to eql hw_info[:sockets] }
         its(:arch) { is_expected.to eql hw_info[:arch] }
+        its(:cloud_provider) { is_expected.to eql hw_info[:cloud_provider] }
         its(:uuid) { is_expected.to eql uuid }
       end
     end
