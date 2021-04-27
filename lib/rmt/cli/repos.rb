@@ -58,7 +58,7 @@ class RMT::CLI::Repos < RMT::CLI::ReposBase
     end
 
     print "\n\e[32m"
-    print _('Clean finished. An estimated %{total_file_size} were removed.') % { total_file_size: ActiveSupport::NumberHelper.number_to_human_size(total_size) }
+    print _('Clean finished. An estimated %{total_file_size} was removed.') % { total_file_size: ActiveSupport::NumberHelper.number_to_human_size(total_size) }
     print "\e[0m\n"
   end
 

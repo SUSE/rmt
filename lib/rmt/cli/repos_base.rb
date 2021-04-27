@@ -7,7 +7,7 @@ class RMT::CLI::ReposBase < RMT::CLI::Base
 
   def change_repos(ids, set_enabled, custom: false)
     ids = clean_target_input(ids)
-    raise RMT::CLI::Error.new(_('No repository ids supplied')) if ids.empty?
+    raise RMT::CLI::Error.new(_('No repository IDs supplied')) if ids.empty?
 
     failed_repos = []
     ids.each do |id|

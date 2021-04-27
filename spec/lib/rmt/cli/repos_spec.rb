@@ -37,7 +37,7 @@ RMT found locally mirrored files from the following repositories which are not m
 Deleting locally mirrored files from repository '#{repository_1.description}'...
 Deleting locally mirrored files from repository '#{repository_2.description}'...
 
-\e[32mClean finished. An estimated #{ActiveSupport::NumberHelper.number_to_human_size(total_removed_file_size)} were removed.\e[0m
+\e[32mClean finished. An estimated #{ActiveSupport::NumberHelper.number_to_human_size(total_removed_file_size)} was removed.\e[0m
       OUTPUT
     end
 
@@ -180,7 +180,7 @@ Repository by ID #{repository_3.friendly_id} successfully enabled.
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output(/No repository ids supplied/).to_stderr
+        expect { command }.to output(/No repository IDs supplied/).to_stderr
       end
 
       its(:mirroring_enabled) { is_expected.to be(false) }
@@ -253,7 +253,7 @@ Repository by ID #{repository_3.friendly_id} successfully disabled.
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output(/No repository ids supplied/).to_stderr
+        expect { command }.to output(/No repository IDs supplied/).to_stderr
       end
 
       its(:mirroring_enabled) { is_expected.to be(true) }

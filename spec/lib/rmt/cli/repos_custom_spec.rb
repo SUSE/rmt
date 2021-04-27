@@ -214,7 +214,7 @@ describe RMT::CLI::ReposCustom do
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output(/No repository ids supplied/).to_stderr
+        expect { command }.to output(/No repository IDs supplied/).to_stderr
       end
 
       its(:mirroring_enabled) { is_expected.to be(false) }
@@ -264,7 +264,7 @@ describe RMT::CLI::ReposCustom do
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output(/No repository ids supplied/).to_stderr
+        expect { command }.to output(/No repository IDs supplied/).to_stderr
       end
 
       its(:mirroring_enabled) { is_expected.to be(true) }
