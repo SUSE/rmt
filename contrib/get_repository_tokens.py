@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-import httplib2
+import requests
 import re
 import json
 import sys
 import getopt
  
  
-h = httplib2.Http(".cache", disable_ssl_certificate_validation=True)
+s = requests.session()
 
 def get_rels(response):
     links = response["link"].split(',')
@@ -20,19 +20,17 @@ def get_rels(response):
                         
 
 def get_token(match_repo_url):
-    (resp, content) = h.request("https://scc.suse.com/connect/organizations/repositories", "GET", headers={'Accept':'application/vnd.scc.suse.com.v4+json','cache-control':'no-cache'})
+    resp = s.get("https://scc.suse.com/connect/organizations/repositories", headers={'Accept':'application/vnd.scc.suse.com.v4+json','cache-control':'no-cache'})
     repositories = []
 
-
     while True:
-        for repository in json.loads(content):
+        for repository in resp.json():
             if match_repo_url in repository['url'].split("?")[0]:
-                #print repository['url'].split("?")[-1]+"\n\t is the token for repository URL:\n\t"+repository['url'].split("?")[0]+"\n"
                 print repository['url'].split("?")[0]+","+repository['url'].split("?")[-1]
-        rels = get_rels(resp)
+        rels = get_rels(resp.headers)
         if not 'next' in rels:
             break
-        (resp, content) = h.request(rels['next'], "GET")
+        resp = s.get(rels['next'])
 
 def print_USAGE():
     print 'Usage:'
@@ -66,9 +64,8 @@ def main(argv):
         print_USAGE()
         sys.exit()
 
-    h.add_credentials(user, password)
+    s.auth = (user, password)
     for match_repo_url in args:
-        print match_repo_url
         get_token(match_repo_url)
  
 
