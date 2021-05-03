@@ -26,7 +26,7 @@ def get_token(match_repo_url):
     while True:
         for repository in resp.json():
             if match_repo_url in repository['url'].split("?")[0]:
-                print repository['url'].split("?")[0]+","+repository['url'].split("?")[-1]
+                print(repository['url'].split("?")[0]+","+repository['url'].split("?")[-1])
         rels = get_rels(resp.headers)
         if not 'next' in rels:
             break
