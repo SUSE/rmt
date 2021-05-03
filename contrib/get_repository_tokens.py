@@ -34,7 +34,7 @@ def get_token(match_repo_url):
 
 def print_USAGE():
     print 'Usage:'
-    print '\t'+self+' -u <username> -o <password> <part of repository URL> [... <part of repository URL>]'
+    print('\t'+self+' -u <username> -p <password> <part of repository URL> [... <part of repository URL>]')
     print '\tUse the SCC mirror credentials of your organization for user and password'
     print '\tProvide strings to match against repository URL'
     print '\tThe script provides all matches, one per line, full URL and TOKEN separated by ",".'
