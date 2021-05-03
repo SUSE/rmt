@@ -56,7 +56,7 @@ def main(argv):
         elif opt in ("-p", "--password"):
             password = arg
     if not user or not password:
-        print 'ERROR: missing user or password of your mirror credentials'
+        print('ERROR: missing user or password of your mirror credentials')
         print_USAGE()
         sys.exit()
     if not args:
