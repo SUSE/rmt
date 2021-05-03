@@ -33,7 +33,7 @@ def get_token(match_repo_url):
         resp = s.get(rels['next'])
 
 def print_USAGE():
-    print 'Usage:'
+    print('Usage:')
     print('\t'+self+' -u <username> -p <password> <part of repository URL> [... <part of repository URL>]')
     print '\tUse the SCC mirror credentials of your organization for user and password'
     print('\tProvide strings to match against repository URL')
