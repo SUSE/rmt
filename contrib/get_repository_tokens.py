@@ -60,7 +60,7 @@ def main(argv):
         print_USAGE()
         sys.exit()
     if not args:
-        print 'ERROR: no strings to match against repository URL'
+        print('ERROR: no strings to match against repository URL')
         print_USAGE()
         sys.exit()
 
