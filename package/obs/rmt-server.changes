@@ -2,6 +2,7 @@
 Thu Apr 22 11:10:11 UTC 2021 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
 - Version 2.6.9
+- Fix: Don't append slash to custom repository urls 
 - Add enabled attribute to syncing process
   This fixes wrong marked repositories when syncing
   This references bsc#1184814
