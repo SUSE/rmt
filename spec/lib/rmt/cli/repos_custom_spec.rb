@@ -138,6 +138,19 @@ describe RMT::CLI::ReposCustom do
         expect(Repository.find_by(external_url: external_url).name).to eq('foobar')
       end
     end
+
+    context 'URL with token' do
+      let(:external_url) { 'http://example.com/repo?token' }
+      let(:argv) { ['add', external_url, 'foo'] }
+
+      it 'does not add trailing slash when query is given' do
+        expect do
+          described_class.start(argv)
+        end.to output("Successfully added custom repository.\n").to_stdout.and output('').to_stderr
+
+        expect(Repository.last.external_url.ends_with?('/')).to be_falsy
+      end
+    end
   end
 
   describe '#list' do

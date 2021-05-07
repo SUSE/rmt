@@ -12,7 +12,7 @@ $ rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualiza
 $ rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers --id containers_sle_12_sp3`
   REPOS
   def add(url, name)
-    url += '/' unless url.end_with?('/')
+    url += '/' unless URI(url).query.present? || url.end_with?('/')
     friendly_id = options.id
     friendly_id ||= Repository.make_friendly_id(name)
 
