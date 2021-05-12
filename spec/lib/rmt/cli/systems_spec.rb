@@ -121,6 +121,7 @@ RSpec.describe RMT::CLI::Systems do
       let(:system) { create :system, :with_activated_product, hostname: 'host1', last_seen_at: Time.now.utc - 3, scc_system_id: '123123' }
       let(:argv) { ['remove', system.login] }
       let(:expected_output) { "Successfully removed system with login #{system.login}.\n" }
+      let(:data_dir) { Dir.mktmpdir }
 
       it 'removes the system with all its products, repositories, activations and services' do
         expect { described_class.start(argv) }
@@ -132,6 +133,19 @@ RSpec.describe RMT::CLI::Systems do
           .and change { system.repositories.count }.from(4).to(0)
           .and change { system.services.count }.from(1).to(0)
           .and change { DeregisteredSystem.count }.by(1)
+      end
+
+      context 'when regsharing is needed' do
+        it 'saves info for the peers' do
+          allow(Settings).to receive(:[]).with(:regsharing).and_return({ peers: 'foo', data_dir: data_dir })
+          allow(system).to receive(:_need_save?).and_return(true)
+
+          expect { described_class.start(argv) }
+            .to output(expected_output).to_stdout
+            .and output('').to_stderr
+
+          FileUtils.remove_entry_secure(data_dir) if File.exist?(data_dir)
+        end
       end
     end
 
