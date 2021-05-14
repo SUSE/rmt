@@ -15,6 +15,7 @@ require 'rmt/config'
 require_relative '../config/initializers_cli/disable_deprecation_warnings'
 require_relative '../config/initializers_cli/rmt_fast_gettext'
 require_relative '../config/initializers_cli/rmt_fast_gettext_cli_locale'
+require_relative '../engines/registration_sharing/lib/registration_sharing' if Settings[:regsharing]
 
 relative_load_paths = %w[lib lib/rmt app/models app/services app/validators].map { |dir| File.join(rmt_path, dir) }
 ActiveSupport::Dependencies.autoload_paths += relative_load_paths

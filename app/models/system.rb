@@ -45,34 +45,5 @@ class System < ApplicationRecord
     if system.scc_system_id
       DeregisteredSystem.find_or_create_by(scc_system_id: system.scc_system_id)
     end
-
-    # save the information for registration sharing
-    peers = Settings[:regsharing][:peers] rescue nil
-    _save_for_sharing(system.login, peers) if peers && _need_save?(caller_locations)
   end
-
-  def _need_save?(call_data)
-    call_data.each do |location|
-      return false if location.absolute_path =~ /\bregistration_sharing\b/
-    end
-
-    true
-  end
-
-  def _save_for_sharing(login, peers)
-    peers = (peers.class == String) ? [peers] : peers
-    config_data_dir = Settings[:regsharing][:data_dir]
-    peers.each do |peer|
-      dirname = File.join(config_data_dir, peer)
-      FileUtils.mkpath(dirname)
-
-      filename = File.join(config_data_dir, peer, login)
-
-      File.open(filename, 'w') do |f|
-        f.flock(File::LOCK_EX)
-        f.puts(Time.now.to_f.to_s)
-      end
-    end
-  end
-
 end
