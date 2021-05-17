@@ -109,6 +109,7 @@ cp -p %{SOURCE2} .
 sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
 
 %build
+bundle.%{ruby_version} config build.nio4r --with-cflags='%{optflags} -Wno-return-type'
 bundle.%{ruby_version} config set deployment 'true'
 bundle.%{ruby_version} config set without 'test development'
 bundle.%{ruby_version} install %{?jobs:--jobs %{jobs}}
