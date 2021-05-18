@@ -3,8 +3,8 @@ rvm:
   # SLES15
   - 2.5.8
   # Factory/Tumbleweed
-  - 2.6.0
-  - 2.7.0
+  - 2.6.6
+  - 2.7.2
 
 cache:
   - bundler
