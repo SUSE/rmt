@@ -440,6 +440,7 @@ msgid "Mirror enabled repositories with given repository IDs"
 msgstr ""
 
 #: ../lib/rmt/cli/mirror.rb:34
+#: ../lib/rmt/cli/repos_base.rb:10
 msgid "No repository IDs supplied"
 msgstr ""
 
@@ -704,10 +705,6 @@ msgstr ""
 msgid ""
 "Only enabled repositories are shown by default. Use the '%{option}' option to "
 "see all repositories."
-msgstr ""
-
-#: ../lib/rmt/cli/repos_base.rb:10
-msgid "No repository IDs supplied"
 msgstr ""
 
 #: ../lib/rmt/cli/repos_base.rb:22
