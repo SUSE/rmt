@@ -14,8 +14,6 @@ class RMT::SCC
   def sync
     credentials_set? || (raise CredentialsError, _('SCC credentials not set.'))
 
-    cleanup_database
-
     @logger.info(_('Downloading data from SCC'))
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
@@ -58,8 +56,6 @@ class RMT::SCC
       .map { |data| "organizations_#{data}.json" }
       .reject { |filename| File.exist?(File.join(path, filename)) }
     raise DataFilesError, _('Missing data files: %{files}') % { files: missing_files.join(', ') } if missing_files.any?
-
-    cleanup_database
 
     @logger.info _('Importing SCC data from %{path}') % { path: path }
 
@@ -116,20 +112,16 @@ class RMT::SCC
     Settings.try(:scc).try(:username) && Settings.try(:scc).try(:password)
   end
 
-  def cleanup_database
-    @logger.info _('Cleaning up the database')
-    Subscription.delete_all
-  end
-
   def update_repositories(repos)
     @logger.info _('Updating repositories')
     repos.each do |item|
-      update_auth_token(item)
+      update_auth_token_enabled_attr(item)
     end
   end
 
   def update_subscriptions(subscriptions)
     @logger.info _('Updating subscriptions')
+    Subscription.delete_all
     subscriptions.each do |item|
       create_subscription(item)
     end
@@ -171,16 +163,15 @@ class RMT::SCC
   def create_service(item, product)
     product.create_service!
     item[:repositories].each do |repo_item|
-      repo_item[:enabled] = true if repo_item[:installer_updates]
       repository_service.create_repository!(product, repo_item[:url], repo_item)
     end
   end
 
-  def update_auth_token(item)
+  def update_auth_token_enabled_attr(item)
     uri = URI(item[:url])
     auth_token = uri.query
 
-    Repository.find_by!(scc_id: item[:id]).update! auth_token: auth_token
+    Repository.find_by!(scc_id: item[:id]).update! auth_token: auth_token, enabled: item[:enabled]
   end
 
   def create_subscription(item)

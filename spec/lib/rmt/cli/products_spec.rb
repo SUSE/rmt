@@ -606,9 +606,9 @@ RSpec.describe RMT::CLI::Products do
       output
     end
 
-    context 'already enabled repositories' do
+    context 'already disabled repositories' do
       let(:target) { product.id.to_s }
-      let(:product) { create :product, :with_not_mirrored_repositories }
+      let(:product) { create :product, :with_not_mirrored_repositories, installer_updates: true }
 
       let(:expected_output) do
         output = "Found product by target #{target}: #{product.friendly_name}.\n"
@@ -619,7 +619,7 @@ RSpec.describe RMT::CLI::Products do
         output
       end
 
-      it 'enables the mandatory product repositories' do
+      it 'disables the mandatory product repositories' do
         expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
         product.repositories.each do |repository|
           expect(repository.mirroring_enabled).to eq(false)
@@ -699,7 +699,7 @@ RSpec.describe RMT::CLI::Products do
     let(:target) { product.id.to_s }
     let(:argv) { ['show', target] }
     let(:expected_output) do
-      output = "Product: #{product.friendly_name} (id: #{target})\n"
+      output = "Product: #{product.friendly_name} (ID: #{target})\n"
       output += "Description: #{product.description}\n"
       output += "Repositories:\n"
       repos.each do |repo|
@@ -753,7 +753,7 @@ RSpec.describe RMT::CLI::Products do
       context 'without the repos' do
         let(:product) { create :product }
         let(:expected_output) do
-          output = "Product: #{product.friendly_name} (id: #{target})\n"
+          output = "Product: #{product.friendly_name} (ID: #{target})\n"
           output += "Description: #{product.description}\n"
           output += "Repositories are not available for this product.\n"
           output

@@ -123,7 +123,7 @@ class Product < ApplicationRecord
   end
 
   def change_repositories_mirroring!(conditions, mirroring_enabled)
-    repos = repositories.where(conditions)
+    repos = repositories.where(conditions).or(repositories.where(installer_updates: true, mirroring_enabled: !mirroring_enabled))
     repo_names = repos.pluck(:name)
     repos.update_all(mirroring_enabled: mirroring_enabled)
 

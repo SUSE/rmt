@@ -142,7 +142,7 @@ msgstr ""
 
 #: ../lib/rmt/cli/base.rb:67
 msgid ""
-"The RMT database has not yet been initialized. Run '%{command}' to setup the d"
+"The RMT database has not yet been initialized. Run '%{command}' to set up the d"
 "atabase."
 msgstr ""
 
@@ -502,15 +502,15 @@ msgid "Output data in CSV format"
 msgstr ""
 
 #: ../lib/rmt/cli/products.rb:12
-msgid "Product name (e.g.: Basesystem, SLES)"
+msgid "Product name (e.g., Basesystem, SLES)"
 msgstr ""
 
 #: ../lib/rmt/cli/products.rb:13
-msgid "Product version (e.g.: 15, 15.1, '12 SP4')"
+msgid "Product version (e.g., 15, 15.1, '12 SP4')"
 msgstr ""
 
 #: ../lib/rmt/cli/products.rb:14
-msgid "Product architecture (e.g.: x86_64, aarch64)"
+msgid "Product architecture (e.g., x86_64, aarch64)"
 msgstr ""
 
 #: ../lib/rmt/cli/products.rb:25 ../lib/rmt/cli/repos.rb:103
@@ -561,7 +561,7 @@ msgid "No product found for target %{target}."
 msgstr ""
 
 #: ../lib/rmt/cli/products.rb:99
-msgid "Product: %{name} (id: %{id})"
+msgid "Product: %{name} (ID: %{id})"
 msgstr ""
 
 #: ../lib/rmt/cli/products.rb:100
@@ -675,7 +675,7 @@ msgid "Deleting locally mirrored files from repository '%{repo}'..."
 msgstr ""
 
 #: ../lib/rmt/cli/repos.rb:61
-msgid "Clean finished. An estimated %{total_file_size} were removed."
+msgid "Clean finished. An estimated %{total_file_size} was removed."
 msgstr ""
 
 #: ../lib/rmt/cli/repos.rb:65 ../lib/rmt/cli/repos.rb:67
@@ -707,7 +707,7 @@ msgid ""
 msgstr ""
 
 #: ../lib/rmt/cli/repos_base.rb:10
-msgid "No repository ids supplied"
+msgid "No repository IDs supplied"
 msgstr ""
 
 #: ../lib/rmt/cli/repos_base.rb:22

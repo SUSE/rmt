@@ -64,7 +64,7 @@ class RMT::CLI::Base < Thor
       end
     rescue ActiveRecord::NoDatabaseError
       raise RMT::CLI::Error.new(
-        _("The RMT database has not yet been initialized. Run '%{command}' to setup the database.") \
+        _("The RMT database has not yet been initialized. Run '%{command}' to set up the database.") \
         % { command: 'systemctl start rmt-server-migration.service' },
         RMT::CLI::Error::ERROR_DB
       )

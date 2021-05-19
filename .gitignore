@@ -5,7 +5,7 @@
 #   git config --global core.excludesfile '~/.gitignore_global'
 
 # Ignore bundler config.
-/.bundle
+/.bundle/config
 
 # Ignore the default SQLite database.
 /db/*.sqlite3
@@ -27,6 +27,7 @@ package/systemsmanagement:SCC:RMT
 vendor/
 coverage/
 .idea/
+integration/prophet/options-local.yml
 
 # Ignore encrypted secrets key file.
 config/secrets.yml.key

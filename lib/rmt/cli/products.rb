@@ -9,9 +9,9 @@ class RMT::CLI::Products < RMT::CLI::Base
   option :all, aliases: '-a', type: :boolean, desc: _('List all products, including ones which are not marked to be mirrored')
   option :release_stage, aliases: '-r', type: :string, desc: 'beta, released'
   option :csv, type: :boolean, desc: _('Output data in CSV format')
-  option :name, type: :string, default: '', desc: _('Product name (e.g.: Basesystem, SLES)')
-  option :version, type: :string, default: '', desc: _('Product version (e.g.: 15, 15.1, \'12 SP4\')')
-  option :arch, type: :string, default: '', desc: _('Product architecture (e.g.: x86_64, aarch64)')
+  option :name, type: :string, default: '', desc: _('Product name (e.g., Basesystem, SLES)')
+  option :version, type: :string, default: '', desc: _('Product version (e.g., 15, 15.1, \'12 SP4\')')
+  option :arch, type: :string, default: '', desc: _('Product architecture (e.g., x86_64, aarch64)')
   def list
     products = (options.all ? Product.all : Product.mirrored).order(:name, :version, :arch)
     products = products.with_release_stage(options[:release_stage])
@@ -96,7 +96,7 @@ class RMT::CLI::Products < RMT::CLI::Base
 
     raise ProductNotFoundException.new(_('No product found for target %{target}.') % { target: target }) if product.blank?
 
-    puts _('Product: %{name} (id: %{id})') % { name: product.friendly_name, id: product.id }
+    puts _('Product: %{name} (ID: %{id})') % { name: product.friendly_name, id: product.id }
     puts _('Description: %{description}') % { description: product.description }
     show_product_repos(product)
   rescue ProductNotFoundException => e

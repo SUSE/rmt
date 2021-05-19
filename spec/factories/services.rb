@@ -5,6 +5,7 @@ FactoryBot.define do
     trait :with_repositories do
       transient do
         mirroring_enabled { false }
+        installer_updates { true }
       end
 
       after :create do |service, evaluator|
@@ -19,7 +20,7 @@ FactoryBot.define do
             name: "#{name_prefix}-Installer-Updates",
             mirroring_enabled: evaluator.mirroring_enabled,
             last_mirrored_at: last_mirrored_at,
-            installer_updates: true,
+            installer_updates: evaluator.installer_updates,
             enabled: false
           ),
           FactoryBot.create(

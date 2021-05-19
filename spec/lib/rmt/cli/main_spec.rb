@@ -103,7 +103,7 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
 
           it 'outputs custom error message' do
             expect { command }.to output(
-              "The RMT database has not yet been initialized. Run 'systemctl start rmt-server-migration.service' to setup the database.\n"
+              "The RMT database has not yet been initialized. Run 'systemctl start rmt-server-migration.service' to set up the database.\n"
             ).to_stderr
           end
         end

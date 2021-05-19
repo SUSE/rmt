@@ -79,11 +79,6 @@ describe RMT::SCC do
         expect(Subscription.statuses[db_subscription.status]).to eq(subscription[:status])
       end
     end
-
-    it 'enables installer-updates repos by default in the DB' do
-      db_repository = Repository.find_by(installer_updates: true)
-      expect(db_repository.enabled).to be(true)
-    end
   end
 
   before do
@@ -162,7 +157,8 @@ describe RMT::SCC do
         {
           id: 999999,
           url: 'http://example.com/extension-without-base',
-          name: 'Repo of an extension without base'
+          name: 'Repo of an extension without base',
+          enabled: true
         }
       end
       let(:extra_product) do
@@ -176,7 +172,8 @@ describe RMT::SCC do
           repositories: [ extra_repo ],
           extensions: [],
           online_predecessor_ids: [],
-          offline_predecessor_ids: []
+          offline_predecessor_ids: [],
+          enabled: true
         }
       end
       let(:repositories_with_extra_repos) { all_repositories + [extra_repo] }
