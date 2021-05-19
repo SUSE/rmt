@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-26 10:31+0100\n"
-"PO-Revision-Date: 2021-03-15 13:56+0000\n"
+"PO-Revision-Date: 2021-05-19 13:04+0000\n"
 "Last-Translator: Yasuhiko Kamata <belphegor@belbel.or.jp>\n"
 "Language-Team: Japanese <https://l10n.opensuse.org/projects/rmt/i18n/ja/>\n"
 "Language: ja\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 3.6.1\n"
+"X-Generator: Weblate 4.6.2\n"
 
 #: ../app/controllers/api/connect/base_controller.rb:20
 msgid "Required parameters are missing or empty: %s"
@@ -135,8 +135,6 @@ msgid "Cannot connect to database server. Make sure it is running and its creden
 msgstr "データベースサーバに接続できません。データベースサーバが動作していること、およびその資格情報が「%{path}」で設定されていることを確認してください。"
 
 #: ../lib/rmt/cli/base.rb:67
-#, fuzzy
-#| msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
 msgid "The RMT database has not yet been initialized. Run '%{command}' to set up the database."
 msgstr "RMTデータベースはまだ初期化されていません。データベースをセットアップするには、「%{command}」を実行してください。"
 
@@ -495,20 +493,14 @@ msgid "Output data in CSV format"
 msgstr "CSVフォーマットの出力データ"
 
 #: ../lib/rmt/cli/products.rb:12
-#, fuzzy
-#| msgid "Product name (e.g.: Basesystem, SLES)"
 msgid "Product name (e.g., Basesystem, SLES)"
 msgstr "製品名 (例: Basesystem, SLES)"
 
 #: ../lib/rmt/cli/products.rb:13
-#, fuzzy
-#| msgid "Product version (e.g.: 15, 15.1, '12 SP4')"
 msgid "Product version (e.g., 15, 15.1, '12 SP4')"
 msgstr "製品バージョン (例: 15, 15.1, '12 SP4')"
 
 #: ../lib/rmt/cli/products.rb:14
-#, fuzzy
-#| msgid "Product architecture (e.g.: x86_64, aarch64)"
 msgid "Product architecture (e.g., x86_64, aarch64)"
 msgstr "製品アーキテクチャ (例: x86_64, aarch64)"
 
@@ -554,8 +546,6 @@ msgid "No product found for target %{target}."
 msgstr "ターゲット %{target} 用の製品が見つかりません。"
 
 #: ../lib/rmt/cli/products.rb:99
-#, fuzzy
-#| msgid "Product: %{name} (id: %{id})"
 msgid "Product: %{name} (ID: %{id})"
 msgstr "製品: %{name} (ID: %{id})"
 
@@ -659,8 +649,6 @@ msgid "Deleting locally mirrored files from repository '%{repo}'..."
 msgstr "リポジトリ '%{repo}' から、ローカルにミラーされているファイルを削除しています..."
 
 #: ../lib/rmt/cli/repos.rb:61
-#, fuzzy
-#| msgid "Clean finished. An estimated %{total_file_size} were removed."
 msgid "Clean finished. An estimated %{total_file_size} was removed."
 msgstr "クリーンアップが完了しました。おおよそ %{total_file_size} が削除されました。"
 
