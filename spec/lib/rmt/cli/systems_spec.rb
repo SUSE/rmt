@@ -1,4 +1,5 @@
 require 'rails_helper'
+require_relative '../../../../engines/registration_sharing/lib/registration_sharing'
 
 RSpec.describe RMT::CLI::Systems do
   describe '#list' do
@@ -136,7 +137,7 @@ RSpec.describe RMT::CLI::Systems do
 
       context 'when regsharing is set' do
         it 'de registration is shared with peers' do
-          allow(Settings).to receive(:[]).with(:regsharing).and_return({ peers: 'foo' })
+          expect(RegistrationSharing).to receive(:save_for_sharing).at_least(:once)
 
           expect { described_class.start(argv) }
             .to output(expected_output).to_stdout
