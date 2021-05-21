@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-26 10:31+0100\n"
-"PO-Revision-Date: 2021-03-25 11:56+0000\n"
+"PO-Revision-Date: 2021-05-21 13:00+0000\n"
 "Last-Translator: Gemineo <vistatec@gemineo.de>\n"
 "Language-Team: German <https://l10n.opensuse.org/projects/rmt/i18n/de/>\n"
 "Language: de\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.6.1\n"
+"X-Generator: Weblate 4.6.2\n"
 
 #: ../app/controllers/api/connect/base_controller.rb:20
 msgid "Required parameters are missing or empty: %s"
@@ -135,10 +135,10 @@ msgid "Cannot connect to database server. Make sure it is running and its creden
 msgstr "Keine Verbindung zu Datenbankserver möglich. Stellen Sie sicher, dass er ausgeführt wird und der Berechtigungsnachweis in '%{path}' konfiguriert ist."
 
 #: ../lib/rmt/cli/base.rb:67
-#, fuzzy
-#| msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
 msgid "The RMT database has not yet been initialized. Run '%{command}' to set up the database."
-msgstr "Die RMT-Datenbank wurde noch nicht initialisiert. Führen Sie '%{command}' aus, um die Datenbank einzurichten."
+msgstr ""
+"Die RMT-Datenbank wurde noch nicht initialisiert. Führen Sie '%{command}' "
+"aus, um die Datenbank einzurichten."
 
 #: ../lib/rmt/cli/base.rb:73
 msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
@@ -495,22 +495,16 @@ msgid "Output data in CSV format"
 msgstr "Daten in CSV-Format ausgeben"
 
 #: ../lib/rmt/cli/products.rb:12
-#, fuzzy
-#| msgid "Product name (e.g.: Basesystem, SLES)"
 msgid "Product name (e.g., Basesystem, SLES)"
-msgstr "Produktname (z. B.: Basesystem, SLES)"
+msgstr "Produktname (z. B. Basesystem, SLES)"
 
 #: ../lib/rmt/cli/products.rb:13
-#, fuzzy
-#| msgid "Product version (e.g.: 15, 15.1, '12 SP4')"
 msgid "Product version (e.g., 15, 15.1, '12 SP4')"
-msgstr "Produktversion (z. B.: 15, 15.1, '12 SP4')"
+msgstr "Produktversion (z. B. 15, 15.1, '12 SP4')"
 
 #: ../lib/rmt/cli/products.rb:14
-#, fuzzy
-#| msgid "Product architecture (e.g.: x86_64, aarch64)"
 msgid "Product architecture (e.g., x86_64, aarch64)"
-msgstr "Produkt-Architektur (z. B.: x86_64, aarch64)"
+msgstr "Produkt-Architektur (z. B. x86_64, aarch64)"
 
 #: ../lib/rmt/cli/products.rb:25 ../lib/rmt/cli/repos.rb:103
 msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
@@ -554,10 +548,8 @@ msgid "No product found for target %{target}."
 msgstr "Kein Produkt für Ziel %{target} gefunden."
 
 #: ../lib/rmt/cli/products.rb:99
-#, fuzzy
-#| msgid "Product: %{name} (id: %{id})"
 msgid "Product: %{name} (ID: %{id})"
-msgstr "Produkt: %{name} (id: %{id})"
+msgstr "Produkt: %{name} (ID: %{id})"
 
 #: ../lib/rmt/cli/products.rb:100
 msgid "Description: %{description}"
@@ -662,8 +654,6 @@ msgid "Deleting locally mirrored files from repository '%{repo}'..."
 msgstr "Löschen von lokal gespiegelten Dateien aus dem Repository '%{repo}'..."
 
 #: ../lib/rmt/cli/repos.rb:61
-#, fuzzy
-#| msgid "Clean finished. An estimated %{total_file_size} were removed."
 msgid "Clean finished. An estimated %{total_file_size} was removed."
 msgstr "Bereinigung beendet. Es wurden etwa %{total_file_size} entfernt."
 
