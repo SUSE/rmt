@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-26 10:31+0100\n"
-"PO-Revision-Date: 2021-05-21 13:00+0000\n"
+"PO-Revision-Date: 2021-05-21 20:59+0000\n"
 "Last-Translator: Gemineo <vistatec@gemineo.de>\n"
 "Language-Team: German <https://l10n.opensuse.org/projects/rmt/i18n/de/>\n"
 "Language: de\n"
@@ -358,11 +358,15 @@ msgstr "Führen Sie diesen Befehl bei einem Online-RMT aus."
 
 #: ../lib/rmt/cli/export.rb:23
 msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
-msgstr "Der angegebene PATH muss eine %{file}-Datei enthalten. Ein Offline-RMT kann diese Datei mit dem Befehl '%{command}' erstellen."
+msgstr ""
+"Der angegebene PATH muss eine %{file}-Datei enthalten. Ein Offline-RMT kann "
+"diese Datei mit dem Befehl '%{command}' erstellen."
 
 #: ../lib/rmt/cli/export.rb:28
 msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
-msgstr "RMT spiegelt die angegebenen Repositorys in %{Datei} auf PATH, normalerweise ein tragbares Speichergerät."
+msgstr ""
+"RMT spiegelt die angegebenen Repositorys in %{Datei} auf PATH, normalerweise "
+"ein tragbares Speichergerät."
 
 #: ../lib/rmt/cli/export.rb:43 ../lib/rmt/cli/import.rb:20
 msgid "%{file} does not exist."
@@ -442,7 +446,8 @@ msgstr "Repository mit ID %{repo_id} nicht gefunden"
 
 #: ../lib/rmt/cli/mirror.rb:48
 msgid "Mirror enabled repositories for a product with given product IDs"
-msgstr "Spiegeln aktivierter Repositories für ein Produkt mit angegebenen Produkt-IDs"
+msgstr ""
+"Spiegeln aktivierter Repositories für ein Produkt mit angegebenen Produkt-IDs"
 
 #: ../lib/rmt/cli/mirror.rb:52 ../lib/rmt/cli/products.rb:115
 msgid "No product IDs supplied"
@@ -462,7 +467,8 @@ msgstr "Produkt mit ID %{id} nicht gefunden"
 
 #: ../lib/rmt/cli/mirror.rb:89
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
-msgstr "Die Spiegelung des Repositorys mit der ID %{repo_id} ist nicht aktiviert"
+msgstr ""
+"Die Spiegelung des Repositorys mit der ID %{repo_id} ist nicht aktiviert"
 
 #: ../lib/rmt/cli/mirror.rb:101
 msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
@@ -623,19 +629,27 @@ msgstr "Alle Repositorys auflisten, auch diejenigen, die nicht zur Spiegelung ma
 
 #: ../lib/rmt/cli/repos.rb:16
 msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
-msgstr "Entfernt lokal gespiegelte Dateien von Repositorys, die nicht zum Spiegeln markiert sind"
+msgstr ""
+"Entfernt lokal gespiegelte Dateien von Repositorys, die nicht zum Spiegeln "
+"markiert sind"
 
 #: ../lib/rmt/cli/repos.rb:26
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
-msgstr "RMT fand nur lokal gespiegelte Dateien von Repositorys, die zum Spiegeln markiert sind."
+msgstr ""
+"RMT fand nur lokal gespiegelte Dateien von Repositorys, die zum Spiegeln "
+"markiert sind."
 
 #: ../lib/rmt/cli/repos.rb:30
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
-msgstr "RMT fand lokal gespiegelte Dateien aus den folgenden Repositorys, die nicht zum Spiegeln markiert sind:"
+msgstr ""
+"RMT fand lokal gespiegelte Dateien aus den folgenden Repositorys, die nicht "
+"zum Spiegeln markiert sind:"
 
 #: ../lib/rmt/cli/repos.rb:36
 msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
-msgstr "Möchten Sie fortfahren und die lokal gespiegelten Dateien dieser Repositorys entfernen?"
+msgstr ""
+"Möchten Sie fortfahren und die lokal gespiegelten Dateien dieser Repositorys "
+"entfernen?"
 
 #: ../lib/rmt/cli/repos.rb:38
 msgid "Only '%{input}' will be accepted."
@@ -686,14 +700,20 @@ msgstr "Standardmäßig werden nur aktivierte Repositorys angezeigt. Verwenden S
 #: ../lib/rmt/cli/repos_base.rb:22
 msgid "Repository by ID %{repos} could not be found and was not enabled."
 msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
-msgstr[0] "Repository %{repos} konnte nicht gefunden werden und wurde nicht aktiviert."
-msgstr[1] "Repositorys %{repos} konnten nicht gefunden werden und wurden nicht aktiviert."
+msgstr[0] ""
+"Repository %{repos} konnte nicht gefunden werden und wurde nicht aktiviert."
+msgstr[1] ""
+"Repositorys %{repos} konnten nicht gefunden werden und wurden nicht "
+"aktiviert."
 
 #: ../lib/rmt/cli/repos_base.rb:26
 msgid "Repository by ID %{repos} could not be found and was not disabled."
 msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
-msgstr[0] "Repository %{repos} konnte nicht gefunden werden und wurde nicht deaktiviert."
-msgstr[1] "Repositorys %{repos} konnten nicht gefunden werden und wurden nicht deaktiviert."
+msgstr[0] ""
+"Repository %{repos} konnte nicht gefunden werden und wurde nicht deaktiviert."
+msgstr[1] ""
+"Repositorys %{repos} konnten nicht gefunden werden und wurden nicht "
+"deaktiviert."
 
 #: ../lib/rmt/cli/repos_base.rb:38
 msgid "Repository by ID %{id} successfully enabled."
@@ -713,7 +733,9 @@ msgstr "Erstellt ein benutzerdefiniertes Repository."
 
 #: ../lib/rmt/cli/repos_custom.rb:4
 msgid "Provide a custom ID instead of allowing RMT to generate one."
-msgstr "Geben Sie eine benutzerdefinierte ID an, anstatt eine von RMT generieren zu lassen."
+msgstr ""
+"Geben Sie eine benutzerdefinierte ID an, anstatt eine von RMT generieren zu "
+"lassen."
 
 #: ../lib/rmt/cli/repos_custom.rb:21
 msgid "A repository by the URL %{url} already exists."
@@ -725,7 +747,9 @@ msgstr "Ein Repository durch ID %{url} ist bereits vorhanden."
 
 #: ../lib/rmt/cli/repos_custom.rb:27
 msgid "Please provide a non-numeric ID for your custom repository."
-msgstr "Bitte geben Sie eine nicht numerische ID für Ihr benutzerdefiniertes Repository an."
+msgstr ""
+"Bitte geben Sie eine nicht numerische ID für Ihr benutzerdefiniertes "
+"Repository an."
 
 #: ../lib/rmt/cli/repos_custom.rb:32
 msgid "Couldn't add custom repository."
@@ -845,7 +869,8 @@ msgstr "Systeme nicht importieren, die im SMT registriert waren"
 
 #: ../lib/rmt/cli/smt_importer.rb:198
 msgid "Do not import system hardware info from MachineData table"
-msgstr "System-Hardware-Informationen nicht aus der MachineData-Tabelle importieren"
+msgstr ""
+"System-Hardware-Informationen nicht aus der MachineData-Tabelle importieren"
 
 #: ../lib/rmt/cli/smt_importer.rb:209
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
@@ -873,7 +898,9 @@ msgstr "Bei dieser RMT-Instanz sind keine Systeme registriert."
 
 #: ../lib/rmt/cli/systems.rb:18
 msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
-msgstr "Zeigt die letzten %{limit} Registrierungen an. Verwenden Sie die Option '--all', um alle registrierten Systeme anzuzeigen."
+msgstr ""
+"Zeigt die letzten %{limit} Registrierungen an. Verwenden Sie die Option '--"
+"all', um alle registrierten Systeme anzuzeigen."
 
 #: ../lib/rmt/cli/systems.rb:26
 msgid "Forward registered systems data to SCC"
@@ -889,7 +916,9 @@ msgstr "Entfernt ein System und seine Aktivierungen aus RMT."
 
 #: ../lib/rmt/cli/systems.rb:35
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
-msgstr "Um ein System gezielt zu entfernen, verwenden Sie den Befehl \"%{command}\" für eine Liste von Systemen mit den entsprechenden Anmeldungen."
+msgstr ""
+"Um ein System gezielt zu entfernen, verwenden Sie den Befehl \"%{command}\" "
+"für eine Liste von Systemen mit den entsprechenden Anmeldungen."
 
 #: ../lib/rmt/cli/systems.rb:44
 msgid "Successfully removed system with login %{login}."
@@ -930,8 +959,8 @@ msgstr "GPG-Signatur konnte nicht verifiziert werden"
 #: ../lib/rmt/lockfile.rb:11
 msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
 msgstr ""
-"Mindestens ein ausgewähltes Gerät ist bereits konfiguriert.\n"
-"Möchten Sie die Konfiguration zur Bindung anpassen?"
+"Mindestens ein ausgewähltes Gerät ist bereits konfiguriert. Beenden Sie die "
+"Konfiguration oder warten Sie, bis sie beendet ist."
 
 #: ../lib/rmt/mirror.rb:41
 msgid "Mirroring SUSE Manager product tree to %{dir}"
@@ -939,7 +968,8 @@ msgstr "SUSE Manager-Produktbaum wird in %{dir} gespiegelt"
 
 #: ../lib/rmt/mirror.rb:44
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
-msgstr "SUSE Manager-Produktbaum konnte nicht gespiegelt werden. Fehler: %{error}"
+msgstr ""
+"SUSE Manager-Produktbaum konnte nicht gespiegelt werden. Fehler: %{error}"
 
 #: ../lib/rmt/mirror.rb:50
 msgid "Mirroring repository %{repo} to %{dir}"
@@ -959,7 +989,9 @@ msgstr "Repository-Metadatensignaturen fehlen"
 
 #: ../lib/rmt/mirror.rb:112
 msgid "Failed to get repository metadata signatures with HTTP code %{http_code}"
-msgstr "Repository-Metadaten-Signaturen mit HTTP-Code %{http_code} konnten nicht abgerufen werden"
+msgstr ""
+"Repository-Metadaten-Signaturen mit HTTP-Code %{http_code} konnten nicht "
+"abgerufen werden"
 
 #: ../lib/rmt/mirror.rb:123
 msgid "Error while mirroring metadata: %{error}"
@@ -1023,7 +1055,9 @@ msgstr "SCC-Daten von %{path} werden importiert."
 
 #: ../lib/rmt/scc.rb:82
 msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
-msgstr "Das Synchronisieren von Systemen mit SCC wird durch die Konfigurationsdatei deaktiviert und beendet."
+msgstr ""
+"Das Synchronisieren von Systemen mit SCC wird durch die Konfigurationsdatei "
+"deaktiviert und beendet."
 
 #: ../lib/rmt/scc.rb:91
 msgid "Syncing system %{login} to SCC"
