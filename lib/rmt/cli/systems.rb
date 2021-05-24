@@ -40,6 +40,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
   REMOVE
   def remove(target)
     target_system = System.find_by!(login: target)
+    RegistrationSharing.save_for_sharing(target_system) if defined? RegistrationSharing
     target_system.destroy!
     puts _('Successfully removed system with login %{login}.') % { login: target }
   rescue ActiveRecord::RecordNotDestroyed
