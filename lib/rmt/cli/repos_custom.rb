@@ -10,9 +10,12 @@ class RMT::CLI::ReposCustom < RMT::CLI::ReposBase
 $ rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers
 
 $ rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers --id containers_sle_12_sp3`
+
+$ rmt-cli repos custom add https://download.example.com?some_auth_token
   REPOS
   def add(url, name)
-    url += '/' unless URI(url).query.present? || url.end_with?('/')
+    url, query = url.split('?')
+    url += '/' unless query.present? || url.end_with?('/')
     friendly_id = options.id
     friendly_id ||= Repository.make_friendly_id(name)
 
@@ -36,6 +39,7 @@ $ rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualiza
       name: name.strip,
       mirroring_enabled: true,
       autorefresh: true,
+      auth_token: query,
       enabled: 0,
       id: friendly_id
     }, custom: true)

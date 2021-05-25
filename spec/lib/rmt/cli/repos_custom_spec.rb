@@ -150,6 +150,14 @@ describe RMT::CLI::ReposCustom do
 
         expect(Repository.last.external_url.ends_with?('/')).to be_falsy
       end
+
+      it 'stores the query parameter as an auth token' do
+        expect do
+          described_class.start(argv)
+        end.to output("Successfully added custom repository.\n").to_stdout.and output('').to_stderr
+        expect(Repository.last.auth_token.present?).to be_truthy
+        expect(Repository.last.external_url).not_to include('?')
+      end
     end
   end
 
