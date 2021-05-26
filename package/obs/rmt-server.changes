@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Thu Apr 22 11:10:11 UTC 2021 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
-- Version 2.6.
+- Version 2.6.9
 - Fix: Store authorization tokens when adding custom repositories
 - Fix: Don't append slash to custom repository urls
 - Add enabled attribute to syncing process
