@@ -1,21 +1,18 @@
 -------------------------------------------------------------------
-Thu Apr 22 11:18:33 UTC 2021 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+Thu Apr 22 11:10:11 UTC 2021 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
-- Version 2.6.10
+- Version 2.6.
+- Fix: Store authorization tokens when adding custom repositories
+- Fix: Don't append slash to custom repository urls
+- Add enabled attribute to syncing process
+  This fixes wrong marked repositories when syncing
+  This references bsc#1184814
+
 - Enable 'Installer-Updates' repositories when
   enabling a product, so they can get used by
   the installer to patch the installation system itself.
 
   This references bsc#1184814
-
--------------------------------------------------------------------
-Thu Apr 22 11:10:11 UTC 2021 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
-
-- Version 2.6.9
-- Add enabled attribute to syncing process
-  This fixes wrong marked repositories when syncing
-  This references bsc#1184814
-
 -------------------------------------------------------------------
 Mon Mar 29 10:51:13 UTC 2021 - Felix Schnizlein <fschnizlein@suse.com>
 

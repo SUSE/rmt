@@ -29,7 +29,7 @@
 %define ruby_version          %{rb_default_ruby_suffix}
 
 Name:           rmt-server
-Version:        2.6.10
+Version:        2.6.9
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -109,6 +109,7 @@ cp -p %{SOURCE2} .
 sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
 
 %build
+bundle.%{ruby_version} config build.nio4r --with-cflags='%{optflags} -Wno-return-type'
 bundle.%{ruby_version} config set deployment 'true'
 bundle.%{ruby_version} config set without 'test development'
 bundle.%{ruby_version} install %{?jobs:--jobs %{jobs}}
@@ -191,7 +192,11 @@ grep -rl '\/usr\/bin\/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xarg
     sed -i -e 's@\/usr\/bin\/env ruby.%{ruby_version}@\/usr\/bin\/ruby\.%{ruby_version}@g' \
     -e 's@\/usr\/bin\/env ruby@\/usr\/bin\/ruby\.%{ruby_version}@g'
 grep -rl '\/usr\/bin\/env bash' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
-    sed -i -e 's@\/usr\/bin\/env bash@\/bin\/bash@g' \
+    sed -i -e 's@\/usr\/bin\/env bash@\/bin\/bash@g'
+
+# Drop 'BUNDLED WITH' line from Gemfile.lock. It causes trouble when the Gemfile.lock
+# was created with a different major version than the distribution's bundler.
+sed -i '/BUNDLED WITH/{N;d;}' %{buildroot}%{app_dir}/Gemfile.lock
 
 # cleanup unneeded files
 find %{buildroot}%{lib_dir} "(" -name "*.c" -o -name "*.h" -o -name .keep ")" -delete
