@@ -39,6 +39,8 @@ class RMT::CLI::Systems < RMT::CLI::Base
     $ rmt-cli systems remove SCC_e740f34145b84523a184ace764d0d597
   REMOVE
   def remove(target)
+    puts System.last.methods.select{|m| m.to_s.include?('share') }
+    exit 0
     target_system = System.find_by!(login: target)
     RegistrationSharing.save_for_sharing(target_system) if defined? RegistrationSharing
     target_system.destroy!

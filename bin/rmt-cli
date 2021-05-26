@@ -1,21 +1,18 @@
 #!/usr/bin/env ruby
 
 rmt_path = File.expand_path('..', __dir__)
-require_relative '../config/boot'
-
 $LOAD_PATH.unshift File.join(rmt_path, 'lib')
 
-require 'etc'
+APP_PATH = File.expand_path('../config/application', __dir__)
 require 'active_support'
 require 'active_support/core_ext/string'
-require 'active_record'
-require 'erb'
-require 'yaml'
-require 'rmt/config'
+require 'rmt'
+require 'rmt/logger'
+require_relative '../config/environment'
+
 require_relative '../config/initializers_cli/disable_deprecation_warnings'
 require_relative '../config/initializers_cli/rmt_fast_gettext'
 require_relative '../config/initializers_cli/rmt_fast_gettext_cli_locale'
-require_relative '../engines/registration_sharing/lib/registration_sharing' if Settings[:regsharing]
 
 relative_load_paths = %w[lib lib/rmt app/models app/services app/validators].map { |dir| File.join(rmt_path, dir) }
 ActiveSupport::Dependencies.autoload_paths += relative_load_paths

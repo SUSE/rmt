@@ -40,3 +40,9 @@ web_server:
   min_threads: 5
   max_threads: 5
   workers: 2
+
+regsharing:
+  a: b
+
+log_level:
+  rails: INFO
