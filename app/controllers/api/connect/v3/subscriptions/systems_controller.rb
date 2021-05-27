@@ -11,6 +11,6 @@ class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseCon
 
   def hw_info_params
     return {} if params[:hwinfo].blank?
-    params[:hwinfo].permit(:cpus, :sockets, :arch, :hypervisor, :uuid)
+    params[:hwinfo].permit(:cpus, :sockets, :arch, :hypervisor, :uuid, :cloud_provider)
   end
 end

@@ -138,6 +138,27 @@ describe RMT::CLI::ReposCustom do
         expect(Repository.find_by(external_url: external_url).name).to eq('foobar')
       end
     end
+
+    context 'URL with token' do
+      let(:external_url) { 'http://example.com/repo?token' }
+      let(:argv) { ['add', external_url, 'foo'] }
+
+      it 'does not add trailing slash when query is given' do
+        expect do
+          described_class.start(argv)
+        end.to output("Successfully added custom repository.\n").to_stdout.and output('').to_stderr
+
+        expect(Repository.last.external_url.ends_with?('/')).to be_falsy
+      end
+
+      it 'stores the query parameter as an auth token' do
+        expect do
+          described_class.start(argv)
+        end.to output("Successfully added custom repository.\n").to_stdout.and output('').to_stderr
+        expect(Repository.last.auth_token.present?).to be_truthy
+        expect(Repository.last.external_url).not_to include('?')
+      end
+    end
   end
 
   describe '#list' do
@@ -214,7 +235,7 @@ describe RMT::CLI::ReposCustom do
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output(/No repository ids supplied/).to_stderr
+        expect { command }.to output(/No repository IDs supplied/).to_stderr
       end
 
       its(:mirroring_enabled) { is_expected.to be(false) }
@@ -264,7 +285,7 @@ describe RMT::CLI::ReposCustom do
 
       before do
         expect(described_class).to receive(:exit)
-        expect { command }.to output(/No repository ids supplied/).to_stderr
+        expect { command }.to output(/No repository IDs supplied/).to_stderr
       end
 
       its(:mirroring_enabled) { is_expected.to be(true) }
@@ -369,6 +390,21 @@ Repository by ID #{repository.friendly_id} successfully disabled.
 
         it 'deletes custom repository' do
           expect(Repository.find_by(id: custom_repository.id)).to be_nil
+        end
+      end
+
+      context 'custom repository with id starting with numbers' do
+        let(:friendly_id) { "#{suse_repository.id}-repo-name" }
+        let(:custom) { create :repository, :custom, friendly_id: friendly_id }
+
+        let(:argv) { [command, custom.friendly_id] }
+
+        before do
+          expect { described_class.start(argv) }.to output("Removed custom repository by ID #{friendly_id}.\n").to_stdout
+        end
+
+        it 'deletes custom repository' do
+          expect(Repository.find_by(friendly_id: friendly_id)).to be_nil
         end
       end
     end

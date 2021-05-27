@@ -160,6 +160,10 @@ ActiveRecord::Schema.define(version: 2020_09_16_120607) do
     t.index ["login"], name: "index_systems_on_login", unique: true
   end
 
+  add_foreign_key "activations", "services", on_delete: :cascade
+  add_foreign_key "activations", "systems", on_delete: :cascade
+  add_foreign_key "product_predecessors", "products", column: "predecessor_id"
+  add_foreign_key "product_predecessors", "products", on_delete: :cascade
   add_foreign_key "products_extensions", "products", column: "extension_id", on_delete: :cascade
   add_foreign_key "products_extensions", "products", column: "root_product_id"
   add_foreign_key "products_extensions", "products", on_delete: :cascade
