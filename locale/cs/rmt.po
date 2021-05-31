@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-26 10:31+0100\n"
-"PO-Revision-Date: 2021-03-17 11:37+0000\n"
+"PO-Revision-Date: 2021-05-31 22:00+0000\n"
 "Last-Translator: Aleš Kastner <alkas@volny.cz>\n"
 "Language-Team: Czech <https://l10n.opensuse.org/projects/rmt/i18n/cs/>\n"
 "Language: cs\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 3.6.1\n"
+"X-Generator: Weblate 4.6.2\n"
 
 #: ../app/controllers/api/connect/base_controller.rb:20
 msgid "Required parameters are missing or empty: %s"
@@ -135,10 +135,10 @@ msgid "Cannot connect to database server. Make sure it is running and its creden
 msgstr "Nelze se připojit k databázovému serveru. Zkontrolujte, zda server běží a zda jsou v %{path} nakonfigurovány jeho přihlašovací údaje."
 
 #: ../lib/rmt/cli/base.rb:67
-#, fuzzy
-#| msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
 msgid "The RMT database has not yet been initialized. Run '%{command}' to set up the database."
-msgstr "Databáze RMT ještě nebyla inicializována. Spusťte příkaz %{command} a databázi nastavte."
+msgstr ""
+"Databáze RMT ještě nebyla inicializována. Spusťte příkaz '%{command}' a "
+"databázi nastavte."
 
 #: ../lib/rmt/cli/base.rb:73
 msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
@@ -495,20 +495,14 @@ msgid "Output data in CSV format"
 msgstr "Výstup dat ve formátu CSV"
 
 #: ../lib/rmt/cli/products.rb:12
-#, fuzzy
-#| msgid "Product name (e.g.: Basesystem, SLES)"
 msgid "Product name (e.g., Basesystem, SLES)"
 msgstr "Název produktu (např.: Základní systém, SLES)"
 
 #: ../lib/rmt/cli/products.rb:13
-#, fuzzy
-#| msgid "Product version (e.g.: 15, 15.1, '12 SP4')"
 msgid "Product version (e.g., 15, 15.1, '12 SP4')"
 msgstr "Vetrze produktu (např.: 15, 15.1, '12 SP4')"
 
 #: ../lib/rmt/cli/products.rb:14
-#, fuzzy
-#| msgid "Product architecture (e.g.: x86_64, aarch64)"
 msgid "Product architecture (e.g., x86_64, aarch64)"
 msgstr "Architektura produktu (např.: x86_64, aarch64)"
 
@@ -554,8 +548,6 @@ msgid "No product found for target %{target}."
 msgstr "Nebyl nalezen žádný produkt pro cíl %{target}."
 
 #: ../lib/rmt/cli/products.rb:99
-#, fuzzy
-#| msgid "Product: %{name} (id: %{id})"
 msgid "Product: %{name} (ID: %{id})"
 msgstr "Produkt: %{name} (ID: %{id})"
 
@@ -665,8 +657,6 @@ msgid "Deleting locally mirrored files from repository '%{repo}'..."
 msgstr "Odstraňuji lokálně zrcadlené soubory z úložiště '%{repo}'..."
 
 #: ../lib/rmt/cli/repos.rb:61
-#, fuzzy
-#| msgid "Clean finished. An estimated %{total_file_size} were removed."
 msgid "Clean finished. An estimated %{total_file_size} was removed."
 msgstr "Vyčistění dokončeno. Celkem bylo odstraněno %{total_file_size}."
 
