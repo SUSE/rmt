@@ -58,7 +58,7 @@ end
 group :test do
   gem 'rspec-command', '1.0.3'
   gem 'rspec-rails', '~> 5.0'
-  gem 'factory_bot_rails', '~> 6.1.0'
+  gem 'factory_bot_rails', '~> 6.2.0'
   gem 'ffaker'
   gem 'rspec-its'
   gem 'fakefs', require: 'fakefs/safe'
