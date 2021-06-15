@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Jun 4 11:10:11 UTC 2021 - Natnael Getahun <natnael.getahun@suse.com>
+
+- Version 2.6.10
+- Fix: Rails 6.1 zeitwerk autoloading errors
+
+This references bsc#1186798
+-------------------------------------------------------------------
 Thu Apr 22 11:10:11 UTC 2021 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
 - Version 2.6.9
