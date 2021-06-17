@@ -13,14 +13,13 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
     raise InstanceVerification::Exception, 'Product/instance type mismatch'
   end
 
-  def validate_instance_data(instance_data)
+  def validate_instance_data(_instance_data)
     # The instance data format is determined by the client implementation and needs to
     # be processed here accordingly. Ideally the data is signed in a way such that it can
     # be independently verified here to not have been tampered with in flight or injected
     # into the stream. The AWS implementation of the Instance Identity Document is one possible
     # implementation route. In this example it is assumed the instance data is json and
     # contains instance_product_id
-    instance_product_id = instance_data.captures
-    JSON.parse(instance_product_id)
+    '1234_SUSE_SLES'
   end
 end
