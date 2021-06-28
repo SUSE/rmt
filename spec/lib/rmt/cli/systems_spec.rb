@@ -1,4 +1,5 @@
 require 'rails_helper'
+require_relative '../../../../engines/registration_sharing/lib/registration_sharing'
 
 RSpec.describe RMT::CLI::Systems do
   describe '#list' do
@@ -132,6 +133,16 @@ RSpec.describe RMT::CLI::Systems do
           .and change { system.repositories.count }.from(4).to(0)
           .and change { system.services.count }.from(1).to(0)
           .and change { DeregisteredSystem.count }.by(1)
+      end
+
+      context 'when regsharing is set' do
+        it 'de registration is shared with peers' do
+          expect(RegistrationSharing).to receive(:save_for_sharing).at_least(:once)
+
+          expect { described_class.start(argv) }
+            .to output(expected_output).to_stdout
+            .and output('').to_stderr
+        end
       end
     end
 

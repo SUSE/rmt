@@ -6,6 +6,9 @@ unless ENV['NO_COVERAGE']
       add_filter '/spec/'
       add_filter '/tasks/'
 
+      # omit registration sharing (removing systems using rmt-cli)
+      add_filter('engines/registration_sharing/lib/registration_sharing.rb')
+
       track_files('app/**/*.rb')
       track_files('lib/**/*.rb')
     end
