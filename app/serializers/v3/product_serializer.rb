@@ -10,7 +10,7 @@ class V3::ProductSerializer < ApplicationSerializer
     end
   end
 
-  attributes :id, :name, :identifier, :former_identifier, :version, :release_type, :arch,
+  attributes :id, :name, :identifier, :former_identifier, :version, :release_type, :release_stage, :arch,
              :friendly_name, :product_class, :cpe, :free, :description, :eula_url, :repositories, :product_type,
              :extensions, :recommended, :available
 
