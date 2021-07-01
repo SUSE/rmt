@@ -1,0 +1,13 @@
+
+
+name: RMT
+
+on: [pull_request]
+
+jobs:
+  smoketest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run some shell command
+        run: |
+          echo "Running actions for RMT"
