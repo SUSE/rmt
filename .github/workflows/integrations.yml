@@ -1,0 +1,54 @@
+
+name: RMT Integration tests
+
+on: [pull_request]
+
+jobs:
+  test:
+    env:
+      DANGER_GITHUB_API_TOKEN: ${ secrets.GH_TOKEN }
+    services:
+      mysql:
+        image: mysql:5.7
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_DATABASE: rmt_test
+          MYSQL_USER: rmt
+          MYSQL_PASSWORD: rmt
+          MYSQL_UNIX_PORT: /var/run/mysqld/mysqld.sock
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: ['2.5.8', '2.6.6', '2.7.2']
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@473e4d8fe5dd94ee328fdfca9f8c9c7afc9dae5e
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true
+        bundler: 1.17
+    - name: Gem cache
+      uses: actions/cache@v1
+      with:
+        path: vendor/bundle
+        key: ${{ matrix.ruby-version }}-gems-${{ hashFiles('Gemfile') }}
+        restore-keys: |
+          ${{ matrix.ruby-version }}-gems-
+    - name: Pre-run inline scripts
+      run: |
+        ruby -e "require 'yaml'; puts({'database_test'=>{'host'=>'localhost','username'=>'rmt','password'=>'rmt','database'=>'rmt_test','adapter'=>'mysql2','encoding'=>'utf8','timeout'=>5000,'pool'=>5, 'socket' => '/var/run/mysqld/mysqld.sock'}}.to_yaml)" > config/rmt.local.yml
+    - name: Run tests
+      run: |
+        bundle exec rails db:migrate RAILS_ENV=test
+        bundle exec rake test
+    - name: Run Danger
+      uses: MeilCli/danger-action@v5
+      with:
+        plugins_file: 'Gemfile'
+        install_path: 'vendor/bundle'
+        danger_file: 'Dangerfile'
+        danger_id: 'danger-pr'
