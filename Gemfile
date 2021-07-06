@@ -1,5 +1,9 @@
 source 'https://rubygems.org'
 
+# Adding an explicit ruby version here to make sure it is still working with
+# SLE 15 variants, since we rely on the system installation of ruby
+ruby '~> 2.5.8'
+
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
   "https://github.com/#{repo_name}.git"
