@@ -60,11 +60,11 @@ jobs:
       - name: Run tests
         env:
           RAILS_ENV: test
-        shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
         run: |
           bundle exec rails db:migrate
           bundle exec rspec
-
+      # Danger does some weird things to the output,
+      # that's why we run it last
       - name: Run Danger
         uses: MeilCli/danger-action@v5
         env:
