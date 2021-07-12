@@ -44,6 +44,16 @@ describe V3::ProductSerializer do
     it { is_expected.not_to include(release_stage) }
   end
 
+  describe 'release_stage' do
+    subject(:serializer) { described_class.new(product) }
+
+    let(:product) { create :product }
+
+    it 'has a release_stage attribute' do
+      expect(serializer.as_json[:release_stage]).to eq(product.release_stage)
+    end
+  end
+
   describe 'SLES extension tree' do
     subject(:serializer) { described_class.new(sles15, root_product: sles15, base_url: base_url) }
 
