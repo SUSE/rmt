@@ -7,6 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-01-26 10:31+0100\n"
 "PO-Revision-Date: 2019-03-28 18:42+0000\n"
 "Last-Translator: Nikita Maynagashev <maynagashev@palex.ru>\n"
 "Language-Team: Russian <https://l10n.opensuse.org/projects/rmt/i18n/ru/>\n"
@@ -14,398 +15,828 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
-"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 3.3\n"
 
-msgid "%s is not yet activated on the system."
-msgstr "Продукт %s еще не активирован в системе."
-
-msgid "%{file} - File does not exist"
-msgstr "%{file} — файл не существует"
-
-msgid "%{file} - HTTP request failed with code %{code}"
-msgstr "%{file} — ошибка HTTP-запроса, код %{code}"
-
-msgid "%{file} - return code %{code}"
-msgstr "%{file} — код возврата %{code}"
-
-msgid "%{file} does not exist."
-msgstr "Файл %{file} не существует."
-
-msgid "%{path} is not a directory."
-msgstr "%{path} не является каталогом."
-
-msgid "%{path} is not writable by user %{username}."
-msgstr "Каталог %{path} недоступен для записи пользователем %{username}."
-
-msgid "A repository by the URL %{url} already exists."
-msgstr "Репозиторий по ссылке URL %{url} уже существует."
-
-msgid "Added association between %{repo} and product %{product}"
-msgstr "Добавлена связь между %{repo} и продуктом %{product}"
-
-msgid "Adding product %{product}"
-msgstr "Добавление продукта %{product}"
-
-msgid "All repositories have already been disabled."
-msgstr "Все репозитории уже отключены."
-
-msgid "All repositories have already been enabled."
-msgstr "Все репозитории уже включены."
-
-msgid "Arch"
-msgstr "Архив"
-
-msgid "Attach an existing custom repository to a product"
-msgstr "Прикрепить существующий настраиваемый репозиторий к продукту"
-
-msgid "Attached repository to product '%{product_name}'."
-msgstr "Репозиторий прикреплен к продукту %{product_name}."
-
-msgid "Authenticated system with login \\\"%{login}\\\""
-msgstr "Выполнена аутентификация в системе с именем пользователя %{login}"
-
-msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
-msgstr ""
-"Не удается подключиться к серверу баз данных. Проверьте правильность учетных "
-"данных в файле %{path} или настройте YaST для RMT (%{command})."
-
-msgid "Cannot connect to database server. Make sure it is running and its credentials are configured in '%{path}'."
-msgstr ""
-"Не удается подключиться к серверу баз данных. Убедитесь, что он запущен и "
-"учетные данные настроены в файле %{path}."
-
-msgid "Cannot deactivate the product \"%s\". Other activated products depend upon it."
-msgstr ""
-"Не удается деактивировать продукт %s. От него зависят другие активированные "
-"продукты."
-
-msgid "Cannot find custom repository by ID %{id}."
-msgstr "Не удается найти системный репозиторий с идентификатором %{id}."
-
-msgid "Cannot find product by ID %{id}."
-msgstr "Не удается найти продукт с идентификатором %{id}."
-
-msgid "Check out %{url}"
-msgstr "Проверьте URL-адрес %{url}"
-
-msgid "Checksum doesn't match"
-msgstr "Не совпадает контрольная сумма"
-
-msgid "Cleaning up the database"
-msgstr "Очистка базы данных"
-
-msgid "Commands:"
-msgstr "Команды:"
-
-msgid "Could not create a temporary directory: %{error}"
-msgstr "Не удалось создать временный каталог: %{error}"
-
-msgid "Could not create deduplication hardlink: %{error}."
-msgstr "Не удалось создать жесткую ссылку для дедупликации: %{error}."
-
-msgid "Could not create local directory %{dir} with error: %{error}"
-msgstr "Не удалось создать локальный каталог %{dir}, ошибка: %{error}"
-
-msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
-msgstr ""
-"Не удалось найти систему с именем пользователя %{login} и паролем %{password}"
-
-msgid "Could not mirror suma product tree with error: %{error}"
-msgstr ""
-"Не удалось создать зеркальное отображение дерева продукта suma, ошибка: "
-"%{error}"
-
-msgid "Creates a custom repository."
-msgstr "Создание пользовательского репозитория."
-
-msgid "Detach an existing custom repository from a product"
-msgstr "Отсоединить существующий пользовательский репозиторий от продукта"
-
-msgid "Detached repository from product '%{product_name}'."
-msgstr "Репозиторий отсоединен от продукта %{product_name}."
-
-msgid "Disable mirroring of custom repository by ID"
-msgstr ""
-"Отключить зеркальное отображение пользовательского репозитория по "
-"идентификатору"
-
-msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
-msgstr ""
-"Отключить зеркальное отображение репозиториев продуктов по списку "
-"идентификаторов или строк продуктов."
-
-msgid "Disable mirroring of repositories by a list of repository IDs"
-msgstr ""
-"Отключить зеркальное отображение репозиториев по списку их идентификаторов"
-
-msgid "Disabled repository %{repository}."
-msgstr "Репозиторий %{repository} отключен."
-
-msgid "Disabling %{product}:"
-msgstr "Отключение продукта %{product}:"
-
-msgid "Do not import the systems that were registered to the SMT"
-msgstr "Не импортировать системы, зарегистрированные в SMT"
-
-msgid "Do you have any suggestions for improvement? We would love to hear from you!"
-msgstr ""
-"Возможно, у вас есть пожелания или вы можете предложить улучшение? Мы будем "
-"рады об этом узнать!"
-
-msgid "Don't Mirror"
-msgstr "Не выполнять зеркальное отображение"
-
-msgid "Downloading data from SCC"
-msgstr "Выполняется загрузка данных из SCC"
-
-msgid "Enable debug output"
-msgstr "Разрешить вывод данных отладки"
-
-msgid "Enable mirroring of custom repository by ID"
-msgstr ""
-"Включить зеркальное отображение пользовательского репозитория по "
-"идентификатору"
-
-msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
-msgstr ""
-"Включить зеркальное отображение пользовательских репозиториев по списку "
-"идентификаторов или строк продуктов."
-
-msgid "Enable mirroring of repositories by a list of repository IDs"
-msgstr ""
-"Включить зеркальное отображение репозиториев по списку их идентификаторов"
-
-msgid "Enabled mirroring for repository %{repo}"
-msgstr "Зеркальное отображение включено для репозитория %{repo}"
-
-msgid "Enabled repository %{repository}."
-msgstr "Репозиторий %{repository} включен."
-
-msgid "Enables all free modules for a product"
-msgstr "Включение всех бесплатных модулей для продукта"
-
-msgid "Enabling %{product}:"
-msgstr "Включение продукта %{product}:"
-
-msgid "Error while mirroring data: %{error}"
-msgstr "Ошибка при зеркальном отображении данных: %{error}"
-
-msgid "Error while mirroring license: %{error}"
-msgstr "Ошибка при зеркальном отображении лицезнии: %{error}"
-
-msgid "Error while mirroring metadata: %{error}"
-msgstr "Ошибка при зеркальном отображении метаданных: %{error}"
-
-msgid "Error while moving directory %{src} to %{dest}: %{error}"
-msgstr "Ошибка при переносе каталога из %{src} в %{dest}: %{error}"
-
-msgid "Export commands for Offline Sync"
-msgstr "Экспорт команд для автономной синхронизации"
-
-msgid "Exporting data from SCC to %{path}"
-msgstr "Выполняется экспорт данных из SCC в %{path}"
-
-msgid "Exporting orders"
-msgstr "Выполняется экспорт заказов"
-
-msgid "Exporting products"
-msgstr "Выполняется экспорт продуктов"
-
-msgid "Exporting repositories"
-msgstr "Выполняется экспорт репозиториев"
-
-msgid "Exporting subscriptions"
-msgstr "Выполняется экспорт подписок"
-
-msgid "Found product by target %{target}: %{products}."
-msgid_plural "Found products by target %{target}: %{products}."
-msgstr[0] "Найден продукт по целевому значению %{target}: %{products}."
-msgstr[1] "Найдены продукты по целевому значению %{target}: %{products}."
-msgstr[2] "Найдены продукты по целевому значению %{target}: %{products}."
-
-msgid "Hardware information stored for system %{system}"
-msgstr "Для системы %{system} сохранена информация об оборудовании"
-
-msgid "ID"
-msgstr "ИД"
-
-msgid "Import commands for Offline Sync"
-msgstr "Импорт команд для автономной синхронизации"
-
-msgid "Imported activation of %{product} for %{system}"
-msgstr "Импортирована активация продукта %{product} для системы %{system}"
-
-msgid "Imported system %{system}"
-msgstr "Импортирована система %{system}"
-
-msgid "Importing SCC data from %{path}"
-msgstr "Выполняется импорт данных SCC из %{path}"
-
-msgid "Invalid system credentials"
-msgstr "Недействительные учетные данные для системы"
-
-msgid "Last Mirrored"
-msgstr "Последнее зеркальное отображение"
-
-msgid "Last mirrored"
-msgstr "Последнее зеркальное отображение"
-
-msgid "List all custom repositories"
-msgstr "Вывести список всех пользовательских репозиториев"
-
-msgid "List all products, including ones which are not marked to be mirrored"
-msgstr ""
-"Вывести список всех продуктов, включая те, что не помечены для зеркального "
-"отображения"
-
-msgid "List all repositories, including ones which are not marked to be mirrored"
-msgstr ""
-"Вывести список всех репозиториев, включая те, что не помечены для "
-"зеркального отображения"
-
-msgid "List and modify custom repositories"
-msgstr "Вывести список пользовательских репозиториев и изменить их"
-
-msgid "List and modify products"
-msgstr "Вывести список продуктов и изменить их"
-
-msgid "List and modify repositories"
-msgstr "Вывести список репозиториев и изменить их"
-
-msgid "List products which are marked to be mirrored."
-msgstr "Вывести список продуктов, помеченных для зеркального отображения."
-
-msgid "List repositories which are marked to be mirrored"
-msgstr "Вывести список репозиториев, помеченных для зеркального отображения"
-
-msgid "Mandatory"
-msgstr "Обязательно"
-
-msgid "Mandatory?"
-msgstr "Обязательно?"
-
-msgid "Mirror"
-msgstr "Зеркальное отображение"
-
-msgid "Mirror repos at given path"
-msgstr "Зеркально отобразить репозитории по указанному пути"
-
-msgid "Mirror repos from given path"
-msgstr "Зеркально отобразить репозитории из указанного пути"
-
-msgid "Mirror repositories"
-msgstr "Зеркально отобразить репозитории"
-
-msgid "Mirror?"
-msgstr "Выполнить зеркальное отображение?"
-
-msgid "Mirroring SUSE Manager product tree to %{dir}"
-msgstr ""
-"Выполняется зеркальное отображение дерева продуктов SUSE Manager в каталог "
-"%{dir}"
-
-msgid "Mirroring repository %{repo} to %{dir}"
-msgstr "Выполняется зеркальное отображение репозитория %{repo} в каталог %{dir}"
-
-msgid "Missing data files: %{files}"
-msgstr "Отсутствуют файлы данных: %{files}"
-
-msgid "Multiple base products found: '%s'."
-msgstr "Найдено несколько базовых продуктов: %s."
-
-msgid "Name"
-msgstr "Имя"
-
-msgid "No base product found."
-msgstr "Базовый продукт не найден."
-
-msgid "No custom repositories found."
-msgstr "Пользовательские репозитории не найдены."
-
-msgid "No matching products found in the database."
-msgstr "В базе данных не найдено соответствующих продуктов."
-
-msgid "No product IDs supplied"
-msgstr "Не указаны идентификаторы продуктов"
-
+#: ../app/controllers/api/connect/base_controller.rb:20
+msgid "Required parameters are missing or empty: %s"
+msgstr "Требуемые параметры отсутствуют или пустые: %s"
+
+#: ../app/controllers/api/connect/base_controller.rb:31
+msgid "Unknown Registration Code."
+msgstr "Неизвестный код регистрации."
+
+#: ../app/controllers/api/connect/base_controller.rb:34
+msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
+msgstr "Код регистрации еще не активирован. Чтобы активировать его, зайдите на страницу https://scc.suse.com."
+
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:21
+msgid "The requested product '%s' is not activated on this system."
+msgstr "Запрошенный продукт %s не активирован в этой системе."
+
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:84
 msgid "No product found"
 msgstr "Продукт не найден"
 
-msgid "No product found for target %{target}."
-msgstr "Не найден продукт для цели %{target}."
-
-msgid "No product found on RMT for: %s"
-msgstr "В RMT не найден продукт для %s"
-
-msgid "No products attached to repository."
-msgstr "К репозиторию не прикреплены продукты."
-
-msgid "No repositories enabled."
-msgstr "Нет включенных репозиториев."
-
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:90
 msgid "No repositories found for product: %s"
 msgstr "Не найдены репозитории для продукта %s"
 
-msgid "No repository ids supplied"
-msgstr "Не указаны идентификаторы репозиториев"
-
-msgid "Not Mandatory"
-msgstr "Необязательно"
-
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:97
 msgid "Not all mandatory repositories are mirrored for product %s"
-msgstr ""
-"Зеркальное отображение выполнено не для всех обязательных репозиториев "
-"продукта %s"
+msgstr "Зеркальное отображение выполнено не для всех обязательных репозиториев продукта %s"
 
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:118
+msgid "Unmet product dependencies, activate one of these products first: %s"
+msgstr "Не соблюдены зависимости продукта, сначала активируйте один из следующих продуктов: %s"
+
+#: ../app/controllers/api/connect/v3/systems/systems_controller.rb:6
 msgid "Not provided"
 msgstr "Не указано"
 
-msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
-msgstr ""
-"Код регистрации еще не активирован. Чтобы активировать его, зайдите на "
-"страницу https://scc.suse.com."
+#: ../app/controllers/api/connect/v3/systems/systems_controller.rb:10
+msgid "Updated system information for host '%s'"
+msgstr "Системная информация для сервера %s обновлена"
 
-msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
-msgstr ""
-"По умолчанию отображаются только включенные продукты. Чтобы увидеть все "
-"продукты, воспользуйтесь параметром %{command}."
+#: ../app/controllers/api/connect/v4/repositories/installer_controller.rb:16
+msgid "No product found on RMT for: %s"
+msgstr "В RMT не найден продукт для %s"
 
-msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
-msgstr ""
-"По умолчанию отображаются только включенные репозитории. Чтобы увидеть все "
-"репозитории, воспользуйтесь параметром %{command}."
+#: ../app/controllers/api/connect/v4/systems/products_controller.rb:5
+msgid "The product \"%s\" is a base product and cannot be deactivated"
+msgstr "Продукт %s является базовым, и его нельзя деактивировать"
 
-msgid "Output data in CSV format"
-msgstr "Вывести данные в формате CSV"
+#: ../app/controllers/api/connect/v4/systems/products_controller.rb:7
+msgid "Cannot deactivate the product \"%s\". Other activated products depend upon it."
+msgstr "Не удается деактивировать продукт %s. От него зависят другие активированные продукты."
 
-msgid "Path to unpacked SMT data tarball"
-msgstr "Путь к tarball незапакованных данных SMT"
+#: ../app/controllers/api/connect/v4/systems/products_controller.rb:15
+msgid "%s is not yet activated on the system."
+msgstr "Продукт %s еще не активирован в системе."
 
-msgid "Process is locked by the application with pid %{pid}. Close this application or wait for it to finish before trying again."
-msgstr ""
-"Процесс заблокирован приложением с pid %{pid}. Закройте его или дождитесь "
-"завершения его работы, а затем повторите попытку."
+#: ../app/controllers/application_controller.rb:13
+msgid "Authenticated system with login \\\"%{login}\\\""
+msgstr "Выполнена аутентификация в системе с именем пользователя %{login}"
 
+#: ../app/controllers/application_controller.rb:16
+msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
+msgstr "Не удалось найти систему с именем пользователя %{login} и паролем %{password}"
+
+#: ../app/controllers/application_controller.rb:17
+msgid "Invalid system credentials"
+msgstr "Недействительные учетные данные для системы"
+
+#: ../app/controllers/services_controller.rb:34
+msgid "Requested service not found"
+msgstr "Запрошенная служба не найдена"
+
+#: ../app/models/migration_engine.rb:49
+msgid "The requested products '%s' are not activated on the system."
+msgstr "Запрошенные продукты %s не активированы в этой системе."
+
+#: ../app/models/migration_engine.rb:68
+msgid "Multiple base products found: '%s'."
+msgstr "Найдено несколько базовых продуктов: %s."
+
+#: ../app/models/migration_engine.rb:69
+msgid "No base product found."
+msgstr "Базовый продукт не найден."
+
+#: ../lib/rmt/checksum_verifier.rb:13
+msgid "Unknown hash function %{checksum_type}"
+msgstr "Неизвестная хэш-функция %{checksum_type}"
+
+#: ../lib/rmt/cli/base.rb:15
+msgid "Commands:"
+msgstr "Команды:"
+
+#: ../lib/rmt/cli/base.rb:21
+msgid "Run '%{command}' for more information on a command and its subcommands."
+msgstr "Чтобы получить дополнительные сведения о команде и ее вложенных командах, выполните команду %{command}."
+
+#: ../lib/rmt/cli/base.rb:24
+msgid "Do you have any suggestions for improvement? We would love to hear from you!"
+msgstr "Возможно, у вас есть пожелания или вы можете предложить улучшение? Мы будем рады об этом узнать!"
+
+#: ../lib/rmt/cli/base.rb:25
+msgid "Check out %{url}"
+msgstr "Проверьте URL-адрес %{url}"
+
+#: ../lib/rmt/cli/base.rb:43
+msgid "Could not create deduplication hardlink: %{error}."
+msgstr "Не удалось создать жесткую ссылку для дедупликации: %{error}."
+
+#: ../lib/rmt/cli/base.rb:49
+msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
+msgstr "Не удается подключиться к серверу баз данных. Проверьте правильность учетных данных в файле %{path} или настройте YaST для RMT (%{command})."
+
+#: ../lib/rmt/cli/base.rb:58
+msgid "Cannot connect to database server. Make sure it is running and its credentials are configured in '%{path}'."
+msgstr "Не удается подключиться к серверу баз данных. Убедитесь, что он запущен и учетные данные настроены в файле %{path}."
+
+#: ../lib/rmt/cli/base.rb:67
+#, fuzzy
+#| msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
+msgid "The RMT database has not yet been initialized. Run '%{command}' to set up the database."
+msgstr "База данных RMT еще не инициализирована. Чтобы настроить ее, выполните команду %{command}."
+
+#: ../lib/rmt/cli/base.rb:73
+msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
+msgstr "Учетные данные SCC не настроены должным образом по пути %{path}. Их можно получить по URL-адресу %{url}."
+
+#: ../lib/rmt/cli/base.rb:86
+#, fuzzy
+msgid ""
+"SCC API request failed. Error details:\n"
+"Request URL: %{url}\n"
+"Response code: %{code}\n"
+"Response body:\n"
+"%{body}"
+msgstr "URL-адрес"
+
+#: ../lib/rmt/cli/base.rb:118
+msgid "%{path} is not a directory."
+msgstr "%{path} не является каталогом."
+
+#: ../lib/rmt/cli/base.rb:122
+msgid "%{path} is not writable by user %{username}."
+msgstr "Каталог %{path} недоступен для записи пользователем %{username}."
+
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:19
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:40
+#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:17
+#: ../lib/rmt/cli/decorators/product_decorator.rb:21
+#: ../lib/rmt/cli/decorators/product_decorator.rb:44
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:19
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:39
+msgid "ID"
+msgstr "ИД"
+
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:20
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:41
+#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:18
+msgid "Name"
+msgstr "Имя"
+
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:21
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:42
+msgid "URL"
+msgstr "URL-адрес"
+
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:22
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:43
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:22
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:41
+msgid "Mandatory?"
+msgstr "Обязательно?"
+
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:23
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:44
+#: ../lib/rmt/cli/decorators/product_decorator.rb:27
+#: ../lib/rmt/cli/decorators/product_decorator.rb:49
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:23
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:42
+msgid "Mirror?"
+msgstr "Выполнить зеркальное отображение?"
+
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:24
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:45
+msgid "Last Mirrored"
+msgstr "Последнее зеркальное отображение"
+
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:34
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:33
+msgid "Mandatory"
+msgstr "Обязательно"
+
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:34
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:33
+msgid "Not Mandatory"
+msgstr "Необязательно"
+
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:35
+#: ../lib/rmt/cli/decorators/product_decorator.rb:39
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:34
+msgid "Mirror"
+msgstr "Зеркальное отображение"
+
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:35
+#: ../lib/rmt/cli/decorators/product_decorator.rb:39
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:34
+msgid "Don't Mirror"
+msgstr "Не выполнять зеркальное отображение"
+
+#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:19
+#: ../lib/rmt/cli/decorators/product_decorator.rb:23
+#: ../lib/rmt/cli/decorators/product_decorator.rb:46
+msgid "Version"
+msgstr "Версия"
+
+#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:20
+#, fuzzy
+msgid "Architecture"
+msgstr "Архив"
+
+#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:34
+msgid "Product ID"
+msgstr "Идентификатор продукта"
+
+#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:35
+msgid "Product Name"
+msgstr "Название продукта"
+
+#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:36
+msgid "Product Version"
+msgstr "Версия продукта"
+
+#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:37
+msgid "Product Architecture"
+msgstr "Архитектура продукта"
+
+#: ../lib/rmt/cli/decorators/product_decorator.rb:22
+#: ../lib/rmt/cli/decorators/product_decorator.rb:45
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:20
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:40
 msgid "Product"
 msgstr "Продукт"
 
-msgid "Product %{products} could not be found and was not disabled."
-msgid_plural "Products %{products} could not be found and were not disabled."
-msgstr[0] "Не удалось найти и отключить продукт %{products}."
-msgstr[1] "Не удалось найти и отключить продукты %{products}."
-msgstr[2] "Не удалось найти и отключить продукты %{products}."
+#. i18n: architecture
+#: ../lib/rmt/cli/decorators/product_decorator.rb:24
+#: ../lib/rmt/cli/decorators/product_decorator.rb:48
+msgid "Arch"
+msgstr "Архив"
 
+#: ../lib/rmt/cli/decorators/product_decorator.rb:25
+#, fuzzy
+msgid "Product String"
+msgstr "Продукт"
+
+#: ../lib/rmt/cli/decorators/product_decorator.rb:26
+msgid "Release Stage"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/product_decorator.rb:28
+#: ../lib/rmt/cli/decorators/product_decorator.rb:50
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:24
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:43
+msgid "Last mirrored"
+msgstr "Последнее зеркальное отображение"
+
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:21
+msgid "Description"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:55
+#, fuzzy
+msgid "mandatory"
+msgstr "Обязательно"
+
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:55
+#, fuzzy
+msgid "non-mandatory"
+msgstr "Необязательно"
+
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:56
+msgid "enabled"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:56
+msgid "not enabled"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:57
+msgid "mirrored at %{time}"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:57
+#, fuzzy
+msgid "not mirrored"
+msgstr "Последнее зеркальное отображение"
+
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:61
+msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+msgid "Login"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+msgid "Hostname"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+msgid "Registration time"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+msgid "Last seen"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+#, fuzzy
+msgid "Products"
+msgstr "Продукт"
+
+#: ../lib/rmt/cli/export.rb:3
+msgid "Store SCC data in files at given path"
+msgstr "Сохранить данные SCC в файлах по указанному пути"
+
+#: ../lib/rmt/cli/export.rb:9
+msgid "Store repository settings at given path"
+msgstr "Сохранить настройки репозитория по указанному пути"
+
+#: ../lib/rmt/cli/export.rb:16
+msgid "Settings saved at %{file}."
+msgstr "Настройки сохранены в файле %{file}."
+
+#: ../lib/rmt/cli/export.rb:19
+msgid "Mirror repos at given path"
+msgstr "Зеркально отобразить репозитории по указанному пути"
+
+#: ../lib/rmt/cli/export.rb:21
+msgid "Run this command on an online RMT."
+msgstr ""
+
+#: ../lib/rmt/cli/export.rb:23
+msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
+msgstr ""
+
+#: ../lib/rmt/cli/export.rb:28
+msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
+msgstr ""
+
+#: ../lib/rmt/cli/export.rb:43 ../lib/rmt/cli/import.rb:20
+msgid "%{file} does not exist."
+msgstr "Файл %{file} не существует."
+
+#: ../lib/rmt/cli/import.rb:3
+msgid "Read SCC data from given path"
+msgstr "Прочитать данные SCC по указанному пути"
+
+#: ../lib/rmt/cli/import.rb:11
+msgid "Mirror repos from given path"
+msgstr "Зеркально отобразить репозитории из указанного пути"
+
+#: ../lib/rmt/cli/import.rb:34
+msgid "repository by URL %{url} does not exist in database"
+msgstr "репозиторий с URL-адресом %{url} не существует в базе данных"
+
+#: ../lib/rmt/cli/main.rb:5
+msgid "Enable debug output"
+msgstr "Разрешить вывод данных отладки"
+
+#: ../lib/rmt/cli/main.rb:7
+msgid "Sync database with SUSE Customer Center"
+msgstr "Синхронизировать базу данных с центром SUSE Customer Center"
+
+#: ../lib/rmt/cli/main.rb:14
+msgid "List and modify products"
+msgstr "Вывести список продуктов и изменить их"
+
+#: ../lib/rmt/cli/main.rb:17
+msgid "List and modify repositories"
+msgstr "Вывести список репозиториев и изменить их"
+
+#: ../lib/rmt/cli/main.rb:20
+msgid "Mirror repositories"
+msgstr "Зеркально отобразить репозитории"
+
+#: ../lib/rmt/cli/main.rb:23
+msgid "Import commands for Offline Sync"
+msgstr "Импорт команд для автономной синхронизации"
+
+#: ../lib/rmt/cli/main.rb:26
+msgid "Export commands for Offline Sync"
+msgstr "Экспорт команд для автономной синхронизации"
+
+#: ../lib/rmt/cli/main.rb:29
+msgid "List and manipulate registered systems"
+msgstr ""
+
+#: ../lib/rmt/cli/main.rb:32
+msgid "Show RMT version"
+msgstr "Показать версию RMT"
+
+#: ../lib/rmt/cli/mirror.rb:2
+#, fuzzy
+msgid "Mirror all enabled repositories"
+msgstr "Зеркальное отображение"
+
+#: ../lib/rmt/cli/mirror.rb:8
+#, fuzzy
+msgid "Mirroring SUMA product tree failed: %{error_message}"
+msgstr "Зеркальное отображение"
+
+#: ../lib/rmt/cli/mirror.rb:11
+msgid "There are no repositories marked for mirroring."
+msgstr "Отсутствуют репозитории, помеченные для зеркального отображения."
+
+#: ../lib/rmt/cli/mirror.rb:30
+#, fuzzy
+msgid "Mirror enabled repositories with given repository IDs"
+msgstr "Зеркальное отображение"
+
+#: ../lib/rmt/cli/mirror.rb:34 ../lib/rmt/cli/repos_base.rb:10
+#, fuzzy
+msgid "No repository IDs supplied"
+msgstr "Не указаны идентификаторы репозиториев"
+
+#: ../lib/rmt/cli/mirror.rb:38
+#, fuzzy
+msgid "Repository with ID %{repo_id} not found"
+msgstr "ИД"
+
+#: ../lib/rmt/cli/mirror.rb:48
+#, fuzzy
+msgid "Mirror enabled repositories for a product with given product IDs"
+msgstr "Зеркальное отображение"
+
+#: ../lib/rmt/cli/mirror.rb:52 ../lib/rmt/cli/products.rb:115
+msgid "No product IDs supplied"
+msgstr "Не указаны идентификаторы продуктов"
+
+#: ../lib/rmt/cli/mirror.rb:57
+#, fuzzy
+msgid "Product for target %{target} not found"
+msgstr "Продукт"
+
+#: ../lib/rmt/cli/mirror.rb:60
+#, fuzzy
+msgid "Product %{target} has no repositories enabled"
+msgstr "Продукт"
+
+#: ../lib/rmt/cli/mirror.rb:64
+#, fuzzy
+msgid "Product with ID %{target} not found"
+msgstr "Не удалось найти продукт с идентификатором %{id}."
+
+#: ../lib/rmt/cli/mirror.rb:89
+#, fuzzy
+msgid "Mirroring of repository with ID %{repo_id} is not enabled"
+msgstr "Зеркальное отображение"
+
+#: ../lib/rmt/cli/mirror.rb:101
+msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
+msgstr ""
+
+#: ../lib/rmt/cli/mirror.rb:109
+#, fuzzy
+msgid "Mirroring complete."
+msgstr "Зеркальное отображение"
+
+#: ../lib/rmt/cli/mirror.rb:111
+msgid "The following errors occurred while mirroring:"
+msgstr ""
+
+#: ../lib/rmt/cli/mirror.rb:113
+#, fuzzy
+msgid "Mirroring completed with errors."
+msgstr "Зеркальное отображение"
+
+#: ../lib/rmt/cli/products.rb:8
+msgid "List products which are marked to be mirrored."
+msgstr "Вывести список продуктов, помеченных для зеркального отображения."
+
+#: ../lib/rmt/cli/products.rb:9
+msgid "List all products, including ones which are not marked to be mirrored"
+msgstr "Вывести список всех продуктов, включая те, что не помечены для зеркального отображения"
+
+#: ../lib/rmt/cli/products.rb:11 ../lib/rmt/cli/repos.rb:8
+#: ../lib/rmt/cli/repos_custom.rb:47 ../lib/rmt/cli/repos_custom.rb:104
+#: ../lib/rmt/cli/systems.rb:5
+msgid "Output data in CSV format"
+msgstr "Вывести данные в формате CSV"
+
+#: ../lib/rmt/cli/products.rb:12
+#, fuzzy
+msgid "Product name (e.g., Basesystem, SLES)"
+msgstr "Продукт"
+
+#: ../lib/rmt/cli/products.rb:13
+#, fuzzy
+msgid "Product version (e.g., 15, 15.1, '12 SP4')"
+msgstr "Продукт"
+
+#: ../lib/rmt/cli/products.rb:14
+#, fuzzy
+msgid "Product architecture (e.g., x86_64, aarch64)"
+msgstr "Продукт"
+
+#: ../lib/rmt/cli/products.rb:25 ../lib/rmt/cli/repos.rb:103
+msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
+msgstr "Сначала выполните команду %{command}, чтобы синхронизировать данные центра SUSE Customer Center."
+
+#: ../lib/rmt/cli/products.rb:27
+msgid "No matching products found in the database."
+msgstr "В базе данных не найдено соответствующих продуктов."
+
+#: ../lib/rmt/cli/products.rb:36
+msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
+msgstr "По умолчанию отображаются только включенные продукты. Чтобы увидеть все продукты, воспользуйтесь параметром %{command}."
+
+#: ../lib/rmt/cli/products.rb:43 ../lib/rmt/cli/products.rb:46
+msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
+msgstr "Включить зеркальное отображение пользовательских репозиториев по списку идентификаторов или строк продуктов."
+
+#: ../lib/rmt/cli/products.rb:44
+msgid "Enables all free modules for a product"
+msgstr "Включение всех бесплатных модулей для продукта"
+
+#: ../lib/rmt/cli/products.rb:48 ../lib/rmt/cli/products.rb:66
+#: ../lib/rmt/cli/products.rb:84 ../lib/rmt/cli/systems.rb:37
+msgid "Examples"
+msgstr ""
+
+#: ../lib/rmt/cli/products.rb:62 ../lib/rmt/cli/products.rb:64
+msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
+msgstr "Отключить зеркальное отображение репозиториев продуктов по списку идентификаторов или строк продуктов."
+
+#: ../lib/rmt/cli/products.rb:77
+msgid "To clean up downloaded files, run '%{command}'"
+msgstr ""
+
+#: ../lib/rmt/cli/products.rb:80 ../lib/rmt/cli/products.rb:82
+msgid "Displays product with all its repositories and their attributes."
+msgstr ""
+
+#: ../lib/rmt/cli/products.rb:97 ../lib/rmt/cli/products.rb:176
+msgid "No product found for target %{target}."
+msgstr "Не найден продукт для цели %{target}."
+
+#: ../lib/rmt/cli/products.rb:99
+#, fuzzy
+msgid "Product: %{name} (ID: %{id})"
+msgstr "Продукт"
+
+#: ../lib/rmt/cli/products.rb:100
+msgid "Description: %{description}"
+msgstr ""
+
+#: ../lib/rmt/cli/products.rb:108
+msgid "Repositories:"
+msgstr ""
+
+#: ../lib/rmt/cli/products.rb:108
+msgid "Repositories are not available for this product."
+msgstr ""
+
+#: ../lib/rmt/cli/products.rb:127
 msgid "Product %{products} could not be found and was not enabled."
 msgid_plural "Products %{products} could not be found and were not enabled."
 msgstr[0] "Не удалось найти и включить продукт %{products}."
 msgstr[1] "Не удалось найти и включить продукты %{products}."
 msgstr[2] "Не удалось найти и включить продукты %{products}."
 
-msgid "Product %{product} not found"
-msgstr "Не удалось найти продукт %{product}"
+#: ../lib/rmt/cli/products.rb:131
+msgid "Product %{products} could not be found and was not disabled."
+msgid_plural "Products %{products} could not be found and were not disabled."
+msgstr[0] "Не удалось найти и отключить продукт %{products}."
+msgstr[1] "Не удалось найти и отключить продукты %{products}."
+msgstr[2] "Не удалось найти и отключить продукты %{products}."
 
+#: ../lib/rmt/cli/products.rb:145
+msgid "Enabling %{product}:"
+msgstr "Включение продукта %{product}:"
+
+#: ../lib/rmt/cli/products.rb:149
+msgid "Disabling %{product}:"
+msgstr "Отключение продукта %{product}:"
+
+#: ../lib/rmt/cli/products.rb:156
+msgid "All repositories have already been enabled."
+msgstr "Все репозитории уже включены."
+
+#: ../lib/rmt/cli/products.rb:156
+msgid "All repositories have already been disabled."
+msgstr "Все репозитории уже отключены."
+
+#: ../lib/rmt/cli/products.rb:162
+msgid "Enabled repository %{repository}."
+msgstr "Репозиторий %{repository} включен."
+
+#: ../lib/rmt/cli/products.rb:164
+msgid "Disabled repository %{repository}."
+msgstr "Репозиторий %{repository} отключен."
+
+#: ../lib/rmt/cli/products.rb:177
+msgid "Found product by target %{target}: %{products}."
+msgid_plural "Found products by target %{target}: %{products}."
+msgstr[0] "Найден продукт по целевому значению %{target}: %{products}."
+msgstr[1] "Найдены продукты по целевому значению %{target}: %{products}."
+msgstr[2] "Найдены продукты по целевому значению %{target}: %{products}."
+
+#: ../lib/rmt/cli/products.rb:187
+msgid "Product by ID %{id} not found."
+msgstr "Не удалось найти продукт с идентификатором %{id}."
+
+#: ../lib/rmt/cli/repos.rb:3
+msgid "List and modify custom repositories"
+msgstr "Вывести список пользовательских репозиториев и изменить их"
+
+#: ../lib/rmt/cli/repos.rb:6
+msgid "List repositories which are marked to be mirrored"
+msgstr "Вывести список репозиториев, помеченных для зеркального отображения"
+
+#: ../lib/rmt/cli/repos.rb:7
+msgid "List all repositories, including ones which are not marked to be mirrored"
+msgstr "Вывести список всех репозиториев, включая те, что не помечены для зеркального отображения"
+
+#: ../lib/rmt/cli/repos.rb:16
+msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:26
+msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:30
+msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:36
+msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:38
+msgid "Only '%{input}' will be accepted."
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:40
+msgid "Enter a value:"
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:45
+msgid "Clean cancelled."
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:52
+msgid "Deleting locally mirrored files from repository '%{repo}'..."
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:61
+msgid "Clean finished. An estimated %{total_file_size} was removed."
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:65 ../lib/rmt/cli/repos.rb:67
+msgid "Enable mirroring of repositories by a list of repository IDs"
+msgstr "Включить зеркальное отображение репозиториев по списку их идентификаторов"
+
+#: ../lib/rmt/cli/repos.rb:69 ../lib/rmt/cli/repos.rb:83
+#: ../lib/rmt/cli/repos_custom.rb:8 ../lib/rmt/cli/repos_custom.rb:66
+#: ../lib/rmt/cli/repos_custom.rb:80
+msgid "Examples:"
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:79 ../lib/rmt/cli/repos.rb:81
+msgid "Disable mirroring of repositories by a list of repository IDs"
+msgstr "Отключить зеркальное отображение репозиториев по списку их идентификаторов"
+
+#: ../lib/rmt/cli/repos.rb:92 ../lib/rmt/cli/repos_custom.rb:89
+msgid "To clean up downloaded files, please run '%{command}'"
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:105
+msgid "No repositories enabled."
+msgstr "Нет включенных репозиториев."
+
+#: ../lib/rmt/cli/repos.rb:113
+msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
+msgstr "По умолчанию отображаются только включенные репозитории. Чтобы увидеть все репозитории, воспользуйтесь параметром %{command}."
+
+#: ../lib/rmt/cli/repos_base.rb:22
+#, fuzzy
+msgid "Repository by ID %{repos} could not be found and was not enabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
+msgstr[0] "Не удалось найти и включить репозиторий %{repos}."
+msgstr[1] "Не удалось найти и включить репозитории %{repos}."
+msgstr[2] "Не удалось найти и включить репозитории %{repos}."
+
+#: ../lib/rmt/cli/repos_base.rb:26
+#, fuzzy
+msgid "Repository by ID %{repos} could not be found and was not disabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
+msgstr[0] "Не удалось найти и отключить репозиторий %{repos}."
+msgstr[1] "Не удалось найти и отключить репозитории %{repos}."
+msgstr[2] "Не удалось найти и отключить репозитории %{repos}."
+
+#: ../lib/rmt/cli/repos_base.rb:38
+msgid "Repository by ID %{id} successfully enabled."
+msgstr "Репозиторий с идентификатором %{id} успешно включен."
+
+#: ../lib/rmt/cli/repos_base.rb:38
+msgid "Repository by ID %{id} successfully disabled."
+msgstr "Репозиторий с идентификатором %{id} успешно отключен."
+
+#: ../lib/rmt/cli/repos_base.rb:46
+#, fuzzy
+msgid "Repository by ID %{id} not found."
+msgstr "Не удалось найти продукт с идентификатором %{id}."
+
+#: ../lib/rmt/cli/repos_custom.rb:3 ../lib/rmt/cli/repos_custom.rb:6
+msgid "Creates a custom repository."
+msgstr "Создание пользовательского репозитория."
+
+#: ../lib/rmt/cli/repos_custom.rb:4
+#, fuzzy
+msgid "Provide a custom ID instead of allowing RMT to generate one."
+msgstr "ИД"
+
+#: ../lib/rmt/cli/repos_custom.rb:21
+msgid "A repository by the URL %{url} already exists."
+msgstr "Репозиторий по ссылке URL %{url} уже существует."
+
+#: ../lib/rmt/cli/repos_custom.rb:24
+#, fuzzy
+msgid "A repository by the ID %{id} already exists."
+msgstr "Репозиторий по ссылке URL %{url} уже существует."
+
+#: ../lib/rmt/cli/repos_custom.rb:27
+#, fuzzy
+msgid "Please provide a non-numeric ID for your custom repository."
+msgstr "ИД"
+
+#: ../lib/rmt/cli/repos_custom.rb:32
+#, fuzzy
+msgid "Couldn't add custom repository."
+msgstr "Создание пользовательского репозитория."
+
+#: ../lib/rmt/cli/repos_custom.rb:43
+msgid "Successfully added custom repository."
+msgstr "Пользовательский репозиторий успешно добавлен."
+
+#: ../lib/rmt/cli/repos_custom.rb:46
+msgid "List all custom repositories"
+msgstr "Вывести список всех пользовательских репозиториев"
+
+#: ../lib/rmt/cli/repos_custom.rb:52
+msgid "No custom repositories found."
+msgstr "Пользовательские репозитории не найдены."
+
+#: ../lib/rmt/cli/repos_custom.rb:62 ../lib/rmt/cli/repos_custom.rb:64
+#, fuzzy
+msgid "Enable mirroring of custom repositories by a list of IDs"
+msgstr "Включить зеркальное отображение пользовательского репозитория по идентификатору"
+
+#: ../lib/rmt/cli/repos_custom.rb:76
+#, fuzzy
+msgid "Disable mirroring of custom repository by a list of IDs"
+msgstr "Отключить зеркальное отображение пользовательского репозитория по идентификатору"
+
+#: ../lib/rmt/cli/repos_custom.rb:78
+#, fuzzy
+msgid "Disable mirroring of custom repositories by a list of IDs"
+msgstr "Отключить зеркальное отображение пользовательского репозитория по идентификатору"
+
+#: ../lib/rmt/cli/repos_custom.rb:92
+msgid "Remove a custom repository"
+msgstr "Удалить пользовательский репозиторий"
+
+#: ../lib/rmt/cli/repos_custom.rb:97
+msgid "Removed custom repository by ID %{id}."
+msgstr "Пользовательский репозиторий с идентификатором %{id} удален."
+
+#: ../lib/rmt/cli/repos_custom.rb:103
+msgid "Shows products attached to a custom repository"
+msgstr "Отображение продуктов, подключенных к пользовательскому репозиторию"
+
+#: ../lib/rmt/cli/repos_custom.rb:111
+msgid "No products attached to repository."
+msgstr "К репозиторию не прикреплены продукты."
+
+#: ../lib/rmt/cli/repos_custom.rb:121
+msgid "Attach an existing custom repository to a product"
+msgstr "Прикрепить существующий настраиваемый репозиторий к продукту"
+
+#: ../lib/rmt/cli/repos_custom.rb:127
+msgid "Attached repository to product '%{product_name}'."
+msgstr "Репозиторий прикреплен к продукту %{product_name}."
+
+#: ../lib/rmt/cli/repos_custom.rb:132
+msgid "Detach an existing custom repository from a product"
+msgstr "Отсоединить существующий пользовательский репозиторий от продукта"
+
+#: ../lib/rmt/cli/repos_custom.rb:138
+msgid "Detached repository from product '%{product_name}'."
+msgstr "Репозиторий отсоединен от продукта %{product_name}."
+
+#: ../lib/rmt/cli/repos_custom.rb:148
+msgid "Cannot find product by ID %{id}."
+msgstr "Не удается найти продукт с идентификатором %{id}."
+
+#: ../lib/rmt/cli/smt_importer.rb:38
+msgid "Enabled mirroring for repository %{repo}"
+msgstr "Зеркальное отображение включено для репозитория %{repo}"
+
+#: ../lib/rmt/cli/smt_importer.rb:40
+msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
+msgstr "Не удалось найти репозиторий%{repo} в базе данных RMT. Возможно, для него отсутствует действующая подписка."
+
+#: ../lib/rmt/cli/smt_importer.rb:62
+msgid "Added association between %{repo} and product %{product}"
+msgstr "Добавлена связь между %{repo} и продуктом %{product}"
+
+#: ../lib/rmt/cli/smt_importer.rb:65
 msgid ""
 "Product %{product} not found!\n"
 "Tried to attach custom repository %{repo} to product %{product},\n"
@@ -413,176 +844,246 @@ msgid ""
 "by running '%{command}'\n"
 msgstr ""
 "Не удалось найти продукт %{product}!\n"
-"Выполнена попытка подключить пользовательский репозиторий %{repo} к продукту "
-"%{product},\n"
-"однако найти указанный продукт не удалось. Чтобы прикрепить репозиторий к "
-"другому продукту,\n"
+"Выполнена попытка подключить пользовательский репозиторий %{repo} к продукту %{product},\n"
+"однако найти указанный продукт не удалось. Чтобы прикрепить репозиторий к другому продукту,\n"
 "воспользуйтесь командой %{command}.\n"
 
-msgid "Product Architecture"
-msgstr "Архитектура продукта"
-
-msgid "Product ID"
-msgstr "Идентификатор продукта"
-
-msgid "Product Name"
-msgstr "Название продукта"
-
-msgid "Product Version"
-msgstr "Версия продукта"
-
-msgid "Product by ID %{id} not found."
-msgstr "Не удалось найти продукт с идентификатором %{id}."
-
-msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
+#: ../lib/rmt/cli/smt_importer.rb:91
+msgid "Duplicate entry for system %{system}, skipping"
 msgstr ""
-"RMT еще не синхронизировано с SCC. Сначала выполните команду %{command}."
 
-msgid "Read SCC data from given path"
-msgstr "Прочитать данные SCC по указанному пути"
-
-msgid "Remove a custom repository"
-msgstr "Удалить пользовательский репозиторий"
-
-msgid "Removed custom repository by ID %{id}."
-msgstr "Пользовательский репозиторий с идентификатором %{id} удален."
-
-msgid "Repository %{repos} could not be found and was not disabled."
-msgid_plural "Repositories %{repos} could not be found and were not disabled."
-msgstr[0] "Не удалось найти и отключить репозиторий %{repos}."
-msgstr[1] "Не удалось найти и отключить репозитории %{repos}."
-msgstr[2] "Не удалось найти и отключить репозитории %{repos}."
-
-msgid "Repository %{repos} could not be found and was not enabled."
-msgid_plural "Repositories %{repos} could not be found and were not enabled."
-msgstr[0] "Не удалось найти и включить репозиторий %{repos}."
-msgstr[1] "Не удалось найти и включить репозитории %{repos}."
-msgstr[2] "Не удалось найти и включить репозитории %{repos}."
-
-msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
+#: ../lib/rmt/cli/smt_importer.rb:101
+msgid "Failed to import system %{system}"
 msgstr ""
-"Не удалось найти репозиторий%{repo} в базе данных RMT. Возможно, для него "
-"отсутствует действующая подписка."
 
-msgid "Repository by ID %{id} successfully disabled."
-msgstr "Репозиторий с идентификатором %{id} успешно отключен."
-
-msgid "Repository by ID %{id} successfully enabled."
-msgstr "Репозиторий с идентификатором %{id} успешно включен."
-
-msgid "Repository metadata signatures are missing"
-msgstr "Отсутствуют подписи метаданных репозитория"
-
-msgid "Repository not found by ID %{id}."
-msgstr "Не удалось найти репозиторий с идентификатором %{id}."
-
-msgid "Repository successfully disabled."
-msgstr "Репозиторий успешно отключен."
-
-msgid "Repository successfully enabled."
-msgstr "Репозиторий успешно включен."
-
-msgid "Requested service not found"
-msgstr "Запрошенная служба не найдена"
-
-msgid "Required parameters are missing or empty: %s"
-msgstr "Требуемые параметры отсутствуют или пустые: %s"
-
-msgid "Run '%{command}' for more information on a command and its subcommands."
-msgstr ""
-"Чтобы получить дополнительные сведения о команде и ее вложенных командах, "
-"выполните команду %{command}."
-
-msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
-msgstr ""
-"Сначала выполните команду %{command}, чтобы синхронизировать данные центра "
-"SUSE Customer Center."
-
-msgid "SCC ID"
-msgstr "Идентификатор SCC"
-
-msgid "Settings saved at %{file}."
-msgstr "Настройки сохранены в файле %{file}."
-
-msgid "Show RMT version"
-msgstr "Показать версию RMT"
-
-msgid "Shows products attached to a custom repository"
-msgstr "Отображение продуктов, подключенных к пользовательскому репозиторию"
-
-msgid "Store SCC data in files at given path"
-msgstr "Сохранить данные SCC в файлах по указанному пути"
-
-msgid "Store repository settings at given path"
-msgstr "Сохранить настройки репозитория по указанному пути"
-
-msgid "Successfully added custom repository."
-msgstr "Пользовательский репозиторий успешно добавлен."
-
-msgid "Sync database with SUSE Customer Center"
-msgstr "Синхронизировать базу данных с центром SUSE Customer Center"
-
+#: ../lib/rmt/cli/smt_importer.rb:136 ../lib/rmt/cli/smt_importer.rb:166
 msgid "System %{system} not found"
 msgstr "Система %{system} не найдена"
 
-msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
+#: ../lib/rmt/cli/smt_importer.rb:139
+msgid "Product %{product} not found"
+msgstr "Не удалось найти продукт %{product}"
+
+#: ../lib/rmt/cli/smt_importer.rb:172
+msgid "Hardware information stored for system %{system}"
+msgstr "Для системы %{system} сохранена информация об оборудовании"
+
+#: ../lib/rmt/cli/smt_importer.rb:196
+msgid "Path to unpacked SMT data tarball"
+msgstr "Путь к tarball незапакованных данных SMT"
+
+#: ../lib/rmt/cli/smt_importer.rb:197
+msgid "Do not import the systems that were registered to the SMT"
+msgstr "Не импортировать системы, зарегистрированные в SMT"
+
+#: ../lib/rmt/cli/smt_importer.rb:198
+msgid "Do not import system hardware info from MachineData table"
 msgstr ""
-"База данных RMT еще не инициализирована. Чтобы настроить ее, выполните "
-"команду %{command}."
 
-msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
-msgstr ""
-"Учетные данные SCC не настроены должным образом по пути %{path}. Их можно "
-"получить по URL-адресу %{url}."
+#: ../lib/rmt/cli/smt_importer.rb:209
+msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
+msgstr "RMT еще не синхронизировано с SCC. Сначала выполните команду %{command}."
 
-msgid "The product \"%s\" is a base product and cannot be deactivated"
-msgstr "Продукт %s является базовым, и его нельзя деактивировать"
-
-msgid "The requested product '%s' is not activated on this system."
-msgstr "Запрошенный продукт %s не активирован в этой системе."
-
-msgid "The requested products '%s' are not activated on the system."
-msgstr "Запрошенные продукты %s не активированы в этой системе."
-
-msgid "There are no repositories marked for mirroring."
-msgstr "Отсутствуют репозитории, помеченные для зеркального отображения."
-
-msgid "URL"
-msgstr "URL-адрес"
-
-msgid "Unknown Registration Code."
-msgstr "Неизвестный код регистрации."
-
-msgid "Unknown hash function %{checksum_type}"
-msgstr "Неизвестная хэш-функция %{checksum_type}"
-
-msgid "Unmet product dependencies, activate one of these products first: %s"
-msgstr ""
-"Не соблюдены зависимости продукта, сначала активируйте один из следующих "
-"продуктов: %s"
-
-msgid "Updated system information for host '%s'"
-msgstr "Системная информация для сервера %s обновлена"
-
-msgid "Updating products"
-msgstr "Выполняется обновление продуктов"
-
-msgid "Updating repositories"
-msgstr "Выполняется обновление репозиториев"
-
-msgid "Updating subscriptions"
-msgstr "Выполняется обновление подписок"
-
-msgid "Version"
-msgstr "Версия"
-
+#: ../lib/rmt/cli/smt_importer.rb:210
 msgid "importing data from SMT."
 msgstr "выполняется импорт данных из SMT."
 
-msgid "repository by URL %{url} does not exist in database"
-msgstr "репозиторий с URL-адресом %{url} не существует в базе данных"
-
-msgid "× File does not exist or has wrong filesize, deduplication ignored %{error}."
+#: ../lib/rmt/cli/systems.rb:2
+msgid "List registered systems."
 msgstr ""
-"× Файл не существует или имеет неправильный размер, операция дедупликации "
-"будет пропущена, ошибка: %{error}."
+
+#: ../lib/rmt/cli/systems.rb:3
+msgid "Number of systems to display"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:4
+msgid "List all registered systems"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:12
+msgid "There are no systems registered to this RMT instance."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:18
+msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:26
+msgid "Forward registered systems data to SCC"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:31
+msgid "Removes a system and its activations from RMT"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:33
+msgid "Removes a system and its activations from RMT."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:35
+msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:44
+msgid "Successfully removed system with login %{login}."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:46
+msgid "System with login %{login} cannot be removed."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:48
+msgid "System with login %{login} not found."
+msgstr ""
+
+#: ../lib/rmt/downloader.rb:201
+msgid "Checksum doesn't match"
+msgstr "Не совпадает контрольная сумма"
+
+#: ../lib/rmt/downloader.rb:207
+msgid "%{file} - HTTP request failed with code %{code}"
+msgstr "%{file} — ошибка HTTP-запроса, код %{code}"
+
+#: ../lib/rmt/downloader.rb:217
+msgid "%{file} - File does not exist"
+msgstr "%{file} — файл не существует"
+
+#: ../lib/rmt/fiber_request.rb:32
+msgid "%{file} - return code %{code}"
+msgstr "%{file} — код возврата %{code}"
+
+#: ../lib/rmt/gpg.rb:37
+msgid "GPG key import failed"
+msgstr ""
+
+#: ../lib/rmt/gpg.rb:48
+msgid "GPG signature verification failed"
+msgstr ""
+
+#: ../lib/rmt/lockfile.rb:11
+msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
+msgstr ""
+
+#: ../lib/rmt/mirror.rb:41
+msgid "Mirroring SUSE Manager product tree to %{dir}"
+msgstr "Выполняется зеркальное отображение дерева продуктов SUSE Manager в каталог %{dir}"
+
+#: ../lib/rmt/mirror.rb:44
+#, fuzzy
+msgid "Could not mirror SUSE Manager product tree with error: %{error}"
+msgstr "Не удалось создать зеркальное отображение дерева продукта suma, ошибка: %{error}"
+
+#: ../lib/rmt/mirror.rb:50
+msgid "Mirroring repository %{repo} to %{dir}"
+msgstr "Выполняется зеркальное отображение репозитория %{repo} в каталог %{dir}"
+
+#: ../lib/rmt/mirror.rb:76
+msgid "Could not create local directory %{dir} with error: %{error}"
+msgstr "Не удалось создать локальный каталог %{dir}, ошибка: %{error}"
+
+#: ../lib/rmt/mirror.rb:83
+msgid "Could not create a temporary directory: %{error}"
+msgstr "Не удалось создать временный каталог: %{error}"
+
+#: ../lib/rmt/mirror.rb:110
+msgid "Repository metadata signatures are missing"
+msgstr "Отсутствуют подписи метаданных репозитория"
+
+#: ../lib/rmt/mirror.rb:112
+msgid "Failed to get repository metadata signatures with HTTP code %{http_code}"
+msgstr ""
+
+#: ../lib/rmt/mirror.rb:123
+msgid "Error while mirroring metadata: %{error}"
+msgstr "Ошибка при зеркальном отображении метаданных: %{error}"
+
+#: ../lib/rmt/mirror.rb:146
+msgid "Error while mirroring license: %{error}"
+msgstr "Ошибка при зеркальном отображении лицезнии: %{error}"
+
+#: ../lib/rmt/mirror.rb:160
+msgid "Failed to download %{failed_count} files"
+msgstr ""
+
+#: ../lib/rmt/mirror.rb:162
+msgid "Error while mirroring data: %{error}"
+msgstr "Ошибка при зеркальном отображении данных: %{error}"
+
+#: ../lib/rmt/mirror.rb:197
+msgid "Error while moving directory %{src} to %{dest}: %{error}"
+msgstr "Ошибка при переносе каталога из %{src} в %{dest}: %{error}"
+
+#: ../lib/rmt/scc.rb:15 ../lib/rmt/scc.rb:86
+msgid "SCC credentials not set."
+msgstr ""
+
+#: ../lib/rmt/scc.rb:19
+msgid "Downloading data from SCC"
+msgstr "Выполняется загрузка данных из SCC"
+
+#: ../lib/rmt/scc.rb:22 ../lib/rmt/scc.rb:66
+msgid "Updating products"
+msgstr "Выполняется обновление продуктов"
+
+#: ../lib/rmt/scc.rb:37
+msgid "Exporting data from SCC to %{path}"
+msgstr "Выполняется экспорт данных из SCC в %{path}"
+
+#: ../lib/rmt/scc.rb:41
+msgid "Exporting products"
+msgstr "Выполняется экспорт продуктов"
+
+#: ../lib/rmt/scc.rb:46
+msgid "Exporting repositories"
+msgstr "Выполняется экспорт репозиториев"
+
+#: ../lib/rmt/scc.rb:49
+msgid "Exporting subscriptions"
+msgstr "Выполняется экспорт подписок"
+
+#: ../lib/rmt/scc.rb:52
+msgid "Exporting orders"
+msgstr "Выполняется экспорт заказов"
+
+#: ../lib/rmt/scc.rb:60
+msgid "Missing data files: %{files}"
+msgstr "Отсутствуют файлы данных: %{files}"
+
+#: ../lib/rmt/scc.rb:64
+msgid "Importing SCC data from %{path}"
+msgstr "Выполняется импорт данных SCC из %{path}"
+
+#: ../lib/rmt/scc.rb:82
+msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
+msgstr ""
+
+#: ../lib/rmt/scc.rb:91
+msgid "Syncing system %{login} to SCC"
+msgstr ""
+
+#: ../lib/rmt/scc.rb:96
+msgid "Failed to sync system %{login}: %{error}"
+msgstr ""
+
+#: ../lib/rmt/scc.rb:103
+msgid "Syncing de-registered system %{scc_system_id} to SCC"
+msgstr ""
+
+#: ../lib/rmt/scc.rb:120
+msgid "Cleaning up the database"
+msgstr "Очистка базы данных"
+
+#: ../lib/rmt/scc.rb:125
+msgid "Updating repositories"
+msgstr "Выполняется обновление репозиториев"
+
+#: ../lib/rmt/scc.rb:132
+msgid "Updating subscriptions"
+msgstr "Выполняется обновление подписок"
+
+#: ../lib/rmt/scc.rb:144
+msgid "Adding product %{product}"
+msgstr "Добавление продукта %{product}"
+
+#~ msgid "No repository ids supplied"
+#~ msgstr "Не указаны идентификаторы репозиториев"

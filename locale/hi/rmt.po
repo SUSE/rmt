@@ -3,20 +3,19 @@
 # This file is distributed under the same license as the rmt package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-26 10:31+0100\n"
 "PO-Revision-Date: 2021-01-26 10:31+0100\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
 
 #: ../app/controllers/api/connect/base_controller.rb:20
 msgid "Required parameters are missing or empty: %s"
@@ -27,9 +26,7 @@ msgid "Unknown Registration Code."
 msgstr ""
 
 #: ../app/controllers/api/connect/base_controller.rb:34
-msgid ""
-"Not yet activated Registration Code. Visit https://scc.suse.com to activate it"
-"."
+msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr ""
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:21
@@ -129,27 +126,19 @@ msgid "Could not create deduplication hardlink: %{error}."
 msgstr ""
 
 #: ../lib/rmt/cli/base.rb:49
-msgid ""
-"Cannot connect to database server. Ensure its credentials are correctly config"
-"ured in '%{path}' or configure RMT with YaST ('%{command}')."
+msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr ""
 
 #: ../lib/rmt/cli/base.rb:58
-msgid ""
-"Cannot connect to database server. Make sure it is running and its credentials"
-" are configured in '%{path}'."
+msgid "Cannot connect to database server. Make sure it is running and its credentials are configured in '%{path}'."
 msgstr ""
 
 #: ../lib/rmt/cli/base.rb:67
-msgid ""
-"The RMT database has not yet been initialized. Run '%{command}' to set up the d"
-"atabase."
+msgid "The RMT database has not yet been initialized. Run '%{command}' to set up the database."
 msgstr ""
 
 #: ../lib/rmt/cli/base.rb:73
-msgid ""
-"The SCC credentials are not configured correctly in '%{path}'. You can obtain "
-"them from %{url}"
+msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
 msgstr ""
 
 #: ../lib/rmt/cli/base.rb:86
@@ -360,15 +349,11 @@ msgid "Run this command on an online RMT."
 msgstr ""
 
 #: ../lib/rmt/cli/export.rb:23
-msgid ""
-"The specified PATH must contain a %{file} file. An offline RMT can create this"
-" file with the command '%{command}'."
+msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
 msgstr ""
 
 #: ../lib/rmt/cli/export.rb:28
-msgid ""
-"RMT will mirror the specified repositories in %{file} to PATH, usually a porta"
-"ble storage device."
+msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
 msgstr ""
 
 #: ../lib/rmt/cli/export.rb:43 ../lib/rmt/cli/import.rb:20
@@ -439,8 +424,7 @@ msgstr ""
 msgid "Mirror enabled repositories with given repository IDs"
 msgstr ""
 
-#: ../lib/rmt/cli/mirror.rb:34
-#: ../lib/rmt/cli/repos_base.rb:10
+#: ../lib/rmt/cli/mirror.rb:34 ../lib/rmt/cli/repos_base.rb:10
 msgid "No repository IDs supplied"
 msgstr ""
 
@@ -523,15 +507,11 @@ msgid "No matching products found in the database."
 msgstr ""
 
 #: ../lib/rmt/cli/products.rb:36
-msgid ""
-"Only enabled products are shown by default. Use the '%{command}' option to see"
-" all products."
+msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
 msgstr ""
 
 #: ../lib/rmt/cli/products.rb:43 ../lib/rmt/cli/products.rb:46
-msgid ""
-"Enable mirroring of product repositories by a list of product IDs or product s"
-"trings."
+msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
 msgstr ""
 
 #: ../lib/rmt/cli/products.rb:44
@@ -544,9 +524,7 @@ msgid "Examples"
 msgstr ""
 
 #: ../lib/rmt/cli/products.rb:62 ../lib/rmt/cli/products.rb:64
-msgid ""
-"Disable mirroring of product repositories by a list of product IDs or product "
-"strings."
+msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
 msgstr ""
 
 #: ../lib/rmt/cli/products.rb:77
@@ -636,27 +614,19 @@ msgid "List all repositories, including ones which are not marked to be mirrored
 msgstr ""
 
 #: ../lib/rmt/cli/repos.rb:16
-msgid ""
-"Removes locally mirrored files of repositories which are not marked to be mirr"
-"ored"
+msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
 msgstr ""
 
 #: ../lib/rmt/cli/repos.rb:26
-msgid ""
-"RMT only found locally mirrored files of repositories that are marked to be mi"
-"rrored."
+msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
 msgstr ""
 
 #: ../lib/rmt/cli/repos.rb:30
-msgid ""
-"RMT found locally mirrored files from the following repositories which are not"
-" marked to be mirrored:"
+msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr ""
 
 #: ../lib/rmt/cli/repos.rb:36
-msgid ""
-"Would you like to continue and remove the locally mirrored files of these repo"
-"sitories?"
+msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
 msgstr ""
 
 #: ../lib/rmt/cli/repos.rb:38
@@ -702,9 +672,7 @@ msgid "No repositories enabled."
 msgstr ""
 
 #: ../lib/rmt/cli/repos.rb:113
-msgid ""
-"Only enabled repositories are shown by default. Use the '%{option}' option to "
-"see all repositories."
+msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
 msgstr ""
 
 #: ../lib/rmt/cli/repos_base.rb:22
@@ -820,9 +788,7 @@ msgid "Enabled mirroring for repository %{repo}"
 msgstr ""
 
 #: ../lib/rmt/cli/smt_importer.rb:40
-msgid ""
-"Repository %{repo} was not found in RMT database, perhaps you no longer have a"
-" valid subscription for it"
+msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
 msgstr ""
 
 #: ../lib/rmt/cli/smt_importer.rb:62
@@ -894,9 +860,7 @@ msgid "There are no systems registered to this RMT instance."
 msgstr ""
 
 #: ../lib/rmt/cli/systems.rb:18
-msgid ""
-"Showing last %{limit} registrations. Use the '--all' option to see all registe"
-"red systems."
+msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
 msgstr ""
 
 #: ../lib/rmt/cli/systems.rb:26
@@ -912,9 +876,7 @@ msgid "Removes a system and its activations from RMT."
 msgstr ""
 
 #: ../lib/rmt/cli/systems.rb:35
-msgid ""
-"To target a system for removal, use the command \"%{command}\" for a list of sys"
-"tems with their corresponding logins."
+msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr ""
 
 #: ../lib/rmt/cli/systems.rb:44
@@ -954,9 +916,7 @@ msgid "GPG signature verification failed"
 msgstr ""
 
 #: ../lib/rmt/lockfile.rb:11
-msgid ""
-"Another instance of this command is already running. Terminate the other insta"
-"nce or wait for it to finish."
+msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
 msgstr ""
 
 #: ../lib/rmt/mirror.rb:41
