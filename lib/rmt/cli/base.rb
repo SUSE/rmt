@@ -109,6 +109,14 @@ class RMT::CLI::Base < Thor
 
   end
 
+  protected
+
+  def logger
+    @logger ||= RMT::Logger.new($stdout)
+    @logger.level = (options[:debug]) ? Logger::DEBUG : Logger::INFO
+    @logger
+  end
+
   private
 
   def needs_path(path, writable: false)
