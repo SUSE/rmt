@@ -113,7 +113,8 @@ class RMT::CLI::Base < Thor
 
   def logger
     @logger ||= RMT::Logger.new($stdout)
-    @logger.level = (options[:debug]) ? Logger::DEBUG : Logger::INFO
+    debug = options[:debug] || Settings&.log_level&.cli == 'debug'
+    @logger.level = debug ? Logger::DEBUG : Logger::INFO
     @logger
   end
 
