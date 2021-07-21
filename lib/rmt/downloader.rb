@@ -21,7 +21,7 @@ class RMT::Downloader
 
   def initialize(logger:, auth_token: nil, track_files: true)
     Typhoeus::Config.user_agent = "RMT/#{RMT::VERSION}"
-    @concurrency = 4
+    @concurrency = Settings&.mirroring&.concurrency || 4
     @auth_token = auth_token
     @logger = logger
     @track_files = track_files

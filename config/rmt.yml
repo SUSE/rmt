@@ -28,6 +28,7 @@ mirroring:
   mirror_src: false
   verify_rpm_checksums: false
   dedup_method: hardlink
+  concurrency: 4
 
 http_client:
   verbose: false
