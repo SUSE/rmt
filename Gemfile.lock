@@ -230,7 +230,7 @@ GEM
     rchardet (1.8.0)
     rdiscount (2.2.0.2)
     regexp_parser (2.1.1)
-    repomd_parser (0.1.4)
+    repomd_parser (0.1.5)
       nokogiri (~> 1.8)
     responders (3.0.1)
       actionpack (>= 5.0)
