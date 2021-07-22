@@ -149,7 +149,7 @@ class RMT::Downloader
   end
 
   def valid_cached_file?(file, response)
-    raise http_error(file.remote_path, response.code) if (response.code != 200)
+    raise http_error(file.remote_path, response) if (response.code != 200)
 
     # response.headers returns Typhoeus::Response::Headers, which takes care of
     # case-sensitive concerns with the header's key
@@ -168,7 +168,7 @@ class RMT::Downloader
 
   def finalize_download(request, file)
     if (URI(request.base_url).scheme != 'file') && request.response.code != 200
-      raise http_error(request.remote_file, request.response.code)
+      raise http_error(request.remote_file, request.response)
     end
 
     handle_checksum_verification!(file.checksum_type, file.checksum, request.download_path)
@@ -204,10 +204,10 @@ class RMT::Downloader
     end
   end
 
-  def http_error(remote_file, http_code)
+  def http_error(remote_file, http_response)
+
     RMT::Downloader::Exception.new(
-      _('%{file} - HTTP request failed with code %{code}') % { file: remote_file, code: http_code },
-      http_code
+      _('%{file} - HTTP request failed with code %{code}') % { file: remote_file, code: http_response.code }
     )
   end
 
