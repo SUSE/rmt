@@ -1,8 +1,19 @@
 #! /usr/bin/env ruby
 
+def work_dir(path, &block)
+  return nil unless block_given?
+
+  old_dir = Dir.pwd
+  Dir.chdir path
+  yield block
+  Dir.chdir old_dir
+end
+
 def modified_files
-	`git fetch master origin/master`
-  `git diff --name-only master`.strip.split "\n"
+  work_dir '../' do
+    `git fetch master origin/master`
+    `git diff --name-only master`.strip.split "\n"
+  end
 end
 
 def spec_version
@@ -36,11 +47,17 @@ def success
   exit 0
 end
 
+def warning(msg)
+  `echo ::warning ""`
+  `echo ::set-output name=warning::msg::msg ""`
+  `echo ::set-output name=warning::msg::msg "#{msg}"`
+end
+
 def check
 
   # check changes
   unless modified_files.include?('package/obs/rmt-server.changes')
-    fail("Unless this is a trivial change, please include a CHANGELOG entry.\nRun 'osc vc' in the 'package' directory to add one.")
+    warning("Unless this is a trivial change, please include a CHANGELOG entry.\nRun 'osc vc' in the 'package' directory to add one.")
   end
 
   if spec_version != rmt_version
