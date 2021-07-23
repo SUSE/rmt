@@ -1,6 +1,7 @@
 #! /usr/bin/env ruby
 
 def modified_files
+	`git fetch master origin/master`
   `git diff --name-only master`.strip.split "\n"
 end
 
@@ -39,7 +40,7 @@ def check
 
   # check changes
   unless modified_files.include?('package/obs/rmt-server.changes')
-    fail("Unless this is a trivial change, please include a CHANGELOG entry.\nRun `osc vc` in the `package` directory to add one.")
+    fail("Unless this is a trivial change, please include a CHANGELOG entry.\nRun 'osc vc' in the 'package' directory to add one.")
   end
 
   if spec_version != rmt_version
