@@ -68,13 +68,6 @@ jobs:
           bundle exec rspec
       # Danger does some weird things to the output,
       # that's why we run it last
-      - name: Run Danger
-        if: ${{ github.event.pull_request.head.repo.full_name == 'SUSE/rmt' }}
-        uses: MeilCli/danger-action@v5
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GH_TOKEN }}
-        with:
-          plugins_file: 'Gemfile'
-          install_path: 'vendor/bundle'
-          danger_file: 'Dangerfile'
-          danger_id: 'danger-pr'
+      - name: Run version checks
+        run: |
+          ruby integration/ci_check.rb
