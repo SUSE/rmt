@@ -57,6 +57,9 @@ jobs:
           sudo mkdir -p /var/lib/rmt
           ruby -e "require 'yaml'; puts({'database_test'=>{'host' => '127.0.0.1', 'port' => 3306, 'username'=>'rmt','password'=>'rmt','database'=>'rmt_test','adapter'=>'mysql2','encoding'=>'utf8','timeout'=>5000,'pool'=>5}}.to_yaml)" > config/rmt.local.yml
 
+      - name: Run Lint
+        run: |
+          bundle exec rubocop -D
       - name: Run tests
         env:
           RAILS_ENV: test
