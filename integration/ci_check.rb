@@ -35,10 +35,9 @@ def warning(msg)
 end
 
 def check
-
   # check changes
-  if !modified_files.include?('package/obs/rmt-server.changes')
-    warning("Unless this is a trivial change, please include a CHANGELOG entry.\nRun 'osc vc' in the 'package' directory to add one.")
+  unless modified_files.include?('package/obs/rmt-server.changes')
+    warning("Warning: Unless this is a trivial change, please include a CHANGELOG entry.\nRun 'osc vc' in the 'package' directory to add one.")
   end
 
   if spec_version != rmt_version

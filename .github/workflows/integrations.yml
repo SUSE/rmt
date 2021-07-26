@@ -65,8 +65,8 @@ jobs:
         run: |
           bundle exec rails db:migrate
           bundle exec rspec
-      # Danger does some weird things to the output,
-      # that's why we run it last
       - name: Run version checks
         run: |
+          echo "::group::Version verification checks"
           ruby integration/ci_check.rb
+          echo "::endgroup::"
