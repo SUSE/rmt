@@ -10,10 +10,14 @@ def work_dir(path, &block)
 end
 
 def modified_files
+  files = ''
   work_dir '../' do
-    `git fetch master origin/master`
-    `git diff --name-only master`.strip.split "\n"
+    puts "Fetching master... #{Dir.pwd}"
+    `git fetch origin master`
+    puts "Computing diff with master #{Dir.pwd}"
+    files = `git diff --name-only master`.strip.split "\n"
   end
+  files
 end
 
 def spec_version
