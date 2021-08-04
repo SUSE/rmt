@@ -4,8 +4,7 @@ name: RMT Integration tests
 on:
   pull_request:
     branches: [master]
-  push:
-    branches: [master]
+
 
 jobs:
   test:
@@ -13,7 +12,7 @@ jobs:
     strategy:
       max-parallel: 3
       matrix:
-        ruby-version: ['2.5.8', '2.6.6', '2.7.2']
+        ruby-version: ['2.5.8', '2.5.9']
 
     services:
       mysql:
@@ -34,7 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: '100'
+          fetch-depth: 0
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -57,21 +56,17 @@ jobs:
           sudo mkdir -p /var/lib/rmt
           ruby -e "require 'yaml'; puts({'database_test'=>{'host' => '127.0.0.1', 'port' => 3306, 'username'=>'rmt','password'=>'rmt','database'=>'rmt_test','adapter'=>'mysql2','encoding'=>'utf8','timeout'=>5000,'pool'=>5}}.to_yaml)" > config/rmt.local.yml
 
+      - name: Run Lint
+        run: |
+          bundle exec rubocop -D
       - name: Run tests
         env:
           RAILS_ENV: test
         run: |
           bundle exec rails db:migrate
           bundle exec rspec
-      # Danger does some weird things to the output,
-      # that's why we run it last
-      - name: Run Danger
-        if: ${{ github.event.pull_request.head.repo.full_name == 'SUSE/rmt' }}
-        uses: MeilCli/danger-action@v5
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.GH_TOKEN }}
-        with:
-          plugins_file: 'Gemfile'
-          install_path: 'vendor/bundle'
-          danger_file: 'Dangerfile'
-          danger_id: 'danger-pr'
+      - name: Run version checks
+        run: |
+          echo "::group::Version verification checks"
+          ruby integration/ci_check.rb
+          echo "::endgroup::"
