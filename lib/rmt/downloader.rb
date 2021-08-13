@@ -9,10 +9,11 @@ require 'rmt/deduplicator'
 
 class RMT::Downloader
   class Exception < RuntimeError
-    attr_reader :http_code
+    attr_reader :http_code, :response
 
-    def initialize(message, http_code = nil)
-      @http_code = http_code
+    def initialize(message, response: nil)
+      @response = response
+      @http_code = response&.code
       super(message)
     end
   end
@@ -149,7 +150,7 @@ class RMT::Downloader
   end
 
   def valid_cached_file?(file, response)
-    raise http_error(file.remote_path, response.code) if (response.code != 200)
+    raise request_error(file.remote_path, response) if invalid_response?(response)
 
     # response.headers returns Typhoeus::Response::Headers, which takes care of
     # case-sensitive concerns with the header's key
@@ -167,8 +168,8 @@ class RMT::Downloader
   end
 
   def finalize_download(request, file)
-    if (URI(request.base_url).scheme != 'file') && request.response.code != 200
-      raise http_error(request.remote_file, request.response.code)
+    if (URI(request.base_url).scheme != 'file') && invalid_response?(request.response)
+      raise request_error(request.remote_file, request.response)
     end
 
     handle_checksum_verification!(file.checksum_type, file.checksum, request.download_path)
@@ -204,11 +205,28 @@ class RMT::Downloader
     end
   end
 
-  def http_error(remote_file, http_code)
-    RMT::Downloader::Exception.new(
-      _('%{file} - HTTP request failed with code %{code}') % { file: remote_file, code: http_code },
-      http_code
-    )
+  def invalid_response?(response)
+    response.code != 200 || (response.return_code && response.return_code != :ok)
+  end
+
+  def request_error(remote_file, response)
+    @logger.debug <<~DEBUG.chomp
+    #{_('HTTP error:')}
+      #{_('Response HTTP status code')}: #{response.code}
+      #{_('Response body')}: #{response.body.presence || "''"}
+      #{_('curl return code')}: #{response.return_code.presence || "''"}
+      #{_('curl return message')}: #{response.return_message.presence || "''"}
+    DEBUG
+
+    message = if response.code != 200
+                _('%{file} - HTTP request failed with code %{code}') %
+                  { file: remote_file, code: response.code }
+              else
+                _("%{file} - processing response failed with return code '%{code}'") %
+                  { file: remote_file, code: response.return_code }
+              end
+
+    raise RMT::Downloader::Exception.new(message, response: response)
   end
 
   def request_uri(file)
