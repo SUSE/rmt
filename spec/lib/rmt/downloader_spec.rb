@@ -26,6 +26,8 @@ RSpec.describe RMT::Downloader do
     end
   end
 
+  let(:debug_request_error_regex) { /Request error:.*HTTP status code:.*body:.*headers:.*return code:.*return message:/m }
+
   after do
     FileUtils.remove_entry(repository_dir)
     FileUtils.remove_entry(cache_dir) if cache_dir
@@ -41,7 +43,7 @@ RSpec.describe RMT::Downloader do
 
       it 'raises an exception' do
         expect_any_instance_of(RMT::Logger).to receive(:debug)
-          .with(/HTTP error:/).once
+          .with(debug_request_error_regex).once
 
         expect { downloader.download(repomd_xml_file) }.to raise_error(
           RMT::Downloader::Exception,
@@ -59,11 +61,12 @@ RSpec.describe RMT::Downloader do
 
       it 'raises an exception' do
         expect_any_instance_of(RMT::Logger).to receive(:debug)
-          .with(/HTTP error:/).once
+          .with(debug_request_error_regex).once
 
         allow_any_instance_of(RMT::FiberRequest).to receive(:read_body) do |instance|
           response = instance_double(Typhoeus::Response, code: 200, body: 'Ok',
-                                     return_code: :error, return_message: 'curl error')
+                                     return_code: :error, return_message: 'curl error',
+                                     response_headers: "HTTP/2 404 \r\ncache-control: max-age=0\r\ncontent-type: text/html")
 
           allow(response).to receive(:request) { instance }
           allow(instance).to receive(:response) { response }
@@ -268,7 +271,7 @@ RSpec.describe RMT::Downloader do
 
         it 'raises an error' do
           expect_any_instance_of(RMT::Logger).to receive(:debug)
-            .with(/HTTP error:/).once
+            .with(debug_request_error_regex).once
 
           expect { downloaded_file }.to raise_error(
             RMT::Downloader::Exception,
@@ -375,7 +378,7 @@ RSpec.describe RMT::Downloader do
 
       it 'requested all files' do
         expect_any_instance_of(RMT::Logger).to receive(:debug)
-          .with(/HTTP error:/).exactly(files.size).times
+          .with(debug_request_error_regex).exactly(files.size).times
 
         downloader.download_multi(queue.dup, ignore_errors: true)
 
@@ -388,7 +391,7 @@ RSpec.describe RMT::Downloader do
 
       it 'but no files were actually saved' do
         expect_any_instance_of(RMT::Logger).to receive(:debug)
-          .with(/HTTP error:/).exactly(files.size).times
+          .with(debug_request_error_regex).exactly(files.size).times
 
         downloader.download_multi(queue.dup, ignore_errors: true)
 
@@ -417,7 +420,7 @@ RSpec.describe RMT::Downloader do
 
       it 'raises an exception' do
         expect_any_instance_of(RMT::Logger).to receive(:debug)
-          .with(/HTTP error:/).once
+          .with(debug_request_error_regex).once
 
         expect do
           downloader.download_multi(queue.dup, ignore_errors: false)
@@ -449,7 +452,7 @@ RSpec.describe RMT::Downloader do
 
         it 'raises an error' do
           expect_any_instance_of(RMT::Logger).to receive(:debug)
-            .with(/HTTP error:/).once
+            .with(debug_request_error_regex).once
 
           expect { downloader.download_multi(queue.dup, ignore_errors: false) }
             .to raise_error(
@@ -470,7 +473,7 @@ RSpec.describe RMT::Downloader do
 
         it 'returns a list of failed downloads' do
           expect_any_instance_of(RMT::Logger).to receive(:debug)
-            .with(/HTTP error:/).exactly(queue.size).times
+            .with(debug_request_error_regex).exactly(queue.size).times
 
           failed_downloads = downloader.download_multi(queue.dup, ignore_errors: true)
           expect(failed_downloads).to match_array(queue.map(&:local_path))

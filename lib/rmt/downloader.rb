@@ -211,9 +211,10 @@ class RMT::Downloader
 
   def request_error(remote_file, response)
     @logger.debug <<~DEBUG.chomp
-    #{_('HTTP error:')}
+    #{_('Request error:')}
       #{_('Response HTTP status code')}: #{response.code}
       #{_('Response body')}: #{response.body.presence || "''"}
+      #{_('Response headers')}: #{flatten_string(response.response_headers.presence)}
       #{_('curl return code')}: #{response.return_code.presence || "''"}
       #{_('curl return message')}: #{response.return_message.presence || "''"}
     DEBUG
@@ -239,5 +240,11 @@ class RMT::Downloader
     dirname = File.dirname(file_path)
 
     FileUtils.mkdir_p(dirname)
+  end
+
+  def flatten_string(str)
+    return '' if str.blank?
+
+    str.lines.map(&:strip).map(&:presence).compact.join('; ')
   end
 end
