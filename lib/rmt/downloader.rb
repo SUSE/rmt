@@ -218,13 +218,8 @@ class RMT::Downloader
       #{_('curl return message')}: #{response.return_message.presence || "''"}
     DEBUG
 
-    message = if response.code != 200
-                _('%{file} - HTTP request failed with code %{code}') %
-                  { file: remote_file, code: response.code }
-              else
-                _("%{file} - processing response failed with return code '%{code}'") %
-                  { file: remote_file, code: response.return_code }
-              end
+    message = _("%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'") %
+      { file: remote_file, code: response.code, return_code: response.return_code }
 
     raise RMT::Downloader::Exception.new(message, response: response)
   end

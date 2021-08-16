@@ -43,8 +43,10 @@ RSpec.describe RMT::Downloader do
         expect_any_instance_of(RMT::Logger).to receive(:debug)
           .with(/HTTP error:/).once
 
-        expect { downloader.download(repomd_xml_file) }
-          .to raise_error(RMT::Downloader::Exception, 'http://example.com/repomd.xml - HTTP request failed with code 404')
+        expect { downloader.download(repomd_xml_file) }.to raise_error(
+          RMT::Downloader::Exception,
+          "http://example.com/repomd.xml - request failed with HTTP status code 404, return code ''"
+        )
       end
     end
 
@@ -69,8 +71,10 @@ RSpec.describe RMT::Downloader do
           response
         end
 
-        expect { downloader.download(repomd_xml_file) }
-          .to raise_error(RMT::Downloader::Exception, "http://example.com/repomd.xml - processing response failed with return code 'error'")
+        expect { downloader.download(repomd_xml_file) }.to raise_error(
+          RMT::Downloader::Exception,
+          "http://example.com/repomd.xml - request failed with HTTP status code 200, return code 'error'"
+        )
       end
     end
 
@@ -268,7 +272,7 @@ RSpec.describe RMT::Downloader do
 
           expect { downloaded_file }.to raise_error(
             RMT::Downloader::Exception,
-            'http://example.com/repomd.xml - HTTP request failed with code 404'
+            "http://example.com/repomd.xml - request failed with HTTP status code 404, return code ''"
           )
         end
       end
@@ -417,14 +421,14 @@ RSpec.describe RMT::Downloader do
 
         expect do
           downloader.download_multi(queue.dup, ignore_errors: false)
-        end.to raise_error('http://example.com/package1 - HTTP request failed with code 404')
+        end.to raise_error("http://example.com/package1 - request failed with HTTP status code 404, return code ''")
       end
 
       it 'cleans up the queue of downloads' do
         expect do
           downloader.concurrency = 1
           downloader.download_multi(queue.dup, ignore_errors: false)
-        end.to raise_error('http://example.com/package1 - HTTP request failed with code 404')
+        end.to raise_error("http://example.com/package1 - request failed with HTTP status code 404, return code ''")
 
         expect(downloader.instance_variable_get(:@hydra).multi.easy_handles).to eq([])
         expect(downloader.instance_variable_get(:@queue)).to eq([])
@@ -450,7 +454,7 @@ RSpec.describe RMT::Downloader do
           expect { downloader.download_multi(queue.dup, ignore_errors: false) }
             .to raise_error(
               RMT::Downloader::Exception,
-              %r{http://example.com/package[1-3] - HTTP request failed with code 404}
+              %r{http://example.com/package[1-3] - request failed with HTTP status code 404, return code ''}
             )
         end
       end
