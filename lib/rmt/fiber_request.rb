@@ -29,14 +29,14 @@ class RMT::FiberRequest < RMT::HttpRequest
     response = read_body
 
     if (response.return_code && response.return_code != :ok)
-      raise RMT::Downloader::Exception.new(_('%{file} - return code %{code}') % { file: @remote_file, code: response.return_code })
+      raise 'Error while processing the response.'
     end
 
     @download_path.close
     response
-  rescue StandardError => e
+  rescue StandardError
     @download_path.unlink
-    raise e
+    response
   end
 
   protected
