@@ -755,6 +755,11 @@ RSpec.describe RMT::Mirror do
     end
 
     context 'when signatures do not exist' do
+      let(:response) do
+        instance_double(Typhoeus::Response, code: 404, body: 'Error',
+                        return_code: :ok, return_message: 'No error')
+      end
+
       it 'mirrors as normal' do
         expect(logger).to receive(:info).with(/Mirroring repository/).once
         expect(logger).to receive(:info).with('Repository metadata signatures are missing').once
@@ -762,7 +767,7 @@ RSpec.describe RMT::Mirror do
 
         allow_any_instance_of(RMT::Downloader).to receive(:finalize_download).and_wrap_original do |klass, *args|
           if args[1].local_path.include?('repodata/repomd.xml.key')
-            raise RMT::Downloader::Exception.new('HTTP request failed', 404)
+            raise RMT::Downloader::Exception.new('HTTP request failed', response: response)
           else
             klass.call(*args)
           end
@@ -773,13 +778,18 @@ RSpec.describe RMT::Mirror do
     end
 
     context 'when files fail to download with errors other than 404' do
+      let(:response) do
+        instance_double(Typhoeus::Response, code: 502, body: 'Error',
+                        return_code: :ok, return_message: 'No error')
+      end
+
       it 'raises RMT::Mirror::Exception' do
         expect(logger).to receive(:info).with(/Mirroring repository/).once
         expect(logger).to receive(:info).with(/↓/).at_least(1).times
 
         allow_any_instance_of(RMT::Downloader).to receive(:download).and_wrap_original do |klass, *args|
           if args[0].local_path.include?('repodata/repomd.xml.asc')
-            raise RMT::Downloader::Exception.new('HTTP request failed', 502)
+            raise RMT::Downloader::Exception.new('HTTP request failed', response: response)
           else
             klass.call(*args)
           end
