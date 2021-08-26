@@ -29,7 +29,7 @@
 %define ruby_version          %{rb_default_ruby_suffix}
 
 Name:           rmt-server
-Version:        2.6.11
+Version:        2.6.12
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -239,6 +239,8 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %dir %{_libexecdir}/supportconfig
 %dir %{_libexecdir}/supportconfig/plugins
 %dir /var/lib/rmt
+%ghost %{_datadir}/rmt/public/repo
+%ghost %{_datadir}/rmt/public/suma
 %dir %{_sysconfdir}/slp.reg.d
 %config(noreplace) %attr(0640, %{rmt_user},root) %{_sysconfdir}/rmt.conf
 %config(noreplace) %{_sysconfdir}/slp.reg.d/rmt-server.reg
