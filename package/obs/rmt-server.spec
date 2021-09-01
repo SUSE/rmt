@@ -29,7 +29,7 @@
 %define ruby_version          %{rb_default_ruby_suffix}
 
 Name:           rmt-server
-Version:        2.6.11
+Version:        2.6.12
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -129,8 +129,6 @@ mv vendor %{buildroot}%{lib_dir}
 
 cp -ar . %{buildroot}%{app_dir}
 ln -s %{data_dir}/tmp %{buildroot}%{app_dir}/tmp
-ln -s %{data_dir}/public/repo %{buildroot}%{app_dir}/public/repo
-ln -s %{data_dir}/public/suma %{buildroot}%{app_dir}/public/suma
 mkdir -p %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-cli %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-data-import %{buildroot}%{_bindir}/rmt-data-import
@@ -151,16 +149,24 @@ install -m 444 package/files/systemd/rmt-server-systems-scc-sync.service %{build
 install -m 444 package/files/systemd/rmt-server.service %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server.target %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server-migration.service %{buildroot}%{_unitdir}
+
 install -m 444 engines/registration_sharing/package/rmt-server-regsharing.service %{buildroot}%{_unitdir}
 install -m 444 engines/registration_sharing/package/rmt-server-regsharing.timer %{buildroot}%{_unitdir}
+install -m 444 engines/registration_sharing/package/rmt-server-trim-cache.service %{buildroot}%{_unitdir}
+install -m 444 engines/registration_sharing/package/rmt-server-trim-cache.timer %{buildroot}%{_unitdir}
 
 mkdir -p %{buildroot}%{_sbindir}
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-migration
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-mirror
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-sync
-ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-regsharing
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-systems-scc-sync
+
+ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-regsharing
+ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-trim-cache
+
+ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-regsharing
+ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-trim-cache
 
 mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
@@ -233,6 +239,8 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %dir %{_libexecdir}/supportconfig
 %dir %{_libexecdir}/supportconfig/plugins
 %dir /var/lib/rmt
+%ghost %{_datadir}/rmt/public/repo
+%ghost %{_datadir}/rmt/public/suma
 %dir %{_sysconfdir}/slp.reg.d
 %config(noreplace) %attr(0640, %{rmt_user},root) %{_sysconfdir}/rmt.conf
 %config(noreplace) %{_sysconfdir}/slp.reg.d/rmt-server.reg
@@ -281,8 +289,11 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
 
 %{_sbindir}/rcrmt-server-regsharing
+%{_sbindir}/rcrmt-server-trim-cache
 %{_unitdir}/rmt-server-regsharing.service
 %{_unitdir}/rmt-server-regsharing.timer
+%{_unitdir}/rmt-server-trim-cache.service
+%{_unitdir}/rmt-server-trim-cache.timer
 
 %pre
 getent group %{rmt_group} >/dev/null || %{_sbindir}/groupadd -r %{rmt_group}
@@ -312,6 +323,14 @@ if [ $1 -eq 2 ]; then
   fi
 fi
 
+if [ ! -e %{_datadir}/rmt/public/repo ]; then
+ ln -ns %{_sharedstatedir}/rmt/public/repo %{_datadir}/rmt/public/repo
+fi
+
+if [ ! -e %{_datadir}/rmt/public/suma ]; then
+ ln -ns %{_sharedstatedir}/rmt/public/suma %{_datadir}/rmt/public/suma
+fi
+
 %preun
 %service_del_preun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
 
@@ -322,16 +341,16 @@ fi
 /usr/bin/systemctl reload nginx.service
 
 %pre pubcloud
-%service_add_pre rmt-server-regsharing.service
+%service_add_pre rmt-server-regsharing.service rmt-server-trim-cache.service
 
 %post pubcloud
-%service_add_post rmt-server-regsharing.service
+%service_add_post rmt-server-regsharing.service rmt-server-trim-cache.service
 
 %preun pubcloud
-%service_del_preun rmt-server-regsharing.service
+%service_del_preun rmt-server-regsharing.service rmt-server-trim-cache.service
 
 %postun pubcloud
-%service_del_postun rmt-server-regsharing.service
+%service_del_postun rmt-server-regsharing.service rmt-server-trim-cache.service
 
 %posttrans pubcloud
 /usr/bin/systemctl try-restart rmt-server.service
