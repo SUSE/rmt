@@ -38,7 +38,7 @@ http_client:
   proxy_password:
 
 log_level:
-  rails: info
+  rails: debug
   cli: info
 
 web_server:
