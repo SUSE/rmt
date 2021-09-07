@@ -100,6 +100,14 @@ RSpec.describe RMT::Mirror::FileReference do
     it 'returns the absolute remote path' do
       expect(file_reference.remote_path.to_s).to eq('https://www.repourl.com/dummy_dir/dummy_file.ext')
     end
+
+    context 'URL with special characters' do
+      let(:relative_path) { 'Packages/t/the_silver_searcher-2.2.0^2020704.5a1c8d8-1.el8.x86_64.rpm' }
+
+      it 'returns an encoded remote path' do
+        expect(file_reference.remote_path.to_s).to eq("#{base_url}/Packages/t/the_silver_searcher-2.2.0%5E2020704.5a1c8d8-1.el8.x86_64.rpm")
+      end
+    end
   end
 
   describe 'build_from_metadata' do
