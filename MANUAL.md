@@ -236,6 +236,18 @@ The `http_client` section defines RMT's global HTTP connection settings.
     Determines proxy authentication mechanism, possible values are:
     `none`, `basic`, `digest`, `gssnegotiate`, `ntlm`, `digest_ie`, `ntlm_wb`
 
+**Logging**
+
+In the `log_level` section you can configure the verbosity of RMT.
+
+  * `rails` setting:
+    Sets the log level of the RMT server, possible values are:
+    `debug`, `info`, `warn`, `error`.
+  * `cli` setting:
+    Sets the log level of the RMT cli, possible values are:
+    `debug`, `info`.
+    Setting this to `debug` has the same effect as running `rmt-cli` with the `-d` switch.
+
 **Web server settings**
 
 The `web_server` section lets you tune the performance of your RMT server.

@@ -1,5 +1,5 @@
 # This is development configuration.
-# Production configuration that is shipped in the RPM package can be found in /package/rmt.conf.
+# Production configuration that is shipped in the RPM package can be found in /package/obs/rmt.conf.
 # You can create rmt.local.yml to override settings in this file.
 
 database: &database
@@ -23,6 +23,7 @@ database_test:
 scc:
   username:
   password:
+  sync_systems: true
 
 mirroring:
   mirror_src: false
@@ -37,7 +38,7 @@ http_client:
   proxy_password:
 
 log_level:
-  rails: info
+  rails: debug
   cli: info
 
 web_server:
