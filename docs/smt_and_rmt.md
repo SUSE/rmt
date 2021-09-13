@@ -27,7 +27,7 @@ From SUSE Linux Enterprise Server 15 onward, only RMT or SUMA is available.
 |Red Hat 8 support ([Expanded Support](https://www.suse.com/products/expandedsupport/))|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Support for migrating SLE 12 systems to 15|:warning:<sup>[1](#partial-migration)</sup>|:heavy_check_mark:|:heavy_check_mark:|
 |Support for migrating SLE 15 SPx systems to 15 SPx+1|:warning:<sup>[1](#partial-migration)</sup>|:heavy_check_mark:|:heavy_check_mark:|
-|Staging repositories|:heavy_check_mark:|:x:<sup>[2](#staging)</sup>|:heavy_check_mark:|
+|Staging repositories|:heavy_check_mark:|:x:|:heavy_check_mark:|
 |Air gap sync/mirroring for secure environments|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |NTLM Proxy support|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Custom repositories|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
@@ -40,8 +40,8 @@ From SUSE Linux Enterprise Server 15 onward, only RMT or SUMA is available.
 |Custom TLS certificates for web-server|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Clean up data from repositories that are not used any longer|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Bash completion|:x:|:heavy_check_mark:|:x:|
-|Available on [openSUSE Leap 15](https://github.com/SUSE/rmt/blob/master/docs/installation.md#installation-on-opensuse-leap-15)|:x:|:heavy_check_mark:<sup>[3](#self-support)</sup>|:heavy_check_mark: (Uyuni, #self-support)|
-|Option to [run as container](https://github.com/SUSE/rmt/blob/master/README.md#development-setup---docker-compose)|:x:|:heavy_check_mark:<sup>[3](#self-support)</sup>|:x:|
+|Available on [openSUSE Leap 15](https://github.com/SUSE/rmt/blob/master/docs/installation.md#installation-on-opensuse-leap-15)|:x:|:heavy_check_mark:<sup>[2](#self-support)</sup>|:heavy_check_mark: (Uyuni, #self-support)|
+|Option to [run as container](https://github.com/SUSE/rmt/blob/master/README.md#development-setup---docker-compose)|:x:|:heavy_check_mark:<sup>[2](#self-support)</sup>|:x:|
 |Easy development setup |:x:|:heavy_check_mark:|:heavy_check_mark:|
 |100% test [coverage](https://coveralls.io/github/SUSE/rmt?branch=master)|:x:|:heavy_check_mark:|:x:|
 |[Plugin functionality](https://github.com/SUSE/rmt/blob/master/docs/PLUGINS.md)|:x:|:heavy_check_mark:|:heavy_check_mark:|
@@ -53,5 +53,4 @@ From SUSE Linux Enterprise Server 15 onward, only RMT or SUMA is available.
 Some modules are not required, as they provide additional functionality.
 RMT fully supports migrations into and within SLE 15, so it will only add the minimal required modules.
 SMT does not fully support these migrations, and it will enable all available modules on the system.\
-<a name="staging">2</a>: This functionality is offered by [SUSE Manager](https://www.suse.com/documentation/suse-best-practices/susemanager/data/susemanager.html).\
-<a name="self-support">3</a>: Only available with [self-support](https://www.suse.com/support/self-support/).
+<a name="self-support">2</a>: Only available with [self-support](https://www.suse.com/support/self-support/).
