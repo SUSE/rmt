@@ -99,7 +99,11 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   end
 
   def create_product_activation
-    @system.activations.where(service_id: @product.service.id).first_or_create
+    products = Product.all.where(identifier: params[:identifier], arch: params[:arch])
+
+    products.each do |product|
+      @system.activations.where(service_id: product.service.id).first_or_create
+    end
   end
 
   def remove_previous_product_activations(product_ids)

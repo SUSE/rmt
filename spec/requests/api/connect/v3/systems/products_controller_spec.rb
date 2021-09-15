@@ -84,6 +84,13 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
     end
 
     describe 'activations' do
+      let(:product_same_identifier) do
+        FactoryBot.create(:product, :with_mirrored_repositories, :with_mirrored_extensions)
+      end
+      let(:product_dif_arch) do
+        FactoryBot.create(:product, :with_mirrored_repositories, :with_mirrored_extensions)
+      end
+
       subject(:request) { post url, headers: headers, params: payload }
 
       context 'when the product was already activated on this system' do
@@ -93,7 +100,34 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       end
 
       context 'when the product was not already activated on this system' do
-        specify { expect { request }.to change { system.activations.count }.from(0).to(1) }
+        before do
+          product_same_identifier.identifier = product.identifier
+          product_same_identifier.version = product.version.to_i + 4
+          product_same_identifier.save!
+          product_dif_arch.arch = 'xfoo_bar'
+          product_dif_arch.save!
+        end
+
+        specify { expect { request }.to change { system.activations.count }.from(0).to(2) }
+
+        it 'activates all the versions of the same product and arch' do
+          request
+
+          expect(product.version).not_to eq(product_same_identifier.version)
+          expect(system.products).to contain_exactly(
+            an_object_having_attributes(
+              identifier: product.identifier,
+              version: product.version,
+              arch: product.arch
+            ),
+            an_object_having_attributes(
+              identifier: product_same_identifier.identifier,
+              version: product_same_identifier.version,
+              arch: product_same_identifier.arch
+            )
+                                     )
+          expect(system.products).not_to include(arch: product_dif_arch.arch)
+        end
       end
     end
   end
