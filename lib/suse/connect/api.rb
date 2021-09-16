@@ -16,7 +16,7 @@ module SUSE
         end
       end
 
-      CONNECT_API_URL = 'https://scc.suse.com/connect'.freeze
+      CONNECT_API_URL = connect_api.freeze
       UUID_FILE_LOCATION = '/var/lib/rmt/system_uuid'.freeze
 
       def initialize(username, password)
@@ -134,6 +134,13 @@ module SUSE
                            File.write(UUID_FILE_LOCATION, uuid)
                            uuid
                          end
+      end
+
+      def connect_api
+        uri_string = Settings.try(:scc).try(:host) || 'https://scc.suse.com/connect'
+        raise URI::InvalidURIError unless URI::ABS_URI.match?(uri_string)
+
+        uri_string
       end
     end
   end
