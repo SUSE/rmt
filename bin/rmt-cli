@@ -20,6 +20,10 @@ require_relative '../engines/registration_sharing/lib/registration_sharing' if S
 relative_load_paths = %w[lib lib/rmt app/models app/services app/validators].map { |dir| File.join(rmt_path, dir) }
 ActiveSupport::Dependencies.autoload_paths += relative_load_paths
 
+# Before moving into the default user/group, let's try to fetch the login
+# information for this host.
+RMT::Config.set_host_system!
+
 if RMT::CLI::Base.process_user_name == 'root'
   # set group and then user, otherwise user cannot change group
   Process::Sys.setegid(Etc.getgrnam(RMT::DEFAULT_GROUP).gid)
@@ -32,6 +36,11 @@ if File.exist?(RMT::DEFAULT_MIRROR_DIR) && !File.writable?(RMT::DEFAULT_MIRROR_D
   warn "Mirroring base directory (#{RMT::DEFAULT_MIRROR_DIR}) is not writable by user '#{RMT::CLI::Base.process_user_name}'"
   warn 'Run as root or adjust the permissions.'
   exit RMT::CLI::Error::ERROR_OTHER
+end
+
+if Settings.try(:host_system).blank? && File.exist?(RMT::CREDENTIALS_FILE_LOCATION) && !File.readable?(RMT::CREDENTIALS_FILE_LOCATION)
+  warn "Credentials file (#{RMT::CREDENTIALS_FILE_LOCATION}) is not readable by user '#{RMT::CLI::Base.process_user_name}'"
+  warn "Run as root or adjust the permissions."
 end
 
 db_config = RMT::Config.db_config

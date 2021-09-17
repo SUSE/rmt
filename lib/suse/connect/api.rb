@@ -102,6 +102,7 @@ module SUSE
         options[:accept_encoding] = 'gzip, deflate'
         options[:headers] = {
           'RMT' => system_uuid.strip,
+          'HOST-SYSTEM' => host_system.to_s.strip,
           'Accept' => 'application/vnd.scc.suse.com.v4+json',
           'Content-Type' => 'application/json'
         }
@@ -138,6 +139,10 @@ module SUSE
       end
 
       private
+
+      def host_system
+        Settings.try(:host_system) || ''
+      end
 
       def system_uuid
         @system_uuid ||= if File.exist?(UUID_FILE_LOCATION) && !File.empty?(UUID_FILE_LOCATION)
