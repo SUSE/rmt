@@ -45,6 +45,39 @@ RSpec.describe SUSE::Connect::Api do
     end
   end
 
+  # rubocop:disable RSpec/MessageChain
+  describe '#connect_api' do
+    subject(:method_call) { api_client.send(:connect_api) }
+
+    context 'with valid uris given' do
+      %w[
+        https://scc.suse.com/connect
+        localhost:3000/connect
+        http://192.168.1.3:3000/connect
+      ].each do |uri|
+        it 'returns a validated url' do
+          expect(Settings).to receive_message_chain(:scc, :host).and_return(uri)
+          expect(method_call).to be(uri)
+        end
+      end
+    end
+
+    context 'with an invalid/malformed uri given' do
+      %w[
+        localhst:3000/connect
+        ftp://192.168.1.3:3000/connect
+        htts://scc.suse.com/connect
+      ].each do |uri|
+        it 'raises an exception' do
+          expect(Settings).to receive_message_chain(:scc, :host).and_return(uri)
+          exception_msg = "Encountered an error validating #{uri}. Be sure to add http/https if it's an absolute url, i.e IP Address"
+          expect { method_call }.to raise_error(an_instance_of(URI::InvalidURIError).and having_attributes(message: exception_msg))
+        end
+      end
+    end
+  end
+  # rubocop:enable RSpec/MessageChain
+
   context 'api requests' do
     before do
       allow_any_instance_of(described_class).to receive(:system_uuid).and_return(uuid)

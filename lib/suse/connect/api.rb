@@ -16,7 +16,15 @@ module SUSE
         end
       end
 
-      CONNECT_API_URL = connect_api.freeze
+      def connect_api
+        uri_string = Settings.try(:scc).try(:host) || 'https://scc.suse.com/connect'
+        unless URI::DEFAULT_PARSER.make_regexp(['http', 'https', 'localhost']).match?(uri_string)
+          raise URI::InvalidURIError.new("Encountered an error validating #{uri_string}. Be sure to add http/https if it's an absolute url, i.e IP Address")
+        end
+
+        uri_string.freeze
+      end
+
       UUID_FILE_LOCATION = '/var/lib/rmt/system_uuid'.freeze
 
       def initialize(username, password)
@@ -25,23 +33,23 @@ module SUSE
       end
 
       def list_orders
-        make_paginated_request(:get, "#{CONNECT_API_URL}/organizations/orders")
+        make_paginated_request(:get, "#{connect_api}/organizations/orders")
       end
 
       def list_products
-        make_paginated_request(:get, "#{CONNECT_API_URL}/organizations/products")
+        make_paginated_request(:get, "#{connect_api}/organizations/products")
       end
 
       def list_products_unscoped
-        make_paginated_request(:get, "#{CONNECT_API_URL}/organizations/products/unscoped")
+        make_paginated_request(:get, "#{connect_api}/organizations/products/unscoped")
       end
 
       def list_repositories
-        make_paginated_request(:get, "#{CONNECT_API_URL}/organizations/repositories")
+        make_paginated_request(:get, "#{connect_api}/organizations/repositories")
       end
 
       def list_subscriptions
-        make_paginated_request(:get, "#{CONNECT_API_URL}/organizations/subscriptions")
+        make_paginated_request(:get, "#{connect_api}/organizations/subscriptions")
       end
 
       def forward_system_activations(system)
@@ -61,13 +69,13 @@ module SUSE
 
         make_single_request(
           :post,
-          "#{CONNECT_API_URL}/organizations/systems",
+          "#{connect_api}/organizations/systems",
           { body: params.to_json }
         )
       end
 
       def forward_system_deregistration(scc_system_id)
-        make_request(:delete, "#{CONNECT_API_URL}/organizations/systems/#{scc_system_id}")
+        make_request(:delete, "#{connect_api}/organizations/systems/#{scc_system_id}")
       rescue RequestError => e
         # don't raise an exception if the system was already deleted from SCC
         raise e unless e.response.code == 404
@@ -136,12 +144,6 @@ module SUSE
                          end
       end
 
-      def connect_api
-        uri_string = Settings.try(:scc).try(:host) || 'https://scc.suse.com/connect'
-        raise URI::InvalidURIError unless URI::ABS_URI.match?(uri_string)
-
-        uri_string
-      end
     end
   end
 end
