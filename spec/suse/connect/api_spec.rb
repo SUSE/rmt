@@ -52,7 +52,7 @@ RSpec.describe SUSE::Connect::Api do
     context 'with valid uris given' do
       %w[
         https://scc.suse.com/connect
-        localhost:3000/connect
+        http://localhost:3000/connect
         http://192.168.1.3:3000/connect
       ].each do |uri|
         it 'returns a validated url' do
@@ -67,6 +67,7 @@ RSpec.describe SUSE::Connect::Api do
         localhst:3000/connect
         ftp://192.168.1.3:3000/connect
         htts://scc.suse.com/connect
+        htxxtp://xxxxxxlocalhost:3000
       ].each do |uri|
         it 'raises an exception' do
           expect(Settings).to receive_message_chain(:scc, :host).and_return(uri)

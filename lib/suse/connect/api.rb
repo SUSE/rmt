@@ -18,7 +18,7 @@ module SUSE
 
       def connect_api
         uri_string = Settings.try(:scc).try(:host) || 'https://scc.suse.com/connect'
-        unless URI::DEFAULT_PARSER.make_regexp(['http', 'https', 'localhost']).match?(uri_string)
+        unless URI::DEFAULT_PARSER.make_regexp(['http', 'https']).match?(uri_string)
           raise URI::InvalidURIError.new("Encountered an error validating #{uri_string}. Be sure to add http/https if it's an absolute url, i.e IP Address")
         end
 
