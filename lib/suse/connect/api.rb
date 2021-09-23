@@ -22,7 +22,7 @@ module SUSE
         uri_string = Settings.try(:scc).try(:host) || 'https://scc.suse.com/connect'
         unless URI::DEFAULT_PARSER.make_regexp(['http', 'https']).match?(uri_string)
           @logger.error("Encountered an error validating #{uri_string}. Be sure to add http/https if it's an absolute url, i.e IP Address")
-          exit 1
+          exit
         end
         # rubocop:enable Rails/Exit
 
