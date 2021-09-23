@@ -10,7 +10,7 @@ Config.load_and_set_settings(
   File.join(__dir__, '../../config/rmt.local.yml')
 )
 
-if ENV.fetch('RAILS_ENV', '') == 'production'
+if ENV.fetch('RMT_ENV', 'development') == 'production'
   Settings.reload_from_files(
     '/etc/rmt.conf'
   )
