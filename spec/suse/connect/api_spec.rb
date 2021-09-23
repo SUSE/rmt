@@ -71,8 +71,10 @@ RSpec.describe SUSE::Connect::Api do
       ].each do |uri|
         it 'raises an exception' do
           expect(Settings).to receive_message_chain(:scc, :host).and_return(uri)
+          expect(Kernel).to receive(:exit).and_call_original
           exception_msg = "Encountered an error validating #{uri}. Be sure to add http/https if it's an absolute url, i.e IP Address"
-          expect { method_call }.to raise_error(an_instance_of(URI::InvalidURIError).and having_attributes(message: exception_msg))
+          expect_any_instance_of(RMT::Logger).to receive(:error).with(exception_msg)
+          expect(method_call).to be(SystemExit)
         end
       end
     end

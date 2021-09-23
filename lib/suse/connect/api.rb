@@ -1,5 +1,6 @@
 require 'rmt'
 require 'rmt/http_request'
+require 'rmt/logger'
 require 'json'
 
 module SUSE
@@ -17,10 +18,13 @@ module SUSE
       end
 
       def connect_api
+        # rubocop:disable Rails/Exit
         uri_string = Settings.try(:scc).try(:host) || 'https://scc.suse.com/connect'
         unless URI::DEFAULT_PARSER.make_regexp(['http', 'https']).match?(uri_string)
-          raise URI::InvalidURIError.new("Encountered an error validating #{uri_string}. Be sure to add http/https if it's an absolute url, i.e IP Address")
+          @logger.error("Encountered an error validating #{uri_string}. Be sure to add http/https if it's an absolute url, i.e IP Address")
+          exit 1
         end
+        # rubocop:enable Rails/Exit
 
         uri_string.freeze
       end
@@ -30,6 +34,7 @@ module SUSE
       def initialize(username, password)
         @username = username
         @password = password
+        @logger = RMT::Logger.new(STDOUT)
       end
 
       def list_orders
