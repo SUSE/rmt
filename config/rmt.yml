@@ -21,6 +21,7 @@ database_test:
   database: rmt_test
 
 scc:
+  host: https://scc.suse.com/connect
   username:
   password:
   sync_systems: true
