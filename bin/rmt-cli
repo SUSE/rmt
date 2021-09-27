@@ -4,7 +4,6 @@ rmt_path = File.expand_path('..', __dir__)
 require_relative '../config/boot'
 
 $LOAD_PATH.unshift File.join(rmt_path, 'lib')
-ENV["RMT_ENV"] = "production"
 require 'etc'
 require 'active_support'
 require 'active_support/core_ext/string'
@@ -21,6 +20,8 @@ relative_load_paths = %w[lib lib/rmt app/models app/services app/validators].map
 ActiveSupport::Dependencies.autoload_paths += relative_load_paths
 
 if RMT::CLI::Base.process_user_name == 'root'
+  # enable production mode
+  ENV["RMT_ENV"] = "production"
   # set group and then user, otherwise user cannot change group
   Process::Sys.setegid(Etc.getgrnam(RMT::DEFAULT_GROUP).gid)
   # GPG needs ruid to be set
