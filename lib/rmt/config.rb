@@ -6,15 +6,11 @@ Config.setup do |config|
 end
 
 Config.load_and_set_settings(
+  ('/etc/rmt.conf' if File.readable?('/etc/rmt.conf')),
   File.join(__dir__, '../../config/rmt.yml'),
   File.join(__dir__, '../../config/rmt.local.yml')
 )
 
-if ENV.fetch('RMT_ENV', 'development') == 'production'
-  Settings.reload_from_files(
-    '/etc/rmt.conf'
-  )
-end
 
 module RMT::Config
   class << self
