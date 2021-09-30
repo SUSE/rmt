@@ -4,7 +4,6 @@ rmt_path = File.expand_path('..', __dir__)
 require_relative '../config/boot'
 
 $LOAD_PATH.unshift File.join(rmt_path, 'lib')
-
 require 'etc'
 require 'active_support'
 require 'active_support/core_ext/string'
