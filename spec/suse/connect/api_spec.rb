@@ -158,6 +158,7 @@ RSpec.describe SUSE::Connect::Api do
         'Authorization' => 'Basic ' + Base64.encode64("#{username}:#{password}").strip,
         'User-Agent' => "RMT/#{RMT::VERSION}",
         'RMT' => uuid,
+        'HOST-SYSTEM' => '',
         'Accept' => 'application/vnd.scc.suse.com.v4+json'
       }
     end
@@ -298,6 +299,7 @@ RSpec.describe SUSE::Connect::Api do
       {
         'Authorization' => 'Basic ' + Base64.encode64("#{username}:#{password}").strip,
         'User-Agent' => "RMT/#{RMT::VERSION}",
+        'HOST-SYSTEM' => '',
         'RMT' => uuid
       }
     end
