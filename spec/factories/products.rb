@@ -40,6 +40,14 @@ FactoryBot.define do
       end
     end
 
+    trait :product_sles do
+      identifier { 'sles' }
+    end
+
+    trait :product_sles_sap do
+      identifier { 'sles_sap' }
+    end
+
     trait :extension do
       product_type { 'extension' }
     end

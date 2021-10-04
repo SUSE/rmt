@@ -20,7 +20,12 @@ module StrictAuthentication
       context 'with valid credentials' do
         include_context 'auth header', :system, :login, :password
 
-        before { get '/api/auth/check', headers: auth_header.merge({ 'X-Original-URI': requested_uri }) }
+        before do
+          allow_any_instance_of(InstanceVerification::Providers::Example).to(
+            receive(:instance_valid?).and_return(true)
+          )
+          get '/api/auth/check', headers: auth_header.merge({ 'X-Original-URI': requested_uri })
+        end
 
         context 'when requested path is not activated' do
           let(:requested_uri) { '/repo/some/uri' }
@@ -29,24 +34,48 @@ module StrictAuthentication
         end
 
         context 'when requesting a file in an activated repo' do
+          before do
+            allow_any_instance_of(InstanceVerification::Providers::Example).to(
+              receive(:instance_valid?).and_return(true)
+            )
+          end
+
           let(:requested_uri) { '/repo' + system.repositories.first[:local_path] + '/repodata/repomd.xml' }
 
           its(:code) { is_expected.to eq '200' }
         end
 
         context 'when requesting a directory in an activated repo' do
+          before do
+            allow_any_instance_of(InstanceVerification::Providers::Example).to(
+              receive(:instance_valid?).and_return(true)
+            )
+          end
+
           let(:requested_uri) { '/repo' + system.repositories.first[:local_path] + '/' }
 
           its(:code) { is_expected.to eq '200' }
         end
 
         context 'when accessing product.license directory' do
+          before do
+            allow_any_instance_of(InstanceVerification::Providers::Example).to(
+              receive(:instance_valid?).and_return(true)
+            )
+          end
+
           let(:requested_uri) { '/repo/some/uri/product.license/' }
 
           its(:code) { is_expected.to eq '200' }
         end
 
         context 'when accessing product with repos with special characters' do
+          before do
+            allow_any_instance_of(InstanceVerification::Providers::Example).to(
+              receive(:instance_valid?).and_return(true)
+            )
+          end
+
           let(:product) do
             product = FactoryBot.create(:product, :with_service)
             product.service.repositories << repository

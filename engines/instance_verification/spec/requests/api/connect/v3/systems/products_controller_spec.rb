@@ -6,7 +6,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
   let(:url) { connect_systems_products_url }
   let(:headers) { auth_header.merge(version_header) }
-  let(:product) { FactoryBot.create(:product, :with_mirrored_repositories, :with_mirrored_extensions) }
+  let(:product) { FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions) }
+  let(:product_sap) { FactoryBot.create(:product, :product_sles_sap, :with_mirrored_repositories, :with_mirrored_extensions) }
 
   let(:payload) do
     {
@@ -35,6 +36,13 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       let(:serialized_service_json) do
         V3::ServiceSerializer.new(
           product.service,
+          base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
+        ).to_json
+      end
+
+      let(:serialized_service_sap_json) do
+        V3::ServiceSerializer.new(
+          product_sap.service,
           base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
         ).to_json
       end
@@ -82,14 +90,22 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       end
 
       context 'when verification provider returns true' do
+        let(:payload_sap) do
+          {
+            identifier: product_sap.identifier,
+            version: product_sap.version,
+            arch: product_sap.arch
+          }
+        end
+
         before do
           expect(InstanceVerification::Providers::Example).to receive(:new)
-            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_call_original
-          post url, params: payload, headers: headers
+            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload_sap, instance_data).and_call_original
+          post url, params: payload_sap, headers: headers
         end
 
         it 'renders service JSON' do
-          expect(response.body).to eq(serialized_service_json)
+          expect(response.body).to eq(serialized_service_sap_json)
         end
       end
     end
