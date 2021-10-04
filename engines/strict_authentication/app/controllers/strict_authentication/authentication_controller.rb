@@ -24,11 +24,25 @@ module StrictAuthentication
       has_sles11 = @system.products.where(identifier: 'SUSE_SLES').first
       return true if (has_sles11 && (path =~ %r{/12/} || path =~ %r{/12-SP1/}))
 
-      @system.repositories.pluck(:local_path).each do |allowed_path|
+      all_products_and_extensions_allowed_paths.each do |allowed_path|
         return true if path =~ /^#{Regexp.escape(allowed_path)}/
       end
 
       false
+    end
+
+    def all_products_and_extensions_allowed_paths
+      activated_product = Product.find(@system.activations.first.service_id)
+      all_product_versions = Product.all.where(identifier: activated_product.identifier, arch: activated_product.arch)
+      allowed_paths = []
+      all_product_versions.each do |prod|
+        allowed_paths += prod.repositories.pluck(:local_path)
+        prod.extensions.each do |test_ext|
+          allowed_paths += test_ext.repositories.pluck(:local_path)
+        end
+      end
+
+      allowed_paths
     end
   end
 end
