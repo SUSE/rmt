@@ -99,7 +99,27 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   end
 
   def create_product_activation
-    @system.activations.where(service_id: @product.service.id).first_or_create
+    activation = @system.activations.where(service_id: @product.service.id).first_or_create
+
+    if params[:token].present?
+      subscription = Subscription.find_by(regcode: params[:token])
+
+      unless subscription
+        raise ActionController::TranslatedError.new(N_('No subscription with this Registration Code found'))
+      end
+
+      unless @product.free
+        unless subscription.products.include?(@product)
+          error = N_("The subscription with the provided Registration Code does not include the requested product '%s'")
+          raise ActionController::TranslatedError.new(error, @product.friendly_name)
+        end
+
+        activation.subscription = subscription
+        activation.save
+      end
+    end
+
+    activation
   end
 
   def remove_previous_product_activations(product_ids)

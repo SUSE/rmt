@@ -95,6 +95,47 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       context 'when the product was not already activated on this system' do
         specify { expect { request }.to change { system.activations.count }.from(0).to(1) }
       end
+
+      shared_context 'with subscriptions' do
+        let(:payload) do
+          {
+            identifier: product.identifier,
+            version: product.version,
+            arch: product.arch,
+            token: regcode
+          }
+        end
+
+        before { post url, headers: headers, params: payload }
+        subject { JSON.parse(response.body, symbolize_names: true) }
+      end
+
+      context 'unknown subscription' do
+        include_context 'with subscriptions'
+        let(:regcode) { 'NOT-EXISTING-SUBSCRIPTION' }
+
+        its([:error]) { is_expected.to match(/No subscription with this Registration Code found/) }
+      end
+
+      context 'subscription does not include product' do
+        include_context 'with subscriptions'
+        let(:subscription) { create :subscription }
+        let(:regcode) { subscription.regcode }
+
+        its([:error]) { is_expected.to match(/The subscription with the provided Registration Code does not include the requested product/) }
+      end
+
+      context 'subscription with associated product' do
+        include_context 'with subscriptions'
+        let(:subscription) { create :subscription, :with_products }
+        let(:product) { subscription.products.first }
+        let(:regcode) { subscription.regcode }
+
+        it 'creates activations with subscriptions associated' do
+          activation = Activation.find_by(subscription: subscription)
+          expect(activation.product).to eq(product)
+        end
+      end
     end
   end
 
