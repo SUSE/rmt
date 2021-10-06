@@ -122,9 +122,15 @@ class RMT::SCC
 
   def update_subscriptions(subscriptions)
     @logger.info _('Updating subscriptions')
-    Subscription.delete_all
     subscriptions.each do |item|
-      create_subscription(item)
+      subscription = Subscription.find_or_create_by(regcode: item[:regcode])
+      subscription.attributes = item.select { |k, _| subscription.attributes.keys.member?(k.to_s) }
+      subscription.kind = item[:type]
+      subscription.save!
+
+      item[:product_classes].each do |item_class|
+        SubscriptionProductClass.find_or_create_by(subscription_id: subscription.id, product_class: item_class)
+      end
     end
   end
 
@@ -173,20 +179,6 @@ class RMT::SCC
     auth_token = uri.query
 
     Repository.find_by!(scc_id: item[:id]).update! auth_token: auth_token, enabled: item[:enabled]
-  end
-
-  def create_subscription(item)
-    subscription = Subscription.new
-    subscription.attributes = item.select { |k, _| subscription.attributes.keys.member?(k.to_s) }
-    subscription.kind = item[:type]
-    subscription.save!
-
-    item[:product_classes].each do |item_class|
-      subscription_product_class = SubscriptionProductClass.new
-      subscription_product_class.subscription_id = subscription.id
-      subscription_product_class.product_class = item_class
-      subscription_product_class.save!
-    end
   end
 
   def migration_paths(item)
