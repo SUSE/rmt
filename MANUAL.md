@@ -192,6 +192,9 @@ However, if you want to reconfigure specific settings manually, this section tel
 
 All available configuration options can be found in the `/etc/rmt.conf` file.
 
+After altering `/etc/rmt.conf` you need to reload the configuration using
+`systemctl restart rmt-server`.
+
 **SSL certificates & HTTPS**
 
 By default access to API endpoints consumed by `SUSEConnect` is limited to HTTPS only.
