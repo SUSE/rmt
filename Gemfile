@@ -39,8 +39,6 @@ group :development, :test do
   gem 'ruby_parser', require: false # needed for gettext_i18n_rails tasks
   gem 'gettext_test_log'
   gem 'memory_profiler'
-  gem 'danger'
-  gem 'danger-rubocop'
   gem 'strong_migrations'
   gem 'awesome_print'
 end
