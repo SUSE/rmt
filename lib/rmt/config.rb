@@ -6,10 +6,11 @@ Config.setup do |config|
 end
 
 Config.load_and_set_settings(
-  '/etc/rmt.conf',
+  ('/etc/rmt.conf' if File.readable?('/etc/rmt.conf')),
   File.join(__dir__, '../../config/rmt.yml'),
   File.join(__dir__, '../../config/rmt.local.yml')
 )
+
 
 module RMT::Config
   class << self
@@ -50,7 +51,23 @@ module RMT::Config
       )
     end
 
+    def set_host_system!
+      Settings[:host_system] = host_system
+    end
+
     private
+
+    def host_system
+      return '' if !File.exist?(RMT::CREDENTIALS_FILE_LOCATION) ||
+                   !File.readable?(RMT::CREDENTIALS_FILE_LOCATION)
+
+      File.foreach(RMT::CREDENTIALS_FILE_LOCATION) do |line|
+        m = line.match(/username=(.+)/)
+        return m[1] if m
+      end
+
+      ''
+    end
 
     def validate_int(value)
       converted_value = Integer(value) rescue nil
