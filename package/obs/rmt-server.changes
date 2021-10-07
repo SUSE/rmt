@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Oct 7 09:01:00 UTC 2021 - Felix Schnizlein <fschnizlein@suse.com>
+
+- Version 2.7.0
+- Add subscription support in RMT. RMT can now consume registration codes
+  supplied when registering a system.
+
+-------------------------------------------------------------------
 Thu Aug 19 10:12:03 UTC 2021 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Version 2.6.12
