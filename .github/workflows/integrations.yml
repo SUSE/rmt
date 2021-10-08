@@ -64,7 +64,7 @@ jobs:
           RAILS_ENV: test
         run: |
           bundle exec rails db:migrate
-          bundle exec rspec
+          bundle exec rspec --format documentation
       - name: Run version checks
         run: |
           echo "::group::Version verification checks"
