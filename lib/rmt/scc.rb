@@ -123,7 +123,7 @@ class RMT::SCC
   def update_subscriptions(subscriptions)
     @logger.info _('Updating subscriptions')
     subscriptions.each do |item|
-      subscription = Subscription.find_or_create_by(regcode: item[:regcode])
+      subscription = Subscription.find_or_create_by(id: item[:id])
       subscription.attributes = item.select { |k, _| subscription.attributes.keys.member?(k.to_s) }
       subscription.kind = item[:type]
       subscription.save!
