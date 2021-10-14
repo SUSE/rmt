@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(version: 2020_09_16_120607) do
     t.datetime "updated_at", null: false
     t.text "instance_data", comment: "Additional client information, e.g. instance identity document"
     t.string "cloud_provider"
+    t.boolean "byos", default: false, null: false
     t.index ["hypervisor"], name: "index_hw_infos_on_hypervisor"
     t.index ["system_id"], name: "index_hw_infos_on_system_id", unique: true
   end

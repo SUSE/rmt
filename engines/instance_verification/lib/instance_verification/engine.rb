@@ -1,3 +1,5 @@
+require 'net/http'
+
 module InstanceVerification
   class Engine < ::Rails::Engine
     isolate_namespace InstanceVerification
@@ -39,7 +41,11 @@ module InstanceVerification
             verify_extension_activation(product)
           end
         rescue InstanceVerification::Exception => e
-          raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
+          # check BYOS instances with SCC
+          unless params[:email] && params[:token] && scc_validate
+            raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
+          end
+          update_cache(product.id)
         rescue StandardError => e
           logger.error('Unexpected instance verification error has occurred:')
           logger.error(e.message)
@@ -47,6 +53,51 @@ module InstanceVerification
           logger.error('Backtrace:')
           logger.error(e.backtrace)
           raise ActionController::TranslatedError.new('Unexpected instance verification error has occurred')
+        end
+
+        def update_cache(product_id)
+          cache_key = [request.remote_ip, @system.login, product_id].join('-')
+          # caches verification result to be used by zypper auth plugin
+          Rails.cache.write(cache_key, true, expires_in: 20.minutes)
+        end
+
+        def scc_validate
+          identifier = params[:identifier].downcase
+          end_index = identifier.index('_')
+          identifier = identifier[0, end_index] if end_index
+          end_index = params[:version].index('.')
+          version = params[:version][0, end_index] if end_index
+          options = {
+            hostname: @system.hostname,
+            distro_target: [identifier, version, params[:arch]].join('-'),
+            hwinfo: {
+              hostname: @system.hostname,
+              cpus: @system.hw_info.cpus,
+              hypervisor: @system.hw_info.hypervisor,
+              arch: @system.hw_info.arch,
+              uuid: @system.hw_info.uuid,
+              cloud_provider: @system.hw_info.cloud_provider
+            }
+          }
+          url = 'https://scc.suse.com/connect/subscriptions/systems'
+          uri = URI.parse(url)
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = uri.is_a? URI::HTTPS
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          request_header = {
+            'accept': 'application/json,application/vnd.scc.suse.com.v4+json',
+            'Content-Type': 'application/json',
+            'Authorization': "Token token=#{params[:token]}"
+          }
+          scc_request = Net::HTTP::Post.new(uri.path, request_header)
+          scc_request.body = options.to_json
+          response = http.request(scc_request)
+          return false unless response.code == '201'
+
+          @system.hw_info.byos = true
+          @system.hw_info.save!
+
+          true
         end
 
         def verify_extension_activation(product)
@@ -82,10 +133,7 @@ module InstanceVerification
 
           raise 'Unspecified error' unless verification_provider.instance_valid?
 
-          cache_key = [request.remote_ip, @system.login, product.id].join('-')
-
-          # caches verification result to be used by zypper auth plugin
-          Rails.cache.write(cache_key, true, expires_in: 20.minutes)
+          update_cache(product.id)
         end
 
         # Verify that the base product doesn't change in the offline migration

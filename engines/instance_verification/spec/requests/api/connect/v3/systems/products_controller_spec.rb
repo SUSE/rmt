@@ -1,5 +1,7 @@
 require 'rails_helper'
 
+# rubocop:disable RSpec/NestedGroups
+
 describe Api::Connect::V3::Systems::ProductsController, type: :request do
   include_context 'auth header', :system, :login, :password
   include_context 'version header', 3
@@ -13,6 +15,16 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       identifier: product.identifier,
       version: product.version,
       arch: product.arch
+    }
+  end
+
+  let(:payload_byos) do
+    {
+      identifier: product.identifier,
+      version: product.version,
+      arch: product.arch,
+      email: 'foo',
+      token: 'bar'
     }
   end
 
@@ -90,6 +102,55 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         it 'renders service JSON' do
           expect(response.body).to eq(serialized_service_json)
+        end
+      end
+
+      context 'when system is BYOS' do
+        let(:scc_url) { 'https://scc.suse.com/connect/subscriptions/systems' }
+
+        context 'with a valid registration code' do
+          before do
+            expect(InstanceVerification::Providers::Example).to receive(:new)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
+            expect(plugin_double).to(
+              receive(:instance_valid?)
+                .and_raise(InstanceVerification::Exception, 'Custom plugin error')
+            )
+            stub_request(:post, scc_url)
+              .to_return(
+                status: 201,
+                body: 'bar',
+                headers: {}
+              )
+            post url, params: payload_byos, headers: headers
+          end
+
+          it 'renders service JSON' do
+            expect(response.body).to eq(serialized_service_json)
+          end
+        end
+
+        context 'with a not valid registration code' do
+          before do
+            expect(InstanceVerification::Providers::Example).to receive(:new)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
+            expect(plugin_double).to(
+              receive(:instance_valid?)
+                .and_raise(InstanceVerification::Exception, 'Custom plugin error')
+            )
+            stub_request(:post, scc_url)
+              .to_return(
+                status: 401,
+                body: 'bar',
+                headers: {}
+              )
+            post url, params: payload_byos, headers: headers
+          end
+
+          it 'renders an error with exception details' do
+            data = JSON.parse(response.body)
+            expect(data['error']).to eq('Instance verification failed: Custom plugin error')
+          end
         end
       end
     end
@@ -243,3 +304,4 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     end
   end
 end
+# rubocop:enable RSpec/NestedGroups
