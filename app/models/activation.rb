@@ -9,8 +9,10 @@ class Activation < ApplicationRecord
 
   # reset SCC sync timestamp so that the system can be re-synced on change
   after_create do |activation|
-    activation.system.scc_registered_at = nil
-    activation.system.save!
+    unless activation.system.hw_info && activation.system.hw_info.scc_connected
+      activation.system.scc_registered_at = nil
+      activation.system.save!
+    end
   end
   after_update do |activation|
     activation.system.scc_registered_at = nil

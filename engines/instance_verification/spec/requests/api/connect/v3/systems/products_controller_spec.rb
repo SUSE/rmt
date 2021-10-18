@@ -105,7 +105,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
       end
 
-      context 'when system is BYOS' do
+      context 'when system is connected to SCC' do
         let(:scc_url) { 'https://scc.suse.com/connect/subscriptions/systems' }
 
         context 'with a valid registration code' do
@@ -119,7 +119,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             stub_request(:post, scc_url)
               .to_return(
                 status: 201,
-                body: 'bar',
+                body: '{"id": "bar"}',
                 headers: {}
               )
             post url, params: payload_byos, headers: headers

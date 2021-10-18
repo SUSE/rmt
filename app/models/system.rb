@@ -38,7 +38,7 @@ class System < ApplicationRecord
 
   before_update do |system|
     # reset SCC sync timestamp so that the system can be re-synced on change
-    system.scc_registered_at = nil
+    system.scc_registered_at = nil unless system.hw_info && system.hw_info.scc_connected
   end
 
   after_destroy do |system|

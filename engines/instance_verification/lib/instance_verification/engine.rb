@@ -42,7 +42,7 @@ module InstanceVerification
           end
         rescue InstanceVerification::Exception => e
           # check BYOS instances with SCC
-          unless params[:email] && params[:token] && scc_validate
+          unless params[:token] && scc_validate
             raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
           end
           update_cache(product.id)
@@ -61,43 +61,52 @@ module InstanceVerification
           Rails.cache.write(cache_key, true, expires_in: 20.minutes)
         end
 
-        def scc_validate
+        def prepare_scc_request(uri_path)
           identifier = params[:identifier].downcase
           end_index = identifier.index('_')
           identifier = identifier[0, end_index] if end_index
           end_index = params[:version].index('.')
           version = params[:version][0, end_index] if end_index
-          options = {
-            hostname: @system.hostname,
-            distro_target: [identifier, version, params[:arch]].join('-'),
-            hwinfo: {
-              hostname: @system.hostname,
-              cpus: @system.hw_info.cpus,
-              hypervisor: @system.hw_info.hypervisor,
-              arch: @system.hw_info.arch,
-              uuid: @system.hw_info.uuid,
-              cloud_provider: @system.hw_info.cloud_provider
-            }
-          }
-          url = 'https://scc.suse.com/connect/subscriptions/systems'
-          uri = URI.parse(url)
-          http = Net::HTTP.new(uri.host, uri.port)
-          http.use_ssl = uri.is_a? URI::HTTPS
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          hw_info_keys = %i[cpus sockets hypervisor arch uuid cloud_provider]
+          hw_info = @system.hw_info ? @system.hw_info.attributes.symbolize_keys.slice(*hw_info_keys) : nil
           request_header = {
             'accept': 'application/json,application/vnd.scc.suse.com.v4+json',
             'Content-Type': 'application/json',
             'Authorization': "Token token=#{params[:token]}"
           }
-          scc_request = Net::HTTP::Post.new(uri.path, request_header)
-          scc_request.body = options.to_json
+          scc_request = Net::HTTP::Post.new(uri_path, request_header)
+          scc_request.body = {
+            hostname: @system.hostname,
+            distro_target: [identifier, version, params[:arch]].join('-'),
+            hwinfo: hw_info
+          }.to_json
+          scc_request
+        end
+
+        def scc_validate
+          uri = URI.parse(
+            'https://scc.suse.com/connect/subscriptions/systems'
+          )
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = true
+          scc_request = prepare_scc_request uri.path
           response = http.request(scc_request)
+          logger.info(
+            "Response code #{response.code} for the attempt to " \
+            "register BYOS system with login #{@system.login} " \
+            "(id: #{@system.id}) to SCC"
+          )
           return false unless response.code == '201'
 
-          @system.hw_info.byos = true
-          @system.hw_info.save!
-
-          true
+          scc_id = JSON.parse(response.body)['id']
+          logger.info(
+            "System (id: #{@system.id}) with login #{@system.login} " \
+            'successfully registered to SCC'
+          )
+          @system.hw_info.update_attribute(:scc_connected, true)
+          # set scc registered info, so rmt-cli systems sync skips these ones
+          @system.update_attribute(:scc_registered_at, Time.current)
+          @system.update_attribute(:scc_system_id, scc_id)
         end
 
         def verify_extension_activation(product)
