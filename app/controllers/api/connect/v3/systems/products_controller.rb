@@ -128,16 +128,26 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
   # Check if extension base product is already activated
   def check_base_product_dependencies
-    # TODO: For APIv5 and future. We skip this check for second level extensions. E.g. HA-GEO
-    # To fix bnc#951189 specifically the rollback part of it.
-    return if @product.bases.any?(&:extension?)
-    return if @product.base? || (@system.products & @product.bases).present?
+    # We skip this check for second level extensions (not modules). E.g. HA-GEO
+    # To fix bnc#951189 specifically the rollback part of it (could get dropped in APIv5).
 
-    logger.info("Tried to activate/upgrade to '#{@product.friendly_name}' with unmet base product dependency")
-    raise ActionController::TranslatedError.new(
-      N_('Unmet product dependencies, activate one of these products first: %s'),
-      @product.bases.map(&:friendly_name).join(', ')
-    )
+    return if @product.extension? && @product.bases.any?(&:extension?)
+    return if @product.base?
+
+    # check if required parent(base) product is activated
+    if (@system.products & @product.bases).empty?
+      untranslated = N_('The product you are attempting to activate (%{product}) requires one of these products ' \
+        'to be activated first: %{required_bases}')
+      raise ActionController::TranslatedError.new(untranslated,
+                                                  { product: @product.friendly_name, required_bases: @product.bases.map(&:friendly_name).join(', ') })
+    # check if required root product is activated
+    elsif (@system.products & @product.root_products).empty?
+      untranslated = N_('The product you are attempting to activate (%{product}) is not available on ' \
+        "your system's base product (%{system_base}). %{product} is available on: %{required_bases}.")
+      raise ActionController::TranslatedError.new(untranslated,
+                                                  { product: @product.friendly_name, system_base: @system.products.find(&:base?).friendly_name,
+                                                    required_bases: @product.root_products.map(&:friendly_name).join(', ') })
+    end
   end
 
   def render_service
