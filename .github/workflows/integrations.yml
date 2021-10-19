@@ -59,12 +59,17 @@ jobs:
       - name: Run Lint
         run: |
           bundle exec rubocop -D
-      - name: Run tests
+      - name: Run core tests
         env:
           RAILS_ENV: test
         run: |
           bundle exec rails db:migrate
           bundle exec rspec --format documentation
+      - name: Run PubCloud engines tests
+        env:
+          RAILS_ENV: tests
+        run: |
+          bundle exec rails db:migrate
           rake test:engines
       - name: Run version checks
         run: |
