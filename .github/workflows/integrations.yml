@@ -67,7 +67,7 @@ jobs:
           bundle exec rspec --format documentation
       - name: Run PubCloud engines tests
         env:
-          RAILS_ENV: tests
+          RAILS_ENV: test
         run: |
           bundle exec rails db:migrate
           rake test:engines
