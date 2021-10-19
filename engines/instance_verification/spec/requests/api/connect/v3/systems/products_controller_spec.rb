@@ -92,7 +92,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       context 'when verification provider returns true' do
         let(:payload_sap) do
           {
-            identifier: product_sap.identifier,
+            identifier: product_sap.identifier.downcase,
             version: product_sap.version,
             arch: product_sap.arch
           }

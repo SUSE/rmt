@@ -12,7 +12,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
     let(:payload) do
       {
-        identifier: product.identifier,
+        identifier: product.identifier.downcase,
         version: product.version,
         arch: product.arch
       }

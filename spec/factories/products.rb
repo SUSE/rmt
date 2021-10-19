@@ -41,11 +41,36 @@ FactoryBot.define do
     end
 
     trait :product_sles do
-      identifier { 'sles' }
+      identifier { 'SLES' }
+      name { 'SUSE Linux Enterprise Server' }
+      description { 'SUSE Linux Enterprise offers a comprehensive suite of products...' }
+      shortname { 'SLES15-SP3' }
+      former_identifier { 'SLES' }
+      product_type { :base }
+      product_class { '7261' }
+      release_type { nil }
+      release_stage { 'released' }
+      version { '15.3' }
+      arch { 'x86_64' }
+      free { false }
+      cpe { 'cpe:/o:suse:sles:15:sp3' }
+      friendly_version { '15 SP3' }
     end
 
     trait :product_sles_sap do
-      identifier { 'sles_sap' }
+      identifier { 'SLES_SAP' }
+      name { 'SUSE Linux Enterprise Server' }
+      description { 'SUSE Linux Enterprise offers a comprehensive suite of products...' }
+      shortname { 'SLES15-SP3' }
+      former_identifier { 'SUSE_SLES_SAP' }
+      product_type { :base }
+      release_type { nil }
+      release_stage { 'released' }
+      version { '15.3' }
+      arch { 'x86_64' }
+      free { false }
+      cpe { 'cpe:/o:suse:sles_sap:15:sp3' }
+      friendly_version { '15 SP3' }
     end
 
     trait :extension do
