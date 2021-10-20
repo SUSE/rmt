@@ -9,7 +9,7 @@ Thu Oct 7 09:01:00 UTC 2021 - Felix Schnizlein <fschnizlein@suse.com>
   host system in SCC.
 - Add extra check to product dependency on RMT API. Now, when a system tries to
   activate a module through RMT, if it requires a root product which is not
-  activated, the activation will fail (bsc#951189).
+  activated, the activation will fail (bnc#951189).
 - Load global configuration only if it can be ready by the current process.
 
 -------------------------------------------------------------------
