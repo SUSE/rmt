@@ -378,9 +378,9 @@ describe RMT::SCC do
         let(:scc_system_id) { 9000 }
         let(:deregistered_system) { FactoryBot.create(:deregistered_system) }
 
-        it 'updates system.scc_registered_at field' do
+        it 'updates system.scc_synced_at field' do
           system.reload
-          expect(system.scc_registered_at).not_to be(nil)
+          expect(system.scc_synced_at).not_to be(nil)
         end
 
         it 'updates system.scc_system_id field' do
@@ -399,9 +399,9 @@ describe RMT::SCC do
 
         let(:system) { FactoryBot.create(:system) }
 
-        it "doesn't update system.scc_registered_at" do
+        it "doesn't update system.scc_synced_at" do
           system.reload
-          expect(system.scc_registered_at).to be(nil)
+          expect(system.scc_synced_at).to be(nil)
         end
       end
     end
