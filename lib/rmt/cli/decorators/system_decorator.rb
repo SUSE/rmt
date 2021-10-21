@@ -7,10 +7,18 @@ class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
         system.hostname,
         system.registered_at,
         system.last_seen_at,
-        system.products.map(&:product_string).join("\n")
+        products_and_subscriptions(system).join("\n")
       ]
     end
     @headers = [ _('Login'), _('Hostname'), _('Registration time'), _('Last seen'), _('Products') ]
+  end
+
+  def products_and_subscriptions(system)
+    system.activations.map do |a|
+      product_name = a.service.product.product_string
+
+      a.subscription ? "#{product_name} (Regcode: #{a.subscription.regcode})" : product_name
+    end
   end
 
   def to_csv
