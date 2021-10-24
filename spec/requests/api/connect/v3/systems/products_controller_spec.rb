@@ -26,20 +26,40 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       let(:verb) { 'post' }
     end
 
-    context 'when product has unmet dependencies' do
+    context 'when product has unmet base dependencies' do
       subject { response }
 
       let(:base_product) { FactoryBot.create(:product, :with_not_mirrored_repositories, :with_mirrored_extensions) }
       let(:product) { base_product.extensions[0] }
       let(:error_json) do
-        {
-          type: 'error',
-          error: "Unmet product dependencies, activate one of these products first: #{base_product.friendly_name}",
-          localized_error: "Unmet product dependencies, activate one of these products first: #{base_product.friendly_name}"
-        }.to_json
+        msg = "The product you are attempting to activate (#{product.friendly_name}) requires one of these products " \
+          "to be activated first: #{base_product.friendly_name}"
+        { type: 'error', error: msg, localized_error: msg }.to_json
       end
 
       before { post url, headers: headers, params: payload }
+      its(:code) { is_expected.to eq('422') }
+      its(:body) { is_expected.to eq(error_json) }
+    end
+
+    context 'when product has unmet root dependencies' do
+      subject { response }
+
+      let(:system) { FactoryBot.create(:system, :with_activated_base_product) }
+      let(:other_root_product) { FactoryBot.create(:product, :with_mirrored_extensions) }
+      let(:extension) { FactoryBot.create(:product, :extension, :with_not_mirrored_repositories, base_products: [system.products.first, other_root_product]) }
+      let(:product) { FactoryBot.create(:product, :module, :with_mirrored_repositories, base_products: [extension], root_product: other_root_product) }
+
+      let(:error_json) do
+        msg = "The product you are attempting to activate (#{product.friendly_name}) is not available on your system's " \
+          "base product (#{system.products.first.friendly_name}). #{product.friendly_name} is available on: #{other_root_product.friendly_name}."
+        { type: 'error', error: msg, localized_error: msg }.to_json
+      end
+
+      before do
+        create(:activation, system: system, service: extension.service)
+        post url, headers: headers, params: payload
+      end
       its(:code) { is_expected.to eq('422') }
       its(:body) { is_expected.to eq(error_json) }
     end
@@ -94,6 +114,47 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
 
       context 'when the product was not already activated on this system' do
         specify { expect { request }.to change { system.activations.count }.from(0).to(1) }
+      end
+
+      shared_context 'with subscriptions' do
+        let(:payload) do
+          {
+            identifier: product.identifier,
+            version: product.version,
+            arch: product.arch,
+            token: regcode
+          }
+        end
+
+        before { post url, headers: headers, params: payload }
+        subject { JSON.parse(response.body, symbolize_names: true) }
+      end
+
+      context 'unknown subscription' do
+        include_context 'with subscriptions'
+        let(:regcode) { 'NOT-EXISTING-SUBSCRIPTION' }
+
+        its([:error]) { is_expected.to match(/No subscription with this Registration Code found/) }
+      end
+
+      context 'subscription does not include product' do
+        include_context 'with subscriptions'
+        let(:subscription) { create :subscription }
+        let(:regcode) { subscription.regcode }
+
+        its([:error]) { is_expected.to match(/The subscription with the provided Registration Code does not include the requested product/) }
+      end
+
+      context 'subscription with associated product' do
+        include_context 'with subscriptions'
+        let(:subscription) { create :subscription, :with_products }
+        let(:product) { subscription.products.first }
+        let(:regcode) { subscription.regcode }
+
+        it 'creates activations with subscriptions associated' do
+          activation = Activation.find_by(subscription: subscription)
+          expect(activation.product).to eq(product)
+        end
       end
     end
   end

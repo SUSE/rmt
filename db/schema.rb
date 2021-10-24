@@ -17,7 +17,9 @@ ActiveRecord::Schema.define(version: 2021_10_17_185107) do
     t.bigint "system_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "subscription_id"
     t.index ["service_id"], name: "fk_rails_5ad14bc754"
+    t.index ["subscription_id"], name: "fk_rails_296466bd8d"
     t.index ["system_id", "service_id"], name: "index_activations_on_system_id_and_service_id", unique: true
     t.index ["system_id"], name: "index_activations_on_system_id"
   end
@@ -49,7 +51,7 @@ ActiveRecord::Schema.define(version: 2021_10_17_185107) do
     t.datetime "updated_at", null: false
     t.text "instance_data", comment: "Additional client information, e.g. instance identity document"
     t.string "cloud_provider"
-    t.boolean "scc_connected", default: false
+    t.boolean "proxy_byos", default: false
     t.index ["hypervisor"], name: "index_hw_infos_on_hypervisor"
     t.index ["system_id"], name: "index_hw_infos_on_system_id", unique: true
   end
@@ -162,6 +164,7 @@ ActiveRecord::Schema.define(version: 2021_10_17_185107) do
   end
 
   add_foreign_key "activations", "services", on_delete: :cascade
+  add_foreign_key "activations", "subscriptions"
   add_foreign_key "activations", "systems", on_delete: :cascade
   add_foreign_key "product_predecessors", "products", column: "predecessor_id"
   add_foreign_key "product_predecessors", "products", on_delete: :cascade

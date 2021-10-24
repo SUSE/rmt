@@ -47,14 +47,24 @@ RSpec.describe ServicesController, type: :request do
         end
 
         context 'when service is registered' do
-          before { get "/services/#{activated_service.id}", headers: auth_header }
+          before do
+            allow_any_instance_of(InstanceVerification::Providers::Example).to(
+              receive(:instance_valid?).and_return(true)
+            )
+            get "/services/#{activated_service.id}", headers: auth_header
+          end
           its(:code) { is_expected.to eq '200' }
         end
       end
     end
 
     describe 'response XML URLs' do
-      before { get "/services/#{activated_service.id}", headers: auth_header }
+      before do
+        allow_any_instance_of(InstanceVerification::Providers::Example).to(
+          receive(:instance_valid?).and_return(true)
+        )
+        get "/services/#{activated_service.id}", headers: auth_header
+      end
 
       include_context 'auth header', :system, :login, :password
 
