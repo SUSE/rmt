@@ -1,6 +1,6 @@
 require 'net/http'
 
-ACTIVATE_PRODUCT_URL = 'https://scc.suse.com/connect/systems/products'
+ACTIVATE_PRODUCT_URL = 'https://scc.suse.com/connect/systems/products'.freeze
 
 module InstanceVerification
   class << self
@@ -72,12 +72,11 @@ module InstanceVerification
           Rails.cache.write(cache_key, true, expires_in: 20.minutes)
         end
 
-        def prepare_scc_request(uri_path, method=nil)
-          basic_encode_scc = 'Basic ' + ["#{@system.login}:#{@system.password}"].pack('m').delete("\r\n")
+        def prepare_scc_request(uri_path, method = nil)
           activate_header = {
-            'accept': 'application/json,application/vnd.scc.suse.com.v4+json',
-            'Content-Type': 'application/json',
-            'Authorization': InstanceVerification.verification_basic_encode(@system.login, @system.password)
+            accept: 'application/json,application/vnd.scc.suse.com.v4+json',
+            Content-Type: 'application/json',
+            Authorization: InstanceVerification.verification_basic_encode(@system.login, @system.password)
           }
           unless method
             scc_request = Net::HTTP::Post.new(uri_path, activate_header) unless method
