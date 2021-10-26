@@ -125,10 +125,7 @@ Lint/ConstantDefinitionInBlock:
 Lint/EmptyBlock:
   Exclude:
     - 'engines/zypper_auth/config/routes.rb'
-<<<<<<< HEAD
     - 'engines/scc_proxy/config/routes.rb'
-=======
->>>>>>> master
 
 # Offense count: 4
 # Configuration parameters: MaximumRangeSize.
