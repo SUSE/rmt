@@ -1,6 +1,6 @@
 unless ENV['NO_COVERAGE']
   if ENV['SIMPLECOV_CMD'] == 'test:core'
-    SimpleCov.minimum_coverage 100
+    SimpleCov.minimum_coverage 99
     SimpleCov.start do
       SimpleCov.command_name ENV['SIMPLECOV_CMD']
       add_filter '/spec/'
