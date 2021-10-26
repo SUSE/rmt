@@ -21,8 +21,8 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
     # implementation route. In this example it is assumed the instance data is json and
     # contains instance_product_id
 
-    return '1234_SUSE_SLES' if @product_hash[:identifier] == 'sles'
+    return '1234_SUSE_SLES' if @product_hash[:identifier].casecmp('sles').zero?
 
-    return '6789_SUSE_SAP' if @product_hash[:identifier] == 'sles_sap'
+    return '6789_SUSE_SAP' if @product_hash[:identifier].casecmp('sles_sap').zero?
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_06_102307) do
+ActiveRecord::Schema.define(version: 2021_10_17_185107) do
 
   create_table "activations", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "service_id", null: false
@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(version: 2021_10_06_102307) do
     t.datetime "updated_at", null: false
     t.text "instance_data", comment: "Additional client information, e.g. instance identity document"
     t.string "cloud_provider"
+    t.boolean "proxy_byos", default: false
     t.index ["hypervisor"], name: "index_hw_infos_on_hypervisor"
     t.index ["system_id"], name: "index_hw_infos_on_system_id", unique: true
   end
