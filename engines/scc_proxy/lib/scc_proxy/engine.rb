@@ -26,9 +26,9 @@ module SccProxy
 
     def prepare_scc_registration_request(uri_path, auth, params)
       request_header = {
-        accept: 'application/json,application/vnd.scc.suse.com.v4+json'
-        Content-Type: 'application/json'
-	Authorization: auth
+        'accept': 'application/json,application/vnd.scc.suse.com.v4+json',
+        'Content-Type': 'application/json',
+	'Authorization': auth
       }
       scc_request = Net::HTTP::Post.new(uri_path, request_header)
       hw_info_keys = %i[cpus sockets hypervisor arch uuid cloud_provider]
@@ -62,7 +62,7 @@ module SccProxy
       Api::Connect::V3::Subscriptions::SystemsController.class_eval do
         def announce_system
           auth_header = request.headers['HTTP_AUTHORIZATION'] if request.headers.include?('HTTP_AUTHORIZATION')
-          auth_header ||= '='
+          auth_header = '=' unless auth_header
           auth_header = auth_header[auth_header.index('=') + 1..-1]
           if auth_header.empty?
             # no token sent to check with SCC

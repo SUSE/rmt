@@ -74,20 +74,20 @@ module InstanceVerification
 
         def prepare_scc_request(uri_path, method = nil)
           activate_header = {
-            accept: 'application/json,application/vnd.scc.suse.com.v4+json',
-            Content-Type: 'application/json',
-            Authorization: InstanceVerification.verification_basic_encode(@system.login, @system.password)
+            'accept' => 'application/json,application/vnd.scc.suse.com.v4+json',
+            'Content-Type' => 'application/json',
+            'Authorization' => InstanceVerification.verification_basic_encode(@system.login, @system.password)
           }
           unless method
             scc_request = Net::HTTP::Post.new(uri_path, activate_header) unless method
-            email = params[:email] ? params[:email] : nil
+            email = params[:email] || nil
             scc_request.body = {
               token: params[:token],
               identifier: params[:identifier],
               version: params[:version],
               arch: params[:arch],
               release_type: params[:release_type],
-              email: nil
+              email: email
             }.to_json
             return scc_request
           end
@@ -105,7 +105,7 @@ module InstanceVerification
           ].join('-')
           logger.info(
             "Response code #{response.code} for the attempt to " \
-            "activate product #{prod} to SCC"
+              "activate product #{prod} to SCC"
           )
           return false unless response.code_type == Net::HTTPCreated
 
