@@ -70,7 +70,7 @@ jobs:
           RAILS_ENV: test
         run: |
           bundle exec rails db:migrate
-          rake test:engines
+          bundle exec rake test:engines
       - name: Run version checks
         run: |
           echo "::group::Version verification checks"
