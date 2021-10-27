@@ -11,7 +11,7 @@ RSpec::Core::RakeTask.new('test:core') do |t|
   t.pattern = 'spec'
   t.verbose = false
   t.fail_on_error = true
-  t.rspec_opts = '--format Fuubar --color'
+  t.rspec_opts = '--format documentation'
 end
 
 RSpec::Core::RakeTask.new('test:engines') do |t|
@@ -20,5 +20,5 @@ RSpec::Core::RakeTask.new('test:engines') do |t|
   t.pattern = 'engines/*/spec/**/**{,/*/**}/*_spec.rb'
   t.verbose = false
   t.fail_on_error = true
-  t.rspec_opts = '--format Fuubar --color'
+  t.rspec_opts = '--format documentation'
 end
