@@ -2,6 +2,7 @@ class Activation < ApplicationRecord
 
   belongs_to :system
   belongs_to :service
+  belongs_to :subscription, optional: true
   has_one :product, through: :service
 
   validates :system, presence: true

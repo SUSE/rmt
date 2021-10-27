@@ -8,11 +8,11 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
     let(:url) { connect_systems_products_url }
     let(:headers) { auth_header.merge(version_header) }
-    let(:product) { FactoryBot.create(:product, :with_mirrored_repositories, :with_mirrored_extensions) }
+    let(:product) { FactoryBot.create(:product, :product_sles_sap, :with_mirrored_repositories, :with_mirrored_extensions) }
 
     let(:payload) do
       {
-        identifier: product.identifier,
+        identifier: product.identifier.downcase,
         version: product.version,
         arch: product.arch
       }
