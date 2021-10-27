@@ -238,10 +238,18 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
       ).to_json
     end
+    let(:scc_activate_url) { 'https://scc.suse.com/connect/systems/products' }
 
     before do
       FactoryBot.create(:subscription, product_classes: product_classes)
       expect(InstanceVerification::Providers::Example).not_to receive(:new)
+      stub_request(:post, scc_activate_url)
+        .to_return(
+          status: 401,
+          body: 'bar',
+          headers: {}
+        )
+
       post url, params: payload, headers: headers
     end
 

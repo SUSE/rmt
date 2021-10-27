@@ -53,7 +53,7 @@ module InstanceVerification
           end
         rescue InstanceVerification::Exception => e
           # check BYOS instances with SCC
-          unless params[:token] && scc_activate_product
+          unless scc_activate_product
             raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
           end
           update_subscription
