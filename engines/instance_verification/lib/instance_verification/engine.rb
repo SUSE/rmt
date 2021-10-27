@@ -4,12 +4,11 @@ ACTIVATE_PRODUCT_URL = 'https://scc.suse.com/connect/systems/products'.freeze
 SYSTEM_SUBSCRIPTION_URL = 'https://scc.suse.com/connect/systems/subscriptions'.freeze
 
 module InstanceVerification
-  class << self
-    include ::Net::HTTPHeader
+  extend ::Net::HTTPHeader
 
-    def verification_basic_encode(login, password)
-      basic_encode(login, password)
-    end
+  def self.verification_basic_encode(login, password)
+    # wrapping private method
+    basic_encode(login, password)
   end
 
   class Engine < ::Rails::Engine
