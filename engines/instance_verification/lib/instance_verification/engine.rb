@@ -73,13 +73,13 @@ module InstanceVerification
           Rails.cache.write(cache_key, true, expires_in: 20.minutes)
         end
 
-        def prepare_scc_request(uri_path, method = nil)
+        def prepare_scc_request(uri_path, method = :get)
           activate_header = {
             'accept' => 'application/json,application/vnd.scc.suse.com.v4+json',
             'Content-Type' => 'application/json',
             'Authorization' => InstanceVerification.verification_basic_encode(@system.login, @system.password)
           }
-          unless method
+          if method == :post
             scc_request = Net::HTTP::Post.new(uri_path, activate_header) # unless method
             email = params[:email] || nil
             scc_request.body = {
@@ -90,16 +90,17 @@ module InstanceVerification
               release_type: params[:release_type],
               email: email
             }.to_json
-            return scc_request
+            scc_request
+          elsif method == :get
+            Net::HTTP::Get.new(uri_path, activate_header)
           end
-          Net::HTTP::Get.new(uri_path, activate_header)
         end
 
         def scc_activate_product
           uri = URI.parse(ACTIVATE_PRODUCT_URL)
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
-          scc_request = prepare_scc_request(uri.path)
+          scc_request = prepare_scc_request(uri.path, :post)
           response = http.request(scc_request)
           prod = [
             params[:identifier], params[:version], params[:arch]
@@ -118,7 +119,7 @@ module InstanceVerification
           uri = URI.parse(SYSTEM_SUBSCRIPTION_URL)
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
-          scc_request = prepare_scc_request(uri.path, 'get')
+          scc_request = prepare_scc_request(uri.path, :get)
           response = http.request(scc_request)
           logger.info "Response code is #{response.code} for subscription request to SCC"
 
