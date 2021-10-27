@@ -80,7 +80,7 @@ module InstanceVerification
             'Authorization' => InstanceVerification.verification_basic_encode(@system.login, @system.password)
           }
           unless method
-            scc_request = Net::HTTP::Post.new(uri_path, activate_header) unless method
+            scc_request = Net::HTTP::Post.new(uri_path, activate_header) # unless method
             email = params[:email] || nil
             scc_request.body = {
               token: params[:token],
