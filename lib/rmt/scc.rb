@@ -84,11 +84,7 @@ class RMT::SCC
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
     # skip the systems that are connected to SCC through proxy
-    System.includes(:hw_info)
-      .where(scc_registered_at: nil, hw_info: { proxy_byos: false }).or(
-        System.includes(:hw_info)
-          .where(scc_registered_at: nil, hw_info: { id: nil })
-      ).find_in_batches(batch_size: 20) do |batch|
+    System.where(scc_registered_at: nil, proxy_byos: false).find_in_batches(batch_size: 20) do |batch|
       batch.each do |system|
         @logger.info(_('Syncing system %{login} to SCC') % { login: system.login })
         response = scc_api_client.forward_system_activations(system)

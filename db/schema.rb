@@ -51,7 +51,6 @@ ActiveRecord::Schema.define(version: 2021_10_17_185107) do
     t.datetime "updated_at", null: false
     t.text "instance_data", comment: "Additional client information, e.g. instance identity document"
     t.string "cloud_provider"
-    t.boolean "proxy_byos", default: false
     t.index ["hypervisor"], name: "index_hw_infos_on_hypervisor"
     t.index ["system_id"], name: "index_hw_infos_on_system_id", unique: true
   end
@@ -160,6 +159,7 @@ ActiveRecord::Schema.define(version: 2021_10_17_185107) do
     t.datetime "updated_at", null: false
     t.datetime "scc_registered_at"
     t.bigint "scc_system_id", comment: "System ID in SCC (if the system registration was forwarded; needed for forwarding de-registrations)"
+    t.boolean "proxy_byos", default: false
     t.index ["login"], name: "index_systems_on_login", unique: true
   end
 

@@ -68,13 +68,12 @@ module SccProxy
             @system = System.create!(hostname: params[:hostname], hw_info: HwInfo.new(hw_info_params))
           else
             response = SccProxy.register_system_scc(request.headers['HTTP_AUTHORIZATION'], request.request_parameters)
-            hw_info = hw_info_params
-            hw_info[:proxy_byos] = true
             @system = System.create!(
               login: response['login'],
               password: response['password'],
               hostname: params[:hostname],
-              hw_info: HwInfo.new(hw_info)
+              proxy_byos: true,
+              hw_info: HwInfo.new(hw_info_params)
             )
           end
           logger.info("System '#{@system.hostname}' announced")
