@@ -137,7 +137,7 @@ RSpec.describe RMT::Config do
   end
 
   describe '#host_system' do
-    subject(:method_call) { described_class.send(:host_system) }
+    subject(:method_call) { described_class.send(:set_host_system!) }
 
     it 'returns an empty string when the credentials file does not exist' do
       allow(File).to receive(:exist?).with(RMT::CREDENTIALS_FILE_LOCATION).and_return(false)
