@@ -101,7 +101,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   def create_product_activation
     activation = @system.activations.where(service_id: @product.service.id).first_or_create
 
-    if params[:token].present?
+    if params[:token].present? && @system.proxy_byos == false
       subscription = Subscription.find_by(regcode: params[:token])
 
       unless subscription

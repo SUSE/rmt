@@ -23,18 +23,34 @@ NET_HTTP_ERRORS = [
 module SccProxy
   class << self
 
-    def prepare_scc_registration_request(uri_path, auth, params)
-      request_header = {
+    def headers(auth)
+      {
         'accept' => 'application/json,application/vnd.scc.suse.com.v4+json',
         'Content-Type' => 'application/json',
         'Authorization' => auth
       }
-      scc_request = Net::HTTP::Post.new(uri_path, request_header)
+    end
+
+    def prepare_scc_registration_request(uri_path, auth, params)
+      scc_request = Net::HTTP::Post.new(uri_path, headers(auth))
       hw_info_keys = %i[cpus sockets hypervisor arch uuid cloud_provider]
       hw_info = params['hwinfo'].symbolize_keys.slice(*hw_info_keys)
       scc_request.body = {
         hostname: params['hostname'],
         hwinfo: hw_info
+      }.to_json
+      scc_request
+    end
+
+    def prepare_scc_request(uri_path, product, auth, token, email, method = nil)
+      scc_request = Net::HTTP::Post.new(uri_path, headers(auth))
+      scc_request.body = {
+        token: token,
+        identifier: product.identifier,
+        version: product.version,
+        arch: product.arch,
+        release_type: product.release_type,
+        email: email || nil
       }.to_json
       scc_request
     end
@@ -45,10 +61,24 @@ module SccProxy
       http.use_ssl = true
       scc_request = prepare_scc_registration_request(uri.path, auth, params)
       response = http.request(scc_request)
-      # raise exception if resource not created
       response.error! unless response.code_type == Net::HTTPCreated
 
       JSON.parse(response.body)
+    end
+
+    def scc_activate_product(product, auth, token, email, logger)
+      uri = URI.parse(ACTIVATE_PRODUCT_URL)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      scc_request = prepare_scc_request(uri.path, product, auth, token, email)
+      response = http.request(scc_request)
+      logger.info(
+        "Response code is #{response.code} for the attempt to " \
+          "activate product #{product.product_string} to SCC"
+      )
+      return false unless response.code_type == Net::HTTPCreated
+      logger.info "Product #{product.product_string} successfully activated"
+      true
     end
   end
 
@@ -75,7 +105,7 @@ module SccProxy
               proxy_byos: true,
               hw_info: HwInfo.new(hw_info_params)
             )
-          end
+           end
           logger.info("System '#{@system.hostname}' announced")
           respond_with(@system, serializer: ::V3::SystemSerializer, location: nil)
         rescue *NET_HTTP_ERRORS => e
@@ -93,6 +123,16 @@ module SccProxy
             status = e.message[0..(message.index(' ') - 1)].to_i
           end
           render json: { type: 'error', error: message }, status: status, location: nil
+        end
+      end
+
+      Api::Connect::V3::Systems::ProductsController.class_eval do
+        before_action :scc_register_product, only: %i[activate]
+
+        def scc_register_product
+          logger.info "Activating product #{@product.product_string} to SCC"
+          auth = request.headers['HTTP_AUTHORIZATION']
+          SccProxy.scc_activate_product(@product, auth, params[:token], params[:email], logger) if @system.proxy_byos
         end
       end
     end

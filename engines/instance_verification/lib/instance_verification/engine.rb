@@ -2,6 +2,7 @@ require 'net/http'
 
 ACTIVATE_PRODUCT_URL = 'https://scc.suse.com/connect/systems/products'.freeze
 SYSTEM_SUBSCRIPTION_URL = 'https://scc.suse.com/connect/systems/subscriptions'.freeze
+SUBSCRIPTIONS_PRODUCTS_URL = 'https://scc.suse.com/connect/subscriptions/products'.freeze
 
 module InstanceVerification
   extend ::Net::HTTPHeader
@@ -51,12 +52,8 @@ module InstanceVerification
             verify_extension_activation(product)
           end
         rescue InstanceVerification::Exception => e
-          # check BYOS instances with SCC
-          unless scc_activate_product
-            raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
-          end
-          update_subscription
-          update_cache(product.id)
+          raise ActionController::TranslatedError.new(e.message) if @system.proxy_byos
+          raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
         rescue StandardError => e
           logger.error('Unexpected instance verification error has occurred:')
           logger.error(e.message)
@@ -72,67 +69,36 @@ module InstanceVerification
           Rails.cache.write(cache_key, true, expires_in: 20.minutes)
         end
 
-        def prepare_scc_request(uri_path, method = :get)
-          activate_header = {
+        def prepare_scc_request(uri_path, product)
+          # check registration code agains SCC request
+          # GET /subscriptions/products
+          header = {
             'accept' => 'application/json,application/vnd.scc.suse.com.v4+json',
             'Content-Type' => 'application/json',
-            'Authorization' => InstanceVerification.verification_basic_encode(@system.login, @system.password)
-          }
-          if method == :post
-            scc_request = Net::HTTP::Post.new(uri_path, activate_header) # unless method
-            email = params[:email] || nil
-            scc_request.body = {
-              token: params[:token],
-              identifier: params[:identifier],
-              version: params[:version],
-              arch: params[:arch],
-              release_type: params[:release_type],
-              email: email
-            }.to_json
-            scc_request
-          elsif method == :get
-            Net::HTTP::Get.new(uri_path, activate_header)
-          end
+            'Authorization' => "Token token=#{params[:token]}"
+	  }
+	  scc_request = Net::HTTP::Get.new(uri_path, header)
+	  scc_request.body = {
+            identifier: product.identifier,
+            version: product.version,
+            arch: product.arch,
+            release_type: product.release_type,
+          }.to_json
+          scc_request
         end
 
-        def scc_activate_product
-          uri = URI.parse(ACTIVATE_PRODUCT_URL)
+        def scc_check_regcode(product)
+          # check that the regcode can access that product
+	  uri = URI.parse(SUBSCRIPTIONS_PRODUCTS_URL)
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
-          scc_request = prepare_scc_request(uri.path, :post)
+          scc_request = prepare_scc_request(uri.path, product)
           response = http.request(scc_request)
-          prod = [
-            params[:identifier], params[:version], params[:arch]
-          ].join('-')
           logger.info(
             "Response code is #{response.code} for the attempt to " \
-              "activate product #{prod} to SCC"
+              "check registration code for #{product.product_string} to SCC"
           )
-          return false unless response.code_type == Net::HTTPCreated
-
-          logger.info "Product #{prod} successfully activated"
-          true
-        end
-
-        def update_subscription
-          uri = URI.parse(SYSTEM_SUBSCRIPTION_URL)
-          http = Net::HTTP.new(uri.host, uri.port)
-          http.use_ssl = true
-          scc_request = prepare_scc_request(uri.path, :get)
-          response = http.request(scc_request)
-          logger.info "Response code is #{response.code} for subscription request to SCC"
-
-          return false unless response.code_type == Net::HTTPOK
-
-          parsed_response = JSON.parse(response.body)[0]
-          subscription = Subscription.find_or_create_by(id: parsed_response['id'].to_i)
-          subscription.attributes = parsed_response.select { |k, _| subscription.attributes.keys.member?(k.to_s) }
-          subscription.kind = parsed_response['type']
-          subscription.save!
-
-          parsed_response['product_classes'].each do |product_class|
-            SubscriptionProductClass.find_or_create_by(subscription_id: subscription.id, product_class: product_class)
-          end
+          raise InstanceVerification::Exception.new('No subscription with this Registration Code found') unless response.code_type == Net::HTTPOK
         end
 
         def verify_extension_activation(product)
@@ -159,15 +125,18 @@ module InstanceVerification
         end
 
         def verify_base_product_activation(product)
-          verification_provider = InstanceVerification.provider.new(
-            logger,
-            request,
-            params.permit(:identifier, :version, :arch, :release_type).to_h,
-            @system.hw_info&.instance_data
-          )
+          if @system.proxy_byos
+            scc_check_regcode(product)
+          else
+            verification_provider = InstanceVerification.provider.new(
+              logger,
+              request,
+              params.permit(:identifier, :version, :arch, :release_type).to_h,
+              @system.hw_info&.instance_data
+            )
 
-          raise 'Unspecified error' unless verification_provider.instance_valid?
-
+            raise 'Unspecified error' unless verification_provider.instance_valid?
+          end
           update_cache(product.id)
         end
 

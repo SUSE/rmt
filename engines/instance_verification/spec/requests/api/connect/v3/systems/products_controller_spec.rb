@@ -130,8 +130,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       end
 
       context 'when system is connected to SCC' do
+        let(:system) { FactoryBot.create(:system, :byos, :with_hw_info, instance_data: instance_data) }
         let(:scc_activate_url) { 'https://scc.suse.com/connect/systems/products' }
-        let(:scc_subscription_url) { 'https://scc.suse.com/connect/systems/subscriptions' }
+        let(:scc_subscriptions_products_url) { 'https://scc.suse.com/connect/subscriptions/products' }
         let(:subscription_response) do
           {
             id: 4206714,
@@ -173,19 +174,13 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         context 'with a valid registration code' do
           before do
-            expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
-            expect(plugin_double).to(
-              receive(:instance_valid?)
-                .and_raise(InstanceVerification::Exception, 'Custom plugin error')
-            )
             stub_request(:post, scc_activate_url)
               .to_return(
                 status: 201,
                 body: '{"id": "bar"}',
                 headers: {}
               )
-            stub_request(:get, scc_subscription_url)
+            stub_request(:get, scc_subscriptions_products_url)
               .to_return(
                 status: 200,
                 body: [subscription_response].to_json,
@@ -201,13 +196,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         context 'with a not valid registration code' do
           before do
-            expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
-            expect(plugin_double).to(
-              receive(:instance_valid?)
-                .and_raise(InstanceVerification::Exception, 'Custom plugin error')
-            )
-            stub_request(:post, scc_activate_url)
+            stub_request(:get, scc_subscriptions_products_url)
               .to_return(
                 status: 401,
                 body: 'bar',
@@ -218,7 +207,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
           it 'renders an error with exception details' do
             data = JSON.parse(response.body)
-            expect(data['error']).to eq('Instance verification failed: Custom plugin error')
+            expect(data['error']).to eq('No subscription with this Registration Code found')
           end
         end
       end
