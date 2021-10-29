@@ -17,18 +17,18 @@ RSpec.describe Activation, type: :model do
     let(:system) { FactoryBot.create :system }
   end
 
-  describe 'system.scc_registered_at hooks' do
+  describe 'system.scc_synced_at hooks' do
     context 'when an activation is created' do
-      let!(:system) { FactoryBot.create :system, scc_registered_at: Time.zone.now }
+      let!(:system) { FactoryBot.create :system, scc_synced_at: Time.zone.now }
 
-      it 'system.scc_registered_at is not nil before activation is created' do
-        expect(system.scc_registered_at).not_to be(nil)
+      it 'system.scc_synced_at is not nil before activation is created' do
+        expect(system.scc_synced_at).not_to be(nil)
       end
 
-      it 'system.scc_registered_at is nil after activation is created' do
+      it 'system.scc_synced_at is nil after activation is created' do
         FactoryBot.create :activation, system_id: system.id
         system.reload
-        expect(system.scc_registered_at).to be(nil)
+        expect(system.scc_synced_at).to be(nil)
       end
     end
 
@@ -36,19 +36,19 @@ RSpec.describe Activation, type: :model do
       let(:system) { FactoryBot.create :system }
       let!(:activation) do
         activation = FactoryBot.create :activation, system_id: system.id
-        system.update_column(:scc_registered_at, Time.zone.now)
+        system.update_column(:scc_synced_at, Time.zone.now)
         activation.system.reload
         activation
       end
 
-      it 'system.scc_registered_at is not nil before activation is destroyed' do
-        expect(system.scc_registered_at).not_to be(nil)
+      it 'system.scc_synced_at is not nil before activation is destroyed' do
+        expect(system.scc_synced_at).not_to be(nil)
       end
 
-      it 'system.scc_registered_at is nil after activation is destroyed' do
+      it 'system.scc_synced_at is nil after activation is destroyed' do
         activation.destroy!
         system.reload
-        expect(system.scc_registered_at).to be(nil)
+        expect(system.scc_synced_at).to be(nil)
       end
     end
 
@@ -56,20 +56,20 @@ RSpec.describe Activation, type: :model do
       let(:system) { FactoryBot.create :system }
       let!(:activation) do
         activation = FactoryBot.create :activation, system_id: system.id
-        system.update_column(:scc_registered_at, Time.zone.now)
+        system.update_column(:scc_synced_at, Time.zone.now)
         activation.system.reload
         activation
       end
 
-      it 'system.scc_registered_at is not nil before activation is updated' do
-        expect(system.scc_registered_at).not_to be(nil)
+      it 'system.scc_synced_at is not nil before activation is updated' do
+        expect(system.scc_synced_at).not_to be(nil)
       end
 
-      it 'system.scc_registered_at is nil after activation is updated' do
+      it 'system.scc_synced_at is nil after activation is updated' do
         activation.updated_at = Time.zone.now
         activation.save!
         system.reload
-        expect(system.scc_registered_at).to be(nil)
+        expect(system.scc_synced_at).to be(nil)
       end
     end
   end
