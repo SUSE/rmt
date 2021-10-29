@@ -42,7 +42,7 @@ module SccProxy
       scc_request
     end
 
-    def prepare_scc_request(uri_path, product, auth, token, email, method = nil)
+    def prepare_scc_request(uri_path, product, auth, token, email)
       scc_request = Net::HTTP::Post.new(uri_path, headers(auth))
       scc_request.body = {
         token: token,
@@ -77,6 +77,7 @@ module SccProxy
           "activate product #{product.product_string} to SCC"
       )
       return false unless response.code_type == Net::HTTPCreated
+
       logger.info "Product #{product.product_string} successfully activated"
       true
     end
@@ -105,7 +106,7 @@ module SccProxy
               proxy_byos: true,
               hw_info: HwInfo.new(hw_info_params)
             )
-           end
+          end
           logger.info("System '#{@system.hostname}' announced")
           respond_with(@system, serializer: ::V3::SystemSerializer, location: nil)
         rescue *NET_HTTP_ERRORS => e

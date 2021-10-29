@@ -76,20 +76,20 @@ module InstanceVerification
             'accept' => 'application/json,application/vnd.scc.suse.com.v4+json',
             'Content-Type' => 'application/json',
             'Authorization' => "Token token=#{params[:token]}"
-	  }
-	  scc_request = Net::HTTP::Get.new(uri_path, header)
-	  scc_request.body = {
+          }
+          scc_request = Net::HTTP::Get.new(uri_path, header)
+          scc_request.body = {
             identifier: product.identifier,
             version: product.version,
             arch: product.arch,
-            release_type: product.release_type,
+            release_type: product.release_type
           }.to_json
           scc_request
         end
 
         def scc_check_regcode(product)
           # check that the regcode can access that product
-	  uri = URI.parse(SUBSCRIPTIONS_PRODUCTS_URL)
+          uri = URI.parse(SUBSCRIPTIONS_PRODUCTS_URL)
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
           scc_request = prepare_scc_request(uri.path, product)

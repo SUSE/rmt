@@ -83,7 +83,7 @@ class RMT::SCC
     credentials_set? || (raise CredentialsError, _('SCC credentials not set.'))
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
-    # do not sync BYOS proxy systems to SCC 
+    # do not sync BYOS proxy systems to SCC
     System.where(scc_synced_at: nil, proxy_byos: false).find_in_batches(batch_size: 20) do |batch|
       batch.each do |system|
         @logger.info(_('Syncing system %{login} to SCC') % { login: system.login })
