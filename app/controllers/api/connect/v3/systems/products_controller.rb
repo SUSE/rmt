@@ -101,7 +101,8 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   def create_product_activation
     activation = @system.activations.where(service_id: @product.service.id).first_or_create
 
-    if params[:token].present? && @system.proxy_byos == false
+    # in BYOS mode, we rely on the activation being performed in `engines/scc_proxy/lib/scc_proxy/engine.rb` and don't need further checks here
+    return activation if @system.proxy_byos
       subscription = Subscription.find_by(regcode: params[:token])
 
       unless subscription
