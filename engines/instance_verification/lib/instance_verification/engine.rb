@@ -53,6 +53,10 @@ module InstanceVerification
           end
         rescue InstanceVerification::Exception => e
           if @system.proxy_byos
+            # BYOS instances that use RMT as a proxy are expected to fail the
+            # instance verification check, however, PAYG instances may send registration
+            # code, as such, instance verification engine checks for those BYOS
+            # instances once instance verification has failed
             raise ActionController::TranslatedError.new('No subscription with this Registration Code found') unless scc_check_regcode(product)
             update_cache(product.id)
             true
