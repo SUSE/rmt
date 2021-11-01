@@ -1,6 +1,6 @@
 require 'net/http'
 
-REGISTER_URL = 'https://scc.suse.com/connect/subscriptions/systems'.freeze
+ANNOUNCE_URL = 'https://scc.suse.com/connect/subscriptions/systems'.freeze
 NET_HTTP_ERRORS = [
   Errno::EINVAL,
   Errno::ECONNRESET,
@@ -31,7 +31,7 @@ module SccProxy
       }
     end
 
-    def prepare_scc_registration_request(uri_path, auth, params)
+    def prepare_scc_announce_request(uri_path, auth, params)
       scc_request = Net::HTTP::Post.new(uri_path, headers(auth))
       hw_info_keys = %i[cpus sockets hypervisor arch uuid cloud_provider]
       hw_info = params['hwinfo'].symbolize_keys.slice(*hw_info_keys)
@@ -55,11 +55,11 @@ module SccProxy
       scc_request
     end
 
-    def register_system_scc(auth, params)
-      uri = URI.parse(REGISTER_URL)
+    def announce_system_scc(auth, params)
+      uri = URI.parse(ANNOUNCE_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      scc_request = prepare_scc_registration_request(uri.path, auth, params)
+      scc_request = prepare_scc_announce_request(uri.path, auth, params)
       response = http.request(scc_request)
       response.error! unless response.code_type == Net::HTTPCreated
 
@@ -98,7 +98,7 @@ module SccProxy
             # no token sent to check with SCC
             @system = System.create!(hostname: params[:hostname], hw_info: HwInfo.new(hw_info_params))
           else
-            response = SccProxy.register_system_scc(request.headers['HTTP_AUTHORIZATION'], request.request_parameters)
+            response = SccProxy.announce_system_scc(request.headers['HTTP_AUTHORIZATION'], request.request_parameters)
             @system = System.create!(
               login: response['login'],
               password: response['password'],
@@ -128,9 +128,9 @@ module SccProxy
       end
 
       Api::Connect::V3::Systems::ProductsController.class_eval do
-        before_action :scc_register_product, only: %i[activate]
+        before_action :scc_activate_product, only: %i[activate]
 
-        def scc_register_product
+        def scc_activate_product
           logger.info "Activating product #{@product.product_string} to SCC"
           auth = request.headers['HTTP_AUTHORIZATION']
           SccProxy.scc_activate_product(@product, auth, params[:token], params[:email], logger) if @system.proxy_byos

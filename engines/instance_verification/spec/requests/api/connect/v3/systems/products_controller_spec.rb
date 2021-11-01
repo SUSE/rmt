@@ -172,6 +172,15 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           }
         end
 
+        before do
+          expect(InstanceVerification::Providers::Example).to receive(:new)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
+          expect(plugin_double).to(
+            receive(:instance_valid?)
+              .and_raise(InstanceVerification::Exception, 'Custom plugin error')
+          )
+        end
+
         context 'with a valid registration code' do
           before do
             stub_request(:post, scc_activate_url)

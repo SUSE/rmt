@@ -52,8 +52,13 @@ module InstanceVerification
             verify_extension_activation(product)
           end
         rescue InstanceVerification::Exception => e
-          raise ActionController::TranslatedError.new(e.message) if @system.proxy_byos
-          raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
+          if @system.proxy_byos
+            raise ActionController::TranslatedError.new('No subscription with this Registration Code found') unless scc_check_regcode(product)
+            update_cache(product.id)
+            true
+          else
+            raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
+          end
         rescue StandardError => e
           logger.error('Unexpected instance verification error has occurred:')
           logger.error(e.message)
@@ -98,7 +103,7 @@ module InstanceVerification
             "Response code is #{response.code} for the attempt to " \
               "check registration code for #{product.product_string} to SCC"
           )
-          raise InstanceVerification::Exception.new('No subscription with this Registration Code found') unless response.code_type == Net::HTTPOK
+          response.code_type == Net::HTTPOK
         end
 
         def verify_extension_activation(product)
@@ -125,18 +130,14 @@ module InstanceVerification
         end
 
         def verify_base_product_activation(product)
-          if @system.proxy_byos
-            scc_check_regcode(product)
-          else
-            verification_provider = InstanceVerification.provider.new(
-              logger,
-              request,
-              params.permit(:identifier, :version, :arch, :release_type).to_h,
-              @system.hw_info&.instance_data
-            )
+          verification_provider = InstanceVerification.provider.new(
+            logger,
+            request,
+            params.permit(:identifier, :version, :arch, :release_type).to_h,
+            @system.hw_info&.instance_data
+          )
 
-            raise 'Unspecified error' unless verification_provider.instance_valid?
-          end
+          raise 'Unspecified error' unless verification_provider.instance_valid?
           update_cache(product.id)
         end
 
