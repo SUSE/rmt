@@ -23,6 +23,7 @@ class Api::Connect::BaseController < ApplicationController
     end
   end
 
+  # :only_core:
   def authenticate_with_token
     authenticate_or_request_with_http_token do |token, _options|
       @subscription = Subscription.find_by(regcode: token)
@@ -43,5 +44,5 @@ class Api::Connect::BaseController < ApplicationController
       logger.info "Authenticated with token '#{token}'"
     end
   end
-
+  # :only_core:
 end

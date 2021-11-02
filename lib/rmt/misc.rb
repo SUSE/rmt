@@ -8,6 +8,7 @@ module RMT
       uri.to_s
     end
 
+    # :only_core:
     def self.replace_uri_parts(uri, replacement)
       uri = URI(uri)
       replacement_uri = URI(replacement)
@@ -18,7 +19,9 @@ module RMT
       uri.path = File.join(replacement_uri.path, uri.path)
       uri.to_s
     end
+    # :only_core:
 
+    # :only_core:
     def self.make_smt_service_name(url)
       # SMT service was always accessed via plain HTTP
       url = URI(url)
@@ -26,5 +29,6 @@ module RMT
 
       "SMT-#{url}".gsub!(%r{:*/+}, '_').tr('.', '_').gsub(/_$/, '')
     end
+    # :only_core:
   end
 end

@@ -14,8 +14,9 @@ unless ENV['NO_COVERAGE']
     end
   end
   if ENV['SIMPLECOV_CMD'] == 'test:engines'
-    SimpleCov.minimum_coverage 84
+    SimpleCov.minimum_coverage 90
     SimpleCov.start do
+      nocov_token 'only_core'
       SimpleCov.command_name ENV['SIMPLECOV_CMD']
       add_filter '/spec/'
       add_filter '/tasks/'

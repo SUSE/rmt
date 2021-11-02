@@ -29,13 +29,17 @@ module RMT::Config
 
     # This method checks whether or not deduplication should be done by hardlinks.
     # If hardlinks are not used, the file will be copied instead.
+    # :only_core:
     def deduplication_by_hardlink?
       Settings.try(:mirroring).try(:dedup_method).to_s.to_sym != :copy
     end
+    # :only_core:
 
+    # :only_core:
     def mirror_src_files?
       ActiveModel::Type::Boolean.new.cast(Settings.try(:mirroring).try(:mirror_src))
     end
+    # :only_core:
 
     WebServerConfig = Struct.new(
       'WebServerConfig',
@@ -43,6 +47,7 @@ module RMT::Config
       keyword_init: true
     )
 
+    # :only_core:
     def web_server
       WebServerConfig.new(
         max_threads: validate_int(Settings.try(:web_server).try(:max_threads)) || 5,
@@ -50,13 +55,17 @@ module RMT::Config
         workers:     validate_int(Settings.try(:web_server).try(:workers))     || 2
       )
     end
+    # :only_core:
 
+    # :only_core:
     def set_host_system!
       Settings[:host_system] = host_system
     end
+    # :only_core:
 
     private
 
+    # :only_core:
     def host_system
       return '' if !File.exist?(RMT::CREDENTIALS_FILE_LOCATION) ||
                    !File.readable?(RMT::CREDENTIALS_FILE_LOCATION)
@@ -68,12 +77,15 @@ module RMT::Config
 
       ''
     end
+    # :only_core:
 
+    # :only_core:
     def validate_int(value)
       converted_value = Integer(value) rescue nil
       return nil if converted_value.nil? || converted_value < 1
 
       converted_value
     end
+    # :only_core:
   end
 end

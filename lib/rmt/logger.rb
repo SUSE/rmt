@@ -20,6 +20,7 @@ class RMT::Logger < ActiveSupport::Logger
     'ANY'     => ::Logger::UNKNOWN
   }.freeze
 
+  # :only_core:
   def initialize(dest)
     super(dest)
 
@@ -34,4 +35,5 @@ class RMT::Logger < ActiveSupport::Logger
       self.formatter = ::Logger::Formatter.new
     end
   end
+  # :only_core:
 end

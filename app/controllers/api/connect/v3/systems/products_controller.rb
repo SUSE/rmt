@@ -10,6 +10,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     render_service
   end
 
+  # :only_core:
   def show
     if @system.products.include? @product
       respond_with(
@@ -21,7 +22,9 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
       raise ActionController::TranslatedError.new(N_("The requested product '%s' is not activated on this system."), @product.friendly_name)
     end
   end
+  # :only_core:
 
+  # :only_core:
   def migrations
     require_params([:installed_products])
 
@@ -33,7 +36,9 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
       raise ActionController::TranslatedError.new(e.message, *e.data)
     end
   end
+  # :only_core:
 
+  # :only_core:
   def offline_migrations
     require_params(%i[installed_products target_base_product])
 
@@ -46,6 +51,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
       raise ActionController::TranslatedError.new(e.message, *e.data)
     end
   end
+  # :only_core:
 
   def upgrade
     obsoleted_product_ids = ([@product] + @product.predecessors + @product.successors).map(&:id)
@@ -62,9 +68,11 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
   protected
 
+  # :only_core:
   def installed_products
     params[:installed_products].map { |hash| product_from_hash(hash) rescue nil }.compact
   end
+  # :only_core:
 
   def migration_paths_as_json(paths)
     paths.reject(&:empty?).map do |item|

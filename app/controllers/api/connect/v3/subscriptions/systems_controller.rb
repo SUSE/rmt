@@ -1,11 +1,13 @@
 class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseController
 
+  # :only_core:
   def announce_system
     @system = System.create!(hostname: params[:hostname], hw_info: HwInfo.new(hw_info_params))
 
     logger.info("System '#{@system.hostname}' announced")
     respond_with(@system, serializer: ::V3::SystemSerializer, location: nil)
   end
+  # :only_core:
 
   private
 

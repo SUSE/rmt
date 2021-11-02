@@ -35,6 +35,7 @@ class ServicesController < ApplicationController
     render(xml: { error: untranslated, localized_error: _(untranslated) }, status: 404) and return
   end
 
+  # :only_core:
   def legacy_service
     repos = Repository.joins(services: :activations).where('activations.system_id' => @system.id, mirroring_enabled: true)
 
@@ -59,6 +60,7 @@ class ServicesController < ApplicationController
 
     render xml: service_xml
   end
+  # :only_core:
 
   protected
 

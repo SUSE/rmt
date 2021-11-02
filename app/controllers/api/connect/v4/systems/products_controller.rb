@@ -15,6 +15,7 @@ class Api::Connect::V4::Systems::ProductsController < Api::Connect::V3::Systems:
     raise ActionController::TranslatedError.new(N_('%s is not yet activated on the system.'), @product.name)
   end
 
+  # :only_core:
   def synchronize
     products = params.require(:products).map do |product_params|
       @system.products.find_by(
@@ -35,5 +36,5 @@ class Api::Connect::V4::Systems::ProductsController < Api::Connect::V3::Systems:
       each_serializer: ::V3::ProductSerializer,
       base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host })
   end
-
+  # :only_core:
 end
