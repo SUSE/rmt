@@ -1,6 +1,7 @@
 require 'net/http'
 
 ANNOUNCE_URL = 'https://scc.suse.com/connect/subscriptions/systems'.freeze
+ACTIVATE_PRODUCT_URL = 'https://scc.suse.com/connect/systems/products'.freeze
 NET_HTTP_ERRORS = [
   Errno::EINVAL,
   Errno::ECONNRESET,

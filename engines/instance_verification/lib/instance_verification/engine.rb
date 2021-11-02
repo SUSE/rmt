@@ -1,7 +1,5 @@
 require 'net/http'
 
-ACTIVATE_PRODUCT_URL = 'https://scc.suse.com/connect/systems/products'.freeze
-SYSTEM_SUBSCRIPTION_URL = 'https://scc.suse.com/connect/systems/subscriptions'.freeze
 SUBSCRIPTIONS_PRODUCTS_URL = 'https://scc.suse.com/connect/subscriptions/products'.freeze
 
 module InstanceVerification
