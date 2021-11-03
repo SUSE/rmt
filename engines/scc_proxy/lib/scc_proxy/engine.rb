@@ -67,20 +67,12 @@ module SccProxy
       JSON.parse(response.body)
     end
 
-    def scc_activate_product(product, auth, token, email, logger)
+    def scc_activate_product(product, auth, token, email)
       uri = URI.parse(ACTIVATE_PRODUCT_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
       scc_request = prepare_scc_request(uri.path, product, auth, token, email)
-      response = http.request(scc_request)
-      logger.info(
-        "Response code is #{response.code} for the attempt to " \
-          "activate product #{product.product_string} to SCC"
-      )
-      return false unless response.code_type == Net::HTTPCreated
-
-      logger.info "Product #{product.product_string} successfully activated"
-      true
+      http.request(scc_request)
     end
   end
 
@@ -93,10 +85,9 @@ module SccProxy
       Api::Connect::V3::Subscriptions::SystemsController.class_eval do
         def announce_system
           auth_header = request.headers['HTTP_AUTHORIZATION'] if request.headers.include?('HTTP_AUTHORIZATION')
-          auth_header ||= '='
-          auth_header = auth_header[(auth_header.index('=') + 1)..-1]
-          if auth_header.empty?
+          if header_has_regcode?(auth_header)
             # no token sent to check with SCC
+            # standard announce case
             @system = System.create!(hostname: params[:hostname], hw_info: HwInfo.new(hw_info_params))
           else
             response = SccProxy.announce_system_scc(request.headers['HTTP_AUTHORIZATION'], request.request_parameters)
@@ -115,26 +106,48 @@ module SccProxy
             "Could not register system with regcode #{auth_header} " \
               "to SCC: #{e.message}"
           )
-          if e.message.include? '401'
-            # same message and status than SUSEConnect cli output
-            # check why it is 422 and not 401
-            status = 422
-            message = 'No subscription with this Registration Code found'
-          else
-            message = e.message
-            status = e.message[0..(message.index(' ') - 1)].to_i
-          end
-          render json: { type: 'error', error: message }, status: status, location: nil
+          render json: { type: 'error', error: e.message }, status: status_code(e.message), location: nil
+        end
+
+        protected
+
+        def status_code(error_message)
+          error_message[0..(error_message.index(' ') - 1)].to_i
+        end
+
+        def header_has_regcode?(auth_header)
+          auth_header ||= '='
+          auth_header = auth_header[(auth_header.index('=') + 1)..-1]
+          logger.info auth_header
+          auth_header.empty?
         end
       end
 
       Api::Connect::V3::Systems::ProductsController.class_eval do
         before_action :scc_activate_product, only: %i[activate]
 
+        protected
+
         def scc_activate_product
           logger.info "Activating product #{@product.product_string} to SCC"
           auth = request.headers['HTTP_AUTHORIZATION']
-          SccProxy.scc_activate_product(@product, auth, params[:token], params[:email], logger) if @system.proxy_byos
+          if @system.proxy_byos
+            response = SccProxy.scc_activate_product(@product, auth, params[:token], params[:email])
+            unless response.code_type == Net::HTTPCreated
+              error = JSON.parse(response.body)
+              logger.info "Could not activate #{@product.product_string}, error: #{error['error']} #{response.code}"
+              error['error'] = parse_error(error['error']) if error['error'].include? 'json'
+              raise ActionController::TranslatedError.new(error['error'])
+            end
+            logger.info "Product #{@product.product_string} successfully activated with SCC"
+            InstanceVerification.update_cache(request.remote_ip, @system.login, @product.id)
+          end
+        end
+
+        def parse_error(error_message)
+          error_message = error_message[0..(error_message.index('json') - 1)].strip
+          error_message = error_message.gsub(params[:token], '').squish
+          error_message.gsub(params[:email], '').strip
         end
       end
     end

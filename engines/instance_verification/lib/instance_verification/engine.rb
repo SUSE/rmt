@@ -1,13 +1,12 @@
 require 'net/http'
 
-SUBSCRIPTIONS_PRODUCTS_URL = 'https://scc.suse.com/connect/subscriptions/products'.freeze
-
 module InstanceVerification
   extend ::Net::HTTPHeader
 
-  def self.verification_basic_encode(login, password)
-    # wrapping private method
-    basic_encode(login, password)
+  def self.update_cache(remote_ip, system_login, product_id)
+    cache_key = [remote_ip, system_login, product_id].join('-')
+    # caches verification result to be used by zypper auth plugin
+    Rails.cache.write(cache_key, true, expires_in: 20.minutes)
   end
 
   class Engine < ::Rails::Engine
@@ -50,15 +49,11 @@ module InstanceVerification
             verify_extension_activation(product)
           end
         rescue InstanceVerification::Exception => e
-          if @system.proxy_byos
+          unless @system.proxy_byos
             # BYOS instances that use RMT as a proxy are expected to fail the
             # instance verification check, however, PAYG instances may send registration
             # code, as such, instance verification engine checks for those BYOS
             # instances once instance verification has failed
-            raise ActionController::TranslatedError.new('No subscription with this Registration Code found') unless scc_check_regcode(product)
-            update_cache(product.id)
-            true
-          else
             raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
           end
         rescue StandardError => e
@@ -68,44 +63,6 @@ module InstanceVerification
           logger.error('Backtrace:')
           logger.error(e.backtrace)
           raise ActionController::TranslatedError.new('Unexpected instance verification error has occurred')
-        end
-
-        def update_cache(product_id)
-          cache_key = [request.remote_ip, @system.login, product_id].join('-')
-          # caches verification result to be used by zypper auth plugin
-          Rails.cache.write(cache_key, true, expires_in: 20.minutes)
-        end
-
-        def prepare_scc_request(uri_path, product)
-          # check registration code agains SCC request
-          # GET /subscriptions/products
-          header = {
-            'accept' => 'application/json,application/vnd.scc.suse.com.v4+json',
-            'Content-Type' => 'application/json',
-            'Authorization' => "Token token=#{params[:token]}"
-          }
-          scc_request = Net::HTTP::Get.new(uri_path, header)
-          scc_request.body = {
-            identifier: product.identifier,
-            version: product.version,
-            arch: product.arch,
-            release_type: product.release_type
-          }.to_json
-          scc_request
-        end
-
-        def scc_check_regcode(product)
-          # check that the regcode can access that product
-          uri = URI.parse(SUBSCRIPTIONS_PRODUCTS_URL)
-          http = Net::HTTP.new(uri.host, uri.port)
-          http.use_ssl = true
-          scc_request = prepare_scc_request(uri.path, product)
-          response = http.request(scc_request)
-          logger.info(
-            "Response code is #{response.code} for the attempt to " \
-              "check registration code for #{product.product_string} to SCC"
-          )
-          response.code_type == Net::HTTPOK
         end
 
         def verify_extension_activation(product)
@@ -140,7 +97,7 @@ module InstanceVerification
           )
 
           raise 'Unspecified error' unless verification_provider.instance_valid?
-          update_cache(product.id)
+          InstanceVerification.update_cache(request.remote_ip, @system.login, product.id)
         end
 
         # Verify that the base product doesn't change in the offline migration
