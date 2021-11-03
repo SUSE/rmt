@@ -85,7 +85,7 @@ module SccProxy
       Api::Connect::V3::Subscriptions::SystemsController.class_eval do
         def announce_system
           auth_header = request.headers['HTTP_AUTHORIZATION'] if request.headers.include?('HTTP_AUTHORIZATION')
-          if header_has_regcode?(auth_header)
+          if has_no_regcode?(auth_header)
             # no token sent to check with SCC
             # standard announce case
             @system = System.create!(hostname: params[:hostname], hw_info: HwInfo.new(hw_info_params))
@@ -115,7 +115,7 @@ module SccProxy
           error_message[0..(error_message.index(' ') - 1)].to_i
         end
 
-        def header_has_regcode?(auth_header)
+        def has_no_regcode?(auth_header)
           auth_header ||= '='
           auth_header = auth_header[(auth_header.index('=') + 1)..-1]
           logger.info auth_header

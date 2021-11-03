@@ -1,8 +1,4 @@
-require 'net/http'
-
 module InstanceVerification
-  extend ::Net::HTTPHeader
-
   def self.update_cache(remote_ip, system_login, product_id)
     cache_key = [remote_ip, system_login, product_id].join('-')
     # caches verification result to be used by zypper auth plugin
