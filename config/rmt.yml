@@ -3,10 +3,10 @@
 # You can create rmt.local.yml to override settings in this file.
 
 database: &database
-  host: localhost
-  database: rmt_development
-  username: rmt
-  password: rmt
+  host: <%= ENV.fetch('MYSQL_HOST') { 'localhost' } %>
+  database: <%= ENV.fetch('MYSQL_DATABASE') { 'rmt_development' } %>
+  username: <%= ENV.fetch('MYSQL_USER') { 'rmt' } %>
+  password: <%= ENV.fetch('MYSQL_PASSWORD') { 'rmt' } %>
   adapter: mysql2
   encoding: utf8
   timeout: 5000
@@ -14,7 +14,6 @@ database: &database
 
 database_development:
   <<: *database
-  database: rmt_development
 
 database_test:
   <<: *database
@@ -22,8 +21,8 @@ database_test:
 
 scc:
   host: https://scc.suse.com/connect
-  username:
-  password:
+  username: <%= ENV['SCC_USERNAME'] %>
+  password: <%= ENV['SCC_PASSWORD'] %>
   sync_systems: true
 
 mirroring:
