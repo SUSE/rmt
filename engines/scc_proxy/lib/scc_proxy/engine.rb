@@ -2,6 +2,7 @@ require 'net/http'
 
 ANNOUNCE_URL = 'https://scc.suse.com/connect/subscriptions/systems'.freeze
 ACTIVATE_PRODUCT_URL = 'https://scc.suse.com/connect/systems/products'.freeze
+SYSTEMS_SUBSCRIPTIONS_URL = 'https://scc.suse.com/connect/systems/subscriptions'.freeze
 NET_HTTP_ERRORS = [
   Errno::EINVAL,
   Errno::ECONNRESET,
@@ -74,6 +75,32 @@ module SccProxy
       scc_request = prepare_scc_request(uri.path, product, auth, token, email)
       http.request(scc_request)
     end
+
+    def parse_error(error_message, token = nil, email = nil)
+      error_message = error_message[0..(error_message.index('json') - 1)].strip
+      error_message = error_message.gsub(token, '').squish if token
+      error_message = error_message.gsub(email, '').strip if email
+      error_message
+    end
+
+    def scc_check_subscription_expiration(headers, login, logger)
+      auth = headers['HTTP_AUTHORIZATION'] if headers.include?('HTTP_AUTHORIZATION')
+      uri = URI.parse(SYSTEMS_SUBSCRIPTIONS_URL)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      scc_request = Net::HTTP::Get.new(uri.path, headers(auth))
+      response = http.request(scc_request)
+      unless response.code_type == Net::HTTPOK
+        logger.info "Could not get the system (#{login}) subscription, error: #{response.message} #{response.code}"
+        response.message = SccProxy.parse_error(response.message) if response.message.include? 'json'
+        return { is_active: false, message: response.message }
+      end
+      parsed_response = JSON.parse(response.body)[0]
+      {
+        is_active: parsed_response['status'].casecmp('active').zero?,
+        message: parsed_response['status']
+      }
+    end
   end
 
   class Engine < ::Rails::Engine
@@ -136,18 +163,12 @@ module SccProxy
             unless response.code_type == Net::HTTPCreated
               error = JSON.parse(response.body)
               logger.info "Could not activate #{@product.product_string}, error: #{error['error']} #{response.code}"
-              error['error'] = parse_error(error['error']) if error['error'].include? 'json'
+              error['error'] = SccProxy.parse_error(error['error']) if error['error'].include? 'json'
               raise ActionController::TranslatedError.new(error['error'])
             end
             logger.info "Product #{@product.product_string} successfully activated with SCC"
             InstanceVerification.update_cache(request.remote_ip, @system.login, @product.id)
           end
-        end
-
-        def parse_error(error_message)
-          error_message = error_message[0..(error_message.index('json') - 1)].strip
-          error_message = error_message.gsub(params[:token], '').squish
-          error_message.gsub(params[:email], '').strip
         end
       end
     end

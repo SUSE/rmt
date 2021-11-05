@@ -27,12 +27,21 @@ module ZypperAuth
       Rails.cache.write(cache_key, is_valid, expires_in: 20.minutes)
       is_valid
     rescue InstanceVerification::Exception => e
+      message = ''
+      if system.proxy_byos
+        result = SccProxy.scc_check_subscription_expiration(request.headers, system.login, logger) if system.proxy_byos
+        return true if result[:is_active]
+
+        message = result[:message]
+      else
+        message = e.message
+      end
       details = [ "System login: #{system.login}", "IP: #{request.remote_ip}" ]
       details << "Instance ID: #{verification_provider.instance_id}" if verification_provider.instance_id
       details << "Billing info: #{verification_provider.instance_billing_info}" if verification_provider.instance_billing_info
 
       ZypperAuth.auth_logger.info <<~LOGMSG
-        Access to the repos denied: #{e.message}
+        Access to the repos denied: #{message}
         #{details.join(', ')}
       LOGMSG
 
