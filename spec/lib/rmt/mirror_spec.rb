@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'rails_helper'
 
 RSpec.describe RMT::Mirror do
@@ -786,6 +787,10 @@ RSpec.describe RMT::Mirror do
       it 'raises RMT::Mirror::Exception' do
         expect(logger).to receive(:info).with(/Mirroring repository/).once
         expect(logger).to receive(:info).with(/↓/).at_least(1).times
+
+        expect_any_instance_of(described_class).to(
+          receive(:mirror_metadata).exactly(2).times.and_call_original
+        )
 
         allow_any_instance_of(RMT::Downloader).to receive(:download).and_wrap_original do |klass, *args|
           if args[0].local_path.include?('repodata/repomd.xml.asc')
