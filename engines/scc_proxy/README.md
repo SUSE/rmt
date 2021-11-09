@@ -13,7 +13,6 @@ if `registercloudguest` is not installed:
 ```bash
 SUSEConnect -r <regcode>
 SUSEConnect -p Public Cloud Module
-SUSEConnect -d
 zypper in cloud-regionsrv-client
 ```
 once installed, then
