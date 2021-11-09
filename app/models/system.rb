@@ -10,6 +10,8 @@ class System < ApplicationRecord
 
   validates :login, uniqueness: { case_sensitive: false }
 
+  alias_attribute :scc_synced_at, :scc_registered_at
+
   def init
     self.login ||= System.generate_secure_login
     self.password ||= System.generate_secure_password
@@ -38,7 +40,7 @@ class System < ApplicationRecord
 
   before_update do |system|
     # reset SCC sync timestamp so that the system can be re-synced on change
-    system.scc_registered_at = nil
+    system.scc_synced_at = nil
   end
 
   after_destroy do |system|

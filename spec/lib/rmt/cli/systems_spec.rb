@@ -96,6 +96,18 @@ RSpec.describe RMT::CLI::Systems do
           expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
         end
       end
+
+      context 'system with associated subscription' do
+        let(:subscription) { create :subscription, :with_products }
+        let(:product) { subscription.products.first }
+        let(:system3) { create :system, :with_activated_product, product: product, subscription: subscription }
+
+        let(:argv) { ['list'] }
+
+        it 'shows the regcode associated' do
+          expect { described_class.start(argv) }.to output(/\(Regcode: #{subscription.regcode}\)/).to_stdout
+        end
+      end
     end
 
     context 'without registrations in the DB' do

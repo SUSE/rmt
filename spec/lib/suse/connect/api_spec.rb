@@ -15,7 +15,7 @@ RSpec.describe SUSE::Connect::Api do
       it 'reads a file' do
         allow(File).to receive(:exist?).with(described_class::UUID_FILE_LOCATION).and_return(true)
         expect(File).not_to receive(:write).with(described_class::UUID_FILE_LOCATION, uuid)
-        expect(File).to receive(:read).with(described_class::UUID_FILE_LOCATION).and_return(uuid)
+        allow(File).to receive(:read).with(described_class::UUID_FILE_LOCATION).and_return(uuid)
         expect(method_call).to be(uuid)
       end
     end
@@ -25,7 +25,7 @@ RSpec.describe SUSE::Connect::Api do
         allow(File).to receive(:exist?).with(described_class::UUID_FILE_LOCATION).and_return(false)
         allow(SecureRandom).to receive(:uuid).and_return(uuid)
 
-        expect(File).to receive(:write).with(described_class::UUID_FILE_LOCATION, uuid).exactly(1).times
+        allow(File).to receive(:write).with(described_class::UUID_FILE_LOCATION, uuid).once
         expect(File).not_to receive(:read).with(described_class::UUID_FILE_LOCATION)
         expect(method_call).to be(uuid)
       end
@@ -39,7 +39,7 @@ RSpec.describe SUSE::Connect::Api do
       end
 
       it 'overwrites a file' do
-        expect(File).to receive(:write).with(described_class::UUID_FILE_LOCATION, uuid).exactly(1).times
+        expect(File).to receive(:write).with(described_class::UUID_FILE_LOCATION, uuid).once
         expect(method_call).to be(uuid)
       end
     end
@@ -56,7 +56,7 @@ RSpec.describe SUSE::Connect::Api do
         http://192.168.1.3:3000/connect
       ].each do |uri|
         it 'returns a validated url' do
-          expect(Settings).to receive_message_chain(:scc, :host).and_return(uri)
+          allow(Settings).to receive_message_chain(:scc, :host).and_return(uri)
           expect(method_call).to be(uri)
         end
       end
@@ -70,11 +70,10 @@ RSpec.describe SUSE::Connect::Api do
         htxxtp://xxxxxxlocalhost:3000
       ].each do |uri|
         it 'raises an exception' do
-          expect(Settings).to receive_message_chain(:scc, :host).and_return(uri)
-          expect(Kernel).to receive(:exit)
+          allow(Settings).to receive_message_chain(:scc, :host).and_return(uri)
           exception_msg = "Encountered an error validating #{uri}. Be sure to add http/https if it's an absolute url, i.e IP Address"
           expect_any_instance_of(RMT::Logger).to receive(:error).with(exception_msg)
-          expect(method_call).to be(SystemExit)
+          expect { method_call }.to raise_exception(SystemExit)
         end
       end
     end
@@ -305,6 +304,8 @@ RSpec.describe SUSE::Connect::Api do
     end
 
     context 'on successful request' do
+      subject { api_client.send(:make_request, 'GET', 'http://example.org/api_method', {}) }
+
       before do
         allow_any_instance_of(described_class).to receive(:system_uuid).and_return(uuid)
 
@@ -316,8 +317,6 @@ RSpec.describe SUSE::Connect::Api do
           )
       end
 
-      subject { api_client.send(:make_request, 'GET', 'http://example.org/api_method', {}) }
-
       let(:response_data) { "Everything's great!" }
 
       it { is_expected.to be_a(Typhoeus::Response) }
@@ -325,6 +324,8 @@ RSpec.describe SUSE::Connect::Api do
     end
 
     context 'on error' do
+      subject(:api_request) { api_client.send(:make_request, 'GET', 'http://example.org/api_method', {}) }
+
       before do
         allow_any_instance_of(described_class).to receive(:system_uuid).and_return(uuid)
 
@@ -335,8 +336,6 @@ RSpec.describe SUSE::Connect::Api do
             headers: {}
           )
       end
-
-      subject(:api_request) { api_client.send(:make_request, 'GET', 'http://example.org/api_method', {}) }
 
       let(:response_data) { 'Something went terribly wrong!' }
 

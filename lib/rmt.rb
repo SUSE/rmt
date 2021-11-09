@@ -1,5 +1,5 @@
 module RMT
-  VERSION ||= '2.6.12'.freeze
+  VERSION ||= '2.7.0'.freeze
 
   DEFAULT_USER = '_rmt'.freeze
   DEFAULT_GROUP = 'nginx'.freeze

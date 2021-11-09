@@ -19,6 +19,7 @@ describe ServicesController do
       let(:headers) { auth_header }
 
       before do
+        Thread.current[:logger] = RMT::Logger.new('/dev/null')
         expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(false)
         get "/services/#{service.id}", headers: headers
       end

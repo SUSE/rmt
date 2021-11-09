@@ -20,6 +20,9 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
     # into the stream. The AWS implementation of the Instance Identity Document is one possible
     # implementation route. In this example it is assumed the instance data is json and
     # contains instance_product_id
-    '1234_SUSE_SLES'
+
+    return '1234_SUSE_SLES' if @product_hash[:identifier] == 'sles'
+
+    return '6789_SUSE_SAP' if @product_hash[:identifier] == 'sles_sap'
   end
 end

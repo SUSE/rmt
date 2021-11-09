@@ -83,12 +83,12 @@ class RMT::SCC
     credentials_set? || (raise CredentialsError, _('SCC credentials not set.'))
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
-    System.where(scc_registered_at: nil).find_in_batches(batch_size: 20) do |batch|
+    System.where(scc_synced_at: nil).find_in_batches(batch_size: 20) do |batch|
       batch.each do |system|
         @logger.info(_('Syncing system %{login} to SCC') % { login: system.login })
         response = scc_api_client.forward_system_activations(system)
-        # Update attributes without triggering after_update callback (which resets scc_registered_at to nil)
-        system.update_columns(scc_system_id: response[:id], scc_registered_at: Time.current)
+        # Update attributes without triggering after_update callback (which resets scc_synced_at to nil)
+        system.update_columns(scc_system_id: response[:id], scc_synced_at: Time.current)
       rescue SUSE::Connect::Api::RequestError => e
         @logger.error(_('Failed to sync system %{login}: %{error}') % { login: system.login, error: e.to_s })
       end
@@ -122,9 +122,15 @@ class RMT::SCC
 
   def update_subscriptions(subscriptions)
     @logger.info _('Updating subscriptions')
-    Subscription.delete_all
     subscriptions.each do |item|
-      create_subscription(item)
+      subscription = Subscription.find_or_create_by(id: item[:id])
+      subscription.attributes = item.select { |k, _| subscription.attributes.keys.member?(k.to_s) }
+      subscription.kind = item[:type]
+      subscription.save!
+
+      item[:product_classes].each do |item_class|
+        SubscriptionProductClass.find_or_create_by(subscription_id: subscription.id, product_class: item_class)
+      end
     end
   end
 
@@ -173,20 +179,6 @@ class RMT::SCC
     auth_token = uri.query
 
     Repository.find_by!(scc_id: item[:id]).update! auth_token: auth_token, enabled: item[:enabled]
-  end
-
-  def create_subscription(item)
-    subscription = Subscription.new
-    subscription.attributes = item.select { |k, _| subscription.attributes.keys.member?(k.to_s) }
-    subscription.kind = item[:type]
-    subscription.save!
-
-    item[:product_classes].each do |item_class|
-      subscription_product_class = SubscriptionProductClass.new
-      subscription_product_class.subscription_id = subscription.id
-      subscription_product_class.product_class = item_class
-      subscription_product_class.save!
-    end
   end
 
   def migration_paths(item)

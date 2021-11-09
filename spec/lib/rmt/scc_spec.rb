@@ -193,6 +193,28 @@ describe RMT::SCC do
       it "doesn't save repos of extensions without base products" do
         expect { Repository.find(extra_repo[:id]) }.to raise_error(ActiveRecord::RecordNotFound)
       end
+
+
+      context 'with updated subscriptions' do
+        let(:subscription) { subscriptions[0] }
+        let(:existing) { Subscription.find_by(regcode: subscription[:regcode]) }
+
+        let(:updated_subscriptions) do
+          updated = subscriptions.dup
+          updated[0][:system_limit] = 42
+          updated
+        end
+
+        it 'updates the subscription' do
+          expect(existing.system_limit).to eq(subscription[:system_limit])
+          expect(api_double).to receive(:list_subscriptions).and_return updated_subscriptions
+          described_class.new.sync
+          # NOTE: We expect the update mechanism to *not* change the id of an
+          # subscription in the database because otherwise all possible
+          # associations are lost (e.g. activations)
+          expect(existing.reload.system_limit).to eq(42)
+        end
+      end
     end
 
     context 'with existing predecessor associations' do
@@ -378,9 +400,9 @@ describe RMT::SCC do
         let(:scc_system_id) { 9000 }
         let(:deregistered_system) { FactoryBot.create(:deregistered_system) }
 
-        it 'updates system.scc_registered_at field' do
+        it 'updates system.scc_synced_at field' do
           system.reload
-          expect(system.scc_registered_at).not_to be(nil)
+          expect(system.scc_synced_at).not_to be(nil)
         end
 
         it 'updates system.scc_system_id field' do
@@ -399,9 +421,9 @@ describe RMT::SCC do
 
         let(:system) { FactoryBot.create(:system) }
 
-        it "doesn't update system.scc_registered_at" do
+        it "doesn't update system.scc_synced_at" do
           system.reload
-          expect(system.scc_registered_at).to be(nil)
+          expect(system.scc_synced_at).to be(nil)
         end
       end
     end
