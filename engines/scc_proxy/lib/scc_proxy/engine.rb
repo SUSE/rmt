@@ -95,11 +95,18 @@ module SccProxy
         response.message = SccProxy.parse_error(response.message) if response.message.include? 'json'
         return { is_active: false, message: response.message }
       end
-      parsed_response = JSON.parse(response.body)[0]
-      {
-        is_active: parsed_response['status'].casecmp('active').zero?,
-        message: parsed_response['status']
-      }
+      array_subscriptions = JSON.parse(response.body)
+      array_subscriptions.each do |subscription|
+        match = subscription['systems'].each do |system_subscribed|
+          true if system_subscribed['login'] == login
+        end
+        if match
+          return {
+            is_active: subscription['status'].casecmp('active').zero?,
+            message: subscription['status']
+          }
+        end
+      end
     end
   end
 
