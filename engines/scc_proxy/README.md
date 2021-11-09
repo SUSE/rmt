@@ -1,28 +1,28 @@
 # SccProxy
-Short description and motivation.
+Engine to handle BYOS, that use RMT as an SCC proxy,
+instances registration and activations
 
-## Usage
-How to use my plugin.
 
-## Installation
-Add this line to your application's Gemfile:
+1. BYOS instance supplies registration code (regcode) during registration, if the regcode is valid
+then, system is announced and product is registered against SCC.
+2. BYOS instance, once registered, can activate products included in that subscription
 
-```ruby
-gem 'scc_proxy'
-```
+in the BYOS instance, do
 
-And then execute:
+if `registercloudguest` is not installed:
 ```bash
-$ bundle
+SUSEConnect -r <regcode>
+SUSEConnect -p Public Cloud Module
+SUSEConnect -d
+zypper in cloud-regionsrv-client
 ```
-
-Or install it yourself as:
+once installed, then
+```
+registercloudguest -r regcode
+SUSEConnect -p <product>
+SUSEConnect -d -p <other_product>
+```
+to de-register
 ```bash
-$ gem install scc_proxy
+registercloudguest --clean
 ```
-
-## Contributing
-Contribution directions go here.
-
-## License
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
