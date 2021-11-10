@@ -1,4 +1,5 @@
 class RMT::CLI::Clean < RMT::CLI::Base
+  CleanedFile = Struct.new(:path, :file_size, :db_entries, keyword_init: true).freeze
 
   desc 'packages', _('Clean stale package files, based on current repository data.')
   option :non_interactive, aliases: '-n', type: :boolean,
@@ -80,23 +81,38 @@ class RMT::CLI::Clean < RMT::CLI::Base
   def run_package_clean(repomd_files)
     dirs_with_stale_files = repomd_files.lazy.map do |repomd_file|
       repo_base_dir = File.absolute_path(File.join(File.dirname(repomd_file), '..'))
-      stale_packages = stale_packages_list(repo_base_dir, repomd_file)
+      stale_candidates = stale_candidates_list(repo_base_dir, repomd_file)
 
-      next nil if stale_packages.empty?
+      next nil if stale_candidates.empty?
 
-      [repo_base_dir, stale_packages]
+      [repo_base_dir, stale_candidates]
     end.reject(&:nil?)
 
     stats = dirs_with_stale_files.map do |(repo_base_dir, stale_packages)|
+      cleaned_files = clean_stale_packages(stale_packages)
+
+      next nil if cleaned_files.empty?
+
       print "\n\e[1m"
       print _('Directory: %{dir}') % { dir: repo_base_dir }
       print "\e[0m\n"
 
-      partial_stats = clean_stale_packages(stale_packages, repo_base_dir)
+      quoted_repo_base_dir = Regexp.quote(repo_base_dir)
+      if options.verbose
+        cleaned_files.each do |file|
+          puts "\s\s" + (
+            _("Cleaned '%{file_name}' (%{file_size}), %{db_entries}.") % {
+              file_name: file.path.gsub(%r{^#{quoted_repo_base_dir}/?}, ''),
+              file_size: ActiveSupport::NumberHelper.number_to_human_size(file.file_size),
+              db_entries: db_entries_text(file.db_entries)
+            }
+          )
+        end
+      end
 
-      cleaned_files_count = partial_stats.count
-      cleaned_files_size, cleaned_db_entries =
-        partial_stats.transpose.map(&:sum)
+      cleaned_files_count = cleaned_files.count
+      cleaned_files_size = cleaned_files.sum(&:file_size)
+      cleaned_db_entries = cleaned_files.sum(&:db_entries)
 
       puts _('Cleaned %{file_count_text} (%{total_size}), %{db_entries}.') % {
         file_count_text: file_count_text(cleaned_files_count),
@@ -105,7 +121,7 @@ class RMT::CLI::Clean < RMT::CLI::Base
       }
 
       [cleaned_files_count, cleaned_files_size, cleaned_db_entries]
-    end
+    end.reject(&:nil?)
 
     total_cleaned_count, total_cleaned_size, total_cleaned_db_entries =
       stats.force.transpose.map(&:sum)
@@ -117,7 +133,7 @@ class RMT::CLI::Clean < RMT::CLI::Base
     }
   end
 
-  def stale_packages_list(repo_base_dir, repomd_file)
+  def stale_candidates_list(repo_base_dir, repomd_file)
     expected_packages = parse_packages_data(repomd_file, repo_base_dir)
       .map { |file| File.join(repo_base_dir, file.location) }.sort
 
@@ -140,38 +156,21 @@ class RMT::CLI::Clean < RMT::CLI::Base
     end.flatten
   end
 
-  def clean_stale_packages(packages, repo_base_dir)
-    quoted_repo_base_dir = Regexp.quote(repo_base_dir)
-
+  def clean_stale_packages(packages)
     packages.map do |file|
       next nil unless File.exist?(file)
 
-      file_size, db_entries = clean_package(file)
+      file_stat = File.stat(file)
 
-      if options.verbose
-        puts "\s\s" + (
-          _("Cleaned '%{file_name}' (%{file_size}), %{db_entries}.") % {
-            file_name: file.gsub(%r{^#{quoted_repo_base_dir}/?}, ''),
-            file_size: ActiveSupport::NumberHelper.number_to_human_size(file_size),
-            db_entries: db_entries_text(db_entries)
-          }
-        )
+      db_entries = DownloadedFile.where(local_path: file)
+
+      unless options.dry_run
+        FileUtils.rm(file)
+        db_entries = db_entries.destroy_all
       end
 
-      [file_size, db_entries]
+      CleanedFile.new(path: file, file_size: file_stat.size, db_entries: db_entries.count)
     end.reject(&:nil?)
-  end
-
-  def clean_package(file)
-    file_size = File.size(file)
-    db_entries = DownloadedFile.where(local_path: file)
-
-    unless options.dry_run
-      FileUtils.rm(file)
-      db_entries = db_entries.destroy_all
-    end
-
-    [file_size, db_entries.count]
   end
 
   def file_count_text(count)
