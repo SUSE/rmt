@@ -1,4 +1,5 @@
 class RMT::CLI::Clean < RMT::CLI::Base
+  STALE_FILE_MINIMUM_AGE = 48 * 60 * 60 # 2 days (in seconds)
   CleanedFile = Struct.new(:path, :file_size, :db_entries, keyword_init: true).freeze
 
   desc 'packages', _('Clean stale package files, based on current repository data.')
@@ -14,7 +15,7 @@ class RMT::CLI::Clean < RMT::CLI::Base
 
     This command scans the mirror directory for 'repomd.xml' files, parse the
     metadata files, and compare their content with files on disk. Files not
-    listed in the metadata are considered stale.
+    listed in the metadata and at least 2-days-old are considered stale.
 
     Then, it removes all stale files from disk and any associated database entries.
     PACKAGES
@@ -161,6 +162,7 @@ class RMT::CLI::Clean < RMT::CLI::Base
       next nil unless File.exist?(file)
 
       file_stat = File.stat(file)
+      next nil if (Time.current - file_stat.mtime) < STALE_FILE_MINIMUM_AGE
 
       db_entries = DownloadedFile.where(local_path: file)
 

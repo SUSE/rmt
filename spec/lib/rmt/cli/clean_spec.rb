@@ -7,6 +7,8 @@ RSpec.describe RMT::CLI::Clean do
     let(:tmp_dir) { Dir.mktmpdir }
     let(:mirror_dir) { File.join(tmp_dir, 'public', 'repo') }
 
+    let(:current_time) { Time.zone.local(2021, 11, 10, 14, 20, 0) }
+
     let(:dummy_repo) do
       { fixture: 'dummy_repo', dir: File.join(mirror_dir, 'dummy_repo') }
     end
@@ -43,6 +45,8 @@ RSpec.describe RMT::CLI::Clean do
         file: File.join(dummy_repo_with_src[:dir], 'src', 'lemon-0.0.2-lp151.2.1.src.rpm'),
         size: 7528 }
     end
+    let(:fresh_stale_files) { [] }
+    let(:fresh_stale_database_entries) { [] }
 
     let(:input) { 'yes' }
     let(:expected_output) do
@@ -66,7 +70,9 @@ RSpec.describe RMT::CLI::Clean do
       RMT.send(:remove_const, 'DEFAULT_MIRROR_DIR')
       RMT.const_set('DEFAULT_MIRROR_DIR', mirror_dir)
       FileUtils.mkdir_p(mirror_dir)
-      example.run
+      Timecop.freeze(current_time) do
+        example.run
+      end
       FileUtils.rm_r(tmp_dir, secure: false)
     end
 
@@ -150,8 +156,8 @@ RSpec.describe RMT::CLI::Clean do
         include_context 'command without options'
 
         include_examples 'prints to stdout'
-        include_examples 'remove files'
-        include_examples 'remove database entries'
+        include_examples 'removes files'
+        include_examples 'removes database entries'
       end
 
       context 'and --dry-run option is set' do
@@ -162,6 +168,16 @@ RSpec.describe RMT::CLI::Clean do
         include_examples 'prints to stdout'
         include_examples 'does not remove files'
         include_examples 'does not remove database entries'
+      end
+
+      context 'and --non-interactive option is set' do
+        include_context 'mirror directory with stale files'
+        include_context 'database entries for stale files'
+        include_context 'command with non-interactive mode'
+
+        include_examples 'prints to stdout'
+        include_examples 'removes files'
+        include_examples 'removes database entries'
       end
 
       context 'and --verbose option is set' do
@@ -187,18 +203,8 @@ RSpec.describe RMT::CLI::Clean do
         include_context 'command with verbose mode'
 
         include_examples 'prints to stdout'
-        include_examples 'remove files'
-        include_examples 'remove database entries'
-      end
-
-      context 'and --non-interactive option is set' do
-        include_context 'mirror directory with stale files'
-        include_context 'database entries for stale files'
-        include_context 'command with non-interactive mode'
-
-        include_examples 'prints to stdout'
-        include_examples 'remove files'
-        include_examples 'remove database entries'
+        include_examples 'removes files'
+        include_examples 'removes database entries'
       end
 
       context 'and there are stale source packages' do
@@ -228,8 +234,36 @@ RSpec.describe RMT::CLI::Clean do
         include_context 'command with verbose mode'
 
         include_examples 'prints to stdout'
-        include_examples 'remove files'
-        include_examples 'remove database entries'
+        include_examples 'removes files'
+        include_examples 'removes database entries'
+      end
+
+      context 'and there are stale files which are less than 2 days old' do
+        let(:stale_files) { [stale_rpm2, stale_drpm2] }
+        let(:stale_database_entries) { [stale_rpm2] }
+        let(:fresh_stale_files) { [stale_rpm1, stale_drpm1] }
+        let(:fresh_stale_database_entries) { [stale_rpm1] }
+        let(:expected_result_output) do
+          <<~OUTPUT.chomp
+          \e[1mDirectory: #{dummy_repo[:dir]}\e[0m
+            Cleaned 'blueberry-0.1-0.x86_64.drpm' (#{file_human_size(2088)}), 0 database entries.
+            Cleaned 'blueberry-0.2-0.x86_64.rpm' (#{file_human_size(1950)}), 1 database entry.
+          Cleaned 2 files (#{file_human_size(4038)}), 1 database entry.
+
+          #{'-' * 80}
+          \e[32;1mTotal: cleaned 2 files (#{file_human_size(4038)}), 1 database entry.\e[0m
+          OUTPUT
+        end
+
+        include_context 'mirror directory with stale files'
+        include_context 'database entries for stale files'
+        include_context 'command with verbose mode'
+
+        include_examples 'prints to stdout'
+        include_examples 'removes files'
+        include_examples 'removes database entries'
+        include_examples 'does not remove fresh stale files'
+        include_examples 'does not remove database entries of fresh stale files'
       end
     end
   end

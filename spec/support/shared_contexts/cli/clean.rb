@@ -58,15 +58,22 @@ shared_context 'mirror directory with stale files' do
       end
     end
 
-    stale_files.each do |file|
-      FileUtils.cp(file_fixture(file[:fixture]).to_s, file[:file])
+    fresh_stale = [fresh_stale_files, 1.day.before(current_time).to_time]
+    stale       = [stale_files,       2.days.before(current_time).to_time]
+
+    [fresh_stale, stale].each do |files, time|
+      files.each do |file|
+        FileUtils.cp(file_fixture(file[:fixture]).to_s, file[:file])
+        File.utime(time, time, file[:file])
+      end
     end
   end
 end
 
 shared_context 'database entries for stale files' do
   before do
-    stale_database_entries.each do |file|
+    entries = fresh_stale_database_entries + stale_database_entries
+    entries.each do |file|
       DownloadedFile.create(
         checksum: SecureRandom.uuid,
         checksum_type: :uuid,
