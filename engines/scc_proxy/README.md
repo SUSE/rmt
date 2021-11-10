@@ -12,16 +12,13 @@ in the BYOS instance, do
 if `registercloudguest` is not installed:
 ```bash
 SUSEConnect -r <regcode>
-SUSEConnect -p Public Cloud Module
+SUSEConnect -p Public Cloud Module  // SUSEConnect -l to list the modules and extensions
 zypper in cloud-regionsrv-client
 ```
 once installed, then
 ```
-registercloudguest -r regcode
-SUSEConnect -p <product>
-SUSEConnect -d -p <other_product>
-```
-to de-register
-```bash
-registercloudguest --clean
+registercloudguest -r regcode // to register the system
+SUSEConnect -p <product> // activate a product
+SUSEConnect -d -p <other_product> // to de-register a product
+registercloudguest --clean // to de-register the system
 ```
