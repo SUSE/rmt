@@ -38,7 +38,9 @@ describe StrictAuthentication::AuthenticationController, type: :request do
       end
 
       context 'when system is BYOS proxy' do
-        let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': 'test' }) }
+        let(:local_path) { system_byos.activations.first.product.repositories.first.local_path }
+        let(:requested_uri_byos) { '/repo' + local_path + '/repodata/repomd.xml' }
+        let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri_byos, 'X-Instance-Data': 'test' }) }
         let(:body_active) do
           {
             id: 1,
@@ -50,28 +52,11 @@ describe StrictAuthentication::AuthenticationController, type: :request do
             expires_at: '2014-03-14T13:10:21.164Z',
             system_limit: 6,
             systems_count: 1,
-            product_classes: [
-              'SLES'
-            ],
-            families: [
-              'sles',
-              'sled'
-            ],
-            skus: [
-              'sku1',
-              'sku2'
-            ],
-            systems: [
-              {
-                id: 14,
-                login: 'SCC_FOO',
-                password: 'secret',
-                last_seen_at: '2010-03-14T13:10:21.164Z'
+            service: {
+              product: {
+                id: system_byos.activations.first.product.id
               }
-            ],
-            product_ids: [
-              239
-            ]
+            }
           }
         end
         let(:body_expired) do
@@ -85,33 +70,51 @@ describe StrictAuthentication::AuthenticationController, type: :request do
             expires_at: '2014-03-14T13:10:21.164Z',
             system_limit: 6,
             systems_count: 1,
-            product_classes: [
-              'SLES'
-            ],
-            families: [
-              'sles',
-              'sled'
-            ],
-            skus: [
-              'sku1',
-              'sku2'
-            ],
-            systems: [
-              {
-                id: 14,
-                login: 'SCC_FOO',
-                password: 'secret',
-                last_seen_at: '2010-03-14T13:10:21.164Z'
+            service: {
+              product: {
+                id: system_byos.activations.first.product.id
               }
-            ],
-            product_ids: [
-              239
-            ]
+            }
           }
         end
-        let(:requested_uri) { '/repo' + system_byos.repositories.first[:local_path] + '/repodata/repomd.xml' }
+        let(:body_not_activated) do
+          {
+            id: 1,
+            regcode: '631dc51f',
+            name: 'Subscription 1',
+            type: 'FULL',
+            status: 'ACTIVE',
+            starts_at: 'null',
+            expires_at: '2014-03-14T13:10:21.164Z',
+            system_limit: 6,
+            systems_count: 1,
+            service: {
+              product: {
+                id: 0o0000
+              }
+            }
+          }
+        end
+        let(:body_unknown_status) do
+          {
+            id: 1,
+            regcode: '631dc51f',
+            name: 'Subscription 1',
+            type: 'FULL',
+            status: 'FOO',
+            starts_at: 'null',
+            expires_at: '2014-03-14T13:10:21.164Z',
+            system_limit: 6,
+            systems_count: 1,
+            service: {
+              product: {
+                id: 0o0000
+              }
+            }
+          }
+        end
         let(:system_byos) { FactoryBot.create(:system, :byos, :with_activated_product) }
-        let(:scc_systems_subscriptions_url) { 'https://scc.suse.com/connect/systems/subscriptions' }
+        let(:scc_systems_activations_url) { 'https://scc.suse.com/connect/systems/activations' }
 
         include_context 'auth header', :system_byos, :login, :password
 
@@ -121,7 +124,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
 
         context 'when subscription is active' do
           before do
-            stub_request(:get, 'https://scc.suse.com/connect/systems/subscriptions').to_return(status: 200, body: [body_active].to_json, headers: {})
+            stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_active].to_json, headers: {})
             get '/api/auth/check', headers: headers
           end
 
@@ -130,7 +133,25 @@ describe StrictAuthentication::AuthenticationController, type: :request do
 
         context 'when subscription is expired' do
           before do
-            stub_request(:get, 'https://scc.suse.com/connect/systems/subscriptions').to_return(status: 200, body: [body_expired].to_json, headers: {})
+            stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_expired].to_json, headers: {})
+            get '/api/auth/check', headers: headers
+          end
+
+          it { is_expected.to have_http_status(403) }
+        end
+
+        context 'when product is not activated' do
+          before do
+            stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_not_activated].to_json, headers: {})
+            get '/api/auth/check', headers: headers
+          end
+
+          it { is_expected.to have_http_status(403) }
+        end
+
+        context 'when status from SCC is unknown' do
+          before do
+            stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_unknown_status].to_json, headers: {})
             get '/api/auth/check', headers: headers
           end
 
@@ -139,7 +160,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
 
         context 'when SCC request fails' do
           before do
-            stub_request(:get, 'https://scc.suse.com/connect/systems/subscriptions').to_return(status: 401, body: [body_expired].to_json, headers: {})
+            stub_request(:get, scc_systems_activations_url).to_return(status: 401, body: [body_expired].to_json, headers: {})
             get '/api/auth/check', headers: headers
           end
 
