@@ -1,5 +1,15 @@
 require 'rails_helper'
 
+class StaleList
+  attr_reader :files, :db_entries, :hardlinks
+
+  def initialize(files: [], db_entries: [], hardlinks: [])
+    @files = files
+    @db_entries = db_entries
+    @hardlinks = hardlinks
+  end
+end
+
 RSpec.describe RMT::CLI::Clean do
   describe '#packages' do
     let(:command) { described_class.start(argv) }
@@ -15,38 +25,43 @@ RSpec.describe RMT::CLI::Clean do
     let(:dummy_repo_with_src) do
       { fixture: 'dummy_repo_with_src', dir: File.join(mirror_dir, 'dummy_repo_with_src') }
     end
-    let(:stale_rpm1) do
-      { fixture: 'dummy_repo_with_src/x86_64/apples-0.0.2-lp151.2.1.x86_64.rpm',
-        file: File.join(dummy_repo_with_src[:dir], 'x86_64', 'lemon-0.0.2-lp151.2.1.x86_64.rpm'),
-        size: 7280 }
+    let(:mirrored_repos) { [dummy_repo, dummy_repo_with_src] }
+    let(:stale_files) do
+      {
+        rpm1: {
+          fixture: 'dummy_repo_with_src/x86_64/apples-0.0.2-lp151.2.1.x86_64.rpm',
+          file: File.join(dummy_repo_with_src[:dir], 'x86_64', 'lemon-0.0.2-lp151.2.1.x86_64.rpm')
+        },
+        drpm1: {
+          fixture: 'dummy_repo_with_src/x86_64/apples-0.0.1_0.0.2-lp151.2.1.x86_64.drpm',
+          file: File.join(dummy_repo_with_src[:dir], 'x86_64', 'lemon-0.0.1_0.0.2-lp151.2.1.x86_64.drpm')
+        },
+        rpm2: {
+          fixture: 'dummy_repo/apples-0.2-0.x86_64.rpm',
+          file: File.join(dummy_repo[:dir], 'blueberry-0.2-0.x86_64.rpm')
+        },
+        drpm2: {
+          fixture: 'dummy_repo/apples-0.1-0.x86_64.drpm',
+          file: File.join(dummy_repo[:dir], 'blueberry-0.1-0.x86_64.drpm')
+        },
+        src1: {
+          fixture: 'dummy_repo_with_src/src/oranges-0.0.1-lp151.1.1.src.rpm',
+          file: File.join(dummy_repo_with_src[:dir], 'src', 'lemon-0.0.1-lp151.1.1.src.rpm')
+        },
+        src2: {
+          fixture: 'dummy_repo_with_src/src/apples-0.0.2-lp151.2.1.src.rpm',
+          file: File.join(dummy_repo_with_src[:dir], 'src', 'lemon-0.0.2-lp151.2.1.src.rpm')
+        },
+        rpm3: {
+          fixture: 'dummy_repo/blueberry-0.2-0.x86_64.rpm',
+          file: File.join(dummy_repo[:dir], 'strawberry-0.3-0.x86_64.rpm')
+        },
+        rpm4: {
+          fixture: 'dummy_repo/blueberry-0.2-0.x86_64.rpm',
+          file: File.join(dummy_repo[:dir], 'cranberry-0.4-0.x86_64.rpm')
+        }
+      }
     end
-    let(:stale_drpm1) do
-      { fixture: 'dummy_repo_with_src/x86_64/apples-0.0.1_0.0.2-lp151.2.1.x86_64.drpm',
-        file: File.join(dummy_repo_with_src[:dir], 'x86_64', 'lemon-0.0.1_0.0.2-lp151.2.1.x86_64.drpm'),
-        size: 3544 }
-    end
-    let(:stale_rpm2) do
-      { fixture: 'dummy_repo/apples-0.2-0.x86_64.rpm',
-        file: File.join(dummy_repo[:dir], 'blueberry-0.2-0.x86_64.rpm'),
-        size: 1950 }
-    end
-    let(:stale_drpm2) do
-      { fixture: 'dummy_repo/apples-0.1-0.x86_64.drpm',
-        file: File.join(dummy_repo[:dir], 'blueberry-0.1-0.x86_64.drpm'),
-        size: 2088 }
-    end
-    let(:stale_src1) do
-      { fixture: 'dummy_repo_with_src/src/oranges-0.0.1-lp151.1.1.src.rpm',
-        file: File.join(dummy_repo_with_src[:dir], 'src', 'lemon-0.0.1-lp151.1.1.src.rpm'),
-        size: 7518 }
-    end
-    let(:stale_src2) do
-      { fixture: 'dummy_repo_with_src/src/apples-0.0.2-lp151.2.1.src.rpm',
-        file: File.join(dummy_repo_with_src[:dir], 'src', 'lemon-0.0.2-lp151.2.1.src.rpm'),
-        size: 7528 }
-    end
-    let(:fresh_stale_files) { [] }
-    let(:fresh_stale_database_entries) { [] }
 
     let(:input) { 'yes' }
     let(:expected_output) do
@@ -65,6 +80,28 @@ RSpec.describe RMT::CLI::Clean do
           \e[1mEnter a value:\e[0m\s
       OUTPUT
     end
+    let(:stale_list)       { StaleList.new }
+    let(:fresh_stale_list) { StaleList.new }
+
+    shared_context 'default stale files setup' do
+      let(:stale_list) do
+        StaleList.new(files: stale_files.values_at(:rpm1, :drpm1, :rpm2, :drpm2),
+                      db_entries: stale_files.values_at(:rpm1, :rpm2, :drpm2))
+      end
+
+      let(:expected_result_output) do
+        <<~OUTPUT.chomp
+          \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
+          Cleaned 2 files (#{file_human_size(10824)}), 1 database entry.
+
+          \e[1mDirectory: #{dummy_repo[:dir]}\e[0m
+          Cleaned 2 files (#{file_human_size(4038)}), 2 database entries.
+
+          #{'-' * 80}
+          \e[32;1mTotal: cleaned 4 files (#{file_human_size(14862)}), 3 database entries.\e[0m
+        OUTPUT
+      end
+    end
 
     around do |example|
       RMT.send(:remove_const, 'DEFAULT_MIRROR_DIR')
@@ -78,6 +115,7 @@ RSpec.describe RMT::CLI::Clean do
 
     context 'when no repomd files have been found' do
       let(:argv) { ['packages'] }
+      let(:mirrored_repos) { [] }
       let(:expected_output) do
         <<~OUTPUT
           \n\e[1mScanning the mirror directory for 'repomd.xml' files...\e[0m
@@ -89,21 +127,19 @@ RSpec.describe RMT::CLI::Clean do
     end
 
     context "when RMT asks for confirmation and user inputs text other than 'yes'" do
-      let(:mirrored_repos) { [dummy_repo, dummy_repo_with_src] }
       let(:expected_result_output) { 'Clean cancelled.' }
       let(:input) { 'no' }
 
       include_context 'command without options'
-      include_context 'mirror directory without stale files'
+      include_context 'mirror repositories'
 
       include_examples 'prints to stdout'
     end
 
     context 'when no stale packages have been found' do
-      let(:mirrored_repos) { [dummy_repo, dummy_repo_with_src] }
       let(:expected_result_output) { "\e[32;1mNo stale packages have been found!\e[0m" }
 
-      include_context 'mirror directory without stale files'
+      include_context 'mirror repositories'
 
       context 'and no options have been passed' do
         include_context 'command without options'
@@ -132,57 +168,43 @@ RSpec.describe RMT::CLI::Clean do
       end
     end
 
-    context 'when there are stale packages' do
-      let(:mirrored_repos) { [dummy_repo, dummy_repo_with_src] }
-      let(:stale_files) { [stale_rpm1, stale_drpm1, stale_rpm2, stale_drpm2] }
-      let(:stale_database_entries) { [stale_rpm1, stale_rpm2, stale_drpm2] }
+    context 'when there are stale packages and no options have been passed' do
+      include_context 'default stale files setup'
+      include_context 'mirror repositories with stale files'
+      include_context 'command without options'
 
+      include_examples 'prints to stdout'
+      include_examples 'removes files'
+      include_examples 'removes database entries'
+    end
+
+    context 'when there are stale packages and --dry-run option is set' do
+      include_context 'default stale files setup'
+      include_context 'mirror repositories with stale files'
+      include_context 'command with dry run option'
+
+      include_examples 'prints to stdout'
+      include_examples 'does not remove files'
+      include_examples 'does not remove database entries'
+    end
+
+    context 'when there are stale packages and --non-interactive option is set' do
+      include_context 'default stale files setup'
+      include_context 'mirror repositories with stale files'
+      include_context 'command with non-interactive mode'
+
+      include_examples 'prints to stdout'
+      include_examples 'removes files'
+      include_examples 'removes database entries'
+    end
+
+    context 'when there are stale packages and --verbose option is set' do
+      let(:stale_list) do
+        StaleList.new(files: stale_files.values_at(:rpm1, :drpm1, :rpm2, :drpm2),
+                      db_entries: stale_files.values_at(:rpm1, :rpm2, :drpm2))
+      end
       let(:expected_result_output) do
         <<~OUTPUT.chomp
-          \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
-          Cleaned 2 files (#{file_human_size(10824)}), 1 database entry.
-
-          \e[1mDirectory: #{dummy_repo[:dir]}\e[0m
-          Cleaned 2 files (#{file_human_size(4038)}), 2 database entries.
-
-          #{'-' * 80}
-          \e[32;1mTotal: cleaned 4 files (#{file_human_size(14862)}), 3 database entries.\e[0m
-        OUTPUT
-      end
-
-      context 'and no options have been passed' do
-        include_context 'mirror directory with stale files'
-        include_context 'database entries for stale files'
-        include_context 'command without options'
-
-        include_examples 'prints to stdout'
-        include_examples 'removes files'
-        include_examples 'removes database entries'
-      end
-
-      context 'and --dry-run option is set' do
-        include_context 'mirror directory with stale files'
-        include_context 'database entries for stale files'
-        include_context 'command with dry run option'
-
-        include_examples 'prints to stdout'
-        include_examples 'does not remove files'
-        include_examples 'does not remove database entries'
-      end
-
-      context 'and --non-interactive option is set' do
-        include_context 'mirror directory with stale files'
-        include_context 'database entries for stale files'
-        include_context 'command with non-interactive mode'
-
-        include_examples 'prints to stdout'
-        include_examples 'removes files'
-        include_examples 'removes database entries'
-      end
-
-      context 'and --verbose option is set' do
-        let(:expected_result_output) do
-          <<~OUTPUT.chomp
           \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
             Cleaned 'x86_64/lemon-0.0.1_0.0.2-lp151.2.1.x86_64.drpm' (#{file_human_size(3544)}), 0 database entries.
             Cleaned 'x86_64/lemon-0.0.2-lp151.2.1.x86_64.rpm' (#{file_human_size(7280)}), 1 database entry.
@@ -195,23 +217,24 @@ RSpec.describe RMT::CLI::Clean do
 
           #{'-' * 80}
           \e[32;1mTotal: cleaned 4 files (#{file_human_size(14862)}), 3 database entries.\e[0m
-          OUTPUT
-        end
-
-        include_context 'mirror directory with stale files'
-        include_context 'database entries for stale files'
-        include_context 'command with verbose mode'
-
-        include_examples 'prints to stdout'
-        include_examples 'removes files'
-        include_examples 'removes database entries'
+        OUTPUT
       end
 
-      context 'and there are stale source packages' do
-        let(:stale_files) { [stale_src1, stale_src2, stale_rpm1, stale_drpm1, stale_rpm2, stale_drpm2] }
-        let(:stale_database_entries) { [stale_rpm1, stale_rpm2, stale_drpm2, stale_src2] }
-        let(:expected_result_output) do
-          <<~OUTPUT.chomp
+      include_context 'mirror repositories with stale files'
+      include_context 'command with verbose mode'
+
+      include_examples 'prints to stdout'
+      include_examples 'removes files'
+      include_examples 'removes database entries'
+    end
+
+    context 'when there are stale packages and some are source packages' do
+      let(:stale_list) do
+        StaleList.new(db_entries: stale_files.values_at(:rpm1, :rpm2, :drpm2, :src2),
+                      files: stale_files.values_at(:src1, :src2, :rpm1, :drpm1, :rpm2, :drpm2))
+      end
+      let(:expected_result_output) do
+        <<~OUTPUT.chomp
           \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
             Cleaned 'src/lemon-0.0.1-lp151.1.1.src.rpm' (#{file_human_size(7518)}), 0 database entries.
             Cleaned 'src/lemon-0.0.2-lp151.2.1.src.rpm' (#{file_human_size(7528)}), 1 database entry.
@@ -226,25 +249,28 @@ RSpec.describe RMT::CLI::Clean do
 
           #{'-' * 80}
           \e[32;1mTotal: cleaned 6 files (#{file_human_size(29908)}), 4 database entries.\e[0m
-          OUTPUT
-        end
-
-        include_context 'mirror directory with stale files'
-        include_context 'database entries for stale files'
-        include_context 'command with verbose mode'
-
-        include_examples 'prints to stdout'
-        include_examples 'removes files'
-        include_examples 'removes database entries'
+        OUTPUT
       end
 
-      context 'and there are stale files which are less than 2 days old' do
-        let(:stale_files) { [stale_rpm2, stale_drpm2] }
-        let(:stale_database_entries) { [stale_rpm2] }
-        let(:fresh_stale_files) { [stale_rpm1, stale_drpm1] }
-        let(:fresh_stale_database_entries) { [stale_rpm1] }
-        let(:expected_result_output) do
-          <<~OUTPUT.chomp
+      include_context 'mirror repositories with stale files'
+      include_context 'command with verbose mode'
+
+      include_examples 'prints to stdout'
+      include_examples 'removes files'
+      include_examples 'removes database entries'
+    end
+
+    context 'when there are stale packages and some are less than 2-days-old' do
+      let(:stale_list) do
+        StaleList.new(files: stale_files.values_at(:rpm2, :drpm2),
+                      db_entries: stale_files.values_at(:rpm2))
+      end
+      let(:fresh_stale_list) do
+        StaleList.new(files: stale_files.values_at(:rpm1, :drpm1),
+                      db_entries: stale_files.values_at(:rpm1))
+      end
+      let(:expected_result_output) do
+        <<~OUTPUT.chomp
           \e[1mDirectory: #{dummy_repo[:dir]}\e[0m
             Cleaned 'blueberry-0.1-0.x86_64.drpm' (#{file_human_size(2088)}), 0 database entries.
             Cleaned 'blueberry-0.2-0.x86_64.rpm' (#{file_human_size(1950)}), 1 database entry.
@@ -252,16 +278,96 @@ RSpec.describe RMT::CLI::Clean do
 
           #{'-' * 80}
           \e[32;1mTotal: cleaned 2 files (#{file_human_size(4038)}), 1 database entry.\e[0m
-          OUTPUT
-        end
+        OUTPUT
+      end
 
-        include_context 'mirror directory with stale files'
-        include_context 'database entries for stale files'
-        include_context 'command with verbose mode'
+      include_context 'mirror repositories with stale files'
+      include_context 'command with verbose mode'
+
+      include_examples 'prints to stdout'
+      include_examples 'removes files'
+      include_examples 'removes database entries'
+      include_examples 'does not remove fresh stale files'
+      include_examples 'does not remove database entries of fresh stale files'
+    end
+
+    context 'when there are stale packages and all of them are hardlinks' do
+      let(:stale_list) do
+        StaleList.new(db_entries: stale_files.values_at(:rpm1, :rpm2, :drpm2, :src2),
+                      hardlinks: stale_files.values_at(:src1, :src2, :rpm1, :drpm1, :rpm2, :drpm2))
+      end
+      let(:expected_result_output) do
+        <<~OUTPUT.chomp
+        \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
+          Cleaned 'src/lemon-0.0.1-lp151.1.1.src.rpm' (#{file_human_size(0)}, hardlink), 0 database entries.
+          Cleaned 'src/lemon-0.0.2-lp151.2.1.src.rpm' (#{file_human_size(0)}, hardlink), 1 database entry.
+          Cleaned 'x86_64/lemon-0.0.1_0.0.2-lp151.2.1.x86_64.drpm' (#{file_human_size(0)}, hardlink), 0 database entries.
+          Cleaned 'x86_64/lemon-0.0.2-lp151.2.1.x86_64.rpm' (#{file_human_size(0)}, hardlink), 1 database entry.
+        Cleaned 4 files (#{file_human_size(0)}), 2 database entries.
+
+        \e[1mDirectory: #{dummy_repo[:dir]}\e[0m
+          Cleaned 'blueberry-0.1-0.x86_64.drpm' (#{file_human_size(0)}, hardlink), 1 database entry.
+          Cleaned 'blueberry-0.2-0.x86_64.rpm' (#{file_human_size(0)}, hardlink), 1 database entry.
+        Cleaned 2 files (#{file_human_size(0)}), 2 database entries.
+
+        #{'-' * 80}
+        \e[32;1mTotal: cleaned 6 files (#{file_human_size(0)}), 4 database entries.\e[0m
+        OUTPUT
+      end
+
+      include_context 'mirror repositories with stale files'
+      include_context 'command with verbose mode'
+
+      include_examples 'prints to stdout'
+      include_examples 'removes files'
+      include_examples 'removes database entries'
+    end
+
+    context 'when there are stale packages and some hardlinks points to them' do
+      let(:stale_list) do
+        StaleList.new(files: stale_files.values_at(:drpm1, :rpm2),
+                      hardlinks: stale_files.values_at(:src1, :drpm2, :rpm3, :rpm4),
+                      db_entries: stale_files.values_at(:rpm2, :drpm2, :rpm4))
+      end
+      let(:fresh_state_files) do
+        StaleList.new(files: stale_files.values_at(:rpm1),
+                      hardlinks: stale_files.values_at(:src2),
+                      db_entries: stale_files.values_at(:rpm1, :src2))
+      end
+      let(:expected_result_output) do
+        <<~OUTPUT.chomp
+          \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
+            Cleaned 'src/lemon-0.0.1-lp151.1.1.src.rpm' (#{file_human_size(0)}, hardlink), 0 database entries.
+            Cleaned 'x86_64/lemon-0.0.1_0.0.2-lp151.2.1.x86_64.drpm' (#{file_human_size(3544)}), 0 database entries.
+          Cleaned 2 files (#{file_human_size(3544)}), 0 database entries.
+
+          \e[1mDirectory: #{dummy_repo[:dir]}\e[0m
+            Cleaned 'blueberry-0.1-0.x86_64.drpm' (#{file_human_size(0)}, hardlink), 1 database entry.
+            Cleaned 'blueberry-0.2-0.x86_64.rpm' (#{file_human_size(0)}, hardlink), 1 database entry.
+            Cleaned 'cranberry-0.4-0.x86_64.rpm' (#{file_human_size(0)}, hardlink), 1 database entry.
+            Cleaned 'strawberry-0.3-0.x86_64.rpm' (#{file_human_size(1950)}), 0 database entries.
+          Cleaned 4 files (#{file_human_size(1950)}), 3 database entries.
+
+          #{'-' * 80}
+          \e[32;1mTotal: cleaned 6 files (#{file_human_size(5494)}), 3 database entries.\e[0m
+        OUTPUT
+      end
+
+      include_context 'mirror repositories with stale files'
+      include_context 'command with verbose mode'
+
+      include_examples 'prints to stdout'
+      include_examples 'removes files'
+      include_examples 'removes database entries'
+      include_examples 'does not remove fresh stale files'
+      include_examples 'does not remove database entries of fresh stale files'
+
+      context '--dry-run options is set' do
+        include_context 'command with dry run and verbose options'
 
         include_examples 'prints to stdout'
-        include_examples 'removes files'
-        include_examples 'removes database entries'
+        include_examples 'does not remove files'
+        include_examples 'does not remove database entries'
         include_examples 'does not remove fresh stale files'
         include_examples 'does not remove database entries of fresh stale files'
       end

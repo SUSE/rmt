@@ -1,6 +1,7 @@
 class RMT::CLI::Clean < RMT::CLI::Base
   STALE_FILE_MINIMUM_AGE = 48 * 60 * 60 # 2 days (in seconds)
-  CleanedFile = Struct.new(:path, :file_size, :db_entries, keyword_init: true).freeze
+  CleanedFile = Struct.new(:path, :file_size, :db_entries, :db_entries_count,
+                           :hardlink, keyword_init: true).freeze
 
   desc 'packages', _('Clean stale package files, based on current repository data.')
   option :non_interactive, aliases: '-n', type: :boolean,
@@ -57,9 +58,31 @@ class RMT::CLI::Clean < RMT::CLI::Base
       end
     end
 
-    report = run_package_clean(repomd_files)
+    run_package_clean(repomd_files)
+  end
 
-    if report[:total_cleaned_count] == 0
+  private
+
+  def run_package_clean(repomd_files)
+    # Initialize table to keep registry of inodes referencing stale files/links
+    @inodes = Hash.new(0)
+
+    partial_reports =
+      stale_packages_list_by_dir(repomd_files).map do |repo_dir, stale_files|
+        unless options.dry_run
+          FileUtils.rm(stale_files.map(&:path))
+          stale_files.each { |file| file.db_entries.destroy_all }
+        end
+
+        generate_partial_report(repo_dir, stale_files)
+      end
+
+    report = partial_reports
+      .reduce({ count: 0, size: 0, db_entries: 0 }) do |acc, partial|
+        acc.merge(partial) { |_, new_val, old_val| new_val + old_val }
+      end
+
+    if report[:count] == 0
       print "\n\e[32;1m"
       print _('No stale packages have been found!')
       print "\e[0m\n"
@@ -70,77 +93,53 @@ class RMT::CLI::Clean < RMT::CLI::Base
     puts "\n#{'-' * 80}"
     print "\e[32;1m"
     print _('Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}.') % {
-      total_count: file_count_text(report[:total_cleaned_count]),
-      total_size: ActiveSupport::NumberHelper.number_to_human_size(report[:total_cleaned_size]),
-      total_db_entries: db_entries_text(report[:total_cleaned_db_entries])
+      total_count: file_count_text(report[:count]),
+      total_size: ActiveSupport::NumberHelper.number_to_human_size(report[:size]),
+      total_db_entries: db_entries_text(report[:db_entries])
     }
     print "\e[0m\n"
   end
 
-  private
-
-  def run_package_clean(repomd_files)
-    dirs_with_stale_files = repomd_files.lazy.map do |repomd_file|
+  def stale_packages_list_by_dir(repomd_files)
+    repomd_files.lazy.map do |repomd_file|
       repo_base_dir = File.absolute_path(File.join(File.dirname(repomd_file), '..'))
-      stale_candidates = stale_candidates_list(repo_base_dir, repomd_file)
+      stale_packages = stale_packages_list(repo_base_dir, repomd_file)
 
-      next nil if stale_candidates.empty?
+      next nil if stale_packages.empty?
 
-      [repo_base_dir, stale_candidates]
+      [repo_base_dir, stale_packages]
     end.reject(&:nil?)
-
-    stats = dirs_with_stale_files.map do |(repo_base_dir, stale_packages)|
-      cleaned_files = clean_stale_packages(stale_packages)
-
-      next nil if cleaned_files.empty?
-
-      print "\n\e[1m"
-      print _('Directory: %{dir}') % { dir: repo_base_dir }
-      print "\e[0m\n"
-
-      quoted_repo_base_dir = Regexp.quote(repo_base_dir)
-      if options.verbose
-        cleaned_files.each do |file|
-          puts "\s\s" + (
-            _("Cleaned '%{file_name}' (%{file_size}), %{db_entries}.") % {
-              file_name: file.path.gsub(%r{^#{quoted_repo_base_dir}/?}, ''),
-              file_size: ActiveSupport::NumberHelper.number_to_human_size(file.file_size),
-              db_entries: db_entries_text(file.db_entries)
-            }
-          )
-        end
-      end
-
-      cleaned_files_count = cleaned_files.count
-      cleaned_files_size = cleaned_files.sum(&:file_size)
-      cleaned_db_entries = cleaned_files.sum(&:db_entries)
-
-      puts _('Cleaned %{file_count_text} (%{total_size}), %{db_entries}.') % {
-        file_count_text: file_count_text(cleaned_files_count),
-        total_size: ActiveSupport::NumberHelper.number_to_human_size(cleaned_files_size),
-        db_entries: db_entries_text(cleaned_db_entries)
-      }
-
-      [cleaned_files_count, cleaned_files_size, cleaned_db_entries]
-    end.reject(&:nil?)
-
-    total_cleaned_count, total_cleaned_size, total_cleaned_db_entries =
-      stats.force.transpose.map(&:sum)
-
-    {
-      total_cleaned_size: total_cleaned_size.to_i,
-      total_cleaned_count: total_cleaned_count.to_i,
-      total_cleaned_db_entries: total_cleaned_db_entries.to_i
-    }
   end
 
-  def stale_candidates_list(repo_base_dir, repomd_file)
+  def stale_packages_list(repo_base_dir, repomd_file)
     expected_packages = parse_packages_data(repomd_file, repo_base_dir)
       .map { |file| File.join(repo_base_dir, file.location) }.sort
 
     actual_packages = Dir.glob(File.join(repo_base_dir, '**', '*.{rpm,drpm}')).sort
+    packages = (actual_packages - expected_packages).sort
 
-    (actual_packages - expected_packages).sort
+    packages.map do |file|
+      next nil unless File.exist?(file)
+
+      # Only remove files if they were not recently created
+      file_stat = File.stat(file)
+      next nil if (Time.current - file_stat.mtime) < STALE_FILE_MINIMUM_AGE
+
+      file_size, hardlink =
+        # We keep the count of times an inode has been referenced to know
+        # if it's the last link (name) referencing the inode, so we can compute
+        # the actual file size removed from disk.
+        if (@inodes[file_stat.ino] += 1) == file_stat.nlink
+          [file_stat.size, false]
+        else
+          [0, true]
+        end
+
+      db_entries = DownloadedFile.where(local_path: file)
+
+      CleanedFile.new(path: file, file_size: file_size, db_entries: db_entries,
+                      db_entries_count: db_entries.count, hardlink: hardlink)
+    end.reject(&:nil?)
   end
 
   def parse_packages_data(repomd_file, repo_base_dir)
@@ -157,22 +156,40 @@ class RMT::CLI::Clean < RMT::CLI::Base
     end.flatten
   end
 
-  def clean_stale_packages(packages)
-    packages.map do |file|
-      next nil unless File.exist?(file)
+  def generate_partial_report(repo_base_dir, cleaned_files)
+    cleaned_files_count = cleaned_files.count
+    cleaned_files_size = cleaned_files.sum(&:file_size)
+    cleaned_db_entries = cleaned_files.sum(&:db_entries_count)
 
-      file_stat = File.stat(file)
-      next nil if (Time.current - file_stat.mtime) < STALE_FILE_MINIMUM_AGE
+    print "\n\e[1m"
+    print _('Directory: %{dir}') % { dir: repo_base_dir }
+    print "\e[0m\n"
 
-      db_entries = DownloadedFile.where(local_path: file)
-
-      unless options.dry_run
-        FileUtils.rm(file)
-        db_entries = db_entries.destroy_all
+    quoted_repo_base_dir = Regexp.quote(repo_base_dir)
+    if options.verbose
+      cleaned_files.each do |file|
+        puts "\s\s" + (
+          _("Cleaned '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}.") % {
+            file_name: file.path.gsub(%r{^#{quoted_repo_base_dir}/?}, ''),
+            file_size: ActiveSupport::NumberHelper.number_to_human_size(file.file_size),
+            hardlink: file.hardlink == true ? (', ' + _('hardlink')) : '',
+            db_entries: db_entries_text(file.db_entries_count)
+          }
+        )
       end
+    end
 
-      CleanedFile.new(path: file, file_size: file_stat.size, db_entries: db_entries.count)
-    end.reject(&:nil?)
+    puts _('Cleaned %{file_count_text} (%{total_size}), %{db_entries}.') % {
+      file_count_text: file_count_text(cleaned_files_count),
+      total_size: ActiveSupport::NumberHelper.number_to_human_size(cleaned_files_size),
+      db_entries: db_entries_text(cleaned_db_entries)
+    }
+
+    {
+      count: cleaned_files_count.to_i,
+      size: cleaned_files_size.to_i,
+      db_entries: cleaned_db_entries.to_i
+    }
   end
 
   def file_count_text(count)
