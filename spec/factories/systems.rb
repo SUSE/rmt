@@ -8,6 +8,10 @@ FactoryBot.define do
       instance_data { nil }
     end
 
+    trait :byos do
+      proxy_byos { true }
+    end
+
     trait :with_activated_base_product do
       after :create do |system, _|
         create(:activation, system: system, service: create(:service)) if system.services.blank?
