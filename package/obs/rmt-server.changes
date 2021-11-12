@@ -11,12 +11,25 @@ Thu Oct 7 09:01:00 UTC 2021 - Felix Schnizlein <fschnizlein@suse.com>
   activate a module through RMT, if it requires a root product which is not
   activated, the activation will fail (bnc#951189).
 - Load global configuration only if it can be ready by the current process.
+-------------------------------------------------------------------
+Thu Oct 7 09:01:00 UTC 2021 - Felix Schnizlein <fschnizlein@suse.com>
+
+- Version 2.7.0
+- Add subscription support in RMT. RMT can now consume registration codes
+  supplied when registering a system.
+- Add host's login header to API requests to SCC. If the information is
+  available, RMT will send it on requests to attach the registration proxy to a
+  host system in SCC.
+- Add extra check to product dependency on RMT API. Now, when a system tries to
+  activate a module through RMT, if it requires a root product which is not
+  activated, the activation will fail (bnc#951189).
+- Load global configuration only if it can be ready by the current process.
 
 -------------------------------------------------------------------
 Thu Aug 19 10:12:03 UTC 2021 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Version 2.6.12
-- Re-fix broken symlinks: This version fixes the bug-fix 
+- Re-fix broken symlinks: This version fixes the bug-fix
 deployed with version 2.6.11. Reference bug (bsc#1188043)
 
 - Handle special characters in package names (bsc#1189805)
