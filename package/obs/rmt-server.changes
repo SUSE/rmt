@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun 06 15:44:00 UTC 2023 - Luís Caparroz <lcaparroz@suse.com>
+
+- Version 2.14
+- Add command 'rmt-cli clean packages', which remove stale packages no longer
+  referenced in the available metadata files and their database entries.
+
+-------------------------------------------------------------------
 Fri May 19 12:05:44 UTC 2023 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
 - Version 2.13
@@ -7,7 +14,6 @@ Fri May 19 12:05:44 UTC 2023 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
   * Additional API paths for SUMa PAYG for RMT
   * Allow access to SUMa Client Tools and Proxy channels if product is SUMA_Server
   * Handle system token for BYOS instances in the cloud
-
 
 -------------------------------------------------------------------
 Wed Apr 12 15:27:18 UTC 2023 - Felix Schnizlein <fschnizlein@suse.com>
