@@ -1,16 +1,15 @@
 -------------------------------------------------------------------
-Thu Oct 7 09:01:00 UTC 2021 - Felix Schnizlein <fschnizlein@suse.com>
+Thu Nov 11 12:20:55 UTC 2021 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
-- Version 2.7.0
-- Add subscription support in RMT. RMT can now consume registration codes
-  supplied when registering a system.
-- Add host's login header to API requests to SCC. If the information is
-  available, RMT will send it on requests to attach the registration proxy to a
-  host system in SCC.
-- Add extra check to product dependency on RMT API. Now, when a system tries to
-  activate a module through RMT, if it requires a root product which is not
-  activated, the activation will fail (bnc#951189).
-- Load global configuration only if it can be ready by the current process.
+PubCloud:
+- Add the handling of the BYOS systems that use RMT as a SCC proxy
+  In order to do that:
+- New boolean column in systems table in db: proxy_byos
+- Skip the sync with SCC (using that column)
+- Registration of the system to SCC (announce system call and
+  then use SCC credentials)
+- Activation of products
+- Check subscription is active/valid for a product/repo to be accessed
 -------------------------------------------------------------------
 Thu Oct 7 09:01:00 UTC 2021 - Felix Schnizlein <fschnizlein@suse.com>
 
