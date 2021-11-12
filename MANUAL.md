@@ -96,11 +96,25 @@ You can install and run this wizard like this:
     `rmt-cli products disable SLES/15/x86_64 1743`
 
   * `rmt-cli products show <id | string>`:
-  	Displays product with all its repositories and their attributes.
+    Displays product with all its repositories and their attributes.
 
-  	Examples:
+    Examples:
 
-  	`rmt-cli products show SLES/15/x86_64`
+    `rmt-cli products show SLES/15/x86_64`
+
+  * `rmt-cli clean packages`:
+    Removes locally mirrored stale files and their database entries.
+    A file is considered *stale* if it matches all the following characteristics:
+
+      * It exists in a repository directory with primary and deltainfo metadata files;
+      * It is not referenced in those metadata files;
+      * It is at least *2-days-old*.
+
+    Use the `--dry-run` flag to generate a report of all files without actually cleaning files or database entries.
+
+    Use the `--verbose` flag to print information detailed information of each cleaned file.
+
+    Use the `--non-interactive` flag to skip confirmation before proceeding with the cleaning process.
 
   * `rmt-cli repos clean [--no-confirmation]`:
     Removes locally mirrored files of repositories which are not marked to be mirrored.
