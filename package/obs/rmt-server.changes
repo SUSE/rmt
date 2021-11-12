@@ -1,6 +1,7 @@
 -------------------------------------------------------------------
 Wed Nov 17 16:07:19 UTC 2021 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
+PubCloud:
 - Update the way allowed paths are checked
   SUMA requested a new feature where it is possible to validate
   all versions of the same product and arch (that are allowed to that system)
@@ -24,6 +25,7 @@ PubCloud:
   then use SCC credentials)
 - Activation of products
 - Check subscription is active/valid for a product/repo to be accessed
+
 -------------------------------------------------------------------
 Thu Oct 7 09:01:00 UTC 2021 - Felix Schnizlein <fschnizlein@suse.com>
 
