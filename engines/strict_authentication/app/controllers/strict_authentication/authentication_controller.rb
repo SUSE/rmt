@@ -28,6 +28,12 @@ module StrictAuthentication
     end
 
     def all_allowed_paths
+      # return all versions of the same product and arch
+      # (that the system has available with that subscription)
+      # in order to validate access not only for current product but others
+      # feature requested by SUMA team
+      # so they can check if a customer has access to other products and show those
+      # to them or verify paths
       all_product_versions = @system.products.map { |p| Product.where(identifier: p.identifier, arch: p.arch) }.flatten
       all_product_versions.map { |prod| prod.repositories.pluck(:local_path) }.flatten
     end
