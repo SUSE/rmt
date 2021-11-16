@@ -256,6 +256,35 @@ RSpec.describe SUSE::Connect::Api do
 
         it { is_expected.to eq(expected_response) }
       end
+
+      context 'when system has activations with subscriptions' do
+        let(:subscription) { FactoryBot.create :subscription }
+        let(:system) { create :system, :with_activated_product, subscription: subscription }
+        let(:product) { system.products.first }
+        let(:product_keys) { %i[id identifier version arch] }
+
+
+        let(:expected_response) { { login: system.login, password: system.password } }
+
+        let(:expected_products) do
+          attributes = product.slice(*product_keys).symbolize_keys
+          attributes[:regcode] = subscription.regcode
+          [attributes]
+        end
+
+        let(:expected_body) do
+          {
+            login: system.login,
+            password: system.password,
+            hostname: nil,
+            regcodes: [],
+            products: expected_products,
+            hwinfo: nil
+          }
+        end
+
+        it { is_expected.to eq(expected_response) }
+      end
     end
 
     describe '#forward_system_deregistration' do

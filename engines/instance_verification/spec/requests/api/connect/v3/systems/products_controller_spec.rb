@@ -16,6 +16,15 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       arch: product.arch
     }
   end
+  let(:payload_byos) do
+    {
+      identifier: product.identifier,
+      version: product.version,
+      arch: product.arch,
+      email: 'foo',
+      token: 'bar'
+    }
+  end
 
   describe '#activate' do
     let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
@@ -76,10 +85,19 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       end
 
       context 'when verification provider raises an instance verification exception' do
+        let(:scc_activate_url) { 'https://scc.suse.com/connect/systems/products' }
+
         before do
           expect(InstanceVerification::Providers::Example).to receive(:new)
             .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
           expect(plugin_double).to receive(:instance_valid?).and_raise(InstanceVerification::Exception, 'Custom plugin error')
+          stub_request(:post, scc_activate_url)
+            .to_return(
+              status: 401,
+              body: 'bar',
+              headers: {}
+            )
+
           post url, params: payload, headers: headers
         end
 
@@ -124,10 +142,18 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
       ).to_json
     end
+    let(:scc_activate_url) { 'https://scc.suse.com/connect/systems/products' }
 
     before do
       FactoryBot.create(:subscription, product_classes: product_classes)
       expect(InstanceVerification::Providers::Example).not_to receive(:new)
+      stub_request(:post, scc_activate_url)
+        .to_return(
+          status: 401,
+          body: 'bar',
+          headers: {}
+        )
+
       post url, params: payload, headers: headers
     end
 

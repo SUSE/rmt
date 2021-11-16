@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Thu Nov 11 12:20:55 UTC 2021 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+PubCloud:
+- Add the handling of the BYOS systems that use RMT as a SCC proxy
+  In order to do that:
+- New boolean column in systems table in db: proxy_byos
+- Skip the sync with SCC (using that column)
+- Registration of the system to SCC (announce system call and
+  then use SCC credentials)
+- Activation of products
+- Check subscription is active/valid for a product/repo to be accessed
+-------------------------------------------------------------------
 Thu Oct 7 09:01:00 UTC 2021 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Version 2.7.0
@@ -16,7 +28,7 @@ Thu Oct 7 09:01:00 UTC 2021 - Felix Schnizlein <fschnizlein@suse.com>
 Thu Aug 19 10:12:03 UTC 2021 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Version 2.6.12
-- Re-fix broken symlinks: This version fixes the bug-fix 
+- Re-fix broken symlinks: This version fixes the bug-fix
 deployed with version 2.6.11. Reference bug (bsc#1188043)
 
 - Handle special characters in package names (bsc#1189805)

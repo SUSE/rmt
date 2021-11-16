@@ -58,18 +58,13 @@ module SUSE
       end
 
       def forward_system_activations(system)
-        product_keys = %i[id identifier version arch]
-        hw_info_keys = %i[cpus sockets hypervisor arch uuid cloud_provider]
-
-        hw_info = system.hw_info ? system.hw_info.attributes.symbolize_keys.slice(*hw_info_keys) : nil
-
         params = {
           login: system.login,
           password: system.password,
           hostname: system.hostname,
           regcodes: [],
-          products: system.products.select(*product_keys).map { |i| i.attributes.symbolize_keys },
-          hwinfo: hw_info
+          products: generate_product_listing_for(system),
+          hwinfo: generate_hwinfo_for(system)
         }
 
         make_single_request(
@@ -87,6 +82,27 @@ module SUSE
       end
 
       protected
+
+      def generate_product_listing_for(system)
+        product_keys = %i[id identifier version arch]
+
+        system.activations.map do |activation|
+          attributes = activation.product.slice(*product_keys).symbolize_keys
+
+          if activation.subscription
+            attributes[:regcode] = activation.subscription.regcode
+          end
+          attributes
+        end
+      end
+
+      def generate_hwinfo_for(system)
+        hw_info_keys = %i[cpus sockets hypervisor arch uuid cloud_provider]
+
+        return nil unless system.hw_info
+
+        system.hw_info.attributes.symbolize_keys.slice(*hw_info_keys)
+      end
 
       def process_rels(response)
         links = (response.headers['Link'] || '').split(', ').map do |link|
