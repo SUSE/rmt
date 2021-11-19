@@ -260,17 +260,6 @@ module SccProxy
         def scc_deregistration
           if @system.proxy_byos
             auth = request.headers['HTTP_AUTHORIZATION']
-            @system.activations.each do |activation|
-              next if activation.product[:product_type] == 'base'
-
-              response = SccProxy.deactivate_product_scc(auth, activation.product)
-              unless response.code_type == Net::HTTPOK
-                error = JSON.parse(response.body)
-                error['error'] = SccProxy.parse_error(error['error'], params[:token], params[:email]) if error['error'].include? 'json'
-                logger.info "Could not de-activate product '#{activation.product.friendly_name}', error: #{error['error']} #{response.code}"
-                raise ActionController::TranslatedError.new(error['error'])
-              end
-            end
             response = SccProxy.deregister_system_scc(auth)
             unless response.code_type == Net::HTTPNoContent
               error = JSON.parse(response.body)
