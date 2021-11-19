@@ -53,39 +53,6 @@ describe Api::Connect::V3::Systems::SystemsController, type: :request do
       end
     end
 
-    context 'a system with error from SCC API for product' do
-      let(:product) do
-        FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system, product_type: 'module')
-      end
-      let(:payload) do
-        {
-          identifier: product.identifier,
-          version: product.version,
-          arch: product.arch
-        }
-      end
-
-      before do
-        stub_request(:delete, scc_systems_products_url)
-          .to_return(
-            status: 422,
-            body: "{\"error\": \"No product found on SCC for: #{product.name} #{product.version} #{product.arch}\"}",
-            headers: {}
-          )
-        allow(Rails.logger).to receive(:info)
-        delete url, params: payload, headers: headers
-      end
-
-      it 'reports an error' do
-        message = 'Could not de-activate product '\
-          "'#{product.friendly_name}', error: No product found on SCC for: "\
-          "#{product.name} #{product.version} #{product.arch} 422"
-        expect(Rails.logger).to have_received(:info).with(message).once
-        data = JSON.parse(response.body)
-        expect(data['error']).to eq("No product found on SCC for: #{product.name} #{product.version} #{product.arch}")
-      end
-    end
-
     context 'a system with error from SCC API' do
       let(:product) { FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system) }
       let(:payload) do
