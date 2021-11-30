@@ -3,6 +3,8 @@ require 'net/http'
 ANNOUNCE_URL = 'https://scc.suse.com/connect/subscriptions/systems'.freeze
 ACTIVATE_PRODUCT_URL = 'https://scc.suse.com/connect/systems/products'.freeze
 SYSTEMS_ACTIVATIONS_URL = 'https://scc.suse.com/connect/systems/activations'.freeze
+DEREGISTER_SYSTEM_URL = 'https://scc.suse.com/connect/systems'.freeze
+DEREGISTER_PRODUCT_URL = 'https://scc.suse.com/connect/systems/products'.freeze
 NET_HTTP_ERRORS = [
   Errno::EINVAL,
   Errno::ECONNRESET,
@@ -22,6 +24,7 @@ NET_HTTP_ERRORS = [
   Net::HTTPRetriableError
 ].freeze
 
+# rubocop:disable Metrics/ModuleLength
 module SccProxy
   class << self
 
@@ -73,6 +76,27 @@ module SccProxy
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
       scc_request = prepare_scc_request(uri.path, product, auth, token, email)
+      http.request(scc_request)
+    end
+
+    def deactivate_product_scc(auth, product)
+      uri = URI.parse(DEREGISTER_PRODUCT_URL)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      scc_request = Net::HTTP::Delete.new(uri.path, headers(auth))
+      scc_request.body = {
+        identifier: product.identifier,
+        version: product.version,
+        arch: product.arch
+      }.to_json
+      http.request(scc_request)
+    end
+
+    def deregister_system_scc(auth)
+      uri = URI.parse(DEREGISTER_SYSTEM_URL)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      scc_request = Net::HTTP::Delete.new(uri.path, headers(auth))
       http.request(scc_request)
     end
 
@@ -182,7 +206,6 @@ module SccProxy
         def has_no_regcode?(auth_header)
           auth_header ||= '='
           auth_header = auth_header[(auth_header.index('=') + 1)..-1]
-          logger.info auth_header
           auth_header.empty?
         end
       end
@@ -208,6 +231,47 @@ module SccProxy
           end
         end
       end
+
+      Api::Connect::V4::Systems::ProductsController.class_eval do
+        before_action :scc_deactivate_product, only: %i[destroy]
+
+        protected
+
+        def scc_deactivate_product
+          auth = request.headers['HTTP_AUTHORIZATION']
+          if @system.proxy_byos && @product[:product_type] != 'base'
+            response = SccProxy.deactivate_product_scc(auth, @product)
+            unless response.code_type == Net::HTTPOK
+              error = JSON.parse(response.body)
+              error['error'] = SccProxy.parse_error(error['error'], params[:token], params[:email]) if error['error'].include? 'json'
+              logger.info "Could not de-activate product '#{@product.friendly_name}', error: #{error['error']} #{response.code}"
+              raise ActionController::TranslatedError.new(error['error'])
+            end
+            logger.info "Product '#{@product.friendly_name}' successfully deactivated from SCC"
+          end
+        end
+      end
+
+      Api::Connect::V3::Systems::SystemsController.class_eval do
+        before_action :scc_deregistration, only: %i[deregister]
+
+        protected
+
+        def scc_deregistration
+          if @system.proxy_byos
+            auth = request.headers['HTTP_AUTHORIZATION']
+            response = SccProxy.deregister_system_scc(auth)
+            unless response.code_type == Net::HTTPNoContent
+              error = JSON.parse(response.body)
+              logger.info "Could not de-activate system #{@system.login}, error: #{error['error']} #{response.code}"
+              error['error'] = SccProxy.parse_error(error['error'], params[:token], params[:email]) if error['error'].include? 'json'
+              raise ActionController::TranslatedError.new(error['error'])
+            end
+            logger.info 'System successfully deregistered from SCC'
+          end
+        end
+      end
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength
