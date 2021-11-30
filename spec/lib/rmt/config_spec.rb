@@ -135,4 +135,37 @@ RSpec.describe RMT::Config do
       }
     end
   end
+
+  describe '#host_system' do
+    subject(:method_call) { described_class.send(:set_host_system!) }
+
+    it 'returns an empty string when the credentials file does not exist' do
+      allow(File).to receive(:exist?).with(RMT::CREDENTIALS_FILE_LOCATION).and_return(false)
+
+      expect(method_call).to be_empty
+    end
+
+    it 'returns an empty string when the credentials file is not readable' do
+      allow(File).to receive(:exist?).with(RMT::CREDENTIALS_FILE_LOCATION).and_return(true)
+      allow(File).to receive(:readable?).with(RMT::CREDENTIALS_FILE_LOCATION).and_return(false)
+
+      expect(method_call).to be_empty
+    end
+
+    it 'returns the proper string when the credentials file is readable and the contents are as expected' do
+      allow(File).to receive(:exist?).with(RMT::CREDENTIALS_FILE_LOCATION).and_return(true)
+      allow(File).to receive(:readable?).with(RMT::CREDENTIALS_FILE_LOCATION).and_return(true)
+      allow(File).to receive(:foreach).with(RMT::CREDENTIALS_FILE_LOCATION).and_yield('username=12341234')
+
+      expect(method_call).to eq('12341234')
+    end
+
+    it 'returns an empty string when the credentials file is readable but the contents are not as expected' do
+      allow(File).to receive(:exist?).with(RMT::CREDENTIALS_FILE_LOCATION).and_return(true)
+      allow(File).to receive(:readable?).with(RMT::CREDENTIALS_FILE_LOCATION).and_return(true)
+      allow(File).to receive(:foreach).with(RMT::CREDENTIALS_FILE_LOCATION).and_yield('whatever=12341234')
+
+      expect(method_call).to be_empty
+    end
+  end
 end

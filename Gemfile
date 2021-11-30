@@ -5,10 +5,10 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'puma', '~> 5.3.2'
+gem 'puma', '~> 5.5.1'
 gem 'mysql2', '~> 0.5.3'
 
-gem 'nokogiri', '~> 1.11.2'
+gem 'nokogiri', '~> 1.12.5'
 gem 'thor'
 gem 'activesupport', '~> 6.1.3'
 gem 'actionpack', '~> 6.1.3'
@@ -39,8 +39,6 @@ group :development, :test do
   gem 'ruby_parser', require: false # needed for gettext_i18n_rails tasks
   gem 'gettext_test_log'
   gem 'memory_profiler'
-  gem 'danger'
-  gem 'danger-rubocop'
   gem 'strong_migrations'
   gem 'awesome_print'
 end

@@ -2,34 +2,36 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_16_120607) do
+ActiveRecord::Schema.define(version: 2021_10_17_185107) do
 
-  create_table "activations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "activations", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "service_id", null: false
     t.bigint "system_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "subscription_id"
     t.index ["service_id"], name: "fk_rails_5ad14bc754"
+    t.index ["subscription_id"], name: "fk_rails_296466bd8d"
     t.index ["system_id", "service_id"], name: "index_activations_on_system_id_and_service_id", unique: true
     t.index ["system_id"], name: "index_activations_on_system_id"
   end
 
-  create_table "deregistered_systems", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "deregistered_systems", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "scc_system_id", null: false, comment: "SCC IDs of deregistered systems; used for forwarding to SCC"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["scc_system_id"], name: "index_deregistered_systems_on_scc_system_id", unique: true
   end
 
-  create_table "downloaded_files", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "downloaded_files", charset: "utf8mb3", force: :cascade do |t|
     t.string "checksum_type"
     t.string "checksum"
     t.string "local_path"
@@ -38,7 +40,7 @@ ActiveRecord::Schema.define(version: 2020_09_16_120607) do
     t.index ["local_path"], name: "index_downloaded_files_on_local_path", unique: true
   end
 
-  create_table "hw_infos", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "hw_infos", charset: "utf8mb3", force: :cascade do |t|
     t.integer "cpus"
     t.integer "sockets"
     t.string "hypervisor"
@@ -53,7 +55,7 @@ ActiveRecord::Schema.define(version: 2020_09_16_120607) do
     t.index ["system_id"], name: "index_hw_infos_on_system_id", unique: true
   end
 
-  create_table "product_predecessors", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "product_predecessors", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "product_id", null: false
     t.bigint "predecessor_id"
     t.integer "kind", default: 0, null: false
@@ -62,7 +64,7 @@ ActiveRecord::Schema.define(version: 2020_09_16_120607) do
     t.index ["product_id"], name: "index_product_predecessors_on_product_id"
   end
 
-  create_table "products", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "products", charset: "utf8mb3", force: :cascade do |t|
     t.string "name"
     t.text "description"
     t.string "shortname"
@@ -80,7 +82,7 @@ ActiveRecord::Schema.define(version: 2020_09_16_120607) do
     t.string "friendly_version"
   end
 
-  create_table "products_extensions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "products_extensions", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "product_id", null: false
     t.bigint "extension_id", null: false
     t.boolean "recommended"
@@ -92,7 +94,7 @@ ActiveRecord::Schema.define(version: 2020_09_16_120607) do
     t.index ["root_product_id"], name: "fk_rails_7d0e68d364"
   end
 
-  create_table "repositories", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "repositories", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "scc_id", unsigned: true
     t.string "name", null: false
     t.string "description"
@@ -110,7 +112,7 @@ ActiveRecord::Schema.define(version: 2020_09_16_120607) do
     t.index ["scc_id"], name: "index_repositories_on_scc_id", unique: true
   end
 
-  create_table "repositories_services", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "repositories_services", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "repository_id", null: false
     t.bigint "service_id", null: false
     t.index ["repository_id"], name: "index_repositories_services_on_repository_id"
@@ -118,21 +120,21 @@ ActiveRecord::Schema.define(version: 2020_09_16_120607) do
     t.index ["service_id"], name: "index_repositories_services_on_service_id"
   end
 
-  create_table "services", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "services", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "product_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_services_on_product_id", unique: true
   end
 
-  create_table "subscription_product_classes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "subscription_product_classes", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "subscription_id", null: false
     t.string "product_class", null: false
     t.index ["subscription_id", "product_class"], name: "index_product_class_unique", unique: true
     t.index ["subscription_id"], name: "index_subscription_product_classes_on_subscription_id"
   end
 
-  create_table "subscriptions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "subscriptions", charset: "utf8mb3", force: :cascade do |t|
     t.string "regcode", null: false
     t.string "name", null: false
     t.string "kind", null: false
@@ -147,7 +149,7 @@ ActiveRecord::Schema.define(version: 2020_09_16_120607) do
     t.index ["regcode"], name: "index_subscriptions_on_regcode"
   end
 
-  create_table "systems", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "systems", charset: "utf8mb3", force: :cascade do |t|
     t.string "login"
     t.string "password"
     t.string "hostname"
@@ -157,10 +159,12 @@ ActiveRecord::Schema.define(version: 2020_09_16_120607) do
     t.datetime "updated_at", null: false
     t.datetime "scc_registered_at"
     t.bigint "scc_system_id", comment: "System ID in SCC (if the system registration was forwarded; needed for forwarding de-registrations)"
+    t.boolean "proxy_byos", default: false
     t.index ["login"], name: "index_systems_on_login", unique: true
   end
 
   add_foreign_key "activations", "services", on_delete: :cascade
+  add_foreign_key "activations", "subscriptions"
   add_foreign_key "activations", "systems", on_delete: :cascade
   add_foreign_key "product_predecessors", "products", column: "predecessor_id"
   add_foreign_key "product_predecessors", "products", on_delete: :cascade

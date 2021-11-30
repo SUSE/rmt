@@ -1,5 +1,6 @@
 require 'rmt'
 require 'rmt/http_request'
+require 'rmt/logger'
 require 'json'
 
 module SUSE
@@ -16,64 +17,92 @@ module SUSE
         end
       end
 
-      CONNECT_API_URL = 'https://scc.suse.com/connect'.freeze
+      def connect_api
+        # rubocop:disable Rails/Exit
+        uri_string = Settings.try(:scc).try(:host) || 'https://scc.suse.com/connect'
+        unless URI::DEFAULT_PARSER.make_regexp(['http', 'https']).match?(uri_string)
+          @logger.error("Encountered an error validating #{uri_string}. Be sure to add http/https if it's an absolute url, i.e IP Address")
+          exit
+        end
+        # rubocop:enable Rails/Exit
+
+        uri_string.freeze
+      end
+
       UUID_FILE_LOCATION = '/var/lib/rmt/system_uuid'.freeze
 
       def initialize(username, password)
         @username = username
         @password = password
+        @logger = RMT::Logger.new(STDOUT)
       end
 
       def list_orders
-        make_paginated_request(:get, "#{CONNECT_API_URL}/organizations/orders")
+        make_paginated_request(:get, "#{connect_api}/organizations/orders")
       end
 
       def list_products
-        make_paginated_request(:get, "#{CONNECT_API_URL}/organizations/products")
+        make_paginated_request(:get, "#{connect_api}/organizations/products")
       end
 
       def list_products_unscoped
-        make_paginated_request(:get, "#{CONNECT_API_URL}/organizations/products/unscoped")
+        make_paginated_request(:get, "#{connect_api}/organizations/products/unscoped")
       end
 
       def list_repositories
-        make_paginated_request(:get, "#{CONNECT_API_URL}/organizations/repositories")
+        make_paginated_request(:get, "#{connect_api}/organizations/repositories")
       end
 
       def list_subscriptions
-        make_paginated_request(:get, "#{CONNECT_API_URL}/organizations/subscriptions")
+        make_paginated_request(:get, "#{connect_api}/organizations/subscriptions")
       end
 
       def forward_system_activations(system)
-        product_keys = %i[id identifier version arch]
-        hw_info_keys = %i[cpus sockets hypervisor arch uuid cloud_provider]
-
-        hw_info = system.hw_info ? system.hw_info.attributes.symbolize_keys.slice(*hw_info_keys) : nil
-
         params = {
           login: system.login,
           password: system.password,
           hostname: system.hostname,
           regcodes: [],
-          products: system.products.select(*product_keys).map { |i| i.attributes.symbolize_keys },
-          hwinfo: hw_info
+          products: generate_product_listing_for(system),
+          hwinfo: generate_hwinfo_for(system)
         }
 
         make_single_request(
           :post,
-          "#{CONNECT_API_URL}/organizations/systems",
+          "#{connect_api}/organizations/systems",
           { body: params.to_json }
         )
       end
 
       def forward_system_deregistration(scc_system_id)
-        make_request(:delete, "#{CONNECT_API_URL}/organizations/systems/#{scc_system_id}")
+        make_request(:delete, "#{connect_api}/organizations/systems/#{scc_system_id}")
       rescue RequestError => e
         # don't raise an exception if the system was already deleted from SCC
         raise e unless e.response.code == 404
       end
 
       protected
+
+      def generate_product_listing_for(system)
+        product_keys = %i[id identifier version arch]
+
+        system.activations.map do |activation|
+          attributes = activation.product.slice(*product_keys).symbolize_keys
+
+          if activation.subscription
+            attributes[:regcode] = activation.subscription.regcode
+          end
+          attributes
+        end
+      end
+
+      def generate_hwinfo_for(system)
+        hw_info_keys = %i[cpus sockets hypervisor arch uuid cloud_provider]
+
+        return nil unless system.hw_info
+
+        system.hw_info.attributes.symbolize_keys.slice(*hw_info_keys)
+      end
 
       def process_rels(response)
         links = (response.headers['Link'] || '').split(', ').map do |link|
@@ -89,6 +118,7 @@ module SUSE
         options[:accept_encoding] = 'gzip, deflate'
         options[:headers] = {
           'RMT' => system_uuid.strip,
+          'HOST-SYSTEM' => host_system.to_s.strip,
           'Accept' => 'application/vnd.scc.suse.com.v4+json',
           'Content-Type' => 'application/json'
         }
@@ -126,6 +156,10 @@ module SUSE
 
       private
 
+      def host_system
+        Settings.try(:host_system) || ''
+      end
+
       def system_uuid
         @system_uuid ||= if File.exist?(UUID_FILE_LOCATION) && !File.empty?(UUID_FILE_LOCATION)
                            File.read(UUID_FILE_LOCATION)
@@ -135,6 +169,7 @@ module SUSE
                            uuid
                          end
       end
+
     end
   end
 end

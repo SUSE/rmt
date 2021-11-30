@@ -8,6 +8,10 @@ FactoryBot.define do
       instance_data { nil }
     end
 
+    trait :byos do
+      proxy_byos { true }
+    end
+
     trait :with_activated_base_product do
       after :create do |system, _|
         create(:activation, system: system, service: create(:service)) if system.services.blank?
@@ -17,10 +21,11 @@ FactoryBot.define do
     trait :with_activated_product do
       transient do
         product { create(:product, :with_mirrored_repositories) }
+        subscription { nil }
       end
 
       after :create do |system, evaluator|
-        create(:activation, system: system, service: evaluator.product.service)
+        create(:activation, system: system, service: evaluator.product.service, subscription: evaluator.subscription)
       end
     end
 

@@ -15,7 +15,7 @@ RSpec.describe SUSE::Connect::Api do
       it 'reads a file' do
         allow(File).to receive(:exist?).with(described_class::UUID_FILE_LOCATION).and_return(true)
         expect(File).not_to receive(:write).with(described_class::UUID_FILE_LOCATION, uuid)
-        expect(File).to receive(:read).with(described_class::UUID_FILE_LOCATION).and_return(uuid)
+        allow(File).to receive(:read).with(described_class::UUID_FILE_LOCATION).and_return(uuid)
         expect(method_call).to be(uuid)
       end
     end
@@ -25,7 +25,7 @@ RSpec.describe SUSE::Connect::Api do
         allow(File).to receive(:exist?).with(described_class::UUID_FILE_LOCATION).and_return(false)
         allow(SecureRandom).to receive(:uuid).and_return(uuid)
 
-        expect(File).to receive(:write).with(described_class::UUID_FILE_LOCATION, uuid).exactly(1).times
+        allow(File).to receive(:write).with(described_class::UUID_FILE_LOCATION, uuid).once
         expect(File).not_to receive(:read).with(described_class::UUID_FILE_LOCATION)
         expect(method_call).to be(uuid)
       end
@@ -39,11 +39,46 @@ RSpec.describe SUSE::Connect::Api do
       end
 
       it 'overwrites a file' do
-        expect(File).to receive(:write).with(described_class::UUID_FILE_LOCATION, uuid).exactly(1).times
+        expect(File).to receive(:write).with(described_class::UUID_FILE_LOCATION, uuid).once
         expect(method_call).to be(uuid)
       end
     end
   end
+
+  # rubocop:disable RSpec/MessageChain
+  describe '#connect_api' do
+    subject(:method_call) { api_client.send(:connect_api) }
+
+    context 'with valid uris given' do
+      %w[
+        https://scc.suse.com/connect
+        http://localhost:3000/connect
+        http://192.168.1.3:3000/connect
+      ].each do |uri|
+        it 'returns a validated url' do
+          allow(Settings).to receive_message_chain(:scc, :host).and_return(uri)
+          expect(method_call).to be(uri)
+        end
+      end
+    end
+
+    context 'with an invalid/malformed uri given' do
+      %w[
+        localhst:3000/connect
+        ftp://192.168.1.3:3000/connect
+        htts://scc.suse.com/connect
+        htxxtp://xxxxxxlocalhost:3000
+      ].each do |uri|
+        it 'raises an exception' do
+          allow(Settings).to receive_message_chain(:scc, :host).and_return(uri)
+          exception_msg = "Encountered an error validating #{uri}. Be sure to add http/https if it's an absolute url, i.e IP Address"
+          expect_any_instance_of(RMT::Logger).to receive(:error).with(exception_msg)
+          expect { method_call }.to raise_exception(SystemExit)
+        end
+      end
+    end
+  end
+  # rubocop:enable RSpec/MessageChain
 
   context 'api requests' do
     before do
@@ -122,6 +157,7 @@ RSpec.describe SUSE::Connect::Api do
         'Authorization' => 'Basic ' + Base64.encode64("#{username}:#{password}").strip,
         'User-Agent' => "RMT/#{RMT::VERSION}",
         'RMT' => uuid,
+        'HOST-SYSTEM' => '',
         'Accept' => 'application/vnd.scc.suse.com.v4+json'
       }
     end
@@ -220,6 +256,35 @@ RSpec.describe SUSE::Connect::Api do
 
         it { is_expected.to eq(expected_response) }
       end
+
+      context 'when system has activations with subscriptions' do
+        let(:subscription) { FactoryBot.create :subscription }
+        let(:system) { create :system, :with_activated_product, subscription: subscription }
+        let(:product) { system.products.first }
+        let(:product_keys) { %i[id identifier version arch] }
+
+
+        let(:expected_response) { { login: system.login, password: system.password } }
+
+        let(:expected_products) do
+          attributes = product.slice(*product_keys).symbolize_keys
+          attributes[:regcode] = subscription.regcode
+          [attributes]
+        end
+
+        let(:expected_body) do
+          {
+            login: system.login,
+            password: system.password,
+            hostname: nil,
+            regcodes: [],
+            products: expected_products,
+            hwinfo: nil
+          }
+        end
+
+        it { is_expected.to eq(expected_response) }
+      end
     end
 
     describe '#forward_system_deregistration' do
@@ -262,11 +327,14 @@ RSpec.describe SUSE::Connect::Api do
       {
         'Authorization' => 'Basic ' + Base64.encode64("#{username}:#{password}").strip,
         'User-Agent' => "RMT/#{RMT::VERSION}",
+        'HOST-SYSTEM' => '',
         'RMT' => uuid
       }
     end
 
     context 'on successful request' do
+      subject { api_client.send(:make_request, 'GET', 'http://example.org/api_method', {}) }
+
       before do
         allow_any_instance_of(described_class).to receive(:system_uuid).and_return(uuid)
 
@@ -278,8 +346,6 @@ RSpec.describe SUSE::Connect::Api do
           )
       end
 
-      subject { api_client.send(:make_request, 'GET', 'http://example.org/api_method', {}) }
-
       let(:response_data) { "Everything's great!" }
 
       it { is_expected.to be_a(Typhoeus::Response) }
@@ -287,6 +353,8 @@ RSpec.describe SUSE::Connect::Api do
     end
 
     context 'on error' do
+      subject(:api_request) { api_client.send(:make_request, 'GET', 'http://example.org/api_method', {}) }
+
       before do
         allow_any_instance_of(described_class).to receive(:system_uuid).and_return(uuid)
 
@@ -297,8 +365,6 @@ RSpec.describe SUSE::Connect::Api do
             headers: {}
           )
       end
-
-      subject(:api_request) { api_client.send(:make_request, 'GET', 'http://example.org/api_method', {}) }
 
       let(:response_data) { 'Something went terribly wrong!' }
 
