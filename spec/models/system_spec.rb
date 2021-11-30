@@ -57,7 +57,7 @@ RSpec.describe System, type: :model do
         system.update_column(:scc_system_id, 9000)
       end
 
-      it 'scc_registered_at is not null before update' do
+      it 'scc_synced_at is not null before update' do
         system.destroy
         expect(DeregisteredSystem.find_by(scc_system_id: 9000)).not_to be(nil)
       end
@@ -66,19 +66,19 @@ RSpec.describe System, type: :model do
 
   describe 'when system is updated' do
     before do
-      system.update_column(:scc_registered_at, Time.zone.now)
+      system.update_column(:scc_synced_at, Time.zone.now)
     end
 
-    it 'scc_registered_at is not null before update' do
+    it 'scc_synced_at is not null before update' do
       system.reload
-      expect(system.scc_registered_at).not_to be(nil)
+      expect(system.scc_synced_at).not_to be(nil)
     end
 
-    it 'scc_registered_at is null after update' do
+    it 'scc_synced_at is null after update' do
       system.updated_at = Time.zone.now
       system.save!
       system.reload
-      expect(system.scc_registered_at).to be(nil)
+      expect(system.scc_synced_at).to be(nil)
     end
   end
 end
