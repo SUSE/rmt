@@ -58,16 +58,9 @@ RSpec.describe Api::Connect::V4::Subscriptions::ProductsController, type: :reque
 
       context 'expired' do
         let(:subscription) { FactoryBot.create(:subscription, :with_products, :expired) }
-        let(:error_reponse) do
-          {
-            type: 'error',
-            error: 'Expired Registration Code',
-            localized_error: 'Expired Registration Code'
-          }
-        end
 
-        its(:code) { is_expected.to eq '401' }
-        its(:body) { is_expected.to eq(error_reponse.to_json) }
+        its(:code) { is_expected.to eq '200' }
+        its(:body) { is_expected.to eq(serialized_response) }
       end
 
       context 'valid' do

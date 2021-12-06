@@ -1,5 +1,4 @@
 class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseController
-  before_action :authenticate_with_token
 
   def announce_system
     @system = System.create!(hostname: params[:hostname], hw_info: HwInfo.new(hw_info_params))

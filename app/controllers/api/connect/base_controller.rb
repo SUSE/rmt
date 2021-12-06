@@ -32,9 +32,6 @@ class Api::Connect::BaseController < ApplicationController
       elsif !@subscription.active?
         logger.info "Token authentication with not activated regcode: '#{token}'"
         error_message = N_('Not yet activated Registration Code. Visit https://scc.suse.com to activate it.')
-      elsif @subscription.expired?
-        logger.info "Token authentication with expired regcode: '#{token}'"
-        error_message = N_('Expired Registration Code')
       end
 
       if error_message
