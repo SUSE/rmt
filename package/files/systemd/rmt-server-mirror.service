@@ -4,6 +4,16 @@ After=rmt-server.service
 Wants=rmt-server.service
 
 [Service]
+ProtectSystem=full
+ProtectHome=true
+PrivateDevices=true
+ProtectHostname=true
+ProtectClock=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictRealtime=true
 Type=simple
 Restart=no
 Environment="LOG_TO_JOURNALD=1" "LANG=en"
