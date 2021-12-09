@@ -83,6 +83,15 @@ class RMT::Mirror
     raise RMT::Mirror::Exception.new(_('Could not create a temporary directory: %{error}') % { error: e.message })
   end
 
+  def validate_repo_data_signature(repomd_xml:, key_file:, signature_file:)
+    RMT::GPG.new(
+      metadata_file: repomd_xml.local_path,
+      key_file: key_file,
+      signature_file: signature_file.local_path,
+      logger: logger
+    ).verify_signature
+  end
+
   def mirror_metadata(repository_dir, repository_url, temp_metadata_dir)
     mirroring_paths = {
       base_url: URI.join(repository_url),
@@ -95,16 +104,17 @@ class RMT::Mirror
 
     begin
       signature_file = FileReference.new(relative_path: 'repodata/repomd.xml.asc', **mirroring_paths)
-      key_file       = FileReference.new(relative_path: 'repodata/repomd.xml.key', **mirroring_paths)
       downloader.download(signature_file)
-      downloader.download(key_file)
 
-      RMT::GPG.new(
-        metadata_file: repomd_xml.local_path,
-        key_file: key_file.local_path,
-        signature_file: signature_file.local_path,
-        logger: logger
-      ).verify_signature
+      # key directory /usr/lib/rpm/gnupg/keys
+      # key_file       = FileReference.new(relative_path: 'repodata/repomd.xml.key', **mirroring_paths)
+      # downloader.download(key_file)
+
+      Dir.glob('/usr/lib/rpm/gnupg/keys/*.asc').each do |key|
+        validate_repo_data_signature(repomd_xml: repomd_xml,
+                                     key_file: key,
+                                     signature_file: signature_file)
+      end
     rescue RMT::Downloader::Exception => e
       if (e.http_code == 404)
         logger.info(_('Repository metadata signatures are missing'))
