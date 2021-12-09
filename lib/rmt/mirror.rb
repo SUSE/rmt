@@ -112,8 +112,9 @@ class RMT::Mirror
         logger.info(_('Repository metadata signatures are missing'))
       else
         if n_retry > 0
-          logger.info _('Mirroring metadata failed with %{http_code}. Retrying after 2 seconds') % { http_code: e.http_code }
-          sleep(2)
+          n_seconds = 2
+          logger.info _('Mirroring metadata failed with %{http_code}. Retrying after %{seconds} seconds') % { http_code: e.http_code, seconds: n_seconds }
+          sleep(n_seconds)
           mirror_metadata(repository_dir, repository_url, temp_metadata_dir, (n_retry - 1))
         end
 
