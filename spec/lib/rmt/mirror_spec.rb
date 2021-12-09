@@ -786,7 +786,7 @@ RSpec.describe RMT::Mirror do
 
       it 'raises RMT::Mirror::Exception' do
         expect(logger).to receive(:info).with(/Mirroring repository/).once
-        expect(logger).to receive(:info).with('Mirroring metadata failed with 502. Retrying after 2 seconds').at_least(1).times
+        expect(logger).to receive(:info).with('Mirroring metadata failed with 502. Retrying after 2 seconds').exactly(1).time
         expect(logger).to receive(:info).with(/↓/).at_least(1).times
 
         expect_any_instance_of(described_class).to(
