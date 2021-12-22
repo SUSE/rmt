@@ -19,4 +19,7 @@ class Subscription < ApplicationRecord
   has_many :product_classes, class_name: 'SubscriptionProductClass'
   has_many :products, through: :product_classes
 
+  def expired?
+    expires_at? && expires_at < Time.zone.now.beginning_of_day
+  end
 end
