@@ -112,6 +112,11 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
         raise ActionController::TranslatedError.new(N_('No subscription with this Registration Code found'))
       end
 
+      if subscription.expired?
+        error = N_('The subscription with the provided Registration Code is expired')
+        raise ActionController::TranslatedError.new(error)
+      end
+
       unless @product.free
         unless subscription.products.include?(@product)
           error = N_("The subscription with the provided Registration Code does not include the requested product '%s'")
