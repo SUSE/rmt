@@ -152,7 +152,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     # check if required root product is activated
     elsif (@system.products & @product.root_products).empty?
       untranslated = N_('The product you are attempting to activate (%{product}) is not available on ' \
-        "your system's base product (%{system_base}). %{product} is available on: %{required_bases}.")
+        "your system's base product (%{system_base}). %{product} is available on %{required_bases}.")
       raise ActionController::TranslatedError.new(untranslated,
                                                   { product: @product.friendly_name, system_base: @system.products.find(&:base?).friendly_name,
                                                     required_bases: @product.root_products.map(&:friendly_name).join(', ') })

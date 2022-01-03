@@ -91,10 +91,10 @@ class MigrationEngine
       extensions_without_successor = installed_extensions.select { |ext| ext.successors.empty? }
       uninstall_command = extensions_without_successor.map { |p| "SUSEConnect -d -p #{p.identifier}/#{p.version}/#{p.arch}" }.join('\n ')
       raise MigrationEngineError.new(
-        N_("There are activated extensions/modules on this system which cannot be migrated. \n" \
-           "De-activate them first, and then try migrating again. \n" \
+        N_("There are activated extensions/modules on this system that cannot be migrated. \n" \
+           "Deactivate them first, and then try migrating again. \n" \
            "The product(s) are '%s'. \n" \
-           "You can de-activate them with: \n%s"), [extensions_without_successor.map(&:friendly_name).join(', '), uninstall_command]
+           "You can deactivate them with \n%s"), [extensions_without_successor.map(&:friendly_name).join(', '), uninstall_command]
          )
     end
 
