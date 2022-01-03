@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-26 10:31+0100\n"
-"PO-Revision-Date: 2022-01-02 00:11+0000\n"
+"PO-Revision-Date: 2022-01-03 19:12+0000\n"
 "Last-Translator: Ghassan <ghassan.alnajjar1984@gmail.com>\n"
 "Language-Team: Arabic <https://l10n.opensuse.org/projects/rmt/i18n/ar/>\n"
 "Language: ar\n"
@@ -270,9 +270,8 @@ msgid "Arch"
 msgstr "Arch"
 
 #: ../lib/rmt/cli/decorators/product_decorator.rb:25
-#, fuzzy
 msgid "Product String"
-msgstr "المنتج"
+msgstr "سلسلة المنتج"
 
 #: ../lib/rmt/cli/decorators/product_decorator.rb:26
 msgid "Release Stage"
@@ -290,7 +289,6 @@ msgid "Description"
 msgstr "وصف"
 
 #: ../lib/rmt/cli/decorators/repository_decorator.rb:55
-#, fuzzy
 msgid "mandatory"
 msgstr "إلزامي"
 
@@ -431,18 +429,16 @@ msgid "Mirror all enabled repositories"
 msgstr "نسخ"
 
 #: ../lib/rmt/cli/mirror.rb:8
-#, fuzzy
 msgid "Mirroring SUMA product tree failed: %{error_message}"
-msgstr "نسخ"
+msgstr "نسخفشل عكس شجرة منتج SUMA: {error_message}"
 
 #: ../lib/rmt/cli/mirror.rb:11
 msgid "There are no repositories marked for mirroring."
 msgstr "لا توجد مخازن عليها علامة لنسخها."
 
 #: ../lib/rmt/cli/mirror.rb:30
-#, fuzzy
 msgid "Mirror enabled repositories with given repository IDs"
-msgstr "نسخ"
+msgstr "المستودعات الممكّنة للنسخ المتطابقة مع معرّفات مستودعات معينة"
 
 #: ../lib/rmt/cli/mirror.rb:34 ../lib/rmt/cli/repos_base.rb:10
 #, fuzzy
