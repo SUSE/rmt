@@ -99,7 +99,7 @@ GEM
       railties (>= 5.0.0)
     fakefs (1.4.0)
     fast_gettext (2.1.0)
-    ffaker (2.17.0)
+    ffaker (2.20.0)
     ffi (1.15.3)
     formatador (0.2.5)
     fuubar (2.5.1)
