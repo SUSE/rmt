@@ -280,7 +280,7 @@ describe MigrationEngine do
         it 'raises error with help message' do
           expect { migrations }.to raise_error do |error|
             expect(error).to be_a(MigrationEngine::MigrationEngineError)
-            expect(error.message).to match(%r{There are activated extensions/modules on this system which cannot be migrated})
+            expect(error.message).to match(%r{There are activated extensions/modules on this system that cannot be migrated})
           end
         end
       end
