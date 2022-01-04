@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jan  4 17:25:07 UTC 2022 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Mirror metadata retry
+
+This fixes bsc#1188578
+
+-------------------------------------------------------------------
 Thu Oct 7 09:01:00 UTC 2021 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Version 2.7.0
@@ -16,7 +23,7 @@ Thu Oct 7 09:01:00 UTC 2021 - Felix Schnizlein <fschnizlein@suse.com>
 Thu Aug 19 10:12:03 UTC 2021 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Version 2.6.12
-- Re-fix broken symlinks: This version fixes the bug-fix 
+- Re-fix broken symlinks: This version fixes the bug-fix
 deployed with version 2.6.11. Reference bug (bsc#1188043)
 
 - Handle special characters in package names (bsc#1189805)
