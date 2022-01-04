@@ -52,7 +52,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
 
       let(:error_json) do
         msg = "The product you are attempting to activate (#{product.friendly_name}) is not available on your system's " \
-          "base product (#{system.products.first.friendly_name}). #{product.friendly_name} is available on: #{other_root_product.friendly_name}."
+          "base product (#{system.products.first.friendly_name}). #{product.friendly_name} is available on #{other_root_product.friendly_name}."
         { type: 'error', error: msg, localized_error: msg }.to_json
       end
 
