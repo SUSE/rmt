@@ -113,12 +113,12 @@ class RMT::Mirror
       else
         if n_retry > 0
           n_seconds = 2
-          logger.info _('Mirroring metadata failed with %{http_code}. Retrying after %{seconds} seconds') % { http_code: e.http_code, seconds: n_seconds }
+          logger.warn _('Mirroring metadata signature/key failed with %{http_code}. Retrying after %{seconds} seconds') % { http_code: e.http_code, seconds: n_seconds }
           sleep(n_seconds)
           mirror_metadata(repository_dir, repository_url, temp_metadata_dir, (n_retry - 1))
         end
 
-        raise(_('Failed to get repository metadata signatures with HTTP code %{http_code}') % { http_code: e.http_code })
+        raise(_('Downloading repo signature/key failed with HTTP code %{http_code}') % { http_code: e.http_code })
       end
     end
 
