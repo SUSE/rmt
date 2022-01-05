@@ -6,6 +6,16 @@ Wants=nginx.service
 After=rmt-server-migration.service
 
 [Service]
+ProtectSystem=full
+ProtectHome=true
+PrivateDevices=true
+ProtectHostname=true
+ProtectClock=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictRealtime=true
 Type=simple
 User=_rmt
 PrivateTmp=yes

@@ -1,4 +1,10 @@
 module InstanceVerification
+  def self.update_cache(remote_ip, system_login, product_id)
+    cache_key = [remote_ip, system_login, product_id].join('-')
+    # caches verification result to be used by zypper auth plugin
+    Rails.cache.write(cache_key, true, expires_in: 20.minutes)
+  end
+
   class Engine < ::Rails::Engine
     isolate_namespace InstanceVerification
     config.generators.api_only = true
@@ -39,7 +45,13 @@ module InstanceVerification
             verify_extension_activation(product)
           end
         rescue InstanceVerification::Exception => e
-          raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
+          unless @system.proxy_byos
+            # BYOS instances that use RMT as a proxy are expected to fail the
+            # instance verification check, however, PAYG instances may send registration
+            # code, as such, instance verification engine checks for those BYOS
+            # instances once instance verification has failed
+            raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
+          end
         rescue StandardError => e
           logger.error('Unexpected instance verification error has occurred:')
           logger.error(e.message)
@@ -81,11 +93,7 @@ module InstanceVerification
           )
 
           raise 'Unspecified error' unless verification_provider.instance_valid?
-
-          cache_key = [request.remote_ip, @system.login, product.id].join('-')
-
-          # caches verification result to be used by zypper auth plugin
-          Rails.cache.write(cache_key, true, expires_in: 20.minutes)
+          InstanceVerification.update_cache(request.remote_ip, @system.login, product.id)
         end
 
         # Verify that the base product doesn't change in the offline migration
