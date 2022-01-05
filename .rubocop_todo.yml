@@ -125,6 +125,7 @@ Lint/ConstantDefinitionInBlock:
 Lint/EmptyBlock:
   Exclude:
     - 'engines/zypper_auth/config/routes.rb'
+    - 'engines/scc_proxy/config/routes.rb'
 
 # Offense count: 4
 # Configuration parameters: MaximumRangeSize.
@@ -398,6 +399,9 @@ RSpec/LetBeforeExamples:
 # SupportedStyles: have_received, receive
 RSpec/MessageSpies:
   EnforcedStyle: receive
+  Exclude:
+    - 'engines/scc_proxy/spec/requests/api/connect/v3/systems/systems_controller_spec.rb'
+    - 'engines/scc_proxy/spec/requests/api/connect/v4/systems/products_controller_spec.rb'
 
 # Offense count: 165
 RSpec/MultipleExpectations:

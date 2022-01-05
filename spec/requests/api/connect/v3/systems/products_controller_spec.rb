@@ -52,7 +52,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
 
       let(:error_json) do
         msg = "The product you are attempting to activate (#{product.friendly_name}) is not available on your system's " \
-          "base product (#{system.products.first.friendly_name}). #{product.friendly_name} is available on: #{other_root_product.friendly_name}."
+          "base product (#{system.products.first.friendly_name}). #{product.friendly_name} is available on #{other_root_product.friendly_name}."
         { type: 'error', error: msg, localized_error: msg }.to_json
       end
 
@@ -127,14 +127,20 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
         end
 
         before { post url, headers: headers, params: payload }
-        subject { JSON.parse(response.body, symbolize_names: true) }
+        subject do
+          Struct.new(:body, :code).new(
+            JSON.parse(response.body, symbolize_names: true),
+            response.status
+          )
+        end
       end
 
       context 'unknown subscription' do
         include_context 'with subscriptions'
         let(:regcode) { 'NOT-EXISTING-SUBSCRIPTION' }
 
-        its([:error]) { is_expected.to match(/No subscription with this Registration Code found/) }
+        its(:body) { is_expected.to include(error: /No subscription with this Registration Code found/) }
+        its(:code) { is_expected.to eq(422) }
       end
 
       context 'subscription does not include product' do
@@ -142,7 +148,17 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
         let(:subscription) { create :subscription }
         let(:regcode) { subscription.regcode }
 
-        its([:error]) { is_expected.to match(/The subscription with the provided Registration Code does not include the requested product/) }
+        its(:body) { is_expected.to include(error: /The subscription with the provided Registration Code does not include the requested product/) }
+        its(:code) { is_expected.to eq(422) }
+      end
+
+      context 'expired subscription' do
+        include_context 'with subscriptions'
+        let(:subscription) { create :subscription, :expired }
+        let(:regcode) { subscription.regcode }
+
+        its(:body) { is_expected.to include(error: /The subscription with the provided Registration Code is expired/) }
+        its(:code) { is_expected.to eq(422) }
       end
 
       context 'subscription with associated product' do
@@ -151,6 +167,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
         let(:product) { subscription.products.first }
         let(:regcode) { subscription.regcode }
 
+        its(:code) { is_expected.to eq(201) }
         it 'creates activations with subscriptions associated' do
           activation = Activation.find_by(subscription: subscription)
           expect(activation.product).to eq(product)

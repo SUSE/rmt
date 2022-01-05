@@ -101,11 +101,20 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   def create_product_activation
     activation = @system.activations.where(service_id: @product.service.id).first_or_create
 
+    # in BYOS mode, we rely on the activation being performed in
+    # `engines/scc_proxy/lib/scc_proxy/engine.rb` and don't need further checks here
+    return activation if @system.proxy_byos
+
     if params[:token].present?
       subscription = Subscription.find_by(regcode: params[:token])
 
       unless subscription
         raise ActionController::TranslatedError.new(N_('No subscription with this Registration Code found'))
+      end
+
+      if subscription.expired?
+        error = N_('The subscription with the provided Registration Code is expired')
+        raise ActionController::TranslatedError.new(error)
       end
 
       unless @product.free
@@ -143,7 +152,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     # check if required root product is activated
     elsif (@system.products & @product.root_products).empty?
       untranslated = N_('The product you are attempting to activate (%{product}) is not available on ' \
-        "your system's base product (%{system_base}). %{product} is available on: %{required_bases}.")
+        "your system's base product (%{system_base}). %{product} is available on %{required_bases}.")
       raise ActionController::TranslatedError.new(untranslated,
                                                   { product: @product.friendly_name, system_base: @system.products.find(&:base?).friendly_name,
                                                     required_bases: @product.root_products.map(&:friendly_name).join(', ') })
