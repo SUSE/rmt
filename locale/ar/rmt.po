@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-26 10:31+0100\n"
-"PO-Revision-Date: 2019-03-28 18:42+0000\n"
-"Last-Translator: George Yacoub <george.yacoub@arabize.com>\n"
+"PO-Revision-Date: 2022-01-03 19:12+0000\n"
+"Last-Translator: Ghassan <ghassan.alnajjar1984@gmail.com>\n"
 "Language-Team: Arabic <https://l10n.opensuse.org/projects/rmt/i18n/ar/>\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 3.3\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"X-Generator: Weblate 4.9.1\n"
 
 #: ../app/controllers/api/connect/base_controller.rb:20
 msgid "Required parameters are missing or empty: %s"
@@ -135,24 +136,27 @@ msgid "Cannot connect to database server. Make sure it is running and its creden
 msgstr "لا يمكن الاتصال بخادم قاعدة البيانات. تأكد من أنه قيد التشغيل وأنه تم تكوين الصلاحيات الخاصة به في المسار '%{path}'."
 
 #: ../lib/rmt/cli/base.rb:67
-#, fuzzy
-#| msgid "The RMT database has not yet been initialized. Run '%{command}' to setup the database."
 msgid "The RMT database has not yet been initialized. Run '%{command}' to set up the database."
-msgstr "لم تتم تهيئة قاعدة بيانات RMT بعد. قم بتشغيل '%{command}' لإعداد قاعدة البيانات."
+msgstr ""
+"لم يتم بعد تهيئة قاعدة بيانات RMT. قم بتشغيل {يأمر} 'لإعداد قاعدة البيانات."
 
 #: ../lib/rmt/cli/base.rb:73
 msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
 msgstr "لم يتم تكوين الصلاحيات الخاصة بمركز SCC بشكل صحيح في المسار '%{path}'. يمكنك الحصول عليها من %{url}"
 
 #: ../lib/rmt/cli/base.rb:86
-#, fuzzy
 msgid ""
 "SCC API request failed. Error details:\n"
 "Request URL: %{url}\n"
 "Response code: %{code}\n"
 "Response body:\n"
 "%{body}"
-msgstr "عنوان URL"
+msgstr ""
+"عنوان URLفشل طلب SCC API. تفاصيل الخطأ\n"
+"طلب عنوان URL {}\n"
+"رمز الاستجابة {code}\n"
+"هيئة الاستجابة\n"
+"{الجسم}"
 
 #: ../lib/rmt/cli/base.rb:118
 msgid "%{path} is not a directory."
@@ -233,9 +237,8 @@ msgid "Version"
 msgstr "الإصدار"
 
 #: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:20
-#, fuzzy
 msgid "Architecture"
-msgstr "Arch"
+msgstr "بنيان"
 
 #: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:34
 msgid "Product ID"
@@ -267,13 +270,12 @@ msgid "Arch"
 msgstr "Arch"
 
 #: ../lib/rmt/cli/decorators/product_decorator.rb:25
-#, fuzzy
 msgid "Product String"
-msgstr "المنتج"
+msgstr "سلسلة المنتج"
 
 #: ../lib/rmt/cli/decorators/product_decorator.rb:26
 msgid "Release Stage"
-msgstr ""
+msgstr "مرحلة الإصدار"
 
 #: ../lib/rmt/cli/decorators/product_decorator.rb:28
 #: ../lib/rmt/cli/decorators/product_decorator.rb:50
@@ -284,10 +286,9 @@ msgstr "آخر نسخ"
 
 #: ../lib/rmt/cli/decorators/repository_decorator.rb:21
 msgid "Description"
-msgstr ""
+msgstr "وصف"
 
 #: ../lib/rmt/cli/decorators/repository_decorator.rb:55
-#, fuzzy
 msgid "mandatory"
 msgstr "إلزامي"
 
@@ -298,15 +299,15 @@ msgstr "غير إلزامي"
 
 #: ../lib/rmt/cli/decorators/repository_decorator.rb:56
 msgid "enabled"
-msgstr ""
+msgstr "ممكن"
 
 #: ../lib/rmt/cli/decorators/repository_decorator.rb:56
 msgid "not enabled"
-msgstr ""
+msgstr "غير مفعل"
 
 #: ../lib/rmt/cli/decorators/repository_decorator.rb:57
 msgid "mirrored at %{time}"
-msgstr ""
+msgstr "معكوسة في زمن"
 
 #: ../lib/rmt/cli/decorators/repository_decorator.rb:57
 #, fuzzy
@@ -315,23 +316,23 @@ msgstr "آخر نسخ"
 
 #: ../lib/rmt/cli/decorators/repository_decorator.rb:61
 msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
-msgstr ""
+msgstr "اسم المعرف  بطاقة تعريف إلزامي ممكّن{mirrored_at})"
 
 #: ../lib/rmt/cli/decorators/system_decorator.rb:13
 msgid "Login"
-msgstr ""
+msgstr "تسجيل الدخول"
 
 #: ../lib/rmt/cli/decorators/system_decorator.rb:13
 msgid "Hostname"
-msgstr ""
+msgstr "اسم المضيف"
 
 #: ../lib/rmt/cli/decorators/system_decorator.rb:13
 msgid "Registration time"
-msgstr ""
+msgstr "وقت التسجيل"
 
 #: ../lib/rmt/cli/decorators/system_decorator.rb:13
 msgid "Last seen"
-msgstr ""
+msgstr "اخر ظهور"
 
 #: ../lib/rmt/cli/decorators/system_decorator.rb:13
 #, fuzzy
@@ -356,15 +357,19 @@ msgstr "نسخ المخازن إلى مسار محدد"
 
 #: ../lib/rmt/cli/export.rb:21
 msgid "Run this command on an online RMT."
-msgstr ""
+msgstr "قم بتشغيل هذا الأمر على RMT عبر الإنترنت."
 
 #: ../lib/rmt/cli/export.rb:23
 msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
 msgstr ""
+"يجب أن يحتوي المسار المحدد على ملف يمكن لـ RMT غير المتصل إنشاء هذا الملف "
+"باستخدام الأمريأمر"
 
 #: ../lib/rmt/cli/export.rb:28
 msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
 msgstr ""
+"سوف تعكس RMT المستودعات المحددة في {ملف} إلى PATH ، وعادة ما تكون جهاز تخزين "
+"محمول."
 
 #: ../lib/rmt/cli/export.rb:43 ../lib/rmt/cli/import.rb:20
 msgid "%{file} does not exist."
@@ -412,7 +417,7 @@ msgstr "تصدير الأوامر لأجل المزامنة غير المتصل�
 
 #: ../lib/rmt/cli/main.rb:29
 msgid "List and manipulate registered systems"
-msgstr ""
+msgstr "سرد والتعامل مع الأنظمة المسجلة"
 
 #: ../lib/rmt/cli/main.rb:32
 msgid "Show RMT version"
@@ -424,18 +429,16 @@ msgid "Mirror all enabled repositories"
 msgstr "نسخ"
 
 #: ../lib/rmt/cli/mirror.rb:8
-#, fuzzy
 msgid "Mirroring SUMA product tree failed: %{error_message}"
-msgstr "نسخ"
+msgstr "نسخفشل عكس شجرة منتج SUMA: {error_message}"
 
 #: ../lib/rmt/cli/mirror.rb:11
 msgid "There are no repositories marked for mirroring."
 msgstr "لا توجد مخازن عليها علامة لنسخها."
 
 #: ../lib/rmt/cli/mirror.rb:30
-#, fuzzy
 msgid "Mirror enabled repositories with given repository IDs"
-msgstr "نسخ"
+msgstr "المستودعات الممكّنة للنسخ المتطابقة مع معرّفات مستودعات معينة"
 
 #: ../lib/rmt/cli/mirror.rb:34 ../lib/rmt/cli/repos_base.rb:10
 #, fuzzy
@@ -467,32 +470,28 @@ msgid "Product %{target} has no repositories enabled"
 msgstr "المنتج"
 
 #: ../lib/rmt/cli/mirror.rb:64
-#, fuzzy
 msgid "Product with ID %{target} not found"
-msgstr "لم يتم العثور على منتج بالمعرف %{id}."
+msgstr "لم يتم العثور على منتج بالمعرف"
 
 #: ../lib/rmt/cli/mirror.rb:89
-#, fuzzy
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
-msgstr "نسخ"
+msgstr "لم يتم تمكين نسخ المستودع بالمعرف {repo_id}"
 
 #: ../lib/rmt/cli/mirror.rb:101
 msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
-msgstr ""
+msgstr "المستودع {repo_name} {repo_id}) {error_message}"
 
 #: ../lib/rmt/cli/mirror.rb:109
-#, fuzzy
 msgid "Mirroring complete."
-msgstr "نسخ"
+msgstr "اكتمل الانعكاس."
 
 #: ../lib/rmt/cli/mirror.rb:111
 msgid "The following errors occurred while mirroring:"
-msgstr ""
+msgstr "حدثت الأخطاء التالية أثناء النسخ المتطابق:"
 
 #: ../lib/rmt/cli/mirror.rb:113
-#, fuzzy
 msgid "Mirroring completed with errors."
-msgstr "نسخ"
+msgstr "اكتمل النسخ المتطابق مع وجود أخطاء."
 
 #: ../lib/rmt/cli/products.rb:8
 msgid "List products which are marked to be mirrored."
@@ -509,19 +508,16 @@ msgid "Output data in CSV format"
 msgstr "بيانات المخرجات بتنسيق CSV"
 
 #: ../lib/rmt/cli/products.rb:12
-#, fuzzy
 msgid "Product name (e.g., Basesystem, SLES)"
-msgstr "المنتج"
+msgstr "اسم المنتج (على سبيل المثال ، Basesystem ، SLES)"
 
 #: ../lib/rmt/cli/products.rb:13
-#, fuzzy
 msgid "Product version (e.g., 15, 15.1, '12 SP4')"
-msgstr "المنتج"
+msgstr "إصدار المنتج (على سبيل المثال ، 15 ، 15.1 ، \"12 SP4\")"
 
 #: ../lib/rmt/cli/products.rb:14
-#, fuzzy
 msgid "Product architecture (e.g., x86_64, aarch64)"
-msgstr "المنتج"
+msgstr "بنية المنتج (على سبيل المثال ، x86_64 ، aarch64)"
 
 #: ../lib/rmt/cli/products.rb:25 ../lib/rmt/cli/repos.rb:103
 msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
@@ -546,7 +542,7 @@ msgstr "تمكين جميع الوحدات النمطية المجانية لم�
 #: ../lib/rmt/cli/products.rb:48 ../lib/rmt/cli/products.rb:66
 #: ../lib/rmt/cli/products.rb:84 ../lib/rmt/cli/systems.rb:37
 msgid "Examples"
-msgstr ""
+msgstr "أمثلة"
 
 #: ../lib/rmt/cli/products.rb:62 ../lib/rmt/cli/products.rb:64
 msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
@@ -554,11 +550,11 @@ msgstr "تعطيل نسخ مخازن المنتجات حسب قائمة معرف
 
 #: ../lib/rmt/cli/products.rb:77
 msgid "To clean up downloaded files, run '%{command}'"
-msgstr ""
+msgstr "لتنظيف الملفات التي تم تنزيلها ، قم بتشغيل {يأمر} '"
 
 #: ../lib/rmt/cli/products.rb:80 ../lib/rmt/cli/products.rb:82
 msgid "Displays product with all its repositories and their attributes."
-msgstr ""
+msgstr "يعرض المنتج بكل مستودعاته وسماته."
 
 #: ../lib/rmt/cli/products.rb:97 ../lib/rmt/cli/products.rb:176
 msgid "No product found for target %{target}."
@@ -571,15 +567,15 @@ msgstr "المنتج"
 
 #: ../lib/rmt/cli/products.rb:100
 msgid "Description: %{description}"
-msgstr ""
+msgstr "الوصف {description}"
 
 #: ../lib/rmt/cli/products.rb:108
 msgid "Repositories:"
-msgstr ""
+msgstr "المستودعات:"
 
 #: ../lib/rmt/cli/products.rb:108
 msgid "Repositories are not available for this product."
-msgstr ""
+msgstr "المستودعات غير متوفرة لهذا المنتج."
 
 #: ../lib/rmt/cli/products.rb:127
 msgid "Product %{products} could not be found and was not enabled."
@@ -654,38 +650,45 @@ msgstr "سرد جميع المنتجات، بما في ذلك المنتجات �
 #: ../lib/rmt/cli/repos.rb:16
 msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
 msgstr ""
+"يزيل الملفات المنسوخة محليًا من المستودعات التي لم يتم تمييزها للنسخ المتطابق"
 
 #: ../lib/rmt/cli/repos.rb:26
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
 msgstr ""
+"وجدت RMT فقط الملفات المنعكسة محليًا للمستودعات التي تم تعليمها للنسخ "
+"المتطابق."
 
 #: ../lib/rmt/cli/repos.rb:30
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr ""
+"عثرت RMT على ملفات معكوسة محليًا من المستودعات التالية التي لم يتم تمييزها "
+"للنسخ المتطابق:"
 
 #: ../lib/rmt/cli/repos.rb:36
 msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
 msgstr ""
+"هل ترغب في المتابعة وإزالة الملفات ذات النسخ المتطابقة محليًا لهذه "
+"المستودعات؟"
 
 #: ../lib/rmt/cli/repos.rb:38
 msgid "Only '%{input}' will be accepted."
-msgstr ""
+msgstr "سيتم قبول إدخال فقط."
 
 #: ../lib/rmt/cli/repos.rb:40
 msgid "Enter a value:"
-msgstr ""
+msgstr "أدخل قيمة:"
 
 #: ../lib/rmt/cli/repos.rb:45
 msgid "Clean cancelled."
-msgstr ""
+msgstr "تم إلغاء التنظيف."
 
 #: ../lib/rmt/cli/repos.rb:52
 msgid "Deleting locally mirrored files from repository '%{repo}'..."
-msgstr ""
+msgstr "حذف الملفات المنسوخة محليًا من المستودع {الريبو}"
 
 #: ../lib/rmt/cli/repos.rb:61
 msgid "Clean finished. An estimated %{total_file_size} was removed."
-msgstr ""
+msgstr "تشطيب نظيف. تمت إزالة ما يقدر بـ {total_file_size}."
 
 #: ../lib/rmt/cli/repos.rb:65 ../lib/rmt/cli/repos.rb:67
 msgid "Enable mirroring of repositories by a list of repository IDs"
@@ -695,7 +698,7 @@ msgstr "تمكين نسخ المخازن باستخدام قائمة معرفا�
 #: ../lib/rmt/cli/repos_custom.rb:8 ../lib/rmt/cli/repos_custom.rb:66
 #: ../lib/rmt/cli/repos_custom.rb:80
 msgid "Examples:"
-msgstr ""
+msgstr "أمثلة:"
 
 #: ../lib/rmt/cli/repos.rb:79 ../lib/rmt/cli/repos.rb:81
 msgid "Disable mirroring of repositories by a list of repository IDs"
@@ -703,7 +706,7 @@ msgstr "تعطيل نسخ المخازن حسب قائمة معرفات المخ
 
 #: ../lib/rmt/cli/repos.rb:92 ../lib/rmt/cli/repos_custom.rb:89
 msgid "To clean up downloaded files, please run '%{command}'"
-msgstr ""
+msgstr "لتنظيف الملفات التي تم تنزيلها ، يرجى تشغيل {command} '"
 
 #: ../lib/rmt/cli/repos.rb:105
 msgid "No repositories enabled."
@@ -865,11 +868,11 @@ msgstr ""
 
 #: ../lib/rmt/cli/smt_importer.rb:91
 msgid "Duplicate entry for system %{system}, skipping"
-msgstr ""
+msgstr "إدخال مكرر للنظام {system} ، تخطي"
 
 #: ../lib/rmt/cli/smt_importer.rb:101
 msgid "Failed to import system %{system}"
-msgstr ""
+msgstr "فشل استيراد النظام٪ {system}"
 
 #: ../lib/rmt/cli/smt_importer.rb:136 ../lib/rmt/cli/smt_importer.rb:166
 msgid "System %{system} not found"
@@ -893,7 +896,7 @@ msgstr "عدم استيراد الأنظمة التي تم تسجيلها في �
 
 #: ../lib/rmt/cli/smt_importer.rb:198
 msgid "Do not import system hardware info from MachineData table"
-msgstr ""
+msgstr "لا تستورد معلومات أجهزة النظام من جدول MachineData"
 
 #: ../lib/rmt/cli/smt_importer.rb:209
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
@@ -905,51 +908,54 @@ msgstr "جارِ استيراد البيانات من أداة إدارة الا
 
 #: ../lib/rmt/cli/systems.rb:2
 msgid "List registered systems."
-msgstr ""
+msgstr "قائمة الأنظمة المسجلة."
 
 #: ../lib/rmt/cli/systems.rb:3
 msgid "Number of systems to display"
-msgstr ""
+msgstr "عدد الأنظمة المراد عرضها"
 
 #: ../lib/rmt/cli/systems.rb:4
 msgid "List all registered systems"
-msgstr ""
+msgstr "قائمة بجميع الأنظمة المسجلة"
 
 #: ../lib/rmt/cli/systems.rb:12
 msgid "There are no systems registered to this RMT instance."
-msgstr ""
+msgstr "لا توجد أنظمة مسجلة في نسخة RMT هذه."
 
 #: ../lib/rmt/cli/systems.rb:18
 msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
 msgstr ""
+"إظهار آخر {Limit} التسجيلات. استخدم خيار الكل لرؤية جميع الأنظمة المسجلة."
 
 #: ../lib/rmt/cli/systems.rb:26
 msgid "Forward registered systems data to SCC"
-msgstr ""
+msgstr "إعادة توجيه بيانات الأنظمة المسجلة إلى SCC"
 
 #: ../lib/rmt/cli/systems.rb:31
 msgid "Removes a system and its activations from RMT"
-msgstr ""
+msgstr "يزيل نظامًا وتنشيطاته من RMT"
 
 #: ../lib/rmt/cli/systems.rb:33
 msgid "Removes a system and its activations from RMT."
-msgstr ""
+msgstr "يزيل نظامًا وتنشيطاته من RMT."
 
 #: ../lib/rmt/cli/systems.rb:35
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr ""
+"لاستهداف نظام للإزالة ، استخدم الأمر {command} \"للحصول على قائمة بالأنظمة "
+"مع تسجيلات الدخول المقابلة لها."
 
 #: ../lib/rmt/cli/systems.rb:44
 msgid "Successfully removed system with login %{login}."
-msgstr ""
+msgstr "تمت إزالة النظام بنجاح مع تسجيل الدخول."
 
 #: ../lib/rmt/cli/systems.rb:46
 msgid "System with login %{login} cannot be removed."
-msgstr ""
+msgstr "لا يمكن إزالة النظام مع تسجيل الدخول."
 
 #: ../lib/rmt/cli/systems.rb:48
 msgid "System with login %{login} not found."
-msgstr ""
+msgstr "النظام مع تسجيل الدخول غير موجود."
 
 #: ../lib/rmt/downloader.rb:201
 msgid "Checksum doesn't match"
@@ -969,15 +975,17 @@ msgstr "%{file} - رمز الإرجاع %{code}"
 
 #: ../lib/rmt/gpg.rb:37
 msgid "GPG key import failed"
-msgstr ""
+msgstr "فشل استيراد مفتاح GPG"
 
 #: ../lib/rmt/gpg.rb:48
 msgid "GPG signature verification failed"
-msgstr ""
+msgstr "فشل التحقق من توقيع GPG"
 
 #: ../lib/rmt/lockfile.rb:11
 msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
 msgstr ""
+"هناك مثيل آخر لهذا الأمر قيد التشغيل بالفعل. قم بإنهاء المثيل الآخر أو انتظر "
+"حتى ينتهي."
 
 #: ../lib/rmt/mirror.rb:41
 msgid "Mirroring SUSE Manager product tree to %{dir}"
@@ -1006,7 +1014,7 @@ msgstr "توقيعات بيانات تعريف المخزن مفقودة"
 
 #: ../lib/rmt/mirror.rb:112
 msgid "Failed to get repository metadata signatures with HTTP code %{http_code}"
-msgstr ""
+msgstr "فشل الحصول على توقيعات البيانات الوصفية للمستودع برمز HTTP {http_code}"
 
 #: ../lib/rmt/mirror.rb:123
 msgid "Error while mirroring metadata: %{error}"
@@ -1018,7 +1026,7 @@ msgstr "خطأ أثناء نسخ الترخيص: %{error}"
 
 #: ../lib/rmt/mirror.rb:160
 msgid "Failed to download %{failed_count} files"
-msgstr ""
+msgstr "فشل تحميل {failure_count} ملف"
 
 #: ../lib/rmt/mirror.rb:162
 msgid "Error while mirroring data: %{error}"
@@ -1030,7 +1038,7 @@ msgstr "خطأ أثناء نقل الدليل %{src} إلى %{dest}‏: %{error}
 
 #: ../lib/rmt/scc.rb:15 ../lib/rmt/scc.rb:86
 msgid "SCC credentials not set."
-msgstr ""
+msgstr "لم يتم تعيين أوراق اعتماد SCC."
 
 #: ../lib/rmt/scc.rb:19
 msgid "Downloading data from SCC"
@@ -1070,19 +1078,19 @@ msgstr "جارِ استيراد بيانات SCC من المسار %{path}"
 
 #: ../lib/rmt/scc.rb:82
 msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
-msgstr ""
+msgstr "مزامنة الأنظمة مع SCC معطلة بواسطة ملف التكوين ، الخروج."
 
 #: ../lib/rmt/scc.rb:91
 msgid "Syncing system %{login} to SCC"
-msgstr ""
+msgstr "مزامنة النظام {login} مع SCC"
 
 #: ../lib/rmt/scc.rb:96
 msgid "Failed to sync system %{login}: %{error}"
-msgstr ""
+msgstr "فشل مزامنة النظام {login} {error}"
 
 #: ../lib/rmt/scc.rb:103
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
-msgstr ""
+msgstr "مزامنة النظام غير المسجل {scc_system_id} مع SCC"
 
 #: ../lib/rmt/scc.rb:120
 msgid "Cleaning up the database"
