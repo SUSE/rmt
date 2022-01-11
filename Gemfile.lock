@@ -140,7 +140,7 @@ GEM
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     lumberjack (1.2.8)
-    memory_profiler (0.9.14)
+    memory_profiler (1.0.0)
     method_source (1.0.0)
     mini_portile2 (2.6.1)
     minitest (5.15.0)
@@ -273,7 +273,7 @@ GEM
     spring-watcher-listen (2.0.1)
       listen (>= 2.7, < 4.0)
       spring (>= 1.2, < 3.0)
-    strong_migrations (0.7.8)
+    strong_migrations (0.7.9)
       activerecord (>= 5)
     sync (0.5.0)
     term-ansicolor (1.7.1)
@@ -300,7 +300,7 @@ GEM
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
     yard (0.9.25)
-    zeitwerk (2.5.1)
+    zeitwerk (2.5.3)
 
 PLATFORMS
   ruby
