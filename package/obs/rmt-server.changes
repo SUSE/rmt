@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Tue Jan 11 16:52:16 UTC 2022 - Miquel Sabate Sola <msabate@suse.com>
 
-- Remove products with a negative ID on sync
+- Remove products with a negative ID during migration
 
 -------------------------------------------------------------------
 Tue Jan 11 15:03:58 UTC 2022 - Luís Caparroz <luis.caparroz@suse.com>
