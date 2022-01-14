@@ -8,20 +8,38 @@ class RMT::CLI::Systems < RMT::CLI::Base
   option :csv, type: :boolean, desc: _('Output data in CSV format')
 
   def list
-    systems = (options.all ? System.all : System.limit(options.limit)).order(id: :desc)
-    decorator = RMT::CLI::Decorators::SystemDecorator.new(systems)
+    systems = System.limit(options.limit).order(id: :desc)
+    decorator = RMT::CLI::Decorators::SystemDecorator.new(systems) unless options.all
 
     if systems.empty?
       warn _('There are no systems registered to this RMT instance.')
     elsif options.csv
-      puts decorator.to_csv
+      if options.all
+        decorator = RMT::CLI::Decorators::SystemDecorator.new(systems.first, all: true)
+        puts decorator.csv_headers
+        System.in_batches(order: :desc, load: true) do |systems|
+          systems.each do |system|
+            decorator = RMT::CLI::Decorators::SystemDecorator.new(system, all: true)
+            puts decorator.to_csv(batch: true)
+          end
+        end
+      else
+        puts decorator.to_csv
+      end
+    elsif options.all
+      rows = []
+      System.in_batches(order: :desc, load: true) do |systems|
+        systems.each do |system|
+          decorator = RMT::CLI::Decorators::SystemDecorator.new(system, all: true)
+          rows << decorator.data[0]
+        end
+      end
+      puts decorator.to_table(large_rows: rows)
     else
       puts decorator.to_table
-      unless options.all
-        puts _("Showing last %{limit} registrations. Use the '--all' option to see all registered systems.") % {
-          limit: options.limit
-        }
-      end
+      puts _("Showing last %{limit} registrations. Use the '--all' option to see all registered systems.") % {
+        limit: options.limit
+      }
     end
   end
   map 'ls' => :list
