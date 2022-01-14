@@ -13,8 +13,13 @@ class RMT::CLI::Decorators::Base
 
   protected
 
-  def array_to_csv(array, headers)
-    CSV.generate { |csv| array.unshift(headers).each { |row| csv << row } }
+  def headers_to_csv(headers)
+    CSV.generate { |csv| csv << headers }
+  end
+
+  def array_to_csv(array, headers, batch: nil)
+    array.unshift(headers) unless batch
+    CSV.generate { |csv| array.each { |row| csv << row } }
   end
 
   def array_to_table(data, headers)
