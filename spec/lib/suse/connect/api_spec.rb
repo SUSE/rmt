@@ -231,7 +231,8 @@ RSpec.describe SUSE::Connect::Api do
             hostname: nil,
             regcodes: [],
             products: [],
-            hwinfo: nil
+            hwinfo: nil,
+            last_seen_at: nil
           }
         end
 
@@ -250,7 +251,8 @@ RSpec.describe SUSE::Connect::Api do
             hostname: nil,
             regcodes: [],
             products: [ %i[id identifier version arch].each_with_object({}) { |k, h| h[k] = product.send(k) } ],
-            hwinfo: %i[cpus sockets hypervisor arch uuid cloud_provider].each_with_object({}) { |k, h| h[k] = hw_info.send(k) }
+            hwinfo: %i[cpus sockets hypervisor arch uuid cloud_provider].each_with_object({}) { |k, h| h[k] = hw_info.send(k) },
+            last_seen_at: nil
           }
         end
 
@@ -279,7 +281,8 @@ RSpec.describe SUSE::Connect::Api do
             hostname: nil,
             regcodes: [],
             products: expected_products,
-            hwinfo: nil
+            hwinfo: nil,
+            last_seen_at: nil
           }
         end
 

@@ -55,5 +55,19 @@ RSpec.describe Api::Connect::V3::Systems::ActivationsController do
         end
       end
     end
+
+    context 'last_seen_at check' do
+      it 'does not touch scc_synced_at when it simply authenticates' do
+        expect(system.last_seen_at).to be_nil
+
+        get url, headers: authenticated_headers
+        expect(response.code).to eq '200'
+
+        system.reload
+
+        expect(system.last_seen_at).not_to be_nil
+        expect(system.scc_synced_at).to be_nil
+      end
+    end
   end
 end
