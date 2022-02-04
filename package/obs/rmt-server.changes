@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Jan 31 08:40:26 UTC 2022 - Dominique Leuenberger <dimstar@opensuse.org>
+
+- Fix build using ruby 3.x (boo#1195318).
+
+-------------------------------------------------------------------
 Thu Jan 27 15:03:58 UTC 2022 - Natnael Getahun<ngetahun@suse.com>
 
 - Version 2.7.1
