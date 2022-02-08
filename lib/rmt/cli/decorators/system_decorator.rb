@@ -1,30 +1,25 @@
 class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
 
+  HEADERS = [ _('Login'), _('Hostname'), _('Registration time'), _('Last seen'), _('Products') ].freeze
+
+  class << self
+    def csv_headers
+      CSV.generate { |csv| csv << HEADERS }
+    end
+  end
+
   attr_reader :data
 
-  def initialize(systems, all: false)
-    @data = if all
-              [
-                [
-                  systems.login,
-                  systems.hostname,
-                  systems.registered_at,
-                  systems.last_seen_at,
-                  products_and_subscriptions(systems).join("\n")
-                ]
-              ]
-            else
-              systems.map do |system|
-                [
-                  system.login,
-                  system.hostname,
-                  system.registered_at,
-                  system.last_seen_at,
-                  products_and_subscriptions(system).join("\n")
-                ]
-              end
-            end
-    @headers = [ _('Login'), _('Hostname'), _('Registration time'), _('Last seen'), _('Products') ]
+  def initialize(systems)
+    @data = systems.map do |system|
+      [
+        system.login,
+        system.hostname,
+        system.registered_at,
+        system.last_seen_at,
+        products_and_subscriptions(system).join("\n")
+      ]
+    end
   end
 
   def products_and_subscriptions(system)
@@ -35,18 +30,12 @@ class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
     end
   end
 
-  def csv_headers
-    headers_to_csv(@headers)
-  end
-
   def to_csv(batch: false)
-    array_to_csv(@data, @headers, batch: batch)
+    array_to_csv(@data, HEADERS, batch: batch)
   end
 
-  def to_table(large_rows: nil)
-    return array_to_table(@data, @headers) if large_rows.nil?
-
-    array_to_table(large_rows, @headers)
+  def to_table
+    array_to_table(@data, HEADERS)
   end
 
 end
