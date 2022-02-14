@@ -64,7 +64,8 @@ module SUSE
           hostname: system.hostname,
           regcodes: [],
           products: generate_product_listing_for(system),
-          hwinfo: generate_hwinfo_for(system)
+          hwinfo: generate_hwinfo_for(system),
+          last_seen_at: system.last_seen_at
         }
 
         make_single_request(
