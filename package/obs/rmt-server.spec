@@ -338,7 +338,8 @@ fi
 %service_del_postun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
 
 %posttrans config
-/usr/bin/systemctl try-reload-or-restart nginx.service
+# Don't fail if either systemd or nginx are not running
+/usr/bin/systemctl try-reload-or-restart nginx.service || true
 
 %pre pubcloud
 %service_add_pre rmt-server-regsharing.service rmt-server-trim-cache.service
