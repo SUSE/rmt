@@ -208,7 +208,7 @@ sed -i '/BUNDLED WITH/{N;d;}' %{buildroot}%{app_dir}/Gemfile.lock
 find %{buildroot}%{lib_dir} "(" -name "*.c" -o -name "*.h" -o -name .keep ")" -delete
 find %{buildroot}%{app_dir} -name .keep -delete
 find %{buildroot}%{data_dir} -name .keep -delete
-rm -r  %{buildroot}%{lib_dir}/vendor/bundle/ruby/2.*.0/cache
+rm -r  %{buildroot}%{lib_dir}/vendor/bundle/ruby/[23].*.0/cache
 rm -rf %{buildroot}%{lib_dir}/vendor/cache
 rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/doc
 rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/examples
