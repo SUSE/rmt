@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Feb 17 16:49:47 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
+
+- Fix default behavior to sync systems to SCC ("sync_systems: true" 
+  in /etc/rmt.conf) when the config file is missing the setting 
+
+-------------------------------------------------------------------
 Mon Jan 31 08:40:26 UTC 2022 - Dominique Leuenberger <dimstar@opensuse.org>
 
 - Fix build using ruby 3.x (boo#1195318).
