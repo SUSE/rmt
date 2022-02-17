@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2021-03-24 14:57+0000\n"
+"PO-Revision-Date: 2022-02-17 16:12+0000\n"
 "Last-Translator: Davide Aiello <davide.aiello@novilingulists.com>\n"
 "Language-Team: Italian <https://l10n.opensuse.org/projects/rmt/i18n/it/>\n"
 "Language: it\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.6.1\n"
+"X-Generator: Weblate 4.9.1\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "%s non è ancora attivato nel sistema."
@@ -99,9 +99,9 @@ msgstr "Codice di controllo non corrispondente"
 msgid "Clean cancelled."
 msgstr "Pulizia annullata."
 
-#, fuzzy
 msgid "Clean finished. An estimated %{total_file_size} was removed."
-msgstr "Pulizia terminata. È stato rimosso un totale stimato di %{total_file_size}."
+msgstr ""
+"Pulizia terminata. È stato rimosso un totale stimato di %{total_file_size}."
 
 msgid "Cleaning up the database"
 msgstr "Pulizia del database"
@@ -504,7 +504,6 @@ msgstr "Stringa prodotto"
 msgid "Product Version"
 msgstr "Versione prodotto"
 
-#, fuzzy
 msgid "Product architecture (e.g., x86_64, aarch64)"
 msgstr "Architettura prodotto (ad es.: x86_64, aarch64)"
 
@@ -514,20 +513,17 @@ msgstr "Prodotto per ID %{id} non trovato."
 msgid "Product for target %{target} not found"
 msgstr "Prodotto per destinazione %{target} non trovato"
 
-#, fuzzy
 msgid "Product name (e.g., Basesystem, SLES)"
 msgstr "Nome prodotto (ad es.: Basesystem, SLES)"
 
-#, fuzzy
 msgid "Product version (e.g., 15, 15.1, '12 SP4')"
 msgstr "Versione prodotto (ad es.: 15, 15.1, '12 SP4')"
 
 msgid "Product with ID %{target} not found"
 msgstr "Prodotto con ID %{target} non trovato"
 
-#, fuzzy
 msgid "Product: %{name} (ID: %{id})"
-msgstr "Prodotto: %{name} (id: %{id})"
+msgstr "Prodotto: %{name} (ID: %{id})"
 
 msgid "Products"
 msgstr "Prodotti"
@@ -684,9 +680,10 @@ msgstr "Impossibile rimuovere il sistema con login %{login}."
 msgid "System with login %{login} not found."
 msgstr "Sistema con login %{login} non trovato."
 
-#, fuzzy
 msgid "The RMT database has not yet been initialized. Run '%{command}' to set up the database."
-msgstr "Il database RMT non è stato ancora inizializzato. Eseguire '%{command}' per configurare il database."
+msgstr ""
+"Il database RMT non è stato ancora inizializzato. Eseguire '%{command}' per "
+"configurare il database."
 
 msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
 msgstr "Le credenziali SCC non sono configurate correttamente in '%{path}'. È possibile ottenerle da %{url}"
