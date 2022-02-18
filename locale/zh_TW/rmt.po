@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2021-03-20 11:56+0000\n"
+"PO-Revision-Date: 2022-02-18 11:12+0000\n"
 "Last-Translator: Grace Yu <grace.yu@excel-gits.com>\n"
-"Language-Team: Chinese (Taiwan) <https://l10n.opensuse.org/projects/rmt/i18n/z"
-"h_TW/>\n"
+"Language-Team: Chinese (Taiwan) <https://l10n.opensuse.org/projects/rmt/i18n/"
+"zh_TW/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 3.6.1\n"
+"X-Generator: Weblate 4.9.1\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "該系統上尚未啟用 %s。"
@@ -100,9 +100,8 @@ msgstr "檢查總數不符"
 msgid "Clean cancelled."
 msgstr "已取消清理。"
 
-#, fuzzy
 msgid "Clean finished. An estimated %{total_file_size} was removed."
-msgstr "清理已完成。估計已移除 %{total_file_size}。"
+msgstr "已完成清理。估計已移除 %{total_file_size}。"
 
 msgid "Cleaning up the database"
 msgstr "正在清理資料庫"
@@ -502,9 +501,8 @@ msgstr "產品字串"
 msgid "Product Version"
 msgstr "產品版本"
 
-#, fuzzy
 msgid "Product architecture (e.g., x86_64, aarch64)"
-msgstr "產品架構 (例如：x86_64、aarch64)"
+msgstr "產品架構 (例如 x86_64、aarch64)"
 
 msgid "Product by ID %{id} not found."
 msgstr "找不到 ID 為 %{id} 的產品。"
@@ -512,18 +510,15 @@ msgstr "找不到 ID 為 %{id} 的產品。"
 msgid "Product for target %{target} not found"
 msgstr "找不到目標 %{target} 的產品"
 
-#, fuzzy
 msgid "Product name (e.g., Basesystem, SLES)"
-msgstr "產品名稱 (例如：Basesystem、SLES)"
+msgstr "產品名稱 (例如 Basesystem、SLES)"
 
-#, fuzzy
 msgid "Product version (e.g., 15, 15.1, '12 SP4')"
-msgstr "產品版本 (例如：15、15.1、'12 SP4')"
+msgstr "產品版本 (例如 15、15.1、\"12 SP4\")"
 
 msgid "Product with ID %{target} not found"
 msgstr "找不到 ID 為 %{target} 的產品"
 
-#, fuzzy
 msgid "Product: %{name} (ID: %{id})"
 msgstr "產品：%{name} (ID：%{id})"
 
@@ -680,9 +675,8 @@ msgstr "無法移除登入名稱為 %{login} 的系統。"
 msgid "System with login %{login} not found."
 msgstr "找不到登入名稱為 %{login} 的系統。"
 
-#, fuzzy
 msgid "The RMT database has not yet been initialized. Run '%{command}' to set up the database."
-msgstr "尚未啟始化 RMT 資料庫。請執行「%{command}」以設定該資料庫。"
+msgstr "尚未啟始化 RMT 資料庫。請執行 \"%{command}\" 以設定該資料庫。"
 
 msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
 msgstr "未在「%{path}」中正確設定 SCC 身分證明。您可以從 %{url} 獲取身分證明"
