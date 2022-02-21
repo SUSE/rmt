@@ -290,6 +290,109 @@ RSpec.describe SUSE::Connect::Api do
       end
     end
 
+    describe '#send_bulk_system_update' do
+      subject { api_client.send_bulk_system_update([system]) }
+
+      before do
+        stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
+          .with(
+            headers: expected_request_headers,
+            body: expected_body.to_json
+          )
+          .to_return(
+            status: 201,
+            body: expected_response.to_json,
+            headers: {}
+          )
+      end
+
+      context 'when system has only mandatory fields changed' do
+        let(:system) { FactoryBot.create(:system, :with_last_seen_at, :with_activated_product, :with_hw_info) }
+        let(:product) { system.products.first }
+        let(:hw_info) { system.hw_info }
+        let(:expected_response) { { id: 9000, login: system.login, password: system.password } }
+        let(:expected_body) do
+          [{
+            login: system.login,
+            password: system.password,
+            last_seen_at: system.last_seen_at,
+            hostname: system.hostname,
+            hwinfo: %i[cpus sockets hypervisor arch uuid cloud_provider].each_with_object({}) { |k, h| h[k] = hw_info.send(k) },
+            products: [
+              %i[id identifier version arch].each_with_object({}) { |k, h| h[k] = product.send(k) }
+            ]
+          }]
+        end
+
+        it { is_expected.to eq(expected_response) }
+      end
+
+      context 'when system has optional params changed' do
+        let(:system) { FactoryBot.create(:system, :with_activated_product, :with_hw_info) }
+        let(:product) { system.products.first }
+        let(:hw_info) { system.hw_info }
+        let(:expected_response) { { login: system.login, password: system.password } }
+        let(:expected_body) do
+          [{
+            login: system.login,
+            password: system.password,
+            last_seen_at: system.last_seen_at,
+            hostname: system.hostname,
+            hwinfo: %i[cpus sockets hypervisor arch uuid cloud_provider].each_with_object({}) { |k, h| h[k] = hw_info.send(k) },
+            products: [
+              %i[id identifier version arch].each_with_object({}) { |k, h| h[k] = product.send(k) }
+            ]
+          }]
+        end
+
+        it { is_expected.to eq(expected_response) }
+      end
+
+      context 'when sending in bulk' do
+        subject { api_client.send_bulk_system_update(systems) }
+
+        before do
+          stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
+            .with(
+              headers: expected_request_headers
+            )
+            .to_return(
+              status: 201,
+              body: expected_response.to_json,
+              headers: {}
+            )
+        end
+
+
+        let(:subscription) { FactoryBot.create :subscription }
+        let(:systems) { FactoryBot.create_list(:system, 400, :with_activated_product, :with_hw_info, subscription: subscription) }
+        let(:system) { System.last }
+        let(:expected_response) { { login: system.login, password: system.password } }
+        let(:product_keys) { %i[id identifier version arch] }
+        let(:hwinfo_keys) { %i[cpus sockets hypervisor arch uuid cloud_provider] }
+
+
+        let(:expected_body) do
+          systems.collect do |system|
+            product = system.products.first.slice(*product_keys).symbolize_keys
+            hwinfo = system.hw_info.slice(*hwinfo_keys).symbolize_keys
+            product[:regcode] = subscription.regcode
+            {
+              login: system.login,
+              password: system.password,
+              hostname: system.hostname,
+              regcodes: [],
+              products: [product],
+              hwinfo: hwinfo,
+              last_seen_at: system.last_seen_at
+            }
+          end
+        end
+
+        it { is_expected.to eq(expected_response) }
+      end
+    end
+
     describe '#forward_system_deregistration' do
       before do
         stub_request(:delete, "https://scc.suse.com/connect/organizations/systems/#{scc_system_id}")

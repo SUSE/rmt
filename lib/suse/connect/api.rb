@@ -75,6 +75,20 @@ module SUSE
         )
       end
 
+      def send_bulk_system_update(systems)
+        system_limit = 200
+        last_response = nil
+        systems.each_slice(system_limit) do |batched_systems|
+          params = prepare_payload_for_bulk_update(batched_systems)
+          last_response = make_single_request(
+            :put,
+            "#{connect_api}/organizations/systems",
+            { body: params.to_json }
+          )
+        end
+        last_response
+      end
+
       def forward_system_deregistration(scc_system_id)
         make_request(:delete, "#{connect_api}/organizations/systems/#{scc_system_id}")
       rescue RequestError => e
@@ -83,6 +97,17 @@ module SUSE
       end
 
       protected
+
+      def prepare_payload_for_bulk_update(systems)
+        mandatory_keys = %i[login password last_seen_at]
+
+        systems.collect do |system|
+          system_hash = system.attributes.symbolize_keys.slice(*mandatory_keys)
+          system_hash[:hostname] = system.hostname
+          system_hash[:hwinfo] = generate_hwinfo_for(system)
+          system_hash.merge!({ products: generate_product_listing_for(system) })
+        end
+      end
 
       def generate_product_listing_for(system)
         product_keys = %i[id identifier version arch]
