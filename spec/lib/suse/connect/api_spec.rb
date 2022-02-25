@@ -301,7 +301,6 @@ RSpec.describe SUSE::Connect::Api do
           )
           .to_return(
             status: 201,
-            body: expected_response.to_json,
             headers: {}
           )
       end
@@ -310,18 +309,19 @@ RSpec.describe SUSE::Connect::Api do
         let(:system) { FactoryBot.create(:system, :with_last_seen_at, :with_activated_product, :with_hw_info) }
         let(:product) { system.products.first }
         let(:hw_info) { system.hw_info }
-        let(:expected_response) { { id: 9000, login: system.login, password: system.password } }
+        let(:expected_response) { { systems: [{ id: system.id, login: system.login, password: system.password }] } }
         let(:expected_body) do
-          [{
+          { systems: [{
             login: system.login,
             password: system.password,
             last_seen_at: system.last_seen_at,
             hostname: system.hostname,
+            regcodes: [],
             hwinfo: %i[cpus sockets hypervisor arch uuid cloud_provider].each_with_object({}) { |k, h| h[k] = hw_info.send(k) },
             products: [
               %i[id identifier version arch].each_with_object({}) { |k, h| h[k] = product.send(k) }
             ]
-          }]
+          }] }
         end
 
         it { is_expected.to eq(expected_response) }
@@ -331,52 +331,83 @@ RSpec.describe SUSE::Connect::Api do
         let(:system) { FactoryBot.create(:system, :with_activated_product, :with_hw_info) }
         let(:product) { system.products.first }
         let(:hw_info) { system.hw_info }
-        let(:expected_response) { { login: system.login, password: system.password } }
+        let(:expected_response) { { systems: [{ id: system.id, login: system.login, password: system.password }] } }
         let(:expected_body) do
-          [{
+          { systems: [{
             login: system.login,
             password: system.password,
             last_seen_at: system.last_seen_at,
             hostname: system.hostname,
+            regcodes: [],
             hwinfo: %i[cpus sockets hypervisor arch uuid cloud_provider].each_with_object({}) { |k, h| h[k] = hw_info.send(k) },
             products: [
               %i[id identifier version arch].each_with_object({}) { |k, h| h[k] = product.send(k) }
             ]
-          }]
+          }] }
         end
 
         it { is_expected.to eq(expected_response) }
       end
 
+      # Spec needs to be fixed.
       context 'when sending in bulk' do
         subject { api_client.send_bulk_system_update(systems) }
 
         before do
           stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
             .with(
-              headers: expected_request_headers
+              headers: expected_request_headers,
+              body: all_systems_payload.to_json
             )
             .to_return(
-              status: 201,
-              body: expected_response.to_json,
-              headers: {}
+              status: 413,
+              headers: {
+                'X-Payload-Entities-Max-Limit': 3
+              }
             )
+          stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
+          .with(
+            headers: expected_request_headers,
+            body: expected_body.to_json
+          )
+          .to_return(
+            status: 201,
+            headers: {}
+          )
         end
 
 
         let(:subscription) { FactoryBot.create :subscription }
-        let(:systems) { FactoryBot.create_list(:system, 400, :with_activated_product, :with_hw_info, subscription: subscription) }
+        let(:systems) { FactoryBot.create_list(:system, 10, :with_activated_product, :with_last_seen_at, :with_hw_info, subscription: subscription) }
         let(:system) { System.last }
-        let(:expected_response) { { login: system.login, password: system.password } }
+        let(:expected_response) do
+          system_hashes = systems.each { |s| s.slice(*%i[login password last_seen_at]) }
+
+          { systems: system_hashes }
+        end
         let(:product_keys) { %i[id identifier version arch] }
         let(:hwinfo_keys) { %i[cpus sockets hypervisor arch uuid cloud_provider] }
-
-
-        let(:expected_body) do
-          systems.collect do |system|
+        let(:all_systems_payload) do
+          system_hashes = systems.collect do |system|
             product = system.products.first.slice(*product_keys).symbolize_keys
             hwinfo = system.hw_info.slice(*hwinfo_keys).symbolize_keys
-            product[:regcode] = subscription.regcode
+            {
+              login: system.login,
+              password: system.password,
+              hostname: system.hostname,
+              last_seen_at: system.last_seen_at,
+              regcodes: [],
+              products: [product],
+              hwinfo: hwinfo
+            }
+          end.compact
+          { systems: system_hashes }
+        end
+
+        let(:expected_body) do
+          systems.reverse.take(3).collect do |system|
+            product = system.products.first.slice(*product_keys).symbolize_keys
+            hwinfo = system.hw_info.slice(*hwinfo_keys).symbolize_keys
             {
               login: system.login,
               password: system.password,
