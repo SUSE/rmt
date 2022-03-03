@@ -1,6 +1,7 @@
 -------------------------------------------------------------------
-Thu Feb 17 16:49:47 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
+Tue Feb 17 19:48:00 UTC 2022 - James Mason <jmason@suse.com>
 
+- Enable nginx configs to serve on IPv6
 - Enable users with old versions of RMT to sync systems with SCC by default
 
 -------------------------------------------------------------------
