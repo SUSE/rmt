@@ -1,7 +1,6 @@
 require 'rails_helper'
 require_relative '../../../../engines/registration_sharing/lib/registration_sharing'
 
-# rubocop:disable RSpec/NestedGroups
 RSpec.describe RMT::CLI::Systems do
   describe '#list' do
     subject(:command) { described_class.start(argv) }
@@ -66,8 +65,6 @@ RSpec.describe RMT::CLI::Systems do
           ).order(id: :desc)
         end
 
-
-
         let(:expected_output) do
           Terminal::Table.new(
             headings: headings,
@@ -98,27 +95,27 @@ RSpec.describe RMT::CLI::Systems do
         it 'produces CSV optput' do
           expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
         end
+      end
 
-        context 'with --all option' do
-          let(:argv) { ['list', '--csv', '--all'] }
+      context 'with --csv --all option' do
+        let(:argv) { ['list', '--csv', '--all'] }
 
-          let(:expected_systems) do
-            System.where(
-              id: [
-                system3.id,
-                system2.id,
-                system1.id
-              ]
-            ).order(id: :desc)
-          end
+        let(:expected_systems) do
+          System.where(
+            id: [
+              system3.id,
+              system2.id,
+              system1.id
+            ]
+          ).order(id: :desc)
+        end
 
-          let(:expected_output) do
-            CSV.generate { |csv| ([headings] + expected_rows).each { |row| csv << row } }
-          end
+        let(:expected_output) do
+          CSV.generate { |csv| ([headings] + expected_rows).each { |row| csv << row } }
+        end
 
-          it 'produces CSV optput' do
-            expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
-          end
+        it 'produces CSV optput' do
+          expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
         end
       end
 
@@ -259,4 +256,3 @@ RSpec.describe RMT::CLI::Systems do
     end
   end
 end
-# rubocop:enable RSpec/NestedGroups
