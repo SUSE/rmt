@@ -93,7 +93,7 @@ module SUSE
       rescue RequestError => e
         # change some params here and start the bulk update.
         if e.response.code == 413
-          system_limit = e.response.headers['X-Payload-Entities-Max-Limit']
+          system_limit = e.response.headers['X-Payload-Entities-Max-Limit'].to_i
           send_bulk_system_update(systems, system_limit)
         end
       end
@@ -116,6 +116,7 @@ module SUSE
           system_hash[:regcodes] = []
           system_hash[:hwinfo] = generate_hwinfo_for(system)
           system_hash[:products] = generate_product_listing_for(system)
+          system_hash
         end
 
         { systems: systems_hash }
