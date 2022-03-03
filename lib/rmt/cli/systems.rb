@@ -5,42 +5,33 @@ class RMT::CLI::Systems < RMT::CLI::Base
   option :csv, type: :boolean, desc: _('Output data in CSV format')
 
   def list
-    systems = System.limit(options.limit).order(id: :desc)
-    decorator = RMT::CLI::Decorators::SystemDecorator.new(systems) unless options.all
+    systems = System.order(id: :desc)
+    systems = systems.limit(options.limit) unless options.all
 
-    if systems.empty?
+    if System.count == 0
       warn _('There are no systems registered to this RMT instance.')
     elsif options.csv
-      if options.all
-        decorator = RMT::CLI::Decorators::SystemDecorator.new(systems.first, all: true)
-        puts decorator.csv_headers
-        System.in_batches(order: :desc, load: true) do |systems|
-          systems.each do |system|
-            decorator = RMT::CLI::Decorators::SystemDecorator.new(system, all: true)
-            puts decorator.to_csv(batch: true)
-          end
-        end
-      else
-        puts decorator.to_csv
+      puts RMT::CLI::Decorators::SystemDecorator.csv_headers
+      systems.in_batches(order: :desc, load: true) do |relation|
+        decorator = RMT::CLI::Decorators::SystemDecorator.new(relation)
+        puts decorator.to_csv(batch: true)
       end
-    elsif options.all
-      rows = []
-      System.in_batches(order: :desc, load: true) do |systems|
-        systems.each do |system|
-          decorator = RMT::CLI::Decorators::SystemDecorator.new(system, all: true)
-          rows << decorator.data[0]
-        end
-      end
-      puts decorator.to_table(large_rows: rows)
     else
+      rows = []
+      systems.in_batches(order: :desc, load: true) do |relation|
+        rows += relation
+      end
+      decorator = RMT::CLI::Decorators::SystemDecorator.new(rows)
       puts decorator.to_table
-      puts _("Showing last %{limit} registrations. Use the '--all' option to see all registered systems.") % {
-        limit: options.limit
-      }
+
+      unless options.all
+        puts _("Showing last %{limit} registrations. Use the '--all' option to see all registered systems.") % {
+          limit: options.limit
+        }
+      end
     end
   end
   map 'ls' => :list
-
   desc 'scc-sync', _('Forward registered systems data to SCC')
   def scc_sync
     RMT::SCC.new(options).sync_systems
