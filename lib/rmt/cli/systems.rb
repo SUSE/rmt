@@ -32,6 +32,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
     end
   end
   map 'ls' => :list
+
   desc 'scc-sync', _('Forward registered systems data to SCC')
   def scc_sync
     RMT::SCC.new(options).sync_systems
