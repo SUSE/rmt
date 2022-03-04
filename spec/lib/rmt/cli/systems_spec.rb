@@ -206,4 +206,53 @@ RSpec.describe RMT::CLI::Systems do
       end
     end
   end
+
+  describe '#purge' do
+    context 'argument error' do
+      it 'raises a CLI error when given a wrong date' do
+        msg = "The given date does not follow a proper format. Ensure it follows this format '<year>-<month>-<day>'.\n"
+        expect { described_class.start(['purge', '--non-interactive', '--before', 'whatever']) }
+          .to raise_error(SystemExit)
+                .and output(msg).to_stderr
+      end
+    end
+
+    context 'no systems to be purged' do
+      let(:argv) { ['purge'] }
+
+      before do
+        create :system, :with_activated_product, last_seen_at: 1.month.ago
+      end
+
+      it 'shows a warning if there are no systems matching the query' do
+        expect { described_class.start(argv) }.to output('').to_stdout.and \
+          output("No systems to be purged on this RMT instance.\n").to_stderr
+      end
+    end
+
+    context 'there are systems to be purged' do
+      let!(:s1) { create :system, :with_activated_product, last_seen_at: 2.months.ago }
+      let!(:s2) { create :system, :with_activated_product, last_seen_at: 4.months.ago }
+
+      it 'removes systems by following the default definition of inactive' do
+        expect(System.count).to eq 2
+
+        expect { described_class.start(['purge', '--non-interactive']) }
+          .to output(/#{s2.login}/).to_stdout
+
+        expect(System.count).to eq 1
+        expect(System.first.id).to eq s1.id
+      end
+
+      it 'removes systems by the given date' do
+        expect(System.count).to eq 2
+
+        argv = ['purge', '--non-interactive', '--before', Time.zone.now.strftime('%F')]
+        expect { described_class.start(argv) }
+          .to output(/#{s1.login}/).to_stdout
+
+        expect(System.count).to eq 0
+      end
+    end
+  end
 end
