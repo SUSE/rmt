@@ -1,4 +1,7 @@
 class RMT::CLI::Systems < RMT::CLI::Base
+  # Amount of time for which a system is considered inactive.
+  INACTIVE = 3.months
+
   desc 'list', _('List registered systems.')
   option :limit, aliases: '-l', type: :numeric, default: 20, desc: _('Number of systems to display')
   option :all, aliases: '-a', type: :boolean, desc: _('List all registered systems')
@@ -49,4 +52,64 @@ class RMT::CLI::Systems < RMT::CLI::Base
     raise RMT::CLI::Error.new(_('System with login %{login} not found.') % { login: target })
   end
   map 'rm' => :remove
+
+  desc 'purge', _('Removes inactive systems')
+  option :before, aliases: '-b', type: :string, desc: _('Remove systems before the given date (format: "<year>-<month>-<day>")')
+  option :non_interactive, aliases: '-n', type: :boolean, default: false, desc: _("Don't ask for anything")
+  long_desc <<~PURGE
+    #{_('Removes old systems and their activations if they are inactive.')}
+
+    #{_('By default, inactive systems are those that have not contacted in any way with RMT for the past 3 months. You can override this with the \'-b / --before\' flag.')}
+
+    #{_('The command will list you the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the \'-n / --non-interactive\' flag.')}
+
+    #{_('Examples')}:
+
+    $ rmt-cli systems purge --non-interactive --before 2022-02-28
+  PURGE
+  def purge
+    ask, before = purge_options
+    systems = System.where('last_seen_at < ?', before)
+
+    decorator = RMT::CLI::Decorators::SystemDecorator.new(systems)
+
+    if systems.empty?
+      warn _('No systems to be purged on this RMT instance.')
+      return
+    else
+      puts decorator.to_table
+    end
+
+    return if ask && !yesno(_('Do you want to delete these systems?'))
+
+    puts "Purging systems that have not contacted this RMT since #{before}."
+    systems.destroy_all
+  end
+
+  protected
+
+  # Returns true if the user answered positively the given question, false
+  # otherwise.
+  def yesno(msg)
+    loop do
+      print "#{msg} (#{_('y')}/#{_('n')}) "
+      prompt = $stdin.gets.chomp.downcase
+
+      return true if prompt == _('y')
+      return false if prompt == _('n')
+
+      warn "#{_('Please, answer')} #{_('y')}/#{_('n')}"
+    end
+  end
+
+  # Returns the validated options expected by the `purge` subcommand.
+  def purge_options
+    ask = options.non_interactive.nil? ? true : !options.non_interactive
+
+    dt = options.before.to_s.to_datetime || INACTIVE.ago
+
+    [ask, dt.strftime('%F')]
+  rescue ArgumentError
+    raise RMT::CLI::Error.new(_("The given date does not follow a proper format. Ensure it follows this format '<year>-<month>-<day>'."))
+  end
 end
