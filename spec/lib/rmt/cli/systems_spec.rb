@@ -97,6 +97,28 @@ RSpec.describe RMT::CLI::Systems do
         end
       end
 
+      context 'with --csv --all option' do
+        let(:argv) { ['list', '--csv', '--all'] }
+
+        let(:expected_systems) do
+          System.where(
+            id: [
+              system3.id,
+              system2.id,
+              system1.id
+            ]
+          ).order(id: :desc)
+        end
+
+        let(:expected_output) do
+          CSV.generate { |csv| ([headings] + expected_rows).each { |row| csv << row } }
+        end
+
+        it 'produces CSV optput' do
+          expect { described_class.start(argv) }.to output(expected_output).to_stdout.and output('').to_stderr
+        end
+      end
+
       context 'system with associated subscription' do
         let(:subscription) { create :subscription, :with_products }
         let(:product) { subscription.products.first }
