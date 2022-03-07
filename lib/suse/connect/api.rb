@@ -31,7 +31,7 @@ module SUSE
 
       UUID_FILE_LOCATION = '/var/lib/rmt/system_uuid'.freeze
 
-      # Max nr of systems per update request 
+      # Max nr of systems per update request
       BULK_SYSTEM_REQUEST_LIMIT = 200
 
       def initialize(username, password)
