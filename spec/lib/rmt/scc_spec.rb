@@ -361,7 +361,7 @@ describe RMT::SCC do
       end
 
       it "doesn't sync systems" do
-        expect(api_double).not_to receive(:forward_system_activations)
+        expect(api_double).not_to receive(:send_bulk_system_update)
         described_class.new.sync_systems
       end
 

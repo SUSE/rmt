@@ -205,7 +205,7 @@ RSpec.describe SUSE::Connect::Api do
       it { is_expected.to eq([ { endpoint: 'organizations/subscriptions' } ]) }
     end
 
-    describe '#forward_system_activations' do
+    xdescribe '#forward_system_activations' do
       subject { api_client.forward_system_activations(system) }
 
       before do

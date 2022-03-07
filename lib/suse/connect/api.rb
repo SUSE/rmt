@@ -60,24 +60,6 @@ module SUSE
         make_paginated_request(:get, "#{connect_api}/organizations/subscriptions")
       end
 
-      def forward_system_activations(system)
-        params = {
-          login: system.login,
-          password: system.password,
-          hostname: system.hostname,
-          regcodes: [],
-          products: generate_product_listing_for(system),
-          hwinfo: generate_hwinfo_for(system),
-          last_seen_at: system.last_seen_at
-        }
-
-        make_single_request(
-          :post,
-          "#{connect_api}/organizations/systems",
-          { body: params.to_json }
-        )
-      end
-
       def send_bulk_system_update(systems, system_limit = nil)
         system_limit ||= BULK_SYSTEM_REQUEST_LIMIT
         systems.each_slice(system_limit) do |batched_systems|
