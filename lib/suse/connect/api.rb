@@ -31,6 +31,7 @@ module SUSE
 
       UUID_FILE_LOCATION = '/var/lib/rmt/system_uuid'.freeze
 
+      # Max nr of systems per update request 
       BULK_SYSTEM_REQUEST_LIMIT = 200
 
       def initialize(username, password)
@@ -78,7 +79,6 @@ module SUSE
       end
 
       def send_bulk_system_update(systems, system_limit = nil)
-        # Test system limit
         system_limit ||= BULK_SYSTEM_REQUEST_LIMIT
         last_response = nil
         systems.each_slice(system_limit) do |batched_systems|
@@ -96,6 +96,7 @@ module SUSE
           system_limit = e.response.headers['X-Payload-Entities-Max-Limit'].to_i
           send_bulk_system_update(systems, system_limit)
         end
+        raise e
       end
 
       def forward_system_deregistration(scc_system_id)
