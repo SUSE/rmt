@@ -94,7 +94,7 @@ module SUSE
         # change some params here and start the bulk update.
         if e.response.code == 413
           system_limit = e.response.headers['X-Payload-Entities-Max-Limit'].to_i
-          send_bulk_system_update(systems, system_limit)
+          return send_bulk_system_update(systems, system_limit)
         end
         raise e
       end
