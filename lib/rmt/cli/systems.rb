@@ -8,15 +8,25 @@ class RMT::CLI::Systems < RMT::CLI::Base
   option :csv, type: :boolean, desc: _('Output data in CSV format')
 
   def list
-    systems = (options.all ? System.all : System.limit(options.limit)).order(id: :desc)
-    decorator = RMT::CLI::Decorators::SystemDecorator.new(systems)
+    systems = System.order(id: :desc)
+    systems = systems.limit(options.limit) unless options.all
 
-    if systems.empty?
+    if System.count == 0
       warn _('There are no systems registered to this RMT instance.')
     elsif options.csv
-      puts decorator.to_csv
+      puts RMT::CLI::Decorators::SystemDecorator.csv_headers
+      systems.in_batches(order: :desc, load: true) do |relation|
+        decorator = RMT::CLI::Decorators::SystemDecorator.new(relation)
+        puts decorator.to_csv(batch: true)
+      end
     else
+      rows = []
+      systems.in_batches(order: :desc, load: true) do |relation|
+        rows += relation
+      end
+      decorator = RMT::CLI::Decorators::SystemDecorator.new(rows)
       puts decorator.to_table
+
       unless options.all
         puts _("Showing last %{limit} registrations. Use the '--all' option to see all registered systems.") % {
           limit: options.limit
