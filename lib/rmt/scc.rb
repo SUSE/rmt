@@ -84,14 +84,19 @@ class RMT::SCC
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
     # do not sync BYOS proxy systems to SCC
-    System.where(scc_synced_at: nil, proxy_byos: false).find_in_batches(batch_size: 20) do |batch|
-      batch.each do |system|
-        @logger.info(_('Syncing system %{login} to SCC') % { login: system.login })
-        response = scc_api_client.forward_system_activations(system)
+    updatable_systems = System.where(scc_synced_at: nil, proxy_byos: false)
+
+    @logger.info(_('Syncing systems to SCC'))
+    scc_api_client.send_bulk_system_update(updatable_systems) do |successful_response|
+      next if successful_response[:systems].count == 0
+
+      successfully_updated_systems = successful_response[:systems]
+      successfully_updated_systems.each do |system_hash|
         # Update attributes without triggering after_update callback (which resets scc_synced_at to nil)
-        system.update_columns(scc_system_id: response[:id], scc_synced_at: Time.current)
-      rescue SUSE::Connect::Api::RequestError => e
-        @logger.error(_('Failed to sync system %{login}: %{error}') % { login: system.login, error: e.to_s })
+        System.find_by(login: system_hash[:login])
+           .update_columns(scc_system_id: system_hash[:id], scc_synced_at: Time.current)
+      rescue StandardError => e
+        @logger.error(_('Failed to sync systems: %{error}') % { login: system_hash[:login], error: e.to_s })
       end
     end
 
