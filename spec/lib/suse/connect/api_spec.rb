@@ -338,7 +338,9 @@ RSpec.describe SUSE::Connect::Api do
           { systems: system_hashes }
         end
 
-        it { is_expected.to eq(expected_response) }
+        it 'yields results' do
+          expect { |b| api_client.send_bulk_system_update(systems, &b) }.to yield_with_args(expected_response)
+        end
       end
 
       context 'when sending in bulk' do
@@ -373,10 +375,11 @@ RSpec.describe SUSE::Connect::Api do
           { systems: system_hashes }
         end
 
-        it { is_expected.to eq(expected_response) }
+        it 'yields successful results' do
+          expect { |b| api_client.send_bulk_system_update(systems, &b) }.to yield_with_args(expected_response)
+        end
       end
 
-      # Spec needs to be fixed.
       context 'when sending in bulk and encounter 413 http error code' do
         subject { api_client.send_bulk_system_update(systems) }
 
@@ -453,7 +456,9 @@ RSpec.describe SUSE::Connect::Api do
           { systems: system_hashes }
         end
 
-        it { is_expected.to eq(expected_response) }
+        it 'yields successful results' do
+          expect { |b| api_client.send_bulk_system_update(systems, &b) }.to yield_with_args(expected_response)
+        end
       end
     end
 

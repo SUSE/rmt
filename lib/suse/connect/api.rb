@@ -80,16 +80,15 @@ module SUSE
 
       def send_bulk_system_update(systems, system_limit = nil)
         system_limit ||= BULK_SYSTEM_REQUEST_LIMIT
-        last_response = nil
         systems.each_slice(system_limit) do |batched_systems|
           params = prepare_payload_for_bulk_update(batched_systems)
-          last_response = make_single_request(
+          response = make_single_request(
             :put,
             "#{connect_api}/organizations/systems",
             { body: params.to_json }
           )
+          yield response
         end
-        last_response
       rescue RequestError => e
         # change some params here and start the bulk update.
         if e.response.code == 413
