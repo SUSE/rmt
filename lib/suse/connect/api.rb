@@ -31,6 +31,9 @@ module SUSE
 
       UUID_FILE_LOCATION = '/var/lib/rmt/system_uuid'.freeze
 
+      # Max nr of systems per update request
+      BULK_SYSTEM_REQUEST_LIMIT = 200
+
       def initialize(username, password)
         @username = username
         @password = password
@@ -75,6 +78,27 @@ module SUSE
         )
       end
 
+      def send_bulk_system_update(systems, system_limit = nil)
+        system_limit ||= BULK_SYSTEM_REQUEST_LIMIT
+        last_response = nil
+        systems.each_slice(system_limit) do |batched_systems|
+          params = prepare_payload_for_bulk_update(batched_systems)
+          last_response = make_single_request(
+            :put,
+            "#{connect_api}/organizations/systems",
+            { body: params.to_json }
+          )
+        end
+        last_response
+      rescue RequestError => e
+        # change some params here and start the bulk update.
+        if e.response.code == 413
+          system_limit = e.response.headers['X-Payload-Entities-Max-Limit'].to_i
+          return send_bulk_system_update(systems, system_limit)
+        end
+        raise e
+      end
+
       def forward_system_deregistration(scc_system_id)
         make_request(:delete, "#{connect_api}/organizations/systems/#{scc_system_id}")
       rescue RequestError => e
@@ -83,6 +107,21 @@ module SUSE
       end
 
       protected
+
+      def prepare_payload_for_bulk_update(systems)
+        mandatory_keys = %i[login password last_seen_at]
+
+        systems_hash = systems.collect do |system|
+          system_hash = system.attributes.symbolize_keys.slice(*mandatory_keys)
+          system_hash[:hostname] = system.hostname
+          system_hash[:regcodes] = []
+          system_hash[:hwinfo] = generate_hwinfo_for(system)
+          system_hash[:products] = generate_product_listing_for(system)
+          system_hash
+        end
+
+        { systems: systems_hash }
+      end
 
       def generate_product_listing_for(system)
         product_keys = %i[id identifier version arch]

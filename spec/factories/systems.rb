@@ -18,6 +18,10 @@ FactoryBot.define do
       end
     end
 
+    trait :with_last_seen_at do
+      last_seen_at { Time.zone.now }
+    end
+
     trait :with_activated_product do
       transient do
         product { create(:product, :with_mirrored_repositories) }
