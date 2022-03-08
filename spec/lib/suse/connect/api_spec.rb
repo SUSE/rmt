@@ -290,6 +290,173 @@ RSpec.describe SUSE::Connect::Api do
       end
     end
 
+    describe '#send_bulk_system_update' do
+      subject { api_client.send_bulk_system_update(systems) }
+
+      before do
+        stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
+          .with(
+            headers: expected_request_headers,
+            body: expected_body.to_json
+          )
+          .to_return(
+            status: 201,
+            body: expected_response.to_json,
+            headers: {}
+          )
+      end
+
+      context 'when a single system is bulk updated' do
+        let(:systems) { FactoryBot.create_list(:system, 1, :with_last_seen_at, :with_activated_product, :with_hw_info) }
+        let(:product) { system.products.first }
+        let(:hw_info) { system.hw_info }
+        let(:expected_response) do
+          system_hashes = systems.collect do |s|
+            s.slice(*%i[id login password last_seen_at])
+              .symbolize_keys
+              .map { |_k, v| { k: v.to_s } }
+          end
+
+          { systems: system_hashes }
+        end
+        let(:product_keys) { %i[id identifier version arch] }
+        let(:hwinfo_keys) { %i[cpus sockets hypervisor arch uuid cloud_provider] }
+        let(:expected_body) do
+          system_hashes = systems.collect do |system|
+            product = system.products.first.slice(*product_keys).symbolize_keys
+            hwinfo = system.hw_info.slice(*hwinfo_keys).symbolize_keys
+            {
+              login: system.login,
+              password: system.password,
+              last_seen_at: system.last_seen_at,
+              hostname: system.hostname,
+              regcodes: [],
+              hwinfo: hwinfo,
+              products: [product]
+            }
+          end.compact
+          { systems: system_hashes }
+        end
+
+        it { is_expected.to eq(expected_response) }
+      end
+
+      context 'when sending in bulk' do
+        let(:systems) { FactoryBot.create_list(:system, 100, :with_last_seen_at, :with_activated_product, :with_hw_info) }
+        let(:product) { system.products.first }
+        let(:hw_info) { system.hw_info }
+        let(:product_keys) { %i[id identifier version arch] }
+        let(:hwinfo_keys) { %i[cpus sockets hypervisor arch uuid cloud_provider] }
+        let(:expected_response) do
+          system_hashes = systems.collect do |s|
+            s.slice(*%i[id login password last_seen_at])
+              .symbolize_keys
+              .map { |_k, v| { k: v.to_s } }
+          end
+
+          { systems: system_hashes }
+        end
+        let(:expected_body) do
+          system_hashes = systems.collect do |system|
+            product = system.products.first.slice(*product_keys).symbolize_keys
+            hwinfo = system.hw_info.slice(*hwinfo_keys).symbolize_keys
+            {
+              login: system.login,
+              password: system.password,
+              last_seen_at: system.last_seen_at,
+              hostname: system.hostname,
+              regcodes: [],
+              hwinfo: hwinfo,
+              products: [product]
+            }
+          end.compact
+          { systems: system_hashes }
+        end
+
+        it { is_expected.to eq(expected_response) }
+      end
+
+      # Spec needs to be fixed.
+      context 'when sending in bulk and encounter 413 http error code' do
+        subject { api_client.send_bulk_system_update(systems) }
+
+        before do
+          stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
+            .with(
+              headers: expected_request_headers,
+              body: all_systems_payload.to_json
+            )
+            .to_return(
+              status: 413,
+              headers: {
+                'X-Payload-Entities-Max-Limit': 1
+              },
+              body: [].to_json
+            )
+          stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
+            .with(
+              headers: expected_request_headers
+            )
+            .to_return(
+              status: 201,
+              body: expected_response.to_json,
+              headers: {}
+            )
+        end
+
+        let(:subscription) { FactoryBot.create :subscription }
+        let(:systems) { FactoryBot.create_list(:system, 2, :with_activated_product, :with_last_seen_at, :with_hw_info, subscription: subscription) }
+        let(:expected_response) do
+          system_hashes = systems.reverse.take(1).collect do |s|
+            s.slice(*%i[id login password last_seen_at])
+              .symbolize_keys
+              .map { |_k, v| { k: v.to_s } }
+          end
+
+          { systems: system_hashes }
+        end
+        let(:product_keys) { %i[id identifier version arch] }
+        let(:hwinfo_keys) { %i[cpus sockets hypervisor arch uuid cloud_provider] }
+        let(:all_systems_payload) do
+          system_hashes = systems.collect do |system|
+            product = system.products.first.slice(*product_keys).symbolize_keys
+            product[:regcode] = subscription.regcode
+            hwinfo = system.hw_info.slice(*hwinfo_keys).symbolize_keys
+            {
+              login: system.login,
+              password: system.password,
+              last_seen_at: system.last_seen_at,
+              hostname: system.hostname,
+              regcodes: [],
+              hwinfo: hwinfo,
+              products: [product]
+            }
+          end.compact
+          { systems: system_hashes }
+        end
+
+        let(:expected_body) do
+          system_hashes = systems.take(1).collect do |system|
+            product = system.products.first.slice(*product_keys).symbolize_keys
+            product[:regcode] = subscription.regcode
+            hwinfo = system.hw_info.slice(*hwinfo_keys).symbolize_keys
+            {
+              login: system.login,
+              password: system.password,
+              last_seen_at: system.last_seen_at,
+              hostname: system.hostname,
+              regcodes: [],
+              hwinfo: hwinfo,
+              products: [product]
+            }
+          end.compact
+          { systems: system_hashes }
+        end
+
+        it { is_expected.to eq(expected_response) }
+      end
+    end
+
     describe '#forward_system_deregistration' do
       before do
         stub_request(:delete, "https://scc.suse.com/connect/organizations/systems/#{scc_system_id}")
