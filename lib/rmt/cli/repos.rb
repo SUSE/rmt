@@ -14,7 +14,7 @@ class RMT::CLI::Repos < RMT::CLI::ReposBase
   map 'ls' => :list
 
   desc 'clean', _('Removes locally mirrored files of repositories which are not marked to be mirrored')
-  option :no_confirm, aliases: '-y', type: :boolean, desc: _(' Don\'t require user interaction. Default: false')
+  option :no_confirm, aliases: '-y', type: :boolean, desc: _(' Don\'t require user interaction. Default: Auto accept confirmation dialog.')
 
   def clean
     base_directory = RMT::DEFAULT_MIRROR_DIR
