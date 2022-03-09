@@ -84,7 +84,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
     decorator = RMT::CLI::Decorators::SystemDecorator.new(systems)
 
     if systems.empty?
-      warn _('No systems to be purged on this RMT instance.')
+      warn _("No systems to be purged on this RMT instance. All systems have contacted RMT after #{before}.")
       return
     else
       puts decorator.to_table
@@ -92,8 +92,8 @@ class RMT::CLI::Systems < RMT::CLI::Base
 
     return if ask && !yesno(_('Do you want to delete these systems?'))
 
-    puts "Purging systems that have not contacted this RMT since #{before}."
     systems.destroy_all
+    puts "Purged systems that have not contacted this RMT since #{before}."
   end
 
   protected
