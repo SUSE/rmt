@@ -135,8 +135,8 @@ RMT only found locally mirrored files of repositories that are marked to be mirr
       end
     end
 
-    context 'with -y' do
-      let(:argv) { ['clean', '-y'] }
+    context 'with -n' do
+      let(:argv) { ['clean', '-n'] }
       let(:input) { 'no' }
 
       it 'delete downloaded files for non-mirrored repositories' do
@@ -147,8 +147,8 @@ RMT only found locally mirrored files of repositories that are marked to be mirr
       end
     end
 
-    context 'with --no-confirm' do
-      let(:argv) { ['clean', '--no-confirm'] }
+    context 'with --non-interactive' do
+      let(:argv) { ['clean', '--non-interactive'] }
       let(:input) { 'no' }
 
       it 'delete downloaded files for non-mirrored repositories' do
