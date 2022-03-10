@@ -225,8 +225,10 @@ RSpec.describe RMT::CLI::Systems do
       end
 
       it 'shows a warning if there are no systems matching the query' do
+        bf = RMT::CLI::Systems::INACTIVE.ago.strftime('%F')
+
         expect { described_class.start(argv) }.to output('').to_stdout.and \
-          output("No systems to be purged on this RMT instance.\n").to_stderr
+          output("No systems to be purged on this RMT instance. All systems have contacted RMT after #{bf}.\n").to_stderr
       end
     end
 
