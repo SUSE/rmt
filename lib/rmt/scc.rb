@@ -75,7 +75,7 @@ class RMT::SCC
   end
 
   def sync_systems
-    unless Settings.scc.sync_systems
+    if Settings.scc.sync_systems == false
       @logger.warn _('Syncing systems to SCC is disabled by the configuration file, exiting.')
       return
     end
