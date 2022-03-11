@@ -1,5 +1,15 @@
 class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
 
+  HEADERS = [ _('Login'), _('Hostname'), _('Registration time'), _('Last seen'), _('Products') ].freeze
+
+  class << self
+    def csv_headers
+      CSV.generate { |csv| csv << HEADERS }
+    end
+  end
+
+  attr_reader :data
+
   def initialize(systems)
     @data = systems.map do |system|
       [
@@ -10,7 +20,6 @@ class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
         products_and_subscriptions(system).join("\n")
       ]
     end
-    @headers = [ _('Login'), _('Hostname'), _('Registration time'), _('Last seen'), _('Products') ]
   end
 
   def products_and_subscriptions(system)
@@ -21,12 +30,12 @@ class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
     end
   end
 
-  def to_csv
-    array_to_csv(@data, @headers)
+  def to_csv(batch: false)
+    array_to_csv(@data, HEADERS, batch: batch)
   end
 
   def to_table
-    array_to_table(@data, @headers)
+    array_to_table(@data, HEADERS)
   end
 
 end

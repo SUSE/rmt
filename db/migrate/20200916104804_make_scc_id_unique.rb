@@ -22,7 +22,7 @@ class MakeSccIdUnique < ActiveRecord::Migration[6.0]
 
     # Add unique index to `local_path`
     logger.info(_('Adding an unique index to `repositories.scc_id`...'))
-    remove_index :repositories, name: :index_repositories_on_scc_id
+    remove_index :repositories, name: :index_repositories_on_scc_id, if_exists: true
     add_index :repositories, :scc_id, unique: true
   end
 end
