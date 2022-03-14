@@ -442,12 +442,12 @@ describe RMT::SCC do
       let(:system) { FactoryBot.create(:system) }
 
       it 'syncs systems' do
-        expect(api_double).to receive(:forward_system_activations).with(system).and_return(
-          {
+        expect(api_double).to receive(:send_bulk_system_update).with([system]).and_yield(
+          systems: [{
             id: 10,
             login: 'test',
             password: 'test'
-          }
+          }]
         )
         described_class.new.sync_systems
       end

@@ -3,8 +3,6 @@ FactoryBot.define do
     sequence(:login) { |n| "login#{n}" }
     sequence(:password) { |n| "password#{n}" }
 
-    scc_synced_at { nil }
-
     transient do
       virtual { false }
       instance_data { nil }
@@ -26,6 +24,12 @@ FactoryBot.define do
       after :create do |system, _|
         create(:activation, system: system, service: create(:service)) if system.services.blank?
       end
+    end
+
+    trait :full do
+      with_activated_product
+      with_hw_info
+      with_last_seen_at
     end
 
     trait :with_last_seen_at do

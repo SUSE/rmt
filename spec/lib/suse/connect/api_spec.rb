@@ -245,14 +245,14 @@ RSpec.describe SUSE::Connect::Api do
       end
 
       context 'when a single system is bulk updated' do
-        let(:systems) { FactoryBot.create_list(:system, 1, :with_last_seen_at, :with_activated_product, :with_hw_info) }
+        let(:systems) { create_list :system, 1, :full }
         let(:product) { system.products.first }
         let(:hw_info) { system.hw_info }
 
         let(:expected_body) do
           system_hashes = systems.collect do |system|
-            product = system.products.first.slice(*product_keys).symbolize_keys
-            hwinfo = system.hw_info.slice(*hwinfo_keys).symbolize_keys
+            product = system.products.first.slice(*product_keys)
+            hwinfo = system.hw_info.slice(*hwinfo_keys)
             {
               login: system.login,
               password: system.password,
@@ -273,14 +273,14 @@ RSpec.describe SUSE::Connect::Api do
       end
 
       context 'when sending in bulk' do
-        let(:systems) { FactoryBot.create_list(:system, 3, :with_last_seen_at, :with_activated_product, :with_hw_info, scc_synced_at: nil) }
+        let(:systems) { create_list :system, 3, :full, scc_synced_at: nil }
         let(:product) { system.products.first }
         let(:hw_info) { system.hw_info }
 
         let(:expected_body) do
           system_hashes = systems.collect do |system|
-            product = system.products.first.slice(*product_keys).symbolize_keys
-            hwinfo = system.hw_info.slice(*hwinfo_keys).symbolize_keys
+            product = system.products.first.slice(*product_keys)
+            hwinfo = system.hw_info.slice(*hwinfo_keys)
             {
               login: system.login,
               password: system.password,
@@ -325,26 +325,17 @@ RSpec.describe SUSE::Connect::Api do
             )
         end
 
-        let(:subscription) { FactoryBot.create :subscription }
-        let(:systems) do
-          FactoryBot.create_list(:system, 2, :with_activated_product, :with_last_seen_at, :with_hw_info, subscription: subscription, scc_synced_at: nil)
-        end
-        let(:expected_response) do
-          system_hashes = systems.reverse.take(1).collect do |s|
-            s.slice(*%i[id login password last_seen_at])
-              .symbolize_keys
-              .map { |_k, v| { k: v.to_s } }
-          end
+        let(:subscription) { create :subscription }
+        let(:systems) { create_list(:system, 2, :full, subscription: subscription, scc_synced_at: nil) }
 
-          { systems: system_hashes }
-        end
-        let(:product_keys) { %i[id identifier version arch] }
-        let(:hwinfo_keys) { %i[cpus sockets hypervisor arch uuid cloud_provider] }
+        let(:expected_response) { { systems: [systems.last.slice(*system_keys).symbolize_keys] } }
+
         let(:all_systems_payload) do
           system_hashes = systems.collect do |system|
-            product = system.products.first.slice(*product_keys).symbolize_keys
+            product = system.products.first.slice(*product_keys)
             product[:regcode] = subscription.regcode
-            hwinfo = system.hw_info.slice(*hwinfo_keys).symbolize_keys
+
+            hwinfo = system.hw_info.slice(*hwinfo_keys)
             {
               login: system.login,
               password: system.password,
@@ -359,9 +350,10 @@ RSpec.describe SUSE::Connect::Api do
 
         let(:expected_body) do
           system_hashes = systems.take(1).collect do |system|
-            product = system.products.first.slice(*product_keys).symbolize_keys
+            product = system.products.first.slice(*product_keys)
             product[:regcode] = subscription.regcode
-            hwinfo = system.hw_info.slice(*hwinfo_keys).symbolize_keys
+
+            hwinfo = system.hw_info.slice(*hwinfo_keys)
             {
               login: system.login,
               password: system.password,
@@ -379,15 +371,12 @@ RSpec.describe SUSE::Connect::Api do
         end
       end
 
-      context 'bulk send with systems where only last_seen_at should be send' do
+      context 'when sending in bulk and a system which only sends last_seen_at' do
         let(:system_set) { create :system, :synced }
+        let(:systems_unset) { create_list :system, 2, :full }
 
-        let(:systems_unset) { FactoryBot.create_list(:system, 2, :with_activated_product, :with_last_seen_at, :with_hw_info, scc_synced_at: nil) }
-
-        # all systems
         let(:systems) { [system_set] + systems_unset }
 
-        # body
         let(:expected_body_set) do
           {
             login: system_set.login,
@@ -395,11 +384,10 @@ RSpec.describe SUSE::Connect::Api do
             last_seen_at: system_set.last_seen_at
           }
         end
-
         let(:expected_body_unset) do
           systems_unset.collect do |system|
-            product = system.products.first.slice(*product_keys).symbolize_keys
-            hwinfo = system.hw_info.slice(*hwinfo_keys).symbolize_keys
+            product = system.products.first.slice(*product_keys)
+            hwinfo = system.hw_info.slice(*hwinfo_keys)
             {
               login: system.login,
               password: system.password,
@@ -410,7 +398,6 @@ RSpec.describe SUSE::Connect::Api do
             }
           end
         end
-
         let(:expected_body) { { systems: [expected_body_set] + expected_body_unset } }
 
         it 'yields successful results' do

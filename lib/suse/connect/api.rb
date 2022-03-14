@@ -95,8 +95,8 @@ module SUSE
         systems_hash = systems.collect do |system|
           system_hash = system.attributes.symbolize_keys.slice(*mandatory_keys)
 
-          # If an system is updated, scc_synced_at is set to nil to
-          # indicate a full sync
+          # If a system has updated attributes other than `last_seen_at`,
+          # scc_synced_at is reset to nil, to require a full sync.
           next system_hash unless system.scc_synced_at.nil?
 
           system_hash[:hostname] = system.hostname
