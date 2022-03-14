@@ -94,8 +94,12 @@ module SUSE
 
         systems_hash = systems.collect do |system|
           system_hash = system.attributes.symbolize_keys.slice(*mandatory_keys)
+
+          # If an system is updated, scc_synced_at is set to nil to
+          # indicate a full sync
+          next system_hash unless system.scc_synced_at.nil?
+
           system_hash[:hostname] = system.hostname
-          system_hash[:regcodes] = []
           system_hash[:hwinfo] = generate_hwinfo_for(system)
           system_hash[:products] = generate_product_listing_for(system)
           system_hash

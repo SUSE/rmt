@@ -84,7 +84,7 @@ class RMT::SCC
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
     # do not sync BYOS proxy systems to SCC
-    updatable_systems = System.where(scc_synced_at: nil, proxy_byos: false)
+    updatable_systems = System.where('scc_registered_at IS NULL OR scc_synced_at > scc_registered_at', proxy_byos: false)
 
     @logger.info(_('Syncing systems to SCC'))
     scc_api_client.send_bulk_system_update(updatable_systems) do |successful_response|

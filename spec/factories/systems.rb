@@ -3,9 +3,19 @@ FactoryBot.define do
     sequence(:login) { |n| "login#{n}" }
     sequence(:password) { |n| "password#{n}" }
 
+    scc_synced_at { nil }
+
     transient do
       virtual { false }
       instance_data { nil }
+    end
+
+    trait :synced do
+      sequence(:scc_system_id) { |n| n }
+
+      after :create do |system, _|
+        system.touch(:scc_synced_at)
+      end
     end
 
     trait :byos do
