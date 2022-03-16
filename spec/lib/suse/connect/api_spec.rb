@@ -267,7 +267,8 @@ RSpec.describe SUSE::Connect::Api do
 
         it 'yields results' do
           expect do |block|
-            api_client.send_bulk_system_update(systems, &block)
+            relation = System.where(id: systems.pluck(:id))
+            api_client.send_bulk_system_update(relation, &block)
           end.to yield_with_args(expected_response)
         end
       end
@@ -295,7 +296,8 @@ RSpec.describe SUSE::Connect::Api do
 
         it 'yields successful results' do
           expect do |block|
-            api_client.send_bulk_system_update(systems, &block)
+            relation = System.where(id: systems.pluck(:id))
+            api_client.send_bulk_system_update(relation, &block)
           end.to yield_with_args(expected_response)
         end
       end
@@ -367,7 +369,10 @@ RSpec.describe SUSE::Connect::Api do
         end
 
         it 'yields successful results' do
-          expect { |b| api_client.send_bulk_system_update(systems, &b) }.to yield_with_args(expected_response)
+          expect do |block|
+            relation = System.where(id: systems.pluck(:id))
+            api_client.send_bulk_system_update(relation, &block)
+          end.to yield_with_args(expected_response)
         end
       end
 
@@ -402,7 +407,8 @@ RSpec.describe SUSE::Connect::Api do
 
         it 'yields successful results' do
           expect do |block|
-            api_client.send_bulk_system_update(systems, &block)
+            relation = System.where(id: systems.pluck(:id))
+            api_client.send_bulk_system_update(relation, &block)
           end.to yield_with_args(expected_response)
         end
       end

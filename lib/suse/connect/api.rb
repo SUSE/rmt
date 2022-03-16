@@ -62,7 +62,7 @@ module SUSE
 
       def send_bulk_system_update(systems, system_limit = nil)
         system_limit ||= BULK_SYSTEM_REQUEST_LIMIT
-        systems.each_slice(system_limit) do |batched_systems|
+        systems.in_batches(of: system_limit) do |batched_systems|
           params = prepare_payload_for_bulk_update(batched_systems)
           response = make_single_request(
             :put,
