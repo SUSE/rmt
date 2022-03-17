@@ -8,6 +8,14 @@ FactoryBot.define do
       instance_data { nil }
     end
 
+    trait :synced do
+      sequence(:scc_system_id) { |n| n }
+
+      after :create do |system, _|
+        system.touch(:scc_synced_at)
+      end
+    end
+
     trait :byos do
       proxy_byos { true }
     end
@@ -16,6 +24,12 @@ FactoryBot.define do
       after :create do |system, _|
         create(:activation, system: system, service: create(:service)) if system.services.blank?
       end
+    end
+
+    trait :full do
+      with_activated_product
+      with_hw_info
+      with_last_seen_at
     end
 
     trait :with_last_seen_at do
