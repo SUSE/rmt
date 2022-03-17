@@ -3,7 +3,7 @@ Description=RMT Mirror timer
 
 [Timer]
 OnCalendar=*-*-* 02:00:00
-RandomizedDelaySec=3h
+RandomizedDelaySec=9h
 Unit=rmt-server-mirror.service
 
 [Install]
