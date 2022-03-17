@@ -41,7 +41,7 @@ You can install and run this wizard like this:
 
     `rmt-cli systems remove SCC_e740f34145b84523a184ace764d0d597`
     
-  * `rmt-cli systems purge [--non-confirmation] [--before date]`:
+  * `rmt-cli systems purge [--no-confirmation] [--before date]`:
     Removes inactive systems.
     
     Use the `--non-confirmation` flag so the command does not ask you for
