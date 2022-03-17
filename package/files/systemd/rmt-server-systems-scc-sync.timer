@@ -3,7 +3,7 @@ Description=Sync RMT systems to SCC timer
 
 [Timer]
 OnCalendar=*-*-* 04:00:00
-RandomizedDelaySec=3h
+RandomizedDelaySec=9h
 Unit=rmt-server-systems-scc-sync.service
 
 [Install]
