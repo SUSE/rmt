@@ -44,7 +44,7 @@ You can install and run this wizard like this:
   * `rmt-cli systems purge [--no-confirmation] [--before date]`:
     Removes inactive systems.
     
-    Use the `--non-confirmation` flag so the command does not ask you for
+    Use the `--no-confirmation` flag so the command does not ask you for
     confirmation.
     
     Use the `--before date` flag to define that systems before the given date
