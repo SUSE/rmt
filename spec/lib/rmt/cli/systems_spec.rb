@@ -211,7 +211,7 @@ RSpec.describe RMT::CLI::Systems do
     context 'argument error' do
       it 'raises a CLI error when given a wrong date' do
         msg = "The given date does not follow a proper format. Ensure it follows this format '<year>-<month>-<day>'.\n"
-        expect { described_class.start(['purge', '--non-interactive', '--before', 'whatever']) }
+        expect { described_class.start(['purge', '--no-confirmation', '--before', 'whatever']) }
           .to raise_error(SystemExit)
                 .and output(msg).to_stderr
       end
@@ -239,7 +239,7 @@ RSpec.describe RMT::CLI::Systems do
       it 'removes systems by following the default definition of inactive' do
         expect(System.count).to eq 2
 
-        expect { described_class.start(['purge', '--non-interactive']) }
+        expect { described_class.start(['purge', '--no-confirmation']) }
           .to output(/#{s2.login}/).to_stdout
 
         expect(System.count).to eq 1
@@ -249,7 +249,7 @@ RSpec.describe RMT::CLI::Systems do
       it 'removes systems by the given date' do
         expect(System.count).to eq 2
 
-        argv = ['purge', '--non-interactive', '--before', Time.zone.now.strftime('%F')]
+        argv = ['purge', '--no-confirmation', '--before', Time.zone.now.strftime('%F')]
         expect { described_class.start(argv) }
           .to output(/#{s1.login}/).to_stdout
 
