@@ -205,93 +205,31 @@ RSpec.describe SUSE::Connect::Api do
       it { is_expected.to eq([ { endpoint: 'organizations/subscriptions' } ]) }
     end
 
-    describe '#forward_system_activations' do
-      subject { api_client.forward_system_activations(system) }
-
-      before do
-        stub_request(:post, 'https://scc.suse.com/connect/organizations/systems')
-          .with(
-            headers: expected_request_headers,
-            body: expected_body
-          )
-          .to_return(
-            status: 200,
-            body: expected_response.to_json,
-            headers: {}
-          )
-      end
-
-      context 'when system has no hw_info and no activations' do
-        let(:system) { FactoryBot.create(:system) }
-        let(:expected_response) { { id: 9000, login: system.login, password: system.password } }
-        let(:expected_body) do
-          {
-            login: system.login,
-            password: system.password,
-            hostname: nil,
-            regcodes: [],
-            products: [],
-            hwinfo: nil,
-            last_seen_at: nil
-          }
-        end
-
-        it { is_expected.to eq(expected_response) }
-      end
-
-      context 'when system has hw_info and no activations' do
-        let(:system) { FactoryBot.create(:system, :with_activated_product, :with_hw_info) }
-        let(:product) { system.products.first }
-        let(:hw_info) { system.hw_info }
-        let(:expected_response) { { login: system.login, password: system.password } }
-        let(:expected_body) do
-          {
-            login: system.login,
-            password: system.password,
-            hostname: nil,
-            regcodes: [],
-            products: [ %i[id identifier version arch].each_with_object({}) { |k, h| h[k] = product.send(k) } ],
-            hwinfo: %i[cpus sockets hypervisor arch uuid cloud_provider].each_with_object({}) { |k, h| h[k] = hw_info.send(k) },
-            last_seen_at: nil
-          }
-        end
-
-        it { is_expected.to eq(expected_response) }
-      end
-
-      context 'when system has activations with subscriptions' do
-        let(:subscription) { FactoryBot.create :subscription }
-        let(:system) { create :system, :with_activated_product, subscription: subscription }
-        let(:product) { system.products.first }
-        let(:product_keys) { %i[id identifier version arch] }
-
-
-        let(:expected_response) { { login: system.login, password: system.password } }
-
-        let(:expected_products) do
-          attributes = product.slice(*product_keys).symbolize_keys
-          attributes[:regcode] = subscription.regcode
-          [attributes]
-        end
-
-        let(:expected_body) do
-          {
-            login: system.login,
-            password: system.password,
-            hostname: nil,
-            regcodes: [],
-            products: expected_products,
-            hwinfo: nil,
-            last_seen_at: nil
-          }
-        end
-
-        it { is_expected.to eq(expected_response) }
-      end
-    end
-
     describe '#send_bulk_system_update' do
-      subject { api_client.send_bulk_system_update(systems) }
+      let(:expected_request_headers) do
+        {
+          'Authorization' => 'Basic ' + Base64.encode64("#{username}:#{password}").strip,
+          'User-Agent' => "RMT/#{RMT::VERSION}",
+          'RMT' => uuid,
+          'HOST-SYSTEM' => '',
+          'Accept' => 'application/vnd.scc.suse.com.v4+json'
+        }
+      end
+
+      let(:systems) { [] }
+
+      let(:system_keys) { %i[id login password last_seen_at] }
+      let(:product_keys) { %i[id identifier version arch] }
+      let(:hwinfo_keys) { %i[cpus sockets hypervisor arch uuid cloud_provider] }
+
+      let(:expected_body) { { systems: [] } }
+
+      let(:expected_response) do
+        system_hashes = systems.collect do |s|
+          s.slice(*system_keys).symbolize_keys
+        end
+        { systems: system_hashes }
+      end
 
       before do
         stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
@@ -307,30 +245,19 @@ RSpec.describe SUSE::Connect::Api do
       end
 
       context 'when a single system is bulk updated' do
-        let(:systems) { FactoryBot.create_list(:system, 1, :with_last_seen_at, :with_activated_product, :with_hw_info) }
+        let(:systems) { create_list :system, 1, :full }
         let(:product) { system.products.first }
         let(:hw_info) { system.hw_info }
-        let(:expected_response) do
-          system_hashes = systems.collect do |s|
-            s.slice(*%i[id login password last_seen_at])
-              .symbolize_keys
-              .map { |_k, v| { k: v.to_s } }
-          end
 
-          { systems: system_hashes }
-        end
-        let(:product_keys) { %i[id identifier version arch] }
-        let(:hwinfo_keys) { %i[cpus sockets hypervisor arch uuid cloud_provider] }
         let(:expected_body) do
           system_hashes = systems.collect do |system|
-            product = system.products.first.slice(*product_keys).symbolize_keys
-            hwinfo = system.hw_info.slice(*hwinfo_keys).symbolize_keys
+            product = system.products.first.slice(*product_keys)
+            hwinfo = system.hw_info.slice(*hwinfo_keys)
             {
               login: system.login,
               password: system.password,
               last_seen_at: system.last_seen_at,
               hostname: system.hostname,
-              regcodes: [],
               hwinfo: hwinfo,
               products: [product]
             }
@@ -338,34 +265,28 @@ RSpec.describe SUSE::Connect::Api do
           { systems: system_hashes }
         end
 
-        it { is_expected.to eq(expected_response) }
+        it 'yields results' do
+          expect do |block|
+            relation = System.where(id: systems.pluck(:id))
+            api_client.send_bulk_system_update(relation, &block)
+          end.to yield_with_args(expected_response)
+        end
       end
 
       context 'when sending in bulk' do
-        let(:systems) { FactoryBot.create_list(:system, 100, :with_last_seen_at, :with_activated_product, :with_hw_info) }
+        let(:systems) { create_list :system, 3, :full, scc_synced_at: nil }
         let(:product) { system.products.first }
         let(:hw_info) { system.hw_info }
-        let(:product_keys) { %i[id identifier version arch] }
-        let(:hwinfo_keys) { %i[cpus sockets hypervisor arch uuid cloud_provider] }
-        let(:expected_response) do
-          system_hashes = systems.collect do |s|
-            s.slice(*%i[id login password last_seen_at])
-              .symbolize_keys
-              .map { |_k, v| { k: v.to_s } }
-          end
 
-          { systems: system_hashes }
-        end
         let(:expected_body) do
           system_hashes = systems.collect do |system|
-            product = system.products.first.slice(*product_keys).symbolize_keys
-            hwinfo = system.hw_info.slice(*hwinfo_keys).symbolize_keys
+            product = system.products.first.slice(*product_keys)
+            hwinfo = system.hw_info.slice(*hwinfo_keys)
             {
               login: system.login,
               password: system.password,
               last_seen_at: system.last_seen_at,
               hostname: system.hostname,
-              regcodes: [],
               hwinfo: hwinfo,
               products: [product]
             }
@@ -373,13 +294,15 @@ RSpec.describe SUSE::Connect::Api do
           { systems: system_hashes }
         end
 
-        it { is_expected.to eq(expected_response) }
+        it 'yields successful results' do
+          expect do |block|
+            relation = System.where(id: systems.pluck(:id))
+            api_client.send_bulk_system_update(relation, &block)
+          end.to yield_with_args(expected_response)
+        end
       end
 
-      # Spec needs to be fixed.
       context 'when sending in bulk and encounter 413 http error code' do
-        subject { api_client.send_bulk_system_update(systems) }
-
         before do
           stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
             .with(
@@ -404,30 +327,22 @@ RSpec.describe SUSE::Connect::Api do
             )
         end
 
-        let(:subscription) { FactoryBot.create :subscription }
-        let(:systems) { FactoryBot.create_list(:system, 2, :with_activated_product, :with_last_seen_at, :with_hw_info, subscription: subscription) }
-        let(:expected_response) do
-          system_hashes = systems.reverse.take(1).collect do |s|
-            s.slice(*%i[id login password last_seen_at])
-              .symbolize_keys
-              .map { |_k, v| { k: v.to_s } }
-          end
+        let(:subscription) { create :subscription }
+        let(:systems) { create_list(:system, 2, :full, subscription: subscription, scc_synced_at: nil) }
 
-          { systems: system_hashes }
-        end
-        let(:product_keys) { %i[id identifier version arch] }
-        let(:hwinfo_keys) { %i[cpus sockets hypervisor arch uuid cloud_provider] }
+        let(:expected_response) { { systems: [systems.last.slice(*system_keys).symbolize_keys] } }
+
         let(:all_systems_payload) do
           system_hashes = systems.collect do |system|
-            product = system.products.first.slice(*product_keys).symbolize_keys
+            product = system.products.first.slice(*product_keys)
             product[:regcode] = subscription.regcode
-            hwinfo = system.hw_info.slice(*hwinfo_keys).symbolize_keys
+
+            hwinfo = system.hw_info.slice(*hwinfo_keys)
             {
               login: system.login,
               password: system.password,
               last_seen_at: system.last_seen_at,
               hostname: system.hostname,
-              regcodes: [],
               hwinfo: hwinfo,
               products: [product]
             }
@@ -437,15 +352,15 @@ RSpec.describe SUSE::Connect::Api do
 
         let(:expected_body) do
           system_hashes = systems.take(1).collect do |system|
-            product = system.products.first.slice(*product_keys).symbolize_keys
+            product = system.products.first.slice(*product_keys)
             product[:regcode] = subscription.regcode
-            hwinfo = system.hw_info.slice(*hwinfo_keys).symbolize_keys
+
+            hwinfo = system.hw_info.slice(*hwinfo_keys)
             {
               login: system.login,
               password: system.password,
               last_seen_at: system.last_seen_at,
               hostname: system.hostname,
-              regcodes: [],
               hwinfo: hwinfo,
               products: [product]
             }
@@ -453,7 +368,49 @@ RSpec.describe SUSE::Connect::Api do
           { systems: system_hashes }
         end
 
-        it { is_expected.to eq(expected_response) }
+        it 'yields successful results' do
+          expect do |block|
+            relation = System.where(id: systems.pluck(:id))
+            api_client.send_bulk_system_update(relation, &block)
+          end.to yield_with_args(expected_response)
+        end
+      end
+
+      context 'when sending in bulk and a system which only sends last_seen_at' do
+        let(:system_set) { create :system, :synced }
+        let(:systems_unset) { create_list :system, 2, :full }
+
+        let(:systems) { [system_set] + systems_unset }
+
+        let(:expected_body_set) do
+          {
+            login: system_set.login,
+            password: system_set.password,
+            last_seen_at: system_set.last_seen_at
+          }
+        end
+        let(:expected_body_unset) do
+          systems_unset.collect do |system|
+            product = system.products.first.slice(*product_keys)
+            hwinfo = system.hw_info.slice(*hwinfo_keys)
+            {
+              login: system.login,
+              password: system.password,
+              last_seen_at: system.last_seen_at,
+              hostname: system.hostname,
+              hwinfo: hwinfo,
+              products: [product]
+            }
+          end
+        end
+        let(:expected_body) { { systems: [expected_body_set] + expected_body_unset } }
+
+        it 'yields successful results' do
+          expect do |block|
+            relation = System.where(id: systems.pluck(:id))
+            api_client.send_bulk_system_update(relation, &block)
+          end.to yield_with_args(expected_response)
+        end
       end
     end
 

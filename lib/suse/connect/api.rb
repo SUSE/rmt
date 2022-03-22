@@ -60,36 +60,17 @@ module SUSE
         make_paginated_request(:get, "#{connect_api}/organizations/subscriptions")
       end
 
-      def forward_system_activations(system)
-        params = {
-          login: system.login,
-          password: system.password,
-          hostname: system.hostname,
-          regcodes: [],
-          products: generate_product_listing_for(system),
-          hwinfo: generate_hwinfo_for(system),
-          last_seen_at: system.last_seen_at
-        }
-
-        make_single_request(
-          :post,
-          "#{connect_api}/organizations/systems",
-          { body: params.to_json }
-        )
-      end
-
       def send_bulk_system_update(systems, system_limit = nil)
         system_limit ||= BULK_SYSTEM_REQUEST_LIMIT
-        last_response = nil
-        systems.each_slice(system_limit) do |batched_systems|
+        systems.in_batches(of: system_limit) do |batched_systems|
           params = prepare_payload_for_bulk_update(batched_systems)
-          last_response = make_single_request(
+          response = make_single_request(
             :put,
             "#{connect_api}/organizations/systems",
             { body: params.to_json }
           )
+          yield response
         end
-        last_response
       rescue RequestError => e
         # change some params here and start the bulk update.
         if e.response.code == 413
@@ -113,8 +94,12 @@ module SUSE
 
         systems_hash = systems.collect do |system|
           system_hash = system.attributes.symbolize_keys.slice(*mandatory_keys)
+
+          # If a system has updated attributes other than `last_seen_at`,
+          # scc_synced_at is reset to nil, to require a full sync.
+          next system_hash unless system.scc_synced_at.nil?
+
           system_hash[:hostname] = system.hostname
-          system_hash[:regcodes] = []
           system_hash[:hwinfo] = generate_hwinfo_for(system)
           system_hash[:products] = generate_product_listing_for(system)
           system_hash
