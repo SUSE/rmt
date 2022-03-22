@@ -135,20 +135,8 @@ RMT only found locally mirrored files of repositories that are marked to be mirr
       end
     end
 
-    context 'with -y' do
-      let(:argv) { ['clean', '-y'] }
-      let(:input) { 'no' }
-
-      it 'delete downloaded files for non-mirrored repositories' do
-        expect { command }.to output(expected_output).to_stdout.and output('').to_stderr
-        expect(DownloadedFile.where('local_path LIKE ?', "#{repo_1_path}%").count).to eq(0)
-        expect(DownloadedFile.where('local_path LIKE ?', "#{repo_2_path}%").count).to eq(0)
-        expect(DownloadedFile.where('local_path LIKE ?', "#{repo_3_path}%").count).to eq(1)
-      end
-    end
-
-    context 'with --no-confirm' do
-      let(:argv) { ['clean', '--no-confirm'] }
+    context 'with --no-confirmation' do
+      let(:argv) { ['clean', '--no-confirmation'] }
       let(:input) { 'no' }
 
       it 'delete downloaded files for non-mirrored repositories' do
