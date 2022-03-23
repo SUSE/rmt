@@ -2,13 +2,13 @@
 Mon Mar 14 15:06:48 UTC 2022 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Version 2.8.0
-- Add sending bulk system information to SCC if needed. Send up to date
-  last seen information to SCC
+- Forwarding information of registered systems to SCC more efficiently in batches
+- Syncing the systems' most recent last seen timestamps to SCC
 
 -------------------------------------------------------------------
 Thu Mar  7 16:38:12 UTC 2022 - Felix Schnizlein <fschnizlein@suse.com>
 
-- Add switch to disable user confirmation when cleaning repository data
+- Optional '--no-confirm' switch to skip user confirmation when cleaning repository data
 
 -------------------------------------------------------------------
 Thu Mar  3 11:06:08 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
