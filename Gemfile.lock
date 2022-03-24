@@ -98,7 +98,7 @@ GEM
       factory_bot (~> 6.2.0)
       railties (>= 5.0.0)
     fakefs (1.4.1)
-    fast_gettext (2.1.0)
+    fast_gettext (2.2.0)
     ffaker (2.20.0)
     ffi (1.15.3)
     formatador (0.2.5)
@@ -323,8 +323,8 @@ DEPENDENCIES
   config (~> 3.0, >= 2.2.1)
   coveralls (~> 0.8.21)
   factory_bot_rails (~> 6.2.0)
-  fakefs
-  fast_gettext
+  fakefs (~> 1.4)
+  fast_gettext (~> 2.2)
   ffaker
   fuubar
   gettext
