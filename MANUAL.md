@@ -41,10 +41,10 @@ You can install and run this wizard like this:
 
     `rmt-cli systems remove SCC_e740f34145b84523a184ace764d0d597`
     
-  * `rmt-cli systems purge [--non-interactive] [--before date]`:
+  * `rmt-cli systems purge [--no-confirmation] [--before date]`:
     Removes inactive systems.
     
-    Use the `--non-interactive` flag so the command does not ask you for
+    Use the `--no-confirmation` flag so the command does not ask you for
     confirmation.
     
     Use the `--before date` flag to define that systems before the given date
@@ -100,10 +100,11 @@ You can install and run this wizard like this:
 
   	`rmt-cli products show SLES/15/x86_64`
 
-  * `rmt-cli repos clean [-y|--no-confirm]`:
+  * `rmt-cli repos clean [--no-confirmation]`:
     Removes locally mirrored files of repositories which are not marked to be mirrored.
 
-	Use the `-y` or `--no-confirm` to avoid user interaction
+    Use the `--no-confirmation` to avoid user interaction and auto accept confirmation
+    dialogs.
 
   * `rmt-cli repos list [--all] [--csv]`:
     Lists the repositories that are enabled for mirroring.

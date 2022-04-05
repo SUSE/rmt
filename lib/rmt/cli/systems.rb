@@ -65,17 +65,17 @@ class RMT::CLI::Systems < RMT::CLI::Base
 
   desc 'purge', _('Removes inactive systems')
   option :before, aliases: '-b', type: :string, desc: _('Remove systems before the given date (format: "<year>-<month>-<day>")')
-  option :non_interactive, aliases: '-n', type: :boolean, default: false, desc: _("Don't ask for anything")
+  option :confirmation, type: :boolean, default: true, desc: _('Ask for confirmation or do not ask for confirmation and require no user interaction')
   long_desc <<~PURGE
     #{_('Removes old systems and their activations if they are inactive.')}
 
     #{_('By default, inactive systems are those that have not contacted in any way with RMT for the past 3 months. You can override this with the \'-b / --before\' flag.')}
 
-    #{_('The command will list you the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the \'-n / --non-interactive\' flag.')}
+    #{_('The command will list you the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the \'--no-confirmation\' flag.')}
 
     #{_('Examples')}:
 
-    $ rmt-cli systems purge --non-interactive --before 2022-02-28
+    $ rmt-cli systems purge --no-confirmation --before 2022-02-28
   PURGE
   def purge
     ask, before = purge_options
@@ -114,11 +114,9 @@ class RMT::CLI::Systems < RMT::CLI::Base
 
   # Returns the validated options expected by the `purge` subcommand.
   def purge_options
-    ask = options.non_interactive.nil? ? true : !options.non_interactive
-
     dt = options.before.to_s.to_datetime || INACTIVE.ago
 
-    [ask, dt.strftime('%F')]
+    [options.confirmation, dt.strftime('%F')]
   rescue ArgumentError
     raise RMT::CLI::Error.new(_("The given date does not follow a proper format. Ensure it follows this format '<year>-<month>-<day>'."))
   end
