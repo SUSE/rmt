@@ -2,6 +2,7 @@ FactoryBot.define do
   factory :system do
     sequence(:login) { |n| "login#{n}" }
     sequence(:password) { |n| "password#{n}" }
+    sequence(:hostname) { FFaker::Name.unique.first_name }
 
     transient do
       virtual { false }
