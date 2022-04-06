@@ -116,6 +116,13 @@ All in all, the code you might be working on sits as a volume inside of the
 Docker container. Thus, you will be able to code as usual and the Docker
 container will behave as if you were working entirely locally.
 
+#### Published container images
+Deploying RMT via containers is possible, however should not be used in production
+use-cases. Be aware that container images published on GitHub are master (nightly)
+builds of RMT. These are not official releases and are not ready for production.
+
+Tagged releases of the RMT container image can be found on the [openSUSE Registry](https://registry.opensuse.org/).
+
 ## API documentation
 
 RMT partially implements the [SUSE Customer Center API](https://scc.suse.com/connect/v4/documentation). You can read the details of each endpoint to find out whether they are supported by RMT.
