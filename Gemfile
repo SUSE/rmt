@@ -5,7 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'puma', '~> 5.5.1'
+gem 'puma', '~> 5.6.2'
 gem 'mysql2', '~> 0.5.3'
 
 gem 'nokogiri', '~> 1.12.5'
@@ -59,7 +59,7 @@ group :test do
   gem 'factory_bot_rails', '~> 6.2.0'
   gem 'ffaker'
   gem 'rspec-its'
-  gem 'fakefs', require: 'fakefs/safe'
+  gem 'fakefs', '~> 1.4', require: 'fakefs/safe'
   gem 'shoulda-matchers'
   gem 'webmock'
   gem 'fuubar'
@@ -79,13 +79,11 @@ gem 'typhoeus', '~> 1.1', '>= 1.1.2'
 gem 'active_model_serializers'
 
 # i18n
-gem 'fast_gettext'
+gem 'fast_gettext', '~> 2.2'
 gem 'gettext_i18n_rails'
 
 gem 'config', '~> 3.0', '>= 2.2.1'
 gem 'terminal-table', '~> 3.0'
-
-
 
 # needed by rmt-server-pubcloud
 gem 'jwt', '~> 2.1'

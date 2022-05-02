@@ -14,6 +14,8 @@ class RMT::CLI::Repos < RMT::CLI::ReposBase
   map 'ls' => :list
 
   desc 'clean', _('Removes locally mirrored files of repositories which are not marked to be mirrored')
+  option :confirmation, type: :boolean, default: true, desc: _('Ask for confirmation or do not ask for confirmation and require no user interaction')
+
   def clean
     base_directory = RMT::DEFAULT_MIRROR_DIR
 
@@ -40,10 +42,12 @@ class RMT::CLI::Repos < RMT::CLI::ReposBase
     print _('Enter a value:')
     print "\e[22m\s\s"
 
-    input = $stdin.gets.to_s.strip
-    if input != 'yes'
-      puts "\n" + _('Clean cancelled.')
-      return
+    if options.confirmation
+      input = $stdin.gets.to_s.strip
+      if input != 'yes'
+        puts "\n" + _('Clean cancelled.')
+        return
+      end
     end
 
     print "\n"
