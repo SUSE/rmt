@@ -81,7 +81,15 @@ if [ ! -x $CURL ]; then
     exit 1
 fi
 
+echo "Importing repomd.xml.key"
 $RPM --import ${REGURL}/repo/SUSE/Updates/RES/8/x86_64/update/repodata/repomd.xml.key
+
+echo "Disabling all repositories"                                                                                                    
+sed -i 's/^enabled=1/enabled=0/' /etc/yum.repos.d/*                                                                  
+
+# on Centos /usr/share/redhat-release is a file, on RHEL and RES it is a directory
+# so this is CentOS only workaround
+rm -f /usr/share/redhat-release
 
 if [ ! -x $SUSECONNECT ]; then
     echo "Downloading SUSEConnect"
@@ -93,18 +101,10 @@ if [ ! -x $SUSECONNECT ]; then
 
     $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/RES/8/x86_64/update
     $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/RES-AS/8/x86_64/update
-    $DNF install ${AUTOACCEPT} SUSEConnect sles_es-release librepo-1.9.2
+    $DNF install ${AUTOACCEPT} --allowerasing sles_es-release
+    $DNF install ${AUTOACCEPT} SUSEConnect librepo
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_RES_8_x86_64_update"
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_RES-AS_8_x86_64_update"
-fi
-
-#iso we ship has old version of librepo installed that doesn't handle tokens in url properly
-TMP=`rpm -q librepo`;
-
-if [ $TMP = "librepo-1.9.2-1.el8.x86_64" ]; then
-   $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/RES/8/x86_64/update
-   $DNF update ${AUTOACCEPT} librepo
-   $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_RES_8_x86_64_update"
 fi
 
 $CURL -s -S $REGURL/tools/rmt-client-setup --output rmt-client-setup
