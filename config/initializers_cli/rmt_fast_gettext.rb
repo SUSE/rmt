@@ -17,7 +17,7 @@ module FastGettextPatch
   require 'fast_gettext/vendor/poparser'
   refine FastGettext::GetText::PoParser do
     def detect_file_encoding(po_file)
-      open(po_file, encoding: 'ASCII-8BIT') do |input|
+      File.open(po_file, encoding: 'ASCII-8BIT') do |input|
         input.each_line do |line|
           return Encoding.find(Regexp.last_match(1)) if /"Content-Type:.*\scharset=(.*)\\n"/ =~ line
         end
