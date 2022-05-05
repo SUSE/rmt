@@ -10,3 +10,21 @@ FastGettext.add_text_domain('rmt', path: File.join(rmt_path, 'locale'), type: :p
 FastGettext.default_locale = :en
 FastGettext.available_locales = FastGettext.default_available_locales = %w[en de fr ja es pt_BR zh_CN]
 FastGettext.text_domain = FastGettext.default_text_domain = 'rmt'
+
+
+
+module FastGettextPatch
+  require 'fast_gettext/vendor/poparser'
+  refine FastGettext::GetText::PoParser do
+    def detect_file_encoding(po_file)
+      open(po_file, encoding: 'ASCII-8BIT') do |input|
+        input.each_line do |line|
+          return Encoding.find(Regexp.last_match(1)) if /"Content-Type:.*\scharset=(.*)\\n"/ =~ line
+        end
+      end
+      Encoding.default_external
+    end
+  end
+end
+
+using FastGettextPatch
