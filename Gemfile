@@ -8,6 +8,7 @@ end
 gem 'puma', '~> 5.6.2'
 gem 'mysql2', '~> 0.5.3'
 
+gem 'webrick', '~> 1.7.0'
 gem 'nokogiri', '~> 1.12.5'
 gem 'thor'
 gem 'activesupport', '~> 6.1.3'

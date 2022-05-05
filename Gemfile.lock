@@ -305,6 +305,7 @@ GEM
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
+    webrick (1.7.0)
     yard (0.9.25)
     zeitwerk (2.5.4)
 
@@ -360,6 +361,7 @@ DEPENDENCIES
   vcr (~> 6.0)
   versionist
   webmock
+  webrick (~> 1.7.0)
 
 BUNDLED WITH
    1.17.3
