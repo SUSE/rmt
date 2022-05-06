@@ -15,7 +15,7 @@ describe DownloadedFile, type: :model do
 
     context 'when there are no records with the specified local path' do
       it 'creates a new record' do
-        expect { described_class.track_file(file_attributes) }
+        expect { described_class.track_file(**file_attributes) }
           .to change { described_class.count }.by(1)
 
         expect(described_class.find_by(local_path: file_attributes[:local_path]))
@@ -41,7 +41,7 @@ describe DownloadedFile, type: :model do
           existent_record = described_class.find_by(local_path: file_attributes[:local_path])
 
           response = nil
-          expect { response = described_class.track_file(file_attributes) }
+          expect { response = described_class.track_file(**file_attributes) }
             .not_to change { described_class.count }
 
           expect(response).to eq(existent_record)
@@ -54,7 +54,7 @@ describe DownloadedFile, type: :model do
           updated_file_attributes = file_attributes.merge(size: 2020)
 
           response = nil
-          expect { response = described_class.track_file(updated_file_attributes) }
+          expect { response = described_class.track_file(**updated_file_attributes) }
             .not_to change { described_class.count }
 
           expect(response).to have_attributes(
@@ -71,8 +71,8 @@ describe DownloadedFile, type: :model do
         duplicated_file_attributes = file_attributes
           .merge(local_path: test_file.sub('apples', 'oranges'))
 
-        described_class.track_file(file_attributes)
-        described_class.track_file(duplicated_file_attributes)
+        described_class.track_file(**file_attributes)
+        described_class.track_file(**duplicated_file_attributes)
 
         files_with_duplicated_checksum = described_class.where(
           checksum: file_attributes[:checksum],
