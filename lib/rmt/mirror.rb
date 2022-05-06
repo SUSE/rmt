@@ -159,6 +159,7 @@ class RMT::Mirror
   end
 
   def mirror_packages(metadata_files, repository_dir, repository_url)
+    attempts ||= 5
     package_references = parse_packages_metadata(metadata_files)
 
     package_file_references = package_references.map do |reference|
@@ -171,7 +172,15 @@ class RMT::Mirror
 
     raise _('Failed to download %{failed_count} files') % { failed_count: failed_downloads.size } unless failed_downloads.empty?
   rescue StandardError => e
-    raise RMT::Mirror::Exception.new(_('Error while mirroring data: %{error}') % { error: e.message })
+    attempts -= 1
+    n_seconds = 2
+    message ||= e.message
+    raise RMT::Mirror::Exception.new(_('Error while mirroring data: %{error}') % { error: message }) if attempts == 0
+
+    logger.warn _('Mirroring package download failed with %{message}. Retrying after %{seconds} seconds' % { message: message,
+                                                                                                             seconds: n_seconds })
+    sleep(n_seconds)
+    retry if attempts > 0
   end
 
   def parse_packages_metadata(metadata_references)

@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri May  6 21:19:07 UTC 2022 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Mirror package retry
+
+-------------------------------------------------------------------
 Mon Jan 31 08:40:26 UTC 2022 - Dominique Leuenberger <dimstar@opensuse.org>
 
 - Fix build using ruby 3.x (boo#1195318).

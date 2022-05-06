@@ -350,6 +350,11 @@ RSpec.describe RMT::Mirror do
             raise(RMT::Downloader::Exception, "418 - I'm a teapot") if args[1].local_path =~ /rpm$/
             klass.call(*args)
           end
+
+          expect_any_instance_of(described_class).to(
+            receive(:sleep).with(2).exactly(4).times
+            )
+
           expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
         end
 
@@ -359,6 +364,9 @@ RSpec.describe RMT::Mirror do
             raise(RMT::ChecksumVerifier::Exception, "Checksum doesn't match") if args[1].local_path =~ /rpm$/
             klass.call(*args)
           end
+          expect_any_instance_of(described_class).to(
+            receive(:sleep).exactly(4).times
+            )
           expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
         end
       end
