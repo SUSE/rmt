@@ -268,7 +268,7 @@ RSpec.describe RMT::Mirror do
         before do
           allow_any_instance_of(RMT::Downloader).to receive(:download).and_call_original
           expect_any_instance_of(RMT::Downloader)
-            .to receive(:download)
+            .to receive(:download).exactly(6).times
             .with(file_reference_containing_path('repodata/repomd.xml'))
             .and_raise(RMT::Downloader::Exception, "418 - I'm a teapot")
         end
@@ -352,9 +352,8 @@ RSpec.describe RMT::Mirror do
           end
 
           expect_any_instance_of(described_class).to(
-            receive(:sleep).with(2).exactly(4).times
+            receive(:sleep).with(2).exactly(5).times
             )
-
           expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
         end
 
@@ -365,7 +364,7 @@ RSpec.describe RMT::Mirror do
             klass.call(*args)
           end
           expect_any_instance_of(described_class).to(
-            receive(:sleep).exactly(4).times
+            receive(:sleep).exactly(5).times
             )
           expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
         end
@@ -793,11 +792,14 @@ RSpec.describe RMT::Mirror do
 
       it 'raises RMT::Mirror::Exception' do
         expect(logger).to receive(:info).with(/Mirroring repository/).once
-        expect(logger).to receive(:warn).with('Mirroring metadata signature/key failed with 502. Retrying after 2 seconds').exactly(1).time
+        expect(logger).to receive(:warn).with(
+          'Mirroring metadata signature/key failed with: Downloading repo signature/key failed with HTTP code 502. ' \
+            'Retrying after 2 seconds'
+          ).exactly(5).times
         expect(logger).to receive(:info).with(/↓/).at_least(1).times
 
         expect_any_instance_of(described_class).to(
-          receive(:mirror_metadata).exactly(2).times.and_call_original
+          receive(:sleep).exactly(5).times.and_call_original
         )
 
         allow_any_instance_of(RMT::Downloader).to receive(:download).and_wrap_original do |klass, *args|
@@ -808,6 +810,7 @@ RSpec.describe RMT::Mirror do
           end
         end
 
+        # rmt_mirror.mirror(**mirror_params)
         expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(
           RMT::Mirror::Exception,
            'Error while mirroring metadata: Downloading repo signature/key failed with HTTP code 502'
