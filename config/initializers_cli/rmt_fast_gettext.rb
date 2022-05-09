@@ -19,7 +19,8 @@ module FastGettextPatch
     def detect_file_encoding(po_file)
       File.open(po_file, encoding: 'ASCII-8BIT') do |input|
         input.each_line do |line|
-          return Encoding.find(Regexp.last_match(1)) if /"Content-Type:.*\scharset=(.*)\\n"/ =~ line
+          # return Encoding.find(Regexp.last_match(1)) if /"Content-Type:.*\scharset=(.*)\\n"/ =~ line
+          return Encoding.find(Regexp.last_match(1)) if %r{/"Content-Type:.*\scharset=(.*)\\n"/} =~ line
         end
       end
       Encoding.default_external

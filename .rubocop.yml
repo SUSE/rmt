@@ -9,7 +9,7 @@ inherit_mode:
     - Exclude
 
 AllCops:
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 3.0
   Exclude:
     - .bundle/**/*
     - db/schema.rb
