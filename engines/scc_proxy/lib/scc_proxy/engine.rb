@@ -17,7 +17,7 @@ NET_HTTP_ERRORS = [
   Net::HTTPHeaderSyntaxError,
   Net::ProtocolError,
   Net::OpenTimeout,
-  Net::HTTPClientException,
+  Net::HTTPServerException,
   Net::HTTPFatalError,
   OpenSSL::SSL::SSLError,
   Errno::EHOSTUNREACH,
@@ -205,7 +205,9 @@ module SccProxy
 
         def has_no_regcode?(auth_header)
           auth_header ||= '='
-          auth_header = auth_header[(auth_header.index('=') + 1)..]
+          # rubocop:disable Style/SlicingWithRange
+          auth_header = auth_header[(auth_header.index('=') + 1)..-1]
+          # rubocop:enable Style/SlicingWithRange
           auth_header.empty?
         end
       end
