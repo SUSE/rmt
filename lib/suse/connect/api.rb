@@ -31,6 +31,9 @@ module SUSE
 
       UUID_FILE_LOCATION = '/var/lib/rmt/system_uuid'.freeze
 
+      # Amount of systems per update request
+      BULK_SYSTEM_REQUEST_LIMIT = 50
+
       def initialize(username, password)
         @username = username
         @password = password
@@ -57,22 +60,24 @@ module SUSE
         make_paginated_request(:get, "#{connect_api}/organizations/subscriptions")
       end
 
-      def forward_system_activations(system)
-        params = {
-          login: system.login,
-          password: system.password,
-          hostname: system.hostname,
-          regcodes: [],
-          products: generate_product_listing_for(system),
-          hwinfo: generate_hwinfo_for(system),
-          last_seen_at: system.last_seen_at
-        }
-
-        make_single_request(
-          :post,
-          "#{connect_api}/organizations/systems",
-          { body: params.to_json }
-        )
+      def send_bulk_system_update(systems, system_limit = nil)
+        system_limit ||= BULK_SYSTEM_REQUEST_LIMIT
+        systems.in_batches(of: system_limit) do |batched_systems|
+          params = prepare_payload_for_bulk_update(batched_systems)
+          response = make_single_request(
+            :put,
+            "#{connect_api}/organizations/systems",
+            { body: params.to_json }
+          )
+          yield response
+        end
+      rescue RequestError => e
+        # change some params here and start the bulk update.
+        if e.response.code == 413
+          system_limit = e.response.headers['X-Payload-Entities-Max-Limit'].to_i
+          return send_bulk_system_update(systems, system_limit)
+        end
+        raise e
       end
 
       def forward_system_deregistration(scc_system_id)
@@ -83,6 +88,25 @@ module SUSE
       end
 
       protected
+
+      def prepare_payload_for_bulk_update(systems)
+        mandatory_keys = %i[login password last_seen_at]
+
+        systems_hash = systems.collect do |system|
+          system_hash = system.attributes.symbolize_keys.slice(*mandatory_keys)
+
+          # If a system has updated attributes other than `last_seen_at`,
+          # scc_synced_at is reset to nil, to require a full sync.
+          next system_hash unless system.scc_synced_at.nil?
+
+          system_hash[:hostname] = system.hostname
+          system_hash[:hwinfo] = generate_hwinfo_for(system)
+          system_hash[:products] = generate_product_listing_for(system)
+          system_hash
+        end
+
+        { systems: systems_hash }
+      end
 
       def generate_product_listing_for(system)
         product_keys = %i[id identifier version arch]

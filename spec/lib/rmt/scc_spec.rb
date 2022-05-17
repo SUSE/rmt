@@ -89,10 +89,7 @@ describe RMT::SCC do
     allow(api_double).to receive(:list_subscriptions).and_return subscriptions
     allow(api_double).to receive(:list_orders).and_return []
 
-    # disable output to stdout while running specs
-    allow(STDOUT).to receive(:puts)
-    allow(STDOUT).to receive(:write)
-    # disable Logger output while running tests
+    # capture Logger output while running tests
     allow(RMT::Logger).to receive(:new).and_return(logger)
   end
 
@@ -361,7 +358,7 @@ describe RMT::SCC do
       end
 
       it "doesn't sync systems" do
-        expect(api_double).not_to receive(:forward_system_activations)
+        expect(api_double).not_to receive(:send_bulk_system_update)
         described_class.new.sync_systems
       end
 
@@ -382,16 +379,16 @@ describe RMT::SCC do
 
       context 'when syncing succeeds' do
         before do
-          expect(api_double).to receive(:forward_system_activations).with(system).and_return(
-            {
+          expect(api_double).to receive(:send_bulk_system_update).with([system]).and_yield({
+            systems: [{
               id: scc_system_id,
-              login: 'test',
-              password: 'test'
-            }
-          )
+              login: system.login,
+              password: system.password
+            }]
+          })
           expect(api_double).to receive(:forward_system_deregistration).with(deregistered_system.scc_system_id)
 
-          expect(logger).to receive(:info).with(/Syncing system/)
+          expect(logger).to receive(:info).with('Syncing 1 updated system(s) to SCC')
           expect(logger).to receive(:info).with(/Syncing de-registered system/)
           described_class.new.sync_systems
         end
@@ -413,8 +410,14 @@ describe RMT::SCC do
 
       context 'when syncing fails' do
         before do
-          expect(api_double).to receive(:forward_system_activations).with(system).and_raise(SUSE::Connect::Api::RequestError, 'Sync error')
-          expect(logger).to receive(:info).with(/Syncing system/)
+          expect(api_double).to receive(:send_bulk_system_update).with([system]).and_yield({
+            systems: [{
+              id: 3000,
+              login: 'foo',
+              password: 'bar'
+            }]
+          })
+          expect(logger).to receive(:info).with('Syncing 1 updated system(s) to SCC')
           expect(logger).to receive(:error).with(/Failed to sync system/)
           described_class.new.sync_systems
         end
@@ -425,6 +428,28 @@ describe RMT::SCC do
           system.reload
           expect(system.scc_synced_at).to be(nil)
         end
+      end
+    end
+
+    context 'when system syncing is not specified (legacy config file from before system syncing was implemented)' do
+      before do
+        allow(Settings).to receive(:scc).and_return OpenStruct.new(
+          username: 'foo',
+          password: 'bar'
+        )
+      end
+
+      let(:system) { FactoryBot.create(:system) }
+
+      it 'syncs systems' do
+        expect(api_double).to receive(:send_bulk_system_update).with([system]).and_yield(
+          systems: [{
+            id: 10,
+            login: 'test',
+            password: 'test'
+          }]
+        )
+        described_class.new.sync_systems
       end
     end
   end

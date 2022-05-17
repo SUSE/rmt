@@ -21,7 +21,7 @@ class AddUniquenessToDownloadedFilesLocalPath < ActiveRecord::Migration[5.2]
 
     # Add unique index to `local_path`
     logger.info(_('Adding an unique index to `downloaded_file.local_path`...'))
-    remove_index :downloaded_files, name: :index_downloaded_files_on_local_path
+    remove_index :downloaded_files, name: :index_downloaded_files_on_local_path, if_exists: true
     add_index :downloaded_files, :local_path, unique: true
   end
 end
