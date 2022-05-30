@@ -388,7 +388,7 @@ describe RMT::SCC do
           })
           expect(api_double).to receive(:forward_system_deregistration).with(deregistered_system.scc_system_id)
 
-          expect(logger).to receive(:info).with(/Syncing system/)
+          expect(logger).to receive(:info).with('Syncing 1 updated system(s) to SCC')
           expect(logger).to receive(:info).with(/Syncing de-registered system/)
           described_class.new.sync_systems
         end
@@ -417,7 +417,7 @@ describe RMT::SCC do
               password: 'bar'
             }]
           })
-          expect(logger).to receive(:info).with(/Syncing system/)
+          expect(logger).to receive(:info).with('Syncing 1 updated system(s) to SCC')
           expect(logger).to receive(:error).with(/Failed to sync system/)
           described_class.new.sync_systems
         end
