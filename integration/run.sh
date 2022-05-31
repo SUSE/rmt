@@ -5,6 +5,8 @@ rm -r /tmp/rmt-server/*
 cp -r /tmp/workdir/* /tmp/rmt-server
 chown -R scc /tmp/rmt-server
 
+cd /tmp/rmt-server/
+NOKOGIRI_USE_SYSTEM_LIBRARIES=1 bundle install
 make dist
 mkdir ~/obs
 cd ~/obs
