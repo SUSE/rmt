@@ -12,7 +12,7 @@ jobs:
     strategy:
       max-parallel: 3
       matrix:
-        ruby-version: ['2.5.8', '2.5.9', '2.7.2']
+        ruby-version: ['2.5.8', '2.5.9', '2.7.6']
 
     services:
       mysql:
@@ -67,6 +67,7 @@ jobs:
           bundle exec rspec --format documentation
       - name: Run PubCloud engines tests
         env:
+          RUBYOPT: '-W0'
           RAILS_ENV: test
         run: |
           bundle exec rails db:migrate
