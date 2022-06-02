@@ -10,7 +10,8 @@ class RMT::Mirror
   include RMT::Deduplicator
   include RMT::FileValidator
 
-  MIRROR_METADATA_RETRIES = 5
+  MIRROR_RETRIES = 5
+  SLEEP_TIME_RETRY = 2
 
   def initialize(mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, logger:, mirror_src: false, airgap_mode: false)
     @mirroring_base_dir = mirroring_base_dir
@@ -86,7 +87,7 @@ class RMT::Mirror
   end
 
   def mirror_metadata(repository_dir, repository_url, temp_metadata_dir)
-    attempts ||= MIRROR_METADATA_RETRIES
+    remaining_attempts ||= MIRROR_RETRIES
     mirroring_paths = {
       base_url: URI.join(repository_url),
       base_dir: temp_metadata_dir,
@@ -124,18 +125,17 @@ class RMT::Mirror
     metadata_files
   rescue StandardError => e
     message ||= e.message
-    raise RMT::Mirror::Exception.new(_('Error while mirroring metadata: %{error}') % { error: message }) if attempts == 0
+    raise RMT::Mirror::Exception.new(_('Error while mirroring metadata: %{error}') % { error: message }) if remaining_attempts == 0
 
-    attempts -= 1
-    n_seconds = 2
+    remaining_attempts -= 1
     logger.warn _('Mirroring metadata signature/key failed with: %{message}. Retrying after %{seconds} seconds' % { message: message,
-                                                                                                                    seconds: n_seconds })
-    sleep(n_seconds)
+                                                                                                                    seconds: SLEEP_TIME_RETRY })
+    sleep(SLEEP_TIME_RETRY)
     retry
   end
 
   def mirror_license(repository_dir, repository_url, temp_licenses_dir)
-    attempts ||= MIRROR_METADATA_RETRIES
+    remaining_attempts ||= MIRROR_RETRIES
     mirroring_paths = {
       base_url: repository_url.chomp('/') + '.license/',
       base_dir: temp_licenses_dir,
@@ -155,18 +155,17 @@ class RMT::Mirror
       .map { |relative_path| FileReference.new(relative_path: relative_path, **mirroring_paths) }
     downloader.download_multi(license_files)
   rescue StandardError => e
-    raise RMT::Mirror::Exception.new(_('Error while mirroring license: %{error}') % { error: e.message }) if attempts == 0
+    raise RMT::Mirror::Exception.new(_('Error while mirroring license: %{error}') % { error: e.message }) if remaining_attempts == 0
 
-    attempts -= 1
-    n_seconds = 2
-    logger.warn _('Mirroring metadata signature/key failed with %{message}. Retrying after %{seconds} seconds' % { message: e.message,
-                                                                                                                   seconds: n_seconds })
-    sleep(n_seconds)
+    remaining_attempts -= 1
+    logger.warn _('Mirroring metadata signature/key failed with %{message}. Retrying after %{secondsSLEEP_TIME_RETRY} seconds' % { message: e.message,
+                                                                                                                                   seconds: SLEEP_TIME_RETRY })
+    sleep(SLEEP_TIME_RETRY)
     retry
   end
 
   def mirror_packages(metadata_files, repository_dir, repository_url)
-    attempts ||= MIRROR_METADATA_RETRIES
+    remaining_attempts ||= MIRROR_RETRIES
     package_references = parse_packages_metadata(metadata_files)
 
     package_file_references = package_references.map do |reference|
@@ -180,13 +179,12 @@ class RMT::Mirror
     raise _('Failed to download %{failed_count} files') % { failed_count: failed_downloads.size } unless failed_downloads.empty?
   rescue StandardError => e
     message ||= e.message
-    raise RMT::Mirror::Exception.new(_('Error while mirroring data: %{error}') % { error: message }) if attempts == 0
+    raise RMT::Mirror::Exception.new(_('Error while mirroring data: %{error}') % { error: message }) if remaining_attempts == 0
 
-    attempts -= 1
-    n_seconds = 2
+    remaining_attempts -= 1
     logger.warn _('Mirroring packages failed with {message}. Retrying after %{seconds} seconds' % { message: message,
-                                                                                                    seconds: n_seconds })
-    sleep(n_seconds)
+                                                                                                    seconds: SLEEP_TIME_RETRY })
+    sleep(SLEEP_TIME_RETRY)
     retry
   end
 

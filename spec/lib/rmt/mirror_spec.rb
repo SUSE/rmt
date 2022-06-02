@@ -810,7 +810,6 @@ RSpec.describe RMT::Mirror do
           end
         end
 
-        # rmt_mirror.mirror(**mirror_params)
         expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(
           RMT::Mirror::Exception,
            'Error while mirroring metadata: Downloading repo signature/key failed with HTTP code 502'
