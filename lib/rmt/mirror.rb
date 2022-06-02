@@ -179,7 +179,7 @@ class RMT::Mirror
     raise _('Failed to download %{failed_count} files') % { failed_count: failed_downloads.size } unless failed_downloads.empty?
   rescue StandardError => e
     message ||= e.message
-    raise RMT::Mirror::Exception.new(_('Error while mirroring data: %{error}') % { error: message }) if remaining_attempts == 0
+    raise RMT::Mirror::Exception.new(_('Error while mirroring packages: %{error}') % { error: message }) if remaining_attempts == 0
 
     remaining_attempts -= 1
     logger.warn _('Mirroring packages failed with {message}. Retrying after %{seconds} seconds' % { message: message,

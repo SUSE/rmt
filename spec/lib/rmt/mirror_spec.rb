@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'rails_helper'
 
 RSpec.describe RMT::Mirror do
@@ -354,7 +355,7 @@ RSpec.describe RMT::Mirror do
           expect_any_instance_of(described_class).to(
             receive(:sleep).with(2).exactly(5).times
             )
-          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
+          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring packages: Failed to download 6 files')
         end
 
         it 'handles RMT::ChecksumVerifier::Exception' do
@@ -366,7 +367,7 @@ RSpec.describe RMT::Mirror do
           expect_any_instance_of(described_class).to(
             receive(:sleep).exactly(5).times
             )
-          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
+          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring packages: Failed to download 6 files')
         end
       end
     end
