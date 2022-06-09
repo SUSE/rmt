@@ -1,0 +1,68 @@
+---
+# Description: Molecule converge.yml playbook used to run an Ansible role in a testing scenario
+
+- name: Converge
+  hosts: all
+  gather_facts: true
+  vars:
+    disk_create: true                         # Set to true to enable creation
+    disk_resize: false                          # Set to true to enable resizing
+    task_delegation: 'localhost'                # Set the delegation host for performing cloud provider interface tasks
+    disk_encryption: false
+    disk_encryption_key_default: ''
+    disk_encryption_keyring_default: ''
+    disk_preset_selection: 'custom'
+  
+  pre_tasks:
+    - name: Include SUSE RMT varibles
+      include_vars:
+        file: ../../vars/businesses/build-development/suse-rmt.yml
+    
+    - name: Include disk management role to create/resize disks, including attachment, partitioning, formatting, and mounting
+      include_role:
+        name: disk-management
+      vars:
+        custom:
+          data:                                   # name of the logical volume group
+            mount_point: '/data'                  # mount point on host
+            size: 50                               # size of volume in gigabytes
+
+    - name: Run the 'vault-auth' role to pull secrets from Vault
+      include_role:
+        name: vault-auth
+      when: vault_secrets is defined and vault_secrets is not none
+
+    - name: Run the 'repository-management' role to enable base repositories
+      include_role:
+        name: repository-management
+      vars:
+        application_preset_selection: ['base','epel']
+        repo_enable: 'true'
+    
+    - name: Disable FIPS to run docker deploy role
+      include_role:
+        name: fips
+        apply:
+          become: true
+      vars:
+        fips_mode_enabled: false
+        fips_reboot_host: true
+
+    - name: Run the 'docker-configure' role to enable and install Docker
+      include_role:
+        name: docker-configure
+        apply:
+          become: true
+      vars:
+        docker_repository_disable: false
+
+  tasks:
+    - name: Include the docker-deploy role
+      include_role:
+        name: docker-deploy
+        apply:
+          become: true
+      vars:
+        docker_build_image: true
+        docker_create_container: true
+        

@@ -1,0 +1,25 @@
+FROM {{ docker_build_from_image }}
+
+WORKDIR /usr/share/rmt
+
+RUN zypper --non-interactive install --no-recommends timezone \
+        libffi-devel \
+        zlib-devel \
+        rmt-server \
+        libxml2-devel \
+        libxslt-devel \
+        cron \
+        libmariadb-devel \
+        mariadb-client \
+        vim \
+        ruby2.5 \
+        ruby2.5-devel \
+        ruby2.5-rubygem-bundler &&\
+    zypper --non-interactive install -t pattern devel_basis
+
+# Change owner of the repo directory in order to allow to write to the directory when mirroring packages
+RUN chown _rmt:root /var/lib/rmt/public/repo/
+
+# Copy Repository Management Tool (RMT) configuration to /etc/rmt.conf
+COPY rmt.conf /etc/rmt.conf
+RUN chown _rmt:root /etc/rmt.conf

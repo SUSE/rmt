@@ -1,0 +1,92 @@
+---
+# Description: Variables file defining what actions to perform and what Docker images or AWS EC2 instances
+#              to create for the given Molecule test scenario.
+# Tests:
+#   - Docker Compose Configuration Exists
+#   - SUSE RMT Container Is Running
+#   - MariaDB Docker Containers are running
+#   - Dockerfile template does not exist
+#   - RMT configuration file exists
+#   - RMT SQL schema file exists
+#   - rmt-cli tool is running on container
+scenario:
+  name: ec2-docker-deploy-suse-container
+  create_sequence:
+    - dependency
+    - create
+    - prepare
+  check_sequence:
+    - dependency
+    - cleanup
+    - destroy
+    - create
+    - prepare
+    - converge
+    - check
+    - destroy
+  converge_sequence:
+    - dependency
+    - create
+    - prepare
+    - converge
+  destroy_sequence:
+    - dependency
+    - cleanup
+    - destroy
+  test_sequence:
+    - dependency
+    - lint
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - idempotence    # NOTE: A lot of our roles aren't truly idempotent as far as Molecule understands, so you might have to comment this line out.
+    - side_effect
+    - verify
+    - cleanup
+    - destroy
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+platforms:
+  - name: instance
+    box: vagrantbox_name
+    memory: 4096
+    cpus: 2
+    interfaces:
+      # `network_name` is the required identifier, other keys map to arguments.
+      - network_name: private_network
+        ip: 192.168.50.20
+        guest: 80
+        host: 8080
+    # List of raw Vagrant `config` options.
+    provider_raw_config_args:
+      - "customize [ 'modifyvm', :id, '--natdnshostresolver1', 'on' ]"
+    # Dictionary of `config` options.
+    config_options:
+      ssh.keep_alive: yes
+provisioner:
+  name: ansible
+  ansible_args:
+    - -e vault_token=${VAULT_TOKEN}
+    - -e aws_access_key=${AWS_ACCESS_KEY_ID}
+    - -e aws_secret_key=${AWS_SECRET_ACCESS_KEY}
+    - -e aws_session_token=${AWS_SESSION_TOKEN}
+    - -e aws_region=${AWS_REGION}
+
+  lint:
+    name: ansible-lint
+    enabled: false
+  playbooks:
+    create: ../../../../testing/molecule/aws-ec2/create.yml
+    prepare: ../../../../testing/molecule/aws-ec2/prepare.yml
+    converge: ./converge.yml
+    verify: ./verify.yml
+    cleanup: ../../../../testing/molecule/aws-ec2/cleanup.yml
+    destroy: ../../../../testing/molecule/aws-ec2/destroy.yml
+verifier:
+  name: ansible
+  enabled: true

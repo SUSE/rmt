@@ -1,0 +1,98 @@
+---
+# Defaults file for the 'docker-deploy' role.
+
+##################################
+# Ansible role related variables #
+##################################
+
+# The AWS region that the AWS ECR registry resides in.
+aws_region: 'REDACTED'
+
+# Whether to have the role become root when running the Docker commands on the target host.
+docker_container_become: false
+
+# The name of the Docker registry to log into and pull the Docker image from.
+docker_registry_name: ''
+
+# The username to use when authenticating with the Docker registry specified in the 'docker_registry_name' variable.
+# NOTE: Not used when AWS ECR is used as the Docker registry.
+#       This variable's value should be provided to the role in a secure manner such as a 'vars_prompt' or use of
+#       the 'vault-auth' role. The password should NOT be saved in this file.
+docker_registry_username: ''
+
+# The password to use when authenticating with the Docker registry specified in the 'docker_registry_name' variable.
+# NOTE: Not used when AWS ECR is used as the Docker registry.
+#       This variable's value should be provided to the role in a secure manner such as a 'vars_prompt' or use of
+#       the 'vault-auth' role. The password should NOT be saved in this file.
+docker_registry_password: ''
+
+# The 'registry/name' of the Docker image to push or pull. For example: 'gitlab/gitlab-ee:latest'
+docker_image: ''
+
+# set the bundle as env var for non-login account
+# when defined, sets AWS_CA_BUNDLE environment variable with supplied filepath to ensure 
+# Docker can interact with AWS ECR Docker registry
+docker_registry_aws_ca_bundle_path: ''
+
+# The region for the docker container to send logs to cloudwatch
+docker_logs_region: ''
+
+
+##################################
+# Docker Build related variables #
+##################################
+
+# Whether to use Docker Build to create a Docker image from a dockerfile.
+docker_build_image: false
+
+# The name of the dockerfile within the 'templates/' directory to use when building a Docker image (For example, 'concourse-ubuntu/dockerfile.j2').
+docker_build_template_filename: ''
+
+# Whether to push the Docker image to the registry after it is built via Docker Build.
+docker_build_push: false
+
+# The name of the Docker image to build from (For example, 'ubuntu:18.04').
+docker_build_from_image: ''
+
+
+
+###############################
+# Container related variables #
+###############################
+
+# Whether to create a Docker container using either of the two methods: Docker CLI or Docker Compose.
+docker_create_container: false
+
+# Whether to use Docker Compose to create the container. Set to false to use Docker CLI.
+docker_compose: false
+
+# The name of the Docker Compose template file to use if the 'docker_compose' is set to true (For example, 'gitlab/docker-compose.yml.j2').
+docker_compose_template_filename: ''
+
+# The directory in which to place the 'docker-compose.yml' file on the target system.
+docker_compose_directory: '/usr/local/docker-compose'
+
+# The name to use for the container once it is created.
+container_name: ''
+
+# The container restart policy. Valid options are 'no' (The default if nothing is specified), 'always', 'on-failure', and 'unless-stopped'.
+container_restart_policy: ''
+
+# The hostname to set for the container.
+container_hostname: ''
+
+# A dictionary of dictionaries defining environment variables to pass to the containers.
+# NOTE: Only used when deploying the containers via Docker CLI (When 'docker_compose' is set to false).
+container_environment_variables: ''
+  # EXAMPLE1: 'value 1'
+  # EXAMPLE2: 'value 2'
+
+# A list of ports to publish to the host for the container.
+# NOTE: Only used when deploying the containers via Docker CLI (When 'docker_compose' is set to false).
+container_ports: ''
+
+# A list of volumes defined for the container.
+# NOTE: Only used when deploying the containers via Docker CLI (When 'docker_compose' is set to false).
+container_volumes: ''
+
+...

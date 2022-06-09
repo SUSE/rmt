@@ -1,0 +1,108 @@
+---
+# Playbook Name: docker-deploy.yml
+#
+# Synopsis: Calls the 'docker-deploy' Ansible role to deploy Docker containers or build Docker images on target hosts.
+#
+# Description: Calls the 'docker-deploy' Ansible role to deploy Docker containers or build Docker images.
+#              Docker CLI or Docker Compose can be used to create the containers. Variables files stored
+#              in the 'docker-deploy' role are used to deploy different container applications or images.
+#
+# Dependencies:
+#   - 'docker-deploy' role
+#   - 'docker-configure' role
+#   - 'vault-auth' role
+#   - 'repository-management' role
+#   - A variables file in the `vars/` directory of the 'docker-deploy' Ansible role and specified via '-e "@vars-filename"'.
+#     The variables file has a few variables in it that must be updated.
+#   - If using AWS ECR, an ECR repository setup and an image stored within it.
+#   - If using AWS ECR, either an IAM role attached to the target hosts granting access to AWS ECR or AWS access and
+#     secret keys specified in the 'aws_access_key' and 'aws_secret_key' Ansible variables (Use the 'vault-auth' role for this).
+#
+# Variables:
+#   - Variables in the variables file specified via the 'ansible-playbook' option '-e "@filename"'.
+#
+#   The following variables are only needed if they're not set in the variables file specified via '-e "@filename"'.
+#   - docker_build_image: (boolean) Whether to use Docker Build to create a Docker image from a dockerfile.
+#   - docker_create_container: (boolean) Whether to create a Docker container using either of the two methods: Docker CLI or Docker Compose.
+#   - aws_ecr_registry: (boolean) Whether to use the AWS ECR registry.
+#   - aws_region: (string) The AWS region that the AWS ECR registry resides in.
+#   - docker_registry_name: (string) The name of the Docker registry to log into.
+#   - docker_registry_username: (string) The username to use when authenticating with the Docker registry specified in the 'docker_registry_name' variable (Use the 'vault-auth' role for this).
+#                                        NOTE: Not used when the 'aws_ecr_registry' variable is set to true.
+#   - docker_registry_password: (string) The password to use when authenticating with the Docker registry specified in the 'docker_registry_name' variable (Use the 'vault-auth' role for this).
+#                                        NOTE: Not used when the 'aws_ecr_registry' variable is set to true.
+#   - vault_address: (string) The address of the Vault server to pull secrets from (Include https:// in the value).
+#                             NOTE: This variable can be specified in the variables file instead of here in this playbook.
+#   - vault_secrets: (list) A list of secrets to pull from Vault. See the 'README.md' of the 'vault-auth' role for details.
+#                           NOTE: This variable can be specified in the variables file instead of here in this playbook.
+#   - vault_token: (string) The Vault token used to authenticate with the Vault server. This can also be specified via
+#                           the 'VAULT_TOKEN' environment variable or in the '~/.vault-token' file on the localhost.
+#
+# Examples:
+#   Deploy GitLab as a container using its variables file:
+#     ansible-playbook -i TARGET_IP_ADDRESSES, docker-deploy.yml -e "@gitlab.yml" -e "docker_create_container=true"
+#
+#   Build a custom Ubuntu Docker image using Docker Build:
+#     ansible-playbook -i TARGET_IP_ADDRESSES, docker-deploy.yml -e "@gitlab.yml" -e "docker_build_image=true"
+#
+#   Build custom SUSE RMT Docket image using Docker Build:
+#     ansible-playbook -i TARGET_IP_ADDRESSES, playbooks/docker/docker-deploy.yml -e "@roles/docker-deploy/vars/businesses/build-development/suse-rmt.yml" -e "docker_build_image=true"
+#
+#   Deploy GitLab as a container using its variables file and pull secrets from Vault (Don't forget to set the 'vault_secrets' variable in this file):
+#     read -sp "Vault token (input is hidden): " TOKEN; echo ""; export VAULT_TOKEN="${TOKEN}"; ansible-playbook -i TARGET_IP_ADDRESSES, docker-deploy.yml -e "@gitlab.yml" -e "vault_address='https://vault.sms.cre.sapns2.us'"
+#
+#   Deploying SUSE RMT as a container and pull secrets from VAULT
+#   NOTE: Make sure to create a volume in /data that's at least 30GB this is specific for the SUSE RMT container.
+#         Otherwise the container will fail to be created.
+#     read -sp "Vault token (input is hidden): " TOKEN; echo ""; export VAULT_TOKEN="${TOKEN}"; ansible-playbook -i TARGET_IP_ADDRESSES, playbooks/docker/docker-deploy.yml -e "@roles/docker-deploy/vars/businesses/build-development/suse-rmt.yml" -e "docker_create_container=true"
+#
+# Authors: REDACTED (REDACTED)
+# Version: 2.9-000004
+# Modified: 2020-05-06 - Created
+#           2020-07-16 - Removed the 'docker_variables_filename' variable and moved the location of the 'vault-auth' role. Moved location of the playbook to 'playbooks/docker/' directory.
+#           2020-09-04 - Removed relative paths in include_role
+#           2021-02-13 - Update to support new Repo-Management role
+#           2021-10-06 - Added commands for building SUSE RMT Docker Image and creating SUSE RMT Container
+# Comments: N/A
+
+- hosts: all
+  gather_facts: true
+  collections:
+    - community.docker
+  vars:
+    vault_address: ''
+    vault_secrets:
+      # - secret_path: 'example/path'
+      #   secret_version: ''
+      #   secret_key: 'example_key_name'
+      #   ansible_fact_name: 'example_ansible_fact_name'
+
+  pre_tasks:
+
+    - name: Run the 'vault-auth' role to pull secrets from Vault
+      include_role:
+        name: vault-auth
+      when: vault_secrets is defined and vault_secrets is not none
+
+    #- name: Run the 'repository-management' role to enable base repositories
+    #  include_role:
+    #    name: repository-management
+    #  vars:
+    #    application_preset_selection: ['base','epel']
+    #    repo_enable: 'true'
+
+    #- name: Run the 'docker-configure' role to enable and install Docker
+    #  include_role:
+    #    name: docker-configure
+    #    apply:
+    #      become: true
+    #  vars:
+    #    docker_repository_disable: false
+
+  tasks:
+
+    - name: Run the 'docker-deploy' role
+      include_role:
+        name: docker-deploy
+
+...

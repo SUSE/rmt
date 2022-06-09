@@ -1,0 +1,77 @@
+---
+
+scenario:
+  name: deploy-rmt-container
+  create_sequence:
+    - dependency
+    - create
+    - prepare
+  check_sequence:
+    - dependency
+    - cleanup
+    - destroy
+    - create
+    - prepare
+    - converge
+    - check
+    - destroy
+  converge_sequence:
+    - dependency
+    - create
+    - prepare
+    - converge
+  destroy_sequence:
+    - dependency
+    - cleanup
+    - destroy
+  test_sequence:
+    - dependency
+    - lint
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - idempotence    # NOTE: A lot of our roles aren't truly idempotent as far as Molecule understands, so you might have to comment this line out.
+    - side_effect
+    - verify
+    - cleanup
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+platforms:
+  - name: instance
+    box: opensuse/Tumbleweed.x86_64
+    memory: 4096
+    cpus: 2
+    interfaces:
+      # `network_name` is the required identifier, other keys map to arguments.
+      - network_name: private_network
+        ip: 192.168.50.20
+        guest: 80
+        host: 8080
+    # List of raw Vagrant `config` options.
+    provider_raw_config_args:
+      - "customize [ 'modifyvm', :id, '--natdnshostresolver1', 'on' ]"
+    # Dictionary of `config` options.
+    config_options:
+      ssh.keep_alive: yes
+      ssh.remote_user: "'vagrant'"
+provisioner:
+  name: ansible
+  inventory:
+    host_vars:
+      # Inventory used for Molecule when executing the Ansible role tested.
+      instance:
+        variable1: value
+        variable2: False
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+verifier:
+  name: ansible

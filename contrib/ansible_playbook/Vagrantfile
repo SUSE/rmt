@@ -1,0 +1,13 @@
+@ansible_home = '/home/vagrant/.ansible'
+
+Vagrant.configure('2') do |config|
+  config.vm.box = 'opensuse/Tumbleweed.x86_64'
+  config.vm.synced_folder './', @ansible_home.to_s, type: 'rsync'
+
+  config.vm.provision 'shell', inline: "chown vagrant:vagrant #{@ansible_home}"
+
+  config.vm.provision 'ansible_local' do |ansible|
+    ansible.playbook = 'docker-deploy.yml'
+    ansible.galaxy_role_file = 'requirements.yml'
+  end
+end

@@ -1,0 +1,46 @@
+---
+# Synopsis: Logs the host into the specified Docker registry.
+#
+# Inputs:
+#   - docker_registry_name: The name of the Docker registry to log into.
+#   - docker_registry_username: The username to use when authenticating with the Docker registry specified in the 'docker_registry_name' variable.
+#   - docker_registry_password: The password to use when authenticating with the Docker registry specified in the 'docker_registry_name' variable.
+#   - docker_registry_aws_ca_bundle_path: When defined, sets AWS_CA_BUNDLE environment variable with supplied filepath to ensure Docker can interact with AWS ECR Docker registry.
+#   - docker_container_become: Whether to have the role become 'root' or a different user when running the Docker commands on the target host.
+#   - aws_access_key: The AWS access key ID used to authenticate with AWS if an IAM role granting ECR access is not set for the target host.
+#   - aws_secret_key: The AWS secret key ID used to authenticate with AWS if an IAM role granting ECR access is not set for the target host.
+#   - aws_session_token: The AWS session token used to authenticate with AWS if an IAM role granting ECR access is not set for the target host.
+#
+# Outputs:
+#   - Authenticates the target host with the specified Docker registery.
+#
+# Comments: N/A
+
+  - name: Determine whether the Docker registry is AWS ECR or not
+    set_fact:
+      aws_ecr_registry: "{{ true if ('.dkr.ecr.' in docker_registry_name and ('.amazonaws.com' in docker_registry_name  or 'c2s.ic.gov' in docker_registry_name)) else false }}"
+
+  - name: Log into the specified AWS ECR Docker registry
+    shell: >-      
+      {% if aws_access_key is defined and aws_access_key | length > 0 and aws_secret_key is defined and aws_secret_key | length > 0 %}export AWS_ACCESS_KEY_ID='{{
+      aws_access_key }}'; export AWS_SECRET_ACCESS_KEY='{{ aws_secret_key }}';{% else %}{% endif %}{% if aws_session_token is defined and aws_session_token
+      | length > 0 %}export AWS_SESSION_TOKEN='{{ aws_session_token }}';{% endif %}
+      aws configure set region {{ aws_region }}; /usr/local/bin/aws ecr get-login-password --region {{ aws_region }}{% if docker_registry_aws_ca_bundle_path is defined and docker_registry_aws_ca_bundle_path | length > 0 %} --ca-bundle "{{ docker_registry_aws_ca_bundle_path }}"{% endif %} | docker login --username AWS --password-stdin {{ docker_registry_name }}
+    when: aws_ecr_registry | bool
+    changed_when: false
+    no_log: true
+    become: '{{ docker_container_become | default(omit, true) }}'
+
+  - name: Log into the specified Docker registry
+    docker_login:
+      state: present
+      registry: '{{ docker_registry_name }}'
+      username: '{{ docker_registry_username }}'
+      password: '{{ docker_registry_password }}'
+      reauthorize: true
+    when: aws_ecr_registry | bool == false or aws_ecr_registry is not defined
+    changed_when: false
+    no_log: true
+    become: '{{ docker_container_become | default(omit, true) }}'
+
+...

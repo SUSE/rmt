@@ -1,0 +1,61 @@
+---
+# Synopsis: Calls other tasks to run the 'docker-deploy' role.
+#
+# Inputs:
+#   - docker_create_container: Whether to create a Docker container using either of the two methods: Docker CLI or Docker Compose.
+#   - docker_registry_name: The name of the Docker registry to log into.
+#   - docker_compose: Whether to use Docker Compose to create the container.
+#   - docker_build_image: Whether to use Docker Build to create a Docker image from a dockerfile.
+#
+# Outputs:
+#   - Deploys an application via Docker containers.
+#
+# Dependencies:
+#   - Run docker-configure role before running this role to install/configure
+#     Docker correctly
+#
+# Comments: N/A
+
+- name: Log into the specified Docker registry.
+  include_tasks:
+    file: login-registry.yml
+  when:
+  - (docker_create_container | bool or docker_build_image | bool)
+  - docker_registry_name is defined
+  - docker_registry_name | length > 0
+
+- name: Copy config and db dump before building SUSE RMT Image
+  include_tasks:
+    file: suse-rmt/copy-rmt-config-files.yml
+  when:
+  - container_name == 'suse-rmt'
+
+- name: Build the Docker image from a dockerfile
+  include_tasks:
+    file: build-docker-image.yml
+  when:
+  - docker_build_image | bool
+
+- name: Create the containers using Docker CLI
+  include_tasks:
+    file: run-docker-cli.yml
+  when:
+  - docker_create_container | bool
+  - docker_compose | bool == false
+
+- name: Create the containers using Docker Compose
+  include_tasks:
+    file: run-docker-compose.yml
+  when:
+  - docker_create_container | bool
+  - docker_compose | bool
+
+- name: Import RMT db dump into Container
+  include_tasks:
+    file: suse-rmt/rmt-import-database-dump.yml
+  when:
+  - docker_create_container | bool
+  - docker_compose | bool
+  - container_name == 'suse-rmt'
+
+...

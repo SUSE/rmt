@@ -1,0 +1,51 @@
+---
+# Synopsis: Builds a Docker image from a dockerfile.
+#
+# Inputs:
+#   - docker_build_template_filename: The name of the dockerfile within the 'templates/' directory to use when building
+#                                     a Docker image (For example, 'concourse-ubuntu/dockerfile.j2').
+#   - docker_image: The 'registry/name' of the Docker image to push or pull. For example: 'gitlab/gitlab-ee:latest'
+#   - docker_build_push: Whether to push the Docker image to the registry after it is built via Docker Build.
+#   - docker_container_become: Whether to have the role become 'root' or a different user when running the Docker commands on the target host.
+#
+# Outputs:
+#   - Builds a Docker image from a dockerfile and optionally pushes it to a Docker registry.
+#
+# Comments: N/A
+
+- name: Copy the template 'dockerfile' file to the target hosts
+  template:
+    src: "{{ docker_build_template_filename }}"
+    dest: "/tmp/dockerfile"
+    trim_blocks: false
+    mode: '0600'
+
+- name: Build the Docker image from the dockerfile
+  docker_image:
+    build:
+      path: /tmp
+      pull: true
+    name: "{{ docker_image }}"
+    push: "{{ docker_build_push }}"
+    source: build
+    force_source: true
+    force_tag: true
+  register: docker_build_results
+  become: "{{ docker_container_become | default(omit, true) }}"
+
+- name: Output of Docker Build when creating the Docker image
+  debug:
+    var: docker_build_results
+
+- name: Remove the template 'dockerfile' from the target hosts
+  file:
+    state: absent
+    path: "/tmp/dockerfile"
+
+# Remove the rmt.conf contains Database and SUSE Customer Center credentials 
+- name: Remove the template 'rmt.conf' from the target hosts
+  file:
+    state: absent
+    path: "/tmp/rmt.conf"
+
+...

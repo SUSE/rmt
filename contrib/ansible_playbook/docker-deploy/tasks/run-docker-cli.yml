@@ -1,0 +1,63 @@
+---
+# Synopsis: Uses Docker CLI to create the Docker container.
+#
+# Inputs:
+#   - docker_container_become: Whether to have the role become 'root' or a different user when running the Docker commands on the target host.
+#   - docker_image: The 'registry/name' of the Docker image to pull for the containers. For example: 'gitlab/gitlab-ee:latest'
+#   - container_environment_variables: A list of dictionaries defining environment variables to pass to the containers.
+#   - container_name: The name to use for the container once it is created.
+#   - container_hostname: The hostname to set for the container.
+#   - container_restart_policy: The container restart policy. Valid options are 'no' (The default if nothing is specified), 'always', 'on-failure', and 'unless-stopped'..
+#   - container_ports: A list of ports to publish for the container.
+#   - container_volumes: A list of volumes defined for the container.
+#
+# Outputs:
+#   - Creates a Docker container via the CLI.
+#
+# Comments: N/A
+
+- name: Pull the specified Docker image
+  docker_image:
+    state: present
+    source: pull
+    name: "{{ docker_image }}"
+  become: "{{ docker_container_become | default(omit, true) }}"
+
+- name: Set the Docker CLI ENV filename as a fact
+  set_fact:
+    docker_env_vars_file: "/tmp/docker-cli-env-vars-{{ ansible_date_time.iso8601_basic_short }}.txt"
+
+- name: Create the container environments variable file
+  copy:
+    dest: "{{ docker_env_vars_file }}"
+    content: |
+      {% for item in container_environment_variables | dict2items %}
+      {{ item.key }}="{{ item.value }}"
+      {% endfor %}
+  when:
+    - container_environment_variables is defined
+    - container_environment_variables | length > 0
+
+- name: Create and start the containers via Docker CLI
+  docker_container:
+    state: started
+    name: "{{ container_name | default(omit, true) }}"
+    image: "{{ docker_image }}"
+    hostname: "{{ container_hostname | default(omit, true) }}"
+    restart_policy: "{{ container_restart_policy | default(omit, true) }}"
+    published_ports: "{{ container_ports | default(omit, true) }}"
+    volumes: "{{ container_volumes | default(omit, true) }}"
+    env_file: "{{ docker_env_vars_file if container_environment_variables is defined and container_environment_variables | length > 0 else none | default(omit) }}"
+  register: docker_container_results
+  become: "{{ docker_container_become | default(omit, true) }}"
+
+- name: Output Docker CLI when creating the containers
+  debug:
+    var: docker_container_results
+
+- name: Remove the container environments variable file
+  file:
+    state: absent
+    path: "{{ docker_env_vars_file }}"
+
+...

@@ -1,0 +1,41 @@
+---
+# Synopsis: Import the database schema into the rmt containers database which has all the tables needed for 
+#           the rmt-cli tool to function. After the import task has finished remove the rmt schema file.
+# 
+# Inputs:
+#   - mysql_user: username to database on container
+#   - mysql_password: password to database on container
+#   - mysql_database: name of database on container
+# Outputs:
+#   - 
+#
+# Comments: N/A
+
+# NOTE: This task should only be run if the SUSE RMT Container is created otherwise it is not needed.
+#       The purpose of this is to import the database schema defining all the tables needed for the rmt-cli tool
+#       to run because it stores all of the metadata for the packages repositories being mirrored.
+- name: Import database dump into Repository Management Tool (rmt) database
+  become: true
+  shell: 
+    cmd: "docker-compose -f /usr/local/docker-compose/docker-compose.yml exec -T rmt mysql -u {{ mysql_user }} -p{{ mysql_password }} {{ mysql_database }} < /tmp/rmt_db_schema.sql"
+  register: result
+  until: result.stderr.find("Can't connect to MySQL") == -1
+  retries: 10
+  delay: 3
+  no_log: true
+
+# Database schema file is only used once and doesn't need to exist after importing into container db
+- name: Remove the template 'rmt_db_schema.sql' from the target hosts
+  become: true
+  file:
+    state: absent
+    path: "/tmp/rmt_db_schema.sql"
+
+# NOTE: The rmt container directory permissions are owned by _rmt and nginx. In order to mirror packages to the 
+#       /public/repo directory they need to be owned by the root user.
+- name: Change directory permissions for /usr/share/rmt/public/repo on rmt container
+  become: true
+  shell: 
+    cmd: "docker-compose -f /usr/local/docker-compose/docker-compose.yml exec -T rmt /bin/bash -c 'chown _rmt:root /usr/share/rmt/public/repo'"
+
+...

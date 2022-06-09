@@ -1,0 +1,77 @@
+---
+# Synopsis: Uses Docker Compose to create Docker containers.
+#
+# Inputs:
+#   - docker_container_become: Whether to have the role become 'root' or a different user when running the Docker commands on the target host.
+#   - docker_image: The 'registry/name' of the Docker image to pull for the containers. For example: 'gitlab/gitlab-ee:latest'
+#   - docker_compose_template_filename: The name of the Docker Compose template file to use if the 'docker_compose' is set to true.
+#   - docker_compose_directory: The directory in which to place the 'docker-compose.yml' file on the target system.
+#
+# Outputs:
+#   - Creates Docker containers via Docker Compose.
+#
+# Comments: N/A
+
+- name: Pull the specified Docker image
+  docker_image:
+    state: present
+    source: pull
+    name: "{{ docker_image }}"
+  become: "{{ docker_container_become | default(omit, true) }}"
+
+- name: Ensure that the directory to save the 'docker-compose.yml' file to exists
+  file:
+    state: 'directory'
+    path: "{{ docker_compose_directory }}"
+  become: "{{ docker_container_become | default(omit, true) }}"
+
+- name: Copy the template 'docker-compose.yml' file to the target hosts
+  template:
+    src: "{{ docker_compose_template_filename }}"
+    dest: "{{ docker_compose_directory }}/docker-compose.yml"
+    trim_blocks: false
+    mode: '0600'
+  become: "{{ docker_container_become | default(omit, true) }}"
+
+- name: "Ensure /usr/local/bin/docker-compose is executable"
+  file:
+    path: "/usr/local/bin/docker-compose"
+    state: file
+    mode: u+x
+  become: "{{ docker_container_become | default(omit, true) }}"
+
+# NOTE: Using the 'shell' task module to run Docker Compose instead of the 'docker_compose' task module
+#       due to the fact that our images manually install Docker Compose via curl instead of an RPM package,
+#       causing the 'docker_compose' task module to not detect the binary.
+
+# NOTE: Using 'retries: 1' to get around an error involving a connection timeout with the container. Running
+#       the equivalent of 'docker-compose up -d' a second time seems to solve the problem.
+
+- name: Create and start the containers via Docker Compose
+  shell:
+    cmd: "/usr/local/bin/docker-compose up -d"
+    chdir: "{{ docker_compose_directory }}"
+  register: docker_compose_container_results
+  become: "{{ docker_container_become | default(omit, true) }}"
+  retries: 1
+  delay: 15
+  until: docker_compose_container_results.rc == 0
+
+# TODO: Properly install the 'docker-compose' package so that the 'docker_compose' task module can be used.
+#       Our current images manually install Docker Compose via curl instead of an RPM package, so therefore
+#       the 'docker_compose' task module can't see it.
+
+# - name: Create and start the containers via Docker Compose
+#   docker_compose:
+#     state: present
+#     project_name: "{{ (docker_project_name | basename | splitext)[0] }}"
+#     project_src: '/'
+#     file:
+#       - "{{ docker_compose_file }}"
+#     build: true
+#   register: docker_compose_container_results
+#   become: "{{ docker_container_become | default(omit, true) }}"
+
+- name: Output of Docker Compose when creating the containers
+  debug:
+    var: docker_compose_container_results

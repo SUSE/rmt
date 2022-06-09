@@ -1,0 +1,35 @@
+---
+# Synopsis: Include SUSE RMT configuration file or database schema file depending on what variable
+#           are being set to true. If we are building the image we don't need the database schema.
+#           If we are creating the container we don't need the rmt.conf file since that was already
+#           used when building out the image.
+#
+# Inputs:
+#   - docker_create_container: When to create container and include the database schema file
+#   - docker_build_image: When to build the image and used to include the rmt.conf file
+#
+# Outputs:
+#   - Copies configuration files for the repository management tool for SUSE
+#
+# Comments: N/A
+
+- name: RMT SQL dump file
+  become: true
+  copy:
+    src: "files/suse-rmt/rmt_db_schema.sql"
+    dest: "/tmp/rmt_db_schema.sql"
+    owner: root
+    group: root
+    mode: 0600
+  when:
+    - docker_create_container | bool
+
+- name: RMT configuration file
+  become: true
+  template:
+    src: "templates/suse-rmt/config/rmt.conf"
+    dest: "/tmp/rmt.conf"
+    trim_blocks: false
+    mode: 0600
+  when:
+    - docker_build_image | bool

@@ -1,0 +1,109 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+
+  tasks:
+  - name: "[TEST] Docker Compose Configuration Exists"
+    block:
+      - name: Get docker compose configuration
+        become: true
+        stat:
+            path: /usr/local/docker-compose/docker-compose.yml
+        register: docker_compose_config
+
+      - name: Ensure docker-compose.yml exists
+        assert:
+          that:
+            - "docker_compose_config.stat.exists"
+            - "docker_compose_config.stat.mode == '0600'"
+          fail_msg: "fail, docker-compose.yml does not exist"
+          success_msg: "success, docker-compose.yml does exist"
+
+  - name: "[TEST] SUSE RMT Container Is Running"
+    block:
+      - name: Get docker container name for rmt
+        become: true
+        shell: docker ps --format {% raw %}'{{.Names}} {{.Status}}'{% endraw %} | grep 'rmt'
+        register: docker_container_rmt
+
+      - name: Ensure rmt docker container is running
+        assert:
+          that:
+            - "'docker-compose_rmt_1 Up' in docker_container_rmt.stdout"
+          fail_msg: "fail, docker-compose_rmt_1 container is not running"
+          success_msg: "success, docker-compose_rmt_1 container is running"
+
+  - name: "[TEST] MariaDB Docker Containers are running"
+    block:
+      - name: Get docker container name for db
+        become: true
+        shell: docker ps --format {% raw %}'{{.Names}} {{.Status}}'{% endraw %} | grep 'db'
+        register: rmt_db_container
+
+      - name: Ensure db docker container is running
+        assert:
+          that:
+            - "'docker-compose_db_1 Up' in rmt_db_container.stdout"
+          fail_msg: "fail, docker-compose_db_1 container is not running"
+          success_msg: "success, docker-compose_db_1 container is running"
+
+  - name: "[TEST] Dockerfile template does not exist"
+    block:
+      - name: Get dockerfile contents
+        become: true
+        stat:
+          path: /tmp/dockerfile
+        register: dockerfile_source
+
+      - name: Check dockerfile exists
+        assert:
+          that:
+            - "not dockerfile_source.stat.exists"
+          fail_msg: "fail, dockerfile exists"
+          success_msg: "success, dockerfile does not exist"
+
+  - name: "[TEST] RMT configuration file does not exists"
+    block:
+      - name: Get rmt configuration contents
+        become: true
+        stat:
+          path: /tmp/rmt.conf
+        register: rmt_config_source
+
+      - name: Check rmt.config permissions are valid
+        assert:
+          that:
+            - "not rmt_config_source.stat.exists"
+          fail_msg: "fail, rmt.conf file was not removed"
+          success_msg: "success, rmt.conf file was removed"
+
+  - name: "[TEST] RMT database schema file does not exists"
+    block:
+      - name: Get rmt configuration contents
+        become: true
+        stat:
+          path: /tmp/rmt_db_schema.sql
+        register: rmt_db_schema_source
+
+      - name: Check rmt_dump.sql permissions are valid
+        assert:
+          that:
+            - "not rmt_db_schema_source.stat.exists"
+          fail_msg: "fail, rmt_db_schema.sql file was not removed!"
+          success_msg: "success, rmt_db_schema.sql file was removed!"
+
+  - name: "[TEST] rmt-cli tool is running on container"
+    block:
+      - name: Run rmt-cli tool checking version
+        become: true
+        shell: docker-compose -f /usr/local/docker-compose/docker-compose.yml exec rmt rmt-cli --version
+        register: rmt_cli_version
+
+      - name: verify rmt-cli version is valid
+        assert:
+          that: "'2.6.5' in rmt_cli_version.stdout"
+          fail_msg: "fail, rmt-cli tool IS NOT running on container"
+          success_msg: "success, rmt-cli tool IS running on container"
