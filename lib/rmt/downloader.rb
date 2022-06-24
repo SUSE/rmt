@@ -8,15 +8,8 @@ require 'rmt/fiber_request'
 require 'rmt/deduplicator'
 
 class RMT::Downloader
-  class Exception < RuntimeError
-    attr_reader :http_code, :response
-
-    def initialize(message, response: nil)
-      @response = response
-      @http_code = response&.code
-      super(message)
-    end
-  end
+  RETRIES = 4
+  RETRY_DELAY_SECONDS = 1
 
   attr_accessor :concurrency, :logger, :auth_token
 
@@ -29,13 +22,23 @@ class RMT::Downloader
     @queue = []
   end
 
-  def download(file_reference)
+  def download(file_reference, retries: RETRIES)
     downloads_needed, _ = try_copying_from_cache([file_reference])
     return file_reference.local_path if downloads_needed.empty?
 
     fiber_request = create_fiber_request(file_reference)
     fiber_request.run
     file_reference.local_path
+  rescue RMT::Downloader::Exception => e
+    # raise if number of retries is exhausted or file not found
+    raise e if retries.zero? || e.http_code == 404
+
+    @logger.warn(_('Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds') % {
+      file_reference: file_reference.remote_path, message: e.message, retries: retries, seconds: RETRY_DELAY_SECONDS
+    })
+    retries -= 1
+    sleep(RETRY_DELAY_SECONDS)
+    retry
   end
 
   def download_multi(files, ignore_errors: false)
@@ -150,7 +153,7 @@ class RMT::Downloader
   end
 
   def valid_cached_file?(file, response)
-    raise request_error(file.remote_path, response) if invalid_response?(response)
+    RMT::Downloader::Exception.raise_request_error(file.remote_path, response, @logger) if invalid_response?(response)
 
     # response.headers returns Typhoeus::Response::Headers, which takes care of
     # case-sensitive concerns with the header's key
@@ -169,7 +172,7 @@ class RMT::Downloader
 
   def finalize_download(request, file)
     if (URI(request.base_url).scheme != 'file') && invalid_response?(request.response)
-      raise request_error(request.remote_file, request.response)
+      RMT::Downloader::Exception.raise_request_error(request.remote_file, request.response, @logger)
     end
 
     handle_checksum_verification!(file.checksum_type, file.checksum, request.download_path)
@@ -209,22 +212,6 @@ class RMT::Downloader
     response.code != 200 || (response.return_code && response.return_code != :ok)
   end
 
-  def request_error(remote_file, response)
-    @logger.debug <<~DEBUG.chomp
-    #{_('Request error:')}
-      #{_('Response HTTP status code')}: #{response.code}
-      #{_('Response body')}: #{response.body.presence || "''"}
-      #{_('Response headers')}: #{flatten_string(response.response_headers.presence)}
-      #{_('curl return code')}: #{response.return_code.presence || "''"}
-      #{_('curl return message')}: #{response.return_message.presence || "''"}
-    DEBUG
-
-    message = _("%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'") %
-      { file: remote_file, code: response.code, return_code: response.return_code }
-
-    raise RMT::Downloader::Exception.new(message, response: response)
-  end
-
   def request_uri(file)
     uri = URI.join(file.remote_path)
     uri.query = @auth_token if (@auth_token && uri.scheme != 'file')
@@ -242,9 +229,4 @@ class RMT::Downloader
     FileUtils.mkdir_p(dirname)
   end
 
-  def flatten_string(str)
-    return '' if str.blank?
-
-    str.lines.map(&:strip).map(&:presence).compact.join('; ')
-  end
 end

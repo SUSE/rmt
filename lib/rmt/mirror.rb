@@ -10,8 +10,6 @@ class RMT::Mirror
   include RMT::Deduplicator
   include RMT::FileValidator
 
-  MIRROR_METADATA_RETRIES = 5
-
   def initialize(mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, logger:, mirror_src: false, airgap_mode: false)
     @mirroring_base_dir = mirroring_base_dir
     @logger = logger
@@ -85,7 +83,7 @@ class RMT::Mirror
     raise RMT::Mirror::Exception.new(_('Could not create a temporary directory: %{error}') % { error: e.message })
   end
 
-  def mirror_metadata(repository_dir, repository_url, temp_metadata_dir, n_retry = MIRROR_METADATA_RETRIES)
+  def mirror_metadata(repository_dir, repository_url, temp_metadata_dir)
     mirroring_paths = {
       base_url: URI.join(repository_url),
       base_dir: temp_metadata_dir,
@@ -111,15 +109,7 @@ class RMT::Mirror
       if (e.http_code == 404)
         logger.info(_('Repository metadata signatures are missing'))
       else
-        if n_retry > 0
-          n_seconds = 2
-          logger.warn _('Mirroring metadata signature/key failed with %{http_code}. Retrying after %{seconds} seconds') % { http_code: e.http_code,
-                                                                                                                            seconds: n_seconds }
-          sleep(n_seconds)
-          mirror_metadata(repository_dir, repository_url, temp_metadata_dir, (n_retry - 1))
-        end
-
-        raise(_('Downloading repo signature/key failed with HTTP code %{http_code}') % { http_code: e.http_code })
+        raise(_('Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}') % { message: e.message, http_code: e.http_code })
       end
     end
 
@@ -130,9 +120,7 @@ class RMT::Mirror
 
     metadata_files
   rescue StandardError => e
-    if n_retry == MIRROR_METADATA_RETRIES
-      raise RMT::Mirror::Exception.new(_('Error while mirroring metadata: %{error}') % { error: e.message })
-    end
+    raise RMT::Mirror::Exception.new(_('Error while mirroring metadata: %{error}') % { error: e.message })
   end
 
   def mirror_license(repository_dir, repository_url, temp_licenses_dir)

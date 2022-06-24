@@ -44,7 +44,6 @@ RSpec.describe RMT::Downloader do
       it 'raises an exception' do
         expect_any_instance_of(RMT::Logger).to receive(:debug)
           .with(debug_request_error_regex).once
-
         expect { downloader.download(repomd_xml_file) }.to raise_error(
           RMT::Downloader::Exception,
           "http://example.com/repomd.xml - request failed with HTTP status code 404, return code ''"
@@ -61,7 +60,7 @@ RSpec.describe RMT::Downloader do
 
       it 'raises an exception' do
         expect_any_instance_of(RMT::Logger).to receive(:debug)
-          .with(debug_request_error_regex).once
+          .with(debug_request_error_regex).exactly(5).times
 
         allow_any_instance_of(RMT::FiberRequest).to receive(:read_body) do |instance|
           response = instance_double(Typhoeus::Response, code: 200, body: 'Ok',
