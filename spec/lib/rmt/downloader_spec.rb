@@ -36,6 +36,7 @@ RSpec.describe RMT::Downloader do
   describe '#download over http://' do
     context 'when HTTP code is not 200' do
       before do
+        allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP request/)
         stub_request(:get, 'http://example.com/repomd.xml')
           .with(headers: headers)
           .to_return(status: 404, body: '', headers: {})
@@ -53,6 +54,7 @@ RSpec.describe RMT::Downloader do
 
     context 'when processing response by Typhoeus failed' do
       before do
+        allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP request/)
         stub_request(:get, 'http://example.com/repomd.xml')
           .with(headers: headers)
           .to_return(status: 200, body: '', headers: {})
@@ -64,6 +66,7 @@ RSpec.describe RMT::Downloader do
 
         allow_any_instance_of(RMT::FiberRequest).to receive(:read_body) do |instance|
           response = instance_double(Typhoeus::Response, code: 200, body: 'Ok',
+                                     effective_url: 'http://example.com/repomd.xml',
                                      return_code: :error, return_message: 'curl error',
                                      response_headers: "HTTP/2 404 \r\ncache-control: max-age=0\r\ncontent-type: text/html")
 
@@ -263,6 +266,7 @@ RSpec.describe RMT::Downloader do
         before do
           File.open(repomd_xml_file.cache_path, 'w') { |file| file.write(cached_content) }
           File.utime(time, time, repomd_xml_file.cache_path)
+          allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP HEAD/)
           stub_request(:head, 'http://example.com/repomd.xml')
             .with(headers: headers)
             .to_return(status: 404)
@@ -369,6 +373,7 @@ RSpec.describe RMT::Downloader do
 
     context 'when download exceptions occur when ignore_errors is true' do
       before do
+        allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP request/)
         files.each do |file|
           stub_request(:get, "http://example.com/#{file}").with(headers: headers)
             .to_return(status: 404, body: file, headers: {})
@@ -418,6 +423,7 @@ RSpec.describe RMT::Downloader do
       end
 
       it 'raises an exception' do
+        allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP request/)
         expect_any_instance_of(RMT::Logger).to receive(:debug)
           .with(debug_request_error_regex).once
 
@@ -442,6 +448,7 @@ RSpec.describe RMT::Downloader do
 
       context 'when a HEAD request fails and the ignore_errors = false' do
         before do
+          allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP HEAD/)
           queue.each do |file|
             FileUtils.touch(file.cache_path)
             stub_request(:head, file.remote_path.to_s).with(headers: headers)
@@ -463,6 +470,7 @@ RSpec.describe RMT::Downloader do
 
       context 'when a HEAD request fails and the ignore_errors = true' do
         before do
+          allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP HEAD/)
           queue.each do |file|
             FileUtils.touch(file.cache_path)
             stub_request(:head, file.remote_path.to_s).with(headers: headers)

@@ -10,6 +10,7 @@ class RMT::Downloader::Exception < RuntimeError
   def self.raise_request_error(remote_file, response, logger)
     logger.debug <<~DEBUG.chomp
     #{_('Request error:')}
+      #{_('Request URL')}: #{response.effective_url}
       #{_('Response HTTP status code')}: #{response.code}
       #{_('Response body')}: #{response.body.presence || "''"}
       #{_('Response headers')}: #{flatten_string(response.response_headers.presence)}

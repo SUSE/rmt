@@ -15,6 +15,8 @@ class RMT::Downloader
 
   def initialize(logger:, auth_token: nil, track_files: true)
     Typhoeus::Config.user_agent = "RMT/#{RMT::VERSION}"
+    Typhoeus::Config.verbose = Settings.try(:http_client).try(:verbose)
+
     @concurrency = 4
     @auth_token = auth_token
     @logger = logger
@@ -111,6 +113,7 @@ class RMT::Downloader
       request_fiber: request_fiber,
       followlocation: true
     )
+    @logger.debug("HTTP request for: #{file.remote_path}")
 
     request.receive_headers
     request.receive_body
@@ -149,6 +152,7 @@ class RMT::Downloader
     return nil unless %w[http https].include?(file.remote_path.scheme)
     return nil if file.cache_timestamp.nil?
 
+    @logger.debug("HTTP HEAD request for: #{file.remote_path}")
     RMT::HttpRequest.new(request_uri(file).to_s, method: :head, followlocation: true)
   end
 
@@ -167,7 +171,7 @@ class RMT::Downloader
     make_file_dir(file.local_path)
     FileUtils.cp(file.cache_path, file.local_path, preserve: true) unless (file.cache_path == file.local_path)
     @logger.info("→ #{File.basename(file.local_path)}")
-    @logger.debug("(cached mtime matches server last modified: #{file.cache_timestamp})")
+    @logger.debug("  (cached mtime matches server last modified: #{file.cache_timestamp})")
   end
 
   def finalize_download(request, file)
@@ -194,7 +198,7 @@ class RMT::Downloader
     end
 
     @logger.info("↓ #{File.basename(file.local_path)}")
-    @logger.debug("(new mtime: #{File.mtime(file.local_path).utc})")
+    @logger.debug("  (new mtime: #{File.mtime(file.local_path).utc})")
   rescue StandardError => e
     request.download_path.unlink
     raise e
