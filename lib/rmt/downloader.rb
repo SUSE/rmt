@@ -9,7 +9,7 @@ require 'rmt/deduplicator'
 
 class RMT::Downloader
   RETRIES = 4
-  RETRY_DELAY_SECONDS = 1
+  RETRY_DELAY_SECONDS = 2
 
   attr_accessor :concurrency, :logger, :auth_token
 
@@ -24,25 +24,8 @@ class RMT::Downloader
     @queue = []
   end
 
-  def download(file_reference, retries: RETRIES)
-    downloads_needed, _ = try_copying_from_cache([file_reference])
-    return file_reference.local_path if downloads_needed.empty?
-
-    fiber_request = create_fiber_request(file_reference)
-    fiber_request.run
-    file_reference.local_path
-  rescue RMT::Downloader::Exception => e
-    # raise if number of retries is exhausted or file not found
-    raise e if retries.zero? || e.http_code == 404
-
-    @logger.warn(_('Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds') % {
-      file_reference: file_reference.remote_path, message: e.message, retries: retries, seconds: RETRY_DELAY_SECONDS
-    })
-    retries -= 1
-    sleep(RETRY_DELAY_SECONDS)
-    retry
-  end
-
+  # returns the list of files that failed to download when 'ignore_errors: true',
+  # otherwise raises RMT::Downloader::Exception if any file fails to download
   def download_multi(files, ignore_errors: false)
     downloads_needed, failed_cache =
       try_copying_from_cache(files, ignore_errors: ignore_errors)
@@ -50,9 +33,8 @@ class RMT::Downloader
 
     @queue = downloads_needed
     @hydra = Typhoeus::Hydra.new(max_concurrency: @concurrency)
-
     failed_downloads = ignore_errors ? failed_cache : nil
-    @concurrency.times { process_queue(failed_downloads) }
+    process_queue(failed_downloads)
 
     @hydra.run
     failed_downloads
@@ -64,7 +46,7 @@ class RMT::Downloader
   # @param [RMT::Mirror::FileReference] file_reference with all file metadata attributes and paths (remote, local, cache)
   # @param [Array] failed_downloads array of remote files that have failed downloads, passed by reference, prevents from raising RMT::Downloader exceptions
   # @return [RMT::FiberRequest] a request that can be run individually or with Typhoeus::Hydra
-  def create_fiber_request(file_reference, failed_downloads: nil)
+  def create_fiber_request(file_reference, failed_downloads: nil, retries: RETRIES)
     make_file_dir(file_reference.local_path)
 
     request_fiber = Fiber.new do
@@ -74,20 +56,29 @@ class RMT::Downloader
         response = make_request(file_reference, request_fiber)
         finalize_download(response.request, file_reference)
       rescue RMT::Downloader::Exception, RMT::ChecksumVerifier::Exception => e
-        unless failed_downloads
-          # Clean up downloads queued in Ethon::Multi and @queue
-          if @hydra
-            @queue = []
-            @hydra.multi.easy_handles.each do |handle|
-              @hydra.multi.delete(handle)
+        # raise if number of retries is exhausted or file not found
+        if retries.zero? #|| e.http_code == 404
+          # if failed_downloads != nil, we're in 'ignore_errors' mode
+          if failed_downloads
+            @logger.warn("× #{File.basename(file_reference.local_path)} - #{e}")
+            failed_downloads << file_reference.local_path
+          else
+            if @hydra
+              @queue = []
+              @hydra.multi.easy_handles.each do |handle|
+                @hydra.multi.delete(handle)
+              end
             end
+            raise e
           end
-
-          raise(e)
+        else
+          @logger.warn(_('Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds') % {
+            file_reference: file_reference.remote_path, message: e.message, retries: retries, seconds: RETRY_DELAY_SECONDS
+          })
+          sleep(RETRY_DELAY_SECONDS)
+          # re-enqueuing with retries -= 1
+          @hydra.queue(create_fiber_request(file_reference, failed_downloads: failed_downloads, retries: (retries - 1)))
         end
-
-        @logger.warn("× #{File.basename(file_reference.local_path)} - #{e}")
-        failed_downloads << file_reference.local_path
       ensure
         process_queue(failed_downloads)
       end
@@ -168,8 +159,10 @@ class RMT::Downloader
   end
 
   def copy_from_cache(file)
-    make_file_dir(file.local_path)
-    FileUtils.cp(file.cache_path, file.local_path, preserve: true) unless (file.cache_path == file.local_path)
+    unless (file.cache_path == file.local_path)
+      make_file_dir(file.local_path)
+      FileUtils.cp(file.cache_path, file.local_path, preserve: true)
+    end
     @logger.info("→ #{File.basename(file.local_path)}")
     @logger.debug("  (cached mtime matches server last modified: #{file.cache_timestamp})")
   end

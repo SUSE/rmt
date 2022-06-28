@@ -39,7 +39,7 @@ class RMT::Mirror
     }
 
     logger.info _('Mirroring SUSE Manager product tree to %{dir}') % { dir: repository_dir }
-    downloader.download(FileReference.new(relative_path: 'product_tree.json', **mirroring_paths))
+    downloader.download_multi([FileReference.new(relative_path: 'product_tree.json', **mirroring_paths)])
   rescue RMT::Downloader::Exception => e
     raise RMT::Mirror::Exception.new(_('Could not mirror SUSE Manager product tree with error: %{error}') % { error: e.message })
   end
@@ -91,13 +91,12 @@ class RMT::Mirror
     }
 
     repomd_xml = FileReference.new(relative_path: 'repodata/repomd.xml', **mirroring_paths)
-    downloader.download(repomd_xml)
+    downloader.download_multi([repomd_xml])
 
     begin
       signature_file = FileReference.new(relative_path: 'repodata/repomd.xml.asc', **mirroring_paths)
       key_file       = FileReference.new(relative_path: 'repodata/repomd.xml.key', **mirroring_paths)
-      downloader.download(signature_file)
-      downloader.download(key_file)
+      downloader.download_multi([signature_file, key_file])
 
       RMT::GPG.new(
         metadata_file: repomd_xml.local_path,
@@ -132,8 +131,9 @@ class RMT::Mirror
 
     begin
       directory_yast = FileReference.new(relative_path: 'directory.yast', **mirroring_paths)
-      downloader.download(directory_yast)
+      downloader.download_multi([directory_yast])
     rescue RMT::Downloader::Exception
+      logger.debug("No license directory found for repository '#{repository_url}'")
       FileUtils.remove_entry(temp_licenses_dir) # the repository would have an empty licenses directory unless removed
       return
     end
@@ -143,7 +143,7 @@ class RMT::Mirror
       .map { |relative_path| FileReference.new(relative_path: relative_path, **mirroring_paths) }
     downloader.download_multi(license_files)
   rescue StandardError => e
-    raise RMT::Mirror::Exception.new(_('Error while mirroring license: %{error}') % { error: e.message })
+    raise RMT::Mirror::Exception.new(_('Error while mirroring license files: %{error}') % { error: e.message })
   end
 
   def mirror_packages(metadata_files, repository_dir, repository_url)
