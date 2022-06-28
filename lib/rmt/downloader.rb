@@ -57,18 +57,12 @@ class RMT::Downloader
         finalize_download(response.request, file_reference)
       rescue RMT::Downloader::Exception, RMT::ChecksumVerifier::Exception => e
         # raise if number of retries is exhausted or file not found
-        if retries.zero? #|| e.http_code == 404
+        if retries.zero? || e.http_code == 404
           # if failed_downloads != nil, we're in 'ignore_errors' mode
           if failed_downloads
             @logger.warn("× #{File.basename(file_reference.local_path)} - #{e}")
             failed_downloads << file_reference.local_path
           else
-            if @hydra
-              @queue = []
-              @hydra.multi.easy_handles.each do |handle|
-                @hydra.multi.delete(handle)
-              end
-            end
             raise e
           end
         else
@@ -79,8 +73,6 @@ class RMT::Downloader
           # re-enqueuing with retries -= 1
           @hydra.queue(create_fiber_request(file_reference, failed_downloads: failed_downloads, retries: (retries - 1)))
         end
-      ensure
-        process_queue(failed_downloads)
       end
     end
 
@@ -88,11 +80,11 @@ class RMT::Downloader
   end
 
   def process_queue(failed_downloads = nil)
-    queue_item = @queue.shift
-    return unless queue_item
-
-    request = create_fiber_request(queue_item, failed_downloads: failed_downloads)
-    @hydra.queue(request)
+    @queue.each do |queue_item|
+      request = create_fiber_request(queue_item, failed_downloads: failed_downloads)
+      @hydra.queue(request)
+    end
+    @queue = []
   end
 
   def make_request(file, request_fiber)
