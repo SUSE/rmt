@@ -45,7 +45,7 @@ RSpec.describe RMT::Downloader do
       it 'raises an exception' do
         expect_any_instance_of(RMT::Logger).to receive(:debug)
           .with(debug_request_error_regex).once
-        expect { downloader.download(repomd_xml_file) }.to raise_error(
+        expect { downloader.download_multi([repomd_xml_file]) }.to raise_error(
           RMT::Downloader::Exception,
           "http://example.com/repomd.xml - request failed with HTTP status code 404, return code ''"
         )
@@ -55,15 +55,13 @@ RSpec.describe RMT::Downloader do
     context 'when processing response by Typhoeus failed' do
       before do
         allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP request/)
-        stub_request(:get, 'http://example.com/repomd.xml')
-          .with(headers: headers)
-          .to_return(status: 200, body: '', headers: {})
       end
 
       it 'raises an exception' do
         expect_any_instance_of(RMT::Logger).to receive(:debug)
           .with(debug_request_error_regex).exactly(5).times
 
+        allow_any_instance_of(RMT::FiberRequest).to receive(:receive_headers)
         allow_any_instance_of(RMT::FiberRequest).to receive(:read_body) do |instance|
           response = instance_double(Typhoeus::Response, code: 200, body: 'Ok',
                                      effective_url: 'http://example.com/repomd.xml',
@@ -76,7 +74,7 @@ RSpec.describe RMT::Downloader do
           response
         end
 
-        expect { downloader.download(repomd_xml_file) }.to raise_error(
+        expect { downloader.download_multi([repomd_xml_file]) }.to raise_error(
           RMT::Downloader::Exception,
           "http://example.com/repomd.xml - request failed with HTTP status code 200, return code 'error'"
         )
@@ -99,7 +97,7 @@ RSpec.describe RMT::Downloader do
         let(:expected_checksum) { '0xDEADBEEF' }
 
         it 'raises an exception' do
-          expect { downloader.download(repomd_xml_file) }
+          expect { downloader.download_multi([repomd_xml_file]) }
             .to raise_error(RMT::ChecksumVerifier::Exception, 'Unknown hash function CHUNKYBACON42')
         end
       end
@@ -109,13 +107,15 @@ RSpec.describe RMT::Downloader do
         let(:expected_checksum) { '0xDEADBEEF' }
 
         it 'raises an exception' do
-          expect { downloader.download(repomd_xml_file) }
+          expect { downloader.download_multi([repomd_xml_file]) }
             .to raise_error(RMT::Downloader::Exception, 'Checksum doesn\'t match')
         end
       end
 
       context 'and checksum is correct' do
-        let(:filename) { downloader.download(repomd_xml_file) }
+        before { downloader.download_multi([repomd_xml_file]) }
+
+        let(:filename) { repomd_xml_file.local_path }
 
         it('has correct content') { expect(File.read(filename)).to eq(content) }
       end
@@ -157,19 +157,19 @@ RSpec.describe RMT::Downloader do
 
 
         it 'does not track .xml files' do
-          downloader.download(repomd_xml_file)
+          downloader.download_multi([repomd_xml_file])
 
           expect(DownloadedFile.where("local_path like '%.xml'").count).to eq(0)
         end
 
         it 'tracks .rpm files' do
-          downloader.download(rpm_package_file)
+          downloader.download_multi([rpm_package_file])
 
           expect(DownloadedFile.where("local_path like '%.rpm'").count).to eq(1)
         end
 
         it 'tracks .drpm files' do
-          downloader.download(drpm_package_file)
+          downloader.download_multi([drpm_package_file])
 
           expect(DownloadedFile.where("local_path like '%.drpm'").count).to eq(1)
         end
@@ -189,10 +189,11 @@ RSpec.describe RMT::Downloader do
         stub_request(:get, 'http://example.com/repomd.xml?repo_auth_token')
           .with(headers: headers)
           .to_return(status: 200, body: content, headers: {})
+        downloader.download_multi([repomd_xml_file])
       end
 
       context 'and checksum is correct' do
-        let(:filename) { downloader.download(repomd_xml_file) }
+        let(:filename) { repomd_xml_file.local_path }
 
         it('has correct content') { expect(File.read(filename)).to eq(content) }
       end
@@ -200,7 +201,7 @@ RSpec.describe RMT::Downloader do
       context 'and checksum type is SHA and it is is correct' do
         let(:expected_checksum_type) { 'sha' }
         let(:expected_checksum) { Digest.const_get('SHA1').hexdigest(content) }
-        let(:filename) { downloader.download(repomd_xml_file) }
+        let(:filename) { repomd_xml_file.local_path }
 
         it('has correct content') { expect(File.read(filename)).to eq(content) }
       end
@@ -210,7 +211,10 @@ RSpec.describe RMT::Downloader do
       let(:cache_dir) { Dir.mktmpdir }
       let(:repository_dir) { Dir.mktmpdir }
       let(:time) { Time.utc(2018, 1, 1, 10, 10, 0) }
-      let(:downloaded_file) { downloader.download(repomd_xml_file) }
+      let(:downloaded_file) do
+        downloader.download_multi([repomd_xml_file])
+        repomd_xml_file
+      end
       let(:cached_content) { 'cached_content' }
       let(:fresh_content) { 'fresh_content' }
 
@@ -225,7 +229,7 @@ RSpec.describe RMT::Downloader do
 
         let(:last_modified_header) { 'Mon, 01 Jan 2018 10:10:00 GMT' }
 
-        it('has correct content') { expect(File.read(downloaded_file)).to eq(cached_content) }
+        it('has correct content') { expect(File.read(downloaded_file.local_path)).to eq(cached_content) }
       end
 
       context 'a file exists in cache and is modified' do
@@ -242,7 +246,7 @@ RSpec.describe RMT::Downloader do
 
         let(:last_modified_header) { 'Tue, 02 Jan 2018 10:10:00 GMT' }
 
-        it('has correct content') { expect(File.read(downloaded_file)).to eq(fresh_content) }
+        it('has correct content') { expect(File.read(downloaded_file.local_path)).to eq(fresh_content) }
       end
 
       context "a file exists in cache and its mtime is greater than 'Last-Modified' time" do
@@ -259,7 +263,7 @@ RSpec.describe RMT::Downloader do
 
         let(:last_modified_header) { 'Sun, 31 Dec 2017 10:10:00 GMT' }
 
-        it('has correct content') { expect(File.read(downloaded_file)).to eq(fresh_content) }
+        it('has correct content') { expect(File.read(downloaded_file.local_path)).to eq(fresh_content) }
       end
 
       context 'a file exists in cache but the HEAD request fails' do
@@ -295,7 +299,10 @@ RSpec.describe RMT::Downloader do
             file.checksum_type = expected_checksum_type
           end
         end
-        let(:downloaded_file) { downloader.download(another_file) }
+        let(:downloaded_file) do
+          downloader.download_multi([another_file])
+          another_file.local_path
+        end
 
         before do
           stub_request(:get, 'http://example.com/another_file.xml')
@@ -309,7 +316,7 @@ RSpec.describe RMT::Downloader do
   end
 
   describe '#download over file://' do
-    subject(:download) { downloader.download(repomd_xml_file) }
+    subject(:download) { downloader.download_multi([repomd_xml_file]) }
 
     let(:repository_dir) { Dir.mktmpdir }
     let(:repository_url_local_path) { File.expand_path(file_fixture('dummy_repo/')) + '/' }
@@ -337,14 +344,15 @@ RSpec.describe RMT::Downloader do
     end
 
     it 'saves the file when it exists' do
-      expect(File.size(download)).to eq(File.size(file_fixture('dummy_repo/repodata/repomd.xml')))
+      download
+      expect(File.size(repomd_xml_file.local_path)).to eq(File.size(file_fixture('dummy_repo/repodata/repomd.xml')))
     end
 
     context "when file doesn't exist" do
       let(:repository_url) { 'file://' + File.expand_path(file_fixture('.')) + '/non_existent/' }
 
       it 'raises and exception' do
-        expect { downloader.download(repomd_xml_file) }
+        expect { downloader.download_multi([repomd_xml_file]) }
           .to raise_error(
             RMT::Downloader::Exception,
             %r{/repodata/repomd.xml - File does not exist}

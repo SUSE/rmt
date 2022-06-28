@@ -45,7 +45,7 @@ RSpec.describe RMT::Mirror do
 
     context 'with download exception' do
       before do
-        expect_any_instance_of(RMT::Downloader).to receive(:download).and_raise(RMT::Downloader::Exception, "418 - I'm a teapot")
+        expect_any_instance_of(RMT::Downloader).to receive(:download_multi).and_raise(RMT::Downloader::Exception, "418 - I'm a teapot")
       end
 
       it 'raises mirroring exception' do
@@ -266,10 +266,10 @@ RSpec.describe RMT::Mirror do
 
       context "when can't download metadata", vcr: { cassette_name: 'mirroring_product' } do
         before do
-          allow_any_instance_of(RMT::Downloader).to receive(:download).and_call_original
+          allow_any_instance_of(RMT::Downloader).to receive(:download_multi).and_call_original
           expect_any_instance_of(RMT::Downloader)
-            .to receive(:download)
-            .with(file_reference_containing_path('repodata/repomd.xml'))
+            .to receive(:download_multi)
+            .with([file_reference_containing_path('repodata/repomd.xml')])
             .and_raise(RMT::Downloader::Exception, "418 - I'm a teapot")
         end
         it 'handles RMT::Downloader::Exception' do
@@ -313,12 +313,12 @@ RSpec.describe RMT::Mirror do
       context "when can't download some of the license files" do
         before do
           allow_any_instance_of(RMT::Downloader).to receive(:download_multi).and_wrap_original do |klass, *args|
-            raise RMT::Downloader::Exception.new if args[0][0].local_path =~ /license/
+            raise RMT::Downloader::Exception.new('') if args[0][0].local_path =~ /license/
             klass.call(*args)
           end
         end
         it 'handles RMT::Downloader::Exception', vcr: { cassette_name: 'mirroring_product' } do
-          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, /Error while mirroring license:/)
+          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, /Error while mirroring license files:/)
         end
       end
 
@@ -345,20 +345,22 @@ RSpec.describe RMT::Mirror do
 
       context "when can't download data", vcr: { cassette_name: 'mirroring_product' } do
         it 'handles RMT::Downloader::Exception' do
-          allow_any_instance_of(RMT::Downloader).to receive(:finalize_download).and_wrap_original do |klass, *args|
+          allow_any_instance_of(RMT::Downloader).to receive(:make_request).and_wrap_original do |klass, *args|
             # raise the exception only for the RPMs/DRPMs
-            raise(RMT::Downloader::Exception, "418 - I'm a teapot") if args[1].local_path =~ /rpm$/
+            raise(RMT::Downloader::Exception, "418 - I'm a teapot") if args[0].local_path =~ /rpm$/
             klass.call(*args)
           end
+
           expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
         end
 
         it 'handles RMT::ChecksumVerifier::Exception' do
-          allow_any_instance_of(RMT::Downloader).to receive(:finalize_download).and_wrap_original do |klass, *args|
+          allow_any_instance_of(RMT::Downloader).to receive(:make_request).and_wrap_original do |klass, *args|
             # raise the exception only for the RPMs/DRPMs
-            raise(RMT::ChecksumVerifier::Exception, "Checksum doesn't match") if args[1].local_path =~ /rpm$/
+            raise(RMT::ChecksumVerifier::Exception, "Checksum doesn't match") if args[0].local_path =~ /rpm$/
             klass.call(*args)
           end
+
           expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
         end
       end
@@ -791,8 +793,8 @@ RSpec.describe RMT::Mirror do
           receive(:mirror_metadata).and_call_original
         )
 
-        allow_any_instance_of(RMT::Downloader).to receive(:download).and_wrap_original do |klass, *args|
-          if args[0].local_path.include?('repodata/repomd.xml.asc')
+        allow_any_instance_of(RMT::Downloader).to receive(:download_multi).and_wrap_original do |klass, *args|
+          if args[0][0].local_path.include?('repodata/repomd.xml.asc')
             raise RMT::Downloader::Exception.new('HTTP request failed', response: response)
           else
             klass.call(*args)
