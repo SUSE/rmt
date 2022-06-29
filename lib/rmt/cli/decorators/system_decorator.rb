@@ -13,7 +13,7 @@ class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
   end
 
   def to_csv(batch: false, proxy_byos: false)
-    systems = systems_to_arrays(proxy_byos)
+    systems = systems_to_arrays(proxy_byos: proxy_byos)
     array_to_csv(systems, HEADERS, batch: batch)
   end
 
