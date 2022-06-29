@@ -5,6 +5,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
   desc 'list', _('List registered systems.')
   option :limit, aliases: '-l', type: :numeric, default: 20, desc: _('Number of systems to display')
   option :all, aliases: '-a', type: :boolean, desc: _('List all registered systems')
+  option :proxy_byos, type: :boolean, desc: _('Add proxy byos info in the output')
   option :csv, type: :boolean, desc: _('Output data in CSV format')
 
   def list
@@ -17,7 +18,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
       puts RMT::CLI::Decorators::SystemDecorator.csv_headers
       systems.in_batches(order: :desc, load: true) do |relation|
         decorator = RMT::CLI::Decorators::SystemDecorator.new(relation)
-        puts decorator.to_csv(batch: true)
+        puts decorator.to_csv(batch: true, proxy_byos: options.proxy_byos)
       end
     else
       rows = []
@@ -25,7 +26,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
         rows += relation
       end
       decorator = RMT::CLI::Decorators::SystemDecorator.new(rows)
-      puts decorator.to_table
+      puts decorator.to_table(proxy_byos: options.proxy_byos)
 
       unless options.all
         puts _("Showing last %{limit} registrations. Use the '--all' option to see all registered systems.") % {
