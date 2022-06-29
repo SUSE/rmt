@@ -256,5 +256,43 @@ RSpec.describe RMT::CLI::Systems do
         expect(System.count).to eq 0
       end
     end
+
+    context 'purge confirmations' do
+      let!(:s1) { create :system, :with_activated_product, last_seen_at: 2.months.ago }
+      let!(:s2) { create :system, :with_activated_product, last_seen_at: 4.months.ago }
+
+      it 'asks for confirmation' do
+        expect(System.count).to eq 2
+        expect($stdin).to receive(:gets).and_return('y')
+
+        expect { described_class.start(['purge']) }
+          .to output(/#{s2.login}/).to_stdout
+
+        expect(System.count).to eq 1
+        expect(System.first.id).to eq s1.id
+      end
+
+      it 'doesn\'t purge when answer is no' do
+        expect(System.count).to eq 2
+        expect($stdin).to receive(:gets).and_return('n')
+
+        expect { described_class.start(['purge']) }
+          .to output(/#{s2.login}/).to_stdout
+
+        expect(System.count).to eq 2
+      end
+
+      it 'loops when answer is invalid' do
+        expect(System.count).to eq 2
+        expect($stdin).to receive(:gets).and_return('e')
+        expect($stdin).to receive(:gets).and_return('n')
+
+        expect { described_class.start(['purge']) }
+          .to output(/Please, answer/).to_stderr.and \
+            output(/#{s2.login}/).to_stdout
+
+        expect(System.count).to eq 2
+      end
+    end
   end
 end
