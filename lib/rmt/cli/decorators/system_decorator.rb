@@ -42,6 +42,8 @@ class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
       end
       proxy_byos_systems = proxy_byos_systems.compact
       return [] if proxy_byos_systems.empty?
+
+      proxy_byos_systems
     else
       data.map do |system|
         [
