@@ -351,7 +351,7 @@ RSpec.describe RMT::Mirror do
             klass.call(*args)
           end
 
-          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
+          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring packages: Failed to download 6 files')
         end
 
         it 'handles RMT::ChecksumVerifier::Exception' do
@@ -361,7 +361,7 @@ RSpec.describe RMT::Mirror do
             klass.call(*args)
           end
 
-          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring data: Failed to download 6 files')
+          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, 'Error while mirroring packages: Failed to download 6 files')
         end
       end
     end

@@ -159,7 +159,7 @@ class RMT::Mirror
 
     raise _('Failed to download %{failed_count} files') % { failed_count: failed_downloads.size } unless failed_downloads.empty?
   rescue StandardError => e
-    raise RMT::Mirror::Exception.new(_('Error while mirroring data: %{error}') % { error: e.message })
+    raise RMT::Mirror::Exception.new(_('Error while mirroring packages: %{error}') % { error: e.message })
   end
 
   def parse_packages_metadata(metadata_references)

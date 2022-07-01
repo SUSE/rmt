@@ -34,7 +34,8 @@ class RMT::Downloader
     @queue = downloads_needed
     @hydra = Typhoeus::Hydra.new(max_concurrency: @concurrency)
     failed_downloads = ignore_errors ? failed_cache : nil
-    process_queue(failed_downloads)
+    # initialize queue with @concurrency items, so hydra can work in parallel
+    @concurrency.times { process_queue(failed_downloads) }
 
     @hydra.run
     failed_downloads
@@ -81,18 +82,20 @@ class RMT::Downloader
           request = create_fiber_request(file_reference, failed_downloads: failed_downloads, retries: (retries - 1))
           @hydra.queue(request) if request
         end
+      ensure
+        process_queue(failed_downloads)
       end
     end
-
     request_fiber.resume
   end
 
+  # enqueuing requests one-by-one, so we don't run into 'too many open files' errors
   def process_queue(failed_downloads = nil)
-    @queue.each do |queue_item|
-      request = create_fiber_request(queue_item, failed_downloads: failed_downloads)
-      @hydra.queue(request) if request
-    end
-    @queue = []
+    queue_item = @queue.shift
+    return unless queue_item
+
+    request = create_fiber_request(queue_item, failed_downloads: failed_downloads)
+    @hydra.queue(request) if request
   end
 
   def make_request(file, request_fiber)
