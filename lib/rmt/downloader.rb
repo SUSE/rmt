@@ -122,8 +122,25 @@ class RMT::Downloader
     # Download everything if the cache is empty
     return [files, []] if available_in_cache.empty?
 
-    Typhoeus::Hydra.new(max_concurrency: @concurrency)
-      .tap { |hydra| available_in_cache.each { |request| hydra.queue(request) } }.run
+    hydra = Typhoeus::Hydra.new(max_concurrency: @concurrency)
+    available_in_cache.each do |request|
+      request.on_complete do |response|
+        if invalid_response?(response)
+          request.retries ||= RETRIES
+          if request.retries > 0
+            @logger.warn(_('Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds') % {
+              file_reference: URI(request.base_url).path, message: "#{response.return_code} (#{response.code})",
+              retries: request.retries, seconds: RETRY_DELAY_SECONDS
+            })
+            sleep(RETRY_DELAY_SECONDS)
+            request.retries -= 1
+            request.run
+          end
+        end
+      end
+      hydra.queue(request)
+    end
+    hydra.run
 
     downloads_needed = []
     failed_files = []
