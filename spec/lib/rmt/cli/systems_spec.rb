@@ -9,13 +9,12 @@ RSpec.describe RMT::CLI::Systems do
       let(:system1) { create :system, :with_activated_product, hostname: 'host1', last_seen_at: Time.now.utc - 3 }
       let(:system2) { create :system, :with_activated_product, hostname: 'host2', last_seen_at: Time.now.utc - 2 }
       let(:system3) { create :system, :with_activated_product, hostname: 'host3', last_seen_at: Time.now.utc - 1 }
-      let(:headings) { [ 'Login', 'Hostname', 'Proxy BYOS', 'Registration time', 'Last seen', 'Products' ] }
+      let(:headings) { [ 'Login', 'Hostname', 'Registration time', 'Last seen', 'Products' ] }
       let(:expected_rows) do
         expected_systems.map do |system|
           [
             system.login,
             system.hostname,
-            system.proxy_byos,
             system.registered_at,
             system.last_seen_at,
             system.products.map { |p| p.identifier.downcase + '/' + p.version + '/' + p.arch }.join("\n")

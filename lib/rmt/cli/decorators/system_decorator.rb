@@ -1,6 +1,6 @@
 class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
 
-  HEADERS = [ _('Login'), _('Hostname'), _('Proxy BYOS'), _('Registration time'), _('Last seen'), _('Products') ].freeze
+  HEADERS = [ _('Login'), _('Hostname'), _('Registration time'), _('Last seen'), _('Products') ].freeze
 
   class << self
     def csv_headers
@@ -33,7 +33,6 @@ class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
           [
             system.login,
             system.hostname,
-            system.proxy_byos,
             system.registered_at,
             system.last_seen_at,
             products_and_subscriptions(system, join_new_line: join_new_line)
@@ -49,7 +48,6 @@ class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
         [
           system.login,
           system.hostname,
-          system.proxy_byos,
           system.registered_at,
           system.last_seen_at,
           products_and_subscriptions(system, join_new_line: join_new_line)
