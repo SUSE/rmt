@@ -53,5 +53,9 @@ FactoryBot.define do
         system.hw_info = FactoryBot.build(:hw_info, virtual: evaluator.virtual, instance_data: evaluator.instance_data)
       end
     end
+
+    trait :with_system_token do
+      sequence(:system_token) { |n| "00000000-0000-4000-9000-#{n.to_s.rjust(12, '0')}" }
+    end
   end
 end

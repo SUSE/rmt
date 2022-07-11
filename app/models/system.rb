@@ -8,7 +8,7 @@ class System < ApplicationRecord
   has_many :products, -> { distinct }, through: :services
   has_one :hw_info, dependent: :destroy
 
-  validates :login, uniqueness: { case_sensitive: false }
+  validates :system_token, uniqueness: { scope: %i[login password], case_sensitive: false }
 
   alias_attribute :scc_synced_at, :scc_registered_at
 
@@ -36,6 +36,10 @@ class System < ApplicationRecord
 
   def self.build_secure_token
     SecureRandom.uuid.delete('-')
+  end
+
+  def self.get_by_credentials(login, password)
+    where(login: login, password: password).order(:id)
   end
 
   before_update do |system|
