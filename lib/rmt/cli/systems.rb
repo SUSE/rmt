@@ -5,7 +5,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
   desc 'list', _('List registered systems.')
   option :limit, aliases: '-l', type: :numeric, default: 20, desc: _('Number of systems to display')
   option :all, aliases: '-a', type: :boolean, desc: _('List all registered systems')
-  option :proxy_byos, type: :boolean, desc: _('Add proxy byos info in the output')
+  option :proxy_byos, type: :boolean, desc: _('List BYOS systems using RMT as a proxy')
   option :csv, type: :boolean, desc: _('Output data in CSV format')
 
   def list
