@@ -28,7 +28,7 @@ RSpec.describe Api::Connect::BaseController, type: :controller do
   end
 
   before do
-    @routes.draw do
+    routes.draw do
       get 'service' => 'api/connect/base#service'
       post 'announce_system' => 'api/connect/base#announce_system'
       post 'activate' => 'api/connect/base#activate'
@@ -93,7 +93,7 @@ RSpec.describe Api::Connect::BaseController, type: :controller do
       let(:new_system_token) { 'BBBBBBBB-BBBB-4BBB-9BBB-BBBBBBBBBBBB' }
 
       context 'when the system does not have a token and the header is not present' do
-        let!(:system) { create(:system, hostname: 'system') }
+        let(:system) { create(:system, hostname: 'system') }
 
         include_examples 'does not create a duplicate system'
         include_examples "does not update the old system's token"
@@ -104,7 +104,7 @@ RSpec.describe Api::Connect::BaseController, type: :controller do
         before { request.headers['System-Token'] = '' }
 
         let(:current_system_token) { nil }
-        let!(:system) { create(:system, hostname: 'system') }
+        let(:system) { create(:system, hostname: 'system') }
 
         include_examples 'does not create a duplicate system'
         include_examples 'updates the system token'
@@ -115,7 +115,7 @@ RSpec.describe Api::Connect::BaseController, type: :controller do
         before { request.headers['System-Token'] = current_system_token }
 
         let(:current_system_token) { 'AAAAAAAA-AAAA-4AAA-9AAA-AAAAAAAAAAAA' }
-        let!(:system) { create(:system, hostname: 'system', system_token: current_system_token) }
+        let(:system) { create(:system, hostname: 'system', system_token: current_system_token) }
 
         include_examples 'does not create a duplicate system'
         include_examples 'updates the system token'
@@ -126,7 +126,7 @@ RSpec.describe Api::Connect::BaseController, type: :controller do
         before { request.headers['System-Token'] = '' }
 
         let(:current_system_token) { 'AAAAAAAA-AAAA-4AAA-9AAA-AAAAAAAAAAAA' }
-        let!(:system) do
+        let(:system) do
           create(:system, :with_activated_product, hostname: 'system',
                  system_token: current_system_token)
         end
@@ -141,7 +141,7 @@ RSpec.describe Api::Connect::BaseController, type: :controller do
 
         let(:current_system_token) { 'AAAAAAAA-AAAA-4AAA-9AAA-AAAAAAAAAAAA' }
         let(:wrong_system_token)   { 'CCCCCCCC-CCCC-4CCC-9CCC-CCCCCCCCCCCC' }
-        let!(:system) do
+        let(:system) do
           create(:system, :with_activated_product, hostname: 'system',
                  system_token: current_system_token)
         end
