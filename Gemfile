@@ -75,7 +75,7 @@ gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 gem 'versionist'
 gem 'responders'
-gem 'typhoeus', '~> 1.1', '>= 1.1.2'
+gem 'typhoeus'
 gem 'active_model_serializers'
 
 # i18n

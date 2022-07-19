@@ -144,7 +144,7 @@ class RMT::SCC
 
   def create_product(item, root_product_id = nil, base_product = nil, recommended = false, migration_extra = false)
     ActiveRecord::Base.transaction do
-      @logger.debug _('Adding product %{product}') % { product: "#{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}" }
+      @logger.debug _('Adding/Updating product %{product}') % { product: "#{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}" }
 
       product = get_product(item[:id])
       product.attributes = item.select { |k, _| product.attributes.keys.member?(k.to_s) }

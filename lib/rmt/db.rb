@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# :nocov: (only used in docker-compose setup)
+
 module RMT
   # The DB module has useful methods for DB purposes. This is largely based on
   # SUSE/Portus.
@@ -60,3 +62,4 @@ module RMT
     class TimeoutReachedError < RuntimeError; end
   end
 end
+# :nocov:
