@@ -10,12 +10,12 @@ gem 'mysql2', '~> 0.5.3'
 
 gem 'nokogiri', '~> 1.12.5'
 gem 'thor'
-gem 'activesupport', '~> 6.1.3'
-gem 'actionpack', '~> 6.1.3'
-gem 'actionview', '~> 6.1.3'
-gem 'activemodel', '~> 6.1.3'
-gem 'activerecord', '~> 6.1.3'
-gem 'railties', '~> 6.1.3'
+gem 'activesupport', '~> 6.1.6'
+gem 'actionpack', '~> 6.1.6'
+gem 'actionview', '~> 6.1.6'
+gem 'activemodel', '~> 6.1.6'
+gem 'activerecord', '~> 6.1.6'
+gem 'railties', '~> 6.1.6'
 gem 'repomd_parser', '~> 0.1.4'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -66,6 +66,7 @@ group :test do
   gem 'timecop'
   gem 'vcr', '~> 6.0'
   gem 'coveralls', '~> 0.8.21', require: false
+  gem 'minitest', '~> 5.15.0' # minitest 5.16 needs Ruby >= 2.6
 end
 
 gem 'simplecov', require: false, group: :test
