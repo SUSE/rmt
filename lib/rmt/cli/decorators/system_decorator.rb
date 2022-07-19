@@ -12,13 +12,13 @@ class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
     @data = systems
   end
 
-  def to_csv(batch: false, proxy_byos: false)
-    systems = systems_to_arrays(proxy_byos: proxy_byos)
+  def to_csv(batch: false)
+    systems = systems_to_arrays
     array_to_csv(systems, HEADERS, batch: batch)
   end
 
-  def to_table(proxy_byos: false)
-    systems = systems_to_arrays(join_new_line: true, proxy_byos: proxy_byos)
+  def to_table
+    systems = systems_to_arrays(join_new_line: true)
     array_to_table(systems, HEADERS)
   end
 
@@ -26,33 +26,15 @@ class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
 
   attr_reader :data
 
-  def systems_to_arrays(join_new_line: false, proxy_byos: false)
-    if proxy_byos
-      proxy_byos_systems = data.map do |system|
-        if system.proxy_byos
-          [
-            system.login,
-            system.hostname,
-            system.registered_at,
-            system.last_seen_at,
-            products_and_subscriptions(system, join_new_line: join_new_line)
-          ]
-        end
-      end
-      proxy_byos_systems = proxy_byos_systems.compact
-      return [] if proxy_byos_systems.empty?
-
-      proxy_byos_systems
-    else
-      data.map do |system|
-        [
-          system.login,
-          system.hostname,
-          system.registered_at,
-          system.last_seen_at,
-          products_and_subscriptions(system, join_new_line: join_new_line)
-        ]
-      end
+  def systems_to_arrays(join_new_line: false)
+    data.map do |system|
+      [
+        system.login,
+        system.hostname,
+        system.registered_at,
+        system.last_seen_at,
+        products_and_subscriptions(system, join_new_line: join_new_line)
+      ]
     end
   end
 
