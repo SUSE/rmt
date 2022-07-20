@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jul 20 15:05:27 UTC 2022 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Add --proxy-byos flag to rmt-cli systems command to filter
+  BYOS systems using RMT as a proxy
+
+-------------------------------------------------------------------
 Mon May  2 13:51:44 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
 
 - Improved rmt-client-setup-res script for CentOS8.x and RHEL/RES8.x (bsc#1197038) 
