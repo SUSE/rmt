@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jul 20 15:05:27 UTC 2022 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Add --proxy-byos flag to rmt-cli systems command to filter
+  BYOS systems using RMT as a proxy
+  
+-------------------------------------------------------------------
 Fri Jul  1 13:10:01 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
 
 - Version 2.8.1:
