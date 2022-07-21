@@ -10,8 +10,6 @@ class RMT::Mirror
   include RMT::Deduplicator
   include RMT::FileValidator
 
-  MIRROR_METADATA_RETRIES = 5
-
   def initialize(mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, logger:, mirror_src: false, airgap_mode: false)
     @mirroring_base_dir = mirroring_base_dir
     @logger = logger
@@ -41,7 +39,7 @@ class RMT::Mirror
     }
 
     logger.info _('Mirroring SUSE Manager product tree to %{dir}') % { dir: repository_dir }
-    downloader.download(FileReference.new(relative_path: 'product_tree.json', **mirroring_paths))
+    downloader.download_multi([FileReference.new(relative_path: 'product_tree.json', **mirroring_paths)])
   rescue RMT::Downloader::Exception => e
     raise RMT::Mirror::Exception.new(_('Could not mirror SUSE Manager product tree with error: %{error}') % { error: e.message })
   end
@@ -85,7 +83,7 @@ class RMT::Mirror
     raise RMT::Mirror::Exception.new(_('Could not create a temporary directory: %{error}') % { error: e.message })
   end
 
-  def mirror_metadata(repository_dir, repository_url, temp_metadata_dir, n_retry = MIRROR_METADATA_RETRIES)
+  def mirror_metadata(repository_dir, repository_url, temp_metadata_dir)
     mirroring_paths = {
       base_url: URI.join(repository_url),
       base_dir: temp_metadata_dir,
@@ -93,13 +91,12 @@ class RMT::Mirror
     }
 
     repomd_xml = FileReference.new(relative_path: 'repodata/repomd.xml', **mirroring_paths)
-    downloader.download(repomd_xml)
+    downloader.download_multi([repomd_xml])
 
     begin
       signature_file = FileReference.new(relative_path: 'repodata/repomd.xml.asc', **mirroring_paths)
       key_file       = FileReference.new(relative_path: 'repodata/repomd.xml.key', **mirroring_paths)
-      downloader.download(signature_file)
-      downloader.download(key_file)
+      downloader.download_multi([signature_file, key_file])
 
       RMT::GPG.new(
         metadata_file: repomd_xml.local_path,
@@ -111,15 +108,7 @@ class RMT::Mirror
       if (e.http_code == 404)
         logger.info(_('Repository metadata signatures are missing'))
       else
-        if n_retry > 0
-          n_seconds = 2
-          logger.warn _('Mirroring metadata signature/key failed with %{http_code}. Retrying after %{seconds} seconds') % { http_code: e.http_code,
-                                                                                                                            seconds: n_seconds }
-          sleep(n_seconds)
-          mirror_metadata(repository_dir, repository_url, temp_metadata_dir, (n_retry - 1))
-        end
-
-        raise(_('Downloading repo signature/key failed with HTTP code %{http_code}') % { http_code: e.http_code })
+        raise(_('Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}') % { message: e.message, http_code: e.http_code })
       end
     end
 
@@ -130,9 +119,7 @@ class RMT::Mirror
 
     metadata_files
   rescue StandardError => e
-    if n_retry == MIRROR_METADATA_RETRIES
-      raise RMT::Mirror::Exception.new(_('Error while mirroring metadata: %{error}') % { error: e.message })
-    end
+    raise RMT::Mirror::Exception.new(_('Error while mirroring metadata: %{error}') % { error: e.message })
   end
 
   def mirror_license(repository_dir, repository_url, temp_licenses_dir)
@@ -144,8 +131,9 @@ class RMT::Mirror
 
     begin
       directory_yast = FileReference.new(relative_path: 'directory.yast', **mirroring_paths)
-      downloader.download(directory_yast)
+      downloader.download_multi([directory_yast])
     rescue RMT::Downloader::Exception
+      logger.debug("No license directory found for repository '#{repository_url}'")
       FileUtils.remove_entry(temp_licenses_dir) # the repository would have an empty licenses directory unless removed
       return
     end
@@ -155,7 +143,7 @@ class RMT::Mirror
       .map { |relative_path| FileReference.new(relative_path: relative_path, **mirroring_paths) }
     downloader.download_multi(license_files)
   rescue StandardError => e
-    raise RMT::Mirror::Exception.new(_('Error while mirroring license: %{error}') % { error: e.message })
+    raise RMT::Mirror::Exception.new(_('Error while mirroring license files: %{error}') % { error: e.message })
   end
 
   def mirror_packages(metadata_files, repository_dir, repository_url)
@@ -171,7 +159,7 @@ class RMT::Mirror
 
     raise _('Failed to download %{failed_count} files') % { failed_count: failed_downloads.size } unless failed_downloads.empty?
   rescue StandardError => e
-    raise RMT::Mirror::Exception.new(_('Error while mirroring data: %{error}') % { error: e.message })
+    raise RMT::Mirror::Exception.new(_('Error while mirroring packages: %{error}') % { error: e.message })
   end
 
   def parse_packages_metadata(metadata_references)

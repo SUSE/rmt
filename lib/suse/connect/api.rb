@@ -72,12 +72,14 @@ module SUSE
           yield response
         end
       rescue RequestError => e
+        # :nocov: TODO: https://github.com/SUSE/rmt/issues/911
         # change some params here and start the bulk update.
         if e.response.code == 413
           system_limit = e.response.headers['X-Payload-Entities-Max-Limit'].to_i
           return send_bulk_system_update(systems, system_limit)
         end
         raise e
+        # :nocov:
       end
 
       def forward_system_deregistration(scc_system_id)

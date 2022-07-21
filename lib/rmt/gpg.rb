@@ -32,7 +32,7 @@ class RMT::GPG
     out = `#{cmd}`
 
     if $CHILD_STATUS.exitstatus != 0
-      @logger.warn "GPG command: #{cmd}"
+      @logger.warn "GPG command failed with #{$CHILD_STATUS.exitstatus}: #{cmd}"
       @logger.warn "GPG output: #{out}"
       raise RMT::GPG::Exception.new(_('GPG key import failed'))
     end
