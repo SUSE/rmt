@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_05_113737) do
+ActiveRecord::Schema.define(version: 2022_07_11_152732) do
 
   create_table "activations", charset: "utf8", force: :cascade do |t|
     t.bigint "service_id", null: false
@@ -160,7 +160,9 @@ ActiveRecord::Schema.define(version: 2022_04_05_113737) do
     t.datetime "scc_registered_at"
     t.bigint "scc_system_id", comment: "System ID in SCC (if the system registration was forwarded; needed for forwarding de-registrations)"
     t.boolean "proxy_byos", default: false
-    t.index ["login"], name: "index_systems_on_login", unique: true
+    t.string "system_token"
+    t.index ["login", "password", "system_token"], name: "index_systems_on_login_and_password_and_system_token", unique: true
+    t.index ["login", "password"], name: "index_systems_on_login_and_password"
   end
 
   add_foreign_key "activations", "services", on_delete: :cascade
