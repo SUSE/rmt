@@ -97,6 +97,15 @@ module SUSE
         systems_hash = systems.collect do |system|
           system_hash = system.attributes.symbolize_keys.slice(*mandatory_keys)
 
+          # Instead of the actual system token we send the system id which is
+          # stable per RMT host.
+          # This is required since SCC does not have access to up to date token
+          # information. If we would send the actual token, SCC would create a
+          # duplicate each time the token changed.
+          if system.system_token
+            system_hash[:system_token] = system.id
+          end
+
           # If a system has updated attributes other than `last_seen_at`,
           # scc_synced_at is reset to nil, to require a full sync.
           next system_hash unless system.scc_synced_at.nil?

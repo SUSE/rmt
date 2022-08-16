@@ -302,6 +302,38 @@ RSpec.describe SUSE::Connect::Api do
         end
       end
 
+      context 'when sending in bulk with and without system_token' do
+        let!(:system1) { create :system, :full, :with_system_token, :synced }
+        let!(:system2) { create :system, :full, :synced }
+
+        let(:systems) { [system1, system2] }
+
+        let(:expected_body) do
+          {
+            systems: [
+              {
+                login: system1.login,
+                password: system1.password,
+                last_seen_at: system1.last_seen_at,
+                system_token: system1.id
+              },
+              {
+                login: system2.login,
+                password: system2.password,
+                last_seen_at: system2.last_seen_at
+              }
+            ]
+          }
+        end
+
+        it 'yields successful results' do
+          expect do |block|
+            relation = System.where(id: systems.pluck(:id))
+            api_client.send_bulk_system_update(relation, &block)
+          end.to yield_with_args(expected_response)
+        end
+      end
+
       context 'when sending in bulk and encounter 413 http error code' do
         before do
           stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
