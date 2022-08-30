@@ -1,0 +1,71 @@
+name: Next-rails (ruby3.1)
+
+on:
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  next-rails:
+    runs-on: ubuntu-latest
+    name: next-rails
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_DATABASE: rmt_test
+          MYSQL_USER: rmt
+          MYSQL_PASSWORD: rmt
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+    steps:
+      - uses: actions/checkout@v2
+        with:
+         fetch-depth: 0
+      - name: Sets env vars for next-rails
+        run: |
+          echo "BUNDLE_GEMFILE=Gemfile.next" >> $GITHUB_ENV
+          echo "BUNDLE_CACHE_PATH=vendor/cache.next" >> $GITHUB_ENV
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.2
+          bundler-cache: true
+      - name: "Cache gems"
+        uses: actions/cache@v2
+        id: gem-cache
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.next.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+      - name: Pre-run inline scripts
+        run: |
+          sudo mkdir -p /var/lib/rmt
+          ruby -e "require 'yaml'; puts({'database_test'=>{'host' => '127.0.0.1', 'port' => 3306, 'username'=>'rmt','password'=>'rmt','database'=>'rmt_test','adapter'=>'mysql2','encoding'=>'utf8','timeout'=>5000,'pool'=>5}}.to_yaml)" > config/rmt.local.yml
+      - name: Run Lint
+        run: |
+          bundle exec rubocop -D
+      - name: Run core tests
+        env:
+          RAILS_ENV: test
+        run: |
+          bundle exec rails db:migrate
+          bundle exec rspec --format documentation
+      - name: Run PubCloud engines tests
+        env:
+          RAILS_ENV: test
+        run: |
+          bundle exec rails db:migrate
+          bundle exec rake test:engines
+      - name: Run version checks
+        run: |
+          echo "::group::Version verification checks"
+          ruby integration/ci_check.rb
+          echo "::endgroup::"
