@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Sep  2 13:33:41 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
+
+- Release version 2.9
+
+-------------------------------------------------------------------
 Thu Jul 21 16:36:27 UTC 2022 - Luís Caparroz <luis.caparroz@suse.com>
 
 - Implement `System-Token` header handling to improve unique system reporting.
