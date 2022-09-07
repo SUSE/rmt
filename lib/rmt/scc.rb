@@ -86,16 +86,21 @@ class RMT::SCC
     # do not sync BYOS proxy systems to SCC
     systems = System.where('scc_registered_at IS NULL OR last_seen_at > scc_registered_at').where(proxy_byos: false)
     @logger.info(_('Syncing %{count} updated system(s) to SCC') % { count: systems.size })
-    scc_api_client.send_bulk_system_update(systems) do |successful_response|
-      next if successful_response[:systems].count == 0
 
-      successful_response[:systems].each do |system_hash|
-        # Update attributes without triggering after_update callback (which resets scc_synced_at to nil)
-        System.find_by(login: system_hash[:login])
-           .update_columns(scc_system_id: system_hash[:id], scc_synced_at: Time.current)
-      rescue StandardError => e
-        @logger.error(_('Failed to sync systems: %{error}') % { error: e.to_s })
-      end
+    updated_systems = scc_api_client.send_bulk_system_update(systems)
+    if updated_systems[:systems].blank?
+      # Case: silently fail but respond with 201
+      systems.update_all(scc_registered_at: Time.current)
+      @logger.info(_('Updated system sync date'))
+      return
+    end
+
+    updated_systems[:systems].each do |system_hash|
+      # Update attributes without triggering after_update callback (which resets scc_synced_at to nil)
+      System.find_by(login: system_hash[:login], password: system_hash[:password], system_token: system_hash[:token])
+       .update_columns(scc_system_id: system_hash[:id], scc_synced_at: Time.current)
+    rescue StandardError => e
+      @logger.error(_('Failed to sync systems: %{error}') % { error: e.to_s })
     end
 
     DeregisteredSystem.find_in_batches(batch_size: 20) do |batch|

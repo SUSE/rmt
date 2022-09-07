@@ -226,10 +226,12 @@ RSpec.describe SUSE::Connect::Api do
 
       let(:expected_response) do
         system_hashes = systems.collect do |s|
-          s.slice(*system_keys).symbolize_keys
+          s.slice(*system_keys).symbolize_keys.transform_values!(&:to_s)
         end
         { systems: system_hashes }
       end
+
+      let(:relation) { System.where(id: systems.pluck(:id)) }
 
       before do
         stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
@@ -266,10 +268,7 @@ RSpec.describe SUSE::Connect::Api do
         end
 
         it 'yields results' do
-          expect do |block|
-            relation = System.where(id: systems.pluck(:id))
-            api_client.send_bulk_system_update(relation, &block)
-          end.to yield_with_args(expected_response)
+          expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
         end
       end
 
@@ -295,10 +294,7 @@ RSpec.describe SUSE::Connect::Api do
         end
 
         it 'yields successful results' do
-          expect do |block|
-            relation = System.where(id: systems.pluck(:id))
-            api_client.send_bulk_system_update(relation, &block)
-          end.to yield_with_args(expected_response)
+          expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
         end
       end
 
@@ -327,10 +323,7 @@ RSpec.describe SUSE::Connect::Api do
         end
 
         it 'yields successful results' do
-          expect do |block|
-            relation = System.where(id: systems.pluck(:id))
-            api_client.send_bulk_system_update(relation, &block)
-          end.to yield_with_args(expected_response)
+          expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
         end
       end
 
@@ -362,7 +355,7 @@ RSpec.describe SUSE::Connect::Api do
         let(:subscription) { create :subscription }
         let(:systems) { create_list(:system, 2, :full, subscription: subscription, scc_synced_at: nil) }
 
-        let(:expected_response) { { systems: [systems.last.slice(*system_keys).symbolize_keys] } }
+        let(:expected_response) { { systems: [systems.last.slice(*system_keys).symbolize_keys.transform_values!(&:to_s)] } }
 
         let(:all_systems_payload) do
           system_hashes = systems.collect do |system|
@@ -377,7 +370,7 @@ RSpec.describe SUSE::Connect::Api do
               hostname: system.hostname,
               hwinfo: hwinfo,
               products: [product]
-            }
+            }.transform_values!(&:to_s)
           end.compact
           { systems: system_hashes }
         end
@@ -401,10 +394,7 @@ RSpec.describe SUSE::Connect::Api do
         end
 
         it 'yields successful results' do
-          expect do |block|
-            relation = System.where(id: systems.pluck(:id))
-            api_client.send_bulk_system_update(relation, &block)
-          end.to yield_with_args(expected_response)
+          expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
         end
       end
 
@@ -438,10 +428,7 @@ RSpec.describe SUSE::Connect::Api do
         let(:expected_body) { { systems: [expected_body_set] + expected_body_unset } }
 
         it 'yields successful results' do
-          expect do |block|
-            relation = System.where(id: systems.pluck(:id))
-            api_client.send_bulk_system_update(relation, &block)
-          end.to yield_with_args(expected_response)
+          expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
         end
       end
     end

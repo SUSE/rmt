@@ -379,13 +379,12 @@ describe RMT::SCC do
 
       context 'when syncing succeeds' do
         before do
-          expect(api_double).to receive(:send_bulk_system_update).with([system]).and_yield({
-            systems: [{
-              id: scc_system_id,
-              login: system.login,
-              password: system.password
-            }]
-          })
+          expect(api_double).to receive(:send_bulk_system_update).with([system])
+                                  .and_return({ systems: [{
+                                    id: scc_system_id,
+                                    login: system.login,
+                                    password: system.password
+                                  }] })
           expect(api_double).to receive(:forward_system_deregistration).with(deregistered_system.scc_system_id)
 
           expect(logger).to receive(:info).with('Syncing 1 updated system(s) to SCC')
@@ -399,6 +398,7 @@ describe RMT::SCC do
 
         it 'updates system.scc_synced_at field' do
           system.reload
+          expect(system.scc_registered_at).not_to be(nil)
           expect(system.scc_synced_at).not_to be(nil)
         end
 
@@ -410,13 +410,14 @@ describe RMT::SCC do
 
       context 'when syncing fails' do
         before do
-          expect(api_double).to receive(:send_bulk_system_update).with([system]).and_yield({
-            systems: [{
-              id: 3000,
-              login: 'foo',
-              password: 'bar'
-            }]
-          })
+          expect(api_double).to receive(:send_bulk_system_update).with([system])
+                              .and_return({
+                                systems: [{
+                                  id: 3000,
+                                  login: 'foo',
+                                  password: 'bar'
+                                }]
+                              })
           expect(logger).to receive(:info).with('Syncing 1 updated system(s) to SCC')
           expect(logger).to receive(:error).with(/Failed to sync system/)
           described_class.new.sync_systems
@@ -442,13 +443,14 @@ describe RMT::SCC do
       let(:system) { FactoryBot.create(:system) }
 
       it 'syncs systems' do
-        expect(api_double).to receive(:send_bulk_system_update).with([system]).and_yield(
-          systems: [{
-            id: 10,
-            login: 'test',
-            password: 'test'
-          }]
-        )
+        expect(api_double).to receive(:send_bulk_system_update).with([system])
+                              .and_return({
+                                systems: [{
+                                  id: 10,
+                                  login: 'test',
+                                  password: 'test'
+                                }]
+                              })
         described_class.new.sync_systems
       end
     end
