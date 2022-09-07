@@ -408,16 +408,10 @@ describe RMT::SCC do
         end
       end
 
-      context 'when syncing fails' do
+      context 'when syncing fails with 5xx erros' do
         before do
-          expect(api_double).to receive(:send_bulk_system_update).with([system])
-                              .and_return({
-                                systems: [{
-                                  id: 3000,
-                                  login: 'foo',
-                                  password: 'bar'
-                                }]
-                              })
+          allow(api_double).to receive(:send_bulk_system_update).with([system])
+                              .and_raise(StandardError, 'simulated error')
           expect(logger).to receive(:info).with('Syncing 1 updated system(s) to SCC')
           expect(logger).to receive(:error).with(/Failed to sync system/)
           described_class.new.sync_systems
@@ -428,6 +422,25 @@ describe RMT::SCC do
         it "doesn't update system.scc_synced_at" do
           system.reload
           expect(system.scc_synced_at).to be(nil)
+        end
+      end
+
+      context 'when some systems fail to sync with 2xx (silent failures)' do
+        before do
+          expect(api_double).to receive(:send_bulk_system_update).with([system])
+                              .and_return({
+                                systems: []
+                              })
+          expect(logger).to receive(:info).with('Syncing 1 updated system(s) to SCC')
+          expect(logger).to receive(:info).with("Couldn't sync 1 systems.")
+          described_class.new.sync_systems
+        end
+
+        let(:system) { FactoryBot.create(:system) }
+
+        it 'mark them for later' do
+          system.reload
+          expect(system.scc_synced_at).not_to eq(nil)
         end
       end
     end
@@ -447,8 +460,8 @@ describe RMT::SCC do
                               .and_return({
                                 systems: [{
                                   id: 10,
-                                  login: 'test',
-                                  password: 'test'
+                                  login: system.login,
+                                  password: system.password
                                 }]
                               })
         described_class.new.sync_systems
