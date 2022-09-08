@@ -96,15 +96,16 @@ class RMT::SCC
       if failed_scc_synced_systems.present?
         # Case: when silently fail but respond with 201, mark systems synced for next try
         @logger.info(_("Couldn't sync %{count} systems.") % { count: failed_scc_synced_systems.count })
-        System.where(login: failed_scc_synced_systems).update_all(scc_synced_at: Time.current)
       end
 
+      # Incase of system duplicates, the response will also have duplicates
+      # updating in a sequential step
       updated_systems[:systems].each do |system_hash|
         # Update attributes without triggering after_update callback (which resets scc_synced_at to nil)
-        System.find_by(login: system_hash[:login]).update_columns(
+        System.where(login: system_hash[:login]).update_all(
           scc_system_id: system_hash[:id],
           scc_synced_at: Time.current
-)
+        )
       end
     end
     DeregisteredSystem.find_in_batches(batch_size: 20) do |batch|

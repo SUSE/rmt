@@ -379,32 +379,34 @@ describe RMT::SCC do
 
       context 'when syncing succeeds' do
         before do
-          expect(api_double).to receive(:send_bulk_system_update).with([system])
-                                  .and_return({ systems: [{
-                                    id: scc_system_id,
-                                    login: system.login,
-                                    password: system.password
-                                  }] })
+          expect(api_double).to receive(:send_bulk_system_update).with(systems)
+                                  .and_return({ systems: stubbed_system_response })
+
           expect(api_double).to receive(:forward_system_deregistration).with(deregistered_system.scc_system_id)
 
-          expect(logger).to receive(:info).with('Syncing 1 updated system(s) to SCC')
+          expect(logger).to receive(:info).with('Syncing 2 updated system(s) to SCC')
           expect(logger).to receive(:info).with(/Syncing de-registered system/)
           described_class.new.sync_systems
         end
 
-        let(:system) { FactoryBot.create(:system) }
-        let(:scc_system_id) { 9000 }
-        let(:deregistered_system) { FactoryBot.create(:deregistered_system) }
-
-        it 'updates system.scc_synced_at field' do
-          system.reload
-          expect(system.scc_registered_at).not_to be(nil)
-          expect(system.scc_synced_at).not_to be(nil)
+        let(:stubbed_system_response) do
+          systems.collect do |s|
+            h = s.slice(%i[id login password])
+            h['id'] = rand(1000)
+            h.symbolize_keys
+          end.compact
         end
+        let(:systems) { create_list(:system, 2, login: 'a test system') }
+        let(:deregistered_system) { create(:deregistered_system) }
 
-        it 'updates system.scc_system_id field' do
-          system.reload
-          expect(system.scc_system_id).to be(scc_system_id)
+        xit 'updates system.scc_synced_at & system.scc_system_id field' do
+          systems.each(&:reload)
+          expect(systems.first.scc_synced_at).not_to eq(nil)
+          expect(systems.second.scc_synced_at).not_to eq(nil)
+
+
+          expect(systems.first.scc_system_id).to eq(stubbed_system_response.first[:id])
+          expect(systems.second.scc_system_id).to eq(stubbed_system_response.second[:id])
         end
       end
 
@@ -440,7 +442,7 @@ describe RMT::SCC do
 
         it 'mark them for later' do
           system.reload
-          expect(system.scc_synced_at).not_to eq(nil)
+          expect(system.scc_synced_at).to eq(nil)
         end
       end
     end
