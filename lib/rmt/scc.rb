@@ -98,11 +98,9 @@ class RMT::SCC
         @logger.info(_("Couldn't sync %{count} systems.") % { count: failed_scc_synced_systems.count })
       end
 
-      # Incase of system duplicates, the response will also have duplicates
-      # updating in a sequential step
       updated_systems[:systems].each do |system_hash|
         # Update attributes without triggering after_update callback (which resets scc_synced_at to nil)
-        System.where(login: system_hash[:login]).update_all(
+        System.where(login: system_hash[:login], system_token: system_hash[:token]).update_all(
           scc_system_id: system_hash[:id],
           scc_synced_at: Time.current
         )

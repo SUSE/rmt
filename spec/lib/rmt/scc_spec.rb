@@ -391,15 +391,16 @@ describe RMT::SCC do
 
         let(:stubbed_system_response) do
           systems.collect do |s|
-            h = s.slice(%i[id login password])
+            h = s.slice(%i[id login password system_token])
+            h[:token] = h.delete :system_token
             h['id'] = rand(1000)
             h.symbolize_keys
           end.compact
         end
-        let(:systems) { create_list(:system, 2, login: 'a test system') }
+        let(:systems) { create_list(:system, 2, :with_system_token, login: 'a test system') }
         let(:deregistered_system) { create(:deregistered_system) }
 
-        xit 'updates system.scc_synced_at & system.scc_system_id field' do
+        it 'updates system.scc_synced_at & system.scc_system_id field' do
           systems.each(&:reload)
           expect(systems.first.scc_synced_at).not_to eq(nil)
           expect(systems.second.scc_synced_at).not_to eq(nil)
