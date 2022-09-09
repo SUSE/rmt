@@ -80,11 +80,6 @@ module SUSE
           system_limit = e.response.headers['X-Payload-Entities-Max-Limit'].to_i
           send_bulk_system_update(systems, system_limit)
         end
-      # rubocop:disable Lint/RescueException
-      rescue Exception => e
-        # rubocop:enable Lint/RescueException
-        @logger.error(e)
-        raise e
       # :nocov:
       else
         updated_systems
