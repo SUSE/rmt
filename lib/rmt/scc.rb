@@ -94,13 +94,12 @@ class RMT::SCC
     else
       failed_scc_synced_systems = systems.pluck(:login).excluding(updated_systems[:systems].pluck(:login))
       if failed_scc_synced_systems.present?
-        # Case: when silently fail but respond with 201, mark systems synced for next try
+        # The response from SCC will be 201 even if some single systems failed to save.
         @logger.info(_("Couldn't sync %{count} systems.") % { count: failed_scc_synced_systems.count })
       end
 
       updated_systems[:systems].each do |system_hash|
-        # Update attributes without triggering after_update callback (which resets scc_synced_at to nil)
-        System.where(login: system_hash[:login], system_token: system_hash[:token]).update_all(
+        System.find_by(login: system_hash[:login], system_token: system_hash[:token]).update_columns(
           scc_system_id: system_hash[:id],
           scc_synced_at: Time.current
         )
