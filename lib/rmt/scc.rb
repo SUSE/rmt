@@ -99,7 +99,13 @@ class RMT::SCC
       end
 
       updated_systems[:systems].each do |system_hash|
-        System.find_by(login: system_hash[:login], system_token: system_hash[:token]).update_columns(
+        # In RMT - SCC communication, RMT's system id is used as token, see also lib/suse/connect/api.rb:108
+        system = if system_hash[:system_token]
+                   System.find_by(id: system_hash[:system_token])
+                 else
+                   System.find_by(login: system_hash[:login])
+                 end
+        system.update_columns(
           scc_system_id: system_hash[:id],
           scc_synced_at: Time.current
         )

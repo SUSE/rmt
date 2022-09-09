@@ -391,9 +391,9 @@ describe RMT::SCC do
 
         let(:stubbed_system_response) do
           systems.collect do |s|
-            h = s.slice(%i[id login password system_token])
-            h[:token] = h.delete :system_token
-            h['id'] = rand(1000)
+            h = s.slice(%i[login password last_seen_at])
+            h[:system_token] = s.id
+            h[:id] = rand(1000)
             h.symbolize_keys
           end.compact
         end
