@@ -161,8 +161,9 @@ module SUSE
           'Accept' => 'application/vnd.scc.suse.com.v4+json',
           'Content-Type' => 'application/json'
         }
-
+        @logger.info('Request to: ' + url + ', options: ' + options.inspect) if Settings&.http_client&.verbose == true
         response = RMT::HttpRequest.new(url, options).run
+        @logger.info('Response: ' + response.body) if Settings&.http_client&.verbose == true
         raise InvalidCredentialsError if (response.code == 401)
         raise RequestError.new(response) unless (response.code >= 200 && response.code < 300)
 
