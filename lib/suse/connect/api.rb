@@ -62,6 +62,7 @@ module SUSE
 
       def send_bulk_system_update(systems, system_limit = nil)
         system_limit ||= BULK_SYSTEM_REQUEST_LIMIT
+        updated_systems = { systems: [] }
         systems.in_batches(of: system_limit) do |batched_systems|
           params = prepare_payload_for_bulk_update(batched_systems)
           response = make_single_request(
@@ -69,17 +70,19 @@ module SUSE
             "#{connect_api}/organizations/systems",
             { body: params.to_json }
           )
-          yield response
+          updated_systems[:systems] = updated_systems[:systems].concat(response[:systems])
         end
       rescue RequestError => e
         # :nocov: TODO: https://github.com/SUSE/rmt/issues/911
         # change some params here and start the bulk update.
         if e.response.code == 413
+          @logger.info("Hit payload limit with: #{system_limit}")
           system_limit = e.response.headers['X-Payload-Entities-Max-Limit'].to_i
-          return send_bulk_system_update(systems, system_limit)
+          send_bulk_system_update(systems, system_limit)
         end
-        raise e
-        # :nocov:
+      # :nocov:
+      else
+        updated_systems
       end
 
       def forward_system_deregistration(scc_system_id)
@@ -158,8 +161,9 @@ module SUSE
           'Accept' => 'application/vnd.scc.suse.com.v4+json',
           'Content-Type' => 'application/json'
         }
-
+        @logger.info('Request to: ' + url + ', options: ' + options.inspect) if Settings&.http_client&.verbose == true
         response = RMT::HttpRequest.new(url, options).run
+        @logger.info('Response: ' + response.body) if Settings&.http_client&.verbose == true
         raise InvalidCredentialsError if (response.code == 401)
         raise RequestError.new(response) unless (response.code >= 200 && response.code < 300)
 
