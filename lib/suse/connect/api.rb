@@ -63,12 +63,12 @@ module SUSE
       def send_bulk_system_update(systems, system_limit = nil)
         system_limit ||= BULK_SYSTEM_REQUEST_LIMIT
         updated_systems = { systems: [] }
+
         systems.in_batches(of: system_limit) do |batched_systems|
-          params = prepare_payload_for_bulk_update(batched_systems)
           response = make_single_request(
             :put,
             "#{connect_api}/organizations/systems",
-            { body: params.to_json }
+            { body: { systems: batched_systems.map { |s| SUSE::Connect::SystemSerializer.new(s) } }.to_json }
           )
           updated_systems[:systems] = updated_systems[:systems].concat(response[:systems])
         end
@@ -93,59 +93,6 @@ module SUSE
       end
 
       protected
-
-      def prepare_payload_for_bulk_update(systems)
-        mandatory_keys = %i[login password last_seen_at created_at]
-
-        systems_hash = systems.collect do |system|
-          system_hash = system.attributes.symbolize_keys.slice(*mandatory_keys)
-
-          # Instead of the actual system token we send the system id which is
-          # stable per RMT host.
-          # This is required since SCC does not have access to up to date token
-          # information. If we would send the actual token, SCC would create a
-          # duplicate each time the token changed.
-          if system.system_token
-            system_hash[:system_token] = system.id
-          end
-
-          # If a system has updated attributes other than `last_seen_at`,
-          # scc_synced_at is reset to nil, to require a full sync.
-          next system_hash unless system.scc_synced_at.nil?
-
-          system_hash[:hostname] = system.hostname
-          system_hash[:hwinfo] = generate_hwinfo_for(system)
-          system_hash[:products] = generate_product_listing_for(system)
-          system_hash
-        end
-
-        { systems: systems_hash }
-      end
-
-      def generate_product_listing_for(system)
-        product_keys = %i[id identifier version arch]
-
-        system.activations.map do |activation|
-          attributes = activation.product.slice(*product_keys).symbolize_keys
-
-          # Send the activation creation date to determine on SCC
-          # when a system has activated a certain product
-          attributes[:activated_at] = activation.created_at
-
-          if activation.subscription
-            attributes[:regcode] = activation.subscription.regcode
-          end
-          attributes
-        end
-      end
-
-      def generate_hwinfo_for(system)
-        hw_info_keys = %i[cpus sockets hypervisor arch uuid cloud_provider]
-
-        return nil unless system.hw_info
-
-        system.hw_info.attributes.symbolize_keys.slice(*hw_info_keys)
-      end
 
       def process_rels(response)
         links = (response.headers['Link'] || '').split(', ').map do |link|
