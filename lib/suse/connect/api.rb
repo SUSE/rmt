@@ -95,7 +95,7 @@ module SUSE
       protected
 
       def prepare_payload_for_bulk_update(systems)
-        mandatory_keys = %i[login password last_seen_at]
+        mandatory_keys = %i[login password last_seen_at created_at]
 
         systems_hash = systems.collect do |system|
           system_hash = system.attributes.symbolize_keys.slice(*mandatory_keys)
@@ -127,6 +127,10 @@ module SUSE
 
         system.activations.map do |activation|
           attributes = activation.product.slice(*product_keys).symbolize_keys
+
+          # Send the activation creation date to determine on SCC
+          # when a system has activated a certain product
+          attributes[:activated_at] = activation.created_at
 
           if activation.subscription
             attributes[:regcode] = activation.subscription.regcode

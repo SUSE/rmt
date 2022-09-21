@@ -248,17 +248,22 @@ RSpec.describe SUSE::Connect::Api do
 
       context 'when a single system is bulk updated' do
         let(:systems) { create_list :system, 1, :full }
-        let(:product) { system.products.first }
+        let(:activation) { system.activations.first }
+        let(:product) { activation.product }
         let(:hw_info) { system.hw_info }
 
         let(:expected_body) do
           system_hashes = systems.collect do |system|
-            product = system.products.first.slice(*product_keys)
+            activation = system.activations.first
+            product = activation.product.slice(*product_keys)
+            product[:activated_at] = activation.created_at
+
             hwinfo = system.hw_info.slice(*hwinfo_keys)
             {
               login: system.login,
               password: system.password,
               last_seen_at: system.last_seen_at,
+              created_at: system.created_at,
               hostname: system.hostname,
               hwinfo: hwinfo,
               products: [product]
@@ -279,12 +284,15 @@ RSpec.describe SUSE::Connect::Api do
 
         let(:expected_body) do
           system_hashes = systems.collect do |system|
-            product = system.products.first.slice(*product_keys)
+            activation = system.activations.first
+            product = activation.product.slice(*product_keys)
+            product[:activated_at] = activation.created_at
             hwinfo = system.hw_info.slice(*hwinfo_keys)
             {
               login: system.login,
               password: system.password,
               last_seen_at: system.last_seen_at,
+              created_at: system.created_at,
               hostname: system.hostname,
               hwinfo: hwinfo,
               products: [product]
@@ -311,12 +319,14 @@ RSpec.describe SUSE::Connect::Api do
                 login: system1.login,
                 password: system1.password,
                 last_seen_at: system1.last_seen_at,
+                created_at: system1.created_at,
                 system_token: system1.id
               },
               {
                 login: system2.login,
                 password: system2.password,
-                last_seen_at: system2.last_seen_at
+                last_seen_at: system2.last_seen_at,
+                created_at: system2.created_at
               }
             ]
           }
@@ -408,17 +418,21 @@ RSpec.describe SUSE::Connect::Api do
           {
             login: system_set.login,
             password: system_set.password,
-            last_seen_at: system_set.last_seen_at
+            last_seen_at: system_set.last_seen_at,
+            created_at: system_set.created_at
           }
         end
         let(:expected_body_unset) do
           systems_unset.collect do |system|
-            product = system.products.first.slice(*product_keys)
+            activation = system.activations.first
+            product = activation.product.slice(*product_keys)
+            product[:activated_at] = activation.created_at
             hwinfo = system.hw_info.slice(*hwinfo_keys)
             {
               login: system.login,
               password: system.password,
               last_seen_at: system.last_seen_at,
+              created_at: system.created_at,
               hostname: system.hostname,
               hwinfo: hwinfo,
               products: [product]
