@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Sep 22 09:30:17 UTC 2022 - Felix Schnizlein <fschnizlein@suse.com>
+
+- Send system creation and product activation dates to SCC for better
+  visibility in SCC.
+
+-------------------------------------------------------------------
 Fri Sep  2 13:33:41 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
 
 - Release version 2.9: Implement `System-Token` header handling to improve unique system reporting.
