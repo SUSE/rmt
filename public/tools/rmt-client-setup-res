@@ -111,9 +111,9 @@ if [ ! -x $SUSECONNECT ]; then
         exit 1
     fi
 
-    $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/x86_64/update
+    $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update
     $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}-AS/${SLL_version}/x86_64/update
-    $DNF install ${AUTOACCEPT} --allowerasing sles_es-release
+    $DNF install ${AUTOACCEPT} --allowerasing ${SLL_release_package}
     $DNF install ${AUTOACCEPT} SUSEConnect librepo
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}_${SLL_version}_x86_64_update"
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}-AS_${SLL_version}_x86_64_update"
