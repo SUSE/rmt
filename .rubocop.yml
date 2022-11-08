@@ -10,6 +10,8 @@ inherit_mode:
 
 AllCops:
   TargetRubyVersion: 2.5
+  SuggestExtensions: false
+  NewCops: enable
   Exclude:
     - .bundle/**/*
     - db/schema.rb
@@ -19,7 +21,6 @@ AllCops:
     - tmp/**/*
     - lib/locale/*
     - package/**/*
-  SuggestExtensions: false
 
 
 Style/TrailingUnderscoreVariable:
@@ -43,3 +44,6 @@ RSpec/NestedGroups:
 
 Style/FormatStringToken:
   EnforcedStyle: template
+
+Style/OpenStructUse:
+  Enabled: false

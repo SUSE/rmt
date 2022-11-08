@@ -540,7 +540,7 @@ RSpec.describe RMT::Mirror do
           VCR.use_cassette 'mirroring_product_with_dedup' do
             rmt_source_mirror.mirror(**mirror_params_source)
             Dir.entries(source_path).select { |entry| entry =~ /(\.drpm|\.rpm)$/ }.each do |filename|
-              File.open(source_path + filename, 'w') { |f| f.write('corruption') }
+              File.write(source_path + filename, 'corruption')
             end
           end
         end
