@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Nov  8 10:30:45 UTC 2022 - Zuzana Petrova <zpetrova@suse.com>
+
+- adapt rmt-client-setup-res script to work on SLL9/RHEL9
+
+-------------------------------------------------------------------
 Thu Sep 22 09:30:17 UTC 2022 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Send system creation and product activation dates to SCC for better
