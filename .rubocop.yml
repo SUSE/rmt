@@ -19,6 +19,8 @@ AllCops:
     - tmp/**/*
     - lib/locale/*
     - package/**/*
+  SuggestExtensions: false
+
 
 Style/TrailingUnderscoreVariable:
   Enabled: false
