@@ -20,7 +20,9 @@ pipeline {
     }
     stage('run prophet') {
       steps {
-        sh 'ruby ./integration/prophet/prophet.rb'
+        sh 'gem.ruby2.5 install --user-install octokit -v 4.21.0'
+        sh 'gem.ruby2.5 install --user-install prophet'
+        sh 'ruby.ruby2.5 ./integration/prophet/prophet.rb'
       }
     }
   }
