@@ -220,7 +220,7 @@ RSpec.describe RMT::Downloader do
 
       context 'a file exists in cache and not modified' do
         before do
-          File.open(repomd_xml_file.cache_path, 'w') { |file| file.write(cached_content) }
+          File.write(repomd_xml_file.cache_path, cached_content)
           File.utime(time, time, repomd_xml_file.cache_path)
           stub_request(:head, 'http://example.com/repomd.xml')
             .with(headers: headers)
@@ -234,7 +234,7 @@ RSpec.describe RMT::Downloader do
 
       context 'a file exists in cache and is modified' do
         before do
-          File.open(repomd_xml_file.cache_path, 'w') { |file| file.write(cached_content) }
+          File.write(repomd_xml_file.cache_path, cached_content)
           File.utime(time, time, repomd_xml_file.cache_path)
           stub_request(:head, 'http://example.com/repomd.xml')
             .with(headers: headers)
@@ -251,7 +251,7 @@ RSpec.describe RMT::Downloader do
 
       context "a file exists in cache and its mtime is greater than 'Last-Modified' time" do
         before do
-          File.open(repomd_xml_file.cache_path, 'w') { |file| file.write(cached_content) }
+          File.write(repomd_xml_file.cache_path, cached_content)
           File.utime(time, time, repomd_xml_file.cache_path)
           stub_request(:head, 'http://example.com/repomd.xml')
             .with(headers: headers)
@@ -268,7 +268,7 @@ RSpec.describe RMT::Downloader do
 
       context 'a file exists in cache but the HEAD request fails' do
         before do
-          File.open(repomd_xml_file.cache_path, 'w') { |file| file.write(cached_content) }
+          File.write(repomd_xml_file.cache_path, cached_content)
           File.utime(time, time, repomd_xml_file.cache_path)
           allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP HEAD/)
           stub_request(:head, 'http://example.com/repomd.xml')
