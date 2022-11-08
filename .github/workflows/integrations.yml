@@ -1,5 +1,4 @@
-
-name: RMT unit + engines tests
+name: RMT lint, unit + engines tests
 
 on:
   pull_request:
@@ -10,7 +9,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 3
+      max-parallel: 4
       matrix:
         # we need to test the Ruby versions of the products we release RMT for,
         # those are: SLE15 (2.5.8, 2.5.9), Leap 15.4 (3.0)
@@ -33,6 +32,9 @@ jobs:
           --health-retries=3
 
     steps:
+      - env:
+        RAILS_ENV: test
+
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
@@ -42,7 +44,7 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
-          bundler: 1.17
+          bundler: 1.17.3
 
       - name: "Cache gems"
         uses: actions/cache@v3
@@ -53,26 +55,24 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gems-
 
-      - name: Pre-run inline scripts
+      - name: Setup db
         run: |
           sudo mkdir -p /var/lib/rmt
           ruby -e "require 'yaml'; puts({'database_test'=>{'host' => '127.0.0.1', 'port' => 3306, 'username'=>'rmt','password'=>'rmt','database'=>'rmt_test','adapter'=>'mysql2','encoding'=>'utf8','timeout'=>5000,'pool'=>5}}.to_yaml)" > config/rmt.local.yml
+          bundle exec rails db:migrate
 
       - name: Run Lint
         run: |
           bundle exec rubocop -D
+
       - name: Run core tests
-        env:
-          RAILS_ENV: test
         run: |
-          bundle exec rails db:migrate
           bundle exec rspec --format documentation
+
       - name: Run PubCloud engines tests
-        env:
-          RAILS_ENV: test
         run: |
-          bundle exec rails db:migrate
           bundle exec rake test:engines
+
       - name: Run version checks
         run: |
           echo "::group::Version verification checks"
