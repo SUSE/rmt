@@ -12,7 +12,9 @@ jobs:
     strategy:
       max-parallel: 3
       matrix:
-        ruby-version: ['2.5.8', '2.5.9']
+        # we need to test the Ruby versions of the products we release RMT for,
+        # those are: SLE15 (2.5.8, 2.5.9), Leap 15.4 (3.0)
+        ruby-version: ['2.5.8', '2.5.9', '2.7.6', '3.0.3']
 
     services:
       mysql:
