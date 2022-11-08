@@ -77,15 +77,13 @@ class RMT::CLI::Base < Thor
         RMT::CLI::Error::ERROR_SCC
       )
     rescue RMT::Lockfile::ExecutionLockedError => e
-      raise RMT::CLI::Error.new(
-        e.message,
-        RMT::CLI::Error::ERROR_OTHER
-      )
+      raise RMT::CLI::Error.new(e.message, RMT::CLI::Error::ERROR_OTHER)
     rescue SUSE::Connect::Api::RequestError => e
       raise RMT::CLI::Error.new(
-        _("SCC API request failed. Error details:\nRequest URL: %{url}\nResponse code: %{code}\nResponse body:\n%{body}") % {
+        _("SCC API request failed. Error details:\nRequest URL: %{url}\nResponse code: %{code}\nReturn code: %{return_code}\nResponse body:\n%{body}") % {
           url: e.response.request.url,
           code: e.response.code,
+          return_code: e.response.return_code,
           body: e.response.body
         },
         RMT::CLI::Error::ERROR_OTHER

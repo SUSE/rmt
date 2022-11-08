@@ -1,5 +1,5 @@
 
-name: RMT Integration tests
+name: RMT unit + engines tests
 
 on:
   pull_request:

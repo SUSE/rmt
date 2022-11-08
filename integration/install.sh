@@ -1,4 +1,8 @@
 #!/bin/sh -xe
+if [ -z "$REGCODE" ]; then
+    echo "Required REGCODE env is not set"
+    exit 1
+fi
 SUSEConnect -r $REGCODE
 SUSEConnect -p sle-module-desktop-applications/15.3/x86_64
 SUSEConnect -p sle-module-development-tools/15.3/x86_64 # this and above is needed for 'rpm-build' package

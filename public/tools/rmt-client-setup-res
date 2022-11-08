@@ -81,15 +81,27 @@ if [ ! -x $CURL ]; then
     exit 1
 fi
 
-echo "Importing repomd.xml.key"
-$RPM --import ${REGURL}/repo/SUSE/Updates/RES/8/x86_64/update/repodata/repomd.xml.key
+SLL_version=`cat /etc/os-release | grep "VERSION_ID" | cut -d\" -f2 | cut -d\. -f1`
+if [[ ${SLL_version} > 8 ]]; then                                                                                                       
+   SLL_name="SLL";                                                                                                                
+   SLL_release_package="sll-release"                                                                                              
+else                                                                                                                                 
+   SLL_name="RES";                                                                                                                
+   SLL_release_package="sles_es-release"                                                                                       
+fi                                                                                                                                   
 
-echo "Disabling all repositories"                                                                                                    
+echo "detect ${SLL_name} version... ${SLL_version}"                                                                                  
+echo "Importing repomd.xml.key"
+$RPM --import ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update/repodata/repomd.xml.key
+
+echo "Disabling all repositories"
 sed -i 's/^enabled=1/enabled=0/' /etc/yum.repos.d/*                                                                  
 
 # on Centos /usr/share/redhat-release is a file, on RHEL and RES it is a directory
 # so this is CentOS only workaround
-rm -f /usr/share/redhat-release
+if [ -f /usr/share/redhat-release ]; then
+   rm -f /usr/share/redhat-release;
+fi
 
 if [ ! -x $SUSECONNECT ]; then
     echo "Downloading SUSEConnect"
@@ -99,12 +111,12 @@ if [ ! -x $SUSECONNECT ]; then
         exit 1
     fi
 
-    $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/RES/8/x86_64/update
-    $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/RES-AS/8/x86_64/update
-    $DNF install ${AUTOACCEPT} --allowerasing sles_es-release
+    $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update
+    $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}-AS/${SLL_version}/x86_64/update
+    $DNF install ${AUTOACCEPT} --allowerasing ${SLL_release_package}
     $DNF install ${AUTOACCEPT} SUSEConnect librepo
-    $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_RES_8_x86_64_update"
-    $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_RES-AS_8_x86_64_update"
+    $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}_${SLL_version}_x86_64_update"
+    $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}-AS_${SLL_version}_x86_64_update"
 fi
 
 $CURL -s -S $REGURL/tools/rmt-client-setup --output rmt-client-setup

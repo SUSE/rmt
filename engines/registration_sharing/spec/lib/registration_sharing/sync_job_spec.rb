@@ -12,7 +12,7 @@ describe RegistrationSharing::SyncJob do
   before do
     allow(Settings).to receive(:[]).with(:regsharing).and_return({ peers: [ peer ], data_dir: data_dir })
     Dir.mkdir(peer_dir)
-    File.open(system_file, 'w') { |file| file.write('test') }
+    File.write(system_file, 'test')
   end
 
   after { FileUtils.remove_entry_secure(data_dir) if File.exist?(data_dir) }
@@ -33,7 +33,7 @@ describe RegistrationSharing::SyncJob do
       it 'keeps system file' do
         expect(RegistrationSharing::Client).to receive(:new).with(peer, system_login).and_return(client_double)
         expect(client_double).to receive(:sync_system) do
-          File.open(system_file, 'w') { |f| f.write('changed content') }
+          File.write(system_file, 'changed content')
           true
         end
         sync_job.run
