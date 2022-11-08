@@ -19,7 +19,7 @@ end
 
 def create_repository_file(dir)
   file_dest = File.join(dir, "#{SecureRandom.alphanumeric(10)}.rpm")
-  File.open(file_dest, 'w+') { |file| file.write(SecureRandom.uuid) }
+  File.write(file_dest, SecureRandom.uuid)
   digest = Digest.const_get(:SHA256).file(file_dest)
   add_downloaded_file('SHA256', digest, file_dest)
 end
