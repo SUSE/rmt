@@ -69,6 +69,7 @@ group :test do
   gem 'vcr', '~> 6.0'
   gem 'coveralls', '~> 0.8.21', require: false
   gem 'minitest', '~> 5.15.0' # minitest 5.16 needs Ruby >= 2.6
+  gem 'public_suffix', '< 5' # Locked because of Ruby >= 2.6 dependency
 end
 
 gem 'simplecov', require: false, group: :test
