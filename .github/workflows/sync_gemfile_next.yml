@@ -1,0 +1,47 @@
+# code adopted from https://wessman.co/rails-dual-boot-with-dependabot
+name: Update Gemfile.next & friends
+
+on:
+  pull_request:
+    paths:
+      - "Gemfile.lock"
+
+jobs:
+  update:
+    runs-on: ubuntu-22.04
+
+    env:
+      BUNDLE_GEMFILE: Gemfile.next
+
+    steps:
+      - name: Generate token
+        id: generate_token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.PRIVATE_KEY }}
+
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+
+      - name: Gems Cache
+        id: gem-cache
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gem-${{ hashFiles('Gemfile.next.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gem-
+
+      - name: Update Gemfile.next
+        run: |
+          bundle update --minor --conservative
+
+      - uses: EndBug/add-and-commit@v6
+        with:
+          add: Gemfile.next.lock
+          message: 'Updated Gemfile.next.lock'

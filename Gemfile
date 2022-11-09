@@ -1,3 +1,6 @@
+def next?
+  File.basename(__FILE__) == 'Gemfile.next'
+end
 source 'https://rubygems.org'
 
 git_source(:github) do |repo_name|
@@ -8,7 +11,11 @@ end
 gem 'puma', '~> 5.6.2'
 gem 'mysql2', '~> 0.5.3'
 
-gem 'nokogiri', '~> 1.12.5'
+if next?
+  gem 'nokogiri', '~> 1.13.6'
+else
+  gem 'nokogiri', '~> 1.12.5'
+end
 gem 'thor'
 gem 'activesupport', '~> 6.1.6'
 gem 'actionpack', '~> 6.1.6'
