@@ -8,7 +8,7 @@ end
 gem 'puma', '~> 5.6.2'
 gem 'mysql2', '~> 0.5.3'
 
-gem 'nokogiri', '~> 1.12.5'
+gem 'nokogiri', '< 1.13' # Locked because of Ruby >= 2.6 dependency
 gem 'thor'
 gem 'activesupport', '~> 6.1.6'
 gem 'actionpack', '~> 6.1.6'
@@ -73,9 +73,6 @@ group :test do
 end
 
 gem 'simplecov', require: false, group: :test
-
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 gem 'versionist'
 gem 'responders'

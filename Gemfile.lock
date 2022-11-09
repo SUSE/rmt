@@ -337,7 +337,7 @@ DEPENDENCIES
   memory_profiler
   minitest (~> 5.15.0)
   mysql2 (~> 0.5.3)
-  nokogiri (~> 1.12.5)
+  nokogiri (< 1.13)
   public_suffix (< 5)
   puma (~> 5.6.2)
   railties (~> 6.1.6)
@@ -361,7 +361,6 @@ DEPENDENCIES
   thor
   timecop
   typhoeus
-  tzinfo-data
   vcr (~> 6.0)
   versionist
   webmock
