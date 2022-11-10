@@ -103,6 +103,11 @@ if [ -f /usr/share/redhat-release ]; then
    rm -f /usr/share/redhat-release;
 fi
 
+# on RHEL9 (not RHEL8) redhat-release is protected and cannot be updated to sll-release
+if [ -f /etc/dnf/protected.d/redhat-release.conf ]; then
+    rm /etc/dnf/protected.d/redhat-release.conf;
+fi
+
 if [ ! -x $SUSECONNECT ]; then
     echo "Downloading SUSEConnect"
 
