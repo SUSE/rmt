@@ -21,6 +21,7 @@ Thu Sep 22 09:30:17 UTC 2022 - Felix Schnizlein <fschnizlein@suse.com>
 Fri Sep  2 13:33:41 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
 
 - Release version 2.9: Implement `System-Token` header handling to improve unique system reporting.
+- Fix CVE-2022-31254 (bsc#1204285)
 
 -------------------------------------------------------------------
 Wed Jul 20 15:05:27 UTC 2022 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
