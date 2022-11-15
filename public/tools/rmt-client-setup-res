@@ -23,7 +23,7 @@ function usage()
 
   Usage: $0 <registration URL> [--regcert <url>] [--regdata <filename>] [--de-register]
   Usage: $0 --host <hostname of the RMT server> [--regcert <url>] [--regdata <filename>] [--de-register]
-  Usage: $0 --host <hostname of the RMT server> [--fingerprint <fingerprint of server cert>] [--yes] [--regdata <filename>] [--de-register]
+  Usage: $0 --host <hostname of the RMT server> [--fingerprint <fingerprint of server cert>] [--regdata <filename>] [--de-register]
          configures a SLE client to register against a different registration server
 
   Example: $0 https://rmt.example.com/
@@ -37,7 +37,6 @@ EOT
 # We need only REGURL and RMTNAME, all other parameters are just passed to rmt-client-setup script
 REGURL=""
 RMTNAME=""
-AUTOACCEPT=""
 
 while true ; do
     case "$1" in
@@ -49,7 +48,6 @@ while true ; do
              REGURL="http://${RMTNAME}";
              shift;;
         --de-register) DE_REGISTER="Y";;
-        --yes) AUTOACCEPT="--assumeyes";;
         "") break ;;
         -h|--help) usage;;
         https://*) RMTNAME=${1:8};
@@ -128,5 +126,8 @@ fi
 $CURL -s -S $REGURL/tools/rmt-client-setup --output rmt-client-setup
 echo "Running rmt-client-setup $PARAMS"
 sh rmt-client-setup $PARAMS
-systemctl start suseconnect-keepalive.timer
-systemctl enable suseconnect-keepalive.timer
+
+if [[ ${SLL_version} > 8 ]]; then 
+    systemctl start suseconnect-keepalive.timer
+    systemctl enable suseconnect-keepalive.timer
+fi
