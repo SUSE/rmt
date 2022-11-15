@@ -161,6 +161,20 @@ RSpec.describe Api::Connect::BaseController, type: :controller do
         include_examples 'does not respond with a token'
       end
 
+      context 'when the server turned off system tokens' do
+        before { request.headers['System-Token'] = '' }
+
+        around do |example|
+          Settings.connect_api.disable_system_tokens = true
+          example.run
+          Settings.connect_api.disable_system_tokens = false
+        end
+
+        let(:system) { create(:system, hostname: 'system') }
+
+        include_examples 'does not respond with a token'
+      end
+
       context 'when the system does not have a token and the header is blank' do
         before { request.headers['System-Token'] = '' }
 
