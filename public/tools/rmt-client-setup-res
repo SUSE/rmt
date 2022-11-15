@@ -95,7 +95,8 @@ echo "Importing repomd.xml.key"
 $RPM --import ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update/repodata/repomd.xml.key
 
 echo "Disabling all repositories"
-sed -i 's/^enabled=1/enabled=0/' /etc/yum.repos.d/*                                                                  
+dnf config-manager --disable $(dnf repolist -q | awk '{ print $1 }' | grep -v repo)
+#sed -i 's/^enabled=1/enabled=0/' /etc/yum.repos.d/*           
 
 # on Centos /usr/share/redhat-release is a file, on RHEL and RES it is a directory
 # so this is CentOS only workaround
@@ -127,3 +128,5 @@ fi
 $CURL -s -S $REGURL/tools/rmt-client-setup --output rmt-client-setup
 echo "Running rmt-client-setup $PARAMS"
 sh rmt-client-setup $PARAMS
+systemctl start suseconnect-keepalive.timer
+systemctl enable suseconnect-keepalive.timer
