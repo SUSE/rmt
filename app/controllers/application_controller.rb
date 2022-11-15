@@ -7,6 +7,8 @@ class ApplicationController < ActionController::API
     render json: { type: 'error', error: error.message, localized_error: error.localized_message }, status: error.status, location: nil
   end
 
+  protected
+
   def authenticate_system
     authenticate_or_request_with_http_basic('RMT API') do |login, password|
       @systems = System.get_by_credentials(login, password)
@@ -15,7 +17,7 @@ class ApplicationController < ActionController::API
 
         # If SYSTEM_TOKEN_HEADER is present, RMT assumes the client uses a SUSEConnect version
         # that supports this feature. In this case, refresh the token and include it in the response.
-        if request.headers.key?(SYSTEM_TOKEN_HEADER)
+        if system_tokens_enabled? && request.headers.key?(SYSTEM_TOKEN_HEADER)
           @system.update(last_seen_at: Time.zone.now, system_token: SecureRandom.uuid)
           headers[SYSTEM_TOKEN_HEADER] = @system.system_token
         # only update last_seen_at each 3 minutes,
@@ -75,5 +77,9 @@ class ApplicationController < ActionController::API
       logger.info _('System with login \"%{login}\" (ID %{new_id}) authenticated and duplicated from ID %{base_id} due to token mismatch') %
         { login: ns.login, new_id: ns.id, base_id: system.id }
     end
+  end
+
+  def system_tokens_enabled?
+    !!!Settings.try(:connect_api).try(:disable_system_tokens)
   end
 end
