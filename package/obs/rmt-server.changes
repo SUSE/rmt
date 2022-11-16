@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Nov 11 17:11:56 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
+
+- Release version 2.10:
+  - Add option to turn off system token support (bsc#1205089)
+
+-------------------------------------------------------------------
 Tue Nov  8 10:30:45 UTC 2022 - Zuzana Petrova <zpetrova@suse.com>
 
 - adapt rmt-client-setup-res script to work on SLL9/RHEL9
