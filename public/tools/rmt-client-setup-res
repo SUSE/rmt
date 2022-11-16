@@ -23,7 +23,7 @@ function usage()
 
   Usage: $0 <registration URL> [--regcert <url>] [--regdata <filename>] [--de-register]
   Usage: $0 --host <hostname of the RMT server> [--regcert <url>] [--regdata <filename>] [--de-register]
-  Usage: $0 --host <hostname of the RMT server> [--fingerprint <fingerprint of server cert>] [--yes] [--regdata <filename>] [--de-register]
+  Usage: $0 --host <hostname of the RMT server> [--fingerprint <fingerprint of server cert>] [--regdata <filename>] [--de-register]
          configures a SLE client to register against a different registration server
 
   Example: $0 https://rmt.example.com/
@@ -37,7 +37,6 @@ EOT
 # We need only REGURL and RMTNAME, all other parameters are just passed to rmt-client-setup script
 REGURL=""
 RMTNAME=""
-AUTOACCEPT=""
 
 while true ; do
     case "$1" in
@@ -49,7 +48,6 @@ while true ; do
              REGURL="http://${RMTNAME}";
              shift;;
         --de-register) DE_REGISTER="Y";;
-        --yes) AUTOACCEPT="--assumeyes";;
         "") break ;;
         -h|--help) usage;;
         https://*) RMTNAME=${1:8};
@@ -95,7 +93,8 @@ echo "Importing repomd.xml.key"
 $RPM --import ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update/repodata/repomd.xml.key
 
 echo "Disabling all repositories"
-sed -i 's/^enabled=1/enabled=0/' /etc/yum.repos.d/*                                                                  
+dnf config-manager --disable $(dnf repolist -q | awk '{ print $1 }' | grep -v repo)
+#sed -i 's/^enabled=1/enabled=0/' /etc/yum.repos.d/*           
 
 # on Centos /usr/share/redhat-release is a file, on RHEL and RES it is a directory
 # so this is CentOS only workaround
@@ -118,8 +117,8 @@ if [ ! -x $SUSECONNECT ]; then
 
     $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update
     $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}-AS/${SLL_version}/x86_64/update
-    $DNF install ${AUTOACCEPT} --allowerasing ${SLL_release_package}
-    $DNF install ${AUTOACCEPT} SUSEConnect librepo
+    $DNF install --allowerasing ${SLL_release_package}
+    $DNF install SUSEConnect librepo
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}_${SLL_version}_x86_64_update"
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}-AS_${SLL_version}_x86_64_update"
 fi
@@ -127,3 +126,8 @@ fi
 $CURL -s -S $REGURL/tools/rmt-client-setup --output rmt-client-setup
 echo "Running rmt-client-setup $PARAMS"
 sh rmt-client-setup $PARAMS
+
+if [[ ${SLL_version} > 8 ]]; then 
+    systemctl start suseconnect-keepalive.timer
+    systemctl enable suseconnect-keepalive.timer
+fi
