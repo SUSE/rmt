@@ -9,10 +9,14 @@ class ApplicationController < ActionController::API
 
   protected
 
-  def authenticate_system
+  def authenticate_system(skip_on_duplicated: false)
     authenticate_or_request_with_http_basic('RMT API') do |login, password|
       @systems = System.get_by_credentials(login, password)
       if @systems.present?
+        # Return now if we just detected duplicates and we were told to skip on
+        # this situation.
+        return true if skip_on_duplicated && @systems.size > 1
+
         @system = find_system_by_token_header(@systems)
 
         # If SYSTEM_TOKEN_HEADER is present, RMT assumes the client uses a SUSEConnect version
