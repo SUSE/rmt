@@ -8,6 +8,20 @@ class ServicesController < ApplicationController
 
   before_action :authenticate_system, only: %w[legacy_service]
 
+  # The #show method was historically not being put behind an authentication
+  # wall, but we have detected that Zypper follows the HTTP Basic authentication
+  # mechanism whenever requested (even in this case). Thus, we can try to
+  # authenticate requests on this method for Zypper so we have a better picture
+  # which systems are still being active (even if not using SUSEConnect).
+  before_action only: %w[show] do
+    ua = request.headers['HTTP_USER_AGENT']
+
+    # Zypper will never provide the `system_token` credentials for the system.
+    # Hence, if there are duplicates, we will not be able to deterministically
+    # tell which system is to be updated. Just skip it altogether on this case.
+    authenticate_system(skip_on_duplicated: true) if ua && ua.downcase.starts_with?('zypp')
+  end
+
   ZYPPER_SERVICE_TTL = 86400
 
   def show
