@@ -3,6 +3,8 @@ require 'rmt/config'
 
 class RMT::HttpRequest < Typhoeus::Request
 
+  attr_accessor :retries
+
   def set_defaults
     Typhoeus::Config.user_agent = "RMT/#{RMT::VERSION}"
     Typhoeus::Config.verbose = Settings.try(:http_client).try(:verbose)

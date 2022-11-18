@@ -216,20 +216,20 @@ RSpec.describe SUSE::Connect::Api do
         }
       end
 
-      let(:systems) { [] }
-
-      let(:system_keys) { %i[id login password last_seen_at] }
-      let(:product_keys) { %i[id identifier version arch] }
-      let(:hwinfo_keys) { %i[cpus sockets hypervisor arch uuid cloud_provider] }
-
-      let(:expected_body) { { systems: [] } }
+      let(:expected_body) do
+        { systems: systems.map { |s| SUSE::Connect::SystemSerializer.new(s) } }
+      end
 
       let(:expected_response) do
+        keys = %i[id login password last_seen_at]
+
         system_hashes = systems.collect do |s|
-          s.slice(*system_keys).symbolize_keys
+          s.slice(*keys).symbolize_keys.transform_values!(&:to_s)
         end
         { systems: system_hashes }
       end
+
+      let(:relation) { System.where(id: systems.pluck(:id)) }
 
       before do
         stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
@@ -246,170 +246,77 @@ RSpec.describe SUSE::Connect::Api do
 
       context 'when a single system is bulk updated' do
         let(:systems) { create_list :system, 1, :full }
-        let(:product) { system.products.first }
-        let(:hw_info) { system.hw_info }
-
-        let(:expected_body) do
-          system_hashes = systems.collect do |system|
-            product = system.products.first.slice(*product_keys)
-            hwinfo = system.hw_info.slice(*hwinfo_keys)
-            {
-              login: system.login,
-              password: system.password,
-              last_seen_at: system.last_seen_at,
-              hostname: system.hostname,
-              hwinfo: hwinfo,
-              products: [product]
-            }
-          end.compact
-          { systems: system_hashes }
-        end
 
         it 'yields results' do
-          expect do |block|
-            relation = System.where(id: systems.pluck(:id))
-            api_client.send_bulk_system_update(relation, &block)
-          end.to yield_with_args(expected_response)
+          expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
         end
       end
 
       context 'when sending in bulk' do
         let(:systems) { create_list :system, 3, :full, scc_synced_at: nil }
-        let(:product) { system.products.first }
-        let(:hw_info) { system.hw_info }
-
-        let(:expected_body) do
-          system_hashes = systems.collect do |system|
-            product = system.products.first.slice(*product_keys)
-            hwinfo = system.hw_info.slice(*hwinfo_keys)
-            {
-              login: system.login,
-              password: system.password,
-              last_seen_at: system.last_seen_at,
-              hostname: system.hostname,
-              hwinfo: hwinfo,
-              products: [product]
-            }
-          end.compact
-          { systems: system_hashes }
-        end
 
         it 'yields successful results' do
-          expect do |block|
-            relation = System.where(id: systems.pluck(:id))
-            api_client.send_bulk_system_update(relation, &block)
-          end.to yield_with_args(expected_response)
+          expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
+        end
+      end
+
+      context 'when sending in bulk with and without system_token' do
+        let!(:system1) { create :system, :full, :with_system_token }
+        let!(:system2) { create :system, :full }
+        let(:systems) { [system1, system2] }
+
+        it 'yields successful results' do
+          expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
         end
       end
 
       context 'when sending in bulk and encounter 413 http error code' do
+        let(:systems) { create_list(:system, 2, :full) }
+        # When we get a 413, the logic will restart and send each system
+        # one by one since the limit is set to 1
+        let!(:stubbed) do
+          expected_body[:systems].each_with_index.map do |payload, i|
+            stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
+              .with(
+                headers: expected_request_headers,
+                body: { systems: [payload] }.to_json
+              )
+              .to_return(
+                status: 201,
+                body: { systems: [expected_response[:systems][i]] }.to_json
+              )
+          end
+        end
+
         before do
+          # Stub the initial request and return 413
           stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
             .with(
               headers: expected_request_headers,
-              body: all_systems_payload.to_json
+              body: expected_body.to_json
             )
             .to_return(
               status: 413,
-              headers: {
-                'X-Payload-Entities-Max-Limit': 1
-              },
+              headers: { 'X-Payload-Entities-Max-Limit': 1 },
               body: [].to_json
             )
-          stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
-            .with(
-              headers: expected_request_headers
-            )
-            .to_return(
-              status: 201,
-              body: expected_response.to_json,
-              headers: {}
-            )
         end
 
-        let(:subscription) { create :subscription }
-        let(:systems) { create_list(:system, 2, :full, subscription: subscription, scc_synced_at: nil) }
-
-        let(:expected_response) { { systems: [systems.last.slice(*system_keys).symbolize_keys] } }
-
-        let(:all_systems_payload) do
-          system_hashes = systems.collect do |system|
-            product = system.products.first.slice(*product_keys)
-            product[:regcode] = subscription.regcode
-
-            hwinfo = system.hw_info.slice(*hwinfo_keys)
-            {
-              login: system.login,
-              password: system.password,
-              last_seen_at: system.last_seen_at,
-              hostname: system.hostname,
-              hwinfo: hwinfo,
-              products: [product]
-            }
-          end.compact
-          { systems: system_hashes }
-        end
-
-        let(:expected_body) do
-          system_hashes = systems.take(1).collect do |system|
-            product = system.products.first.slice(*product_keys)
-            product[:regcode] = subscription.regcode
-
-            hwinfo = system.hw_info.slice(*hwinfo_keys)
-            {
-              login: system.login,
-              password: system.password,
-              last_seen_at: system.last_seen_at,
-              hostname: system.hostname,
-              hwinfo: hwinfo,
-              products: [product]
-            }
-          end.compact
-          { systems: system_hashes }
-        end
 
         it 'yields successful results' do
-          expect do |block|
-            relation = System.where(id: systems.pluck(:id))
-            api_client.send_bulk_system_update(relation, &block)
-          end.to yield_with_args(expected_response)
+          expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
+
+          expect(stubbed).to all(have_been_requested)
         end
       end
 
       context 'when sending in bulk and a system which only sends last_seen_at' do
-        let(:system_set) { create :system, :synced }
+        let(:system_set) { create :system, :full, :synced }
         let(:systems_unset) { create_list :system, 2, :full }
-
         let(:systems) { [system_set] + systems_unset }
 
-        let(:expected_body_set) do
-          {
-            login: system_set.login,
-            password: system_set.password,
-            last_seen_at: system_set.last_seen_at
-          }
-        end
-        let(:expected_body_unset) do
-          systems_unset.collect do |system|
-            product = system.products.first.slice(*product_keys)
-            hwinfo = system.hw_info.slice(*hwinfo_keys)
-            {
-              login: system.login,
-              password: system.password,
-              last_seen_at: system.last_seen_at,
-              hostname: system.hostname,
-              hwinfo: hwinfo,
-              products: [product]
-            }
-          end
-        end
-        let(:expected_body) { { systems: [expected_body_set] + expected_body_unset } }
-
         it 'yields successful results' do
-          expect do |block|
-            relation = System.where(id: systems.pluck(:id))
-            api_client.send_bulk_system_update(relation, &block)
-          end.to yield_with_args(expected_response)
+          expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
         end
       end
     end

@@ -138,7 +138,8 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
                   url: 'http://example.com/api'
                 ),
                 body: 'A terrible error has occurred!',
-                code: 503
+                code: 503,
+                return_code: 'my_error'
               )
             )
           end
@@ -148,6 +149,7 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
               "SCC API request failed. Error details:\n" \
               "Request URL: http://example.com/api\n" \
               "Response code: 503\n" \
+              "Return code: my_error\n" \
               "Response body:\n" \
               "A terrible error has occurred!\n"
             ).to_stderr

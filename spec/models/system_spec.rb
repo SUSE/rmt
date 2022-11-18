@@ -25,7 +25,7 @@ RSpec.describe System, type: :model do
   end
 
   describe 'validation' do
-    it { is_expected.to validate_uniqueness_of(:login).ignoring_case_sensitivity }
+    it { is_expected.to validate_uniqueness_of(:system_token).scoped_to(:login, :password).case_insensitive }
   end
 
   context 'when system is deleted' do
@@ -79,6 +79,41 @@ RSpec.describe System, type: :model do
       system.save!
       system.reload
       expect(system.scc_synced_at).to be(nil)
+    end
+  end
+
+  it 'assigns nil system_token on create' do
+    system = described_class.create(login: 'abc', password: 'xyz')
+    expect(system.system_token).to be_nil
+  end
+
+  describe '#get_by_credentials' do
+    subject { described_class.get_by_credentials(login, password) }
+
+    let(:login) { 'system_abcd' }
+    let(:password) { 'password1234' }
+
+    context 'when there are no systems with the given credentials' do
+      let(:system) { nil }
+
+      it { is_expected.to be_kind_of(ActiveRecord::Relation) }
+      it { is_expected.to be_empty }
+    end
+
+    context 'when there are only one system with the given credentials' do
+      before { create(:system, login: login, password: password) }
+
+      it { is_expected.to be_kind_of(ActiveRecord::Relation) }
+      it { is_expected.to have_attributes(count: 1) }
+      it { is_expected.to all(have_attributes(class: described_class, login: login, password: password)) }
+    end
+
+    context 'when there are more than one system with the given credentials' do
+      before { create_list(:system, 5, :with_system_token, login: login, password: password) }
+
+      it { is_expected.to be_kind_of(ActiveRecord::Relation) }
+      it { is_expected.to have_attributes(count: 5) }
+      it { is_expected.to all(have_attributes(class: described_class, login: login, password: password)) }
     end
   end
 end
