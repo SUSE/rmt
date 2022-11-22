@@ -1,3 +1,7 @@
+#
+# update_rmt_app_dir_permissions.sh
+# This scripts adjusts the user and group permissions
+# of the RMT application directory.
 set -euo pipefail
 
 IFS=" "
