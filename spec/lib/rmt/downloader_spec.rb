@@ -353,10 +353,11 @@ RSpec.describe RMT::Downloader do
 
       it 'raises and exception' do
         expect { downloader.download_multi([repomd_xml_file]) }
-          .to raise_error(
-            RMT::Downloader::Exception,
-            %r{/repodata/repomd.xml - File does not exist}
-          )
+          .to raise_error { |error|
+                expect(error).to be_a(RMT::Downloader::Exception)
+                expect(error.message).to match(%r{/repodata/repomd.xml - File does not exist})
+                expect(error.http_code).to eq(404)
+              }
       end
     end
   end
