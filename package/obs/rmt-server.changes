@@ -3,6 +3,8 @@ Fri Nov 11 17:11:56 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
 
 - Release version 2.10:
   - Add option to turn off system token support (bsc#1205089)
+  - Update the `last_seen_at` column on zypper service refresh
+  - Do not retry to import non-existing files in air-gapped mode (bsc#1204769)
 
 -------------------------------------------------------------------
 Tue Nov  8 10:30:45 UTC 2022 - Zuzana Petrova <zpetrova@suse.com>

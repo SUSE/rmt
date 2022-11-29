@@ -1,5 +1,5 @@
 class RMT::Downloader::Exception < RuntimeError
-  attr_reader :http_code, :response
+  attr_accessor :http_code, :response
 
   def initialize(message, response: nil)
     @response = response
