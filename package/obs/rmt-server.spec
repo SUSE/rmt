@@ -20,6 +20,7 @@
 %define lib_dir      %{_libdir}/rmt
 %define data_dir     %{_localstatedir}/lib/rmt
 %define conf_dir     %{_sysconfdir}/rmt
+%define script_dir   %{_libexecdir}/rmt
 %define rmt_user     _rmt
 %define rmt_group    nginx
 
@@ -39,7 +40,6 @@ Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-server-rpmlintrc
 Source2:        rmt.conf
 Source3:        rmt-cli.8.gz
-Source4:        update_rmt_app_dir_permissions.sh
 BuildRequires:  %{ruby_version}
 BuildRequires:  %{ruby_version}-devel
 BuildRequires:  %{ruby_version}-rubygem-bundler
@@ -105,7 +105,6 @@ required for public cloud environments.
 
 %prep
 cp -p %{SOURCE2} .
-cp -p %{SOURCE4} .
 
 %setup -q
 sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
@@ -173,9 +172,6 @@ ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-trim-cache
 mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
-mkdir -p %{buildroot}%{_tmppath}
-mv %{_builddir}/update_rmt_app_dir_permissions.sh %{buildroot}%{_tmppath}/update_rmt_app_dir_permissions.sh
-
 # nginx
 install -D -m 644 package/files/nginx/nginx-http.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
 install -D -m 644 package/files/nginx/nginx-https.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
@@ -192,6 +188,10 @@ sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"'
 # supportconfig plugin
 mkdir -p %{buildroot}%{_libexecdir}/supportconfig/plugins
 install -D -m 544 support/rmt %{buildroot}%{_libexecdir}/supportconfig/plugins/rmt
+
+# Directory permission update script
+mkdir -p %{buildroot}%{script_dir}
+install -D -m 544 package/files/update_rmt_app_dir_permissions.sh %{buildroot}%{script_dir}/update_rmt_app_dir_permissions.sh
 
 # bash completion
 install -D -m 644 package/files/rmt-cli_bash-completion.sh %{buildroot}%{_datadir}/bash-completion/completions/rmt-cli
@@ -243,13 +243,13 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %attr(-,%{rmt_user},%{rmt_group}) %{conf_dir}
 %dir %{_libexecdir}/supportconfig
 %dir %{_libexecdir}/supportconfig/plugins
+%dir %{script_dir}
 %dir /var/lib/rmt
 %ghost %{_datadir}/rmt/public/repo
 %ghost %{_datadir}/rmt/public/suma
 %dir %{_sysconfdir}/slp.reg.d
 %config(noreplace) %attr(0640, %{rmt_user}, root) %{_sysconfdir}/rmt.conf
 %config(noreplace) %{_sysconfdir}/slp.reg.d/rmt-server.reg
-%config(noreplace) %attr(0540,root,root) %{_tmppath}/update_rmt_app_dir_permissions.sh
 %{_mandir}/man8/rmt-cli.8%{?ext_man}
 %{_bindir}/rmt-cli
 %{_bindir}/rmt-data-import
@@ -273,6 +273,7 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 
 %{_libdir}/rmt
 %{_libexecdir}/supportconfig/plugins/rmt
+%{script_dir}/update_rmt_app_dir_permissions.sh
 
 %files config
 %dir %{_sysconfdir}/nginx
@@ -326,7 +327,7 @@ if [ $1 -eq 2 ]; then
   if [ -f %{app_dir}/config/system_uuid ]; then
     mv %{app_dir}/config/system_uuid /var/lib/rmt/system_uuid
   fi
-  bash %{_tmppath}/update_rmt_app_dir_permissions.sh %{app_dir}
+  bash %{script_dir}/update_rmt_app_dir_permissions.sh %{app_dir}
 fi
 
 if [ ! -e %{_datadir}/rmt/public/repo ]; then
