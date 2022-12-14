@@ -1,5 +1,8 @@
 class RMT::CLI::Systems < RMT::CLI::Base
-  # Amount of time for which a system is considered inactive.
+  # Amount of time after which a system is considered inactive. This is a
+  # definition shared across projects. Check out the term on the glossary that
+  # we maintain on scc-docs for more information
+  # (https://github.com/SUSE/scc-docs/blob/master/projects/scc/architecture/glossary.md#inactive).
   INACTIVE = 3.months
 
   desc 'list', _('List registered systems.')
