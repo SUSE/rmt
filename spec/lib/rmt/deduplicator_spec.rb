@@ -135,9 +135,9 @@ RSpec.describe RMT::Deduplicator do
           add_downloaded_file(file.checksum_type, file.checksum, source_path)
         end
 
-        it 'duplicates file' do
+        it 'hardlinks file' do
           expect_any_instance_of(RMT::Logger).to receive(:info)
-            .with(/→ #{file_basename}/).once
+            .with(/← #{file_basename}/).once
 
           deduplicate
 
