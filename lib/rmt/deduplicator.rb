@@ -18,8 +18,10 @@ module RMT::Deduplicator
 
     if RMT::Config.deduplication_by_hardlink? && !airgap_mode
       hardlink(source_file_path, target_file.local_path)
+      logger.info("← #{File.basename(target_file.local_path)}")
     else
       copy(source_file_path, target_file.local_path)
+      logger.info("→ #{File.basename(target_file.local_path)}")
     end
 
     # we don't want to track airgap files in our database
@@ -29,8 +31,6 @@ module RMT::Deduplicator
                                 local_path: target_file.local_path,
                                 size: File.size(target_file.local_path))
     end
-
-    logger.info("→ #{File.basename(target_file.local_path)}")
     true
   end
 
