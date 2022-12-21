@@ -355,6 +355,7 @@ fi
 
 %posttrans pubcloud
 /usr/bin/systemctl try-restart rmt-server.service
-/usr/bin/systemctl reload nginx.service
+# Don't fail if either systemd or nginx are not running
+/usr/bin/systemctl try-reload-or-restart nginx.service || true
 
 %changelog
