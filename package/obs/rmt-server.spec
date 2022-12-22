@@ -204,6 +204,10 @@ grep -rl '\/usr\/bin\/env bash' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xarg
 # was created with a different major version than the distribution's bundler.
 sed -i '/BUNDLED WITH/{N;d;}' %{buildroot}%{app_dir}/Gemfile.lock
 
+# Drop warning "Nokogiri was built against libxml version x, but has dynamically y"
+# Because we cannot control which libxml version is installed on the system
+sed -i 's|warnings << "Nokogiri was built|# warnings << "Nokogiri was built|' %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/nokogiri-*/lib/nokogiri/version/info.rb
+
 # cleanup unneeded files
 find %{buildroot}%{lib_dir} "(" -name "*.c" -o -name "*.h" -o -name .keep ")" -delete
 find %{buildroot}%{app_dir} -name .keep -delete
@@ -355,6 +359,7 @@ fi
 
 %posttrans pubcloud
 /usr/bin/systemctl try-restart rmt-server.service
-/usr/bin/systemctl reload nginx.service
+# Don't fail if either systemd or nginx are not running
+/usr/bin/systemctl try-reload-or-restart nginx.service || true
 
 %changelog
