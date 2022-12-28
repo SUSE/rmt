@@ -205,85 +205,119 @@ RSpec.describe SUSE::Connect::Api do
       it { is_expected.to eq([ { endpoint: 'organizations/subscriptions' } ]) }
     end
 
-    describe '#forward_system_activations' do
-      subject { api_client.forward_system_activations(system) }
+    describe '#send_bulk_system_update' do
+      let(:expected_request_headers) do
+        {
+          'Authorization' => 'Basic ' + Base64.encode64("#{username}:#{password}").strip,
+          'User-Agent' => "RMT/#{RMT::VERSION}",
+          'RMT' => uuid,
+          'HOST-SYSTEM' => '',
+          'Accept' => 'application/vnd.scc.suse.com.v4+json'
+        }
+      end
+
+      let(:expected_body) do
+        { systems: systems.map { |s| SUSE::Connect::SystemSerializer.new(s) } }
+      end
+
+      let(:expected_response) do
+        keys = %i[id login password last_seen_at]
+
+        system_hashes = systems.collect do |s|
+          s.slice(*keys).symbolize_keys.transform_values!(&:to_s)
+        end
+        { systems: system_hashes }
+      end
+
+      let(:relation) { System.where(id: systems.pluck(:id)) }
 
       before do
-        stub_request(:post, 'https://scc.suse.com/connect/organizations/systems')
+        stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
           .with(
             headers: expected_request_headers,
-            body: expected_body
+            body: expected_body.to_json
           )
           .to_return(
-            status: 200,
+            status: 201,
             body: expected_response.to_json,
             headers: {}
           )
       end
 
-      context 'when system has no hw_info and no activations' do
-        let(:system) { FactoryBot.create(:system) }
-        let(:expected_response) { { id: 9000, login: system.login, password: system.password } }
-        let(:expected_body) do
-          {
-            login: system.login,
-            password: system.password,
-            hostname: nil,
-            regcodes: [],
-            products: [],
-            hwinfo: nil
-          }
-        end
+      context 'when a single system is bulk updated' do
+        let(:systems) { create_list :system, 1, :full }
 
-        it { is_expected.to eq(expected_response) }
+        it 'yields results' do
+          expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
+        end
       end
 
-      context 'when system has hw_info and no activations' do
-        let(:system) { FactoryBot.create(:system, :with_activated_product, :with_hw_info) }
-        let(:product) { system.products.first }
-        let(:hw_info) { system.hw_info }
-        let(:expected_response) { { login: system.login, password: system.password } }
-        let(:expected_body) do
-          {
-            login: system.login,
-            password: system.password,
-            hostname: nil,
-            regcodes: [],
-            products: [ %i[id identifier version arch].each_with_object({}) { |k, h| h[k] = product.send(k) } ],
-            hwinfo: %i[cpus sockets hypervisor arch uuid cloud_provider].each_with_object({}) { |k, h| h[k] = hw_info.send(k) }
-          }
-        end
+      context 'when sending in bulk' do
+        let(:systems) { create_list :system, 3, :full, scc_synced_at: nil }
 
-        it { is_expected.to eq(expected_response) }
+        it 'yields successful results' do
+          expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
+        end
       end
 
-      context 'when system has activations with subscriptions' do
-        let(:subscription) { FactoryBot.create :subscription }
-        let(:system) { create :system, :with_activated_product, subscription: subscription }
-        let(:product) { system.products.first }
-        let(:product_keys) { %i[id identifier version arch] }
+      context 'when sending in bulk with and without system_token' do
+        let!(:system1) { create :system, :full, :with_system_token }
+        let!(:system2) { create :system, :full }
+        let(:systems) { [system1, system2] }
 
+        it 'yields successful results' do
+          expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
+        end
+      end
 
-        let(:expected_response) { { login: system.login, password: system.password } }
-
-        let(:expected_products) do
-          attributes = product.slice(*product_keys).symbolize_keys
-          attributes[:regcode] = subscription.regcode
-          [attributes]
+      context 'when sending in bulk and encounter 413 http error code' do
+        let(:systems) { create_list(:system, 2, :full) }
+        # When we get a 413, the logic will restart and send each system
+        # one by one since the limit is set to 1
+        let!(:stubbed) do
+          expected_body[:systems].each_with_index.map do |payload, i|
+            stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
+              .with(
+                headers: expected_request_headers,
+                body: { systems: [payload] }.to_json
+              )
+              .to_return(
+                status: 201,
+                body: { systems: [expected_response[:systems][i]] }.to_json
+              )
+          end
         end
 
-        let(:expected_body) do
-          {
-            login: system.login,
-            password: system.password,
-            hostname: nil,
-            regcodes: [],
-            products: expected_products,
-            hwinfo: nil
-          }
+        before do
+          # Stub the initial request and return 413
+          stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
+            .with(
+              headers: expected_request_headers,
+              body: expected_body.to_json
+            )
+            .to_return(
+              status: 413,
+              headers: { 'X-Payload-Entities-Max-Limit': 1 },
+              body: [].to_json
+            )
         end
 
-        it { is_expected.to eq(expected_response) }
+
+        it 'yields successful results' do
+          expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
+
+          expect(stubbed).to all(have_been_requested)
+        end
+      end
+
+      context 'when sending in bulk and a system which only sends last_seen_at' do
+        let(:system_set) { create :system, :full, :synced }
+        let(:systems_unset) { create_list :system, 2, :full }
+        let(:systems) { [system_set] + systems_unset }
+
+        it 'yields successful results' do
+          expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
+        end
       end
     end
 

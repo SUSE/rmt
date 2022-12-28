@@ -75,7 +75,7 @@ class RMT::SCC
   end
 
   def sync_systems
-    unless Settings.scc.sync_systems
+    if Settings.scc.sync_systems == false
       @logger.warn _('Syncing systems to SCC is disabled by the configuration file, exiting.')
       return
     end
@@ -84,17 +84,33 @@ class RMT::SCC
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
     # do not sync BYOS proxy systems to SCC
-    System.where(scc_synced_at: nil, proxy_byos: false).find_in_batches(batch_size: 20) do |batch|
-      batch.each do |system|
-        @logger.info(_('Syncing system %{login} to SCC') % { login: system.login })
-        response = scc_api_client.forward_system_activations(system)
-        # Update attributes without triggering after_update callback (which resets scc_synced_at to nil)
-        system.update_columns(scc_system_id: response[:id], scc_synced_at: Time.current)
-      rescue SUSE::Connect::Api::RequestError => e
-        @logger.error(_('Failed to sync system %{login}: %{error}') % { login: system.login, error: e.to_s })
+    systems = System.where('scc_registered_at IS NULL OR last_seen_at > scc_registered_at').where(proxy_byos: false)
+    @logger.info(_('Syncing %{count} updated system(s) to SCC') % { count: systems.size })
+
+    begin
+      updated_systems = scc_api_client.send_bulk_system_update(systems)
+    rescue StandardError => e
+      @logger.error(_('Failed to sync systems: %{error}') % { error: e.to_s })
+    else
+      failed_scc_synced_systems = systems.pluck(:login).excluding(updated_systems[:systems].pluck(:login))
+      if failed_scc_synced_systems.present?
+        # The response from SCC will be 201 even if some single systems failed to save.
+        @logger.info(_("Couldn't sync %{count} systems.") % { count: failed_scc_synced_systems.count })
+      end
+
+      updated_systems[:systems].each do |system_hash|
+        # In RMT - SCC communication, RMT's system id is used as token, see also lib/suse/connect/api.rb:108
+        system = if system_hash[:system_token]
+                   System.find_by(id: system_hash[:system_token])
+                 else
+                   System.find_by(login: system_hash[:login])
+                 end
+        system.update_columns(
+          scc_system_id: system_hash[:id],
+          scc_synced_at: Time.current
+        )
       end
     end
-
     DeregisteredSystem.find_in_batches(batch_size: 20) do |batch|
       batch.each do |deregistered_system|
         @logger.info(
@@ -141,7 +157,7 @@ class RMT::SCC
 
   def create_product(item, root_product_id = nil, base_product = nil, recommended = false, migration_extra = false)
     ActiveRecord::Base.transaction do
-      @logger.debug _('Adding product %{product}') % { product: "#{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}" }
+      @logger.debug _('Adding/Updating product %{product}') % { product: "#{item[:identifier]}/#{item[:version]}#{(item[:arch]) ? '/' + item[:arch] : ''}" }
 
       product = get_product(item[:id])
       product.attributes = item.select { |k, _| product.attributes.keys.member?(k.to_s) }

@@ -1,29 +1,94 @@
 -------------------------------------------------------------------
-Tue Jan  4 17:25:07 UTC 2022 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+Wed Dec 21 14:07:21 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
 
-- Mirror metadata retry
-
-This fixes bsc#1188578
+- Fix %post install of pubcloud subpackage reload of nginx (bsc#1206593)
+- Skip warnings regarding nokogiri libxml version mismatch (bsc#1202053)
 
 -------------------------------------------------------------------
-Wed Nov 17 16:07:19 UTC 2021 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+Fri Nov 11 17:11:56 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
+
+- Release version 2.10:
+  - Add option to turn off system token support (bsc#1205089)
+  - Update the `last_seen_at` column on zypper service refresh
+  - Do not retry to import non-existing files in air-gapped mode (bsc#1204769)
+
+-------------------------------------------------------------------
+Tue Nov  8 10:30:45 UTC 2022 - Zuzana Petrova <zpetrova@suse.com>
+
+- adapt rmt-client-setup-res script to work on SLL9/RHEL9
+
+-------------------------------------------------------------------
+Thu Sep 22 09:30:17 UTC 2022 - Felix Schnizlein <fschnizlein@suse.com>
+
+- Send system creation and product activation dates to SCC for better
+  visibility in SCC.
+
+-------------------------------------------------------------------
+Fri Sep  2 13:33:41 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
+
+- Release version 2.9: Implement `System-Token` header handling to improve unique system reporting.
+
+-------------------------------------------------------------------
+Wed Jul 20 15:05:27 UTC 2022 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Add --proxy-byos flag to rmt-cli systems command to filter
+  BYOS systems using RMT as a proxy
+
+-------------------------------------------------------------------
+Fri Jul  1 13:10:01 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
+
+- Version 2.8.1:
+  Retry failed http requests automatically (bsc#1197405, bsc#1188578, bsc#1198721, bsc#1199961)
+
+-------------------------------------------------------------------
+Mon May  2 13:51:44 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
+
+- Improved rmt-client-setup-res script for CentOS8.x and RHEL/RES8.x (bsc#1197038)
+
+-------------------------------------------------------------------
+Mon Mar 14 15:06:48 UTC 2022 - Felix Schnizlein <fschnizlein@suse.com>
+
+- Version 2.8.0
+- Forwarding information of registered systems to SCC more efficiently in batches
+- Syncing the systems' most recent last seen timestamps to SCC
+
+-------------------------------------------------------------------
+Thu Mar  7 16:38:12 UTC 2022 - Felix Schnizlein <fschnizlein@suse.com>
+
+- Optional '--no-confirmation' switch to skip user confirmation when cleaning repository data
+
+-------------------------------------------------------------------
+Thu Mar  3 11:06:08 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
+
+- Fix "rmt-cli systems list --csv -a" for RMTs with millions of systems (bsc#1191552)
+
+-------------------------------------------------------------------
+Tue Feb 17 19:48:00 UTC 2022 - James Mason <jmason@suse.com>
+
+- Enable nginx configs to serve on IPv6
+- Enable users with old versions of RMT to sync systems with SCC by default
+
+-------------------------------------------------------------------
+Mon Jan 31 08:40:26 UTC 2022 - Dominique Leuenberger <dimstar@opensuse.org>
+
+- Fix build using ruby 3.x (boo#1195318).
+
+-------------------------------------------------------------------
+Thu Jan 27 15:03:58 UTC 2022 - Natnael Getahun<ngetahun@suse.com>
+
+- Version 2.7.1
+- Remove products with a negative ID during migration
+
+- Changes to RMT/connect API: RMT returns HTTP status code 422 whenever a system
+  tries to register/activate a product with an expired subscription.
+- Mirror metadata retry. This fixes bsc#1188578
 
 PubCloud:
 - Update the way allowed paths are checked
   SUMA requested a new feature where it is possible to validate
   all versions of the same product and arch (that are allowed to that system)
-
--------------------------------------------------------------------
-Fri Nov 12 16:44:46 UTC 2021 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
-
-PubCloud:
 - De-register BYOS systems using RMT as a proxy from SCC
 - De-activate a single product from a BYOS proxy system
-
--------------------------------------------------------------------
-Thu Nov 11 12:20:55 UTC 2021 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
-
-PubCloud:
 - Add the handling of the BYOS systems that use RMT as a SCC proxy
   In order to do that:
 - New boolean column in systems table in db: proxy_byos

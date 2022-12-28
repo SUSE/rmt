@@ -5,17 +5,17 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'puma', '~> 5.5.1'
+gem 'puma', '~> 5.6.2'
 gem 'mysql2', '~> 0.5.3'
 
-gem 'nokogiri', '~> 1.12.5'
+gem 'nokogiri', '< 1.13' # Locked because of Ruby >= 2.6 dependency
 gem 'thor'
-gem 'activesupport', '~> 6.1.3'
-gem 'actionpack', '~> 6.1.3'
-gem 'actionview', '~> 6.1.3'
-gem 'activemodel', '~> 6.1.3'
-gem 'activerecord', '~> 6.1.3'
-gem 'railties', '~> 6.1.3'
+gem 'activesupport', '~> 6.1.6'
+gem 'actionpack', '~> 6.1.6'
+gem 'actionview', '~> 6.1.6'
+gem 'activemodel', '~> 6.1.6'
+gem 'activerecord', '~> 6.1.6'
+gem 'railties', '~> 6.1.6'
 gem 'repomd_parser', '~> 0.1.4'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -34,7 +34,9 @@ gem 'repomd_parser', '~> 0.1.4'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
-  gem 'scc-codestyle'
+  gem 'scc-codestyle', '<= 0.5.0' # Locked because of Ruby >= 2.6 dependency
+  gem 'rubocop', '<= 1.25' # Locked because of Ruby >= 2.6 dependency
+  gem 'rubocop-ast', '<= 1.17.0' # Locked because of Ruby >= 2.6 dependency
   gem 'gettext', require: false # needed for gettext_i18n_rails tasks
   gem 'ruby_parser', require: false # needed for gettext_i18n_rails tasks
   gem 'gettext_test_log'
@@ -59,33 +61,30 @@ group :test do
   gem 'factory_bot_rails', '~> 6.2.0'
   gem 'ffaker'
   gem 'rspec-its'
-  gem 'fakefs', require: 'fakefs/safe'
+  gem 'fakefs', '~> 1.4', require: 'fakefs/safe'
   gem 'shoulda-matchers'
   gem 'webmock'
   gem 'fuubar'
   gem 'timecop'
   gem 'vcr', '~> 6.0'
   gem 'coveralls', '~> 0.8.21', require: false
+  gem 'minitest', '~> 5.15.0' # minitest 5.16 needs Ruby >= 2.6
+  gem 'public_suffix', '< 5' # Locked because of Ruby >= 2.6 dependency
 end
 
 gem 'simplecov', require: false, group: :test
 
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
-
 gem 'versionist'
 gem 'responders'
-gem 'typhoeus', '~> 1.1', '>= 1.1.2'
+gem 'typhoeus'
 gem 'active_model_serializers'
 
 # i18n
-gem 'fast_gettext'
+gem 'fast_gettext', '~> 2.2'
 gem 'gettext_i18n_rails'
 
 gem 'config', '~> 3.0', '>= 2.2.1'
 gem 'terminal-table', '~> 3.0'
-
-
 
 # needed by rmt-server-pubcloud
 gem 'jwt', '~> 2.1'

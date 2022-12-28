@@ -1,4 +1,8 @@
 #!/bin/sh -xe
+if [ -z "$REGCODE" ]; then
+    echo "Required REGCODE env is not set"
+    exit 1
+fi
 SUSEConnect -r $REGCODE
 SUSEConnect -p sle-module-desktop-applications/15.3/x86_64
 SUSEConnect -p sle-module-development-tools/15.3/x86_64 # this and above is needed for 'rpm-build' package
@@ -7,6 +11,6 @@ zypper --non-interactive --gpg-auto-import-keys ref
 zypper --non-interactive up
 zypper --non-interactive in -t pattern devel_osc_build
 zypper --non-interactive install --no-recommends wget curl timezone \
-  gcc-c++ libffi-devel git-core zlib-devel libxml2-devel libxslt-devel libmariadb-devel \
+  osc gcc-c++ libffi-devel git-core zlib-devel libxml2-devel libxslt-devel libmariadb-devel \
   mariadb-client mariadb ruby2.5-rubygem-bundler make build sudo ruby-devel nginx obs-service-format_spec_file
 SUSEConnect -d
