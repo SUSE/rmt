@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-28 14:15+0100\n"
-"PO-Revision-Date: 2021-05-23 18:59+0000\n"
-"Last-Translator: Carina Hagl <vistatec_pm@sunflare.co.jp>\n"
+"PO-Revision-Date: 2022-12-29 01:14+0000\n"
+"Last-Translator: Yasuhiko Kamata <belphegor@belbel.or.jp>\n"
 "Language-Team: Japanese <https://l10n.opensuse.org/projects/rmt/i18n/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.6.2\n"
+"X-Generator: Weblate 4.9.1\n"
 
 #: ../app/controllers/api/connect/base_controller.rb:20
 msgid "Required parameters are missing or empty: %s"
@@ -48,23 +48,26 @@ msgstr "すべての必須リポジトリが製品 %s 用にミラーリング�
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:112
 msgid "No subscription with this Registration Code found"
-msgstr ""
+msgstr "この登録コードのサブスクリプションが見つかりません"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:116
 msgid "The subscription with the provided Registration Code is expired"
-msgstr ""
+msgstr "この登録コードのサブスクリプションは期限切れになっています"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:122
 msgid "The subscription with the provided Registration Code does not include the requested product '%s'"
-msgstr ""
+msgstr "この登録コードのサブスクリプションには、要求された製品 '%s' が含まれていません"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:148
 msgid "The product you are attempting to activate (%{product}) requires one of these products to be activated first: %{required_bases}"
 msgstr ""
+"この製品 (%{product}) をアクティブ化するには、これらの製品を先にアクティブ化しておく必要があります: %{required_bases}"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:154
 msgid "The product you are attempting to activate (%{product}) is not available on your system's base product (%{system_base}). %{product} is available on %{required_bases}."
 msgstr ""
+"この製品 (%{product}) はお使いのシステムの基本製品 (%{system_base}) 内では提供されていません。 %{product} は "
+"%{required_bases} で提供されているものです。"
 
 #: ../app/controllers/api/connect/v3/systems/systems_controller.rb:6
 msgid "Not provided"
@@ -100,16 +103,17 @@ msgstr "無効なシステム資格情報"
 
 #: ../app/controllers/application_controller.rb:59
 msgid "System with login \\\"%{login}\\\" authenticated without token header"
-msgstr ""
+msgstr "トークンヘッダ無しでログイン \\\"%{login}\\\" がシステムに対して認証しました"
 
 #: ../app/controllers/application_controller.rb:68
 msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
-msgstr ""
+msgstr "トークン \\\"%{system_token}\\\" でログイン \\\"%{login}\\\" がシステムに対して認証しました"
 
 #: ../app/controllers/application_controller.rb:81
-#, fuzzy
 msgid "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated from ID %{base_id} due to token mismatch"
-msgstr "ID"
+msgstr ""
+"ログイン \\\"%{login}\\\" (ID %{new_id}) がシステムに対して認証しましたが、トークン不整合により ID "
+"%{base_id} を複製しました"
 
 #: ../app/controllers/services_controller.rb:48
 msgid "Requested service not found"
@@ -135,6 +139,11 @@ msgid ""
 "You can deactivate them with \n"
 "%s"
 msgstr ""
+"このシステム内には移行できない拡張またはモジュールが存在しています。\n"
+"これらをいったん非アクティブ化してから再度移行してください。\n"
+"製品は '%s' です。\n"
+"無効化を行うには、下記のコマンドを実行してください:\n"
+"%s"
 
 #: ../lib/rmt/checksum_verifier.rb:13
 msgid "Unknown hash function %{checksum_type}"
@@ -177,7 +186,6 @@ msgid "The SCC credentials are not configured correctly in '%{path}'. You can ob
 msgstr "SCC資格情報が「%{path}」で正しく設定されていません。それらの資格情報は %{url} から取得できます"
 
 #: ../lib/rmt/cli/base.rb:83
-#, fuzzy
 msgid ""
 "SCC API request failed. Error details:\n"
 "Request URL: %{url}\n"
@@ -189,6 +197,7 @@ msgstr ""
 "SCC API リクエストが失敗しました。エラーの詳細:\n"
 "リクエスト URL: %{url}\n"
 "レスポンスコード: %{code}\n"
+"返却コード: %{return_code}\n"
 "レスポンスボディ:\n"
 "%{body}"
 
@@ -452,7 +461,7 @@ msgstr "RMTバージョンの表示"
 
 #: ../lib/rmt/cli/mirror.rb:2
 msgid "Do not fail the command if product is in alpha or beta stage"
-msgstr ""
+msgstr "製品がアルファ版またはベータ版の場合、コマンドを失敗させない"
 
 #: ../lib/rmt/cli/mirror.rb:4
 msgid "Mirror all enabled repositories"
@@ -663,7 +672,7 @@ msgstr "ミラーリング対象としてマークされていないリポジト
 
 #: ../lib/rmt/cli/repos.rb:17 ../lib/rmt/cli/systems.rb:73
 msgid "Ask for confirmation or do not ask for confirmation and require no user interaction"
-msgstr ""
+msgstr "確認を行うか、もしくは確認を求めずにユーザ操作を不要とするか"
 
 #: ../lib/rmt/cli/repos.rb:28
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
@@ -907,7 +916,7 @@ msgstr "全登録済みシステムの一覧"
 
 #: ../lib/rmt/cli/systems.rb:11
 msgid "Filter BYOS systems using RMT as a proxy"
-msgstr ""
+msgstr "RMT をプロキシとして使用して BYOS システムをフィルタする"
 
 #: ../lib/rmt/cli/systems.rb:20
 msgid "There are no systems registered to this RMT instance."
@@ -947,53 +956,61 @@ msgstr "ログイン %{login} のシステムが見つかりませんでした�
 
 #: ../lib/rmt/cli/systems.rb:71
 msgid "Removes inactive systems"
-msgstr ""
+msgstr "稼働していないシステムを削除する"
 
 #: ../lib/rmt/cli/systems.rb:72
 msgid "Remove systems before the given date (format: \"<year>-<month>-<day>\")"
-msgstr ""
+msgstr "指定した日付以前のシステムを削除する (書式: \"<年>-<月>-<日>\")"
 
 #: ../lib/rmt/cli/systems.rb:75
 msgid "Removes old systems and their activations if they are inactive."
-msgstr ""
+msgstr "稼働していない古いシステムを削除し、アクティベーションも解除します。"
 
 #: ../lib/rmt/cli/systems.rb:77
 msgid "By default, inactive systems are those that have not contacted in any way with RMT for the past 3 months. You can override this with the '-b / --before' flag."
 msgstr ""
+"既定では、稼働していないシステムとは 3 ヶ月以上にわたって RMT で通信を行っていないシステムのことを指します。期間を調整したい場合は、 '-b / "
+"--before' フラグで指定してください。"
 
 #: ../lib/rmt/cli/systems.rb:79
 msgid "The command will list you the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
 msgstr ""
+"このコマンドでは、削除対象のシステムを一覧表示して確認を求めます。確認せずにそのままサブコマンドの処理を進めたい場合は、 '--no-"
+"confirmation' フラグを指定してください。"
 
 #: ../lib/rmt/cli/systems.rb:98
 msgid "Do you want to delete these systems?"
-msgstr ""
+msgstr "これらのシステムを削除してよろしいですか？"
 
 #: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:113
 #: ../lib/rmt/cli/systems.rb:116
 msgid "y"
-msgstr ""
+msgstr "y"
 
 #: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:114
 #: ../lib/rmt/cli/systems.rb:116
 msgid "n"
-msgstr ""
+msgstr "n"
 
 #: ../lib/rmt/cli/systems.rb:116
 msgid "Please, answer"
-msgstr ""
+msgstr "回答を入力してください"
 
 #: ../lib/rmt/cli/systems.rb:126
 msgid "The given date does not follow a proper format. Ensure it follows this format '<year>-<month>-<day>'."
-msgstr ""
+msgstr "日付が正しい書式になっていません。日付は '<年>-<月>-<日>' の形式で指定してください。"
 
 #: ../lib/rmt/downloader.rb:77
 msgid "Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
 msgstr ""
+"%{file_reference} のダウンロードが %{message} で失敗しました。 %{seconds} 秒後に%{retries} "
+"回再試行します"
 
 #: ../lib/rmt/downloader.rb:131
 msgid "Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
 msgstr ""
+"%{file_reference} の問い合わせが %{message} で失敗しました。 %{seconds} 秒後に %{retries} "
+"回再試行します"
 
 #: ../lib/rmt/downloader.rb:224
 msgid "Checksum doesn't match"
@@ -1005,36 +1022,35 @@ msgstr "%{file} - ファイルが存在しません"
 
 #: ../lib/rmt/downloader/exception.rb:12
 msgid "Request error:"
-msgstr ""
+msgstr "リクエストエラー:"
 
 #: ../lib/rmt/downloader/exception.rb:13
-#, fuzzy
 msgid "Request URL"
-msgstr "URL"
+msgstr "リクエスト URL"
 
 #: ../lib/rmt/downloader/exception.rb:14
 msgid "Response HTTP status code"
-msgstr ""
+msgstr "HTTP 応答ステータスコード"
 
 #: ../lib/rmt/downloader/exception.rb:15
 msgid "Response body"
-msgstr ""
+msgstr "レスポンスボディ"
 
 #: ../lib/rmt/downloader/exception.rb:16
 msgid "Response headers"
-msgstr ""
+msgstr "レスポンスヘッダ"
 
 #: ../lib/rmt/downloader/exception.rb:17
 msgid "curl return code"
-msgstr ""
+msgstr "curl 終了コード"
 
 #: ../lib/rmt/downloader/exception.rb:18
 msgid "curl return message"
-msgstr ""
+msgstr "curl 終了メッセージ"
 
 #: ../lib/rmt/downloader/exception.rb:21
 msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
-msgstr ""
+msgstr "%{file} - HTTP 状態コード %{code} および終了コード '%{return_code}' でリクエストが失敗しました"
 
 #: ../lib/rmt/gpg.rb:37
 msgid "GPG key import failed"
@@ -1074,25 +1090,23 @@ msgstr "リポジトリメタデータの署名がありません"
 
 #: ../lib/rmt/mirror.rb:111
 msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
-msgstr ""
+msgstr "リポジトリの署名もしくは鍵のダウンロードに失敗しました: %{message}, HTTP コード %{http_code}"
 
 #: ../lib/rmt/mirror.rb:122
 msgid "Error while mirroring metadata: %{error}"
 msgstr "メタデータのミラーリング中にエラーが発生しました: %{error}"
 
 #: ../lib/rmt/mirror.rb:146
-#, fuzzy
 msgid "Error while mirroring license files: %{error}"
-msgstr "ライセンスのミラーリング中にエラーが発生しました: %{error}"
+msgstr "ライセンスファイルのミラーリング時にエラーが発生しました: %{error}"
 
 #: ../lib/rmt/mirror.rb:160
 msgid "Failed to download %{failed_count} files"
 msgstr "%{failed_count} 個のファイルのダウンロードに失敗しました"
 
 #: ../lib/rmt/mirror.rb:162
-#, fuzzy
 msgid "Error while mirroring packages: %{error}"
-msgstr "ライセンスのミラーリング中にエラーが発生しました: %{error}"
+msgstr "パッケージのミラーリング中にエラーが発生しました: %{error}"
 
 #: ../lib/rmt/mirror.rb:197
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
@@ -1144,16 +1158,15 @@ msgstr "SCC とのシステム同期は設定ファイルで無効化されて�
 
 #: ../lib/rmt/scc.rb:88
 msgid "Syncing %{count} updated system(s) to SCC"
-msgstr ""
+msgstr "%{count} 個の更新済みシステムを SCC に同期しています"
 
 #: ../lib/rmt/scc.rb:93
-#, fuzzy
 msgid "Failed to sync systems: %{error}"
-msgstr "システムの同期に失敗しました %{login}: %{error}"
+msgstr "システムの同期に失敗しました: %{error}"
 
 #: ../lib/rmt/scc.rb:98
 msgid "Couldn't sync %{count} systems."
-msgstr ""
+msgstr "%{count} 個のシステムを同期できませんでした。"
 
 #: ../lib/rmt/scc.rb:117
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
@@ -1168,6 +1181,5 @@ msgid "Updating subscriptions"
 msgstr "サブスクリプションを更新しています"
 
 #: ../lib/rmt/scc.rb:160
-#, fuzzy
 msgid "Adding/Updating product %{product}"
-msgstr "製品 %{product} を追加しています"
+msgstr "製品 %{product} を追加／更新しています"
