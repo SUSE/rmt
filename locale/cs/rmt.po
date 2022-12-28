@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-28 14:15+0100\n"
-"PO-Revision-Date: 2021-05-31 22:00+0000\n"
+"PO-Revision-Date: 2022-12-28 19:13+0000\n"
 "Last-Translator: Aleš Kastner <alkas@volny.cz>\n"
 "Language-Team: Czech <https://l10n.opensuse.org/projects/rmt/i18n/cs/>\n"
 "Language: cs\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.6.2\n"
+"X-Generator: Weblate 4.9.1\n"
 
 #: ../app/controllers/api/connect/base_controller.rb:20
 msgid "Required parameters are missing or empty: %s"
@@ -48,23 +48,29 @@ msgstr "Nejsou zrcadleny všechny povinné repozitáře pro produkt %s"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:112
 msgid "No subscription with this Registration Code found"
-msgstr ""
+msgstr "Předplatné s tímto registračním kódem nenalezeno"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:116
 msgid "The subscription with the provided Registration Code is expired"
-msgstr ""
+msgstr "Platnost předplatného se zadaným registračním kódem vypršela"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:122
 msgid "The subscription with the provided Registration Code does not include the requested product '%s'"
 msgstr ""
+"Předplatné se zadaným registračním kódem neobsahuje požadovaný produkt \"%s\""
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:148
 msgid "The product you are attempting to activate (%{product}) requires one of these products to be activated first: %{required_bases}"
 msgstr ""
+"Produkt, který se pokoušíte aktivovat (%{product}), vyžaduje, aby byl "
+"nejprve aktivován jeden z těchto produktů: %{required_bases}"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:154
 msgid "The product you are attempting to activate (%{product}) is not available on your system's base product (%{system_base}). %{product} is available on %{required_bases}."
 msgstr ""
+"Produkt, který se pokoušíte aktivovat (%{product}), není k dispozici v "
+"základním produktu vašeho systému (%{system_base}). %{product} je k "
+"dispozici na %{required_bases}."
 
 #: ../app/controllers/api/connect/v3/systems/systems_controller.rb:6
 msgid "Not provided"
@@ -100,16 +106,19 @@ msgstr "Neplatné přihlašovací údaje systému"
 
 #: ../app/controllers/application_controller.rb:59
 msgid "System with login \\\"%{login}\\\" authenticated without token header"
-msgstr ""
+msgstr "Systém s přihlášením \\\"%{login}\\\" ověřen bez hlavičky tokenu"
 
 #: ../app/controllers/application_controller.rb:68
 msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
 msgstr ""
+"Systém s přihlášením \\\"%{login}\\\" je ověřen tokenem \\\"%{system_token}\\"
+"\""
 
 #: ../app/controllers/application_controller.rb:81
-#, fuzzy
 msgid "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated from ID %{base_id} due to token mismatch"
-msgstr "ID"
+msgstr ""
+"Systém s přihlášením \\\"%{login}\\\" (ID %{new_id}) je ověřen a duplikován "
+"z ID %{base_id} kvůli neshodě tokenů"
 
 #: ../app/controllers/services_controller.rb:48
 msgid "Requested service not found"
@@ -135,6 +144,11 @@ msgid ""
 "You can deactivate them with \n"
 "%s"
 msgstr ""
+"V tomto systému jsou aktivována rozšíření/moduly, které nelze migrovat. \n"
+"Nejprve je deaktivujte a pak zkuste migrovat znovu. \n"
+"Produkt(y) jsou \"%s\". \n"
+"Můžete je deaktivovat pomocí \n"
+"%s"
 
 #: ../lib/rmt/checksum_verifier.rb:13
 msgid "Unknown hash function %{checksum_type}"
@@ -177,7 +191,6 @@ msgid "The SCC credentials are not configured correctly in '%{path}'. You can ob
 msgstr "Přihlašovací údaje SCC nejsou v cestě %{path} nakonfigurovány správně. Můžete je získat z %{url}"
 
 #: ../lib/rmt/cli/base.rb:83
-#, fuzzy
 msgid ""
 "SCC API request failed. Error details:\n"
 "Request URL: %{url}\n"
@@ -189,6 +202,7 @@ msgstr ""
 "Žádost SCC API selhala. Podrobnosti chyby:\n"
 "URL žádosti: %{url}\n"
 "Kód odpovědi: %{code}\n"
+"Návratový kód: %{return_code}\n"
 "Obsah odpovědi:\n"
 "%{body}"
 
@@ -452,7 +466,7 @@ msgstr "Zobrazit verzi RMT"
 
 #: ../lib/rmt/cli/mirror.rb:2
 msgid "Do not fail the command if product is in alpha or beta stage"
-msgstr ""
+msgstr "Nezadávejte příkaz, pokud je produkt ve fázi alfa nebo beta"
 
 #: ../lib/rmt/cli/mirror.rb:4
 msgid "Mirror all enabled repositories"
@@ -670,6 +684,8 @@ msgstr "Odebere lokálně zrcadlené soubory z úložišť neoznačených jako z
 #: ../lib/rmt/cli/repos.rb:17 ../lib/rmt/cli/systems.rb:73
 msgid "Ask for confirmation or do not ask for confirmation and require no user interaction"
 msgstr ""
+"Požádat o potvrzení, nebo nepožádat o potvrzení a nevyžadovat žádnou "
+"interakci uživatele"
 
 #: ../lib/rmt/cli/repos.rb:28
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
@@ -917,7 +933,7 @@ msgstr "Seznam všech registrovaných systémů"
 
 #: ../lib/rmt/cli/systems.rb:11
 msgid "Filter BYOS systems using RMT as a proxy"
-msgstr ""
+msgstr "Filtrování systémů BYOS s použitím RMT jako proxy serveru"
 
 #: ../lib/rmt/cli/systems.rb:20
 msgid "There are no systems registered to this RMT instance."
@@ -957,53 +973,64 @@ msgstr "Systém s přihlášením %{login} nebyl nalezen."
 
 #: ../lib/rmt/cli/systems.rb:71
 msgid "Removes inactive systems"
-msgstr ""
+msgstr "Odstraňuje neaktivní systémy"
 
 #: ../lib/rmt/cli/systems.rb:72
 msgid "Remove systems before the given date (format: \"<year>-<month>-<day>\")"
-msgstr ""
+msgstr "Odstranění systémů před zadaným datem (formát: \"<rok>-<měsíc>-<den>\")"
 
 #: ../lib/rmt/cli/systems.rb:75
 msgid "Removes old systems and their activations if they are inactive."
-msgstr ""
+msgstr "Odstraní staré systémy a jejich aktivace, pokud jsou neaktivní."
 
 #: ../lib/rmt/cli/systems.rb:77
 msgid "By default, inactive systems are those that have not contacted in any way with RMT for the past 3 months. You can override this with the '-b / --before' flag."
 msgstr ""
+"Neaktivní systémy jsou ve výchozím nastavení ty, které za poslední 3 měsíce "
+"nijak nekontaktovaly RMT. Toto nastavení můžete zrušit příznakem '-b / "
+"--before'."
 
 #: ../lib/rmt/cli/systems.rb:79
 msgid "The command will list you the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
 msgstr ""
+"Příkaz vám vypíše seznam kandidátů na odstranění a požádá vás o potvrzení. "
+"Příznakem '--no-confirmation' můžete tomuto příkazu nařídit, aby pokračoval "
+"bez dotazu."
 
 #: ../lib/rmt/cli/systems.rb:98
 msgid "Do you want to delete these systems?"
-msgstr ""
+msgstr "Chcete tyto systémy odstranit?"
 
 #: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:113
 #: ../lib/rmt/cli/systems.rb:116
 msgid "y"
-msgstr ""
+msgstr "a"
 
 #: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:114
 #: ../lib/rmt/cli/systems.rb:116
 msgid "n"
-msgstr ""
+msgstr "n"
 
 #: ../lib/rmt/cli/systems.rb:116
 msgid "Please, answer"
-msgstr ""
+msgstr "Odpovězte, prosím"
 
 #: ../lib/rmt/cli/systems.rb:126
 msgid "The given date does not follow a proper format. Ensure it follows this format '<year>-<month>-<day>'."
 msgstr ""
+"Zadané datum nemá správný formát. Správný formát je '<rok>-<měsíc>-<den>'."
 
 #: ../lib/rmt/downloader.rb:77
 msgid "Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
 msgstr ""
+"Stažení %{file_reference} se nezdařilo s %{message}. Opakování %{retries} se "
+"opakuje vícekrát po %{seconds} sekundách"
 
 #: ../lib/rmt/downloader.rb:131
 msgid "Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
 msgstr ""
+"Oprava %{file_reference} selhala s %{message}. Opakovuje se %{retries}-krát "
+"po %{seconds} sekundách"
 
 #: ../lib/rmt/downloader.rb:224
 msgid "Checksum doesn't match"
@@ -1015,36 +1042,37 @@ msgstr "%{file} – soubor neexistuje"
 
 #: ../lib/rmt/downloader/exception.rb:12
 msgid "Request error:"
-msgstr ""
+msgstr "Chyba požadavku:"
 
 #: ../lib/rmt/downloader/exception.rb:13
-#, fuzzy
 msgid "Request URL"
-msgstr "URL"
+msgstr "Požadavek URL"
 
 #: ../lib/rmt/downloader/exception.rb:14
 msgid "Response HTTP status code"
-msgstr ""
+msgstr "Stavový kód HTTP odpovědi"
 
 #: ../lib/rmt/downloader/exception.rb:15
 msgid "Response body"
-msgstr ""
+msgstr "Tělo odpovědi"
 
 #: ../lib/rmt/downloader/exception.rb:16
 msgid "Response headers"
-msgstr ""
+msgstr "Záhlaví odpovědi"
 
 #: ../lib/rmt/downloader/exception.rb:17
 msgid "curl return code"
-msgstr ""
+msgstr "návratový kód curl"
 
 #: ../lib/rmt/downloader/exception.rb:18
 msgid "curl return message"
-msgstr ""
+msgstr "návratová zpráva curl"
 
 #: ../lib/rmt/downloader/exception.rb:21
 msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
 msgstr ""
+"%{file} - požadavek se nezdařil se stavovým kódem HTTP %{code}, návratový "
+"kód '%{return_code}'"
 
 #: ../lib/rmt/gpg.rb:37
 msgid "GPG key import failed"
@@ -1084,25 +1112,23 @@ msgstr "Chybí podpisy metadat repozitáře"
 
 #: ../lib/rmt/mirror.rb:111
 msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
-msgstr ""
+msgstr "Stažení podpisu/klíče repo selhalo s: %{message}, kód HTTP %{http_code}"
 
 #: ../lib/rmt/mirror.rb:122
 msgid "Error while mirroring metadata: %{error}"
 msgstr "Chyba při zrcadlení metadat: %{error}"
 
 #: ../lib/rmt/mirror.rb:146
-#, fuzzy
 msgid "Error while mirroring license files: %{error}"
-msgstr "Chyba při zrcadlení licence: %{error}"
+msgstr "Chyba při zrcadlení licenčních souborů: %{error}"
 
 #: ../lib/rmt/mirror.rb:160
 msgid "Failed to download %{failed_count} files"
 msgstr "Nepodařilo se stáhnout %{failed_count} souborů"
 
 #: ../lib/rmt/mirror.rb:162
-#, fuzzy
 msgid "Error while mirroring packages: %{error}"
-msgstr "Chyba při zrcadlení licence: %{error}"
+msgstr "Chyba při zrcadlení balíčků: %{error}"
 
 #: ../lib/rmt/mirror.rb:197
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
@@ -1155,15 +1181,16 @@ msgstr "Synchronizace systémů do SCC je zakázána konfiguračním souborem; k
 #: ../lib/rmt/scc.rb:88
 msgid "Syncing %{count} updated system(s) to SCC"
 msgstr ""
+"Synchronizace %{count} aktualizovaného systému (aktualizovaných systémů) do "
+"SCC"
 
 #: ../lib/rmt/scc.rb:93
-#, fuzzy
 msgid "Failed to sync systems: %{error}"
-msgstr "Nepodařilo se synchronizovat systém %{login}: %{error}"
+msgstr "Nepodařilo se synchronizovat systémy: %{error}"
 
 #: ../lib/rmt/scc.rb:98
 msgid "Couldn't sync %{count} systems."
-msgstr ""
+msgstr "Nepodařilo se synchronizovat %{count} systémů."
 
 #: ../lib/rmt/scc.rb:117
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
@@ -1178,6 +1205,5 @@ msgid "Updating subscriptions"
 msgstr "Aktualizují se předplatná"
 
 #: ../lib/rmt/scc.rb:160
-#, fuzzy
 msgid "Adding/Updating product %{product}"
-msgstr "Přidává se produkt %{product}"
+msgstr "Přidává/aktualizuje se produkt %{product}"
