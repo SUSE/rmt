@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-28 14:13+0100\n"
+"POT-Creation-Date: 2022-12-28 14:15+0100\n"
 "PO-Revision-Date: 2021-05-21 04:59+0000\n"
 "Last-Translator: Grace Yu <grace.yu@excel-gits.com>\n"
 "Language-Team: Chinese (China) <https://l10n.opensuse.org/projects/rmt/i18n/zh_CN/>\n"
@@ -90,19 +90,28 @@ msgstr "无法停用产品“%s”。其他的已激活产品依赖于该产品�
 msgid "%s is not yet activated on the system."
 msgstr "此系统上尚未激活 %s。"
 
-#: ../app/controllers/application_controller.rb:13
-msgid "Authenticated system with login \\\"%{login}\\\""
-msgstr "已使用登录名“%{login}”通过系统的身份验证"
-
-#: ../app/controllers/application_controller.rb:16
+#: ../app/controllers/application_controller.rb:34
 msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
 msgstr "通过登录名“%{login}”和密码“%{password}”找不到系统"
 
-#: ../app/controllers/application_controller.rb:17
+#: ../app/controllers/application_controller.rb:36
 msgid "Invalid system credentials"
 msgstr "系统身份凭证无效"
 
-#: ../app/controllers/services_controller.rb:34
+#: ../app/controllers/application_controller.rb:59
+msgid "System with login \\\"%{login}\\\" authenticated without token header"
+msgstr ""
+
+#: ../app/controllers/application_controller.rb:68
+msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
+msgstr ""
+
+#: ../app/controllers/application_controller.rb:81
+#, fuzzy
+msgid "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated from ID %{base_id} due to token mismatch"
+msgstr "ID"
+
+#: ../app/controllers/services_controller.rb:48
 msgid "Requested service not found"
 msgstr "找不到请求的服务"
 
@@ -167,11 +176,13 @@ msgstr "RMT 数据库尚未初始化。请运行 \"%{command}\" 设置该数据�
 msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
 msgstr "未在“%{path}”中正确配置 SCC 身份凭证。您可以从 %{url} 获取相应身份凭证"
 
-#: ../lib/rmt/cli/base.rb:86
+#: ../lib/rmt/cli/base.rb:83
+#, fuzzy
 msgid ""
 "SCC API request failed. Error details:\n"
 "Request URL: %{url}\n"
 "Response code: %{code}\n"
+"Return code: %{return_code}\n"
 "Response body:\n"
 "%{body}"
 msgstr ""
@@ -181,11 +192,11 @@ msgstr ""
 "响应正文：\n"
 "%{body}"
 
-#: ../lib/rmt/cli/base.rb:127
+#: ../lib/rmt/cli/base.rb:125
 msgid "%{path} is not a directory."
 msgstr "%{path} 不是目录。"
 
-#: ../lib/rmt/cli/base.rb:131
+#: ../lib/rmt/cli/base.rb:129
 msgid "%{path} is not writable by user %{username}."
 msgstr "用户 %{username} 不允许向 %{path} 写入数据。"
 
@@ -339,23 +350,23 @@ msgstr "未镜像"
 msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 msgstr "* %{name}（id：%{id}）（%{mandatory}，%{enabled}，%{mirrored_at}）"
 
-#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+#: ../lib/rmt/cli/decorators/system_decorator.rb:3
 msgid "Login"
 msgstr "登录"
 
-#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+#: ../lib/rmt/cli/decorators/system_decorator.rb:3
 msgid "Hostname"
 msgstr "主机名"
 
-#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+#: ../lib/rmt/cli/decorators/system_decorator.rb:3
 msgid "Registration time"
 msgstr "注册时间"
 
-#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+#: ../lib/rmt/cli/decorators/system_decorator.rb:3
 msgid "Last seen"
 msgstr "上次出现时间"
 
-#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+#: ../lib/rmt/cli/decorators/system_decorator.rb:3
 msgid "Products"
 msgstr "产品"
 
@@ -517,7 +528,7 @@ msgstr "列出所有产品，包括未标记为要镜像的产品"
 
 #: ../lib/rmt/cli/products.rb:11 ../lib/rmt/cli/repos.rb:8
 #: ../lib/rmt/cli/repos_custom.rb:51 ../lib/rmt/cli/repos_custom.rb:108
-#: ../lib/rmt/cli/systems.rb:5
+#: ../lib/rmt/cli/systems.rb:12
 msgid "Output data in CSV format"
 msgstr "以 CSV 格式输出数据"
 
@@ -533,7 +544,7 @@ msgstr "产品版本（例如，15、15.1、\"12 SP4\"）"
 msgid "Product architecture (e.g., x86_64, aarch64)"
 msgstr "产品体系结构（例如，x86_64、aarch64）"
 
-#: ../lib/rmt/cli/products.rb:25 ../lib/rmt/cli/repos.rb:103
+#: ../lib/rmt/cli/products.rb:25 ../lib/rmt/cli/repos.rb:107
 msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
 msgstr "请运行 %{command} 先与您的 SUSE Customer Center 数据同步。"
 
@@ -554,7 +565,8 @@ msgid "Enables all free modules for a product"
 msgstr "启用产品的所有免费模块"
 
 #: ../lib/rmt/cli/products.rb:48 ../lib/rmt/cli/products.rb:66
-#: ../lib/rmt/cli/products.rb:84 ../lib/rmt/cli/systems.rb:37
+#: ../lib/rmt/cli/products.rb:84 ../lib/rmt/cli/systems.rb:55
+#: ../lib/rmt/cli/systems.rb:81
 msgid "Examples"
 msgstr "示例"
 
@@ -649,61 +661,65 @@ msgstr "列出所有储存库，包括未标记为要镜像的储存库"
 msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
 msgstr "移除未标记为有待镜像的储存库的本地镜像文件"
 
-#: ../lib/rmt/cli/repos.rb:26
+#: ../lib/rmt/cli/repos.rb:17 ../lib/rmt/cli/systems.rb:73
+msgid "Ask for confirmation or do not ask for confirmation and require no user interaction"
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:28
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
 msgstr "RMT 只找到了标记为有待镜像的储存库的本地镜像文件。"
 
-#: ../lib/rmt/cli/repos.rb:30
+#: ../lib/rmt/cli/repos.rb:32
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr "RMT 在以下未标记为有待镜像的储存库中找到了本地镜像的文件："
 
-#: ../lib/rmt/cli/repos.rb:36
+#: ../lib/rmt/cli/repos.rb:38
 msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
 msgstr "是否要继续移除这些储存库的本地镜像文件？"
 
-#: ../lib/rmt/cli/repos.rb:38
+#: ../lib/rmt/cli/repos.rb:40
 msgid "Only '%{input}' will be accepted."
 msgstr "只接受“%{input}”。"
 
-#: ../lib/rmt/cli/repos.rb:40
+#: ../lib/rmt/cli/repos.rb:42
 msgid "Enter a value:"
 msgstr "输入值："
 
-#: ../lib/rmt/cli/repos.rb:45
+#: ../lib/rmt/cli/repos.rb:48
 msgid "Clean cancelled."
 msgstr "已取消清理。"
 
-#: ../lib/rmt/cli/repos.rb:52
+#: ../lib/rmt/cli/repos.rb:56
 msgid "Deleting locally mirrored files from repository '%{repo}'..."
 msgstr "正在从储存库“%{repo}”中删除已本地镜像的文件..."
 
-#: ../lib/rmt/cli/repos.rb:61
+#: ../lib/rmt/cli/repos.rb:65
 msgid "Clean finished. An estimated %{total_file_size} was removed."
 msgstr "已完成清理。估计已去除 %{total_file_size}。"
 
-#: ../lib/rmt/cli/repos.rb:65 ../lib/rmt/cli/repos.rb:67
+#: ../lib/rmt/cli/repos.rb:69 ../lib/rmt/cli/repos.rb:71
 msgid "Enable mirroring of repositories by a list of repository IDs"
 msgstr "根据储存库 ID 列表启用储存库镜像"
 
-#: ../lib/rmt/cli/repos.rb:69 ../lib/rmt/cli/repos.rb:83
+#: ../lib/rmt/cli/repos.rb:73 ../lib/rmt/cli/repos.rb:87
 #: ../lib/rmt/cli/repos_custom.rb:8 ../lib/rmt/cli/repos_custom.rb:70
 #: ../lib/rmt/cli/repos_custom.rb:84
 msgid "Examples:"
 msgstr "示例："
 
-#: ../lib/rmt/cli/repos.rb:79 ../lib/rmt/cli/repos.rb:81
+#: ../lib/rmt/cli/repos.rb:83 ../lib/rmt/cli/repos.rb:85
 msgid "Disable mirroring of repositories by a list of repository IDs"
 msgstr "根据储存库 ID 列表禁用储存库镜像"
 
-#: ../lib/rmt/cli/repos.rb:92 ../lib/rmt/cli/repos_custom.rb:93
+#: ../lib/rmt/cli/repos.rb:96 ../lib/rmt/cli/repos_custom.rb:93
 msgid "To clean up downloaded files, please run '%{command}'"
 msgstr "要清理下载的文件，请运行“%{command}”"
 
-#: ../lib/rmt/cli/repos.rb:105
+#: ../lib/rmt/cli/repos.rb:109
 msgid "No repositories enabled."
 msgstr "未启用任何储存库。"
 
-#: ../lib/rmt/cli/repos.rb:113
+#: ../lib/rmt/cli/repos.rb:117
 msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
 msgstr "默认仅会显示启用的储存库。使用“%{option}”选项可列出所有储存库。"
 
@@ -877,89 +893,148 @@ msgstr "RMT 尚未同步至 SCC。请先运行 \"%{command}\""
 msgid "importing data from SMT."
 msgstr "正在从 SMT 导入数据。"
 
-#: ../lib/rmt/cli/systems.rb:2
+#: ../lib/rmt/cli/systems.rb:8
 msgid "List registered systems."
 msgstr "列出已注册的系统。"
 
-#: ../lib/rmt/cli/systems.rb:3
+#: ../lib/rmt/cli/systems.rb:9
 msgid "Number of systems to display"
 msgstr "要显示的系统数"
 
-#: ../lib/rmt/cli/systems.rb:4
+#: ../lib/rmt/cli/systems.rb:10
 msgid "List all registered systems"
 msgstr "列出所有已注册的系统"
 
-#: ../lib/rmt/cli/systems.rb:12
+#: ../lib/rmt/cli/systems.rb:11
+msgid "Filter BYOS systems using RMT as a proxy"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:20
 msgid "There are no systems registered to this RMT instance."
 msgstr "未将任何系统注册到此 RMT 实例。"
 
-#: ../lib/rmt/cli/systems.rb:18
+#: ../lib/rmt/cli/systems.rb:36
 msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
 msgstr "显示了最后 %{limit} 个注册。使用“--all”选项可查看所有已注册的系统。"
 
-#: ../lib/rmt/cli/systems.rb:26
+#: ../lib/rmt/cli/systems.rb:44
 msgid "Forward registered systems data to SCC"
 msgstr "将已注册系统的数据转发到 SCC"
 
-#: ../lib/rmt/cli/systems.rb:31
+#: ../lib/rmt/cli/systems.rb:49
 msgid "Removes a system and its activations from RMT"
 msgstr "从 RMT 中移除某个系统及其激活记录"
 
-#: ../lib/rmt/cli/systems.rb:33
+#: ../lib/rmt/cli/systems.rb:51
 msgid "Removes a system and its activations from RMT."
 msgstr "从 RMT 中移除某个系统及其激活记录。"
 
-#: ../lib/rmt/cli/systems.rb:35
+#: ../lib/rmt/cli/systems.rb:53
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr "要指定某个有待移除的系统作为目标，请针对一系列系统及其相应登录名使用命令“%{command}”。"
 
-#: ../lib/rmt/cli/systems.rb:45
+#: ../lib/rmt/cli/systems.rb:63
 msgid "Successfully removed system with login %{login}."
 msgstr "已成功移除登录名为 %{login} 的系统。"
 
-#: ../lib/rmt/cli/systems.rb:47
+#: ../lib/rmt/cli/systems.rb:65
 msgid "System with login %{login} cannot be removed."
 msgstr "无法移除登录名为 %{login} 的系统。"
 
-#: ../lib/rmt/cli/systems.rb:49
+#: ../lib/rmt/cli/systems.rb:67
 msgid "System with login %{login} not found."
 msgstr "未找到登录名为 %{login} 的系统。"
 
-#: ../lib/rmt/downloader.rb:204
+#: ../lib/rmt/cli/systems.rb:71
+msgid "Removes inactive systems"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:72
+msgid "Remove systems before the given date (format: \"<year>-<month>-<day>\")"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:75
+msgid "Removes old systems and their activations if they are inactive."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:77
+msgid "By default, inactive systems are those that have not contacted in any way with RMT for the past 3 months. You can override this with the '-b / --before' flag."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:79
+msgid "The command will list you the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:98
+msgid "Do you want to delete these systems?"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:113
+#: ../lib/rmt/cli/systems.rb:116
+msgid "y"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:114
+#: ../lib/rmt/cli/systems.rb:116
+msgid "n"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:116
+msgid "Please, answer"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:126
+msgid "The given date does not follow a proper format. Ensure it follows this format '<year>-<month>-<day>'."
+msgstr ""
+
+#: ../lib/rmt/downloader.rb:77
+msgid "Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
+msgstr ""
+
+#: ../lib/rmt/downloader.rb:131
+msgid "Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
+msgstr ""
+
+#: ../lib/rmt/downloader.rb:224
 msgid "Checksum doesn't match"
 msgstr "校验和不匹配"
 
-#: ../lib/rmt/downloader.rb:214
+#: ../lib/rmt/downloader.rb:237
+msgid "%{file} - File does not exist"
+msgstr "%{file} - 文件不存在"
+
+#: ../lib/rmt/downloader/exception.rb:12
 msgid "Request error:"
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:215
+#: ../lib/rmt/downloader/exception.rb:13
+#, fuzzy
+msgid "Request URL"
+msgstr "URL"
+
+#: ../lib/rmt/downloader/exception.rb:14
 msgid "Response HTTP status code"
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:216
+#: ../lib/rmt/downloader/exception.rb:15
 msgid "Response body"
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:217
+#: ../lib/rmt/downloader/exception.rb:16
 msgid "Response headers"
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:218
+#: ../lib/rmt/downloader/exception.rb:17
 msgid "curl return code"
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:219
+#: ../lib/rmt/downloader/exception.rb:18
 msgid "curl return message"
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:222
+#: ../lib/rmt/downloader/exception.rb:21
 msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
 msgstr ""
-
-#: ../lib/rmt/downloader.rb:233
-msgid "%{file} - File does not exist"
-msgstr "%{file} - 文件不存在"
 
 #: ../lib/rmt/gpg.rb:37
 msgid "GPG key import failed"
@@ -973,56 +1048,53 @@ msgstr "GPG 签名校验失败"
 msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
 msgstr "已运行此命令的另一个实例。请终止另一实例，或等待该实例完成。"
 
-#: ../lib/rmt/mirror.rb:43
+#: ../lib/rmt/mirror.rb:41
 msgid "Mirroring SUSE Manager product tree to %{dir}"
 msgstr "正在将 SUSE Manager 产品树镜像至 %{dir}"
 
-#: ../lib/rmt/mirror.rb:46
+#: ../lib/rmt/mirror.rb:44
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "无法镜像 SUSE Manager 产品树，发生错误：%{error}"
 
-#: ../lib/rmt/mirror.rb:52
+#: ../lib/rmt/mirror.rb:50
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "正在将储存库 %{repo} 镜像到 %{dir}"
 
-#: ../lib/rmt/mirror.rb:78
+#: ../lib/rmt/mirror.rb:76
 msgid "Could not create local directory %{dir} with error: %{error}"
 msgstr "无法创建本地目录 %{dir}，发生错误：%{error}"
 
-#: ../lib/rmt/mirror.rb:85
+#: ../lib/rmt/mirror.rb:83
 msgid "Could not create a temporary directory: %{error}"
 msgstr "无法创建临时目录：%{error}"
 
-#: ../lib/rmt/mirror.rb:112
+#: ../lib/rmt/mirror.rb:109
 msgid "Repository metadata signatures are missing"
 msgstr "缺少储存库元数据签名"
 
-#: ../lib/rmt/mirror.rb:116
-#, fuzzy
-msgid "Mirroring metadata signature/key failed with %{http_code}. Retrying after %{seconds} seconds"
-msgstr "镜像"
-
-#: ../lib/rmt/mirror.rb:122
-msgid "Downloading repo signature/key failed with HTTP code %{http_code}"
+#: ../lib/rmt/mirror.rb:111
+msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:134
+#: ../lib/rmt/mirror.rb:122
 msgid "Error while mirroring metadata: %{error}"
 msgstr "镜像元数据时发生错误：%{error}"
 
-#: ../lib/rmt/mirror.rb:158
-msgid "Error while mirroring license: %{error}"
+#: ../lib/rmt/mirror.rb:146
+#, fuzzy
+msgid "Error while mirroring license files: %{error}"
 msgstr "镜像许可证时发生错误：%{error}"
 
-#: ../lib/rmt/mirror.rb:172
+#: ../lib/rmt/mirror.rb:160
 msgid "Failed to download %{failed_count} files"
 msgstr "无法下载 %{failed_count} 个文件"
 
-#: ../lib/rmt/mirror.rb:174
-msgid "Error while mirroring data: %{error}"
-msgstr "镜像数据时发生错误：%{error}"
+#: ../lib/rmt/mirror.rb:162
+#, fuzzy
+msgid "Error while mirroring packages: %{error}"
+msgstr "镜像许可证时发生错误：%{error}"
 
-#: ../lib/rmt/mirror.rb:209
+#: ../lib/rmt/mirror.rb:197
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
 msgstr "将目录 %{src} 移至 %{dest} 时发生错误：%{error}"
 
@@ -1070,26 +1142,32 @@ msgstr "正在从 %{path} 导入 SCC 数据"
 msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
 msgstr "配置文件已禁用将系统同步到 SCC，正在退出。"
 
-#: ../lib/rmt/scc.rb:89
-msgid "Syncing system %{login} to SCC"
-msgstr "正在将系统 %{login} 同步到 SCC"
+#: ../lib/rmt/scc.rb:88
+msgid "Syncing %{count} updated system(s) to SCC"
+msgstr ""
 
-#: ../lib/rmt/scc.rb:94
-msgid "Failed to sync system %{login}: %{error}"
+#: ../lib/rmt/scc.rb:93
+#, fuzzy
+msgid "Failed to sync systems: %{error}"
 msgstr "无法同步系统 %{login}：%{error}"
 
-#: ../lib/rmt/scc.rb:101
+#: ../lib/rmt/scc.rb:98
+msgid "Couldn't sync %{count} systems."
+msgstr ""
+
+#: ../lib/rmt/scc.rb:117
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
 msgstr "正在将已取消注册的系统 %{scc_system_id} 同步到 SCC"
 
-#: ../lib/rmt/scc.rb:118
+#: ../lib/rmt/scc.rb:134
 msgid "Updating repositories"
 msgstr "正在更新储存库"
 
-#: ../lib/rmt/scc.rb:125
+#: ../lib/rmt/scc.rb:141
 msgid "Updating subscriptions"
 msgstr "正在更新订阅"
 
-#: ../lib/rmt/scc.rb:144
-msgid "Adding product %{product}"
+#: ../lib/rmt/scc.rb:160
+#, fuzzy
+msgid "Adding/Updating product %{product}"
 msgstr "正在添加产品 %{product}"

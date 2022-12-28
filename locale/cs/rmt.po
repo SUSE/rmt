@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-28 14:13+0100\n"
+"POT-Creation-Date: 2022-12-28 14:15+0100\n"
 "PO-Revision-Date: 2021-05-31 22:00+0000\n"
 "Last-Translator: Aleš Kastner <alkas@volny.cz>\n"
 "Language-Team: Czech <https://l10n.opensuse.org/projects/rmt/i18n/cs/>\n"
@@ -90,19 +90,28 @@ msgstr "Produkt %s nelze deaktivovat. Závisí na něm jiné aktivované produkt
 msgid "%s is not yet activated on the system."
 msgstr "%s ještě není v systému aktivováno."
 
-#: ../app/controllers/application_controller.rb:13
-msgid "Authenticated system with login \\\"%{login}\\\""
-msgstr "Ověřený systém s přihlašovacím jménem „%{login}“"
-
-#: ../app/controllers/application_controller.rb:16
+#: ../app/controllers/application_controller.rb:34
 msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
 msgstr "Nelze najít systém s přihlašovacím jménem „%{login}“ a heslem „%{password}“"
 
-#: ../app/controllers/application_controller.rb:17
+#: ../app/controllers/application_controller.rb:36
 msgid "Invalid system credentials"
 msgstr "Neplatné přihlašovací údaje systému"
 
-#: ../app/controllers/services_controller.rb:34
+#: ../app/controllers/application_controller.rb:59
+msgid "System with login \\\"%{login}\\\" authenticated without token header"
+msgstr ""
+
+#: ../app/controllers/application_controller.rb:68
+msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
+msgstr ""
+
+#: ../app/controllers/application_controller.rb:81
+#, fuzzy
+msgid "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated from ID %{base_id} due to token mismatch"
+msgstr "ID"
+
+#: ../app/controllers/services_controller.rb:48
 msgid "Requested service not found"
 msgstr "Požadovaná služba nebyla nalezena"
 
@@ -167,11 +176,13 @@ msgstr "Databáze RMT ještě nebyla inicializována. Spusťte příkaz '%{comma
 msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
 msgstr "Přihlašovací údaje SCC nejsou v cestě %{path} nakonfigurovány správně. Můžete je získat z %{url}"
 
-#: ../lib/rmt/cli/base.rb:86
+#: ../lib/rmt/cli/base.rb:83
+#, fuzzy
 msgid ""
 "SCC API request failed. Error details:\n"
 "Request URL: %{url}\n"
 "Response code: %{code}\n"
+"Return code: %{return_code}\n"
 "Response body:\n"
 "%{body}"
 msgstr ""
@@ -181,11 +192,11 @@ msgstr ""
 "Obsah odpovědi:\n"
 "%{body}"
 
-#: ../lib/rmt/cli/base.rb:127
+#: ../lib/rmt/cli/base.rb:125
 msgid "%{path} is not a directory."
 msgstr "%{path} není adresář."
 
-#: ../lib/rmt/cli/base.rb:131
+#: ../lib/rmt/cli/base.rb:129
 msgid "%{path} is not writable by user %{username}."
 msgstr "Do cesty %{path} nemůže uživatel %{username} zapisovat."
 
@@ -339,23 +350,23 @@ msgstr "neodzrcadleno"
 msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 msgstr "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 
-#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+#: ../lib/rmt/cli/decorators/system_decorator.rb:3
 msgid "Login"
 msgstr "Přihlášení"
 
-#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+#: ../lib/rmt/cli/decorators/system_decorator.rb:3
 msgid "Hostname"
 msgstr "Název hostitele"
 
-#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+#: ../lib/rmt/cli/decorators/system_decorator.rb:3
 msgid "Registration time"
 msgstr "Čas registrace"
 
-#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+#: ../lib/rmt/cli/decorators/system_decorator.rb:3
 msgid "Last seen"
 msgstr "Naposledy spatřen"
 
-#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+#: ../lib/rmt/cli/decorators/system_decorator.rb:3
 msgid "Products"
 msgstr "Produkty"
 
@@ -517,7 +528,7 @@ msgstr "Vypsat všechny produkty včetně produktů neoznačených k zrcadlení"
 
 #: ../lib/rmt/cli/products.rb:11 ../lib/rmt/cli/repos.rb:8
 #: ../lib/rmt/cli/repos_custom.rb:51 ../lib/rmt/cli/repos_custom.rb:108
-#: ../lib/rmt/cli/systems.rb:5
+#: ../lib/rmt/cli/systems.rb:12
 msgid "Output data in CSV format"
 msgstr "Výstup dat ve formátu CSV"
 
@@ -533,7 +544,7 @@ msgstr "Vetrze produktu (např.: 15, 15.1, '12 SP4')"
 msgid "Product architecture (e.g., x86_64, aarch64)"
 msgstr "Architektura produktu (např.: x86_64, aarch64)"
 
-#: ../lib/rmt/cli/products.rb:25 ../lib/rmt/cli/repos.rb:103
+#: ../lib/rmt/cli/products.rb:25 ../lib/rmt/cli/repos.rb:107
 msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
 msgstr "Nejprve spusťte příkaz %{command}, aby se provedla synchronizace s daty SUSE Customer Center."
 
@@ -554,7 +565,8 @@ msgid "Enables all free modules for a product"
 msgstr "Povolí všechny zdarma dostupné moduly pro produkt"
 
 #: ../lib/rmt/cli/products.rb:48 ../lib/rmt/cli/products.rb:66
-#: ../lib/rmt/cli/products.rb:84 ../lib/rmt/cli/systems.rb:37
+#: ../lib/rmt/cli/products.rb:84 ../lib/rmt/cli/systems.rb:55
+#: ../lib/rmt/cli/systems.rb:81
 msgid "Examples"
 msgstr "Příklady"
 
@@ -655,61 +667,65 @@ msgstr "Vypsat všechny repozitáře včetně repozitářů neoznačených k zrc
 msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
 msgstr "Odebere lokálně zrcadlené soubory z úložišť neoznačených jako zrcadlená"
 
-#: ../lib/rmt/cli/repos.rb:26
+#: ../lib/rmt/cli/repos.rb:17 ../lib/rmt/cli/systems.rb:73
+msgid "Ask for confirmation or do not ask for confirmation and require no user interaction"
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:28
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
 msgstr "RMT našel pouze lokálně zrcadlené soubory úložišť označených jako zrcadlená."
 
-#: ../lib/rmt/cli/repos.rb:30
+#: ../lib/rmt/cli/repos.rb:32
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr "RMT našel lokálně zrcadlené soubory z těchto úložišť neoznačených jako zrcadlená:"
 
-#: ../lib/rmt/cli/repos.rb:36
+#: ../lib/rmt/cli/repos.rb:38
 msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
 msgstr "Chcete pokračovat a odstranit lokálně zrcadlené soubory těchto úložišť?"
 
-#: ../lib/rmt/cli/repos.rb:38
+#: ../lib/rmt/cli/repos.rb:40
 msgid "Only '%{input}' will be accepted."
 msgstr "Přijat bude pouze '%{input}'."
 
-#: ../lib/rmt/cli/repos.rb:40
+#: ../lib/rmt/cli/repos.rb:42
 msgid "Enter a value:"
 msgstr "Zadejte hodnotu:"
 
-#: ../lib/rmt/cli/repos.rb:45
+#: ../lib/rmt/cli/repos.rb:48
 msgid "Clean cancelled."
 msgstr "Vyčistění zrušeno."
 
-#: ../lib/rmt/cli/repos.rb:52
+#: ../lib/rmt/cli/repos.rb:56
 msgid "Deleting locally mirrored files from repository '%{repo}'..."
 msgstr "Odstraňuji lokálně zrcadlené soubory z úložiště '%{repo}'..."
 
-#: ../lib/rmt/cli/repos.rb:61
+#: ../lib/rmt/cli/repos.rb:65
 msgid "Clean finished. An estimated %{total_file_size} was removed."
 msgstr "Vyčistění dokončeno. Celkem bylo odstraněno %{total_file_size}."
 
-#: ../lib/rmt/cli/repos.rb:65 ../lib/rmt/cli/repos.rb:67
+#: ../lib/rmt/cli/repos.rb:69 ../lib/rmt/cli/repos.rb:71
 msgid "Enable mirroring of repositories by a list of repository IDs"
 msgstr "Povolit zrcadlení repozitářů podle seznamu ID repozitářů"
 
-#: ../lib/rmt/cli/repos.rb:69 ../lib/rmt/cli/repos.rb:83
+#: ../lib/rmt/cli/repos.rb:73 ../lib/rmt/cli/repos.rb:87
 #: ../lib/rmt/cli/repos_custom.rb:8 ../lib/rmt/cli/repos_custom.rb:70
 #: ../lib/rmt/cli/repos_custom.rb:84
 msgid "Examples:"
 msgstr "Příklady:"
 
-#: ../lib/rmt/cli/repos.rb:79 ../lib/rmt/cli/repos.rb:81
+#: ../lib/rmt/cli/repos.rb:83 ../lib/rmt/cli/repos.rb:85
 msgid "Disable mirroring of repositories by a list of repository IDs"
 msgstr "Zakázat zrcadlení repozitářů podle seznamu ID repozitářů"
 
-#: ../lib/rmt/cli/repos.rb:92 ../lib/rmt/cli/repos_custom.rb:93
+#: ../lib/rmt/cli/repos.rb:96 ../lib/rmt/cli/repos_custom.rb:93
 msgid "To clean up downloaded files, please run '%{command}'"
 msgstr "Chcete-li vyčistit stažené soubory, spusťte '%{command}'"
 
-#: ../lib/rmt/cli/repos.rb:105
+#: ../lib/rmt/cli/repos.rb:109
 msgid "No repositories enabled."
 msgstr "Nejsou povoleny žádné repozitáře."
 
-#: ../lib/rmt/cli/repos.rb:113
+#: ../lib/rmt/cli/repos.rb:117
 msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
 msgstr "Ve výchozím nastavení se zobrazují jen povolené repozitáře. Použitím možnosti %{command} zobrazíte všechny repozitáře."
 
@@ -887,89 +903,148 @@ msgstr "Nástroj RMT nebyl zatím synchronizován s SCC. Spusťte příkaz „%{
 msgid "importing data from SMT."
 msgstr "budete importovat data ze SMT."
 
-#: ../lib/rmt/cli/systems.rb:2
+#: ../lib/rmt/cli/systems.rb:8
 msgid "List registered systems."
 msgstr "Seznam registrovaných systémů."
 
-#: ../lib/rmt/cli/systems.rb:3
+#: ../lib/rmt/cli/systems.rb:9
 msgid "Number of systems to display"
 msgstr "Počet systémů k zobrazení"
 
-#: ../lib/rmt/cli/systems.rb:4
+#: ../lib/rmt/cli/systems.rb:10
 msgid "List all registered systems"
 msgstr "Seznam všech registrovaných systémů"
 
-#: ../lib/rmt/cli/systems.rb:12
+#: ../lib/rmt/cli/systems.rb:11
+msgid "Filter BYOS systems using RMT as a proxy"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:20
 msgid "There are no systems registered to this RMT instance."
 msgstr "K této instanci RMT nejsou registrovány žádné systémy."
 
-#: ../lib/rmt/cli/systems.rb:18
+#: ../lib/rmt/cli/systems.rb:36
 msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
 msgstr "Zobrazeno posledních %{limit} registrací. Všechny registrované systémy zobrazíte volbou '--all'."
 
-#: ../lib/rmt/cli/systems.rb:26
+#: ../lib/rmt/cli/systems.rb:44
 msgid "Forward registered systems data to SCC"
 msgstr "Přeposlat data registrovaných systémů do SCC"
 
-#: ../lib/rmt/cli/systems.rb:31
+#: ../lib/rmt/cli/systems.rb:49
 msgid "Removes a system and its activations from RMT"
 msgstr "Odebere systém a jeho aktivace z RMT"
 
-#: ../lib/rmt/cli/systems.rb:33
+#: ../lib/rmt/cli/systems.rb:51
 msgid "Removes a system and its activations from RMT."
 msgstr "Odebere systém a jeho aktivace z RMT."
 
-#: ../lib/rmt/cli/systems.rb:35
+#: ../lib/rmt/cli/systems.rb:53
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr "Chcete-li označit systém k odstranění, použijte příkaz \"% {command}\" pro výpis systémů s jejichi přihlašovacími údaji."
 
-#: ../lib/rmt/cli/systems.rb:45
+#: ../lib/rmt/cli/systems.rb:63
 msgid "Successfully removed system with login %{login}."
 msgstr "Systém s přihlášením %{login} byl úspěšně odebrán."
 
-#: ../lib/rmt/cli/systems.rb:47
+#: ../lib/rmt/cli/systems.rb:65
 msgid "System with login %{login} cannot be removed."
 msgstr "Systém s přihlášením %{login} nelze odebrat."
 
-#: ../lib/rmt/cli/systems.rb:49
+#: ../lib/rmt/cli/systems.rb:67
 msgid "System with login %{login} not found."
 msgstr "Systém s přihlášením %{login} nebyl nalezen."
 
-#: ../lib/rmt/downloader.rb:204
+#: ../lib/rmt/cli/systems.rb:71
+msgid "Removes inactive systems"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:72
+msgid "Remove systems before the given date (format: \"<year>-<month>-<day>\")"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:75
+msgid "Removes old systems and their activations if they are inactive."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:77
+msgid "By default, inactive systems are those that have not contacted in any way with RMT for the past 3 months. You can override this with the '-b / --before' flag."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:79
+msgid "The command will list you the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:98
+msgid "Do you want to delete these systems?"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:113
+#: ../lib/rmt/cli/systems.rb:116
+msgid "y"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:114
+#: ../lib/rmt/cli/systems.rb:116
+msgid "n"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:116
+msgid "Please, answer"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:126
+msgid "The given date does not follow a proper format. Ensure it follows this format '<year>-<month>-<day>'."
+msgstr ""
+
+#: ../lib/rmt/downloader.rb:77
+msgid "Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
+msgstr ""
+
+#: ../lib/rmt/downloader.rb:131
+msgid "Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
+msgstr ""
+
+#: ../lib/rmt/downloader.rb:224
 msgid "Checksum doesn't match"
 msgstr "Kontrolní součet neodpovídá"
 
-#: ../lib/rmt/downloader.rb:214
+#: ../lib/rmt/downloader.rb:237
+msgid "%{file} - File does not exist"
+msgstr "%{file} – soubor neexistuje"
+
+#: ../lib/rmt/downloader/exception.rb:12
 msgid "Request error:"
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:215
+#: ../lib/rmt/downloader/exception.rb:13
+#, fuzzy
+msgid "Request URL"
+msgstr "URL"
+
+#: ../lib/rmt/downloader/exception.rb:14
 msgid "Response HTTP status code"
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:216
+#: ../lib/rmt/downloader/exception.rb:15
 msgid "Response body"
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:217
+#: ../lib/rmt/downloader/exception.rb:16
 msgid "Response headers"
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:218
+#: ../lib/rmt/downloader/exception.rb:17
 msgid "curl return code"
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:219
+#: ../lib/rmt/downloader/exception.rb:18
 msgid "curl return message"
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:222
+#: ../lib/rmt/downloader/exception.rb:21
 msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
 msgstr ""
-
-#: ../lib/rmt/downloader.rb:233
-msgid "%{file} - File does not exist"
-msgstr "%{file} – soubor neexistuje"
 
 #: ../lib/rmt/gpg.rb:37
 msgid "GPG key import failed"
@@ -983,56 +1058,53 @@ msgstr "Ověření podpisu GPG se nezdařilo"
 msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
 msgstr "Je již spuštěna jiná instance tohoto příkazu. Ukončete jinou instanci nebo počkejte, až skončí."
 
-#: ../lib/rmt/mirror.rb:43
+#: ../lib/rmt/mirror.rb:41
 msgid "Mirroring SUSE Manager product tree to %{dir}"
 msgstr "Zrcadlí se strom produktů SUSE Manager do %{dir}"
 
-#: ../lib/rmt/mirror.rb:46
+#: ../lib/rmt/mirror.rb:44
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "Nelze zrcadlit produkt SUSE Manager s chybou: %{error}"
 
-#: ../lib/rmt/mirror.rb:52
+#: ../lib/rmt/mirror.rb:50
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "Zrcadlí se repozitář %{repo} do %{dir}"
 
-#: ../lib/rmt/mirror.rb:78
+#: ../lib/rmt/mirror.rb:76
 msgid "Could not create local directory %{dir} with error: %{error}"
 msgstr "Nelze vytvořit místní adresář %{dir} s chybou: %{error}"
 
-#: ../lib/rmt/mirror.rb:85
+#: ../lib/rmt/mirror.rb:83
 msgid "Could not create a temporary directory: %{error}"
 msgstr "Nelze vytvořit dočasný adresář: %{error}"
 
-#: ../lib/rmt/mirror.rb:112
+#: ../lib/rmt/mirror.rb:109
 msgid "Repository metadata signatures are missing"
 msgstr "Chybí podpisy metadat repozitáře"
 
-#: ../lib/rmt/mirror.rb:116
-#, fuzzy
-msgid "Mirroring metadata signature/key failed with %{http_code}. Retrying after %{seconds} seconds"
-msgstr "Zrcadlit"
-
-#: ../lib/rmt/mirror.rb:122
-msgid "Downloading repo signature/key failed with HTTP code %{http_code}"
+#: ../lib/rmt/mirror.rb:111
+msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:134
+#: ../lib/rmt/mirror.rb:122
 msgid "Error while mirroring metadata: %{error}"
 msgstr "Chyba při zrcadlení metadat: %{error}"
 
-#: ../lib/rmt/mirror.rb:158
-msgid "Error while mirroring license: %{error}"
+#: ../lib/rmt/mirror.rb:146
+#, fuzzy
+msgid "Error while mirroring license files: %{error}"
 msgstr "Chyba při zrcadlení licence: %{error}"
 
-#: ../lib/rmt/mirror.rb:172
+#: ../lib/rmt/mirror.rb:160
 msgid "Failed to download %{failed_count} files"
 msgstr "Nepodařilo se stáhnout %{failed_count} souborů"
 
-#: ../lib/rmt/mirror.rb:174
-msgid "Error while mirroring data: %{error}"
-msgstr "Chyba při zrcadlení dat: %{error}"
+#: ../lib/rmt/mirror.rb:162
+#, fuzzy
+msgid "Error while mirroring packages: %{error}"
+msgstr "Chyba při zrcadlení licence: %{error}"
 
-#: ../lib/rmt/mirror.rb:209
+#: ../lib/rmt/mirror.rb:197
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
 msgstr "Chyba při přesouvání adresáře %{src} do %{dest}: %{error}"
 
@@ -1080,26 +1152,32 @@ msgstr "Importují se data SCC z %{path}"
 msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
 msgstr "Synchronizace systémů do SCC je zakázána konfiguračním souborem; končím akci."
 
-#: ../lib/rmt/scc.rb:89
-msgid "Syncing system %{login} to SCC"
-msgstr "Synchronizace systému %{login} do SCC"
+#: ../lib/rmt/scc.rb:88
+msgid "Syncing %{count} updated system(s) to SCC"
+msgstr ""
 
-#: ../lib/rmt/scc.rb:94
-msgid "Failed to sync system %{login}: %{error}"
+#: ../lib/rmt/scc.rb:93
+#, fuzzy
+msgid "Failed to sync systems: %{error}"
 msgstr "Nepodařilo se synchronizovat systém %{login}: %{error}"
 
-#: ../lib/rmt/scc.rb:101
+#: ../lib/rmt/scc.rb:98
+msgid "Couldn't sync %{count} systems."
+msgstr ""
+
+#: ../lib/rmt/scc.rb:117
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
 msgstr "Synchronizace odregistrovaného systému %{scc_system_id} do SCC"
 
-#: ../lib/rmt/scc.rb:118
+#: ../lib/rmt/scc.rb:134
 msgid "Updating repositories"
 msgstr "Aktualizují se repozitáře"
 
-#: ../lib/rmt/scc.rb:125
+#: ../lib/rmt/scc.rb:141
 msgid "Updating subscriptions"
 msgstr "Aktualizují se předplatná"
 
-#: ../lib/rmt/scc.rb:144
-msgid "Adding product %{product}"
+#: ../lib/rmt/scc.rb:160
+#, fuzzy
+msgid "Adding/Updating product %{product}"
 msgstr "Přidává se produkt %{product}"
