@@ -7,6 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-12-28 14:13+0100\n"
 "PO-Revision-Date: 2022-08-12 10:13+0000\n"
 "Last-Translator: Luna  Jernberg <bittin@opensuse.org>\n"
 "Language-Team: Swedish <https://l10n.opensuse.org/projects/rmt/i18n/sv/>\n"
@@ -17,478 +18,847 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.9.1\n"
 
-msgid "%s is not yet activated on the system."
-msgstr "%s har inte aktiverats på systemet ännu."
+#: ../app/controllers/api/connect/base_controller.rb:20
+msgid "Required parameters are missing or empty: %s"
+msgstr "Begärda parametrar saknas eller är tomma: %s"
 
-msgid "%{file} - File does not exist"
-msgstr "%{file} - Filen finns inte"
+#: ../app/controllers/api/connect/base_controller.rb:31
+msgid "Unknown Registration Code."
+msgstr "Okänd registreringskod."
 
-msgid "%{file} - HTTP request failed with code %{code}"
-msgstr "%{file} - HTTP-begäran misslyckades med koden %{code}"
+#: ../app/controllers/api/connect/base_controller.rb:34
+msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
+msgstr "Registreringskoden är inte aktiverad ännu. Gå till https://scc.suse.com för att aktivera den."
 
-msgid "%{file} - return code %{code}"
-msgstr "%{file} - returkod %{code}"
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:21
+msgid "The requested product '%s' is not activated on this system."
+msgstr "Den begärda produkten '%s' är inte aktiverad på detta system."
 
-msgid "%{file} does not exist."
-msgstr "%{file} finns inte."
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:84
+msgid "No product found"
+msgstr "Inga produkter hittades"
 
-msgid "%{path} is not a directory."
-msgstr "%{path} är inte en katalog."
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:90
+msgid "No repositories found for product: %s"
+msgstr "Inga lagringsplatser hittades för produkten: %s"
 
-msgid "%{path} is not writable by user %{username}."
-msgstr "%{path} är inte skrivbar av användare %{username}."
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:97
+msgid "Not all mandatory repositories are mirrored for product %s"
+msgstr "Inte alla obligatoriska lagringsplatser är speglade  för produkten %s"
 
-msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
-msgstr "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
-
-#, fuzzy
-msgid "A repository by the ID %{id} already exists."
-msgstr "Det finns redan en lagringsplats med webbadressen %{url}."
-
-msgid "A repository by the URL %{url} already exists."
-msgstr "Det finns redan en lagringsplats med webbadressen %{url}."
-
-msgid "Added association between %{repo} and product %{product}"
-msgstr "Lade till en association mellan %{repo} och produkten %{product}"
-
-msgid "Adding product %{product}"
-msgstr "Lägger till produkten %{product}"
-
-msgid "All repositories have already been disabled."
-msgstr "Alla lagringsplatser har redan inaktiverats."
-
-msgid "All repositories have already been enabled."
-msgstr "Alla lagringsplatser har redan aktiverats."
-
-msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:112
+msgid "No subscription with this Registration Code found"
 msgstr ""
 
-#. i18n: architecture
-msgid "Arch"
-msgstr "Båge"
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:116
+msgid "The subscription with the provided Registration Code is expired"
+msgstr ""
 
-msgid "Architecture"
-msgstr "Arkitektur"
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:122
+msgid "The subscription with the provided Registration Code does not include the requested product '%s'"
+msgstr ""
 
-msgid "Attach an existing custom repository to a product"
-msgstr "Bifoga en befintlig anpassad lagringsplats till en produkt"
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:148
+msgid "The product you are attempting to activate (%{product}) requires one of these products to be activated first: %{required_bases}"
+msgstr ""
 
-msgid "Attached repository to product '%{product_name}'."
-msgstr "Bifogade lagringsplats till produkten '%{product_name}'."
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:154
+msgid "The product you are attempting to activate (%{product}) is not available on your system's base product (%{system_base}). %{product} is available on %{required_bases}."
+msgstr ""
 
-msgid "Authenticated system with login \\\"%{login}\\\""
-msgstr "Autentiserat system med inloggningen \\\"%{login}\\\""
+#: ../app/controllers/api/connect/v3/systems/systems_controller.rb:6
+msgid "Not provided"
+msgstr "Inte levererat"
 
-msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
-msgstr "Det går inte att ansluta till databasservern. Se att inloggningsuppgifterna är korrekt konfigurerade i '%{path}' eller konfigurera RMT med YaST ('%{command}')."
+#: ../app/controllers/api/connect/v3/systems/systems_controller.rb:10
+msgid "Updated system information for host '%s'"
+msgstr "Uppdaterad systeminformation för värden '%s'"
 
-msgid "Cannot connect to database server. Make sure it is running and its credentials are configured in '%{path}'."
-msgstr "Det går inte att ansluta till databasservern. Se till att den körs och att inloggningsuppgifterna är konfigurerade i '%{path}'."
+#: ../app/controllers/api/connect/v4/repositories/installer_controller.rb:16
+msgid "No product found on RMT for: %s"
+msgstr "Ingen produkt hittades på RMT för: %s"
 
+#: ../app/controllers/api/connect/v4/systems/products_controller.rb:5
+msgid "The product \"%s\" is a base product and cannot be deactivated"
+msgstr "Produkten \"%s\" är en basprodukt och kan inte inaktiveras"
+
+#: ../app/controllers/api/connect/v4/systems/products_controller.rb:7
 msgid "Cannot deactivate the product \"%s\". Other activated products depend upon it."
 msgstr "Det går inte att inaktivera produkten \"%s\". Andra aktiverade produkter är beroende av den."
 
-msgid "Cannot find product by ID %{id}."
-msgstr "Det går inte att hitta produkten med ID %{id}."
+#: ../app/controllers/api/connect/v4/systems/products_controller.rb:15
+msgid "%s is not yet activated on the system."
+msgstr "%s har inte aktiverats på systemet ännu."
 
-msgid "Check out %{url}"
-msgstr "Kontrollera %{url}"
+#: ../app/controllers/application_controller.rb:13
+msgid "Authenticated system with login \\\"%{login}\\\""
+msgstr "Autentiserat system med inloggningen \\\"%{login}\\\""
 
-msgid "Checksum doesn't match"
-msgstr "Kontrollsumman matchar inte"
-
-msgid "Clean cancelled."
-msgstr ""
-
-msgid "Clean finished. An estimated %{total_file_size} was removed."
-msgstr ""
-
-msgid "Cleaning up the database"
-msgstr "Rensar databasen"
-
-msgid "Commands:"
-msgstr "Kommandon:"
-
-msgid "Could not create a temporary directory: %{error}"
-msgstr "Det gick inte att skapa en tillfällig katalog: %{error}"
-
-msgid "Could not create deduplication hardlink: %{error}."
-msgstr "Det gick inte att skapa hård länk för avduplicering: %{error}."
-
-msgid "Could not create local directory %{dir} with error: %{error}"
-msgstr "Det gick inte att skapa lokala katalogen %{dir} med felet: %{error}"
-
+#: ../app/controllers/application_controller.rb:16
 msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
 msgstr "Det gick inte att hitta ett system med inloggningen \\\"%{login}\\\" och lösenordet \\\"%{password}\\\""
 
-#, fuzzy
-msgid "Could not mirror SUSE Manager product tree with error: %{error}"
-msgstr "Det gick inte att spegla suma-produktträd med felet: %{error}"
-
-#, fuzzy
-msgid "Couldn't add custom repository."
-msgstr "Skapar en anpassad lagringsplats."
-
-msgid "Creates a custom repository."
-msgstr "Skapar en anpassad lagringsplats."
-
-msgid "Deleting locally mirrored files from repository '%{repo}'..."
-msgstr ""
-
-msgid "Description"
-msgstr ""
-
-msgid "Description: %{description}"
-msgstr "Beskrivning: %{description}"
-
-msgid "Detach an existing custom repository from a product"
-msgstr "Koppla från en befintlig anpassad lagringsplats från en produkt"
-
-msgid "Detached repository from product '%{product_name}'."
-msgstr "Kopplade från lagringsplats från produkten '%{product_name}'."
-
-#, fuzzy
-msgid "Disable mirroring of custom repositories by a list of IDs"
-msgstr "Inaktivera spegling av anpassad lagringsplats efter ID"
-
-#, fuzzy
-msgid "Disable mirroring of custom repository by a list of IDs"
-msgstr "Inaktivera spegling av anpassad lagringsplats efter ID"
-
-msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
-msgstr "Inaktivera spegling av produktlagringsplatser efter en lista med produkt-ID eller produktsträngar."
-
-msgid "Disable mirroring of repositories by a list of repository IDs"
-msgstr "Inaktivera spegling av lagringsplatser efter en lista med lagringsplats-ID"
-
-msgid "Disabled repository %{repository}."
-msgstr "Inaktiverade lagringsplatsen %{repository}."
-
-msgid "Disabling %{product}:"
-msgstr "Inaktiverar %{product}:"
-
-msgid "Displays product with all its repositories and their attributes."
-msgstr ""
-
-msgid "Do not import system hardware info from MachineData table"
-msgstr ""
-
-msgid "Do not import the systems that were registered to the SMT"
-msgstr "Importera inte systemen som var registrerade till SMT"
-
-msgid "Do you have any suggestions for improvement? We would love to hear from you!"
-msgstr "Har du förslag på förbättringar? Hör gärna av dig till oss!"
-
-msgid "Don't Mirror"
-msgstr "Spegla inte"
-
-msgid "Downloading data from SCC"
-msgstr "Ladda ned data från SCC"
-
-msgid "Duplicate entry for system %{system}, skipping"
-msgstr ""
-
-msgid "Enable debug output"
-msgstr "Aktivera felsökningsutdata"
-
-#, fuzzy
-msgid "Enable mirroring of custom repositories by a list of IDs"
-msgstr "Aktivera spegling av anpassad lagringsplats efter ID"
-
-msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
-msgstr "Aktivera spegling av produktlagringsplatser efter en lista med produkt-ID eller produktsträngar."
-
-msgid "Enable mirroring of repositories by a list of repository IDs"
-msgstr "Aktivera spegling av lagringsplatser efter en lista med lagringsplats-ID"
-
-msgid "Enabled mirroring for repository %{repo}"
-msgstr "Aktiverade spegling för lagringsplatsen %{repo}"
-
-msgid "Enabled repository %{repository}."
-msgstr "Aktiverade lagringsplatsen %{repository}."
-
-msgid "Enables all free modules for a product"
-msgstr "Aktiverar alla lediga moduler för en produkt"
-
-msgid "Enabling %{product}:"
-msgstr "Aktiverar %{product}:"
-
-msgid "Enter a value:"
-msgstr "Ange ett värde:"
-
-msgid "Error while mirroring data: %{error}"
-msgstr "Fel vid spegling av data: %{error}"
-
-msgid "Error while mirroring license: %{error}"
-msgstr "Fel vid spegling av licens: %{error}"
-
-msgid "Error while mirroring metadata: %{error}"
-msgstr "Fel vid spegling av metadata: %{error}"
-
-msgid "Error while moving directory %{src} to %{dest}: %{error}"
-msgstr "Fel vid flytt av katalogen %{src} till %{dest}: %{error}"
-
-msgid "Examples"
-msgstr "Exempel"
-
-msgid "Examples:"
-msgstr "Exempel:"
-
-msgid "Export commands for Offline Sync"
-msgstr "Exportera kommandon för Offline Sync"
-
-msgid "Exporting data from SCC to %{path}"
-msgstr "Exporterar data från SCC till %{path}"
-
-msgid "Exporting orders"
-msgstr "Exportera beställningar"
-
-msgid "Exporting products"
-msgstr "Exporterar produkter"
-
-msgid "Exporting repositories"
-msgstr "Exporterar lagringsplatser"
-
-msgid "Exporting subscriptions"
-msgstr "Exporterar abonnemang"
-
-msgid "Failed to download %{failed_count} files"
-msgstr ""
-
-msgid "Failed to get repository metadata signatures with HTTP code %{http_code}"
-msgstr ""
-
-msgid "Failed to import system %{system}"
-msgstr ""
-
-msgid "Failed to sync system %{login}: %{error}"
-msgstr ""
-
-msgid "Forward registered systems data to SCC"
-msgstr ""
-
-msgid "Found product by target %{target}: %{products}."
-msgid_plural "Found products by target %{target}: %{products}."
-msgstr[0] "Hittade produkt efter mål %{target}: %{products}."
-msgstr[1] "Hittade produkter efter mål %{target}: %{products}."
-
-msgid "GPG key import failed"
-msgstr ""
-
-msgid "GPG signature verification failed"
-msgstr ""
-
-msgid "Hardware information stored for system %{system}"
-msgstr "Maskinvaruinformation lagrad för systemet %{system}"
-
-msgid "Hostname"
-msgstr ""
-
-msgid "ID"
-msgstr "ID"
-
-msgid "Import commands for Offline Sync"
-msgstr "Importera kommandon för Offline Sync"
-
-msgid "Importing SCC data from %{path}"
-msgstr "Importerar SCC-data från %{path}"
-
+#: ../app/controllers/application_controller.rb:17
 msgid "Invalid system credentials"
 msgstr "Ogiltig systeminloggning"
 
-msgid "Last Mirrored"
-msgstr "Senast speglad"
+#: ../app/controllers/services_controller.rb:34
+msgid "Requested service not found"
+msgstr "Det gick inte att hitta begärd tjänst"
 
-msgid "Last mirrored"
-msgstr "Senast speglad"
+#: ../app/models/migration_engine.rb:49
+msgid "The requested products '%s' are not activated on the system."
+msgstr "Begärda produkter '%s' är inte aktiverade på systemet."
 
-msgid "Last seen"
+#: ../app/models/migration_engine.rb:67
+msgid "Multiple base products found: '%s'."
+msgstr "Flera basprodukter hittades: '%s'."
+
+#: ../app/models/migration_engine.rb:68
+msgid "No base product found."
+msgstr "Inga basprodukter hittades."
+
+#: ../app/models/migration_engine.rb:94
+msgid ""
+"There are activated extensions/modules on this system that cannot be migrated. \n"
+"Deactivate them first, and then try migrating again. \n"
+"The product(s) are '%s'. \n"
+"You can deactivate them with \n"
+"%s"
 msgstr ""
 
-msgid "List all custom repositories"
-msgstr "Lista alla anpassade lagringsplatser"
+#: ../lib/rmt/checksum_verifier.rb:13
+msgid "Unknown hash function %{checksum_type}"
+msgstr "Okänd hash-funktion %{checksum_type}"
 
-msgid "List all products, including ones which are not marked to be mirrored"
-msgstr "Lista alla produkter, inklusive de som inte är markerade för spegling"
+#: ../lib/rmt/cli/base.rb:15
+msgid "Commands:"
+msgstr "Kommandon:"
 
-msgid "List all registered systems"
-msgstr ""
+#: ../lib/rmt/cli/base.rb:21
+msgid "Run '%{command}' for more information on a command and its subcommands."
+msgstr "Kör '%{command}' för mer information om ett kommando och dess delkommandon."
 
-msgid "List all repositories, including ones which are not marked to be mirrored"
-msgstr "Lista alla lagringsplatser, inklusive de som inte är markerade för spegling"
+#: ../lib/rmt/cli/base.rb:24
+msgid "Do you have any suggestions for improvement? We would love to hear from you!"
+msgstr "Har du förslag på förbättringar? Hör gärna av dig till oss!"
 
-msgid "List and manipulate registered systems"
-msgstr ""
+#: ../lib/rmt/cli/base.rb:25
+msgid "Check out %{url}"
+msgstr "Kontrollera %{url}"
 
-msgid "List and modify custom repositories"
-msgstr "Lista och ändra anpassade lagringsplatser"
+#: ../lib/rmt/cli/base.rb:43
+msgid "Could not create deduplication hardlink: %{error}."
+msgstr "Det gick inte att skapa hård länk för avduplicering: %{error}."
 
-msgid "List and modify products"
-msgstr "Lista och ändra produkter"
+#: ../lib/rmt/cli/base.rb:49
+msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
+msgstr "Det går inte att ansluta till databasservern. Se att inloggningsuppgifterna är korrekt konfigurerade i '%{path}' eller konfigurera RMT med YaST ('%{command}')."
 
-msgid "List and modify repositories"
-msgstr "Lista och ändra lagringsplatser"
+#: ../lib/rmt/cli/base.rb:58
+msgid "Cannot connect to database server. Make sure it is running and its credentials are configured in '%{path}'."
+msgstr "Det går inte att ansluta till databasservern. Se till att den körs och att inloggningsuppgifterna är konfigurerade i '%{path}'."
 
-msgid "List products which are marked to be mirrored."
-msgstr "Lista produkter som är markerade för spegling."
+#: ../lib/rmt/cli/base.rb:67
+#, fuzzy
+msgid "The RMT database has not yet been initialized. Run '%{command}' to set up the database."
+msgstr "RMT-databasen har inte initierats ännu. Kör '%{command}' för att konfigurera databasen."
 
-msgid "List registered systems."
-msgstr ""
+#: ../lib/rmt/cli/base.rb:73
+msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
+msgstr "SCC-uppgifter är inte korrekt konfigurerade i '%{path}'. Du kan hämta dem från %{url}"
 
-msgid "List repositories which are marked to be mirrored"
-msgstr "Lista lagringsplatser som är markerade för spegling"
+#: ../lib/rmt/cli/base.rb:86
+#, fuzzy
+msgid ""
+"SCC API request failed. Error details:\n"
+"Request URL: %{url}\n"
+"Response code: %{code}\n"
+"Response body:\n"
+"%{body}"
+msgstr "Webbadress"
 
-msgid "Login"
-msgstr ""
+#: ../lib/rmt/cli/base.rb:127
+msgid "%{path} is not a directory."
+msgstr "%{path} är inte en katalog."
 
-msgid "Mandatory"
-msgstr "Obligatoriskt"
+#: ../lib/rmt/cli/base.rb:131
+msgid "%{path} is not writable by user %{username}."
+msgstr "%{path} är inte skrivbar av användare %{username}."
 
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:19
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:40
+#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:17
+#: ../lib/rmt/cli/decorators/product_decorator.rb:21
+#: ../lib/rmt/cli/decorators/product_decorator.rb:44
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:19
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:39
+msgid "ID"
+msgstr "ID"
+
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:20
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:41
+#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:18
+msgid "Name"
+msgstr "Namn"
+
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:21
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:42
+msgid "URL"
+msgstr "Webbadress"
+
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:22
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:43
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:22
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:41
 msgid "Mandatory?"
 msgstr "Obligatoriskt?"
 
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:23
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:44
+#: ../lib/rmt/cli/decorators/product_decorator.rb:27
+#: ../lib/rmt/cli/decorators/product_decorator.rb:49
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:23
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:42
+msgid "Mirror?"
+msgstr "Spegla?"
+
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:24
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:45
+msgid "Last Mirrored"
+msgstr "Senast speglad"
+
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:34
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:33
+msgid "Mandatory"
+msgstr "Obligatoriskt"
+
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:34
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:33
+msgid "Not Mandatory"
+msgstr "Inte obligatoriskt"
+
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:35
+#: ../lib/rmt/cli/decorators/product_decorator.rb:39
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:34
 msgid "Mirror"
 msgstr "Spegla"
 
+#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:35
+#: ../lib/rmt/cli/decorators/product_decorator.rb:39
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:34
+msgid "Don't Mirror"
+msgstr "Spegla inte"
+
+#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:19
+#: ../lib/rmt/cli/decorators/product_decorator.rb:23
+#: ../lib/rmt/cli/decorators/product_decorator.rb:46
+msgid "Version"
+msgstr "Version"
+
+#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:20
+msgid "Architecture"
+msgstr "Arkitektur"
+
+#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:34
+msgid "Product ID"
+msgstr "Produkt-ID"
+
+#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:35
+msgid "Product Name"
+msgstr "Produktnamn"
+
+#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:36
+msgid "Product Version"
+msgstr "Produktversion"
+
+#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:37
+msgid "Product Architecture"
+msgstr "Produktarkitektur"
+
+#: ../lib/rmt/cli/decorators/product_decorator.rb:22
+#: ../lib/rmt/cli/decorators/product_decorator.rb:45
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:20
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:40
+msgid "Product"
+msgstr "Produkt"
+
+#. i18n: architecture
+#: ../lib/rmt/cli/decorators/product_decorator.rb:24
+#: ../lib/rmt/cli/decorators/product_decorator.rb:48
+msgid "Arch"
+msgstr "Båge"
+
+#: ../lib/rmt/cli/decorators/product_decorator.rb:25
+#, fuzzy
+msgid "Product String"
+msgstr "Produkt"
+
+#: ../lib/rmt/cli/decorators/product_decorator.rb:26
+msgid "Release Stage"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/product_decorator.rb:28
+#: ../lib/rmt/cli/decorators/product_decorator.rb:50
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:24
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:43
+msgid "Last mirrored"
+msgstr "Senast speglad"
+
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:21
+msgid "Description"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:55
+#, fuzzy
+msgid "mandatory"
+msgstr "Obligatoriskt"
+
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:55
+#, fuzzy
+msgid "non-mandatory"
+msgstr "Inte obligatoriskt"
+
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:56
+msgid "enabled"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:56
+msgid "not enabled"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:57
+msgid "mirrored at %{time}"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:57
+#, fuzzy
+msgid "not mirrored"
+msgstr "Senast speglad"
+
+#: ../lib/rmt/cli/decorators/repository_decorator.rb:61
+msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
+msgstr "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
+
+#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+msgid "Login"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+msgid "Hostname"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+msgid "Registration time"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+msgid "Last seen"
+msgstr ""
+
+#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+#, fuzzy
+msgid "Products"
+msgstr "Produkt"
+
+#: ../lib/rmt/cli/export.rb:3
+msgid "Store SCC data in files at given path"
+msgstr "Lagra SCC-data i filer på angiven sökväg"
+
+#: ../lib/rmt/cli/export.rb:9
+msgid "Store repository settings at given path"
+msgstr "Lagra lagringsplatsinställningar på angiven sökväg"
+
+#: ../lib/rmt/cli/export.rb:16
+msgid "Settings saved at %{file}."
+msgstr "Inställningar sparade i %{file}."
+
+#: ../lib/rmt/cli/export.rb:19
+msgid "Mirror repos at given path"
+msgstr "Spegla repos på angiven sökväg"
+
+#: ../lib/rmt/cli/export.rb:21
+msgid "Run this command on an online RMT."
+msgstr ""
+
+#: ../lib/rmt/cli/export.rb:23
+msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
+msgstr ""
+
+#: ../lib/rmt/cli/export.rb:28
+msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
+msgstr ""
+
+#: ../lib/rmt/cli/export.rb:43 ../lib/rmt/cli/import.rb:20
+msgid "%{file} does not exist."
+msgstr "%{file} finns inte."
+
+#: ../lib/rmt/cli/import.rb:3
+msgid "Read SCC data from given path"
+msgstr "Läs SCC-data från angiven sökväg"
+
+#: ../lib/rmt/cli/import.rb:11
+msgid "Mirror repos from given path"
+msgstr "Spegla repos från angiven sökväg"
+
+#: ../lib/rmt/cli/import.rb:34
+msgid "repository by URL %{url} does not exist in database"
+msgstr "lagringsplats med webbadressen %{url} finns inte i databasen"
+
+#: ../lib/rmt/cli/main.rb:5
+msgid "Enable debug output"
+msgstr "Aktivera felsökningsutdata"
+
+#: ../lib/rmt/cli/main.rb:7
+msgid "Sync database with SUSE Customer Center"
+msgstr "Synka databas med SUSE-kundtjänst"
+
+#: ../lib/rmt/cli/main.rb:14
+msgid "List and modify products"
+msgstr "Lista och ändra produkter"
+
+#: ../lib/rmt/cli/main.rb:17
+msgid "List and modify repositories"
+msgstr "Lista och ändra lagringsplatser"
+
+#: ../lib/rmt/cli/main.rb:20
+msgid "Mirror repositories"
+msgstr "Spegla lagringsplatser"
+
+#: ../lib/rmt/cli/main.rb:23
+msgid "Import commands for Offline Sync"
+msgstr "Importera kommandon för Offline Sync"
+
+#: ../lib/rmt/cli/main.rb:26
+msgid "Export commands for Offline Sync"
+msgstr "Exportera kommandon för Offline Sync"
+
+#: ../lib/rmt/cli/main.rb:29
+msgid "List and manipulate registered systems"
+msgstr ""
+
+#: ../lib/rmt/cli/main.rb:32
+msgid "Show RMT version"
+msgstr "Visa RMT-version"
+
+#: ../lib/rmt/cli/mirror.rb:2
+msgid "Do not fail the command if product is in alpha or beta stage"
+msgstr ""
+
+#: ../lib/rmt/cli/mirror.rb:4
 #, fuzzy
 msgid "Mirror all enabled repositories"
 msgstr "Spegla"
 
-#, fuzzy
-msgid "Mirror enabled repositories for a product with given product IDs"
-msgstr "Spegla"
-
-#, fuzzy
-msgid "Mirror enabled repositories with given repository IDs"
-msgstr "Spegla"
-
-msgid "Mirror repos at given path"
-msgstr "Spegla repos på angiven sökväg"
-
-msgid "Mirror repos from given path"
-msgstr "Spegla repos från angiven sökväg"
-
-msgid "Mirror repositories"
-msgstr "Spegla lagringsplatser"
-
-msgid "Mirror?"
-msgstr "Spegla?"
-
+#: ../lib/rmt/cli/mirror.rb:10
 #, fuzzy
 msgid "Mirroring SUMA product tree failed: %{error_message}"
 msgstr "Spegla"
 
-msgid "Mirroring SUSE Manager product tree to %{dir}"
-msgstr "Speglar SUSE Manager-produktträd till %{dir}"
+#: ../lib/rmt/cli/mirror.rb:13
+msgid "There are no repositories marked for mirroring."
+msgstr "Det finns inga lagringsplatser som är markerade för spegling."
 
+#: ../lib/rmt/cli/mirror.rb:33
 #, fuzzy
-msgid "Mirroring complete."
+msgid "Mirror enabled repositories with given repository IDs"
 msgstr "Spegla"
 
-#, fuzzy
-msgid "Mirroring completed with errors."
-msgstr "Spegla"
-
-#, fuzzy
-msgid "Mirroring of repository with ID %{repo_id} is not enabled"
-msgstr "Spegla"
-
-msgid "Mirroring repository %{repo} to %{dir}"
-msgstr "Speglar lagringsplatsen %{repo} till %{dir}"
-
-msgid "Missing data files: %{files}"
-msgstr "Saknar datafiler: %{files}"
-
-msgid "Multiple base products found: '%s'."
-msgstr "Flera basprodukter hittades: '%s'."
-
-msgid "Name"
-msgstr "Namn"
-
-msgid "No base product found."
-msgstr "Inga basprodukter hittades."
-
-msgid "No custom repositories found."
-msgstr "Inga anpassade lagringsplatser hittades."
-
-msgid "No matching products found in the database."
-msgstr "Inga matchande produkter hittades i databasen."
-
-msgid "No product IDs supplied"
-msgstr "Inga produkt-ID levererade"
-
-msgid "No product found"
-msgstr "Inga produkter hittades"
-
-msgid "No product found for target %{target}."
-msgstr "Ingen produkt hittades för målet %{target}."
-
-msgid "No product found on RMT for: %s"
-msgstr "Ingen produkt hittades på RMT för: %s"
-
-msgid "No products attached to repository."
-msgstr "Inga produkter är kopplade till lagringsplatsen."
-
-msgid "No repositories enabled."
-msgstr "Inga lagringsplatser är aktiverade."
-
-msgid "No repositories found for product: %s"
-msgstr "Inga lagringsplatser hittades för produkten: %s"
-
+#: ../lib/rmt/cli/mirror.rb:37 ../lib/rmt/cli/repos_base.rb:10
 #, fuzzy
 msgid "No repository IDs supplied"
 msgstr "Inga lagringsplats-ID levererades"
 
-msgid "Not Mandatory"
-msgstr "Inte obligatoriskt"
+#: ../lib/rmt/cli/mirror.rb:42
+#, fuzzy
+msgid "Repository with ID %{repo_id} not found"
+msgstr "ID"
 
-msgid "Not all mandatory repositories are mirrored for product %s"
-msgstr "Inte alla obligatoriska lagringsplatser är speglade  för produkten %s"
+#: ../lib/rmt/cli/mirror.rb:51
+#, fuzzy
+msgid "Mirror enabled repositories for a product with given product IDs"
+msgstr "Spegla"
 
-msgid "Not provided"
-msgstr "Inte levererat"
+#: ../lib/rmt/cli/mirror.rb:55 ../lib/rmt/cli/products.rb:115
+msgid "No product IDs supplied"
+msgstr "Inga produkt-ID levererade"
 
-msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
-msgstr "Registreringskoden är inte aktiverad ännu. Gå till https://scc.suse.com för att aktivera den."
+#: ../lib/rmt/cli/mirror.rb:60
+#, fuzzy
+msgid "Product for target %{target} not found"
+msgstr "Produkt"
 
-msgid "Number of systems to display"
+#: ../lib/rmt/cli/mirror.rb:64
+#, fuzzy
+msgid "Product %{target} has no repositories enabled"
+msgstr "Produkt"
+
+#: ../lib/rmt/cli/mirror.rb:70
+#, fuzzy
+msgid "Product with ID %{target} not found"
+msgstr "Produkt efter ID %{id} hittades inte."
+
+#: ../lib/rmt/cli/mirror.rb:129
+#, fuzzy
+msgid "Mirroring of repository with ID %{repo_id} is not enabled"
+msgstr "Spegla"
+
+#: ../lib/rmt/cli/mirror.rb:141
+msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
 msgstr ""
 
-msgid "Only '%{input}' will be accepted."
+#: ../lib/rmt/cli/mirror.rb:150
+#, fuzzy
+msgid "Mirroring complete."
+msgstr "Spegla"
+
+#: ../lib/rmt/cli/mirror.rb:152
+msgid "The following errors occurred while mirroring:"
 msgstr ""
 
-msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
-msgstr "Endast aktiverade produkter visas som standard. Använd alternativet '%{command}' för att visa alla produkter."
+#: ../lib/rmt/cli/mirror.rb:154
+#, fuzzy
+msgid "Mirroring completed with errors."
+msgstr "Spegla"
 
-msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
-msgstr "Endast aktiverade lagringsplatser visas som standard. Använd alternativet '%{option}' för att visa alla lagringsplatser."
+#: ../lib/rmt/cli/products.rb:8
+msgid "List products which are marked to be mirrored."
+msgstr "Lista produkter som är markerade för spegling."
 
+#: ../lib/rmt/cli/products.rb:9
+msgid "List all products, including ones which are not marked to be mirrored"
+msgstr "Lista alla produkter, inklusive de som inte är markerade för spegling"
+
+#: ../lib/rmt/cli/products.rb:11 ../lib/rmt/cli/repos.rb:8
+#: ../lib/rmt/cli/repos_custom.rb:51 ../lib/rmt/cli/repos_custom.rb:108
+#: ../lib/rmt/cli/systems.rb:5
 msgid "Output data in CSV format"
 msgstr "Utdata i CSV-format"
 
-msgid "Path to unpacked SMT data tarball"
-msgstr "Sökväg till icke inpackad tarball för SMT-data"
-
+#: ../lib/rmt/cli/products.rb:12
 #, fuzzy
-msgid "Please provide a non-numeric ID for your custom repository."
-msgstr "ID"
-
-msgid "Product"
+msgid "Product name (e.g., Basesystem, SLES)"
 msgstr "Produkt"
 
-msgid "Product %{products} could not be found and was not disabled."
-msgid_plural "Products %{products} could not be found and were not disabled."
-msgstr[0] "Produkten %{products} gick inte att hitta och var inte inaktiverad."
-msgstr[1] "Produkterna %{products} kunde inte hittas och var inte inaktiverade."
+#: ../lib/rmt/cli/products.rb:13
+#, fuzzy
+msgid "Product version (e.g., 15, 15.1, '12 SP4')"
+msgstr "Produkt"
 
+#: ../lib/rmt/cli/products.rb:14
+#, fuzzy
+msgid "Product architecture (e.g., x86_64, aarch64)"
+msgstr "Produkt"
+
+#: ../lib/rmt/cli/products.rb:25 ../lib/rmt/cli/repos.rb:103
+msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
+msgstr "Kör '%{command}' för att först synkronisera med dina SUSE-kundtjänstdata."
+
+#: ../lib/rmt/cli/products.rb:27
+msgid "No matching products found in the database."
+msgstr "Inga matchande produkter hittades i databasen."
+
+#: ../lib/rmt/cli/products.rb:36
+msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
+msgstr "Endast aktiverade produkter visas som standard. Använd alternativet '%{command}' för att visa alla produkter."
+
+#: ../lib/rmt/cli/products.rb:43 ../lib/rmt/cli/products.rb:46
+msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
+msgstr "Aktivera spegling av produktlagringsplatser efter en lista med produkt-ID eller produktsträngar."
+
+#: ../lib/rmt/cli/products.rb:44
+msgid "Enables all free modules for a product"
+msgstr "Aktiverar alla lediga moduler för en produkt"
+
+#: ../lib/rmt/cli/products.rb:48 ../lib/rmt/cli/products.rb:66
+#: ../lib/rmt/cli/products.rb:84 ../lib/rmt/cli/systems.rb:37
+msgid "Examples"
+msgstr "Exempel"
+
+#: ../lib/rmt/cli/products.rb:62 ../lib/rmt/cli/products.rb:64
+msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
+msgstr "Inaktivera spegling av produktlagringsplatser efter en lista med produkt-ID eller produktsträngar."
+
+#: ../lib/rmt/cli/products.rb:77
+msgid "To clean up downloaded files, run '%{command}'"
+msgstr ""
+
+#: ../lib/rmt/cli/products.rb:80 ../lib/rmt/cli/products.rb:82
+msgid "Displays product with all its repositories and their attributes."
+msgstr ""
+
+#: ../lib/rmt/cli/products.rb:97 ../lib/rmt/cli/products.rb:176
+msgid "No product found for target %{target}."
+msgstr "Ingen produkt hittades för målet %{target}."
+
+#: ../lib/rmt/cli/products.rb:99
+#, fuzzy
+msgid "Product: %{name} (ID: %{id})"
+msgstr "Produkt"
+
+#: ../lib/rmt/cli/products.rb:100
+msgid "Description: %{description}"
+msgstr "Beskrivning: %{description}"
+
+#: ../lib/rmt/cli/products.rb:108
+msgid "Repositories:"
+msgstr ""
+
+#: ../lib/rmt/cli/products.rb:108
+msgid "Repositories are not available for this product."
+msgstr ""
+
+#: ../lib/rmt/cli/products.rb:127
 msgid "Product %{products} could not be found and was not enabled."
 msgid_plural "Products %{products} could not be found and were not enabled."
 msgstr[0] "Produkten %{products} kunde inte hittas och var inte aktiverad."
 msgstr[1] "Produkterna %{products} kunde inte hittas och var inte aktiverade."
 
-msgid "Product %{product} not found"
-msgstr "Produkten %{product} hittades inte"
+#: ../lib/rmt/cli/products.rb:131
+msgid "Product %{products} could not be found and was not disabled."
+msgid_plural "Products %{products} could not be found and were not disabled."
+msgstr[0] "Produkten %{products} gick inte att hitta och var inte inaktiverad."
+msgstr[1] "Produkterna %{products} kunde inte hittas och var inte inaktiverade."
 
+#: ../lib/rmt/cli/products.rb:145
+msgid "Enabling %{product}:"
+msgstr "Aktiverar %{product}:"
+
+#: ../lib/rmt/cli/products.rb:149
+msgid "Disabling %{product}:"
+msgstr "Inaktiverar %{product}:"
+
+#: ../lib/rmt/cli/products.rb:156
+msgid "All repositories have already been enabled."
+msgstr "Alla lagringsplatser har redan aktiverats."
+
+#: ../lib/rmt/cli/products.rb:156
+msgid "All repositories have already been disabled."
+msgstr "Alla lagringsplatser har redan inaktiverats."
+
+#: ../lib/rmt/cli/products.rb:162
+msgid "Enabled repository %{repository}."
+msgstr "Aktiverade lagringsplatsen %{repository}."
+
+#: ../lib/rmt/cli/products.rb:164
+msgid "Disabled repository %{repository}."
+msgstr "Inaktiverade lagringsplatsen %{repository}."
+
+#: ../lib/rmt/cli/products.rb:177
+msgid "Found product by target %{target}: %{products}."
+msgid_plural "Found products by target %{target}: %{products}."
+msgstr[0] "Hittade produkt efter mål %{target}: %{products}."
+msgstr[1] "Hittade produkter efter mål %{target}: %{products}."
+
+#: ../lib/rmt/cli/products.rb:187
+msgid "Product by ID %{id} not found."
+msgstr "Produkt efter ID %{id} hittades inte."
+
+#: ../lib/rmt/cli/repos.rb:3
+msgid "List and modify custom repositories"
+msgstr "Lista och ändra anpassade lagringsplatser"
+
+#: ../lib/rmt/cli/repos.rb:6
+msgid "List repositories which are marked to be mirrored"
+msgstr "Lista lagringsplatser som är markerade för spegling"
+
+#: ../lib/rmt/cli/repos.rb:7
+msgid "List all repositories, including ones which are not marked to be mirrored"
+msgstr "Lista alla lagringsplatser, inklusive de som inte är markerade för spegling"
+
+#: ../lib/rmt/cli/repos.rb:16
+msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:26
+msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:30
+msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:36
+msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:38
+msgid "Only '%{input}' will be accepted."
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:40
+msgid "Enter a value:"
+msgstr "Ange ett värde:"
+
+#: ../lib/rmt/cli/repos.rb:45
+msgid "Clean cancelled."
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:52
+msgid "Deleting locally mirrored files from repository '%{repo}'..."
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:61
+msgid "Clean finished. An estimated %{total_file_size} was removed."
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:65 ../lib/rmt/cli/repos.rb:67
+msgid "Enable mirroring of repositories by a list of repository IDs"
+msgstr "Aktivera spegling av lagringsplatser efter en lista med lagringsplats-ID"
+
+#: ../lib/rmt/cli/repos.rb:69 ../lib/rmt/cli/repos.rb:83
+#: ../lib/rmt/cli/repos_custom.rb:8 ../lib/rmt/cli/repos_custom.rb:70
+#: ../lib/rmt/cli/repos_custom.rb:84
+msgid "Examples:"
+msgstr "Exempel:"
+
+#: ../lib/rmt/cli/repos.rb:79 ../lib/rmt/cli/repos.rb:81
+msgid "Disable mirroring of repositories by a list of repository IDs"
+msgstr "Inaktivera spegling av lagringsplatser efter en lista med lagringsplats-ID"
+
+#: ../lib/rmt/cli/repos.rb:92 ../lib/rmt/cli/repos_custom.rb:93
+msgid "To clean up downloaded files, please run '%{command}'"
+msgstr ""
+
+#: ../lib/rmt/cli/repos.rb:105
+msgid "No repositories enabled."
+msgstr "Inga lagringsplatser är aktiverade."
+
+#: ../lib/rmt/cli/repos.rb:113
+msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
+msgstr "Endast aktiverade lagringsplatser visas som standard. Använd alternativet '%{option}' för att visa alla lagringsplatser."
+
+#: ../lib/rmt/cli/repos_base.rb:22
+#, fuzzy
+msgid "Repository by ID %{repos} could not be found and was not enabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
+msgstr[0] "Lagringsplatsen %{repos} hittades inte och var inte aktiverad."
+msgstr[1] "Lagringsplatserna %{repos} hittades inte och var inte aktiverade."
+
+#: ../lib/rmt/cli/repos_base.rb:26
+#, fuzzy
+msgid "Repository by ID %{repos} could not be found and was not disabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
+msgstr[0] "Lagringsplatsen %{repos} hittades inte och var inte inaktiverad."
+msgstr[1] "Lagringsplatserna %{repos} hittades inte och var inte inaktiverade."
+
+#: ../lib/rmt/cli/repos_base.rb:38
+msgid "Repository by ID %{id} successfully enabled."
+msgstr "Lagringsplats med ID %{id} har aktiverats."
+
+#: ../lib/rmt/cli/repos_base.rb:38
+msgid "Repository by ID %{id} successfully disabled."
+msgstr "Lagringsplats med ID %{id} har inaktiverats."
+
+#: ../lib/rmt/cli/repos_base.rb:56
+#, fuzzy
+msgid "Repository by ID %{id} not found."
+msgstr "Produkt efter ID %{id} hittades inte."
+
+#: ../lib/rmt/cli/repos_custom.rb:3 ../lib/rmt/cli/repos_custom.rb:6
+msgid "Creates a custom repository."
+msgstr "Skapar en anpassad lagringsplats."
+
+#: ../lib/rmt/cli/repos_custom.rb:4
+#, fuzzy
+msgid "Provide a custom ID instead of allowing RMT to generate one."
+msgstr "ID"
+
+#: ../lib/rmt/cli/repos_custom.rb:24
+msgid "A repository by the URL %{url} already exists."
+msgstr "Det finns redan en lagringsplats med webbadressen %{url}."
+
+#: ../lib/rmt/cli/repos_custom.rb:27
+#, fuzzy
+msgid "A repository by the ID %{id} already exists."
+msgstr "Det finns redan en lagringsplats med webbadressen %{url}."
+
+#: ../lib/rmt/cli/repos_custom.rb:30
+#, fuzzy
+msgid "Please provide a non-numeric ID for your custom repository."
+msgstr "ID"
+
+#: ../lib/rmt/cli/repos_custom.rb:35
+#, fuzzy
+msgid "Couldn't add custom repository."
+msgstr "Skapar en anpassad lagringsplats."
+
+#: ../lib/rmt/cli/repos_custom.rb:47
+msgid "Successfully added custom repository."
+msgstr "Anpassad lagringsplats har lagts till."
+
+#: ../lib/rmt/cli/repos_custom.rb:50
+msgid "List all custom repositories"
+msgstr "Lista alla anpassade lagringsplatser"
+
+#: ../lib/rmt/cli/repos_custom.rb:56
+msgid "No custom repositories found."
+msgstr "Inga anpassade lagringsplatser hittades."
+
+#: ../lib/rmt/cli/repos_custom.rb:66 ../lib/rmt/cli/repos_custom.rb:68
+#, fuzzy
+msgid "Enable mirroring of custom repositories by a list of IDs"
+msgstr "Aktivera spegling av anpassad lagringsplats efter ID"
+
+#: ../lib/rmt/cli/repos_custom.rb:80
+#, fuzzy
+msgid "Disable mirroring of custom repository by a list of IDs"
+msgstr "Inaktivera spegling av anpassad lagringsplats efter ID"
+
+#: ../lib/rmt/cli/repos_custom.rb:82
+#, fuzzy
+msgid "Disable mirroring of custom repositories by a list of IDs"
+msgstr "Inaktivera spegling av anpassad lagringsplats efter ID"
+
+#: ../lib/rmt/cli/repos_custom.rb:96
+msgid "Remove a custom repository"
+msgstr "Ta bort en anpassad lagringsplats"
+
+#: ../lib/rmt/cli/repos_custom.rb:101
+msgid "Removed custom repository by ID %{id}."
+msgstr "Tog bort anpassad lagringsplats efter ID %{id}."
+
+#: ../lib/rmt/cli/repos_custom.rb:107
+msgid "Shows products attached to a custom repository"
+msgstr "Visar produkter kopplade till en anpassad lagringsplats"
+
+#: ../lib/rmt/cli/repos_custom.rb:115
+msgid "No products attached to repository."
+msgstr "Inga produkter är kopplade till lagringsplatsen."
+
+#: ../lib/rmt/cli/repos_custom.rb:125
+msgid "Attach an existing custom repository to a product"
+msgstr "Bifoga en befintlig anpassad lagringsplats till en produkt"
+
+#: ../lib/rmt/cli/repos_custom.rb:131
+msgid "Attached repository to product '%{product_name}'."
+msgstr "Bifogade lagringsplats till produkten '%{product_name}'."
+
+#: ../lib/rmt/cli/repos_custom.rb:136
+msgid "Detach an existing custom repository from a product"
+msgstr "Koppla från en befintlig anpassad lagringsplats från en produkt"
+
+#: ../lib/rmt/cli/repos_custom.rb:142
+msgid "Detached repository from product '%{product_name}'."
+msgstr "Kopplade från lagringsplats från produkten '%{product_name}'."
+
+#: ../lib/rmt/cli/repos_custom.rb:152
+msgid "Cannot find product by ID %{id}."
+msgstr "Det går inte att hitta produkten med ID %{id}."
+
+#: ../lib/rmt/cli/smt_importer.rb:38
+msgid "Enabled mirroring for repository %{repo}"
+msgstr "Aktiverade spegling för lagringsplatsen %{repo}"
+
+#: ../lib/rmt/cli/smt_importer.rb:40
+msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
+msgstr "Lagringsplatsen %{repo} hittades inte i RMT-databasen, du kanske inte längre har ett giltigt abonnemang för den"
+
+#: ../lib/rmt/cli/smt_importer.rb:62
+msgid "Added association between %{repo} and product %{product}"
+msgstr "Lade till en association mellan %{repo} och produkten %{product}"
+
+#: ../lib/rmt/cli/smt_importer.rb:65
 msgid ""
 "Product %{product} not found!\n"
 "Tried to attach custom repository %{repo} to product %{product},\n"
@@ -500,300 +870,260 @@ msgstr ""
 "men den produkten hittades inte. Bifoga till en annan produkt\n"
 "genom att köra '%{command}'\n"
 
-#, fuzzy
-msgid "Product %{target} has no repositories enabled"
-msgstr "Produkt"
-
-msgid "Product Architecture"
-msgstr "Produktarkitektur"
-
-msgid "Product ID"
-msgstr "Produkt-ID"
-
-msgid "Product Name"
-msgstr "Produktnamn"
-
-#, fuzzy
-msgid "Product String"
-msgstr "Produkt"
-
-msgid "Product Version"
-msgstr "Produktversion"
-
-#, fuzzy
-msgid "Product architecture (e.g., x86_64, aarch64)"
-msgstr "Produkt"
-
-msgid "Product by ID %{id} not found."
-msgstr "Produkt efter ID %{id} hittades inte."
-
-#, fuzzy
-msgid "Product for target %{target} not found"
-msgstr "Produkt"
-
-#, fuzzy
-msgid "Product name (e.g., Basesystem, SLES)"
-msgstr "Produkt"
-
-#, fuzzy
-msgid "Product version (e.g., 15, 15.1, '12 SP4')"
-msgstr "Produkt"
-
-#, fuzzy
-msgid "Product with ID %{target} not found"
-msgstr "Produkt efter ID %{id} hittades inte."
-
-#, fuzzy
-msgid "Product: %{name} (ID: %{id})"
-msgstr "Produkt"
-
-#, fuzzy
-msgid "Products"
-msgstr "Produkt"
-
-#, fuzzy
-msgid "Provide a custom ID instead of allowing RMT to generate one."
-msgstr "ID"
-
-msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
+#: ../lib/rmt/cli/smt_importer.rb:91
+msgid "Duplicate entry for system %{system}, skipping"
 msgstr ""
 
-msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
-msgstr "RMT har inte synkats till SCC ännu. Kör först '%{command}'"
-
-msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
+#: ../lib/rmt/cli/smt_importer.rb:101
+msgid "Failed to import system %{system}"
 msgstr ""
 
-msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
-msgstr ""
-
-msgid "Read SCC data from given path"
-msgstr "Läs SCC-data från angiven sökväg"
-
-msgid "Registration time"
-msgstr ""
-
-msgid "Release Stage"
-msgstr ""
-
-msgid "Remove a custom repository"
-msgstr "Ta bort en anpassad lagringsplats"
-
-msgid "Removed custom repository by ID %{id}."
-msgstr "Tog bort anpassad lagringsplats efter ID %{id}."
-
-msgid "Removes a system and its activations from RMT"
-msgstr ""
-
-msgid "Removes a system and its activations from RMT."
-msgstr ""
-
-msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
-msgstr ""
-
-msgid "Repositories are not available for this product."
-msgstr ""
-
-msgid "Repositories:"
-msgstr ""
-
-msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
-msgstr "Lagringsplatsen %{repo} hittades inte i RMT-databasen, du kanske inte längre har ett giltigt abonnemang för den"
-
-msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
-msgstr ""
-
-#, fuzzy
-msgid "Repository by ID %{id} not found."
-msgstr "Produkt efter ID %{id} hittades inte."
-
-msgid "Repository by ID %{id} successfully disabled."
-msgstr "Lagringsplats med ID %{id} har inaktiverats."
-
-msgid "Repository by ID %{id} successfully enabled."
-msgstr "Lagringsplats med ID %{id} har aktiverats."
-
-#, fuzzy
-msgid "Repository by ID %{repos} could not be found and was not disabled."
-msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
-msgstr[0] "Lagringsplatsen %{repos} hittades inte och var inte inaktiverad."
-msgstr[1] "Lagringsplatserna %{repos} hittades inte och var inte inaktiverade."
-
-#, fuzzy
-msgid "Repository by ID %{repos} could not be found and was not enabled."
-msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
-msgstr[0] "Lagringsplatsen %{repos} hittades inte och var inte aktiverad."
-msgstr[1] "Lagringsplatserna %{repos} hittades inte och var inte aktiverade."
-
-msgid "Repository metadata signatures are missing"
-msgstr "Signaturer saknas för lagringsplatsmetadata"
-
-#, fuzzy
-msgid "Repository with ID %{repo_id} not found"
-msgstr "ID"
-
-msgid "Requested service not found"
-msgstr "Det gick inte att hitta begärd tjänst"
-
-msgid "Required parameters are missing or empty: %s"
-msgstr "Begärda parametrar saknas eller är tomma: %s"
-
-msgid "Run '%{command}' for more information on a command and its subcommands."
-msgstr "Kör '%{command}' för mer information om ett kommando och dess delkommandon."
-
-msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
-msgstr "Kör '%{command}' för att först synkronisera med dina SUSE-kundtjänstdata."
-
-msgid "Run this command on an online RMT."
-msgstr ""
-
-#, fuzzy
-msgid ""
-"SCC API request failed. Error details:\n"
-"Request URL: %{url}\n"
-"Response code: %{code}\n"
-"Response body:\n"
-"%{body}"
-msgstr "Webbadress"
-
-msgid "SCC credentials not set."
-msgstr ""
-
-msgid "Settings saved at %{file}."
-msgstr "Inställningar sparade i %{file}."
-
-msgid "Show RMT version"
-msgstr "Visa RMT-version"
-
-msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
-msgstr ""
-
-msgid "Shows products attached to a custom repository"
-msgstr "Visar produkter kopplade till en anpassad lagringsplats"
-
-msgid "Store SCC data in files at given path"
-msgstr "Lagra SCC-data i filer på angiven sökväg"
-
-msgid "Store repository settings at given path"
-msgstr "Lagra lagringsplatsinställningar på angiven sökväg"
-
-msgid "Successfully added custom repository."
-msgstr "Anpassad lagringsplats har lagts till."
-
-msgid "Successfully removed system with login %{login}."
-msgstr ""
-
-msgid "Sync database with SUSE Customer Center"
-msgstr "Synka databas med SUSE-kundtjänst"
-
-msgid "Syncing de-registered system %{scc_system_id} to SCC"
-msgstr ""
-
-msgid "Syncing system %{login} to SCC"
-msgstr ""
-
-msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
-msgstr ""
-
+#: ../lib/rmt/cli/smt_importer.rb:136 ../lib/rmt/cli/smt_importer.rb:166
 msgid "System %{system} not found"
 msgstr "Det gick inte att hitta systemet %{system}"
 
-msgid "System with login %{login} cannot be removed."
+#: ../lib/rmt/cli/smt_importer.rb:139
+msgid "Product %{product} not found"
+msgstr "Produkten %{product} hittades inte"
+
+#: ../lib/rmt/cli/smt_importer.rb:172
+msgid "Hardware information stored for system %{system}"
+msgstr "Maskinvaruinformation lagrad för systemet %{system}"
+
+#: ../lib/rmt/cli/smt_importer.rb:196
+msgid "Path to unpacked SMT data tarball"
+msgstr "Sökväg till icke inpackad tarball för SMT-data"
+
+#: ../lib/rmt/cli/smt_importer.rb:197
+msgid "Do not import the systems that were registered to the SMT"
+msgstr "Importera inte systemen som var registrerade till SMT"
+
+#: ../lib/rmt/cli/smt_importer.rb:198
+msgid "Do not import system hardware info from MachineData table"
 msgstr ""
 
-msgid "System with login %{login} not found."
-msgstr ""
+#: ../lib/rmt/cli/smt_importer.rb:209
+msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
+msgstr "RMT har inte synkats till SCC ännu. Kör först '%{command}'"
 
-#, fuzzy
-msgid "The RMT database has not yet been initialized. Run '%{command}' to set up the database."
-msgstr "RMT-databasen har inte initierats ännu. Kör '%{command}' för att konfigurera databasen."
-
-msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
-msgstr "SCC-uppgifter är inte korrekt konfigurerade i '%{path}'. Du kan hämta dem från %{url}"
-
-msgid "The following errors occurred while mirroring:"
-msgstr ""
-
-msgid "The product \"%s\" is a base product and cannot be deactivated"
-msgstr "Produkten \"%s\" är en basprodukt och kan inte inaktiveras"
-
-msgid "The requested product '%s' is not activated on this system."
-msgstr "Den begärda produkten '%s' är inte aktiverad på detta system."
-
-msgid "The requested products '%s' are not activated on the system."
-msgstr "Begärda produkter '%s' är inte aktiverade på systemet."
-
-msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
-msgstr ""
-
-msgid "There are no repositories marked for mirroring."
-msgstr "Det finns inga lagringsplatser som är markerade för spegling."
-
-msgid "There are no systems registered to this RMT instance."
-msgstr ""
-
-msgid "To clean up downloaded files, please run '%{command}'"
-msgstr ""
-
-msgid "To clean up downloaded files, run '%{command}'"
-msgstr ""
-
-msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
-msgstr ""
-
-msgid "URL"
-msgstr "Webbadress"
-
-msgid "Unknown Registration Code."
-msgstr "Okänd registreringskod."
-
-msgid "Unknown hash function %{checksum_type}"
-msgstr "Okänd hash-funktion %{checksum_type}"
-
-msgid "Unmet product dependencies, activate one of these products first: %s"
-msgstr "Produktberoenden har inte uppfyllts, aktivera en av dessa produkter först: %s"
-
-msgid "Updated system information for host '%s'"
-msgstr "Uppdaterad systeminformation för värden '%s'"
-
-msgid "Updating products"
-msgstr "Uppdaterar produkter"
-
-msgid "Updating repositories"
-msgstr "Uppdaterar lagringsplatser"
-
-msgid "Updating subscriptions"
-msgstr "Uppdaterar abonnemang"
-
-msgid "Version"
-msgstr "Version"
-
-msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
-msgstr ""
-
-msgid "enabled"
-msgstr ""
-
+#: ../lib/rmt/cli/smt_importer.rb:210
 msgid "importing data from SMT."
 msgstr "importerar data från SMT."
 
-#, fuzzy
-msgid "mandatory"
-msgstr "Obligatoriskt"
-
-msgid "mirrored at %{time}"
+#: ../lib/rmt/cli/systems.rb:2
+msgid "List registered systems."
 msgstr ""
 
-#, fuzzy
-msgid "non-mandatory"
-msgstr "Inte obligatoriskt"
-
-msgid "not enabled"
+#: ../lib/rmt/cli/systems.rb:3
+msgid "Number of systems to display"
 msgstr ""
 
-#, fuzzy
-msgid "not mirrored"
-msgstr "Senast speglad"
+#: ../lib/rmt/cli/systems.rb:4
+msgid "List all registered systems"
+msgstr ""
 
-msgid "repository by URL %{url} does not exist in database"
-msgstr "lagringsplats med webbadressen %{url} finns inte i databasen"
+#: ../lib/rmt/cli/systems.rb:12
+msgid "There are no systems registered to this RMT instance."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:18
+msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:26
+msgid "Forward registered systems data to SCC"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:31
+msgid "Removes a system and its activations from RMT"
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:33
+msgid "Removes a system and its activations from RMT."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:35
+msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:45
+msgid "Successfully removed system with login %{login}."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:47
+msgid "System with login %{login} cannot be removed."
+msgstr ""
+
+#: ../lib/rmt/cli/systems.rb:49
+msgid "System with login %{login} not found."
+msgstr ""
+
+#: ../lib/rmt/downloader.rb:204
+msgid "Checksum doesn't match"
+msgstr "Kontrollsumman matchar inte"
+
+#: ../lib/rmt/downloader.rb:214
+msgid "Request error:"
+msgstr ""
+
+#: ../lib/rmt/downloader.rb:215
+msgid "Response HTTP status code"
+msgstr ""
+
+#: ../lib/rmt/downloader.rb:216
+msgid "Response body"
+msgstr ""
+
+#: ../lib/rmt/downloader.rb:217
+msgid "Response headers"
+msgstr ""
+
+#: ../lib/rmt/downloader.rb:218
+msgid "curl return code"
+msgstr ""
+
+#: ../lib/rmt/downloader.rb:219
+msgid "curl return message"
+msgstr ""
+
+#: ../lib/rmt/downloader.rb:222
+msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
+msgstr ""
+
+#: ../lib/rmt/downloader.rb:233
+msgid "%{file} - File does not exist"
+msgstr "%{file} - Filen finns inte"
+
+#: ../lib/rmt/gpg.rb:37
+msgid "GPG key import failed"
+msgstr ""
+
+#: ../lib/rmt/gpg.rb:48
+msgid "GPG signature verification failed"
+msgstr ""
+
+#: ../lib/rmt/lockfile.rb:11
+msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
+msgstr ""
+
+#: ../lib/rmt/mirror.rb:43
+msgid "Mirroring SUSE Manager product tree to %{dir}"
+msgstr "Speglar SUSE Manager-produktträd till %{dir}"
+
+#: ../lib/rmt/mirror.rb:46
+#, fuzzy
+msgid "Could not mirror SUSE Manager product tree with error: %{error}"
+msgstr "Det gick inte att spegla suma-produktträd med felet: %{error}"
+
+#: ../lib/rmt/mirror.rb:52
+msgid "Mirroring repository %{repo} to %{dir}"
+msgstr "Speglar lagringsplatsen %{repo} till %{dir}"
+
+#: ../lib/rmt/mirror.rb:78
+msgid "Could not create local directory %{dir} with error: %{error}"
+msgstr "Det gick inte att skapa lokala katalogen %{dir} med felet: %{error}"
+
+#: ../lib/rmt/mirror.rb:85
+msgid "Could not create a temporary directory: %{error}"
+msgstr "Det gick inte att skapa en tillfällig katalog: %{error}"
+
+#: ../lib/rmt/mirror.rb:112
+msgid "Repository metadata signatures are missing"
+msgstr "Signaturer saknas för lagringsplatsmetadata"
+
+#: ../lib/rmt/mirror.rb:116
+#, fuzzy
+msgid "Mirroring metadata signature/key failed with %{http_code}. Retrying after %{seconds} seconds"
+msgstr "Spegla"
+
+#: ../lib/rmt/mirror.rb:122
+msgid "Downloading repo signature/key failed with HTTP code %{http_code}"
+msgstr ""
+
+#: ../lib/rmt/mirror.rb:134
+msgid "Error while mirroring metadata: %{error}"
+msgstr "Fel vid spegling av metadata: %{error}"
+
+#: ../lib/rmt/mirror.rb:158
+msgid "Error while mirroring license: %{error}"
+msgstr "Fel vid spegling av licens: %{error}"
+
+#: ../lib/rmt/mirror.rb:172
+msgid "Failed to download %{failed_count} files"
+msgstr ""
+
+#: ../lib/rmt/mirror.rb:174
+msgid "Error while mirroring data: %{error}"
+msgstr "Fel vid spegling av data: %{error}"
+
+#: ../lib/rmt/mirror.rb:209
+msgid "Error while moving directory %{src} to %{dest}: %{error}"
+msgstr "Fel vid flytt av katalogen %{src} till %{dest}: %{error}"
+
+#: ../lib/rmt/scc.rb:16 ../lib/rmt/scc.rb:83
+msgid "SCC credentials not set."
+msgstr ""
+
+#: ../lib/rmt/scc.rb:18
+msgid "Downloading data from SCC"
+msgstr "Ladda ned data från SCC"
+
+#: ../lib/rmt/scc.rb:21 ../lib/rmt/scc.rb:63
+msgid "Updating products"
+msgstr "Uppdaterar produkter"
+
+#: ../lib/rmt/scc.rb:36
+msgid "Exporting data from SCC to %{path}"
+msgstr "Exporterar data från SCC till %{path}"
+
+#: ../lib/rmt/scc.rb:40
+msgid "Exporting products"
+msgstr "Exporterar produkter"
+
+#: ../lib/rmt/scc.rb:45
+msgid "Exporting repositories"
+msgstr "Exporterar lagringsplatser"
+
+#: ../lib/rmt/scc.rb:48
+msgid "Exporting subscriptions"
+msgstr "Exporterar abonnemang"
+
+#: ../lib/rmt/scc.rb:51
+msgid "Exporting orders"
+msgstr "Exportera beställningar"
+
+#: ../lib/rmt/scc.rb:59
+msgid "Missing data files: %{files}"
+msgstr "Saknar datafiler: %{files}"
+
+#: ../lib/rmt/scc.rb:61
+msgid "Importing SCC data from %{path}"
+msgstr "Importerar SCC-data från %{path}"
+
+#: ../lib/rmt/scc.rb:79
+msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
+msgstr ""
+
+#: ../lib/rmt/scc.rb:89
+msgid "Syncing system %{login} to SCC"
+msgstr ""
+
+#: ../lib/rmt/scc.rb:94
+msgid "Failed to sync system %{login}: %{error}"
+msgstr ""
+
+#: ../lib/rmt/scc.rb:101
+msgid "Syncing de-registered system %{scc_system_id} to SCC"
+msgstr ""
+
+#: ../lib/rmt/scc.rb:118
+msgid "Updating repositories"
+msgstr "Uppdaterar lagringsplatser"
+
+#: ../lib/rmt/scc.rb:125
+msgid "Updating subscriptions"
+msgstr "Uppdaterar abonnemang"
+
+#: ../lib/rmt/scc.rb:144
+msgid "Adding product %{product}"
+msgstr "Lägger till produkten %{product}"
