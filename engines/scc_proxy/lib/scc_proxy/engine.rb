@@ -1,3 +1,4 @@
+require 'json'
 require 'net/http'
 
 ANNOUNCE_URL = 'https://scc.suse.com/connect/subscriptions/systems'.freeze
@@ -28,16 +29,43 @@ NET_HTTP_ERRORS = [
 module SccProxy
   class << self
 
-    def headers(auth)
+    def headers(auth, params)
+      if params && params.class != String
+        @instance_id = get_instance_id(params, logger)
+      else
+        @instance_id = params
+      end
+
       {
         'accept' => 'application/json,application/vnd.scc.suse.com.v4+json',
         'Content-Type' => 'application/json',
-        'Authorization' => auth
+        'Authorization' => auth,
+        ApplicationController::SYSTEM_TOKEN_HEADER => @instance_id
       }
     end
 
+    def get_instance_id(params)
+      # if it is not JSON, it is the system_token already
+      return params if params.class == String
+
+      verification_provider = InstanceVerification.provider.new(
+        logger,
+        nil,
+        nil,
+        nil,
+      )
+      instance_id_keys = {
+        'Amazon': 'instanceId',
+        'Google': 'instance_id',
+        'Microsoft': 'vmId'
+      }
+      instance_id_key = instance_id_keys[params['cloud_provider']]
+      iid = verification_provider.parse_instance_data(params['instance_data'])
+      iid[instance_id_key]
+    end
+
     def prepare_scc_announce_request(uri_path, auth, params)
-      scc_request = Net::HTTP::Post.new(uri_path, headers(auth))
+      scc_request = Net::HTTP::Post.new(uri_path, headers(auth, params))
       hw_info_keys = %i[cpus sockets hypervisor arch uuid cloud_provider]
       hw_info = params['hwinfo'].symbolize_keys.slice(*hw_info_keys)
       scc_request.body = {
@@ -47,8 +75,8 @@ module SccProxy
       scc_request
     end
 
-    def prepare_scc_request(uri_path, product, auth, token, email)
-      scc_request = Net::HTTP::Post.new(uri_path, headers(auth))
+    def prepare_scc_request(uri_path, product, auth, token, email, system_token)
+      scc_request = Net::HTTP::Post.new(uri_path, headers(auth, system_token))
       scc_request.body = {
         token: token,
         identifier: product.identifier,
@@ -71,19 +99,19 @@ module SccProxy
       JSON.parse(response.body)
     end
 
-    def scc_activate_product(product, auth, token, email)
+    def scc_activate_product(product, auth, token, email, system_token)
       uri = URI.parse(ACTIVATE_PRODUCT_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      scc_request = prepare_scc_request(uri.path, product, auth, token, email)
+      scc_request = prepare_scc_request(uri.path, product, auth, token, email, system_token)
       http.request(scc_request)
     end
 
-    def deactivate_product_scc(auth, product)
+    def deactivate_product_scc(auth, product, params)
       uri = URI.parse(DEREGISTER_PRODUCT_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      scc_request = Net::HTTP::Delete.new(uri.path, headers(auth))
+      scc_request = Net::HTTP::Delete.new(uri.path, headers(auth, params))
       scc_request.body = {
         identifier: product.identifier,
         version: product.version,
@@ -92,7 +120,7 @@ module SccProxy
       http.request(scc_request)
     end
 
-    def deregister_system_scc(auth)
+    def deregister_system_scc(auth, params)
       uri = URI.parse(DEREGISTER_SYSTEM_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
@@ -172,13 +200,14 @@ module SccProxy
       # replaces RMT registration for SCC registration
       Api::Connect::V3::Subscriptions::SystemsController.class_eval do
         def announce_system
+          auth_header = nil
           auth_header = request.headers['HTTP_AUTHORIZATION'] if request.headers.include?('HTTP_AUTHORIZATION')
           if has_no_regcode?(auth_header)
             # no token sent to check with SCC
             # standard announce case
             @system = System.create!(hostname: params[:hostname], hw_info: HwInfo.new(hw_info_params))
           else
-            response = SccProxy.announce_system_scc(request.headers['HTTP_AUTHORIZATION'], request.request_parameters)
+            response = SccProxy.announce_system_scc(auth_header, request.request_parameters)
             @system = System.create!(
               login: response['login'],
               password: response['password'],
@@ -219,7 +248,7 @@ module SccProxy
           logger.info "Activating product #{@product.product_string} to SCC"
           auth = request.headers['HTTP_AUTHORIZATION']
           if @system.proxy_byos
-            response = SccProxy.scc_activate_product(@product, auth, params[:token], params[:email])
+            response = SccProxy.scc_activate_product(@product, auth, params[:token], params[:email], nil)
             unless response.code_type == Net::HTTPCreated
               error = JSON.parse(response.body)
               logger.info "Could not activate #{@product.product_string}, error: #{error['error']} #{response.code}"
@@ -240,7 +269,7 @@ module SccProxy
         def scc_deactivate_product
           auth = request.headers['HTTP_AUTHORIZATION']
           if @system.proxy_byos && @product[:product_type] != 'base'
-            response = SccProxy.deactivate_product_scc(auth, @product)
+            response = SccProxy.deactivate_product_scc(auth, @product, request.request_parameters)
             unless response.code_type == Net::HTTPOK
               error = JSON.parse(response.body)
               error['error'] = SccProxy.parse_error(error['error'], params[:token], params[:email]) if error['error'].include? 'json'
@@ -260,7 +289,7 @@ module SccProxy
         def scc_deregistration
           if @system.proxy_byos
             auth = request.headers['HTTP_AUTHORIZATION']
-            response = SccProxy.deregister_system_scc(auth)
+            response = SccProxy.deregister_system_scc(auth, @system.system_token)
             unless response.code_type == Net::HTTPNoContent
               error = JSON.parse(response.body)
               logger.info "Could not de-activate system #{@system.login}, error: #{error['error']} #{response.code}"
