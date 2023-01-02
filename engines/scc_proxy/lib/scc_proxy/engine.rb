@@ -70,7 +70,8 @@ module SccProxy
       hw_info = params['hwinfo'].symbolize_keys.slice(*hw_info_keys)
       scc_request.body = {
         hostname: params['hostname'],
-        hwinfo: hw_info
+        hwinfo: hw_info,
+        byos: @instance_id
       }.to_json
       scc_request
     end
