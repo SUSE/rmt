@@ -25,6 +25,12 @@ NET_HTTP_ERRORS = [
   Net::HTTPRetriableError
 ].freeze
 
+INSTANCE_ID_KEYS = {
+  'Amazon': 'instanceId',
+  'Google': 'instance_id',
+  'Microsoft': 'vmId'
+}.freeze
+
 # rubocop:disable Metrics/ModuleLength
 module SccProxy
   class << self
@@ -52,12 +58,7 @@ module SccProxy
         nil,
         nil,
       )
-      instance_id_keys = {
-        'Amazon': 'instanceId',
-        'Google': 'instance_id',
-        'Microsoft': 'vmId'
-      }
-      instance_id_key = instance_id_keys[params['cloud_provider']]
+      instance_id_key = INSTANCE_ID_KEYS[params['cloud_provider']]
       iid = verification_provider.parse_instance_data(params['instance_data'])
       iid[instance_id_key]
     end
@@ -250,12 +251,7 @@ module SccProxy
           if @system.proxy_byos
             iid = @system.hw_info.instance_data.match(%r{<document>(.*?)</document>}m)
             iid = iid.captures
-            instance_id_keys = {
-              'Amazon': 'instanceId',
-              'Google': 'instance_id',
-              'Microsoft': 'vmId'
-            }
-            iid_key = instance_id_keys[@system.hw_info.cloud_provider]
+            iid_key = INSTANCE_ID_KEYS[@system.hw_info.cloud_provider]
             iid  = JSON.parse(iid[0])[iid_key]
             response = SccProxy.scc_activate_product(@product, auth, params[:token], params[:email], iid, logger)
             unless response.code_type == Net::HTTPCreated
