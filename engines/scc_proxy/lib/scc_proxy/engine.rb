@@ -35,6 +35,8 @@ INSTANCE_ID_KEYS = {
 module SccProxy
   class << self
 
+    attr_accessor :instance_id
+
     def headers(auth, params, logger)
       if params && params.class != String
         @instance_id = get_instance_id(params, logger)
@@ -210,6 +212,7 @@ module SccProxy
           else
             response = SccProxy.announce_system_scc(auth_header, request.request_parameters, logger)
             @system = System.create!(
+              system_token: SccProxy.instance_id,
               login: response['login'],
               password: response['password'],
               hostname: params[:hostname],

@@ -22,7 +22,8 @@ class ApplicationController < ActionController::API
         # If SYSTEM_TOKEN_HEADER is present, RMT assumes the client uses a SUSEConnect version
         # that supports this feature. In this case, refresh the token and include it in the response.
         if system_tokens_enabled? && request.headers.key?(SYSTEM_TOKEN_HEADER)
-          @system.update(last_seen_at: Time.zone.now, system_token: SecureRandom.uuid)
+          @system.update(last_seen_at: Time.zone.now, system_token: SecureRandom.uuid) unless @system.proxy_byos
+          @system.update(last_seen_at: Time.zone.now) if @system.proxy_byos
           headers[SYSTEM_TOKEN_HEADER] = @system.system_token
         # only update last_seen_at each 3 minutes,
         # so that a system that calls SCC every second doesn't write + lock the database row
@@ -55,7 +56,10 @@ class ApplicationController < ActionController::API
     return nil if systems.blank?
 
     # 1st case
-    unless request.headers.key?(SYSTEM_TOKEN_HEADER)
+    # check if BYOS systems have system_token
+    # as those will not have the token in the header
+    byos_system_with_system_token = systems.find{|system| system.proxy_byos && system.system_token }
+    unless request.headers.key?(SYSTEM_TOKEN_HEADER) || !byos_system_with_system_token.nil?
       logger.info _('System with login \"%{login}\" authenticated without token header') %
         { login: systems.first.login }
       return systems.first
