@@ -365,7 +365,7 @@ module SccProxy
           system = matched_systems.first
           if matched_systems.length > 1
             # check for possible duplicated system_tokens
-            duplicated_system_tokens = matched_systems.group_by { |sys| sys[:system_token] }.select { |_, v| v.size > 1 }.keys
+            duplicated_system_tokens = matched_systems.group_by { |sys| sys[:system_token] }.keys
 
             if duplicated_system_tokens.length > 1
               logger.info _('BYOS system with login \"%{login}\" authenticated and duplicated due to token (system tokens %{system_tokens}) mismatch') %

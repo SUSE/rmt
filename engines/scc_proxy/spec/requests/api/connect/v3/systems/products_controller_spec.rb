@@ -176,6 +176,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               receive(:instance_valid?)
                 .and_raise(InstanceVerification::Exception, 'Custom plugin error')
             )
+            headers['System-Token'] = 'foo'
             stub_request(:post, scc_activate_url)
               .to_return(
                 status: 201,
