@@ -252,10 +252,13 @@ module SccProxy
           logger.info "Activating product #{@product.product_string} to SCC"
           auth = request.headers['HTTP_AUTHORIZATION']
           if @system.proxy_byos
-            iid = @system.hw_info.instance_data.match(%r{<document>(.*?)</document>}m)
-            iid = iid.captures
-            iid_key = INSTANCE_ID_KEYS[@system.hw_info.cloud_provider]
-            iid  = JSON.parse(iid[0])[iid_key]
+            instance_data = @system.hw_info.instance_data
+            cloud_provider = @system.hw_info.cloud_provider
+            instance_params = {
+              'cloud_provider' => cloud_provider,
+              'instance_data' => instance_data
+            }
+            iid = SccProxy.get_instance_id(params, logger)
             response = SccProxy.scc_activate_product(@product, auth, params[:token], params[:email], iid, logger)
             unless response.code_type == Net::HTTPCreated
               error = JSON.parse(response.body)
@@ -306,6 +309,67 @@ module SccProxy
             end
             logger.info 'System successfully deregistered from SCC'
           end
+        end
+      end
+
+      ApplicationController.class_eval do
+        # overwrite authenticate_system method
+        # as BYOS in the cloud does not use SYSTEM_TOKEN headers
+        def authenticate_system(skip_on_duplicated: false)
+          authenticate_or_request_with_http_basic('RMT API') do |login, password|
+            @systems = System.get_by_credentials(login, password)
+            if @systems.present?
+              # Return now if we just detected duplicates and we were told to skip on
+              # this situation.
+              return true if skip_on_duplicated && @systems.size > 1
+
+              @system = get_system(@systems)
+              if system_tokens_enabled? && request.headers.key?(SYSTEM_TOKEN_HEADER)
+                @system.update(last_seen_at: Time.zone.now)
+                headers[SYSTEM_TOKEN_HEADER] = @system.system_token
+              elsif !@system.last_seen_at || @system.last_seen_at < 3.minutes.ago
+                @system.touch(:last_seen_at)
+              end
+              true
+            else
+              logger.info _('Could not find system with login \"%{login}\" and password \"%{password}\"') %
+                { login: login, password: password }
+              error = ActionController::TranslatedError.new(N_('Invalid system credentials'))
+              error.status = :unauthorized
+              raise error
+            end
+          end
+        end
+
+        def get_system(systems)
+          return nil if systems.blank?
+
+          matched_systems = systems.select{|system| system.proxy_byos && system.system_token}
+          if matched_systems.empty?
+            logger.info _('BYOS system with login \"%{login}\" authenticated without system token') %
+              { login: systems.first.login }
+            return systems.first
+          end
+
+          system = matched_systems.first
+          if matched_systems.length > 1
+            # check for possible duplicated system_tokens
+            duplicated_system_tokens = matched_systems.group_by {|sys| sys[:system_token]}.select {|_,v| v.size > 0}.keys
+
+            if duplicated_system_tokens.length > 1
+              logger.info _('BYOS system with login \"%{login}\" authenticated and duplicated due to token (system tokens %{system_tokens}) mismatch') %
+                { login: system.login, system_tokens: duplicated_system_tokens.join(',') }
+            else
+              # no different systems
+              # first system is chosen
+              logger.info _('BYOS system with login \"%{login}\" authenticated, system  token \"%{system_token}\"') %
+                { login: system.login, system_token: system.system_token }
+            end
+          else
+            logger.info _('BYOS system with login \"%{login}\" authenticated, system  token \"%{system_token}\"') %
+              { login: system.login, system_token: system.system_token }
+          end
+          return system
         end
       end
     end
