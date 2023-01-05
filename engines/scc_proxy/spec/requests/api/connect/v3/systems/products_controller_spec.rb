@@ -169,8 +169,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           before do
-            system2 = system
-            system2.save!
+            system3 = system
+            system3.save!
             allow(System).to receive(:get_by_credentials).and_return([system, system3])
             allow(plugin_double).to(
               receive(:instance_valid?)
