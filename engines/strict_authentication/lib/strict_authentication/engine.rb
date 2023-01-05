@@ -19,7 +19,7 @@ module StrictAuthentication
           activation = @systems.includes(activations: %i[service]).map(&:activations).flatten
                          .select { |a| a.service == service }
 
-          raise ActiveRecord::RecordNotFound unless activation.length > 0
+          raise ActiveRecord::RecordNotFound if activation.empty?
 
           system_id = activation[0].system_id
           @system = System.find(system_id)

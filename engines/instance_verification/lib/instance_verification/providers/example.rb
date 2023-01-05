@@ -27,6 +27,6 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
   end
 
   def parse_instance_data(_instance_data)
-    return {'instance_data' => 'parsed_instance_data'}
+    { 'instance_data' => 'parsed_instance_data' }
   end
 end

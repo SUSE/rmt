@@ -141,6 +141,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             FactoryBot.create(:system, :byos, :with_hw_info, instance_data: instance_data,
               system_token: 'foo')
           end
+
           before do
             allow(System).to receive(:get_by_credentials).and_return([system, system2])
             allow(plugin_double).to(
@@ -162,14 +163,15 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
 
         context 'with duplicated system_tokens' do
-          let(:system2) do
+          let(:system3) do
             FactoryBot.create(:system, :byos, :with_hw_info, instance_data: instance_data,
               system_token: 'foo')
           end
+
           before do
             system2 = system
             system2.save!
-            allow(System).to receive(:get_by_credentials).and_return([system, system2])
+            allow(System).to receive(:get_by_credentials).and_return([system, system3])
             allow(plugin_double).to(
               receive(:instance_valid?)
                 .and_raise(InstanceVerification::Exception, 'Custom plugin error')

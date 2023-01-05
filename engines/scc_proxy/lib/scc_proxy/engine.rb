@@ -26,24 +26,28 @@ NET_HTTP_ERRORS = [
 ].freeze
 
 INSTANCE_ID_KEYS = {
-  'Amazon': 'instanceId',
-  'Google': 'instance_id',
-  'Microsoft': 'vmId'
+  Amazon: 'instanceId',
+  Google: 'instance_id',
+  Microsoft: 'vmId'
 }.freeze
 
 # rubocop:disable Metrics/ModuleLength
 module SccProxy
   class << self
 
+    # rubocop:disable ThreadSafety/ClassAndModuleAttributes
     attr_accessor :instance_id
 
+    # rubocop:enable ThreadSafety/ClassAndModuleAttributes
+
+    # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
     def headers(auth, params, logger)
-      if params && params.class != String
-        @instance_id = get_instance_id(params, logger)
-      else
-        # if it is not JSON, it is the system_token already
-        @instance_id = params
-      end
+      @instance_id = if params && params.class != String
+                       get_instance_id(params, logger)
+                     else
+                       # if it is not JSON, it is the system_token already
+                       params
+                     end
 
       {
         'accept' => 'application/json,application/vnd.scc.suse.com.v4+json',
@@ -52,19 +56,21 @@ module SccProxy
         ApplicationController::SYSTEM_TOKEN_HEADER => @instance_id
       }
     end
+    # rubocop:enable ThreadSafety/InstanceVariableInClassMethod
 
     def get_instance_id(params, logger)
       verification_provider = InstanceVerification.provider.new(
         logger,
         nil,
         nil,
-        nil,
+        nil
       )
       instance_id_key = INSTANCE_ID_KEYS[params['cloud_provider']]
       iid = verification_provider.parse_instance_data(params['instance_data'])
       iid[instance_id_key]
     end
 
+    # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
     def prepare_scc_announce_request(uri_path, auth, params, logger)
       scc_request = Net::HTTP::Post.new(uri_path, headers(auth, params, logger))
       hw_info_keys = %i[cpus sockets hypervisor arch uuid cloud_provider]
@@ -76,7 +82,9 @@ module SccProxy
       }.to_json
       scc_request
     end
+    # rubocop:enable ThreadSafety/InstanceVariableInClassMethod
 
+    # rubocop:disable Metrics/ParameterLists
     def prepare_scc_request(uri_path, product, auth, token, email, system_token, logger)
       scc_request = Net::HTTP::Post.new(uri_path, headers(auth, nil, logger))
       scc_request.body = {
@@ -90,6 +98,7 @@ module SccProxy
       }.to_json
       scc_request
     end
+    # rubocop:enable Metrics/ParameterLists
 
     def announce_system_scc(auth, params, logger)
       uri = URI.parse(ANNOUNCE_URL)
@@ -102,6 +111,7 @@ module SccProxy
       JSON.parse(response.body)
     end
 
+    # rubocop:disable Metrics/ParameterLists
     def scc_activate_product(product, auth, token, email, system_token, logger)
       uri = URI.parse(ACTIVATE_PRODUCT_URL)
       http = Net::HTTP.new(uri.host, uri.port)
@@ -109,6 +119,7 @@ module SccProxy
       scc_request = prepare_scc_request(uri.path, product, auth, token, email, system_token, logger)
       http.request(scc_request)
     end
+    # rubocop:enable Metrics/ParameterLists
 
     def deactivate_product_scc(auth, product, params, logger)
       uri = URI.parse(DEREGISTER_PRODUCT_URL)
@@ -258,7 +269,7 @@ module SccProxy
               'cloud_provider' => cloud_provider,
               'instance_data' => instance_data
             }
-            iid = SccProxy.get_instance_id(params, logger)
+            iid = SccProxy.get_instance_id(instance_params, logger)
             response = SccProxy.scc_activate_product(@product, auth, params[:token], params[:email], iid, logger)
             unless response.code_type == Net::HTTPCreated
               error = JSON.parse(response.body)
@@ -324,9 +335,9 @@ module SccProxy
               return true if skip_on_duplicated && @systems.size > 1
 
               @system = get_system(@systems)
-              if system_tokens_enabled? && request.headers.key?(SYSTEM_TOKEN_HEADER)
+              if system_tokens_enabled? && request.headers.key?(ApplicationController::SYSTEM_TOKEN_HEADER)
                 @system.update(last_seen_at: Time.zone.now)
-                headers[SYSTEM_TOKEN_HEADER] = @system.system_token
+                headers[ApplicationController::SYSTEM_TOKEN_HEADER] = @system.system_token
               elsif !@system.last_seen_at || @system.last_seen_at < 3.minutes.ago
                 @system.touch(:last_seen_at)
               end
@@ -344,7 +355,7 @@ module SccProxy
         def get_system(systems)
           return nil if systems.blank?
 
-          matched_systems = systems.select{|system| system.proxy_byos && system.system_token}
+          matched_systems = systems.select { |system| system.proxy_byos && system.system_token }
           if matched_systems.empty?
             logger.info _('BYOS system with login \"%{login}\" authenticated without system token') %
               { login: systems.first.login }
@@ -354,7 +365,8 @@ module SccProxy
           system = matched_systems.first
           if matched_systems.length > 1
             # check for possible duplicated system_tokens
-            duplicated_system_tokens = matched_systems.group_by {|sys| sys[:system_token]}.select {|_,v| v.size > 0}.keys
+            # duplicated_system_tokens = matched_systems.group_by {|sys| sys[:system_token]}.select {|_, v| v.size > 1 }.keys
+            duplicated_system_tokens = matched_systems.group_by { |sys| sys[:system_token] }.select { |_, v| v.size > 1 }.keys
 
             if duplicated_system_tokens.length > 1
               logger.info _('BYOS system with login \"%{login}\" authenticated and duplicated due to token (system tokens %{system_tokens}) mismatch') %
@@ -369,7 +381,7 @@ module SccProxy
             logger.info _('BYOS system with login \"%{login}\" authenticated, system  token \"%{system_token}\"') %
               { login: system.login, system_token: system.system_token }
           end
-          return system
+          system
         end
       end
     end
