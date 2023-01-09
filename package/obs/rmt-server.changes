@@ -11,6 +11,8 @@ Fri Nov 11 17:11:56 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
   - Add option to turn off system token support (bsc#1205089)
   - Update the `last_seen_at` column on zypper service refresh
   - Do not retry to import non-existing files in air-gapped mode (bsc#1204769)
+  - Fix CVE-2022-31254 (bsc#1204285): rmt-server-pubcloud allows to escalate from user _rmt to root
+  Root-level escalation vector bug was found in the packaging file which has been mitigated.
 
 -------------------------------------------------------------------
 Tue Nov  8 10:30:45 UTC 2022 - Zuzana Petrova <zpetrova@suse.com>
