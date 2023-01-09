@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Dec 21 14:07:21 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
+
+- Fix %post install of pubcloud subpackage reload of nginx (bsc#1206593)
+- Skip warnings regarding nokogiri libxml version mismatch (bsc#1202053)
+
+-------------------------------------------------------------------
 Fri Nov 11 17:11:56 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
 
 - Release version 2.10:
