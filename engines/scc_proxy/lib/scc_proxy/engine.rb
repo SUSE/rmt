@@ -41,11 +41,14 @@ module SccProxy
     # rubocop:enable ThreadSafety/ClassAndModuleAttributes
 
     # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
-    def headers(auth, params, logger)
+    def headers(auth, params)
       @instance_id = if params && params.class != String
-                       get_instance_id(params, logger)
+                       get_instance_id(params)
                      else
                        # if it is not JSON, it is the system_token already
+                       # announce system has metadata
+                       # activate product does not have metadata
+                       # so instance id comes as string
                        params
                      end
 
@@ -58,9 +61,9 @@ module SccProxy
     end
     # rubocop:enable ThreadSafety/InstanceVariableInClassMethod
 
-    def get_instance_id(params, logger)
+    def get_instance_id(params)
       verification_provider = InstanceVerification.provider.new(
-        logger,
+        nil,
         nil,
         nil,
         nil
@@ -71,22 +74,22 @@ module SccProxy
     end
 
     # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
-    def prepare_scc_announce_request(uri_path, auth, params, logger)
-      scc_request = Net::HTTP::Post.new(uri_path, headers(auth, params, logger))
+    def prepare_scc_announce_request(uri_path, auth, params)
+      scc_request = Net::HTTP::Post.new(uri_path, headers(auth, params))
       hw_info_keys = %i[cpus sockets hypervisor arch uuid cloud_provider]
       hw_info = params['hwinfo'].symbolize_keys.slice(*hw_info_keys)
       scc_request.body = {
         hostname: params['hostname'],
         hwinfo: hw_info,
-        byos: @instance_id
+        byos: true
       }.to_json
       scc_request
     end
     # rubocop:enable ThreadSafety/InstanceVariableInClassMethod
 
     # rubocop:disable Metrics/ParameterLists
-    def prepare_scc_request(uri_path, product, auth, token, email, system_token, logger)
-      scc_request = Net::HTTP::Post.new(uri_path, headers(auth, nil, logger))
+    def prepare_scc_request(uri_path, product, auth, token, email, system_token)
+      scc_request = Net::HTTP::Post.new(uri_path, headers(auth, nil))
       scc_request.body = {
         token: token,
         identifier: product.identifier,
@@ -100,11 +103,11 @@ module SccProxy
     end
     # rubocop:enable Metrics/ParameterLists
 
-    def announce_system_scc(auth, params, logger)
+    def announce_system_scc(auth, params)
       uri = URI.parse(ANNOUNCE_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      scc_request = prepare_scc_announce_request(uri.path, auth, params, logger)
+      scc_request = prepare_scc_announce_request(uri.path, auth, params)
       response = http.request(scc_request)
       response.error! unless response.code_type == Net::HTTPCreated
 
@@ -112,20 +115,20 @@ module SccProxy
     end
 
     # rubocop:disable Metrics/ParameterLists
-    def scc_activate_product(product, auth, token, email, system_token, logger)
+    def scc_activate_product(product, auth, token, email, system_token)
       uri = URI.parse(ACTIVATE_PRODUCT_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      scc_request = prepare_scc_request(uri.path, product, auth, token, email, system_token, logger)
+      scc_request = prepare_scc_request(uri.path, product, auth, token, email, system_token)
       http.request(scc_request)
     end
     # rubocop:enable Metrics/ParameterLists
 
-    def deactivate_product_scc(auth, product, params, logger)
+    def deactivate_product_scc(auth, product, params)
       uri = URI.parse(DEREGISTER_PRODUCT_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      scc_request = Net::HTTP::Delete.new(uri.path, headers(auth, params, logger))
+      scc_request = Net::HTTP::Delete.new(uri.path, headers(auth, params))
       scc_request.body = {
         identifier: product.identifier,
         version: product.version,
@@ -134,11 +137,11 @@ module SccProxy
       http.request(scc_request)
     end
 
-    def deregister_system_scc(auth, params, logger)
+    def deregister_system_scc(auth, params)
       uri = URI.parse(DEREGISTER_SYSTEM_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      scc_request = Net::HTTP::Delete.new(uri.path, headers(auth, params, logger))
+      scc_request = Net::HTTP::Delete.new(uri.path, headers(auth, params))
       http.request(scc_request)
     end
 
@@ -151,12 +154,12 @@ module SccProxy
 
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
-    def scc_check_subscription_expiration(headers, login, params, logger)
+    def scc_check_subscription_expiration(headers, login, params)
       auth = headers['HTTP_AUTHORIZATION'] if headers.include?('HTTP_AUTHORIZATION')
       uri = URI.parse(SYSTEMS_ACTIVATIONS_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      scc_request = Net::HTTP::Get.new(uri.path, headers(auth, params, logger))
+      scc_request = Net::HTTP::Get.new(uri.path, headers(auth, params))
       response = http.request(scc_request)
       unless response.code_type == Net::HTTPOK
         logger.info "Could not get the system (#{login}) activations, error: #{response.message} #{response.code}"
@@ -221,7 +224,7 @@ module SccProxy
             # standard announce case
             @system = System.create!(hostname: params[:hostname], hw_info: HwInfo.new(hw_info_params))
           else
-            response = SccProxy.announce_system_scc(auth_header, request.request_parameters, logger)
+            response = SccProxy.announce_system_scc(auth_header, request.request_parameters)
             @system = System.create!(
               system_token: SccProxy.instance_id,
               login: response['login'],
@@ -269,8 +272,8 @@ module SccProxy
               'cloud_provider' => cloud_provider,
               'instance_data' => instance_data
             }
-            iid = SccProxy.get_instance_id(instance_params, logger)
-            response = SccProxy.scc_activate_product(@product, auth, params[:token], params[:email], iid, logger)
+            iid = SccProxy.get_instance_id(instance_params)
+            response = SccProxy.scc_activate_product(@product, auth, params[:token], params[:email], iid)
             unless response.code_type == Net::HTTPCreated
               error = JSON.parse(response.body)
               logger.info "Could not activate #{@product.product_string}, error: #{error['error']} #{response.code}"
@@ -291,7 +294,7 @@ module SccProxy
         def scc_deactivate_product
           auth = request.headers['HTTP_AUTHORIZATION']
           if @system.proxy_byos && @product[:product_type] != 'base'
-            response = SccProxy.deactivate_product_scc(auth, @product, request.request_parameters, logger)
+            response = SccProxy.deactivate_product_scc(auth, @product, request.request_parameters)
             unless response.code_type == Net::HTTPOK
               error = JSON.parse(response.body)
               error['error'] = SccProxy.parse_error(error['error'], params[:token], params[:email]) if error['error'].include? 'json'
@@ -311,7 +314,7 @@ module SccProxy
         def scc_deregistration
           if @system.proxy_byos
             auth = request.headers['HTTP_AUTHORIZATION']
-            response = SccProxy.deregister_system_scc(auth, @system.system_token, logger)
+            response = SccProxy.deregister_system_scc(auth, @system.system_token)
             unless response.code_type == Net::HTTPNoContent
               error = JSON.parse(response.body)
               logger.info "Could not de-activate system #{@system.login}, error: #{error['error']} #{response.code}"
