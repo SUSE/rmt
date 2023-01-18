@@ -73,7 +73,6 @@ module SccProxy
       iid[instance_id_key]
     end
 
-    # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
     def prepare_scc_announce_request(uri_path, auth, params)
       scc_request = Net::HTTP::Post.new(uri_path, headers(auth, params))
       hw_info_keys = %i[cpus sockets hypervisor arch uuid cloud_provider]
@@ -85,7 +84,6 @@ module SccProxy
       }.to_json
       scc_request
     end
-    # rubocop:enable ThreadSafety/InstanceVariableInClassMethod
 
     # rubocop:disable Metrics/ParameterLists
     def prepare_scc_request(uri_path, product, auth, token, email, system_token)
@@ -114,7 +112,6 @@ module SccProxy
       JSON.parse(response.body)
     end
 
-    # rubocop:disable Metrics/ParameterLists
     def scc_activate_product(product, auth, token, email, system_token)
       uri = URI.parse(ACTIVATE_PRODUCT_URL)
       http = Net::HTTP.new(uri.host, uri.port)
@@ -122,7 +119,6 @@ module SccProxy
       scc_request = prepare_scc_request(uri.path, product, auth, token, email, system_token)
       http.request(scc_request)
     end
-    # rubocop:enable Metrics/ParameterLists
 
     def deactivate_product_scc(auth, product, params)
       uri = URI.parse(DEREGISTER_PRODUCT_URL)
