@@ -50,6 +50,7 @@ module InstanceVerification
             # instance verification check, however, PAYG instances may send registration
             # code, as such, instance verification engine checks for those BYOS
             # instances once instance verification has failed
+            logger.error "Instance verification failed: #{e.message}"
             raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
           end
         rescue StandardError => e
