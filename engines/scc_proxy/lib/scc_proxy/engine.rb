@@ -85,8 +85,7 @@ module SccProxy
       scc_request
     end
 
-    # rubocop:disable Metrics/ParameterLists
-    def prepare_scc_request(uri_path, product, auth, token, email, system_token)
+    def prepare_scc_request(uri_path, product, auth, token, email)
       scc_request = Net::HTTP::Post.new(uri_path, headers(auth, nil))
       scc_request.body = {
         token: token,
@@ -95,11 +94,10 @@ module SccProxy
         arch: product.arch,
         release_type: product.release_type,
         email: email || nil,
-        byos: system_token
+        byos: true
       }.to_json
       scc_request
     end
-    # rubocop:enable Metrics/ParameterLists
 
     def announce_system_scc(auth, params)
       uri = URI.parse(ANNOUNCE_URL)
@@ -112,11 +110,11 @@ module SccProxy
       JSON.parse(response.body)
     end
 
-    def scc_activate_product(product, auth, token, email, system_token)
+    def scc_activate_product(product, auth, token, email)
       uri = URI.parse(ACTIVATE_PRODUCT_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      scc_request = prepare_scc_request(uri.path, product, auth, token, email, system_token)
+      scc_request = prepare_scc_request(uri.path, product, auth, token, email)
       http.request(scc_request)
     end
 
@@ -262,14 +260,7 @@ module SccProxy
           logger.info "Activating product #{@product.product_string} to SCC"
           auth = request.headers['HTTP_AUTHORIZATION']
           if @system.proxy_byos
-            instance_data = @system.hw_info.instance_data
-            cloud_provider = @system.hw_info.cloud_provider
-            instance_params = {
-              'cloud_provider' => cloud_provider,
-              'instance_data' => instance_data
-            }
-            iid = SccProxy.get_instance_id(instance_params)
-            response = SccProxy.scc_activate_product(@product, auth, params[:token], params[:email], iid)
+            response = SccProxy.scc_activate_product(@product, auth, params[:token], params[:email])
             unless response.code_type == Net::HTTPCreated
               error = JSON.parse(response.body)
               logger.info "Could not activate #{@product.product_string}, error: #{error['error']} #{response.code}"
