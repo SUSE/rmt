@@ -74,9 +74,9 @@ class RMT::CLI::Systems < RMT::CLI::Base
   long_desc <<~PURGE
     #{_('Removes old systems and their activations if they are inactive.')}
 
-    #{_('By default, inactive systems are those that have not contacted in any way with RMT for the past 3 months. You can override this with the \'-b / --before\' flag.')}
+    #{_('By default, inactive systems are those that have not contacted RMT in any way in the past 3 months. You can override this with the \'-b / --before\' flag.')}
 
-    #{_('The command will list you the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the \'--no-confirmation\' flag.')}
+    #{_('The command will list the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the \'--no-confirmation\' flag.')}
 
     #{_('Examples')}:
 
@@ -113,7 +113,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
       return true if prompt == _('y')
       return false if prompt == _('n')
 
-      warn "#{_('Please, answer')} #{_('y')}/#{_('n')}"
+      warn "#{_('Please answer')} #{_('y')}/#{_('n')}"
     end
   end
 
@@ -123,6 +123,6 @@ class RMT::CLI::Systems < RMT::CLI::Base
 
     [options.confirmation, dt.strftime('%F')]
   rescue ArgumentError
-    raise RMT::CLI::Error.new(_("The given date does not follow a proper format. Ensure it follows this format '<year>-<month>-<day>'."))
+    raise RMT::CLI::Error.new(_("The given date does not follow the proper format. Ensure it follows this format '<year>-<month>-<day>'."))
   end
 end

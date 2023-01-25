@@ -18,7 +18,7 @@ class RegistrationSharing::Client
   def peer_register_system(system)
     params = {}
 
-    %w[login password hostname proxy_byos registered_at created_at last_seen_at].each do |attribute|
+    %w[login password hostname proxy_byos system_token registered_at created_at last_seen_at].each do |attribute|
       params[attribute] = system.send(attribute)
     end
 

@@ -210,7 +210,7 @@ RSpec.describe RMT::CLI::Systems do
   describe '#purge' do
     context 'argument error' do
       it 'raises a CLI error when given a wrong date' do
-        msg = "The given date does not follow a proper format. Ensure it follows this format '<year>-<month>-<day>'.\n"
+        msg = "The given date does not follow the proper format. Ensure it follows this format '<year>-<month>-<day>'.\n"
         expect { described_class.start(['purge', '--no-confirmation', '--before', 'whatever']) }
           .to raise_error(SystemExit)
                 .and output(msg).to_stderr
@@ -288,7 +288,7 @@ RSpec.describe RMT::CLI::Systems do
         expect($stdin).to receive(:gets).and_return('n')
 
         expect { described_class.start(['purge']) }
-          .to output(/Please, answer/).to_stderr.and \
+          .to output(/Please answer/).to_stderr.and \
             output(/#{s2.login}/).to_stdout
 
         expect(System.count).to eq 2

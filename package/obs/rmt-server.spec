@@ -20,6 +20,7 @@
 %define lib_dir      %{_libdir}/rmt
 %define data_dir     %{_localstatedir}/lib/rmt
 %define conf_dir     %{_sysconfdir}/rmt
+%define script_dir   %{_libexecdir}/rmt
 %define rmt_user     _rmt
 %define rmt_group    nginx
 
@@ -188,6 +189,10 @@ sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"'
 mkdir -p %{buildroot}%{_libexecdir}/supportconfig/plugins
 install -D -m 544 support/rmt %{buildroot}%{_libexecdir}/supportconfig/plugins/rmt
 
+# Directory permission update script
+mkdir -p %{buildroot}%{script_dir}
+install -D -m 544 package/files/update_rmt_app_dir_permissions.sh %{buildroot}%{script_dir}/update_rmt_app_dir_permissions.sh
+
 # bash completion
 install -D -m 644 package/files/rmt-cli_bash-completion.sh %{buildroot}%{_datadir}/bash-completion/completions/rmt-cli
 
@@ -234,19 +239,20 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/mysql2-*/lib/mysql2/
 chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/mysql2/mysql2.so
 
 %files
-%attr(-,%{rmt_user},%{rmt_group}) %{app_dir}
+%attr(0755,root,root) %{app_dir}
 %exclude %{app_dir}/engines/
 %exclude %{app_dir}/package/
+%exclude %{app_dir}/rmt/tmp
 %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
 %attr(-,%{rmt_user},%{rmt_group}) %{conf_dir}
-%attr(-,%{rmt_user},%{rmt_group}) /var/lib/rmt
 %dir %{_libexecdir}/supportconfig
 %dir %{_libexecdir}/supportconfig/plugins
+%dir %{script_dir}
 %dir /var/lib/rmt
 %ghost %{_datadir}/rmt/public/repo
 %ghost %{_datadir}/rmt/public/suma
 %dir %{_sysconfdir}/slp.reg.d
-%config(noreplace) %attr(0640, %{rmt_user},root) %{_sysconfdir}/rmt.conf
+%config(noreplace) %attr(0640, %{rmt_user}, root) %{_sysconfdir}/rmt.conf
 %config(noreplace) %{_sysconfdir}/slp.reg.d/rmt-server.reg
 %{_mandir}/man8/rmt-cli.8%{?ext_man}
 %{_bindir}/rmt-cli
@@ -271,6 +277,7 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 
 %{_libdir}/rmt
 %{_libexecdir}/supportconfig/plugins/rmt
+%{script_dir}/update_rmt_app_dir_permissions.sh
 
 %files config
 %dir %{_sysconfdir}/nginx
@@ -281,7 +288,7 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %files pubcloud
 %{_bindir}/rmt-test-regsharing
 %{_bindir}/rmt-manual-instance-verify
-%attr(-,%{rmt_user},%{rmt_group}) %{app_dir}/engines/
+%attr(-,root,root) %{app_dir}/engines/
 %dir %{_sysconfdir}/nginx/rmt-auth.d/
 %dir %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}/regsharing
 %exclude %{app_dir}/engines/registration_sharing/package/
@@ -303,14 +310,13 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 getent group %{rmt_group} >/dev/null || %{_sbindir}/groupadd -r %{rmt_group}
 getent passwd %{rmt_user} >/dev/null || \
 	%{_sbindir}/useradd -g %{rmt_group} -s /bin/false -r \
-	-c "user for RMT" -d %{app_dir} %{rmt_user}
+	-c "user for RMT" %{rmt_user}
 %service_add_pre rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
 
 %post
 %service_add_post rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
-cd %{_datadir}/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails rmt:secrets:create_encryption_key >/dev/null RAILS_ENV=production
-cd %{_datadir}/rmt && runuser -u %{rmt_user} -g %{rmt_group} -- bin/rails rmt:secrets:create_secret_key_base >/dev/null RAILS_ENV=production
-
+cd %{_datadir}/rmt && bin/rails rmt:secrets:create_encryption_key >/dev/null RAILS_ENV=production && \
+cd %{_datadir}/rmt && bin/rails rmt:secrets:create_secret_key_base >/dev/null RAILS_ENV=production && \
 # Run only on install
 if [ $1 -eq 1 ]; then
   echo "Please run the YaST RMT module (or 'yast2 rmt' from the command line) to complete the configuration of your RMT" >> /dev/stdout
@@ -325,6 +331,7 @@ if [ $1 -eq 2 ]; then
   if [ -f %{app_dir}/config/system_uuid ]; then
     mv %{app_dir}/config/system_uuid /var/lib/rmt/system_uuid
   fi
+  bash %{script_dir}/update_rmt_app_dir_permissions.sh %{app_dir}
 fi
 
 if [ ! -e %{_datadir}/rmt/public/repo ]; then
