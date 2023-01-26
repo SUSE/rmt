@@ -68,7 +68,7 @@ module SccProxy
         nil,
         nil
       )
-      instance_id_key = INSTANCE_ID_KEYS[params['cloud_provider']]
+      instance_id_key = INSTANCE_ID_KEYS[params['hwinfo']['cloud_provider'].to_sym]
       iid = verification_provider.parse_instance_data(params['instance_data'])
       iid[instance_id_key]
     end
@@ -131,11 +131,11 @@ module SccProxy
       http.request(scc_request)
     end
 
-    def deregister_system_scc(auth, params)
+    def deregister_system_scc(auth, system_token)
       uri = URI.parse(DEREGISTER_SYSTEM_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      scc_request = Net::HTTP::Delete.new(uri.path, headers(auth, params))
+      scc_request = Net::HTTP::Delete.new(uri.path, headers(auth, system_token))
       http.request(scc_request)
     end
 
@@ -148,12 +148,12 @@ module SccProxy
 
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
-    def scc_check_subscription_expiration(headers, login, params, logger)
+    def scc_check_subscription_expiration(headers, login, system_token, logger)
       auth = headers['HTTP_AUTHORIZATION'] if headers.include?('HTTP_AUTHORIZATION')
       uri = URI.parse(SYSTEMS_ACTIVATIONS_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      scc_request = Net::HTTP::Get.new(uri.path, headers(auth, params))
+      scc_request = Net::HTTP::Get.new(uri.path, headers(auth, system_token))
       response = http.request(scc_request)
       unless response.code_type == Net::HTTPOK
         logger.info "Could not get the system (#{login}) activations, error: #{response.message} #{response.code}"
@@ -281,7 +281,7 @@ module SccProxy
         def scc_deactivate_product
           auth = request.headers['HTTP_AUTHORIZATION']
           if @system.proxy_byos && @product[:product_type] != 'base'
-            response = SccProxy.deactivate_product_scc(auth, @product, request.request_parameters)
+            response = SccProxy.deactivate_product_scc(auth, @product, @system.system_token)
             unless response.code_type == Net::HTTPOK
               error = JSON.parse(response.body)
               error['error'] = SccProxy.parse_error(error['error'], params[:token], params[:email]) if error['error'].include? 'json'

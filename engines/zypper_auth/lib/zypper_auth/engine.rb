@@ -29,12 +29,7 @@ module ZypperAuth
     rescue InstanceVerification::Exception => e
       message = ''
       if system.proxy_byos
-        params = {
-          'cloud_provider' => system.hw_info.cloud_provider,
-          'instance_data' => instance_data
-        }
-
-        result = SccProxy.scc_check_subscription_expiration(request.headers, system.login, params, logger)
+        result = SccProxy.scc_check_subscription_expiration(request.headers, system.login, system.system_token, logger)
         if result[:is_active]
           InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id)
           return true
