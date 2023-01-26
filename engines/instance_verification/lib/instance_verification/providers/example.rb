@@ -25,4 +25,8 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
 
     return '6789_SUSE_SAP' if @product_hash[:identifier].casecmp('sles_sap').zero?
   end
+
+  def parse_instance_data(_instance_data)
+    { 'instance_data' => 'parsed_instance_data' }
+  end
 end
