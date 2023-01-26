@@ -126,7 +126,8 @@ module SccProxy
       scc_request.body = {
         identifier: product.identifier,
         version: product.version,
-        arch: product.arch
+        arch: product.arch,
+        byos: true
       }.to_json
       http.request(scc_request)
     end
