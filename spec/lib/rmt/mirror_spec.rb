@@ -702,7 +702,7 @@ RSpec.describe RMT::Mirror do
 
       it 'removes it, moves src to dst and sets permissions' do
         expect(FileUtils).to receive(:remove_entry).with(old_dir)
-        expect(FileUtils).to receive(:mv).with(source_dir, destination_dir, { force: '-f' })
+        expect(FileUtils).to receive(:mv).with(source_dir, destination_dir, { force: true })
         expect(FileUtils).to receive(:chmod).with(0o755, destination_dir)
         replace_directory
       end
@@ -716,7 +716,7 @@ RSpec.describe RMT::Mirror do
 
       it 'renames it as .old, moves src to dst and sets permissions' do
         expect(FileUtils).to receive(:mv).with(destination_dir, old_dir)
-        expect(FileUtils).to receive(:mv).with(source_dir, destination_dir, { force: '-f' })
+        expect(FileUtils).to receive(:mv).with(source_dir, destination_dir, { force: true })
         expect(FileUtils).to receive(:chmod).with(0o755, destination_dir)
         replace_directory
       end
