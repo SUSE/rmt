@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-28 14:15+0100\n"
-"PO-Revision-Date: 2021-05-21 20:59+0000\n"
-"Last-Translator: Gemineo <vistatec@gemineo.de>\n"
+"PO-Revision-Date: 2023-01-28 17:14+0000\n"
+"Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
 "Language-Team: German <https://l10n.opensuse.org/projects/rmt/i18n/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.6.2\n"
+"X-Generator: Weblate 4.9.1\n"
 
 #: ../app/controllers/api/connect/base_controller.rb:20
 msgid "Required parameters are missing or empty: %s"
@@ -48,23 +48,30 @@ msgstr "Nicht alle obligatorischen Repositorys für Produkt %s wurden gespiegelt
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:112
 msgid "No subscription with this Registration Code found"
-msgstr ""
+msgstr "Kein Abonnement mit diesem Registrierungscode gefunden"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:116
 msgid "The subscription with the provided Registration Code is expired"
-msgstr ""
+msgstr "Das Abonnement mit dem angegebenen Registrierungscode ist abgelaufen"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:122
 msgid "The subscription with the provided Registration Code does not include the requested product '%s'"
 msgstr ""
+"Das Abonnement mit dem angegebenen Registrierungscode enthält nicht das "
+"angeforderte Produkt '%s'"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:148
 msgid "The product you are attempting to activate (%{product}) requires one of these products to be activated first: %{required_bases}"
 msgstr ""
+"Das Produkt, das Sie zu aktivieren versuchen (%{product}), erfordert, dass "
+"eines der folgenden Produkte zuerst aktiviert wird: %{required_bases}"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:154
 msgid "The product you are attempting to activate (%{product}) is not available on your system's base product (%{system_base}). %{product} is available on %{required_bases}."
 msgstr ""
+"Das Produkt, das Sie zu aktivieren versuchen (%{product}), ist auf dem "
+"Basisprodukt Ihres Systems (%{system_base}) nicht verfügbar. %{product} ist "
+"auf %{required_bases} verfügbar."
 
 #: ../app/controllers/api/connect/v3/systems/systems_controller.rb:6
 msgid "Not provided"
@@ -107,9 +114,8 @@ msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_
 msgstr ""
 
 #: ../app/controllers/application_controller.rb:81
-#, fuzzy
 msgid "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated from ID %{base_id} due to token mismatch"
-msgstr "ID"
+msgstr ""
 
 #: ../app/controllers/services_controller.rb:48
 msgid "Requested service not found"
@@ -135,6 +141,13 @@ msgid ""
 "You can deactivate them with \n"
 "%s"
 msgstr ""
+"Auf diesem System gibt es aktivierte Erweiterungen/Module, die nicht "
+"migriert werden können. \n"
+"Deaktivieren Sie diese zunächst, und versuchen Sie dann erneut, die "
+"Migration durchzuführen. \n"
+"Das/die Produkt(e) ist/sind '%s'. \n"
+"Sie können diese deaktivieren mit \n"
+"%s"
 
 #: ../lib/rmt/checksum_verifier.rb:13
 msgid "Unknown hash function %{checksum_type}"
@@ -177,7 +190,6 @@ msgid "The SCC credentials are not configured correctly in '%{path}'. You can ob
 msgstr "Der SCC-Berechtigungsnachweis in '%{path}' ist nicht korrekt konfiguriert. Sie erhalten den Berechtigungsnachweis unter %{url}."
 
 #: ../lib/rmt/cli/base.rb:83
-#, fuzzy
 msgid ""
 "SCC API request failed. Error details:\n"
 "Request URL: %{url}\n"
@@ -189,7 +201,7 @@ msgstr ""
 "SCC-API-Anforderung fehlgeschlagen. Fehlerdetails:\n"
 "Anfrage-URL: %{url}\n"
 "Antwort-Code: %{code}\n"
-"Antwort-Text:\n"
+"Antwort-Text: %{return_code}\n"
 "%{body}"
 
 #: ../lib/rmt/cli/base.rb:125
@@ -667,6 +679,8 @@ msgstr "Entfernt lokal gespiegelte Dateien von Repositorys, die nicht zum Spiege
 #: ../lib/rmt/cli/repos.rb:17 ../lib/rmt/cli/systems.rb:73
 msgid "Ask for confirmation or do not ask for confirmation and require no user interaction"
 msgstr ""
+"Nach einer Bestätigung fragen oder nicht nach einer Bestätigung fragen und "
+"keine Benutzerinteraktion erfordern"
 
 #: ../lib/rmt/cli/repos.rb:28
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
@@ -952,15 +966,17 @@ msgstr "System mit Anmeldung %{login} nicht gefunden."
 
 #: ../lib/rmt/cli/systems.rb:71
 msgid "Removes inactive systems"
-msgstr ""
+msgstr "Entfernt inaktive Systeme"
 
 #: ../lib/rmt/cli/systems.rb:72
 msgid "Remove systems before the given date (format: \"<year>-<month>-<day>\")"
 msgstr ""
+"Systeme vor dem angegebenen Datum entfernen (Format: \"<Jahr>-<Monat>-<Tag>\""
+")"
 
 #: ../lib/rmt/cli/systems.rb:75
 msgid "Removes old systems and their activations if they are inactive."
-msgstr ""
+msgstr "Entfernt alte Systeme und ihre Aktivierungen, wenn sie inaktiv sind."
 
 #: ../lib/rmt/cli/systems.rb:77
 msgid "By default, inactive systems are those that have not contacted in any way with RMT for the past 3 months. You can override this with the '-b / --before' flag."
@@ -972,25 +988,27 @@ msgstr ""
 
 #: ../lib/rmt/cli/systems.rb:98
 msgid "Do you want to delete these systems?"
-msgstr ""
+msgstr "Möchten Sie diese Systeme löschen?"
 
 #: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:113
 #: ../lib/rmt/cli/systems.rb:116
 msgid "y"
-msgstr ""
+msgstr "j"
 
 #: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:114
 #: ../lib/rmt/cli/systems.rb:116
 msgid "n"
-msgstr ""
+msgstr "n"
 
 #: ../lib/rmt/cli/systems.rb:116
 msgid "Please, answer"
-msgstr ""
+msgstr "Bitte antworten Sie"
 
 #: ../lib/rmt/cli/systems.rb:126
 msgid "The given date does not follow a proper format. Ensure it follows this format '<year>-<month>-<day>'."
 msgstr ""
+"Das angegebene Datum entspricht nicht dem richtigen Format. Stellen Sie "
+"sicher, dass es dem Format '<Jahr>-<Monat>-<Tag>' entspricht."
 
 #: ../lib/rmt/downloader.rb:77
 msgid "Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
@@ -1010,32 +1028,31 @@ msgstr "%{file} – Datei ist nicht vorhanden"
 
 #: ../lib/rmt/downloader/exception.rb:12
 msgid "Request error:"
-msgstr ""
+msgstr "Anforderungsfehler:"
 
 #: ../lib/rmt/downloader/exception.rb:13
-#, fuzzy
 msgid "Request URL"
-msgstr "URL"
+msgstr "Anforderungs-URL"
 
 #: ../lib/rmt/downloader/exception.rb:14
 msgid "Response HTTP status code"
-msgstr ""
+msgstr "HTTP-Statuscode der Antwort"
 
 #: ../lib/rmt/downloader/exception.rb:15
 msgid "Response body"
-msgstr ""
+msgstr "Antwort-Text"
 
 #: ../lib/rmt/downloader/exception.rb:16
 msgid "Response headers"
-msgstr ""
+msgstr "Antwort-Kopfdaten"
 
 #: ../lib/rmt/downloader/exception.rb:17
 msgid "curl return code"
-msgstr ""
+msgstr "curl-Rückgabecode"
 
 #: ../lib/rmt/downloader/exception.rb:18
 msgid "curl return message"
-msgstr ""
+msgstr "curl-Rückgabemeldung"
 
 #: ../lib/rmt/downloader/exception.rb:21
 msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
@@ -1086,18 +1103,16 @@ msgid "Error while mirroring metadata: %{error}"
 msgstr "Fehler beim Spiegeln von Metadaten: %{error}"
 
 #: ../lib/rmt/mirror.rb:146
-#, fuzzy
 msgid "Error while mirroring license files: %{error}"
-msgstr "Fehler beim Spiegeln von Lizenz: %{error}"
+msgstr "Fehler beim Spiegeln von Lizenzdateien: %{error}"
 
 #: ../lib/rmt/mirror.rb:160
 msgid "Failed to download %{failed_count} files"
 msgstr "%{failed_count} Dateien konnten nicht heruntergeladen werden"
 
 #: ../lib/rmt/mirror.rb:162
-#, fuzzy
 msgid "Error while mirroring packages: %{error}"
-msgstr "Fehler beim Spiegeln von Lizenz: %{error}"
+msgstr "Fehler beim Spiegeln von Paketen: %{error}"
 
 #: ../lib/rmt/mirror.rb:197
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
@@ -1149,16 +1164,15 @@ msgstr "Das Synchronisieren von Systemen mit SCC wird durch die Konfigurationsda
 
 #: ../lib/rmt/scc.rb:88
 msgid "Syncing %{count} updated system(s) to SCC"
-msgstr ""
+msgstr "Synchronisierung von %{count} aktualisierten System(en) mit SCC"
 
 #: ../lib/rmt/scc.rb:93
-#, fuzzy
 msgid "Failed to sync systems: %{error}"
-msgstr "System %{login} konnte nicht synchronisiert werden: %{error}"
+msgstr "Systeme konnten nicht synchronisiert werden: %{error}"
 
 #: ../lib/rmt/scc.rb:98
 msgid "Couldn't sync %{count} systems."
-msgstr ""
+msgstr "%{count} Systeme konnten nicht synchronisiert werden."
 
 #: ../lib/rmt/scc.rb:117
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
@@ -1173,6 +1187,5 @@ msgid "Updating subscriptions"
 msgstr "Subscriptions werden aktualisiert"
 
 #: ../lib/rmt/scc.rb:160
-#, fuzzy
 msgid "Adding/Updating product %{product}"
-msgstr "Produkt %{product} wird hinzugefügt"
+msgstr "Produkt %{product} wird hinzugefügt/aktualisiert"
