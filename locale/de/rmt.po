@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-28 14:15+0100\n"
-"PO-Revision-Date: 2023-02-06 13:14+0000\n"
+"PO-Revision-Date: 2023-02-06 20:14+0000\n"
 "Last-Translator: Gemineo <vistatec@gemineo.de>\n"
 "Language-Team: German <https://l10n.opensuse.org/projects/rmt/i18n/de/>\n"
 "Language: de\n"
@@ -1033,7 +1033,7 @@ msgstr ""
 #: ../lib/rmt/downloader.rb:131
 msgid "Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
 msgstr ""
-"Das Abrufen von %{file_reference} ist mit %{message} fehlgeschlagen. Vorgang "
+"Schreiben von %{file_reference} ist mit %{message} fehlgeschlagen. Vorgang "
 "wird nach %{seconds} Sekunden %{retries} Mal wiederholt"
 
 #: ../lib/rmt/downloader.rb:224
