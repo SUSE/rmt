@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-28 14:15+0100\n"
-"PO-Revision-Date: 2023-01-28 17:14+0000\n"
-"Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
+"PO-Revision-Date: 2023-02-06 13:14+0000\n"
+"Last-Translator: Gemineo <vistatec@gemineo.de>\n"
 "Language-Team: German <https://l10n.opensuse.org/projects/rmt/i18n/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -108,14 +108,19 @@ msgstr "Ungültiger Systemberechtigungsnachweis"
 #: ../app/controllers/application_controller.rb:59
 msgid "System with login \\\"%{login}\\\" authenticated without token header"
 msgstr ""
+"System mit Benutzername \\\"%{login}\\\" authentifiziert ohne Token-Header"
 
 #: ../app/controllers/application_controller.rb:68
 msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
 msgstr ""
+"System mit Benutzername \\\"%{login}\\\" authentifiziert mit Token \\\""
+"%{system_token}\\\""
 
 #: ../app/controllers/application_controller.rb:81
 msgid "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated from ID %{base_id} due to token mismatch"
 msgstr ""
+"System mit Benutzername \\\"%{login}\\\" (ID %{new_id}) authentifiziert und "
+"dupliziert von ID %{base_id} aufgrund von Token-Fehler"
 
 #: ../app/controllers/services_controller.rb:48
 msgid "Requested service not found"
@@ -201,6 +206,7 @@ msgstr ""
 "SCC-API-Anforderung fehlgeschlagen. Fehlerdetails:\n"
 "Anfrage-URL: %{url}\n"
 "Antwort-Code: %{code}\n"
+"Rückgabecode: %{return_code}\n"
 "Antwort-Text: %{return_code}\n"
 "%{body}"
 
@@ -465,6 +471,8 @@ msgstr "RMT-Version anzeigen"
 #: ../lib/rmt/cli/mirror.rb:2
 msgid "Do not fail the command if product is in alpha or beta stage"
 msgstr ""
+"Befehl schlägt nicht fehl, wenn sich das Produkt in der Alpha- oder Beta-"
+"Phase befindet"
 
 #: ../lib/rmt/cli/mirror.rb:4
 msgid "Mirror all enabled repositories"
@@ -926,7 +934,7 @@ msgstr "Alle registrierten Systeme auflisten"
 
 #: ../lib/rmt/cli/systems.rb:11
 msgid "Filter BYOS systems using RMT as a proxy"
-msgstr ""
+msgstr "BYOS-Systeme mit RMT als Proxy filtern"
 
 #: ../lib/rmt/cli/systems.rb:20
 msgid "There are no systems registered to this RMT instance."
@@ -981,10 +989,16 @@ msgstr "Entfernt alte Systeme und ihre Aktivierungen, wenn sie inaktiv sind."
 #: ../lib/rmt/cli/systems.rb:77
 msgid "By default, inactive systems are those that have not contacted in any way with RMT for the past 3 months. You can override this with the '-b / --before' flag."
 msgstr ""
+"Standardmäßig sind inaktive Systeme solche Systeme, die in den letzten 3 "
+"Monaten nicht mit RMT in Kontakt getreten sind. Sie können dies mit dem Flag "
+"'-b / --before' außer Kraft setzen."
 
 #: ../lib/rmt/cli/systems.rb:79
 msgid "The command will list you the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
 msgstr ""
+"Der Befehl führt die Kandidaten auf, die entfernt werden, und fragt nach "
+"einer Bestätigung. Mit dem Flag '--no-confirmation' können Sie diesen "
+"Unterbefehl anweisen, ohne Nachfrage fortzufahren."
 
 #: ../lib/rmt/cli/systems.rb:98
 msgid "Do you want to delete these systems?"
@@ -1013,10 +1027,14 @@ msgstr ""
 #: ../lib/rmt/downloader.rb:77
 msgid "Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
 msgstr ""
+"Das Herunterladen von %{file_reference} ist mit %{message} fehlgeschlagen. "
+"Vorgang wird nach %{seconds} Sekunden %{retries} Mal wiederholt"
 
 #: ../lib/rmt/downloader.rb:131
 msgid "Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
 msgstr ""
+"Das Abrufen von %{file_reference} ist mit %{message} fehlgeschlagen. Vorgang "
+"wird nach %{seconds} Sekunden %{retries} Mal wiederholt"
 
 #: ../lib/rmt/downloader.rb:224
 msgid "Checksum doesn't match"
@@ -1057,6 +1075,8 @@ msgstr "curl-Rückgabemeldung"
 #: ../lib/rmt/downloader/exception.rb:21
 msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
 msgstr ""
+"%{file} - Anforderung fehlgeschlagen mit HTTP-Statuscode %{code}, "
+"Rückgabecode '%{return_code}'"
 
 #: ../lib/rmt/gpg.rb:37
 msgid "GPG key import failed"
@@ -1097,6 +1117,8 @@ msgstr "Repository-Metadatensignaturen fehlen"
 #: ../lib/rmt/mirror.rb:111
 msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
 msgstr ""
+"Herunterladen der Repo-Signatur/des Schlüssels fehlgeschlagen mit folgender "
+"Meldung: %{message}, HTTP-Code %{http_code}"
 
 #: ../lib/rmt/mirror.rb:122
 msgid "Error while mirroring metadata: %{error}"
