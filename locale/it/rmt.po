@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-28 14:15+0100\n"
-"PO-Revision-Date: 2023-02-06 20:14+0000\n"
+"PO-Revision-Date: 2023-02-07 13:14+0000\n"
 "Last-Translator: Davide Aiello <davide.aiello@novilingulists.com>\n"
 "Language-Team: Italian <https://l10n.opensuse.org/projects/rmt/i18n/it/>\n"
 "Language: it\n"
@@ -571,7 +571,9 @@ msgstr "Nessun prodotto corrispondente trovato nel database."
 
 #: ../lib/rmt/cli/products.rb:36
 msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
-msgstr "Per impostazione predefinita vengono visualizzati solo i prodotti abilitati. Utilizzare l'opzione '%{command}' per visualizzare tutti i prodotti."
+msgstr ""
+"Per default vengono visualizzati solo i prodotti abilitati. Utilizzare "
+"l'opzione '%{command}' per visualizzare tutti i prodotti."
 
 #: ../lib/rmt/cli/products.rb:43 ../lib/rmt/cli/products.rb:46
 msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
@@ -1031,6 +1033,8 @@ msgstr ""
 #: ../lib/rmt/downloader.rb:131
 msgid "Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
 msgstr ""
+"Scrittura in memoria di %{file_reference} non riuscita con %{message}. Nuovi "
+"%{retries} altri tentativi dopo %{seconds} secondi"
 
 #: ../lib/rmt/downloader.rb:224
 msgid "Checksum doesn't match"
@@ -1042,36 +1046,37 @@ msgstr "%{file} - File inesistente"
 
 #: ../lib/rmt/downloader/exception.rb:12
 msgid "Request error:"
-msgstr ""
+msgstr "Errore nella richiesta:"
 
 #: ../lib/rmt/downloader/exception.rb:13
-#, fuzzy
 msgid "Request URL"
-msgstr "URL"
+msgstr "URL della richiesta"
 
 #: ../lib/rmt/downloader/exception.rb:14
 msgid "Response HTTP status code"
-msgstr ""
+msgstr "Codice stato HTTP della risposta"
 
 #: ../lib/rmt/downloader/exception.rb:15
 msgid "Response body"
-msgstr ""
+msgstr "Corpo della risposta"
 
 #: ../lib/rmt/downloader/exception.rb:16
 msgid "Response headers"
-msgstr ""
+msgstr "Intestazioni della risposta"
 
 #: ../lib/rmt/downloader/exception.rb:17
 msgid "curl return code"
-msgstr ""
+msgstr "codice restituito curl"
 
 #: ../lib/rmt/downloader/exception.rb:18
 msgid "curl return message"
-msgstr ""
+msgstr "messaggio restituito curl"
 
 #: ../lib/rmt/downloader/exception.rb:21
 msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
 msgstr ""
+"%{file} - richiesta non riuscita con codice stato HTTP %{code}, codice "
+"restituito '%{return_code}'"
 
 #: ../lib/rmt/gpg.rb:37
 msgid "GPG key import failed"
@@ -1112,24 +1117,24 @@ msgstr "Firme metadati del repository mancanti"
 #: ../lib/rmt/mirror.rb:111
 msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
 msgstr ""
+"Download della firma/chiave del repository non riuscito con: %{message}, "
+"codice HTTP %{http_code}"
 
 #: ../lib/rmt/mirror.rb:122
 msgid "Error while mirroring metadata: %{error}"
 msgstr "Errore durante il mirroring dei metadati: %{error}"
 
 #: ../lib/rmt/mirror.rb:146
-#, fuzzy
 msgid "Error while mirroring license files: %{error}"
-msgstr "Errore durante il mirroring della licenza: %{error}"
+msgstr "Errore durante la copia speculare dei file di licenza: %{error}"
 
 #: ../lib/rmt/mirror.rb:160
 msgid "Failed to download %{failed_count} files"
 msgstr "Download di %{failed_count} file non riuscito"
 
 #: ../lib/rmt/mirror.rb:162
-#, fuzzy
 msgid "Error while mirroring packages: %{error}"
-msgstr "Errore durante il mirroring della licenza: %{error}"
+msgstr "Errore durante la copia speculare dei pacchetti: %{error}"
 
 #: ../lib/rmt/mirror.rb:197
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
@@ -1181,16 +1186,15 @@ msgstr "La sincronizzazione dei sistemi su SCC è disabilitata nel file di confi
 
 #: ../lib/rmt/scc.rb:88
 msgid "Syncing %{count} updated system(s) to SCC"
-msgstr ""
+msgstr "Sincronizzazione di %{count} sistemi aggiornati con SCC"
 
 #: ../lib/rmt/scc.rb:93
-#, fuzzy
 msgid "Failed to sync systems: %{error}"
-msgstr "Sincronizzazione del sistema %{login} non riuscita: %{error}"
+msgstr "Sincronizzazione dei sistemi non riuscita: %{error}"
 
 #: ../lib/rmt/scc.rb:98
 msgid "Couldn't sync %{count} systems."
-msgstr ""
+msgstr "Impossibile sincronizzare %{count} sistemi."
 
 #: ../lib/rmt/scc.rb:117
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
@@ -1205,6 +1209,5 @@ msgid "Updating subscriptions"
 msgstr "Aggiornamento delle sottoscrizioni"
 
 #: ../lib/rmt/scc.rb:160
-#, fuzzy
 msgid "Adding/Updating product %{product}"
-msgstr "Aggiunta del prodotto %{product}"
+msgstr "Aggiunta/aggiornamento del prodotto %{product}"
