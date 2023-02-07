@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-28 14:15+0100\n"
-"PO-Revision-Date: 2021-05-21 13:00+0000\n"
+"PO-Revision-Date: 2023-02-07 19:14+0000\n"
 "Last-Translator: Sophie Leroy <sophie@stoquart.com>\n"
 "Language-Team: French <https://l10n.opensuse.org/projects/rmt/i18n/fr/>\n"
 "Language: fr\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.6.2\n"
+"X-Generator: Weblate 4.9.1\n"
 
 #: ../app/controllers/api/connect/base_controller.rb:20
 msgid "Required parameters are missing or empty: %s"
@@ -48,23 +48,30 @@ msgstr "Tous les dépôts obligatoires ne sont pas mis en miroir pour les produi
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:112
 msgid "No subscription with this Registration Code found"
-msgstr ""
+msgstr "Aucun abonnement trouvé avec ce code d'enregistrement"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:116
 msgid "The subscription with the provided Registration Code is expired"
-msgstr ""
+msgstr "L'abonnement portant le code d'enregistrement fourni a expiré"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:122
 msgid "The subscription with the provided Registration Code does not include the requested product '%s'"
 msgstr ""
+"L'abonnement portant le code d'enregistrement fourni n'est pas inclus dans "
+"le produit demandé '%s'"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:148
 msgid "The product you are attempting to activate (%{product}) requires one of these products to be activated first: %{required_bases}"
 msgstr ""
+"Le produit que vous essayez d'activer (%{product}) implique d'activer au "
+"préalable l'un des produits suivants : %{required_bases}"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:154
 msgid "The product you are attempting to activate (%{product}) is not available on your system's base product (%{system_base}). %{product} is available on %{required_bases}."
 msgstr ""
+"Le produit que vous essayez d'activer (%{product}) n'est pas disponible sur "
+"le produit de base de votre système (%{system_base}). %{product} est "
+"disponible sur %{required_bases}."
 
 #: ../app/controllers/api/connect/v3/systems/systems_controller.rb:6
 msgid "Not provided"
@@ -101,15 +108,19 @@ msgstr "Références système non valides"
 #: ../app/controllers/application_controller.rb:59
 msgid "System with login \\\"%{login}\\\" authenticated without token header"
 msgstr ""
+"Système avec l'identifiant \\\"%{login}\\\" authentifié sans en-tête de jeton"
 
 #: ../app/controllers/application_controller.rb:68
 msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
 msgstr ""
+"Système avec l'identifiant \\\"%{login}\\\" authentifié avec le jeton \\\""
+"%{system_token}\\\""
 
 #: ../app/controllers/application_controller.rb:81
-#, fuzzy
 msgid "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated from ID %{base_id} due to token mismatch"
-msgstr "ID"
+msgstr ""
+"Système avec l'identifiant \\\"%{login}\\\" (ID %{new_id}) authentifié et "
+"dupliqué à partir de l'ID %{base_id} en raison d'une discordance de jeton"
 
 #: ../app/controllers/services_controller.rb:48
 msgid "Requested service not found"
@@ -135,6 +146,12 @@ msgid ""
 "You can deactivate them with \n"
 "%s"
 msgstr ""
+"Ce système comporte des extensions/modules activé(e)s qui ne peuvent pas "
+"être migré(e)s. \n"
+"Désactivez-les avant de retenter la migration. \n"
+"Il s'agit du ou des produits suivants : '%s'. \n"
+"Vous pouvez les désactiver avec \n"
+"%s"
 
 #: ../lib/rmt/checksum_verifier.rb:13
 msgid "Unknown hash function %{checksum_type}"
@@ -177,7 +194,6 @@ msgid "The SCC credentials are not configured correctly in '%{path}'. You can ob
 msgstr "Les références de SCC ne sont pas configurées correctement dans '%{path}'. Vous pouvez vous les procurer à l'adresse %{url}"
 
 #: ../lib/rmt/cli/base.rb:83
-#, fuzzy
 msgid ""
 "SCC API request failed. Error details:\n"
 "Request URL: %{url}\n"
@@ -189,6 +205,7 @@ msgstr ""
 "Échec de la requête SCC API. Détails de l'erreur :\n"
 "URL de la requête : %{url}\n"
 "Code de réponse : %{code}\n"
+"Code de retour : %{return_code}\n"
 "Corps de la réponse :\n"
 "%{body}"
 
@@ -453,6 +470,7 @@ msgstr "Afficher la version de RMT"
 #: ../lib/rmt/cli/mirror.rb:2
 msgid "Do not fail the command if product is in alpha or beta stage"
 msgstr ""
+"Ne pas faire échouer la commande si le produit est à un stade alpha ou bêta"
 
 #: ../lib/rmt/cli/mirror.rb:4
 msgid "Mirror all enabled repositories"
@@ -667,6 +685,8 @@ msgstr "Supprime les fichiers de dépôts mis en miroir localement qui ne sont p
 #: ../lib/rmt/cli/repos.rb:17 ../lib/rmt/cli/systems.rb:73
 msgid "Ask for confirmation or do not ask for confirmation and require no user interaction"
 msgstr ""
+"Demander confirmation ou ne pas demander confirmation et ne nécessiter "
+"aucune interaction de l'utilisateur"
 
 #: ../lib/rmt/cli/repos.rb:28
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
@@ -912,7 +932,7 @@ msgstr "Lister tous les systèmes enregistrés"
 
 #: ../lib/rmt/cli/systems.rb:11
 msgid "Filter BYOS systems using RMT as a proxy"
-msgstr ""
+msgstr "Filtrer les systèmes BYOS en utilisant RMT comme proxy"
 
 #: ../lib/rmt/cli/systems.rb:20
 msgid "There are no systems registered to this RMT instance."
@@ -952,19 +972,24 @@ msgstr "Le système avec la connexion %{login} est introuvable."
 
 #: ../lib/rmt/cli/systems.rb:71
 msgid "Removes inactive systems"
-msgstr ""
+msgstr "Supprime les systèmes inactifs"
 
 #: ../lib/rmt/cli/systems.rb:72
 msgid "Remove systems before the given date (format: \"<year>-<month>-<day>\")"
 msgstr ""
+"Supprimer les systèmes avant la date mentionnée (format : \""
+"<année>-<mois>-<jour>\")"
 
 #: ../lib/rmt/cli/systems.rb:75
 msgid "Removes old systems and their activations if they are inactive."
-msgstr ""
+msgstr "Supprime les anciens systèmes et leur activation s'ils sont inactifs."
 
 #: ../lib/rmt/cli/systems.rb:77
 msgid "By default, inactive systems are those that have not contacted in any way with RMT for the past 3 months. You can override this with the '-b / --before' flag."
 msgstr ""
+"Par défaut, les systèmes inactifs sont ceux qui n'ont plus contacté RMT de "
+"quelque manière que ce soit au cours des 3 derniers mois. Vous pouvez "
+"ignorer ce comportement par défaut avec l'indicateur '-b / --before'."
 
 #: ../lib/rmt/cli/systems.rb:79
 msgid "The command will list you the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
