@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-28 14:15+0100\n"
-"PO-Revision-Date: 2021-05-21 04:59+0000\n"
+"PO-Revision-Date: 2023-02-07 13:14+0000\n"
 "Last-Translator: Grace Yu <grace.yu@excel-gits.com>\n"
-"Language-Team: Chinese (China) <https://l10n.opensuse.org/projects/rmt/i18n/zh_CN/>\n"
+"Language-Team: Chinese (China) <https://l10n.opensuse.org/projects/rmt/i18n/"
+"zh_CN/>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.6.2\n"
+"X-Generator: Weblate 4.9.1\n"
 
 #: ../app/controllers/api/connect/base_controller.rb:20
 msgid "Required parameters are missing or empty: %s"
@@ -48,23 +49,25 @@ msgstr "未为产品 %s 镜像所有强制储存库"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:112
 msgid "No subscription with this Registration Code found"
-msgstr ""
+msgstr "找不到使用此注册码的订阅"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:116
 msgid "The subscription with the provided Registration Code is expired"
-msgstr ""
+msgstr "使用所提供注册码的订阅已失效"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:122
 msgid "The subscription with the provided Registration Code does not include the requested product '%s'"
-msgstr ""
+msgstr "使用所提供注册码的订阅不包含请求的产品 \"%s\""
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:148
 msgid "The product you are attempting to activate (%{product}) requires one of these products to be activated first: %{required_bases}"
-msgstr ""
+msgstr "需要先激活以下产品之一，才能激活您尝试激活的产品 (%{product})：%{required_bases}"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:154
 msgid "The product you are attempting to activate (%{product}) is not available on your system's base product (%{system_base}). %{product} is available on %{required_bases}."
 msgstr ""
+"无法在您的系统的基础产品 (%{system_base}) 上使用您尝试激活的产品 %{product}。可以在 %{required_bases} "
+"上使用 %{product}。"
 
 #: ../app/controllers/api/connect/v3/systems/systems_controller.rb:6
 msgid "Not provided"
@@ -100,16 +103,16 @@ msgstr "系统身份凭证无效"
 
 #: ../app/controllers/application_controller.rb:59
 msgid "System with login \\\"%{login}\\\" authenticated without token header"
-msgstr ""
+msgstr "登录名为 \\\"%{login}\\\" 的系统进行身份验证时未提供令牌标头"
 
 #: ../app/controllers/application_controller.rb:68
 msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
-msgstr ""
+msgstr "登录名为 \\\"%{login}\\\" 的系统使用了令牌 \\\"%{system_token}\\\" 进行身份验证"
 
 #: ../app/controllers/application_controller.rb:81
-#, fuzzy
 msgid "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated from ID %{base_id} due to token mismatch"
-msgstr "ID"
+msgstr ""
+"登录名为 \\\"%{login}\\\" (ID %{new_id}) 的系统已进行身份验证并因令牌不匹配已从 ID %{base_id} 复制"
 
 #: ../app/controllers/services_controller.rb:48
 msgid "Requested service not found"
@@ -135,6 +138,11 @@ msgid ""
 "You can deactivate them with \n"
 "%s"
 msgstr ""
+"此系统上存在已激活因而无法迁移的扩展/模块。\n"
+"请先将其停用，然后再次尝试迁移。\n"
+"这些产品是 \"%s\"。\n"
+"您可以使用以下命令将其停用\n"
+"%s"
 
 #: ../lib/rmt/checksum_verifier.rb:13
 msgid "Unknown hash function %{checksum_type}"
@@ -177,7 +185,6 @@ msgid "The SCC credentials are not configured correctly in '%{path}'. You can ob
 msgstr "未在“%{path}”中正确配置 SCC 身份凭证。您可以从 %{url} 获取相应身份凭证"
 
 #: ../lib/rmt/cli/base.rb:83
-#, fuzzy
 msgid ""
 "SCC API request failed. Error details:\n"
 "Request URL: %{url}\n"
@@ -189,6 +196,7 @@ msgstr ""
 "SCC API 请求失败。错误细节：\n"
 "请求 URL：%{url}\n"
 "响应代码：%{code}\n"
+"返回代码：%{return_code}\n"
 "响应正文：\n"
 "%{body}"
 
@@ -452,7 +460,7 @@ msgstr "显示 RMT 版本"
 
 #: ../lib/rmt/cli/mirror.rb:2
 msgid "Do not fail the command if product is in alpha or beta stage"
-msgstr ""
+msgstr "如果产品处于 alpha 或 beta 阶段，请勿使命令失败"
 
 #: ../lib/rmt/cli/mirror.rb:4
 msgid "Mirror all enabled repositories"
@@ -663,7 +671,7 @@ msgstr "移除未标记为有待镜像的储存库的本地镜像文件"
 
 #: ../lib/rmt/cli/repos.rb:17 ../lib/rmt/cli/systems.rb:73
 msgid "Ask for confirmation or do not ask for confirmation and require no user interaction"
-msgstr ""
+msgstr "要求确认或不要求确认以及无需用户交互"
 
 #: ../lib/rmt/cli/repos.rb:28
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
@@ -907,7 +915,7 @@ msgstr "列出所有已注册的系统"
 
 #: ../lib/rmt/cli/systems.rb:11
 msgid "Filter BYOS systems using RMT as a proxy"
-msgstr ""
+msgstr "使用 RMT 作为代理来过滤 BYOS 系统"
 
 #: ../lib/rmt/cli/systems.rb:20
 msgid "There are no systems registered to this RMT instance."
@@ -947,53 +955,54 @@ msgstr "未找到登录名为 %{login} 的系统。"
 
 #: ../lib/rmt/cli/systems.rb:71
 msgid "Removes inactive systems"
-msgstr ""
+msgstr "移除非活动系统"
 
 #: ../lib/rmt/cli/systems.rb:72
 msgid "Remove systems before the given date (format: \"<year>-<month>-<day>\")"
-msgstr ""
+msgstr "移除早于给定日期（格式：\"<年>-<月>-<日>\"）的系统"
 
 #: ../lib/rmt/cli/systems.rb:75
 msgid "Removes old systems and their activations if they are inactive."
-msgstr ""
+msgstr "移除旧系统以及相应的激活产品（如果处于非活动状态）。"
 
 #: ../lib/rmt/cli/systems.rb:77
 msgid "By default, inactive systems are those that have not contacted in any way with RMT for the past 3 months. You can override this with the '-b / --before' flag."
 msgstr ""
+"默认情况下，非活动系统是指过去 3 个月内未以任何方式与 RMT 进行联系的系统。您可以使用 \"-b / --before\" 标志覆盖此默认值。"
 
 #: ../lib/rmt/cli/systems.rb:79
 msgid "The command will list you the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
-msgstr ""
+msgstr "该命令会列出待移除的候选系统并要求您确认。您可以使用 \"--no-confirmation\" 标志指示此子命令直接执行而不要求确认。"
 
 #: ../lib/rmt/cli/systems.rb:98
 msgid "Do you want to delete these systems?"
-msgstr ""
+msgstr "确实要删除这些系统吗？"
 
 #: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:113
 #: ../lib/rmt/cli/systems.rb:116
 msgid "y"
-msgstr ""
+msgstr "y"
 
 #: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:114
 #: ../lib/rmt/cli/systems.rb:116
 msgid "n"
-msgstr ""
+msgstr "n"
 
 #: ../lib/rmt/cli/systems.rb:116
 msgid "Please, answer"
-msgstr ""
+msgstr "请回复"
 
 #: ../lib/rmt/cli/systems.rb:126
 msgid "The given date does not follow a proper format. Ensure it follows this format '<year>-<month>-<day>'."
-msgstr ""
+msgstr "给定日期的格式不正确。请确保其采用以下格式：\"<年>-<月>-<日>\"。"
 
 #: ../lib/rmt/downloader.rb:77
 msgid "Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
-msgstr ""
+msgstr "下载 %{file_reference} 失败，消息：%{message}。%{seconds} 秒后会再尝试 %{retries} 次"
 
 #: ../lib/rmt/downloader.rb:131
 msgid "Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
-msgstr ""
+msgstr "查询 %{file_reference} 失败，消息：%{message}。%{seconds} 秒后会再尝试 %{retries} 次"
 
 #: ../lib/rmt/downloader.rb:224
 msgid "Checksum doesn't match"
@@ -1005,36 +1014,35 @@ msgstr "%{file} - 文件不存在"
 
 #: ../lib/rmt/downloader/exception.rb:12
 msgid "Request error:"
-msgstr ""
+msgstr "请求出错："
 
 #: ../lib/rmt/downloader/exception.rb:13
-#, fuzzy
 msgid "Request URL"
-msgstr "URL"
+msgstr "请求 URL"
 
 #: ../lib/rmt/downloader/exception.rb:14
 msgid "Response HTTP status code"
-msgstr ""
+msgstr "响应 HTTP 状态代码"
 
 #: ../lib/rmt/downloader/exception.rb:15
 msgid "Response body"
-msgstr ""
+msgstr "响应正文"
 
 #: ../lib/rmt/downloader/exception.rb:16
 msgid "Response headers"
-msgstr ""
+msgstr "响应标头"
 
 #: ../lib/rmt/downloader/exception.rb:17
 msgid "curl return code"
-msgstr ""
+msgstr "curl 返回代码"
 
 #: ../lib/rmt/downloader/exception.rb:18
 msgid "curl return message"
-msgstr ""
+msgstr "curl 返回消息"
 
 #: ../lib/rmt/downloader/exception.rb:21
 msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
-msgstr ""
+msgstr "%{file} - 请求失败，HTTP 状态代码：%{code}，返回代码：%{return_code}"
 
 #: ../lib/rmt/gpg.rb:37
 msgid "GPG key import failed"
@@ -1074,25 +1082,23 @@ msgstr "缺少储存库元数据签名"
 
 #: ../lib/rmt/mirror.rb:111
 msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
-msgstr ""
+msgstr "下载软件源签名/密钥失败，消息：%{message}，HTTP 代码：%{http_code}"
 
 #: ../lib/rmt/mirror.rb:122
 msgid "Error while mirroring metadata: %{error}"
 msgstr "镜像元数据时发生错误：%{error}"
 
 #: ../lib/rmt/mirror.rb:146
-#, fuzzy
 msgid "Error while mirroring license files: %{error}"
-msgstr "镜像许可证时发生错误：%{error}"
+msgstr "镜像许可证文件时发生错误：%{error}"
 
 #: ../lib/rmt/mirror.rb:160
 msgid "Failed to download %{failed_count} files"
 msgstr "无法下载 %{failed_count} 个文件"
 
 #: ../lib/rmt/mirror.rb:162
-#, fuzzy
 msgid "Error while mirroring packages: %{error}"
-msgstr "镜像许可证时发生错误：%{error}"
+msgstr "镜像软件包时发生错误：%{error}"
 
 #: ../lib/rmt/mirror.rb:197
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
@@ -1144,16 +1150,15 @@ msgstr "配置文件已禁用将系统同步到 SCC，正在退出。"
 
 #: ../lib/rmt/scc.rb:88
 msgid "Syncing %{count} updated system(s) to SCC"
-msgstr ""
+msgstr "正在将 %{count} 个已更新系统同步到 SCC"
 
 #: ../lib/rmt/scc.rb:93
-#, fuzzy
 msgid "Failed to sync systems: %{error}"
-msgstr "无法同步系统 %{login}：%{error}"
+msgstr "无法同步系统：%{error}"
 
 #: ../lib/rmt/scc.rb:98
 msgid "Couldn't sync %{count} systems."
-msgstr ""
+msgstr "无法同步 %{count} 个系统。"
 
 #: ../lib/rmt/scc.rb:117
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
@@ -1168,6 +1173,5 @@ msgid "Updating subscriptions"
 msgstr "正在更新订阅"
 
 #: ../lib/rmt/scc.rb:160
-#, fuzzy
 msgid "Adding/Updating product %{product}"
-msgstr "正在添加产品 %{product}"
+msgstr "正在添加/更新产品 %{/product}"
