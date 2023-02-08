@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-28 14:15+0100\n"
-"PO-Revision-Date: 2021-05-21 20:59+0000\n"
+"PO-Revision-Date: 2023-02-08 17:14+0000\n"
 "Last-Translator: Samanta Magalhaes <samanta_texttrans@outlook.com>\n"
-"Language-Team: Portuguese (Brazil) <https://l10n.opensuse.org/projects/rmt/i18n/pt_BR/>\n"
+"Language-Team: Portuguese (Brazil) <https://l10n.opensuse.org/projects/rmt/"
+"i18n/pt_BR/>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.6.2\n"
+"X-Generator: Weblate 4.9.1\n"
 
 #: ../app/controllers/api/connect/base_controller.rb:20
 msgid "Required parameters are missing or empty: %s"
@@ -48,23 +49,30 @@ msgstr "Nem todos os repositórios obrigatórios são espelhados para o produto 
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:112
 msgid "No subscription with this Registration Code found"
-msgstr ""
+msgstr "Nenhuma assinatura encontrada com este Código de Registro"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:116
 msgid "The subscription with the provided Registration Code is expired"
-msgstr ""
+msgstr "A assinatura com o Código de Registro informado está vencida"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:122
 msgid "The subscription with the provided Registration Code does not include the requested product '%s'"
 msgstr ""
+"A assinatura com o Código de Registro informado não inclui o produto "
+"solicitado '%s'"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:148
 msgid "The product you are attempting to activate (%{product}) requires one of these products to be activated first: %{required_bases}"
 msgstr ""
+"O produto que você está tentando ativar (%{product}) requer primeiro um "
+"destes produtos para ser ativado: %{required_bases}"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:154
 msgid "The product you are attempting to activate (%{product}) is not available on your system's base product (%{system_base}). %{product} is available on %{required_bases}."
 msgstr ""
+"O produto que você está tentando ativar (%{product}) não está disponível no "
+"produto base do seu sistema (%{system_base}). %{product} está disponível em "
+"%{required_bases}."
 
 #: ../app/controllers/api/connect/v3/systems/systems_controller.rb:6
 msgid "Not provided"
@@ -100,16 +108,19 @@ msgstr "Credenciais do sistema inválidas"
 
 #: ../app/controllers/application_controller.rb:59
 msgid "System with login \\\"%{login}\\\" authenticated without token header"
-msgstr ""
+msgstr "Sistema com login \\\"%{login}\\\" autenticado sem cabeçalho de token"
 
 #: ../app/controllers/application_controller.rb:68
 msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
 msgstr ""
+"Sistema com login \\\"%{login}\\\" autenticado com token \\\"%{system_token}"
+"\\\""
 
 #: ../app/controllers/application_controller.rb:81
-#, fuzzy
 msgid "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated from ID %{base_id} due to token mismatch"
-msgstr "ID"
+msgstr ""
+"Sistema com login \\\"%{login}\\\" (ID %{new_id}) autenticado e duplicado do "
+"ID %{base_id} devido à incompatibilidade de token"
 
 #: ../app/controllers/services_controller.rb:48
 msgid "Requested service not found"
@@ -135,6 +146,11 @@ msgid ""
 "You can deactivate them with \n"
 "%s"
 msgstr ""
+"Há extensões/módulos ativados neste sistema que não podem ser migrados. \n"
+"Desative-os primeiro e depois repita a migração. \n"
+"O(s) produto(s) é(são) '%s'. \n"
+"Você pode desativá-los com \n"
+"%s"
 
 #: ../lib/rmt/checksum_verifier.rb:13
 msgid "Unknown hash function %{checksum_type}"
@@ -177,7 +193,6 @@ msgid "The SCC credentials are not configured correctly in '%{path}'. You can ob
 msgstr "As credenciais do SCC não estão configuradas corretamente em '%{path}'. Você pode obtê-las em %{url}"
 
 #: ../lib/rmt/cli/base.rb:83
-#, fuzzy
 msgid ""
 "SCC API request failed. Error details:\n"
 "Request URL: %{url}\n"
@@ -186,10 +201,11 @@ msgid ""
 "Response body:\n"
 "%{body}"
 msgstr ""
-"Erro de solicitação da API SCC. Detalhes do erro:\n"
-"URL do pedido: %{url}\n"
+"Falha na solicitação de API SCC. Detalhes do erro:\n"
+"URL da solicitação: %{url}\n"
 "Código de resposta: %{code}\n"
-"Corpo de resposta:\n"
+"Código de retorno: %{return_code}\n"
+"Corpo da resposta:\n"
 "%{body}"
 
 #: ../lib/rmt/cli/base.rb:125
@@ -452,7 +468,7 @@ msgstr "Mostrar versão do RMT"
 
 #: ../lib/rmt/cli/mirror.rb:2
 msgid "Do not fail the command if product is in alpha or beta stage"
-msgstr ""
+msgstr "Não gerar falha do comando se a fase do produto for Alfa ou Beta"
 
 #: ../lib/rmt/cli/mirror.rb:4
 msgid "Mirror all enabled repositories"
@@ -667,6 +683,7 @@ msgstr "Remove arquivos duplicados localmente de repositórios que não estão m
 #: ../lib/rmt/cli/repos.rb:17 ../lib/rmt/cli/systems.rb:73
 msgid "Ask for confirmation or do not ask for confirmation and require no user interaction"
 msgstr ""
+"Pedir confirmação ou não pedir confirmação nem exigir interação do usuário"
 
 #: ../lib/rmt/cli/repos.rb:28
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
@@ -912,7 +929,7 @@ msgstr "Liste todos os sistemas registrados"
 
 #: ../lib/rmt/cli/systems.rb:11
 msgid "Filter BYOS systems using RMT as a proxy"
-msgstr ""
+msgstr "Filtrar sistemas BYOS usando RMT como proxy"
 
 #: ../lib/rmt/cli/systems.rb:20
 msgid "There are no systems registered to this RMT instance."
@@ -952,53 +969,67 @@ msgstr "O sistema não pode ser encontrado com o login %{login}."
 
 #: ../lib/rmt/cli/systems.rb:71
 msgid "Removes inactive systems"
-msgstr ""
+msgstr "Remove sistemas inativos"
 
 #: ../lib/rmt/cli/systems.rb:72
 msgid "Remove systems before the given date (format: \"<year>-<month>-<day>\")"
 msgstr ""
+"Remover sistemas antes da data especificada (formato: \"<ano>-<mês>-<dia>\")"
 
 #: ../lib/rmt/cli/systems.rb:75
 msgid "Removes old systems and their activations if they are inactive."
 msgstr ""
+"Removes sistemas antigos e as respectivas ativações se estiverem inativos."
 
 #: ../lib/rmt/cli/systems.rb:77
 msgid "By default, inactive systems are those that have not contacted in any way with RMT for the past 3 months. You can override this with the '-b / --before' flag."
 msgstr ""
+"Por padrão, sistemas inativos são aqueles que não estabeleceram nenhum tipo "
+"de contato com o RMT nos últimos 3 meses. Você pode anular esse "
+"comportamento com o flag \"-b / --before\"."
 
 #: ../lib/rmt/cli/systems.rb:79
 msgid "The command will list you the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
 msgstr ""
+"O comando listará os candidatos para remoção e pedirá confirmação. Você pode "
+"especificar para que este subcomando prossiga sem confirmar com o flag \""
+"--no-confirmation\"."
 
 #: ../lib/rmt/cli/systems.rb:98
 msgid "Do you want to delete these systems?"
-msgstr ""
+msgstr "Deseja apagar estes sistemas?"
 
 #: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:113
 #: ../lib/rmt/cli/systems.rb:116
 msgid "y"
-msgstr ""
+msgstr "s"
 
 #: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:114
 #: ../lib/rmt/cli/systems.rb:116
 msgid "n"
-msgstr ""
+msgstr "n"
 
 #: ../lib/rmt/cli/systems.rb:116
 msgid "Please, answer"
-msgstr ""
+msgstr "Responda"
 
 #: ../lib/rmt/cli/systems.rb:126
 msgid "The given date does not follow a proper format. Ensure it follows this format '<year>-<month>-<day>'."
 msgstr ""
+"A data especificada não segue o formato apropriado. Verifique se ela segue "
+"este formato \"<ano>-<mês>-<dia>\"."
 
 #: ../lib/rmt/downloader.rb:77
 msgid "Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
 msgstr ""
+"Falha no download de %{file_reference} com %{message}. Será repetido mais "
+"%{retries} vezes após %{seconds} segundos"
 
 #: ../lib/rmt/downloader.rb:131
 msgid "Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
 msgstr ""
+"Falha de armazenamento de %{file_reference} em endereço na memória com "
+"%{message}. Será repetido mais %{retries} vezes após %{seconds} segundos"
 
 #: ../lib/rmt/downloader.rb:224
 msgid "Checksum doesn't match"
@@ -1010,36 +1041,37 @@ msgstr "%{file} - Arquivo não existe"
 
 #: ../lib/rmt/downloader/exception.rb:12
 msgid "Request error:"
-msgstr ""
+msgstr "Erro de solicitação:"
 
 #: ../lib/rmt/downloader/exception.rb:13
-#, fuzzy
 msgid "Request URL"
-msgstr "URL"
+msgstr "URL da solicitação"
 
 #: ../lib/rmt/downloader/exception.rb:14
 msgid "Response HTTP status code"
-msgstr ""
+msgstr "Código de status HTTP da resposta"
 
 #: ../lib/rmt/downloader/exception.rb:15
 msgid "Response body"
-msgstr ""
+msgstr "Corpo da resposta"
 
 #: ../lib/rmt/downloader/exception.rb:16
 msgid "Response headers"
-msgstr ""
+msgstr "Cabeçalhos de resposta"
 
 #: ../lib/rmt/downloader/exception.rb:17
 msgid "curl return code"
-msgstr ""
+msgstr "código de retorno curl"
 
 #: ../lib/rmt/downloader/exception.rb:18
 msgid "curl return message"
-msgstr ""
+msgstr "mensagem de retorno curl"
 
 #: ../lib/rmt/downloader/exception.rb:21
 msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
 msgstr ""
+"%{file} - falha na solicitação com código de status HTTP %{code}, código de "
+"retorno '%{return_code}'"
 
 #: ../lib/rmt/gpg.rb:37
 msgid "GPG key import failed"
@@ -1080,24 +1112,24 @@ msgstr "Assinaturas de metadados do repositório estão faltando"
 #: ../lib/rmt/mirror.rb:111
 msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
 msgstr ""
+"Falha no download da assinatura/chave de repositório com: %{message}, código "
+"HTTP %{http_code}"
 
 #: ../lib/rmt/mirror.rb:122
 msgid "Error while mirroring metadata: %{error}"
 msgstr "Erro ao espelhar metadados: %{error}"
 
 #: ../lib/rmt/mirror.rb:146
-#, fuzzy
 msgid "Error while mirroring license files: %{error}"
-msgstr "Erro ao espelhar a licença: %{error}"
+msgstr "Erro ao espelhar arquivos de licença: %{error}"
 
 #: ../lib/rmt/mirror.rb:160
 msgid "Failed to download %{failed_count} files"
 msgstr "Falha ao baixar %{failed_count} arquivos"
 
 #: ../lib/rmt/mirror.rb:162
-#, fuzzy
 msgid "Error while mirroring packages: %{error}"
-msgstr "Erro ao espelhar a licença: %{error}"
+msgstr "Erro ao espelhar pacotes: %{error}"
 
 #: ../lib/rmt/mirror.rb:197
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
@@ -1149,16 +1181,15 @@ msgstr "A sincronização do sistema com o SCC está desabilitada no arquivo de 
 
 #: ../lib/rmt/scc.rb:88
 msgid "Syncing %{count} updated system(s) to SCC"
-msgstr ""
+msgstr "Sincronização de %{count} sistema(s) atualizado(s) com SCC"
 
 #: ../lib/rmt/scc.rb:93
-#, fuzzy
 msgid "Failed to sync systems: %{error}"
-msgstr "Falha ao sincronizar o sistema %{login}: %{error}"
+msgstr "Falha ao sincronizar sistemas: %{error}"
 
 #: ../lib/rmt/scc.rb:98
 msgid "Couldn't sync %{count} systems."
-msgstr ""
+msgstr "Não foi possível sincronizar %{count} sistemas."
 
 #: ../lib/rmt/scc.rb:117
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
@@ -1173,6 +1204,5 @@ msgid "Updating subscriptions"
 msgstr "Atualizando assinaturas"
 
 #: ../lib/rmt/scc.rb:160
-#, fuzzy
 msgid "Adding/Updating product %{product}"
-msgstr "Adicionando produto %{product}"
+msgstr "Adicionando/Atualizando o produto %{product}"
