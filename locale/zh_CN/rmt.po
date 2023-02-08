@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-28 14:15+0100\n"
-"PO-Revision-Date: 2023-02-07 13:14+0000\n"
+"PO-Revision-Date: 2023-02-08 06:14+0000\n"
 "Last-Translator: Grace Yu <grace.yu@excel-gits.com>\n"
 "Language-Team: Chinese (China) <https://l10n.opensuse.org/projects/rmt/i18n/"
 "zh_CN/>\n"
@@ -963,7 +963,7 @@ msgstr "移除早于给定日期（格式：\"<年>-<月>-<日>\"）的系统"
 
 #: ../lib/rmt/cli/systems.rb:75
 msgid "Removes old systems and their activations if they are inactive."
-msgstr "移除旧系统以及相应的激活产品（如果处于非活动状态）。"
+msgstr "移除处于非活动状态的旧系统以及系统上激活的产品。"
 
 #: ../lib/rmt/cli/systems.rb:77
 msgid "By default, inactive systems are those that have not contacted in any way with RMT for the past 3 months. You can override this with the '-b / --before' flag."
