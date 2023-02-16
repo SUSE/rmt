@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-28 14:15+0100\n"
-"PO-Revision-Date: 2023-02-08 06:14+0000\n"
+"PO-Revision-Date: 2023-02-16 05:14+0000\n"
 "Last-Translator: Grace Yu <grace.yu@excel-gits.com>\n"
 "Language-Team: Chinese (China) <https://l10n.opensuse.org/projects/rmt/i18n/"
 "zh_CN/>\n"
@@ -25,7 +25,7 @@ msgstr "所需参数缺失或为空：%s"
 
 #: ../app/controllers/api/connect/base_controller.rb:31
 msgid "Unknown Registration Code."
-msgstr "未知的储存库代码。"
+msgstr "未知的软件源代码。"
 
 #: ../app/controllers/api/connect/base_controller.rb:34
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
@@ -41,11 +41,11 @@ msgstr "找不到产品"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:90
 msgid "No repositories found for product: %s"
-msgstr "找不到产品 %s 的储存库"
+msgstr "找不到产品 %s 的软件源"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:97
 msgid "Not all mandatory repositories are mirrored for product %s"
-msgstr "未为产品 %s 镜像所有强制储存库"
+msgstr "未为产品 %s 镜像所有强制软件源"
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:112
 msgid "No subscription with this Registration Code found"
@@ -384,7 +384,7 @@ msgstr "将 SCC 数据储存在给定路径下的文件中"
 
 #: ../lib/rmt/cli/export.rb:9
 msgid "Store repository settings at given path"
-msgstr "将储存库设置储存在给定路径"
+msgstr "将软件源设置储存在给定路径"
 
 #: ../lib/rmt/cli/export.rb:16
 msgid "Settings saved at %{file}."
@@ -392,7 +392,7 @@ msgstr "设置已保存在 %{file} 中。"
 
 #: ../lib/rmt/cli/export.rb:19
 msgid "Mirror repos at given path"
-msgstr "将储存库镜像到给定路径"
+msgstr "将软件源镜像到给定路径"
 
 #: ../lib/rmt/cli/export.rb:21
 msgid "Run this command on an online RMT."
@@ -404,7 +404,7 @@ msgstr "指定的 PATH 必须包含 %{file} 文件。脱机 RMT 可以使用命�
 
 #: ../lib/rmt/cli/export.rb:28
 msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
-msgstr "RMT 会将 %{file} 中指定的储存库镜像到 PATH（通常是一个便携式储存设备）。"
+msgstr "RMT 会将 %{file} 中指定的软件源镜像到 PATH（通常是一个便携式储存设备）。"
 
 #: ../lib/rmt/cli/export.rb:43 ../lib/rmt/cli/import.rb:20
 msgid "%{file} does not exist."
@@ -416,11 +416,11 @@ msgstr "从给定路径读取 SCC 数据"
 
 #: ../lib/rmt/cli/import.rb:11
 msgid "Mirror repos from given path"
-msgstr "从给定路径镜像储存库"
+msgstr "从给定路径镜像软件源"
 
 #: ../lib/rmt/cli/import.rb:34
 msgid "repository by URL %{url} does not exist in database"
-msgstr "数据库中不存在 URL 为 %{url} 的储存库"
+msgstr "数据库中不存在 URL 为 %{url} 的软件源"
 
 #: ../lib/rmt/cli/main.rb:5
 msgid "Enable debug output"
@@ -436,11 +436,11 @@ msgstr "列出并修改产品"
 
 #: ../lib/rmt/cli/main.rb:17
 msgid "List and modify repositories"
-msgstr "列出并修改储存库"
+msgstr "列出并修改软件源"
 
 #: ../lib/rmt/cli/main.rb:20
 msgid "Mirror repositories"
-msgstr "镜像储存库"
+msgstr "镜像软件源"
 
 #: ../lib/rmt/cli/main.rb:23
 msgid "Import commands for Offline Sync"
@@ -464,7 +464,7 @@ msgstr "如果产品处于 alpha 或 beta 阶段，请勿使命令失败"
 
 #: ../lib/rmt/cli/mirror.rb:4
 msgid "Mirror all enabled repositories"
-msgstr "镜像所有已启用的储存库"
+msgstr "镜像所有已启用的软件源"
 
 #: ../lib/rmt/cli/mirror.rb:10
 msgid "Mirroring SUMA product tree failed: %{error_message}"
@@ -472,23 +472,23 @@ msgstr "镜像 SUMA 产品树失败：%{error_message}"
 
 #: ../lib/rmt/cli/mirror.rb:13
 msgid "There are no repositories marked for mirroring."
-msgstr "没有标记为要镜像的储存库。"
+msgstr "没有标记为要镜像的软件源。"
 
 #: ../lib/rmt/cli/mirror.rb:33
 msgid "Mirror enabled repositories with given repository IDs"
-msgstr "镜像具有给定储存库 ID 的已启用储存库"
+msgstr "镜像具有给定软件源 ID 的已启用软件源"
 
 #: ../lib/rmt/cli/mirror.rb:37 ../lib/rmt/cli/repos_base.rb:10
 msgid "No repository IDs supplied"
-msgstr "未提供储存库 ID"
+msgstr "未提供软件源 ID"
 
 #: ../lib/rmt/cli/mirror.rb:42
 msgid "Repository with ID %{repo_id} not found"
-msgstr "未找到 ID 为 %{repo_id} 的储存库"
+msgstr "未找到 ID 为 %{repo_id} 的软件源"
 
 #: ../lib/rmt/cli/mirror.rb:51
 msgid "Mirror enabled repositories for a product with given product IDs"
-msgstr "镜像具有给定产品 ID 的产品的已启用储存库"
+msgstr "镜像具有给定产品 ID 的产品的已启用软件源"
 
 #: ../lib/rmt/cli/mirror.rb:55 ../lib/rmt/cli/products.rb:115
 msgid "No product IDs supplied"
@@ -500,7 +500,7 @@ msgstr "未找到目标 %{target} 的产品"
 
 #: ../lib/rmt/cli/mirror.rb:64
 msgid "Product %{target} has no repositories enabled"
-msgstr "未为产品 %{target} 启用储存库"
+msgstr "未为产品 %{target} 启用软件源"
 
 #: ../lib/rmt/cli/mirror.rb:70
 msgid "Product with ID %{target} not found"
@@ -508,11 +508,11 @@ msgstr "未找到 ID 为 %{target} 的产品"
 
 #: ../lib/rmt/cli/mirror.rb:129
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
-msgstr "未启用 ID 为 %{repo_id} 的储存库的镜像"
+msgstr "未启用 ID 为 %{repo_id} 的软件源的镜像"
 
 #: ../lib/rmt/cli/mirror.rb:141
 msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
-msgstr "储存库“%{repo_name}”(%{repo_id})：%{error_message}"
+msgstr "软件源“%{repo_name}”(%{repo_id})：%{error_message}"
 
 #: ../lib/rmt/cli/mirror.rb:150
 msgid "Mirroring complete."
@@ -566,7 +566,7 @@ msgstr "默认仅会显示启用的产品。使用“%{command}”选项可列�
 
 #: ../lib/rmt/cli/products.rb:43 ../lib/rmt/cli/products.rb:46
 msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
-msgstr "根据产品 ID 列表或产品字符串启用产品储存库镜像。"
+msgstr "根据产品 ID 列表或产品字符串启用产品软件源镜像。"
 
 #: ../lib/rmt/cli/products.rb:44
 msgid "Enables all free modules for a product"
@@ -580,7 +580,7 @@ msgstr "示例"
 
 #: ../lib/rmt/cli/products.rb:62 ../lib/rmt/cli/products.rb:64
 msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
-msgstr "根据产品 ID 列表或产品字符串禁用产品储存库镜像。"
+msgstr "根据产品 ID 列表或产品字符串禁用产品软件源镜像。"
 
 #: ../lib/rmt/cli/products.rb:77
 msgid "To clean up downloaded files, run '%{command}'"
@@ -588,7 +588,7 @@ msgstr "要清理下载的文件，请运行“%{command}”"
 
 #: ../lib/rmt/cli/products.rb:80 ../lib/rmt/cli/products.rb:82
 msgid "Displays product with all its repositories and their attributes."
-msgstr "显示产品及其所有储存库，以及储存库的属性。"
+msgstr "显示产品及其所有软件源，以及软件源的属性。"
 
 #: ../lib/rmt/cli/products.rb:97 ../lib/rmt/cli/products.rb:176
 msgid "No product found for target %{target}."
@@ -604,11 +604,11 @@ msgstr "描述：%{description}"
 
 #: ../lib/rmt/cli/products.rb:108
 msgid "Repositories:"
-msgstr "储存库："
+msgstr "软件源："
 
 #: ../lib/rmt/cli/products.rb:108
 msgid "Repositories are not available for this product."
-msgstr "储存库不可用于此产品。"
+msgstr "软件源不可用于此产品。"
 
 #: ../lib/rmt/cli/products.rb:127
 msgid "Product %{products} could not be found and was not enabled."
@@ -630,19 +630,19 @@ msgstr "正在禁用 %{product}："
 
 #: ../lib/rmt/cli/products.rb:156
 msgid "All repositories have already been enabled."
-msgstr "已启用所有储存库。"
+msgstr "已启用所有软件源。"
 
 #: ../lib/rmt/cli/products.rb:156
 msgid "All repositories have already been disabled."
-msgstr "已禁用所有储存库。"
+msgstr "已禁用所有软件源。"
 
 #: ../lib/rmt/cli/products.rb:162
 msgid "Enabled repository %{repository}."
-msgstr "已启用储存库 %{repository}。"
+msgstr "已启用软件源 %{repository}。"
 
 #: ../lib/rmt/cli/products.rb:164
 msgid "Disabled repository %{repository}."
-msgstr "已禁用储存库 %{repository}。"
+msgstr "已禁用软件源 %{repository}。"
 
 #: ../lib/rmt/cli/products.rb:177
 msgid "Found product by target %{target}: %{products}."
@@ -655,19 +655,19 @@ msgstr "找不到 ID 为 %{id} 的产品。"
 
 #: ../lib/rmt/cli/repos.rb:3
 msgid "List and modify custom repositories"
-msgstr "列出并修改自定义储存库"
+msgstr "列出并修改自定义软件源"
 
 #: ../lib/rmt/cli/repos.rb:6
 msgid "List repositories which are marked to be mirrored"
-msgstr "列出标记为要镜像的储存库"
+msgstr "列出标记为要镜像的软件源"
 
 #: ../lib/rmt/cli/repos.rb:7
 msgid "List all repositories, including ones which are not marked to be mirrored"
-msgstr "列出所有储存库，包括未标记为要镜像的储存库"
+msgstr "列出所有软件源，包括未标记为要镜像的软件源"
 
 #: ../lib/rmt/cli/repos.rb:16
 msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
-msgstr "移除未标记为有待镜像的储存库的本地镜像文件"
+msgstr "移除未标记为有待镜像的软件源的本地镜像文件"
 
 #: ../lib/rmt/cli/repos.rb:17 ../lib/rmt/cli/systems.rb:73
 msgid "Ask for confirmation or do not ask for confirmation and require no user interaction"
@@ -675,15 +675,15 @@ msgstr "要求确认或不要求确认以及无需用户交互"
 
 #: ../lib/rmt/cli/repos.rb:28
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
-msgstr "RMT 只找到了标记为有待镜像的储存库的本地镜像文件。"
+msgstr "RMT 只找到了标记为有待镜像的软件源的本地镜像文件。"
 
 #: ../lib/rmt/cli/repos.rb:32
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
-msgstr "RMT 在以下未标记为有待镜像的储存库中找到了本地镜像的文件："
+msgstr "RMT 在以下未标记为有待镜像的软件源中找到了本地镜像的文件："
 
 #: ../lib/rmt/cli/repos.rb:38
 msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
-msgstr "是否要继续移除这些储存库的本地镜像文件？"
+msgstr "是否要继续移除这些软件源的本地镜像文件？"
 
 #: ../lib/rmt/cli/repos.rb:40
 msgid "Only '%{input}' will be accepted."
@@ -699,7 +699,7 @@ msgstr "已取消清理。"
 
 #: ../lib/rmt/cli/repos.rb:56
 msgid "Deleting locally mirrored files from repository '%{repo}'..."
-msgstr "正在从储存库“%{repo}”中删除已本地镜像的文件..."
+msgstr "正在从软件源“%{repo}”中删除已本地镜像的文件..."
 
 #: ../lib/rmt/cli/repos.rb:65
 msgid "Clean finished. An estimated %{total_file_size} was removed."
@@ -707,7 +707,7 @@ msgstr "已完成清理。估计已去除 %{total_file_size}。"
 
 #: ../lib/rmt/cli/repos.rb:69 ../lib/rmt/cli/repos.rb:71
 msgid "Enable mirroring of repositories by a list of repository IDs"
-msgstr "根据储存库 ID 列表启用储存库镜像"
+msgstr "根据软件源 ID 列表启用软件源镜像"
 
 #: ../lib/rmt/cli/repos.rb:73 ../lib/rmt/cli/repos.rb:87
 #: ../lib/rmt/cli/repos_custom.rb:8 ../lib/rmt/cli/repos_custom.rb:70
@@ -717,7 +717,7 @@ msgstr "示例："
 
 #: ../lib/rmt/cli/repos.rb:83 ../lib/rmt/cli/repos.rb:85
 msgid "Disable mirroring of repositories by a list of repository IDs"
-msgstr "根据储存库 ID 列表禁用储存库镜像"
+msgstr "根据软件源 ID 列表禁用软件源镜像"
 
 #: ../lib/rmt/cli/repos.rb:96 ../lib/rmt/cli/repos_custom.rb:93
 msgid "To clean up downloaded files, please run '%{command}'"
@@ -725,37 +725,37 @@ msgstr "要清理下载的文件，请运行“%{command}”"
 
 #: ../lib/rmt/cli/repos.rb:109
 msgid "No repositories enabled."
-msgstr "未启用任何储存库。"
+msgstr "未启用任何软件源。"
 
 #: ../lib/rmt/cli/repos.rb:117
 msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
-msgstr "默认仅会显示启用的储存库。使用“%{option}”选项可列出所有储存库。"
+msgstr "默认仅会显示启用的软件源。使用“%{option}”选项可列出所有软件源。"
 
 #: ../lib/rmt/cli/repos_base.rb:22
 msgid "Repository by ID %{repos} could not be found and was not enabled."
 msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
-msgstr[0] "找不到 ID 为 %{repos} 的储存库，未启用该储存库。"
+msgstr[0] "找不到 ID 为 %{repos} 的软件源，未启用该软件源。"
 
 #: ../lib/rmt/cli/repos_base.rb:26
 msgid "Repository by ID %{repos} could not be found and was not disabled."
 msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
-msgstr[0] "找不到 ID 为 %{repos} 的储存库，未禁用该储存库。"
+msgstr[0] "找不到 ID 为 %{repos} 的软件源，未禁用该软件源。"
 
 #: ../lib/rmt/cli/repos_base.rb:38
 msgid "Repository by ID %{id} successfully enabled."
-msgstr "已成功启用 ID 为 %{id} 的储存库。"
+msgstr "已成功启用 ID 为 %{id} 的软件源。"
 
 #: ../lib/rmt/cli/repos_base.rb:38
 msgid "Repository by ID %{id} successfully disabled."
-msgstr "已成功禁用 ID 为 %{id} 的储存库。"
+msgstr "已成功禁用 ID 为 %{id} 的软件源。"
 
 #: ../lib/rmt/cli/repos_base.rb:56
 msgid "Repository by ID %{id} not found."
-msgstr "未找到 ID 为 %{id} 的储存库。"
+msgstr "未找到 ID 为 %{id} 的软件源。"
 
 #: ../lib/rmt/cli/repos_custom.rb:3 ../lib/rmt/cli/repos_custom.rb:6
 msgid "Creates a custom repository."
-msgstr "创建自定义储存库。"
+msgstr "创建自定义软件源。"
 
 #: ../lib/rmt/cli/repos_custom.rb:4
 msgid "Provide a custom ID instead of allowing RMT to generate one."
@@ -763,75 +763,75 @@ msgstr "请提供自定义 ID，而不要允许 RMT 生成 ID。"
 
 #: ../lib/rmt/cli/repos_custom.rb:24
 msgid "A repository by the URL %{url} already exists."
-msgstr "URL 为 %{url} 的储存库已存在。"
+msgstr "URL 为 %{url} 的软件源已存在。"
 
 #: ../lib/rmt/cli/repos_custom.rb:27
 msgid "A repository by the ID %{id} already exists."
-msgstr "已存在 ID 为 %{id} 的储存库。"
+msgstr "已存在 ID 为 %{id} 的软件源。"
 
 #: ../lib/rmt/cli/repos_custom.rb:30
 msgid "Please provide a non-numeric ID for your custom repository."
-msgstr "请为自定义储存库提供一个非数字 ID。"
+msgstr "请为自定义软件源提供一个非数字 ID。"
 
 #: ../lib/rmt/cli/repos_custom.rb:35
 msgid "Couldn't add custom repository."
-msgstr "无法添加自定义储存库。"
+msgstr "无法添加自定义软件源。"
 
 #: ../lib/rmt/cli/repos_custom.rb:47
 msgid "Successfully added custom repository."
-msgstr "已成功添加自定义储存库。"
+msgstr "已成功添加自定义软件源。"
 
 #: ../lib/rmt/cli/repos_custom.rb:50
 msgid "List all custom repositories"
-msgstr "列出所有自定义储存库"
+msgstr "列出所有自定义软件源"
 
 #: ../lib/rmt/cli/repos_custom.rb:56
 msgid "No custom repositories found."
-msgstr "未找到自定义储存库。"
+msgstr "未找到自定义软件源。"
 
 #: ../lib/rmt/cli/repos_custom.rb:66 ../lib/rmt/cli/repos_custom.rb:68
 msgid "Enable mirroring of custom repositories by a list of IDs"
-msgstr "根据 ID 列表启用自定义储存库镜像"
+msgstr "根据 ID 列表启用自定义软件源镜像"
 
 #: ../lib/rmt/cli/repos_custom.rb:80
 msgid "Disable mirroring of custom repository by a list of IDs"
-msgstr "根据 ID 列表禁用自定义储存库镜像"
+msgstr "根据 ID 列表禁用自定义软件源镜像"
 
 #: ../lib/rmt/cli/repos_custom.rb:82
 msgid "Disable mirroring of custom repositories by a list of IDs"
-msgstr "根据 ID 列表禁用自定义储存库镜像"
+msgstr "根据 ID 列表禁用自定义软件源镜像"
 
 #: ../lib/rmt/cli/repos_custom.rb:96
 msgid "Remove a custom repository"
-msgstr "去除自定义储存库"
+msgstr "去除自定义软件源"
 
 #: ../lib/rmt/cli/repos_custom.rb:101
 msgid "Removed custom repository by ID %{id}."
-msgstr "已去除 ID 为 %{id} 的自定义储存库。"
+msgstr "已去除 ID 为 %{id} 的自定义软件源。"
 
 #: ../lib/rmt/cli/repos_custom.rb:107
 msgid "Shows products attached to a custom repository"
-msgstr "显示关联到自定义储存库的产品"
+msgstr "显示关联到自定义软件源的产品"
 
 #: ../lib/rmt/cli/repos_custom.rb:115
 msgid "No products attached to repository."
-msgstr "没有关联到储存库的产品。"
+msgstr "没有关联到软件源的产品。"
 
 #: ../lib/rmt/cli/repos_custom.rb:125
 msgid "Attach an existing custom repository to a product"
-msgstr "将现有自定义储存库关联到产品"
+msgstr "将现有自定义软件源关联到产品"
 
 #: ../lib/rmt/cli/repos_custom.rb:131
 msgid "Attached repository to product '%{product_name}'."
-msgstr "已将储存库关联到产品“%{product_name}”。"
+msgstr "已将软件源关联到产品“%{product_name}”。"
 
 #: ../lib/rmt/cli/repos_custom.rb:136
 msgid "Detach an existing custom repository from a product"
-msgstr "将现有自定义储存库与产品解除关联"
+msgstr "将现有自定义软件源与产品解除关联"
 
 #: ../lib/rmt/cli/repos_custom.rb:142
 msgid "Detached repository from product '%{product_name}'."
-msgstr "已将储存库与产品“%{product_name}”解除关联。"
+msgstr "已将软件源与产品“%{product_name}”解除关联。"
 
 #: ../lib/rmt/cli/repos_custom.rb:152
 msgid "Cannot find product by ID %{id}."
@@ -839,11 +839,11 @@ msgstr "找不到 ID 为 %{id} 的产品。"
 
 #: ../lib/rmt/cli/smt_importer.rb:38
 msgid "Enabled mirroring for repository %{repo}"
-msgstr "启用储存库 %{repo} 的镜像"
+msgstr "启用软件源 %{repo} 的镜像"
 
 #: ../lib/rmt/cli/smt_importer.rb:40
 msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
-msgstr "在 RMT 数据库中找不到储存库 %{repo}，可能是因为您的该储存库订阅不再有效"
+msgstr "在 RMT 数据库中找不到软件源 %{repo}，可能是因为您的该软件源订阅不再有效"
 
 #: ../lib/rmt/cli/smt_importer.rb:62
 msgid "Added association between %{repo} and product %{product}"
@@ -857,8 +857,8 @@ msgid ""
 "by running '%{command}'\n"
 msgstr ""
 "找不到产品 %{product}！\n"
-"尝试将自定义储存库 %{repo} 关联到产品 %{product}，\n"
-"但找不到该产品。请运行 %{command} 将该储存库关联到\n"
+"尝试将自定义软件源 %{repo} 关联到产品 %{product}，\n"
+"但找不到该产品。请运行 %{command} 将该软件源关联到\n"
 "其他产品\n"
 
 #: ../lib/rmt/cli/smt_importer.rb:91
@@ -1066,7 +1066,7 @@ msgstr "无法镜像 SUSE Manager 产品树，发生错误：%{error}"
 
 #: ../lib/rmt/mirror.rb:50
 msgid "Mirroring repository %{repo} to %{dir}"
-msgstr "正在将储存库 %{repo} 镜像到 %{dir}"
+msgstr "正在将软件源 %{repo} 镜像到 %{dir}"
 
 #: ../lib/rmt/mirror.rb:76
 msgid "Could not create local directory %{dir} with error: %{error}"
@@ -1078,7 +1078,7 @@ msgstr "无法创建临时目录：%{error}"
 
 #: ../lib/rmt/mirror.rb:109
 msgid "Repository metadata signatures are missing"
-msgstr "缺少储存库元数据签名"
+msgstr "缺少软件源元数据签名"
 
 #: ../lib/rmt/mirror.rb:111
 msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
@@ -1126,7 +1126,7 @@ msgstr "正在导出产品"
 
 #: ../lib/rmt/scc.rb:45
 msgid "Exporting repositories"
-msgstr "正在导出储存库"
+msgstr "正在导出软件源"
 
 #: ../lib/rmt/scc.rb:48
 msgid "Exporting subscriptions"
@@ -1166,7 +1166,7 @@ msgstr "正在将已取消注册的系统 %{scc_system_id} 同步到 SCC"
 
 #: ../lib/rmt/scc.rb:134
 msgid "Updating repositories"
-msgstr "正在更新储存库"
+msgstr "正在更新软件源"
 
 #: ../lib/rmt/scc.rb:141
 msgid "Updating subscriptions"
