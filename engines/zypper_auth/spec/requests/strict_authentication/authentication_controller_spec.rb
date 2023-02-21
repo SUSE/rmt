@@ -113,7 +113,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
             }
           }
         end
-        let(:system_byos) { FactoryBot.create(:system, :byos, :with_activated_product) }
+        let(:system_byos) { FactoryBot.create(:system, :byos, :with_activated_product, :with_hw_info) }
         let(:scc_systems_activations_url) { 'https://scc.suse.com/connect/systems/activations' }
 
         include_context 'auth header', :system_byos, :login, :password
