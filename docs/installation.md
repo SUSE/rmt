@@ -7,6 +7,43 @@ RMT is tested on SLES and openSUSE. We recommend installing RMT on either operat
 * You can find a recent openSUSE iso at https://www.opensuse.org/.
 * You can get a trial SLES subscription at https://www.suse.com/trials/.
 
+## Installation on Kubernetes with Helm
+
+RMT comes with a helm-chart to easily install and configure on your kubernetes clusters. Save the following chart values
+
+```bash
+cat << EOF > helm_values.yml
+---
+app:
+  scc:
+    username: <your_proxy_username>
+    password: <your_proxy_password>
+    products_enable:
+      - SLES/15.3/x86_64
+      - sle-module-python2/15.3/x86_64
+    products_disable:
+      - sle-module-legacy/15.3/x86_64
+      - sle-module-cap-tools/15.3/x86_64
+ingress:
+  enabled: true
+  hosts:
+    - host: your-rmt-example.local
+      paths:
+        - path: "/"
+          pathType: Prefix
+  tls:
+  - secretName: rmt-cert
+    hosts:
+    - chart-example.local
+EOF
+```
+
+and run
+
+`helm install rmtsle oci://registry.suse.com/suse/rmt-helm -f helm_values.yml`
+
+More information can be found [here](https://documentation.suse.com/sles/15-SP4/html/SLES-all/cha-rmt-installation.html#sec-rmt-deploy-kubernetes).
+
 ## Installation on SLE 15
 
 1. If your server isn't activated yet, activate it with the command `SUSEConnect -r <regcode>`.
