@@ -1,8 +1,10 @@
-### rmt-server Packaging
+## rmt-server Packaging
 
 Note: Never push changes to the internal build service `ibs://Devel:SCC:RMT`!
           The repository links to `systemsmanagement:SCC:RMT` and gets updated
           automatically.
+
+Note: Look below for direction on publishing to registry.
 
 
 * The package is built in OBS at: https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT/rmt-server
@@ -100,3 +102,10 @@ Using target project 'SUSE:Maintenance'
 You can check the status of your requests [here](https://build.opensuse.org/package/requests/systemsmanagement:SCC:RMT/rmt-server) and [here](https://build.suse.de/package/requests/Devel:SCC:RMT/rmt-server).
 
 After your requests have been accepted, they still have to pass maintenance testing before they are released to customers. You can check their progress at [maintenance.suse.de](https://maintenance.suse.de/search/?q=rmt-server). If you still need help, the maintenance team can be reached at [maint-coord@suse.de](maint-coord@suse.de) or #maintenance on irc.suse.de.
+
+
+## Packaging and publishing to SUSE registry
+
+SUSE registry houses the rmt-server docker image. The image is built on OBS/IBS, project for SLES 15sp4 based distributions can be found [here](https://build.opensuse.org/package/show/devel:BCI:SLE-15-SP4/rmt-server-image).
+
+At the moment of writing, the publishing process has to be done manually. This can be achieved my reaching out to the Auto-Build team (only available internally).
