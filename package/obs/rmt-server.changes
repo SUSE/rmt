@@ -1,10 +1,18 @@
 -------------------------------------------------------------------
+Wed Dec 21 14:07:21 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
+
+- Fix %post install of pubcloud subpackage reload of nginx (bsc#1206593)
+- Skip warnings regarding nokogiri libxml version mismatch (bsc#1202053)
+
+-------------------------------------------------------------------
 Fri Nov 11 17:11:56 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
 
 - Release version 2.10:
   - Add option to turn off system token support (bsc#1205089)
   - Update the `last_seen_at` column on zypper service refresh
   - Do not retry to import non-existing files in air-gapped mode (bsc#1204769)
+  - Fix CVE-2022-31254 (bsc#1204285): rmt-server-pubcloud allows to escalate from user _rmt to root
+  Root-level escalation vector bug was found in the packaging file which has been mitigated.
 
 -------------------------------------------------------------------
 Tue Nov  8 10:30:45 UTC 2022 - Zuzana Petrova <zpetrova@suse.com>
