@@ -149,7 +149,7 @@ GEM
     minitest (5.15.0)
     mixlib-shellout (2.4.4)
     mustache (1.1.1)
-    mysql2 (0.5.4)
+    mysql2 (0.5.5)
     nenv (0.3.0)
     nio4r (2.5.8)
     nokogiri (1.12.5)
