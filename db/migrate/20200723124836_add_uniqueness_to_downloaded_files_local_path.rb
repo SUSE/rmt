@@ -2,10 +2,10 @@ class AddUniquenessToDownloadedFilesLocalPath < ActiveRecord::Migration[5.2]
   def change
     logger = RMT::Logger.new(STDOUT)
 
-    logger.info(_('Adding index to `downloaded_files.local_path` before querying duplicates...'))
+    logger.info('Adding index to `downloaded_files.local_path` before querying duplicates...')
     add_index :downloaded_files, :local_path, unique: false
 
-    logger.info(_('Removing duplicated records on `downloaded_files.local_path`...'))
+    logger.info('Removing duplicated records on `downloaded_files.local_path`...')
     ActiveRecord::Base.connection.execute(
       <<~SQL
         DELETE df1 FROM downloaded_files AS df1
@@ -20,7 +20,7 @@ class AddUniquenessToDownloadedFilesLocalPath < ActiveRecord::Migration[5.2]
     )
 
     # Add unique index to `local_path`
-    logger.info(_('Adding an unique index to `downloaded_file.local_path`...'))
+    logger.info('Adding an unique index to `downloaded_file.local_path`...')
     remove_index :downloaded_files, name: :index_downloaded_files_on_local_path, if_exists: true
     add_index :downloaded_files, :local_path, unique: true
   end
