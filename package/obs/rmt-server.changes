@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Jan 24 22:03:53 UTC 2023 - Thomas Schmidt <tschmidt@suse.com>
+
+- Adding -f to the file move command when moving the mirrored directory to its final location (bsc#1203171) 
+
+-------------------------------------------------------------------
 Wed Dec 21 14:07:21 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
 
 - Fix %post install of pubcloud subpackage reload of nginx (bsc#1206593)
