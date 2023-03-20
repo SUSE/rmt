@@ -1,18 +1,22 @@
-
-name: RMT unit + engines tests
+name: RMT lint, unit + engines tests
 
 on:
   pull_request:
     branches: [master]
 
+env:
+  RAILS_ENV: test
 
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 3
+      # Only use 2 workers, gh actions seems to kill jobs when we use more
+      max-parallel: 2
       matrix:
-        ruby-version: ['2.5.8', '2.5.9']
+        # we need to test the Ruby versions of the products we release RMT for,
+        # those are: SLE15 (2.5.8, 2.5.9), Leap 15.4 (3.0)
+        ruby-version: ['2.5.8', '2.5.9', '3.0.3']
 
     services:
       mysql:
@@ -39,19 +43,9 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
-          bundler-cache: true
-          bundler: 1.17
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
-      - name: "Cache gems"
-        uses: actions/cache@v2
-        id: gem-cache
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
-
-      - name: Pre-run inline scripts
+      - name: Setup database config file
         run: |
           sudo mkdir -p /var/lib/rmt
           ruby -e "require 'yaml'; puts({'database_test'=>{'host' => '127.0.0.1', 'port' => 3306, 'username'=>'rmt','password'=>'rmt','database'=>'rmt_test','adapter'=>'mysql2','encoding'=>'utf8','timeout'=>5000,'pool'=>5}}.to_yaml)" > config/rmt.local.yml
@@ -59,18 +53,19 @@ jobs:
       - name: Run Lint
         run: |
           bundle exec rubocop -D
+
+      - name: Prepare database
+        run: |
+          bundle exec rails db:migrate
+
       - name: Run core tests
-        env:
-          RAILS_ENV: test
         run: |
-          bundle exec rails db:migrate
           bundle exec rspec --format documentation
+
       - name: Run PubCloud engines tests
-        env:
-          RAILS_ENV: test
         run: |
-          bundle exec rails db:migrate
           bundle exec rake test:engines
+
       - name: Run version checks
         run: |
           echo "::group::Version verification checks"
