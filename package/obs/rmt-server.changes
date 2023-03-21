@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Mar  6 09:41:32 UTC 2023 - Felix Schnizlein <fschnizlein@suse.com>
+
+- Version 2.11:
+  - Mark secrets.yml.key file as part of the rpm to allow seamless downgrades (bsc#1207670)
+
+-------------------------------------------------------------------
 Tue Jan 24 22:03:53 UTC 2023 - Thomas Schmidt <tschmidt@suse.com>
 
 - Adding -f to the file move command when moving the mirrored directory to its final location (bsc#1203171) 
