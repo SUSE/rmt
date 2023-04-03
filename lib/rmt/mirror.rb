@@ -96,7 +96,9 @@ class RMT::Mirror
     begin
       signature_file = FileReference.new(relative_path: 'repodata/repomd.xml.asc', **mirroring_paths)
       key_file       = FileReference.new(relative_path: 'repodata/repomd.xml.key', **mirroring_paths)
-      downloader.download_multi([signature_file, key_file])
+      # mirror repomd.xml.asc first, because there are repos with repomd.xml.asc but without repomd.xml.key
+      downloader.download_multi([signature_file])
+      downloader.download_multi([key_file])
 
       RMT::GPG.new(
         metadata_file: repomd_xml.local_path,
