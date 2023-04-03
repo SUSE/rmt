@@ -51,7 +51,7 @@ while true ; do
         "") break ;;
         -h|--help) usage;;
         https://*) RMTNAME=${1:8};
-                   REGURL="http://${RMTNAME}";;
+                   REGURL=$1;;
         http://*) REGURL=$1;
                   RMTNAME=${REGURL:7};;
         *) usage "Unknown option $1";;
@@ -123,7 +123,7 @@ if [ ! -x $SUSECONNECT ]; then
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}-AS_${SLL_version}_x86_64_update"
 fi
 
-$CURL -s -S $REGURL/tools/rmt-client-setup --output rmt-client-setup
+$CURL --silent --show-error --insecure $REGURL/tools/rmt-client-setup --output rmt-client-setup
 echo "Running rmt-client-setup $PARAMS"
 sh rmt-client-setup $PARAMS
 
