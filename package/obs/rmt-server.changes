@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Mar 31 17:10:41 UTC 2023 - Zuzana Petrova <zpetrova@suse.com>
+
+- Force rmt-client-setup-res script to use https (bsc#1209825)
+
+-------------------------------------------------------------------
 Tue Mar 21 09:20:19 UTC 2023 - Thomas Schmidt <tschmidt@suse.com>
 
 - Download repomd.xml.asc before repomd.xml.key, because there are repos that only have repomd.xml.asc
