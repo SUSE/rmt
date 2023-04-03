@@ -26,9 +26,9 @@ NET_HTTP_ERRORS = [
 ].freeze
 
 INSTANCE_ID_KEYS = {
-  Amazon: 'instanceId',
-  Google: 'instance_id',
-  Microsoft: 'vmId'
+  amazon: 'instanceId',
+  google: 'instance_id',
+  microsoft: 'vmId'
 }.freeze
 
 # rubocop:disable Metrics/ModuleLength
@@ -68,7 +68,7 @@ module SccProxy
         nil,
         nil
       )
-      instance_id_key = INSTANCE_ID_KEYS[params['hwinfo']['cloud_provider'].to_sym]
+      instance_id_key = INSTANCE_ID_KEYS[params['hwinfo']['cloud_provider'].downcase.to_sym]
       iid = verification_provider.parse_instance_data(params['instance_data'])
       iid[instance_id_key]
     end
