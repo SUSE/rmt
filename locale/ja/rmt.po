@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-26 10:31+0100\n"
-"PO-Revision-Date: 2021-05-23 18:59+0000\n"
-"Last-Translator: Carina Hagl <vistatec_pm@sunflare.co.jp>\n"
+"POT-Creation-Date: 2022-12-28 14:15+0100\n"
+"PO-Revision-Date: 2022-12-29 01:14+0000\n"
+"Last-Translator: Yasuhiko Kamata <belphegor@belbel.or.jp>\n"
 "Language-Team: Japanese <https://l10n.opensuse.org/projects/rmt/i18n/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.6.2\n"
+"X-Generator: Weblate 4.9.1\n"
 
 #: ../app/controllers/api/connect/base_controller.rb:20
 msgid "Required parameters are missing or empty: %s"
@@ -46,9 +46,28 @@ msgstr "製品: %s のリポジトリが見つかりません"
 msgid "Not all mandatory repositories are mirrored for product %s"
 msgstr "すべての必須リポジトリが製品 %s 用にミラーリングされるわけではありません"
 
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:118
-msgid "Unmet product dependencies, activate one of these products first: %s"
-msgstr "製品の依存関係が満たされていません。まずこれらの製品のいずれかをアクティブ化してください: %s"
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:112
+msgid "No subscription with this Registration Code found"
+msgstr "この登録コードのサブスクリプションが見つかりません"
+
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:116
+msgid "The subscription with the provided Registration Code is expired"
+msgstr "この登録コードのサブスクリプションは期限切れになっています"
+
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:122
+msgid "The subscription with the provided Registration Code does not include the requested product '%s'"
+msgstr "この登録コードのサブスクリプションには、要求された製品 '%s' が含まれていません"
+
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:148
+msgid "The product you are attempting to activate (%{product}) requires one of these products to be activated first: %{required_bases}"
+msgstr ""
+"この製品 (%{product}) をアクティブ化するには、これらの製品を先にアクティブ化しておく必要があります: %{required_bases}"
+
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:154
+msgid "The product you are attempting to activate (%{product}) is not available on your system's base product (%{system_base}). %{product} is available on %{required_bases}."
+msgstr ""
+"この製品 (%{product}) はお使いのシステムの基本製品 (%{system_base}) 内では提供されていません。 %{product} は "
+"%{required_bases} で提供されているものです。"
 
 #: ../app/controllers/api/connect/v3/systems/systems_controller.rb:6
 msgid "Not provided"
@@ -74,19 +93,29 @@ msgstr "製品「%s」を非アクティブ化できません。アクティブ�
 msgid "%s is not yet activated on the system."
 msgstr "%s はシステム上でまだ有効化されていません。"
 
-#: ../app/controllers/application_controller.rb:13
-msgid "Authenticated system with login \\\"%{login}\\\""
-msgstr "ログイン「%{login}」を使用する認証済みシステム"
-
-#: ../app/controllers/application_controller.rb:16
+#: ../app/controllers/application_controller.rb:34
 msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
 msgstr "ログイン「%{login}」とパスワード「%{password}」を持つシステムが見つかりませんでした"
 
-#: ../app/controllers/application_controller.rb:17
+#: ../app/controllers/application_controller.rb:36
 msgid "Invalid system credentials"
 msgstr "無効なシステム資格情報"
 
-#: ../app/controllers/services_controller.rb:34
+#: ../app/controllers/application_controller.rb:59
+msgid "System with login \\\"%{login}\\\" authenticated without token header"
+msgstr "トークンヘッダ無しでログイン \\\"%{login}\\\" がシステムに対して認証しました"
+
+#: ../app/controllers/application_controller.rb:68
+msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
+msgstr "トークン \\\"%{system_token}\\\" でログイン \\\"%{login}\\\" がシステムに対して認証しました"
+
+#: ../app/controllers/application_controller.rb:81
+msgid "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated from ID %{base_id} due to token mismatch"
+msgstr ""
+"ログイン \\\"%{login}\\\" (ID %{new_id}) がシステムに対して認証しましたが、トークン不整合により ID "
+"%{base_id} を複製しました"
+
+#: ../app/controllers/services_controller.rb:48
 msgid "Requested service not found"
 msgstr "要求されたサービスが見つかりません"
 
@@ -94,13 +123,27 @@ msgstr "要求されたサービスが見つかりません"
 msgid "The requested products '%s' are not activated on the system."
 msgstr "要求された製品「%s」はシステムでアクティブ化されていません。"
 
-#: ../app/models/migration_engine.rb:68
+#: ../app/models/migration_engine.rb:67
 msgid "Multiple base products found: '%s'."
 msgstr "複数の基本製品が見つかりました: 「%s」。"
 
-#: ../app/models/migration_engine.rb:69
+#: ../app/models/migration_engine.rb:68
 msgid "No base product found."
 msgstr "基本製品が見つかりません。"
+
+#: ../app/models/migration_engine.rb:94
+msgid ""
+"There are activated extensions/modules on this system that cannot be migrated. \n"
+"Deactivate them first, and then try migrating again. \n"
+"The product(s) are '%s'. \n"
+"You can deactivate them with \n"
+"%s"
+msgstr ""
+"このシステム内には移行できない拡張またはモジュールが存在しています。\n"
+"これらをいったん非アクティブ化してから再度移行してください。\n"
+"製品は '%s' です。\n"
+"無効化を行うには、下記のコマンドを実行してください:\n"
+"%s"
 
 #: ../lib/rmt/checksum_verifier.rb:13
 msgid "Unknown hash function %{checksum_type}"
@@ -142,25 +185,27 @@ msgstr "RMTデータベースはまだ初期化されていません。データ
 msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
 msgstr "SCC資格情報が「%{path}」で正しく設定されていません。それらの資格情報は %{url} から取得できます"
 
-#: ../lib/rmt/cli/base.rb:86
+#: ../lib/rmt/cli/base.rb:83
 msgid ""
 "SCC API request failed. Error details:\n"
 "Request URL: %{url}\n"
 "Response code: %{code}\n"
+"Return code: %{return_code}\n"
 "Response body:\n"
 "%{body}"
 msgstr ""
 "SCC API リクエストが失敗しました。エラーの詳細:\n"
 "リクエスト URL: %{url}\n"
 "レスポンスコード: %{code}\n"
+"返却コード: %{return_code}\n"
 "レスポンスボディ:\n"
 "%{body}"
 
-#: ../lib/rmt/cli/base.rb:118
+#: ../lib/rmt/cli/base.rb:125
 msgid "%{path} is not a directory."
 msgstr "%{path} はディレクトリではありません。"
 
-#: ../lib/rmt/cli/base.rb:122
+#: ../lib/rmt/cli/base.rb:129
 msgid "%{path} is not writable by user %{username}."
 msgstr "%{path} はユーザ %{username} による書き込みはできません。"
 
@@ -314,23 +359,23 @@ msgstr "ミラーリングされていません"
 msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 msgstr "* %{name} (ID: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 
-#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+#: ../lib/rmt/cli/decorators/system_decorator.rb:3
 msgid "Login"
 msgstr "ログイン"
 
-#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+#: ../lib/rmt/cli/decorators/system_decorator.rb:3
 msgid "Hostname"
 msgstr "ホスト名"
 
-#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+#: ../lib/rmt/cli/decorators/system_decorator.rb:3
 msgid "Registration time"
 msgstr "登録日時"
 
-#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+#: ../lib/rmt/cli/decorators/system_decorator.rb:3
 msgid "Last seen"
 msgstr "最終確認"
 
-#: ../lib/rmt/cli/decorators/system_decorator.rb:13
+#: ../lib/rmt/cli/decorators/system_decorator.rb:3
 msgid "Products"
 msgstr "製品"
 
@@ -415,66 +460,70 @@ msgid "Show RMT version"
 msgstr "RMTバージョンの表示"
 
 #: ../lib/rmt/cli/mirror.rb:2
+msgid "Do not fail the command if product is in alpha or beta stage"
+msgstr "製品がアルファ版またはベータ版の場合、コマンドを失敗させない"
+
+#: ../lib/rmt/cli/mirror.rb:4
 msgid "Mirror all enabled repositories"
 msgstr "有効化されている全てのリポジトリをミラーリングする"
 
-#: ../lib/rmt/cli/mirror.rb:8
+#: ../lib/rmt/cli/mirror.rb:10
 msgid "Mirroring SUMA product tree failed: %{error_message}"
 msgstr "SUMA 製品ツリーのミラーリングに失敗しました: %{error_message}"
 
-#: ../lib/rmt/cli/mirror.rb:11
+#: ../lib/rmt/cli/mirror.rb:13
 msgid "There are no repositories marked for mirroring."
 msgstr "ミラーリング用にマーク付けされたリポジトリはありません。"
 
-#: ../lib/rmt/cli/mirror.rb:30
+#: ../lib/rmt/cli/mirror.rb:33
 msgid "Mirror enabled repositories with given repository IDs"
 msgstr "指定された ID を持つ有効化されたリポジトリをミラーリングする"
 
-#: ../lib/rmt/cli/mirror.rb:34 ../lib/rmt/cli/repos_base.rb:10
+#: ../lib/rmt/cli/mirror.rb:37 ../lib/rmt/cli/repos_base.rb:10
 msgid "No repository IDs supplied"
 msgstr "リポジトリ ID が指定されていません"
 
-#: ../lib/rmt/cli/mirror.rb:38
+#: ../lib/rmt/cli/mirror.rb:42
 msgid "Repository with ID %{repo_id} not found"
 msgstr "ID %{repo_id} のリポジトリが見つかりませんでした"
 
-#: ../lib/rmt/cli/mirror.rb:48
+#: ../lib/rmt/cli/mirror.rb:51
 msgid "Mirror enabled repositories for a product with given product IDs"
 msgstr "指定された ID を持つ製品向けの有効化されたリポジトリをミラーリングする"
 
-#: ../lib/rmt/cli/mirror.rb:52 ../lib/rmt/cli/products.rb:115
+#: ../lib/rmt/cli/mirror.rb:55 ../lib/rmt/cli/products.rb:115
 msgid "No product IDs supplied"
 msgstr "製品IDが提供されていません"
 
-#: ../lib/rmt/cli/mirror.rb:57
+#: ../lib/rmt/cli/mirror.rb:60
 msgid "Product for target %{target} not found"
 msgstr "ターゲット %{target} に対する製品が見つかりませんでした"
 
-#: ../lib/rmt/cli/mirror.rb:60
+#: ../lib/rmt/cli/mirror.rb:64
 msgid "Product %{target} has no repositories enabled"
 msgstr "製品 %{target} には有効化されているリポジトリがありません"
 
-#: ../lib/rmt/cli/mirror.rb:64
+#: ../lib/rmt/cli/mirror.rb:70
 msgid "Product with ID %{target} not found"
 msgstr "ID %{target} の製品が見つかりませんでした"
 
-#: ../lib/rmt/cli/mirror.rb:89
+#: ../lib/rmt/cli/mirror.rb:129
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
 msgstr "ID %{repo_id} のリポジトリのミラーリングは有効化されていません"
 
-#: ../lib/rmt/cli/mirror.rb:101
+#: ../lib/rmt/cli/mirror.rb:141
 msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
 msgstr "リポジトリ '%{repo_name}' (%{repo_id}): %{error_message}"
 
-#: ../lib/rmt/cli/mirror.rb:109
+#: ../lib/rmt/cli/mirror.rb:150
 msgid "Mirroring complete."
 msgstr "ミラーリングが完了しました。"
 
-#: ../lib/rmt/cli/mirror.rb:111
+#: ../lib/rmt/cli/mirror.rb:152
 msgid "The following errors occurred while mirroring:"
 msgstr "ミラーリング時に下記のエラーが発生しました:"
 
-#: ../lib/rmt/cli/mirror.rb:113
+#: ../lib/rmt/cli/mirror.rb:154
 msgid "Mirroring completed with errors."
 msgstr "ミラーリングがエラーで終了しました。"
 
@@ -487,8 +536,8 @@ msgid "List all products, including ones which are not marked to be mirrored"
 msgstr "ミラーリング対象にマーク付けされていない製品を含む、すべての製品を一覧表示する"
 
 #: ../lib/rmt/cli/products.rb:11 ../lib/rmt/cli/repos.rb:8
-#: ../lib/rmt/cli/repos_custom.rb:47 ../lib/rmt/cli/repos_custom.rb:104
-#: ../lib/rmt/cli/systems.rb:5
+#: ../lib/rmt/cli/repos_custom.rb:51 ../lib/rmt/cli/repos_custom.rb:108
+#: ../lib/rmt/cli/systems.rb:12
 msgid "Output data in CSV format"
 msgstr "CSVフォーマットの出力データ"
 
@@ -504,7 +553,7 @@ msgstr "製品バージョン(例: 15, 15.1, '12 SP4')"
 msgid "Product architecture (e.g., x86_64, aarch64)"
 msgstr "製品アーキテクチャ(例: x86_64, aarch64)"
 
-#: ../lib/rmt/cli/products.rb:25 ../lib/rmt/cli/repos.rb:103
+#: ../lib/rmt/cli/products.rb:25 ../lib/rmt/cli/repos.rb:107
 msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
 msgstr "SUSE Customer Centerデータと同期するには、まず「%{command}」を実行してください。"
 
@@ -525,7 +574,8 @@ msgid "Enables all free modules for a product"
 msgstr "製品のすべての無料モジュールを有効にする"
 
 #: ../lib/rmt/cli/products.rb:48 ../lib/rmt/cli/products.rb:66
-#: ../lib/rmt/cli/products.rb:84 ../lib/rmt/cli/systems.rb:37
+#: ../lib/rmt/cli/products.rb:84 ../lib/rmt/cli/systems.rb:55
+#: ../lib/rmt/cli/systems.rb:81
 msgid "Examples"
 msgstr "例"
 
@@ -620,61 +670,65 @@ msgstr "ミラーリング対象にマーク付けされていないリポジト
 msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
 msgstr "ミラーリング対象としてマークされていないリポジトリのミラー済みファイルを削除します"
 
-#: ../lib/rmt/cli/repos.rb:26
+#: ../lib/rmt/cli/repos.rb:17 ../lib/rmt/cli/systems.rb:73
+msgid "Ask for confirmation or do not ask for confirmation and require no user interaction"
+msgstr "確認を行うか、もしくは確認を求めずにユーザ操作を不要とするか"
+
+#: ../lib/rmt/cli/repos.rb:28
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
 msgstr "RMT はミラーリング対象としてマークされているリポジトリのファイルのみを検出しました。"
 
-#: ../lib/rmt/cli/repos.rb:30
+#: ../lib/rmt/cli/repos.rb:32
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr "RMT は下記のリポジトリ内に、ミラーリング対象としてマークされていないミラー済みファイルを検出しました:"
 
-#: ../lib/rmt/cli/repos.rb:36
+#: ../lib/rmt/cli/repos.rb:38
 msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
 msgstr "続行してこれらのリポジトリのミラー済みファイルを削除しますか？"
 
-#: ../lib/rmt/cli/repos.rb:38
+#: ../lib/rmt/cli/repos.rb:40
 msgid "Only '%{input}' will be accepted."
 msgstr "'%{input}' のみを受け付けることができます。"
 
-#: ../lib/rmt/cli/repos.rb:40
+#: ../lib/rmt/cli/repos.rb:42
 msgid "Enter a value:"
 msgstr "値を入力してください:"
 
-#: ../lib/rmt/cli/repos.rb:45
+#: ../lib/rmt/cli/repos.rb:48
 msgid "Clean cancelled."
 msgstr "クリーンアップをキャンセルしました。"
 
-#: ../lib/rmt/cli/repos.rb:52
+#: ../lib/rmt/cli/repos.rb:56
 msgid "Deleting locally mirrored files from repository '%{repo}'..."
 msgstr "リポジトリ '%{repo}' から、ローカルにミラーされているファイルを削除しています..."
 
-#: ../lib/rmt/cli/repos.rb:61
+#: ../lib/rmt/cli/repos.rb:65
 msgid "Clean finished. An estimated %{total_file_size} was removed."
 msgstr "クリーンアップが完了しました。推定 %{total_file_size} が削除されました。"
 
-#: ../lib/rmt/cli/repos.rb:65 ../lib/rmt/cli/repos.rb:67
+#: ../lib/rmt/cli/repos.rb:69 ../lib/rmt/cli/repos.rb:71
 msgid "Enable mirroring of repositories by a list of repository IDs"
 msgstr "リポジトリIDのリストによりリポジトリのミラーリングを有効にする"
 
-#: ../lib/rmt/cli/repos.rb:69 ../lib/rmt/cli/repos.rb:83
-#: ../lib/rmt/cli/repos_custom.rb:8 ../lib/rmt/cli/repos_custom.rb:66
-#: ../lib/rmt/cli/repos_custom.rb:80
+#: ../lib/rmt/cli/repos.rb:73 ../lib/rmt/cli/repos.rb:87
+#: ../lib/rmt/cli/repos_custom.rb:8 ../lib/rmt/cli/repos_custom.rb:70
+#: ../lib/rmt/cli/repos_custom.rb:84
 msgid "Examples:"
 msgstr "例:"
 
-#: ../lib/rmt/cli/repos.rb:79 ../lib/rmt/cli/repos.rb:81
+#: ../lib/rmt/cli/repos.rb:83 ../lib/rmt/cli/repos.rb:85
 msgid "Disable mirroring of repositories by a list of repository IDs"
 msgstr "リポジトリIDのリストによりリポジトリのミラーリングを無効にする"
 
-#: ../lib/rmt/cli/repos.rb:92 ../lib/rmt/cli/repos_custom.rb:89
+#: ../lib/rmt/cli/repos.rb:96 ../lib/rmt/cli/repos_custom.rb:93
 msgid "To clean up downloaded files, please run '%{command}'"
 msgstr "ダウンロードしたファイルをクリーンアップするには、 '%{command}' を実行してください"
 
-#: ../lib/rmt/cli/repos.rb:105
+#: ../lib/rmt/cli/repos.rb:109
 msgid "No repositories enabled."
 msgstr "リポジトリが有効化されていません。"
 
-#: ../lib/rmt/cli/repos.rb:113
+#: ../lib/rmt/cli/repos.rb:117
 msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
 msgstr "有効なリポジトリのみがデフォルトで表示されます。すべてのリポジトリを表示するには「%{command}」オプションを使用します。"
 
@@ -696,7 +750,7 @@ msgstr "ID %{id} のリポジトリが正常に有効化されました。"
 msgid "Repository by ID %{id} successfully disabled."
 msgstr "ID %{id} によりリポジトリが正常に無効化されました。"
 
-#: ../lib/rmt/cli/repos_base.rb:46
+#: ../lib/rmt/cli/repos_base.rb:56
 msgid "Repository by ID %{id} not found."
 msgstr "ID %{id} のリポジトリが見つかりません。"
 
@@ -708,79 +762,79 @@ msgstr "カスタムリポジトリを作成します。"
 msgid "Provide a custom ID instead of allowing RMT to generate one."
 msgstr "RMT に生成させるのではなく、独自の ID を指定してください。"
 
-#: ../lib/rmt/cli/repos_custom.rb:21
+#: ../lib/rmt/cli/repos_custom.rb:24
 msgid "A repository by the URL %{url} already exists."
 msgstr "URL %{url} のリポジトリはすでに存在しています。"
 
-#: ../lib/rmt/cli/repos_custom.rb:24
+#: ../lib/rmt/cli/repos_custom.rb:27
 msgid "A repository by the ID %{id} already exists."
 msgstr "ID %{id} のリポジトリはすでに存在しています。"
 
-#: ../lib/rmt/cli/repos_custom.rb:27
+#: ../lib/rmt/cli/repos_custom.rb:30
 msgid "Please provide a non-numeric ID for your custom repository."
 msgstr "カスタムリポジトリに対する数字ではない ID を入力してください。"
 
-#: ../lib/rmt/cli/repos_custom.rb:32
+#: ../lib/rmt/cli/repos_custom.rb:35
 msgid "Couldn't add custom repository."
 msgstr "カスタムリポジトリを追加できませんでした。"
 
-#: ../lib/rmt/cli/repos_custom.rb:43
+#: ../lib/rmt/cli/repos_custom.rb:47
 msgid "Successfully added custom repository."
 msgstr "カスタムリポジトリが正常に追加されました。"
 
-#: ../lib/rmt/cli/repos_custom.rb:46
+#: ../lib/rmt/cli/repos_custom.rb:50
 msgid "List all custom repositories"
 msgstr "すべてのカスタムリポジトリを一覧表示する"
 
-#: ../lib/rmt/cli/repos_custom.rb:52
+#: ../lib/rmt/cli/repos_custom.rb:56
 msgid "No custom repositories found."
 msgstr "カスタムリポジトリが見つかりません。"
 
-#: ../lib/rmt/cli/repos_custom.rb:62 ../lib/rmt/cli/repos_custom.rb:64
+#: ../lib/rmt/cli/repos_custom.rb:66 ../lib/rmt/cli/repos_custom.rb:68
 msgid "Enable mirroring of custom repositories by a list of IDs"
 msgstr "ID のリストによるカスタムリポジトリのミラーリングを有効化する"
 
-#: ../lib/rmt/cli/repos_custom.rb:76
+#: ../lib/rmt/cli/repos_custom.rb:80
 msgid "Disable mirroring of custom repository by a list of IDs"
 msgstr "ID リストによるカスタムリポジトリのミラーリングを無効化する"
 
-#: ../lib/rmt/cli/repos_custom.rb:78
+#: ../lib/rmt/cli/repos_custom.rb:82
 msgid "Disable mirroring of custom repositories by a list of IDs"
 msgstr "ID によるカスタムリポジトリのミラーリングを無効化する"
 
-#: ../lib/rmt/cli/repos_custom.rb:92
+#: ../lib/rmt/cli/repos_custom.rb:96
 msgid "Remove a custom repository"
 msgstr "カスタムリポジトリを削除する"
 
-#: ../lib/rmt/cli/repos_custom.rb:97
+#: ../lib/rmt/cli/repos_custom.rb:101
 msgid "Removed custom repository by ID %{id}."
 msgstr "ID %{id} によりカスタムリポジトリを削除しました。"
 
-#: ../lib/rmt/cli/repos_custom.rb:103
+#: ../lib/rmt/cli/repos_custom.rb:107
 msgid "Shows products attached to a custom repository"
 msgstr "カスタムリポジトリにアタッチされた製品を表示します"
 
-#: ../lib/rmt/cli/repos_custom.rb:111
+#: ../lib/rmt/cli/repos_custom.rb:115
 msgid "No products attached to repository."
 msgstr "製品がリポジトリにアタッチされていません。"
 
-#: ../lib/rmt/cli/repos_custom.rb:121
+#: ../lib/rmt/cli/repos_custom.rb:125
 msgid "Attach an existing custom repository to a product"
 msgstr "既存のカスタムリポジトリを製品にアタッチする"
 
-#: ../lib/rmt/cli/repos_custom.rb:127
+#: ../lib/rmt/cli/repos_custom.rb:131
 msgid "Attached repository to product '%{product_name}'."
 msgstr "リポジトリを製品「%{product_name}」にアタッチしました。"
 
-#: ../lib/rmt/cli/repos_custom.rb:132
+#: ../lib/rmt/cli/repos_custom.rb:136
 msgid "Detach an existing custom repository from a product"
 msgstr "製品から既存のカスタムリポジトリをデタッチする"
 
-#: ../lib/rmt/cli/repos_custom.rb:138
+#: ../lib/rmt/cli/repos_custom.rb:142
 msgid "Detached repository from product '%{product_name}'."
 msgstr "リポジトリを製品「%{product_name}」からデタッチしました。"
 
-#: ../lib/rmt/cli/repos_custom.rb:148
+#: ../lib/rmt/cli/repos_custom.rb:152
 msgid "Cannot find product by ID %{id}."
 msgstr "ID %{id} の製品が見つかりません。"
 
@@ -848,69 +902,155 @@ msgstr "RMTがまだSCCと同期されていません。その前に「%{command
 msgid "importing data from SMT."
 msgstr "SMTからデータをインポートしています。"
 
-#: ../lib/rmt/cli/systems.rb:2
+#: ../lib/rmt/cli/systems.rb:8
 msgid "List registered systems."
 msgstr "登録済みのシステムを一覧表示します。"
 
-#: ../lib/rmt/cli/systems.rb:3
+#: ../lib/rmt/cli/systems.rb:9
 msgid "Number of systems to display"
 msgstr "表示するシステムの数"
 
-#: ../lib/rmt/cli/systems.rb:4
+#: ../lib/rmt/cli/systems.rb:10
 msgid "List all registered systems"
 msgstr "全登録済みシステムの一覧"
 
-#: ../lib/rmt/cli/systems.rb:12
+#: ../lib/rmt/cli/systems.rb:11
+msgid "Filter BYOS systems using RMT as a proxy"
+msgstr "RMT をプロキシとして使用して BYOS システムをフィルタする"
+
+#: ../lib/rmt/cli/systems.rb:20
 msgid "There are no systems registered to this RMT instance."
 msgstr "この RMT インスタンスに登録すべきシステムはありません。"
 
-#: ../lib/rmt/cli/systems.rb:18
+#: ../lib/rmt/cli/systems.rb:36
 msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
 msgstr "直近の %{limit} 件の登録のみを表示しています。全ての登録済みシステムを表示したい場合は、 '--all' オプションを指定してください。"
 
-#: ../lib/rmt/cli/systems.rb:26
+#: ../lib/rmt/cli/systems.rb:44
 msgid "Forward registered systems data to SCC"
 msgstr "SCC に登録済みのシステムを転送する"
 
-#: ../lib/rmt/cli/systems.rb:31
+#: ../lib/rmt/cli/systems.rb:49
 msgid "Removes a system and its activations from RMT"
 msgstr "RMT からシステムを削除しアクティベーションを解除する"
 
-#: ../lib/rmt/cli/systems.rb:33
+#: ../lib/rmt/cli/systems.rb:51
 msgid "Removes a system and its activations from RMT."
 msgstr "RMT からシステムを削除しアクティベーションを解除します。"
 
-#: ../lib/rmt/cli/systems.rb:35
+#: ../lib/rmt/cli/systems.rb:53
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr "システムの削除を行なうには、対応するログイン情報を指定して \"%{command}\" コマンドを実行してください。"
 
-#: ../lib/rmt/cli/systems.rb:44
+#: ../lib/rmt/cli/systems.rb:63
 msgid "Successfully removed system with login %{login}."
 msgstr "ログイン %{login} のシステムを削除しました。"
 
-#: ../lib/rmt/cli/systems.rb:46
+#: ../lib/rmt/cli/systems.rb:65
 msgid "System with login %{login} cannot be removed."
 msgstr "ログイン %{login} のシステムは削除できません。"
 
-#: ../lib/rmt/cli/systems.rb:48
+#: ../lib/rmt/cli/systems.rb:67
 msgid "System with login %{login} not found."
 msgstr "ログイン %{login} のシステムが見つかりませんでした。"
 
-#: ../lib/rmt/downloader.rb:201
+#: ../lib/rmt/cli/systems.rb:71
+msgid "Removes inactive systems"
+msgstr "稼働していないシステムを削除する"
+
+#: ../lib/rmt/cli/systems.rb:72
+msgid "Remove systems before the given date (format: \"<year>-<month>-<day>\")"
+msgstr "指定した日付以前のシステムを削除する (書式: \"<年>-<月>-<日>\")"
+
+#: ../lib/rmt/cli/systems.rb:75
+msgid "Removes old systems and their activations if they are inactive."
+msgstr "稼働していない古いシステムを削除し、アクティベーションも解除します。"
+
+#: ../lib/rmt/cli/systems.rb:77
+msgid "By default, inactive systems are those that have not contacted in any way with RMT for the past 3 months. You can override this with the '-b / --before' flag."
+msgstr ""
+"既定では、稼働していないシステムとは 3 ヶ月以上にわたって RMT で通信を行っていないシステムのことを指します。期間を調整したい場合は、 '-b / "
+"--before' フラグで指定してください。"
+
+#: ../lib/rmt/cli/systems.rb:79
+msgid "The command will list you the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
+msgstr ""
+"このコマンドでは、削除対象のシステムを一覧表示して確認を求めます。確認せずにそのままサブコマンドの処理を進めたい場合は、 '--no-"
+"confirmation' フラグを指定してください。"
+
+#: ../lib/rmt/cli/systems.rb:98
+msgid "Do you want to delete these systems?"
+msgstr "これらのシステムを削除してよろしいですか？"
+
+#: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:113
+#: ../lib/rmt/cli/systems.rb:116
+msgid "y"
+msgstr "y"
+
+#: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:114
+#: ../lib/rmt/cli/systems.rb:116
+msgid "n"
+msgstr "n"
+
+#: ../lib/rmt/cli/systems.rb:116
+msgid "Please, answer"
+msgstr "回答を入力してください"
+
+#: ../lib/rmt/cli/systems.rb:126
+msgid "The given date does not follow a proper format. Ensure it follows this format '<year>-<month>-<day>'."
+msgstr "日付が正しい書式になっていません。日付は '<年>-<月>-<日>' の形式で指定してください。"
+
+#: ../lib/rmt/downloader.rb:77
+msgid "Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
+msgstr ""
+"%{file_reference} のダウンロードが %{message} で失敗しました。 %{seconds} 秒後に%{retries} "
+"回再試行します"
+
+#: ../lib/rmt/downloader.rb:131
+msgid "Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
+msgstr ""
+"%{file_reference} の問い合わせが %{message} で失敗しました。 %{seconds} 秒後に %{retries} "
+"回再試行します"
+
+#: ../lib/rmt/downloader.rb:224
 msgid "Checksum doesn't match"
 msgstr "チェックサムが一致しません"
 
-#: ../lib/rmt/downloader.rb:207
-msgid "%{file} - HTTP request failed with code %{code}"
-msgstr "%{file} - HTTP要求がコード %{code} で失敗しました"
-
-#: ../lib/rmt/downloader.rb:217
+#: ../lib/rmt/downloader.rb:237
 msgid "%{file} - File does not exist"
 msgstr "%{file} - ファイルが存在しません"
 
-#: ../lib/rmt/fiber_request.rb:32
-msgid "%{file} - return code %{code}"
-msgstr "%{file} - リターンコード %{code}"
+#: ../lib/rmt/downloader/exception.rb:12
+msgid "Request error:"
+msgstr "リクエストエラー:"
+
+#: ../lib/rmt/downloader/exception.rb:13
+msgid "Request URL"
+msgstr "リクエスト URL"
+
+#: ../lib/rmt/downloader/exception.rb:14
+msgid "Response HTTP status code"
+msgstr "HTTP 応答ステータスコード"
+
+#: ../lib/rmt/downloader/exception.rb:15
+msgid "Response body"
+msgstr "レスポンスボディ"
+
+#: ../lib/rmt/downloader/exception.rb:16
+msgid "Response headers"
+msgstr "レスポンスヘッダ"
+
+#: ../lib/rmt/downloader/exception.rb:17
+msgid "curl return code"
+msgstr "curl 終了コード"
+
+#: ../lib/rmt/downloader/exception.rb:18
+msgid "curl return message"
+msgstr "curl 終了メッセージ"
+
+#: ../lib/rmt/downloader/exception.rb:21
+msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
+msgstr "%{file} - HTTP 状態コード %{code} および終了コード '%{return_code}' でリクエストが失敗しました"
 
 #: ../lib/rmt/gpg.rb:37
 msgid "GPG key import failed"
@@ -944,105 +1084,102 @@ msgstr "ローカルディレクトリ %{dir} がエラー: %{error} で作成�
 msgid "Could not create a temporary directory: %{error}"
 msgstr "一時ディレクトリを作成できませんでした: %{error}"
 
-#: ../lib/rmt/mirror.rb:110
+#: ../lib/rmt/mirror.rb:109
 msgid "Repository metadata signatures are missing"
 msgstr "リポジトリメタデータの署名がありません"
 
-#: ../lib/rmt/mirror.rb:112
-msgid "Failed to get repository metadata signatures with HTTP code %{http_code}"
-msgstr "HTTP コード %{http_code} でリポジトリメタデータの署名取得に失敗しました"
+#: ../lib/rmt/mirror.rb:111
+msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
+msgstr "リポジトリの署名もしくは鍵のダウンロードに失敗しました: %{message}, HTTP コード %{http_code}"
 
-#: ../lib/rmt/mirror.rb:123
+#: ../lib/rmt/mirror.rb:122
 msgid "Error while mirroring metadata: %{error}"
 msgstr "メタデータのミラーリング中にエラーが発生しました: %{error}"
 
 #: ../lib/rmt/mirror.rb:146
-msgid "Error while mirroring license: %{error}"
-msgstr "ライセンスのミラーリング中にエラーが発生しました: %{error}"
+msgid "Error while mirroring license files: %{error}"
+msgstr "ライセンスファイルのミラーリング時にエラーが発生しました: %{error}"
 
 #: ../lib/rmt/mirror.rb:160
 msgid "Failed to download %{failed_count} files"
 msgstr "%{failed_count} 個のファイルのダウンロードに失敗しました"
 
 #: ../lib/rmt/mirror.rb:162
-msgid "Error while mirroring data: %{error}"
-msgstr "データをミラーリング中にエラーが発生しました: %{error}"
+msgid "Error while mirroring packages: %{error}"
+msgstr "パッケージのミラーリング中にエラーが発生しました: %{error}"
 
 #: ../lib/rmt/mirror.rb:197
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
 msgstr "ディレクトリ %{src} から %{dest} への移動中にエラーが発生しました: %{error}"
 
-#: ../lib/rmt/scc.rb:15 ../lib/rmt/scc.rb:86
+#: ../lib/rmt/scc.rb:16 ../lib/rmt/scc.rb:83
 msgid "SCC credentials not set."
 msgstr "SCC 資格情報が設定されていません。"
 
-#: ../lib/rmt/scc.rb:19
+#: ../lib/rmt/scc.rb:18
 msgid "Downloading data from SCC"
 msgstr "SCCからデータをダウンロードしています"
 
-#: ../lib/rmt/scc.rb:22 ../lib/rmt/scc.rb:66
+#: ../lib/rmt/scc.rb:21 ../lib/rmt/scc.rb:63
 msgid "Updating products"
 msgstr "製品を更新しています"
 
-#: ../lib/rmt/scc.rb:37
+#: ../lib/rmt/scc.rb:36
 msgid "Exporting data from SCC to %{path}"
 msgstr "SCCから %{path} にデータをエクスポートしています"
 
-#: ../lib/rmt/scc.rb:41
+#: ../lib/rmt/scc.rb:40
 msgid "Exporting products"
 msgstr "製品をエクスポートしています"
 
-#: ../lib/rmt/scc.rb:46
+#: ../lib/rmt/scc.rb:45
 msgid "Exporting repositories"
 msgstr "リポジトリをエクスポートしています"
 
-#: ../lib/rmt/scc.rb:49
+#: ../lib/rmt/scc.rb:48
 msgid "Exporting subscriptions"
 msgstr "サブスクリプションをエクスポートしています"
 
-#: ../lib/rmt/scc.rb:52
+#: ../lib/rmt/scc.rb:51
 msgid "Exporting orders"
 msgstr "オーダーをエクスポートしています"
 
-#: ../lib/rmt/scc.rb:60
+#: ../lib/rmt/scc.rb:59
 msgid "Missing data files: %{files}"
 msgstr "データファイル: %{files} が見つかりません"
 
-#: ../lib/rmt/scc.rb:64
+#: ../lib/rmt/scc.rb:61
 msgid "Importing SCC data from %{path}"
 msgstr "%{path} からSCCデータをインポートしています"
 
-#: ../lib/rmt/scc.rb:82
+#: ../lib/rmt/scc.rb:79
 msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
 msgstr "SCC とのシステム同期は設定ファイルで無効化されています。終了します。"
 
-#: ../lib/rmt/scc.rb:91
-msgid "Syncing system %{login} to SCC"
-msgstr "システム %{login} を SCC と同期しています"
+#: ../lib/rmt/scc.rb:88
+msgid "Syncing %{count} updated system(s) to SCC"
+msgstr "%{count} 個の更新済みシステムを SCC に同期しています"
 
-#: ../lib/rmt/scc.rb:96
-msgid "Failed to sync system %{login}: %{error}"
-msgstr "システムの同期に失敗しました %{login}: %{error}"
+#: ../lib/rmt/scc.rb:93
+msgid "Failed to sync systems: %{error}"
+msgstr "システムの同期に失敗しました: %{error}"
 
-#: ../lib/rmt/scc.rb:103
+#: ../lib/rmt/scc.rb:98
+msgid "Couldn't sync %{count} systems."
+msgstr "%{count} 個のシステムを同期できませんでした。"
+
+#: ../lib/rmt/scc.rb:117
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
 msgstr "システム %{scc_system_id} の登録解除情報を SCC と同期しています"
 
-#: ../lib/rmt/scc.rb:120
-msgid "Cleaning up the database"
-msgstr "データベースをクリーンアップしています"
-
-#: ../lib/rmt/scc.rb:125
+#: ../lib/rmt/scc.rb:134
 msgid "Updating repositories"
 msgstr "リポジトリを更新しています"
 
-#: ../lib/rmt/scc.rb:132
+#: ../lib/rmt/scc.rb:141
 msgid "Updating subscriptions"
 msgstr "サブスクリプションを更新しています"
 
-#: ../lib/rmt/scc.rb:144
-msgid "Adding product %{product}"
-msgstr "製品 %{product} を追加しています"
-
-#~ msgid "No repository ids supplied"
-#~ msgstr "リポジトリIDが提供されていません"
+#: ../lib/rmt/scc.rb:160
+msgid "Adding/Updating product %{product}"
+msgstr "製品 %{product} を追加／更新しています"
