@@ -33,7 +33,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
 
     context 'when system has hw_info' do
-      let(:instance_data) { 'dummy_instance_data' }
+      let(:instance_data) { '<document>{"instanceId": "dummy_instance_data"}</document>' }
+      let(:new_system_token) { 'BBBBBBBB-BBBB-4BBB-9BBB-BBBBBBBBBBBB' }
       let(:system) { FactoryBot.create(:system, :with_hw_info, instance_data: instance_data) }
       let(:serialized_service_json) do
         V3::ServiceSerializer.new(
@@ -50,7 +51,10 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       end
 
       context 'when system is connected to SCC' do
-        let(:system) { FactoryBot.create(:system, :byos, :with_hw_info, instance_data: instance_data) }
+        let(:system) do
+          FactoryBot.create(:system, :byos, :with_hw_info, instance_data: instance_data,
+            system_token: new_system_token)
+        end
         let(:scc_activate_url) { 'https://scc.suse.com/connect/systems/products' }
         let(:subscription_response) do
           {
@@ -92,8 +96,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
 
         before do
-          allow(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
           allow(plugin_double).to(
             receive(:instance_valid?)
               .and_raise(InstanceVerification::Exception, 'Custom plugin error')
@@ -131,6 +133,61 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             data = JSON.parse(response.body)
             expect(data['error']).to include('No product found on SCC')
             expect(data['error']).not_to include('json api')
+          end
+        end
+
+        context 'with different system_tokens' do
+          let(:system2) do
+            FactoryBot.create(:system, :byos, :with_hw_info, instance_data: instance_data,
+              system_token: 'foo')
+          end
+
+          before do
+            allow(System).to receive(:get_by_credentials).and_return([system, system2])
+            allow(plugin_double).to(
+              receive(:instance_valid?)
+                .and_raise(InstanceVerification::Exception, 'Custom plugin error')
+            )
+            stub_request(:post, scc_activate_url)
+              .to_return(
+                status: 201,
+                body: '{"id": "bar"}',
+                headers: {}
+              )
+            post url, params: payload_byos, headers: headers
+          end
+
+          it 'renders service JSON' do
+            expect(response.body).to eq(serialized_service_json)
+          end
+        end
+
+        context 'with duplicated system_tokens' do
+          let(:system3) do
+            FactoryBot.create(:system, :byos, :with_hw_info, instance_data: instance_data,
+              system_token: 'foo')
+          end
+
+          before do
+            system3 = system
+            system3.save!
+            allow(System).to receive(:get_by_credentials).and_return([system, system3])
+            allow(plugin_double).to(
+              receive(:instance_valid?)
+                .and_raise(InstanceVerification::Exception, 'Custom plugin error')
+            )
+            headers['System-Token'] = 'foo'
+            stub_request(:post, scc_activate_url)
+              .to_return(
+                status: 201,
+                body: '{"id": "bar"}',
+                headers: {}
+              )
+            post url, params: payload_byos, headers: headers
+          end
+
+          it 'renders service JSON' do
+            expect(response.body).to eq(serialized_service_json)
           end
         end
       end

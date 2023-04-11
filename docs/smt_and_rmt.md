@@ -22,7 +22,7 @@ From SUSE Linux Enterprise Server 15 onward, only RMT or SUMA is available.
 |Registration of SLE 12 systems|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Registration of SLE 11 systems|:heavy_check_mark:|:x:|:heavy_check_mark:|
 |Registration of openSUSE Leap 15 systems|:x:|:x:|:heavy_check_mark:|
-|Registeation of non-SUSE products (RHEL, Ubuntu, etc)|:x:|:x:|:heavy_check_mark:|
+|Registration of non-SUSE products (RHEL, Ubuntu, etc)|:x:|:x:|:heavy_check_mark:|
 |Red Hat 7 and earlier support ([Expanded Support](https://www.suse.com/products/expandedsupport/))|:heavy_check_mark:|:x:|:heavy_check_mark:|
 |Red Hat 8 support ([Expanded Support](https://www.suse.com/products/expandedsupport/))|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Support for migrating SLE 12 systems to 15|:warning:<sup>[1](#partial-migration)</sup>|:heavy_check_mark:|:heavy_check_mark:|

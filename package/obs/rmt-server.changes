@@ -1,4 +1,25 @@
 -------------------------------------------------------------------
+Fri Mar 31 17:10:41 UTC 2023 - Zuzana Petrova <zpetrova@suse.com>
+
+- Force rmt-client-setup-res script to use https (bsc#1209825)
+
+-------------------------------------------------------------------
+Tue Mar 21 09:20:19 UTC 2023 - Thomas Schmidt <tschmidt@suse.com>
+
+- Download repomd.xml.asc before repomd.xml.key, because there are repos that only have repomd.xml.asc
+
+-------------------------------------------------------------------
+Mon Mar  6 09:41:32 UTC 2023 - Felix Schnizlein <fschnizlein@suse.com>
+
+- Version 2.11:
+  - Mark secrets.yml.key file as part of the rpm to allow seamless downgrades (bsc#1207670)
+
+-------------------------------------------------------------------
+Tue Jan 24 22:03:53 UTC 2023 - Thomas Schmidt <tschmidt@suse.com>
+
+- Adding -f to the file move command when moving the mirrored directory to its final location (bsc#1203171) 
+
+-------------------------------------------------------------------
 Wed Dec 21 14:07:21 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
 
 - Fix %post install of pubcloud subpackage reload of nginx (bsc#1206593)
