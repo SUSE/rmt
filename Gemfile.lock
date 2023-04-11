@@ -349,7 +349,7 @@ DEPENDENCIES
   rspec-rails (~> 5.0)
   rubocop (<= 1.25)
   rubocop-ast (<= 1.17.0)
-  ruby_parser
+  ruby_parser (< 3.20)
   scc-codestyle (<= 0.5.0)
   shoulda-matchers
   simplecov
