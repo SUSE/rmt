@@ -38,7 +38,7 @@ group :development, :test do
   gem 'rubocop', '<= 1.25' # Locked because of Ruby >= 2.6 dependency
   gem 'rubocop-ast', '<= 1.17.0' # Locked because of Ruby >= 2.6 dependency
   gem 'gettext', require: false # needed for gettext_i18n_rails tasks
-  gem 'ruby_parser', require: false # needed for gettext_i18n_rails tasks
+  gem 'ruby_parser', '< 3.20', require: false # needed for gettext_i18n_rails tasks, Locked because of Ruby >= 2.6 dependency
   gem 'gettext_test_log'
   gem 'memory_profiler'
   gem 'strong_migrations'
