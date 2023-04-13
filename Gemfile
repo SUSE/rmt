@@ -10,12 +10,12 @@ gem 'mysql2', '~> 0.5.3'
 
 gem 'nokogiri', '< 1.13' # Locked because of Ruby >= 2.6 dependency
 gem 'thor'
-gem 'activesupport', '~> 6.1.6'
-gem 'actionpack', '~> 6.1.6'
-gem 'actionview', '~> 6.1.6'
-gem 'activemodel', '~> 6.1.6'
-gem 'activerecord', '~> 6.1.6'
-gem 'railties', '~> 6.1.6'
+gem 'activesupport', '~> 6.1.7.3'
+gem 'actionpack', '~> 6.1.7.3'
+gem 'actionview', '~> 6.1.7.3'
+gem 'activemodel', '~> 6.1.7.3'
+gem 'activerecord', '~> 6.1.7.3'
+gem 'railties', '~> 6.1.7.3'
 gem 'repomd_parser', '~> 0.1.4'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder

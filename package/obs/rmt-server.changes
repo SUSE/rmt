@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Apr 12 15:27:18 UTC 2023 - Felix Schnizlein <fschnizlein@suse.com>
+
+- Version 2.12
+  * Update translations
+  * Fix CVE-2023-28120: Update active support to fix possible XSS Security Vulnerability
+    in bytesliced strings for html_safe. (bsc#1209507)
+
+-------------------------------------------------------------------
 Fri Mar 31 17:10:41 UTC 2023 - Zuzana Petrova <zpetrova@suse.com>
 
 - Force rmt-client-setup-res script to use https (bsc#1209825)
