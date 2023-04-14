@@ -4,9 +4,12 @@ module InstanceVerification
       # return a string indicating if the instance metadata
       # belongs to a PAYG or BYOS instance
       metadata = verification.parse_instance_data(params[:metadata])
+      instance_billing_info = {
+        billing_product: metadata['billingProducts']&.first,
+        marketplace_code: metadata['marketplaceProductCodes']&.first
+      }
       is_payg = verification_provider.payg_billing_code?(
-        metadata[:billingProducts]&.first,
-        metadata[:marketplaceProductCodes]&.first,
+        instance_billing_info,
         params[:identifier]
       )
 
