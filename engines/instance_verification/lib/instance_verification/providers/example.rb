@@ -29,4 +29,9 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
   def parse_instance_data(_instance_data)
     { 'instance_data' => 'parsed_instance_data' }
   end
+
+  def payg_billing_code?(billing_product, marketplace_code, identifier)
+    return true if (identifier.downcase == 'sles' && billing_product == SLES_BILLING_PRODUCT)
+    return true if (identifier.downcase == 'sles_sap' && SLES_SAP_CODES.include?(marketplace_code))
+  end
 end
