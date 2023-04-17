@@ -35,7 +35,16 @@ module StrictAuthentication
       # so they can check if a customer has access to other products and show those
       # to them or verify paths
       all_product_versions = @system.products.map { |p| Product.where(identifier: p.identifier, arch: p.arch) }.flatten
-      all_product_versions.map { |prod| prod.repositories.pluck(:local_path) }.flatten
+      all_product_versions = all_product_versions.map { |prod| prod.repositories.pluck(:local_path) }.flatten
+      manager_prod = @system.products.any? { |p| p.identifier.include?('manager') }
+
+      if manager_prod
+        # add all SUMA products paths
+        manager_products = Product.where('identifier LIKE ?', '%manager%')
+        manager_product_repo_paths = manager_products.map { |prod| prod.repositories.pluck(:local_path) }.flatten
+        all_product_versions += manager_product_repo_paths
+      end
+      all_product_versions
     end
   end
 end

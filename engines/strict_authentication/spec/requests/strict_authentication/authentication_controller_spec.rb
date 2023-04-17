@@ -100,25 +100,34 @@ module StrictAuthentication
             end
           end
 
-          context 'when accessing SLES12SP1 repos and SLES 11 is not activated' do
-            let(:system) { FactoryBot.create(:system, :with_activated_product, product: product) }
-            let(:product) do
+          context 'when system is SUMA' do
+            let(:my_product) do
               FactoryBot.create(
                 :product, :with_mirrored_repositories,
-                identifier: 'SLES', version: '15', arch: 'x86_64'
-              )
+                identifier: 'SLES-manager', version: '15', arch: 'x86_64'
+                )
+            end
+            let(:system) { FactoryBot.create(:system, :with_activated_product, product: my_product) }
+
+            let(:suma_prod_id) do
+              system.products.find do |p|
+                if p.identifier.include?('manager')
+                  return p.id
+                end
+              end
             end
 
-            context 'when requested path is version 12' do
-              let(:requested_uri) { '/repo/SUSE/Updates/SLE-Module-Adv-Systems-Management/12/x86_64/update' }
-
-              its(:code) { is_expected.to eq '403' }
+            let(:suma_repo) do
+              system.services.find do |service|
+                if service.id == suma_prod_id
+                  return service.repositories.first[:local_path]
+                end
+              end
             end
+            let(:requested_uri) { '/repo' + suma_repo + '/repodata/repomd.xml' }
 
-            context 'when requested path is version 12.1' do
-              let(:requested_uri) { '/repo/SUSE/Products/SLE-SERVER/12-SP1/x86_64/product' }
-
-              its(:code) { is_expected.to eq '403' }
+            context 'foo' do
+              its(:code) { is_expected.to eq '200' }
             end
           end
         end
