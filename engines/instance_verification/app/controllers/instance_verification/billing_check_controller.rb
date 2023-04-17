@@ -4,10 +4,10 @@ module InstanceVerification
       # return a string indicating if the instance metadata
       # belongs to a PAYG or BYOS instance
       verification_provider = InstanceVerification.provider.new(
-         nil,
-         nil,
-         nil,
-         nil
+        nil,
+        nil,
+        nil,
+        nil
       )
 
       metadata = verification_provider.parse_instance_data(params[:metadata])
