@@ -31,7 +31,7 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
   end
 
   def payg_billing_code?(billing_product, marketplace_code, identifier)
-    return true if (identifier.downcase == 'sles' && billing_product == SLES_BILLING_PRODUCT)
-    return true if (identifier.downcase == 'sles_sap' && SLES_SAP_CODES.include?(marketplace_code))
+    return true if (identifier.casecmp('sles').zero? && billing_product == SLES_BILLING_PRODUCT)
+    return true if (identifier.casecmp('sles_sap').zero? && SLES_SAP_CODES.include?(marketplace_code))
   end
 end

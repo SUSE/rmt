@@ -16,7 +16,7 @@ module InstanceVerification
       product_billing = 'BYOS'
       product_billing = 'PAYG' if is_payg
 
-      render status: 200, json: { state: product_billing }
-     end
+      render status: :ok, json: { state: product_billing }
+    end
   end
 end
