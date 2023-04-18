@@ -298,7 +298,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
       it 'returns PAYG' do
         get '/api/instance/check', params: { metadata: billing_info.to_s, identifier: 'SLES' }
-        expect(JSON.parse(response.body)['state']).to eq('PAYG')
+        expect(JSON.parse(response.body)['flavor']).to eq('PAYG')
       end
     end
 
@@ -312,7 +312,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
       it 'returns PAYG' do
         get '/api/instance/check', params: { metadata: billing_info.to_s, identifier: 'SLES_SAP' }
-        expect(JSON.parse(response.body)['state']).to eq('PAYG')
+        expect(JSON.parse(response.body)['flavor']).to eq('PAYG')
       end
     end
 
@@ -326,7 +326,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
       it 'returns BYOS' do
         get '/api/instance/check', params: { metadata: billing_info.to_s, identifier: 'SLES' }
-        expect(JSON.parse(response.body)['state']).to eq('BYOS')
+        expect(JSON.parse(response.body)['flavor']).to eq('BYOS')
       end
     end
   end
