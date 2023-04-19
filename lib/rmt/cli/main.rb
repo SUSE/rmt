@@ -33,6 +33,11 @@ class RMT::CLI::Main < RMT::CLI::Base
   def version
     puts RMT::VERSION
   end
+  
+  desc 'setup', _('Configure RMT')
+  def setup
+    RMT::CLI::Setup.new.start_setup
+  end
 
   map %w[--version -v] => :version
 
