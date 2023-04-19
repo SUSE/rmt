@@ -25,6 +25,12 @@ You can install and run this wizard like this:
   * `rmt-cli sync`:
     RMT comes with a preconfigured systemd timer to automatically get the latest product and repository data from the SUSE Customer Center over night.
     This command triggers the same synchronization instantly.
+    
+  * `rmt-cli setup`:
+    As a part of the configuration of RMT, users can create and edit /etc/rmt.conf file to overwrite specific configurations for their need.
+    This requires manual work.
+    This command provides an interactive cli to the user to enter values such as SCC credentials, DB credentials and saves changes to /etc/rmt.conf
+    User can also choose to restart the server after config update from the cli itself.
 
   * `rmt-cli systems list`:
     Lists systems registered against RMT.
