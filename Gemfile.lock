@@ -313,12 +313,12 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  actionpack (~> 6.1.7.3)
-  actionview (~> 6.1.7.3)
+  actionpack (~> 6.1.7)
+  actionview (~> 6.1.7)
   active_model_serializers
-  activemodel (~> 6.1.7.3)
-  activerecord (~> 6.1.7.3)
-  activesupport (~> 6.1.7.3)
+  activemodel (~> 6.1.7)
+  activerecord (~> 6.1.7)
+  activesupport (~> 6.1.7)
   awesome_print
   byebug
   config (~> 3.0, >= 2.2.1)
@@ -340,7 +340,7 @@ DEPENDENCIES
   nokogiri (< 1.13)
   public_suffix (< 5)
   puma (~> 5.6.2)
-  railties (~> 6.1.7.3)
+  railties (~> 6.1.7)
   repomd_parser (~> 0.1.4)
   responders
   ronn
