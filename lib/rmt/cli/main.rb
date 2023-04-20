@@ -29,6 +29,11 @@ class RMT::CLI::Main < RMT::CLI::Base
   desc 'systems', _('List and manipulate registered systems')
   subcommand 'systems', RMT::CLI::Systems
 
+  desc 'setup', _('Configure RMT')
+  def setup
+    RMT::CLI::Setup.new.run_setup
+  end
+
   desc 'version', _('Show RMT version')
   def version
     puts RMT::VERSION
