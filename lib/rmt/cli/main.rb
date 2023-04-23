@@ -34,6 +34,11 @@ class RMT::CLI::Main < RMT::CLI::Base
     puts RMT::VERSION
   end
 
+  desc 'setup', _('Setup configuration file')
+  def setup
+    RMT::CLI::Setup.new.setup_configuration
+  end
+
   map %w[--version -v] => :version
 
   def self.exit_on_failure?
