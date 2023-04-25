@@ -1,5 +1,6 @@
 require 'rails_helper'
 
+# rubocop:disable Metrics/ModuleLength
 module StrictAuthentication
   RSpec.describe AuthenticationController, type: :request do
     subject { response }
@@ -126,14 +127,14 @@ module StrictAuthentication
             let(:my_product) do
               FactoryBot.create(
                 :product, :with_mirrored_repositories,
-                identifier: 'SLES-manager', version: '15', arch: 'x86_64'
+                identifier: 'SUSE-Manager-Server', version: '15', arch: 'x86_64'
                 )
             end
             let(:system) { FactoryBot.create(:system, :with_activated_product, product: my_product) }
 
             let(:suma_prod_id) do
               system.products.find do |p|
-                if p.identifier.include?('manager')
+                if p.identifier.include?('Manager')
                   return p.id
                 end
               end
@@ -157,3 +158,4 @@ module StrictAuthentication
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength
