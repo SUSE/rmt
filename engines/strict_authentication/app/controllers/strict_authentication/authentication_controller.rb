@@ -36,7 +36,7 @@ module StrictAuthentication
       # to them or verify paths
       all_product_versions = @system.products.map { |p| Product.where(identifier: p.identifier, arch: p.arch) }.flatten
       allowed_paths = all_product_versions.map { |prod| prod.repositories.pluck(:local_path) }.flatten
-      manager_prod = @system.products.any? { |p| p.identifier.include?('manager') }
+      manager_prod = @system.products.any? { |p| p.identifier.downcase.include?('manager-server') }
 
       if manager_prod
         # add all SUMA products paths
