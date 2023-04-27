@@ -1,6 +1,6 @@
 module SccSuma
   class SccSumaController < ::ApplicationController
-    # before_action :is_valid?, only: %w[unscoped_products repositories orders]
+    before_action :is_valid?, only: %w[unscoped_products get_list]
 
     def unscoped_products
       render status: :ok, json: { result: 'some_result' }
@@ -14,16 +14,16 @@ module SccSuma
       render status: :ok, json: { result: 'some_result' }
     end
 
-    # protected
+    protected
 
-    # def is_valid?
-    #   verification_provider = InstanceVerification.provider.new(
-    #     logger,
-    #     request,
-    #     params.permit(:identifier, :version, :arch, :release_type).to_h,
-    #     params[:metadata]
-    #   )
-    #   raise 'Unspecified error' unless verification_provider.instance_valid?
-    # end
+    def is_valid?
+      verification_provider = InstanceVerification.provider.new(
+        logger,
+        request,
+        params.permit(:identifier, :version, :arch, :release_type).to_h,
+        params[:metadata]
+      )
+      raise 'Unspecified error' unless verification_provider.instance_valid?
+    end
   end
 end
