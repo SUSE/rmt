@@ -2,13 +2,17 @@ require 'json'
 
 module SccSuma
   REPOSITORY_URL = 'https://scc.suse.com/suma/'.freeze
+  CACHED_PRODUCT_TREE_JSON = '/usr/share/rmt/public/suma/product_tree.json'.freeze
+
 
   class SccSumaController < ::ApplicationController
-    before_action :is_valid?, only: %w[get_scc_client]
-    before_action :get_scc_client, only: %w[unscoped_products get_list]
+    before_action :is_valid?, only: %w[unscoped_products]
 
     def unscoped_products
-      render status: :ok, json: { result: @scc_api_client.list_products_unscoped.to_json }
+      update_cache unless cache_is_valid?
+
+      unscoped_products_json = File.open(@unscoped_products_path).read
+      render status: :ok, json: { result: unscoped_products_json }
     end
 
     def get_list
@@ -16,9 +20,10 @@ module SccSuma
     end
 
     def product_tree
-      json_product_tree = get_product_tree_json
-      render status: :ok, json: { result: json_product_tree }
+      render status: :ok, json: { result: get_product_tree_json }
     end
+
+    protected
 
     def get_scc_client
       @scc_api_client = SUSE::Connect::Api.new(
@@ -26,8 +31,6 @@ module SccSuma
         Settings.scc.password
       )
     end
-
-    protected
 
     def is_valid?
       verification_provider = InstanceVerification.provider.new(
@@ -40,34 +43,47 @@ module SccSuma
     end
 
     def get_product_tree_json
-      @product_tree_file = get_file_reference
+      product_tree_file_path = get_cached_file
+      if product_tree_file_path.nil?
+        download_file_from_scc
+        product_tree_file_path = @product_tree_file.local_path
+      end
 
-      download_file_from_scc unless cache_is_valid?
-
-      JSON.parse(File.open(@product_tree_file.local_path).read)
+      JSON.parse(File.open(product_tree_file_path).read)
     end
 
-    def get_file_reference
+    def get_cached_file
+      return nil unless File.exist?(CACHED_PRODUCT_TREE_JSON)
+
+      JSON.parse(File.open(CACHED_PRODUCT_TREE_JSON).read)
+    end
+
+    def download_file_from_scc
       tmp_dir = Rails.root.join('tmp')
       downloading_paths = {
         base_url: URI.join(REPOSITORY_URL),
         base_dir: tmp_dir,
         cache_dir: tmp_dir
       }
+      @product_tree_file = RMT::Mirror::FileReference.new(relative_path: 'product_tree.json', **downloading_paths)
 
-      RMT::Mirror::FileReference.new(relative_path: 'product_tree.json', **downloading_paths)
-    end
-
-    def download_file_from_scc
       downloader = RMT::Downloader.new(logger: logger, track_files: false)
       logger.info _('Downloading SUSE Manager product tree to %{dir}') % { dir: tmp_dir }
       downloader.download_multi([@product_tree_file])
     end
 
     def cache_is_valid?
-      return false unless File.exist(@product_tree_file.local_path)
+      @unscoped_products_path = File.join(Rails.root.join('tmp'), '/unscoped_products.json')
 
-      File.new(@product_tree_file.local_path).ctime > 1.day.ago
+      return false unless File.exist?(@unscoped_products_path)
+
+      File.new(@unscoped_products_path).ctime > 1.day.ago
+    end
+
+    def update_cache
+      get_scc_client
+      unscoped_products_json = @scc_api_client.list_products_unscoped.to_json
+      File.open(@unscoped_products_path, 'w') {|f| f.write(unscoped_products_json)}
     end
   end
 end
