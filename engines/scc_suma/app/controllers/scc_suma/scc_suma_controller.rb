@@ -40,11 +40,14 @@ module SccSuma
     end
 
     def get_product_tree_json
-      download_scc_file
-      JSON.File.open(@product_tree_file.local_path).read
+      @product_tree_file = get_file_reference
+
+      download_file_from_scc unless cache_is_valid?
+
+      JSON.parse(File.open(@product_tree_file.local_path).read)
     end
 
-    def download_scc_file
+    def get_file_reference
       tmp_dir = Rails.root.join('tmp')
       downloading_paths = {
         base_url: URI.join(REPOSITORY_URL),
@@ -52,10 +55,19 @@ module SccSuma
         cache_dir: tmp_dir
       }
 
-      @product_tree_file = RMT::Mirror::FileReference.new(relative_path: 'product_tree.json', **downloading_paths)
+      RMT::Mirror::FileReference.new(relative_path: 'product_tree.json', **downloading_paths)
+    end
+
+    def download_file_from_scc
       downloader = RMT::Downloader.new(logger: logger, track_files: false)
       logger.info _('Downloading SUSE Manager product tree to %{dir}') % { dir: tmp_dir }
       downloader.download_multi([@product_tree_file])
+    end
+
+    def cache_is_valid?
+      return false unless File.exist(@product_tree_file.local_path)
+
+      File.new(@product_tree_file.local_path).ctime > 1.day.ago
     end
   end
 end
