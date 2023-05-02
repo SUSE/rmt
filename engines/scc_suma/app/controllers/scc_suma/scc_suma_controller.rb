@@ -12,7 +12,7 @@ module SccSuma
       update_cache unless cache_is_valid?
 
       unscoped_products_json = File.open(@unscoped_products_path).read
-      render status: :ok, json: { result: unscoped_products_json }
+      render status: :ok, json: { result: JSON.parse(unscoped_products_json) }
     end
 
     def get_list
@@ -43,19 +43,14 @@ module SccSuma
     end
 
     def get_product_tree_json
-      product_tree_file_path = get_cached_file
-      if product_tree_file_path.nil?
+      product_tree_file_path = CACHED_PRODUCT_TREE_JSON
+      unless File.exist?(product_tree_file_path)
+        product_tree_file_path.nil?
         download_file_from_scc
         product_tree_file_path = @product_tree_file.local_path
       end
 
-      JSON.parse(File.open(product_tree_file_path).read)
-    end
-
-    def get_cached_file
-      return nil unless File.exist?(CACHED_PRODUCT_TREE_JSON)
-
-      JSON.parse(File.open(CACHED_PRODUCT_TREE_JSON).read)
+      return JSON.parse(File.open(product_tree_file_path).read)
     end
 
     def download_file_from_scc
