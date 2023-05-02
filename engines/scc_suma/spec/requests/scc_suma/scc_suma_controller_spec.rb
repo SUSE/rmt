@@ -15,13 +15,15 @@ module SccSuma
         {
           identifier: product.identifier,
           version: product.version,
-          arch: product.arch,
+          arch: product.arch
         }
       end
       let(:logger) { instance_double('RMT::Logger').as_null_object }
-      let(:unscoped_file) { File.join(Rails.root.join('tmp'), '/unscoped_products.json') }
+
 
       context 'get unscoped products' do
+        let(:unscoped_file) { Rails.root.join('tmp/unscoped_products.json') }
+
         context 'cache is valid' do
           before do
             allow(plugin_double).to(
@@ -33,13 +35,13 @@ module SccSuma
             allow(RMT::Logger).to receive(:new).and_return(logger)
             FileUtils.cp(
               file_fixture('products/dummy_products.json'),
-              File.join(Rails.root.join('tmp'), '/unscoped_products.json')
+              Rails.root.join('tmp/unscoped_products.json')
               )
 
             get '/api/scc/unscoped-products', params: payload
           end
 
-          after { File.delete(unscoped_file) if File.exist?(unscoped_file)}
+          after { File.delete(unscoped_file) if File.exist?(unscoped_file) }
 
           its(:code) { is_expected.to eq '200' }
           its(:body) { is_expected.to eq "{\"result\":#{products.to_json}}" }
@@ -66,18 +68,24 @@ module SccSuma
 
       context 'get repos' do
         before { get '/api/scc/repos' }
+
         its(:code) { is_expected.to eq '200' }
-        its(:body) { is_expected.to eq "{\"result\":[]}" }
+        its(:body) { is_expected.to eq '{"result":[]}' }
       end
 
       context 'get product tree' do
+        let(:product_tree_file) { Rails.root.join('tmp/product_tree.json') }
+
         before do
           allow(RMT::Downloader).to receive(:new).and_return downloader_double
           allow(downloader_double).to receive(:download_multi)
           allow_any_instance_of(File).to receive(:read).and_return products.to_json
+          FileUtils.cp(file_fixture('products/dummy_products.json'), product_tree_file)
 
           get '/api/scc/product-tree'
         end
+
+        after { File.delete(product_tree_file) if File.exist?(product_tree_file) }
 
         its(:code) { is_expected.to eq '200' }
         its(:body) { is_expected.to eq "{\"result\":#{products.to_json}}" }
