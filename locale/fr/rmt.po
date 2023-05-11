@@ -1,7 +1,6 @@
-# French translations for rmt package.
-# Copyright (C) 2019 THE PACKAGE'S COPYRIGHT HOLDER
+# French translations for rmt.
+# Copyright (C) 2019-2023
 # This file is distributed under the same license as the rmt package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
 #
 msgid ""
 msgstr ""
