@@ -1,8 +1,8 @@
 require 'rails_helper'
 require 'json'
 
-module SccSuma
-  RSpec.describe SccSumaController, type: :request do
+module SccSumaApi
+  RSpec.describe SccSumaApiController, type: :request do
     subject { response }
 
     describe '#scc endpoints' do
