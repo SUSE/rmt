@@ -1,6 +1,6 @@
-module SccSuma
+module SccSumaApi
   class Engine < ::Rails::Engine
-    isolate_namespace SccSuma
+    isolate_namespace SccSumaApi
     config.generators.api_only = true
 
     config.generators do |g|

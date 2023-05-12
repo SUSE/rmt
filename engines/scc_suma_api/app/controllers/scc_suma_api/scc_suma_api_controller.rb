@@ -1,11 +1,11 @@
 require 'json'
 
-module SccSuma
+module SccSumaApi
   REPOSITORY_URL = 'https://scc.suse.com/suma/'.freeze
   CACHED_PRODUCT_TREE_JSON = '/usr/share/rmt/public/suma/product_tree.json'.freeze
 
 
-  class SccSumaController < ::ApplicationController
+  class SccSumaApiController < ::ApplicationController
     before_action :is_valid?, only: %w[unscoped_products]
 
     def unscoped_products
