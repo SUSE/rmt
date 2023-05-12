@@ -61,4 +61,5 @@ Rails.application.routes.draw do
   mount StrictAuthentication::Engine, at: '/api/auth' if defined?(StrictAuthentication::Engine)
   mount RegistrationSharing::Engine, at: '/api/regsharing' if defined?(RegistrationSharing::Engine)
   mount InstanceVerification::Engine, at: '/api/instance' if defined?(InstanceVerification::Engine)
+  mount SccSumaApi::Engine, at: '/api/scc' if defined?(SccSumaApi::Engine)
 end
