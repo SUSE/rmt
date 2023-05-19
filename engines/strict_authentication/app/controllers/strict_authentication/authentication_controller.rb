@@ -35,7 +35,19 @@ module StrictAuthentication
       # so they can check if a customer has access to other products and show those
       # to them or verify paths
       all_product_versions = @system.products.map { |p| Product.where(identifier: p.identifier, arch: p.arch) }.flatten
-      all_product_versions.map { |prod| prod.repositories.pluck(:local_path) }.flatten
+      allowed_paths = all_product_versions.map { |prod| prod.repositories.pluck(:local_path) }.flatten
+      # for the SUMa PAYG offers, RMT access verification code allows access
+      # to the SUMa Client Tools channels and SUMa Proxy channels
+      # when product is SUMA_Server and PAYG or SUMA_Server and used as SCC proxy
+      manager_prod = @system.products.any? { |p| p.identifier.downcase.include?('manager-server') }
+
+      if manager_prod
+        # add all SUMA products paths
+        manager_products = Product.where('identifier LIKE ?', '%manager%')
+        manager_product_repo_paths = manager_products.map { |prod| prod.repositories.pluck(:local_path) }.flatten
+        allowed_paths += manager_product_repo_paths
+      end
+      allowed_paths
     end
   end
 end
