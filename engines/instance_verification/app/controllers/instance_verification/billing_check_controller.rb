@@ -4,26 +4,16 @@ module InstanceVerification
       # return a string indicating if the instance metadata
       # belongs to a PAYG or BYOS instance
       verification_provider = InstanceVerification.provider.new(
+        logger,
         nil,
         nil,
-        nil,
-        nil
+        params[:metadata]
       )
 
-      metadata = verification_provider.parse_instance_data(params[:metadata])
-      instance_billing_info = {
-        billing_product: metadata['billingProducts']&.first,
-        marketplace_code: metadata['marketplaceProductCodes']&.first
-      }
-      is_payg = verification_provider.payg_billing_code?(
-        instance_billing_info,
-        params[:identifier]
-      )
+      iid = verification_provider.parse_instance_data
+      is_payg = verification_provider.payg_billing_code?(iid, params[:identifier])
 
-      product_billing = 'BYOS'
-      product_billing = 'PAYG' if is_payg
-
-      render status: :ok, json: { flavor: product_billing }
+      render status: :ok, json: { flavor: is_payg ? 'PAYG' : 'BYOS' }
     end
   end
 end
