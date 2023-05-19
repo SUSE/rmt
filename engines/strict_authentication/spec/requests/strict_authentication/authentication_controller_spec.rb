@@ -1,5 +1,6 @@
 require 'rails_helper'
 
+# rubocop:disable Metrics/ModuleLength
 module StrictAuthentication
   RSpec.describe AuthenticationController, type: :request do
     subject { response }
@@ -121,8 +122,40 @@ module StrictAuthentication
               its(:code) { is_expected.to eq '403' }
             end
           end
+
+          context 'when system is SUMA' do
+            let(:my_product) do
+              FactoryBot.create(
+                :product, :with_mirrored_repositories,
+                identifier: 'SUSE-Manager-Server', version: '15', arch: 'x86_64'
+                )
+            end
+            let(:system) { FactoryBot.create(:system, :with_activated_product, product: my_product) }
+
+            let(:suma_prod_id) do
+              system.products.find do |p|
+                if p.identifier.include?('Manager')
+                  return p.id
+                end
+              end
+            end
+
+            let(:suma_repo) do
+              system.services.find do |service|
+                if service.id == suma_prod_id
+                  return service.repositories.first[:local_path]
+                end
+              end
+            end
+            let(:requested_uri) { '/repo' + suma_repo + '/repodata/repomd.xml' }
+
+            context 'foo' do
+              its(:code) { is_expected.to eq '200' }
+            end
+          end
         end
       end
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength
