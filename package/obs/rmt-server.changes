@@ -6,6 +6,7 @@ Fri May 19 12:05:44 UTC 2023 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
   * New endpoint to handle SUMa CLI tool PAYG/BYOS check
   * Additional API paths for SUMa PAYG for RMT
   * Allow access to SUMa Client Tools and Proxy channels if product is SUMA_Server
+  * Handle system token for BYOS instances in the cloud
 
 
 -------------------------------------------------------------------
