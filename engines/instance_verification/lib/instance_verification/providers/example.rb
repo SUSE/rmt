@@ -26,7 +26,23 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
     return '6789_SUSE_SAP' if @product_hash[:identifier].casecmp('sles_sap').zero?
   end
 
-  def parse_instance_data(_instance_data)
-    { 'instance_data' => 'parsed_instance_data' }
+  def parse_instance_data(instance_data)
+    if instance_data.include? '<instance_data/>'
+      return { 'instance_data' => 'parsed_instance_data' }
+    end
+
+    if instance_data.include?('SUSE')
+      if instance_data.include?('SAP')
+        return { 'billingProducts' => nil, 'marketplaceProductCodes' => ['6789_SUSE_SAP'] }
+      end
+
+      return { 'billingProducts' => ['1234_SUSE_SLES'], 'marketplaceProductCodes' => nil }
+    end
+    { 'billingProducts' => ['foo'], 'marketplaceProductCodes' => ['bar'] }
+  end
+
+  def payg_billing_code?(instance_billing_info, identifier)
+    return true if (identifier.casecmp('sles').zero? && instance_billing_info[:billing_product] == SLES_PRODUCT_IDENTIFIER)
+    return true if (identifier.casecmp('sles_sap').zero? && SLES4SAP_PRODUCT_IDENTIFIER.include?(instance_billing_info[:marketplace_code]))
   end
 end
