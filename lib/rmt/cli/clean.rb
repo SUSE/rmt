@@ -108,7 +108,7 @@ class RMT::CLI::Clean < RMT::CLI::Base
       next nil if stale_packages.empty?
 
       [repo_base_dir, stale_packages]
-    end.reject(&:nil?)
+    end.compact_blank
   end
 
   def stale_packages_list(repo_base_dir, repomd_file)
@@ -139,7 +139,7 @@ class RMT::CLI::Clean < RMT::CLI::Base
 
       CleanedFile.new(path: file, file_size: file_size, db_entries: db_entries,
                       db_entries_count: db_entries.count, hardlink: hardlink)
-    end.reject(&:nil?)
+    end.compact
   end
 
   def parse_packages_data(repomd_file, repo_base_dir)
