@@ -91,11 +91,11 @@ RSpec.describe RMT::CLI::Clean do
 
       let(:expected_result_output) do
         <<~OUTPUT.chomp
-          \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
-          Cleaned 2 files (#{file_human_size(10824)}), 1 database entry.
-
           \e[1mDirectory: #{dummy_repo[:dir]}\e[0m
           Cleaned 2 files (#{file_human_size(4038)}), 2 database entries.
+
+          \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
+          Cleaned 2 files (#{file_human_size(10824)}), 1 database entry.
 
           #{'-' * 80}
           \e[32;1mTotal: cleaned 4 files (#{file_human_size(14862)}), 3 database entries.\e[0m
@@ -205,15 +205,15 @@ RSpec.describe RMT::CLI::Clean do
       end
       let(:expected_result_output) do
         <<~OUTPUT.chomp
-          \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
-            Cleaned 'x86_64/lemon-0.0.1_0.0.2-lp151.2.1.x86_64.drpm' (#{file_human_size(3544)}), 0 database entries.
-            Cleaned 'x86_64/lemon-0.0.2-lp151.2.1.x86_64.rpm' (#{file_human_size(7280)}), 1 database entry.
-          Cleaned 2 files (#{file_human_size(10824)}), 1 database entry.
-
           \e[1mDirectory: #{dummy_repo[:dir]}\e[0m
             Cleaned 'blueberry-0.1-0.x86_64.drpm' (#{file_human_size(2088)}), 1 database entry.
             Cleaned 'blueberry-0.2-0.x86_64.rpm' (#{file_human_size(1950)}), 1 database entry.
           Cleaned 2 files (#{file_human_size(4038)}), 2 database entries.
+
+          \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
+            Cleaned 'x86_64/lemon-0.0.1_0.0.2-lp151.2.1.x86_64.drpm' (#{file_human_size(3544)}), 0 database entries.
+            Cleaned 'x86_64/lemon-0.0.2-lp151.2.1.x86_64.rpm' (#{file_human_size(7280)}), 1 database entry.
+          Cleaned 2 files (#{file_human_size(10824)}), 1 database entry.
 
           #{'-' * 80}
           \e[32;1mTotal: cleaned 4 files (#{file_human_size(14862)}), 3 database entries.\e[0m
@@ -235,17 +235,17 @@ RSpec.describe RMT::CLI::Clean do
       end
       let(:expected_result_output) do
         <<~OUTPUT.chomp
+          \e[1mDirectory: #{dummy_repo[:dir]}\e[0m
+            Cleaned 'blueberry-0.1-0.x86_64.drpm' (#{file_human_size(2088)}), 1 database entry.
+            Cleaned 'blueberry-0.2-0.x86_64.rpm' (#{file_human_size(1950)}), 1 database entry.
+          Cleaned 2 files (#{file_human_size(4038)}), 2 database entries.
+
           \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
             Cleaned 'src/lemon-0.0.1-lp151.1.1.src.rpm' (#{file_human_size(7518)}), 0 database entries.
             Cleaned 'src/lemon-0.0.2-lp151.2.1.src.rpm' (#{file_human_size(7528)}), 1 database entry.
             Cleaned 'x86_64/lemon-0.0.1_0.0.2-lp151.2.1.x86_64.drpm' (#{file_human_size(3544)}), 0 database entries.
             Cleaned 'x86_64/lemon-0.0.2-lp151.2.1.x86_64.rpm' (#{file_human_size(7280)}), 1 database entry.
           Cleaned 4 files (#{file_human_size(25870)}), 2 database entries.
-
-          \e[1mDirectory: #{dummy_repo[:dir]}\e[0m
-            Cleaned 'blueberry-0.1-0.x86_64.drpm' (#{file_human_size(2088)}), 1 database entry.
-            Cleaned 'blueberry-0.2-0.x86_64.rpm' (#{file_human_size(1950)}), 1 database entry.
-          Cleaned 2 files (#{file_human_size(4038)}), 2 database entries.
 
           #{'-' * 80}
           \e[32;1mTotal: cleaned 6 files (#{file_human_size(29908)}), 4 database entries.\e[0m
@@ -298,17 +298,17 @@ RSpec.describe RMT::CLI::Clean do
       end
       let(:expected_result_output) do
         <<~OUTPUT.chomp
+        \e[1mDirectory: #{dummy_repo[:dir]}\e[0m
+          Cleaned 'blueberry-0.1-0.x86_64.drpm' (#{file_human_size(0)}, hardlink), 1 database entry.
+          Cleaned 'blueberry-0.2-0.x86_64.rpm' (#{file_human_size(0)}, hardlink), 1 database entry.
+        Cleaned 2 files (#{file_human_size(0)}), 2 database entries.
+
         \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
           Cleaned 'src/lemon-0.0.1-lp151.1.1.src.rpm' (#{file_human_size(0)}, hardlink), 0 database entries.
           Cleaned 'src/lemon-0.0.2-lp151.2.1.src.rpm' (#{file_human_size(0)}, hardlink), 1 database entry.
           Cleaned 'x86_64/lemon-0.0.1_0.0.2-lp151.2.1.x86_64.drpm' (#{file_human_size(0)}, hardlink), 0 database entries.
           Cleaned 'x86_64/lemon-0.0.2-lp151.2.1.x86_64.rpm' (#{file_human_size(0)}, hardlink), 1 database entry.
         Cleaned 4 files (#{file_human_size(0)}), 2 database entries.
-
-        \e[1mDirectory: #{dummy_repo[:dir]}\e[0m
-          Cleaned 'blueberry-0.1-0.x86_64.drpm' (#{file_human_size(0)}, hardlink), 1 database entry.
-          Cleaned 'blueberry-0.2-0.x86_64.rpm' (#{file_human_size(0)}, hardlink), 1 database entry.
-        Cleaned 2 files (#{file_human_size(0)}), 2 database entries.
 
         #{'-' * 80}
         \e[32;1mTotal: cleaned 6 files (#{file_human_size(0)}), 4 database entries.\e[0m
@@ -336,17 +336,17 @@ RSpec.describe RMT::CLI::Clean do
       end
       let(:expected_result_output) do
         <<~OUTPUT.chomp
-          \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
-            Cleaned 'src/lemon-0.0.1-lp151.1.1.src.rpm' (#{file_human_size(0)}, hardlink), 0 database entries.
-            Cleaned 'x86_64/lemon-0.0.1_0.0.2-lp151.2.1.x86_64.drpm' (#{file_human_size(3544)}), 0 database entries.
-          Cleaned 2 files (#{file_human_size(3544)}), 0 database entries.
-
           \e[1mDirectory: #{dummy_repo[:dir]}\e[0m
             Cleaned 'blueberry-0.1-0.x86_64.drpm' (#{file_human_size(0)}, hardlink), 1 database entry.
             Cleaned 'blueberry-0.2-0.x86_64.rpm' (#{file_human_size(0)}, hardlink), 1 database entry.
             Cleaned 'cranberry-0.4-0.x86_64.rpm' (#{file_human_size(0)}, hardlink), 1 database entry.
             Cleaned 'strawberry-0.3-0.x86_64.rpm' (#{file_human_size(1950)}), 0 database entries.
           Cleaned 4 files (#{file_human_size(1950)}), 3 database entries.
+
+          \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
+            Cleaned 'src/lemon-0.0.1-lp151.1.1.src.rpm' (#{file_human_size(0)}, hardlink), 0 database entries.
+            Cleaned 'x86_64/lemon-0.0.1_0.0.2-lp151.2.1.x86_64.drpm' (#{file_human_size(3544)}), 0 database entries.
+          Cleaned 2 files (#{file_human_size(3544)}), 0 database entries.
 
           #{'-' * 80}
           \e[32;1mTotal: cleaned 6 files (#{file_human_size(5494)}), 3 database entries.\e[0m

@@ -27,7 +27,7 @@ class RMT::CLI::Clean < RMT::CLI::Base
     print _("Scanning the mirror directory for 'repomd.xml' files...")
     print "\e[0m\n"
 
-    repomd_files = Dir.glob(File.join(RMT::DEFAULT_MIRROR_DIR, '**', 'repomd.xml'))
+    repomd_files = Dir.glob(File.join(RMT::DEFAULT_MIRROR_DIR, '**', 'repomd.xml')).sort
 
     repomd_count = repomd_files.count
     if repomd_count == 0
