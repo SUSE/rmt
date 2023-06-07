@@ -1,4 +1,5 @@
 require 'rails_helper'
+RSpec::Support::ObjectFormatter.default_instance.max_formatted_output_length = 1000000
 
 class StaleList
   attr_reader :files, :db_entries, :hardlinks
