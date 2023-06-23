@@ -146,6 +146,13 @@ if [ ! -x $SUSECONNECT ]; then
     $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update
     $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}-AS/${SLL_version}/x86_64/update
     $DNF install --allowerasing ${SLL_release_package}
+
+    // For SLL8, remove all old signing keys and import SUSE keys installed with sles_es-release package
+    if [[ ${SLL_version} -eq 8 ]]; then
+        $RPM -e gpg-pubkey-*
+        $RPM --import /etc/pki/rpm-gpg/*
+    fi
+
     $DNF install SUSEConnect librepo
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}_${SLL_version}_x86_64_update"
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}-AS_${SLL_version}_x86_64_update"
