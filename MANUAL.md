@@ -104,15 +104,15 @@ You can install and run this wizard like this:
 
   * `rmt-cli clean packages`:
     Removes locally mirrored dangling files and their database entries.
-    A file is considered *dangling* if it matches all the following characteristics:
+    A file is considered to be *dangling* if it matches all the following characteristics:
 
-      * It exists in a repository directory with primary and deltainfo metadata files;
-      * It is not referenced in those metadata files;
+      * It exists in a repository directory with primary and deltainfo metadata `repomd.xml` files;
+      * It is no longer referenced to in those metadata files;
       * It is at least *2-days-old*.
 
     Use the `--dry-run` flag to generate a report of all files without actually cleaning files or database entries.
 
-    Use the `--verbose` flag to print information detailed information of each cleaned file.
+    Use the `--verbose` flag to print detailed information of each cleaned file.
 
     Use the `--non-interactive` flag to skip confirmation before proceeding with the cleaning process.
 
