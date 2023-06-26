@@ -25,40 +25,40 @@ shared_examples 'does not remove database entries' do
 end
 
 shared_examples 'removes files' do
-  it 'removes all stale files' do
+  it 'removes all dangling files' do
     silence_stdout do
       expect { command }
         .to change { Dir.glob(File.join(mirror_dir, '**', '*.*rpm')).count }
-        .by(-stale_list.files.count - stale_list.hardlinks.count)
+        .by(-dangling_list.files.count - dangling_list.hardlinks.count)
     end
   end
 end
 
 shared_examples 'removes database entries' do
-  it 'removes all database entries referencing stale files' do
+  it 'removes all database entries referencing dangling files' do
     silence_stdout do
       expect { command }
         .to change(DownloadedFile, :count)
-        .by(-stale_list.db_entries.count)
+        .by(-dangling_list.db_entries.count)
     end
   end
 end
 
-shared_examples 'does not remove fresh stale files' do
-  it 'does not remove fresh stale files' do
+shared_examples 'does not remove fresh dangling files' do
+  it 'does not remove fresh dangling files' do
     silence_stdout do
       # File.stat will fail if the file doesn't exist, which come in hand in
       # case the implementation fails to keep the files.
       expect { command }.not_to change {
-        fresh_stale_list.files.map { |f| File.stat(f[:file]).inspect }
+        fresh_dangling_list.files.map { |f| File.stat(f[:file]).inspect }
       }
     end
   end
 end
 
-shared_examples 'does not remove database entries of fresh stale files' do
-  it 'does not remove database entries referencing fresh stale files' do
-    fresh_files = fresh_stale_list.db_entries.pluck(:file)
+shared_examples 'does not remove database entries of fresh dangling files' do
+  it 'does not remove database entries referencing fresh dangling files' do
+    fresh_files = fresh_dangling_list.db_entries.pluck(:file)
     silence_stdout do
       expect { command }.not_to change {
         DownloadedFile.where(local_path: fresh_files).pluck(:local_path)

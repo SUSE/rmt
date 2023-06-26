@@ -1,9 +1,9 @@
 class RMT::CLI::Clean < RMT::CLI::Base
-  STALE_FILE_MINIMUM_AGE = 48 * 60 * 60 # 2 days (in seconds)
+  DANGLING_FILE_MINIMUM_AGE = 48 * 60 * 60 # 2 days (in seconds)
   CleanedFile = Struct.new(:path, :file_size, :db_entries, :db_entries_count,
                            :hardlink, keyword_init: true).freeze
 
-  desc 'packages', _('Clean stale package files, based on current repository data.')
+  desc 'packages', _('Clean dangling package files, based on current repository data.')
   option :non_interactive, aliases: '-n', type: :boolean,
     desc: _('Do not ask anything, use default answers automatically. Default: false')
   option :dry_run, type: :boolean,
@@ -12,13 +12,13 @@ class RMT::CLI::Clean < RMT::CLI::Base
     desc: _('List files during the cleaning process.')
   long_desc _(
     <<~PACKAGES
-    Clean stale package files, based on current repository metadata.
+    Clean dangling package files, based on current repository metadata.
 
     This command scans the mirror directory for 'repomd.xml' files, parse the
     metadata files, and compare their content with files on disk. Files not
-    listed in the metadata and at least 2-days-old are considered stale.
+    listed in the metadata and at least 2-days-old are considered dangling.
 
-    Then, it removes all stale files from disk and any associated database entries.
+    Then, it removes all dangling files from disk and any associated database entries.
     PACKAGES
   )
 
@@ -40,11 +40,11 @@ class RMT::CLI::Clean < RMT::CLI::Base
 
     repomd_count_text = file_count_text(repomd_count)
     puts _('RMT found repomd.xml files: %{repomd_count}.') % { repomd_count: repomd_count_text }
-    puts _('Now, it will parse all repomd.xml files, search for stale packages on disk and clean them.')
+    puts _('Now, it will parse all repomd.xml files, search for dangling packages on disk and clean them.')
 
     unless options.non_interactive
       print "\n\e[1m"
-      print _('This can take several minutes. Would you like to continue and clean stale packages?')
+      print _('This can take several minutes. Would you like to continue and clean dangling packages?')
       print "\e[0m\n\s\s"
       print _("Only '%{input}' will be accepted.") % { input: _('yes') }
       print "\n\s\s\e[1m"
@@ -64,17 +64,17 @@ class RMT::CLI::Clean < RMT::CLI::Base
   private
 
   def run_package_clean(repomd_files)
-    # Initialize table to keep registry of inodes referencing stale files/links
+    # Initialize table to keep registry of inodes referencing dangling files/links
     @inodes = Hash.new(0)
 
     partial_reports =
-      stale_packages_list_by_dir(repomd_files).map do |repo_dir, stale_files|
+      dangling_packages_list_by_dir(repomd_files).map do |repo_dir, dangling_files|
         unless options.dry_run
-          FileUtils.rm(stale_files.map(&:path))
-          stale_files.each { |file| file.db_entries.destroy_all }
+          FileUtils.rm(dangling_files.map(&:path))
+          dangling_files.each { |file| file.db_entries.destroy_all }
         end
 
-        generate_partial_report(repo_dir, stale_files)
+        generate_partial_report(repo_dir, dangling_files)
       end
 
     report = partial_reports
@@ -84,7 +84,7 @@ class RMT::CLI::Clean < RMT::CLI::Base
 
     if report[:count] == 0
       print "\n\e[32;1m"
-      print _('No stale packages have been found!')
+      print _('No dangling packages have been found!')
       print "\e[0m\n"
 
       return
@@ -100,18 +100,18 @@ class RMT::CLI::Clean < RMT::CLI::Base
     print "\e[0m\n"
   end
 
-  def stale_packages_list_by_dir(repomd_files)
+  def dangling_packages_list_by_dir(repomd_files)
     repomd_files.lazy.map do |repomd_file|
       repo_base_dir = File.absolute_path(File.join(File.dirname(repomd_file), '..'))
-      stale_packages = stale_packages_list(repo_base_dir, repomd_file)
+      dangling_packages = dangling_packages_list(repo_base_dir, repomd_file)
 
-      next nil if stale_packages.empty?
+      next nil if dangling_packages.empty?
 
-      [repo_base_dir, stale_packages]
+      [repo_base_dir, dangling_packages]
     end.compact_blank
   end
 
-  def stale_packages_list(repo_base_dir, repomd_file)
+  def dangling_packages_list(repo_base_dir, repomd_file)
     expected_packages = parse_packages_data(repomd_file, repo_base_dir)
       .map { |file| File.join(repo_base_dir, file.location) }.sort
 
@@ -123,7 +123,7 @@ class RMT::CLI::Clean < RMT::CLI::Base
 
       # Only remove files if they were not recently created
       file_stat = File.stat(file)
-      next nil if (Time.current - file_stat.mtime) < STALE_FILE_MINIMUM_AGE
+      next nil if (Time.current - file_stat.mtime) < DANGLING_FILE_MINIMUM_AGE
 
       file_size, hardlink =
         # We keep the count of times an inode has been referenced to know

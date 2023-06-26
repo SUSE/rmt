@@ -61,14 +61,14 @@ shared_context 'mirror repositories' do
   end
 end
 
-shared_context 'mirror repositories with stale files' do
+shared_context 'mirror repositories with dangling files' do
   include_context 'mirror repositories'
 
   before do
-    fresh_stale = [fresh_stale_list, 1.day.before(current_time).to_time]
-    stale       = [stale_list,       2.days.before(current_time).to_time]
+    fresh_dangling = [fresh_dangling_list, 1.day.before(current_time).to_time]
+    dangling       = [dangling_list,       2.days.before(current_time).to_time]
 
-    [fresh_stale, stale].each do |list, time|
+    [fresh_dangling, dangling].each do |list, time|
       list.files.each do |file|
         FileUtils.cp(File.join(mirror_dir, file[:fixture]).to_s, file[:file])
         File.utime(time, time, file[:file])

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-class StaleList
+class DanglingList
   attr_reader :files, :db_entries, :hardlinks
 
   def initialize(files: [], db_entries: [], hardlinks: [])
@@ -26,7 +26,7 @@ RSpec.describe RMT::CLI::Clean do
       { fixture: 'dummy_repo_with_src', dir: File.join(mirror_dir, 'dummy_repo_with_src') }
     end
     let(:mirrored_repos) { [dummy_repo, dummy_repo_with_src] }
-    let(:stale_files) do
+    let(:dangling_files) do
       {
         rpm1: {
           fixture: 'dummy_repo_with_src/x86_64/apples-0.0.2-lp151.2.1.x86_64.rpm',
@@ -68,25 +68,25 @@ RSpec.describe RMT::CLI::Clean do
       <<~OUTPUT
         \n\e[1mScanning the mirror directory for 'repomd.xml' files...\e[0m
         RMT found repomd.xml files: 2 files.
-        Now, it will parse all repomd.xml files, search for stale packages on disk and clean them.
+        Now, it will parse all repomd.xml files, search for dangling packages on disk and clean them.
 
         #{confirmation_prompt}#{expected_result_output}
       OUTPUT
     end
     let(:confirmation_prompt) do
       <<~OUTPUT
-        \e[1mThis can take several minutes. Would you like to continue and clean stale packages?\e[0m
+        \e[1mThis can take several minutes. Would you like to continue and clean dangling packages?\e[0m
           Only 'yes' will be accepted.
           \e[1mEnter a value:\e[0m\s
       OUTPUT
     end
-    let(:stale_list)       { StaleList.new }
-    let(:fresh_stale_list) { StaleList.new }
+    let(:dangling_list)       { DanglingList.new }
+    let(:fresh_dangling_list) { DanglingList.new }
 
-    shared_context 'default stale files setup' do
-      let(:stale_list) do
-        StaleList.new(files: stale_files.values_at(:rpm1, :drpm1, :rpm2, :drpm2),
-                      db_entries: stale_files.values_at(:rpm1, :rpm2, :drpm2))
+    shared_context 'default dangling files setup' do
+      let(:dangling_list) do
+        DanglingList.new(files: dangling_files.values_at(:rpm1, :drpm1, :rpm2, :drpm2),
+                         db_entries: dangling_files.values_at(:rpm1, :rpm2, :drpm2))
       end
 
       let(:expected_result_output) do
@@ -136,8 +136,8 @@ RSpec.describe RMT::CLI::Clean do
       include_examples 'prints to stdout'
     end
 
-    context 'when no stale packages have been found' do
-      let(:expected_result_output) { "\e[32;1mNo stale packages have been found!\e[0m" }
+    context 'when no dangling packages have been found' do
+      let(:expected_result_output) { "\e[32;1mNo dangling packages have been found!\e[0m" }
 
       include_context 'mirror repositories'
 
@@ -168,9 +168,9 @@ RSpec.describe RMT::CLI::Clean do
       end
     end
 
-    context 'when there are stale packages and no options have been passed' do
-      include_context 'default stale files setup'
-      include_context 'mirror repositories with stale files'
+    context 'when there are dangling packages and no options have been passed' do
+      include_context 'default dangling files setup'
+      include_context 'mirror repositories with dangling files'
       include_context 'command without options'
 
       include_examples 'prints to stdout'
@@ -178,9 +178,9 @@ RSpec.describe RMT::CLI::Clean do
       include_examples 'removes database entries'
     end
 
-    context 'when there are stale packages and --dry-run option is set' do
-      include_context 'default stale files setup'
-      include_context 'mirror repositories with stale files'
+    context 'when there are dangling packages and --dry-run option is set' do
+      include_context 'default dangling files setup'
+      include_context 'mirror repositories with dangling files'
       include_context 'command with dry run option'
 
       include_examples 'prints to stdout'
@@ -188,9 +188,9 @@ RSpec.describe RMT::CLI::Clean do
       include_examples 'does not remove database entries'
     end
 
-    context 'when there are stale packages and --non-interactive option is set' do
-      include_context 'default stale files setup'
-      include_context 'mirror repositories with stale files'
+    context 'when there are dangling packages and --non-interactive option is set' do
+      include_context 'default dangling files setup'
+      include_context 'mirror repositories with dangling files'
       include_context 'command with non-interactive mode'
 
       include_examples 'prints to stdout'
@@ -198,10 +198,10 @@ RSpec.describe RMT::CLI::Clean do
       include_examples 'removes database entries'
     end
 
-    context 'when there are stale packages and --verbose option is set' do
-      let(:stale_list) do
-        StaleList.new(files: stale_files.values_at(:rpm1, :drpm1, :rpm2, :drpm2),
-                      db_entries: stale_files.values_at(:rpm1, :rpm2, :drpm2))
+    context 'when there are dangling packages and --verbose option is set' do
+      let(:dangling_list) do
+        DanglingList.new(files: dangling_files.values_at(:rpm1, :drpm1, :rpm2, :drpm2),
+                         db_entries: dangling_files.values_at(:rpm1, :rpm2, :drpm2))
       end
       let(:expected_result_output) do
         <<~OUTPUT.chomp
@@ -220,7 +220,7 @@ RSpec.describe RMT::CLI::Clean do
         OUTPUT
       end
 
-      include_context 'mirror repositories with stale files'
+      include_context 'mirror repositories with dangling files'
       include_context 'command with verbose mode'
 
       include_examples 'prints to stdout'
@@ -228,10 +228,10 @@ RSpec.describe RMT::CLI::Clean do
       include_examples 'removes database entries'
     end
 
-    context 'when there are stale packages and some are source packages' do
-      let(:stale_list) do
-        StaleList.new(db_entries: stale_files.values_at(:rpm1, :rpm2, :drpm2, :src2),
-                      files: stale_files.values_at(:src1, :src2, :rpm1, :drpm1, :rpm2, :drpm2))
+    context 'when there are dangling packages and some are source packages' do
+      let(:dangling_list) do
+        DanglingList.new(db_entries: dangling_files.values_at(:rpm1, :rpm2, :drpm2, :src2),
+                         files: dangling_files.values_at(:src1, :src2, :rpm1, :drpm1, :rpm2, :drpm2))
       end
       let(:expected_result_output) do
         <<~OUTPUT.chomp
@@ -252,7 +252,7 @@ RSpec.describe RMT::CLI::Clean do
         OUTPUT
       end
 
-      include_context 'mirror repositories with stale files'
+      include_context 'mirror repositories with dangling files'
       include_context 'command with verbose mode'
 
       include_examples 'prints to stdout'
@@ -260,14 +260,14 @@ RSpec.describe RMT::CLI::Clean do
       include_examples 'removes database entries'
     end
 
-    context 'when there are stale packages and some are less than 2-days-old' do
-      let(:stale_list) do
-        StaleList.new(files: stale_files.values_at(:rpm2, :drpm2),
-                      db_entries: stale_files.values_at(:rpm2))
+    context 'when there are dangling packages and some are less than 2-days-old' do
+      let(:dangling_list) do
+        DanglingList.new(files: dangling_files.values_at(:rpm2, :drpm2),
+                         db_entries: dangling_files.values_at(:rpm2))
       end
-      let(:fresh_stale_list) do
-        StaleList.new(files: stale_files.values_at(:rpm1, :drpm1),
-                      db_entries: stale_files.values_at(:rpm1))
+      let(:fresh_dangling_list) do
+        DanglingList.new(files: dangling_files.values_at(:rpm1, :drpm1),
+                         db_entries: dangling_files.values_at(:rpm1))
       end
       let(:expected_result_output) do
         <<~OUTPUT.chomp
@@ -281,20 +281,20 @@ RSpec.describe RMT::CLI::Clean do
         OUTPUT
       end
 
-      include_context 'mirror repositories with stale files'
+      include_context 'mirror repositories with dangling files'
       include_context 'command with verbose mode'
 
       include_examples 'prints to stdout'
       include_examples 'removes files'
       include_examples 'removes database entries'
-      include_examples 'does not remove fresh stale files'
-      include_examples 'does not remove database entries of fresh stale files'
+      include_examples 'does not remove fresh dangling files'
+      include_examples 'does not remove database entries of fresh dangling files'
     end
 
-    context 'when there are stale packages and all of them are hardlinks' do
-      let(:stale_list) do
-        StaleList.new(db_entries: stale_files.values_at(:rpm1, :rpm2, :drpm2, :src2),
-                      hardlinks: stale_files.values_at(:src1, :src2, :rpm1, :drpm1, :rpm2, :drpm2))
+    context 'when there are dangling packages and all of them are hardlinks' do
+      let(:dangling_list) do
+        DanglingList.new(db_entries: dangling_files.values_at(:rpm1, :rpm2, :drpm2, :src2),
+                         hardlinks: dangling_files.values_at(:src1, :src2, :rpm1, :drpm1, :rpm2, :drpm2))
       end
       let(:expected_result_output) do
         <<~OUTPUT.chomp
@@ -315,7 +315,7 @@ RSpec.describe RMT::CLI::Clean do
         OUTPUT
       end
 
-      include_context 'mirror repositories with stale files'
+      include_context 'mirror repositories with dangling files'
       include_context 'command with verbose mode'
 
       include_examples 'prints to stdout'
@@ -323,16 +323,16 @@ RSpec.describe RMT::CLI::Clean do
       include_examples 'removes database entries'
     end
 
-    context 'when there are stale packages and some hardlinks points to them' do
-      let(:stale_list) do
-        StaleList.new(files: stale_files.values_at(:drpm1, :rpm2),
-                      hardlinks: stale_files.values_at(:src1, :drpm2, :rpm3, :rpm4),
-                      db_entries: stale_files.values_at(:rpm2, :drpm2, :rpm4))
+    context 'when there are dangling packages and some hardlinks points to them' do
+      let(:dangling_list) do
+        DanglingList.new(files: dangling_files.values_at(:drpm1, :rpm2),
+                         hardlinks: dangling_files.values_at(:src1, :drpm2, :rpm3, :rpm4),
+                         db_entries: dangling_files.values_at(:rpm2, :drpm2, :rpm4))
       end
       let(:fresh_state_files) do
-        StaleList.new(files: stale_files.values_at(:rpm1),
-                      hardlinks: stale_files.values_at(:src2),
-                      db_entries: stale_files.values_at(:rpm1, :src2))
+        DanglingList.new(files: dangling_files.values_at(:rpm1),
+                         hardlinks: dangling_files.values_at(:src2),
+                         db_entries: dangling_files.values_at(:rpm1, :src2))
       end
       let(:expected_result_output) do
         <<~OUTPUT.chomp
@@ -353,14 +353,14 @@ RSpec.describe RMT::CLI::Clean do
         OUTPUT
       end
 
-      include_context 'mirror repositories with stale files'
+      include_context 'mirror repositories with dangling files'
       include_context 'command with verbose mode'
 
       include_examples 'prints to stdout'
       include_examples 'removes files'
       include_examples 'removes database entries'
-      include_examples 'does not remove fresh stale files'
-      include_examples 'does not remove database entries of fresh stale files'
+      include_examples 'does not remove fresh dangling files'
+      include_examples 'does not remove database entries of fresh dangling files'
 
       context '--dry-run options is set' do
         include_context 'command with dry run and verbose options'
@@ -368,8 +368,8 @@ RSpec.describe RMT::CLI::Clean do
         include_examples 'prints to stdout'
         include_examples 'does not remove files'
         include_examples 'does not remove database entries'
-        include_examples 'does not remove fresh stale files'
-        include_examples 'does not remove database entries of fresh stale files'
+        include_examples 'does not remove fresh dangling files'
+        include_examples 'does not remove database entries of fresh dangling files'
       end
     end
   end

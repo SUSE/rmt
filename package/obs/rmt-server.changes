@@ -2,7 +2,7 @@
 Thu Jun 06 15:44:00 UTC 2023 - Luís Caparroz <lcaparroz@suse.com>
 
 - Version 2.14
-- Add command 'rmt-cli clean packages', which remove stale packages no longer
+- Add command 'rmt-cli clean packages', which remove dangling packages no longer
   referenced in the available metadata files and their database entries.
 
 -------------------------------------------------------------------

@@ -103,8 +103,8 @@ You can install and run this wizard like this:
     `rmt-cli products show SLES/15/x86_64`
 
   * `rmt-cli clean packages`:
-    Removes locally mirrored stale files and their database entries.
-    A file is considered *stale* if it matches all the following characteristics:
+    Removes locally mirrored dangling files and their database entries.
+    A file is considered *dangling* if it matches all the following characteristics:
 
       * It exists in a repository directory with primary and deltainfo metadata files;
       * It is not referenced in those metadata files;
