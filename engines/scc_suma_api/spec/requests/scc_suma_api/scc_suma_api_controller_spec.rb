@@ -13,9 +13,9 @@ module SccSumaApi
       let(:product) { FactoryBot.create(:product, :product_sles_sap, :with_mirrored_repositories, :with_mirrored_extensions) }
       let(:payload) do
         {
-          "X-INSTANCE-IDENTIFIER" => product.identifier,
-          "X-INSTANCE-VERSION" => product.version,
-          "X-INSTANCE-ARCH" => product.arch
+          'X-INSTANCE-IDENTIFIER' => product.identifier,
+          'X-INSTANCE-VERSION' => product.version,
+          'X-INSTANCE-ARCH' => product.arch
         }
       end
       let(:logger) { instance_double('RMT::Logger').as_null_object }
