@@ -37,14 +37,28 @@ module SccSumaApi
               file_fixture('products/dummy_products.json'),
               Rails.root.join('tmp/unscoped_products.json')
               )
+          end
 
-            get '/api/scc/unscoped-products', params: payload
+          context 'redirect from SCC endpoint' do
+            before do
+              get '/connect/organizations/products/unscoped', params: payload
+            end
+
+            its(:code) { is_expected.to eq '301' }
+            its(:body) { is_expected.to include "http://www.example.com/api/scc/unscoped-products" }
+            its(:body) { is_expected.to include "redirected" }
+          end
+
+          context 'endpoints return unscoped products' do
+            before do
+              get '/api/scc/unscoped-products', params: payload
+            end
+
+            its(:code) { is_expected.to eq '200' }
+            its(:body) { is_expected.to eq "{\"result\":#{products.to_json}}" }
           end
 
           after { File.delete(unscoped_file) if File.exist?(unscoped_file) }
-
-          its(:code) { is_expected.to eq '200' }
-          its(:body) { is_expected.to eq "{\"result\":#{products.to_json}}" }
         end
 
         context 'cache is not valid' do
@@ -66,6 +80,14 @@ module SccSumaApi
         end
       end
 
+      context 'get repos redirect' do
+        before { get '/connect/organizations/repositories' }
+
+        its(:code) { is_expected.to eq '301' }
+        its(:body) { is_expected.to include "http://www.example.com/api/scc/repos" }
+        its(:body) { is_expected.to include "redirected" }
+      end
+
       context 'get repos' do
         before { get '/api/scc/repos' }
 
@@ -82,13 +104,29 @@ module SccSumaApi
           allow_any_instance_of(File).to receive(:read).and_return products.to_json
           FileUtils.cp(file_fixture('products/dummy_products.json'), product_tree_file)
 
-          get '/api/scc/product-tree'
+          get '/suma/product_tree.json'
+        end
+
+        context 'SCC endpoint redirect' do
+          before do
+            get '/suma/product_tree.json'
+          end
+
+          its(:code) { is_expected.to eq '301' }
+          its(:body) { is_expected.to include "http://www.example.com/api/scc/product-tree" }
+          its(:body) { is_expected.to include "redirected" }
+        end
+
+        context 'endpoint returns product tree json output' do
+          before do
+            get '/api/scc/product-tree'
+          end
+
+          its(:code) { is_expected.to eq '200' }
+          its(:body) { is_expected.to eq "{\"result\":#{products.to_json}}" }
         end
 
         after { File.delete(product_tree_file) if File.exist?(product_tree_file) }
-
-        its(:code) { is_expected.to eq '200' }
-        its(:body) { is_expected.to eq "{\"result\":#{products.to_json}}" }
       end
     end
   end
