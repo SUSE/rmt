@@ -55,7 +55,7 @@ module SccSumaApi
             end
 
             its(:code) { is_expected.to eq '200' }
-            its(:body) { is_expected.to eq "{\"result\":#{products.to_json}}" }
+            its(:body) { is_expected.to eq "#{products.to_json}" }
           end
 
           after { File.delete(unscoped_file) if File.exist?(unscoped_file) }
@@ -76,7 +76,7 @@ module SccSumaApi
           end
 
           its(:code) { is_expected.to eq '200' }
-          its(:body) { is_expected.to eq "{\"result\":#{products.to_json}}" }
+          its(:body) { is_expected.to eq "#{products.to_json}" }
         end
       end
 
@@ -92,7 +92,7 @@ module SccSumaApi
         before { get '/api/scc/repos' }
 
         its(:code) { is_expected.to eq '200' }
-        its(:body) { is_expected.to eq '{"result":[]}' }
+        its(:body) { is_expected.to eq '[]' }
       end
 
       context 'get product tree' do
@@ -123,7 +123,7 @@ module SccSumaApi
           end
 
           its(:code) { is_expected.to eq '200' }
-          its(:body) { is_expected.to eq "{\"result\":#{products.to_json}}" }
+          its(:body) { is_expected.to eq "#{products.to_json}" }
         end
 
         after { File.delete(product_tree_file) if File.exist?(product_tree_file) }

@@ -12,15 +12,15 @@ module SccSumaApi
       update_cache unless cache_is_valid?
 
       unscoped_products_json = File.read(@unscoped_products_path)
-      render status: :ok, json: { result: JSON.parse(unscoped_products_json) }
+      render status: :ok, json: JSON.parse(unscoped_products_json)
     end
 
     def list
-      render status: :ok, json: { result: [] }
+      render status: :ok, json: []
     end
 
     def product_tree
-      render status: :ok, json: { result: product_tree_json }
+      render status: :ok, json: product_tree_json
     end
 
     protected
