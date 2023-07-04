@@ -68,5 +68,4 @@ Rails.application.routes.draw do
   get '/connect/organizations/subscriptions', to: redirect(path: '/api/scc/subs')
   get '/connect/organizations/orders', to: redirect(path: '/api/scc/orders')
   get '/suma/product_tree.json', to: redirect(path: '/api/scc/product-tree')
-
 end
