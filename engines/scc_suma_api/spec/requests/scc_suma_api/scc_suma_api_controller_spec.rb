@@ -54,7 +54,7 @@ module SccSumaApi
 
           context 'endpoints return unscoped products' do
             before do
-              get '/api/scc/unscoped-products', params: payload
+              get '/api/scc/unscoped-products', headers: payload
             end
 
             its(:code) { is_expected.to eq '200' }
