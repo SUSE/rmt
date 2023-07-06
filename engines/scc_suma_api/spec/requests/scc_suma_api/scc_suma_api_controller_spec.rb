@@ -13,9 +13,9 @@ module SccSumaApi
       let(:product) { FactoryBot.create(:product, :product_sles_sap, :with_mirrored_repositories, :with_mirrored_extensions) }
       let(:payload) do
         {
-          identifier: product.identifier,
-          version: product.version,
-          arch: product.arch
+          'X-INSTANCE-IDENTIFIER' => product.identifier,
+          'X-INSTANCE-VERSION' => product.version,
+          'X-INSTANCE-ARCH' => product.arch
         }
       end
       let(:logger) { instance_double('RMT::Logger').as_null_object }
@@ -37,6 +37,8 @@ module SccSumaApi
               file_fixture('products/dummy_products.json'),
               Rails.root.join('tmp/unscoped_products.json')
               )
+
+            get '/api/scc/unscoped-products', headers: payload
           end
 
           after { File.delete(unscoped_file) if File.exist?(unscoped_file) }
@@ -52,7 +54,7 @@ module SccSumaApi
 
           context 'endpoints return unscoped products' do
             before do
-              get '/api/scc/unscoped-products', params: payload
+              get '/api/scc/unscoped-products', headers: payload
             end
 
             its(:code) { is_expected.to eq '200' }
@@ -71,7 +73,7 @@ module SccSumaApi
             allow(RMT::Logger).to receive(:new).and_return(logger)
             File.delete(unscoped_file) if File.exist?(unscoped_file)
 
-            get '/api/scc/unscoped-products', params: payload
+            get '/api/scc/unscoped-products', headers: payload
           end
 
           its(:code) { is_expected.to eq '200' }

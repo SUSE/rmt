@@ -1,3 +1,4 @@
+require 'base64'
 require 'json'
 
 module SccSumaApi
@@ -33,11 +34,17 @@ module SccSumaApi
     end
 
     def is_valid?
+      instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
+      product_hash = {
+        identifier: request.headers['X-INSTANCE-IDENTIFIER'],
+        version: request.headers['X-INSTANCE-VERSION'],
+        arch: request.headers['X-INSTANCE-ARCH']
+      }
       verification_provider = InstanceVerification.provider.new(
         logger,
         request,
-        params.permit(:identifier, :version, :arch, :release_type).to_h,
-        params[:metadata]
+        product_hash,
+        instance_data
       )
       raise 'Unspecified error' unless verification_provider.instance_valid?
     end
