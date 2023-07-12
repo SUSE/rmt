@@ -23,9 +23,10 @@ class RMT::Mirror::FileReference
     @cache_path = (cache_dir ? File.join(cache_dir, relative_path) : nil)
     @local_path = File.join(base_dir, relative_path.gsub(/\.\./, '__'))
 
-    # INFO: Encode the filename of the URI to make RMT handle RFC3986-incompliant filenames (e.g. containing special characters)
     encoded_filename = File.basename(relative_path)
-    encoded_filename = ERB::Util.url_encode(encoded_filename) unless base_url.to_s.starts_with? 'file://'
+    # INFO: Encode the filename of the URI to make RMT handle
+    # RFC3986-incompliant filenames (e.g. containing special characters)
+    encoded_filename = ERB::Util.url_encode(encoded_filename)
     relative_path = File.join(File.dirname(relative_path), encoded_filename)
 
     @remote_path = URI.join(base_url, relative_path)

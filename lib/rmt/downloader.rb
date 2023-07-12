@@ -233,7 +233,7 @@ class RMT::Downloader
     uri = URI.join(file.remote_path)
     uri.query = @auth_token if (@auth_token && uri.scheme != 'file')
 
-    if URI(uri).scheme == 'file' && !File.exist?(uri.path)
+    if URI(uri).scheme == 'file' && !File.exist?(CGI.unescape(uri.path))
       e = RMT::Downloader::Exception.new(_('%{file} - File does not exist') % { file: file.remote_path })
       # Similar to http download, set 404 when file is not found, to skip retries
       e.http_code = 404
