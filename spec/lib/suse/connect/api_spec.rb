@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'webmock/rspec'
 require 'fakefs/spec_helpers'
 
 RSpec.describe SUSE::Connect::Api do

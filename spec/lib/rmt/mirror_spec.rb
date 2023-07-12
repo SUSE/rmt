@@ -101,7 +101,7 @@ RSpec.describe RMT::Mirror do
       end
     end
 
-    context 'importing local repo', vcr: { cassette_name: 'mirroring_local' } do
+    context 'importing local repo' do
       let(:rmt_mirror) do
         described_class.new(
           mirroring_base_dir: @tmp_dir,
