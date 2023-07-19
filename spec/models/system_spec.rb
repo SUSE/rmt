@@ -116,4 +116,26 @@ RSpec.describe System, type: :model do
       it { is_expected.to all(have_attributes(class: described_class, login: login, password: password)) }
     end
   end
+
+  describe '#cloud_provider' do
+    subject { system.cloud_provider }
+
+    before do
+      system.system_information = information.to_json
+      system.save
+    end
+
+    context 'cloud provider information is available' do
+      let(:information) { { cloud_provider: 'Amazon' } }
+
+      it { is_expected.not_to be_nil }
+      it { is_expected.to eq('Amazon') }
+    end
+
+    context 'cloud provider information is not available' do
+      let(:information) { {} }
+
+      it { is_expected.to be_nil }
+    end
+  end
 end
