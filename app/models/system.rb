@@ -29,6 +29,13 @@ class System < ApplicationRecord
     generated_login
   end
 
+  def cloud_provider
+    # system_information is checked for valid JSON on save. It is safe
+    # to assume the structure is valid.
+    info = JSON.parse(system_information).symbolize_keys
+    info.fetch(:cloud_provider, nil)
+  end
+
   # Generate secure token for System password
   def self.generate_secure_password
     build_secure_token[0..15]

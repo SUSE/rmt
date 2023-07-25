@@ -336,13 +336,6 @@ RSpec.describe RMT::Downloader do
         .to_raise('should not make HEAD requests')
     end
 
-    # WebMock doesn't work nicely with file://
-    around do |example|
-      WebMock.allow_net_connect!
-      example.run
-      WebMock.disable_net_connect!
-    end
-
     it 'saves the file when it exists' do
       download
       expect(File.size(repomd_xml_file.local_path)).to eq(File.size(file_fixture('dummy_repo/repodata/repomd.xml')))

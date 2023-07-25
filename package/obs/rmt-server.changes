@@ -6,6 +6,7 @@ Thu Jun 06 15:44:00 UTC 2023 - Luís Caparroz <lcaparroz@suse.com>
   referenced in the available metadata files and their database entries. (gh#662)
 - Fix for SUSE Liberty registration script to allow register to RMT servers with
   self-signed certificates and enable both old and new singing keys for SLL8 (bsc#1209825)
+- Fix for local import of packages with special characters (bsc#1213002)
 
 -------------------------------------------------------------------
 Fri May 19 12:05:44 UTC 2023 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
