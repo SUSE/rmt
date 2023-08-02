@@ -4,7 +4,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
   include_context 'auth header', :system, :login, :password
   include_context 'version header', 3
 
-  let(:system) { FactoryBot.create(:system, :with_hw_info, hostname: 'initial') }
+  let(:system) { FactoryBot.create(:system, hostname: 'initial') }
   let(:url) { '/connect/systems' }
   let(:headers) { auth_header.merge(version_header) }
   let(:hwinfo) do
@@ -36,34 +36,13 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
       end
 
       context 'with existing hardware info' do
-        it do
-          update_action
-
-          expect(system.hw_info.reload.arch).to eq('x86_64')
-          expect(system.hw_info.reload.hypervisor).to eq('XEN')
-          expect(system.hw_info.reload.uuid).to eq('f46906c5-d87d-4e4c-894b-851e80376003')
-          expect(system.hw_info.reload.cloud_provider).to eq('testcloud')
-        end
-
         it 'updates initial hardware info' do
-          expect { update_action }.to change { system.hw_info.reload.cpus }.from(2).to(16)
-        end
-      end
-
-      context 'with new hardware info' do
-        let(:system) { FactoryBot.create(:system, hostname: 'initial') }
-
-        it do
           update_action
 
-          expect(system.hw_info.reload.arch).to eq('x86_64')
-          expect(system.hw_info.reload.hypervisor).to eq('XEN')
-          expect(system.hw_info.reload.uuid).to eq('f46906c5-d87d-4e4c-894b-851e80376003')
-          expect(system.hw_info.reload.cloud_provider).to eq('testcloud')
-        end
+          information = JSON.parse(system.reload.system_information).symbolize_keys
 
-        it 'creates hardware info record' do
-          expect { update_action }.to change { HwInfo.count }.by(1)
+          expect(system.reload.cloud_provider).to eq('testcloud')
+          expect(information[:cpus]).to eq('16')
         end
       end
     end
@@ -73,25 +52,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
       it do
         update_action
-
-        expect(system.reload.hostname).to eq('Not provided') # FIXME: should detect the hostname instead
-        expect(response.body).to be_empty
-        expect(response.status).to eq(204)
-      end
-
-      context 'hardware info' do
-        it do
-          update_action
-
-          expect(system.hw_info.reload.arch).to eq('x86_64')
-          expect(system.hw_info.reload.hypervisor).to eq('XEN')
-          expect(system.hw_info.reload.uuid).to eq('f46906c5-d87d-4e4c-894b-851e80376003')
-          expect(system.hw_info.reload.cloud_provider).to eq('testcloud')
-        end
-
-        it 'updates initial hardware info' do
-          expect { update_action }.to change { system.hw_info.reload.cpus }.from(2).to(16)
-        end
+        expect(system.reload.hostname).to be_nil
       end
     end
   end
@@ -105,10 +66,6 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
     it 'deletes system' do
       expect { deregister_action }.to change { System.count }.by(-1)
-    end
-
-    it 'deletes hardware info' do
-      expect { deregister_action }.to change { HwInfo.count }.by(-1)
     end
   end
 end

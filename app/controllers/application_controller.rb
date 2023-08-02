@@ -76,7 +76,6 @@ class ApplicationController < ActionController::API
       ns.created_at = Time.zone.now
       ns.system_token = system_token
       ns.activations = system.activations.map(&:dup)
-      ns.hw_info = system.hw_info.dup
       ns.save!
       logger.info _('System with login \"%{login}\" (ID %{new_id}) authenticated and duplicated from ID %{base_id} due to token mismatch') %
         { login: ns.login, new_id: ns.id, base_id: system.id }
