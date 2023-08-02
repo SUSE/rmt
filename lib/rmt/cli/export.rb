@@ -30,7 +30,6 @@ class RMT::CLI::Export < RMT::CLI::Base
   def repos(path)
     path = needs_path(path, writable: true)
 
-    logger = RMT::Logger.new(STDOUT)
     mirror = RMT::Mirror.new(mirroring_base_dir: path, logger: logger, airgap_mode: true)
 
     begin

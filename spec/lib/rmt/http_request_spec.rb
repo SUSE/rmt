@@ -65,7 +65,7 @@ RSpec.describe RMT::HttpRequest do
       sleep 1 # for server to start up
       WebMock.allow_net_connect!
       example.run
-      WebMock.disable_net_connect!
+      WebMock.disable_net_connect!(allow: 'file')
       server_thread.kill
     end
 
