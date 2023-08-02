@@ -4,9 +4,10 @@ FactoryBot.define do
     sequence(:password) { |n| "password#{n}" }
     sequence(:hostname) { FFaker::Name.unique.first_name }
 
+    instance_data { nil }
+
     transient do
       virtual { false }
-      instance_data { nil }
     end
 
     trait :synced do
