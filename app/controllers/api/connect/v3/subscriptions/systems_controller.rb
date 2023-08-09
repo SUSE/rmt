@@ -12,7 +12,7 @@ class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseCon
   def hwinfo_params
     # Allow all attributes without validating the key structure
     # This is fine since the systems are only internal and RMT users
-    # can save in their own database what ever they want.
+    # can save in their own database whatever they want.
     # When forwarded to SCC, SCC validates the payload for correctness.
     params.permit(hwinfo: {})
   end
