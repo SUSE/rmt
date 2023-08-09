@@ -5,7 +5,7 @@ describe Api::Connect::V3::Systems::SystemsController, type: :request do
   let(:url) { '/connect/systems' }
   let(:headers) { auth_header.merge(version_header) }
   let(:instance_data) { 'dummy_instance_data' }
-  let(:system) { FactoryBot.create(:system, :byos, :with_hw_info, instance_data: instance_data) }
+  let(:system) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
 
   describe '#deactivate' do
     let(:scc_systems_url) { 'https://scc.suse.com/connect/systems' }

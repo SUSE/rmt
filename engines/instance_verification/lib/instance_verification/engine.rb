@@ -16,8 +16,8 @@ module InstanceVerification
         # store IID for later product activation checks
         def save_instance_data
           return true unless (@system && params[:instance_data])
-          @system.hw_info.instance_data = params[:instance_data]
-          @system.hw_info.save!
+          @system.instance_data = params[:instance_data]
+          @system.save!
         end
       end
 
@@ -90,7 +90,7 @@ module InstanceVerification
             logger,
             request,
             params.permit(:identifier, :version, :arch, :release_type).to_h,
-            @system.hw_info&.instance_data
+            @system.instance_data
           )
 
           raise 'Unspecified error' unless verification_provider.instance_valid?

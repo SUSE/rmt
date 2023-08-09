@@ -4,9 +4,10 @@ FactoryBot.define do
     sequence(:password) { |n| "password#{n}" }
     sequence(:hostname) { FFaker::Name.unique.first_name }
 
+    instance_data { nil }
+
     transient do
       virtual { false }
-      instance_data { nil }
     end
 
     trait :synced do
@@ -29,7 +30,7 @@ FactoryBot.define do
 
     trait :full do
       with_activated_product
-      with_hw_info
+      with_system_information
       with_last_seen_at
     end
 
@@ -48,9 +49,16 @@ FactoryBot.define do
       end
     end
 
-    trait :with_hw_info do
-      after :build do |system, evaluator|
-        system.hw_info = FactoryBot.build(:hw_info, virtual: evaluator.virtual, instance_data: evaluator.instance_data)
+    trait :with_system_information do
+      system_information do
+        {
+          cpus: 2,
+          sockets: 1,
+          hypervisor: nil,
+          arch: 'x86_64',
+          uuid: SecureRandom.uuid,
+          cloud_provider: 'Amazon'
+        }.to_json
       end
     end
 

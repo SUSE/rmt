@@ -40,17 +40,6 @@ RSpec.describe System, type: :model do
       end
     end
 
-    context 'hw_info' do
-      let(:hw_info) do
-        hw_info = create(:system, :with_hw_info).hw_info
-        hw_info.system.destroy
-      end
-
-      it 'hw_info is also deleted' do
-        expect { hw_info.reload }.to raise_error ActiveRecord::RecordNotFound
-      end
-    end
-
     context 'when scc_system_id is set' do
       before do
         DeregisteredSystem.where(scc_system_id: 9000).delete_all
