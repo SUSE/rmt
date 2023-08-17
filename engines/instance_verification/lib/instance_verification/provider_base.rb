@@ -3,7 +3,7 @@ class InstanceVerification::ProviderBase
     InstanceVerification.provider = child_class
   end
 
-  def initialize(logger, request, product_hash, instance_data, debug = false)
+  def initialize(logger, request, product_hash, instance_data, debug: false)
     @logger = logger
     @request = request
     @product_hash = product_hash
