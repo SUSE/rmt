@@ -55,58 +55,27 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
       end
     end
 
-    context 'with hw_info' do
-      let(:hw_info) { { cpus: 8, sockets: 1, arch: 'x86_64', hypervisor: 'XEN', uuid: uuid, cloud_provider: 'cloud' } }
-      let(:uuid) { 'f46906c5-d87d-4e4c-894b-851e80376003' }
-
-      before do
-        post url, params: { hwinfo: hw_info }.to_json, headers: headers
+    context 'with hwinfo parameters' do
+      let(:hwinfo_parameter) do
+        {
+          cpus: 8,
+          sockets: 1,
+          arch: 'x86_64',
+          hypervisor: 'XEN',
+          uuid: 'f46906c5-d87d-4e4c-894b-851e80376003',
+          cloud_provider: 'cloud'
+        }
       end
 
-      context 'with hw_info parameters' do
-        subject { response }
+      it 'stores the hwinfo parameters as system information' do
+        post url, params: { hwinfo: hwinfo_parameter }.to_json, headers: headers
 
-        it { is_expected.to be_successful }
-        its(:status) { is_expected.to eq 201 }
-      end
+        expect(response).to be_successful
+        expect(response).to have_http_status(:created)
 
-      describe 'stored hw_info' do
-        subject { System.find_by(login: json_response[:login]).hw_info }
+        system = System.find_by(login: json_response[:login])
 
-        its(:cpus) { is_expected.to eql hw_info[:cpus] }
-        its(:sockets) { is_expected.to eql hw_info[:sockets] }
-        its(:arch) { is_expected.to eql hw_info[:arch] }
-        its(:cloud_provider) { is_expected.to eql hw_info[:cloud_provider] }
-        its(:uuid) { is_expected.to eql uuid }
-      end
-    end
-
-    context 'uuid processing' do
-      let(:hw_info) { { uuid: uuid } }
-      let(:uuid) { 'f46906c5-d87d-4e4c-894b-851e80376003' }
-
-      subject { System.find_by(login: json_response[:login]).hw_info }
-
-      before do
-        post url, params: { hwinfo: hw_info }.to_json, headers: headers
-      end
-
-      context 'with valid uuid' do
-        its(:uuid) { is_expected.to eql 'f46906c5-d87d-4e4c-894b-851e80376003' }
-      end
-
-      context 'with invalid uuid' do
-        let(:uuid) { '123' }
-
-        it { is_expected.not_to be nil }
-        its(:uuid) { is_expected.to be nil }
-      end
-
-      context 'with nil uuid' do
-        let(:uuid) { nil }
-
-        it { is_expected.not_to be nil }
-        its(:uuid) { is_expected.to be nil }
+        expect(system.system_information).to eq(hwinfo_parameter.to_json)
       end
     end
   end

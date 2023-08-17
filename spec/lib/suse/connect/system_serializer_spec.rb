@@ -6,25 +6,18 @@ describe SUSE::Connect::SystemSerializer do
   let(:system) { create :system, :full }
 
   context 'not synchronized system' do
-    let(:expected) do
-      info = system.hw_info
-      activation = system.activations.first
-      product = activation.product
+    let(:hwinfo_parameters) { JSON.parse(system.system_information).symbolize_keys }
+    let(:activation) { system.activations.first }
+    let(:product) { activation.product }
 
+    let(:expected) do
       {
         login: system.login,
         password: system.password,
         last_seen_at: system.last_seen_at,
         created_at: system.created_at,
         hostname: system.hostname,
-        hwinfo: {
-          cpus: info.cpus,
-          sockets: info.sockets,
-          hypervisor: info.hypervisor,
-          arch: info.arch,
-          uuid: info.uuid,
-          cloud_provider: info.cloud_provider
-        },
+        hwinfo: hwinfo_parameters,
         products: [
           {
             id: product.id,
@@ -79,7 +72,7 @@ describe SUSE::Connect::SystemSerializer do
   end
 
   context 'system without hardware info' do
-    let(:system) { create :system, :synced, hw_info: nil }
+    let(:system) { create :system, :synced }
 
     it 'does not add the hwinfo attribute' do
       expect(serializer.key? :hwinfo).to eq(false)

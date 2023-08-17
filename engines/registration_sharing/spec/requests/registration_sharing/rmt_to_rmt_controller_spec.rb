@@ -62,7 +62,7 @@ module RegistrationSharing
           its(:registered_at) { is_expected.to eq(registered_at) }
           its(:last_seen_at) { is_expected.to eq(last_seen_at) }
           it 'saves instance data' do
-            expect(system.hw_info.instance_data).to eq(instance_data)
+            expect(system.instance_data).to eq(instance_data)
           end
         end
 

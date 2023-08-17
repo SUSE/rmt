@@ -18,15 +18,13 @@ class RegistrationSharing::Client
   def peer_register_system(system)
     params = {}
 
-    %w[login password hostname proxy_byos system_token registered_at created_at last_seen_at].each do |attribute|
+    %w[login password hostname proxy_byos system_token registered_at created_at last_seen_at instance_data].each do |attribute|
       params[attribute] = system.send(attribute)
     end
 
     params[:activations] = system.activations.map do |a|
       { product_id: a.product.id, created_at: a.created_at }
     end
-
-    params[:instance_data] = system.hw_info&.instance_data
 
     make_request(:post, params)
   end
