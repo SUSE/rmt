@@ -1,5 +1,6 @@
 class MoveHwInfoToSystemsTable < ActiveRecord::Migration[6.1]
   def up
+
     execute "update systems as s inner join hw_infos hw on s.id=hw.system_id \
                 set system_information = json_object(\
                 'cpus', hw.cpus, \
