@@ -41,7 +41,6 @@ group :development, :test do
   gem 'ruby_parser', '< 3.20', require: false # needed for gettext_i18n_rails tasks, Locked because of Ruby >= 2.6 dependency
   gem 'gettext_test_log'
   gem 'memory_profiler'
-  gem 'strong_migrations'
   gem 'awesome_print'
 end
 
