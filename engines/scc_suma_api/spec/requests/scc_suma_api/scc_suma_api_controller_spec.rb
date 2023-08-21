@@ -1,6 +1,7 @@
 require 'rails_helper'
 require 'json'
 
+# rubocop:disable Metrics/ModuleLength
 module SccSumaApi
   RSpec.describe SccSumaApiController, type: :request do
     subject { response }
@@ -148,3 +149,4 @@ module SccSumaApi
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength
