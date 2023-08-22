@@ -45,8 +45,12 @@ module SccSumaApi
         request,
         product_hash,
         instance_data
-      )
-      raise 'Unspecified error' unless verification_provider.instance_valid?
+        )
+      # check auth for registered BYOS systems
+      iid = verification_provider.parse_instance_data
+      systems_found = System.find_by(system_token: iid['instanceId'], proxy_byos: true)
+
+      raise 'Unspecified error' unless systems_found.present? || verification_provider.instance_valid?
     end
 
     def product_tree_json
