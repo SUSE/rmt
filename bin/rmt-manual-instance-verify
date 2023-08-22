@@ -110,7 +110,7 @@ raise 'Instance verification provider is missing or failed to initialize' unless
 puts "Loaded instance verification module: #{InstanceVerification.provider}"
 
 # Verifying instance data
-provider = InstanceVerification.provider.new(logger, request, product_hash, instance_data)
+provider = InstanceVerification.provider.new(logger, request, product_hash, instance_data, debug: true)
 
 begin
   provider.instance_valid?
