@@ -21,10 +21,10 @@ describe RegistrationSharing::Client do
   describe '#peer_register_system' do
     let(:client) { described_class.new(peer, system.login) }
     let(:system) do
-      FactoryBot.create(
-        :system, :with_activated_product,
-        :with_hw_info, instance_data: instance_data
-      )
+      FactoryBot.create(:system,
+                        :with_activated_product,
+                        :with_system_information,
+                        instance_data: instance_data)
     end
     let(:instance_data) { '<document>test</document>' }
     let(:expected_payload) do
@@ -37,10 +37,10 @@ describe RegistrationSharing::Client do
         'registered_at' => system.registered_at,
         'created_at' => system.created_at,
         'last_seen_at' => nil,
+        'instance_data' => instance_data,
         'activations' => [
           { 'product_id' => system.products.first.id, 'created_at' => system.activations.first.created_at }
-        ],
-        'instance_data' => instance_data
+        ]
       }
     end
 
