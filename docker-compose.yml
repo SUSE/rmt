@@ -1,7 +1,4 @@
-version: '2'
-volumes:
-  db_storage:
-    driver: local
+version: '3.7'
 
 services:
   db:
@@ -51,3 +48,5 @@ services:
 volumes:
   public:
   mariadb:
+  db_storage:
+    driver: local
