@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-12-28 19:13+0000\n"
+"PO-Revision-Date: 2023-08-29 18:15+0000\n"
 "Last-Translator: Aleš Kastner <alkas@volny.cz>\n"
 "Language-Team: Czech <https://l10n.opensuse.org/projects/rmt/i18n/cs/>\n"
 "Language: cs\n"
@@ -19,15 +19,17 @@ msgstr ""
 msgid "%s is not yet activated on the system."
 msgstr "%s ještě není v systému aktivováno."
 
-#, fuzzy
 msgid "%{count} file"
 msgid_plural "%{count} files"
-msgstr[0] "n"
+msgstr[0] "%{count} soubor"
+msgstr[1] "%{count} soubory"
+msgstr[2] "%{count} souborů"
 
-#, fuzzy
 msgid "%{db_entries} database entry"
 msgid_plural "%{db_entries} database entries"
-msgstr[0] "a"
+msgstr[0] "%{db_entries} položka databáze"
+msgstr[1] "%{db_entries} položky databáze"
+msgstr[2] "%{db_entries} položek databáze"
 
 msgid "%{file} - File does not exist"
 msgstr "%{file} – soubor neexistuje"
@@ -84,9 +86,11 @@ msgstr "Připojit existující vlastní repozitář k produktu"
 msgid "Attached repository to product '%{product_name}'."
 msgstr "Byl připojen repozitář k produktu „%{product_name}“."
 
-#, fuzzy
 msgid "By default, inactive systems are those that have not contacted RMT in any way in the past 3 months. You can override this with the '-b / --before' flag."
-msgstr "Neaktivní systémy jsou ve výchozím nastavení ty, které za poslední 3 měsíce nijak nekontaktovaly RMT. Toto nastavení můžete zrušit příznakem '-b / --before'."
+msgstr ""
+"Neaktivní systémy jsou ve výchozím nastavení ty, které za poslední 3 měsíce "
+"nijak nekontaktovaly RMT. Toto nastavení můžete zrušit příznakem '-b / "
+"--before'."
 
 msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr "Nelze se připojit k databázovému serveru. Zkontrolujte, zda jsou v %{path} správně nakonfigurovány jeho přihlašovací údaje, nebo nakonfigurujte RMT pomocí YaST (%{command})."
@@ -109,15 +113,12 @@ msgstr "Kontrolní součet neodpovídá"
 msgid "Clean cancelled."
 msgstr "Vyčistění zrušeno."
 
-#, fuzzy
 msgid "Clean dangling files and their database entries"
-msgstr "n"
+msgstr "Vyčištění visících souborů a jejich záznamů v databázi"
 
-#, fuzzy
 msgid "Clean dangling package files, based on current repository data."
-msgstr "a"
+msgstr "Vyčištění visících souborů balíčků na základě aktuálních dat úložiště."
 
-#, fuzzy
 msgid ""
 "Clean dangling package files, based on current repository metadata.\n"
 "\n"
@@ -126,18 +127,28 @@ msgid ""
 "listed in the metadata and at least 2-days-old are considered dangling.\n"
 "\n"
 "Then, it removes all dangling files from disk and any associated database entries.\n"
-msgstr "a"
+msgstr ""
+"Vyčistí visící soubory balíčků na základě aktuálních metadat úložiště.\n"
+"\n"
+"Tento příkaz prohledá adresář zrcadla a vyhledá soubory metadat 'repomd.xml',"
+"\n"
+"rozebere je a porovná jejich obsah se soubory na disku. Soubory, které "
+"nejsou\n"
+"uvedené v metadatech a staré alespoň 2 dny, jsou považovány za visící.\n"
+"\n"
+"Pak odstraní všechny visící soubory z disku a všechny souvisící záznamy "
+"databáze.\n"
 
 msgid "Clean finished. An estimated %{total_file_size} was removed."
 msgstr "Vyčistění dokončeno. Celkem bylo odstraněno %{total_file_size}."
 
-#, fuzzy
 msgid "Cleaned %{file_count_text} (%{total_size}), %{db_entries}."
-msgstr "n"
+msgstr "Vyčistěno %{file_count_text} (%{total_size}), %{db_entries}."
 
-#, fuzzy
 msgid "Cleaned '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}."
-msgstr "n"
+msgstr ""
+"Vyčistěno '%{název_souboru}' (%{velikost_souboru}%{tvrdý_odkaz}), "
+"%{db_entries}."
 
 msgid "Commands:"
 msgstr "Příkazy:"
@@ -181,9 +192,8 @@ msgstr "Odpojit existující vlastní repozitář od produktu"
 msgid "Detached repository from product '%{product_name}'."
 msgstr "Byl odpojen repozitář od projektu %{product_name}."
 
-#, fuzzy
 msgid "Directory: %{dir}"
-msgstr "a"
+msgstr "Adresář: %{dir}"
 
 msgid "Disable mirroring of custom repositories by a list of IDs"
 msgstr "Zakázat zrcadlení vlastního úložiště podle seznamu ID"
@@ -206,9 +216,9 @@ msgstr "Zakazuje se %{product}:"
 msgid "Displays product with all its repositories and their attributes."
 msgstr "Zobrazí produkt se všemi jeho úložišti a jejich atributy."
 
-#, fuzzy
 msgid "Do not ask anything, use default answers automatically. Default: false"
-msgstr "a"
+msgstr ""
+"Na nic se neptat, automaticky použít výchozí odpovědi. Výchozí hodnota: false"
 
 msgid "Do not fail the command if product is in alpha or beta stage"
 msgstr "Nezadávejte příkaz, pokud je produkt ve fázi alfa nebo beta"
@@ -381,9 +391,8 @@ msgstr "Vypsat a upravit produkty"
 msgid "List and modify repositories"
 msgstr "Vypsat a upravit repozitáře"
 
-#, fuzzy
 msgid "List files during the cleaning process."
-msgstr "n"
+msgstr "Seznam souborů v průběhu čistění."
 
 msgid "List products which are marked to be mirrored."
 msgstr "Vypsat produkty označené k zrcadlení"
@@ -460,9 +469,8 @@ msgstr "Nebyl nalezen žádný základní produkt."
 msgid "No custom repositories found."
 msgstr "Nebyly nalezeny žádné vlastní repozitáře."
 
-#, fuzzy
 msgid "No dangling packages have been found!"
-msgstr "n"
+msgstr "Žádné visící balíčky nebyly nalezeny!"
 
 msgid "No matching products found in the database."
 msgstr "V databázi nebyly nalezeny žádné odpovídající produkty."
@@ -506,9 +514,10 @@ msgstr "Není zadáno"
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "Ještě není aktivován registrační kód. Navštivte https://scc.suse.com a aktivujte ho."
 
-#, fuzzy
 msgid "Now, it will parse all repomd.xml files, search for dangling packages on disk and clean them."
-msgstr "n"
+msgstr ""
+"Nyní bude analyzovat všechny soubory repomd.xml, vyhledá visící balíčky na "
+"disku a vyčistí je."
 
 msgid "Number of systems to display"
 msgstr "Počet systémů k zobrazení"
@@ -528,7 +537,6 @@ msgstr "Výstup dat ve formátu CSV"
 msgid "Path to unpacked SMT data tarball"
 msgstr "Cesta k rozbalenému balíčku TAR dat SMT"
 
-#, fuzzy
 msgid "Please answer"
 msgstr "Odpovězte, prosím"
 
@@ -615,13 +623,13 @@ msgstr "Místo povolení RMT generovat ID zadejte vlastní ID."
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr "RMT našel lokálně zrcadlené soubory z těchto úložišť neoznačených jako zrcadlená:"
 
-#, fuzzy
 msgid "RMT found no repomd.xml files. Check if RMT is properly configured."
-msgstr "a"
+msgstr ""
+"RMT nenašel žádné soubory repomd.xml. Zkontrolujte, zda je RMT správně "
+"konfigurován."
 
-#, fuzzy
 msgid "RMT found repomd.xml files: %{repomd_count}."
-msgstr "n"
+msgstr "RMT nalezl soubory repomd.xml: %{repomd_count}."
 
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr "Nástroj RMT nebyl zatím synchronizován s SCC. Spusťte příkaz „%{command}“, dříve než"
@@ -731,9 +739,8 @@ msgstr "Spuštěním příkazu %{command} zobrazíte další informace o příka
 msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
 msgstr "Nejprve spusťte příkaz %{command}, aby se provedla synchronizace s daty SUSE Customer Center."
 
-#, fuzzy
 msgid "Run the clean process without actually removing files."
-msgstr "a"
+msgstr "Spusťte proces čistění bez skutečného odstranění souborů."
 
 msgid "Run this command on an online RMT."
 msgstr "Spusťte tento příkaz na online RMT."
@@ -756,9 +763,8 @@ msgstr ""
 msgid "SCC credentials not set."
 msgstr "Pověření SCC nejsou nastavena."
 
-#, fuzzy
 msgid "Scanning the mirror directory for 'repomd.xml' files..."
-msgstr "a"
+msgstr "Vyhledávání souborů 'repomd.xml' v zrcadleném (mirror) adresáři..."
 
 msgid "Settings saved at %{file}."
 msgstr "Nastavení byla uložena do souboru %{file}."
@@ -820,16 +826,18 @@ msgstr "Databáze RMT ještě nebyla inicializována. Spusťte příkaz '%{comma
 msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
 msgstr "Přihlašovací údaje SCC nejsou v cestě %{path} nakonfigurovány správně. Můžete je získat z %{url}"
 
-#, fuzzy
 msgid "The command will list the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
-msgstr "Příkaz vám vypíše seznam kandidátů na odstranění a požádá vás o potvrzení. Příznakem '--no-confirmation' můžete tomuto příkazu nařídit, aby pokračoval bez dotazu."
+msgstr ""
+"Příkaz vypíše seznam kandidátů na odstranění a požádá vás o potvrzení. "
+"Příznakem '--no-confirmation' můžete tomuto příkazu nařídit, aby pokračoval "
+"bez dotazu."
 
 msgid "The following errors occurred while mirroring:"
 msgstr "Při zrcadlení došlo k následujícím chybám:"
 
-#, fuzzy
 msgid "The given date does not follow the proper format. Ensure it follows this format '<year>-<month>-<day>'."
-msgstr "Zadané datum nemá správný formát. Správný formát je '<rok>-<měsíc>-<den>'."
+msgstr ""
+"Zadané datum nemá správný formát. Upravte na formát '<rok>-<měsíc>-<den>'."
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
 msgstr "Produkt %s je základní produkt a nelze ho deaktivovat"
@@ -874,9 +882,9 @@ msgstr "Žádné repozitáře nejsou označeny k zrcadlení."
 msgid "There are no systems registered to this RMT instance."
 msgstr "K této instanci RMT nejsou registrovány žádné systémy."
 
-#, fuzzy
 msgid "This can take several minutes. Would you like to continue and clean dangling packages?"
-msgstr "a"
+msgstr ""
+"To může trvat několik minut. Chcete pokračovat a vyčistit visící balíčky?"
 
 msgid "To clean up downloaded files, please run '%{command}'"
 msgstr "Chcete-li vyčistit stažené soubory, spusťte '%{command}'"
@@ -887,9 +895,8 @@ msgstr "Chcete-li vyčistit stažené soubory, spusťte '%{command}'"
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr "Chcete-li označit systém k odstranění, použijte příkaz \"% {command}\" pro výpis systémů s jejichi přihlašovacími údaji."
 
-#, fuzzy
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
-msgstr "n"
+msgstr "Celkem: vyčistěno %{total_count} (%{total_size}), %{total_db_entries}."
 
 msgid "URL"
 msgstr "URL"
@@ -927,9 +934,8 @@ msgstr "návratová zpráva curl"
 msgid "enabled"
 msgstr "povoleno"
 
-#, fuzzy
 msgid "hardlink"
-msgstr "n"
+msgstr "pevný odkaz"
 
 msgid "importing data from SMT."
 msgstr "budete importovat data ze SMT."
@@ -958,6 +964,5 @@ msgstr "repozitář podle URL %{url} v databázi neexistuje"
 msgid "y"
 msgstr "a"
 
-#, fuzzy
 msgid "yes"
-msgstr "a"
+msgstr "ano"
