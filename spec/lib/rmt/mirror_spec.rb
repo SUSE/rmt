@@ -101,6 +101,36 @@ RSpec.describe RMT::Mirror do
       end
     end
 
+    context 'importing local repo' do
+      let(:rmt_mirror) do
+        described_class.new(
+          mirroring_base_dir: @tmp_dir,
+          logger: logger,
+          mirror_src: false
+        )
+      end
+
+      let(:mirror_params) do
+        {
+          repository_url: URI.join('file://', File.expand_path(file_fixture('dummy_repo'))).to_s + '/',
+          local_path: Repository.make_local_path('dummy_repo/'),
+          repo_name: 'dummy_repo'
+        }
+      end
+
+      before do
+        rmt_mirror.mirror(**mirror_params)
+      end
+
+      it 'copies rpm files' do
+        expect(Dir.entries(File.join(@tmp_dir, 'dummy_repo'))).to match_array(Dir.entries(file_fixture('dummy_repo')))
+      end
+
+      it 'copies metadata' do
+        expect(Dir.entries(File.join(@tmp_dir, 'dummy_repo/repodata'))).to match_array(Dir.entries(file_fixture('dummy_repo/repodata')))
+      end
+    end
+
     context 'without auth_token and with source packages', vcr: { cassette_name: 'mirroring_with_src' } do
       let(:rmt_mirror) do
         described_class.new(

@@ -162,8 +162,11 @@ ActiveRecord::Schema.define(version: 2022_07_11_152732) do
     t.bigint "scc_system_id", comment: "System ID in SCC (if the system registration was forwarded; needed for forwarding de-registrations)"
     t.boolean "proxy_byos", default: false
     t.string "system_token"
+    t.text "system_information", size: :long
+    t.string "instance_data"
     t.index ["login", "password", "system_token"], name: "index_systems_on_login_and_password_and_system_token", unique: true
     t.index ["login", "password"], name: "index_systems_on_login_and_password"
+    t.check_constraint "json_valid(`system_information`)", name: "system_information"
   end
 
   add_foreign_key "activations", "services", on_delete: :cascade

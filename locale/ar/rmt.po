@@ -1,4 +1,4 @@
-# Arabic translations for rmt package.
+# Arabic translations for rmt.
 # Copyright (C) 2019 THE rmt'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the rmt package.
 # Automatically generated, 2019.

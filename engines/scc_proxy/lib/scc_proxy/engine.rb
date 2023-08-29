@@ -66,10 +66,10 @@ module SccProxy
         nil,
         nil,
         nil,
-        nil
+        params['instance_data']
       )
       instance_id_key = INSTANCE_ID_KEYS[params['hwinfo']['cloud_provider'].downcase.to_sym]
-      iid = verification_provider.parse_instance_data(params['instance_data'])
+      iid = verification_provider.parse_instance_data
       iid[instance_id_key]
     end
 
@@ -172,7 +172,7 @@ module SccProxy
       active_products_ids = scc_systems_activations.map { |act| act['service']['product']['id'] if act['status'].casecmp('active').zero? }.flatten
       products = Product.where(id: active_products_ids)
       product_paths = products.map { |prod| prod.repositories.pluck(:local_path) }.flatten
-      active_subscription = product_paths.any? { |path| headers['X-Original-URI'].include?(path) }
+      active_subscription = product_paths.any? { |path| headers.fetch('X-Original-URI', '').include?(path) }
       if active_subscription
         { is_active: true }
       else
@@ -186,7 +186,7 @@ module SccProxy
         end
         products = Product.where(id: expired_products_ids)
         product_paths = products.map { |prod| prod.repositories.pluck(:local_path) }.flatten
-        expired_subscription = product_paths.any? { |path| headers['X-Original-URI'].include?(path) }
+        expired_subscription = product_paths.any? { |path| headers.fetch('X-Original-URI', '').include?(path) }
         if expired_subscription
           {
             is_active: false,

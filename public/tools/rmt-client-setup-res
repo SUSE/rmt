@@ -10,8 +10,16 @@ SUSECONNECT=/usr/bin/SUSEConnect
 RPM=/usr/bin/rpm
 DNF=/usr/bin/dnf
 CURL=/usr/bin/curl
+TEMPFILE="/etc/pki/ca-trust/source/anchors/rmt.crt"
+UPDATE_CA_TRUST=/usr/bin/update-ca-trust
+RPM_GPG_KEY_LOCATION="/etc/pki/rpm-gpg"
 
 PARAMS=$@
+
+function import_rpm_signing_keys()
+{
+    $RPM --import ${RPM_GPG_KEY_LOCATION}/*
+}
 
 function usage()
 {
@@ -79,6 +87,30 @@ if [ ! -x $CURL ]; then
     exit 1
 fi
 
+# Import Self-signed CERT as Trusted
+if [ -z "$REGCERT" ]; then
+    CERTURL=`echo "$REGURL" | awk -F/ '{print "https://" $3 "/rmt.crt"}'`
+else
+    CERTURL="$REGCERT"
+fi
+
+if [ -x $CURL ]; then
+    $CURL --tlsv1.2 --silent --insecure --connect-timeout 10 --output $TEMPFILE $CERTURL
+    if [ $? -ne 0 ]; then
+        echo "Download failed. Abort."
+        exit 1
+    fi
+else
+    download_tool_basename=$(basename $CURL)
+    echo "Binary to download the certificate not found. Please install $download_tool_basename. Abort."
+    exit 1
+fi
+
+if [ -x $UPDATE_CA_TRUST ]; then
+    $UPDATE_CA_TRUST enable
+    $UPDATE_CA_TRUST extract
+fi
+
 SLL_version=`cat /etc/os-release | grep "VERSION_ID" | cut -d\" -f2 | cut -d\. -f1`
 if [[ ${SLL_version} > 8 ]]; then                                                                                                       
    SLL_name="SLL";                                                                                                                
@@ -89,8 +121,6 @@ else
 fi                                                                                                                                   
 
 echo "detect ${SLL_name} version... ${SLL_version}"                                                                                  
-echo "Importing repomd.xml.key"
-$RPM --import ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update/repodata/repomd.xml.key
 
 echo "Disabling all repositories"
 dnf config-manager --disable $(dnf repolist -q | awk '{ print $1 }' | grep -v repo)
@@ -107,6 +137,10 @@ if [ -f /etc/dnf/protected.d/redhat-release.conf ]; then
     rm -f /etc/dnf/protected.d/redhat-release.conf;
 fi
 
+echo "Importing repomd.xml.key"
+$CURL --silent --show-error --insecure  ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update/repodata/repomd.xml.key --output repomd.xml.key
+$RPM --import repomd.xml.key
+
 if [ ! -x $SUSECONNECT ]; then
     echo "Downloading SUSEConnect"
 
@@ -118,9 +152,18 @@ if [ ! -x $SUSECONNECT ]; then
     $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update
     $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}-AS/${SLL_version}/x86_64/update
     $DNF install --allowerasing ${SLL_release_package}
+
+    # For RHEL8/CentOS8, remove all old signing keys and import SUSE keys installed with sles_es-release package
+    if [[ ${SLL_version} -eq 8 ]]; then
+        import_rpm_signing_keys
+    fi
+
     $DNF install SUSEConnect librepo
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}_${SLL_version}_x86_64_update"
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}-AS_${SLL_version}_x86_64_update"
+elif [[ ${SLL_version} -eq 8 ]]; then
+    # For SLL8, the release package is already installed, just import the keys
+    import_rpm_signing_keys
 fi
 
 $CURL --silent --show-error --insecure $REGURL/tools/rmt-client-setup --output rmt-client-setup

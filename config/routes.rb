@@ -58,6 +58,19 @@ Rails.application.routes.draw do
 
   get '/api/health/status', to: 'api/health#status'
 
+  # :nocov:
   mount StrictAuthentication::Engine, at: '/api/auth' if defined?(StrictAuthentication::Engine)
   mount RegistrationSharing::Engine, at: '/api/regsharing' if defined?(RegistrationSharing::Engine)
+  mount InstanceVerification::Engine, at: '/api/instance' if defined?(InstanceVerification::Engine)
+
+  if defined?(SccSumaApi::Engine)
+    mount SccSumaApi::Engine, at: '/api/scc'
+
+    get '/connect/organizations/products/unscoped', to: redirect(path: '/api/scc/unscoped-products')
+    get '/connect/organizations/repositories', to: redirect(path: '/api/scc/repos')
+    get '/connect/organizations/subscriptions', to: redirect(path: '/api/scc/subs')
+    get '/connect/organizations/orders', to: redirect(path: '/api/scc/orders')
+    get '/suma/product_tree.json', to: redirect(path: '/api/scc/product-tree')
+  end
+  # :nocov:
 end
