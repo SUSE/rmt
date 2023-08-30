@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-12-29 01:14+0000\n"
+"PO-Revision-Date: 2023-08-30 13:15+0000\n"
 "Last-Translator: Yasuhiko Kamata <belphegor@belbel.or.jp>\n"
 "Language-Team: Japanese <https://l10n.opensuse.org/projects/rmt/i18n/ja/>\n"
 "Language: ja\n"
@@ -19,15 +19,13 @@ msgstr ""
 msgid "%s is not yet activated on the system."
 msgstr "%s はシステム上でまだ有効化されていません。"
 
-#, fuzzy
 msgid "%{count} file"
 msgid_plural "%{count} files"
-msgstr[0] "n"
+msgstr[0] "%{count} 個のファイル"
 
-#, fuzzy
 msgid "%{db_entries} database entry"
 msgid_plural "%{db_entries} database entries"
-msgstr[0] "y"
+msgstr[0] "%{db_entries} 個のデータベース項目"
 
 msgid "%{file} - File does not exist"
 msgstr "%{file} - ファイルが存在しません"
@@ -84,9 +82,10 @@ msgstr "既存のカスタムリポジトリを製品にアタッチする"
 msgid "Attached repository to product '%{product_name}'."
 msgstr "リポジトリを製品「%{product_name}」にアタッチしました。"
 
-#, fuzzy
 msgid "By default, inactive systems are those that have not contacted RMT in any way in the past 3 months. You can override this with the '-b / --before' flag."
-msgstr "既定では、稼働していないシステムとは 3 ヶ月以上にわたって RMT で通信を行っていないシステムのことを指します。期間を調整したい場合は、 '-b / --before' フラグで指定してください。"
+msgstr ""
+"既定では、稼働していないシステムとは 3 ヶ月以上にわたって RMT で通信を行っていないシステムのことを指します。期間を調整したい場合は、 '-b / "
+"--before' フラグで指定してください。"
 
 msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr "データベースサーバに接続できません。資格情報が「%{path}」で正しく設定されていることを確認するか、YaST (「%{command}」) を使用してRMTを設定してください。"
@@ -109,15 +108,12 @@ msgstr "チェックサムが一致しません"
 msgid "Clean cancelled."
 msgstr "クリーンアップをキャンセルしました。"
 
-#, fuzzy
 msgid "Clean dangling files and their database entries"
-msgstr "n"
+msgstr "不要なファイルとデータベース項目をクリーンアップする"
 
-#, fuzzy
 msgid "Clean dangling package files, based on current repository data."
-msgstr "y"
+msgstr "現在のリポジトリデータを元に、不要なパッケージファイルをクリーンアップします。"
 
-#, fuzzy
 msgid ""
 "Clean dangling package files, based on current repository metadata.\n"
 "\n"
@@ -126,18 +122,27 @@ msgid ""
 "listed in the metadata and at least 2-days-old are considered dangling.\n"
 "\n"
 "Then, it removes all dangling files from disk and any associated database entries.\n"
-msgstr "y"
+msgstr ""
+"現在のリポジトリデータを元に、付随するパッケージファイルをクリーンアップします。\n"
+"\n"
+"このコマンドはミラーディレクトリの 'repomd.xml' ファイルを読み込んでメタデータファイルを処理したあと、\n"
+"ディスク内に保存されたコンテンツとの比較処理を行います。メタデータ内に書かれておらず、かつ 2 日以上が\n"
+"経過したファイルを不要と判断します。\n"
+"\n"
+"その後、全ての不要なファイルと関連するデータベース項目を削除します。\n"
 
 msgid "Clean finished. An estimated %{total_file_size} was removed."
 msgstr "クリーンアップが完了しました。推定 %{total_file_size} が削除されました。"
 
-#, fuzzy
 msgid "Cleaned %{file_count_text} (%{total_size}), %{db_entries}."
-msgstr "n"
+msgstr ""
+"%{file_count_text} 個 (%{total_size}) のファイルと %{db_entries} "
+"個のデータベース項目をクリーンアップしました。"
 
-#, fuzzy
 msgid "Cleaned '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}."
-msgstr "n"
+msgstr ""
+"'%{file_name}' (%{file_size}%{hardlink}) と %{db_entries} "
+"個のデータベース項目をクリーンアップしました。"
 
 msgid "Commands:"
 msgstr "コマンド:"
@@ -181,9 +186,8 @@ msgstr "製品から既存のカスタムリポジトリをデタッチする"
 msgid "Detached repository from product '%{product_name}'."
 msgstr "リポジトリを製品「%{product_name}」からデタッチしました。"
 
-#, fuzzy
 msgid "Directory: %{dir}"
-msgstr "y"
+msgstr "ディレクトリ: %{dir}"
 
 msgid "Disable mirroring of custom repositories by a list of IDs"
 msgstr "ID によるカスタムリポジトリのミラーリングを無効化する"
@@ -206,9 +210,8 @@ msgstr "%{product} の無効化:"
 msgid "Displays product with all its repositories and their attributes."
 msgstr "製品に対応する全てのリポジトリと、それらの属性を表示しています。"
 
-#, fuzzy
 msgid "Do not ask anything, use default answers automatically. Default: false"
-msgstr "y"
+msgstr "何も問い合わせを表示せず、自動で応答する (既定値: いいえ)"
 
 msgid "Do not fail the command if product is in alpha or beta stage"
 msgstr "製品がアルファ版またはベータ版の場合、コマンドを失敗させない"
@@ -379,9 +382,8 @@ msgstr "製品を一覧表示および変更する"
 msgid "List and modify repositories"
 msgstr "リポジトリを一覧表示および変更する"
 
-#, fuzzy
 msgid "List files during the cleaning process."
-msgstr "n"
+msgstr "クリーンアップ処理の際にファイルを一覧表示する。"
 
 msgid "List products which are marked to be mirrored."
 msgstr "ミラーリング対象にマーク付けされている製品を一覧表示します。"
@@ -458,9 +460,8 @@ msgstr "基本製品が見つかりません。"
 msgid "No custom repositories found."
 msgstr "カスタムリポジトリが見つかりません。"
 
-#, fuzzy
 msgid "No dangling packages have been found!"
-msgstr "n"
+msgstr "不要なパッケージは見つかりませんでした！"
 
 msgid "No matching products found in the database."
 msgstr "データベース内に一致する製品が見つかりません。"
@@ -504,9 +505,8 @@ msgstr "提供されていません"
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "登録コードがまだアクティブ化されていません。https://scc.suse.comにアクセスしてアクティブ化してください。"
 
-#, fuzzy
 msgid "Now, it will parse all repomd.xml files, search for dangling packages on disk and clean them."
-msgstr "n"
+msgstr "ここから全ての repomd.xml ファイルを処理します。これにより不要なパッケージファイルを検索し、クリーンアップ処理を行います。"
 
 msgid "Number of systems to display"
 msgstr "表示するシステムの数"
@@ -526,7 +526,6 @@ msgstr "CSVフォーマットの出力データ"
 msgid "Path to unpacked SMT data tarball"
 msgstr "展開したSMTデータtarballへのパス"
 
-#, fuzzy
 msgid "Please answer"
 msgstr "回答を入力してください"
 
@@ -609,13 +608,11 @@ msgstr "RMT に生成させるのではなく、独自の ID を指定してく�
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr "RMT は下記のリポジトリ内に、ミラーリング対象としてマークされていないミラー済みファイルを検出しました:"
 
-#, fuzzy
 msgid "RMT found no repomd.xml files. Check if RMT is properly configured."
-msgstr "y"
+msgstr "RMT は repomd.xml ファイルを検出できませんでした。 RMT が正しく設定されていることをお確かめください。"
 
-#, fuzzy
 msgid "RMT found repomd.xml files: %{repomd_count}."
-msgstr "n"
+msgstr "RMT は repomd.xml ファイルを %{repomd_count} 個検出しました。"
 
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr "RMTがまだSCCと同期されていません。その前に「%{command}」を実行してください"
@@ -721,9 +718,8 @@ msgstr "コマンドおよびそのサブコマンドの詳細については、
 msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
 msgstr "SUSE Customer Centerデータと同期するには、まず「%{command}」を実行してください。"
 
-#, fuzzy
 msgid "Run the clean process without actually removing files."
-msgstr "y"
+msgstr "ファイルを削除せずにクリーンアップ処理を動作させます。"
 
 msgid "Run this command on an online RMT."
 msgstr "このコマンドをオンラインの RMT で実行してください。"
@@ -746,9 +742,8 @@ msgstr ""
 msgid "SCC credentials not set."
 msgstr "SCC 資格情報が設定されていません。"
 
-#, fuzzy
 msgid "Scanning the mirror directory for 'repomd.xml' files..."
-msgstr "y"
+msgstr "ミラーディレクトリ内の 'repomd.xml' ファイルを検索しています..."
 
 msgid "Settings saved at %{file}."
 msgstr "%{file} に設定が保存されました。"
@@ -810,14 +805,14 @@ msgstr "RMTデータベースはまだ初期化されていません。データ
 msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
 msgstr "SCC資格情報が「%{path}」で正しく設定されていません。それらの資格情報は %{url} から取得できます"
 
-#, fuzzy
 msgid "The command will list the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
-msgstr "このコマンドでは、削除対象のシステムを一覧表示して確認を求めます。確認せずにそのままサブコマンドの処理を進めたい場合は、 '--no-confirmation' フラグを指定してください。"
+msgstr ""
+"このコマンドでは、削除対象のシステムを一覧表示して確認を求めます。確認せずにそのままサブコマンドの処理を進めたい場合は、 '--no-"
+"confirmation' フラグを指定してください。"
 
 msgid "The following errors occurred while mirroring:"
 msgstr "ミラーリング時に下記のエラーが発生しました:"
 
-#, fuzzy
 msgid "The given date does not follow the proper format. Ensure it follows this format '<year>-<month>-<day>'."
 msgstr "日付が正しい書式になっていません。日付は '<年>-<月>-<日>' の形式で指定してください。"
 
@@ -864,9 +859,8 @@ msgstr "ミラーリング用にマーク付けされたリポジトリはあり
 msgid "There are no systems registered to this RMT instance."
 msgstr "この RMT インスタンスに登録すべきシステムはありません。"
 
-#, fuzzy
 msgid "This can take several minutes. Would you like to continue and clean dangling packages?"
-msgstr "y"
+msgstr "この処理の完了までにはしばらくの時間がかかりますが、このまま続行して不要なファイルを削除してよろしいですか？"
 
 msgid "To clean up downloaded files, please run '%{command}'"
 msgstr "ダウンロードしたファイルをクリーンアップするには、 '%{command}' を実行してください"
@@ -877,9 +871,8 @@ msgstr "ダウンロードしたファイルをクリーンアップするには
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr "システムの削除を行なうには、対応するログイン情報を指定して \"%{command}\" コマンドを実行してください。"
 
-#, fuzzy
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
-msgstr "n"
+msgstr "合計: %{total_count} 個 (%{total_size}), %{total_db_entries} 個のデータベース項目。"
 
 msgid "URL"
 msgstr "URL"
@@ -917,9 +910,8 @@ msgstr "curl 終了メッセージ"
 msgid "enabled"
 msgstr "有効"
 
-#, fuzzy
 msgid "hardlink"
-msgstr "n"
+msgstr "ハードリンク"
 
 msgid "importing data from SMT."
 msgstr "SMTからデータをインポートしています。"
@@ -948,6 +940,5 @@ msgstr "URL %{url} のリポジトリはデータベースに存在しません"
 msgid "y"
 msgstr "y"
 
-#, fuzzy
 msgid "yes"
-msgstr "y"
+msgstr "はい"
