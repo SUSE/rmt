@@ -41,6 +41,12 @@ Note: Look below for direction on publishing to registry.
     ```
 2. On github, submit a release for the tag. See https://help.github.com/en/articles/creating-releases for assistance.
 
+#### Helm chart update process
+
+RMT helm chart is found [here](https://github.com/SUSE/helm-charts.git). 
+
+Edit `rmt-helm/Chart.yaml` to update the chart version (`version`) and rmt-version (`appVersion`). The `BuildTag` version needs to be updated. Look at this example [pull-request](https://github.com/SUSE/helm-charts/pull/5) bumping the version.
+ 
 #### Submit Requests to openSUSE Factory and SLES
 
 To get a maintenance request accepted, each changelog entry needs to have at
