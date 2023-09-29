@@ -114,4 +114,4 @@ After your requests have been accepted, they still have to pass maintenance test
 
 SUSE registry houses the rmt-server docker image. The image is built on OBS/IBS, project for SLES 15sp4 based distributions can be found [here](https://build.opensuse.org/package/show/devel:BCI:SLE-15-SP4/rmt-server-image).
 
-At the moment of writing, the publishing process has to be done manually. This can be achieved my reaching out to the Auto-Build team (only available internally).
+At the moment of writing, the publishing process has to be done manually. This can be achieved by reaching out to the Auto-Build team (only available internally).
