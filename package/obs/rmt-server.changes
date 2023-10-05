@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Oct 04 13:23:00 UTC 2023 - Felix Schnizlein <fschnizlein@suse.com>
+
+- Version 2.15:
+  * Moving system hardware information to systems database table to
+    allow transmitting system information dynamically. (jsc#PED-3734)
+
+-------------------------------------------------------------------
 Thu Jun 06 15:44:00 UTC 2023 - Luís Caparroz <lcaparroz@suse.com>
 
 - Version 2.14
