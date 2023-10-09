@@ -48,19 +48,11 @@ class SUSE::Connect::SystemSerializer < ActiveModel::Serializer
   end
 
   def hwinfo
-    info = object.hw_info
-    {
-      cpus: info.cpus,
-      sockets: info.sockets,
-      hypervisor: info.hypervisor,
-      arch: info.arch,
-      uuid: info.uuid,
-      cloud_provider: info.cloud_provider
-    }
+    JSON.parse(object.system_information).symbolize_keys
   end
 
   def has_hwinfo_and_needs_full_update?
-    object.hw_info.present? && needs_full_update?
+    object.system_information.present? && needs_full_update?
   end
 
   def has_system_token?

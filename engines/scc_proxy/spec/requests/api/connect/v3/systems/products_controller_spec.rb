@@ -35,7 +35,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     context 'when system has hw_info' do
       let(:instance_data) { '<document>{"instanceId": "dummy_instance_data"}</document>' }
       let(:new_system_token) { 'BBBBBBBB-BBBB-4BBB-9BBB-BBBBBBBBBBBB' }
-      let(:system) { FactoryBot.create(:system, :with_hw_info, instance_data: instance_data) }
+      let(:system) { FactoryBot.create(:system, :with_system_information, instance_data: instance_data) }
       let(:serialized_service_json) do
         V3::ServiceSerializer.new(
           product.service,
@@ -52,7 +52,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
       context 'when system is connected to SCC' do
         let(:system) do
-          FactoryBot.create(:system, :byos, :with_hw_info, instance_data: instance_data,
+          FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data,
             system_token: new_system_token)
         end
         let(:scc_activate_url) { 'https://scc.suse.com/connect/systems/products' }
@@ -138,7 +138,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         context 'with different system_tokens' do
           let(:system2) do
-            FactoryBot.create(:system, :byos, :with_hw_info, instance_data: instance_data,
+            FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data,
               system_token: 'foo')
           end
 
@@ -164,7 +164,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         context 'with duplicated system_tokens' do
           let(:system3) do
-            FactoryBot.create(:system, :byos, :with_hw_info, instance_data: instance_data,
+            FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data,
               system_token: 'foo')
           end
 
@@ -198,7 +198,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     let(:instance_data) { 'dummy_instance_data' }
     let(:system) do
       FactoryBot.create(
-        :system, :with_hw_info, :with_activated_product, product: base_product, instance_data: instance_data
+        :system, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data
       )
     end
     let(:serialized_service_json) do

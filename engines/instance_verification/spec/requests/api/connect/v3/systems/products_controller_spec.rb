@@ -41,7 +41,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
     context 'when system has hw_info' do
       let(:instance_data) { 'dummy_instance_data' }
-      let(:system) { FactoryBot.create(:system, :with_hw_info, instance_data: instance_data) }
+      let(:system) { FactoryBot.create(:system, :with_system_information, instance_data: instance_data) }
       let(:serialized_service_json) do
         V3::ServiceSerializer.new(
           product.service,
@@ -133,7 +133,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     let(:instance_data) { 'dummy_instance_data' }
     let(:system) do
       FactoryBot.create(
-        :system, :with_hw_info, :with_activated_product, product: base_product, instance_data: instance_data
+        :system, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data
       )
     end
     let(:serialized_service_json) do

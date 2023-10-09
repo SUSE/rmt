@@ -167,8 +167,8 @@ WARNING
         next
       end
       info.delete('hostname')
+      system.system_information = info.to_json
 
-      HwInfo.find_or_initialize_by(system: system).update!(info)
       puts _('Hardware information stored for system %{system}') % { system: login }
     end
   end

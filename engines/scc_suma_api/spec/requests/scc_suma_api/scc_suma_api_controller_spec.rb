@@ -1,6 +1,7 @@
 require 'rails_helper'
 require 'json'
 
+# rubocop:disable Metrics/ModuleLength
 module SccSumaApi
   RSpec.describe SccSumaApiController, type: :request do
     subject { response }
@@ -52,8 +53,26 @@ module SccSumaApi
             its(:body) { is_expected.to include 'http://www.example.com/api/scc/unscoped-products' }
           end
 
-          context 'endpoints return unscoped products' do
+          context 'endpoints return unscoped products for PAYG systems' do
             before do
+              get '/api/scc/unscoped-products', headers: payload
+            end
+
+            its(:code) { is_expected.to eq '200' }
+            its(:body) { is_expected.to eq products.to_json.to_s }
+          end
+
+          context 'endpoints return unscoped products for BYOS systems' do
+            before do
+              allow_any_instance_of(InstanceVerification::Providers::Example).to(
+                receive(:instance_valid?).and_return(false)
+                )
+              System.stub(:find_by).and_return('foo')
+
+              allow(SUSE::Connect::Api).to receive(:new).and_return api_double
+              allow(api_double).to receive(:list_products_unscoped).and_return products
+              File.delete(unscoped_file) if File.exist?(unscoped_file)
+
               get '/api/scc/unscoped-products', headers: payload
             end
 
@@ -130,3 +149,4 @@ module SccSumaApi
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength
