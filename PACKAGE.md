@@ -46,7 +46,9 @@ Note: Look below for direction on publishing to registry.
 RMT helm chart is found [here](https://github.com/SUSE/helm-charts.git). 
 
 Edit `rmt-helm/Chart.yaml` to update the chart version (`version`) and rmt-version (`appVersion`). The `BuildTag` version needs to be updated. Look at this example [pull-request](https://github.com/SUSE/helm-charts/pull/5) bumping the version.
- 
+
+[Bruno Leon](mailto:bruno.leon@suse.com) is the maintainer and point of contact for rmt-helm.
+
 #### Submit Requests to openSUSE Factory and SLES
 
 To get a maintenance request accepted, each changelog entry needs to have at
