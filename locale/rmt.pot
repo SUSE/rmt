@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-29 15:33+0200\n"
-"PO-Revision-Date: 2023-08-29 15:33+0200\n"
+"POT-Creation-Date: 2023-10-09 12:20+0200\n"
+"PO-Revision-Date: 2023-10-09 12:20+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -75,11 +75,7 @@ msgid ""
 "ed_bases}."
 msgstr ""
 
-#: ../app/controllers/api/connect/v3/systems/systems_controller.rb:6
-msgid "Not provided"
-msgstr ""
-
-#: ../app/controllers/api/connect/v3/systems/systems_controller.rb:10
+#: ../app/controllers/api/connect/v3/systems/systems_controller.rb:14
 msgid "Updated system information for host '%s'"
 msgstr ""
 
@@ -99,23 +95,23 @@ msgstr ""
 msgid "%s is not yet activated on the system."
 msgstr ""
 
-#: ../app/controllers/application_controller.rb:35
+#: ../app/controllers/application_controller.rb:34
 msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
 msgstr ""
 
-#: ../app/controllers/application_controller.rb:37
+#: ../app/controllers/application_controller.rb:36
 msgid "Invalid system credentials"
 msgstr ""
 
-#: ../app/controllers/application_controller.rb:60
+#: ../app/controllers/application_controller.rb:59
 msgid "System with login \\\"%{login}\\\" authenticated without token header"
 msgstr ""
 
-#: ../app/controllers/application_controller.rb:69
+#: ../app/controllers/application_controller.rb:68
 msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
 msgstr ""
 
-#: ../app/controllers/application_controller.rb:82
+#: ../app/controllers/application_controller.rb:80
 msgid ""
 "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated fro"
 "m ID %{base_id} due to token mismatch"
@@ -218,7 +214,7 @@ msgid "Clean dangling package files, based on current repository data."
 msgstr ""
 
 #: ../lib/rmt/cli/clean.rb:8
-msgid "Do not ask anything, use default answers automatically. Default: false"
+msgid "Do not ask anything; use default answers automatically. Default: false"
 msgstr ""
 
 #: ../lib/rmt/cli/clean.rb:10
@@ -231,14 +227,14 @@ msgstr ""
 
 #: ../lib/rmt/cli/clean.rb:13
 msgid ""
-"Clean dangling package files, based on current repository metadata.\n"
+"Clean dangling package files based on current repository metadata.\n"
 "\n"
-"This command scans the mirror directory for 'repomd.xml' files, parse the\n"
-"metadata files, and compare their content with files on disk. Files not\n"
-"listed in the metadata and at least 2-days-old are considered dangling.\n"
+"This command scans the mirror directory for 'repomd.xml' files, parses the\n"
+"metadata files, and compares their content with files on disk. Files not\n"
+"listed in the metadata and at least 2 days old are considered dangling.\n"
 "\n"
-"Then, it removes all dangling files from disk and any associated database entr"
-"ies.\n"
+"Then, it removes all dangling files from disk along with any associated databa"
+"se entries.\n"
 msgstr ""
 
 #: ../lib/rmt/cli/clean.rb:27

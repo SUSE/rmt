@@ -83,9 +83,7 @@ msgid "Attached repository to product '%{product_name}'."
 msgstr "リポジトリを製品「%{product_name}」にアタッチしました。"
 
 msgid "By default, inactive systems are those that have not contacted RMT in any way in the past 3 months. You can override this with the '-b / --before' flag."
-msgstr ""
-"既定では、稼働していないシステムとは 3 ヶ月以上にわたって RMT で通信を行っていないシステムのことを指します。期間を調整したい場合は、 '-b / "
-"--before' フラグで指定してください。"
+msgstr "既定では、稼働していないシステムとは 3 ヶ月以上にわたって RMT で通信を行っていないシステムのことを指します。期間を調整したい場合は、 '-b / --before' フラグで指定してください。"
 
 msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr "データベースサーバに接続できません。資格情報が「%{path}」で正しく設定されていることを確認するか、YaST (「%{command}」) を使用してRMTを設定してください。"
@@ -111,17 +109,15 @@ msgstr "クリーンアップをキャンセルしました。"
 msgid "Clean dangling files and their database entries"
 msgstr "不要なファイルとデータベース項目をクリーンアップする"
 
-msgid "Clean dangling package files, based on current repository data."
-msgstr "現在のリポジトリデータを元に、不要なパッケージファイルをクリーンアップします。"
-
+#, fuzzy
 msgid ""
-"Clean dangling package files, based on current repository metadata.\n"
+"Clean dangling package files based on current repository metadata.\n"
 "\n"
-"This command scans the mirror directory for 'repomd.xml' files, parse the\n"
-"metadata files, and compare their content with files on disk. Files not\n"
-"listed in the metadata and at least 2-days-old are considered dangling.\n"
+"This command scans the mirror directory for 'repomd.xml' files, parses the\n"
+"metadata files, and compares their content with files on disk. Files not\n"
+"listed in the metadata and at least 2 days old are considered dangling.\n"
 "\n"
-"Then, it removes all dangling files from disk and any associated database entries.\n"
+"Then, it removes all dangling files from disk along with any associated database entries.\n"
 msgstr ""
 "現在のリポジトリデータを元に、付随するパッケージファイルをクリーンアップします。\n"
 "\n"
@@ -131,18 +127,17 @@ msgstr ""
 "\n"
 "その後、全ての不要なファイルと関連するデータベース項目を削除します。\n"
 
+msgid "Clean dangling package files, based on current repository data."
+msgstr "現在のリポジトリデータを元に、不要なパッケージファイルをクリーンアップします。"
+
 msgid "Clean finished. An estimated %{total_file_size} was removed."
 msgstr "クリーンアップが完了しました。推定 %{total_file_size} が削除されました。"
 
 msgid "Cleaned %{file_count_text} (%{total_size}), %{db_entries}."
-msgstr ""
-"%{file_count_text} 個 (%{total_size}) のファイルと %{db_entries} "
-"個のデータベース項目をクリーンアップしました。"
+msgstr "%{file_count_text} 個 (%{total_size}) のファイルと %{db_entries} 個のデータベース項目をクリーンアップしました。"
 
 msgid "Cleaned '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}."
-msgstr ""
-"'%{file_name}' (%{file_size}%{hardlink}) と %{db_entries} "
-"個のデータベース項目をクリーンアップしました。"
+msgstr "'%{file_name}' (%{file_size}%{hardlink}) と %{db_entries} 個のデータベース項目をクリーンアップしました。"
 
 msgid "Commands:"
 msgstr "コマンド:"
@@ -210,7 +205,8 @@ msgstr "%{product} の無効化:"
 msgid "Displays product with all its repositories and their attributes."
 msgstr "製品に対応する全てのリポジトリと、それらの属性を表示しています。"
 
-msgid "Do not ask anything, use default answers automatically. Default: false"
+#, fuzzy
+msgid "Do not ask anything; use default answers automatically. Default: false"
 msgstr "何も問い合わせを表示せず、自動で応答する (既定値: いいえ)"
 
 msgid "Do not fail the command if product is in alpha or beta stage"
@@ -498,9 +494,6 @@ msgstr "必須ではありません"
 
 msgid "Not all mandatory repositories are mirrored for product %s"
 msgstr "すべての必須リポジトリが製品 %s 用にミラーリングされるわけではありません"
-
-msgid "Not provided"
-msgstr "提供されていません"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "登録コードがまだアクティブ化されていません。https://scc.suse.comにアクセスしてアクティブ化してください。"
@@ -806,9 +799,7 @@ msgid "The SCC credentials are not configured correctly in '%{path}'. You can ob
 msgstr "SCC資格情報が「%{path}」で正しく設定されていません。それらの資格情報は %{url} から取得できます"
 
 msgid "The command will list the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
-msgstr ""
-"このコマンドでは、削除対象のシステムを一覧表示して確認を求めます。確認せずにそのままサブコマンドの処理を進めたい場合は、 '--no-"
-"confirmation' フラグを指定してください。"
+msgstr "このコマンドでは、削除対象のシステムを一覧表示して確認を求めます。確認せずにそのままサブコマンドの処理を進めたい場合は、 '--no-confirmation' フラグを指定してください。"
 
 msgid "The following errors occurred while mirroring:"
 msgstr "ミラーリング時に下記のエラーが発生しました:"
