@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-02-20 16:14+0000\n"
+"PO-Revision-Date: 2023-10-10 19:15+0000\n"
 "Last-Translator: Gemineo <vistatec@gemineo.de>\n"
 "Language-Team: German <https://l10n.opensuse.org/projects/rmt/i18n/de/>\n"
 "Language: de\n"
@@ -19,15 +19,15 @@ msgstr ""
 msgid "%s is not yet activated on the system."
 msgstr "%s ist auf dem System noch nicht aktiviert."
 
-#, fuzzy
 msgid "%{count} file"
 msgid_plural "%{count} files"
-msgstr[0] "n"
+msgstr[0] "%{count} Datei"
+msgstr[1] "%{count} Dateien"
 
-#, fuzzy
 msgid "%{db_entries} database entry"
 msgid_plural "%{db_entries} database entries"
-msgstr[0] "j"
+msgstr[0] "%{db_entries} Datenbaneintrag"
+msgstr[1] "%{db_entries} Datenbankeinträge"
 
 msgid "%{file} - File does not exist"
 msgstr "%{file} – Datei ist nicht vorhanden"
@@ -84,9 +84,11 @@ msgstr "Ein vorhandenes benutzerdefiniertes Repository mit einem Produkt verbind
 msgid "Attached repository to product '%{product_name}'."
 msgstr "Repository wurde mit Produkt '%{product_name}' verbunden."
 
-#, fuzzy
 msgid "By default, inactive systems are those that have not contacted RMT in any way in the past 3 months. You can override this with the '-b / --before' flag."
-msgstr "Standardmäßig sind inaktive Systeme solche Systeme, die in den letzten 3 Monaten nicht mit RMT in Kontakt getreten sind. Sie können dies mit dem Flag '-b / --before' außer Kraft setzen."
+msgstr ""
+"Standardmäßig sind inaktive Systeme solche Systeme, die in den letzten 3 "
+"Monaten nicht mit RMT in Kontakt getreten sind. Sie können dies mit dem Flag "
+"'-b / --before' außer Kraft setzen."
 
 msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr "Keine Verbindung zum Datenbankserver möglich. Stellen Sie sicher, dass der Berechtigungsnachweis in '%{path}' richtig konfiguriert ist oder konfigurieren Sie RMT mit YaST ('%{command}')."
@@ -109,11 +111,10 @@ msgstr "Prüfsumme stimmt nicht überein"
 msgid "Clean cancelled."
 msgstr "Bereinigung abgebrochen."
 
-#, fuzzy
 msgid "Clean dangling files and their database entries"
-msgstr "n"
+msgstr ""
+"Hängengebliebene Dateien und die entsprechenden Datenbankeinträge bereinigen"
 
-#, fuzzy
 msgid ""
 "Clean dangling package files based on current repository metadata.\n"
 "\n"
@@ -122,22 +123,33 @@ msgid ""
 "listed in the metadata and at least 2 days old are considered dangling.\n"
 "\n"
 "Then, it removes all dangling files from disk along with any associated database entries.\n"
-msgstr "j"
+msgstr ""
+"Bereinigen Sie hängengebliebene Paketdateien anhand der aktuellen Metadaten "
+"des Repositorys.\n"
+"\n"
+"Dieser Befehl durchsucht das Spiegelverzeichnis nach repomd.xml-Dateien, "
+"analysiert Metadatendateien\n"
+"und vergleicht ihren Inhalt mit Dateien auf der Festplatte. Dateien, die "
+"nicht in den Metadaten\n"
+"aufgeführt und mindestens 2 Tage alt sind, werden als hängegebliebene "
+"Dateien betrachtet.\n"
+"\n"
+"Dann werden alle nicht mehr benötigten Dateien von der Festplatte entfernt "
+"und die entsprechenden Datenbankeinträge gelöscht.\n"
 
-#, fuzzy
 msgid "Clean dangling package files, based on current repository data."
-msgstr "j"
+msgstr ""
+"Bereinigen Sie hängengebliebene Paketdateien anhand der aktuellen Repository-"
+"Daten."
 
 msgid "Clean finished. An estimated %{total_file_size} was removed."
 msgstr "Bereinigung beendet. Es wurden etwa %{total_file_size} entfernt."
 
-#, fuzzy
 msgid "Cleaned %{file_count_text} (%{total_size}), %{db_entries}."
-msgstr "n"
+msgstr "%{file_count_text} (%{total_size}), %{db_entries} bereinigt."
 
-#, fuzzy
 msgid "Cleaned '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}."
-msgstr "n"
+msgstr "'%{file_name}' (%{file_size}%{hardlink}), %{db_entries} bereinigt."
 
 msgid "Commands:"
 msgstr "Kommandos:"
@@ -181,9 +193,8 @@ msgstr "Vorhandenes benutzerdefiniertes Repository von Produkt trennen"
 msgid "Detached repository from product '%{product_name}'."
 msgstr "Repository von Produkt '%{product_name}' getrennt."
 
-#, fuzzy
 msgid "Directory: %{dir}"
-msgstr "j"
+msgstr "Verzeichnis: %{dir}"
 
 msgid "Disable mirroring of custom repositories by a list of IDs"
 msgstr "Spiegeln des benutzerdefinierten Repositorys nach IDs deaktivieren"
@@ -206,9 +217,10 @@ msgstr "%{product} wird deaktiviert:"
 msgid "Displays product with all its repositories and their attributes."
 msgstr "Zeigt das Produkt mit allen Repositorys und deren Attributen an."
 
-#, fuzzy
 msgid "Do not ask anything; use default answers automatically. Default: false"
-msgstr "j"
+msgstr ""
+"Nichts fragen; Standardantworten automatisch verwenden. Standardeinstellung: "
+"falsch"
 
 msgid "Do not fail the command if product is in alpha or beta stage"
 msgstr "Befehl schlägt nicht fehl, wenn sich das Produkt in der Alpha- oder Beta-Phase befindet"
@@ -380,9 +392,8 @@ msgstr "Produkte auflisten und ändern"
 msgid "List and modify repositories"
 msgstr "Repositorys auflisten und ändern"
 
-#, fuzzy
 msgid "List files during the cleaning process."
-msgstr "n"
+msgstr "Dateien während des Bereinigungsvorgangs auflisten."
 
 msgid "List products which are marked to be mirrored."
 msgstr "Produkte auflisten, die zur Spiegelung markiert sind"
@@ -459,9 +470,8 @@ msgstr "Kein Basisprodukt gefunden."
 msgid "No custom repositories found."
 msgstr "Keine benutzerdefinierten Repositorys gefunden."
 
-#, fuzzy
 msgid "No dangling packages have been found!"
-msgstr "n"
+msgstr "Keine hängengebliebenen Pakete gefunden!"
 
 msgid "No matching products found in the database."
 msgstr "Keine übereinstimmenden Produkte in der Datenbank gefunden."
@@ -502,9 +512,10 @@ msgstr "Nicht alle obligatorischen Repositorys für Produkt %s wurden gespiegelt
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "Registrierungscode wurde noch nicht aktiviert. Rufen Sie zum Aktivieren https://scc.suse.com auf."
 
-#, fuzzy
 msgid "Now, it will parse all repomd.xml files, search for dangling packages on disk and clean them."
-msgstr "n"
+msgstr ""
+"Jetzt werden alle repomd.xml-Dateien analysiert, auf der Festplatte wird "
+"nach hängengebliebenen Paketen gesucht, die anschließend bereinigt werden."
 
 msgid "Number of systems to display"
 msgstr "Anzahl der anzuzeigenden Systeme"
@@ -524,7 +535,6 @@ msgstr "Daten in CSV-Format ausgeben"
 msgid "Path to unpacked SMT data tarball"
 msgstr "Pfad zur entpackten SMT-Daten-Tarball-Datei"
 
-#, fuzzy
 msgid "Please answer"
 msgstr "Bitte antworten Sie"
 
@@ -609,13 +619,13 @@ msgstr "Geben Sie eine benutzerdefinierte ID an, anstatt eine von RMT generieren
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr "RMT fand lokal gespiegelte Dateien aus den folgenden Repositorys, die nicht zum Spiegeln markiert sind:"
 
-#, fuzzy
 msgid "RMT found no repomd.xml files. Check if RMT is properly configured."
-msgstr "j"
+msgstr ""
+"RMT hat keine repomd.xml-Dateien gefunden. Überprüfen Sie, ob RMT richtig "
+"konfiguriert ist."
 
-#, fuzzy
 msgid "RMT found repomd.xml files: %{repomd_count}."
-msgstr "n"
+msgstr "RMT hat repomd.xml-Dateien gefunden: %{repomd_count}."
 
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr "RMT wurde noch nicht mit SCC synchronisiert. Führen Sie zuvor '%{command}' aus."
@@ -723,9 +733,8 @@ msgstr "Führen Sie '%{command}' aus, um weitere Informationen zu einem Kommando
 msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
 msgstr "Führen Sie '%{command}' aus, um zuerst eine Synchronisierung mit Ihren SUSE Customer Center-Daten durchzuführen."
 
-#, fuzzy
 msgid "Run the clean process without actually removing files."
-msgstr "j"
+msgstr "Führen Sie den Bereinigungsvorgang aus, ohne Dateien zu löschen."
 
 msgid "Run this command on an online RMT."
 msgstr "Führen Sie diesen Befehl bei einem Online-RMT aus."
@@ -748,9 +757,8 @@ msgstr ""
 msgid "SCC credentials not set."
 msgstr "SCC-Anmeldeberechtigung nicht eingestellt."
 
-#, fuzzy
 msgid "Scanning the mirror directory for 'repomd.xml' files..."
-msgstr "j"
+msgstr "Spiegelverzeichnis wird nach repomd.xml-Dateien durchsucht..."
 
 msgid "Settings saved at %{file}."
 msgstr "Einstellungen wurden in %{file} gespeichert."
@@ -812,16 +820,19 @@ msgstr "Die RMT-Datenbank wurde noch nicht initialisiert. Führen Sie '%{command
 msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
 msgstr "Der SCC-Berechtigungsnachweis in '%{path}' ist nicht korrekt konfiguriert. Sie erhalten den Berechtigungsnachweis unter %{url}."
 
-#, fuzzy
 msgid "The command will list the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
-msgstr "Der Befehl führt die Kandidaten auf, die entfernt werden, und fragt nach einer Bestätigung. Mit dem Flag '--no-confirmation' können Sie diesen Unterbefehl anweisen, ohne Nachfrage fortzufahren."
+msgstr ""
+"Der Befehl führt die Kandidaten auf, die entfernt werden, und fragt nach "
+"einer Bestätigung. Mit dem Flag '--no-confirmation' können Sie diesen "
+"Unterbefehl anweisen, ohne Nachfrage fortzufahren."
 
 msgid "The following errors occurred while mirroring:"
 msgstr "Beim Spiegeln sind folgende Fehler aufgetreten:"
 
-#, fuzzy
 msgid "The given date does not follow the proper format. Ensure it follows this format '<year>-<month>-<day>'."
-msgstr "Das angegebene Datum entspricht nicht dem richtigen Format. Stellen Sie sicher, dass es dem Format '<Jahr>-<Monat>-<Tag>' entspricht."
+msgstr ""
+"Das angegebene Datum entspricht nicht dem richtigen Format. Stellen Sie "
+"sicher, dass es dem Format '<Jahr>-<Monat>-<Tag>' entspricht."
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
 msgstr "Das Produkt \"%s\" ist ein Basisprodukt und kann nicht deaktiviert werden."
@@ -866,9 +877,10 @@ msgstr "Es gibt keine Repositorys, die für die Spiegelung markiert sind."
 msgid "There are no systems registered to this RMT instance."
 msgstr "Bei dieser RMT-Instanz sind keine Systeme registriert."
 
-#, fuzzy
 msgid "This can take several minutes. Would you like to continue and clean dangling packages?"
-msgstr "j"
+msgstr ""
+"Dies kann einige Minuten dauern. Möchten Sie fortfahren und hängengebliebene "
+"Pakete bereinigen?"
 
 msgid "To clean up downloaded files, please run '%{command}'"
 msgstr "Führen Sie zum Bereinigen heruntergeladener Dateien '%{command}' aus"
@@ -879,9 +891,8 @@ msgstr "Führen Sie zum Bereinigen heruntergeladener Dateien '%{command}' aus"
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr "Um ein System gezielt zu entfernen, verwenden Sie den Befehl \"%{command}\" für eine Liste von Systemen mit den entsprechenden Anmeldungen."
 
-#, fuzzy
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
-msgstr "n"
+msgstr "Gesamt: %{total_count} (%{total_size}), %{total_db_entries} bereinigt."
 
 msgid "URL"
 msgstr "URL"
@@ -919,9 +930,8 @@ msgstr "curl-Rückgabemeldung"
 msgid "enabled"
 msgstr "aktiviert"
 
-#, fuzzy
 msgid "hardlink"
-msgstr "n"
+msgstr "Hardlink"
 
 msgid "importing data from SMT."
 msgstr "Daten aus SMT werden importiert."
@@ -950,6 +960,5 @@ msgstr "Repository mit URL %{url} ist nicht in Datenbank vorhanden."
 msgid "y"
 msgstr "j"
 
-#, fuzzy
 msgid "yes"
-msgstr "j"
+msgstr "ja"
