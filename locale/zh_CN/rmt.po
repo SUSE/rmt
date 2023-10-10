@@ -6,10 +6,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-02-16 05:14+0000\n"
+"PO-Revision-Date: 2023-10-10 05:15+0000\n"
 "Last-Translator: Grace Yu <grace.yu@excel-gits.com>\n"
-"Language-Team: Chinese (China) <https://l10n.opensuse.org/projects/rmt/i18n/zh"
-"_CN/>\n"
+"Language-Team: Chinese (China) <https://l10n.opensuse.org/projects/rmt/i18n/"
+"zh_CN/>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,17 +18,15 @@ msgstr ""
 "X-Generator: Weblate 4.9.1\n"
 
 msgid "%s is not yet activated on the system."
-msgstr "此系统上尚未激活 %s。"
+msgstr "尚未在系统中激活 %s。"
 
-#, fuzzy
 msgid "%{count} file"
 msgid_plural "%{count} files"
-msgstr[0] "n"
+msgstr[0] "%{count} 文件"
 
-#, fuzzy
 msgid "%{db_entries} database entry"
 msgid_plural "%{db_entries} database entries"
-msgstr[0] "y"
+msgstr[0] "%{db_entries} 数据库条目"
 
 msgid "%{file} - File does not exist"
 msgstr "%{file} - 文件不存在"
@@ -49,10 +47,10 @@ msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 msgstr "* %{name}（id：%{id}）（%{mandatory}，%{enabled}，%{mirrored_at}）"
 
 msgid "A repository by the ID %{id} already exists."
-msgstr "已存在 ID 为 %{id} 的软件源。"
+msgstr "已存在 ID 为 %{id} 的储存库。"
 
 msgid "A repository by the URL %{url} already exists."
-msgstr "URL 为 %{url} 的软件源已存在。"
+msgstr "URL 为 %{url} 的储存库已存在。"
 
 msgid "Added association between %{repo} and product %{product}"
 msgstr "已在 %{repo} 与产品 %{product} 之间添加关联"
@@ -61,10 +59,10 @@ msgid "Adding/Updating product %{product}"
 msgstr "正在添加/更新产品 %{/product}"
 
 msgid "All repositories have already been disabled."
-msgstr "已禁用所有软件源。"
+msgstr "已禁用所有储存库。"
 
 msgid "All repositories have already been enabled."
-msgstr "已启用所有软件源。"
+msgstr "已启用所有储存库。"
 
 msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
 msgstr "已运行此命令的另一个实例。请终止另一实例，或等待该实例完成。"
@@ -80,14 +78,14 @@ msgid "Ask for confirmation or do not ask for confirmation and require no user i
 msgstr "要求确认或不要求确认以及无需用户交互"
 
 msgid "Attach an existing custom repository to a product"
-msgstr "将现有自定义软件源关联到产品"
+msgstr "将现有自定义储存库关联到产品"
 
 msgid "Attached repository to product '%{product_name}'."
-msgstr "已将软件源关联到产品“%{product_name}”。"
+msgstr "已将储存库关联到产品“%{product_name}”。"
 
-#, fuzzy
 msgid "By default, inactive systems are those that have not contacted RMT in any way in the past 3 months. You can override this with the '-b / --before' flag."
-msgstr "默认情况下，非活动系统是指过去 3 个月内未以任何方式与 RMT 进行联系的系统。您可以使用 \"-b / --before\" 标志覆盖此默认值。"
+msgstr ""
+"默认情况下，非活动系统是指过去 3 个月内未以任何方式与 RMT 进行联系的系统。您可以使用 \"-b / --before\" 标志覆盖此默认值。"
 
 msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr "无法连接到数据库服务器。请确保已在“%{path}”中正确配置其身份凭证，或使用 YaST（运行 %{command}）来配置 RMT。"
@@ -110,11 +108,9 @@ msgstr "校验和不匹配"
 msgid "Clean cancelled."
 msgstr "已取消清理。"
 
-#, fuzzy
 msgid "Clean dangling files and their database entries"
-msgstr "n"
+msgstr "清理悬空文件及其数据库条目"
 
-#, fuzzy
 msgid ""
 "Clean dangling package files based on current repository metadata.\n"
 "\n"
@@ -123,22 +119,26 @@ msgid ""
 "listed in the metadata and at least 2 days old are considered dangling.\n"
 "\n"
 "Then, it removes all dangling files from disk along with any associated database entries.\n"
-msgstr "y"
+msgstr ""
+"根据当前储存库元数据清理悬空软件包文件。\n"
+"\n"
+"此命令会扫描镜像目录中的 \"repomd.xml\" 文件、分析元数据文件，\n"
+"并将这些文件的内容与磁盘上的文件进行比较。\n"
+"至少已存在 2 天但元数据中未列出的文件会被视为悬空文件。\n"
+"\n"
+"然后，该命令会从磁盘中去除所有悬空文件以及任何关联的数据库条目。\n"
 
-#, fuzzy
 msgid "Clean dangling package files, based on current repository data."
-msgstr "y"
+msgstr "根据当前储存库数据清理悬空软件包文件。"
 
 msgid "Clean finished. An estimated %{total_file_size} was removed."
 msgstr "已完成清理。估计已去除 %{total_file_size}。"
 
-#, fuzzy
 msgid "Cleaned %{file_count_text} (%{total_size}), %{db_entries}."
-msgstr "n"
+msgstr "已清理 %{file_count_text} (%{total_size})，%{db_entries}。"
 
-#, fuzzy
 msgid "Cleaned '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}."
-msgstr "n"
+msgstr "已清理 \"{file_name}\" (%{file_size}%{hardlink})，%{db_entries}。"
 
 msgid "Commands:"
 msgstr "命令："
@@ -159,16 +159,16 @@ msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "无法镜像 SUSE Manager 产品树，发生错误：%{error}"
 
 msgid "Couldn't add custom repository."
-msgstr "无法添加自定义软件源。"
+msgstr "无法添加自定义储存库。"
 
 msgid "Couldn't sync %{count} systems."
 msgstr "无法同步 %{count} 个系统。"
 
 msgid "Creates a custom repository."
-msgstr "创建自定义软件源。"
+msgstr "创建自定义储存库。"
 
 msgid "Deleting locally mirrored files from repository '%{repo}'..."
-msgstr "正在从软件源“%{repo}”中删除已本地镜像的文件..."
+msgstr "正在从储存库“%{repo}”中删除已本地镜像的文件..."
 
 msgid "Description"
 msgstr "描述"
@@ -177,39 +177,37 @@ msgid "Description: %{description}"
 msgstr "描述：%{description}"
 
 msgid "Detach an existing custom repository from a product"
-msgstr "将现有自定义软件源与产品解除关联"
+msgstr "将现有自定义储存库与产品解除关联"
 
 msgid "Detached repository from product '%{product_name}'."
-msgstr "已将软件源与产品“%{product_name}”解除关联。"
+msgstr "已将储存库与产品“%{product_name}”解除关联。"
 
-#, fuzzy
 msgid "Directory: %{dir}"
-msgstr "y"
+msgstr "目录：%{dir}"
 
 msgid "Disable mirroring of custom repositories by a list of IDs"
-msgstr "根据 ID 列表禁用自定义软件源镜像"
+msgstr "根据 ID 列表禁用自定义储存库镜像"
 
 msgid "Disable mirroring of custom repository by a list of IDs"
-msgstr "根据 ID 列表禁用自定义软件源镜像"
+msgstr "根据 ID 列表禁用自定义储存库镜像"
 
 msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
-msgstr "根据产品 ID 列表或产品字符串禁用产品软件源镜像。"
+msgstr "根据产品 ID 列表或产品字符串禁用产品储存库镜像。"
 
 msgid "Disable mirroring of repositories by a list of repository IDs"
-msgstr "根据软件源 ID 列表禁用软件源镜像"
+msgstr "根据储存库 ID 列表禁用储存库镜像"
 
 msgid "Disabled repository %{repository}."
-msgstr "已禁用软件源 %{repository}。"
+msgstr "已禁用储存库 %{repository}。"
 
 msgid "Disabling %{product}:"
 msgstr "正在禁用 %{product}："
 
 msgid "Displays product with all its repositories and their attributes."
-msgstr "显示产品及其所有软件源，以及软件源的属性。"
+msgstr "显示产品及其所有储存库，以及储存库的属性。"
 
-#, fuzzy
 msgid "Do not ask anything; use default answers automatically. Default: false"
-msgstr "y"
+msgstr "不询问任何问题；自动使用默认回复。默认值：false"
 
 msgid "Do not fail the command if product is in alpha or beta stage"
 msgstr "如果产品处于 alpha 或 beta 阶段，请勿使命令失败"
@@ -236,7 +234,7 @@ msgid "Downloading data from SCC"
 msgstr "正在从 SCC 下载数据"
 
 msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
-msgstr "下载软件源签名/密钥失败，消息：%{message}，HTTP 代码：%{http_code}"
+msgstr "下载储存库签名/密钥失败，消息：%{message}，HTTP 代码：%{http_code}"
 
 msgid "Duplicate entry for system %{system}, skipping"
 msgstr "系统 %{system} 存在重复的项，正在跳过"
@@ -245,19 +243,19 @@ msgid "Enable debug output"
 msgstr "启用调试输出"
 
 msgid "Enable mirroring of custom repositories by a list of IDs"
-msgstr "根据 ID 列表启用自定义软件源镜像"
+msgstr "根据 ID 列表启用自定义储存库镜像"
 
 msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
-msgstr "根据产品 ID 列表或产品字符串启用产品软件源镜像。"
+msgstr "根据产品 ID 列表或产品字符串启用产品储存库镜像。"
 
 msgid "Enable mirroring of repositories by a list of repository IDs"
-msgstr "根据软件源 ID 列表启用软件源镜像"
+msgstr "根据储存库 ID 列表启用储存库镜像"
 
 msgid "Enabled mirroring for repository %{repo}"
-msgstr "启用软件源 %{repo} 的镜像"
+msgstr "启用储存库 %{repo} 的镜像"
 
 msgid "Enabled repository %{repository}."
-msgstr "已启用软件源 %{repository}。"
+msgstr "已启用储存库 %{repository}。"
 
 msgid "Enables all free modules for a product"
 msgstr "启用产品的所有免费模块"
@@ -299,7 +297,7 @@ msgid "Exporting products"
 msgstr "正在导出产品"
 
 msgid "Exporting repositories"
-msgstr "正在导出软件源"
+msgstr "正在导出储存库"
 
 msgid "Exporting subscriptions"
 msgstr "正在导出订阅"
@@ -357,7 +355,7 @@ msgid "Last seen"
 msgstr "上次出现时间"
 
 msgid "List all custom repositories"
-msgstr "列出所有自定义软件源"
+msgstr "列出所有自定义储存库"
 
 msgid "List all products, including ones which are not marked to be mirrored"
 msgstr "列出所有产品，包括未标记为要镜像的产品"
@@ -366,23 +364,22 @@ msgid "List all registered systems"
 msgstr "列出所有已注册的系统"
 
 msgid "List all repositories, including ones which are not marked to be mirrored"
-msgstr "列出所有软件源，包括未标记为要镜像的软件源"
+msgstr "列出所有储存库，包括未标记为要镜像的储存库"
 
 msgid "List and manipulate registered systems"
 msgstr "列出并操作已注册的系统"
 
 msgid "List and modify custom repositories"
-msgstr "列出并修改自定义软件源"
+msgstr "列出并修改自定义储存库"
 
 msgid "List and modify products"
 msgstr "列出并修改产品"
 
 msgid "List and modify repositories"
-msgstr "列出并修改软件源"
+msgstr "列出并修改储存库"
 
-#, fuzzy
 msgid "List files during the cleaning process."
-msgstr "n"
+msgstr "清理期间列出文件。"
 
 msgid "List products which are marked to be mirrored."
 msgstr "列出标记为要镜像的产品。"
@@ -391,7 +388,7 @@ msgid "List registered systems."
 msgstr "列出已注册的系统。"
 
 msgid "List repositories which are marked to be mirrored"
-msgstr "列出标记为要镜像的软件源"
+msgstr "列出标记为要镜像的储存库"
 
 msgid "Login"
 msgstr "登录"
@@ -406,22 +403,22 @@ msgid "Mirror"
 msgstr "镜像"
 
 msgid "Mirror all enabled repositories"
-msgstr "镜像所有已启用的软件源"
+msgstr "镜像所有已启用的储存库"
 
 msgid "Mirror enabled repositories for a product with given product IDs"
-msgstr "镜像具有给定产品 ID 的产品的已启用软件源"
+msgstr "镜像具有给定产品 ID 的产品的已启用储存库"
 
 msgid "Mirror enabled repositories with given repository IDs"
-msgstr "镜像具有给定软件源 ID 的已启用软件源"
+msgstr "镜像具有给定储存库 ID 的已启用储存库"
 
 msgid "Mirror repos at given path"
-msgstr "将软件源镜像到给定路径"
+msgstr "将储存库镜像到给定路径"
 
 msgid "Mirror repos from given path"
-msgstr "从给定路径镜像软件源"
+msgstr "从给定路径镜像储存库"
 
 msgid "Mirror repositories"
-msgstr "镜像软件源"
+msgstr "镜像储存库"
 
 msgid "Mirror?"
 msgstr "是否镜像？"
@@ -439,10 +436,10 @@ msgid "Mirroring completed with errors."
 msgstr "镜像已完成但出错。"
 
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
-msgstr "未启用 ID 为 %{repo_id} 的软件源的镜像"
+msgstr "未启用 ID 为 %{repo_id} 的储存库的镜像"
 
 msgid "Mirroring repository %{repo} to %{dir}"
-msgstr "正在将软件源 %{repo} 镜像到 %{dir}"
+msgstr "正在将储存库 %{repo} 镜像到 %{dir}"
 
 msgid "Missing data files: %{files}"
 msgstr "缺少数据文件：%{files}"
@@ -457,11 +454,10 @@ msgid "No base product found."
 msgstr "未找到基础产品。"
 
 msgid "No custom repositories found."
-msgstr "未找到自定义软件源。"
+msgstr "未找到自定义储存库。"
 
-#, fuzzy
 msgid "No dangling packages have been found!"
-msgstr "n"
+msgstr "未找到任何悬空软件包！"
 
 msgid "No matching products found in the database."
 msgstr "在数据库中找不到匹配的产品。"
@@ -479,16 +475,16 @@ msgid "No product found on RMT for: %s"
 msgstr "在 RMT 上找不到 %s 的产品"
 
 msgid "No products attached to repository."
-msgstr "没有关联到软件源的产品。"
+msgstr "没有关联到储存库的产品。"
 
 msgid "No repositories enabled."
-msgstr "未启用任何软件源。"
+msgstr "未启用任何储存库。"
 
 msgid "No repositories found for product: %s"
-msgstr "找不到产品 %s 的软件源"
+msgstr "找不到产品 %s 的储存库"
 
 msgid "No repository IDs supplied"
-msgstr "未提供软件源 ID"
+msgstr "未提供储存库 ID"
 
 msgid "No subscription with this Registration Code found"
 msgstr "找不到使用此注册码的订阅"
@@ -497,14 +493,13 @@ msgid "Not Mandatory"
 msgstr "非强制"
 
 msgid "Not all mandatory repositories are mirrored for product %s"
-msgstr "未为产品 %s 镜像所有强制软件源"
+msgstr "未为产品 %s 镜像所有强制储存库"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "尚未激活注册代码。请访问 https://scc.suse.com 激活。"
 
-#, fuzzy
 msgid "Now, it will parse all repomd.xml files, search for dangling packages on disk and clean them."
-msgstr "n"
+msgstr "现在，该工具将分析所有 repomd.xml 文件，搜索磁盘上的悬空软件包并予以清理。"
 
 msgid "Number of systems to display"
 msgstr "要显示的系统数"
@@ -516,7 +511,7 @@ msgid "Only enabled products are shown by default. Use the '%{command}' option t
 msgstr "默认仅会显示启用的产品。使用“%{command}”选项可列出所有产品。"
 
 msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
-msgstr "默认仅会显示启用的软件源。使用“%{option}”选项可列出所有软件源。"
+msgstr "默认仅会显示启用的储存库。使用“%{option}”选项可列出所有储存库。"
 
 msgid "Output data in CSV format"
 msgstr "以 CSV 格式输出数据"
@@ -524,12 +519,11 @@ msgstr "以 CSV 格式输出数据"
 msgid "Path to unpacked SMT data tarball"
 msgstr "解压缩的 SMT 数据 Tarball 的路径"
 
-#, fuzzy
 msgid "Please answer"
 msgstr "请回复"
 
 msgid "Please provide a non-numeric ID for your custom repository."
-msgstr "请为自定义软件源提供一个非数字 ID。"
+msgstr "请为自定义储存库提供一个非数字 ID。"
 
 msgid "Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
 msgstr "查询 %{file_reference} 失败，消息：%{message}。%{seconds} 秒后会再尝试 %{retries} 次"
@@ -555,12 +549,12 @@ msgid ""
 "by running '%{command}'\n"
 msgstr ""
 "找不到产品 %{product}！\n"
-"尝试将自定义软件源 %{repo} 关联到产品 %{product}，\n"
-"但找不到该产品。请运行 %{command} 将该软件源关联到\n"
+"尝试将自定义储存库 %{repo} 关联到产品 %{product}，\n"
+"但找不到该产品。请运行 %{command} 将该储存库关联到\n"
 "其他产品\n"
 
 msgid "Product %{target} has no repositories enabled"
-msgstr "未为产品 %{target} 启用软件源"
+msgstr "未为产品 %{target} 启用储存库"
 
 msgid "Product Architecture"
 msgstr "产品体系结构"
@@ -605,24 +599,22 @@ msgid "Provide a custom ID instead of allowing RMT to generate one."
 msgstr "请提供自定义 ID，而不要允许 RMT 生成 ID。"
 
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
-msgstr "RMT 在以下未标记为有待镜像的软件源中找到了本地镜像的文件："
+msgstr "RMT 在以下未标记为有待镜像的储存库中找到了本地镜像的文件："
 
-#, fuzzy
 msgid "RMT found no repomd.xml files. Check if RMT is properly configured."
-msgstr "y"
+msgstr "RMT 未找到任何 repomd.xml 文件。请检查是否已正确配置 RMT。"
 
-#, fuzzy
 msgid "RMT found repomd.xml files: %{repomd_count}."
-msgstr "n"
+msgstr "RMT 找到了 repomd.xml 文件：%{repomd_count}。"
 
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr "RMT 尚未同步至 SCC。请先运行 \"%{command}\""
 
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
-msgstr "RMT 只找到了标记为有待镜像的软件源的本地镜像文件。"
+msgstr "RMT 只找到了标记为有待镜像的储存库的本地镜像文件。"
 
 msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
-msgstr "RMT 会将 %{file} 中指定的软件源镜像到 PATH（通常是一个便携式储存设备）。"
+msgstr "RMT 会将 %{file} 中指定的储存库镜像到 PATH（通常是一个便携式储存设备）。"
 
 msgid "Read SCC data from given path"
 msgstr "从给定路径读取 SCC 数据"
@@ -634,13 +626,13 @@ msgid "Release Stage"
 msgstr "发布阶段"
 
 msgid "Remove a custom repository"
-msgstr "去除自定义软件源"
+msgstr "去除自定义储存库"
 
 msgid "Remove systems before the given date (format: \"<year>-<month>-<day>\")"
 msgstr "移除早于给定日期（格式：\"<年>-<月>-<日>\"）的系统"
 
 msgid "Removed custom repository by ID %{id}."
-msgstr "已去除 ID 为 %{id} 的自定义软件源。"
+msgstr "已去除 ID 为 %{id} 的自定义储存库。"
 
 msgid "Removes a system and its activations from RMT"
 msgstr "从 RMT 中移除某个系统及其激活记录"
@@ -652,45 +644,45 @@ msgid "Removes inactive systems"
 msgstr "移除非活动系统"
 
 msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
-msgstr "移除未标记为有待镜像的软件源的本地镜像文件"
+msgstr "移除未标记为有待镜像的储存库的本地镜像文件"
 
 msgid "Removes old systems and their activations if they are inactive."
 msgstr "移除处于非活动状态的旧系统以及系统上激活的产品。"
 
 msgid "Repositories are not available for this product."
-msgstr "软件源不可用于此产品。"
+msgstr "储存库不可用于此产品。"
 
 msgid "Repositories:"
-msgstr "软件源："
+msgstr "储存库："
 
 msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
-msgstr "在 RMT 数据库中找不到软件源 %{repo}，可能是因为您的该软件源订阅不再有效"
+msgstr "在 RMT 数据库中找不到储存库 %{repo}，可能是因为您的该储存库订阅不再有效"
 
 msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
-msgstr "软件源“%{repo_name}”(%{repo_id})：%{error_message}"
+msgstr "储存库“%{repo_name}”(%{repo_id})：%{error_message}"
 
 msgid "Repository by ID %{id} not found."
-msgstr "未找到 ID 为 %{id} 的软件源。"
+msgstr "未找到 ID 为 %{id} 的储存库。"
 
 msgid "Repository by ID %{id} successfully disabled."
-msgstr "已成功禁用 ID 为 %{id} 的软件源。"
+msgstr "已成功禁用 ID 为 %{id} 的储存库。"
 
 msgid "Repository by ID %{id} successfully enabled."
-msgstr "已成功启用 ID 为 %{id} 的软件源。"
+msgstr "已成功启用 ID 为 %{id} 的储存库。"
 
 msgid "Repository by ID %{repos} could not be found and was not disabled."
 msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
-msgstr[0] "找不到 ID 为 %{repos} 的软件源，未禁用该软件源。"
+msgstr[0] "找不到 ID 为 %{repos} 的储存库，未禁用该储存库。"
 
 msgid "Repository by ID %{repos} could not be found and was not enabled."
 msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
-msgstr[0] "找不到 ID 为 %{repos} 的软件源，未启用该软件源。"
+msgstr[0] "找不到 ID 为 %{repos} 的储存库，未启用该储存库。"
 
 msgid "Repository metadata signatures are missing"
-msgstr "缺少软件源元数据签名"
+msgstr "缺少储存库元数据签名"
 
 msgid "Repository with ID %{repo_id} not found"
-msgstr "未找到 ID 为 %{repo_id} 的软件源"
+msgstr "未找到 ID 为 %{repo_id} 的储存库"
 
 msgid "Request URL"
 msgstr "请求 URL"
@@ -719,9 +711,8 @@ msgstr "运行 %{command} 可获取某个命令及其子命令的详细信息。
 msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
 msgstr "请运行 %{command} 先与您的 SUSE Customer Center 数据同步。"
 
-#, fuzzy
 msgid "Run the clean process without actually removing files."
-msgstr "y"
+msgstr "运行清理过程但不真正去除文件。"
 
 msgid "Run this command on an online RMT."
 msgstr "在联机 RMT 中运行此命令。"
@@ -744,9 +735,8 @@ msgstr ""
 msgid "SCC credentials not set."
 msgstr "未设置 SCC 身份凭证。"
 
-#, fuzzy
 msgid "Scanning the mirror directory for 'repomd.xml' files..."
-msgstr "y"
+msgstr "正在扫描镜像目录中的 \"repomd.xml\" 文件..."
 
 msgid "Settings saved at %{file}."
 msgstr "设置已保存在 %{file} 中。"
@@ -758,16 +748,16 @@ msgid "Showing last %{limit} registrations. Use the '--all' option to see all re
 msgstr "显示了最后 %{limit} 个注册。使用“--all”选项可查看所有已注册的系统。"
 
 msgid "Shows products attached to a custom repository"
-msgstr "显示关联到自定义软件源的产品"
+msgstr "显示关联到自定义储存库的产品"
 
 msgid "Store SCC data in files at given path"
 msgstr "将 SCC 数据储存在给定路径下的文件中"
 
 msgid "Store repository settings at given path"
-msgstr "将软件源设置储存在给定路径"
+msgstr "将储存库设置储存在给定路径"
 
 msgid "Successfully added custom repository."
-msgstr "已成功添加自定义软件源。"
+msgstr "已成功添加自定义储存库。"
 
 msgid "Successfully removed system with login %{login}."
 msgstr "已成功移除登录名为 %{login} 的系统。"
@@ -808,16 +798,14 @@ msgstr "RMT 数据库尚未初始化。请运行 \"%{command}\" 设置该数据�
 msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
 msgstr "未在“%{path}”中正确配置 SCC 身份凭证。您可以从 %{url} 获取相应身份凭证"
 
-#, fuzzy
 msgid "The command will list the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
-msgstr "该命令会列出待移除的候选系统并要求您确认。您可以使用 \"--no-confirmation\" 标志指示此子命令直接执行而不要求确认。"
+msgstr "该命令会列出待去除的候选文件并要求您确认。您可以使用 \"--no-confirmation\" 标志指示此子命令直接去除而不要求您确认。"
 
 msgid "The following errors occurred while mirroring:"
 msgstr "镜像时发生以下错误："
 
-#, fuzzy
 msgid "The given date does not follow the proper format. Ensure it follows this format '<year>-<month>-<day>'."
-msgstr "给定日期的格式不正确。请确保其采用以下格式：\"<年>-<月>-<日>\"。"
+msgstr "给定日期的格式不正确。请确保日期采用以下格式：\"<年>-<月>-<日>\"。"
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
 msgstr "产品“%s”是基础产品，无法停用"
@@ -857,14 +845,13 @@ msgstr ""
 "%s"
 
 msgid "There are no repositories marked for mirroring."
-msgstr "没有标记为要镜像的软件源。"
+msgstr "没有标记为要镜像的储存库。"
 
 msgid "There are no systems registered to this RMT instance."
 msgstr "未将任何系统注册到此 RMT 实例。"
 
-#, fuzzy
 msgid "This can take several minutes. Would you like to continue and clean dangling packages?"
-msgstr "y"
+msgstr "此过程可能需要几分钟时间。您要继续清理悬空软件包吗？"
 
 msgid "To clean up downloaded files, please run '%{command}'"
 msgstr "要清理下载的文件，请运行“%{command}”"
@@ -875,15 +862,14 @@ msgstr "要清理下载的文件，请运行“%{command}”"
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr "要指定某个有待移除的系统作为目标，请针对一系列系统及其相应登录名使用命令“%{command}”。"
 
-#, fuzzy
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
-msgstr "n"
+msgstr "总计：已清理 %{total_count} (%{total_size})，%{total_db_entries}。"
 
 msgid "URL"
 msgstr "URL"
 
 msgid "Unknown Registration Code."
-msgstr "未知的软件源代码。"
+msgstr "未知的储存库代码。"
 
 msgid "Unknown hash function %{checksum_type}"
 msgstr "未知的哈希函数 %{checksum_type}"
@@ -895,7 +881,7 @@ msgid "Updating products"
 msgstr "正在更新产品"
 
 msgid "Updating repositories"
-msgstr "正在更新软件源"
+msgstr "正在更新储存库"
 
 msgid "Updating subscriptions"
 msgstr "正在更新订阅"
@@ -904,7 +890,7 @@ msgid "Version"
 msgstr "版本"
 
 msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
-msgstr "是否要继续移除这些软件源的本地镜像文件？"
+msgstr "是否要继续移除这些储存库的本地镜像文件？"
 
 msgid "curl return code"
 msgstr "curl 返回代码"
@@ -915,9 +901,8 @@ msgstr "curl 返回消息"
 msgid "enabled"
 msgstr "已启用"
 
-#, fuzzy
 msgid "hardlink"
-msgstr "n"
+msgstr "硬链接"
 
 msgid "importing data from SMT."
 msgstr "正在从 SMT 导入数据。"
@@ -941,11 +926,10 @@ msgid "not mirrored"
 msgstr "未镜像"
 
 msgid "repository by URL %{url} does not exist in database"
-msgstr "数据库中不存在 URL 为 %{url} 的软件源"
+msgstr "数据库中不存在 URL 为 %{url} 的储存库"
 
 msgid "y"
 msgstr "y"
 
-#, fuzzy
 msgid "yes"
-msgstr "y"
+msgstr "是"
