@@ -128,7 +128,7 @@ dnf config-manager --disable $(dnf repolist -q | awk '{ print $1 }' | grep -v re
 
 # on Centos /usr/share/redhat-release is a file, on RHEL and RES it is a directory
 # so this is CentOS only workaround
-if [ -f /usr/share/redhat-release ]; then
+if [ -f /usr/share/redhat-release ] | [ -h /usr/share/redhat-release ]; then
    rm -f /usr/share/redhat-release;
 fi
 

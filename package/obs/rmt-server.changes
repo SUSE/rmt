@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Oct 12 11:00:00 UTC 2023 - Zuzana Petrova <zpetrova@suse.com>
+
+- rmt-client-setup-res script: fix for CentOS8 clients (bsc#1214709)
+
+-------------------------------------------------------------------
 Wed Oct 04 13:23:00 UTC 2023 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Version 2.15:
