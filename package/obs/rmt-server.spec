@@ -21,7 +21,7 @@
 %define data_dir     %{_localstatedir}/lib/rmt
 %define conf_dir     %{_sysconfdir}/rmt
 %define script_dir   %{_libexecdir}/rmt
-%define rmt_user     _rmt
+%define rmt_user     root
 %define rmt_group    nginx
 
 # Only build for the distribution default Ruby version

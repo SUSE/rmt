@@ -17,7 +17,7 @@ ProtectKernelLogs=true
 ProtectControlGroups=true
 RestrictRealtime=true
 Type=simple
-User=_rmt
+User=root
 PrivateTmp=yes
 Environment="LOG_TO_JOURNALD=1" "LANG=en"
 WorkingDirectory=/usr/share/rmt

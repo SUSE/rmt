@@ -76,7 +76,7 @@ After this in order for the client machines to consume data from RMT, it would b
     ```
     cp -r /var/www/htdocs/repo/* /var/lib/rmt/public/repo
     ```
-2. Adjust owner/group of the files to `_rmt:nginx`:
+2. Adjust owner/group of the files to `root:nginx`:
     ```
-    chown -R _rmt:nginx /var/lib/rmt/public/repo
+    chown -R root:nginx /var/lib/rmt/public/repo
     ```
