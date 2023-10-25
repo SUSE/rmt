@@ -16,7 +16,7 @@ ProtectKernelLogs=true
 ProtectControlGroups=true
 RestrictRealtime=true
 Type=oneshot
-User=root
+User=_rmt
 Environment="LOG_TO_JOURNALD=1" "LANG=en"
 WorkingDirectory=/usr/share/rmt
 ExecStart=/usr/share/rmt/bin/rails db:create db:migrate RAILS_ENV=production
