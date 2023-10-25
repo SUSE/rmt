@@ -3,7 +3,7 @@ require File.expand_path('../support/command_rspec_helper', __FILE__)
 describe 'rmt-cli' do
   before do
     `echo long_text_but_not_the_process_id > /tmp/rmt.lock`
-    `chown root /tmp/rmt.lock`
+    `chown _rmt /tmp/rmt.lock`
     `/usr/bin/rmt-cli sync > /dev/null &`
   end
   # kill running process to let further specs pass
