@@ -5,20 +5,20 @@ class RMT::CLI::Clean < RMT::CLI::Base
 
   desc 'packages', _('Clean dangling package files, based on current repository data.')
   option :non_interactive, aliases: '-n', type: :boolean,
-    desc: _('Do not ask anything, use default answers automatically. Default: false')
+    desc: _('Do not ask anything; use default answers automatically. Default: false')
   option :dry_run, type: :boolean,
     desc: _('Run the clean process without actually removing files.')
   option :verbose, aliases: '-v', type: :boolean,
     desc: _('List files during the cleaning process.')
   long_desc _(
     <<~PACKAGES
-    Clean dangling package files, based on current repository metadata.
+    Clean dangling package files based on current repository metadata.
 
-    This command scans the mirror directory for 'repomd.xml' files, parse the
-    metadata files, and compare their content with files on disk. Files not
-    listed in the metadata and at least 2-days-old are considered dangling.
+    This command scans the mirror directory for 'repomd.xml' files, parses the
+    metadata files, and compares their content with files on disk. Files not
+    listed in the metadata and at least 2 days old are considered dangling.
 
-    Then, it removes all dangling files from disk and any associated database entries.
+    Then, it removes all dangling files from disk along with any associated database entries.
     PACKAGES
   )
 
