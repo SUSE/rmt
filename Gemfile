@@ -31,6 +31,8 @@ gem 'repomd_parser', '~> 0.1.4'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
 
+gem 'strong_migrations'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
@@ -41,7 +43,6 @@ group :development, :test do
   gem 'ruby_parser', '< 3.20', require: false # needed for gettext_i18n_rails tasks, Locked because of Ruby >= 2.6 dependency
   gem 'gettext_test_log'
   gem 'memory_profiler'
-  gem 'strong_migrations'
   gem 'awesome_print'
 end
 
