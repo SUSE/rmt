@@ -337,6 +337,11 @@ if [ $1 -eq 2 ]; then
     mv %{app_dir}/config/system_uuid /var/lib/rmt/system_uuid
   fi
   bash %{script_dir}/update_rmt_app_dir_permissions.sh %{app_dir}
+
+  echo "RMT database migration in progress. This could take some time."
+  echo ""
+  echo "To check current migration status:"
+  echo "  systemctl status rmt-server-migration.service"
 fi
 
 if [ ! -e %{_datadir}/rmt/public/repo ]; then
@@ -348,7 +353,7 @@ if [ ! -e %{_datadir}/rmt/public/suma ]; then
 fi
 
 %preun
-%service_del_preun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
+%service_del_preun rmt-server.target rmt-server.service  rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
 
 %postun
 %service_del_postun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
