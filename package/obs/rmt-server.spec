@@ -240,6 +240,7 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 
 %files
 %attr(0755,root,root) %{app_dir}
+%attr(0755,root,nginx) %{app_dir}/public/tools
 %exclude %{app_dir}/engines/
 %exclude %{app_dir}/package/
 %exclude %{app_dir}/rmt/tmp
@@ -342,6 +343,7 @@ fi
 if [ ! -e %{_datadir}/rmt/public/repo ]; then
  ln -ns %{_sharedstatedir}/rmt/public/repo %{_datadir}/rmt/public/repo
 fi
+
 
 if [ ! -e %{_datadir}/rmt/public/suma ]; then
  ln -ns %{_sharedstatedir}/rmt/public/suma %{_datadir}/rmt/public/suma
