@@ -1,9 +1,13 @@
 require 'rmt/downloader'
 require 'rmt/gpg'
+require 'rmt/mirror/base'
 require 'repomd_parser'
 require 'time'
 
-class RMT::Mirror
+module RMT::Mirror3
+end
+
+class RMT::Mirror < RMT::Mirror2::Base
   class RMT::Mirror::Exception < RuntimeError
   end
 
@@ -50,12 +54,14 @@ class RMT::Mirror
     logger.info _('Mirroring repository %{repo} to %{dir}') % { repo: repo_name || repository_url, dir: repository_dir }
 
     create_repository_dir(repository_dir)
+
     temp_licenses_dir = create_temp_dir
+    temp_metadata_dir = create_temp_dir
+
     # downloading license doesn't require an auth token
     mirror_license(repository_dir, repository_url, temp_licenses_dir)
 
     downloader.auth_token = auth_token
-    temp_metadata_dir = create_temp_dir
     metadata_files = mirror_metadata(repository_dir, repository_url, temp_metadata_dir)
     mirror_packages(metadata_files, repository_dir, repository_url)
 

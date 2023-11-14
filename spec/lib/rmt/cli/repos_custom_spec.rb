@@ -15,6 +15,11 @@ describe RMT::CLI::ReposCustom do
       expect(Repository.find_by(external_url: external_url)).not_to be_nil
     end
 
+    it 'adds repository as repomd repository' do
+      expect { described_class.start(argv) }.to output("Successfully added custom repository.\n").to_stdout.and output('').to_stderr
+      expect(Repository.find_by(external_url: external_url).repository_type).to eq 'repomd'
+    end
+
     context '--id parameter' do
       subject(:custom_repo) { Repository.find_by(external_url: external_url) }
 
@@ -22,6 +27,29 @@ describe RMT::CLI::ReposCustom do
 
       before do
         expect { described_class.start(argv) }.to output("Successfully added custom repository.\n").to_stdout.and output('').to_stderr
+      end
+
+      it 'sets the name' do
+        expect(custom_repo.name).to eq('bar')
+      end
+
+      it 'sets the friendly_id' do
+        expect(custom_repo.friendly_id).to eq('foo')
+      end
+    end
+
+    context '--debian parameter' do
+      subject(:custom_repo) { Repository.find_by(external_url: external_url) }
+
+      let(:argv) { ['add', external_url, 'bar', '--debian', '--id', 'foo'] }
+
+      before do
+        expect { described_class.start(argv) }.to output("Successfully added custom repository.\n").to_stdout
+          .and output('').to_stderr
+      end
+
+      it 'sets the repository type' do
+        expect(custom_repo.repository_type).to eq 'debian'
       end
 
       it 'sets the name' do

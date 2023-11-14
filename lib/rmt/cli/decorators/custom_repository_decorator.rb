@@ -8,6 +8,7 @@ class RMT::CLI::Decorators::CustomRepositoryDecorator < RMT::CLI::Decorators::Ba
     data = @repositories.map do |repo|
       [
         repo.friendly_id,
+        repo.repository_type,
         repo.name,
         repo.external_url,
         repo.enabled,
@@ -17,6 +18,7 @@ class RMT::CLI::Decorators::CustomRepositoryDecorator < RMT::CLI::Decorators::Ba
     end
     array_to_csv(data, [
       _('ID'),
+      _('Type'),
       _('Name'),
       _('URL'),
       _('Mandatory?'),
@@ -29,6 +31,7 @@ class RMT::CLI::Decorators::CustomRepositoryDecorator < RMT::CLI::Decorators::Ba
     data = @repositories.map do |repo|
       [
         repo.friendly_id,
+        repo.repository_type,
         repo.name,
         repo.external_url,
         repo.enabled ? _('Mandatory') : _('Not Mandatory'),
@@ -38,6 +41,7 @@ class RMT::CLI::Decorators::CustomRepositoryDecorator < RMT::CLI::Decorators::Ba
     end
     array_to_table(data, [
       _('ID'),
+      _('Type'),
       _('Name'),
       _('URL'),
       _('Mandatory?'),

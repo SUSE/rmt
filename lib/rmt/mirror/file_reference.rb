@@ -36,3 +36,42 @@ class RMT::Mirror::FileReference
     File.mtime(cache_path).utc if cache_path && File.exist?(cache_path)
   end
 end
+
+
+module RMT::Synchronization do
+  class Reference do
+    attr_reader :local_path, :remote_url, :type
+
+    def initialize(type:, local_path:, remote_url:)
+    end
+
+    def local_content
+    end
+
+    def local_size
+    end
+
+    def remote_size
+    end
+
+    def checksum_match?
+    end
+
+    protected
+
+    # provided by a remote file such as primary.xml or Packages.gz
+    attr_accessor :arch, :checksum, :checksum_type, :size, :type
+  end
+end
+
+# class RMT::Synchronization::Reference
+#   attr_reader :offline_path, :online_url, :cache_dir
+#   attr_accessor 
+#
+  attr_reader :cache_path, :local_path, :remote_path
+
+
+
+
+
+

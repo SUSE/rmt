@@ -2,6 +2,7 @@ class RMT::CLI::ReposCustom < RMT::CLI::ReposBase
 
   desc 'add URL NAME', _('Creates a custom repository.')
   option :id, type: :string, desc: _('Provide a custom ID instead of allowing RMT to generate one.')
+  option :debian, type: :boolean, desc: _('Enable debian repository handling for this repository')
   long_desc <<-REPOS
 #{_('Creates a custom repository.')}
 
@@ -10,6 +11,8 @@ class RMT::CLI::ReposCustom < RMT::CLI::ReposBase
 $ rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers
 
 $ rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers --id containers_sle_12_sp3`
+
+$ rmt-cli repos custom add --debian https://ftp.de.debian.org/debian/dists/bullseye/main/ --id debian_bullseye_main
 
 $ rmt-cli repos custom add https://download.example.com?some_auth_token
   REPOS
@@ -41,7 +44,8 @@ $ rmt-cli repos custom add https://download.example.com?some_auth_token
       autorefresh: true,
       auth_token: query,
       enabled: 0,
-      id: friendly_id
+      id: friendly_id,
+      repository_type: options.debian ? :debian : :repomd
     }, custom: true)
 
     puts _('Successfully added custom repository.')
