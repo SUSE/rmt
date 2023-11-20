@@ -1,13 +1,12 @@
 require 'rmt/downloader'
 require 'rmt/gpg'
-require 'rmt/mirror/base'
 require 'repomd_parser'
 require 'time'
 
 module RMT::Mirror3
 end
 
-class RMT::Mirror < RMT::Mirror2::Base
+class RMT::Mirror
   class RMT::Mirror::Exception < RuntimeError
   end
 

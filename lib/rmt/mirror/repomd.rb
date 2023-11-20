@@ -1,16 +1,18 @@
-class RMT::Synchronization::Repomd < RMT::Synchronization::Base
+class RMT::Mirror::Repomd < RMT::Mirror::Base
   include RMT::Deduplicator
   include RMT::FileValidator
 
-  def synchronize
+  def mirror_with_implementation!
     create_temp :licenses, :metadata
     set_auth_token auth_token
+
+    create_dir local_repository_path
 
     # 1. Licenses
     optional do
       without_auth do
-        diryast = download_now!('.licenses/directory.yast', to: temp(:licences))
-        licences = parse_yast_directory(diryast.content)
+        diryast = download_cached!('.licenses/directory.yast', to: temp(:licences))
+        licences = parse_yast_directory(diryast)
         licences.each { |lic| enqueue(lic) }
       end
     end
@@ -18,11 +20,11 @@ class RMT::Synchronization::Repomd < RMT::Synchronization::Base
     download_enqueued!
 
     # 2. Metadata
-    repomd_xml = download_now!('repodata/repomd.xml', to: temp(:metadata))
+    repomd_xml = download_cached!('repodata/repomd.xml', to: temp(:metadata))
 
     optional do
-      signature = download_now!('repodata/repomd.xml.asc', to: temp(:metadata))
-      key = download_now!('repodata/repomd.xml.key', to: temp(:metadata))
+      signature = download_cached!('repodata/repomd.xml.asc', to: temp(:metadata))
+      key = download_cached!('repodata/repomd.xml.key', to: temp(:metadata))
       repomd_xml.verify_signature(key: key, signature: signature)
     end
 
@@ -48,5 +50,8 @@ class RMT::Synchronization::Repomd < RMT::Synchronization::Base
     end
 
     download_enqueued!
+
+    replace_directory(temp(:licences), repository_path('.licences/')) if licenses
+    replace_directory(temp(:metadata), repository_path('repodata'))
   end
 end
