@@ -24,8 +24,8 @@ for secretFile in $secret_key_files; do
   file_path="$app_dir/$secretFile"
   if [[ -e $file_path ]]; then
     if [[ "$(stat -c "%U %G" $file_path)" == "root root" ]]; then
-      chown -h root:nginx $file_path
       chmod 0640 $file_path
+      chown -h root:nginx $file_path
     fi
   fi
 

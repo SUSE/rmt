@@ -348,7 +348,6 @@ if [ ! -e %{_datadir}/rmt/public/repo ]; then
  ln -ns %{_sharedstatedir}/rmt/public/repo %{_datadir}/rmt/public/repo
 fi
 
-
 if [ ! -e %{_datadir}/rmt/public/suma ]; then
  ln -ns %{_sharedstatedir}/rmt/public/suma %{_datadir}/rmt/public/suma
 fi
