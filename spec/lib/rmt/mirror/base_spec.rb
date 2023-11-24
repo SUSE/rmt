@@ -1,19 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe RMT::Mirror::Base do
+  subject { described_class.new(logger: logger, base_dir: base_dir, repository: repository, mirror_sources: false, airgapped: false) }
+
   let(:logger) { RMT::Logger.new('/dev/null') }
   let(:base_dir) { '/rspec/repository/' }
   let(:temp) { '/temp/path/' }
 
   let(:repository) do
     create :repository,
-      name: 'HYPE product repository 15.3',
-      external_url: 'https://updates.suse.com/update/hype/15.3/backports/'
+           name: 'HYPE product repository 15.3',
+           external_url: 'https://updates.suse.com/update/hype/15.3/backports/'
   end
 
-  subject { described_class.new(logger: logger, base_dir: base_dir, repository: repository, mirror_sources: false, airgapped: false) }
-
-  let(:downloader) { double("downloader") }
+  let(:downloader) { double('downloader') }
 
   before do
     # Make all protected methods public here, to allow testing them properly
@@ -23,18 +23,20 @@ RSpec.describe RMT::Mirror::Base do
   end
 
   describe '#create_temp' do
+    let(:error) { ArgumentError.new('parent directory is not sticky') }
+
     it 'creates the desired temp directories' do
-      expect(Dir).to receive(:mktmpdir).with(:one).and_return('/tmp/rspec-one')
-      expect(Dir).to receive(:mktmpdir).with(:two).and_return('/tmp/rspec-two')
-      expect(Dir).to receive(:mktmpdir).with(:three).and_return('/tmp/rspec-three')
+      expect(Dir).to receive(:mktmpdir).with('one').and_return('/tmp/rspec-one')
+      expect(Dir).to receive(:mktmpdir).with('two').and_return('/tmp/rspec-two')
+      expect(Dir).to receive(:mktmpdir).with('three').and_return('/tmp/rspec-three')
 
       subject.create_temp(:one, :two, :three)
 
-      expect(subject.temp_directories.keys).to match([:one, :two, :three])
+      expect(subject.temp_directories.keys).to match(%i[one two three])
       expect(subject.temp_directories[:two]).to match('/tmp/rspec-two')
     end
 
-    let(:error) { ArgumentError.new('parent directory is not sticky') }
+
     it 'fails when it could not create the temp directory' do
       expect(Dir).to receive(:mktmpdir).and_raise(error)
 
@@ -61,7 +63,7 @@ RSpec.describe RMT::Mirror::Base do
     let(:resource) { 'somedir/somefile.json' }
 
     it 'downloads the resource' do
-      expect(downloader).to receive(:downloader_multi)
+      expect(downloader).to receive(:download_multi)
 
       ref = subject.download_cached!(resource, to: temp)
 

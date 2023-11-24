@@ -16,12 +16,15 @@ class RMT::Mirror::FileReference
     end
   end
 
-  attr_reader :cache_path, :local_path, :remote_path
+  attr_reader :cache_path, :local_path, :remote_path, :base_dir, :base_url, :cache_dir
   attr_accessor :arch, :checksum, :checksum_type, :size, :type
 
   def initialize(relative_path:, base_dir:, base_url:, cache_dir: nil)
     @cache_path = (cache_dir ? File.join(cache_dir, relative_path) : nil)
     @local_path = File.join(base_dir, relative_path.gsub(/\.\./, '__'))
+    @base_dir = base_dir
+    @base_url = base_url
+    @cache_dir = cache_dir
 
     encoded_filename = File.basename(relative_path)
     # INFO: Encode the filename of the URI to make RMT handle

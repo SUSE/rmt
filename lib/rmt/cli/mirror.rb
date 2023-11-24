@@ -130,12 +130,22 @@ class RMT::CLI::Mirror < RMT::CLI::Base
         next
       end
 
-      mirror.mirror(
-        repository_url: repo.external_url,
-        local_path: Repository.make_local_path(repo.external_url),
-        auth_token: repo.auth_token,
-        repo_name: repo.name
+      repomd = RMT::Mirror::Repomd.new(
+        logger: logger,
+        base_dir: RMT::DEFAULT_MIRROR_DIR,
+        repository: repo,
+        mirror_sources: RMT::Config.mirror_src_files?
       )
+      repomd.set_auth_token repo.auth_token
+
+      repomd.mirror_repository!
+
+      # mirror.mirror(
+      #   repository_url: repo.external_url,
+      #   local_path: Repository.make_local_path(repo.external_url),
+      #   auth_token: repo.auth_token,
+      #   repo_name: repo.name
+      # )
       repo.refresh_timestamp!
     rescue RMT::Mirror::Exception => e
       errors << _("Repository '%{repo_name}' (%{repo_id}): %{error_message}") % {
