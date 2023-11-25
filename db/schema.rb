@@ -107,7 +107,7 @@ ActiveRecord::Schema.define(version: 2023_11_11_120153) do
     t.string "local_path", null: false
     t.datetime "last_mirrored_at"
     t.string "friendly_id"
-    t.string "repository_type"
+    t.string "repository_type", default: "repomd"
     t.index ["external_url"], name: "index_repositories_on_external_url", unique: true
     t.index ["friendly_id"], name: "index_repositories_on_friendly_id", unique: true
     t.index ["scc_id"], name: "index_repositories_on_scc_id", unique: true

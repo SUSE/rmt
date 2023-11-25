@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe RMT::Mirror::Base do
-  subject { described_class.new(logger: logger, base_dir: base_dir, repository: repository, mirror_sources: false, airgapped: false) }
+  subject { described_class.new(logger: logger, base_dir: base_dir, repo: repository, mirror_sources: false, airgapped: false) }
 
   let(:logger) { RMT::Logger.new('/dev/null') }
   let(:base_dir) { '/rspec/repository/' }
@@ -68,7 +68,7 @@ RSpec.describe RMT::Mirror::Base do
       ref = subject.download_cached!(resource, to: temp)
 
       expect(ref.local_path).to match(File.join(temp, resource))
-      expect(ref.cache_path).to match(File.join(subject.repository_dir, resource))
+      expect(ref.cache_path).to match(File.join(subject.repo_dir, resource))
       expect(ref.remote_path).to match(URI.join(repository.external_url, resource))
     end
   end

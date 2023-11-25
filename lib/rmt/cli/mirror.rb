@@ -130,15 +130,20 @@ class RMT::CLI::Mirror < RMT::CLI::Base
         next
       end
 
-      repomd = RMT::Mirror::Repomd.new(
+      impl = case repo.repository_type
+             when 'repomd' then RMT::Mirror::Repomd
+             when 'debian' then RMT::Mirror::Debian
+             end
+
+      handler = impl.new(
         logger: logger,
         base_dir: RMT::DEFAULT_MIRROR_DIR,
-        repository: repo,
+        repo: repo,
         mirror_sources: RMT::Config.mirror_src_files?
       )
-      repomd.set_auth_token repo.auth_token
+      handler.set_auth_token repo.auth_token if repo.repository_type == :repomd
 
-      repomd.mirror_repository!
+      handler.mirror_repository!
 
       # mirror.mirror(
       #   repository_url: repo.external_url,

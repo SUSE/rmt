@@ -1,10 +1,11 @@
 class RMT::Mirror::Base
-  attr_reader :logger, :repository_dir, :repository, :mirror_sources, :airgap_mode
+  attr_reader :logger, :repo_dir, :repo_url, :repo, :mirror_sources, :airgap_mode
 
-  def initialize(logger:, base_dir:, repository:, mirror_sources: false, airgapped: false)
+  def initialize(logger:, base_dir:, repo:, mirror_sources: false, airgapped: false)
     @logger = logger
-    @repository_dir = File.join(base_dir, repository.local_path)
-    @repository = repository
+    @repo_dir = File.join(base_dir, repo.local_path)
+    @repo_url = repo.external_url
+    @repo = repo
     @mirror_sources = mirror_sources
     @airgap_mode = airgapped
 
@@ -78,11 +79,11 @@ class RMT::Mirror::Base
   end
 
   def repository_path(*subdirectories)
-    File.join(repository_dir, *subdirectories)
+    File.join(repo_dir, *subdirectories)
   end
 
   def repository_url(*subdirectories)
-    URI.join(repository.external_url, *subdirectories).to_s
+    URI.join(repo_url, *subdirectories).to_s
   end
 
   def create_dir(directory)
@@ -93,12 +94,7 @@ class RMT::Mirror::Base
   end
 
   def move_dir(source:, dest:)
-    src1 = source
     old = File.join(File.dirname(dest), '.old_' + File.basename(dest))
-
-
-    require 'byebug'
-    byebug
 
     FileUtils.remove_entry(old) if Dir.exist?(old)
     FileUtils.mv(dest, old) if Dir.exist?(dest)

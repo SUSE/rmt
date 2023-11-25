@@ -1,7 +1,5 @@
 class Repository < ApplicationRecord
 
-  enum repository_type: { repomd: 'repomd', debian: 'debian' }
-
   has_many :repositories_services_associations
   has_many :services, through: :repositories_services_associations
   has_many :systems, through: :services

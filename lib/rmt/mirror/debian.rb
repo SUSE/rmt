@@ -1,0 +1,99 @@
+require 'byebug'
+
+class RMT::Mirror::Debian < RMT::Mirror::Base
+
+  attr_reader :release
+
+  def initialize(logger:, base_dir:, repo:, mirror_sources: false, airgapped: false)
+    base_config = {
+      logger: logger,
+      base_dir: base_dir,
+      repo: repo,
+      mirror_sources: mirror_sources,
+      airgapped: airgapped
+    }
+    super(**base_config)
+
+    uri = URI(repo.external_url)
+    base_uri, _ = repo.external_url.split(/dists/,2)
+    base_path, release = uri.path.split(/dists/,2)
+    matched = release.match(/\/(.+)\//)
+
+    @release = matched[1]
+    @repo_dir = File.join(base_dir, base_path)
+    @repo_url = URI.join(base_uri, base_path)
+  end
+
+  def mirror_with_implementation!
+    # FIXME: This should all go into `public/debian/*` directory!
+    create_dir repository_path
+    create_temp :dists
+
+    mirror_metadata
+
+    byebug
+
+    move_dir(source: File.join(temp(:dists), 'dists'), dest: repository_path('dists'))
+  end
+
+  def dists_path(*subdirectories)
+    File.join('dists', release, *subdirectories)
+  end
+
+  def dists_url(*subdirectories)
+    # Ensure we end on '/' to make URI later on happy
+    File.join(repo_url.to_s, dists_path(*subdirectories), '/')
+  end
+
+  def parse_release_file(ref)
+    metadata = []
+    # We are only interested in sha256 sums
+    checksum_found = false
+    File.foreach(ref.local_path, chomp: true) do |line|
+      if line == 'SHA256:'
+        checksum_found = true
+        next
+      end
+      next unless checksum_found
+      matched = line.match(/^\s([a-z0-9]{64})\s+(\d+)\s+(.+)$/)
+
+      # FIXME: Do not iterate over all the crap after the sha256 sums
+      next unless matched
+
+      ref = RMT::Mirror::FileReference.new(
+        relative_path: matched[3],
+        # FIXME: This is looking like I messed up in base it should got to temp not to temp/dists/:release
+        base_dir: File.join(temp(:dists), 'dists', release),
+        base_url: dists_url,
+        cache_dir: dists_path
+      )
+      ref.tap do |r|
+        r.checksum = matched[1]
+        r.checksum_type = 'SHA256'
+        r.size = matched[2]
+      end
+
+      metadata << ref
+    end
+    metadata
+  end
+
+  def mirror_metadata
+    release_file = download_cached!(dists_path('Release'), to: temp(:dists))
+    metadata = parse_release_file(release_file)
+
+    metadata.each do |ref|
+      # The metadata can specify files which are uncompressed and not existend
+      next unless ['.gz', '.xz'].include? ref.remote_path.to_s.last(3)
+
+      enqueue ref
+    end
+
+
+
+    # FIXME: Add sha256 checking
+    # FIXME: Add by-hash support!
+
+    download_enqueued
+  end
+end
