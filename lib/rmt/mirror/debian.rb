@@ -1,4 +1,5 @@
 require 'byebug'
+require 'xz'
 
 class RMT::Mirror::Debian < RMT::Mirror::Base
 
@@ -29,9 +30,9 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
     create_dir repository_path
     create_temp :dists
 
-    mirror_metadata
+    metadata = mirror_metadata
 
-    byebug
+    mirror_packages(metadata)
 
     move_dir(source: File.join(temp(:dists), 'dists'), dest: repository_path('dists'))
   end
@@ -73,7 +74,10 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
         r.size = matched[2]
       end
 
-      metadata << ref
+      # Release does include the uncompressed filename while in realtiy this files
+      # are normally not existing on the remote host...
+      # Nice specs here!
+      metadata << ref if ['.gz', '.xz'].include? ref.remote_path.to_s.last(3)
     end
     metadata
   end
@@ -82,18 +86,66 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
     release_file = download_cached!(dists_path('Release'), to: temp(:dists))
     metadata = parse_release_file(release_file)
 
-    metadata.each do |ref|
-      # The metadata can specify files which are uncompressed and not existend
-      next unless ['.gz', '.xz'].include? ref.remote_path.to_s.last(3)
-
-      enqueue ref
-    end
-
-
+    metadata.each { |ref| enqueue ref }
 
     # FIXME: Add sha256 checking
     # FIXME: Add by-hash support!
 
     download_enqueued
+    metadata
+  end
+
+  def parse_packages_file(source)
+    paths = {
+      base_dir: repo_dir,
+      base_url: repo_url,
+      cache_dir: nil
+    }
+
+    packages = []
+
+    XZ::StreamReader.open(source.local_path) do |fd|
+      attributes = {}
+
+      loop do
+        l = fd.readline.chomp
+
+        if l.empty?
+          break if fd.eof?
+
+          ref = RMT::Mirror::FileReference.new(relative_path: attributes[:filename], **paths)
+          ref.tap do |r|
+            r.arch = attributes[:architecture]
+            r.checksum_type = 'SHA256'
+            r.checksum = attributes[:sha256]
+            r.size = attributes[:size]
+          end
+
+          packages << ref
+          attributes = {}
+          next
+        end
+
+        name, value = l.split(/: /, 2)
+        attributes[name.downcase.to_sym] = value
+      end
+    end
+    packages
+  end
+
+  def mirror_packages(metadata)
+    # FIXME: Allow multiple compressions here but decide for one file only
+    sources = metadata.select do |ref|
+      # FIXME: Allow Sources to be mirrored as well
+      ref.compression == :xz && ref.remote_path.to_s.end_with?('Packages.xz')
+    end
+
+    sources.each do |ref|
+      logger.debug("Reading package list from #{ref.local_path}..")
+      packages = parse_packages_file(ref)
+      packages.each { |ref| enqueue ref }
+
+      download_enqueued
+    end
   end
 end

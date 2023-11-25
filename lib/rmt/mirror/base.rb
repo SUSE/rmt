@@ -15,7 +15,7 @@ class RMT::Mirror::Base
 
   def mirror_repository!
     mirror_with_implementation!
-  rescue StandardError => e
+  rescue RMT::Mirror::Exception => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring repository: %{error}' % { error: e.message }))
   ensure
     cleanup_temp_directories

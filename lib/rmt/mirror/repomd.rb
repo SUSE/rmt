@@ -66,6 +66,7 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
       base_url: repository_url,
       cache_dir: nil
     }
+    # FIXME: Support deltainfo files
     sources = metadata.select { |src| [:primary].include?(src.type) }
    
     sources.each do |src|
@@ -78,8 +79,8 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
         ref = RMT::Mirror::FileReference.build_from_metadata(meta, **paths)
 
         next if ref.arch == 'src' && !mirror_sources
-    #   next if pkg.uptodate?
-    #   next if deduplicate(pkg)
+        # FIXME: Check if the package is up to date and only download it if necessary
+        # FIXME: Deduplicate if possible
         enqueue ref
       end
     end

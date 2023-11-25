@@ -35,6 +35,16 @@ class RMT::Mirror::FileReference
     @remote_path = URI.join(base_url, relative_path)
   end
 
+  def compression
+    # yes yes poor mans detection... we will do better, for sure!
+    ext = File.extname(remote_path.to_s)
+
+    case ext
+    when '.gz' then :gz
+    when '.xz' then :xz
+    end
+  end
+
   def local_content
   end
 
