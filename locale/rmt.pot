@@ -1,14 +1,15 @@
-# Language template file for rmt.
-# Copyright (C) 2019-2023
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the rmt package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-28 14:15+0100\n"
-"PO-Revision-Date: 2022-12-28 14:15+0100\n"
+"POT-Creation-Date: 2023-10-09 12:20+0200\n"
+"PO-Revision-Date: 2023-10-09 12:20+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -74,11 +75,7 @@ msgid ""
 "ed_bases}."
 msgstr ""
 
-#: ../app/controllers/api/connect/v3/systems/systems_controller.rb:6
-msgid "Not provided"
-msgstr ""
-
-#: ../app/controllers/api/connect/v3/systems/systems_controller.rb:10
+#: ../app/controllers/api/connect/v3/systems/systems_controller.rb:14
 msgid "Updated system information for host '%s'"
 msgstr ""
 
@@ -114,7 +111,7 @@ msgstr ""
 msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
 msgstr ""
 
-#: ../app/controllers/application_controller.rb:81
+#: ../app/controllers/application_controller.rb:80
 msgid ""
 "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated fro"
 "m ID %{base_id} due to token mismatch"
@@ -211,6 +208,110 @@ msgstr ""
 #: ../lib/rmt/cli/base.rb:129
 msgid "%{path} is not writable by user %{username}."
 msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:6
+msgid "Clean dangling package files, based on current repository data."
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:8
+msgid "Do not ask anything; use default answers automatically. Default: false"
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:10
+msgid "Run the clean process without actually removing files."
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:12
+msgid "List files during the cleaning process."
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:13
+msgid ""
+"Clean dangling package files based on current repository metadata.\n"
+"\n"
+"This command scans the mirror directory for 'repomd.xml' files, parses the\n"
+"metadata files, and compares their content with files on disk. Files not\n"
+"listed in the metadata and at least 2 days old are considered dangling.\n"
+"\n"
+"Then, it removes all dangling files from disk along with any associated databa"
+"se entries.\n"
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:27
+msgid "Scanning the mirror directory for 'repomd.xml' files..."
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:35
+msgid "RMT found no repomd.xml files. Check if RMT is properly configured."
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:42
+msgid "RMT found repomd.xml files: %{repomd_count}."
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:43
+msgid ""
+"Now, it will parse all repomd.xml files, search for dangling packages on disk "
+"and clean them."
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:47
+msgid ""
+"This can take several minutes. Would you like to continue and clean dangling p"
+"ackages?"
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:49 ../lib/rmt/cli/repos.rb:40
+msgid "Only '%{input}' will be accepted."
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:49 ../lib/rmt/cli/clean.rb:55
+msgid "yes"
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:51 ../lib/rmt/cli/repos.rb:42
+msgid "Enter a value:"
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:56 ../lib/rmt/cli/repos.rb:48
+msgid "Clean cancelled."
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:87
+msgid "No dangling packages have been found!"
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:95
+msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:165
+msgid "Directory: %{dir}"
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:172
+msgid "Cleaned '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}."
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:175
+msgid "hardlink"
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:182
+msgid "Cleaned %{file_count_text} (%{total_size}), %{db_entries}."
+msgstr ""
+
+#: ../lib/rmt/cli/clean.rb:196
+msgid "%{count} file"
+msgid_plural "%{count} files"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../lib/rmt/cli/clean.rb:200
+msgid "%{db_entries} database entry"
+msgid_plural "%{db_entries} database entries"
+msgstr[0] ""
+msgstr[1] ""
 
 #: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:19
 #: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:40
@@ -414,7 +515,7 @@ msgid ""
 "ble storage device."
 msgstr ""
 
-#: ../lib/rmt/cli/export.rb:43 ../lib/rmt/cli/import.rb:20
+#: ../lib/rmt/cli/export.rb:42 ../lib/rmt/cli/import.rb:19
 msgid "%{file} does not exist."
 msgstr ""
 
@@ -426,7 +527,7 @@ msgstr ""
 msgid "Mirror repos from given path"
 msgstr ""
 
-#: ../lib/rmt/cli/import.rb:34
+#: ../lib/rmt/cli/import.rb:33
 msgid "repository by URL %{url} does not exist in database"
 msgstr ""
 
@@ -463,6 +564,10 @@ msgid "List and manipulate registered systems"
 msgstr ""
 
 #: ../lib/rmt/cli/main.rb:32
+msgid "Clean dangling files and their database entries"
+msgstr ""
+
+#: ../lib/rmt/cli/main.rb:35
 msgid "Show RMT version"
 msgstr ""
 
@@ -710,18 +815,6 @@ msgstr ""
 msgid ""
 "Would you like to continue and remove the locally mirrored files of these repo"
 "sitories?"
-msgstr ""
-
-#: ../lib/rmt/cli/repos.rb:40
-msgid "Only '%{input}' will be accepted."
-msgstr ""
-
-#: ../lib/rmt/cli/repos.rb:42
-msgid "Enter a value:"
-msgstr ""
-
-#: ../lib/rmt/cli/repos.rb:48
-msgid "Clean cancelled."
 msgstr ""
 
 #: ../lib/rmt/cli/repos.rb:56
@@ -1000,16 +1093,15 @@ msgstr ""
 
 #: ../lib/rmt/cli/systems.rb:77
 msgid ""
-"By default, inactive systems are those that have not contacted in any way with"
-" RMT for the past 3 months. You can override this with the '-b / --before' fla"
-"g."
+"By default, inactive systems are those that have not contacted RMT in any way "
+"in the past 3 months. You can override this with the '-b / --before' flag."
 msgstr ""
 
 #: ../lib/rmt/cli/systems.rb:79
 msgid ""
-"The command will list you the candidates for removal and will ask for confirma"
-"tion. You can tell this subcommand to go ahead without asking with the '--no-c"
-"onfirmation' flag."
+"The command will list the candidates for removal and will ask for confirmation"
+". You can tell this subcommand to go ahead without asking with the '--no-confi"
+"rmation' flag."
 msgstr ""
 
 #: ../lib/rmt/cli/systems.rb:98
@@ -1027,13 +1119,13 @@ msgid "n"
 msgstr ""
 
 #: ../lib/rmt/cli/systems.rb:116
-msgid "Please, answer"
+msgid "Please answer"
 msgstr ""
 
 #: ../lib/rmt/cli/systems.rb:126
 msgid ""
-"The given date does not follow a proper format. Ensure it follows this format "
-"'<year>-<month>-<day>'."
+"The given date does not follow the proper format. Ensure it follows this forma"
+"t '<year>-<month>-<day>'."
 msgstr ""
 
 #: ../lib/rmt/downloader.rb:77
@@ -1124,31 +1216,31 @@ msgstr ""
 msgid "Could not create a temporary directory: %{error}"
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:109
+#: ../lib/rmt/mirror.rb:111
 msgid "Repository metadata signatures are missing"
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:111
+#: ../lib/rmt/mirror.rb:113
 msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:122
+#: ../lib/rmt/mirror.rb:124
 msgid "Error while mirroring metadata: %{error}"
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:146
+#: ../lib/rmt/mirror.rb:148
 msgid "Error while mirroring license files: %{error}"
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:160
+#: ../lib/rmt/mirror.rb:162
 msgid "Failed to download %{failed_count} files"
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:162
+#: ../lib/rmt/mirror.rb:164
 msgid "Error while mirroring packages: %{error}"
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:197
+#: ../lib/rmt/mirror.rb:199
 msgid "Error while moving directory %{src} to %{dest}: %{error}"
 msgstr ""
 
