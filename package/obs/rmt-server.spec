@@ -353,7 +353,7 @@ if [ ! -e %{_datadir}/rmt/public/suma ]; then
 fi
 
 %preun
-%service_del_preun rmt-server.target rmt-server.service  rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
+%service_del_preun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
 
 %postun
 %service_del_postun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
