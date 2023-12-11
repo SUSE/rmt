@@ -342,6 +342,11 @@ if [ $1 -eq 2 ]; then
     mv %{app_dir}/config/system_uuid /var/lib/rmt/system_uuid
   fi
   bash %{script_dir}/update_rmt_app_dir_permissions.sh %{app_dir}
+
+  echo "RMT database migration in progress. This could take some time."
+  echo ""
+  echo "To check current migration status:"
+  echo "  systemctl status rmt-server-migration.service"
 fi
 
 if [ ! -e %{_datadir}/rmt/public/repo ]; then
