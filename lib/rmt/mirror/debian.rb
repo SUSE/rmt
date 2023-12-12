@@ -2,6 +2,7 @@ require 'byebug'
 require 'xz'
 
 class RMT::Mirror::Debian < RMT::Mirror::Base
+  include RMT::FileValidator
 
   attr_reader :release
 
@@ -71,7 +72,7 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
       ref.tap do |r|
         r.checksum = matched[1]
         r.checksum_type = 'SHA256'
-        r.size = matched[2]
+        r.size = matched[2].to_i
       end
 
       # Release does include the uncompressed filename while in realtiy this files
@@ -118,7 +119,7 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
             r.arch = attributes[:architecture]
             r.checksum_type = 'SHA256'
             r.checksum = attributes[:sha256]
-            r.size = attributes[:size]
+            r.size = attributes[:size].to_i
           end
 
           packages << ref
@@ -143,7 +144,13 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
     sources.each do |ref|
       logger.debug("Reading package list from #{ref.local_path}..")
       packages = parse_packages_file(ref)
-      packages.each { |ref| enqueue ref }
+
+      packages.each do |ref|
+        logger.debug("~ #{File.basename(ref.local_path)} is up to date")
+        next if validate_local_file(ref)
+
+        enqueue ref
+      end
 
       download_enqueued
     end

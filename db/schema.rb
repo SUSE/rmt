@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_11_11_120153) do
+ActiveRecord::Schema.define(version: 2023_08_03_162005) do
 
   create_table "activations", charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
     t.bigint "service_id", null: false
@@ -107,7 +107,6 @@ ActiveRecord::Schema.define(version: 2023_11_11_120153) do
     t.string "local_path", null: false
     t.datetime "last_mirrored_at"
     t.string "friendly_id"
-    t.string "repository_type", default: "repomd"
     t.index ["external_url"], name: "index_repositories_on_external_url", unique: true
     t.index ["friendly_id"], name: "index_repositories_on_friendly_id", unique: true
     t.index ["scc_id"], name: "index_repositories_on_scc_id", unique: true

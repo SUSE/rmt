@@ -1,6 +1,6 @@
 class RMT::Mirror::Repomd < RMT::Mirror::Base
   # include RMT::Deduplicator
-  # include RMT::FileValidator
+  include RMT::FileValidator
 
   def set_auth_token(token)
     downloader.auth_token = token
@@ -79,7 +79,7 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
         ref = RMT::Mirror::FileReference.build_from_metadata(meta, **paths)
 
         next if ref.arch == 'src' && !mirror_sources
-        # FIXME: Check if the package is up to date and only download it if necessary
+        next if validate_local_file(ref)
         # FIXME: Deduplicate if possible
         enqueue ref
       end

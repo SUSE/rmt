@@ -1,5 +1,5 @@
 class RMT::Mirror::Base
-  attr_reader :logger, :repo_dir, :repo_url, :repo, :mirror_sources, :airgap_mode
+  attr_reader :logger, :repo_dir, :repo_url, :repo, :mirror_sources, :airgap_mode, :deep_verify
 
   def initialize(logger:, base_dir:, repo:, mirror_sources: false, airgapped: false)
     @logger = logger
@@ -8,6 +8,8 @@ class RMT::Mirror::Base
     @repo = repo
     @mirror_sources = mirror_sources
     @airgap_mode = airgapped
+    # Yes this is not implemented and used anywhere, was this every intended to work?
+    @deep_verify = false
 
     @temp_directories = {}
     @enqueued = []
