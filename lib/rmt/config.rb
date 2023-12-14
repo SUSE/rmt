@@ -23,7 +23,13 @@ module RMT::Config
         'adapter'  => Settings[key].adapter  || 'mysql2',
         'encoding' => Settings[key].encoding || 'utf8',
         'timeout'  => Settings[key].timeout  || 5000,
-        'pool'     => Settings[key].pool     || 5
+        'pool'     => Settings[key].pool     || 5,
+        'sslverify' => Settings[key].sslverify || false,
+        'sslkey' => Settings[key].sslkey || '',
+        'sslcert' => Settings[key].sslcert || '',
+        'sslca' => Settings[key].sslca || '',
+        'sslcapath' => Settings[key].sslcapath || '',
+        'sslcipher' => Settings[key].sslcipher || ''
       }
     end
 
