@@ -11,26 +11,31 @@ Config.load_and_set_settings(
   File.join(__dir__, '../../config/rmt.local.yml')
 )
 
-
 module RMT::Config
   class << self
+    def ssl_config(key = 'database')
+      {
+        'sslverify' => Settings[key].sslverify || true,
+        'sslkey' => Settings[key].sslkey || '',
+        'sslcert' => Settings[key].sslcert || '',
+        'sslca' => Settings[key].sslca || '',
+        'sslcapath' => Settings[key].sslcapath || '',
+        'sslcipher' => Settings[key].sslcipher || 'AES256-SHA',
+        'ssl_mode' => Settings[key].ssl_mode.try(:to_sym) || :disabled
+      }
+    end
+
     def db_config(key = 'database')
       {
         'username' => Settings[key].username,
         'password' => Settings[key].password,
         'database' => Settings[key].database,
-        'host'     => Settings[key].host     || 'localhost',
-        'adapter'  => Settings[key].adapter  || 'mysql2',
+        'host' => Settings[key].host || 'localhost',
+        'adapter' => Settings[key].adapter || 'mysql2',
         'encoding' => Settings[key].encoding || 'utf8',
-        'timeout'  => Settings[key].timeout  || 5000,
-        'pool'     => Settings[key].pool     || 5,
-        'sslverify' => Settings[key].sslverify || false,
-        'sslkey' => Settings[key].sslkey || '',
-        'sslcert' => Settings[key].sslcert || '',
-        'sslca' => Settings[key].sslca || '',
-        'sslcapath' => Settings[key].sslcapath || '',
-        'sslcipher' => Settings[key].sslcipher || ''
-      }
+        'timeout' => Settings[key].timeout || 5000,
+        'pool' => Settings[key].pool || 5
+      }.deep_merge! ssl_config
     end
 
     # This method checks whether or not deduplication should be done by hardlinks.
@@ -53,7 +58,7 @@ module RMT::Config
       WebServerConfig.new(
         max_threads: validate_int(Settings.try(:web_server).try(:max_threads)) || 5,
         min_threads: validate_int(Settings.try(:web_server).try(:min_threads)) || 5,
-        workers:     validate_int(Settings.try(:web_server).try(:workers))     || 2
+        workers: validate_int(Settings.try(:web_server).try(:workers)) || 2
       )
     end
 
