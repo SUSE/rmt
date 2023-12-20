@@ -1,5 +1,5 @@
 class RMT::Mirror::Base
-  attr_reader :logger, :repository
+  attr_reader :downloader, :logger, :deep_verify, :repository
 
   def initialize(repository:, logger:, mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, mirror_src: false, is_airgapped: false)
     @repository = repository
@@ -8,24 +8,11 @@ class RMT::Mirror::Base
     @mirror_src = mirror_src
     @is_airgapped = is_airgapped
     @deep_verify = false
+    @tmp_dirs = {}
 
     # don't save files for deduplication when in offline mode
     @downloader = RMT::Downloader.new(logger: logger, track_files: !is_airgapped)
-    @temp_dirs = {}
-    @enqueued = []
   end
-
-  def mirror
-    mirror_implementation
-  rescue RMT::Mirror::Exception => e
-    raise RMT::Mirror::Exception.new(_('Error while mirroring repository: %{error}' % { error: e.message }))
-  ensure
-    cleanup_temp_dirs
-  end
-
-  protected
-
-  attr_accessor :temp_dirs, :downloader, :deep_verify, :is_airgapped, :mirroring_base_dir
 
   def download_cached!(relative, to:)
     ref = RMT::Mirror::FileReference.new(
@@ -39,68 +26,39 @@ class RMT::Mirror::Base
     ref
   end
 
+  def mirror
+    mirror_implementation
+  rescue RMT::Mirror::Exception => e
+    raise RMT::Mirror::Exception.new(_('Error while mirroring repository: %{error}' % { error: e.message }))
+  ensure
+    cleanup_tmp_dirs
+  end
+
   def mirror_implementation
     raise 'Not implemented!'
   end
 
-  def check_signature(key_file:, signature_file:, metadata_file:)
-
-    downloader.download_multi([signature_file])
-    downloader.download_multi([key_file])
-
-    gpg_checker = RMT::GPG.new(
-      metadata_file: metadata_file.local_path,
-      key_file: key_file.local_path,
-      signature_file: signature_file.local_path,
-      logger: logger
-    )
-    gpg_checker.verify_signature
-  rescue RMT::Downloader::Exception => e
-    if (e.http_code == 404)
-      logger.info(_('Repository metadata signatures are missing'))
-    else
-      raise(_('Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}') % { message: e.message, http_code: e.http_code })
-    end
-
+  def repository_url
+    raise 'Not implemented!'
   end
 
-  def repository_url(*args)
-    URI.join(repository.external_url, *args).to_s
-  end
-
-  def repository_path(*args)
-    File.join(mirroring_base_dir, repository.local_path, *args)
+  def repository_path
+    raise 'Not Implemented!'
   end
 
   def create_temp_dir(name)
-    temp_dirs[name] = Dir.mktmpdir(name.to_s)
+    @tmp_dirs[name] = Dir.mktmpdir
   rescue StandardError => e
-    raise RMT::Mirror::Exception.new(_('Could not create a temporary directory: %{error}') % { error: e.message })
+    raise RMT::Mirror::Repomd::Exception.new(_('Could not create a temporary directory: %{error}') % { error: e.message })
   end
 
   def temp(name)
-    unless temp_dirs.key? name
-      message = _('Try to access non existing temporary directory %{name}' % { name: name })
-      raise RMT::Mirror::Exception.new(message)
+    @tmp_dirs[name]
+  end
+
+  def cleanup_tmp_dirs
+    @tmp_dirs.values.each do |tmp_dir|
+      FileUtils.remove_entry(tmp_dir, force: true)
     end
-
-    temp_dirs[name]
-  end
-
-  def cleanup_temp_dirs
-    @temp_dirs.values.each do |temp_dir|
-      FileUtils.remove_entry(temp_dir, force: true)
-    end
-    @temp_dirs = {}
-  end
-
-  def enqueue(ref)
-    @enqueued << ref
-  end
-
-  def download_enqueued(continue_on_error: false)
-    result = downloader.download_multi(@enqueued, ignore_errors: continue_on_error)
-    @enqueued = []
-    result
   end
 end
