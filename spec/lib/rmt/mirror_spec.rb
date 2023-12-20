@@ -14,24 +14,33 @@ RSpec.describe RMT::Mirror do
   end
 
   describe '#detect_repository_type' do
+    let(:repomd_url) { 'http://some.test.us/path/directory/repodata/repomd.xml' }
+    let(:debian_url) { 'http://some.test.us/path/directory/Release' }
+
     context 'repomd repository' do
       it 'detects a repomd repository' do
+        stub_request(:head, repomd_url).to_return(status: 200, body: '', headers: {})
+
         expect(mirror.detect_repository_type).to eq(:repomd)
       end
     end
 
     context 'debian flat repository' do
       it 'detects a flat debian repository' do
+        stub_request(:head, repomd_url).to_return(status: 404, body: '', headers: {})
+        stub_request(:head, debian_url).to_return(status: 200, body: '', headers: {})
+
         expect(mirror.detect_repository_type).to eq(:debian)
       end
     end
 
-    context 'debian repository' do
-      it 'detects a full blown debian repository and raises'
-    end
-
     context 'unknown repository type' do
-      it 'raises if a unknown repository type is detected'
+      it 'raises if a unknown repository type is detected' do
+        stub_request(:head, repomd_url).to_return(status: 404, body: '', headers: {})
+        stub_request(:head, debian_url).to_return(status: 404, body: '', headers: {})
+
+        expect(mirror.detect_repository_type).to be_nil
+      end
     end
   end
 end

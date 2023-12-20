@@ -10,7 +10,7 @@ class RMT::Mirror::Repomd
   include RMT::Deduplicator
   include RMT::FileValidator
 
-  def initialize(mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, logger:, mirror_src: false, airgap_mode: false)
+  def initialize(logger:, mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, mirror_src: false, airgap_mode: false)
     @mirroring_base_dir = mirroring_base_dir
     @logger = logger
     @mirror_src = mirror_src
@@ -153,8 +153,8 @@ class RMT::Mirror::Repomd
 
     package_file_references = package_references.map do |reference|
       RMT::Mirror::FileReference.build_from_metadata(reference,
-                                        base_dir: repository_dir,
-                                        base_url: repository_url)
+                                                     base_dir: repository_dir,
+                                                     base_url: repository_url)
     end
 
     failed_downloads = download_package_files(package_file_references)
