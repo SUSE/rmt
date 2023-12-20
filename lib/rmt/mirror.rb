@@ -13,5 +13,18 @@ class RMT::Mirror
   end
 
   def detect_repository_type
+    search = {
+      repomd: File.join(repository.external_url, RPM_FILE_NEEDLE),
+      debian: File.join(repository.external_url, DEB_FILE_NEEDLE)
+    }
+
+    search.each do |key, url|
+      request = RMT::HttpRequest.new(url, method: :head, followlocation: true)
+      request.on_success do
+        return key
+      end
+      request.run
+    end
+    nil
   end
 end
