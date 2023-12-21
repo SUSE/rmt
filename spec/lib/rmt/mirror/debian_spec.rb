@@ -29,4 +29,36 @@ describe RMT::Mirror::Debian do
       end
     end
   end
+
+  describe '#parse_release_file' do
+    let(:config) do
+      {
+        relative_path: rel_path,
+        base_dir: file_fixture('debian/'),
+        base_url: 'https://updates.suse.de/Debian/'
+      }
+    end
+    let(:release_ref) { RMT::Mirror::FileReference.new(**config) }
+
+    context 'Release file is valid' do
+      let(:rel_path) { 'Release' }
+      let(:local_path) { 'spec/fixtures/files/debian/Packages' }
+      let(:remote_path) { 'https://updates.suse.de/Debian/Packages' }
+
+      it 'parses the file' do
+        metadata = debian.parse_release_file(release_ref)
+        expect(metadata.length).to eq 2
+        expect(metadata[0].local_path).to eq local_path
+        expect(metadata[0].remote_path.to_s).to eq remote_path
+      end
+    end
+
+    context 'Release file is invalid' do
+      let(:rel_path) { 'Invalid_Release' }
+
+      it 'returns empty metadata' do
+        expect(debian.parse_release_file(release_ref)).to be_empty
+      end
+    end
+  end
 end
