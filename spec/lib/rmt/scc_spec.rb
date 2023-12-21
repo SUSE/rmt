@@ -113,6 +113,17 @@ describe RMT::SCC do
       include_examples 'saves in database'
     end
 
+    context 'with changed repo url in SCC' do
+      before do
+        allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
+        described_class.new.sync
+        Repository.first.update(external_url: 'https://outdated.com/')
+        described_class.new.sync
+      end
+
+      include_examples 'saves in database'
+    end
+
     context 'with SLES15 product tree' do
       let(:products) { JSON.parse(file_fixture('products/sle15_tree.json').read, symbolize_names: true) }
       let(:subscriptions) { [] }
@@ -155,7 +166,8 @@ describe RMT::SCC do
           id: 999999,
           url: 'http://example.com/extension-without-base',
           name: 'Repo of an extension without base',
-          enabled: true
+          enabled: true,
+          autorefresh: true
         }
       end
       let(:extra_product) do
