@@ -50,3 +50,6 @@ Style/OpenStructUse:
 
 RSpec/MessageChain:
   Enabled: false
+
+RSpec/SubjectStub:
+  Enabled: false
