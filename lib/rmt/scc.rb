@@ -18,8 +18,8 @@ class RMT::SCC
     @logger.info(_('Downloading data from SCC'))
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
-    @logger.info(_('Updating products'))
     data = scc_api_client.list_products
+    @logger.info(_('Updating products'))
     data.each { |item| create_product(item) }
     data.each { |item| migration_paths(item) }
 
@@ -132,8 +132,8 @@ class RMT::SCC
 
   def update_repositories(repos)
     @logger.info _('Updating repositories')
-    repos.each do |item|
-      update_auth_token_enabled_attr(item)
+    repos.each do |repo|
+      repository_service.update_repository!(repo)
     end
   end
 
@@ -189,13 +189,6 @@ class RMT::SCC
     item[:repositories].each do |repo_item|
       repository_service.create_repository!(product, repo_item[:url], repo_item)
     end
-  end
-
-  def update_auth_token_enabled_attr(item)
-    uri = URI(item[:url])
-    auth_token = uri.query
-
-    Repository.find_by!(scc_id: item[:id]).update! auth_token: auth_token, enabled: item[:enabled]
   end
 
   def migration_paths(item)
