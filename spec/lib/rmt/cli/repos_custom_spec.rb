@@ -104,10 +104,10 @@ describe RMT::CLI::ReposCustom do
 
       it 'does not update previous repository if non-custom' do
         expect(described_class).to receive(:exit)
+        existing_repo = create :repository, external_url: external_url, name: 'foobar'
         expect do
-          create :repository, external_url: external_url, name: 'foobar'
           described_class.start(argv)
-        end.to output("\e[31mA repository by the URL #{external_url} already exists.\e[0m\nCouldn't add custom repository.\n")
+        end.to output("\e[31mA repository by the URL #{external_url} already exists (ID #{existing_repo.friendly_id}).\e[0m\nCouldn't add custom repository.\n")
                    .to_stderr
                    .and output('').to_stdout
         expect(Repository.find_by(external_url: external_url).name).to eq('foobar')
@@ -119,20 +119,21 @@ describe RMT::CLI::ReposCustom do
         expect do
           described_class.start(%w[add http://example.com/repo/ foo])
         end.to output("Successfully added custom repository.\n").to_stdout.and output('').to_stderr
-
+        existing_repo = Repository.find_by(external_url: 'http://example.com/repo/')
         expect do
           described_class.start(%w[add http://example.com/repo foo])
-        end.to output("\e[31mA repository by the URL http://example.com/repo/ already exists.\e[0m\nCouldn't add custom repository.\n")
+        end.to output("\e[31mA repository by the URL http://example.com/repo/ already exists (ID #{existing_repo.friendly_id})." \
+          "\e[0m\nCouldn't add custom repository.\n")
                    .to_stderr
                    .and output('').to_stdout
       end
 
       it 'does not update previous repository if custom' do
         expect(described_class).to receive(:exit)
+        existing_repo = create :repository, :custom, external_url: external_url, name: 'foobar'
         expect do
-          create :repository, :custom, external_url: external_url, name: 'foobar'
           described_class.start(argv)
-        end.to output("\e[31mA repository by the URL #{external_url} already exists.\e[0m\nCouldn't add custom repository.\n")
+        end.to output("\e[31mA repository by the URL #{external_url} already exists (ID #{existing_repo.friendly_id}).\e[0m\nCouldn't add custom repository.\n")
                    .to_stderr
                    .and output('').to_stdout
         expect(Repository.find_by(external_url: external_url).name).to eq('foobar')
