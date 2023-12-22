@@ -61,4 +61,23 @@ describe RMT::Mirror::Debian do
       end
     end
   end
+
+  describe '#mirror_metadata' do
+    let(:config) do
+      {
+        relative_path: 'Release',
+        base_dir: file_fixture('debian/'),
+        base_url: 'https://updates.suse.de/Debian/'
+      }
+    end
+    let(:release_ref) { RMT::Mirror::FileReference.new(**config) }
+
+    it 'succeeds' do
+      allow(debian).to receive(:temp).with(:metadata).and_return('bar')
+      expect(debian).to receive(:check_signature)
+      expect(debian).to receive(:parse_release_file).and_return([])
+      expect(debian).to receive(:download_enqueued)
+      debian.mirror_metadata(release_ref)
+    end
+  end
 end
