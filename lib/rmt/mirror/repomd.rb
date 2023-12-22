@@ -3,7 +3,7 @@ require 'rmt/gpg'
 require 'repomd_parser'
 require 'time'
 
-class RMT::Mirror::Repomd
+class RMT::Mirror::Repomd < RMT::Mirror::Base
   include RMT::Deduplicator
   include RMT::FileValidator
 
