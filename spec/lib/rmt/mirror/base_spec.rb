@@ -99,12 +99,6 @@ describe RMT::Mirror::Base do
     end
   end
 
-  describe '#mirror_metadata' do
-    it 'calls' do
-      base.mirror_metadata
-    end
-  end
-
   describe '#check_signature' do
     let(:config) do
       {
@@ -131,8 +125,7 @@ describe RMT::Mirror::Base do
     context 'has valid signature' do
       it 'succeeds' do
         expect(downloader).to receive(:download_multi).twice
-        # expect(gpg_checker).to receive(:verify_signature).and_return(true)
-        expect_any_instance_of(RMT::GPG).to receive(:verify_signature).and_return(true)
+        expect_any_instance_of(RMT::GPG).to receive(:verify_signature)
         base.check_signature(key_file: key_file, signature_file: signature_file, metadata_file: metadata)
       end
     end
