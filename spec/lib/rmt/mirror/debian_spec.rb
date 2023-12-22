@@ -75,7 +75,7 @@ describe RMT::Mirror::Debian do
     it 'succeeds' do
       allow(debian).to receive(:temp).with(:metadata).and_return('bar')
       expect(debian).to receive(:check_signature)
-      expect(debian).to receive(:parse_release_file).and_return([])
+      allow(debian).to receive(:parse_release_file).and_return([])
       expect(debian).to receive(:download_enqueued)
       debian.mirror_metadata(release_ref)
     end

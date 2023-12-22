@@ -4,6 +4,9 @@ require 'repomd_parser'
 require 'time'
 
 class RMT::Mirror::Repomd < RMT::Mirror::Base
+  class RMT::Mirror::Repomd::Exception < RuntimeError
+  end
+
   include RMT::Deduplicator
   include RMT::FileValidator
 
