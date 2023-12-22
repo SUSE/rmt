@@ -90,26 +90,9 @@ class RMT::Mirror::Repomd
     repomd_xml = RMT::Mirror::FileReference.new(relative_path: 'repodata/repomd.xml', **mirroring_paths)
     downloader.download_multi([repomd_xml])
 
-    begin
-      signature_file = RMT::Mirror::FileReference.new(relative_path: 'repodata/repomd.xml.asc', **mirroring_paths)
-      key_file       = RMT::Mirror::FileReference.new(relative_path: 'repodata/repomd.xml.key', **mirroring_paths)
-      # mirror repomd.xml.asc first, because there are repos with repomd.xml.asc but without repomd.xml.key
-      downloader.download_multi([signature_file])
-      downloader.download_multi([key_file])
-
-      RMT::GPG.new(
-        metadata_file: repomd_xml.local_path,
-        key_file: key_file.local_path,
-        signature_file: signature_file.local_path,
-        logger: logger
-      ).verify_signature
-    rescue RMT::Downloader::Exception => e
-      if (e.http_code == 404)
-        logger.info(_('Repository metadata signatures are missing'))
-      else
-        raise(_('Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}') % { message: e.message, http_code: e.http_code })
-      end
-    end
+    signature_file = RMT::Mirror::FileReference.new(relative_path: 'repodata/repomd.xml.asc', **mirroring_paths)
+    key_file       = RMT::Mirror::FileReference.new(relative_path: 'repodata/repomd.xml.key', **mirroring_paths)
+    check_signature(key_file: key_file, signature_file: signature_file, metadata_file: repomd_xml)
 
     metadata_files = RepomdParser::RepomdXmlParser.new(repomd_xml.local_path).parse
       .map { |reference| RMT::Mirror::FileReference.build_from_metadata(reference, **mirroring_paths) }
