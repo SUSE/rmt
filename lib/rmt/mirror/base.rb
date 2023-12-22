@@ -12,6 +12,7 @@ class RMT::Mirror::Base
     # don't save files for deduplication when in offline mode
     @downloader = RMT::Downloader.new(logger: logger, track_files: !is_airgapped)
     @temp_dirs = {}
+    @enqueued = []
   end
 
   def mirror
@@ -42,6 +43,27 @@ class RMT::Mirror::Base
     raise 'Not implemented!'
   end
 
+  def check_signature(key_file:, signature_file:, metadata_file:)
+
+    downloader.download_multi([signature_file])
+    downloader.download_multi([key_file])
+
+    gpg_checker = RMT::GPG.new(
+      metadata_file: metadata_file.local_path,
+      key_file: key_file.local_path,
+      signature_file: signature_file.local_path,
+      logger: logger
+    )
+    gpg_checker.verify_signature
+  rescue RMT::Downloader::Exception => e
+    if (e.http_code == 404)
+      logger.info(_('Repository metadata signatures are missing'))
+    else
+      raise(_('Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}') % { message: e.message, http_code: e.http_code })
+    end
+
+  end
+
   def repository_url(*args)
     URI.join(repository.external_url, *args).to_s
   end
@@ -70,5 +92,15 @@ class RMT::Mirror::Base
       FileUtils.remove_entry(temp_dir, force: true)
     end
     @temp_dirs = {}
+  end
+
+  def enqueue(ref)
+    @enqueued << ref
+  end
+
+  def download_enqueued(continue_on_error: false)
+    result = downloader.download_multi(@enqueued, ignore_errors: continue_on_error)
+    @enqueued = []
+    result
   end
 end
