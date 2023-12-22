@@ -1,9 +1,26 @@
 class RMT::Mirror::Debian < RMT::Mirror::Base
   RELEASE_FILE_NAME = 'Release'.freeze
+  GPG_FILE_NAME = 'Release.gpg'.freeze
+  KEY_FILE_NAME = 'Release.key'.freeze
+
   def mirror_implementation
     create_temp_dir(:metadata)
     release = download_cached!(repository_url(RELEASE_FILE_NAME), to: temp(:metadata))
 
+  end
+
+  def mirror_metadata(release_file)
+    ref_config = {
+      base_dir: temp(:metadata),
+      base_url: repository_url
+    }
+    key_file = RMT::Mirror::FileReference.new(relative_path: GPG_FILE_NAME, **ref_config)
+    signature_file = RMT::Mirror::FileReference.new(relative_path: KEY_FILE_NAME, **ref_config)
+    check_signature(key_file: key_file, signature_file: signature_file, metadata_file: release_file)
+
+    metadata_refs = parse_release_file(release_file)
+    metadata_refs.each { |ref| enqueue(ref) }
+    download_enqueued
   end
 
   def repository_url(*args)

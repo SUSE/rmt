@@ -98,4 +98,52 @@ describe RMT::Mirror::Base do
       expect { base.temp(:does_not_exist) }.to raise_error(RMT::Mirror::Exception)
     end
   end
+
+  describe '#mirror_metadata' do
+    it 'calls' do
+      base.mirror_metadata
+    end
+  end
+
+  describe '#check_signature' do
+    let(:config) do
+      {
+        base_dir: '/tmp',
+        base_url: 'https://updates.suse.de/'
+      }
+    end
+    let(:signature_file) { RMT::Mirror::FileReference.new(relative_path: 'repo.gpg', **config) }
+    let(:key_file) { RMT::Mirror::FileReference.new(relative_path: 'repo.key', **config) }
+    let(:metadata) { RMT::Mirror::FileReference.new(relative_path: 'metadata', **config) }
+    let(:gpg_checker) do
+      RMT::GPG.new(
+        metadata_file: metadata.local_path,
+        key_file: key_file.local_path,
+        signature_file: signature_file.local_path,
+        logger: nil
+     )
+    end
+
+    # before do
+
+    # end
+
+    context 'has valid signature' do
+      it 'succeeds' do
+        expect(downloader).to receive(:download_multi).twice
+        # expect(gpg_checker).to receive(:verify_signature).and_return(true)
+        expect_any_instance_of(RMT::GPG).to receive(:verify_signature).and_return(true)
+        base.check_signature(key_file: key_file, signature_file: signature_file, metadata_file: metadata)
+      end
+    end
+
+    context 'has invalid or no signature' do
+      it 'raises exception' do
+        expect(downloader).to receive(:download_multi).and_raise(RMT::Downloader::Exception, 'foo')
+        expect do
+          base.check_signature(key_file: key_file, signature_file: signature_file, metadata_file: metadata)
+        end.to raise_error(/foo/)
+      end
+    end
+  end
 end
