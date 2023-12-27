@@ -4,9 +4,6 @@ require 'repomd_parser'
 require 'time'
 
 class RMT::Mirror::Repomd
-  class RMT::Mirror::Repomd::Exception < RuntimeError
-  end
-
   include RMT::Deduplicator
   include RMT::FileValidator
 
@@ -41,7 +38,7 @@ class RMT::Mirror::Repomd
     logger.info _('Mirroring SUSE Manager product tree to %{dir}') % { dir: repository_dir }
     downloader.download_multi([RMT::Mirror::FileReference.new(relative_path: 'product_tree.json', **mirroring_paths)])
   rescue RMT::Downloader::Exception => e
-    raise RMT::Mirror::Repomd::Exception.new(_('Could not mirror SUSE Manager product tree with error: %{error}') % { error: e.message })
+    raise RMT::Mirror::Exception.new(_('Could not mirror SUSE Manager product tree with error: %{error}') % { error: e.message })
   end
 
   def mirror(repository_url:, local_path:, auth_token: nil, repo_name: nil)
@@ -72,7 +69,7 @@ class RMT::Mirror::Repomd
   def create_repository_dir(repository_dir)
     FileUtils.mkpath(repository_dir) unless Dir.exist?(repository_dir)
   rescue StandardError => e
-    raise RMT::Mirror::Repomd::Exception.new(
+    raise RMT::Mirror::Exception.new(
       _('Could not create local directory %{dir} with error: %{error}') % { dir: repository_dir, error: e.message }
     )
   end
@@ -80,7 +77,7 @@ class RMT::Mirror::Repomd
   def create_temp_dir
     Dir.mktmpdir
   rescue StandardError => e
-    raise RMT::Mirror::Repomd::Exception.new(_('Could not create a temporary directory: %{error}') % { error: e.message })
+    raise RMT::Mirror::Exception.new(_('Could not create a temporary directory: %{error}') % { error: e.message })
   end
 
   def mirror_metadata(repository_dir, repository_url, temp_metadata_dir)
@@ -121,7 +118,7 @@ class RMT::Mirror::Repomd
 
     metadata_files
   rescue StandardError => e
-    raise RMT::Mirror::Repomd::Exception.new(_('Error while mirroring metadata: %{error}') % { error: e.message })
+    raise RMT::Mirror::Exception.new(_('Error while mirroring metadata: %{error}') % { error: e.message })
   end
 
   def mirror_license(repository_dir, repository_url, temp_licenses_dir)
@@ -145,7 +142,7 @@ class RMT::Mirror::Repomd
       .map { |relative_path| RMT::Mirror::FileReference.new(relative_path: relative_path, **mirroring_paths) }
     downloader.download_multi(license_files)
   rescue StandardError => e
-    raise RMT::Mirror::Repomd::Exception.new(_('Error while mirroring license files: %{error}') % { error: e.message })
+    raise RMT::Mirror::Exception.new(_('Error while mirroring license files: %{error}') % { error: e.message })
   end
 
   def mirror_packages(metadata_files, repository_dir, repository_url)
@@ -161,7 +158,7 @@ class RMT::Mirror::Repomd
 
     raise _('Failed to download %{failed_count} files') % { failed_count: failed_downloads.size } unless failed_downloads.empty?
   rescue StandardError => e
-    raise RMT::Mirror::Repomd::Exception.new(_('Error while mirroring packages: %{error}') % { error: e.message })
+    raise RMT::Mirror::Exception.new(_('Error while mirroring packages: %{error}') % { error: e.message })
   end
 
   def parse_packages_metadata(metadata_references)
@@ -196,7 +193,7 @@ class RMT::Mirror::Repomd
     FileUtils.mv(source_dir, destination_dir, force: true)
     FileUtils.chmod(0o755, destination_dir)
   rescue StandardError => e
-    raise RMT::Mirror::Repomd::Exception.new(_('Error while moving directory %{src} to %{dest}: %{error}') % {
+    raise RMT::Mirror::Exception.new(_('Error while moving directory %{src} to %{dest}: %{error}') % {
       src: source_dir,
       dest: destination_dir,
       error: e.message
