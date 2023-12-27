@@ -2,32 +2,77 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
   RELEASE_FILE_NAME = 'Release'.freeze
   GPG_FILE_NAME = 'Release.gpg'.freeze
   KEY_FILE_NAME = 'Release.key'.freeze
+  INRELEASE_FILE_NAME = 'InRelease'.freeze
 
   def mirror_implementation
     create_temp_dir(:metadata)
-    release = download_cached!(repository_url(RELEASE_FILE_NAME), to: temp(:metadata))
-
+    sources = mirror_metadata
+    mirror_packages(sources)
   end
 
-  def mirror_metadata(release_file)
-    ref_config = {
-      base_dir: temp(:metadata),
-      base_url: repository_url
-    }
-    key_file = RMT::Mirror::FileReference.new(relative_path: GPG_FILE_NAME, **ref_config)
-    signature_file = RMT::Mirror::FileReference.new(relative_path: KEY_FILE_NAME, **ref_config)
-    check_signature(key_file: key_file, signature_file: signature_file, metadata_file: release_file)
+  def mirror_metadata
+    release = download_cached!(repository_url(RELEASE_FILE_NAME), to: temp(:metadata))
+    key = file_reference(repository_url(GPG_FILE_NAME), to: temp(:metadata))
+    signature = file_reference(repository_url(KEY_FILE_NAME), to: temp(:metadata))
+    inrelease = file_reference(repository_url(INRELEASE_FILE_NAME), to: temp(:metadata))
 
-    metadata_refs = parse_release_file(release_file)
+    check_signature(key_file: key, signature_file: signature, metadata_file: release)
+
+    metadata_refs = parse_release_file(release)
+    # We need to make sure downloading the InRelease file which is not referenced
+    # anywhere
+    metadata_refs << inrelease
     metadata_refs.each { |ref| enqueue(ref) }
+
+    download_enqueued
+    metadata_refs
+  end
+
+  def mirror_packages(metadata_refs)
+    packagelists = metadata_refs.select { |ref| File.basename(ref.local_path) == 'Packages.gz' }
+
+    packagelists.each do |list|
+      parse_package_list(list).each { |pkg| enqueue pkg }
+    end
+
     download_enqueued
   end
 
-  def repository_url(*args)
-    File.join(repository.external_url, *args)
-  end
+  def parse_package_list(list)
+    packages = []
+    hdl = File.open(list.local_path, 'rb')
 
-  def repository_path
+    current = {}
+    Zlib::GzipReader.new(hdl).each_line do |line|
+      if line == "\n"
+        ref = file_reference(current[:filename], to: repository_path)
+        ref.arch = current[:architecture]
+        ref.checksum = current[:sha256]
+        ref.checksum_type = 'SHA256'
+        ref.size = current[:size].to_i
+        ref.type = :deb
+
+        packages << ref
+        current = {}
+      end
+
+      # We do not care for multiline statements since we only interested in single line keys
+      # Failing example:
+      #   |Description: Command-line interface to Spacewalk and Red Hat Satellite servers|
+      #   | spacecmd is a command-line interface to Spacewalk and Red Hat Satellite servers|
+      #    ^--- it will be skipped here
+      key, value = line.split(': ', 2)
+
+      next if value.blank?
+
+      current[key.downcase.to_sym] = value.strip
+    end
+    packages
+  rescue Zlib::GzipFile::Error => e
+    message = _("Could not read '%{file}': %{error}" % { file: list.local_path, error: e })
+    raise RMT::Mirror::Exception.new(message)
+  ensure
+    hdl.close
   end
 
   def parse_release_file(file_ref)

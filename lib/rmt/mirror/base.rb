@@ -27,14 +27,18 @@ class RMT::Mirror::Base
 
   attr_accessor :temp_dirs, :downloader, :deep_verify, :is_airgapped, :mirroring_base_dir
 
-  def download_cached!(relative, to:)
-    ref = RMT::Mirror::FileReference.new(
+  def file_reference(relative, to:)
+    RMT::Mirror::FileReference.new(
       relative_path: relative,
       base_dir: to,
       base_url: repository_url,
+      # FIXME: Check if this is fine if base_dir and cache_dir is the same!
       cache_dir: repository_path
     )
+  end
 
+  def download_cached!(relative, to:)
+    ref = file_reference(relative, to: to)
     downloader.download_multi([ref])
     ref
   end
@@ -44,9 +48,7 @@ class RMT::Mirror::Base
   end
 
   def check_signature(key_file:, signature_file:, metadata_file:)
-
-    downloader.download_multi([signature_file])
-    downloader.download_multi([key_file])
+    downloader.download_multi([signature_file, key_file])
 
     gpg_checker = RMT::GPG.new(
       metadata_file: metadata_file.local_path,
@@ -61,7 +63,6 @@ class RMT::Mirror::Base
     else
       raise(_('Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}') % { message: e.message, http_code: e.http_code })
     end
-
   end
 
   def repository_url(*args)
