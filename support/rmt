@@ -5,31 +5,30 @@
 #              about RMT
 # License:     GPLv2
 # Author:      SCC Team <happy-customer@suse.de>
-# Modified:    2018 April 18
+# Modified:    2023-12-18
 #############################################################
 
-SVER=0.0.2
-RCFILE="/usr/lib/supportconfig/resources/scplugin.rc"
+SVER='0.0.3'
+RCFILE="/usr/lib/supportconfig/resources/supportconfig.rc"
+OF='output-rmt.txt'
 
 [ -s $RCFILE ] && . $RCFILE || { echo "ERROR: Initializing resource file: $RCFILE"; exit 1; }
 
 ## Our own helper functions
 validate_rpm_if_installed() {
   THISRPM=$1
-  echo "#==[ Validating RPM ]=================================#"
+  log_write $OF '#==[ Validating RPM ]=================================#'
   if rpm -q "$THISRPM" >/dev/null 2>&1; then
-    echo "# rpm -V $THISRPM"
-
-    if rpm -V "$THISRPM"; then
-      echo "Status: Passed"
+    if rpm -V $THISRPM >> ${LOG}/${OF} 2>&1; then
+      log_write $OF "Status: Passed"
     else
-      echo "Status: WARNING"
+      log_write $OF "Status: WARNING"
     fi
   else
-    echo "package $THISRPM is not installed"
-    echo "Status: Skipped"
+    log_write $OF "package $THISRPM is not installed"
+    log_write $OF "Status: Skipped"
   fi
-  echo
+  log_write $OF
 }
 
 RPMLIST=(rmt-server nginx mariadb)
@@ -40,51 +39,51 @@ LOG_UNITS=(rmt-server.service rmt-server-migration.service rmt-server-sync.servi
 
 CONF_FILES=(/etc/rmt.conf /etc/nginx/vhosts.d/rmt-server-http.conf /etc/nginx/vhosts.d/rmt-server-https.conf)
 
-section_header "Supportconfig Plugin for RMT, v${SVER}"
-if ! rpm -q rmt-server &>/dev/null; then
-  echo -e "ERROR: RMT rpm package ('rmt-server') not installed\n"
-  exit 111
-fi
+log_entry $OF note "Supportconfig Plugin for RMT, v${SVER}"
+rpm_verify $OF rmt-server || exit 111
 
-plugin_tag "Packages"
+log_entry $OF note 'Packages'
+
 for pkg in "${RPMLIST[@]}"; do
   validate_rpm_if_installed "$pkg"
 done
 
-plugin_tag "Configuration"
-pconf_files "$CONF_FILES"
+log_entry $OF note "Configuration"
+conf_files $OF "$CONF_FILES"
 
-plugin_tag "SSL Configuration"
-plugin_command "ls -l /usr/share/rmt/ssl/"
+log_entry $OF note "SSL Configuration"
+log_cmd $OF "ls -l /usr/share/rmt/ssl/"
 
 if systemctl --quiet is-active nginx; then
-  plugin_command "echo | openssl s_client -showcerts -servername localhost -connect localhost:443 2>/dev/null | openssl x509 -inform pem -noout -text"
+  log_cmd $OF "echo | openssl s_client -showcerts -servername localhost -connect localhost:443 2>/dev/null | openssl x509 -inform pem -noout -text"
 else
   for cert in /usr/share/rmt/ssl/rmt-ca.crt /usr/share/rmt/ssl/rmt-server.crt; do
-    plugin_command "openssl x509 -inform pem -noout -text -in $cert"
+    log_cmd $OF "openssl x509 -inform pem -noout -text -in $cert"
   done
 fi
 
-plugin_tag "Service Status"
+log_entry $OF note "Service Status"
 for i in "${STATUS_UNITS[@]}"; do
-  plugin_command "systemctl status $i"
+  log_cmd $OF "systemctl status $i"
 done
 
-plugin_tag "Mirroring Status"
-plugin_command "rmt-cli products list"
-plugin_command "rmt-cli repos list"
+log_entry $OF note "Mirroring Status"
+log_cmd $OF "rmt-cli products list"
+log_cmd $OF "rmt-cli repos list"
 
-plugin_tag "Service Logs"
+log_entry $OF note "Service Logs"
 for service in "${LOG_UNITS[@]}"; do
-  plugin_command "journalctl -n1000 -u $service"
+  log_cmd $OF "journalctl -n1000 -u $service"
 done
 
-plugin_tag "Custom Repos"
-plugin_command "rmt-cli repos custom list"
+log_entry $OF note "Custom Repos"
+log_cmd $OF "rmt-cli repos custom list"
 custom_repos=$(rmt-cli repos custom list --csv 2>/dev/null | sed 1d | cut -d ',' -f 1)
 if [ -n "$custom_repos" ]; then
   for custom in $custom_repos; do
-    echo "Products bound to custom repo id: $custom"
-    plugin_command "rmt-cli repos custom products $custom"
+    log_write $OF "Products bound to custom repo id: $custom"
+    log_cmd $OF "rmt-cli repos custom products $custom"
   done
 fi
+_sanitize_file $OF
+
