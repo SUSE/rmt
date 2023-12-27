@@ -47,7 +47,7 @@ describe RMT::CLI::Import, :with_fakefs do
     let(:repo2) { create :repository, mirroring_enabled: true }
     let(:repo1_local_path) { repo_url_to_local_path(path, repo1.external_url) }
     let(:repo2_local_path) { repo_url_to_local_path(path, repo2.external_url) }
-    let(:mirror_double) { instance_double RMT::Mirror }
+    let(:mirror_double) { instance_double RMT::Mirror::Repomd }
     let(:repo_settings) do
       [
         { url: repo1.external_url, auth_token: repo1.auth_token.to_s },
@@ -59,7 +59,7 @@ describe RMT::CLI::Import, :with_fakefs do
       FileUtils.mkdir_p path
       File.write("#{path}/repos.json", repo_settings.to_json)
 
-      expect(RMT::Mirror).to receive(:new).with(
+      expect(RMT::Mirror::Repomd).to receive(:new).with(
         logger: instance_of(RMT::Logger),
         airgap_mode: true
       ).and_return(mirror_double)
@@ -91,7 +91,7 @@ describe RMT::CLI::Import, :with_fakefs do
         FileUtils.mkdir_p path
         File.write("#{path}/repos.json", repo_settings.to_json)
 
-        expect(RMT::Mirror).to receive(:new).with(
+        expect(RMT::Mirror::Repomd).to receive(:new).with(
           logger: instance_of(RMT::Logger),
           airgap_mode: true
         ).and_return(mirror_double)
@@ -124,8 +124,8 @@ describe RMT::CLI::Import, :with_fakefs do
 
     context 'suma product tree mirror with exception' do
       it 'outputs exception message' do
-        expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree).and_raise(RMT::Mirror::Exception, 'black mirror')
-        expect_any_instance_of(RMT::Mirror).to receive(:mirror).twice
+        expect_any_instance_of(RMT::Mirror::Repomd).to receive(:mirror_suma_product_tree).and_raise(RMT::Mirror::Exception, 'black mirror')
+        expect_any_instance_of(RMT::Mirror::Repomd).to receive(:mirror).twice
 
         FileUtils.mkdir_p path
         File.write("#{path}/repos.json", repo_settings.to_json)
@@ -148,7 +148,7 @@ describe RMT::CLI::Import, :with_fakefs do
         FileUtils.mkdir_p path
         File.write("#{path}/repos.json", repo_settings.to_json)
 
-        expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
+        expect_any_instance_of(RMT::Mirror::Repomd).to receive(:mirror_suma_product_tree)
         expect { command }.to output(/repository by URL #{missing_repo_url} does not exist in database/).to_stderr.and output('').to_stdout
       end
     end
@@ -165,7 +165,7 @@ describe RMT::CLI::Import, :with_fakefs do
         FileUtils.mkdir_p path
         File.write("#{path}/repos.json", repo_settings.to_json)
 
-        expect(RMT::Mirror).to receive(:new).with(
+        expect(RMT::Mirror::Repomd).to receive(:new).with(
           logger: instance_of(RMT::Logger),
           airgap_mode: true
         ).and_return(mirror_double)
