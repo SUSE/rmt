@@ -124,7 +124,7 @@ describe RMT::Mirror::Base do
 
     context 'has valid signature' do
       it 'succeeds' do
-        expect(downloader).to receive(:download_multi).twice
+        expect(downloader).to receive(:download_multi).with(match_array([key_file, signature_file]))
         expect_any_instance_of(RMT::GPG).to receive(:verify_signature)
         base.check_signature(key_file: key_file, signature_file: signature_file, metadata_file: metadata)
       end
