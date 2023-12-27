@@ -49,7 +49,7 @@ RSpec.describe RMT::Mirror::Repomd do
       end
 
       it 'raises mirroring exception' do
-        expect { command }.to raise_error(RMT::Mirror::Repomd::Exception, "Could not mirror SUSE Manager product tree with error: 418 - I'm a teapot")
+        expect { command }.to raise_error(RMT::Mirror::Exception, "Could not mirror SUSE Manager product tree with error: 418 - I'm a teapot")
       end
     end
   end
@@ -283,7 +283,7 @@ RSpec.describe RMT::Mirror::Repomd do
         let(:mirroring_dir) { '/non/existent/path' }
 
         it 'raises exception', vcr: { cassette_name: 'mirroring_product' } do
-          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Repomd::Exception)
+          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception)
         end
       end
 
@@ -291,7 +291,7 @@ RSpec.describe RMT::Mirror::Repomd do
         before { allow(Dir).to receive(:mktmpdir).and_raise('mktmpdir exception') }
 
         it 'handles the exception' do
-          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Repomd::Exception)
+          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception)
         end
       end
 
@@ -306,7 +306,7 @@ RSpec.describe RMT::Mirror::Repomd do
 
         it 'handles RMT::Downloader::Exception' do
           expect { rmt_mirror.mirror(**mirror_params) }
-            .to raise_error(RMT::Mirror::Repomd::Exception, "Error while mirroring metadata: 418 - I'm a teapot")
+            .to raise_error(RMT::Mirror::Exception, "Error while mirroring metadata: 418 - I'm a teapot")
         end
       end
 
@@ -352,7 +352,7 @@ RSpec.describe RMT::Mirror::Repomd do
         end
 
         it 'handles RMT::Downloader::Exception', vcr: { cassette_name: 'mirroring_product' } do
-          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Repomd::Exception, /Error while mirroring license files:/)
+          expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(RMT::Mirror::Exception, /Error while mirroring license files:/)
         end
       end
 
@@ -361,7 +361,7 @@ RSpec.describe RMT::Mirror::Repomd do
 
         it 'removes the temporary metadata directory' do
           expect { rmt_mirror.mirror(**mirror_params) }
-            .to raise_error(RMT::Mirror::Repomd::Exception, 'Error while mirroring metadata: Parse error')
+            .to raise_error(RMT::Mirror::Exception, 'Error while mirroring metadata: Parse error')
 
           tmp_dir_glob = Dir.glob(File.join(Dir.tmpdir, 'rmt_mirror_*', '**'))
           expect(tmp_dir_glob.length).to eq(0)
@@ -390,7 +390,7 @@ RSpec.describe RMT::Mirror::Repomd do
 
           expect do
             rmt_mirror.mirror(**mirror_params)
-          end.to raise_error(RMT::Mirror::Repomd::Exception, 'Error while mirroring packages: Failed to download 6 files')
+          end.to raise_error(RMT::Mirror::Exception, 'Error while mirroring packages: Failed to download 6 files')
         end
 
         it 'handles RMT::ChecksumVerifier::Exception' do
@@ -403,7 +403,7 @@ RSpec.describe RMT::Mirror::Repomd do
 
           expect do
             rmt_mirror.mirror(**mirror_params)
-          end.to raise_error(RMT::Mirror::Repomd::Exception, 'Error while mirroring packages: Failed to download 6 files')
+          end.to raise_error(RMT::Mirror::Exception, 'Error while mirroring packages: Failed to download 6 files')
         end
       end
     end
@@ -765,10 +765,10 @@ RSpec.describe RMT::Mirror::Repomd do
     end
 
     context 'when an error is encountered' do
-      it 'raises RMT::Mirror::Repomd::Exception' do
+      it 'raises RMT::Mirror::Exception' do
         expect(FileUtils).to receive(:mv).and_raise(Errno::ENOENT)
         expect { replace_directory }.to raise_error(
-          RMT::Mirror::Repomd::Exception,
+          RMT::Mirror::Exception,
           "Error while moving directory #{source_dir} to #{destination_dir}: No such file or directory"
         )
       end
@@ -827,7 +827,7 @@ RSpec.describe RMT::Mirror::Repomd do
                         return_code: :ok, return_message: 'No error')
       end
 
-      it 'raises RMT::Mirror::Repomd::Exception' do
+      it 'raises RMT::Mirror::Exception' do
         expect(logger).to receive(:info).with(/Mirroring repository/).once
         expect(logger).to receive(:info).with(/↓/).at_least(:once)
 
@@ -844,7 +844,7 @@ RSpec.describe RMT::Mirror::Repomd do
         end
 
         expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(
-          RMT::Mirror::Repomd::Exception,
+          RMT::Mirror::Exception,
           'Error while mirroring metadata: Downloading repo signature/key failed with: HTTP request failed, HTTP code 502'
         )
       end
