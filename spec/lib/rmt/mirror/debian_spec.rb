@@ -53,10 +53,10 @@ describe RMT::Mirror::Debian do
     end
 
     context 'mirrors the Release file' do
-      let(:release_url) { File.join(repository.external_url, described_class::RELEASE_FILE_NAME) }
+      let(:release_path) { described_class::RELEASE_FILE_NAME }
 
       it 'downloads and parses the file' do
-        expect(debian).to receive(:download_cached!).with(release_url, to: 'bar')
+        expect(debian).to receive(:download_cached!).with(release_path, to: 'bar')
         expect(debian).to receive(:check_signature)
         expect(debian).to receive(:download_enqueued)
         debian.mirror_metadata
@@ -79,7 +79,7 @@ describe RMT::Mirror::Debian do
       debian.mirror_packages([packages_ref, non_package_ref])
     end
 
-    it 'does not download packages which size match locally and remotely', focus: true do
+    it 'does not download packages which size match locally and remotely' do
       expect(debian).to receive(:need_to_download?).exactly(3).times.and_return(true)
       expect(debian).to receive(:need_to_download?).with(any_args) {|ref| ref.size == 206796}.and_return(false)
       expect(debian).to receive(:enqueue).exactly(3).times
