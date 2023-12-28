@@ -14,6 +14,7 @@ class RMT::Mirror::Base
 
     # don't save files for deduplication when in offline mode
     @downloader = RMT::Downloader.new(logger: logger, track_files: !is_airgapped)
+    @downloader.auth_token = @repository.auth_token if @repository.auth_token.present?
     @temp_dirs = {}
     @enqueued = []
   end
@@ -114,5 +115,34 @@ class RMT::Mirror::Base
     return false if deduplicate(ref)
 
     true
+  end
+
+  # repomd repositories are stored within /repodata so we can use a backup for it
+  # However, for debian, repositories are stored in the top-level repository path -> backup: false
+  def replace_directory(source:, destination:, with_backup: true, &block)
+    if with_backup
+      backup = File.join(File.dirname(destination), '.backup_' + File.basename(destination))
+      FileUtils.remove_entry(backup) if Dir.exist?(backup)
+      FileUtils.mv(destination, backup) if Dir.exist?(destination)
+    end
+
+    if block
+      yield(source, destination, with_backup ? backup : nil)
+    else
+      FileUtils.mv(source, destination, force: true)
+      FileUtils.chmod(0o755, destination)
+    end
+  rescue StandardError => e
+    raise RMT::Mirror::Exception.new(_('Error while moving directory %{src} to %{dest}: %{error}') % {
+      src: source,
+      dest: destination,
+      error: e.message
+    })
+  end
+
+  def copy_directory_content(source:, destination:)
+    replace_directory(source: source, destination: destination, with_backup: false) do
+      FileUtils.mv(Dir.glob(source), destination)
+    end
   end
 end

@@ -1,6 +1,6 @@
 class RMT::Mirror::Debian < RMT::Mirror::Base
   RELEASE_FILE_NAME = 'Release'.freeze
-  GPG_FILE_NAME = 'Release.gpg'.freeze
+  SIGNATURE_FILE_NAME = 'Release.gpg'.freeze
   KEY_FILE_NAME = 'Release.key'.freeze
   INRELEASE_FILE_NAME = 'InRelease'.freeze
 
@@ -8,13 +8,15 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
     create_temp_dir(:metadata)
     sources = mirror_metadata
     mirror_packages(sources)
+    glob_metadata = File.join(temp(:metadata), '*')
+    copy_directory_content(source: glob_metadata, destination: repository_path)
   end
 
   def mirror_metadata
-    release = download_cached!(repository_url(RELEASE_FILE_NAME), to: temp(:metadata))
-    key = file_reference(repository_url(GPG_FILE_NAME), to: temp(:metadata))
-    signature = file_reference(repository_url(KEY_FILE_NAME), to: temp(:metadata))
-    inrelease = file_reference(repository_url(INRELEASE_FILE_NAME), to: temp(:metadata))
+    release = download_cached!(RELEASE_FILE_NAME, to: temp(:metadata))
+    key = file_reference(KEY_FILE_NAME, to: temp(:metadata))
+    signature = file_reference(SIGNATURE_FILE_NAME, to: temp(:metadata))
+    inrelease = file_reference(INRELEASE_FILE_NAME, to: temp(:metadata))
 
     check_signature(key_file: key, signature_file: signature, metadata_file: release)
 
@@ -33,7 +35,7 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
 
     packagelists.each do |packagelist|
       parse_package_list(packagelist).each do |ref|
-        enqueue(ref) if need_to_download?(ref) 
+        enqueue(ref) if need_to_download?(ref)
       end
     end
 
