@@ -31,16 +31,18 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
   def mirror_packages(metadata_refs)
     packagelists = metadata_refs.select { |ref| File.basename(ref.local_path) == 'Packages.gz' }
 
-    packagelists.each do |list|
-      parse_package_list(list).each { |pkg| enqueue pkg }
+    packagelists.each do |packagelist|
+      parse_package_list(packagelist).each do |ref|
+        enqueue(ref) if need_to_download?(ref) 
+      end
     end
 
     download_enqueued
   end
 
-  def parse_package_list(list)
+  def parse_package_list(packagelist)
     packages = []
-    hdl = File.open(list.local_path, 'rb')
+    hdl = File.open(packagelist.local_path, 'rb')
 
     current = {}
     Zlib::GzipReader.new(hdl).each_line do |line|
@@ -69,7 +71,7 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
     end
     packages
   rescue Zlib::GzipFile::Error => e
-    message = _("Could not read '%{file}': %{error}" % { file: list.local_path, error: e })
+    message = _("Could not read '%{file}': %{error}" % { file: packagelist.local_path, error: e })
     raise RMT::Mirror::Exception.new(message)
   ensure
     hdl.close
