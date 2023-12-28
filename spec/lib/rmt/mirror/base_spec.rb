@@ -118,10 +118,6 @@ describe RMT::Mirror::Base do
      )
     end
 
-    # before do
-
-    # end
-
     context 'has valid signature' do
       it 'succeeds' do
         expect(downloader).to receive(:download_multi).with(match_array([key_file, signature_file]))
@@ -138,5 +134,52 @@ describe RMT::Mirror::Base do
         end.to raise_error(/foo/)
       end
     end
+  end
+
+  describe '#replace_directory' do
+    let(:src) { '/source/path' }
+    let(:dest) { '/destination/path' }
+    let(:backup) { '/destination/.backup_path' }
+
+    it 'moves content from source to destination' do
+      expect(Dir).to receive(:exist?).with(backup).and_return(false)
+      expect(Dir).to receive(:exist?).with(dest).and_return(false)
+      expect(FileUtils).to receive(:mv).with(src, dest, force: true)
+      expect(FileUtils).to receive(:chmod).with(0o755, dest)
+      base.replace_directory(source: src, destination: dest)
+    end
+
+    it 'removes the backup directory if it already exists' do
+      expect(Dir).to receive(:exist?).with(backup).and_return(true)
+      expect(FileUtils).to receive(:remove_entry).with(backup)
+      expect(Dir).to receive(:exist?).with(dest).and_return(false)
+      expect(FileUtils).to receive(:mv).with(src, dest, force: true)
+      expect(FileUtils).to receive(:chmod).with(0o755, dest)
+      base.replace_directory(source: src, destination: dest)
+    end
+
+    it 'creates an backup directory if the destination directory already exists' do
+      expect(Dir).to receive(:exist?).with(backup).and_return(false)
+      expect(Dir).to receive(:exist?).with(dest).and_return(true)
+      expect(FileUtils).to receive(:mv).with(dest, backup)
+      expect(FileUtils).to receive(:mv).with(src, dest, force: true)
+      expect(FileUtils).to receive(:chmod).with(0o755, dest)
+      base.replace_directory(source: src, destination: dest)
+    end
+
+    it 'yields when block is given' do
+      expect { |b| base.replace_directory(source: src, destination: dest, with_backup: false, &b) }.to yield_with_args
+    end
+
+    it 'fails on file system errors' do
+      expect(Dir).to receive(:exist?).with(backup).and_raise(StandardError)
+      expect { base.replace_directory(source: src, destination: dest) }.to raise_exception(/Error while moving directory/)
+    end
+  end
+
+  describe '#need_to_download?' do
+    it 'does not mirror source files'
+    it 'does not download if the file exists locally'
+    it 'deduplicates the file if it exists'
   end
 end
