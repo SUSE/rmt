@@ -7,9 +7,11 @@ describe RMT::Mirror::Base do
     {
       repository: repository,
       logger: RMT::Logger.new('/dev/null'),
-      mirroring_base_dir: '/rspec/repository'
+      mirroring_base_dir: '/rspec/repository',
+      mirror_src: enable_source_mirroring
     }
   end
+  let(:enable_source_mirroring) { false }
 
   let(:repository) do
     create :repository,
@@ -142,28 +144,34 @@ describe RMT::Mirror::Base do
     let(:backup) { '/destination/.backup_path' }
 
     it 'moves content from source to destination' do
-      expect(Dir).to receive(:exist?).with(backup).and_return(false)
-      expect(Dir).to receive(:exist?).with(dest).and_return(false)
+      allow(Dir).to receive(:exist?).with(backup).and_return(false)
+      allow(Dir).to receive(:exist?).with(dest).and_return(false)
+
       expect(FileUtils).to receive(:mv).with(src, dest, force: true)
       expect(FileUtils).to receive(:chmod).with(0o755, dest)
+
       base.replace_directory(source: src, destination: dest)
     end
 
     it 'removes the backup directory if it already exists' do
-      expect(Dir).to receive(:exist?).with(backup).and_return(true)
+      allow(Dir).to receive(:exist?).with(backup).and_return(true)
+      allow(Dir).to receive(:exist?).with(dest).and_return(false)
+
       expect(FileUtils).to receive(:remove_entry).with(backup)
-      expect(Dir).to receive(:exist?).with(dest).and_return(false)
       expect(FileUtils).to receive(:mv).with(src, dest, force: true)
       expect(FileUtils).to receive(:chmod).with(0o755, dest)
+
       base.replace_directory(source: src, destination: dest)
     end
 
     it 'creates an backup directory if the destination directory already exists' do
-      expect(Dir).to receive(:exist?).with(backup).and_return(false)
-      expect(Dir).to receive(:exist?).with(dest).and_return(true)
+      allow(Dir).to receive(:exist?).with(backup).and_return(false)
+      allow(Dir).to receive(:exist?).with(dest).and_return(true)
+
       expect(FileUtils).to receive(:mv).with(dest, backup)
       expect(FileUtils).to receive(:mv).with(src, dest, force: true)
       expect(FileUtils).to receive(:chmod).with(0o755, dest)
+
       base.replace_directory(source: src, destination: dest)
     end
 
@@ -172,14 +180,61 @@ describe RMT::Mirror::Base do
     end
 
     it 'fails on file system errors' do
-      expect(Dir).to receive(:exist?).with(backup).and_raise(StandardError)
+      allow(Dir).to receive(:exist?).with(backup).and_raise(StandardError)
+
       expect { base.replace_directory(source: src, destination: dest) }.to raise_exception(/Error while moving directory/)
     end
   end
 
   describe '#need_to_download?' do
-    it 'does not mirror source files'
-    it 'does not download if the file exists locally'
-    it 'deduplicates the file if it exists'
+    let(:source_package) do
+      ref = base.file_reference('neovim-0.9.4.src.rpm', to: '/test/path/')
+      ref.arch = 'src'
+      ref
+    end
+
+    let(:package) do
+      ref = base.file_reference('neovim-0.9.4.deb', to: '/test/path/')
+      ref.arch = 'x86_64'
+      ref
+    end
+
+    context 'with source mirroring enabled' do
+      let(:enable_source_mirroring) { true }
+
+      it 'indicates downloading source files' do
+        allow(base).to receive(:validate_local_file).with(source_package).and_return(false)
+        allow(base).to receive(:deduplicate).with(source_package).and_return(false)
+
+        expect(base.need_to_download?(source_package)).to be(true)
+      end
+    end
+
+    it 'does not indicate downloading source packages if source mirroring is disabled' do
+      expect(base.need_to_download?(source_package)).to be(false)
+    end
+
+    context 'with normal package' do
+      it 'doesnt indicate if the package exists locally' do
+        allow(base).to receive(:validate_local_file).with(package).and_return(true)
+        allow(base).to receive(:deduplicate).with(package).and_return(false)
+
+        expect(base.need_to_download?(package)).to be(false)
+      end
+
+      it 'does indicate if the package does not exist or match' do
+        allow(base).to receive(:validate_local_file).with(package).and_return(false)
+        allow(base).to receive(:deduplicate).with(package).and_return(false)
+
+        expect(base.need_to_download?(package)).to be(true)
+      end
+    end
+
+    it 'doesnt indicate if the package is duplicated in another repository' do
+      allow(base).to receive(:validate_local_file).with(package).and_return(false)
+      allow(base).to receive(:deduplicate).with(package).and_return(true)
+
+      expect(base.need_to_download?(package)).to be(false)
+    end
   end
 end
