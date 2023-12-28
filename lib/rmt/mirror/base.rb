@@ -1,4 +1,7 @@
 class RMT::Mirror::Base
+  include RMT::Deduplicator
+  include RMT::FileValidator
+
   attr_reader :logger, :repository
 
   def initialize(repository:, logger:, mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, mirror_src: false, is_airgapped: false)
@@ -103,5 +106,13 @@ class RMT::Mirror::Base
     result = downloader.download_multi(@enqueued, ignore_errors: continue_on_error)
     @enqueued = []
     result
+  end
+
+  def need_to_download?(ref)
+    return false if ref.arch == 'src' && !@mirror_src
+    return false if validate_local_file(ref)
+    return false if deduplicate(ref)
+
+    true
   end
 end

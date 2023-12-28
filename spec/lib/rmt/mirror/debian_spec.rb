@@ -3,6 +3,13 @@ require 'rails_helper'
 describe RMT::Mirror::Debian do
   subject(:debian) { described_class.new(**configuration) }
 
+  let(:repository) do
+    create :repository,
+           name: 'HYPE product repository debian 15.3',
+           external_url: 'https://updates.suse.com/sample/repository/15.3/'
+  end
+
+  # Configuration for Debian mirroring instance
   let(:base_dir) { '/test/repository/base/path/' }
   let(:configuration) do
     {
@@ -12,11 +19,16 @@ describe RMT::Mirror::Debian do
     }
   end
 
-  let(:repository) do
-    create :repository,
-           name: 'HYPE product repository debian 15.3',
-           external_url: 'https://updates.suse.com/sample/repository/15.3/'
+  # Configuration for file reference to an arbitrary fixture
+  let(:fixture) { 'Packages.gz' } 
+  let(:config) do
+    {
+      relative_path: fixture,
+      base_dir: file_fixture('debian/'),
+      base_url: 'https://updates.suse.de/Debian/'
+    }
   end
+  let(:packages_ref) { RMT::Mirror::FileReference.new(**config) }
 
   describe '#mirror_metadata' do
     let(:config) do
@@ -53,21 +65,35 @@ describe RMT::Mirror::Debian do
   end
 
   describe '#mirror_packages' do
-    it 'download packages to disk'
-    it 'do not download packages which size match locally and remotly'
-    it 'deduplicate obsolete references'
+    let(:fixture) { 'Packages.gz' }
+    let(:non_package_ref) do
+      packages_ref.dup.tap do |ref|
+        ref.relative_path = "Packages"
+      end
+    end
+
+    it 'download packages to disk' do
+      expect(debian).to receive(:enqueue).exactly(4).times
+      expect(debian).to receive(:parse_package_list).with(packages_ref).and_call_original
+      expect(debian).to receive(:download_enqueued)
+      debian.mirror_packages([packages_ref, non_package_ref])
+    end
+
+    it 'does not download packages which size match locally and remotely', focus: true do
+      expect(debian).to receive(:need_to_download?).exactly(3).times.and_return(true)
+      expect(debian).to receive(:need_to_download?).with(any_args) {|ref| ref.size == 206796}.and_return(false)
+      expect(debian).to receive(:enqueue).exactly(3).times
+      expect(debian).to receive(:parse_package_list).with(packages_ref).and_call_original
+      expect(debian).to receive(:download_enqueued)
+      debian.mirror_packages([packages_ref])
+    end
+    
+    xit 'deduplicate obsolete references' do
+      #do we test this in base?
+    end
   end
 
   describe '#parse_package_list' do
-    let(:config) do
-      {
-        relative_path: fixture,
-        base_dir: file_fixture('debian/'),
-        base_url: 'https://updates.suse.de/Debian/'
-      }
-    end
-    let(:packages_ref) { RMT::Mirror::FileReference.new(**config) }
-
     context 'valid package list' do
       let(:fixture) { 'Packages.gz' }
       let(:deb_file_path) { '/test/repository/base/path/sample/repository/15.3/amd64/venv-salt-minion_3006.0-2.6.3_amd64.deb' }
