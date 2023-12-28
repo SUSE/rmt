@@ -20,7 +20,7 @@ describe RMT::Mirror::Debian do
   end
 
   # Configuration for file reference to an arbitrary fixture
-  let(:fixture) { 'Packages.gz' } 
+  let(:fixture) { 'Packages.gz' }
   let(:config) do
     {
       relative_path: fixture,
@@ -68,7 +68,7 @@ describe RMT::Mirror::Debian do
     let(:fixture) { 'Packages.gz' }
     let(:non_package_ref) do
       packages_ref.dup.tap do |ref|
-        ref.relative_path = "Packages"
+        ref.relative_path = 'Packages'
       end
     end
 
@@ -79,17 +79,13 @@ describe RMT::Mirror::Debian do
       debian.mirror_packages([packages_ref, non_package_ref])
     end
 
-    it 'does not download packages which size match locally and remotely' do
+    it 'does not download the file if not needed' do
       expect(debian).to receive(:need_to_download?).exactly(3).times.and_return(true)
-      expect(debian).to receive(:need_to_download?).with(any_args) {|ref| ref.size == 206796}.and_return(false)
+      expect(debian).to receive(:need_to_download?).with(any_args) { |ref| ref.size == 206796 }.and_return(false)
       expect(debian).to receive(:enqueue).exactly(3).times
       expect(debian).to receive(:parse_package_list).with(packages_ref).and_call_original
       expect(debian).to receive(:download_enqueued)
       debian.mirror_packages([packages_ref])
-    end
-    
-    xit 'deduplicate obsolete references' do
-      #do we test this in base?
     end
   end
 

@@ -15,6 +15,7 @@ class RMT::Mirror::Base
     # don't save files for deduplication when in offline mode
     @downloader = RMT::Downloader.new(logger: logger, track_files: !is_airgapped)
     @downloader.auth_token = @repository.auth_token if @repository.auth_token.present?
+
     @temp_dirs = {}
     @enqueued = []
   end
@@ -117,9 +118,10 @@ class RMT::Mirror::Base
     true
   end
 
-  # repomd repositories are stored within /repodata so we can use a backup for it
-  # However, for debian, repositories are stored in the top-level repository path -> backup: false
   def replace_directory(source:, destination:, with_backup: true, &block)
+    # Repomd repositories are stored within /repodata so we can use a backup for it
+    # However, for Debian, repositories are stored in the top-level repository path -> backup: false
+
     if with_backup
       backup = File.join(File.dirname(destination), '.backup_' + File.basename(destination))
       FileUtils.remove_entry(backup) if Dir.exist?(backup)

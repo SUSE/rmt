@@ -14,6 +14,7 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
 
   def mirror_metadata
     release = download_cached!(RELEASE_FILE_NAME, to: temp(:metadata))
+
     key = file_reference(KEY_FILE_NAME, to: temp(:metadata))
     signature = file_reference(SIGNATURE_FILE_NAME, to: temp(:metadata))
     inrelease = file_reference(INRELEASE_FILE_NAME, to: temp(:metadata))

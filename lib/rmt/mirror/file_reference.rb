@@ -16,7 +16,8 @@ class RMT::Mirror::FileReference
     end
   end
 
-  attr_accessor :arch, :checksum, :checksum_type, :size, :type, :base_dir, :base_url, :cache_dir, :relative_path
+  attr_accessor :arch, :checksum, :checksum_type, :size, :type
+  attr_accessor :base_dir, :base_url, :cache_dir, :relative_path
 
   def initialize(relative_path:, base_dir:, base_url:, cache_dir: nil)
     @base_dir = base_dir
