@@ -26,8 +26,8 @@ RSpec.describe RMT::CLI::Mirror do
       let(:error_messages) { "Mirroring SUMA product tree failed: #{suma_error}." }
 
       it 'handles the exception and raises an error after mirroring all repos' do
-        expect_any_instance_of(RMT::Mirror::Repomd)
-          .to receive(:mirror_suma_product_tree)
+        expect_any_instance_of(RMT::Mirror::SumaProductTree)
+          .to receive(:mirror)
           .and_raise(RMT::Mirror::Exception, suma_error)
         expect_any_instance_of(RMT::Mirror::Repomd).to receive(:mirror)
 
@@ -44,7 +44,7 @@ RSpec.describe RMT::CLI::Mirror do
       end
 
       it 'raises an error' do
-        expect_any_instance_of(RMT::Mirror::Repomd).to receive(:mirror_suma_product_tree)
+        expect_any_instance_of(RMT::Mirror::SumaProductTree).to receive(:mirror)
         expect_any_instance_of(RMT::Mirror::Repomd).not_to receive(:mirror)
 
         expect { command }
@@ -58,7 +58,7 @@ RSpec.describe RMT::CLI::Mirror do
       let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
 
       it 'updates repository mirroring timestamp' do
-        expect_any_instance_of(RMT::Mirror::Repomd).to receive(:mirror_suma_product_tree)
+        expect_any_instance_of(RMT::Mirror::SumaProductTree).to receive(:mirror)
         expect_any_instance_of(RMT::Mirror::Repomd).to receive(:mirror)
 
         Timecop.freeze(Time.utc(2018)) do
@@ -79,7 +79,7 @@ RSpec.describe RMT::CLI::Mirror do
         let(:error_messages) { /Repository '#{repository.name}' \(#{repository.friendly_id}\): #{mirroring_error}\./ }
 
         it 'raises an error' do
-          expect_any_instance_of(RMT::Mirror::Repomd).to receive(:mirror_suma_product_tree)
+          expect_any_instance_of(RMT::Mirror::SumaProductTree).to receive(:mirror)
 
           expect { command }
             .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
@@ -115,7 +115,7 @@ RSpec.describe RMT::CLI::Mirror do
         let(:argv) { ['all', '--do-not-raise-unpublished'] }
 
         it 'log the warning and does not raise an error' do
-          allow_any_instance_of(RMT::Mirror::Repomd).to receive(:mirror_suma_product_tree)
+          allow_any_instance_of(RMT::Mirror::SumaProductTree).to receive(:mirror)
           expect { command }.to output(error_log).to_stdout
         end
       end
@@ -126,7 +126,7 @@ RSpec.describe RMT::CLI::Mirror do
       let!(:additional_repository) { create :repository, :with_products, mirroring_enabled: false }
 
       it 'mirrors additional repositories' do
-        expect_any_instance_of(RMT::Mirror::Repomd).to receive(:mirror_suma_product_tree)
+        expect_any_instance_of(RMT::Mirror::SumaProductTree).to receive(:mirror)
         expect_any_instance_of(RMT::Mirror::Repomd).to receive(:mirror).with(
           repository_url: repository.external_url,
           local_path: anything,
@@ -156,7 +156,7 @@ RSpec.describe RMT::CLI::Mirror do
       let(:error_messages) { /Repository '#{repository.name}' \(#{repository.friendly_id}\): #{mirroring_error}\./ }
 
       it 'handles exceptions and mirrors additional repositories' do
-        expect_any_instance_of(RMT::Mirror::Repomd).to receive(:mirror_suma_product_tree)
+        expect_any_instance_of(RMT::Mirror::SumaProductTree).to receive(:mirror)
         expect_any_instance_of(RMT::Mirror::Repomd).to receive(:mirror).with(
           repository_url: repository.external_url,
           local_path: anything,
@@ -381,7 +381,7 @@ RSpec.describe RMT::CLI::Mirror do
 
       context 'mirror product using --do-not-raise-unpublished flag' do
         it 'log the warning and does not raise an error' do
-          allow_any_instance_of(RMT::Mirror::Repomd).to receive(:mirror_suma_product_tree)
+          allow_any_instance_of(RMT::Mirror::SumaProductTree).to receive(:mirror)
           expect { command }.to output(error_log).to_stdout
         end
       end

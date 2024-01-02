@@ -5,7 +5,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   def all
     RMT::Lockfile.lock('mirror') do
       begin
-        mirror.mirror_suma_product_tree(repository_url: 'https://scc.suse.com/suma/')
+        suma_product_tree.mirror
       rescue RMT::Mirror::Exception => e
         errors << _('Mirroring SUMA product tree failed: %{error_message}') % { error_message: e.message }
       end
@@ -77,6 +77,10 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   end
 
   protected
+
+  def suma_product_tree
+    RMT::Mirror::SumaProductTree.new(logger: logger, mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR)
+  end
 
   def mirror
     config = {
