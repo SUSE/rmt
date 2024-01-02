@@ -13,47 +13,6 @@ RSpec.describe RMT::Mirror::Repomd do
 
   let(:logger) { RMT::Logger.new('/dev/null') }
 
-  describe '#mirror_suma_product_tree' do
-    subject(:command) { rmt_mirror.mirror_suma_product_tree(repository_url: 'https://scc.suse.com/suma/') }
-
-    let(:rmt_mirror) do
-      described_class.new(
-        mirroring_base_dir: @tmp_dir,
-        logger: logger,
-        mirror_src: false
-      )
-    end
-
-    around do |example|
-      @tmp_dir = Dir.mktmpdir('rmt')
-      example.run
-      FileUtils.remove_entry(@tmp_dir)
-    end
-
-    context 'all is well', vcr: { cassette_name: 'mirroring_suma_product_tree' } do
-      before do
-        expect(logger).to receive(:info).with(/Mirroring SUSE Manager product tree to/).once
-        expect(logger).to receive(:info).with(/↓ product_tree.json/).once
-      end
-
-      it 'downloads the suma product tree' do
-        command
-        content = File.read(File.join(@tmp_dir, 'suma/product_tree.json'))
-        expect(Digest::SHA256.hexdigest(content)).to eq('7486026e9c1181affae5b21c9aa64637aa682fcdeacb099e213f0e8c7e86d85d')
-      end
-    end
-
-    context 'with download exception' do
-      before do
-        expect_any_instance_of(RMT::Downloader).to receive(:download_multi).and_raise(RMT::Downloader::Exception, "418 - I'm a teapot")
-      end
-
-      it 'raises mirroring exception' do
-        expect { command }.to raise_error(RMT::Mirror::Exception, "Could not mirror SUSE Manager product tree with error: 418 - I'm a teapot")
-      end
-    end
-  end
-
   describe '#mirror' do
     around do |example|
       @tmp_dir = Dir.mktmpdir('rmt')
