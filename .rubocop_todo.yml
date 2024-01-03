@@ -16,7 +16,7 @@ Layout/ArgumentAlignment:
     - 'app/models/product.rb'
     - 'engines/instance_verification/spec/requests/api/connect/v3/systems/products_controller_spec.rb'
     - 'spec/factories/products.rb'
-    - 'spec/lib/rmt/mirror/repomd_spec.rb'
+    - 'spec/lib/rmt/mirror_spec.rb'
     - 'spec/models/migration_engine_spec.rb'
 
 # Offense count: 3
@@ -40,7 +40,7 @@ Layout/EmptyLineAfterGuardClause:
     - 'lib/rmt/cli/repos_custom.rb'
     - 'lib/rmt/cli/smt_importer.rb'
     - 'lib/rmt/fiber_request.rb'
-    - 'spec/lib/rmt/mirror/repomd_spec.rb'
+    - 'spec/lib/rmt/mirror_spec.rb'
 
 # Offense count: 2
 # Cop supports --auto-correct.
@@ -241,7 +241,7 @@ Performance/RegexpMatch:
     - 'engines/registration_sharing/lib/registration_sharing.rb'
     - 'engines/strict_authentication/app/controllers/strict_authentication/authentication_controller.rb'
     - 'lib/rmt/cli/base.rb'
-    - 'spec/lib/rmt/mirror/repomd_spec.rb'
+    - 'spec/lib/rmt/mirror_spec.rb'
 
 # Offense count: 4
 # Cop supports --auto-correct.
@@ -249,7 +249,7 @@ Performance/RegexpMatch:
 Performance/StringInclude:
   Exclude:
     - 'engines/strict_authentication/app/controllers/strict_authentication/authentication_controller.rb'
-    - 'spec/lib/rmt/mirror/repomd_spec.rb'
+    - 'spec/lib/rmt/mirror_spec.rb'
 
 # Offense count: 167
 # Configuration parameters: Prefixes.
@@ -279,7 +279,7 @@ RSpec/EmptyLineAfterHook:
     - 'engines/strict_authentication/spec/requests/services_controller_spec.rb'
     - 'engines/strict_authentication/spec/requests/strict_authentication/authentication_controller_spec.rb'
     - 'spec/lib/rmt/config_spec.rb'
-    - 'spec/lib/rmt/mirror/repomd_spec.rb'
+    - 'spec/lib/rmt/mirror_spec.rb'
     - 'spec/models/product_spec.rb'
     - 'spec/requests/api/connect/v3/subscriptions/systems_controller_spec.rb'
     - 'spec/requests/api/connect/v3/systems/activations_controller_spec.rb'
@@ -321,7 +321,7 @@ RSpec/ExpectInHook:
     - 'spec/lib/rmt/cli/main_spec.rb'
     - 'spec/lib/rmt/cli/repos_custom_spec.rb'
     - 'spec/lib/rmt/cli/repos_spec.rb'
-    - 'spec/lib/rmt/mirror/repomd_spec.rb'
+    - 'spec/lib/rmt/mirror_spec.rb'
     - 'spec/lib/rmt/scc_spec.rb'
 
 # Offense count: 3
@@ -362,7 +362,7 @@ RSpec/ImplicitSubject:
 # Configuration parameters: AssignmentOnly.
 RSpec/InstanceVariable:
   Exclude:
-    - 'spec/lib/rmt/mirror/repomd_spec.rb'
+    - 'spec/lib/rmt/mirror_spec.rb'
 
 # Offense count: 1
 RSpec/IteratedExpectation:
@@ -430,7 +430,7 @@ RSpec/Rails/HttpStatus:
 RSpec/ReceiveCounts:
   Exclude:
     - 'spec/lib/rmt/lockfile_spec.rb'
-    - 'spec/lib/rmt/mirror/repomd_spec.rb'
+    - 'spec/lib/rmt/mirror_spec.rb'
     - 'spec/suse/connect/api_spec.rb'
 
 # Offense count: 3
@@ -454,7 +454,7 @@ RSpec/StubbedMock:
     - 'spec/lib/rmt/cli/main_spec.rb'
     - 'spec/lib/rmt/cli/smt_importer_spec.rb'
     - 'spec/lib/rmt/cli/systems_spec.rb'
-    - 'spec/lib/rmt/mirror/repomd_spec.rb'
+    - 'spec/lib/rmt/mirror_spec.rb'
     - 'spec/lib/rmt/scc_spec.rb'
     - 'spec/support/shared_examples/cli.rb'
     - 'spec/suse/connect/api_spec.rb'

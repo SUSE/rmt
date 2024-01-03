@@ -30,7 +30,7 @@ class RMT::CLI::Export < RMT::CLI::Base
   def repos(path)
     path = needs_path(path, writable: true)
 
-    mirror = RMT::Mirror::Repomd.new(mirroring_base_dir: path, logger: logger, airgap_mode: true)
+    mirror = RMT::Mirror.new(mirroring_base_dir: path, logger: logger, airgap_mode: true)
 
     begin
       mirror.mirror_suma_product_tree(repository_url: 'https://scc.suse.com/suma/')

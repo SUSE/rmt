@@ -13,7 +13,7 @@ class RMT::CLI::Import < RMT::CLI::Base
     RMT::Lockfile.lock do
       path = needs_path(path)
 
-      mirror = RMT::Mirror::Repomd.new(logger: logger, airgap_mode: true)
+      mirror = RMT::Mirror.new(logger: logger, airgap_mode: true)
 
       repos_file = File.join(path, 'repos.json')
       raise RMT::CLI::Error.new(_('%{file} does not exist.') % { file: repos_file }) unless File.exist?(repos_file)
