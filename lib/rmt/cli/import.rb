@@ -21,7 +21,8 @@ class RMT::CLI::Import < RMT::CLI::Base
       begin
         exported_suma_path = File.join(path, '/suma/')
         suma_repo_url = URI.join('file://', exported_suma_path).to_s
-        mirror.mirror_suma_product_tree(repository_url: suma_repo_url)
+        suma_product_tree = RMT::Mirror::SumaProductTree.new(mirroring_base_dir: exported_suma_path, logger: logger, url: suma_repo_url)
+        suma_product_tree.mirror
       rescue RMT::Mirror::Exception => e
         logger.warn(e.message)
       end
