@@ -67,7 +67,7 @@ describe RMT::CLI::Export, :with_fakefs do
     include_examples 'handles non-writable path'
 
     let(:command) { described_class.start(['repos', path]) }
-    let(:mirror_double) { instance_double('RMT::Mirror') }
+    let(:mirror_double) { instance_double('RMT::Mirror::Repomd') }
     let(:repo_settings) do
       [
         { url: 'http://foo.bar/repo1', auth_token: 'foobar' },
@@ -77,8 +77,8 @@ describe RMT::CLI::Export, :with_fakefs do
 
     context 'suma product tree mirror with exception' do
       it 'outputs exception message' do
-        expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree).and_raise(RMT::Mirror::Exception, 'black mirror')
-        expect_any_instance_of(RMT::Mirror).to receive(:mirror).twice
+        expect_any_instance_of(RMT::Mirror::Repomd).to receive(:mirror_suma_product_tree).and_raise(RMT::Mirror::Exception, 'black mirror')
+        expect_any_instance_of(RMT::Mirror::Repomd).to receive(:mirror).twice
 
         FileUtils.mkdir_p path
         File.write("#{path}/repos.json", repo_settings.to_json)
@@ -92,7 +92,7 @@ describe RMT::CLI::Export, :with_fakefs do
       it 'outputs a warning' do
         FileUtils.mkdir_p path
 
-        expect_any_instance_of(RMT::Mirror).to receive(:mirror_suma_product_tree)
+        expect_any_instance_of(RMT::Mirror::Repomd).to receive(:mirror_suma_product_tree)
         expect { command }.to raise_error(SystemExit).and(output("#{File.join(path, 'repos.json')} does not exist.\n").to_stderr)
       end
     end
@@ -101,7 +101,7 @@ describe RMT::CLI::Export, :with_fakefs do
       let(:path) { '/mnt/usb/../usb' }
 
       before do
-        expect(RMT::Mirror).to receive(:new).with(
+        expect(RMT::Mirror::Repomd).to receive(:new).with(
           mirroring_base_dir: '/mnt/usb',
           logger: instance_of(RMT::Logger),
           airgap_mode: true
@@ -131,7 +131,7 @@ describe RMT::CLI::Export, :with_fakefs do
 
     context 'with valid repo ids' do
       before do
-        expect(RMT::Mirror).to receive(:new).with(
+        expect(RMT::Mirror::Repomd).to receive(:new).with(
           mirroring_base_dir: path,
           logger: instance_of(RMT::Logger),
           airgap_mode: true
