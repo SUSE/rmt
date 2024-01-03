@@ -330,6 +330,16 @@ cd %{_datadir}/rmt && runuser -u root -g %{rmt_group} -- bin/rails rmt:secrets:c
 # Run only on install
 if [ $1 -eq 1 ]; then
   echo "Please run the YaST RMT module (or 'yast2 rmt' from the command line) to complete the configuration of your RMT" >> /dev/stdout
+  
+  # Adjust file access mode to secret files
+  secret_key_files=('config/secrets.yml.key' 'config/secrets.yml.enc')
+
+  for secretFile in $secret_key_files; do
+    file_path="%{app_dir}/$secretFile"
+    if [[ -e $file_path ]]; then
+      chmod 0640 $file_path
+    fi
+  done
 fi
 
 # Run only on upgrade
