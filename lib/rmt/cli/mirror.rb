@@ -79,13 +79,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   protected
 
   def mirror
-    config = {
-      logger: logger,
-      mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR,
-      mirror_src: RMT::Config.mirror_src_files?,
-      airgap_mode: false
-    }
-    @mirror ||= RMT::Mirror::Repomd.new(**config)
+    @mirror ||= RMT::Mirror.new(logger: logger, mirror_src: RMT::Config.mirror_src_files?)
   end
 
   def errors
