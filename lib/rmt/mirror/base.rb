@@ -21,6 +21,9 @@ class RMT::Mirror::Base
   end
 
   def mirror
+    # FIXME: stub me in specs!
+    create_repository_path
+    logger.info _('Mirroring repository %{repo} to %{dir}') % { repo: repository.name || repository_url, dir: repository_path }
     mirror_implementation
   rescue RMT::Mirror::Exception => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring repository: %{error}' % { error: e.message }))
@@ -77,6 +80,15 @@ class RMT::Mirror::Base
 
   def repository_path(*args)
     File.join(mirroring_base_dir, repository.local_path, *args)
+  end
+
+  # FIXME: Write some specs for me!
+  def create_repository_path
+    FileUtils.mkpath(repository_path) unless Dir.exist?(repository_path)
+  rescue StandardError => e
+    raise RMT::Mirror::Exception.new(
+      _('Could not create local directory %{dir} with error: %{error}') % { dir: repository_path, error: e.message }
+    )
   end
 
   def create_temp_dir(name)

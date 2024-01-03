@@ -3,59 +3,32 @@ require 'rmt/gpg'
 require 'repomd_parser'
 require 'time'
 
-class RMT::Mirror::Repomd
-  include RMT::Deduplicator
-  include RMT::FileValidator
+class RMT::Mirror::Repomd < RMT::Mirror::Base
+  # def initialize(logger:, mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, mirror_src: false, airgap_mode: false)
+  #   @mirroring_base_dir = mirroring_base_dir
+  #   @logger = logger
+  #   @mirror_src = mirror_src
+  #   @airgap_mode = airgap_mode
+  #   @deep_verify = false
 
-  def initialize(logger:, mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, mirror_src: false, airgap_mode: false)
-    @mirroring_base_dir = mirroring_base_dir
-    @logger = logger
-    @mirror_src = mirror_src
-    @airgap_mode = airgap_mode
-    @deep_verify = false
+  #   # don't save files for deduplication when in offline mode
+  #   @downloader = RMT::Downloader.new(logger: logger, track_files: !airgap_mode)
+  # end
 
-    # don't save files for deduplication when in offline mode
-    @downloader = RMT::Downloader.new(logger: logger, track_files: !airgap_mode)
-  end
+  def mirror_implementation
+    create_temp_dir(:license)
+    create_temp_dir(:metadata)
+    mirror_license(repository_dir, repository_url, temp(:license))
 
-  def mirror(repository_url:, local_path:, auth_token: nil, repo_name: nil)
-    repository_dir = File.join(mirroring_base_dir, local_path)
-
-    logger.info _('Mirroring repository %{repo} to %{dir}') % { repo: repo_name || repository_url, dir: repository_dir }
-
-    create_repository_dir(repository_dir)
-    temp_licenses_dir = create_temp_dir
-    # downloading license doesn't require an auth token
-    mirror_license(repository_dir, repository_url, temp_licenses_dir)
-
-    downloader.auth_token = auth_token
-    temp_metadata_dir = create_temp_dir
-    metadata_files = mirror_metadata(repository_dir, repository_url, temp_metadata_dir)
+    metadata_files = mirror_metadata(repository_dir, repository_url, temp(:metadata))
     mirror_packages(metadata_files, repository_dir, repository_url)
 
-    replace_directory(temp_licenses_dir, repository_dir.chomp('/') + '.license/') if Dir.exist?(temp_licenses_dir)
-    replace_directory(File.join(temp_metadata_dir, 'repodata'), File.join(repository_dir, 'repodata'))
-  ensure
-    [temp_licenses_dir, temp_metadata_dir].each { |dir| FileUtils.remove_entry(dir, true) }
+    # FIXME: Ensure license dirs are not created if the repository doesn't contain them
+    replace_directory(temp(:license), repository_dir.chomp('/') + '.license/') if Dir.exist?(temp(:license))
+    replace_directory(File.join(temp(:metadata), 'repodata'), File.join(repository_dir, 'repodata'))
   end
 
   protected
-
-  attr_reader :airgap_mode, :deep_verify, :downloader, :logger, :mirroring_base_dir, :mirror_src
-
-  def create_repository_dir(repository_dir)
-    FileUtils.mkpath(repository_dir) unless Dir.exist?(repository_dir)
-  rescue StandardError => e
-    raise RMT::Mirror::Exception.new(
-      _('Could not create local directory %{dir} with error: %{error}') % { dir: repository_dir, error: e.message }
-    )
-  end
-
-  def create_temp_dir
-    Dir.mktmpdir
-  rescue StandardError => e
-    raise RMT::Mirror::Exception.new(_('Could not create a temporary directory: %{error}') % { error: e.message })
-  end
 
   def mirror_metadata(repository_dir, repository_url, temp_metadata_dir)
     mirroring_paths = {
@@ -105,6 +78,7 @@ class RMT::Mirror::Repomd
       cache_dir: repository_dir.chomp('/') + '.license/'
     }
 
+    directory_yast = download_cached!('directory.yast', to: temp_licenses_dir)
     begin
       directory_yast = RMT::Mirror::FileReference.new(relative_path: 'directory.yast', **mirroring_paths)
       downloader.download_multi([directory_yast])
