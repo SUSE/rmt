@@ -6,6 +6,8 @@ namespace :rmt do
 
       Rails::Generators::EncryptionKeyFileGenerator
         .new.add_key_file('config/secrets.yml.key')
+
+      FileUtils.chmod(0o640, 'config/secrets.yml.key')
     end
 
     desc 'Create the `secret_key_base` for Rails'
@@ -13,6 +15,8 @@ namespace :rmt do
       Rails::Secrets.write(
         { 'production' => { 'secret_key_base' => SecureRandom.hex(64) } }.to_yaml
       )
+
+      FileUtils.chmod(0o640, 'config/secrets.yml.enc')
     end
   end
 end
