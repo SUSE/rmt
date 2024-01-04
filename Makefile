@@ -53,7 +53,6 @@ dist: clean man
 
 	@rm -rf $(NAME)-$(VERSION)/config/rmt.yml
 	@rm -rf $(NAME)-$(VERSION)/config/rmt.local.yml
-	@rm -rf $(NAME)-$(VERSION)/config/secrets.yml.*
 	@rm -rf $(NAME)-$(VERSION)/config/system_uuid
 
 	# don't package test tasks (fails to load because of rspec dependency)
