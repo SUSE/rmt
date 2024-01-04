@@ -6,6 +6,8 @@ Wed Oct 04 13:23:00 UTC 2023 - Felix Schnizlein <fschnizlein@suse.com>
     allow transmitting system information dynamically. (jsc#PED-3734)
   * Fix secrets access for server user (bsc#1215176)
   * rmt-client-setup-res script: fix for CentOS8 clients (bsc#1214709)
+  * Updated supportconfig script (bsc#1216389)
+
 -------------------------------------------------------------------
 Thu Jun 06 15:44:00 UTC 2023 - Luís Caparroz <lcaparroz@suse.com>
 

@@ -20,7 +20,7 @@ fi
 # Change secrets encrypted and key files to nginx readable
 secret_key_files=('config/secrets.yml.key' 'config/secrets.yml.enc')
 
-for secretFile in $secret_key_files; do
+for secretFile in ${secret_key_files[@]}; do
   file_path="$app_dir/$secretFile"
   if [[ -e $file_path ]]; then
     if [[ "$(stat -c "%U %G" $file_path)" == "root root" ]]; then
