@@ -29,12 +29,12 @@ class RMT::Mirror::License < RMT::Mirror::Base
 
     File.readlines(directory_yast.local_path)
         .map(&:strip).reject { |item| item == 'directory.yast' }
-        .map { |relative_path| file_reference(relative: relative_path, to: temp(:license)) }
+        .map { |relative_path| file_reference(relative_path, to: temp(:license)) }
         .each { |ref| enqueue(ref) }
 
     download_enqueued
 
-    replace_directory(temp(:license), repository_path)
+    replace_directory(source: temp(:license), destination: repository_path)
   rescue RMT::Downloader::Exception => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring license files: %{error}') % { error: e.message })
   end
