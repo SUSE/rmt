@@ -31,6 +31,7 @@ class RMT::Mirror::Base
   protected
 
   attr_accessor :temp_dirs, :downloader, :deep_verify, :is_airgapped, :mirroring_base_dir
+  attr_reader :enqueued
 
   def file_reference(relative, to:)
     RMT::Mirror::FileReference.new(
