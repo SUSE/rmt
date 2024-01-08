@@ -8,7 +8,7 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
   def mirror_implementation
     create_temp_dir(:license)
     create_temp_dir(:metadata)
-    licenses = RMT::Mirror::License.new(repository: repository, logger: logger, mirroring_base_dir: mirroring_base_dir )
+    licenses = RMT::Mirror::License.new(repository: repository, logger: logger, mirroring_base_dir: mirroring_base_dir)
     licenses.mirror
 
     metadata_files = mirror_metadata
@@ -28,8 +28,8 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
     check_signature(key_file: key_file, signature_file: signature_file, metadata_file: repomd_xml)
 
     metadata_files = RepomdParser::RepomdXmlParser.new(repomd_xml.local_path).parse
-      .map do |reference| 
-        ref = RMT::Mirror::FileReference.build_from_metadata(reference, base_dir: temp(:metadata), base_url: repomd_xml.base_url) 
+      .map do |reference|
+        ref = RMT::Mirror::FileReference.build_from_metadata(reference, base_dir: temp(:metadata), base_url: repomd_xml.base_url)
         enqueue ref
         ref
       end

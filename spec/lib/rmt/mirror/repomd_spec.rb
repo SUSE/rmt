@@ -49,7 +49,7 @@ RSpec.describe RMT::Mirror::Repomd do
     it 'mirrors the packages'
     it 'replaces license and metadata directories'
   end
-  
+
   describe '#mirror_metadata' do
     let(:x_config) do
       {
@@ -58,6 +58,9 @@ RSpec.describe RMT::Mirror::Repomd do
         cache_dir: repomd.repository_path
       }
     end
+    let(:signature_file) { RMT::Mirror::FileReference.new(relative_path: 'repodata/repomd.xml.asc', **x_config) }
+    let(:key_file) { RMT::Mirror::FileReference.new(relative_path: 'repodata/repomd.xml.key', **x_config) }
+    let(:repomd_parser) { RepomdParser::RepomdXmlParser.new(repomd_ref.local_path) }
 
     before do
       described_class.send(:public, *described_class.protected_instance_methods)
@@ -65,16 +68,14 @@ RSpec.describe RMT::Mirror::Repomd do
       allow(repomd).to receive(:temp).with(:metadata).and_return(base_dir)
     end
 
-    let(:signature_file) { RMT::Mirror::FileReference.new(relative_path: 'repodata/repomd.xml.asc', **x_config) }
-    let(:key_file) { RMT::Mirror::FileReference.new(relative_path: 'repodata/repomd.xml.key', **x_config) }
-    let(:repomd_parser) { RepomdParser::RepomdXmlParser.new(repomd_ref.local_path) }
 
     it 'checks signature of the repomd file' do
       allow(repomd).to receive(:download_cached!).and_return(repomd_ref)
       allow_any_instance_of(RepomdParser::RepomdXmlParser).to receive(:parse).and_return([])
       allow(repomd).to receive(:enqueue)
       allow(repomd).to receive(:download_enqueued)
-      expect(repomd).to receive(:check_signature).with(key_file: duck_type(:local_path), signature_file: duck_type(:local_path), metadata_file: duck_type(:local_path))
+      expect(repomd).to receive(:check_signature).with(key_file: duck_type(:local_path), signature_file: duck_type(:local_path),
+metadata_file: duck_type(:local_path))
       repomd.mirror_metadata
     end
 
@@ -104,7 +105,6 @@ RSpec.describe RMT::Mirror::Repomd do
       allow_any_instance_of(RepomdParser::RepomdXmlParser).to receive(:parse).and_raise(StandardError)
       expect { repomd.mirror_metadata }.to raise_exception(RMT::Mirror::Exception, /Error while mirroring/)
     end
-
   end
 
   xdescribe '#mirror' do
@@ -123,7 +123,7 @@ RSpec.describe RMT::Mirror::Repomd do
         .each { |tmpdir| FileUtils.remove_entry(tmpdir, true) }
     end
 
-    context 'without auth_token' do
+    context 'without auth_token', vcr: { cassette_name: 'mirroring' } do
       let(:mirror_params) do
         {
           repository_url: 'http://localhost/dummy_repo/',
@@ -131,9 +131,11 @@ RSpec.describe RMT::Mirror::Repomd do
         }
       end
 
+      # FIXME: this is incomplete.
+      # Tests for mirroring license will be re-written in mirror_implementation tests
       let(:license_config) do
         {
-          relative_path: "directory.yast",
+          relative_path: 'directory.yast',
           base_dir: file_fixture(''),
           base_url: 'https://updates.suse.de/SLES/'
         }
@@ -141,7 +143,7 @@ RSpec.describe RMT::Mirror::Repomd do
       let(:directory_yast_ref) { RMT::Mirror::FileReference.new(**license_config) }
 
       before do
-        allow(FileUtils).to receive(:mkpath) #.with(repomd.repository_path).and_return(nil)
+        allow(FileUtils).to receive(:mkpath) # .with(repomd.repository_path).and_return(nil)
         described_class.send(:public, *described_class.protected_instance_methods)
         allow_any_instance_of(RMT::Mirror::License).to receive(:licenses_available?).and_return(true)
         allow_any_instance_of(RMT::Mirror::License).to receive(:download_cached!).and_return(directory_yast_ref)
@@ -781,5 +783,4 @@ RSpec.describe RMT::Mirror::Repomd do
       end
     end
   end
-
 end
