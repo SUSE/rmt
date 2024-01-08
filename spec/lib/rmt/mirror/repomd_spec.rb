@@ -38,12 +38,76 @@ RSpec.describe RMT::Mirror::Repomd do
     {
       relative_path: fixture,
       base_dir: file_fixture('dummy_repo/'),
-      base_url: 'https://updates.suse.de/SLES/'
+      base_url: 'https://updates.suse.com/sample/repository/15.4/'
     }
   end
   let(:repomd_ref) { RMT::Mirror::FileReference.new(**config) }
 
-  describe '#mirror' do
+  describe '#mirror_implementation' do
+    it 'mirrors the metadata'
+    it 'mirrors the licenses'
+    it 'mirrors the packages'
+    it 'replaces license and metadata directories'
+  end
+  
+  describe '#mirror_metadata' do
+    let(:x_config) do
+      {
+        base_dir: base_dir,
+        base_url: 'https://updates.suse.com/sample/repository/15.4/',
+        cache_dir: repomd.repository_path
+      }
+    end
+
+    before do
+      described_class.send(:public, *described_class.protected_instance_methods)
+      allow(repomd).to receive(:create_repository_path)
+      allow(repomd).to receive(:temp).with(:metadata).and_return(base_dir)
+    end
+
+    let(:signature_file) { RMT::Mirror::FileReference.new(relative_path: 'repodata/repomd.xml.asc', **x_config) }
+    let(:key_file) { RMT::Mirror::FileReference.new(relative_path: 'repodata/repomd.xml.key', **x_config) }
+    let(:repomd_parser) { RepomdParser::RepomdXmlParser.new(repomd_ref.local_path) }
+
+    it 'checks signature of the repomd file' do
+      allow(repomd).to receive(:download_cached!).and_return(repomd_ref)
+      allow_any_instance_of(RepomdParser::RepomdXmlParser).to receive(:parse).and_return([])
+      allow(repomd).to receive(:enqueue)
+      allow(repomd).to receive(:download_enqueued)
+      expect(repomd).to receive(:check_signature).with(key_file: duck_type(:local_path), signature_file: duck_type(:local_path), metadata_file: duck_type(:local_path))
+      repomd.mirror_metadata
+    end
+
+    it 'parses the repomd file' do
+      allow(repomd).to receive(:download_cached!).and_return(repomd_ref)
+      allow(repomd).to receive(:check_signature)
+      expect(RepomdParser::RepomdXmlParser).to receive(:new).with(repomd_ref.local_path).and_return(repomd_parser)
+      expect(repomd_parser).to receive(:parse).and_call_original
+      expect(repomd).to receive(:enqueue).with(duck_type(:local_path)).exactly(4).times
+      allow(repomd).to receive(:download_enqueued)
+      metadatas = repomd.mirror_metadata
+      expect(metadatas.count).to eq(4)
+    end
+
+    it 'downloads the metadata files' do
+      allow(repomd).to receive(:download_cached!).and_return(repomd_ref)
+      allow(repomd).to receive(:check_signature)
+      allow_any_instance_of(RepomdParser::RepomdXmlParser).to receive(:parse).and_return([])
+      allow(repomd).to receive(:enqueue)
+      expect(repomd).to receive(:download_enqueued)
+      repomd.mirror_metadata
+    end
+
+    it 'handles generic errors' do
+      allow(repomd).to receive(:download_cached!).and_return(repomd_ref)
+      allow(repomd).to receive(:check_signature)
+      allow_any_instance_of(RepomdParser::RepomdXmlParser).to receive(:parse).and_raise(StandardError)
+      expect { repomd.mirror_metadata }.to raise_exception(RMT::Mirror::Exception, /Error while mirroring/)
+    end
+
+  end
+
+  xdescribe '#mirror' do
     around do |example|
       @tmp_dir = Dir.mktmpdir('rmt')
       example.run
@@ -59,7 +123,7 @@ RSpec.describe RMT::Mirror::Repomd do
         .each { |tmpdir| FileUtils.remove_entry(tmpdir, true) }
     end
 
-    context 'without auth_token', vcr: { cassette_name: 'mirroring' } do
+    context 'without auth_token' do
       let(:mirror_params) do
         {
           repository_url: 'http://localhost/dummy_repo/',
@@ -67,7 +131,23 @@ RSpec.describe RMT::Mirror::Repomd do
         }
       end
 
+      let(:license_config) do
+        {
+          relative_path: "directory.yast",
+          base_dir: file_fixture(''),
+          base_url: 'https://updates.suse.de/SLES/'
+        }
+      end
+      let(:directory_yast_ref) { RMT::Mirror::FileReference.new(**license_config) }
+
       before do
+        allow(FileUtils).to receive(:mkpath) #.with(repomd.repository_path).and_return(nil)
+        described_class.send(:public, *described_class.protected_instance_methods)
+        allow_any_instance_of(RMT::Mirror::License).to receive(:licenses_available?).and_return(true)
+        allow_any_instance_of(RMT::Mirror::License).to receive(:download_cached!).and_return(directory_yast_ref)
+        expect_any_instance_of(RMT::Mirror::License).to receive(:download_enqueued)
+        expect_any_instance_of(RMT::Mirror::License).to receive(:replace_directory)
+        expect(repomd).to receive(:mirror_metadata)
         repomd.mirror
       end
 
@@ -702,133 +782,4 @@ RSpec.describe RMT::Mirror::Repomd do
     end
   end
 
-  xdescribe '#replace_directory' do
-    subject(:replace_directory) { rmt_mirror.send(:replace_directory, source_dir, destination_dir) }
-
-    let(:rmt_mirror) do
-      described_class.new(
-        mirroring_base_dir: @tmp_dir,
-        logger: logger,
-        mirror_src: false
-      )
-    end
-
-    let(:source_dir) { '/tmp/temp-repo-dir' }
-    let(:destination_dir) { '/var/www/repo/product.license' }
-    let(:old_dir) { '/var/www/repo/.old_product.license' }
-
-    context 'when the old directory exists' do
-      before do
-        expect(Dir).to receive(:exist?).with(old_dir).and_return(true)
-        expect(Dir).to receive(:exist?).with(destination_dir).and_return(false)
-      end
-
-      it 'removes it, moves src to dst and sets permissions' do
-        expect(FileUtils).to receive(:remove_entry).with(old_dir)
-        expect(FileUtils).to receive(:mv).with(source_dir, destination_dir, { force: true })
-        expect(FileUtils).to receive(:chmod).with(0o755, destination_dir)
-        replace_directory
-      end
-    end
-
-    context 'when the destination directory already exists' do
-      before do
-        expect(Dir).to receive(:exist?).with(old_dir).and_return(false)
-        expect(Dir).to receive(:exist?).with(destination_dir).and_return(true)
-      end
-
-      it 'renames it as .old, moves src to dst and sets permissions' do
-        expect(FileUtils).to receive(:mv).with(destination_dir, old_dir)
-        expect(FileUtils).to receive(:mv).with(source_dir, destination_dir, { force: true })
-        expect(FileUtils).to receive(:chmod).with(0o755, destination_dir)
-        replace_directory
-      end
-    end
-
-    context 'when an error is encountered' do
-      it 'raises RMT::Mirror::Exception' do
-        expect(FileUtils).to receive(:mv).and_raise(Errno::ENOENT)
-        expect { replace_directory }.to raise_error(
-          RMT::Mirror::Exception,
-          "Error while moving directory #{source_dir} to #{destination_dir}: No such file or directory"
-        )
-      end
-    end
-  end
-
-  xcontext 'when GPG signature is incomplete', vcr: { cassette_name: 'mirroring_with_auth_token' } do
-    let(:rmt_mirror) do
-      described_class.new(
-        mirroring_base_dir: @tmp_dir,
-        logger: logger,
-        mirror_src: false
-      )
-    end
-
-    let(:mirror_params) do
-      {
-        repository_url: 'http://localhost/dummy_repo/',
-        local_path: '/dummy_repo',
-        auth_token: 'repo_auth_token'
-      }
-    end
-
-    around do |example|
-      @tmp_dir = Dir.mktmpdir('rmt')
-      example.run
-      FileUtils.remove_entry(@tmp_dir)
-    end
-
-    context 'when signatures do not exist' do
-      let(:response) do
-        instance_double(Typhoeus::Response, code: 404, body: 'Error',
-                        return_code: :ok, return_message: 'No error')
-      end
-
-      it 'mirrors as normal' do
-        expect(logger).to receive(:info).with(/Mirroring repository/).once
-        expect(logger).to receive(:info).with('Repository metadata signatures are missing').once
-        expect(logger).to receive(:info).with(/↓/).at_least(:once)
-
-        allow_any_instance_of(RMT::Downloader).to receive(:finalize_download).and_wrap_original do |klass, *args|
-          if args[1].local_path.include?('repodata/repomd.xml.key')
-            raise RMT::Downloader::Exception.new('HTTP request failed', response: response)
-          else
-            klass.call(*args)
-          end
-        end
-
-        rmt_mirror.mirror(**mirror_params)
-      end
-    end
-
-    context 'when files fail to download with errors other than 404' do
-      let(:response) do
-        instance_double(Typhoeus::Response, code: 502, body: 'Error',
-                        return_code: :ok, return_message: 'No error')
-      end
-
-      it 'raises RMT::Mirror::Exception' do
-        expect(logger).to receive(:info).with(/Mirroring repository/).once
-        expect(logger).to receive(:info).with(/↓/).at_least(:once)
-
-        expect_any_instance_of(described_class).to(
-          receive(:mirror_metadata).and_call_original
-        )
-
-        allow_any_instance_of(RMT::Downloader).to receive(:download_multi).and_wrap_original do |klass, *args|
-          if args[0][0].local_path.include?('repodata/repomd.xml.asc')
-            raise RMT::Downloader::Exception.new('HTTP request failed', response: response)
-          else
-            klass.call(*args)
-          end
-        end
-
-        expect { rmt_mirror.mirror(**mirror_params) }.to raise_error(
-          RMT::Mirror::Exception,
-          'Error while mirroring metadata: Downloading repo signature/key failed with: HTTP request failed, HTTP code 502'
-        )
-      end
-    end
-  end
 end
