@@ -783,4 +783,43 @@ metadata_file: duck_type(:local_path))
       end
     end
   end
+
+  describe '#parse_packages_metadata' do
+    let(:fixture) { 'repodata/repomd.xml' }
+    let(:fixture_base_dir) { file_fixture('dummy_repo') }
+    let(:repomd_package_ref) do
+      RMT::Mirror::FileReference.new(**config).tap do |ref|
+        ref.type = type
+      end
+    end
+
+    let(:delta_parser_double) { instance_double(RepomdParser::DeltainfoXmlParser) }
+    let(:primary_parser_double) { instance_double(RepomdParser::PrimaryXmlParser) }
+
+    let(:metadata_refs) do
+      [repomd_package_ref]
+    end
+
+    context 'valid repomd file' do
+      context 'with deltainfo files' do
+        let(:fixture) { 'repodata/a546b430098b8a3fb7d65493a9ce608fafcb32f451d0ce8bf85410191f347cc3-deltainfo.xml.gz' }
+        let(:type) { :deltainfo }
+
+        it 'parses' do
+          expect_any_instance_of(RepomdParser::DeltainfoXmlParser).to receive :parse
+          repomd.parse_packages_metadata(metadata_refs)
+        end
+      end
+
+      context 'with primary package files' do
+        let(:fixture) { 'repodata/abf421e45af5cd686f050bab3d2a98e0a60d1b5ca3b07c86cb948fc1abfa675e-primary.xml.gz' }
+        let(:type) { :primary }
+
+        it 'parses primary package files' do
+          expect_any_instance_of(RepomdParser::PrimaryXmlParser).to receive :parse
+          repomd.parse_packages_metadata(metadata_refs)
+        end
+      end
+    end
+  end
 end
