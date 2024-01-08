@@ -30,6 +30,36 @@ describe RMT::Mirror::Debian do
   end
   let(:packages_ref) { RMT::Mirror::FileReference.new(**config) }
 
+  describe '#mirror_implementation' do
+    before do
+      allow(debian).to receive(:temp).with(:metadata).and_return('bar')
+    end
+
+    it 'mirrors the metadata' do
+      allow(debian).to receive(:create_temp_dir).with(:metadata)
+      expect(debian).to receive(:mirror_metadata)
+      allow(debian).to receive(:mirror_packages)
+      allow(debian).to receive(:copy_directory_content)
+      debian.mirror_implementation
+    end
+
+    it 'mirrors the packages' do
+      allow(debian).to receive(:create_temp_dir).with(:metadata)
+      allow(debian).to receive(:mirror_metadata).and_return([])
+      expect(debian).to receive(:mirror_packages)
+      allow(debian).to receive(:copy_directory_content)
+      debian.mirror_implementation
+    end
+
+    it 'moves the files to correct directories' do
+      allow(debian).to receive(:create_temp_dir).with(:metadata)
+      allow(debian).to receive(:mirror_metadata).and_return([])
+      allow(debian).to receive(:mirror_packages)
+      expect(debian).to receive(:copy_directory_content)
+      debian.mirror_implementation
+    end
+  end
+
   describe '#mirror_metadata' do
     let(:config) do
       {

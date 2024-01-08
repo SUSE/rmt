@@ -6,7 +6,7 @@ describe RMT::Mirror::Base do
   let(:configuration) do
     {
       repository: repository,
-      logger: RMT::Logger.new('/dev/null'),
+      logger: logger,
       mirroring_base_dir: '/rspec/repository',
       mirror_src: enable_source_mirroring
     }
@@ -21,11 +21,35 @@ describe RMT::Mirror::Base do
 
   let(:downloader) { instance_double('downloader') }
 
+  let(:logger) { instance_double('RMT::Logger') }
+
   before do
     # Make all protected methods public for testing purpose
     described_class.send(:public, *described_class.protected_instance_methods)
 
     allow(base).to receive(:downloader).and_return(downloader)
+  end
+
+  # FIXME: rewrite tests for mirror and mirror_implementation.
+  # This is a placeholder added due to low code coverage issue
+  describe '#mirror' do
+    it 'mirrors repositories and licenses' do
+      expect(base).to receive(:mirror_implementation)
+      expect(base).to receive(:cleanup_temp_dirs)
+      base.mirror
+    end
+
+    it 'throws an exception if mirroring fails' do
+      allow(base).to receive(:mirror_implementation).and_raise(RMT::Mirror::Exception)
+      expect(base).to receive(:cleanup_temp_dirs)
+      expect { base.mirror }.to raise_error(RMT::Mirror::Exception)
+    end
+  end
+
+  describe '#mirror_implementation' do
+    it 'will implement the main mirroring logic' do
+      expect { base.mirror_implementation }.to raise_error('Not implemented!')
+    end
   end
 
   describe '#download_cached' do
@@ -128,13 +152,35 @@ describe RMT::Mirror::Base do
       end
     end
 
-    context 'has invalid or no signature' do
+    context 'is unable to download the signature files' do
       it 'raises exception' do
         expect(downloader).to receive(:download_multi).and_raise(RMT::Downloader::Exception, 'foo')
         expect do
           base.check_signature(key_file: key_file, signature_file: signature_file, metadata_file: metadata)
         end.to raise_error(/foo/)
       end
+    end
+
+    context 'the signature file is missing' do
+      let(:response) { Typhoeus::Response.new(code: 404, body: {}) }
+
+      it 'creates a log entry' do
+        allow(downloader).to receive(:download_multi).and_raise(RMT::Downloader::Exception.new('missing file', response: response))
+        expect(logger).to receive(:info).with(/metadata signatures are missing/)
+        base.check_signature(key_file: key_file, signature_file: signature_file, metadata_file: metadata)
+      end
+    end
+  end
+
+  describe '#download_enqueued' do
+    before do
+      base.enqueue(base.file_reference('enqueued_file', to: '/test/path/'))
+    end
+
+    it 'downloads enqueued contents and clear queue' do
+      expect(downloader).to receive(:download_multi)
+      base.download_enqueued
+      expect(base.enqueued).to be_empty
     end
   end
 
@@ -183,6 +229,17 @@ describe RMT::Mirror::Base do
       allow(Dir).to receive(:exist?).with(backup).and_raise(StandardError)
 
       expect { base.replace_directory(source: src, destination: dest) }.to raise_exception(/Error while moving directory/)
+    end
+  end
+
+  describe '#copy_directory_content' do
+    let(:src) { '/source/path' }
+    let(:dest) { '/destination/path' }
+
+    it 'copies content from source to destination without backup' do
+      expect(base).to receive(:replace_directory).with(source: src, destination: dest, with_backup: false).and_yield
+      expect(FileUtils).to receive(:mv).with(Dir.glob(src), dest)
+      base.copy_directory_content(source: src, destination: dest)
     end
   end
 
