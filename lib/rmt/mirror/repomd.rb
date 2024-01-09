@@ -6,17 +6,14 @@ require 'time'
 class RMT::Mirror::Repomd < RMT::Mirror::Base
 
   def mirror_implementation
-    create_temp_dir(:license)
     create_temp_dir(:metadata)
     licenses = RMT::Mirror::License.new(repository: repository, logger: logger, mirroring_base_dir: mirroring_base_dir)
     licenses.mirror
 
     metadata_files = mirror_metadata
-    # mirror_packages(metadata_files, repository_dir, repository_url)
+    mirror_packages(metadata_files)
 
-    # # FIXME: Ensure license dirs are not created if the repository doesn't contain them
-    # replace_directory(temp(:license), repository_dir.chomp('/') + '.license/') if Dir.exist?(temp(:license))
-    # replace_directory(File.join(temp(:metadata), 'repodata'), File.join(repository_dir, 'repodata'))
+    replace_directory(source: File.join(temp(:metadata), 'repodata'), destination: repository_path('repodata'))
   end
 
   protected
@@ -41,18 +38,22 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
     raise RMT::Mirror::Exception.new(_('Error while mirroring metadata: %{error}') % { error: e.message })
   end
 
-  def mirror_packages(metadata_files, repository_dir, repository_url)
-    package_references = parse_packages_metadata(metadata_files)
+  def mirror_packages(metadata_references)
+    package_references = parse_packages_metadata(metadata_references)
 
-    package_file_references = package_references.map do |reference|
+    packages = package_references.map do |reference|
       RMT::Mirror::FileReference.build_from_metadata(reference,
-                                                     base_dir: repository_dir,
+                                                     base_dir: repository_path,
                                                      base_url: repository_url)
     end
 
-    failed_downloads = download_package_files(package_file_references)
+    packages.each do |package|
+      enqueue package if need_to_download?(package)
+    end
 
-    raise _('Failed to download %{failed_count} files') % { failed_count: failed_downloads.size } unless failed_downloads.empty?
+    failed = download_enqueued(continue_on_error: true)
+
+    raise _('Failed to download %{failed_count} files') % { failed_count: failed.size } unless failed.empty?
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring packages: %{error}') % { error: e.message })
   end
@@ -65,12 +66,4 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
       .map { |file| xml_parsers[file.type]&.new(file.local_path) }.compact
       .map(&:parse).flatten
   end
-
-  def download_package_files(file_references)
-    files_to_download = file_references.select { |file| need_to_download?(file) }
-    return [] if files_to_download.empty?
-
-    downloader.download_multi(files_to_download, ignore_errors: true)
-  end
-
 end
