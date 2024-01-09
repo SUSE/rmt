@@ -19,7 +19,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       # could lead to different Repositories sets where it's used.
       mirrored_repo_ids = []
       until (repos = Repository.only_mirroring_enabled.where.not(id: mirrored_repo_ids).load).empty?
-        mirror_repos!(repos)
+        mirror_repositories!(repos)
         mirrored_repo_ids.concat(repos.pluck(:id))
       end
 
@@ -43,7 +43,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
         repo
       end
 
-      mirror_repos!(repos)
+      mirror_repositories!(repos)
       finish_execution
     end
   end
@@ -71,7 +71,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
         errored_products_id << target if options[:do_not_raise_unpublished]
       end
 
-      mirror_repos!(repos)
+      mirror_repositories!(repos)
       finish_execution
     end
   end
@@ -80,16 +80,6 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
   def suma_product_tree
     RMT::Mirror::SumaProductTree.new(logger: logger, mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR)
-  end
-
-  def mirror
-    config = {
-      logger: logger,
-      mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR,
-      mirror_src: RMT::Config.mirror_src_files?,
-      airgap_mode: false
-    }
-    @mirror ||= RMT::Mirror::Repomd.new(**config)
   end
 
   def errors
@@ -133,19 +123,22 @@ class RMT::CLI::Mirror < RMT::CLI::Base
     true
   end
 
-  def mirror_repos!(repos)
+  def mirror_repositories!(repos)
     repos.compact.each do |repo|
       unless repo.mirroring_enabled
         errors << _('Mirroring of repository with ID %{repo_id} is not enabled') % { repo_id: repo.friendly_id }
         next
       end
 
-      mirror.mirror(
-        repository_url: repo.external_url,
-        local_path: Repository.make_local_path(repo.external_url),
-        auth_token: repo.auth_token,
-        repo_name: repo.name
-      )
+      configuration = {
+        repository: repo,
+        logger: logger,
+        mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR,
+        mirror_sources: RMT::Config.mirror_src_files?,
+        is_airgapped: false
+      }
+
+      RMT::Mirror.new(**configuration).mirror_now
       repo.refresh_timestamp!
     rescue RMT::Mirror::Exception => e
       errors << _("Repository '%{repo_name}' (%{repo_id}): %{error_message}") % {

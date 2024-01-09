@@ -2,17 +2,41 @@ class RMT::Mirror
   RPM_FILE_NEEDLE = 'repodata/repomd.xml'.freeze
   DEB_FILE_NEEDLE = 'Release'.freeze
 
-  attr_reader :logger, :base_dir, :mirror_sources, :is_airgapped, :repository
+  attr_reader :logger, :mirroring_base_dir, :mirror_sources, :is_airgapped, :repository
 
-  def initialize(repository:, base_dir:, logger:, mirror_sources: false, is_airgapped: false)
+  def initialize(repository:, mirroring_base_dir:, logger:, mirror_sources: false, is_airgapped: false)
     @repository = repository
     @logger = logger
-    @base_dir = base_dir
+    @mirroring_base_dir = mirroring_base_dir
     @mirror_sources = mirror_sources
     @is_airgapped = is_airgapped
   end
 
-  def detect_repository_type
+  def mirror_now
+    configuration = { repository: repository,
+                      logger: logger,
+                      mirroring_base_dir: mirroring_base_dir,
+                      mirror_sources: mirror_sources,
+                      is_airgapped: is_airgapped }
+
+    instance = repository_mirror_class.new(**configuration)
+    instance.mirror
+  end
+
+  protected
+
+  def repository_mirror_class
+    case repository_type
+    when :repomd
+      RMT::Mirror::Repomd
+    when :debian
+      RMT::Mirror::Debian
+    else
+      raise(RMT::Mirror::Exception.new('Unknown repository type'))
+    end
+  end
+
+  def repository_type
     search = {
       repomd: File.join(repository.external_url, RPM_FILE_NEEDLE),
       debian: File.join(repository.external_url, DEB_FILE_NEEDLE)
@@ -35,6 +59,4 @@ class RMT::Mirror
     end
     nil
   end
-
-
 end
