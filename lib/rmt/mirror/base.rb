@@ -4,11 +4,11 @@ class RMT::Mirror::Base
 
   attr_reader :logger, :repository
 
-  def initialize(repository:, logger:, mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, mirror_src: false, is_airgapped: false)
+  def initialize(repository:, logger:, mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, mirror_sources: false, is_airgapped: false)
     @repository = repository
     @mirroring_base_dir = mirroring_base_dir
     @logger = logger
-    @mirror_src = mirror_src
+    @mirror_sources = mirror_sources
     @is_airgapped = is_airgapped
     @deep_verify = false
 
@@ -124,7 +124,7 @@ class RMT::Mirror::Base
   end
 
   def need_to_download?(ref)
-    return false if ref.arch == 'src' && !@mirror_src
+    return false if ref.arch == 'src' && !@mirror_sources
     return false if validate_local_file(ref)
     return false if deduplicate(ref)
 
