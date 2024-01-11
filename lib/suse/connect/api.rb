@@ -45,18 +45,22 @@ module SUSE
       end
 
       def list_products
+        @logger.info(_('Loading product data from SCC'))
         make_paginated_request(:get, "#{connect_api}/organizations/products")
       end
 
       def list_products_unscoped
+        @logger.info(_('Loading product data from SCC'))
         make_paginated_request(:get, "#{connect_api}/organizations/products/unscoped")
       end
 
       def list_repositories
+        @logger.info(_('Loading repository data from SCC'))
         make_paginated_request(:get, "#{connect_api}/organizations/repositories")
       end
 
       def list_subscriptions
+        @logger.info(_('Loading subscription data from SCC'))
         make_paginated_request(:get, "#{connect_api}/organizations/subscriptions")
       end
 
