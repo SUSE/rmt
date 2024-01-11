@@ -77,7 +77,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
     end
   end
 
-  protected
+  private
 
   def suma_product_tree
     RMT::Mirror::SumaProductTree.new(logger: logger, mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR)

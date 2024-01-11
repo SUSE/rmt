@@ -29,9 +29,8 @@ class RMT::CLI::Export < RMT::CLI::Base
   REPOS
   def repos(path)
     path = needs_path(path, writable: true)
-
-    mirror = RMT::Mirror::Repomd.new(mirroring_base_dir: path, logger: logger, airgap_mode: true)
     suma_product_tree = RMT::Mirror::SumaProductTree.new(mirroring_base_dir: path, logger: logger)
+
     begin
       suma_product_tree.mirror
     rescue RMT::Mirror::Exception => e
@@ -42,13 +41,18 @@ class RMT::CLI::Export < RMT::CLI::Base
     raise RMT::CLI::Error.new(_('%{file} does not exist.') % { file: repos_file }) unless File.exist?(repos_file)
 
     repos = JSON.parse(File.read(repos_file))
-    repos.each do |repo|
+    repos.each do |repo_json|
+      repo = Repository.find_by(external_url: repo_json['url'])
+
       begin
-        mirror.mirror(
-          repository_url: repo['url'],
-          local_path: Repository.make_local_path(repo['url']),
-          auth_token: repo['auth_token']
-        )
+        configuration = {
+          repository: repo,
+          logger: logger,
+          mirroring_base_dir: path,
+          mirror_sources: RMT::Config.mirror_src_files?,
+          is_airgapped: true
+        }
+        RMT::Mirror.new(**configuration).mirror_now
       rescue RMT::Mirror::Exception => e
         warn e.to_s
       end
