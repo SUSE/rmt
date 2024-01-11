@@ -5,9 +5,12 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
   INRELEASE_FILE_NAME = 'InRelease'.freeze
 
   def mirror_implementation
+    create_repository_path
     create_temp_dir(:metadata)
+
     sources = mirror_metadata
     mirror_packages(sources)
+
     glob_metadata = File.join(temp(:metadata), '*')
     copy_directory_content(source: glob_metadata, destination: repository_path)
   end

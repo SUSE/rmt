@@ -8,7 +8,7 @@ describe RMT::Mirror::Base do
       repository: repository,
       logger: logger,
       mirroring_base_dir: '/rspec/repository',
-      mirror_src: enable_source_mirroring
+      mirror_sources: enable_source_mirroring
     }
   end
   let(:enable_source_mirroring) { false }
