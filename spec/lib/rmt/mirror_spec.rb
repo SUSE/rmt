@@ -2,26 +2,42 @@ require 'rails_helper'
 
 RSpec.describe RMT::Mirror do
   let(:url) { 'http://some.test.us/path/directory/' }
-  let(:base_dir) { '/non/existing/' }
+  let(:mirroring_base_dir) { '/non/existing/' }
   let(:repository) { create :repository, external_url: url }
 
   let(:mirror) do
     described_class.new(repository: repository,
-                        base_dir: base_dir,
+                        mirroring_base_dir: mirroring_base_dir,
                         logger: nil,
                         mirror_sources: false,
                         is_airgapped: false)
   end
 
-  describe '#detect_repository_type' do
-    let(:repomd_url) { 'http://some.test.us/path/directory/repodata/repomd.xml' }
+  before do
+    # Make all protected methods public for testing purpose
+    described_class.send(:public, *described_class.protected_instance_methods)
+  end
+
+  describe '#repository_type' do
+    let(:repomd_url) { 'http:///some.test.us/path/directory/repodata/repomd.xml' }
     let(:debian_url) { 'http://some.test.us/path/directory/Release' }
 
     context 'repomd repository' do
       it 'detects a repomd repository' do
         stub_request(:head, repomd_url).to_return(status: 200, body: '', headers: {})
 
-        expect(mirror.detect_repository_type).to eq(:repomd)
+        expect(mirror.repository_type).to eq(:repomd)
+      end
+
+      context 'with local file as URI' do
+        let(:url) { 'file:///test/export/SUSE/Products/SLE-Product-SLES/15-SP4/x86_64/product/' }
+        let(:path) { File.join(URI.join(url).path, 'repodata/repomd.xml') }
+
+        it 'checks if the file exists' do
+          allow(File).to receive(:exist?).with(path).and_return(true)
+
+          expect(mirror.repository_type).to eq(:repomd)
+        end
       end
     end
 
@@ -30,7 +46,7 @@ RSpec.describe RMT::Mirror do
         stub_request(:head, repomd_url).to_return(status: 404, body: '', headers: {})
         stub_request(:head, debian_url).to_return(status: 200, body: '', headers: {})
 
-        expect(mirror.detect_repository_type).to eq(:debian)
+        expect(mirror.repository_type).to eq(:debian)
       end
     end
 
@@ -39,7 +55,7 @@ RSpec.describe RMT::Mirror do
         stub_request(:head, repomd_url).to_return(status: 404, body: '', headers: {})
         stub_request(:head, debian_url).to_return(status: 404, body: '', headers: {})
 
-        expect(mirror.detect_repository_type).to be_nil
+        expect(mirror.repository_type).to be_nil
       end
     end
   end

@@ -78,8 +78,11 @@ describe RMT::CLI::Export, :with_fakefs do
     end
 
     before do
-      # stub all file handling for the repos.json file and mock it with repo_settings content
-      allow_any_instance_of(described_class).to receive(:needs_path).and_return(path)
+      # Stub `needs_path` implementation since we can not stub `needs_path` directly
+      # because of thor. See: https://github.com/rails/thor/blob/f1ba900585afecfa13b7fff36968fca3e305c371/lib/thor.rb#L567
+      allow(File).to receive(:directory?).and_return(true)
+      allow(File).to receive(:writable?).and_return(true)
+
       allow(File).to receive(:exist?).with(repo_json).and_return(true)
       allow(File).to receive(:read).with(repo_json).and_return(repo_settings.to_json.to_s)
 

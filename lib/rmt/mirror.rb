@@ -43,12 +43,21 @@ class RMT::Mirror
     }
 
     search.each do |key, url|
+      uri = URI.join(url)
+
+      # If we dealing with a file:/// scheme we do not actually
+      # make a head request but check if the file exists locally
+      if uri.scheme == 'file'
+        return key if File.exist?(uri.path)
+
+        next
+      end
+
       # Current CDN authenticates via a key append to the request path
       # e.g.
       # https://update.suse.com/SUSE/product/some-product
       # becomes
       # https://update.suse.com/SUSE/product/some-product?authenication_tokensiduhashasdyashdaysdasud
-      uri = URI.join(url)
       uri.query = @repository.auth_token if @repository.auth_token
 
       request = RMT::HttpRequest.new(uri, method: :head, followlocation: true)
