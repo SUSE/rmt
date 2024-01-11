@@ -54,6 +54,7 @@ RSpec.describe RMT::Mirror::Repomd do
       allow(RMT::Mirror::License).to receive(:new).and_return(licenses)
       allow(repomd).to receive(:temp).with(:metadata).and_return('a')
 
+      expect(repomd).to receive(:create_repository_path)
       expect(repomd).to receive(:create_temp_dir).with(:metadata)
       expect(licenses).to receive(:mirror)
       expect(repomd).to receive(:mirror_metadata)
