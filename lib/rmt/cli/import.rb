@@ -17,10 +17,13 @@ class RMT::CLI::Import < RMT::CLI::Base
       raise RMT::CLI::Error.new(_('%{file} does not exist.') % { file: repos_file }) unless File.exist?(repos_file)
 
       begin
-        exported_suma_path = File.join(path, '/suma/')
-        suma_repo_url = URI.join('file://', exported_suma_path).to_s
-        suma_product_tree = RMT::Mirror::SumaProductTree.new(mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, logger: logger, url: suma_repo_url)
-        suma_product_tree.mirror
+        suma_repo_url = URI.join('file://', File.join(path, '/suma/')).to_s
+
+        RMT::Mirror::SumaProductTree.new(
+          mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR,
+          logger: logger,
+          url: suma_repo_url
+        ).mirror
       rescue RMT::Mirror::Exception => e
         logger.warn(e.message)
       end
@@ -37,6 +40,10 @@ class RMT::CLI::Import < RMT::CLI::Base
         begin
           exported_repo_path = File.join(path, Repository.make_local_path(repo_json['url']))
           repo_url = URI.join('file://', exported_repo_path).to_s
+
+          # We temporary alter the external_url to point to files on this. This is
+          # a bit of a hack to make sure we import from the disk rather the a real
+          # remote origin
           repo.external_url = repo_url
 
           configuration = {
