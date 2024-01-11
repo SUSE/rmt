@@ -34,7 +34,7 @@ module RegistrationSharing
     protected
 
     def system_params
-      params.permit(:login, :password, :hostname, :proxy_byos, :system_token, :registered_at, :created_at, :last_seen_at)
+      params.permit(:login, :password, :hostname, :proxy_byos, :system_token, :registered_at, :created_at, :last_seen_at, :instance_data)
     end
 
     def authenticate

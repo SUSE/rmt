@@ -6,11 +6,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-28 14:15+0100\n"
 "PO-Revision-Date: 2023-02-08 09:14+0000\n"
 "Last-Translator: Grace Yu <grace.yu@excel-gits.com>\n"
-"Language-Team: Chinese (Taiwan) <https://l10n.opensuse.org/projects/rmt/i18n/"
-"zh_TW/>\n"
+"Language-Team: Chinese (Taiwan) <https://l10n.opensuse.org/projects/rmt/i18n/z"
+"h_TW/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,171 +17,715 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.9.1\n"
 
-#: ../app/controllers/api/connect/base_controller.rb:20
-msgid "Required parameters are missing or empty: %s"
-msgstr "所需參數缺失或為空白：%s"
-
-#: ../app/controllers/api/connect/base_controller.rb:31
-msgid "Unknown Registration Code."
-msgstr "未知的註冊代碼。"
-
-#: ../app/controllers/api/connect/base_controller.rb:34
-msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
-msgstr "尚未啟用註冊代碼。請造訪 https://scc.suse.com 以啟用該註冊代碼。"
-
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:21
-msgid "The requested product '%s' is not activated on this system."
-msgstr "此系統上未啟用要求的產品「%s」。"
-
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:84
-msgid "No product found"
-msgstr "找不到產品"
-
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:90
-msgid "No repositories found for product: %s"
-msgstr "找不到產品 %s 的儲存庫"
-
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:97
-msgid "Not all mandatory repositories are mirrored for product %s"
-msgstr "未鏡像產品 %s 的所有強制儲存庫"
-
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:112
-msgid "No subscription with this Registration Code found"
-msgstr "找不到使用此註冊代碼的訂閱"
-
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:116
-msgid "The subscription with the provided Registration Code is expired"
-msgstr "使用所提供註冊代碼的訂閱已過期"
-
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:122
-msgid "The subscription with the provided Registration Code does not include the requested product '%s'"
-msgstr "使用所提供註冊代碼的訂閱不包含申請的產品 \"%s\""
-
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:148
-msgid "The product you are attempting to activate (%{product}) requires one of these products to be activated first: %{required_bases}"
-msgstr "需要先啟用以下產品之一，才能啟用您嘗試啟用的產品 (%{product})：%{required_bases}"
-
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:154
-msgid "The product you are attempting to activate (%{product}) is not available on your system's base product (%{system_base}). %{product} is available on %{required_bases}."
-msgstr ""
-"無法在您系統的基礎產品 (%{system_base}) 上使用您嘗試啟用的產品 %{product}。可以在 %{required_bases} "
-"上使用 %{product}。"
-
-#: ../app/controllers/api/connect/v3/systems/systems_controller.rb:6
-msgid "Not provided"
-msgstr "未提供"
-
-#: ../app/controllers/api/connect/v3/systems/systems_controller.rb:10
-msgid "Updated system information for host '%s'"
-msgstr "已更新主機「%s」的系統資訊"
-
-#: ../app/controllers/api/connect/v4/repositories/installer_controller.rb:16
-msgid "No product found on RMT for: %s"
-msgstr "在 RMT 上找不到 %s 的產品"
-
-#: ../app/controllers/api/connect/v4/systems/products_controller.rb:5
-msgid "The product \"%s\" is a base product and cannot be deactivated"
-msgstr "產品「%s」為基礎產品，無法停用"
-
-#: ../app/controllers/api/connect/v4/systems/products_controller.rb:7
-msgid "Cannot deactivate the product \"%s\". Other activated products depend upon it."
-msgstr "無法停用產品「%s」。其他的已啟用產品相依於該產品。"
-
-#: ../app/controllers/api/connect/v4/systems/products_controller.rb:15
 msgid "%s is not yet activated on the system."
 msgstr "該系統上尚未啟用 %s。"
 
-#: ../app/controllers/application_controller.rb:34
-msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
-msgstr "使用登入名称「%{login}」和密碼「%{password}」找不到系統"
+#, fuzzy
+msgid "%{count} file"
+msgid_plural "%{count} files"
+msgstr[0] "n"
 
-#: ../app/controllers/application_controller.rb:36
-msgid "Invalid system credentials"
-msgstr "系統身分證明無效"
+#, fuzzy
+msgid "%{db_entries} database entry"
+msgid_plural "%{db_entries} database entries"
+msgstr[0] "y"
 
-#: ../app/controllers/application_controller.rb:59
-msgid "System with login \\\"%{login}\\\" authenticated without token header"
-msgstr "登入名為 \\\"%{login}\\\" 的系統進行驗證時未提供記號標頭"
+msgid "%{file} - File does not exist"
+msgstr "%{file} - 檔案不存在"
 
-#: ../app/controllers/application_controller.rb:68
-msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
-msgstr "登入名為 \\\"%{login}\\\" 的系統使用了記號 \\\"%{system_token}\\\" 進行驗證"
+msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
+msgstr "%{file} - 申請失敗，HTTP 狀態碼：%{code}，傳回碼：%{return_code}"
 
-#: ../app/controllers/application_controller.rb:81
-msgid "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated from ID %{base_id} due to token mismatch"
-msgstr "登入名為 \\\"%{login}\\\" (ID %{new_id}) 的系統已進行驗證並因記號不符已從 ID %{base_id} 複製"
+msgid "%{file} does not exist."
+msgstr "%{file} 不存在。"
 
-#: ../app/controllers/services_controller.rb:48
-msgid "Requested service not found"
-msgstr "找不到要求的服務"
+msgid "%{path} is not a directory."
+msgstr "%{path} 不是目錄。"
 
-#: ../app/models/migration_engine.rb:49
-msgid "The requested products '%s' are not activated on the system."
-msgstr "此系統上未啟用要求的產品「%s」。"
+msgid "%{path} is not writable by user %{username}."
+msgstr "使用者 %{username} 不允許寫入資料至 %{path}。"
 
-#: ../app/models/migration_engine.rb:67
-msgid "Multiple base products found: '%s'."
-msgstr "找到多個基礎產品：%s。"
+msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
+msgstr "* %{name} (id：%{id}) (%{mandatory}，%{enabled}，%{mirrored_at})"
 
-#: ../app/models/migration_engine.rb:68
-msgid "No base product found."
-msgstr "找不到基礎產品。"
+msgid "A repository by the ID %{id} already exists."
+msgstr "已存在 ID 為 %{id} 的儲存庫。"
 
-#: ../app/models/migration_engine.rb:94
-msgid ""
-"There are activated extensions/modules on this system that cannot be migrated. \n"
-"Deactivate them first, and then try migrating again. \n"
-"The product(s) are '%s'. \n"
-"You can deactivate them with \n"
-"%s"
-msgstr ""
-"此系統上存在已啟用因而無法移轉的延伸/模組。\n"
-"請先將其停用，然後再次嘗試移轉。\n"
-"這些產品是 \"%s\"。\n"
-"您可以使用以下指令將其停用\n"
-"%s"
+msgid "A repository by the URL %{url} already exists."
+msgstr "URL 為 %{url} 的儲存庫已存在。"
 
-#: ../lib/rmt/checksum_verifier.rb:13
-msgid "Unknown hash function %{checksum_type}"
-msgstr "未知的雜湊函數 %{checksum_type}"
+msgid "Added association between %{repo} and product %{product}"
+msgstr "已在 %{repo} 與產品 %{product} 之間新增關聯"
 
-#: ../lib/rmt/cli/base.rb:15
-msgid "Commands:"
-msgstr "指令："
+msgid "Adding/Updating product %{product}"
+msgstr "正在新增/更新產品 %{/product}"
 
-#: ../lib/rmt/cli/base.rb:21
-msgid "Run '%{command}' for more information on a command and its subcommands."
-msgstr "請執行「%{command}」以獲取有關某個指令及其子指令的詳細資訊。"
+msgid "All repositories have already been disabled."
+msgstr "已停用所有儲存庫。"
 
-#: ../lib/rmt/cli/base.rb:24
-msgid "Do you have any suggestions for improvement? We would love to hear from you!"
-msgstr "若您有任何有關改善產品或服務的建議，我們將十分樂意聽取！"
+msgid "All repositories have already been enabled."
+msgstr "已啟用所有儲存庫。"
 
-#: ../lib/rmt/cli/base.rb:25
-msgid "Check out %{url}"
-msgstr "檢查 %{url}"
+msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
+msgstr "已執行此指令的另一個例項。請終止另一例項，或等待該例項完成。"
 
-#: ../lib/rmt/cli/base.rb:43
-msgid "Could not create deduplication hardlink: %{error}."
-msgstr "無法建立重複資料刪除永久連結：%{error}。"
+#. i18n: architecture
+msgid "Arch"
+msgstr "架構"
 
-#: ../lib/rmt/cli/base.rb:49
+msgid "Architecture"
+msgstr "架構"
+
+msgid "Ask for confirmation or do not ask for confirmation and require no user interaction"
+msgstr "要求確認或不要求確認以及無需使用者互動"
+
+msgid "Attach an existing custom repository to a product"
+msgstr "正在將現有的自訂儲存庫關聯至產品"
+
+msgid "Attached repository to product '%{product_name}'."
+msgstr "已將儲存庫關聯至產品「%{product_name}」。"
+
+#, fuzzy
+msgid "By default, inactive systems are those that have not contacted RMT in any way in the past 3 months. You can override this with the '-b / --before' flag."
+msgstr "依預設，非使用中系統是指過去 3 個月內未以任何方式與 RMT 進行聯絡的系統。您可以使用 \"-b / --before\" 旗標覆寫此預設值。"
+
 msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr "無法連接至資料庫伺服器。請確定已在「%{path}」中正確設定其身分證明，或使用 YaST (「%{command}」) 設定 RMT。"
 
-#: ../lib/rmt/cli/base.rb:58
 msgid "Cannot connect to database server. Make sure it is running and its credentials are configured in '%{path}'."
 msgstr "無法連接至資料庫伺服器。請確定該伺服器正在執行且已在「%{path}」中設定其身分證明。"
 
-#: ../lib/rmt/cli/base.rb:67
-msgid "The RMT database has not yet been initialized. Run '%{command}' to set up the database."
-msgstr "尚未啟始化 RMT 資料庫。請執行 \"%{command}\" 以設定該資料庫。"
+msgid "Cannot deactivate the product \"%s\". Other activated products depend upon it."
+msgstr "無法停用產品「%s」。其他的已啟用產品相依於該產品。"
 
-#: ../lib/rmt/cli/base.rb:73
-msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
-msgstr "未在「%{path}」中正確設定 SCC 身分證明。您可以從 %{url} 獲取身分證明"
+msgid "Cannot find product by ID %{id}."
+msgstr "找不到 ID 為 %{id} 的產品。"
 
-#: ../lib/rmt/cli/base.rb:83
+msgid "Check out %{url}"
+msgstr "檢查 %{url}"
+
+msgid "Checksum doesn't match"
+msgstr "檢查總數不符"
+
+msgid "Clean cancelled."
+msgstr "已取消清理。"
+
+#, fuzzy
+msgid "Clean dangling files and their database entries"
+msgstr "n"
+
+#, fuzzy
+msgid ""
+"Clean dangling package files based on current repository metadata.\n"
+"\n"
+"This command scans the mirror directory for 'repomd.xml' files, parses the\n"
+"metadata files, and compares their content with files on disk. Files not\n"
+"listed in the metadata and at least 2 days old are considered dangling.\n"
+"\n"
+"Then, it removes all dangling files from disk along with any associated database entries.\n"
+msgstr "y"
+
+#, fuzzy
+msgid "Clean dangling package files, based on current repository data."
+msgstr "y"
+
+msgid "Clean finished. An estimated %{total_file_size} was removed."
+msgstr "已完成清理。估計已移除 %{total_file_size}。"
+
+#, fuzzy
+msgid "Cleaned %{file_count_text} (%{total_size}), %{db_entries}."
+msgstr "n"
+
+#, fuzzy
+msgid "Cleaned '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}."
+msgstr "n"
+
+msgid "Commands:"
+msgstr "指令："
+
+msgid "Could not create a temporary directory: %{error}"
+msgstr "無法建立暫存目錄：%{error}"
+
+msgid "Could not create deduplication hardlink: %{error}."
+msgstr "無法建立重複資料刪除永久連結：%{error}。"
+
+msgid "Could not create local directory %{dir} with error: %{error}"
+msgstr "無法建立本地目錄 %{dir}，發生錯誤：%{error}"
+
+msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
+msgstr "使用登入名称「%{login}」和密碼「%{password}」找不到系統"
+
+msgid "Could not mirror SUSE Manager product tree with error: %{error}"
+msgstr "無法鏡像 SUSE Manager 產品樹，發生錯誤：%{error}"
+
+msgid "Couldn't add custom repository."
+msgstr "無法新增自訂儲存庫。"
+
+msgid "Couldn't sync %{count} systems."
+msgstr "無法同步 %{count} 個系統。"
+
+msgid "Creates a custom repository."
+msgstr "建立自訂儲存庫。"
+
+msgid "Deleting locally mirrored files from repository '%{repo}'..."
+msgstr "正在從儲存庫「%{repo}」中刪除已本地鏡像的檔案..."
+
+msgid "Description"
+msgstr "描述"
+
+msgid "Description: %{description}"
+msgstr "描述：%{description}"
+
+msgid "Detach an existing custom repository from a product"
+msgstr "將現有的自訂儲存庫與產品解除關聯"
+
+msgid "Detached repository from product '%{product_name}'."
+msgstr "已將儲存庫與產品「%{product_name}」解除關聯。"
+
+#, fuzzy
+msgid "Directory: %{dir}"
+msgstr "y"
+
+msgid "Disable mirroring of custom repositories by a list of IDs"
+msgstr "依 ID 清單停用自訂儲存庫鏡像"
+
+msgid "Disable mirroring of custom repository by a list of IDs"
+msgstr "依 ID 清單停用自訂儲存庫鏡像"
+
+msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
+msgstr "依產品 ID 清單或產品字串停用產品儲存庫鏡像。"
+
+msgid "Disable mirroring of repositories by a list of repository IDs"
+msgstr "依儲存庫 ID 清單停用儲存庫鏡像"
+
+msgid "Disabled repository %{repository}."
+msgstr "已停用儲存庫 %{repository}。"
+
+msgid "Disabling %{product}:"
+msgstr "正在停用 %{product}："
+
+msgid "Displays product with all its repositories and their attributes."
+msgstr "顯示產品及其所有儲存庫，以及儲存庫的屬性。"
+
+#, fuzzy
+msgid "Do not ask anything; use default answers automatically. Default: false"
+msgstr "y"
+
+msgid "Do not fail the command if product is in alpha or beta stage"
+msgstr "如果產品處於 alpha 或 beta 階段，請勿使指令失敗"
+
+msgid "Do not import system hardware info from MachineData table"
+msgstr "不要從 MachineData 表輸入系統硬體資訊"
+
+msgid "Do not import the systems that were registered to the SMT"
+msgstr "不輸入已在 SMT 中註冊的系統"
+
+msgid "Do you have any suggestions for improvement? We would love to hear from you!"
+msgstr "若您有任何有關改善產品或服務的建議，我們將十分樂意聽取！"
+
+msgid "Do you want to delete these systems?"
+msgstr "確定要刪除這些系統嗎？"
+
+msgid "Don't Mirror"
+msgstr "不鏡像"
+
+msgid "Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
+msgstr "下載 %{file_reference} 失敗，訊息：%{message}。%{seconds} 秒後會再嘗試 %{retries} 次"
+
+msgid "Downloading data from SCC"
+msgstr "正在從 SCC 下載資料"
+
+msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
+msgstr "下載儲存庫簽名/金鑰失敗，訊息：%{message}，HTTP 代碼：%{http_code}"
+
+msgid "Duplicate entry for system %{system}, skipping"
+msgstr "系統 %{system} 存在重複項目，正在跳過"
+
+msgid "Enable debug output"
+msgstr "啟用除錯輸出"
+
+msgid "Enable mirroring of custom repositories by a list of IDs"
+msgstr "依 ID 清單啟用自訂儲存庫鏡像"
+
+msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
+msgstr "依產品 ID 清單或產品字串啟用產品儲存庫鏡像。"
+
+msgid "Enable mirroring of repositories by a list of repository IDs"
+msgstr "依儲存庫 ID 清單啟用儲存庫鏡像"
+
+msgid "Enabled mirroring for repository %{repo}"
+msgstr "已啟用儲存庫 %{repo} 的鏡像"
+
+msgid "Enabled repository %{repository}."
+msgstr "已啟用儲存庫 %{repository}。"
+
+msgid "Enables all free modules for a product"
+msgstr "啟用產品的所有免費模組"
+
+msgid "Enabling %{product}:"
+msgstr "正在啟用 %{product}："
+
+msgid "Enter a value:"
+msgstr "輸入值："
+
+msgid "Error while mirroring license files: %{error}"
+msgstr "鏡像授權檔案時發生錯誤：%{error}"
+
+msgid "Error while mirroring metadata: %{error}"
+msgstr "鏡像中繼資料時發生錯誤：%{error}"
+
+msgid "Error while mirroring packages: %{error}"
+msgstr "鏡像套件時發生錯誤：%{error}"
+
+msgid "Error while moving directory %{src} to %{dest}: %{error}"
+msgstr "將目錄 %{src} 移至 %{dest} 時發生錯誤：%{error}"
+
+msgid "Examples"
+msgstr "範例"
+
+msgid "Examples:"
+msgstr "範例："
+
+msgid "Export commands for Offline Sync"
+msgstr "輸出離線同步的指令"
+
+msgid "Exporting data from SCC to %{path}"
+msgstr "將 SCC 中的資料輸出至 %{path}"
+
+msgid "Exporting orders"
+msgstr "正在輸出訂單"
+
+msgid "Exporting products"
+msgstr "正在輸出產品"
+
+msgid "Exporting repositories"
+msgstr "正在輸出儲存庫"
+
+msgid "Exporting subscriptions"
+msgstr "正在輸出訂閱"
+
+msgid "Failed to download %{failed_count} files"
+msgstr "無法下載 %{failed_count} 個文件"
+
+msgid "Failed to import system %{system}"
+msgstr "無法輸入系統 %{system}"
+
+msgid "Failed to sync systems: %{error}"
+msgstr "無法同步系統：%{error}"
+
+msgid "Filter BYOS systems using RMT as a proxy"
+msgstr "使用 RMT 做為代理來過濾 BYOS 系統"
+
+msgid "Forward registered systems data to SCC"
+msgstr "將已註冊系統的資料轉遞至 SCC"
+
+msgid "Found product by target %{target}: %{products}."
+msgid_plural "Found products by target %{target}: %{products}."
+msgstr[0] "依目標 %{target} 找到以下產品：%{products}。"
+
+msgid "GPG key import failed"
+msgstr "GPG 金鑰輸入失敗"
+
+msgid "GPG signature verification failed"
+msgstr "GPG 簽章驗證失敗"
+
+msgid "Hardware information stored for system %{system}"
+msgstr "儲存的有關系統 %{system} 的硬體資訊"
+
+msgid "Hostname"
+msgstr "主機名稱"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "Import commands for Offline Sync"
+msgstr "輸入離線同步的指令"
+
+msgid "Importing SCC data from %{path}"
+msgstr "正在從 %{path} 輸入 SCC 資料"
+
+msgid "Invalid system credentials"
+msgstr "系統身分證明無效"
+
+msgid "Last Mirrored"
+msgstr "上次鏡像時間"
+
+msgid "Last mirrored"
+msgstr "上次鏡像時間"
+
+msgid "Last seen"
+msgstr "上次出現時間"
+
+msgid "List all custom repositories"
+msgstr "列出所有自訂儲存庫"
+
+msgid "List all products, including ones which are not marked to be mirrored"
+msgstr "列出所有產品，包括標示為要鏡像的產品"
+
+msgid "List all registered systems"
+msgstr "列出所有已註冊的系統"
+
+msgid "List all repositories, including ones which are not marked to be mirrored"
+msgstr "列出所有儲存庫，包括標示為要鏡像的儲存庫"
+
+msgid "List and manipulate registered systems"
+msgstr "列出並操作已註冊的系統"
+
+msgid "List and modify custom repositories"
+msgstr "列出並修改自訂儲存庫"
+
+msgid "List and modify products"
+msgstr "列出並修改產品"
+
+msgid "List and modify repositories"
+msgstr "列出並修改儲存庫"
+
+#, fuzzy
+msgid "List files during the cleaning process."
+msgstr "n"
+
+msgid "List products which are marked to be mirrored."
+msgstr "列出標示為要鏡像的產品。"
+
+msgid "List registered systems."
+msgstr "列出已註冊的系統。"
+
+msgid "List repositories which are marked to be mirrored"
+msgstr "列出標示為要鏡像的儲存庫"
+
+msgid "Login"
+msgstr "登入"
+
+msgid "Mandatory"
+msgstr "強制"
+
+msgid "Mandatory?"
+msgstr "是否為強制？"
+
+msgid "Mirror"
+msgstr "鏡像"
+
+msgid "Mirror all enabled repositories"
+msgstr "鏡像所有已啟用的儲存庫"
+
+msgid "Mirror enabled repositories for a product with given product IDs"
+msgstr "鏡像具有指定產品 ID 的產品的已啟用儲存庫"
+
+msgid "Mirror enabled repositories with given repository IDs"
+msgstr "鏡像具有指定儲存庫 ID 的已啟用儲存庫"
+
+msgid "Mirror repos at given path"
+msgstr "將儲存庫鏡像至給定路徑"
+
+msgid "Mirror repos from given path"
+msgstr "從給定路徑鏡像儲存庫"
+
+msgid "Mirror repositories"
+msgstr "鏡像儲存庫"
+
+msgid "Mirror?"
+msgstr "是否鏡像？"
+
+msgid "Mirroring SUMA product tree failed: %{error_message}"
+msgstr "鏡像 SUMA 產品樹失敗：%{error_message}"
+
+msgid "Mirroring SUSE Manager product tree to %{dir}"
+msgstr "正在將 SUSE Manager 產品樹鏡像至 %{dir}"
+
+msgid "Mirroring complete."
+msgstr "鏡像已完成。"
+
+msgid "Mirroring completed with errors."
+msgstr "鏡像已完成但發生錯誤。"
+
+msgid "Mirroring of repository with ID %{repo_id} is not enabled"
+msgstr "未啟用 ID 為 %{repo_id} 的儲存庫的鏡像"
+
+msgid "Mirroring repository %{repo} to %{dir}"
+msgstr "正在將儲存庫 %{repo} 鏡像至 %{dir}"
+
+msgid "Missing data files: %{files}"
+msgstr "資料檔案缺失：%{files}"
+
+msgid "Multiple base products found: '%s'."
+msgstr "找到多個基礎產品：%s。"
+
+msgid "Name"
+msgstr "名稱"
+
+msgid "No base product found."
+msgstr "找不到基礎產品。"
+
+msgid "No custom repositories found."
+msgstr "找不到自訂儲存庫。"
+
+#, fuzzy
+msgid "No dangling packages have been found!"
+msgstr "n"
+
+msgid "No matching products found in the database."
+msgstr "在資料庫中找不到相符產品。"
+
+msgid "No product IDs supplied"
+msgstr "未提供產品 ID"
+
+msgid "No product found"
+msgstr "找不到產品"
+
+msgid "No product found for target %{target}."
+msgstr "找不到目標 %{target} 的產品。"
+
+msgid "No product found on RMT for: %s"
+msgstr "在 RMT 上找不到 %s 的產品"
+
+msgid "No products attached to repository."
+msgstr "沒有關聯至儲存庫的產品。"
+
+msgid "No repositories enabled."
+msgstr "未啟用任何儲存庫。"
+
+msgid "No repositories found for product: %s"
+msgstr "找不到產品 %s 的儲存庫"
+
+msgid "No repository IDs supplied"
+msgstr "未提供儲存庫 ID"
+
+msgid "No subscription with this Registration Code found"
+msgstr "找不到使用此註冊代碼的訂閱"
+
+msgid "Not Mandatory"
+msgstr "非強制"
+
+msgid "Not all mandatory repositories are mirrored for product %s"
+msgstr "未鏡像產品 %s 的所有強制儲存庫"
+
+msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
+msgstr "尚未啟用註冊代碼。請造訪 https://scc.suse.com 以啟用該註冊代碼。"
+
+#, fuzzy
+msgid "Now, it will parse all repomd.xml files, search for dangling packages on disk and clean them."
+msgstr "n"
+
+msgid "Number of systems to display"
+msgstr "要顯示的系統數目"
+
+msgid "Only '%{input}' will be accepted."
+msgstr "只接受「%{input}」。"
+
+msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
+msgstr "系統預設僅顯示啟用的產品。使用「%{command}」選項可查看所有產品。"
+
+msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
+msgstr "系統預設僅顯示啟用的儲存庫。使用「%{option}」選項可查看所有儲存庫。"
+
+msgid "Output data in CSV format"
+msgstr "以 CSV 格式輸出資料"
+
+msgid "Path to unpacked SMT data tarball"
+msgstr "已解壓縮 SMT 資料 Tar 聚合檔的路徑"
+
+#, fuzzy
+msgid "Please answer"
+msgstr "請回覆"
+
+msgid "Please provide a non-numeric ID for your custom repository."
+msgstr "請為自訂儲存庫提供一個非數字 ID。"
+
+msgid "Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
+msgstr "查詢 %{file_reference} 失敗，訊息：%{message}。%{seconds} 秒後會再嘗試 %{retries} 次"
+
+msgid "Product"
+msgstr "產品"
+
+msgid "Product %{products} could not be found and was not disabled."
+msgid_plural "Products %{products} could not be found and were not disabled."
+msgstr[0] "找不到產品 %{products}，未將其停用。"
+
+msgid "Product %{products} could not be found and was not enabled."
+msgid_plural "Products %{products} could not be found and were not enabled."
+msgstr[0] "找不到產品 %{products}，未將其啟用。"
+
+msgid "Product %{product} not found"
+msgstr "找不到產品 %{product}"
+
+msgid ""
+"Product %{product} not found!\n"
+"Tried to attach custom repository %{repo} to product %{product},\n"
+"but that product was not found. Attach it to a different product\n"
+"by running '%{command}'\n"
+msgstr ""
+"找不到產品 %{product}！\n"
+"嘗試將自訂儲存庫 %{repo} 關聯至產品 %{product}，\n"
+"但找不到該產品。請透過執行「%{command}」將其\n"
+"關聯至其他產品\n"
+
+msgid "Product %{target} has no repositories enabled"
+msgstr "未為產品 %{target} 啟用儲存庫"
+
+msgid "Product Architecture"
+msgstr "產品架構"
+
+msgid "Product ID"
+msgstr "產品 ID"
+
+msgid "Product Name"
+msgstr "產品名稱"
+
+msgid "Product String"
+msgstr "產品字串"
+
+msgid "Product Version"
+msgstr "產品版本"
+
+msgid "Product architecture (e.g., x86_64, aarch64)"
+msgstr "產品架構 (例如 x86_64、aarch64)"
+
+msgid "Product by ID %{id} not found."
+msgstr "找不到 ID 為 %{id} 的產品。"
+
+msgid "Product for target %{target} not found"
+msgstr "找不到目標 %{target} 的產品"
+
+msgid "Product name (e.g., Basesystem, SLES)"
+msgstr "產品名稱 (例如 Basesystem、SLES)"
+
+msgid "Product version (e.g., 15, 15.1, '12 SP4')"
+msgstr "產品版本 (例如 15、15.1、\"12 SP4\")"
+
+msgid "Product with ID %{target} not found"
+msgstr "找不到 ID 為 %{target} 的產品"
+
+msgid "Product: %{name} (ID: %{id})"
+msgstr "產品：%{name} (ID：%{id})"
+
+msgid "Products"
+msgstr "產品"
+
+msgid "Provide a custom ID instead of allowing RMT to generate one."
+msgstr "請提供自訂 ID，而不要允許 RMT 產生 ID。"
+
+msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
+msgstr "RMT 在以下未標示為有待鏡像的儲存庫中找到了本地鏡像的檔案："
+
+#, fuzzy
+msgid "RMT found no repomd.xml files. Check if RMT is properly configured."
+msgstr "y"
+
+#, fuzzy
+msgid "RMT found repomd.xml files: %{repomd_count}."
+msgstr "n"
+
+msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
+msgstr "尚未將 RMT 同步至 SCC。請先執行「%{command}」"
+
+msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
+msgstr "RMT 只找到了標示為有待鏡像的儲存庫的本地鏡像檔案。"
+
+msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
+msgstr "RMT 會將 %{file} 中指定的儲存庫鏡像至 PATH (通常是一個可擕式儲存裝置)。"
+
+msgid "Read SCC data from given path"
+msgstr "從給定路徑讀取 SCC 資料"
+
+msgid "Registration time"
+msgstr "註冊時間"
+
+msgid "Release Stage"
+msgstr "發佈階段"
+
+msgid "Remove a custom repository"
+msgstr "移除自訂儲存庫"
+
+msgid "Remove systems before the given date (format: \"<year>-<month>-<day>\")"
+msgstr "移除早於給定日期 (格式：\"<年>-<月>-<日>\") 的系統"
+
+msgid "Removed custom repository by ID %{id}."
+msgstr "已移除 ID 為 %{id} 的自訂儲存庫。"
+
+msgid "Removes a system and its activations from RMT"
+msgstr "從 RMT 中移除某個系統及其啟用記錄"
+
+msgid "Removes a system and its activations from RMT."
+msgstr "從 RMT 中移除某個系統及其啟用記錄。"
+
+msgid "Removes inactive systems"
+msgstr "移除非使用中系統"
+
+msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
+msgstr "移除未標示為有待鏡像的儲存庫的本地鏡像檔案"
+
+msgid "Removes old systems and their activations if they are inactive."
+msgstr "移除處於非使用中狀態的舊系統以及系統上啟用的產品。"
+
+msgid "Repositories are not available for this product."
+msgstr "儲存庫不可用於此產品。"
+
+msgid "Repositories:"
+msgstr "儲存庫："
+
+msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
+msgstr "在 RMT 資料庫中找不到儲存庫 %{repo}，可能是因為您的該儲存庫訂閱不再有效"
+
+msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
+msgstr "儲存庫「%{repo_name}」(%{repo_id})：%{error_message}"
+
+msgid "Repository by ID %{id} not found."
+msgstr "找不到 ID 為 %{id} 的儲存庫。"
+
+msgid "Repository by ID %{id} successfully disabled."
+msgstr "已成功停用 ID 為 %{id} 的儲存庫。"
+
+msgid "Repository by ID %{id} successfully enabled."
+msgstr "已成功啟用 ID 為 %{id} 的儲存庫。"
+
+msgid "Repository by ID %{repos} could not be found and was not disabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
+msgstr[0] "找不到 ID 為 %{repos} 的儲存庫，未停用該儲存庫。"
+
+msgid "Repository by ID %{repos} could not be found and was not enabled."
+msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
+msgstr[0] "找不到 ID 為 %{repos} 的儲存庫，未啟用該儲存庫。"
+
+msgid "Repository metadata signatures are missing"
+msgstr "缺少儲存庫中繼資料簽名"
+
+msgid "Repository with ID %{repo_id} not found"
+msgstr "找不到 ID 為 %{repo_id} 的儲存庫"
+
+msgid "Request URL"
+msgstr "申請 URL"
+
+msgid "Request error:"
+msgstr "申請發生錯誤："
+
+msgid "Requested service not found"
+msgstr "找不到要求的服務"
+
+msgid "Required parameters are missing or empty: %s"
+msgstr "所需參數缺失或為空白：%s"
+
+msgid "Response HTTP status code"
+msgstr "回應 HTTP 狀態碼"
+
+msgid "Response body"
+msgstr "回應本文"
+
+msgid "Response headers"
+msgstr "回應標頭"
+
+msgid "Run '%{command}' for more information on a command and its subcommands."
+msgstr "請執行「%{command}」以獲取有關某個指令及其子指令的詳細資訊。"
+
+msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
+msgstr "請執行「%{command}」以先與您的 SUSE Customer Center 資料同步。"
+
+#, fuzzy
+msgid "Run the clean process without actually removing files."
+msgstr "y"
+
+msgid "Run this command on an online RMT."
+msgstr "在線上 RMT 中執行此指令。"
+
 msgid ""
 "SCC API request failed. Error details:\n"
 "Request URL: %{url}\n"
@@ -198,978 +741,211 @@ msgstr ""
 "回應本文：\n"
 "%{body}"
 
-#: ../lib/rmt/cli/base.rb:125
-msgid "%{path} is not a directory."
-msgstr "%{path} 不是目錄。"
-
-#: ../lib/rmt/cli/base.rb:129
-msgid "%{path} is not writable by user %{username}."
-msgstr "使用者 %{username} 不允許寫入資料至 %{path}。"
-
-#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:19
-#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:40
-#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:17
-#: ../lib/rmt/cli/decorators/product_decorator.rb:21
-#: ../lib/rmt/cli/decorators/product_decorator.rb:44
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:19
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:39
-msgid "ID"
-msgstr "ID"
-
-#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:20
-#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:41
-#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:18
-msgid "Name"
-msgstr "名稱"
-
-#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:21
-#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:42
-msgid "URL"
-msgstr "URL"
-
-#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:22
-#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:43
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:22
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:41
-msgid "Mandatory?"
-msgstr "是否為強制？"
-
-#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:23
-#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:44
-#: ../lib/rmt/cli/decorators/product_decorator.rb:27
-#: ../lib/rmt/cli/decorators/product_decorator.rb:49
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:23
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:42
-msgid "Mirror?"
-msgstr "是否鏡像？"
-
-#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:24
-#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:45
-msgid "Last Mirrored"
-msgstr "上次鏡像時間"
-
-#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:34
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:33
-msgid "Mandatory"
-msgstr "強制"
-
-#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:34
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:33
-msgid "Not Mandatory"
-msgstr "非強制"
-
-#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:35
-#: ../lib/rmt/cli/decorators/product_decorator.rb:39
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:34
-msgid "Mirror"
-msgstr "鏡像"
-
-#: ../lib/rmt/cli/decorators/custom_repository_decorator.rb:35
-#: ../lib/rmt/cli/decorators/product_decorator.rb:39
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:34
-msgid "Don't Mirror"
-msgstr "不鏡像"
-
-#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:19
-#: ../lib/rmt/cli/decorators/product_decorator.rb:23
-#: ../lib/rmt/cli/decorators/product_decorator.rb:46
-msgid "Version"
-msgstr "版本"
-
-#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:20
-msgid "Architecture"
-msgstr "架構"
-
-#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:34
-msgid "Product ID"
-msgstr "產品 ID"
-
-#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:35
-msgid "Product Name"
-msgstr "產品名稱"
-
-#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:36
-msgid "Product Version"
-msgstr "產品版本"
-
-#: ../lib/rmt/cli/decorators/custom_repository_products_decorator.rb:37
-msgid "Product Architecture"
-msgstr "產品架構"
-
-#: ../lib/rmt/cli/decorators/product_decorator.rb:22
-#: ../lib/rmt/cli/decorators/product_decorator.rb:45
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:20
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:40
-msgid "Product"
-msgstr "產品"
-
-#. i18n: architecture
-#: ../lib/rmt/cli/decorators/product_decorator.rb:24
-#: ../lib/rmt/cli/decorators/product_decorator.rb:48
-msgid "Arch"
-msgstr "架構"
-
-#: ../lib/rmt/cli/decorators/product_decorator.rb:25
-msgid "Product String"
-msgstr "產品字串"
-
-#: ../lib/rmt/cli/decorators/product_decorator.rb:26
-msgid "Release Stage"
-msgstr "發佈階段"
-
-#: ../lib/rmt/cli/decorators/product_decorator.rb:28
-#: ../lib/rmt/cli/decorators/product_decorator.rb:50
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:24
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:43
-msgid "Last mirrored"
-msgstr "上次鏡像時間"
-
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:21
-msgid "Description"
-msgstr "描述"
-
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:55
-msgid "mandatory"
-msgstr "強制"
-
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:55
-msgid "non-mandatory"
-msgstr "非強制"
-
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:56
-msgid "enabled"
-msgstr "已啟用"
-
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:56
-msgid "not enabled"
-msgstr "未啟用"
-
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:57
-msgid "mirrored at %{time}"
-msgstr "已在 %{time} 鏡像"
-
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:57
-msgid "not mirrored"
-msgstr "未鏡像"
-
-#: ../lib/rmt/cli/decorators/repository_decorator.rb:61
-msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
-msgstr "* %{name} (id：%{id}) (%{mandatory}，%{enabled}，%{mirrored_at})"
-
-#: ../lib/rmt/cli/decorators/system_decorator.rb:3
-msgid "Login"
-msgstr "登入"
-
-#: ../lib/rmt/cli/decorators/system_decorator.rb:3
-msgid "Hostname"
-msgstr "主機名稱"
-
-#: ../lib/rmt/cli/decorators/system_decorator.rb:3
-msgid "Registration time"
-msgstr "註冊時間"
-
-#: ../lib/rmt/cli/decorators/system_decorator.rb:3
-msgid "Last seen"
-msgstr "上次出現時間"
-
-#: ../lib/rmt/cli/decorators/system_decorator.rb:3
-msgid "Products"
-msgstr "產品"
-
-#: ../lib/rmt/cli/export.rb:3
-msgid "Store SCC data in files at given path"
-msgstr "將 SCC 資料儲存在給定路徑下的檔案中"
-
-#: ../lib/rmt/cli/export.rb:9
-msgid "Store repository settings at given path"
-msgstr "在給定路徑中儲存儲存庫設定"
-
-#: ../lib/rmt/cli/export.rb:16
-msgid "Settings saved at %{file}."
-msgstr "已將設定儲存於 %{file} 中。"
-
-#: ../lib/rmt/cli/export.rb:19
-msgid "Mirror repos at given path"
-msgstr "將儲存庫鏡像至給定路徑"
-
-#: ../lib/rmt/cli/export.rb:21
-msgid "Run this command on an online RMT."
-msgstr "在線上 RMT 中執行此指令。"
-
-#: ../lib/rmt/cli/export.rb:23
-msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
-msgstr "指定的 PATH 必須包含 %{file} 檔案。離線 RMT 可以使用指令「%{command}」建立此檔案。"
-
-#: ../lib/rmt/cli/export.rb:28
-msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
-msgstr "RMT 會將 %{file} 中指定的儲存庫鏡像至 PATH (通常是一個可擕式儲存裝置)。"
-
-#: ../lib/rmt/cli/export.rb:43 ../lib/rmt/cli/import.rb:20
-msgid "%{file} does not exist."
-msgstr "%{file} 不存在。"
-
-#: ../lib/rmt/cli/import.rb:3
-msgid "Read SCC data from given path"
-msgstr "從給定路徑讀取 SCC 資料"
-
-#: ../lib/rmt/cli/import.rb:11
-msgid "Mirror repos from given path"
-msgstr "從給定路徑鏡像儲存庫"
-
-#: ../lib/rmt/cli/import.rb:34
-msgid "repository by URL %{url} does not exist in database"
-msgstr "資料庫中不存在 URL 為 %{url} 的儲存庫"
-
-#: ../lib/rmt/cli/main.rb:5
-msgid "Enable debug output"
-msgstr "啟用除錯輸出"
-
-#: ../lib/rmt/cli/main.rb:7
-msgid "Sync database with SUSE Customer Center"
-msgstr "將資料庫與 SUSE Customer Center 同步"
-
-#: ../lib/rmt/cli/main.rb:14
-msgid "List and modify products"
-msgstr "列出並修改產品"
-
-#: ../lib/rmt/cli/main.rb:17
-msgid "List and modify repositories"
-msgstr "列出並修改儲存庫"
-
-#: ../lib/rmt/cli/main.rb:20
-msgid "Mirror repositories"
-msgstr "鏡像儲存庫"
-
-#: ../lib/rmt/cli/main.rb:23
-msgid "Import commands for Offline Sync"
-msgstr "輸入離線同步的指令"
-
-#: ../lib/rmt/cli/main.rb:26
-msgid "Export commands for Offline Sync"
-msgstr "輸出離線同步的指令"
-
-#: ../lib/rmt/cli/main.rb:29
-msgid "List and manipulate registered systems"
-msgstr "列出並操作已註冊的系統"
-
-#: ../lib/rmt/cli/main.rb:32
-msgid "Show RMT version"
-msgstr "顯示 RMT 版本"
-
-#: ../lib/rmt/cli/mirror.rb:2
-msgid "Do not fail the command if product is in alpha or beta stage"
-msgstr "如果產品處於 alpha 或 beta 階段，請勿使指令失敗"
-
-#: ../lib/rmt/cli/mirror.rb:4
-msgid "Mirror all enabled repositories"
-msgstr "鏡像所有已啟用的儲存庫"
-
-#: ../lib/rmt/cli/mirror.rb:10
-msgid "Mirroring SUMA product tree failed: %{error_message}"
-msgstr "鏡像 SUMA 產品樹失敗：%{error_message}"
-
-#: ../lib/rmt/cli/mirror.rb:13
-msgid "There are no repositories marked for mirroring."
-msgstr "沒有標示為要鏡像的儲存庫。"
-
-#: ../lib/rmt/cli/mirror.rb:33
-msgid "Mirror enabled repositories with given repository IDs"
-msgstr "鏡像具有指定儲存庫 ID 的已啟用儲存庫"
-
-#: ../lib/rmt/cli/mirror.rb:37 ../lib/rmt/cli/repos_base.rb:10
-msgid "No repository IDs supplied"
-msgstr "未提供儲存庫 ID"
-
-#: ../lib/rmt/cli/mirror.rb:42
-msgid "Repository with ID %{repo_id} not found"
-msgstr "找不到 ID 為 %{repo_id} 的儲存庫"
-
-#: ../lib/rmt/cli/mirror.rb:51
-msgid "Mirror enabled repositories for a product with given product IDs"
-msgstr "鏡像具有指定產品 ID 的產品的已啟用儲存庫"
-
-#: ../lib/rmt/cli/mirror.rb:55 ../lib/rmt/cli/products.rb:115
-msgid "No product IDs supplied"
-msgstr "未提供產品 ID"
-
-#: ../lib/rmt/cli/mirror.rb:60
-msgid "Product for target %{target} not found"
-msgstr "找不到目標 %{target} 的產品"
-
-#: ../lib/rmt/cli/mirror.rb:64
-msgid "Product %{target} has no repositories enabled"
-msgstr "未為產品 %{target} 啟用儲存庫"
-
-#: ../lib/rmt/cli/mirror.rb:70
-msgid "Product with ID %{target} not found"
-msgstr "找不到 ID 為 %{target} 的產品"
-
-#: ../lib/rmt/cli/mirror.rb:129
-msgid "Mirroring of repository with ID %{repo_id} is not enabled"
-msgstr "未啟用 ID 為 %{repo_id} 的儲存庫的鏡像"
-
-#: ../lib/rmt/cli/mirror.rb:141
-msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
-msgstr "儲存庫「%{repo_name}」(%{repo_id})：%{error_message}"
-
-#: ../lib/rmt/cli/mirror.rb:150
-msgid "Mirroring complete."
-msgstr "鏡像已完成。"
-
-#: ../lib/rmt/cli/mirror.rb:152
-msgid "The following errors occurred while mirroring:"
-msgstr "鏡像時發生以下錯誤："
-
-#: ../lib/rmt/cli/mirror.rb:154
-msgid "Mirroring completed with errors."
-msgstr "鏡像已完成但發生錯誤。"
-
-#: ../lib/rmt/cli/products.rb:8
-msgid "List products which are marked to be mirrored."
-msgstr "列出標示為要鏡像的產品。"
-
-#: ../lib/rmt/cli/products.rb:9
-msgid "List all products, including ones which are not marked to be mirrored"
-msgstr "列出所有產品，包括標示為要鏡像的產品"
-
-#: ../lib/rmt/cli/products.rb:11 ../lib/rmt/cli/repos.rb:8
-#: ../lib/rmt/cli/repos_custom.rb:51 ../lib/rmt/cli/repos_custom.rb:108
-#: ../lib/rmt/cli/systems.rb:12
-msgid "Output data in CSV format"
-msgstr "以 CSV 格式輸出資料"
-
-#: ../lib/rmt/cli/products.rb:12
-msgid "Product name (e.g., Basesystem, SLES)"
-msgstr "產品名稱 (例如 Basesystem、SLES)"
-
-#: ../lib/rmt/cli/products.rb:13
-msgid "Product version (e.g., 15, 15.1, '12 SP4')"
-msgstr "產品版本 (例如 15、15.1、\"12 SP4\")"
-
-#: ../lib/rmt/cli/products.rb:14
-msgid "Product architecture (e.g., x86_64, aarch64)"
-msgstr "產品架構 (例如 x86_64、aarch64)"
-
-#: ../lib/rmt/cli/products.rb:25 ../lib/rmt/cli/repos.rb:107
-msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
-msgstr "請執行「%{command}」以先與您的 SUSE Customer Center 資料同步。"
-
-#: ../lib/rmt/cli/products.rb:27
-msgid "No matching products found in the database."
-msgstr "在資料庫中找不到相符產品。"
-
-#: ../lib/rmt/cli/products.rb:36
-msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
-msgstr "系統預設僅顯示啟用的產品。使用「%{command}」選項可查看所有產品。"
-
-#: ../lib/rmt/cli/products.rb:43 ../lib/rmt/cli/products.rb:46
-msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
-msgstr "依產品 ID 清單或產品字串啟用產品儲存庫鏡像。"
-
-#: ../lib/rmt/cli/products.rb:44
-msgid "Enables all free modules for a product"
-msgstr "啟用產品的所有免費模組"
-
-#: ../lib/rmt/cli/products.rb:48 ../lib/rmt/cli/products.rb:66
-#: ../lib/rmt/cli/products.rb:84 ../lib/rmt/cli/systems.rb:55
-#: ../lib/rmt/cli/systems.rb:81
-msgid "Examples"
-msgstr "範例"
-
-#: ../lib/rmt/cli/products.rb:62 ../lib/rmt/cli/products.rb:64
-msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
-msgstr "依產品 ID 清單或產品字串停用產品儲存庫鏡像。"
-
-#: ../lib/rmt/cli/products.rb:77
-msgid "To clean up downloaded files, run '%{command}'"
-msgstr "若要清理下載的檔案，請執行「%{command}」"
-
-#: ../lib/rmt/cli/products.rb:80 ../lib/rmt/cli/products.rb:82
-msgid "Displays product with all its repositories and their attributes."
-msgstr "顯示產品及其所有儲存庫，以及儲存庫的屬性。"
-
-#: ../lib/rmt/cli/products.rb:97 ../lib/rmt/cli/products.rb:176
-msgid "No product found for target %{target}."
-msgstr "找不到目標 %{target} 的產品。"
-
-#: ../lib/rmt/cli/products.rb:99
-msgid "Product: %{name} (ID: %{id})"
-msgstr "產品：%{name} (ID：%{id})"
-
-#: ../lib/rmt/cli/products.rb:100
-msgid "Description: %{description}"
-msgstr "描述：%{description}"
-
-#: ../lib/rmt/cli/products.rb:108
-msgid "Repositories:"
-msgstr "儲存庫："
-
-#: ../lib/rmt/cli/products.rb:108
-msgid "Repositories are not available for this product."
-msgstr "儲存庫不可用於此產品。"
-
-#: ../lib/rmt/cli/products.rb:127
-msgid "Product %{products} could not be found and was not enabled."
-msgid_plural "Products %{products} could not be found and were not enabled."
-msgstr[0] "找不到產品 %{products}，未將其啟用。"
-
-#: ../lib/rmt/cli/products.rb:131
-msgid "Product %{products} could not be found and was not disabled."
-msgid_plural "Products %{products} could not be found and were not disabled."
-msgstr[0] "找不到產品 %{products}，未將其停用。"
-
-#: ../lib/rmt/cli/products.rb:145
-msgid "Enabling %{product}:"
-msgstr "正在啟用 %{product}："
-
-#: ../lib/rmt/cli/products.rb:149
-msgid "Disabling %{product}:"
-msgstr "正在停用 %{product}："
-
-#: ../lib/rmt/cli/products.rb:156
-msgid "All repositories have already been enabled."
-msgstr "已啟用所有儲存庫。"
-
-#: ../lib/rmt/cli/products.rb:156
-msgid "All repositories have already been disabled."
-msgstr "已停用所有儲存庫。"
-
-#: ../lib/rmt/cli/products.rb:162
-msgid "Enabled repository %{repository}."
-msgstr "已啟用儲存庫 %{repository}。"
-
-#: ../lib/rmt/cli/products.rb:164
-msgid "Disabled repository %{repository}."
-msgstr "已停用儲存庫 %{repository}。"
-
-#: ../lib/rmt/cli/products.rb:177
-msgid "Found product by target %{target}: %{products}."
-msgid_plural "Found products by target %{target}: %{products}."
-msgstr[0] "依目標 %{target} 找到以下產品：%{products}。"
-
-#: ../lib/rmt/cli/products.rb:187
-msgid "Product by ID %{id} not found."
-msgstr "找不到 ID 為 %{id} 的產品。"
-
-#: ../lib/rmt/cli/repos.rb:3
-msgid "List and modify custom repositories"
-msgstr "列出並修改自訂儲存庫"
-
-#: ../lib/rmt/cli/repos.rb:6
-msgid "List repositories which are marked to be mirrored"
-msgstr "列出標示為要鏡像的儲存庫"
-
-#: ../lib/rmt/cli/repos.rb:7
-msgid "List all repositories, including ones which are not marked to be mirrored"
-msgstr "列出所有儲存庫，包括標示為要鏡像的儲存庫"
-
-#: ../lib/rmt/cli/repos.rb:16
-msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
-msgstr "移除未標示為有待鏡像的儲存庫的本地鏡像檔案"
-
-#: ../lib/rmt/cli/repos.rb:17 ../lib/rmt/cli/systems.rb:73
-msgid "Ask for confirmation or do not ask for confirmation and require no user interaction"
-msgstr "要求確認或不要求確認以及無需使用者互動"
-
-#: ../lib/rmt/cli/repos.rb:28
-msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
-msgstr "RMT 只找到了標示為有待鏡像的儲存庫的本地鏡像檔案。"
-
-#: ../lib/rmt/cli/repos.rb:32
-msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
-msgstr "RMT 在以下未標示為有待鏡像的儲存庫中找到了本地鏡像的檔案："
-
-#: ../lib/rmt/cli/repos.rb:38
-msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
-msgstr "是否要繼續移除這些儲存庫的本地鏡像檔案？"
-
-#: ../lib/rmt/cli/repos.rb:40
-msgid "Only '%{input}' will be accepted."
-msgstr "只接受「%{input}」。"
-
-#: ../lib/rmt/cli/repos.rb:42
-msgid "Enter a value:"
-msgstr "輸入值："
-
-#: ../lib/rmt/cli/repos.rb:48
-msgid "Clean cancelled."
-msgstr "已取消清理。"
-
-#: ../lib/rmt/cli/repos.rb:56
-msgid "Deleting locally mirrored files from repository '%{repo}'..."
-msgstr "正在從儲存庫「%{repo}」中刪除已本地鏡像的檔案..."
-
-#: ../lib/rmt/cli/repos.rb:65
-msgid "Clean finished. An estimated %{total_file_size} was removed."
-msgstr "已完成清理。估計已移除 %{total_file_size}。"
-
-#: ../lib/rmt/cli/repos.rb:69 ../lib/rmt/cli/repos.rb:71
-msgid "Enable mirroring of repositories by a list of repository IDs"
-msgstr "依儲存庫 ID 清單啟用儲存庫鏡像"
-
-#: ../lib/rmt/cli/repos.rb:73 ../lib/rmt/cli/repos.rb:87
-#: ../lib/rmt/cli/repos_custom.rb:8 ../lib/rmt/cli/repos_custom.rb:70
-#: ../lib/rmt/cli/repos_custom.rb:84
-msgid "Examples:"
-msgstr "範例："
-
-#: ../lib/rmt/cli/repos.rb:83 ../lib/rmt/cli/repos.rb:85
-msgid "Disable mirroring of repositories by a list of repository IDs"
-msgstr "依儲存庫 ID 清單停用儲存庫鏡像"
-
-#: ../lib/rmt/cli/repos.rb:96 ../lib/rmt/cli/repos_custom.rb:93
-msgid "To clean up downloaded files, please run '%{command}'"
-msgstr "若要清理下載的檔案，請執行「%{command}」"
-
-#: ../lib/rmt/cli/repos.rb:109
-msgid "No repositories enabled."
-msgstr "未啟用任何儲存庫。"
-
-#: ../lib/rmt/cli/repos.rb:117
-msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
-msgstr "系統預設僅顯示啟用的儲存庫。使用「%{option}」選項可查看所有儲存庫。"
-
-#: ../lib/rmt/cli/repos_base.rb:22
-msgid "Repository by ID %{repos} could not be found and was not enabled."
-msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
-msgstr[0] "找不到 ID 為 %{repos} 的儲存庫，未啟用該儲存庫。"
-
-#: ../lib/rmt/cli/repos_base.rb:26
-msgid "Repository by ID %{repos} could not be found and was not disabled."
-msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
-msgstr[0] "找不到 ID 為 %{repos} 的儲存庫，未停用該儲存庫。"
-
-#: ../lib/rmt/cli/repos_base.rb:38
-msgid "Repository by ID %{id} successfully enabled."
-msgstr "已成功啟用 ID 為 %{id} 的儲存庫。"
-
-#: ../lib/rmt/cli/repos_base.rb:38
-msgid "Repository by ID %{id} successfully disabled."
-msgstr "已成功停用 ID 為 %{id} 的儲存庫。"
-
-#: ../lib/rmt/cli/repos_base.rb:56
-msgid "Repository by ID %{id} not found."
-msgstr "找不到 ID 為 %{id} 的儲存庫。"
-
-#: ../lib/rmt/cli/repos_custom.rb:3 ../lib/rmt/cli/repos_custom.rb:6
-msgid "Creates a custom repository."
-msgstr "建立自訂儲存庫。"
-
-#: ../lib/rmt/cli/repos_custom.rb:4
-msgid "Provide a custom ID instead of allowing RMT to generate one."
-msgstr "請提供自訂 ID，而不要允許 RMT 產生 ID。"
-
-#: ../lib/rmt/cli/repos_custom.rb:24
-msgid "A repository by the URL %{url} already exists."
-msgstr "URL 為 %{url} 的儲存庫已存在。"
-
-#: ../lib/rmt/cli/repos_custom.rb:27
-msgid "A repository by the ID %{id} already exists."
-msgstr "已存在 ID 為 %{id} 的儲存庫。"
-
-#: ../lib/rmt/cli/repos_custom.rb:30
-msgid "Please provide a non-numeric ID for your custom repository."
-msgstr "請為自訂儲存庫提供一個非數字 ID。"
-
-#: ../lib/rmt/cli/repos_custom.rb:35
-msgid "Couldn't add custom repository."
-msgstr "無法新增自訂儲存庫。"
-
-#: ../lib/rmt/cli/repos_custom.rb:47
-msgid "Successfully added custom repository."
-msgstr "已成功新增自訂儲存庫。"
-
-#: ../lib/rmt/cli/repos_custom.rb:50
-msgid "List all custom repositories"
-msgstr "列出所有自訂儲存庫"
-
-#: ../lib/rmt/cli/repos_custom.rb:56
-msgid "No custom repositories found."
-msgstr "找不到自訂儲存庫。"
-
-#: ../lib/rmt/cli/repos_custom.rb:66 ../lib/rmt/cli/repos_custom.rb:68
-msgid "Enable mirroring of custom repositories by a list of IDs"
-msgstr "依 ID 清單啟用自訂儲存庫鏡像"
-
-#: ../lib/rmt/cli/repos_custom.rb:80
-msgid "Disable mirroring of custom repository by a list of IDs"
-msgstr "依 ID 清單停用自訂儲存庫鏡像"
-
-#: ../lib/rmt/cli/repos_custom.rb:82
-msgid "Disable mirroring of custom repositories by a list of IDs"
-msgstr "依 ID 清單停用自訂儲存庫鏡像"
-
-#: ../lib/rmt/cli/repos_custom.rb:96
-msgid "Remove a custom repository"
-msgstr "移除自訂儲存庫"
-
-#: ../lib/rmt/cli/repos_custom.rb:101
-msgid "Removed custom repository by ID %{id}."
-msgstr "已移除 ID 為 %{id} 的自訂儲存庫。"
-
-#: ../lib/rmt/cli/repos_custom.rb:107
-msgid "Shows products attached to a custom repository"
-msgstr "顯示關聯至自訂儲存庫的產品"
-
-#: ../lib/rmt/cli/repos_custom.rb:115
-msgid "No products attached to repository."
-msgstr "沒有關聯至儲存庫的產品。"
-
-#: ../lib/rmt/cli/repos_custom.rb:125
-msgid "Attach an existing custom repository to a product"
-msgstr "正在將現有的自訂儲存庫關聯至產品"
-
-#: ../lib/rmt/cli/repos_custom.rb:131
-msgid "Attached repository to product '%{product_name}'."
-msgstr "已將儲存庫關聯至產品「%{product_name}」。"
-
-#: ../lib/rmt/cli/repos_custom.rb:136
-msgid "Detach an existing custom repository from a product"
-msgstr "將現有的自訂儲存庫與產品解除關聯"
-
-#: ../lib/rmt/cli/repos_custom.rb:142
-msgid "Detached repository from product '%{product_name}'."
-msgstr "已將儲存庫與產品「%{product_name}」解除關聯。"
-
-#: ../lib/rmt/cli/repos_custom.rb:152
-msgid "Cannot find product by ID %{id}."
-msgstr "找不到 ID 為 %{id} 的產品。"
-
-#: ../lib/rmt/cli/smt_importer.rb:38
-msgid "Enabled mirroring for repository %{repo}"
-msgstr "已啟用儲存庫 %{repo} 的鏡像"
-
-#: ../lib/rmt/cli/smt_importer.rb:40
-msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
-msgstr "在 RMT 資料庫中找不到儲存庫 %{repo}，可能是因為您的該儲存庫訂閱不再有效"
-
-#: ../lib/rmt/cli/smt_importer.rb:62
-msgid "Added association between %{repo} and product %{product}"
-msgstr "已在 %{repo} 與產品 %{product} 之間新增關聯"
-
-#: ../lib/rmt/cli/smt_importer.rb:65
-msgid ""
-"Product %{product} not found!\n"
-"Tried to attach custom repository %{repo} to product %{product},\n"
-"but that product was not found. Attach it to a different product\n"
-"by running '%{command}'\n"
-msgstr ""
-"找不到產品 %{product}！\n"
-"嘗試將自訂儲存庫 %{repo} 關聯至產品 %{product}，\n"
-"但找不到該產品。請透過執行「%{command}」將其\n"
-"關聯至其他產品\n"
-
-#: ../lib/rmt/cli/smt_importer.rb:91
-msgid "Duplicate entry for system %{system}, skipping"
-msgstr "系統 %{system} 存在重複項目，正在跳過"
-
-#: ../lib/rmt/cli/smt_importer.rb:101
-msgid "Failed to import system %{system}"
-msgstr "無法輸入系統 %{system}"
-
-#: ../lib/rmt/cli/smt_importer.rb:136 ../lib/rmt/cli/smt_importer.rb:166
-msgid "System %{system} not found"
-msgstr "找不到系統 %{system}"
-
-#: ../lib/rmt/cli/smt_importer.rb:139
-msgid "Product %{product} not found"
-msgstr "找不到產品 %{product}"
-
-#: ../lib/rmt/cli/smt_importer.rb:172
-msgid "Hardware information stored for system %{system}"
-msgstr "儲存的有關系統 %{system} 的硬體資訊"
-
-#: ../lib/rmt/cli/smt_importer.rb:196
-msgid "Path to unpacked SMT data tarball"
-msgstr "已解壓縮 SMT 資料 Tar 聚合檔的路徑"
-
-#: ../lib/rmt/cli/smt_importer.rb:197
-msgid "Do not import the systems that were registered to the SMT"
-msgstr "不輸入已在 SMT 中註冊的系統"
-
-#: ../lib/rmt/cli/smt_importer.rb:198
-msgid "Do not import system hardware info from MachineData table"
-msgstr "不要從 MachineData 表輸入系統硬體資訊"
-
-#: ../lib/rmt/cli/smt_importer.rb:209
-msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
-msgstr "尚未將 RMT 同步至 SCC。請先執行「%{command}」"
-
-#: ../lib/rmt/cli/smt_importer.rb:210
-msgid "importing data from SMT."
-msgstr "正在從 SMT 輸入資料。"
-
-#: ../lib/rmt/cli/systems.rb:8
-msgid "List registered systems."
-msgstr "列出已註冊的系統。"
-
-#: ../lib/rmt/cli/systems.rb:9
-msgid "Number of systems to display"
-msgstr "要顯示的系統數目"
-
-#: ../lib/rmt/cli/systems.rb:10
-msgid "List all registered systems"
-msgstr "列出所有已註冊的系統"
-
-#: ../lib/rmt/cli/systems.rb:11
-msgid "Filter BYOS systems using RMT as a proxy"
-msgstr "使用 RMT 做為代理來過濾 BYOS 系統"
-
-#: ../lib/rmt/cli/systems.rb:20
-msgid "There are no systems registered to this RMT instance."
-msgstr "未將任何系統註冊到此 RMT 例項。"
-
-#: ../lib/rmt/cli/systems.rb:36
-msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
-msgstr "顯示了最後 %{limit} 個註冊。使用「--all」選項可查看所有已註冊的系統。"
-
-#: ../lib/rmt/cli/systems.rb:44
-msgid "Forward registered systems data to SCC"
-msgstr "將已註冊系統的資料轉遞至 SCC"
-
-#: ../lib/rmt/cli/systems.rb:49
-msgid "Removes a system and its activations from RMT"
-msgstr "從 RMT 中移除某個系統及其啟用記錄"
-
-#: ../lib/rmt/cli/systems.rb:51
-msgid "Removes a system and its activations from RMT."
-msgstr "從 RMT 中移除某個系統及其啟用記錄。"
-
-#: ../lib/rmt/cli/systems.rb:53
-msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
-msgstr "若要指定某個有待移除的系統做為目標，請針對一系列系統及其相應登入名稱使用指令「%{command}」。"
-
-#: ../lib/rmt/cli/systems.rb:63
-msgid "Successfully removed system with login %{login}."
-msgstr "已成功移除登入名稱為 %{login} 的系統。"
-
-#: ../lib/rmt/cli/systems.rb:65
-msgid "System with login %{login} cannot be removed."
-msgstr "無法移除登入名稱為 %{login} 的系統。"
-
-#: ../lib/rmt/cli/systems.rb:67
-msgid "System with login %{login} not found."
-msgstr "找不到登入名稱為 %{login} 的系統。"
-
-#: ../lib/rmt/cli/systems.rb:71
-msgid "Removes inactive systems"
-msgstr "移除非使用中系統"
-
-#: ../lib/rmt/cli/systems.rb:72
-msgid "Remove systems before the given date (format: \"<year>-<month>-<day>\")"
-msgstr "移除早於給定日期 (格式：\"<年>-<月>-<日>\") 的系統"
-
-#: ../lib/rmt/cli/systems.rb:75
-msgid "Removes old systems and their activations if they are inactive."
-msgstr "移除處於非使用中狀態的舊系統以及系統上啟用的產品。"
-
-#: ../lib/rmt/cli/systems.rb:77
-msgid "By default, inactive systems are those that have not contacted in any way with RMT for the past 3 months. You can override this with the '-b / --before' flag."
-msgstr ""
-"依預設，非使用中系統是指過去 3 個月內未以任何方式與 RMT 進行聯絡的系統。您可以使用 \"-b / --before\" 旗標覆寫此預設值。"
-
-#: ../lib/rmt/cli/systems.rb:79
-msgid "The command will list you the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
-msgstr "該指令會列出待移除的候選系統並要求您確認。您可以使用 \"--no-confirmation\" 旗標指示此子指令直接執行而不要求確認。"
-
-#: ../lib/rmt/cli/systems.rb:98
-msgid "Do you want to delete these systems?"
-msgstr "確定要刪除這些系統嗎？"
-
-#: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:113
-#: ../lib/rmt/cli/systems.rb:116
-msgid "y"
-msgstr "y"
-
-#: ../lib/rmt/cli/systems.rb:110 ../lib/rmt/cli/systems.rb:114
-#: ../lib/rmt/cli/systems.rb:116
-msgid "n"
-msgstr "n"
-
-#: ../lib/rmt/cli/systems.rb:116
-msgid "Please, answer"
-msgstr "請回覆"
-
-#: ../lib/rmt/cli/systems.rb:126
-msgid "The given date does not follow a proper format. Ensure it follows this format '<year>-<month>-<day>'."
-msgstr "給定日期的格式不正確。請確定其採用以下格式：\"<年>-<月>-<日>\"。"
-
-#: ../lib/rmt/downloader.rb:77
-msgid "Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
-msgstr "下載 %{file_reference} 失敗，訊息：%{message}。%{seconds} 秒後會再嘗試 %{retries} 次"
-
-#: ../lib/rmt/downloader.rb:131
-msgid "Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
-msgstr "查詢 %{file_reference} 失敗，訊息：%{message}。%{seconds} 秒後會再嘗試 %{retries} 次"
-
-#: ../lib/rmt/downloader.rb:224
-msgid "Checksum doesn't match"
-msgstr "檢查總數不符"
-
-#: ../lib/rmt/downloader.rb:237
-msgid "%{file} - File does not exist"
-msgstr "%{file} - 檔案不存在"
-
-#: ../lib/rmt/downloader/exception.rb:12
-msgid "Request error:"
-msgstr "申請發生錯誤："
-
-#: ../lib/rmt/downloader/exception.rb:13
-msgid "Request URL"
-msgstr "申請 URL"
-
-#: ../lib/rmt/downloader/exception.rb:14
-msgid "Response HTTP status code"
-msgstr "回應 HTTP 狀態碼"
-
-#: ../lib/rmt/downloader/exception.rb:15
-msgid "Response body"
-msgstr "回應本文"
-
-#: ../lib/rmt/downloader/exception.rb:16
-msgid "Response headers"
-msgstr "回應標頭"
-
-#: ../lib/rmt/downloader/exception.rb:17
-msgid "curl return code"
-msgstr "curl 傳回碼"
-
-#: ../lib/rmt/downloader/exception.rb:18
-msgid "curl return message"
-msgstr "curl 傳回訊息"
-
-#: ../lib/rmt/downloader/exception.rb:21
-msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
-msgstr "%{file} - 申請失敗，HTTP 狀態碼：%{code}，傳回碼：%{return_code}"
-
-#: ../lib/rmt/gpg.rb:37
-msgid "GPG key import failed"
-msgstr "GPG 金鑰輸入失敗"
-
-#: ../lib/rmt/gpg.rb:48
-msgid "GPG signature verification failed"
-msgstr "GPG 簽章驗證失敗"
-
-#: ../lib/rmt/lockfile.rb:11
-msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
-msgstr "已執行此指令的另一個例項。請終止另一例項，或等待該例項完成。"
-
-#: ../lib/rmt/mirror.rb:41
-msgid "Mirroring SUSE Manager product tree to %{dir}"
-msgstr "正在將 SUSE Manager 產品樹鏡像至 %{dir}"
-
-#: ../lib/rmt/mirror.rb:44
-msgid "Could not mirror SUSE Manager product tree with error: %{error}"
-msgstr "無法鏡像 SUSE Manager 產品樹，發生錯誤：%{error}"
-
-#: ../lib/rmt/mirror.rb:50
-msgid "Mirroring repository %{repo} to %{dir}"
-msgstr "正在將儲存庫 %{repo} 鏡像至 %{dir}"
-
-#: ../lib/rmt/mirror.rb:76
-msgid "Could not create local directory %{dir} with error: %{error}"
-msgstr "無法建立本地目錄 %{dir}，發生錯誤：%{error}"
-
-#: ../lib/rmt/mirror.rb:83
-msgid "Could not create a temporary directory: %{error}"
-msgstr "無法建立暫存目錄：%{error}"
-
-#: ../lib/rmt/mirror.rb:109
-msgid "Repository metadata signatures are missing"
-msgstr "缺少儲存庫中繼資料簽名"
-
-#: ../lib/rmt/mirror.rb:111
-msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
-msgstr "下載儲存庫簽名/金鑰失敗，訊息：%{message}，HTTP 代碼：%{http_code}"
-
-#: ../lib/rmt/mirror.rb:122
-msgid "Error while mirroring metadata: %{error}"
-msgstr "鏡像中繼資料時發生錯誤：%{error}"
-
-#: ../lib/rmt/mirror.rb:146
-msgid "Error while mirroring license files: %{error}"
-msgstr "鏡像授權檔案時發生錯誤：%{error}"
-
-#: ../lib/rmt/mirror.rb:160
-msgid "Failed to download %{failed_count} files"
-msgstr "無法下載 %{failed_count} 個文件"
-
-#: ../lib/rmt/mirror.rb:162
-msgid "Error while mirroring packages: %{error}"
-msgstr "鏡像套件時發生錯誤：%{error}"
-
-#: ../lib/rmt/mirror.rb:197
-msgid "Error while moving directory %{src} to %{dest}: %{error}"
-msgstr "將目錄 %{src} 移至 %{dest} 時發生錯誤：%{error}"
-
-#: ../lib/rmt/scc.rb:16 ../lib/rmt/scc.rb:83
 msgid "SCC credentials not set."
 msgstr "未設定 SCC 身分證明。"
 
-#: ../lib/rmt/scc.rb:18
-msgid "Downloading data from SCC"
-msgstr "正在從 SCC 下載資料"
+#, fuzzy
+msgid "Scanning the mirror directory for 'repomd.xml' files..."
+msgstr "y"
 
-#: ../lib/rmt/scc.rb:21 ../lib/rmt/scc.rb:63
-msgid "Updating products"
-msgstr "正在更新產品"
+msgid "Settings saved at %{file}."
+msgstr "已將設定儲存於 %{file} 中。"
 
-#: ../lib/rmt/scc.rb:36
-msgid "Exporting data from SCC to %{path}"
-msgstr "將 SCC 中的資料輸出至 %{path}"
+msgid "Show RMT version"
+msgstr "顯示 RMT 版本"
 
-#: ../lib/rmt/scc.rb:40
-msgid "Exporting products"
-msgstr "正在輸出產品"
+msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
+msgstr "顯示了最後 %{limit} 個註冊。使用「--all」選項可查看所有已註冊的系統。"
 
-#: ../lib/rmt/scc.rb:45
-msgid "Exporting repositories"
-msgstr "正在輸出儲存庫"
+msgid "Shows products attached to a custom repository"
+msgstr "顯示關聯至自訂儲存庫的產品"
 
-#: ../lib/rmt/scc.rb:48
-msgid "Exporting subscriptions"
-msgstr "正在輸出訂閱"
+msgid "Store SCC data in files at given path"
+msgstr "將 SCC 資料儲存在給定路徑下的檔案中"
 
-#: ../lib/rmt/scc.rb:51
-msgid "Exporting orders"
-msgstr "正在輸出訂單"
+msgid "Store repository settings at given path"
+msgstr "在給定路徑中儲存儲存庫設定"
 
-#: ../lib/rmt/scc.rb:59
-msgid "Missing data files: %{files}"
-msgstr "資料檔案缺失：%{files}"
+msgid "Successfully added custom repository."
+msgstr "已成功新增自訂儲存庫。"
 
-#: ../lib/rmt/scc.rb:61
-msgid "Importing SCC data from %{path}"
-msgstr "正在從 %{path} 輸入 SCC 資料"
+msgid "Successfully removed system with login %{login}."
+msgstr "已成功移除登入名稱為 %{login} 的系統。"
 
-#: ../lib/rmt/scc.rb:79
-msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
-msgstr "組態檔案已停用將系統同步至 SCC，正在離開。"
+msgid "Sync database with SUSE Customer Center"
+msgstr "將資料庫與 SUSE Customer Center 同步"
 
-#: ../lib/rmt/scc.rb:88
 msgid "Syncing %{count} updated system(s) to SCC"
 msgstr "正在將 %{count} 個已更新系統同步到 SCC"
 
-#: ../lib/rmt/scc.rb:93
-msgid "Failed to sync systems: %{error}"
-msgstr "無法同步系統：%{error}"
-
-#: ../lib/rmt/scc.rb:98
-msgid "Couldn't sync %{count} systems."
-msgstr "無法同步 %{count} 個系統。"
-
-#: ../lib/rmt/scc.rb:117
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
 msgstr "正在將已取消註冊的系統 %{scc_system_id} 同步至 SCC"
 
-#: ../lib/rmt/scc.rb:134
+msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
+msgstr "組態檔案已停用將系統同步至 SCC，正在離開。"
+
+msgid "System %{system} not found"
+msgstr "找不到系統 %{system}"
+
+msgid "System with login %{login} cannot be removed."
+msgstr "無法移除登入名稱為 %{login} 的系統。"
+
+msgid "System with login %{login} not found."
+msgstr "找不到登入名稱為 %{login} 的系統。"
+
+msgid "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated from ID %{base_id} due to token mismatch"
+msgstr "登入名為 \\\"%{login}\\\" (ID %{new_id}) 的系統已進行驗證並因記號不符已從 ID %{base_id} 複製"
+
+msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
+msgstr "登入名為 \\\"%{login}\\\" 的系統使用了記號 \\\"%{system_token}\\\" 進行驗證"
+
+msgid "System with login \\\"%{login}\\\" authenticated without token header"
+msgstr "登入名為 \\\"%{login}\\\" 的系統進行驗證時未提供記號標頭"
+
+msgid "The RMT database has not yet been initialized. Run '%{command}' to set up the database."
+msgstr "尚未啟始化 RMT 資料庫。請執行 \"%{command}\" 以設定該資料庫。"
+
+msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
+msgstr "未在「%{path}」中正確設定 SCC 身分證明。您可以從 %{url} 獲取身分證明"
+
+#, fuzzy
+msgid "The command will list the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
+msgstr "該指令會列出待移除的候選系統並要求您確認。您可以使用 \"--no-confirmation\" 旗標指示此子指令直接執行而不要求確認。"
+
+msgid "The following errors occurred while mirroring:"
+msgstr "鏡像時發生以下錯誤："
+
+#, fuzzy
+msgid "The given date does not follow the proper format. Ensure it follows this format '<year>-<month>-<day>'."
+msgstr "給定日期的格式不正確。請確定其採用以下格式：\"<年>-<月>-<日>\"。"
+
+msgid "The product \"%s\" is a base product and cannot be deactivated"
+msgstr "產品「%s」為基礎產品，無法停用"
+
+msgid "The product you are attempting to activate (%{product}) is not available on your system's base product (%{system_base}). %{product} is available on %{required_bases}."
+msgstr "無法在您系統的基礎產品 (%{system_base}) 上使用您嘗試啟用的產品 %{product}。可以在 %{required_bases} 上使用 %{product}。"
+
+msgid "The product you are attempting to activate (%{product}) requires one of these products to be activated first: %{required_bases}"
+msgstr "需要先啟用以下產品之一，才能啟用您嘗試啟用的產品 (%{product})：%{required_bases}"
+
+msgid "The requested product '%s' is not activated on this system."
+msgstr "此系統上未啟用要求的產品「%s」。"
+
+msgid "The requested products '%s' are not activated on the system."
+msgstr "此系統上未啟用要求的產品「%s」。"
+
+msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
+msgstr "指定的 PATH 必須包含 %{file} 檔案。離線 RMT 可以使用指令「%{command}」建立此檔案。"
+
+msgid "The subscription with the provided Registration Code does not include the requested product '%s'"
+msgstr "使用所提供註冊代碼的訂閱不包含申請的產品 \"%s\""
+
+msgid "The subscription with the provided Registration Code is expired"
+msgstr "使用所提供註冊代碼的訂閱已過期"
+
+msgid ""
+"There are activated extensions/modules on this system that cannot be migrated. \n"
+"Deactivate them first, and then try migrating again. \n"
+"The product(s) are '%s'. \n"
+"You can deactivate them with \n"
+"%s"
+msgstr ""
+"此系統上存在已啟用因而無法移轉的延伸/模組。\n"
+"請先將其停用，然後再次嘗試移轉。\n"
+"這些產品是 \"%s\"。\n"
+"您可以使用以下指令將其停用\n"
+"%s"
+
+msgid "There are no repositories marked for mirroring."
+msgstr "沒有標示為要鏡像的儲存庫。"
+
+msgid "There are no systems registered to this RMT instance."
+msgstr "未將任何系統註冊到此 RMT 例項。"
+
+#, fuzzy
+msgid "This can take several minutes. Would you like to continue and clean dangling packages?"
+msgstr "y"
+
+msgid "To clean up downloaded files, please run '%{command}'"
+msgstr "若要清理下載的檔案，請執行「%{command}」"
+
+msgid "To clean up downloaded files, run '%{command}'"
+msgstr "若要清理下載的檔案，請執行「%{command}」"
+
+msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
+msgstr "若要指定某個有待移除的系統做為目標，請針對一系列系統及其相應登入名稱使用指令「%{command}」。"
+
+#, fuzzy
+msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
+msgstr "n"
+
+msgid "URL"
+msgstr "URL"
+
+msgid "Unknown Registration Code."
+msgstr "未知的註冊代碼。"
+
+msgid "Unknown hash function %{checksum_type}"
+msgstr "未知的雜湊函數 %{checksum_type}"
+
+msgid "Updated system information for host '%s'"
+msgstr "已更新主機「%s」的系統資訊"
+
+msgid "Updating products"
+msgstr "正在更新產品"
+
 msgid "Updating repositories"
 msgstr "正在更新儲存庫"
 
-#: ../lib/rmt/scc.rb:141
 msgid "Updating subscriptions"
 msgstr "正在更新訂閱"
 
-#: ../lib/rmt/scc.rb:160
-msgid "Adding/Updating product %{product}"
-msgstr "正在新增/更新產品 %{/product}"
+msgid "Version"
+msgstr "版本"
+
+msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
+msgstr "是否要繼續移除這些儲存庫的本地鏡像檔案？"
+
+msgid "curl return code"
+msgstr "curl 傳回碼"
+
+msgid "curl return message"
+msgstr "curl 傳回訊息"
+
+msgid "enabled"
+msgstr "已啟用"
+
+#, fuzzy
+msgid "hardlink"
+msgstr "n"
+
+msgid "importing data from SMT."
+msgstr "正在從 SMT 輸入資料。"
+
+msgid "mandatory"
+msgstr "強制"
+
+msgid "mirrored at %{time}"
+msgstr "已在 %{time} 鏡像"
+
+msgid "n"
+msgstr "n"
+
+msgid "non-mandatory"
+msgstr "非強制"
+
+msgid "not enabled"
+msgstr "未啟用"
+
+msgid "not mirrored"
+msgstr "未鏡像"
+
+msgid "repository by URL %{url} does not exist in database"
+msgstr "資料庫中不存在 URL 為 %{url} 的儲存庫"
+
+msgid "y"
+msgstr "y"
+
+#, fuzzy
+msgid "yes"
+msgstr "y"
