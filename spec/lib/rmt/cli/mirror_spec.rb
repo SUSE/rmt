@@ -13,16 +13,19 @@ RSpec.describe RMT::CLI::Mirror do
   let(:error_log_end) { /\e\[33mMirroring completed with errors.\e\[0m/ }
   let(:error_log) { /.*#{error_log_begin}\n.*\e\[31m#{error_messages}\e\[0m\n.*#{error_log_end}/ }
 
+  let(:suma) { instance_double(RMT::Mirror::SumaProductTree) }
+  let(:mirror) { instance_double(RMT::Mirror) }
+
+  before do
+    allow(RMT::Mirror::SumaProductTree).to receive(:new).and_return(suma)
+    allow(suma).to receive(:mirror)
+
+    allow(RMT::Mirror).to receive(:new).and_return(mirror)
+    allow(mirror).to receive(:mirror_now)
+  end
+
   describe '#all' do
     let(:argv) { ['all'] }
-
-    let(:suma) { instance_double(RMT::Mirror::SumaProductTree) }
-
-    before do
-      allow(RMT::Mirror::SumaProductTree).to receive(:new).and_return(suma)
-      allow(suma).to receive(:mirror)
-      allow_any_instance_of(RMT::Mirror).to receive(:mirror_now)
-    end
 
     context 'lockfiles', :with_fakefs do
       include_examples 'handles lockfile exception'
@@ -66,8 +69,7 @@ RSpec.describe RMT::CLI::Mirror do
         let(:error_messages) { /Repository '#{repository.name}' \(#{repository.friendly_id}\): #{mirroring_error}\./ }
 
         it 'raises an error' do
-          allow_any_instance_of(RMT::Mirror).to receive(:mirror_now)
-            .and_raise(RMT::Mirror::Exception, mirroring_error)
+          allow(mirror).to receive(:mirror_now).and_raise(RMT::Mirror::Exception, mirroring_error)
 
           expect { command }
             .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
@@ -98,9 +100,7 @@ RSpec.describe RMT::CLI::Mirror do
 
       context 'using --do-not-raise-unpublished flag' do
         it 'log the warning and does not raise an error' do
-          allow_any_instance_of(RMT::Mirror)
-            .to receive(:mirror_now)
-            .and_raise(RMT::Mirror::Exception, mirroring_error)
+          allow(mirror).to receive(:mirror_now).and_raise(RMT::Mirror::Exception, mirroring_error)
 
           expect { command }.to output(error_log).to_stdout
         end
@@ -111,11 +111,12 @@ RSpec.describe RMT::CLI::Mirror do
       let!(:additional_repository) { create :repository, :with_products, mirroring_enabled: false }
 
       it 'mirrors additional repositories' do
-        expect_any_instance_of(described_class).to receive(:mirror_repositories!).with([repository]) do
+        expect(mirror).to receive(:mirror_now) do
           # enable mirroring of the additional repository during mirroring
           additional_repository.update!(mirroring_enabled: true)
         end
-        expect_any_instance_of(described_class).to receive(:mirror_repositories!).with([additional_repository])
+        expect(mirror).to receive(:mirror_now)
+
         expect { command }.to output(/\e\[32mMirroring complete.\e\[0m/).to_stdout
       end
 
@@ -188,9 +189,7 @@ RSpec.describe RMT::CLI::Mirror do
       let(:error_messages) { /Repository '#{repository.name}' \(#{repository.friendly_id}\): #{mirroring_error}\./ }
 
       it 'handles the exception and raises an error after mirroring all repos' do
-        allow_any_instance_of(RMT::Mirror)
-          .to receive(:mirror_now)
-          .and_raise(RMT::Mirror::Exception, mirroring_error)
+        allow(mirror).to receive(:mirror_now).and_raise(RMT::Mirror::Exception, mirroring_error)
 
         expect { command }
           .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
@@ -252,8 +251,7 @@ RSpec.describe RMT::CLI::Mirror do
       let(:argv) { ['product', product.id] }
 
       it 'mirrors repos' do
-        expect_any_instance_of(described_class).to receive(:mirror_repositories!).with(product.repositories)
-
+        expect(mirror).to receive(:mirror_now).exactly(product.repositories.count).times
         expect { command }.to output(/\e\[32mMirroring complete.\e\[0m/).to_stdout
       end
     end
@@ -263,7 +261,7 @@ RSpec.describe RMT::CLI::Mirror do
       let(:argv) { ['product', [product.identifier, product.version, product.arch].join('/')] }
 
       it 'mirrors repos' do
-        expect_any_instance_of(described_class).to receive(:mirror_repositories!).with(product.repositories)
+        expect(mirror).to receive(:mirror_now).exactly(product.repositories.count).times
 
         expect { command }.to output(/\e\[32mMirroring complete.\e\[0m/).to_stdout
       end
@@ -280,9 +278,7 @@ RSpec.describe RMT::CLI::Mirror do
       end
 
       it 'handles the exception and raises an error after mirroring all repos' do
-        allow_any_instance_of(RMT::Mirror)
-          .to receive(:mirror_now)
-          .and_raise(RMT::Mirror::Exception, mirroring_error)
+        allow(mirror).to receive(:mirror_now).and_raise(RMT::Mirror::Exception, mirroring_error)
 
         expect { command }
           .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
