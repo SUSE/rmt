@@ -10,6 +10,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
         errors << _('Mirroring SUMA product tree failed: %{error_message}') % { error_message: e.message }
       end
 
+
       raise RMT::CLI::Error.new(_('There are no repositories marked for mirroring.')) if Repository.only_mirroring_enabled.empty?
 
       # The set of repositories to be mirrored can change while the command is
