@@ -1,7 +1,7 @@
 #
 # spec file for package rmt-server
 #
-# Copyright (c) 2023 SUSE LLC
+# Copyright (c) 2024 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -30,7 +30,7 @@
 %define ruby_version          %{rb_default_ruby_suffix}
 
 Name:           rmt-server
-Version:        2.15
+Version:        2.16
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -145,6 +145,7 @@ mkdir -p %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server-mirror.timer %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server-sync.timer %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server-systems-scc-sync.timer %{buildroot}%{_unitdir}
+install -m 444 package/files/systemd/rmt-uptime-cleanup.timer %{buildroot}%{_unitdir}
 
 install -m 444 package/files/systemd/rmt-server-mirror.service %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server-sync.service %{buildroot}%{_unitdir}
@@ -152,6 +153,7 @@ install -m 444 package/files/systemd/rmt-server-systems-scc-sync.service %{build
 install -m 444 package/files/systemd/rmt-server.service %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server.target %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server-migration.service %{buildroot}%{_unitdir}
+install -m 444 package/files/systemd/rmt-uptime-cleanup.service %{buildroot}%{_unitdir}
 
 install -m 444 engines/registration_sharing/package/rmt-server-regsharing.service %{buildroot}%{_unitdir}
 install -m 444 engines/registration_sharing/package/rmt-server-regsharing.timer %{buildroot}%{_unitdir}
@@ -164,6 +166,7 @@ ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-migration
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-mirror
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-sync
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-systems-scc-sync
+ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-uptime-cleanup
 
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-regsharing
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-trim-cache
@@ -270,6 +273,7 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %{_sbindir}/rcrmt-server-sync
 %{_sbindir}/rcrmt-server-mirror
 %{_sbindir}/rcrmt-server-systems-scc-sync
+%{_sbindir}/rcrmt-uptime-cleanup
 %{_unitdir}/rmt-server.target
 %{_unitdir}/rmt-server.service
 %{_unitdir}/rmt-server-migration.service
@@ -279,6 +283,8 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %{_unitdir}/rmt-server-sync.timer
 %{_unitdir}/rmt-server-systems-scc-sync.service
 %{_unitdir}/rmt-server-systems-scc-sync.timer
+%{_unitdir}/rmt-uptime-cleanup.service
+%{_unitdir}/rmt-uptime-cleanup.timer
 %dir %{_datadir}/bash-completion/
 %dir %{_datadir}/bash-completion/completions/
 %{_datadir}/bash-completion/completions/rmt-cli
@@ -319,10 +325,10 @@ getent group %{rmt_group} >/dev/null || %{_sbindir}/groupadd -r %{rmt_group}
 getent passwd %{rmt_user} >/dev/null || \
 	%{_sbindir}/useradd -g %{rmt_group} -s /bin/false -r \
 	-c "user for RMT" %{rmt_user}
-%service_add_pre rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
+%service_add_pre rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service rmt-uptime-cleanup.service
 
 %post
-%service_add_post rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
+%service_add_post rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service rmt-uptime-cleanup.service
 
 # Run only on install
 if [ $1 -eq 1 ]; then
@@ -355,10 +361,10 @@ if [ ! -e %{_datadir}/rmt/public/suma ]; then
 fi
 
 %preun
-%service_del_preun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
+%service_del_preun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service rmt-uptime-cleanup.service
 
 %postun
-%service_del_postun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
+%service_del_postun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service rmt-uptime-cleanup.service
 
 %posttrans config
 # Don't fail if either systemd or nginx are not running

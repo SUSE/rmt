@@ -1,0 +1,10 @@
+[Unit]
+Description=RMT Uptime Data cleanup timer
+
+[Timer]
+# Run this timer every day at a randomized 24h delay.
+OnCalendar=daily
+RandomizedDelaySec=24h
+
+[Install]
+WantedBy=timers.target

@@ -18,6 +18,8 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
     }
   end
   let(:payload) { { hostname: 'test', hwinfo: hwinfo } }
+  let(:systemuptime) { system.system_uptimes.first }
+  let(:online_hours) { ':111111111111111111111111' }
 
   describe '#update' do
     subject(:update_action) { put url, params: payload, headers: headers }
@@ -43,6 +45,41 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
           expect(system.reload.cloud_provider).to eq('testcloud')
           expect(information[:cpus]).to eq('16')
+        end
+      end
+
+      context 'when uptime data provided' do
+        let(:payload) { { hostname: 'test', hwinfo: hwinfo, online_at: [1.day.ago.to_date.to_s << online_hours] } }
+
+        it 'inserts the uptime data in system_uptimes table' do
+          update_action
+
+          expect(systemuptime.system_id).to eq(system.reload.id)
+          expect(systemuptime.online_at_day.to_date).to eq(1.day.ago.to_date)
+          expect(systemuptime.online_at_hours.to_s).to eq('111111111111111111111111')
+        end
+      end
+
+      context 'when same uptime data added twice' do
+        let(:payload) { { hostname: 'test', hwinfo: hwinfo, online_at: [1.day.ago.to_date.to_s << online_hours, 1.day.ago.to_date.to_s << online_hours] } }
+
+        it 'avoids duplication if multiple records have same data' do
+          update_action
+
+          expect(system.system_uptimes.count).to eq(1)
+          expect(systemuptime.system_id).to eq(system.reload.id)
+          expect(systemuptime.online_at_day.to_date).to eq(1.day.ago.to_date)
+          expect(systemuptime.online_at_hours.to_s).to eq('111111111111111111111111')
+        end
+      end
+
+      context 'when uptime data is malformed' do
+        let(:payload) { { hostname: 'test', hwinfo: hwinfo, online_at: [1.day.ago.to_date.to_s] } }
+
+        it 'record is not inserted' do
+          update_action
+
+          expect(system.system_uptimes.count).to eq(0)
         end
       end
     end

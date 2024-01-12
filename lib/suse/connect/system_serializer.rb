@@ -18,6 +18,7 @@ class SUSE::Connect::SystemSerializer < ActiveModel::Serializer
   attribute :hostname, if: :needs_full_update?
   attribute :hwinfo, if: :has_hwinfo_and_needs_full_update?
   attribute :products, if: :needs_full_update?
+  attribute :systemuptimes, if: :has_systemuptime?
 
   # We send the internal system id as system_token if the system (in RMT) is
   # duplicated (therefore using the system_token mechanism).
@@ -47,6 +48,17 @@ class SUSE::Connect::SystemSerializer < ActiveModel::Serializer
     end
   end
 
+  def systemuptimes
+    object.system_uptimes.map do |systemuptime|
+      payload = {
+        system_id: systemuptime.system_id,
+        online_at_day: systemuptime.online_at_day,
+        online_at_hours: systemuptime.online_at_hours
+      }
+      payload
+    end
+  end
+
   def hwinfo
     JSON.parse(object.system_information).symbolize_keys
   end
@@ -57,6 +69,10 @@ class SUSE::Connect::SystemSerializer < ActiveModel::Serializer
 
   def has_system_token?
     object.system_token.present?
+  end
+
+  def has_systemuptime?
+    systemuptimes.any?
   end
 
   def needs_full_update?
