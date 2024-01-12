@@ -1,0 +1,12 @@
+[Unit]
+Description=RMT uptime cleanup service 
+Requires=mysql.service
+Wants=rmt-uptime-cleanup.timer
+
+[Service]
+Type=oneshot
+WorkingDirectory=/usr/share/rmt/bin
+ExecStart=bundle exec rake db:maintenance:cleanup_uptime_tracking RAILS_ENV=production
+
+[Install]
+WantedBy=multi-user.target
