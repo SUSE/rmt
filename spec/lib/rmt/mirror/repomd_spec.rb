@@ -16,10 +16,11 @@ RSpec.describe RMT::Mirror::Repomd do
   let(:logger) { RMT::Logger.new('/dev/null') }
 
 
+  let(:repository_url) { 'https://updates.suse.com/sample/repository/15.4/product' }
   let(:repository) do
     create :repository,
            name: 'SUSE Linux Enterprise Server 15 SP4',
-           external_url: 'https://updates.suse.com/sample/repository/15.4/'
+           external_url: repository_url
   end
 
   # Configuration for Debian mirroring instance
@@ -50,10 +51,12 @@ RSpec.describe RMT::Mirror::Repomd do
   describe '#mirror_implementation' do
     let(:licenses) { instance_double(RMT::Mirror::License) }
 
-    it 'mirrors the whole repository' do
+    before do
       allow(RMT::Mirror::License).to receive(:new).and_return(licenses)
       allow(repomd).to receive(:temp).with(:metadata).and_return('a')
+    end
 
+    it 'mirrors the whole repository' do
       expect(repomd).to receive(:create_repository_path)
       expect(repomd).to receive(:create_temp_dir).with(:metadata)
       expect(licenses).to receive(:mirror)
@@ -62,6 +65,22 @@ RSpec.describe RMT::Mirror::Repomd do
       expect(repomd).to receive(:replace_directory).with(source: 'a/repodata', destination: repomd.repository_path('repodata'))
 
       repomd.mirror_implementation
+    end
+
+    context 'non-product repositories' do
+      let(:repository_url) { 'https://updates.suse.com/sample/repository/15.4/update' }
+
+      it 'does not mirror licenses' do
+        expect(repomd).to receive(:create_repository_path)
+        expect(repomd).to receive(:create_temp_dir).with(:metadata)
+        expect(repomd).to receive(:mirror_metadata)
+        expect(repomd).to receive(:mirror_packages)
+        expect(repomd).to receive(:replace_directory).with(source: 'a/repodata', destination: repomd.repository_path('repodata'))
+
+        expect(licenses).not_to receive(:mirror)
+
+        repomd.mirror_implementation
+      end
     end
   end
 
