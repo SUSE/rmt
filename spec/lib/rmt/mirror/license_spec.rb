@@ -69,8 +69,6 @@ describe RMT::Mirror::License do
       license.mirror_implementation
     end
 
-    it 'creates a temporary directory & syncs the content at the end'
-
     it 'raises if mirroring failed' do
       allow(license).to receive(:licenses_available?).and_return(true)
       allow(license).to receive(:downloader).and_return(downloader)
