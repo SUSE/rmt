@@ -7,7 +7,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       begin
         suma_product_tree.mirror
       rescue RMT::Mirror::Exception => e
-        errors << _('Mirroring SUMA product tree failed: %{error_message}') % { error_message: e.message }
+        errors << (_('Mirroring SUMA product tree failed: %{error_message}') % { error_message: e.message })
       end
 
 
@@ -40,7 +40,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       repos = ids.map do |id|
         repo = Repository.find_by(friendly_id: id)
         errored_repos_id << id if options[:do_not_raise_unpublished] && repo.nil?
-        errors << _('Repository with ID %{repo_id} not found') % { repo_id: id } if repo.nil?
+        errors << (_('Repository with ID %{repo_id} not found') % { repo_id: id }) if repo.nil?
         repo
       end
 
@@ -58,17 +58,17 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       repos = []
       targets.each do |target|
         products = Product.get_by_target!(target)
-        errors << _('Product for target %{target} not found') % { target: target } if products.empty?
+        errors << (_('Product for target %{target} not found') % { target: target }) if products.empty?
         products.each do |product|
           product_repos = product.repositories.only_mirroring_enabled
           if product_repos.empty?
-            errors << _('Product %{target} has no repositories enabled') % { target: target }
+            errors << (_('Product %{target} has no repositories enabled') % { target: target })
             errored_products_id << target if options[:do_not_raise_unpublished]
           end
           repos += product_repos.to_a
         end
       rescue ActiveRecord::RecordNotFound
-        errors << _('Product with ID %{target} not found') % { target: target }
+        errors << (_('Product with ID %{target} not found') % { target: target })
         errored_products_id << target if options[:do_not_raise_unpublished]
       end
 
@@ -127,7 +127,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   def mirror_repositories!(repos)
     repos.compact.each do |repo|
       unless repo.mirroring_enabled
-        errors << _('Mirroring of repository with ID %{repo_id} is not enabled') % { repo_id: repo.friendly_id }
+        errors << (_('Mirroring of repository with ID %{repo_id} is not enabled') % { repo_id: repo.friendly_id })
         next
       end
 
@@ -142,9 +142,9 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       RMT::Mirror.new(**configuration).mirror_now
       repo.refresh_timestamp!
     rescue RMT::Mirror::Exception => e
-      errors << _("Repository '%{repo_name}' (%{repo_id}): %{error_message}") % {
+      errors << (_("Repository '%{repo_name}' (%{repo_id}): %{error_message}") % {
         repo_id: repo.friendly_id, repo_name: repo.name, error_message: e.message
-      }
+      })
       errored_repos_id << repo.id if options[:do_not_raise_unpublished]
     end
   end
