@@ -30,7 +30,13 @@ describe RMT::Mirror::Debian do
   end
   let(:packages_ref) { RMT::Mirror::FileReference.new(**packages_configuration) }
 
+
   describe '#mirror_implementation' do
+    before do
+      allow(debian).to receive(:temp).with(:metadata).and_return('bar')
+      allow(debian).to receive(:create_repository_path)
+    end
+
     let(:temp) { '/tmp/metadata/' }
 
     it 'mirrors the whole repository' do
@@ -47,17 +53,12 @@ describe RMT::Mirror::Debian do
       )
       debian.mirror_implementation
     end
-  end
-
-  describe '#mirror_implementation' do
-    before do
-      allow(debian).to receive(:temp).with(:metadata).and_return('bar')
-    end
 
     it 'mirrors the metadata' do
       allow(debian).to receive(:create_temp_dir).with(:metadata)
       expect(debian).to receive(:mirror_metadata)
       allow(debian).to receive(:mirror_packages)
+      expect(debian).to receive(:create_repository_path)
       allow(debian).to receive(:copy_directory_content)
       debian.mirror_implementation
     end
@@ -66,6 +67,7 @@ describe RMT::Mirror::Debian do
       allow(debian).to receive(:create_temp_dir).with(:metadata)
       allow(debian).to receive(:mirror_metadata).and_return([])
       expect(debian).to receive(:mirror_packages)
+      expect(debian).to receive(:create_repository_path)
       allow(debian).to receive(:copy_directory_content)
       debian.mirror_implementation
     end
@@ -74,6 +76,7 @@ describe RMT::Mirror::Debian do
       allow(debian).to receive(:create_temp_dir).with(:metadata)
       allow(debian).to receive(:mirror_metadata).and_return([])
       allow(debian).to receive(:mirror_packages)
+      expect(debian).to receive(:create_repository_path)
       expect(debian).to receive(:copy_directory_content)
       debian.mirror_implementation
     end
