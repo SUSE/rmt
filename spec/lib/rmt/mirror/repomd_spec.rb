@@ -106,7 +106,7 @@ RSpec.describe RMT::Mirror::Repomd do
       allow(repomd).to receive(:enqueue)
       allow(repomd).to receive(:download_enqueued)
       expect(repomd).to receive(:check_signature).with(key_file: duck_type(:local_path), signature_file: duck_type(:local_path),
-metadata_file: duck_type(:local_path))
+                                                       metadata_file: duck_type(:local_path))
       repomd.mirror_metadata
     end
 
@@ -114,8 +114,8 @@ metadata_file: duck_type(:local_path))
       allow(repomd).to receive(:download_cached!).and_return(repomd_ref)
       allow(repomd).to receive(:check_signature)
       allow(repomd).to receive(:download_enqueued)
+      allow(RepomdParser::RepomdXmlParser).to receive(:new).with(repomd_ref.local_path).and_return(repomd_parser)
 
-      expect(RepomdParser::RepomdXmlParser).to receive(:new).with(repomd_ref.local_path).and_return(repomd_parser)
       expect(repomd_parser).to receive(:parse).and_call_original
       expect(repomd).to receive(:enqueue).with(duck_type(:local_path)).exactly(4).times
 
