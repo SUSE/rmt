@@ -21,7 +21,7 @@ describe RMT::Mirror::Base do
 
   let(:downloader) { instance_double('downloader') }
 
-  let(:logger) { instance_double('RMT::Logger') }
+  let(:logger) { RMT::Logger.new('/dev/null') }
 
   before do
     # Make all protected methods public for testing purpose
@@ -30,8 +30,6 @@ describe RMT::Mirror::Base do
     allow(base).to receive(:downloader).and_return(downloader)
   end
 
-  # FIXME: rewrite tests for mirror and mirror_implementation.
-  # This is a placeholder added due to low code coverage issue
   describe '#mirror' do
     it 'mirrors repositories and licenses' do
       expect(base).to receive(:mirror_implementation)
