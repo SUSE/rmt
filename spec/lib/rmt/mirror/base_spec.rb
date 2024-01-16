@@ -177,6 +177,7 @@ describe RMT::Mirror::Base do
 
     it 'downloads enqueued contents and clear queue' do
       expect(downloader).to receive(:download_multi)
+      expect(base.enqueued.count).to eq(1)
       base.download_enqueued
       expect(base.enqueued).to be_empty
     end
@@ -236,7 +237,7 @@ describe RMT::Mirror::Base do
 
     it 'copies content from source to destination without backup' do
       expect(base).to receive(:replace_directory).with(source: src, destination: dest, with_backup: false).and_yield
-      expect(FileUtils).to receive(:mv).with(Dir.glob(src), dest)
+      expect(FileUtils).to receive(:mv).with(Dir.glob(src), dest, force: true)
       base.copy_directory_content(source: src, destination: dest)
     end
   end
