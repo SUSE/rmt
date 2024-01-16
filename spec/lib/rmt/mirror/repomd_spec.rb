@@ -3,16 +3,6 @@ require 'rails_helper'
 RSpec.describe RMT::Mirror::Repomd do
   subject(:repomd) { described_class.new(**repomd_configuration) }
 
-  RSpec::Matchers.define :file_reference_containing_path do |expected|
-    match do |actual|
-      actual.local_path.include?(expected)
-    end
-
-    failure_message do |actual|
-      "expected that file path #{actual.local_path} would contain #{expected}"
-    end
-  end
-
   let(:logger) { RMT::Logger.new('/dev/null') }
 
 

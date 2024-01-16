@@ -49,4 +49,8 @@ class RMT::Mirror::FileReference
   def cache_timestamp
     File.mtime(cache_path).utc if cache_path && File.exist?(cache_path)
   end
+
+  def to_s
+    relative_path
+  end
 end

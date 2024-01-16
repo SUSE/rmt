@@ -28,9 +28,17 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
     # We need to make sure downloading the InRelease file which is not referenced
     # anywhere
     metadata_refs << inrelease
-    metadata_refs.each { |ref| enqueue(ref) }
 
+    # The nested debian structure only contains the zipped version of packages sometimes
+    # However, the release file still contains a reference to the unzipped versions
+    # So, we don't error if they don't exist
+    packages, remaining = metadata_refs.partition { |ref| ref.relative_path.match(/(Packages|Sources|Translation)(-\w+)?$/) }
+    enqueue(packages)
+    download_enqueued(continue_on_error: true)
+
+    enqueue(remaining)
     download_enqueued
+
     metadata_refs
   end
 
@@ -39,6 +47,12 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
 
     packagelists.each do |packagelist|
       parse_package_list(packagelist).each do |ref|
+        # In a nested debian repository stucture, the metadata and packages are stored in different locations
+        # so we need to update the base_url if we encounter the nested structure
+        # We assume that if the base_url contains '/dists/', it's a nested debian structure
+        if ref.base_url.match?(%r{/dists/\w*/$})
+          ref.base_url.sub!(%r{(/dists/\w*/$)}, '/')
+        end
         enqueue(ref) if need_to_download?(ref)
       end
     end

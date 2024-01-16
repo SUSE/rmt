@@ -83,9 +83,10 @@ describe RMT::Mirror::Debian do
   end
 
   describe '#mirror_metadata' do
+    let(:release_fixture) { 'Release' }
     let(:config) do
       {
-        relative_path: 'Release',
+        relative_path: release_fixture,
         base_dir: file_fixture('debian/'),
         base_url: 'https://updates.suse.de/Debian/'
       }
@@ -100,7 +101,7 @@ describe RMT::Mirror::Debian do
     it 'succeeds' do
       allow(debian).to receive(:check_signature)
       allow(debian).to receive(:parse_release_file).and_return([])
-      expect(debian).to receive(:download_enqueued)
+      expect(debian).to receive(:download_enqueued).twice
       debian.mirror_metadata
     end
 
@@ -110,7 +111,36 @@ describe RMT::Mirror::Debian do
       it 'downloads and parses the file' do
         expect(debian).to receive(:download_cached!).with(release_path, to: 'bar')
         expect(debian).to receive(:check_signature)
+        expect(debian).to receive(:download_enqueued).twice
+        debian.mirror_metadata
+      end
+    end
+
+    context 'nested debian repository' do
+      let(:release_fixture) { 'Nested_Release' }
+
+      before do
+        allow(debian).to receive(:download_cached!).and_return(release_ref)
+        allow(debian).to receive(:check_signature)
+        described_class.send(:public, :enqueued)
+      end
+
+      it 'ignores non-existent references from release file' do
+        allow(debian).to receive(:download_enqueued)
+        allow(debian).to receive(:enqueue)
+
+        expect(debian).to receive(:download_enqueued).with(continue_on_error: true)
+        expect(debian).to receive(:enqueue).with(all(be_like_relative_path(/(Packages|Sources|Translation)(-\w+)?$/)))
+
+        debian.mirror_metadata
+      end
+
+      it 'calls download_enqueued for the remaining valid paths' do
+        expect(debian).to receive(:download_enqueued).with(continue_on_error: true)
         expect(debian).to receive(:download_enqueued)
+        expect(debian).to receive(:enqueue).with(all(be_like_relative_path(/(Packages|Sources|Translation)(-\w+)?$/))).once
+        expect(debian).to receive(:enqueue).once
+
         debian.mirror_metadata
       end
     end
