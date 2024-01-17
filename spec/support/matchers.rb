@@ -18,6 +18,7 @@ RSpec::Matchers.define :be_like_relative_path do |regex|
   end
 end
 
+# rubocop:disable Lint/StructNewOverride
 RSpec::Matchers.define :contain_records_like do |expected|
   match do |actual|
     record_struct = Struct.new(:local_path, :checksum, :checksum_type, :size)
@@ -41,3 +42,4 @@ RSpec::Matchers.define :contain_records_like do |expected|
 
   diffable
 end
+# rubocop:enable Lint/StructNewOverride

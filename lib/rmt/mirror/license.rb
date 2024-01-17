@@ -18,6 +18,7 @@ class RMT::Mirror::License < RMT::Mirror::Base
     end
     request.run
 
+    logger.debug("No license directory found for repository '#{uri}'")
     false
   end
 

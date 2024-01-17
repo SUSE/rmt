@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe RMT::Mirror::SumaProductTree do
-  subject(:suma) { described_class.new(**configuration) }
+  subject(:suma) { described_class.new(**suma_mirror_configuration) }
 
-  let(:configuration) do
+  let(:suma_mirror_configuration) do
     {
       logger: RMT::Logger.new('/dev/null'),
       mirroring_base_dir: base_dir

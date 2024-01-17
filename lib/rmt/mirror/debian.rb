@@ -3,6 +3,8 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
   SIGNATURE_FILE_NAME = 'Release.gpg'.freeze
   KEY_FILE_NAME = 'Release.key'.freeze
   INRELEASE_FILE_NAME = 'InRelease'.freeze
+  NESTED_REPOSITORY_REGEX = %r{/dists/\w*/$}.freeze
+  DETECT_NONMANDATORY_FILES = %r{/(Packages|Sources|Translation)(-\w+)?$/}.freeze
 
   def mirror_implementation
     create_repository_path
@@ -32,7 +34,7 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
     # The nested debian structure only contains the zipped version of packages sometimes
     # However, the release file still contains a reference to the unzipped versions
     # So, we don't error if they don't exist
-    packages, remaining = metadata_refs.partition { |ref| ref.relative_path.match(/(Packages|Sources|Translation)(-\w+)?$/) }
+    packages, remaining = metadata_refs.partition { |ref| ref.relative_path.match(DETECT_NONMANDATORY_FILES) }
     enqueue(packages)
     download_enqueued(continue_on_error: true)
 
@@ -50,8 +52,8 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
         # In a nested debian repository stucture, the metadata and packages are stored in different locations
         # so we need to update the base_url if we encounter the nested structure
         # We assume that if the base_url contains '/dists/', it's a nested debian structure
-        if ref.base_url.match?(%r{/dists/\w*/$})
-          ref.base_url.sub!(%r{(/dists/\w*/$)}, '/')
+        if ref.base_url.match?(NESTED_REPOSITORY_REGEX)
+          ref.base_url.sub!(NESTED_REPOSITORY_REGEX, '/')
         end
         enqueue(ref) if need_to_download?(ref)
       end

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe RMT::Mirror::Repomd do
-  subject(:repomd) { described_class.new(**repomd_configuration) }
+  subject(:repomd) { described_class.new(**repomd_mirror_configuration) }
 
   let(:logger) { RMT::Logger.new('/dev/null') }
 
@@ -15,7 +15,7 @@ RSpec.describe RMT::Mirror::Repomd do
 
   # Configuration for Debian mirroring instance
   let(:base_dir) { '/test/repository/base/path/' }
-  let(:repomd_configuration) do
+  let(:repomd_mirror_configuration) do
     {
       repository: repository,
       logger: logger,
@@ -25,14 +25,14 @@ RSpec.describe RMT::Mirror::Repomd do
 
   # Configuration for file reference to an arbitrary fixture
   let(:fixture) { 'repodata/repomd.xml' }
-  let(:config) do
+  let(:file_ref_configuration) do
     {
       relative_path: fixture,
       base_dir: file_fixture('dummy_repo/'),
       base_url: 'https://updates.suse.com/sample/repository/15.4/'
     }
   end
-  let(:repomd_ref) { RMT::Mirror::FileReference.new(**config) }
+  let(:repomd_ref) { RMT::Mirror::FileReference.new(**file_ref_configuration) }
 
   before do
     described_class.send(:public, *described_class.protected_instance_methods)
@@ -75,15 +75,15 @@ RSpec.describe RMT::Mirror::Repomd do
   end
 
   describe '#mirror_metadata' do
-    let(:x_config) do
+    let(:ref_configuration) do
       {
         base_dir: base_dir,
         base_url: 'https://updates.suse.com/sample/repository/15.4/',
         cache_dir: repomd.repository_path
       }
     end
-    let(:signature_file) { RMT::Mirror::FileReference.new(relative_path: 'repodata/repomd.xml.asc', **x_config) }
-    let(:key_file) { RMT::Mirror::FileReference.new(relative_path: 'repodata/repomd.xml.key', **x_config) }
+    let(:signature_file) { RMT::Mirror::FileReference.new(relative_path: 'repodata/repomd.xml.asc', **ref_configuration) }
+    let(:key_file) { RMT::Mirror::FileReference.new(relative_path: 'repodata/repomd.xml.key', **ref_configuration) }
     let(:repomd_parser) { RepomdParser::RepomdXmlParser.new(repomd_ref.local_path) }
 
     before do
@@ -134,7 +134,7 @@ RSpec.describe RMT::Mirror::Repomd do
     let(:fixture) { 'repodata/repomd.xml' }
     let(:fixture_base_dir) { file_fixture('dummy_repo') }
     let(:repomd_package_ref) do
-      RMT::Mirror::FileReference.new(**config).tap do |ref|
+      RMT::Mirror::FileReference.new(**file_ref_configuration).tap do |ref|
         ref.type = type
       end
     end
@@ -171,7 +171,7 @@ RSpec.describe RMT::Mirror::Repomd do
 
   describe '#mirror_packages' do
     let(:fixture) { 'repodata/abf421e45af5cd686f050bab3d2a98e0a60d1b5ca3b07c86cb948fc1abfa675e-primary.xml.gz' }
-    let(:primary_ref) { RMT::Mirror::FileReference.new(**config).tap { |ref| ref.type = :primary } }
+    let(:primary_ref) { RMT::Mirror::FileReference.new(**file_ref_configuration).tap { |ref| ref.type = :primary } }
     let(:package_ref) { instance_double(RMT::Mirror::FileReference) }
 
     it 'downloads the reference packages' do

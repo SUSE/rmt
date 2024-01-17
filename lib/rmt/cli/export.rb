@@ -34,7 +34,7 @@ class RMT::CLI::Export < RMT::CLI::Base
     begin
       suma_product_tree.mirror
     rescue RMT::Mirror::Exception => e
-      logger.warn(e.message)
+      logger.warn(_('Exporting SUSE Manager product tree failed: %{error_message}') % { error_message: e.message })
     end
 
     repos_file = File.join(path, 'repos.json')

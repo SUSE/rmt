@@ -37,6 +37,9 @@ class RMT::Mirror
   end
 
   def repository_type
+    # We search repomd structure first since it is more common
+    # Debian is less common
+
     search = {
       repomd: File.join(repository.external_url, RPM_FILE_NEEDLE),
       debian: File.join(repository.external_url, DEB_FILE_NEEDLE)
