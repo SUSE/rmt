@@ -95,7 +95,7 @@ describe RMT::CLI::Export, :with_fakefs do
         allow_any_instance_of(RMT::Mirror).to receive(:mirror_now)
 
         expect(suma_product_tree_double).to receive(:mirror).and_raise(RMT::Mirror::Exception, 'black mirror')
-        expect_any_instance_of(RMT::Logger).to receive(:warn).with('black mirror')
+        expect_any_instance_of(RMT::Logger).to receive(:warn).with(/black mirror/)
         command
       end
     end

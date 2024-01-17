@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe RMT::Mirror::Debian do
-  subject(:debian) { described_class.new(**configuration) }
+  subject(:debian) { described_class.new(**debian_mirror_configuration) }
 
   let(:repository) do
     create :repository,
@@ -11,7 +11,7 @@ describe RMT::Mirror::Debian do
 
   # Configuration for Debian mirroring instance
   let(:mirroring_base_dir) { '/test/repository/base/path/' }
-  let(:configuration) do
+  let(:debian_mirror_configuration) do
     {
       repository: repository,
       logger: RMT::Logger.new('/dev/null'),
@@ -84,14 +84,14 @@ describe RMT::Mirror::Debian do
 
   describe '#mirror_metadata' do
     let(:release_fixture) { 'Release' }
-    let(:config) do
+    let(:release_configuration) do
       {
         relative_path: release_fixture,
         base_dir: file_fixture('debian/'),
         base_url: 'https://updates.suse.de/Debian/'
       }
     end
-    let(:release_ref) { RMT::Mirror::FileReference.new(**config) }
+    let(:release_ref) { RMT::Mirror::FileReference.new(**release_configuration) }
 
     before do
       allow(debian).to receive(:temp).with(:metadata).and_return('bar')
@@ -194,14 +194,14 @@ describe RMT::Mirror::Debian do
   end
 
   describe '#parse_release_file' do
-    let(:config) do
+    let(:release_configuration) do
       {
         relative_path: rel_path,
         base_dir: file_fixture('debian/'),
         base_url: 'https://updates.suse.de/Debian/'
       }
     end
-    let(:release_ref) { RMT::Mirror::FileReference.new(**config) }
+    let(:release_ref) { RMT::Mirror::FileReference.new(**release_configuration) }
 
     context 'Release file is valid' do
       let(:rel_path) { 'Release' }

@@ -14,20 +14,22 @@ describe RMT::Mirror::License do
   let(:license_configuration) do
     {
       repository: repository,
-      logger: RMT::Logger.new('/dev/null'),
+      logger: logger,
       mirroring_base_dir: base_dir
     }
   end
 
+  let(:logger) { RMT::Logger.new('/dev/null') }
+
   let(:fixture) { 'directory.yast' }
-  let(:config) do
+  let(:license_listing_configuration) do
     {
       relative_path: fixture,
       base_dir: file_fixture(''),
       base_url: 'https://updates.suse.de/sles/'
     }
   end
-  let(:licenses_ref) { RMT::Mirror::FileReference.new(**config) }
+  let(:licenses_ref) { RMT::Mirror::FileReference.new(**license_listing_configuration) }
 
   before do
     allow(FileUtils).to receive(:mkpath).with(license.repository_path).and_return(nil)
@@ -42,6 +44,7 @@ describe RMT::Mirror::License do
 
     it 'returns false if directory.yast is not available' do
       stub_request(:head, license.repository_url('directory.yast')).to_return(status: 404, body: '', headers: {})
+      expect(logger).to receive(:debug)
       expect(license.licenses_available?).to eq(false)
     end
 

@@ -80,7 +80,6 @@ class RMT::Mirror::Base
     File.join(mirroring_base_dir, repository.local_path, *args)
   end
 
-  # FIXME: Write some specs for me!
   def create_repository_path
     FileUtils.mkpath(repository_path) unless Dir.exist?(repository_path)
   rescue StandardError => e

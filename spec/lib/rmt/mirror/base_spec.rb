@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 describe RMT::Mirror::Base do
-  subject(:base) { described_class.new(**configuration) }
+  subject(:base) { described_class.new(**mirror_configuration) }
 
-  let(:configuration) do
+  let(:mirror_configuration) do
     {
       repository: repository,
       logger: logger,
@@ -86,6 +86,21 @@ describe RMT::Mirror::Base do
     end
   end
 
+  describe '#create_repository_path' do
+    it 'creates the repository path' do
+      allow(Dir).to receive(:exist?).and_return(false)
+      expect(FileUtils).to receive(:mkpath).with('/rspec/repository/update/hype/15.3/product/')
+      base.create_repository_path
+    end
+
+    it 'fails when it could not create the repository path' do
+      allow(Dir).to receive(:exist?).and_return(false)
+      allow(FileUtils).to receive(:mkpath).and_raise(StandardError)
+
+      expect { base.create_repository_path }.to raise_error(RMT::Mirror::Exception, /Could not create local directory/)
+    end
+  end
+
   describe '#cleanup_temp_dirs' do
     let(:temp_metadata) { '/tmp/metadata' }
     let(:temp_licenses) { '/tmp/licenses' }
@@ -124,15 +139,15 @@ describe RMT::Mirror::Base do
   end
 
   describe '#check_signature' do
-    let(:config) do
+    let(:ref_configuration) do
       {
         base_dir: '/tmp',
         base_url: 'https://updates.suse.de/'
       }
     end
-    let(:signature_file) { RMT::Mirror::FileReference.new(relative_path: 'repo.gpg', **config) }
-    let(:key_file) { RMT::Mirror::FileReference.new(relative_path: 'repo.key', **config) }
-    let(:metadata) { RMT::Mirror::FileReference.new(relative_path: 'metadata', **config) }
+    let(:signature_file) { RMT::Mirror::FileReference.new(relative_path: 'repo.gpg', **ref_configuration) }
+    let(:key_file) { RMT::Mirror::FileReference.new(relative_path: 'repo.key', **ref_configuration) }
+    let(:metadata) { RMT::Mirror::FileReference.new(relative_path: 'metadata', **ref_configuration) }
     let(:gpg_checker) do
       RMT::GPG.new(
         metadata_file: metadata.local_path,

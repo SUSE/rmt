@@ -25,7 +25,7 @@ class RMT::CLI::Import < RMT::CLI::Base
           url: suma_repo_url
         ).mirror
       rescue RMT::Mirror::Exception => e
-        logger.warn(e.message)
+        logger.warn(_('Importing suma product tree failed: %{error_message}') % { error_message: e.message })
       end
 
       repos = JSON.parse(File.read(repos_file))

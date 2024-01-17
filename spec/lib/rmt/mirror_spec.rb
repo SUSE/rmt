@@ -27,26 +27,28 @@ RSpec.describe RMT::Mirror do
 
       it 'uses the credentials from the repository if the repository has credentials' do
         stub_request(:head, authenticated_repo_url)
-          .to_return(status: 200, body: '', headers: {})
+        .to_return(status: 200, body: '', headers: {})
 
         allow(repository).to receive(:auth_token).and_return('token')
         expect(RMT::HttpRequest).to receive(:new)
-          .with(authenticated_repo_url, method: :head, followlocation: true)
-          .and_call_original
+        .with(authenticated_repo_url, method: :head, followlocation: true)
+        .and_call_original
 
         mirror.repository_type
       end
 
       it 'uses no credentials from the repository if the repository has no credentials' do
         stub_request(:head, repomd_url)
-          .to_return(status: 200, body: '', headers: {})
+        .to_return(status: 200, body: '', headers: {})
 
         expect(RMT::HttpRequest).to receive(:new)
-          .with(URI.parse(repomd_url), method: :head, followlocation: true)
-          .and_call_original
+        .with(URI.parse(repomd_url), method: :head, followlocation: true)
+        .and_call_original
 
         mirror.repository_type
       end
+
+      # it 'continues checking repo if fi'
     end
 
     context 'repomd repository' do
@@ -68,10 +70,23 @@ RSpec.describe RMT::Mirror do
       end
     end
 
-    context 'debian flat repository' do
-      it 'detects a flat debian repository' do
+    context 'debian repository' do
+      it 'detects a debian repository' do
         stub_request(:head, repomd_url).to_return(status: 404, body: '', headers: {})
         stub_request(:head, debian_url).to_return(status: 200, body: '', headers: {})
+
+        expect(mirror.repository_type).to eq(:debian)
+      end
+    end
+
+    context 'local file as URI' do
+      let(:url) { 'file:///test/export/SUSE/Products/SLE-Product-SLES/15-SP4/x86_64/product/' }
+      let(:path_repomd) { File.join(URI.join(url).path, 'repodata/repomd.xml') }
+      let(:path_debian) { File.join(URI.join(url).path, 'Release') }
+
+      it 'continues checking for repository type' do
+        allow(File).to receive(:exist?).with(path_repomd).and_return(false)
+        allow(File).to receive(:exist?).with(path_debian).and_return(true)
 
         expect(mirror.repository_type).to eq(:debian)
       end
@@ -84,6 +99,41 @@ RSpec.describe RMT::Mirror do
 
         expect(mirror.repository_type).to be_nil
       end
+    end
+  end
+
+  describe '#mirror_now' do
+    context 'repomd repository' do
+      let(:repomd_mirror) { instance_double('RMT::Mirror::Repomd') }
+
+      before do
+        allow(mirror).to receive(:repository_type).and_return(:repomd)
+        allow(RMT::Mirror::Repomd).to receive(:new).and_return(repomd_mirror)
+      end
+
+      it 'creates a repomd mirror instance and calls mirror' do
+        expect(repomd_mirror).to receive(:mirror)
+        mirror.mirror_now
+      end
+    end
+
+    context 'debian repository' do
+      let(:debian_mirror) { instance_double('RMT::Mirror::Debian') }
+
+      before do
+        allow(mirror).to receive(:repository_type).and_return(:debian)
+        allow(RMT::Mirror::Debian).to receive(:new).and_return(debian_mirror)
+      end
+
+      it 'creates a debian mirror instance and calls mirror' do
+        expect(debian_mirror).to receive(:mirror)
+        mirror.mirror_now
+      end
+    end
+
+    it 'raises an exception if the repository type is unknown' do
+      allow(mirror).to receive(:repository_type).and_return(nil)
+      expect { mirror.mirror_now }.to raise_error(RMT::Mirror::Exception)
     end
   end
 end
