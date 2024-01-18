@@ -23,7 +23,7 @@ RSpec.describe RMT::Mirror::SumaProductTree do
 
   describe '#mirror' do
     before do
-      allow(suma).to receive(:downloader).and_return downloader
+      allow(RMT::Downloader).to receive(:new).and_return downloader
     end
 
     it 'mirrors the product_tree file' do

@@ -73,11 +73,12 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
         # In a nested debian repository stucture, the metadata and packages are stored in different locations
         # so we need to update the base_url if we encounter the nested structure
         # We assume that if the base_url contains '/dists/', it's a nested debian structure
-        #
-        # FIXME: Is there a better way to detect a nested structure?
         if ref.base_url.match?(NESTED_REPOSITORY_REGEX)
-          ref.base_url.sub!(NESTED_REPOSITORY_REGEX, '/')
-          ref.base_dir.sub!(NESTED_REPOSITORY_REGEX, '/')
+          ref.tap do |r|
+            r.base_url.sub!(NESTED_REPOSITORY_REGEX, '/')
+            r.base_dir.sub!(NESTED_REPOSITORY_REGEX, '/')
+            r.cache_dir.sub!(NESTED_REPOSITORY_REGEX, '/')
+          end
         end
 
         packages << ref
