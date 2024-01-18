@@ -2,7 +2,12 @@ require 'rails_helper'
 
 describe RMT::Mirror::Debian do
   subject(:debian) { described_class.new(**debian_mirror_configuration) }
-  let(:repository) { create :repository, :debian_flat }
+
+  let(:repository) do
+    create :repository,
+           name: 'HYPE product repository debian 15.3',
+           external_url: 'https://updates.suse.com/sample/repository/15.3/'
+  end
 
   # Configuration for Debian mirroring instance
   let(:mirroring_base_dir) { '/test/repository/base/path/' }
@@ -112,7 +117,7 @@ describe RMT::Mirror::Debian do
     end
 
     context 'nested debian repository' do
-      let(:release_fixture) { 'Nested_Release' }
+      let(:release_fixture) { 'nested/Release' }
 
       before do
         allow(debian).to receive(:download_cached!).and_return(release_ref)
@@ -150,36 +155,19 @@ describe RMT::Mirror::Debian do
     end
 
     it 'download packages to disk' do
-      allow(debian).to receive(:parse_package_list).with(packages_ref).and_call_original
-
       expect(debian).to receive(:enqueue).exactly(4).times
+      expect(debian).to receive(:parse_package_list).with(packages_ref).and_call_original
       expect(debian).to receive(:download_enqueued)
       debian.mirror_packages([packages_ref, non_package_ref])
     end
 
     it 'does not download the file if not needed' do
-      allow(debian).to receive(:need_to_download?).exactly(3).times.and_return(true)
-      allow(debian).to receive(:need_to_download?).with(any_args) { |ref| ref.size == 206796 }.and_return(false)
-      allow(debian).to receive(:parse_package_list).with(packages_ref).and_call_original
-
+      expect(debian).to receive(:need_to_download?).exactly(3).times.and_return(true)
+      expect(debian).to receive(:need_to_download?).with(any_args) { |ref| ref.size == 206796 }.and_return(false)
       expect(debian).to receive(:enqueue).exactly(3).times
+      expect(debian).to receive(:parse_package_list).with(packages_ref).and_call_original
       expect(debian).to receive(:download_enqueued)
-
       debian.mirror_packages([packages_ref])
-    end
-
-    context 'nested debian repository' do
-      let(:fixture) { 'nested/Packages.gz' }
-      let(:repository) { create :repository, :debian }
-
-      it 'downloads packages but saves them to altered base directory', focus: true do
-        allow(debian).to receive(:need_to_download?).and_return(true)
-
-        expect(debian).to receive(:enqueue).with(base_dir_matches(/foo/)).exactly(35).times
-        expect(debian).to receive(:download_enqueued)
-
-        debian.mirror_packages([packages_ref])
-      end
     end
   end
 
@@ -201,6 +189,27 @@ describe RMT::Mirror::Debian do
 
       it 'is parsed partially' do
         expect { debian.parse_package_list(packages_ref) }.to raise_error(RMT::Mirror::Exception, /unexpected end of file/)
+      end
+    end
+
+    context 'nested repository structure' do
+      let(:fixture) { 'nested/Packages.gz' }
+      let(:repository) do
+        create :repository,
+          name: 'HYPE product repository debian 15.3',
+          external_url: 'https://ppa.launchpadcontent.net/ondrej/nginx/ubuntu/dists/focal/'
+      end
+
+      it 'removes dists/ from mirroring path and external URL' do
+        packages = debian.parse_package_list(packages_ref)
+
+        expect(packages).to all(
+          have_attributes(
+            base_url: 'https://ppa.launchpadcontent.net/ondrej/nginx/ubuntu/',
+            base_dir: mirroring_base_dir + 'ondrej/nginx/ubuntu/',
+            cache_dir: mirroring_base_dir + 'ondrej/nginx/ubuntu/'
+          )
+        )
       end
     end
   end
