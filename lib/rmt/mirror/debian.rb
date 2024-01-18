@@ -3,7 +3,7 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
   SIGNATURE_FILE_NAME = 'Release.gpg'.freeze
   KEY_FILE_NAME = 'Release.key'.freeze
   INRELEASE_FILE_NAME = 'InRelease'.freeze
-  NESTED_REPOSITORY_REGEX = %r{/dists/\w*/$}.freeze
+  NESTED_REPOSITORY_REGEX = %r{/dists/.*/$}.freeze
   DETECT_NONMANDATORY_FILES = %r{/(Packages|Sources|Translation)(-\w+)?$/}.freeze
 
   def mirror_implementation
@@ -49,12 +49,6 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
 
     packagelists.each do |packagelist|
       parse_package_list(packagelist).each do |ref|
-        # In a nested debian repository stucture, the metadata and packages are stored in different locations
-        # so we need to update the base_url if we encounter the nested structure
-        # We assume that if the base_url contains '/dists/', it's a nested debian structure
-        if ref.base_url.match?(NESTED_REPOSITORY_REGEX)
-          ref.base_url.sub!(NESTED_REPOSITORY_REGEX, '/')
-        end
         enqueue(ref) if need_to_download?(ref)
       end
     end
@@ -75,6 +69,16 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
         ref.checksum_type = 'SHA256'
         ref.size = current[:size].to_i
         ref.type = :deb
+
+        # In a nested debian repository stucture, the metadata and packages are stored in different locations
+        # so we need to update the base_url if we encounter the nested structure
+        # We assume that if the base_url contains '/dists/', it's a nested debian structure
+        #
+        # FIXME: Is there a better way to detect a nested structure?
+        if ref.base_url.match?(NESTED_REPOSITORY_REGEX)
+          ref.base_url.sub!(NESTED_REPOSITORY_REGEX, '/')
+          ref.base_dir.sub!(NESTED_REPOSITORY_REGEX, '/')
+        end
 
         packages << ref
         current = {}
