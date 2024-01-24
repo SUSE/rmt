@@ -194,9 +194,10 @@ GEM
       ffi (~> 1.0)
     rdiscount (2.2.0.2)
     regexp_parser (2.6.0)
-    repomd_parser (0.1.5)
+    repomd_parser (0.1.6)
       nokogiri (~> 1.8)
-    responders (3.1.0)
+      zstd-ruby (~> 1.3, >= 1.3.5.0)
+    responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
     rexml (3.2.6)
@@ -310,6 +311,7 @@ GEM
       hashdiff (>= 0.4.0, < 2.0.0)
     yard (0.9.25)
     zeitwerk (2.6.12)
+    zstd-ruby (1.5.5.0)
 
 PLATFORMS
   ruby
@@ -328,7 +330,7 @@ DEPENDENCIES
   factory_bot_rails (~> 6.2.0)
   fakefs (~> 1.4)
   fast_gettext (~> 2.2)
-  ffaker
+  ffaker (<= 2.21.0)
   fuubar
   gettext
   gettext_i18n_rails
@@ -343,8 +345,8 @@ DEPENDENCIES
   public_suffix (< 5)
   puma (~> 5.6.2)
   railties (~> 6.1.7)
-  repomd_parser (~> 0.1.4)
-  responders
+  repomd_parser (~> 0.1.6)
+  responders (~> 3.1.1)
   ronn
   rspec-command (= 1.0.3)
   rspec-its
@@ -360,7 +362,7 @@ DEPENDENCIES
   spring-watcher-listen (~> 2.0.0)
   strong_migrations
   terminal-table (~> 3.0)
-  thor
+  thor (<= 1.2.2)
   timecop
   typhoeus
   vcr (~> 6.0)
