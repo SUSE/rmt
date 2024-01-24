@@ -167,8 +167,9 @@ $RPM --import repomd.xml.key
     $DNF_CONFIG_MGR --enable *suse.*
 
     $DNF remove ${SLL_release_package}
-    $RPM -e centos-release
-    $RPM -e redhat-release
+    $RPM -e --nodeps centos-release
+    $RPM -e --nodeps redhat-release
+    
     $DNF install ${SLL_release_package}
 
     # For RHEL8/CentOS8, remove all old signing keys and import SUSE keys installed with sles_es-release package
@@ -180,7 +181,7 @@ $RPM --import repomd.xml.key
     #$DNF install SUSEConnect librepo
 
 #$CURL --silent --show-error --insecure $REGURL/tools/rmt-client-setup --output rmt-client-setup
-echo "Running rmt-client-setup $PARAMS"
+echo "Running rmt-client-setup7 $PARAMS"
 sh rmt-client-setup $PARAMS
 
 if [[ ${SLL_version} > 8 ]]; then 
