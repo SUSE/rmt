@@ -9,14 +9,14 @@ gem 'puma', '~> 5.6.2'
 gem 'mysql2', '~> 0.5.3'
 
 gem 'nokogiri', '< 1.13' # Locked because of Ruby >= 2.6 dependency
-gem 'thor'
+gem 'thor', '<= 1.2.2' # Locked because of Ruby >= 2.6 dependency
 gem 'activesupport', '~> 6.1.7'
 gem 'actionpack', '~> 6.1.7'
 gem 'actionview', '~> 6.1.7'
 gem 'activemodel', '~> 6.1.7'
 gem 'activerecord', '~> 6.1.7'
 gem 'railties', '~> 6.1.7'
-gem 'repomd_parser', '~> 0.1.4'
+gem 'repomd_parser', '~> 0.1.6'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
@@ -31,6 +31,8 @@ gem 'repomd_parser', '~> 0.1.4'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
 
+gem 'strong_migrations'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
@@ -41,7 +43,6 @@ group :development, :test do
   gem 'ruby_parser', '< 3.20', require: false # needed for gettext_i18n_rails tasks, Locked because of Ruby >= 2.6 dependency
   gem 'gettext_test_log'
   gem 'memory_profiler'
-  gem 'strong_migrations'
   gem 'awesome_print'
 end
 
@@ -59,7 +60,7 @@ group :test do
   gem 'rspec-command', '1.0.3'
   gem 'rspec-rails', '~> 5.0'
   gem 'factory_bot_rails', '~> 6.2.0'
-  gem 'ffaker'
+  gem 'ffaker', '<= 2.21.0' # Locked because of Ruby >= 3.0 dependency
   gem 'rspec-its'
   gem 'fakefs', '~> 1.4', require: 'fakefs/safe'
   gem 'shoulda-matchers'
@@ -75,7 +76,7 @@ end
 gem 'simplecov', require: false, group: :test
 
 gem 'versionist'
-gem 'responders'
+gem 'responders', '~> 3.1.1'
 gem 'typhoeus'
 gem 'active_model_serializers'
 

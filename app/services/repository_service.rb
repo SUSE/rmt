@@ -37,6 +37,19 @@ class RepositoryService
     repository
   end
 
+  def update_repository!(repo_data)
+    uri = URI(repo_data[:url])
+    auth_token = uri.query
+
+    Repository.find_by!(scc_id: repo_data[:id]).update!(
+      auth_token: auth_token,
+      enabled: repo_data[:enabled],
+      autorefresh: repo_data[:autorefresh],
+      external_url: "#{uri.scheme}://#{uri.host}#{uri.path}",
+      local_path: Repository.make_local_path(uri)
+    )
+  end
+
   def attach_product!(product, repository)
     RepositoriesServicesAssociation.find_or_create_by!(
       service_id: product.service.id,

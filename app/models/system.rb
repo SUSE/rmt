@@ -6,7 +6,6 @@ class System < ApplicationRecord
   has_many :services, through: :activations
   has_many :repositories, -> { distinct }, through: :services
   has_many :products, -> { distinct }, through: :services
-  has_one :hw_info, dependent: :destroy
 
   validates :system_token, uniqueness: { scope: %i[login password], case_sensitive: false }
 
@@ -27,6 +26,13 @@ class System < ApplicationRecord
       generated_login = "SCC_#{build_secure_token}"
     end
     generated_login
+  end
+
+  def cloud_provider
+    # system_information is checked for valid JSON on save. It is safe
+    # to assume the structure is valid.
+    info = JSON.parse(system_information).symbolize_keys
+    info.fetch(:cloud_provider, nil)
   end
 
   # Generate secure token for System password

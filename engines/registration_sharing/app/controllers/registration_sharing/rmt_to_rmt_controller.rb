@@ -21,10 +21,7 @@ module RegistrationSharing
           )
         end
 
-        system.hw_info ||= HwInfo.create
-        system.hw_info.instance_data = params[:instance_data]
-        system.hw_info.save!
-
+        system.instance_data = params[:instance_data]
         system.save!
       end
     end
@@ -37,7 +34,7 @@ module RegistrationSharing
     protected
 
     def system_params
-      params.permit(:login, :password, :hostname, :proxy_byos, :system_token, :registered_at, :created_at, :last_seen_at)
+      params.permit(:login, :password, :hostname, :proxy_byos, :system_token, :registered_at, :created_at, :last_seen_at, :instance_data)
     end
 
     def authenticate

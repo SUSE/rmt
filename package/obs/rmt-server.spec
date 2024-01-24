@@ -30,7 +30,7 @@
 %define ruby_version          %{rb_default_ruby_suffix}
 
 Name:           rmt-server
-Version:        2.13
+Version:        2.15
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -240,6 +240,7 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 
 %files
 %attr(0755,root,root) %{app_dir}
+%attr(0755,root,root) %{app_dir}/public/tools
 %exclude %{app_dir}/engines/
 %exclude %{app_dir}/package/
 %exclude %{app_dir}/rmt/tmp
@@ -253,8 +254,8 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %ghost %{_datadir}/rmt/public/suma
 
 # The secrets file is created by running the initial rake tasks in the `post` section
-%ghost %{app_dir}/config/secrets.yml.key
-%ghost %{app_dir}/config/secrets.yml.enc
+%ghost %attr(0640,root,%{rmt_group}) %{app_dir}/config/secrets.yml.key
+%ghost %attr(0640,root,%{rmt_group}) %{app_dir}/config/secrets.yml.enc
 
 %dir %{_sysconfdir}/slp.reg.d
 %config(noreplace) %attr(0640, %{rmt_user}, root) %{_sysconfdir}/rmt.conf
@@ -320,8 +321,7 @@ getent passwd %{rmt_user} >/dev/null || \
 
 %post
 %service_add_post rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
-cd %{_datadir}/rmt && bin/rails rmt:secrets:create_encryption_key >/dev/null RAILS_ENV=production && \
-cd %{_datadir}/rmt && bin/rails rmt:secrets:create_secret_key_base >/dev/null RAILS_ENV=production && \
+
 # Run only on install
 if [ $1 -eq 1 ]; then
   echo "Please run the YaST RMT module (or 'yast2 rmt' from the command line) to complete the configuration of your RMT" >> /dev/stdout
@@ -337,6 +337,11 @@ if [ $1 -eq 2 ]; then
     mv %{app_dir}/config/system_uuid /var/lib/rmt/system_uuid
   fi
   bash %{script_dir}/update_rmt_app_dir_permissions.sh %{app_dir}
+
+  echo "RMT database migration in progress. This could take some time."
+  echo ""
+  echo "To check current migration status:"
+  echo "  systemctl status rmt-server-migration.service"
 fi
 
 if [ ! -e %{_datadir}/rmt/public/repo ]; then

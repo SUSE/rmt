@@ -40,17 +40,6 @@ RSpec.describe System, type: :model do
       end
     end
 
-    context 'hw_info' do
-      let(:hw_info) do
-        hw_info = create(:system, :with_hw_info).hw_info
-        hw_info.system.destroy
-      end
-
-      it 'hw_info is also deleted' do
-        expect { hw_info.reload }.to raise_error ActiveRecord::RecordNotFound
-      end
-    end
-
     context 'when scc_system_id is set' do
       before do
         DeregisteredSystem.where(scc_system_id: 9000).delete_all
@@ -114,6 +103,28 @@ RSpec.describe System, type: :model do
       it { is_expected.to be_kind_of(ActiveRecord::Relation) }
       it { is_expected.to have_attributes(count: 5) }
       it { is_expected.to all(have_attributes(class: described_class, login: login, password: password)) }
+    end
+  end
+
+  describe '#cloud_provider' do
+    subject { system.cloud_provider }
+
+    before do
+      system.system_information = information.to_json
+      system.save
+    end
+
+    context 'cloud provider information is available' do
+      let(:information) { { cloud_provider: 'Amazon' } }
+
+      it { is_expected.not_to be_nil }
+      it { is_expected.to eq('Amazon') }
+    end
+
+    context 'cloud provider information is not available' do
+      let(:information) { {} }
+
+      it { is_expected.to be_nil }
     end
   end
 end

@@ -29,6 +29,9 @@ class RMT::CLI::Main < RMT::CLI::Base
   desc 'systems', _('List and manipulate registered systems')
   subcommand 'systems', RMT::CLI::Systems
 
+  desc 'clean', _('Clean dangling files and their database entries')
+  subcommand 'clean', RMT::CLI::Clean
+
   desc 'version', _('Show RMT version')
   def version
     puts RMT::VERSION

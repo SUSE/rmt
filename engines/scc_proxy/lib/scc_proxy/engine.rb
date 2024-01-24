@@ -75,11 +75,14 @@ module SccProxy
 
     def prepare_scc_announce_request(uri_path, auth, params)
       scc_request = Net::HTTP::Post.new(uri_path, headers(auth, params))
-      hw_info_keys = %i[cpus sockets hypervisor arch uuid cloud_provider]
-      hw_info = params['hwinfo'].symbolize_keys.slice(*hw_info_keys)
+
+      # Do not filter hardware information here but redirect the whole payload
+      # to SCC.
+      # SCC will make sure to handle the data correctly. This removes the need
+      # to adapt here if information send by the client changes.
       scc_request.body = {
         hostname: params['hostname'],
-        hwinfo: hw_info,
+        hwinfo: params['hwinfo'],
         byos: true
       }.to_json
       scc_request
@@ -214,10 +217,12 @@ module SccProxy
         def announce_system
           auth_header = nil
           auth_header = request.headers['HTTP_AUTHORIZATION'] if request.headers.include?('HTTP_AUTHORIZATION')
+          system_information = hwinfo_params[:hwinfo].to_json
+
           if has_no_regcode?(auth_header)
             # no token sent to check with SCC
             # standard announce case
-            @system = System.create!(hostname: params[:hostname], hw_info: HwInfo.new(hw_info_params))
+            @system = System.create!(hostname: params[:hostname], system_information: system_information)
           else
             response = SccProxy.announce_system_scc(auth_header, request.request_parameters)
             @system = System.create!(
@@ -226,7 +231,7 @@ module SccProxy
               password: response['password'],
               hostname: params[:hostname],
               proxy_byos: true,
-              hw_info: HwInfo.new(hw_info_params)
+              system_information: system_information
             )
           end
           logger.info("System '#{@system.hostname}' announced")

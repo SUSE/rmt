@@ -26,8 +26,8 @@
   <open-size>791</open-size>
 </data>
 <data type="primary">
-  <checksum type="sha256">abf421e45af5cd686f050bab3d2a98e0a60d1b5ca3b07c86cb948fc1abfa675e</checksum>
-  <open-checksum type="sha256">cceefe3857696a694110fc35bf14f8e2b77a1ed8aee1d422f0e99be20a3fc42f</open-checksum>
+  <checksum type="sha256">5e3313a9e6295271b67625cad1ea7c7b020fed2b1c869c57e23811719d52bbde</checksum>
+  <open-checksum type="sha256">5e3313a9e6295271b67625cad1ea7c7b020fed2b1c869c57e23811719d52bbde</open-checksum>
   <location href="repodata/abf421e45af5cd686f050bab3d2a98e0a60d1b5ca3b07c86cb948fc1abfa675e-primary.xml.gz"/>
   <timestamp>1500454273</timestamp>
   <size>920</size>

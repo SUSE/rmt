@@ -44,7 +44,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         it 'saves the data' do
           post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
           system = System.find_by(login: 'SCC_foo')
-          expect(system.hw_info.instance_data).to eq(instance_data)
+          expect(system.instance_data).to eq(instance_data)
         end
       end
 

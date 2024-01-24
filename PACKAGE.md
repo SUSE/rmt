@@ -41,6 +41,14 @@ Note: Look below for direction on publishing to registry.
     ```
 2. On github, submit a release for the tag. See https://help.github.com/en/articles/creating-releases for assistance.
 
+#### Helm chart update process
+
+RMT helm chart is found [here](https://github.com/SUSE/helm-charts.git). 
+
+Edit `rmt-helm/Chart.yaml` to update the chart version (`version`) and rmt-version (`appVersion`). The `BuildTag` version needs to be updated. Look at this example [pull-request](https://github.com/SUSE/helm-charts/pull/5) bumping the version.
+
+[Bruno Leon](mailto:bruno.leon@suse.com) is the maintainer and point of contact for rmt-helm.
+
 #### Submit Requests to openSUSE Factory and SLES
 
 To get a maintenance request accepted, each changelog entry needs to have at
@@ -108,4 +116,4 @@ After your requests have been accepted, they still have to pass maintenance test
 
 SUSE registry houses the rmt-server docker image. The image is built on OBS/IBS, project for SLES 15sp4 based distributions can be found [here](https://build.opensuse.org/package/show/devel:BCI:SLE-15-SP4/rmt-server-image).
 
-At the moment of writing, the publishing process has to be done manually. This can be achieved my reaching out to the Auto-Build team (only available internally).
+At the moment of writing, the publishing process has to be done manually. This can be achieved by reaching out to the Auto-Build team (only available internally).

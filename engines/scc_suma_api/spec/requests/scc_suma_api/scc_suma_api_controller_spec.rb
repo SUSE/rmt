@@ -1,6 +1,7 @@
 require 'rails_helper'
 require 'json'
 
+# rubocop:disable Metrics/ModuleLength
 module SccSumaApi
   RSpec.describe SccSumaApiController, type: :request do
     subject { response }
@@ -13,9 +14,9 @@ module SccSumaApi
       let(:product) { FactoryBot.create(:product, :product_sles_sap, :with_mirrored_repositories, :with_mirrored_extensions) }
       let(:payload) do
         {
-          identifier: product.identifier,
-          version: product.version,
-          arch: product.arch
+          'X-INSTANCE-IDENTIFIER' => product.identifier,
+          'X-INSTANCE-VERSION' => product.version,
+          'X-INSTANCE-ARCH' => product.arch
         }
       end
       let(:logger) { instance_double('RMT::Logger').as_null_object }
@@ -38,13 +39,46 @@ module SccSumaApi
               Rails.root.join('tmp/unscoped_products.json')
               )
 
-            get '/api/scc/unscoped-products', params: payload
+            get '/api/scc/unscoped-products', headers: payload
           end
 
           after { File.delete(unscoped_file) if File.exist?(unscoped_file) }
 
-          its(:code) { is_expected.to eq '200' }
-          its(:body) { is_expected.to eq "{\"result\":#{products.to_json}}" }
+          context 'redirect from SCC endpoint' do
+            before do
+              get '/connect/organizations/products/unscoped', params: payload
+            end
+
+            its(:code) { is_expected.to eq '301' }
+            its(:body) { is_expected.to include 'http://www.example.com/api/scc/unscoped-products' }
+          end
+
+          context 'endpoints return unscoped products for PAYG systems' do
+            before do
+              get '/api/scc/unscoped-products', headers: payload
+            end
+
+            its(:code) { is_expected.to eq '200' }
+            its(:body) { is_expected.to eq products.to_json.to_s }
+          end
+
+          context 'endpoints return unscoped products for BYOS systems' do
+            before do
+              allow_any_instance_of(InstanceVerification::Providers::Example).to(
+                receive(:instance_valid?).and_return(false)
+                )
+              System.stub(:find_by).and_return('foo')
+
+              allow(SUSE::Connect::Api).to receive(:new).and_return api_double
+              allow(api_double).to receive(:list_products_unscoped).and_return products
+              File.delete(unscoped_file) if File.exist?(unscoped_file)
+
+              get '/api/scc/unscoped-products', headers: payload
+            end
+
+            its(:code) { is_expected.to eq '200' }
+            its(:body) { is_expected.to eq products.to_json.to_s }
+          end
         end
 
         context 'cache is not valid' do
@@ -58,19 +92,26 @@ module SccSumaApi
             allow(RMT::Logger).to receive(:new).and_return(logger)
             File.delete(unscoped_file) if File.exist?(unscoped_file)
 
-            get '/api/scc/unscoped-products', params: payload
+            get '/api/scc/unscoped-products', headers: payload
           end
 
           its(:code) { is_expected.to eq '200' }
-          its(:body) { is_expected.to eq "{\"result\":#{products.to_json}}" }
+          its(:body) { is_expected.to eq products.to_json.to_s }
         end
+      end
+
+      context 'get repos redirect' do
+        before { get '/connect/organizations/repositories' }
+
+        its(:code) { is_expected.to eq '301' }
+        its(:body) { is_expected.to include 'http://www.example.com/api/scc/repos' }
       end
 
       context 'get repos' do
         before { get '/api/scc/repos' }
 
         its(:code) { is_expected.to eq '200' }
-        its(:body) { is_expected.to eq '{"result":[]}' }
+        its(:body) { is_expected.to eq '[]' }
       end
 
       context 'get product tree' do
@@ -82,14 +123,30 @@ module SccSumaApi
           allow_any_instance_of(File).to receive(:read).and_return products.to_json
           FileUtils.cp(file_fixture('products/dummy_products.json'), product_tree_file)
 
-          get '/api/scc/product-tree'
+          get '/suma/product_tree.json'
         end
 
         after { File.delete(product_tree_file) if File.exist?(product_tree_file) }
 
-        its(:code) { is_expected.to eq '200' }
-        its(:body) { is_expected.to eq "{\"result\":#{products.to_json}}" }
+        context 'SCC endpoint redirect' do
+          before do
+            get '/suma/product_tree.json'
+          end
+
+          its(:code) { is_expected.to eq '301' }
+          its(:body) { is_expected.to include 'http://www.example.com/api/scc/product-tree' }
+        end
+
+        context 'endpoint returns product tree json output' do
+          before do
+            get '/api/scc/product-tree'
+          end
+
+          its(:code) { is_expected.to eq '200' }
+          its(:body) { is_expected.to eq products.to_json.to_s }
+        end
       end
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength

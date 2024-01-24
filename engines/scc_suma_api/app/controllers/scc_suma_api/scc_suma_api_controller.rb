@@ -1,3 +1,4 @@
+require 'base64'
 require 'json'
 
 module SccSumaApi
@@ -12,15 +13,15 @@ module SccSumaApi
       update_cache unless cache_is_valid?
 
       unscoped_products_json = File.read(@unscoped_products_path)
-      render status: :ok, json: { result: JSON.parse(unscoped_products_json) }
+      render status: :ok, json: JSON.parse(unscoped_products_json)
     end
 
     def list
-      render status: :ok, json: { result: [] }
+      render status: :ok, json: []
     end
 
     def product_tree
-      render status: :ok, json: { result: product_tree_json }
+      render status: :ok, json: product_tree_json
     end
 
     protected
@@ -33,13 +34,23 @@ module SccSumaApi
     end
 
     def is_valid?
+      instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
+      product_hash = {
+        identifier: request.headers['X-INSTANCE-IDENTIFIER'],
+        version: request.headers['X-INSTANCE-VERSION'],
+        arch: request.headers['X-INSTANCE-ARCH']
+      }
       verification_provider = InstanceVerification.provider.new(
         logger,
         request,
-        params.permit(:identifier, :version, :arch, :release_type).to_h,
-        params[:metadata]
-      )
-      raise 'Unspecified error' unless verification_provider.instance_valid?
+        product_hash,
+        instance_data
+        )
+      # check auth for registered BYOS systems
+      iid = verification_provider.parse_instance_data
+      systems_found = System.find_by(system_token: iid['instanceId'], proxy_byos: true)
+
+      raise 'Unspecified error' unless systems_found.present? || verification_provider.instance_valid?
     end
 
     def product_tree_json

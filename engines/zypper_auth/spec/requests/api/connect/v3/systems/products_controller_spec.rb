@@ -21,7 +21,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     before { post url, headers: headers, params: payload }
 
     context 'when system is registered with the old client' do
-      let(:system) { FactoryBot.create(:system, :with_hw_info, instance_data: '<document>test</document>') }
+      let(:system) { FactoryBot.create(:system, :with_system_information, instance_data: '<document>test</document>') }
 
       it 'service url has http scheme' do
         expect(service_url).to match(%r{^plugin:/susecloud})
@@ -31,7 +31,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     context 'when system is registered with the new client' do
       let(:system) do
         FactoryBot.create(
-          :system, :with_hw_info,
+          :system, :with_system_information,
           instance_data: '<document>test</document><repoformat>plugin:susecloud</repoformat>'
         )
       end
