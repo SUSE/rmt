@@ -30,9 +30,15 @@ class ServicesController < ApplicationController
 
     builder = Builder::XmlMarkup.new
     service_xml = builder.repoindex(ttl: ZYPPER_SERVICE_TTL) do
+      # NOTE: We only care to add the ?credentials parameter to the repository URL if
+      # we are *NOT* dealing with plain RMT but the authentication engine of Public Cloud.
+      # The engine requires to supply the service name to function properly, since repositories
+      # are authenticated in this case.
+      service_name = defined?(StrictAuthentication::Engine) ? service.name : nil
+
       repos.each do |repo|
         attributes = {
-          url: make_repo_url(request.base_url, repo.local_path, service.name),
+          url: make_repo_url(request.base_url, repo.local_path, service_name),
           alias: repo.name,
           name: repo.name,
           autorefresh: repo.autorefresh,
