@@ -196,8 +196,8 @@ describe RMT::Mirror::Debian do
       let(:fixture) { 'nested/Packages.gz' }
       let(:repository) do
         create :repository,
-          name: 'HYPE product repository debian 15.3',
-          external_url: 'https://ppa.launchpadcontent.net/ondrej/nginx/ubuntu/dists/focal/'
+               name: 'HYPE product repository debian 15.3',
+               external_url: 'https://ppa.launchpadcontent.net/ondrej/nginx/ubuntu/dists/focal/'
       end
 
       it 'removes dists/ from mirroring path and external URL' do
