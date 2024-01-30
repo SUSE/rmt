@@ -1,6 +1,7 @@
 require 'rmt/lockfile'
 require 'rmt/cli/decorators'
 require 'etc'
+require 'mysql2'
 
 class RMT::CLI::Base < Thor
 
