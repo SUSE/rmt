@@ -322,11 +322,6 @@ getent passwd %{rmt_user} >/dev/null || \
 %post
 %service_add_post rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
 
-# Rails by default creates `secrets.yml.key` with `0600` file mode, see here
-# https://github.com/rails/rails/blob/6-0-stable/railties/lib/rails/generators/rails/encryption_key_file/encryption_key_file_generator.rb
-cd %{_datadir}/rmt && runuser -u root -g %{rmt_group} -- bin/rails rmt:secrets:create_encryption_key >/dev/null RAILS_ENV=production && \
-cd %{_datadir}/rmt && runuser -u root -g %{rmt_group} -- bin/rails rmt:secrets:create_secret_key_base >/dev/null RAILS_ENV=production && \
-
 # Run only on install
 if [ $1 -eq 1 ]; then
   echo "Please run the YaST RMT module (or 'yast2 rmt' from the command line) to complete the configuration of your RMT" >> /dev/stdout
