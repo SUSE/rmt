@@ -7,6 +7,7 @@ end
 
 gem 'puma', '~> 5.6.2'
 gem 'mysql2', '~> 0.5.3'
+gem 'sqlite3'
 
 gem 'nokogiri', '< 1.13' # Locked because of Ruby >= 2.6 dependency
 gem 'thor'
