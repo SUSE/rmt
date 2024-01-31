@@ -126,20 +126,21 @@ describe RMT::Mirror::Debian do
       end
 
       it 'ignores non-existent references from release file' do
-        allow(debian).to receive(:download_enqueued)
         allow(debian).to receive(:enqueue)
-
         expect(debian).to receive(:download_enqueued).with(continue_on_error: true)
-        expect(debian).to receive(:enqueue).with(all(be_like_relative_path(/(Packages|Sources|Translation)(-\w+)?$/)))
+
+        allow(debian).to receive(:download_enqueued)
+        expect(debian).to receive(:enqueue).with(all(be_like_relative_path(/Packages.gz/)))
 
         debian.mirror_metadata
       end
 
       it 'calls download_enqueued for the remaining valid paths' do
-        expect(debian).to receive(:download_enqueued).with(continue_on_error: true)
         expect(debian).to receive(:download_enqueued)
-        expect(debian).to receive(:enqueue).with(all(be_like_relative_path(/(Packages|Sources|Translation)(-\w+)?$/))).once
+        expect(debian).to receive(:enqueue).with(all(be_like_relative_path(/Packages.gz/))).once
+
         expect(debian).to receive(:enqueue).once
+        expect(debian).to receive(:download_enqueued).with(continue_on_error: true)
 
         debian.mirror_metadata
       end

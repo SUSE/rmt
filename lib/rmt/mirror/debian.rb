@@ -4,7 +4,7 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
   KEY_FILE_NAME = 'Release.key'.freeze
   INRELEASE_FILE_NAME = 'InRelease'.freeze
   NESTED_REPOSITORY_REGEX = %r{/dists/.*/$}.freeze
-  DETECT_NONMANDATORY_FILES = %r{/(Packages|Sources|Translation)(-\w+)?$/}.freeze
+
 
   def mirror_implementation
     create_repository_path
@@ -34,12 +34,14 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
     # The nested debian structure only contains the zipped version of packages sometimes
     # However, the release file still contains a reference to the unzipped versions
     # So, we don't error if they don't exist
-    packages, remaining = metadata_refs.partition { |ref| ref.relative_path.match(DETECT_NONMANDATORY_FILES) }
-    enqueue(packages)
-    download_enqueued(continue_on_error: true)
+    packages, optionals = metadata_refs.partition { |ref| is_mandatory? ref }
 
-    enqueue(remaining)
+    # fail early if required Packages.gz files are missing
+    enqueue(packages)
     download_enqueued
+
+    enqueue(optionals)
+    download_enqueued(continue_on_error: true)
 
     metadata_refs
   end
@@ -139,4 +141,9 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
     metadata_references
   end
 
+  def is_mandatory?(file_ref)
+    # This check is needed to separate what files are mandatory to download
+    # We expect only Packages.gz to always be present
+    File.basename(file_ref.relative_path) == 'Packages.gz'
+  end
 end
