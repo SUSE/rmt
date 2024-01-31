@@ -283,6 +283,7 @@ GEM
     spring-watcher-listen (2.0.1)
       listen (>= 2.7, < 4.0)
       spring (>= 1.2, < 3.0)
+    sqlite3 (1.4.4)
     strong_migrations (0.7.9)
       activerecord (>= 5)
     sync (0.5.0)
@@ -360,6 +361,7 @@ DEPENDENCIES
   spring
   spring-commands-rspec
   spring-watcher-listen (~> 2.0.0)
+  sqlite3
   strong_migrations
   terminal-table (~> 3.0)
   thor (<= 1.2.2)

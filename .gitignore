@@ -10,6 +10,10 @@
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
+/rmt_development
+/rmt_test
+/rmt_production
+
 
 # Ignore all logfiles and tempfiles.
 /log/*

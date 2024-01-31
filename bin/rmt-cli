@@ -45,6 +45,11 @@ end
 db_config = RMT::Config.db_config
 ActiveRecord::Base.establish_connection(db_config)
 
+if ActiveRecord::Base.connection.adapter_name != "Mysql2"
+  warn "Running with experimental support for #{ActiveRecord::Base.connection.adapter_name}."
+  warn 'RMT is running without locking operations, make sure not to run it in multipe processes.'
+end
+
 begin
   RMT::CLI::Main.start(ARGV)
 rescue Interrupt
