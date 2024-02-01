@@ -23,19 +23,27 @@ Please view our [guide](docs/installation.md) to assist you in the RMT installat
     sudo zypper in libxml2-devel libxslt-devel libmariadb-devel gcc
     ```
 2. Install the ruby version specified in the `.ruby-version` [file](.ruby-version).
-3. Install and start either the MariaDB or MySQL server:
+3. Install and setup the database:
+
+   **Default: MariaDB or MySQL server**
     ```
     sudo zypper in mariadb
     sudo systemctl enable mariadb
     sudo systemctl start mariadb
     ```
-4. Log into the MariaDB or MySQL server as root and create the RMT database user:
+    Log into the MariaDB or MySQL server as root and create the RMT database user:
     ```
     mysql -u root -p <<EOFF
     GRANT ALL PRIVILEGES ON \`rmt%\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
     FLUSH PRIVILEGES;
     EOFF
     ```
+
+    **Experimental: SQLite**
+
+    For development purposes it can be easier to run with SQLite, to avoid extra dependencies.
+    To run RMT with SQLite, switch the database adapter in `config/rmt.yml` to `sqlite3`.
+
 5. Clone the RMT repository:
     ```
     git clone git@github.com:SUSE/rmt.git
