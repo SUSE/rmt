@@ -178,15 +178,13 @@ $RPM --import repomd.xml.key
     fi
 
     $DNF install librepo
-    #$DNF install SUSEConnect librepo
+    $DNF install SUSEConnect librepo
 
-#$CURL --silent --show-error --insecure $REGURL/tools/rmt-client-setup --output rmt-client-setup
-echo "Running rmt-client-setup7 $PARAMS"
+$CURL --silent --show-error --insecure $REGURL/tools/rmt-client-setup --output rmt-client-setup
+echo "Running rmt-client-setup $PARAMS"
 sh rmt-client-setup $PARAMS
 
 if [[ ${SLL_version} > 8 ]]; then 
     systemctl start suseconnect-keepalive.timer
     systemctl enable suseconnect-keepalive.timer
 fi
-
-
