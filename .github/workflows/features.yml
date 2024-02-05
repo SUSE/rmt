@@ -1,16 +1,25 @@
 ---
+name: feature tests
 
-name: RMT feature tests
 on:
   pull_request:
     branches: [master]
+
+env:
+  SOURCE: /usr/src/rmt-server
+  SCC_USERNAME: ${{ secrets.SCC_USERNAME }}
+  SCC_PASSWORD: ${{ secrets.SCC_PASSWORD }}
+  SYSTEM_UUID: ${{ secrets.SYSTEM_UUID }}
+
+  # Within containters Github Actions does create a bridged network exposing
+  # the service named after its label
+  MYSQL_HOST: mysql
 
 jobs:
   feature-tests:
     runs-on: ubuntu-latest
     defaults:
       run:
-        shell: bash
         working-directory: /usr/src/rmt-server
     container:
       image: registry.opensuse.org/systemsmanagement/scc/containers/15.5/rmt-ci-container:latest
@@ -35,14 +44,32 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: build rpm
+      - name: move source to /usr/src/rmt-server
         run: |
-          rmt-build-rpm
+          [ -d $SOURCE ] && rm -r $SOURCE
+          cp -r $GITHUB_WORKSPACE $SOURCE
 
-      - name: configure rmt
+      - name: build RPM package
         run: |
-          rmt-configure
+          bash ci/rmt-build-rpm
+
+      - name: gather RPM build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: rmt-server-rpms
+          path: ${{ env.SOURCE }}/tmp/artifacts/*.rpm
+
+      - name: configure RMT to run feature tests
+        run: |
+          bash ci/rmt-configure
+
+      # Yes, yes we could use setup-ruby for this BUT:
+      # it will require to make local ruby available within
+      # our custom container. This here is more easy and clean!
+      - name: install test depdencies
+        run: |
+          bundle install
 
       - name: run feature tests
         run: |
-          rmt-run-feature-tests
+          bash ci/rmt-run-feature-tests

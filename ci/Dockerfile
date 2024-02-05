@@ -11,21 +11,5 @@ RUN zypper --non-interactive in make chrpath fdupes gcc libcurl-devel libffi-dev
 RUN update-alternatives --install /usr/bin/bundle bundle /usr/bin/bundle.ruby2.5 5 && \
     update-alternatives --install /usr/bin/bundler bundler /usr/bin/bundler.ruby2.5 5
 
-VOLUME /usr/src/rmt-server
-VOLUME /usr/
-
-ARG SCC_USERNAME
-ARG SCC_PASSWORD
-
-# Prepare ruby environment
-ENV NOKOGIRI_USE_SYSTEM_LIBRARIES 1
-
-# Add rmt ci/development scripts
-RUN mkdir -p /usr/src/rmt-server /usr/local/bin
-
-COPY rmt-build-rpm /usr/local/bin/
-COPY rmt-configure /usr/local/bin/
-COPY rmt-console /usr/local/bin/
-COPY rmt-run-feature-tests /usr/local/bin/
-
+RUN mkdir /usr/src/rmt-server
 WORKDIR /usr/src/rmt-server

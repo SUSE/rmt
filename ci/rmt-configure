@@ -26,6 +26,10 @@ MYSQL_PASSWORD=${MYSQL_PASSWORD:-rmt}
 MYSQL_DATABASE=${MYSQL_DATABASE:-rmt_features}
 MYSQL_PORT=${MYSQL_PORT:-3306}
 
+# The systems uuid to use to identify this proxy (namely to not
+# create a new proxy each time this is running!)
+SYSTEM_UUID=${SYSTEM_UUID:-$(uuidgen)}
+
 group() { echo "::group::$@"; }
 groupend() { echo "::groupend::"; }
 fail() { echo "::error::$@"; exit 1; }
@@ -34,6 +38,12 @@ if [ "x$SCC_PASSWORD" = "x" ] || [ "x$SCC_USERNAME" = "x" ]; then
   fail "To correctly configure RMT environment variables \$SCC_USERNAME and \$SCC_PASSWORD are required. Check your environment!"
 fi
 
+group "setup system uuid"
+  echo "saving uuid to /var/lib/rmt/system_uuid"
+  mkdir -p /var/lib/rmt/
+  echo "$SYSTEM_UUID" > /var/lib/rmt/system_uuid
+groupend
+
 group "install rmt-server rpms"
 pushd $BUILD_DIR/RPMS/x86_64
   zypper --non-interactive --no-refresh install --allow-unsigned-rpm $RPMS
@@ -41,6 +51,7 @@ popd
 groupend
 
 group "create /etc/rmt.conf"
+  echo "saving /etc/rmt.conf"
 cat > /etc/rmt.conf << EOL
 ---
 database:

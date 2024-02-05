@@ -25,7 +25,7 @@ pushd $SOURCE
   make dist
   cp $SOURCE/package/obs/rmt-server-$VERSION.tar.bz2 $ARTIFACT_DIR
 popd
-group
+groupend
 
 group "prepare build environment (in $BUILD_DIR)"
 pushd $BUILD_DIR
@@ -38,5 +38,6 @@ group "build rmt-server-$VERSION.x86_64.rpm"
 pushd $BUILD_DIR
   rpmbuild -ba --define '_srcdefattr (-,root,root)' --nosignature --undefine _enable_debug_packages SOURCES/rmt-server.spec
   cp -r RPMS/x86_64/rmt-server-$VERSION*.rpm $ARTIFACT_DIR/
+  cp -r RPMS/x86_64/rmt-server-config-$VERSION*.rpm $ARTIFACT_DIR/
 popd
 groupend
