@@ -1,0 +1,48 @@
+---
+
+name: RMT feature tests
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  feature-tests:
+    runs-on: ubuntu-latest
+    container: registry.opensuse.org/systemsmanagement/scc/containers/15.5/rmt-ci-container:latest
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_DATABASE: rmt_features
+          MYSQL_USER: rmt
+          MYSQL_PASSWORD: rmt
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+
+      - name: build rpm
+        run: |
+          rmt-build-rpm
+
+      - name: configure rmt
+        run: |
+          rmt-configure
+
+      - name: run feature tests
+        run: |
+          rmt-run-feature-tests
