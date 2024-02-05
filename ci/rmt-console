@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Installation path to RMT installed via rpm
+INSTALL_DIR=${INSTALL_DIR:-/usr/share/rmt}
+
+pushd $INSTALL_DIR
+  RAILS_ENV=production bundle exec rails console
+popd
