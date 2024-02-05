@@ -20,11 +20,6 @@ ARG SCC_PASSWORD
 # Prepare ruby environment
 ENV NOKOGIRI_USE_SYSTEM_LIBRARIES 1
 
-COPY Gemfile /usr/src/
-COPY Gemfile.lock /usr/src
-
-RUN bundle install --gemfile=/usr/src/Gemfile
-
 # Add rmt ci/development scripts
 RUN mkdir -p /usr/src/rmt-server /usr/local/bin
 
