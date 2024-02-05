@@ -10,6 +10,7 @@ RUN update-alternatives --install /usr/bin/bundle bundle /usr/bin/bundle.ruby2.5
     update-alternatives --install /usr/bin/bundler bundler /usr/bin/bundler.ruby2.5 5
 
 VOLUME /usr/src/rmt-server
+VOLUME /usr/
 
 ARG SCC_USERNAME
 ARG SCC_PASSWORD
@@ -25,9 +26,9 @@ RUN bundle install --gemfile=/usr/src/Gemfile
 # Add rmt ci/development scripts
 RUN mkdir -p /usr/src/rmt-server /usr/local/bin
 
-COPY ci/rmt-build-rpm /usr/local/bin/
-COPY ci/rmt-configure /usr/local/bin/
-COPY ci/rmt-console /usr/local/bin/
-COPY ci/rmt-run-feature-tests /usr/local/bin/
+COPY rmt-build-rpm /usr/local/bin/
+COPY rmt-configure /usr/local/bin/
+COPY rmt-console /usr/local/bin/
+COPY rmt-run-feature-tests /usr/local/bin/
 
 WORKDIR /usr/src/rmt-server
