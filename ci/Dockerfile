@@ -1,3 +1,5 @@
+#!BuildTag: rmt-ci-container
+#!UseOBSRepositories
 FROM opensuse/leap:15.5
 
 RUN zypper --non-interactive in make chrpath fdupes gcc libcurl-devel libffi-devel libmysqlclient-devel \
