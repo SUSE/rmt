@@ -8,6 +8,10 @@ on:
 jobs:
   feature-tests:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: /usr/src/rmt-server
     container:
       image: registry.opensuse.org/systemsmanagement/scc/containers/15.5/rmt-ci-container:latest
       options: --user root
