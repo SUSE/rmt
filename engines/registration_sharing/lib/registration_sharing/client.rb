@@ -1,5 +1,5 @@
 class RegistrationSharing::Client
-  # default is 60 seconds, should be shorter than regsharing timer
+  # default is 60 seconds, should be shorter than regsharing timer (30 seconds)
   REGSHARING_TIMEOUT = 25
 
   def initialize(peer, system_login)
