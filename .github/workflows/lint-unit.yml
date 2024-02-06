@@ -72,5 +72,5 @@ jobs:
       - name: Run version checks
         run: |
           echo "::group::Version verification checks"
-          ruby integration/ci_check.rb
+          ruby ci/check-version-matches.rb
           echo "::endgroup::"

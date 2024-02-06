@@ -1,4 +1,5 @@
 #! /usr/bin/env ruby
+
 def modified_files
   `git fetch origin master`
   `git diff --name-only origin/master`.strip.split "\n"
