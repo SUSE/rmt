@@ -13,9 +13,6 @@ ARTIFACT_DIR=${ARTIFACT_DIR:-$SOURCE/tmp/artifacts}
 # Current version we are working with
 VERSION=$(ruby -r "$SOURCE/lib/rmt" -e 'print RMT::VERSION')
 
-# Default RPMS which will be installed
-RPMS=${RPMS:-rmt-server-config-${VERSION}-*.x86_64.rpm rmt-server-${VERSION}-*.x86_64.rpm}
-
 # Installation path to RMT installed via rpm
 INSTALL_DIR=${INSTALL_DIR:-/usr/share/rmt}
 
@@ -30,11 +27,11 @@ MYSQL_PORT=${MYSQL_PORT:-3306}
 # create a new proxy each time this is running!)
 SYSTEM_UUID=${SYSTEM_UUID:-$(uuidgen)}
 
-group() { echo "::group::$@"; }
+group() { echo "::group::$1"; }
 groupend() { echo "::groupend::"; }
-fail() { echo "::error::$@"; exit 1; }
+fail() { echo "::error::$1"; exit 1; }
 
-if [ "x$SCC_PASSWORD" = "x" ] || [ "x$SCC_USERNAME" = "x" ]; then
+if [ "$SCC_PASSWORD" = "" ] || [ "$SCC_USERNAME" = "" ]; then
   fail "To correctly configure RMT environment variables \$SCC_USERNAME and \$SCC_PASSWORD are required. Check your environment!"
 fi
 
@@ -45,8 +42,8 @@ group "setup system uuid"
 groupend
 
 group "install rmt-server rpms"
-pushd $BUILD_DIR/RPMS/x86_64
-  zypper --non-interactive --no-refresh install --allow-unsigned-rpm $RPMS
+pushd "$BUILD_DIR/RPMS/x86_64"
+  zypper --non-interactive --no-refresh install --allow-unsigned-rpm "rmt-server-config-${VERSION}"-*.x86_64.rpm "rmt-server-${VERSION}-"*.x86_64.rpm
 popd
 groupend
 
@@ -71,7 +68,7 @@ EOL
 groupend
 
 group "setup database"
-pushd $INSTALL_DIR
+pushd "$INSTALL_DIR"
   RAILS_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rails db:drop db:create db:migrate
 popd
 groupend

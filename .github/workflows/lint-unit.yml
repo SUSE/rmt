@@ -1,5 +1,19 @@
-name: RMT lint, unit + engines tests
+name: lint + unit + engine tests
 
+# About security when running the tests and NOT exposing
+# the secrets to externals. Currently Github Actions does
+# NOT expose the secrets if the branch is coming from a forked
+# repository.
+# See: https://github.blog/2020-08-03-github-actions-improvements-for-fork-and-pull-request-workflows/
+# See: https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions
+#
+# An alternate would be to set, pull_request_target but this takes the CI code
+# from master removing the ability to change the code in a PR easily.
+#
+# Aditionally, since 2021 pull requests from new contributors will not
+# trigger workflows automatically but will wait for approval from somebody
+# with write access.
+# See: https://docs.github.com/en/actions/managing-workflow-runs/approving-workflow-runs-from-public-forks
 on:
   pull_request:
     branches: [master]
@@ -18,12 +32,12 @@ jobs:
         # those are: SLE15 (2.5.8, 2.5.9)
         ruby-version: ['2.5.8', '2.5.9']
         # skipping Ruby3 tests for now, because RMT isn't Ruby3 compatible yet, and the failing 
-        # tests confuse the team. 
+        # tests confuse the team.
         # ruby-version: ['2.5.8', '2.5.9', '3.0.3']
 
     services:
       mysql:
-        image: mysql:5.7
+        image: registry.suse.com/suse/mariadb:10.6
         env:
           MYSQL_DATABASE: rmt_test
           MYSQL_USER: rmt
@@ -40,11 +54,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Run bundle install and cache the installed gems
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+          bundler-cache: true
 
       - name: Setup database config file
         run: |
