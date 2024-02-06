@@ -11,7 +11,7 @@ BUILD_DIR=${BUILD_DIR:-/usr/src/packages}
 ARTIFACT_DIR=${ARTIFACT_DIR:-$SOURCE/tmp/artifacts}
 
 # Current version we are working with
-VERSION=$(ruby -e "require '$SOURCE/lib/rmt.rb'; print RMT::VERSION")
+VERSION=$(ruby -r "$SOURCE/lib/rmt" -e 'print RMT::VERSION')
 
 group() { echo "::group::$@"; }
 groupend() { echo "::groupend::"; }

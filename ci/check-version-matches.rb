@@ -8,15 +8,14 @@ end
 def spec_version
   return @spec_version if defined?(@spec_version)
 
-  @spec_version = File.open('package/obs/rmt-server.spec', 'r') do |f|
-    f.each_line do |line|
-      break line.split(':').last.strip if /^Version/.match?(line)
-    end
-  end
+  @spec_version ||= File.read('package/obs/rmt-server.spec')
+    .match(/^Version:\s+(.+)\s*$/)
+    .captures
+    .first
 end
 
 def rmt_version
-  return @rmt_version if defined?(@rmt_version)
+  @rmt_version ||= (require_relative 'lib/rmt' and RMT::VERSION)
 
   require_relative '../lib/rmt'
   @rmt_version = RMT::VERSION
