@@ -1,4 +1,7 @@
 class RegistrationSharing::Client
+  # default is 60 seconds, should be shorter than regsharing timer
+  REGSHARING_TIMEOUT = 25.freeze
+
   def initialize(peer, system_login)
     @peer = peer
     @system_login = system_login
@@ -42,6 +45,7 @@ class RegistrationSharing::Client
         'Authorization' => "Bearer #{RegistrationSharing.config_api_secret}",
         'User-Agent' => "RMT::Regsharing/#{RMT::VERSION}"
       },
+      timeout: REGSHARING_TIMEOUT,
       body: JSON.dump(params),
       capath: RegistrationSharing.config_ca_path
     )
