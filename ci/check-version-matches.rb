@@ -15,10 +15,7 @@ def spec_version
 end
 
 def rmt_version
-  @rmt_version ||= (require_relative 'lib/rmt' and RMT::VERSION)
-
-  require_relative '../lib/rmt'
-  @rmt_version = RMT::VERSION
+  @rmt_version ||= (require_relative '../lib/rmt' and RMT::VERSION)
 end
 
 def failure(msg)

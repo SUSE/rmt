@@ -38,9 +38,7 @@ jobs:
           --health-retries=3
 
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v4
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -52,6 +50,11 @@ jobs:
         run: |
           sudo mkdir -p /var/lib/rmt
           ruby -e "require 'yaml'; puts({'database_test'=>{'host' => '127.0.0.1', 'port' => 3306, 'username'=>'rmt','password'=>'rmt','database'=>'rmt_test','adapter'=>'mysql2','encoding'=>'utf8','timeout'=>5000,'pool'=>5}}.to_yaml)" > config/rmt.local.yml
+
+      - name: Run Shell lint
+        uses: azohra/shell-linter@latest
+        with:
+          path: "ci/rmt-*"
 
       - name: Run Lint
         run: |
