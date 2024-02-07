@@ -10,7 +10,7 @@ clean:
 	rm -rf $(NAME)-$(VERSION)/
 
 man:
-	bundle exec ronn --roff --pipe --manual RMT MANUAL.md > rmt-cli.8 && gzip -f rmt-cli.8
+	ronn --roff --pipe --manual RMT MANUAL.md > rmt-cli.8 && gzip -f rmt-cli.8
 	mv rmt-cli.8.gz package/obs
 
 dist: clean man

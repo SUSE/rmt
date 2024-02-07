@@ -1,24 +1,21 @@
 #! /usr/bin/env ruby
+
 def modified_files
   `git fetch origin master`
   `git diff --name-only origin/master`.strip.split "\n"
 end
 
 def spec_version
-  return @_spec_version if defined?(@_spec_version)
+  return @spec_version if defined?(@spec_version)
 
-  @_spec_version = File.open('package/obs/rmt-server.spec', 'r') do |f|
-    f.each_line do |line|
-      break line.split(':').last.strip if /^Version/.match?(line)
-    end
-  end
+  @spec_version ||= File.read('package/obs/rmt-server.spec')
+    .match(/^Version:\s+(.+)\s*$/)
+    .captures
+    .first
 end
 
 def rmt_version
-  return @_rmt_version if defined?(@_rmt_version)
-
-  require_relative '../lib/rmt.rb'
-  @_rmt_version = RMT::VERSION
+  @rmt_version ||= (require_relative '../lib/rmt' and RMT::VERSION)
 end
 
 def failure(msg)

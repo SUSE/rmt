@@ -1,0 +1,75 @@
+#!/bin/bash
+set -e
+
+# Where is the rmt-server source code located
+SOURCE=${SOURCE:-/usr/src/rmt-server}
+
+# Where is the rpm build environment to be found
+BUILD_DIR=${BUILD_DIR:-/usr/src/packages}
+
+# Where copy the built rpm files after a successful build
+ARTIFACT_DIR=${ARTIFACT_DIR:-$SOURCE/tmp/artifacts}
+
+# Current version we are working with
+VERSION=$(ruby -r "$SOURCE/lib/rmt" -e 'print RMT::VERSION')
+
+# Installation path to RMT installed via rpm
+INSTALL_DIR=${INSTALL_DIR:-/usr/share/rmt}
+
+# MYSQL environment variables are needed to configure RMT correctly
+MYSQL_HOST=${MYSQL_HOST:-127.0.0.1}
+MYSQL_USER=${MYSQL_USER:-rmt}
+MYSQL_PASSWORD=${MYSQL_PASSWORD:-rmt}
+MYSQL_DATABASE=${MYSQL_DATABASE:-rmt_features}
+MYSQL_PORT=${MYSQL_PORT:-3306}
+
+# The systems uuid to use to identify this proxy (namely to not
+# create a new proxy each time this is running!)
+SYSTEM_UUID=${SYSTEM_UUID:-$(uuidgen)}
+
+group() { echo "::group::$1"; }
+groupend() { echo "::groupend::"; }
+fail() { echo "::error::$1"; exit 1; }
+
+if [ "$SCC_PASSWORD" = "" ] || [ "$SCC_USERNAME" = "" ]; then
+  fail "To correctly configure RMT environment variables \$SCC_USERNAME and \$SCC_PASSWORD are required. Check your environment!"
+fi
+
+group "setup system uuid"
+  echo "saving uuid to /var/lib/rmt/system_uuid"
+  mkdir -p /var/lib/rmt/
+  echo "$SYSTEM_UUID" > /var/lib/rmt/system_uuid
+groupend
+
+group "install rmt-server rpms"
+pushd "$BUILD_DIR/RPMS/x86_64"
+  zypper --non-interactive --no-refresh install --allow-unsigned-rpm "rmt-server-config-${VERSION}"-*.x86_64.rpm "rmt-server-${VERSION}-"*.x86_64.rpm
+popd
+groupend
+
+group "create /etc/rmt.conf"
+  echo "saving /etc/rmt.conf"
+cat > /etc/rmt.conf << EOL
+---
+database:
+  host: $MYSQL_HOST
+  username: $MYSQL_USER
+  password: $MYSQL_PASSWORD
+  database: $MYSQL_DATABASE
+scc:
+  username: $SCC_USERNAME
+  password: $SCC_PASSWORD
+  sync_systems: false
+mirroring:
+  mirror_src: false
+  verify_rpm_checksums: false
+  dedup_method: hardlink
+EOL
+groupend
+
+group "setup database"
+pushd "$INSTALL_DIR"
+  RAILS_ENV=production DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rails db:drop db:create db:migrate
+popd
+groupend
+

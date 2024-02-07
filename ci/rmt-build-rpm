@@ -1,0 +1,43 @@
+#!/bin/bash
+set -e
+
+# Where is the rmt-server source code located
+SOURCE=${SOURCE:-/usr/src/rmt-server}
+
+# Where is the rpm build environment to be found
+BUILD_DIR=${BUILD_DIR:-/usr/src/packages}
+
+# Where copy the built rpm files after a successful build
+ARTIFACT_DIR=${ARTIFACT_DIR:-$SOURCE/tmp/artifacts}
+
+# Current version we are working with
+VERSION=$(ruby -r "$SOURCE/lib/rmt" -e 'print RMT::VERSION')
+
+group() { echo "::group::$1"; }
+groupend() { echo "::groupend::"; }
+fail() { echo "::error::$1"; exit 1;}
+
+# Setup artifact dir
+mkdir -p "$ARTIFACT_DIR"
+
+group "create rmt-server tarball"
+pushd "$SOURCE"
+  make dist
+  cp "$SOURCE/package/obs/rmt-server-$VERSION.tar.bz2" "$ARTIFACT_DIR"
+popd
+groupend
+
+group "prepare build environment (in $BUILD_DIR)"
+pushd "$BUILD_DIR"
+  mkdir -p {BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS,OTHERS}
+  cp -r "$SOURCE/package/obs"/* SOURCES/
+popd
+groupend
+
+group "build rmt-server-$VERSION.x86_64.rpm"
+pushd "$BUILD_DIR"
+  rpmbuild -ba --define '_srcdefattr (-,root,root)' --nosignature --undefine _enable_debug_packages SOURCES/rmt-server.spec
+  cp -r "RPMS/x86_64/rmt-server-$VERSION"*.rpm "$ARTIFACT_DIR/"
+  cp -r "RPMS/x86_64/rmt-server-config-$VERSION"*.rpm "$ARTIFACT_DIR/"
+popd
+groupend
