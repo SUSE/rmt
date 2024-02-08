@@ -1,0 +1,86 @@
+---
+name: feature tests
+
+# About security when running the tests and NOT exposing
+# the secrets to externals. Currently Github Actions does
+# NOT expose the secrets if the branch is coming from a forked
+# repository.
+# See: https://github.blog/2020-08-03-github-actions-improvements-for-fork-and-pull-request-workflows/
+# See: https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions
+#
+# An alternate would be to set, pull_request_target but this takes the CI code
+# from master removing the ability to change the code in a PR easily.
+#
+# Aditionally, since 2021 pull requests from new contributors will not
+# trigger workflows automatically but will wait for approval from somebody
+# with write access.
+# See: https://docs.github.com/en/actions/managing-workflow-runs/approving-workflow-runs-from-public-forks
+on:
+  pull_request:
+    branches: [master]
+
+env:
+  SOURCE: /usr/src/rmt-server
+  SCC_USERNAME: ${{ secrets.SCC_USERNAME }}
+  SCC_PASSWORD: ${{ secrets.SCC_PASSWORD }}
+  SYSTEM_UUID: ${{ secrets.SYSTEM_UUID }}
+
+  # Within containters Github Actions does create a bridged network exposing
+  # the service named after its label
+  MYSQL_HOST: mysql
+
+jobs:
+  feature-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: /usr/src/rmt-server
+    container:
+      image: registry.opensuse.org/systemsmanagement/scc/containers/15.5/rmt-ci-container:latest
+      options: --user root
+    services:
+      mysql:
+        image: registry.suse.com/suse/mariadb:10.6
+        env:
+          MYSQL_DATABASE: rmt_features
+          MYSQL_USER: rmt
+          MYSQL_PASSWORD: rmt
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: move source to /usr/src/rmt-server
+        run: |
+          [ -d $SOURCE ] && rm -r $SOURCE
+          cp -r $GITHUB_WORKSPACE $SOURCE
+
+      - name: build RPM package
+        run: |
+          bash ci/rmt-build-rpm
+
+      - name: gather RPM build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: rmt-server-rpms
+          path: ${{ env.SOURCE }}/tmp/artifacts/*.rpm
+
+      - name: configure RMT to run feature tests
+        run: |
+          bash ci/rmt-configure
+
+      - name: install test dependencies
+        run: |
+          bundle install
+
+      - name: run feature tests
+        run: |
+          bash ci/rmt-run-feature-tests
