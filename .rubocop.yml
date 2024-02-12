@@ -47,3 +47,6 @@ Style/FormatStringToken:
 
 Style/OpenStructUse:
   Enabled: false
+
+RSpec/MessageChain:
+  Enabled: false
