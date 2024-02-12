@@ -20,7 +20,7 @@ Please view our [guide](docs/installation.md) to assist you in the RMT installat
 
 1. Install the system dependencies:
     ```
-    sudo zypper in libxml2-devel libxslt-devel libmariadb-devel gcc
+    sudo zypper in libxml2-devel libxslt-devel libmariadb-devel sqlite3-devel gcc
     ```
 2. Install the ruby version specified in the `.ruby-version` [file](.ruby-version).
 3. Install and setup the database:

@@ -3,7 +3,10 @@ class RMT::Lockfile
 
   class << self
     def lock(lock_name = nil)
-      yield and return if ActiveRecord::Base.connection.adapter_name != 'Mysql2'
+      if ActiveRecord::Base.connection.adapter_name != 'Mysql2'
+        yield
+        return
+      end
 
       lock_name = ['rmt-cli', lock_name].compact.join('-')
 
