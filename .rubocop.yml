@@ -55,3 +55,6 @@ Style/OpenStructUse:
 # Count: 107 offenses
 RSpec/SubjectStub:
   Enabled: false
+
+RSpec/MessageChain:
+  Enabled: false

@@ -49,6 +49,7 @@ BuildRequires:  gcc
 BuildRequires:  libcurl-devel
 BuildRequires:  libffi-devel
 BuildRequires:  libmysqlclient-devel
+BuildRequires:  sqlite-devel
 BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
 BuildRequires:  pkgconfig(systemd)
@@ -65,6 +66,7 @@ Requires(post): util-linux
 Conflicts:      yast2-rmt < 1.0.3
 Recommends:     rmt-server-config
 Recommends:     yast2-rmt >= 1.3.0
+Provides:       user(%{rmt_user})
 # Does not build for i586 and s390 and is not supported on those architectures
 ExcludeArch:    %{ix86} s390
 %{systemd_ordering}

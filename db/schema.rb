@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_08_14_105634) do
+ActiveRecord::Schema.define(version: 2024_01_29_140413) do
 
   create_table "activations", charset: "utf8", force: :cascade do |t|
     t.bigint "service_id", null: false

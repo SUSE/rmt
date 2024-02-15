@@ -51,5 +51,12 @@ RSpec.describe RMT::Lockfile do
         )
       end
     end
+
+    context 'with sqlite backend' do
+      it 'yields block' do
+        allow(ActiveRecord::Base).to receive_message_chain(:connection, :adapter_name).and_return('sqlite3')
+        expect(lock).to eq nil
+      end
+    end
   end
 end
