@@ -40,7 +40,11 @@ class Registry::AccessScope
   end
 
   def granted(client: nil)
-    aa = authorized_actions(client)
+    # aa = authorized_actions(client)
+    # TODO: decide on a policy to grant a system access to products/images
+    # in the meantime, allow access to any action
+    # if basisc auth is OK (username/password)
+    aa = @actions
     Rails.logger.info "Granted actions for user '#{client&.account || '<anonymous>'}': #{aa}"
     {
       'type' => @type,
