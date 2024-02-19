@@ -23,7 +23,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       # could lead to different Repositories sets where it's used.
       mirrored_repo_ids = []
       until (repos = Repository.only_mirroring_enabled.where.not(id: mirrored_repo_ids).load).empty?
-        # retirar daqui o tamanho e qts repos
+
         files_count, files_size = mirror_repos!(repos)
 
         downloaded_files_count += files_count
