@@ -345,6 +345,7 @@ DEPENDENCIES
   minitest (~> 5.15.0)
   mysql2 (~> 0.5.3)
   nokogiri (< 1.13)
+  pry
   public_suffix (< 5)
   puma (~> 5.6.2)
   railties (~> 6.1.7)
@@ -374,4 +375,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   1.17.3
+   2.4.22

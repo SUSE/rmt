@@ -45,6 +45,7 @@ group :development, :test do
   gem 'gettext_test_log'
   gem 'memory_profiler'
   gem 'awesome_print'
+  gem 'pry'
 end
 
 group :development do
