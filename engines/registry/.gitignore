@@ -1,6 +1,3 @@
-/.bundle/
-/doc/
-/log/*.log
-/pkg/
-/tmp/
-.byebug_history
+.bundle/
+log/*.log
+pkg/
