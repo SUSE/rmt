@@ -145,7 +145,17 @@ RSpec.describe RMT::CLI::Mirror do
           auth_token: anything
         ).and_return([1, 32323])
 
-        expect { command }.to output(/\e\[32mMirroring complete.\e\[0m/).to_stdout
+        $stdout = StringIO.new
+
+        command
+
+        $stdout.rewind
+
+        expect($stdout.gets).to match(/Total mirrored repositories: 2/)
+        expect($stdout.gets).to match(/Total transferred files: 2/)
+        expect($stdout.gets).to match(/Total transferred file size: 0.06 MB/)
+        expect($stdout.gets).to match(/Total Mirror Time: 00:00:00/)
+        expect($stdout.gets).to match(/Mirroring complete./)
       end
     end
 
@@ -199,9 +209,19 @@ RSpec.describe RMT::CLI::Mirror do
           local_path: anything,
           repo_name: anything,
           auth_token: anything
-        )
+        ).and_return([1, 8765])
 
-        expect { command }.to output(/\e\[32mMirroring complete.\e\[0m/).to_stdout
+        $stdout = StringIO.new
+
+        command
+
+        $stdout.rewind
+
+        expect($stdout.gets).to match(/Total mirrored repositories: 1/)
+        expect($stdout.gets).to match(/Total transferred files: 1/)
+        expect($stdout.gets).to match(/Total transferred file size: 0.0 MB/)
+        expect($stdout.gets).to match(/Total Mirror Time: 00:00:00/)
+        expect($stdout.gets).to match(/Mirroring complete./)
       end
     end
 
@@ -268,6 +288,7 @@ RSpec.describe RMT::CLI::Mirror do
     context 'when given an ID and product has enabled repos' do
       let(:product) { create :product, :with_mirrored_repositories }
       let(:argv) { ['product', product.id] }
+      let(:repos_count) { product.repositories.count }
 
       it 'mirrors repos' do
         product.repositories.each do |repo|
@@ -276,16 +297,27 @@ RSpec.describe RMT::CLI::Mirror do
             local_path: anything,
             repo_name: anything,
             auth_token: anything
-          )
+          ).and_return([repos_count, 89987332.33])
         end
 
-        expect { command }.to output(/\e\[32mMirroring complete.\e\[0m/).to_stdout
+        $stdout = StringIO.new
+
+        command
+
+        $stdout.rewind
+
+        expect($stdout.gets).to match(/Total mirrored repositories: #{repos_count}/)
+        expect($stdout.gets).to match(/Total transferred files: 16/)
+        expect($stdout.gets).to match(/Total transferred file size: 351.51 MB/)
+        expect($stdout.gets).to match(/Total Mirror Time: 00:00:00/)
+        expect($stdout.gets).to match(/Mirroring complete./)
       end
     end
 
     context 'when given a triplet and product has enabled repos' do
       let(:product) { create :product, :with_mirrored_repositories }
       let(:argv) { ['product', [product.identifier, product.version, product.arch].join('/')] }
+      let(:repos_count) { product.repositories.count }
 
       it 'mirrors repos' do
         product.repositories.each do |repo|
@@ -294,10 +326,20 @@ RSpec.describe RMT::CLI::Mirror do
             local_path: anything,
             repo_name: anything,
             auth_token: anything
-          )
+          ).and_return([repos_count, 89987332.33])
         end
 
-        expect { command }.to output(/\e\[32mMirroring complete.\e\[0m/).to_stdout
+        $stdout = StringIO.new
+
+        command
+
+        $stdout.rewind
+
+        expect($stdout.gets).to match(/Total mirrored repositories: #{repos_count}/)
+        expect($stdout.gets).to match(/Total transferred files: 16/)
+        expect($stdout.gets).to match(/Total transferred file size: 351.51 MB/)
+        expect($stdout.gets).to match(/Total Mirror Time: 00:00:00/)
+        expect($stdout.gets).to match(/Mirroring complete./)
       end
     end
 
