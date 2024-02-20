@@ -47,8 +47,6 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   desc 'repository IDS', _('Mirror enabled repositories with given repository IDs')
   def repository(*ids)
     RMT::Lockfile.lock('mirror') do
-      downloaded_files_count = 0
-      downloaded_files_size = 0
       start_time = Time.now
 
       ids = clean_target_input(ids)
@@ -75,8 +73,6 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   desc 'product IDS', _('Mirror enabled repositories for a product with given product IDs')
   def product(*targets)
     RMT::Lockfile.lock('mirror') do
-      downloaded_files_count = 0
-      downloaded_files_size = 0
       start_time = Time.now
 
       targets = clean_target_input(targets)
