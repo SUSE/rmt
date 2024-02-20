@@ -62,10 +62,7 @@ class RMT::Mirror
     replace_directory(temp_licenses_dir, repository_dir.chomp('/') + '.license/') if Dir.exist?(temp_licenses_dir)
     replace_directory(File.join(temp_metadata_dir, 'repodata'), File.join(repository_dir, 'repodata'))
 
-    downloaded_files_count = downloader.downloaded_files_count
-    downloaded_files_size = downloader.downloaded_files_size
-
-    [downloaded_files_count, downloaded_files_size]
+    [downloader.downloaded_files_count, downloader.downloaded_files_size]
   ensure
     [temp_licenses_dir, temp_metadata_dir].each { |dir| FileUtils.remove_entry(dir, true) }
   end
