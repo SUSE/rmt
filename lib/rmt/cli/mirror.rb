@@ -171,7 +171,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
     if errors.empty?
       logger.info("\e[32m" + _('Total mirrored repositories: ' + "#{repo_count}") + "\e[0m")
       logger.info("\e[32m" + _('Total transferred files: ' + "#{downloaded_files_count}") + "\e[0m")
-      logger.info("\e[32m" + _('Total transferred file size: ' + "#{downloaded_files_size / 1024000.0} MB") + "\e[0m")
+      logger.info("\e[32m" + _('Total transferred file size: ' + "#{files_size_format(downloaded_files_size)} MB") + "\e[0m")
       logger.info("\e[32m" + _('Total Mirror Time: ' + "#{format_time(start_time)}") + "\e[0m")
       logger.info("\e[32m" + _('Mirroring complete.') + "\e[0m")
     else
@@ -180,6 +180,10 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       logger.warn("\e[33m" + _('Mirroring completed with errors.') + "\e[0m")
       raise RMT::CLI::Error.new('The command exited with errors.') unless options[:do_not_raise_unpublished] && in_alpha_or_beta?
     end
+  end
+
+  def files_size_format(downloaded_files_size)
+    (downloaded_files_size / 1024000.0).floor(2)
   end
 
   def format_time(start_time)
