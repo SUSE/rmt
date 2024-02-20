@@ -136,14 +136,14 @@ RSpec.describe RMT::CLI::Mirror do
           # enable mirroring of the additional repository during mirroring
           additional_repository.mirroring_enabled = true
           additional_repository.save!
-        end
+        end.and_return([1, 32323])
 
         expect_any_instance_of(RMT::Mirror).to receive(:mirror).with(
           repository_url: additional_repository.external_url,
           local_path: anything,
           repo_name: anything,
           auth_token: anything
-        )
+        ).and_return([1, 32323])
 
         expect { command }.to output(/\e\[32mMirroring complete.\e\[0m/).to_stdout
       end

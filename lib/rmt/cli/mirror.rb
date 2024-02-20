@@ -175,8 +175,8 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       )
       repo.refresh_timestamp!
 
-      downloaded_files_count += files_count
-      downloaded_files_size += files_size
+      downloaded_files_count += files_count if files_count
+      downloaded_files_size += files_size if files_size
     rescue RMT::Mirror::Exception => e
       errors << _("Repository '%{repo_name}' (%{repo_id}): %{error_message}") % {
         repo_id: repo.friendly_id, repo_name: repo.name, error_message: e.message
