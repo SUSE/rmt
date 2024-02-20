@@ -10,6 +10,9 @@ SUSECONNECT=/usr/bin/SUSEConnect
 RPM=/usr/bin/rpm
 DNF=/usr/bin/dnf
 CURL=/usr/bin/curl
+YUM=/usr/bin/yum
+YUM_CONFIG_MGR=/usr/bin/yum-config-manager
+
 TEMPFILE="/etc/pki/ca-trust/source/anchors/rmt.crt"
 UPDATE_CA_TRUST=/usr/bin/update-ca-trust
 RPM_GPG_KEY_LOCATION="/etc/pki/rpm-gpg"
@@ -74,7 +77,7 @@ fi
 
 if [ -z "$REGURL" ]; then
     echo "Missing registration URL. Abort."
-    usage
+    exit 1
 fi
 
 if [ ! -x $RPM ]; then
@@ -84,6 +87,11 @@ fi
 
 if [ ! -x $CURL ]; then
     echo "curl command not found. Abort."
+    exit 1
+fi
+
+if  [[ ! -e /etc/os-release ]]; then
+    echo "/etc/os-release file not found. Couldn't determine OS. Abort."
     exit 1
 fi
 
@@ -112,30 +120,21 @@ if [ -x $UPDATE_CA_TRUST ]; then
 fi
 
 SLL_version=`cat /etc/os-release | grep "VERSION_ID" | cut -d\" -f2 | cut -d\. -f1`
-if [[ ${SLL_version} > 8 ]]; then                                                                                                       
+if [[ ${SLL_version} > 8 ]]; then
    SLL_name="SLL";                                                                                                                
    SLL_release_package="sll-release"                                                                                              
+elif [[ ${SLL_version} -eq 7 ]]; then
+   SLL_name="RES";
+   SLL_release_package="sles_es-release-server"
+elif [[ ${SLL_version} -eq 8 ]]; then
+    SLL_name="RES";                      
+    SLL_release_package="sles_es-release"
 else                                                                                                                                 
-   SLL_name="RES";                                                                                                                
-   SLL_release_package="sles_es-release"                                                                                       
+   echo "Unsupported or unknown base version. Abort";
+   exit 1
 fi                                                                                                                                   
 
 echo "detect ${SLL_name} version... ${SLL_version}"                                                                                  
-
-echo "Disabling all repositories"
-dnf config-manager --disable $(dnf repolist -q | awk '{ print $1 }' | grep -v repo)
-#sed -i 's/^enabled=1/enabled=0/' /etc/yum.repos.d/*           
-
-# on Centos /usr/share/redhat-release is a file, on RHEL and RES it is a directory
-# so this is CentOS only workaround
-if [ -f /usr/share/redhat-release ] | [ -h /usr/share/redhat-release ]; then
-   rm -f /usr/share/redhat-release;
-fi
-
-# on RHEL9 (not RHEL8) redhat-release is protected and cannot be updated to sll-release
-if [ -f /etc/dnf/protected.d/redhat-release.conf ]; then
-    rm -f /etc/dnf/protected.d/redhat-release.conf;
-fi
 
 echo "Importing repomd.xml.key"
 $CURL --silent --show-error --insecure  ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update/repodata/repomd.xml.key --output repomd.xml.key
@@ -143,11 +142,20 @@ $RPM --import repomd.xml.key
 
 if [ ! -x $SUSECONNECT ]; then
     echo "Downloading SUSEConnect"
+if [[ ${SLL_version} > 7 ]]; then
 
     if [ ! -x $DNF ]; then
         echo "dnf command not found. Abort."
         exit 1
     fi
+
+echo "Disabling all repositories"
+$DNF config-manager --disable $(dnf repolist -q | awk '{ print $1 }' | grep -v repo)
+#sed -i 's/^enabled=1/enabled=0/' /etc/yum.repos.d/*           
+# on RHEL9 (not RHEL8) redhat-release is protected and cannot be updated to sll-release
+if [ -f /etc/dnf/protected.d/redhat-release.conf ]; then
+    rm -f /etc/dnf/protected.d/redhat-release.conf;
+fi
 
     $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update
     $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}-AS/${SLL_version}/x86_64/update
@@ -161,6 +169,30 @@ if [ ! -x $SUSECONNECT ]; then
     $DNF install SUSEConnect librepo
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}_${SLL_version}_x86_64_update"
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}-AS_${SLL_version}_x86_64_update"
+
+elif [[ ${SLL_version} -eq 7 ]]; then
+    # For SLL7 we need to have yum, yum_config_mgr, sles_os-release-server, etc.. 
+	if [ ! -x "$YUM_CONFIG_MGR" ]; then
+	    	echo "YUM config manager is not installed. Please install yum-config-manager and retry. Abort."
+		exit 1
+	fi	
+	
+	echo "Disabling all repositories"
+	$YUM_CONFIG_MGR --disable \*
+	
+	# on Centos /usr/share/redhat-release is a file, on RHEL and RES it is a directory
+	# so this is CentOS only workaround (on some system it is a normal file, on some systems a symlink)
+	if [ -f /usr/share/redhat-release ] | [ -h /usr/share/redhat-release ]; then
+	   rm -f /usr/share/redhat-release;
+	fi
+
+	 $YUM_CONFIG_MGR --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update
+	 $YUM_CONFIG_MGR --enable *suse.*
+
+	$YUM install SUSEConnect librepo
+
+
+fi
 elif [[ ${SLL_version} -eq 8 ]]; then
     # For SLL8, the release package is already installed, just import the keys
     import_rpm_signing_keys
