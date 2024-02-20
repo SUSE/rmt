@@ -47,6 +47,10 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   desc 'repository IDS', _('Mirror enabled repositories with given repository IDs')
   def repository(*ids)
     RMT::Lockfile.lock('mirror') do
+      downloaded_files_count = 0
+      downloaded_files_size = 0
+      start_time = Time.now
+
       ids = clean_target_input(ids)
       raise RMT::CLI::Error.new(_('No repository IDs supplied')) if ids.empty?
 
@@ -57,14 +61,24 @@ class RMT::CLI::Mirror < RMT::CLI::Base
         repo
       end
 
-      mirror_repos!(repos)
-      finish_execution
+      downloaded_files_count, downloaded_files_size = mirror_repos!(repos)
+
+      finish_execution(
+        start_time: start_time,
+        repo_count: repos.count,
+        downloaded_files_count: downloaded_files_count,
+        downloaded_files_size: downloaded_files_size
+      )
     end
   end
 
   desc 'product IDS', _('Mirror enabled repositories for a product with given product IDs')
   def product(*targets)
     RMT::Lockfile.lock('mirror') do
+      downloaded_files_count = 0
+      downloaded_files_size = 0
+      start_time = Time.now
+
       targets = clean_target_input(targets)
       raise RMT::CLI::Error.new(_('No product IDs supplied')) if targets.empty?
 
@@ -85,8 +99,14 @@ class RMT::CLI::Mirror < RMT::CLI::Base
         errored_products_id << target if options[:do_not_raise_unpublished]
       end
 
-      mirror_repos!(repos)
-      finish_execution
+      downloaded_files_count, downloaded_files_size = mirror_repos!(repos)
+
+      finish_execution(
+        start_time: start_time,
+        repo_count: repos.count,
+        downloaded_files_count: downloaded_files_count,
+        downloaded_files_size: downloaded_files_size
+      )
     end
   end
 
