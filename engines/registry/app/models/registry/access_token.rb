@@ -17,7 +17,7 @@ class Registry::AccessToken
 
   def claim
     {}.tap do |hash|
-      hash['iss']    = 'registry.suse.com/auth' # "matching issuer in registry auth token config"
+      hash['iss']    = 'RMT' # "matching issuer in registry auth token config"
       hash['sub']    = @account
       hash['aud']    = @service
       hash['exp']    = Time.now.getlocal.to_i + (5 * 60) # expires at
