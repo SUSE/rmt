@@ -11,12 +11,12 @@ gem 'sqlite3'
 
 gem 'nokogiri', '< 1.13' # Locked because of Ruby >= 2.6 dependency
 gem 'thor', '<= 1.2.2' # Locked because of Ruby >= 2.6 dependency
-gem 'activesupport', '~> 6.1.7'
-gem 'actionpack', '~> 6.1.7'
-gem 'actionview', '~> 6.1.7'
-gem 'activemodel', '~> 6.1.7'
-gem 'activerecord', '~> 6.1.7'
-gem 'railties', '~> 6.1.7'
+gem 'activesupport', '~> 7.0.8'
+gem 'actionpack', '~> 7.0.8'
+gem 'actionview', '~> 7.0.8'
+gem 'activemodel', '~> 7.0.8'
+gem 'activerecord', '~> 7.0.8'
+gem 'railties', '~> 7.0.8'
 gem 'repomd_parser', '~> 0.1.6'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
