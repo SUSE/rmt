@@ -1,6 +1,6 @@
 module Registry
   class RegistryController < ::ApplicationController
-    REGISTRY_SERVICE = 'SUSE Linux Docker Registry'.freeze
+    REGISTRY_SERVICE = 'SUSE Linux OCI Registry'.freeze
     REGISTRY_API_VERSION = 'registry/2.0'.freeze
 
     before_action :set_requested_scopes, except: [ :catalog ]
