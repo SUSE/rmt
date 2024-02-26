@@ -1,3 +1,3 @@
 # Registry
-Instances in the cloud have the option to use registry.suse.com for their containers,
-this engine provides the endpoint to auth and handling of that access to the registry
+Provide an authentication end point for a container registry.
+This supports access control based on system credentials to registry paths that are set to have access restrictions.
