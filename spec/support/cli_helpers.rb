@@ -12,3 +12,7 @@ end
 def file_human_size(size_in_bytes)
   ActiveSupport::NumberHelper.number_to_human_size(size_in_bytes)
 end
+
+def running_mysql
+  ActiveRecord::Base.connection.adapter_name == 'Mysql2'
+end
