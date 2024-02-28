@@ -92,9 +92,11 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
     mandatory_repos = @product.repositories.only_enabled
     mirrored_repos = @product.repositories.only_enabled.only_fully_mirrored
+    missing_repo_ids = (mandatory_repos - mirrored_repos).pluck(:id).join(', ')
 
     unless mandatory_repos.size == mirrored_repos.size
-      fail ActionController::TranslatedError.new(N_('Not all mandatory repositories are mirrored for product %s'), @product.friendly_name)
+      fail ActionController::TranslatedError.new(N_('Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s'),
+                                                 @product.friendly_name, missing_repo_ids)
     end
   end
 

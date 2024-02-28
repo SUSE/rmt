@@ -72,11 +72,12 @@ shared_examples 'product must have mirrored repositories' do
     subject { response }
 
     let(:product) { FactoryBot.create(:product, :with_not_mirrored_repositories) }
+    let(:missing_repo_ids) { (product.repositories.only_enabled - product.repositories.only_enabled.only_fully_mirrored).pluck(:id).join(', ') }
     let(:error_json) do
       {
         type: 'error',
-        error: "Not all mandatory repositories are mirrored for product #{product.friendly_name}",
-        localized_error: "Not all mandatory repositories are mirrored for product #{product.friendly_name}"
+        error: "Not all mandatory repositories are mirrored for product #{product.friendly_name}. Missing Repositories (by ids): #{missing_repo_ids}",
+        localized_error: "Not all mandatory repositories are mirrored for product #{product.friendly_name}. Missing Repositories (by ids): #{missing_repo_ids}"
       }.to_json
     end
 
