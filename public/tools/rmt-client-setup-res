@@ -189,7 +189,7 @@ elif [[ ${SLL_version} -eq 7 ]]; then
 	 $YUM_CONFIG_MGR --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update
 	 $YUM_CONFIG_MGR --enable *suse.*
 
-	$YUM install SUSEConnect librepo
+	$YUM install suseconnect-ng librepo
 
 
 fi
