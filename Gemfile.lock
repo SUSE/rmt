@@ -138,7 +138,7 @@ GEM
       concurrent-ruby (~> 1.0)
     json (2.3.1)
     jsonapi-renderer (0.2.2)
-    jwt (2.8.0)
+    jwt (2.8.1)
       base64
     listen (3.6.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
