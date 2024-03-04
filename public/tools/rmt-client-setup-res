@@ -178,7 +178,7 @@ elif [[ ${SLL_version} -eq 7 ]]; then
 	fi	
 	
 	echo "Disabling all repositories"
-	$YUM_CONFIG_MGR --disable \*
+	$YUM_CONFIG_MGR --disable \* > /dev/null
 	
 	# on Centos /usr/share/redhat-release is a file, on RHEL and RES it is a directory
 	# so this is CentOS only workaround (on some system it is a normal file, on some systems a symlink)
