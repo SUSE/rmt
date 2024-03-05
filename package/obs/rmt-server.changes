@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Feb 20 15:36:00 UTC 2024 - Zuzana Petrova <zpetrova@suse.com>
+
+- Fix for SUSE Liberty registration script to allow RHEL7/SLL7/CentOS7 
+  clients to register to RMT servers
+
+-------------------------------------------------------------------
 Thu Feb 08 15:33:00 UTC 2024 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Version 2.15:
