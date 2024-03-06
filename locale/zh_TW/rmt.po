@@ -6,10 +6,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-02-08 09:14+0000\n"
+"PO-Revision-Date: 2024-03-06 03:42+0000\n"
 "Last-Translator: Grace Yu <grace.yu@excel-gits.com>\n"
-"Language-Team: Chinese (Taiwan) <https://l10n.opensuse.org/projects/rmt/i18n/z"
-"h_TW/>\n"
+"Language-Team: Chinese (Taiwan) <https://l10n.opensuse.org/projects/rmt/i18n/"
+"zh_TW/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,15 +20,13 @@ msgstr ""
 msgid "%s is not yet activated on the system."
 msgstr "該系統上尚未啟用 %s。"
 
-#, fuzzy
 msgid "%{count} file"
 msgid_plural "%{count} files"
-msgstr[0] "n"
+msgstr[0] "%{count} 個檔案"
 
-#, fuzzy
 msgid "%{db_entries} database entry"
 msgid_plural "%{db_entries} database entries"
-msgstr[0] "y"
+msgstr[0] "%{db_entries} 資料庫項目"
 
 msgid "%{file} - File does not exist"
 msgstr "%{file} - 檔案不存在"
@@ -85,9 +83,9 @@ msgstr "正在將現有的自訂儲存庫關聯至產品"
 msgid "Attached repository to product '%{product_name}'."
 msgstr "已將儲存庫關聯至產品「%{product_name}」。"
 
-#, fuzzy
 msgid "By default, inactive systems are those that have not contacted RMT in any way in the past 3 months. You can override this with the '-b / --before' flag."
-msgstr "依預設，非使用中系統是指過去 3 個月內未以任何方式與 RMT 進行聯絡的系統。您可以使用 \"-b / --before\" 旗標覆寫此預設值。"
+msgstr ""
+"依預設，非使用中系統是指過去 3 個月內未以任何方式與 RMT 進行聯絡的系統。您可以使用 \"-b / --before\" 旗標覆寫此預設值。"
 
 msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr "無法連接至資料庫伺服器。請確定已在「%{path}」中正確設定其身分證明，或使用 YaST (「%{command}」) 設定 RMT。"
@@ -110,11 +108,9 @@ msgstr "檢查總數不符"
 msgid "Clean cancelled."
 msgstr "已取消清理。"
 
-#, fuzzy
 msgid "Clean dangling files and their database entries"
-msgstr "n"
+msgstr "清理迷途檔案及其資料庫項目"
 
-#, fuzzy
 msgid ""
 "Clean dangling package files based on current repository metadata.\n"
 "\n"
@@ -123,22 +119,26 @@ msgid ""
 "listed in the metadata and at least 2 days old are considered dangling.\n"
 "\n"
 "Then, it removes all dangling files from disk along with any associated database entries.\n"
-msgstr "y"
+msgstr ""
+"依據目前的儲存庫中繼資料清理迷途套件檔案\n"
+"\n"
+"此指令會掃描鏡像目錄中的 \"repomd.xml\" 檔案、剖析\n"
+"中繼資料檔案、將其內容與磁碟上的檔案進行比較。中繼資料中\n"
+"未列出的檔案和至少已存在 2 天的檔案會視為迷途檔案。\n"
+"\n"
+"然後，該指令會移除磁碟中的所有迷途檔案，以及所有關聯的資料庫項目。\n"
 
-#, fuzzy
 msgid "Clean dangling package files, based on current repository data."
-msgstr "y"
+msgstr "依據目前的儲存庫資料清理迷途套件檔案。"
 
 msgid "Clean finished. An estimated %{total_file_size} was removed."
 msgstr "已完成清理。估計已移除 %{total_file_size}。"
 
-#, fuzzy
 msgid "Cleaned %{file_count_text} (%{total_size}), %{db_entries}."
-msgstr "n"
+msgstr "已清理 %{file_count_text} (%{total_size})，%{db_entries}。"
 
-#, fuzzy
 msgid "Cleaned '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}."
-msgstr "n"
+msgstr "已清理 \"%{file_name}\" (%{file_size}%{hardlink})，%{db_entries}。"
 
 msgid "Commands:"
 msgstr "指令："
@@ -182,9 +182,8 @@ msgstr "將現有的自訂儲存庫與產品解除關聯"
 msgid "Detached repository from product '%{product_name}'."
 msgstr "已將儲存庫與產品「%{product_name}」解除關聯。"
 
-#, fuzzy
 msgid "Directory: %{dir}"
-msgstr "y"
+msgstr "目錄：%{dir}"
 
 msgid "Disable mirroring of custom repositories by a list of IDs"
 msgstr "依 ID 清單停用自訂儲存庫鏡像"
@@ -207,9 +206,8 @@ msgstr "正在停用 %{product}："
 msgid "Displays product with all its repositories and their attributes."
 msgstr "顯示產品及其所有儲存庫，以及儲存庫的屬性。"
 
-#, fuzzy
 msgid "Do not ask anything; use default answers automatically. Default: false"
-msgstr "y"
+msgstr "不詢問，自動使用預設的答案。預設值：false"
 
 msgid "Do not fail the command if product is in alpha or beta stage"
 msgstr "如果產品處於 alpha 或 beta 階段，請勿使指令失敗"
@@ -380,9 +378,8 @@ msgstr "列出並修改產品"
 msgid "List and modify repositories"
 msgstr "列出並修改儲存庫"
 
-#, fuzzy
 msgid "List files during the cleaning process."
-msgstr "n"
+msgstr "在清理過程中列出檔案。"
 
 msgid "List products which are marked to be mirrored."
 msgstr "列出標示為要鏡像的產品。"
@@ -459,9 +456,8 @@ msgstr "找不到基礎產品。"
 msgid "No custom repositories found."
 msgstr "找不到自訂儲存庫。"
 
-#, fuzzy
 msgid "No dangling packages have been found!"
-msgstr "n"
+msgstr "未找到任何迷途套件！"
 
 msgid "No matching products found in the database."
 msgstr "在資料庫中找不到相符產品。"
@@ -502,9 +498,8 @@ msgstr "未鏡像產品 %s 的所有強制儲存庫"
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "尚未啟用註冊代碼。請造訪 https://scc.suse.com 以啟用該註冊代碼。"
 
-#, fuzzy
 msgid "Now, it will parse all repomd.xml files, search for dangling packages on disk and clean them."
-msgstr "n"
+msgstr "現在，它會剖析所有 repomd.xml 檔案、搜尋磁碟上的迷途套件並清理它們。"
 
 msgid "Number of systems to display"
 msgstr "要顯示的系統數目"
@@ -524,7 +519,6 @@ msgstr "以 CSV 格式輸出資料"
 msgid "Path to unpacked SMT data tarball"
 msgstr "已解壓縮 SMT 資料 Tar 聚合檔的路徑"
 
-#, fuzzy
 msgid "Please answer"
 msgstr "請回覆"
 
@@ -607,13 +601,11 @@ msgstr "請提供自訂 ID，而不要允許 RMT 產生 ID。"
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr "RMT 在以下未標示為有待鏡像的儲存庫中找到了本地鏡像的檔案："
 
-#, fuzzy
 msgid "RMT found no repomd.xml files. Check if RMT is properly configured."
-msgstr "y"
+msgstr "RMT 未找到 repomd.xml 檔案。請檢查是否已正確設定 RMT。"
 
-#, fuzzy
 msgid "RMT found repomd.xml files: %{repomd_count}."
-msgstr "n"
+msgstr "RMT 找到 %{repomd_count} 個 repomd.xml 檔案。"
 
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr "尚未將 RMT 同步至 SCC。請先執行「%{command}」"
@@ -719,9 +711,8 @@ msgstr "請執行「%{command}」以獲取有關某個指令及其子指令的�
 msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
 msgstr "請執行「%{command}」以先與您的 SUSE Customer Center 資料同步。"
 
-#, fuzzy
 msgid "Run the clean process without actually removing files."
-msgstr "y"
+msgstr "執行清理過程，不真正移除檔案。"
 
 msgid "Run this command on an online RMT."
 msgstr "在線上 RMT 中執行此指令。"
@@ -744,9 +735,8 @@ msgstr ""
 msgid "SCC credentials not set."
 msgstr "未設定 SCC 身分證明。"
 
-#, fuzzy
 msgid "Scanning the mirror directory for 'repomd.xml' files..."
-msgstr "y"
+msgstr "正在掃描鏡像目錄中的 \"repomd.xml\" 檔案..."
 
 msgid "Settings saved at %{file}."
 msgstr "已將設定儲存於 %{file} 中。"
@@ -808,14 +798,12 @@ msgstr "尚未啟始化 RMT 資料庫。請執行 \"%{command}\" 以設定該資
 msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
 msgstr "未在「%{path}」中正確設定 SCC 身分證明。您可以從 %{url} 獲取身分證明"
 
-#, fuzzy
 msgid "The command will list the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
-msgstr "該指令會列出待移除的候選系統並要求您確認。您可以使用 \"--no-confirmation\" 旗標指示此子指令直接執行而不要求確認。"
+msgstr "該指令會列出待移除的對象並要求您確認。您可以使用 \"--no-confirmation\" 旗標指示此子指令直接執行而不要求確認。"
 
 msgid "The following errors occurred while mirroring:"
 msgstr "鏡像時發生以下錯誤："
 
-#, fuzzy
 msgid "The given date does not follow the proper format. Ensure it follows this format '<year>-<month>-<day>'."
 msgstr "給定日期的格式不正確。請確定其採用以下格式：\"<年>-<月>-<日>\"。"
 
@@ -862,9 +850,8 @@ msgstr "沒有標示為要鏡像的儲存庫。"
 msgid "There are no systems registered to this RMT instance."
 msgstr "未將任何系統註冊到此 RMT 例項。"
 
-#, fuzzy
 msgid "This can take several minutes. Would you like to continue and clean dangling packages?"
-msgstr "y"
+msgstr "此過程可能需要幾分鐘時間。是否要繼續並清理迷途套件？"
 
 msgid "To clean up downloaded files, please run '%{command}'"
 msgstr "若要清理下載的檔案，請執行「%{command}」"
@@ -875,9 +862,8 @@ msgstr "若要清理下載的檔案，請執行「%{command}」"
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr "若要指定某個有待移除的系統做為目標，請針對一系列系統及其相應登入名稱使用指令「%{command}」。"
 
-#, fuzzy
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
-msgstr "n"
+msgstr "總計：已清理 %{total_count} (%{total_size})，%{total_db_entries}。"
 
 msgid "URL"
 msgstr "URL"
@@ -915,9 +901,8 @@ msgstr "curl 傳回訊息"
 msgid "enabled"
 msgstr "已啟用"
 
-#, fuzzy
 msgid "hardlink"
-msgstr "n"
+msgstr "硬連接"
 
 msgid "importing data from SMT."
 msgstr "正在從 SMT 輸入資料。"
@@ -946,6 +931,5 @@ msgstr "資料庫中不存在 URL 為 %{url} 的儲存庫"
 msgid "y"
 msgstr "y"
 
-#, fuzzy
 msgid "yes"
-msgstr "y"
+msgstr "是"
