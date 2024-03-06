@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Wed Mar  6 14:08:42 UTC 2024 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- rmt-server-pubcloud
+  When checking SCC for subscription expiration
+  on a GET request, SCC does rotate the system token
+
+  Set the byos info on the request to fix that 
+
+-------------------------------------------------------------------
 Thu Feb 20 15:36:00 UTC 2024 - Zuzana Petrova <zpetrova@suse.com>
 
 - Fix for SUSE Liberty registration script to allow RHEL7/SLL7/CentOS7 
