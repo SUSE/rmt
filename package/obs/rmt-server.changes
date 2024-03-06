@@ -2,10 +2,9 @@
 Wed Mar  6 13:17:01 UTC 2024 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
 - rmt-server-pubcloud:
-  Extend cache expiration time for BYOS systems
-  PAYG -> 20 min cache
-  BYOS -> 24 hours cache
-
+  * Extend cache expiration time for BYOS systems (PAYG: 20 min, BYOS: 24 hours)
+  * Include byos parameter when checking subscription validity for BYOS systems with SCC
+  
 -------------------------------------------------------------------
 Thu Feb 20 15:36:00 UTC 2024 - Zuzana Petrova <zpetrova@suse.com>
 
