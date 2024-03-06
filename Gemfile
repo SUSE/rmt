@@ -89,3 +89,4 @@ gem 'terminal-table', '~> 3.0'
 
 # needed by rmt-server-pubcloud
 gem 'jwt', '~> 2.1'
+gem 'base32'

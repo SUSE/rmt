@@ -58,6 +58,15 @@ module RMT
     config.eager_load_paths << Rails.root.join('lib')
     config.eager_load_paths << Rails.root.join('app', 'validators')
 
+    # registry config needed
+    config.autoloader = :classic
+    registry_cert = "-----BEGIN PRIVATE KEY-----
+SAMEcertAStheONEinTHEregistry
+-----END PRIVATE KEY-----"
+    config.registry_private_key = OpenSSL::PKey::RSA.new(registry_cert)
+    config.registry_public_key = config.registry_private_key.public_key
+    # registry config needed end
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
