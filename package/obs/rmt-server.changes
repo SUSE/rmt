@@ -1,18 +1,5 @@
 -------------------------------------------------------------------
-Wed Mar  6 13:17:01 UTC 2024 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
-
-- rmt-server-pubcloud:
-  * Extend cache expiration time for BYOS systems (PAYG: 20 min, BYOS: 24 hours)
-  * Include byos parameter when checking subscription validity for BYOS systems with SCC
-  
--------------------------------------------------------------------
-Thu Feb 20 15:36:00 UTC 2024 - Zuzana Petrova <zpetrova@suse.com>
-
-- Fix for SUSE Liberty registration script to allow RHEL7/SLL7/CentOS7 
-  clients to register to RMT servers
-
--------------------------------------------------------------------
-Thu Feb 08 15:33:00 UTC 2024 - Felix Schnizlein <fschnizlein@suse.com>
+Thu Mar 07 15:33:00 UTC 2024 - Likhitha Priya <likhitha.priyad@suse.com>
 
 - Version 2.15:
   * Moving system hardware information to systems database table to
@@ -21,9 +8,13 @@ Thu Feb 08 15:33:00 UTC 2024 - Felix Schnizlein <fschnizlein@suse.com>
   * Updated supportconfig script (bsc#1216389)
   * Support zstd compression for repository metadata (bsc#1218775)
   * Do not add credential handling to normal repository URLs (bsc#1219153)
+  * Fix for SUSE Liberty registration script to allow RHEL7/SLL7/CentOS7 clients to register to RMT servers
+  * Provide user/group symbol for user created during pre (boo#1219540)
   * Disable authentication for license files in pubcloud context
   * Higher registration sharing timeout
-  * Provide user/group symbol for user created during pre (boo#1219540)
+  * rmt-server-pubcloud:
+    * Extend cache expiration time for BYOS systems (PAYG: 20 min, BYOS: 24 hours)
+    * Include byos parameter when checking subscription validity for BYOS systems with SCC
 
 -------------------------------------------------------------------
 Thu Jun 06 15:44:00 UTC 2023 - Luís Caparroz <lcaparroz@suse.com>
