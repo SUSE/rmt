@@ -16,15 +16,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       arch: product.arch
     }
   end
-  let(:payload_byos) do
-    {
-      identifier: product.identifier,
-      version: product.version,
-      arch: product.arch,
-      email: 'foo',
-      token: 'bar'
-    }
-  end
 
   describe '#activate' do
     let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
@@ -119,6 +110,10 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         before do
           expect(InstanceVerification::Providers::Example).to receive(:new)
             .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload_sap, instance_data).and_call_original
+
+          expect(Rails.cache).to receive(:write).with(
+            ['127.0.0.1', system.login, product_sap.id].join('-'), true, expires_in: 20.minutes
+            )
           post url, params: payload_sap, headers: headers
         end
 

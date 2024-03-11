@@ -157,6 +157,7 @@ module SccProxy
       uri = URI.parse(SYSTEMS_ACTIVATIONS_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
+      uri.query = URI.encode_www_form({ byos: true })
       scc_request = Net::HTTP::Get.new(uri.path, headers(auth, system_token))
       response = http.request(scc_request)
       unless response.code_type == Net::HTTPOK
@@ -274,7 +275,7 @@ module SccProxy
               raise ActionController::TranslatedError.new(error['error'])
             end
             logger.info "Product #{@product.product_string} successfully activated with SCC"
-            InstanceVerification.update_cache(request.remote_ip, @system.login, @product.id)
+            InstanceVerification.update_cache(request.remote_ip, @system.login, @product.id, @system.proxy_byos)
           end
         end
       end
