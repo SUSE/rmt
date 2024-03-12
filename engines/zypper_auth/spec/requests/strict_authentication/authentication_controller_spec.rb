@@ -125,6 +125,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         context 'when subscription is active' do
           before do
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_active].to_json, headers: {})
+            expect(URI).to receive(:encode_www_form).with({ byos: true })
             get '/api/auth/check', headers: headers
           end
 
@@ -134,6 +135,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         context 'when subscription is expired' do
           before do
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_expired].to_json, headers: {})
+            expect(URI).to receive(:encode_www_form).with({ byos: true })
             get '/api/auth/check', headers: headers
           end
 
@@ -143,6 +145,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         context 'when product is not activated' do
           before do
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_not_activated].to_json, headers: {})
+            expect(URI).to receive(:encode_www_form).with({ byos: true })
             get '/api/auth/check', headers: headers
           end
 
@@ -152,6 +155,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         context 'when status from SCC is unknown' do
           before do
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_unknown_status].to_json, headers: {})
+            expect(URI).to receive(:encode_www_form).with({ byos: true })
             get '/api/auth/check', headers: headers
           end
 
@@ -161,6 +165,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         context 'when SCC request fails' do
           before do
             stub_request(:get, scc_systems_activations_url).to_return(status: 401, body: [body_expired].to_json, headers: {})
+            expect(URI).to receive(:encode_www_form).with({ byos: true })
             get '/api/auth/check', headers: headers
           end
 

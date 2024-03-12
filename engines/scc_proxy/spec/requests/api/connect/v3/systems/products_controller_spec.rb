@@ -110,10 +110,13 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                 body: '{"id": "bar"}',
                 headers: {}
               )
-            post url, params: payload_byos, headers: headers
           end
 
           it 'renders service JSON' do
+            expect(Rails.cache).to receive(:write).twice.with(
+              ['127.0.0.1', system.login, product.id].join('-'), true, expires_in: 24.hours
+              )
+            post url, params: payload_byos, headers: headers
             expect(response.body).to eq(serialized_service_json)
           end
         end
