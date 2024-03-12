@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Mar 12 11:20:00 UTC 2024 - Zuzana Petrova <zpetrova@suse.com>
+
+- make sure yum that can read repomd.xml correctly is installed (bsc#1221223)
+
+-------------------------------------------------------------------
 Thu Mar 07 15:33:00 UTC 2024 - Likhitha Priya <likhitha.priyad@suse.com>
 
 - Version 2.15:
