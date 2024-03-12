@@ -62,7 +62,7 @@ RSpec.configure do |config|
   # Skipping some tests when running with (experimental) sqlite backend.
   # Some tests / code parts are using specific mysql behavior
   if ActiveRecord::Base.connection.adapter_name == 'SQLite'
-    config.filter_run_excluding :skip_sqlite => true
+    config.filter_run_excluding skip_sqlite: true
   end
 end
 

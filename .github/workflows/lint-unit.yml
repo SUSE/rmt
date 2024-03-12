@@ -83,6 +83,11 @@ jobs:
         run: |
           bundle exec rspec --format documentation
 
+      - name: Run core tests with sqlite
+        run: |
+          sed -i 's/adapter: mysql2/adapter: sqlite3/' config/rmt.yml
+          bundle exec rspec --format documentation
+
       - name: Run PubCloud engines tests
         run: |
           bundle exec rake test:engines
