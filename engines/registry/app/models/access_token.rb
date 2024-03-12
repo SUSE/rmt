@@ -41,6 +41,6 @@ class Registry::AccessToken
   end
 
   def private_key
-    @private_key ||= OpenSSL::PKey::RSA.new(Registry.config[:key])
+    @private_key ||= Rails.application.config.registry_private_key
   end
 end
