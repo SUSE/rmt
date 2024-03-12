@@ -9,6 +9,7 @@ Thu Mar 07 15:33:00 UTC 2024 - Likhitha Priya <likhitha.priyad@suse.com>
   * Support zstd compression for repository metadata (bsc#1218775)
   * Do not add credential handling to normal repository URLs (bsc#1219153)
   * Fix for SUSE Liberty registration script to allow RHEL7/SLL7/CentOS7 clients to register to RMT servers
+    * make sure yum that can read repomd.xml correctly is installed (bsc#1221223)
   * Provide user/group symbol for user created during pre (boo#1219540)
   * Disable authentication for license files in pubcloud context
   * Higher registration sharing timeout
