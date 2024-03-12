@@ -58,6 +58,12 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  # Skipping some tests when running with (experimental) sqlite backend.
+  # Some tests / code parts are using specific mysql behavior
+  if ActiveRecord::Base.connection.adapter_name == 'SQLite'
+    config.filter_run_excluding :skip_sqlite => true
+  end
 end
 
 Shoulda::Matchers.configure do |config|
