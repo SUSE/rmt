@@ -190,6 +190,7 @@ elif [[ ${SLL_version} -eq 7 ]]; then
 	 $YUM_CONFIG_MGR --enable *suse.* > /dev/null
 
 	$YUM install sles_es-release-server suseconnect-ng librepo
+	$YUM update yum
 
 
 fi
