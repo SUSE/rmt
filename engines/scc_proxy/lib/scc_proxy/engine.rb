@@ -353,11 +353,8 @@ module SccProxy
           return nil if systems.blank?
 
           matched_systems = systems.select { |system| system.proxy_byos && system.system_token }
-          if matched_systems.empty?
-            logger.info _('BYOS system with login \"%{login}\" authenticated without system token') %
-              { login: systems.first.login }
-            return systems.first
-          end
+
+          return systems.first if matched_systems.empty?
 
           system = matched_systems.first
           if matched_systems.length > 1
