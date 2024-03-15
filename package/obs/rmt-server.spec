@@ -29,6 +29,10 @@
 %define rb_build_ruby_abis    %{rb_default_ruby_abi}
 %define ruby_version          %{rb_default_ruby_suffix}
 
+# disabling dwz for now, as it is not available in SLE15
+# related bugzilla https://bugzilla.suse.com/show_bug.cgi?id=1180984
+%undefine _find_debuginfo_dwz_opts
+
 Name:           rmt-server
 Version:        2.15
 Release:        0
