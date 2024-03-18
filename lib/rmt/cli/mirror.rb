@@ -5,10 +5,11 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   def all
     RMT::Lockfile.lock('mirror') do
       begin
-        mirror.mirror_suma_product_tree(repository_url: 'https://scc.suse.com/suma/')
+        suma_product_tree.mirror
       rescue RMT::Mirror::Exception => e
-        errors << _('Mirroring SUMA product tree failed: %{error_message}') % { error_message: e.message }
+        errors << (_('Mirroring SUMA product tree failed: %{error_message}') % { error_message: e.message })
       end
+
 
       raise RMT::CLI::Error.new(_('There are no repositories marked for mirroring.')) if Repository.only_mirroring_enabled.empty?
 
@@ -19,7 +20,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       # could lead to different Repositories sets where it's used.
       mirrored_repo_ids = []
       until (repos = Repository.only_mirroring_enabled.where.not(id: mirrored_repo_ids).load).empty?
-        mirror_repos!(repos)
+        mirror_repositories!(repos)
         mirrored_repo_ids.concat(repos.pluck(:id))
       end
 
@@ -39,11 +40,11 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       repos = ids.map do |id|
         repo = Repository.find_by(friendly_id: id)
         errored_repos_id << id if options[:do_not_raise_unpublished] && repo.nil?
-        errors << _('Repository with ID %{repo_id} not found') % { repo_id: id } if repo.nil?
+        errors << (_('Repository with ID %{repo_id} not found') % { repo_id: id }) if repo.nil?
         repo
       end
 
-      mirror_repos!(repos)
+      mirror_repositories!(repos)
       finish_execution
     end
   end
@@ -57,29 +58,29 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       repos = []
       targets.each do |target|
         products = Product.get_by_target!(target)
-        errors << _('Product for target %{target} not found') % { target: target } if products.empty?
+        errors << (_('Product for target %{target} not found') % { target: target }) if products.empty?
         products.each do |product|
           product_repos = product.repositories.only_mirroring_enabled
           if product_repos.empty?
-            errors << _('Product %{target} has no repositories enabled') % { target: target }
+            errors << (_('Product %{target} has no repositories enabled') % { target: target })
             errored_products_id << target if options[:do_not_raise_unpublished]
           end
           repos += product_repos.to_a
         end
       rescue ActiveRecord::RecordNotFound
-        errors << _('Product with ID %{target} not found') % { target: target }
+        errors << (_('Product with ID %{target} not found') % { target: target })
         errored_products_id << target if options[:do_not_raise_unpublished]
       end
 
-      mirror_repos!(repos)
+      mirror_repositories!(repos)
       finish_execution
     end
   end
 
-  protected
+  private
 
-  def mirror
-    @mirror ||= RMT::Mirror.new(logger: logger, mirror_src: RMT::Config.mirror_src_files?)
+  def suma_product_tree
+    RMT::Mirror::SumaProductTree.new(logger: logger, mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR)
   end
 
   def errors
@@ -123,24 +124,27 @@ class RMT::CLI::Mirror < RMT::CLI::Base
     true
   end
 
-  def mirror_repos!(repos)
+  def mirror_repositories!(repos)
     repos.compact.each do |repo|
       unless repo.mirroring_enabled
-        errors << _('Mirroring of repository with ID %{repo_id} is not enabled') % { repo_id: repo.friendly_id }
+        errors << (_('Mirroring of repository with ID %{repo_id} is not enabled') % { repo_id: repo.friendly_id })
         next
       end
 
-      mirror.mirror(
-        repository_url: repo.external_url,
-        local_path: Repository.make_local_path(repo.external_url),
-        auth_token: repo.auth_token,
-        repo_name: repo.name
-      )
+      configuration = {
+        repository: repo,
+        logger: logger,
+        mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR,
+        mirror_sources: RMT::Config.mirror_src_files?,
+        is_airgapped: false
+      }
+
+      RMT::Mirror.new(**configuration).mirror_now
       repo.refresh_timestamp!
     rescue RMT::Mirror::Exception => e
-      errors << _("Repository '%{repo_name}' (%{repo_id}): %{error_message}") % {
+      errors << (_("Repository '%{repo_name}' (%{repo_id}): %{error_message}") % {
         repo_id: repo.friendly_id, repo_name: repo.name, error_message: e.message
-      }
+      })
       errored_repos_id << repo.id if options[:do_not_raise_unpublished]
     end
   end

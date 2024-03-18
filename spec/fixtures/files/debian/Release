@@ -1,0 +1,16 @@
+Archive: update
+Codename: update
+Origin: obs://build.suse.de/SUSE:Updates:Debian:12-CLIENT-TOOLS:x86_64/update
+Label: SUSE:Updates:Debian:12-CLIENT-TOOLS:x86_64
+Architectures: amd64
+Date: Wed Dec 13 09:33:00 2023
+Description: SUSE:Updates:Debian:12-CLIENT-TOOLS:x86_64 (update)
+MD5Sum:
+ 5445634cce826d020f85762f0d70dc83 2604 Packages
+ e043fbf63b4c8b3888605d4bdfd7aab5 946 Packages.gz
+SHA1:
+ dfb8482867d4b8cd0b9f46598745674f2d0928af 2604 Packages
+ c562eb103a78eba5eab15007481e184d5f9e11d2 946 Packages.gz
+SHA256:
+ b8a41cf82b68c2576c45e92e4fd7d194144794eaa06b55d52691f5255fa9a4b0 2604 Packages
+ 49c9d19176f9e4cfa72f8338c3efac5d6589f0676f556b93af1ae2a0ced3ea52 946 Packages.gz

@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe RMT::Deduplicator do
   describe '#deduplicate' do
     subject(:deduplicate) do
-      dummy_class.new(airgap_mode).send(:deduplicate, file)
+      dummy_class.new(is_airgapped).send(:deduplicate, file)
     end
 
     let(:dummy_class) do
@@ -11,17 +11,17 @@ RSpec.describe RMT::Deduplicator do
         include RMT::Deduplicator
         include RMT::FileValidator
 
-        attr_reader :airgap_mode, :deep_verify, :logger
+        attr_reader :is_airgapped, :deep_verify, :logger
 
-        def initialize(airgap_mode)
-          @airgap_mode = airgap_mode
+        def initialize(is_airgapped)
+          @is_airgapped = is_airgapped
           @deep_verify = false
           @logger = RMT::Logger.new('/dev/null')
         end
       end
     end
 
-    let(:airgap_mode) { false }
+    let(:is_airgapped) { false }
     let(:dir) { Dir.mktmpdir }
     let(:dest_path) { File.join(dir, 'foo2.rpm') }
     let(:checksum_type) { 'SHA256' }
@@ -57,7 +57,7 @@ RSpec.describe RMT::Deduplicator do
       end
 
       context 'when airgap mode is disabled' do
-        let(:airgap_mode) { false }
+        let(:is_airgapped) { false }
 
         it 'tracks files on database' do
           deduplicate
@@ -67,7 +67,7 @@ RSpec.describe RMT::Deduplicator do
       end
 
       context 'when airgap mode is enabled' do
-        let(:airgap_mode) { true }
+        let(:is_airgapped) { true }
 
         it 'does not track files on database' do
           deduplicate
