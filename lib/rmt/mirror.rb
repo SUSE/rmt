@@ -2,6 +2,7 @@ require 'rmt/downloader'
 require 'rmt/gpg'
 require 'repomd_parser'
 require 'time'
+require 'byebug'
 
 class RMT::Mirror
   class RMT::Mirror::Exception < RuntimeError
@@ -10,15 +11,18 @@ class RMT::Mirror
   include RMT::Deduplicator
   include RMT::FileValidator
 
+  attr_reader :stats
+
   def initialize(mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR, logger:, mirror_src: false, airgap_mode: false)
     @mirroring_base_dir = mirroring_base_dir
     @logger = logger
     @mirror_src = mirror_src
     @airgap_mode = airgap_mode
     @deep_verify = false
+    @stats = Stats.new
 
     # don't save files for deduplication when in offline mode
-    @downloader = RMT::Downloader.new(logger: logger, track_files: !airgap_mode)
+    @downloader = RMT::Downloader.new(logger: logger, track_files: !airgap_mode, stats: @stats.download_stats)
   end
 
   def mirror_suma_product_tree(repository_url:)
@@ -61,6 +65,7 @@ class RMT::Mirror
 
     replace_directory(temp_licenses_dir, repository_dir.chomp('/') + '.license/') if Dir.exist?(temp_licenses_dir)
     replace_directory(File.join(temp_metadata_dir, 'repodata'), File.join(repository_dir, 'repodata'))
+    stats.increment_mirrored_repos_count
   ensure
     [temp_licenses_dir, temp_metadata_dir].each { |dir| FileUtils.remove_entry(dir, true) }
   end
