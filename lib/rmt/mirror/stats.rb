@@ -1,7 +1,7 @@
 require 'forwardable'
 
 class RMT::Mirror::Stats
-  attr_reader :mirrored_repos_count, :elapsed_seconds, :download_stats
+  attr_reader :mirrored_repos_count, :download_stats
 
   extend Forwardable
 
@@ -15,7 +15,7 @@ class RMT::Mirror::Stats
   def reset!
     @mirrored_repos_count = 0
     # Timing it here isnt perfecct, but since its running on CLI it would not make that much of a differance
-    @start_time = Time.now
+    @start_time = Time.zone.now
 
     # TODO: revist this, should we be calling it here or not ?
     download_stats.reset!
@@ -26,7 +26,7 @@ class RMT::Mirror::Stats
   end
 
   def elapsed_seconds
-    elapsed = Time.now - @start_time
+    elapsed = Time.zone.now - @start_time
     elapsed.round
   end
 end
