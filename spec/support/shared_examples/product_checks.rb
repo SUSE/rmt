@@ -72,13 +72,16 @@ shared_examples 'product must have mirrored repositories' do
     subject { response }
 
     let(:product) { FactoryBot.create(:product, :with_not_mirrored_repositories) }
+    let(:missing_repo_ids) { (product.repositories.only_enabled - product.repositories.only_enabled.only_fully_mirrored).pluck(:id).join(', ') }
+    # rubocop:disable Layout/LineLength
     let(:error_json) do
       {
         type: 'error',
-        error: "Not all mandatory repositories are mirrored for product #{product.friendly_name}",
-        localized_error: "Not all mandatory repositories are mirrored for product #{product.friendly_name}"
+        error: "Not all mandatory repositories are mirrored for product #{product.friendly_name}. Missing Repositories (by ids): #{missing_repo_ids}. On the RMT server, the missing repositories can get enabled with: rmt-cli repos enable #{missing_repo_ids};  rmt-cli mirror",
+        localized_error: "Not all mandatory repositories are mirrored for product #{product.friendly_name}. Missing Repositories (by ids): #{missing_repo_ids}. On the RMT server, the missing repositories can get enabled with: rmt-cli repos enable #{missing_repo_ids};  rmt-cli mirror"
       }.to_json
     end
+    # rubocop:enable Layout/LineLength
 
     before { post url, headers: headers, params: payload }
     its(:code) { is_expected.to eq('422') }

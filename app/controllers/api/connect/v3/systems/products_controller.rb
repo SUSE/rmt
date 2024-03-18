@@ -92,9 +92,13 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
     mandatory_repos = @product.repositories.only_enabled
     mirrored_repos = @product.repositories.only_enabled.only_fully_mirrored
+    missing_repo_ids = (mandatory_repos - mirrored_repos).pluck(:id).join(', ')
 
     unless mandatory_repos.size == mirrored_repos.size
-      fail ActionController::TranslatedError.new(N_('Not all mandatory repositories are mirrored for product %s'), @product.friendly_name)
+      # rubocop:disable Layout/LineLength
+      fail ActionController::TranslatedError.new(N_('Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can get enabled with: rmt-cli repos enable %s;  rmt-cli mirror'),
+                                                 @product.friendly_name, missing_repo_ids, missing_repo_ids)
+      # rubocop:enable Layout/LineLength
     end
   end
 

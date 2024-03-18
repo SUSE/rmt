@@ -352,17 +352,14 @@ module SccProxy
         def get_system(systems)
           return nil if systems.blank?
 
-          matched_systems = systems.select { |system| system.proxy_byos && system.system_token }
-          if matched_systems.empty?
-            logger.info _('BYOS system with login \"%{login}\" authenticated without system token') %
-              { login: systems.first.login }
-            return systems.first
-          end
+          byos_systems_with_token = systems.select { |system| system.proxy_byos && system.system_token }
 
-          system = matched_systems.first
-          if matched_systems.length > 1
+          return systems.first if byos_systems_with_token.empty?
+
+          system = byos_systems_with_token.first
+          if byos_systems_with_token.length > 1
             # check for possible duplicated system_tokens
-            duplicated_system_tokens = matched_systems.group_by { |sys| sys[:system_token] }.keys
+            duplicated_system_tokens = byos_systems_with_token.group_by { |sys| sys[:system_token] }.keys
 
             if duplicated_system_tokens.length > 1
               logger.info _('BYOS system with login \"%{login}\" authenticated and duplicated due to token (system tokens %{system_tokens}) mismatch') %
