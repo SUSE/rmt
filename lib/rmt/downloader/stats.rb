@@ -25,11 +25,6 @@ class RMT::Downloader::Stats
     @files_count = 0
   end
 
-  def total_size_in_mb
-    megabytes = total_size / 1_000_000.0
-    megabytes.round(2)
-  end
-
   def to_h
     {
       files_count: files_count,
