@@ -28,7 +28,7 @@ RSpec.describe RMT::Mirror::Stats do
     end
 
     it 'resets mirrored_repos_count to 0' do
-      expect { stats.reset! }.to change(subject, :mirrored_repos_count).to(0)
+      expect { stats.reset! }.to change(stats, :mirrored_repos_count).to(0)
     end
 
     it 'resets download_stats' do
@@ -39,7 +39,7 @@ RSpec.describe RMT::Mirror::Stats do
 
   describe '#increment_mirrored_repos_count' do
     it 'increments mirrored_repos_count by 1' do
-      expect { stats.increment_mirrored_repos_count }.to change(subject, :mirrored_repos_count).by(1)
+      expect { stats.increment_mirrored_repos_count }.to change(stats, :mirrored_repos_count).by(1)
     end
   end
 
