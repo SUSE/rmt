@@ -151,8 +151,8 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       logger.info _('Summary:')
       logger.info _('Total mirrored repositories: %{count}') % { count: mirror.stats.mirrored_repos_count }
       logger.info _('Total transferred files: %{count}') % { count: mirror.stats.files_count }
-      logger.info _('Total transferred file size: %{size} MB') + { size: mirror.stats.total_size_in_mb }
-      logger.info _('Total Mirror Time: %{seconds} seconds') + { seconds: mirror.stats.elapsed_seconds }
+      logger.info _('Total transferred file size: %{size} MB') % { size: mirror.stats.total_size_in_mb }
+      logger.info _('Total Mirror Time: %{seconds} seconds') % { seconds: mirror.stats.elapsed_seconds }
       logger.info("\e[32m" + _('Mirroring complete. ') + "\e[0m")
     else
       logger.warn("\e[31m" + _('The following errors occurred while mirroring:') + "\e[0m")
