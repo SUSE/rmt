@@ -17,7 +17,7 @@ class RMT::Mirror::Stats
     # Timing it here isnt perfecct, but since its running on CLI it would not make that much of a differance
     @start_time = Time.now
 
-    #TODO: revist this, should we be calling it here or not ?
+    # TODO: revist this, should we be calling it here or not ?
     download_stats.reset!
   end
 
