@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Mon Mar 18 14:00:00 UTC 2024 - Nijeesh Joshy <nijeesh4all@gmail.com>
+
+- Version 2.xx:
+  * added summery output to `rmt-cli mirror`. Once the mirroring has completed it prints a summery with 
+        - Total mirrored repositories
+        - Total transferred files
+        - Total transferred file size
+        - Total Mirror Time
+    
+-------------------------------------------------------------------
 Thu Mar 07 15:33:00 UTC 2024 - Likhitha Priya <likhitha.priyad@suse.com>
 
 - Version 2.15:
