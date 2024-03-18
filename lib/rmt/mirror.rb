@@ -2,7 +2,6 @@ require 'rmt/downloader'
 require 'rmt/gpg'
 require 'repomd_parser'
 require 'time'
-require 'byebug'
 
 class RMT::Mirror
   class RMT::Mirror::Exception < RuntimeError
