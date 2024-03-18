@@ -6,6 +6,7 @@ class System < ApplicationRecord
   has_many :services, through: :activations
   has_many :repositories, -> { distinct }, through: :services
   has_many :products, -> { distinct }, through: :services
+  has_many :system_uptimes, dependent: :destroy
 
   validates :system_token, uniqueness: { scope: %i[login password], case_sensitive: false }
 
