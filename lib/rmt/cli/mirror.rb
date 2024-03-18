@@ -5,6 +5,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   def all
     RMT::Lockfile.lock('mirror') do
       begin
+        mirror.stats.reset!
         mirror.mirror_suma_product_tree(repository_url: 'https://scc.suse.com/suma/')
       rescue RMT::Mirror::Exception => e
         errors << _('Mirroring SUMA product tree failed: %{error_message}') % { error_message: e.message }
@@ -147,7 +148,12 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
   def finish_execution
     if errors.empty?
-      logger.info("\e[32m" + _('Mirroring complete.') + "\e[0m")
+      logger.info _('Summary:')
+      logger.info _('Total mirrored repositories: %{count}') % { count: mirror.stats.mirrored_repos_count }
+      logger.info _('Total transferred files: %{count}') % { count: mirror.stats.files_count }
+      logger.info _('Total transferred file size: %{size} MB') + { size: mirror.stats.total_size_in_mb }
+      logger.info _('Total Mirror Time: %{seconds} seconds') + { seconds: mirror.stats.elapsed_seconds }
+      logger.info("\e[32m" + _('Mirroring complete. ') + "\e[0m")
     else
       logger.warn("\e[31m" + _('The following errors occurred while mirroring:') + "\e[0m")
       errors.each { |e| logger.warn("\e[31m" + (e.end_with?('.') ? e : e + '.') + "\e[0m") }
