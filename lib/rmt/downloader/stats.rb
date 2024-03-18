@@ -1,5 +1,5 @@
 class RMT::Downloader::Stats
-  attr_reader :total_size, :files_count, :total_size_in_mb
+  attr_reader :total_size, :files_count
 
   def initialize
     @total_size_mutex = Mutex.new
@@ -18,6 +18,11 @@ class RMT::Downloader::Stats
     @total_size_mutex.synchronize do
       @total_size += bytes
     end
+  end
+
+  def total_size_in_mb
+    megabytes = total_size / 1_000_000.0
+    megabytes.round(2)
   end
 
   def reset!
