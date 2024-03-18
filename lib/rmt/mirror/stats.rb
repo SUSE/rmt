@@ -27,6 +27,6 @@ class RMT::Mirror::Stats
 
   def elapsed_seconds
     elapsed = Time.now - @start_time
-    elapsed.round()
+    elapsed.round
   end
 end

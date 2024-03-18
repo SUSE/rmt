@@ -89,7 +89,7 @@ RSpec.describe RMT::CLI::Mirror do
       end
 
       it 'resets the stats before starts mirroring' do
-        stub_request(:any, /suse.com/).to_return(status: 200, body: "", headers: {})
+        stub_request(:any, /suse.com/).to_return(status: 200, body: '', headers: {})
 
         expect_any_instance_of(RMT::Mirror::Stats).to receive(:reset!)
         command
