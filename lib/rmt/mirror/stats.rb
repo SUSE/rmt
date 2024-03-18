@@ -15,7 +15,7 @@ class RMT::Mirror::Stats
   def reset!
     @mirrored_repos_count = 0
     # Timing it here isnt perfecct, but since its running on CLI it would not make that much of a differance
-    @start_time = Time.zone.now
+    @start_time = Time.now.to_i
 
     # TODO: revist this, should we be calling it here or not ?
     download_stats.reset!
@@ -26,7 +26,7 @@ class RMT::Mirror::Stats
   end
 
   def elapsed_seconds
-    elapsed = Time.zone.now - @start_time
+    elapsed = Time.now.to_i - @start_time
     elapsed.round
   end
 end
