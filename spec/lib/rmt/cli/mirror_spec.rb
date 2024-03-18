@@ -87,6 +87,13 @@ RSpec.describe RMT::CLI::Mirror do
             .and output(exit_with_error_message).to_stderr
         end
       end
+
+      it 'resets the stats before starts mirroring' do
+        stub_request(:any, /suse.com/).to_return(status: 200, body: "", headers: {})
+
+        expect_any_instance_of(RMT::Mirror::Stats).to receive(:reset!)
+        command
+      end
     end
 
     context 'with repositories in alpha or beta stage' do
