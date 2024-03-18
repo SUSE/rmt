@@ -373,6 +373,27 @@ RSpec.describe RMT::Downloader do
       end
     end
 
+    context 'when files are downloaded' do
+      before do
+        files.each do |file|
+          stub_request(:get, "http://example.com/#{file}").with(headers: headers)
+            .to_return(status: 200, body: file, headers: {})
+        end
+      end
+
+      it 'increments the file count to number of files' do
+        expect_any_instance_of(RMT::Downloader::Stats).to receive(:increment_files_count)
+          .exactly(files.size).times
+        downloader.download_multi(queue.dup)
+      end
+
+      it 'calls increment_total_size for each file with file size' do
+        expect_any_instance_of(RMT::Downloader::Stats).to receive(:increment_total_size).with(8)
+          .exactly(files.size).times
+        downloader.download_multi(queue.dup)
+      end
+    end
+
     context 'when download exceptions occur when ignore_errors is true' do
       before do
         allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP request/)
