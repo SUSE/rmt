@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe RMT::Lockfile do
   let(:lock_name) { nil }
 
-  describe '#lock' do
+  describe '#lock', :skip_sqlite do
     subject(:lock) { described_class.lock(lock_name) { nil } }
 
     context 'with an unnamed lock' do
