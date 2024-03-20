@@ -178,6 +178,7 @@ install -D -m 644 package/files/nginx/nginx-https.conf %{buildroot}%{_sysconfdir
 
 install -D -m 644 package/files/nginx-pubcloud/nginx-http.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-pubcloud-http.conf
 install -D -m 644 package/files/nginx-pubcloud/nginx-https.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-pubcloud-https.conf
+install -D -m 644 package/files/nginx-pubcloud/nginx-registry-https.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/registry-pubcloud-https.conf
 install -D -m 644 package/files/nginx-pubcloud/auth-handler.conf %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
 install -D -m 644 package/files/nginx-pubcloud/auth-location.conf %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
 
@@ -302,6 +303,7 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %dir %{_sysconfdir}/nginx/vhosts.d
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-pubcloud-http.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-pubcloud-https.conf
+%config(noreplace) %{_sysconfdir}/nginx/vhosts.d/registry-pubcloud-https.conf
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
 
