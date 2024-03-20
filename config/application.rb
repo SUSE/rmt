@@ -60,10 +60,9 @@ module RMT
 
     # registry config needed
     config.autoloader = :classic
-    registry_cert = "-----BEGIN PRIVATE KEY-----
-SAMEcertAStheONEinTHEregistry
------END PRIVATE KEY-----"
-    config.registry_private_key = OpenSSL::PKey::RSA.new(registry_cert)
+    config.registry_private_key = OpenSSL::PKey::RSA.new(
+      File.read('/etc/rmt/ssl/rmt-server.key')
+      )
     config.registry_public_key = config.registry_private_key.public_key
     # registry config needed end
 
