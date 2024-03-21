@@ -1,3 +1,6 @@
+require 'yaml'
+
+AUTHORIZED_ACTION = ['pull'].freeze
 # this is analogous to auth.Access in golang code.
 class Registry::AccessScope
   attr_accessor :type,
@@ -40,11 +43,7 @@ class Registry::AccessScope
   end
 
   def granted(client: nil)
-    # aa = authorized_actions(client)
-    # TODO: decide on a policy to grant a system access to products/images
-    # in the meantime, allow access to any action
-    # if basisc auth is OK (username/password)
-    aa = @actions
+    aa = authorized_actions(client)
     Rails.logger.info "Granted actions for user '#{client&.account || '<anonymous>'}': #{aa}"
     {
       'type' => @type,
@@ -58,23 +57,15 @@ class Registry::AccessScope
     [namespace, image].map(&:presence).compact.join('/')
   end
 
-  # there can be multiple policies matching the same scope, for example one for admins
-  # and one for customers
-  def policies
-    unless @policies
-      @policies = Registry::AccessPolicy.get_by_scope(self)
-
-      if @policies.present?
-        Rails.logger.info "Matched AccessPolicies for '#{self}': '#{@policies.map(&:to_s)}'"
-      else
-        Rails.logger.info "No AccessPolicy found for '#{self}'"
-      end
-    end
-    @policies
-  end
-
   def authorized_actions(client = nil)
-    @actions.intersection(policies.map { |p| p.authorized_actions(client: client) }.flatten.uniq)
+    allowed_paths(client)
+    if @allowed_paths.any?{|allowed_path| @namespace.include?(allowed_path.chomp('/')) }
+      # remove '/' as last character from allowed path as
+      # @namespace comes from splitting name string by '/'
+      @actions & AUTHORIZED_ACTION
+    else
+      []
+    end
   end
 
   def self.raise_on_invalid_scope(scope)
@@ -83,5 +74,17 @@ class Registry::AccessScope
     # if scope is malformed, return
     raise Registry::Exceptions::InvalidScope.new('Invalid scope format') unless scope.split(':').size == 3
     raise Registry::Exceptions::InvalidScope.new('Invalid scope format') unless %r{^[a-z0-9\-_/:*(),.]+$}i.match?(scope)
+  end
+
+  def self.allowed_paths(client = nil)
+    access_policies_yml = YAML.load(
+      File.read(Rails.application.config.access_policies)
+    )
+    active_products = client.systems.first.activations.includes(:product).pluck(:identifier)
+    sles_index = active_products.index('SLES')
+    active_products[sles_index] = '7261' unless sles_index.nil? # for [historic] reasons, SLES identifier in the yaml is the product class as string
+
+    allowed_products = active_products & access_policies_yml.keys
+    @allowed_paths = access_policies_yml.values_at(*allowed_products).flatten.map { |allowed_path| allowed_path[0..allowed_path.index('*') - 1] }
   end
 end
