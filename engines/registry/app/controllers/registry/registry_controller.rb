@@ -61,7 +61,11 @@ module Registry
         begin
           @client = Registry::AuthenticatedClient.new(login, password)
         rescue StandardError
-          respond_with_error(message: 'Invalid credentials', status: :unauthorized) and return
+          logger.info _('Could not find system with login \"%{login}\" and password \"%{password}\"') %
+            { login: login, password: password }
+          error = ActionController::TranslatedError.new(N_('Invalid registry credentials'))
+          error.status = :unauthorized
+          raise error
         end
 
         true
