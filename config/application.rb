@@ -64,6 +64,7 @@ module RMT
       File.read('/etc/rmt/ssl/rmt-server.key')
       )
     config.registry_public_key = config.registry_private_key.public_key
+    config.access_policies = '/etc/rmt/access_policies.yml'
     # registry config needed end
 
     # Settings in config/environments/* take precedence over those specified here.
