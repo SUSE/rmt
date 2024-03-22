@@ -78,11 +78,11 @@ class Registry::AccessScope
     raise Registry::Exceptions::InvalidScope.new('Invalid scope format') unless %r{^[a-z0-9\-_/:*(),.]+$}i.match?(scope)
   end
 
-  def self.allowed_paths(client = nil)
+  def self.allowed_paths(system = nil)
     access_policies_yml = YAML.load(
       File.read(Rails.application.config.access_policies)
     )
-    active_products = client.systems.first.activations.includes(:product).pluck(:identifier)
+    active_products = system.activations.includes(:product).pluck(:identifier)
     sles_index = active_products.index('SLES')
     active_products[sles_index] = '7261' unless sles_index.nil? # for [historic] reasons, SLES identifier in the yaml is the product class as string
 
