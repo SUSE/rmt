@@ -21,7 +21,8 @@ module Registry
     # Returns a Distribution Registry HTTP API V2 - compatible repository catalog as defined in
     # https://distribution.github.io/distribution/spec/api/#listing-repositories
     def catalog
-      repos = @client.matching_policies.repositories(account_numbers: @client.account_numbers)
+      access_scope = Registry::AccessScope.parse(['registry:catalog:*'])
+      repos = access_scope.allowed_paths(System.find_by(login: @client&.account))
       logger.debug("Returning #{repos.size} repos for client #{@client}")
 
       response.set_header('Docker-Distribution-Api-Version', REGISTRY_API_VERSION)
@@ -77,7 +78,10 @@ module Registry
         begin
           @client = Registry::CatalogClient.new(token)
         rescue JWT::DecodeError
-          respond_with_error(message: 'Invalid token', status: :unauthorized) and return
+          logger.info _('Invalid token')
+          error = ActionController::TranslatedError.new(N_('Invalid registry token'))
+          error.status = :unauthorized
+          raise error
         end
 
         @client.authorized_for_catalog?

@@ -58,8 +58,10 @@ class Registry::AccessScope
   end
 
   def authorized_actions(client = nil)
-    allowed_paths(client)
-    if @allowed_paths.any?{|allowed_path| @namespace.include?(allowed_path.chomp('/')) }
+    allowed_paths(client.systems.first)
+    if @namespace.nil?
+      if @image == 'catalog' ? @actions : AUTHORIZED_ACTION
+    elsif @allowed_paths.any?{|allowed_path| @namespace.include?(allowed_path.chomp('/'))}
       # remove '/' as last character from allowed path as
       # @namespace comes from splitting name string by '/'
       @actions & AUTHORIZED_ACTION
