@@ -58,15 +58,15 @@ class Registry::AccessScope
   end
 
   def authorized_actions(client = nil)
-    allowed_paths(client.systems.first)
     if @namespace.nil?
-      if @image == 'catalog' ? @actions : AUTHORIZED_ACTION
-    elsif @allowed_paths.any?{|allowed_path| @namespace.include?(allowed_path.chomp('/'))}
-      # remove '/' as last character from allowed path as
-      # @namespace comes from splitting name string by '/'
-      @actions & AUTHORIZED_ACTION
+      @image == 'catalog' ? @actions : AUTHORIZED_ACTION
     else
-      []
+      allowed_paths(client.systems.first)
+      if @allowed_paths.any? { |allowed_path| File.fnmatch(@namespace + '*', allowed_path) }
+        @actions & AUTHORIZED_ACTION
+      else
+        []
+      end
     end
   end
 
@@ -78,15 +78,15 @@ class Registry::AccessScope
     raise Registry::Exceptions::InvalidScope.new('Invalid scope format') unless %r{^[a-z0-9\-_/:*(),.]+$}i.match?(scope)
   end
 
-  def self.allowed_paths(system = nil)
-    access_policies_yml = YAML.load(
+  def allowed_paths(system = nil)
+    repo_list = RegistryCatalogService.new.repos(reload: false, system: system)
+    access_policies_yml = YAML.safe_load(
       File.read(Rails.application.config.access_policies)
     )
-    active_products = system.activations.includes(:product).pluck(:identifier)
-    sles_index = active_products.index('SLES')
-    active_products[sles_index] = '7261' unless sles_index.nil? # for [historic] reasons, SLES identifier in the yaml is the product class as string
+    active_products = system.activations.includes(:product).pluck(:product_class)
 
-    allowed_products = active_products & access_policies_yml.keys
-    @allowed_paths = access_policies_yml.values_at(*allowed_products).flatten.map { |allowed_path| allowed_path[0..allowed_path.index('*') - 1] }
+    allowed_products = (active_products & access_policies_yml.keys) + ['free']
+    allowed_glob_paths = access_policies_yml.values_at(*allowed_products).flatten
+    @allowed_paths = repo_list.select { |repo| repo if allowed_glob_paths.any? { |glob_path| File.fnmatch(glob_path, repo) } }
   end
 end

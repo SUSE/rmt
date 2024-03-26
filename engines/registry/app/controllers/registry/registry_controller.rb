@@ -44,11 +44,8 @@ module Registry
       .map(&:downcase)
 
       @requested_scopes = []
-      unless raw_scopes.empty?
-        @requested_scopes = raw_scopes.map do |scope| #.filter_map do |scope|
-          Registry::AccessScope.parse(scope)
-        end
-      end
+      @requested_scopes = raw_scopes.map { |scope| Registry::AccessScope.parse(scope) } unless raw_scopes.empty?
+
       logger.info("Requested scopes: #{@requested_scopes.map(&:to_s)}")
     end
 
