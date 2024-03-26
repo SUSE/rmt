@@ -5,7 +5,7 @@ require 'base32'
 class Registry::AccessToken
   def initialize(account, service, granted_scopes)
     @account = account
-    @service = service # "SUSE Linux Docker Registry"
+    @service = service # "SUSE Linux OCI Registry"
     @granted_scopes = granted_scopes
   end
 
