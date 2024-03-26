@@ -17,6 +17,7 @@ class Registry::AuthenticatedClient
   end
 
   private
+
   def authenticate_by_system_credentials(login, password)
     @systems = System.get_by_credentials(login, password)
     if @systems.present?
