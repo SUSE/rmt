@@ -61,7 +61,7 @@ module Registry
         rescue StandardError
           logger.info _('Could not find system with login \"%{login}\" and password \"%{password}\"') %
             { login: login, password: password }
-          error = ActionController::TranslatedError.new(N_('Invalid registry credentials'))
+          error = ActionController::TranslatedError.new(N_('Registration expired, please re authenticate again'))
           error.status = :unauthorized
           raise error
         end
