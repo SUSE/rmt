@@ -60,6 +60,7 @@ class RegistryCatalogService
     http.use_ssl = false
     registry_request = Net::HTTP::Get.new(uri.to_s)
     registry_request['Authorization'] = format("Bearer #{auth_token}")
+    response = nil
     time = Benchmark.realtime do
       response = http.request(registry_request)
     end
