@@ -87,6 +87,38 @@ class Registry::AccessScope
 
     allowed_products = (active_products & access_policies_yml.keys) + ['free']
     allowed_glob_paths = access_policies_yml.values_at(*allowed_products).flatten
-    @allowed_paths = repo_list.select { |repo| repo if allowed_glob_paths.any? { |glob_path| File.fnmatch(glob_path, repo) } }
+
+    @allowed_paths = parsed_repos(repo_list, allowed_glob_paths)
+  end
+
+  def parse_repos(repos, allowed_paths)
+    filtered_repos = []
+    allowed_paths.each do |allowed_path|
+      prefix_path = File.dirname(allowed_path)
+      base_pattern = File.basename(allowed_path)
+      repos.each do |repo|
+        next if filtered_repos.include? repo
+
+        prefix_repo = File.dirname(repo)
+        base_repo = File.basename(repo)
+
+        base_no_glob_index = base_pattern.index('*') ? base_pattern.index('*') - 1 : nil
+        base_no_glob = ''
+        base_no_glob = base_pattern if base_no_glob_index.nil?
+        base_no_glob = base_pattern[0..base_no_glob_index] if !base_no_glob_index.nil? && base_no_glob_index > 0
+
+        next if base_no_glob.length > 0 && !base_repo.start_with?(base_no_glob)
+
+        if base_pattern.end_with?('**')
+          next unless File.fnmatch(allowed_path, repo)
+        elsif base_pattern.end_with?('*')
+          next unless prefix_path == prefix_repo && base_repo.index('/').nil?
+        else
+          next unless prefix_path == prefix_repo && base_repo == base_no_glob
+        end
+        filtered_repos << repo
+      end
+    end
+    filtered_repos
   end
 end
