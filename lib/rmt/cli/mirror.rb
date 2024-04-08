@@ -6,7 +6,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
     RMT::Lockfile.lock('mirror') do
       downloaded_files_count = 0
       downloaded_files_size = 0
-      start_time = Time.now
+      start_time = Time.current
 
       begin
         mirror.mirror_suma_product_tree(repository_url: 'https://scc.suse.com/suma/')
@@ -47,7 +47,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   desc 'repository IDS', _('Mirror enabled repositories with given repository IDs')
   def repository(*ids)
     RMT::Lockfile.lock('mirror') do
-      start_time = Time.now
+      start_time = Time.current
 
       ids = clean_target_input(ids)
       raise RMT::CLI::Error.new(_('No repository IDs supplied')) if ids.empty?
@@ -73,7 +73,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   desc 'product IDS', _('Mirror enabled repositories for a product with given product IDs')
   def product(*targets)
     RMT::Lockfile.lock('mirror') do
-      start_time = Time.now
+      start_time = Time.current
 
       targets = clean_target_input(targets)
       raise RMT::CLI::Error.new(_('No product IDs supplied')) if targets.empty?
@@ -203,7 +203,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   end
 
   def format_time(start_time)
-    finish_time = Time.now - start_time
+    finish_time = Time.current - start_time
 
     hours, remainder = finish_time.divmod(3600)
     minutes, seconds = remainder.divmod(60)
