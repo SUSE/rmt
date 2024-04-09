@@ -34,6 +34,26 @@ Style/StringLiterals:
   Exclude:
     - lib/rmt/cli/mirror.rb
 
+RSpec/ExampleLength:
+  Exclude:
+    - spec/lib/rmt/cli/mirror_spec.rb
+
+RSpec/ExpectOutput:
+  Exclude:
+    - spec/lib/rmt/cli/mirror_spec.rb
+
+RSpec/MultipleExpectations:
+  Exclude:
+    - spec/lib/rmt/cli/mirror_spec.rb
+
+RSpec/StubbedMock:
+  Exclude:
+    - spec/lib/rmt/cli/mirror_spec.rb
+
+Metrics/ClassLength:
+  Exclude:
+    - lib/rmt/downloader.rb
+
 Naming/FileName:
   Exclude:
     - Dangerfile
