@@ -12,10 +12,6 @@ class Registry::AuthenticatedClient
     end
   end
 
-  def anonymous?
-    false
-  end
-
   private
 
   def authenticate_by_system_credentials(login, password)
