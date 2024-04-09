@@ -26,6 +26,14 @@ AllCops:
 Style/TrailingUnderscoreVariable:
   Enabled: false
 
+Style/RedundantInterpolation:
+  Exclude:
+    - lib/rmt/cli/mirror.rb
+
+Style/StringLiterals:
+  Exclude:
+    - lib/rmt/cli/mirror.rb
+
 Naming/FileName:
   Exclude:
     - Dangerfile
@@ -44,6 +52,8 @@ RSpec/NestedGroups:
 
 Style/FormatStringToken:
   EnforcedStyle: template
+  Exclude:
+    - lib/rmt/cli/mirror.rb
 
 Style/OpenStructUse:
   Enabled: false
