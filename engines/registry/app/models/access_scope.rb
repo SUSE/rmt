@@ -1,8 +1,8 @@
 require 'yaml'
 
 AUTHORIZED_ACTION = ['pull'].freeze
-# this is analogous to auth.Access in golang code.
-class Registry::AccessScope
+# this is analogous to auth.Access in golang code.'
+class AccessScope
   attr_accessor :type,
                 :class,
                 :namespace,
@@ -88,11 +88,12 @@ class Registry::AccessScope
     allowed_products = (active_products & access_policies_yml.keys) + ['free']
     allowed_glob_paths = access_policies_yml.values_at(*allowed_products).flatten
 
-    @allowed_paths = parsed_repos(repo_list, allowed_glob_paths)
+    @allowed_paths = parse_repos(repo_list, allowed_glob_paths)
   end
 
   def parse_repos(repos, allowed_paths)
     filtered_repos = []
+
     allowed_paths.each do |allowed_path|
       pattern = allowed_path.gsub(/(?<!\*)\*(?!\*)/, '[^/]*').gsub('**', '.*')
       repos.each do |repo|

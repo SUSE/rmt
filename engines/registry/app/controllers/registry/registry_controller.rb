@@ -7,13 +7,11 @@ module Registry
     before_action :basic_auth, except: [ :catalog ]
     before_action :catalog_token_auth, only: [ :catalog ]
 
-    rescue_from Exception, with: :handle_exceptions
-
     # AuthZ handler
     # AuthZ will validate which of the requested scope policies are fulfilled
     # with the current login access and prepare the token to be sent back to the client
     def authorize
-      token = Registry::AccessToken.new(@client&.account, params['service'], @requested_scopes.map { |s| s.granted(client: @client) }).token
+      token = AccessToken.new(@client&.account, params['service'], @requested_scopes.map { |s| s.granted(client: @client) }).token
       render json: { token: token }, status: :ok
     end
 
@@ -21,7 +19,8 @@ module Registry
     # Returns a Distribution Registry HTTP API V2 - compatible repository catalog as defined in
     # https://distribution.github.io/distribution/spec/api/#listing-repositories
     def catalog
-      access_scope = Registry::AccessScope.parse(['registry:catalog:*'])
+      # access_scope = Registry::AccessScope.parse(['registry:catalog:*'])
+      access_scope = AccessScope.parse(['registry:catalog:*'])
       repos = access_scope.allowed_paths(System.find_by(login: @client&.account))
       logger.debug("Returning #{repos.size} repos for client #{@client}")
 
@@ -44,7 +43,8 @@ module Registry
       .map(&:downcase)
 
       @requested_scopes = []
-      @requested_scopes = raw_scopes.map { |scope| Registry::AccessScope.parse(scope) } unless raw_scopes.empty?
+      # @requested_scopes = raw_scopes.map { |scope| Registry::AccessScope.parse(scope) } unless raw_scopes.empty?
+      @requested_scopes = raw_scopes.map { |scope| AccessScope.parse(scope) } unless raw_scopes.empty?
 
       logger.info("Requested scopes: #{@requested_scopes.map(&:to_s)}")
     end
