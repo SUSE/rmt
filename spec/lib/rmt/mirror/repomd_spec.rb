@@ -84,7 +84,7 @@ RSpec.describe RMT::Mirror::Repomd do
     end
     let(:signature_file) { RMT::Mirror::FileReference.new(relative_path: 'repodata/repomd.xml.asc', **ref_configuration) }
     let(:key_file) { RMT::Mirror::FileReference.new(relative_path: 'repodata/repomd.xml.key', **ref_configuration) }
-    let(:repomd_parser) { RepomdParser::RepomdXmlParser.new(repomd_ref.local_path) }
+    let(:parsed_repomd) { RepomdParser::RepomdXmlParser.new.parse_file(repomd_ref.local_path) }
 
     before do
       allow(repomd).to receive(:temp).with(:metadata).and_return('a')
@@ -104,9 +104,7 @@ RSpec.describe RMT::Mirror::Repomd do
       allow(repomd).to receive(:download_cached!).and_return(repomd_ref)
       allow(repomd).to receive(:check_signature)
       allow(repomd).to receive(:download_enqueued)
-      allow(RepomdParser::RepomdXmlParser).to receive(:new).with(repomd_ref.local_path).and_return(repomd_parser)
-
-      expect(repomd_parser).to receive(:parse).and_call_original
+      allow_any_instance_of(RepomdParser::RepomdXmlParser).to receive(:parse_file).with(repomd_ref.local_path).and_return(parsed_repomd)
       expect(repomd).to receive(:enqueue).with(duck_type(:local_path)).exactly(4).times
 
       metadatas = repomd.mirror_metadata

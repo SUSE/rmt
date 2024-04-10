@@ -28,7 +28,7 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
     key_file = file_reference('repodata/repomd.xml.key', to: temp(:metadata))
     check_signature(key_file: key_file, signature_file: signature_file, metadata_file: repomd_xml)
 
-    metadata_files = RepomdParser::RepomdXmlParser.new(repomd_xml.local_path).parse
+    metadata_files = RepomdParser::RepomdXmlParser.new.parse_file(repomd_xml.local_path)
       .map do |reference|
         ref = RMT::Mirror::FileReference.build_from_metadata(reference, base_dir: temp(:metadata), base_url: repomd_xml.base_url)
         enqueue ref
@@ -66,8 +66,10 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
     xml_parsers = { deltainfo: RepomdParser::DeltainfoXmlParser,
                     primary: RepomdParser::PrimaryXmlParser }
 
-    metadata_references
-      .map { |file| xml_parsers[file.type]&.new(file.local_path) }.compact
-      .map(&:parse).flatten
+    metadata_references.map do |file|
+      next unless xml_parsers.key? file.type
+
+      xml_parsers[file.type].new.parse_file(file.local_path)
+    end.flatten.compact
   end
 end
