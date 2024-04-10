@@ -34,9 +34,12 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     ast (2.4.2)
     awesome_print (1.9.2)
+    base64 (0.2.0)
     bigdecimal (3.1.6)
     builder (3.2.4)
     byebug (11.1.3)
+    bzip2-ffi (1.1.1)
+      ffi (~> 1.0)
     case_transform (0.2)
       activesupport
     coderay (1.1.3)
@@ -137,7 +140,8 @@ GEM
       concurrent-ruby (~> 1.0)
     json (2.3.1)
     jsonapi-renderer (0.2.2)
-    jwt (2.7.1)
+    jwt (2.8.0)
+      base64
     listen (3.6.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -196,7 +200,8 @@ GEM
       ffi (~> 1.0)
     rdiscount (2.2.0.2)
     regexp_parser (2.6.0)
-    repomd_parser (0.1.6)
+    repomd_parser (1.1.0)
+      bzip2-ffi (~> 1.1.1)
       nokogiri (~> 1.8)
       zstd-ruby (~> 1.3, >= 1.3.5.0)
     responders (3.1.1)
@@ -314,7 +319,7 @@ GEM
       hashdiff (>= 0.4.0, < 2.0.0)
     yard (0.9.35)
     zeitwerk (2.6.12)
-    zstd-ruby (1.5.5.0)
+    zstd-ruby (1.5.6.1)
 
 PLATFORMS
   ruby
@@ -348,7 +353,7 @@ DEPENDENCIES
   public_suffix (< 5)
   puma (~> 5.6.2)
   railties (~> 6.1.7)
-  repomd_parser (~> 0.1.6)
+  repomd_parser (~> 1.1.0)
   responders (~> 3.1.1)
   ronn
   rspec-command (= 1.0.3)
