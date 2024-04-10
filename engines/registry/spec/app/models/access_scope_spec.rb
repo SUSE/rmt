@@ -1,82 +1,80 @@
 require 'spec_helper'
 
-# RSpec.describe Registry::AccessScope, type: :model do
 RSpec.describe AccessScope, type: :model do
-  #describe AccessScope do
   subject { build(:registry_access_scope) }
 
   describe '.name' do
     context 'without repository' do
-      subject { build(:registry_access_scope, namespace: nil, image: 'leap') }
+      subject(:build_call) { build(:registry_access_scope, namespace: nil, image: 'leap') }
 
       it 'returns the repo' do
-        expect(subject.name).to eq('leap')
+        expect(build_call.name).to eq('leap')
       end
     end
 
     context 'normal <namespace>/<image>' do
-      subject { build(:registry_access_scope, namespace: 'suse', image: 'leap') }
+      subject(:build_call) { build(:registry_access_scope, namespace: 'suse', image: 'leap') }
 
       it 'returns the repo' do
-        expect(subject.name).to eq('suse/leap')
+        expect(build_call.name).to eq('suse/leap')
       end
     end
 
     context 'nested <namespace>/<namespace2>/<image>' do
-      subject { build(:registry_access_scope, namespace: 'suse/test', image: 'leap') }
+      subject(:build_call) { build(:registry_access_scope, namespace: 'suse/test', image: 'leap') }
 
       it 'returns the repo' do
-        expect(subject.name).to eq('suse/test/leap')
+        expect(build_call.name).to eq('suse/test/leap')
       end
     end
   end
 
   describe '#parse' do
     context 'without namespace' do
-      subject { described_class.parse('repository:leap:pull') }
+      subject(:parse) { described_class.parse('repository:leap:pull') }
 
       it 'returns the scope' do
-        expect(subject.to_s).to eq('repository:leap:pull')
+        expect(parse.to_s).to eq('repository:leap:pull')
       end
     end
 
     context 'normal <namespace>/<image>' do
-      subject { described_class.parse('repository:suse/leap:pull') }
+      subject(:parse) { described_class.parse('repository:suse/leap:pull') }
 
       it 'returns the scope' do
-        expect(subject.to_s).to eq('repository:suse/leap:pull')
+        expect(parse.to_s).to eq('repository:suse/leap:pull')
       end
     end
 
     context 'nested <namespace>/<namespace>/<image>' do
-      subject { described_class.parse('repository:suse/leap/leap:pull') }
+      subject(:parse) { described_class.parse('repository:suse/leap/leap:pull') }
 
       it 'returns the scope' do
-        expect(subject.to_s).to eq('repository:suse/leap/leap:pull')
+        expect(parse.to_s).to eq('repository:suse/leap/leap:pull')
       end
     end
 
     context 'with multiple actions' do
-      subject { described_class.parse('repository:suse/leap/leap:pull,push') }
+      subject(:parse) { described_class.parse('repository:suse/leap/leap:pull,push') }
 
       it 'returns the scope' do
-        expect(subject.to_s).to eq('repository:suse/leap/leap:pull,push')
+        expect(parse.to_s).to eq('repository:suse/leap/leap:pull,push')
       end
     end
 
     context 'with class' do
-      subject { described_class.parse('repository(class):suse/leap/leap:pull,push') }
+      subject(:parse) { described_class.parse('repository(class):suse/leap/leap:pull,push') }
 
       it 'returns the scope' do
-        expect(subject.to_s).to eq('repository(class):suse/leap/leap:pull,push')
+        expect(parse.to_s).to eq('repository(class):suse/leap/leap:pull,push')
       end
     end
 
     context 'with different type' do
-      subject { described_class.parse('registry:catalog:*') }
+      subject(:parse) { described_class.parse('registry:catalog:*') }
 
       it 'returns the scope' do
-        expect(subject.to_s).to eq('registry:catalog:*')
+        expect(parse.to_s).to eq('registry:catalog:*')
       end
     end
 
@@ -108,20 +106,22 @@ RSpec.describe AccessScope, type: :model do
 
   describe ".granted['actions']" do
     let(:system) { create(:system) }
-    let(:client) { double(
+    let(:client) do
+      double( # rubocop:disable RSpec/VerifiedDoubles
         :registryclient,
         account: 'foo',
-        systems: [system]
-        ) }
+          systems: [system]
+        )
+    end
 
     context 'when namespace is null' do
-      subject(:access_scope) { described_class.new(type:'a', name:'b', actions:'c') }
+      subject(:access_scope) { described_class.new(type: 'a', name: 'b', actions: 'c') }
       # let(:scope) { build(:registry_access_scope, namespace: 'suse', image: 'leap') }
 
       it 'returns default auth actions' do
         possible_access = access_scope.granted(client: client)
 
-        expect(possible_access).to eq({ 'type' => 'a', "actions"=>["pull"], "class"=>nil, "name"=>"b" })
+        expect(possible_access).to eq({ 'type' => 'a', 'actions' => ['pull'], 'class' => nil, 'name' => 'b' })
       end
     end
 
@@ -145,9 +145,9 @@ RSpec.describe AccessScope, type: :model do
           expect(possible_access).to eq(
             {
               'type' => 'a',
-              'actions'=>['pull'],
-              'class'=>nil,
-              'name'=>'suse/sles/*'
+              'actions' => ['pull'],
+              'class' => nil,
+              'name' => 'suse/sles/*'
             }
             )
         end
@@ -170,9 +170,9 @@ RSpec.describe AccessScope, type: :model do
           expect(possible_access).to eq(
             {
               'type' => 'a',
-              'actions'=>[],
-              'class'=>nil,
-              'name'=>'suse/sles/*'
+              'actions' => [],
+              'class' => nil,
+              'name' => 'suse/sles/*'
             }
             )
         end
@@ -194,16 +194,14 @@ RSpec.describe AccessScope, type: :model do
 
           expect(possible_access).to eq(
             {
-              'type'    => 'a',
+              'type' => 'a',
               'actions' => [],
-              'class'   => nil,
-              'name'    =>'super_expensive/suse/sles/*'
+              'class' => nil,
+              'name' => 'super_expensive/suse/sles/*'
             }
             )
         end
-
       end
-
     end
   end
 end

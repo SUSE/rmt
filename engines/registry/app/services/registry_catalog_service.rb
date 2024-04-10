@@ -29,7 +29,6 @@ class RegistryCatalogService
 
   def fetch_registry_repos(system)
     Rails.logger.info('Fetch registry repos')
-    response = nil
     response = catalog_token(system)
     catalog_auth_token = JSON.parse(response.body).fetch('token', '')
     response = all_repos(catalog_auth_token)
@@ -38,7 +37,6 @@ class RegistryCatalogService
 
   def catalog_token(system)
     system = System.where(proxy_byos: false).last if system.nil?
-    response = nil
     uri = URI.parse(AUTH_URL)
     catalog_token_params = {
       service: SERVICE,

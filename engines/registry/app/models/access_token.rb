@@ -2,7 +2,6 @@ require 'base32'
 
 # Following Docker distribution token auth specs,
 # see docs here: https://github.com/distribution/distribution/blob/main/docs/spec/auth/token.md
-#class Registry::AccessToken
 class AccessToken
   def initialize(account, service, granted_scopes)
     @account = account

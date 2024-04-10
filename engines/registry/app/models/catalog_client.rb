@@ -9,7 +9,6 @@ class CatalogClient
     Rails.logger.info("Got token for '#{self}'")
   end
 
-
   def authorized_for_catalog?
     (@access.any? &&
      @access.first.fetch('type', '') == 'registry' && # TODO: better not only check the first 'access'

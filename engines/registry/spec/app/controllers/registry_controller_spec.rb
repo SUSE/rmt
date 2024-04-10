@@ -45,26 +45,19 @@ module Registry
 
     describe '#catalog access' do
       let(:system) { create(:system) }
-      let(:params) {
-        {
-          'account' => system.login,
-          'scope'   => 'registry:catalog:*',
-          'service' => 'SUSE Linux Docker Registry'
-        }
-      }
       let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
       let(:auth_headers_token) { {} }
 
-      let(:fake_response){ { repositories: repositories_returned } }
+      let(:fake_response) { { repositories: repositories_returned } }
       let(:repositories_returned) do
         %w[repo repo.v2 level1/repo.v2 level1/level2 level1/level2/repo level1/level2/level.3 level1/level2/level.3/repo]
       end
       let(:auth_url) { 'https://smt-ec2.susecloud.net/api/registry/authorize' }
-      let(:params) { "account=#{system.login}&scope=registry:catalog:*&service=SUSE%20Linux%20OCI%20Registry" }
+      let(:params_catalog) { "account=#{system.login}&scope=registry:catalog:*&service=SUSE%20Linux%20OCI%20Registry" }
       let(:access_policy_content) { File.read('engines/registry/spec/data/access_policy_yaml.yml') }
 
       before do
-        stub_request(:get, "#{auth_url}?#{params}")
+        stub_request(:get, "#{auth_url}?#{params_catalog}")
           .to_return(body: JSON.dump(fake_response), status: 200, headers: { 'Content-type' => 'application/json' })
 
         stub_request(:get, "#{RegistryCatalogService.new.catalog_api_url}?n=1000")
@@ -95,7 +88,7 @@ module Registry
             headers: auth_headers
             )
 
-          auth_headers_token['Authorization'] = format("Bearer foo")
+          auth_headers_token['Authorization'] = format('Bearer foo')
 
           get('/api/registry/catalog', headers: auth_headers_token)
 

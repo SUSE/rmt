@@ -2,7 +2,7 @@ module Registry
   class RegistryController < Registry::ApplicationController
     REGISTRY_SERVICE = 'SUSE Linux OCI Registry'.freeze
     REGISTRY_API_VERSION = 'registry/2.0'.freeze
-    AUTH_URL = 'https://smt-ec2.susecloud.net/api/registry/authorize'
+    AUTH_URL = 'https://smt-ec2.susecloud.net/api/registry/authorize'.freeze
 
     before_action :set_requested_scopes, except: [ :catalog ]
     before_action :basic_auth, except: [ :catalog ]
@@ -64,7 +64,7 @@ module Registry
             { login: login, password: password }
           error = ActionController::TranslatedError.new(N_('Please, re-authenticate'))
           error.status = :unauthorized
-          render json: {error: error.message}.to_json, status: :unauthorized
+          render json: { error: error.message }.to_json, status: :unauthorized
         end
 
         true
