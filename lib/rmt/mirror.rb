@@ -114,7 +114,7 @@ class RMT::Mirror
       end
     end
 
-    metadata_files = RepomdParser::RepomdXmlParser.new(repomd_xml.local_path).parse
+    metadata_files = RepomdParser::RepomdXmlParser.new.parse_file(repomd_xml.local_path)
       .map { |reference| FileReference.build_from_metadata(reference, **mirroring_paths) }
 
     downloader.download_multi(metadata_files.dup)
@@ -168,9 +168,11 @@ class RMT::Mirror
     xml_parsers = { deltainfo: RepomdParser::DeltainfoXmlParser,
                     primary: RepomdParser::PrimaryXmlParser }
 
-    metadata_references
-      .map { |file| xml_parsers[file.type]&.new(file.local_path) }.compact
-      .map(&:parse).flatten
+    metadata_references.map do |file|
+      next unless xml_parsers.key? file.type
+
+      xml_parsers[file.type].new.parse_file(file.local_path)
+    end.flatten.compact
   end
 
   def download_package_files(file_references)
