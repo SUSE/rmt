@@ -38,10 +38,6 @@ RSpec/MultipleExpectations:
   Exclude:
     - spec/lib/rmt/cli/mirror_spec.rb
 
-RSpec/StubbedMock:
-  Exclude:
-    - spec/lib/rmt/cli/mirror_spec.rb
-
 Metrics/ClassLength:
   Exclude:
     - lib/rmt/downloader.rb
