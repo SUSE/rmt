@@ -1,7 +1,4 @@
-require 'rmt/downloader'
-require 'rmt/gpg'
 require 'repomd_parser'
-require 'time'
 
 class RMT::Mirror::Repomd < RMT::Mirror::Base
 
