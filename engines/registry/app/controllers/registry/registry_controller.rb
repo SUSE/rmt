@@ -1,7 +1,8 @@
 module Registry
-  class RegistryController < ::ApplicationController
+  class RegistryController < Registry::ApplicationController
     REGISTRY_SERVICE = 'SUSE Linux OCI Registry'.freeze
     REGISTRY_API_VERSION = 'registry/2.0'.freeze
+    AUTH_URL = 'https://smt-ec2.susecloud.net/api/registry/authorize'
 
     before_action :set_requested_scopes, except: [ :catalog ]
     before_action :basic_auth, except: [ :catalog ]
@@ -20,7 +21,7 @@ module Registry
     # https://distribution.github.io/distribution/spec/api/#listing-repositories
     def catalog
       # access_scope = Registry::AccessScope.parse(['registry:catalog:*'])
-      access_scope = AccessScope.parse(['registry:catalog:*'])
+      access_scope = AccessScope.parse('registry:catalog:*')
       repos = access_scope.allowed_paths(System.find_by(login: @client&.account))
       logger.debug("Returning #{repos.size} repos for client #{@client}")
 
@@ -63,7 +64,7 @@ module Registry
             { login: login, password: password }
           error = ActionController::TranslatedError.new(N_('Invalid registry credentials'))
           error.status = :unauthorized
-          raise error
+          render json: {error: error.message}.to_json, status: :unauthorized
         end
 
         true
@@ -71,14 +72,14 @@ module Registry
     end
 
     def catalog_token_auth
-      authenticate_or_request_with_http_token(authorize_api_registry_url, 'authentication required') do |token|
+      authenticate_or_request_with_http_token(authorize_url, 'authentication required') do |token|
         begin
-          @client = Registry::CatalogClient.new(token)
+          @client = CatalogClient.new(token)
         rescue JWT::DecodeError
           logger.info _('Invalid token')
           error = ActionController::TranslatedError.new(N_('Invalid registry token'))
           error.status = :unauthorized
-          raise error
+          render json: {error: error.message}.to_json, status: :unauthorized
         end
 
         @client.authorized_for_catalog?
@@ -86,13 +87,16 @@ module Registry
     end
 
     # is called by authenticate_or_request_with_http_token when client provides no token
-    def request_http_token_authentication(realm = authorize_api_registry_url, message = 'authentication required')
-      headers['WWW-Authenticate'] = [
+    def request_http_token_authentication(realm = authorize_url, message = 'authentication required')
+      www_authenticate = [
         %(Bearer realm="#{realm.delete('"')}"),
         %(service="#{REGISTRY_SERVICE.delete('"')}"),
-        %(scope="registry:catalog:*"),
-        %(error="insufficient_scope")
-      ].join(',')
+        %(scope="registry:catalog:*")
+      ]
+
+      www_authenticate << %(error="insufficient_scope") if request.authorization
+
+      headers['WWW-Authenticate'] = www_authenticate.join(',')
 
       render json: { errors: [ code: 'UNAUTHORIZED', details: nil, message: message] }, status: :unauthorized
     end
