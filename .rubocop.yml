@@ -26,14 +26,6 @@ AllCops:
 Style/TrailingUnderscoreVariable:
   Enabled: false
 
-Style/RedundantInterpolation:
-  Exclude:
-    - lib/rmt/cli/mirror.rb
-
-Style/StringLiterals:
-  Exclude:
-    - lib/rmt/cli/mirror.rb
-
 RSpec/ExampleLength:
   Exclude:
     - spec/lib/rmt/cli/mirror_spec.rb

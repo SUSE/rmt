@@ -185,10 +185,10 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
   def finish_execution(start_time:, repo_count:, downloaded_files_count:, downloaded_files_size:)
     if errors.empty?
-      logger.info("\e[32m" + _('Total mirrored repositories: ' + "#{repo_count}") + "\e[0m")
-      logger.info("\e[32m" + _('Total transferred files: ' + "#{downloaded_files_count}") + "\e[0m")
-      logger.info("\e[32m" + _('Total transferred file size: ' + "#{files_size_format(downloaded_files_size)} MB") + "\e[0m")
-      logger.info("\e[32m" + _('Total Mirror Time: ' + "#{format_time(start_time)}") + "\e[0m")
+      logger.info("\e[32m" + _('Total mirrored repositories: %{repo_count}') % { repo_count: repo_count } + "\e[0m")
+      logger.info("\e[32m" + _('Total transferred files: %{files_count}') % { files_count: downloaded_files_count } + "\e[0m")
+      logger.info("\e[32m" + _('Total transferred file size: %{files_size} MB') % { files_size: files_size_format(downloaded_files_size) } + "\e[0m")
+      logger.info("\e[32m" + _('Total Mirror Time: %{time}') % { time: format_time(start_time) } + "\e[0m")
       logger.info("\e[32m" + _('Mirroring complete.') + "\e[0m")
     else
       logger.warn("\e[31m" + _('The following errors occurred while mirroring:') + "\e[0m")
@@ -208,6 +208,6 @@ class RMT::CLI::Mirror < RMT::CLI::Base
     hours, remainder = finish_time.divmod(3600)
     minutes, seconds = remainder.divmod(60)
 
-    "%02d:%02d:%02d" % [hours, minutes, seconds]
+    '%02d:%02d:%02d' % [hours, minutes, seconds]
   end
 end
