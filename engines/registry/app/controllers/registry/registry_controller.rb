@@ -62,7 +62,7 @@ module Registry
         rescue StandardError
           logger.info _('Could not find system with login \"%{login}\" and password \"%{password}\"') %
             { login: login, password: password }
-          error = ActionController::TranslatedError.new(N_('Invalid registry credentials'))
+          error = ActionController::TranslatedError.new(N_('Please, re-authenticate'))
           error.status = :unauthorized
           render json: {error: error.message}.to_json, status: :unauthorized
         end
@@ -77,7 +77,7 @@ module Registry
           @client = CatalogClient.new(token)
         rescue JWT::DecodeError
           logger.info _('Invalid token')
-          error = ActionController::TranslatedError.new(N_('Invalid registry token'))
+          error = ActionController::TranslatedError.new(N_('Please, run cloudguestregistryauth'))
           error.status = :unauthorized
           render json: {error: error.message}.to_json, status: :unauthorized
         end
