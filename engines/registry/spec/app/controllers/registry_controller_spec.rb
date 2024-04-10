@@ -53,7 +53,7 @@ module Registry
         }
       }
       let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
-      let(:auth_headers2) { {} }
+      let(:auth_headers_token) { {} }
 
       let(:fake_response){ { repositories: repositories_returned } }
       let(:repositories_returned) do
@@ -71,18 +71,36 @@ module Registry
           .to_return(body: JSON.dump(fake_response), status: 200, headers: { 'Content-type' => 'application/json' })
       end
 
-      it 'should have catalog access' do
-        allow(File).to receive(:read).and_return(access_policy_content)
-        get(
-          '/api/registry/authorize',
-          params: { service: 'SUSE Linux OCI Registry', scope: 'registry:catalog:*' },
-          headers: auth_headers
-          )
+      context 'with a valid token' do
+        it 'has catalog access' do
+          allow(File).to receive(:read).and_return(access_policy_content)
+          get(
+            '/api/registry/authorize',
+            params: { service: 'SUSE Linux OCI Registry', scope: 'registry:catalog:*' },
+            headers: auth_headers
+            )
 
-        auth_headers2['Authorization'] = format("Bearer #{json_response[:token]}")
-        get('/api/registry/catalog', headers: auth_headers2)
+          auth_headers_token['Authorization'] = format("Bearer #{json_response[:token]}")
+          get('/api/registry/catalog', headers: auth_headers_token)
 
-        expect(response).to have_http_status(:ok)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context 'when token is invalid' do
+        it 'raise an exception' do
+          get(
+            '/api/registry/authorize',
+            params: { service: 'SUSE Linux OCI Registry', scope: 'registry:catalog:*' },
+            headers: auth_headers
+            )
+
+          auth_headers_token['Authorization'] = format("Bearer foo")
+
+          get('/api/registry/catalog', headers: auth_headers_token)
+
+          expect(response).to have_http_status(:unauthorized)
+        end
       end
     end
   end

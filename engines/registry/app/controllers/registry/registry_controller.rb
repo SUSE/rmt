@@ -79,7 +79,8 @@ module Registry
           logger.info _('Invalid token')
           error = ActionController::TranslatedError.new(N_('Please, run cloudguestregistryauth'))
           error.status = :unauthorized
-          render json: {error: error.message}.to_json, status: :unauthorized
+          render json: { error: error.message }.to_json, status: :unauthorized
+          return
         end
 
         @client.authorized_for_catalog?
