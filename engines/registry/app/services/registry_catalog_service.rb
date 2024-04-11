@@ -2,7 +2,7 @@ require 'json'
 require 'net/http'
 
 CATALOG_API_URL = 'http://127.0.0.1:5000/v2/_catalog'.freeze
-AUTH_URL = 'https://smt-ec2.susecloud.net/api/registry/authorize'.freeze
+AUTH_URL = 'api/registry/authorize'.freeze
 CATALOG_SCOPE = 'registry:catalog:*'.freeze
 SERVICE = 'SUSE Linux OCI Registry'.freeze
 
@@ -36,8 +36,8 @@ class RegistryCatalogService
   end
 
   def catalog_token(system)
-    system = System.where(proxy_byos: false).last if system.nil?
-    uri = URI.parse(AUTH_URL)
+    # rmt.conf must have the root_url
+    uri = URI.parse(URI.join("https://#{Settings[:registry][:root_url]}", AUTH_URL).to_s)
     catalog_token_params = {
       service: SERVICE,
       account: system.login,

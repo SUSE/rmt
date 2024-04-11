@@ -4,12 +4,14 @@ describe RegistryCatalogService do
   subject(:registry) { described_class.new }
 
   let(:system) { create(:system) }
-  let(:auth_url) { 'https://smt-ec2.susecloud.net/api/registry/authorize' }
+  let(:root_url) { 'smt-ec2.susecloud.net' }
+  let(:auth_url) { "https://#{root_url}/api/registry/authorize" }
   let(:params) { "account=#{system.login}&scope=registry:catalog:*&service=SUSE%20Linux%20OCI%20Registry" }
   let(:response) { { repositories: repositories_returned } }
   let(:repositories_returned) do
     %w[repo repo.v2 level1/repo.v2 level1/level2 level1/level2/repo level1/level2/level.3 level1/level2/level.3/repo]
   end
+  let(:registry_conf) { { root_url: root_url } }
 
   before do
     stub_request(:get, "#{auth_url}?#{params}").with(
@@ -28,6 +30,7 @@ describe RegistryCatalogService do
 
   it 'lists all repos' do
     allow(System).to receive(:where).and_return([system])
-    expect(registry.repos.length).to eq repositories_returned.size
+    allow(Settings).to receive(:[]).with(anything).and_return(registry_conf)
+    expect(registry.repos(system: system).length).to eq repositories_returned.size
   end
 end

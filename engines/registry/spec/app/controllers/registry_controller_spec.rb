@@ -52,12 +52,15 @@ module Registry
       let(:repositories_returned) do
         %w[repo repo.v2 level1/repo.v2 level1/level2 level1/level2/repo level1/level2/level.3 level1/level2/level.3/repo]
       end
-      let(:auth_url) { 'https://smt-ec2.susecloud.net/api/registry/authorize' }
+      let(:authorize_url) { 'api/registry/authorize' }
+      let(:root_url) { 'smt-ec2.susecloud.net' }
       let(:params_catalog) { "account=#{system.login}&scope=registry:catalog:*&service=SUSE%20Linux%20OCI%20Registry" }
       let(:access_policy_content) { File.read('engines/registry/spec/data/access_policy_yaml.yml') }
+      let(:registry_conf) { { root_url: root_url } }
+
 
       before do
-        stub_request(:get, "#{auth_url}?#{params_catalog}")
+        stub_request(:get, "https://#{root_url}/#{authorize_url}?#{params_catalog}")
           .to_return(body: JSON.dump(fake_response), status: 200, headers: { 'Content-type' => 'application/json' })
 
         stub_request(:get, "#{RegistryCatalogService.new.catalog_api_url}?n=1000")
@@ -67,6 +70,7 @@ module Registry
       context 'with a valid token' do
         it 'has catalog access' do
           allow(File).to receive(:read).and_return(access_policy_content)
+          allow(Settings).to receive(:[]).with(anything).and_return(registry_conf)
           get(
             '/api/registry/authorize',
             params: { service: 'SUSE Linux OCI Registry', scope: 'registry:catalog:*' },
