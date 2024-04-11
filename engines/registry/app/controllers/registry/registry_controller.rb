@@ -20,7 +20,6 @@ module Registry
     # Returns a Distribution Registry HTTP API V2 - compatible repository catalog as defined in
     # https://distribution.github.io/distribution/spec/api/#listing-repositories
     def catalog
-      # access_scope = Registry::AccessScope.parse(['registry:catalog:*'])
       access_scope = AccessScope.parse('registry:catalog:*')
       repos = access_scope.allowed_paths(System.find_by(login: @client&.account))
       logger.debug("Returning #{repos.size} repos for client #{@client}")
@@ -44,7 +43,6 @@ module Registry
       .map(&:downcase)
 
       @requested_scopes = []
-      # @requested_scopes = raw_scopes.map { |scope| Registry::AccessScope.parse(scope) } unless raw_scopes.empty?
       @requested_scopes = raw_scopes.map { |scope| AccessScope.parse(scope) } unless raw_scopes.empty?
 
       logger.info("Requested scopes: #{@requested_scopes.map(&:to_s)}")
