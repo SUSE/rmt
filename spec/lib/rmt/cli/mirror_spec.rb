@@ -160,7 +160,7 @@ RSpec.describe RMT::CLI::Mirror do
 
         expect($stdout.gets).to match(/Total mirrored repositories: 2/)
         expect($stdout.gets).to match(/Total transferred files: 2/)
-        expect($stdout.gets).to match(/Total transferred file size: 0.06 MB/)
+        expect($stdout.gets).to match(/Total transferred file size: 63.1 KB/)
         expect($stdout.gets).to match(/Total Mirror Time: 00:00:00/)
         expect($stdout.gets).to match(/Mirroring complete./)
       end
@@ -230,7 +230,7 @@ RSpec.describe RMT::CLI::Mirror do
 
         expect($stdout.gets).to match(/Total mirrored repositories: 1/)
         expect($stdout.gets).to match(/Total transferred files: 1/)
-        expect($stdout.gets).to match(/Total transferred file size: 0.0 MB/)
+        expect($stdout.gets).to match(/Total transferred file size: 8.56 KB/)
         expect($stdout.gets).to match(/Total Mirror Time: 00:00:00/)
         expect($stdout.gets).to match(/Mirroring complete./)
       end
@@ -324,7 +324,7 @@ RSpec.describe RMT::CLI::Mirror do
 
         expect($stdout.gets).to match(/Total mirrored repositories: #{repos_count}/)
         expect($stdout.gets).to match(/Total transferred files: 16/)
-        expect($stdout.gets).to match(/Total transferred file size: 351.51 MB/)
+        expect($stdout.gets).to match(/Total transferred file size: 343 MB/)
         expect($stdout.gets).to match(/Total Mirror Time: 00:00:00/)
         expect($stdout.gets).to match(/Mirroring complete./)
       end
@@ -356,7 +356,7 @@ RSpec.describe RMT::CLI::Mirror do
 
         expect($stdout.gets).to match(/Total mirrored repositories: #{repos_count}/)
         expect($stdout.gets).to match(/Total transferred files: 16/)
-        expect($stdout.gets).to match(/Total transferred file size: 351.51 MB/)
+        expect($stdout.gets).to match(/Total transferred file size: 343 MB/)
         expect($stdout.gets).to match(/Total Mirror Time: 00:00:00/)
         expect($stdout.gets).to match(/Mirroring complete./)
       end

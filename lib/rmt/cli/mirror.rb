@@ -187,7 +187,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
     if errors.empty?
       logger.info("\e[32m" + _('Total mirrored repositories: %{repo_count}') % { repo_count: repo_count } + "\e[0m")
       logger.info("\e[32m" + _('Total transferred files: %{files_count}') % { files_count: downloaded_files_count } + "\e[0m")
-      logger.info("\e[32m" + _('Total transferred file size: %{files_size} MB') % { files_size: files_size_format(downloaded_files_size) } + "\e[0m")
+      logger.info("\e[32m" + _('Total transferred file size: %{files_size}') % { files_size: files_size_format(downloaded_files_size) } + "\e[0m")
       logger.info("\e[32m" + _('Total Mirror Time: %{time}') % { time: format_time(start_time) } + "\e[0m")
       logger.info("\e[32m" + _('Mirroring complete.') + "\e[0m")
     else
@@ -199,7 +199,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   end
 
   def files_size_format(downloaded_files_size)
-    (downloaded_files_size / 1024000.0).floor(2)
+    ActiveSupport::NumberHelper.number_to_human_size(downloaded_files_size)
   end
 
   def format_time(start_time)
