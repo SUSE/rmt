@@ -3,7 +3,7 @@
 RMT replaces some functionality of [SMT](https://github.com/SUSE/smt).
 The following table outlines the differences and similarities between the three tools.
 The last SUSE Linux Enterprise Server version where SMT is available is 12 SP5.
-From SUSE Linux Enterprise Server 15 onward, only RMT or SUMA is available.
+From SUSE Linux Enterprise Server 15 onward, only RMT and SUMA are available.
 
 > Note: RMT is fully maintained and receives new features, bug fixes, and perfomance improvements.
 > SMT no longer receives new features, only critical security and bug fixes.
@@ -23,8 +23,8 @@ From SUSE Linux Enterprise Server 15 onward, only RMT or SUMA is available.
 |Registration of SLE 11 systems|:heavy_check_mark:|:x:|:heavy_check_mark:|
 |Registration of openSUSE Leap 15 systems|:x:|:x:|:heavy_check_mark:|
 |Registration of non-SUSE products (RHEL, Ubuntu, etc)|:x:|:x:|:heavy_check_mark:|
-|Red Hat 7 and earlier support ([Expanded Support](https://www.suse.com/products/expandedsupport/))|:heavy_check_mark:|:x:|:heavy_check_mark:|
-|Red Hat 8 support ([Expanded Support](https://www.suse.com/products/expandedsupport/))|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+|Red Hat 6 and earlier support (via [SUSE Liberty](https://www.suse.com/products/suse-liberty-linux/))|:heavy_check_mark:|:x:|:heavy_check_mark:|
+|Red Hat 7+ support (via [SUSE Liberty](https://www.suse.com/products/suse-liberty-linux/))|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Support for migrating SLE 12 systems to 15|:warning:<sup>[1](#partial-migration)</sup>|:heavy_check_mark:|:heavy_check_mark:|
 |Support for migrating SLE 15 SPx systems to 15 SPx+1|:warning:<sup>[1](#partial-migration)</sup>|:heavy_check_mark:|:heavy_check_mark:|
 |Staging repositories|:heavy_check_mark:|:x:|:heavy_check_mark:|
