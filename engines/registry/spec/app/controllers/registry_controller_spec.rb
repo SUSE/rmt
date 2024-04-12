@@ -60,8 +60,14 @@ module Registry
 
 
       before do
-        stub_request(:get, "https://#{root_url}/#{authorize_url}?#{params_catalog}")
-          .to_return(body: JSON.dump(fake_response), status: 200, headers: { 'Content-type' => 'application/json' })
+        stub_request(:get, "https://www.example.com:80/api/registry/authorize?account=#{system.login}&scope=registry:catalog:*&service=SUSE%20Linux%20OCI%20Registry")
+         .with(
+           headers: {
+             'Accept' => '*/*',
+             'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+             'User-Agent' => 'Ruby'
+           }
+).to_return(status: 200, body: JSON.dump({ foo: 'foo' }), headers: {})
 
         stub_request(:get, "#{RegistryCatalogService.new.catalog_api_url}?n=1000")
           .to_return(body: JSON.dump(fake_response), status: 200, headers: { 'Content-type' => 'application/json' })
@@ -70,7 +76,6 @@ module Registry
       context 'with a valid token' do
         it 'has catalog access' do
           allow(File).to receive(:read).and_return(access_policy_content)
-          allow(Settings).to receive(:[]).with(anything).and_return(registry_conf)
           get(
             '/api/registry/authorize',
             params: { service: 'SUSE Linux OCI Registry', scope: 'registry:catalog:*' },

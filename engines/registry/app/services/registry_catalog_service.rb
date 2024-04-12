@@ -19,25 +19,24 @@ class RegistryCatalogService
   end
 
   # be aware that this takes about 20-25 seconds to be finished if not in cache
-  def repos(reload: false, system: nil)
+  def repos(reload: false, system: nil, origin_url: nil)
     Rails.cache.fetch(@catalog_api_url, expires_in: 1.hour, force: reload) do
-      fetch_registry_repos(system)
+      fetch_registry_repos(system, origin_url)
     end
   end
 
   private
 
-  def fetch_registry_repos(system)
+  def fetch_registry_repos(system, origin_url)
     Rails.logger.info('Fetch registry repos')
-    response = catalog_token(system)
+    response = catalog_token(system, origin_url)
     catalog_auth_token = JSON.parse(response.body).fetch('token', '')
     response = all_repos(catalog_auth_token)
     JSON.parse(response.body).fetch('repositories', [])
   end
 
-  def catalog_token(system)
-    # rmt.conf must have the root_url
-    uri = URI.parse(URI.join("https://#{Settings[:registry][:root_url]}", AUTH_URL).to_s)
+  def catalog_token(system, origin_url)
+    uri = URI.parse(URI.join(origin_url, AUTH_URL).to_s)
     catalog_token_params = {
       service: SERVICE,
       account: system.login,

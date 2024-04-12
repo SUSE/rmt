@@ -30,7 +30,6 @@ describe RegistryCatalogService do
 
   it 'lists all repos' do
     allow(System).to receive(:where).and_return([system])
-    allow(Settings).to receive(:[]).with(anything).and_return(registry_conf)
-    expect(registry.repos(system: system).length).to eq repositories_returned.size
+    expect(registry.repos(system: system, origin_url: "https://#{root_url}").length).to eq repositories_returned.size
   end
 end
