@@ -67,7 +67,6 @@ Rails.application.routes.draw do
     mount Registry::Engine, at: '/api/registry'
 
     get '/v2/_catalog', to: 'registry/registry#catalog'
-    get '/v2/', to: 'registry/registry#authorize'
   end
 
   if defined?(SccSumaApi::Engine)
