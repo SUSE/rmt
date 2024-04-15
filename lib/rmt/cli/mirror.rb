@@ -4,6 +4,10 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   desc 'all', _('Mirror all enabled repositories')
   def all
     RMT::Lockfile.lock('mirror') do
+      downloaded_files_count = 0
+      downloaded_files_size = 0
+      start_time = Time.current
+
       begin
         suma_product_tree.mirror
       rescue RMT::Mirror::Exception => e
@@ -20,11 +24,20 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       # could lead to different Repositories sets where it's used.
       mirrored_repo_ids = []
       until (repos = Repository.only_mirroring_enabled.where.not(id: mirrored_repo_ids).load).empty?
-        mirror_repositories!(repos)
+        files_count, files_size = mirror_repositories!(repos)
+
+        downloaded_files_count += files_count
+        downloaded_files_size += files_size
+
         mirrored_repo_ids.concat(repos.pluck(:id))
       end
 
-      finish_execution
+      finish_execution(
+        start_time: start_time,
+        repo_count: mirrored_repo_ids.count,
+        downloaded_files_count: downloaded_files_count,
+        downloaded_files_size: downloaded_files_size
+      )
     end
   end
 
@@ -34,6 +47,8 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   desc 'repository IDS', _('Mirror enabled repositories with given repository IDs')
   def repository(*ids)
     RMT::Lockfile.lock('mirror') do
+      start_time = Time.current
+
       ids = clean_target_input(ids)
       raise RMT::CLI::Error.new(_('No repository IDs supplied')) if ids.empty?
 
@@ -44,14 +59,22 @@ class RMT::CLI::Mirror < RMT::CLI::Base
         repo
       end
 
-      mirror_repositories!(repos)
-      finish_execution
+      downloaded_files_count, downloaded_files_size = mirror_repositories!(repos)
+
+      finish_execution(
+        start_time: start_time,
+        repo_count: repos.count,
+        downloaded_files_count: downloaded_files_count,
+        downloaded_files_size: downloaded_files_size
+      )
     end
   end
 
   desc 'product IDS', _('Mirror enabled repositories for a product with given product IDs')
   def product(*targets)
     RMT::Lockfile.lock('mirror') do
+      start_time = Time.current
+
       targets = clean_target_input(targets)
       raise RMT::CLI::Error.new(_('No product IDs supplied')) if targets.empty?
 
@@ -72,8 +95,14 @@ class RMT::CLI::Mirror < RMT::CLI::Base
         errored_products_id << target if options[:do_not_raise_unpublished]
       end
 
-      mirror_repositories!(repos)
-      finish_execution
+      downloaded_files_count, downloaded_files_size = mirror_repositories!(repos)
+
+      finish_execution(
+        start_time: start_time,
+        repo_count: repos.count,
+        downloaded_files_count: downloaded_files_count,
+        downloaded_files_size: downloaded_files_size
+      )
     end
   end
 
@@ -125,6 +154,9 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   end
 
   def mirror_repositories!(repos)
+    downloaded_files_count = 0
+    downloaded_files_size = 0
+
     repos.compact.each do |repo|
       unless repo.mirroring_enabled
         errors << (_('Mirroring of repository with ID %{repo_id} is not enabled') % { repo_id: repo.friendly_id })
@@ -139,18 +171,27 @@ class RMT::CLI::Mirror < RMT::CLI::Base
         is_airgapped: false
       }
 
-      RMT::Mirror.new(**configuration).mirror_now
+      files_count, files_size = RMT::Mirror.new(**configuration).mirror_now
       repo.refresh_timestamp!
+
+      downloaded_files_count += files_count if files_count
+      downloaded_files_size += files_size if files_size
     rescue RMT::Mirror::Exception => e
       errors << (_("Repository '%{repo_name}' (%{repo_id}): %{error_message}") % {
         repo_id: repo.friendly_id, repo_name: repo.name, error_message: e.message
       })
       errored_repos_id << repo.id if options[:do_not_raise_unpublished]
     end
+
+    [downloaded_files_count, downloaded_files_size]
   end
 
-  def finish_execution
+  def finish_execution(start_time:, repo_count:, downloaded_files_count:, downloaded_files_size:)
     if errors.empty?
+      logger.info("\e[32m" + (_('Total mirrored repositories: %{repo_count}') % { repo_count: repo_count }) + "\e[0m")
+      logger.info("\e[32m" + (_('Total transferred files: %{files_count}') % { files_count: downloaded_files_count }) + "\e[0m")
+      logger.info("\e[32m" + (_('Total transferred file size: %{files_size}') % { files_size: files_size_format(downloaded_files_size) }) + "\e[0m")
+      logger.info("\e[32m" + (_('Total Mirror Time: %{time}') % { time: format_time(start_time) }) + "\e[0m")
       logger.info("\e[32m" + _('Mirroring complete.') + "\e[0m")
     else
       logger.warn("\e[31m" + _('The following errors occurred while mirroring:') + "\e[0m")
@@ -158,5 +199,18 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       logger.warn("\e[33m" + _('Mirroring completed with errors.') + "\e[0m")
       raise RMT::CLI::Error.new('The command exited with errors.') unless options[:do_not_raise_unpublished] && in_alpha_or_beta?
     end
+  end
+
+  def files_size_format(downloaded_files_size)
+    ActiveSupport::NumberHelper.number_to_human_size(downloaded_files_size)
+  end
+
+  def format_time(start_time)
+    finish_time = Time.current - start_time
+
+    hours, remainder = finish_time.divmod(3600)
+    minutes, seconds = remainder.divmod(60)
+
+    '%02d:%02d:%02d' % [hours, minutes, seconds]
   end
 end
