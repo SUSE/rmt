@@ -67,7 +67,7 @@ describe RMT::Mirror::License do
       allow(license).to receive(:download_cached!).with('directory.yast', to: '/tmp/foo').and_return(licenses_ref)
       expect(license).to receive(:download_enqueued)
       expect(license).to receive(:enqueue).with(duck_type(:local_path)).exactly(11).times
-      expect(license).to receive(:replace_directory).with(source: license.temp(:license), destination: license.repository_path)
+      expect(license).to receive(:move_directory).with(source: license.temp(:license), destination: license.repository_path)
 
       license.mirror_implementation
     end
