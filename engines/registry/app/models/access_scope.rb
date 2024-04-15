@@ -85,7 +85,7 @@ class AccessScope
     )
     active_products = system.activations.includes(:product).pluck(:product_class)
 
-    allowed_products = (active_products & access_policies_yml.keys) + ['free']
+    allowed_products = (active_products & access_policies_yml.keys)
     allowed_glob_paths = access_policies_yml.values_at(*allowed_products).flatten
 
     @allowed_paths = parse_repos(repo_list, allowed_glob_paths)

@@ -137,7 +137,7 @@ RSpec.describe AccessScope, type: :model do
             )
         end
 
-        it 'returns default auth actions' do
+        it 'returns default auth actions (no free repos included)' do
           allow_any_instance_of(RegistryCatalogService).to receive(:repos).and_return(['suse/sles/super_repo'])
           allow(File).to receive(:read).and_return(access_policy_content)
           possible_access = access_scope.granted(client: client)
@@ -145,7 +145,7 @@ RSpec.describe AccessScope, type: :model do
           expect(possible_access).to eq(
             {
               'type' => 'a',
-              'actions' => ['pull'],
+              'actions' => [],
               'class' => nil,
               'name' => 'suse/sles/*'
             }
