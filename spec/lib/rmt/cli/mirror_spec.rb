@@ -5,54 +5,53 @@ RSpec.describe RMT::CLI::Mirror do
 
   let(:argv) { [] }
 
+  let!(:repository) { create :repository, :with_products, mirroring_enabled: default_repository_enabled }
+  let(:default_repository_enabled) { true }
+
   let(:exit_with_error_message) { "The command exited with errors.\n" }
   let(:error_log_begin) { /\e\[31mThe following errors occurred while mirroring:\e\[0m/ }
   let(:error_log_end) { /\e\[33mMirroring completed with errors.\e\[0m/ }
   let(:error_log) { /.*#{error_log_begin}\n.*\e\[31m#{error_messages}\e\[0m\n.*#{error_log_end}/ }
 
-  describe 'mirror' do
+  let(:suma) { instance_double(RMT::Mirror::SumaProductTree) }
+  let(:mirror) { instance_double(RMT::Mirror) }
+
+  before do
+    allow(RMT::Mirror::SumaProductTree).to receive(:new).and_return(suma)
+    allow(suma).to receive(:mirror)
+
+    allow(RMT::Mirror).to receive(:new).and_return(mirror)
+    allow(mirror).to receive(:mirror_now)
+  end
+
+  describe '#all' do
     let(:argv) { ['all'] }
 
     context 'lockfiles', :with_fakefs do
       include_examples 'handles lockfile exception'
     end
 
-    context 'suma product tree mirror with exception' do
-      before do
-        create :repository, :with_products, mirroring_enabled: true
-      end
 
+    context 'suma product tree mirror with exception' do
       let(:suma_error) { 'mirroring SUMA failed' }
       let(:error_messages) { "Mirroring SUMA product tree failed: #{suma_error}." }
       let(:rmt_mirror) { instance_double(RMT::Mirror) }
 
       it 'handles the exception and raises an error after mirroring all repos' do
-        allow(RMT::Mirror).to receive(:new).and_return(rmt_mirror)
-        allow(rmt_mirror)
-          .to receive(:mirror_suma_product_tree)
-          .and_raise(RMT::Mirror::Exception, suma_error)
-        allow(rmt_mirror).to receive(:mirror)
+        allow(mirror).to receive(:mirror_now)
+        allow(suma).to receive(:mirror).and_raise(RMT::Mirror::Exception, suma_error)
 
-        expect { command }
-          .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+        expect { command }.to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
           .and output(error_log).to_stdout
           .and output(exit_with_error_message).to_stderr
       end
     end
 
     context 'without repositories marked for mirroring' do
-      before do
-        create :repository, :with_products, mirroring_enabled: false
-      end
-
-      let(:rmt_mirror) { instance_double(RMT::Mirror) }
+      let(:default_repository_enabled) { false }
 
       it 'raises an error' do
-        allow(RMT::Mirror).to receive(:new).and_return(rmt_mirror)
-        allow(rmt_mirror).to receive(:mirror_suma_product_tree)
-
-        expect { command }
-          .to raise_error(SystemExit)
+        expect { command }.to raise_error(SystemExit)
           .and output("There are no repositories marked for mirroring.\n").to_stderr
           .and output('').to_stdout
       end
@@ -63,9 +62,8 @@ RSpec.describe RMT::CLI::Mirror do
       let(:rmt_mirror) { instance_double(RMT::Mirror) }
 
       it 'updates repository mirroring timestamp' do
-        allow(RMT::Mirror).to receive(:new).and_return(rmt_mirror)
-        allow(rmt_mirror).to receive(:mirror_suma_product_tree)
-        allow(rmt_mirror).to receive(:mirror)
+        allow(suma).to receive(:mirror)
+        allow(mirror).to receive(:mirror_now)
 
         Timecop.freeze(Time.utc(2018)) do
           expect { command }
@@ -79,12 +77,7 @@ RSpec.describe RMT::CLI::Mirror do
         let(:error_messages) { /Repository '#{repository.name}' \(#{repository.friendly_id}\): #{mirroring_error}\./ }
 
         it 'raises an error' do
-          allow(RMT::Mirror).to receive(:new).and_return(rmt_mirror)
-
-          allow(rmt_mirror)
-          .to receive(:mirror)
-          .and_raise(RMT::Mirror::Exception, mirroring_error)
-          allow(rmt_mirror).to receive(:mirror_suma_product_tree)
+          allow(mirror).to receive(:mirror_now).and_raise(RMT::Mirror::Exception, mirroring_error)
 
           expect { command }
             .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
@@ -95,16 +88,18 @@ RSpec.describe RMT::CLI::Mirror do
     end
 
     context 'with repositories in alpha or beta stage' do
+      let(:argv) { ['all', '--do-not-raise-unpublished'] }
+      let(:default_repository_enabled) { false }
+
       let(:product) { create :beta }
       let(:mirrored) { create(:product, :module, :with_mirrored_repositories, base_products: [product], root_product: product, recommended: true) }
-      let(:repos) { mirrored.repositories }
-      let(:rmt_mirror) { instance_double(RMT::Mirror) }
+      let(:repositories) { mirrored.repositories }
 
       let(:mirroring_error) { 'mirroring failed' }
       let(:error_log) { /.*#{error_log_begin}\n#{error_messages}#{error_log_end}/ }
       let(:error_messages) do
         full_message = Regexp.new ''
-        repos.each do |repo|
+        repositories.each do |repo|
           repo_error = /.*\e\[31mRepository '#{repo.name}' \(#{repo.friendly_id}\): #{mirroring_error}\.\e\[0m\n.*/
           full_message = Regexp.new(full_message.source + repo_error.source)
         end
@@ -112,29 +107,20 @@ RSpec.describe RMT::CLI::Mirror do
       end
 
       context 'using --do-not-raise-unpublished flag' do
-        let(:argv) { ['all', '--do-not-raise-unpublished'] }
-
         it 'log the warning and does not raise an error' do
-          allow(RMT::Mirror).to receive(:new).and_return(rmt_mirror)
-          allow(rmt_mirror)
-            .to receive(:mirror)
-            .and_raise(RMT::Mirror::Exception, mirroring_error)
+          allow(mirror).to receive(:mirror_now).and_raise(RMT::Mirror::Exception, mirroring_error)
 
-          allow(rmt_mirror).to receive(:mirror_suma_product_tree)
           expect { command }.to output(error_log).to_stdout
         end
       end
     end
 
     context 'with repositories changing during mirroring' do
-      let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
       let!(:additional_repository) { create :repository, :with_products, mirroring_enabled: false }
-      let(:rmt_mirror) { instance_double(RMT::Mirror) }
 
       it 'mirrors additional repositories' do
-        allow(RMT::Mirror).to receive(:new).and_return(rmt_mirror)
-        allow(rmt_mirror).to receive(:mirror_suma_product_tree)
-        allow(rmt_mirror).to receive(:mirror).with(
+        allow(suma).to receive(:mirror)
+        allow(mirror).to receive(:mirror_now).with(
           repository_url: repository.external_url,
           local_path: anything,
           repo_name: anything,
@@ -145,12 +131,18 @@ RSpec.describe RMT::CLI::Mirror do
           additional_repository.save!
         end.and_return([1, 32323])
 
-        allow(rmt_mirror).to receive(:mirror).with(
+        allow(mirror).to receive(:mirror_now).with(
           repository_url: additional_repository.external_url,
           local_path: anything,
           repo_name: anything,
           auth_token: anything
         ).and_return([1, 32323])
+
+        expect(mirror).to receive(:mirror_now) do
+          # enable mirroring of the additional repository during mirroring
+          additional_repository.update!(mirroring_enabled: true)
+        end
+        expect(mirror).to receive(:mirror_now)
 
         $stdout = StringIO.new
 
@@ -174,9 +166,7 @@ RSpec.describe RMT::CLI::Mirror do
       let(:rmt_mirror) { instance_double(RMT::Mirror) }
 
       it 'handles exceptions and mirrors additional repositories' do
-        allow(RMT::Mirror).to receive(:new).and_return(rmt_mirror)
-        allow(rmt_mirror).to receive(:mirror_suma_product_tree)
-        allow(rmt_mirror).to receive(:mirror).with(
+        allow(mirror).to receive(:mirror_now).with(
           repository_url: repository.external_url,
           local_path: anything,
           repo_name: anything,
@@ -188,28 +178,70 @@ RSpec.describe RMT::CLI::Mirror do
           raise(RMT::Mirror::Exception, mirroring_error)
         end
 
-        allow(rmt_mirror).to receive(:mirror).with(
+        allow(mirror).to receive(:mirror_now).with(
           repository_url: additional_repository.external_url,
           local_path: anything,
           repo_name: anything,
           auth_token: anything
         )
+      end
 
-        expect { command }
-          .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
-          .and output(error_log).to_stdout
-          .and output(exit_with_error_message).to_stderr
+      context 'failed repository mirroring' do
+        let(:argv) { ['all', '--do-not-raise-unpublished'] }
+
+        let(:mirroring_error) { 'mirroring failed' }
+        let(:error_messages) { /Repository '#{repository.name}' \(#{repository.friendly_id}\): #{mirroring_error}\./ }
+
+        let(:mirror_repo) { instance_double(RMT::Mirror) }
+        let(:mirror_add_repo) { instance_double(RMT::Mirror) }
+
+        before do
+          allow(RMT::Mirror).to receive(:new).with(
+            repository: repository,
+            logger: anything,
+            mirroring_base_dir: anything,
+            mirror_sources: anything,
+            is_airgapped: anything
+          ).and_return(mirror_repo)
+
+          allow(RMT::Mirror).to receive(:new).with(
+            repository: additional_repository,
+            logger: anything,
+            mirroring_base_dir: anything,
+            mirror_sources: anything,
+            is_airgapped: anything
+          ).and_return(mirror_add_repo)
+        end
+
+        it 'handles exceptions and mirrors additional repositories' do
+          expect(mirror_repo).to receive(:mirror_now) do
+            # enable mirroring of the additional repository during mirroring
+            additional_repository.update!(mirroring_enabled: true)
+          end.and_raise(RMT::Mirror::Exception, mirroring_error)
+
+          expect(mirror_add_repo).to receive(:mirror_now)
+
+          expect { command }
+            .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+            .and output(error_log).to_stdout
+            .and output(exit_with_error_message).to_stderr
+        end
       end
     end
   end
 
   describe 'mirror repository' do
+    before do
+      allow(RMT::Mirror::SumaProductTree).to receive(:new)
+      allow_any_instance_of(RMT::Mirror).to receive(:mirror_now)
+    end
+
     context 'lockfiles', :with_fakefs do
       include_examples 'handles lockfile exception'
     end
 
+
     context 'when repository mirroring is enabled' do
-      let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
       let(:argv) { ['repository', repository.friendly_id] }
       let(:rmt_mirror) { instance_double(RMT::Mirror) }
 
@@ -237,7 +269,6 @@ RSpec.describe RMT::CLI::Mirror do
     end
 
     context 'when an exception is raised during mirroring' do
-      let!(:repository) { create :repository, :with_products, mirroring_enabled: true }
       let(:argv) { ['repository', repository.friendly_id] }
       let(:mirroring_error) { 'mirroring failed' }
       let(:error_messages) { /Repository '#{repository.name}' \(#{repository.friendly_id}\): #{mirroring_error}\./ }
@@ -294,9 +325,15 @@ RSpec.describe RMT::CLI::Mirror do
   end
 
   describe 'mirror product' do
+    before do
+      allow(RMT::Mirror::SumaProductTree).to receive(:new)
+      allow_any_instance_of(RMT::Mirror).to receive(:mirror_now)
+    end
+
     context 'lockfiles', :with_fakefs do
       include_examples 'handles lockfile exception'
     end
+
 
     context 'when given an ID and product has enabled repos' do
       let(:product) { create :product, :with_mirrored_repositories }
@@ -322,6 +359,8 @@ RSpec.describe RMT::CLI::Mirror do
 
         $stdout.rewind
 
+        expect(mirror).to receive(:mirror_now).exactly(product.repositories.count).times
+
         expect($stdout.gets).to match(/Total mirrored repositories: #{repos_count}/)
         expect($stdout.gets).to match(/Total transferred files: 16/)
         expect($stdout.gets).to match(/Total transferred file size: 343 MB/)
@@ -334,19 +373,18 @@ RSpec.describe RMT::CLI::Mirror do
       let(:product) { create :product, :with_mirrored_repositories }
       let(:argv) { ['product', [product.identifier, product.version, product.arch].join('/')] }
       let(:repos_count) { product.repositories.count }
-      let(:rmt_mirror) { instance_double(RMT::Mirror) }
 
       it 'mirrors repos' do
-        allow(RMT::Mirror).to receive(:new).and_return(rmt_mirror)
-
         product.repositories.each do |repo|
-          allow(rmt_mirror).to receive(:mirror).with(
+          allow(mirror).to receive(:mirror_now).with(
             repository_url: repo.external_url,
             local_path: anything,
             repo_name: anything,
             auth_token: anything
           ).and_return([repos_count, 89987332.33])
         end
+
+        expect(mirror).to receive(:mirror_now).exactly(product.repositories.count).times
 
         $stdout = StringIO.new
 
@@ -374,10 +412,7 @@ RSpec.describe RMT::CLI::Mirror do
       let(:rmt_mirror) { instance_double(RMT::Mirror) }
 
       it 'handles the exception and raises an error after mirroring all repos' do
-        allow(RMT::Mirror).to receive(:new).and_return(rmt_mirror)
-        allow(rmt_mirror)
-          .to receive(:mirror).at_least(:once)
-          .and_raise(RMT::Mirror::Exception, mirroring_error)
+        allow(mirror).to receive(:mirror_now).and_raise(RMT::Mirror::Exception, mirroring_error)
 
         expect { command }
           .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
@@ -445,8 +480,7 @@ RSpec.describe RMT::CLI::Mirror do
 
       context 'mirror product using --do-not-raise-unpublished flag' do
         it 'log the warning and does not raise an error' do
-          allow(RMT::Mirror).to receive(:new).and_return(rmt_mirror)
-          allow(rmt_mirror).to receive(:mirror_suma_product_tree)
+          allow_any_instance_of(RMT::Mirror::SumaProductTree).to receive(:mirror)
           expect { command }.to output(error_log).to_stdout
         end
       end

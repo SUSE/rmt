@@ -1,5 +1,16 @@
+Thu April 07 13:23:00 UTC 2024 - Felix Schnizlein <fschnizlein@suse.com>
+
+- Version 2.16 (unreleased):
+  * Support bzip2 compressed repositories (bsc#1222122)
+
 -------------------------------------------------------------------
 Thu Mar 07 15:33:00 UTC 2024 - Likhitha Priya <likhitha.priyad@suse.com>
+
+- Version 2.16:
+  * Add support for debian repositories using flat or nested structures
+
+-------------------------------------------------------------------
+Wed Oct 04 13:23:00 UTC 2023 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Version 2.15:
   * Moving system hardware information to systems database table to

@@ -9,10 +9,11 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       start_time = Time.current
 
       begin
-        mirror.mirror_suma_product_tree(repository_url: 'https://scc.suse.com/suma/')
+        suma_product_tree.mirror
       rescue RMT::Mirror::Exception => e
-        errors << _('Mirroring SUMA product tree failed: %{error_message}') % { error_message: e.message }
+        errors << (_('Mirroring SUMA product tree failed: %{error_message}') % { error_message: e.message })
       end
+
 
       raise RMT::CLI::Error.new(_('There are no repositories marked for mirroring.')) if Repository.only_mirroring_enabled.empty?
 
@@ -23,8 +24,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       # could lead to different Repositories sets where it's used.
       mirrored_repo_ids = []
       until (repos = Repository.only_mirroring_enabled.where.not(id: mirrored_repo_ids).load).empty?
-
-        files_count, files_size = mirror_repos!(repos)
+        files_count, files_size = mirror_repositories!(repos)
 
         downloaded_files_count += files_count
         downloaded_files_size += files_size
@@ -55,11 +55,11 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       repos = ids.map do |id|
         repo = Repository.find_by(friendly_id: id)
         errored_repos_id << id if options[:do_not_raise_unpublished] && repo.nil?
-        errors << _('Repository with ID %{repo_id} not found') % { repo_id: id } if repo.nil?
+        errors << (_('Repository with ID %{repo_id} not found') % { repo_id: id }) if repo.nil?
         repo
       end
 
-      downloaded_files_count, downloaded_files_size = mirror_repos!(repos)
+      downloaded_files_count, downloaded_files_size = mirror_repositories!(repos)
 
       finish_execution(
         start_time: start_time,
@@ -81,21 +81,21 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       repos = []
       targets.each do |target|
         products = Product.get_by_target!(target)
-        errors << _('Product for target %{target} not found') % { target: target } if products.empty?
+        errors << (_('Product for target %{target} not found') % { target: target }) if products.empty?
         products.each do |product|
           product_repos = product.repositories.only_mirroring_enabled
           if product_repos.empty?
-            errors << _('Product %{target} has no repositories enabled') % { target: target }
+            errors << (_('Product %{target} has no repositories enabled') % { target: target })
             errored_products_id << target if options[:do_not_raise_unpublished]
           end
           repos += product_repos.to_a
         end
       rescue ActiveRecord::RecordNotFound
-        errors << _('Product with ID %{target} not found') % { target: target }
+        errors << (_('Product with ID %{target} not found') % { target: target })
         errored_products_id << target if options[:do_not_raise_unpublished]
       end
 
-      downloaded_files_count, downloaded_files_size = mirror_repos!(repos)
+      downloaded_files_count, downloaded_files_size = mirror_repositories!(repos)
 
       finish_execution(
         start_time: start_time,
@@ -106,10 +106,10 @@ class RMT::CLI::Mirror < RMT::CLI::Base
     end
   end
 
-  protected
+  private
 
-  def mirror
-    @mirror ||= RMT::Mirror.new(logger: logger, mirror_src: RMT::Config.mirror_src_files?)
+  def suma_product_tree
+    RMT::Mirror::SumaProductTree.new(logger: logger, mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR)
   end
 
   def errors
@@ -153,30 +153,33 @@ class RMT::CLI::Mirror < RMT::CLI::Base
     true
   end
 
-  def mirror_repos!(repos)
+  def mirror_repositories!(repos)
     downloaded_files_count = 0
     downloaded_files_size = 0
 
     repos.compact.each do |repo|
       unless repo.mirroring_enabled
-        errors << _('Mirroring of repository with ID %{repo_id} is not enabled') % { repo_id: repo.friendly_id }
+        errors << (_('Mirroring of repository with ID %{repo_id} is not enabled') % { repo_id: repo.friendly_id })
         next
       end
 
-      files_count, files_size = mirror.mirror(
-        repository_url: repo.external_url,
-        local_path: Repository.make_local_path(repo.external_url),
-        auth_token: repo.auth_token,
-        repo_name: repo.name
-      )
+      configuration = {
+        repository: repo,
+        logger: logger,
+        mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR,
+        mirror_sources: RMT::Config.mirror_src_files?,
+        is_airgapped: false
+      }
+
+      files_count, files_size = RMT::Mirror.new(**configuration).mirror_now
       repo.refresh_timestamp!
 
       downloaded_files_count += files_count if files_count
       downloaded_files_size += files_size if files_size
     rescue RMT::Mirror::Exception => e
-      errors << _("Repository '%{repo_name}' (%{repo_id}): %{error_message}") % {
+      errors << (_("Repository '%{repo_name}' (%{repo_id}): %{error_message}") % {
         repo_id: repo.friendly_id, repo_name: repo.name, error_message: e.message
-      }
+      })
       errored_repos_id << repo.id if options[:do_not_raise_unpublished]
     end
 
