@@ -23,6 +23,8 @@ class RMT::Mirror::Base
   def mirror
     logger.info _('Mirroring repository %{repo} to %{dir}') % { repo: repository.name || repository_url, dir: repository_path }
     mirror_implementation
+
+    [downloader.downloaded_files_count, downloader.downloaded_files_size]
   rescue RMT::Mirror::Exception, RMT::Downloader::Exception => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring repository: %{error}' % { error: e.message }))
   ensure
