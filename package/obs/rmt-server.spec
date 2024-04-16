@@ -29,8 +29,12 @@
 %define rb_build_ruby_abis    %{rb_default_ruby_abi}
 %define ruby_version          %{rb_default_ruby_suffix}
 
+# disabling dwz for now, as it is not available in SLE15
+# related bugzilla https://bugzilla.suse.com/show_bug.cgi?id=1180984
+%undefine _find_debuginfo_dwz_opts
+
 Name:           rmt-server
-Version:        2.15
+Version:        2.16
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -49,6 +53,7 @@ BuildRequires:  gcc
 BuildRequires:  libcurl-devel
 BuildRequires:  libffi-devel
 BuildRequires:  libmysqlclient-devel
+BuildRequires:  sqlite-devel
 BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
 BuildRequires:  pkgconfig(systemd)
@@ -65,6 +70,7 @@ Requires(post): util-linux
 Conflicts:      yast2-rmt < 1.0.3
 Recommends:     rmt-server-config
 Recommends:     yast2-rmt >= 1.3.0
+Provides:       user(%{rmt_user})
 # Does not build for i586 and s390 and is not supported on those architectures
 ExcludeArch:    %{ix86} s390
 %{systemd_ordering}

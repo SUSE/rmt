@@ -3,6 +3,11 @@ class RMT::Lockfile
 
   class << self
     def lock(lock_name = nil)
+      if ActiveRecord::Base.connection.adapter_name != 'Mysql2'
+        yield
+        return
+      end
+
       lock_name = ['rmt-cli', lock_name].compact.join('-')
 
       is_lock_obtained = obtain_lock(lock_name)

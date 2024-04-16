@@ -1,6 +1,7 @@
 require 'rmt/lockfile'
 require 'rmt/cli/decorators'
 require 'etc'
+require 'mysql2'
 
 class RMT::CLI::Base < Thor
 
@@ -116,8 +117,6 @@ class RMT::CLI::Base < Thor
     @logger
   end
 
-  private
-
   def needs_path(path, writable: false)
     # expand the path to make it easier to work with
     path = File.expand_path(path)
@@ -135,6 +134,8 @@ class RMT::CLI::Base < Thor
 
     path
   end
+
+  private
 
   # Allows to have any type of multi input that you want:
   #

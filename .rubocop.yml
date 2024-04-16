@@ -47,3 +47,14 @@ Style/FormatStringToken:
 
 Style/OpenStructUse:
   Enabled: false
+
+RSpec/MessageChain:
+  Enabled: false
+
+# We disable this check since we are stubing class methods
+# that are already tested in their respective tests.
+# This way we circumvent tight coupling between tests and
+# implementation.
+# Count: 107 offenses
+RSpec/SubjectStub:
+  Enabled: false
