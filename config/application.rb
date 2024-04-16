@@ -59,7 +59,7 @@ module RMT
     config.eager_load_paths << Rails.root.join('app', 'validators')
 
     # :nocov:
-    if Rails.env.production?
+    if defined?(Registry::Engine) && Rails.env.production?
       # registry config needed
       config.autoloader = :classic
       config.registry_private_key = OpenSSL::PKey::RSA.new(

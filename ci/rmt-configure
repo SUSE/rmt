@@ -77,7 +77,7 @@ groupend
 group "create /etc/rmt/ssl/rmt-server.key"
   echo "create /etc/rmt/ssl/rmt-server.key"
   mkdir -p /etc/rmt/ssl/
-  openssl genrsa -out /etc/rmt/ssk/rmt-key.key 2048
+  openssl genrsa -out /etc/rmt/ssl/rmt-key.key 2048
 groupdend
 
 group "create /etc/rmt/access_policies.yml"
