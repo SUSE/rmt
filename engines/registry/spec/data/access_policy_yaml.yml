@@ -1,3 +1,4 @@
+---
 free:
 - "*"
 - bci/**
@@ -22,3 +23,4 @@ free:
 - suse/sles/**
 - suse/vmdp/**
 - trento/**
+72AAA: suse/**

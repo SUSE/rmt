@@ -1,3 +1,4 @@
+require 'yaml'
 require 'spec_helper'
 
 RSpec.describe AccessScope, type: :model do
@@ -105,7 +106,24 @@ RSpec.describe AccessScope, type: :model do
   end
 
   describe ".granted['actions']" do
-    let(:system) { create(:system) }
+    let(:product1) do
+      product = FactoryBot.create(:product, :with_mirrored_repositories)
+      product.repositories.where(enabled: false).update(mirroring_enabled: false)
+      product
+    end
+    let(:product2) do
+      product = FactoryBot.create(:product, :with_mirrored_repositories)
+      product.repositories.where(enabled: false).update(mirroring_enabled: false)
+      product
+    end
+    let(:system) do
+      system = FactoryBot.create(:system)
+      system.activations << [
+        FactoryBot.create(:activation, system: system, service: product1.service),
+        FactoryBot.create(:activation, system: system, service: product2.service)
+      ]
+      system
+    end
     let(:client) do
       double( # rubocop:disable RSpec/VerifiedDoubles
         :registryclient,
@@ -138,6 +156,10 @@ RSpec.describe AccessScope, type: :model do
         end
 
         it 'returns default auth actions (no free repos included)' do
+          yaml_string = access_policy_content
+          data = YAML.safe_load yaml_string
+          data[product1.product_class] = 'suse/**'
+          File.write('engines/registry/spec/data/access_policy_yaml.yml', YAML.dump(data))
           allow_any_instance_of(RegistryCatalogService).to receive(:repos).and_return(['suse/sles/super_repo'])
           allow(File).to receive(:read).and_return(access_policy_content)
           possible_access = access_scope.granted(client: client)
@@ -145,7 +167,7 @@ RSpec.describe AccessScope, type: :model do
           expect(possible_access).to eq(
             {
               'type' => 'a',
-              'actions' => [],
+              'actions' => ['pull'],
               'class' => nil,
               'name' => 'suse/sles/*'
             }
