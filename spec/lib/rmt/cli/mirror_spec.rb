@@ -31,7 +31,6 @@ RSpec.describe RMT::CLI::Mirror do
       include_examples 'handles lockfile exception'
     end
 
-
     context 'suma product tree mirror with exception' do
       let(:suma_error) { 'mirroring SUMA failed' }
       let(:error_messages) { "Mirroring SUMA product tree failed: #{suma_error}." }

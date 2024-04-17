@@ -32,6 +32,9 @@ describe RMT::Mirror::Base do
 
   describe '#mirror' do
     it 'mirrors repositories and licenses' do
+      allow(downloader).to receive(:downloaded_files_count)
+      allow(downloader).to receive(:downloaded_files_size)
+
       expect(base).to receive(:mirror_implementation)
       expect(base).to receive(:cleanup_temp_dirs)
       base.mirror
