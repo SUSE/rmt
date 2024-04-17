@@ -114,10 +114,19 @@ RSpec.describe RMT::CLI::Mirror do
         expect(mirror).to receive(:mirror_now) do
           # enable mirroring of the additional repository during mirroring
           additional_repository.update!(mirroring_enabled: true)
-        end
-        expect(mirror).to receive(:mirror_now)
+        end.and_return([2, 98798798798])
 
-        expect { command }.to output(/\e\[32mMirroring complete.\e\[0m/).to_stdout
+        $stdout = StringIO.new
+
+        command
+
+        $stdout.rewind
+
+        expect($stdout.gets).to match(/Total mirrored repositories: 2/)
+        expect($stdout.gets).to match(/Total transferred files: 2/)
+        expect($stdout.gets).to match(/Total transferred file size: 92 GB/)
+        expect($stdout.gets).to match(/Total Mirror Time: 00:00:00/)
+        expect($stdout.gets).to match(/Mirroring complete./)
       end
 
       context 'failed repository mirroring' do
@@ -179,7 +188,17 @@ RSpec.describe RMT::CLI::Mirror do
       let(:argv) { ['repository', repository.friendly_id] }
 
       it 'mirrors the repository' do
-        expect { command }.to output(/\e\[32mMirroring complete.\e\[0m/).to_stdout
+        $stdout = StringIO.new
+
+        command
+
+        $stdout.rewind
+
+        expect($stdout.gets).to match(/Total mirrored repositories: 1/)
+        expect($stdout.gets).to match(/Total transferred files: 0/)
+        expect($stdout.gets).to match(/Total transferred file size: 0 Bytes/)
+        expect($stdout.gets).to match(/Total Mirror Time: 00:00:00/)
+        expect($stdout.gets).to match(/Mirroring complete./)
       end
     end
 
@@ -263,7 +282,17 @@ RSpec.describe RMT::CLI::Mirror do
       it 'mirrors repos' do
         expect(mirror).to receive(:mirror_now).exactly(product.repositories.count).times
 
-        expect { command }.to output(/\e\[32mMirroring complete.\e\[0m/).to_stdout
+        $stdout = StringIO.new
+
+        command
+
+        $stdout.rewind
+
+        expect($stdout.gets).to match(/Total mirrored repositories: 4/)
+        expect($stdout.gets).to match(/Total transferred files: 0/)
+        expect($stdout.gets).to match(/Total transferred file size: 0 Bytes/)
+        expect($stdout.gets).to match(/Total Mirror Time: 00:00:00/)
+        expect($stdout.gets).to match(/Mirroring complete./)
       end
     end
 
