@@ -47,8 +47,8 @@ describe RMT::Mirror::Debian do
       expect(debian).to receive(:create_repository_path)
       expect(debian).to receive(:create_temp_dir)
       expect(debian).to receive(:mirror_packages).with([packages_ref])
-      expect(debian).to receive(:copy_directory_content).with(
-        source: File.join(temp, '*'),
+      expect(debian).to receive(:move_files).with(
+        glob: File.join(temp, '*'),
         destination: debian.repository_path
       )
       debian.mirror_implementation
@@ -59,7 +59,7 @@ describe RMT::Mirror::Debian do
       expect(debian).to receive(:mirror_metadata)
       allow(debian).to receive(:mirror_packages)
       expect(debian).to receive(:create_repository_path)
-      allow(debian).to receive(:copy_directory_content)
+      allow(debian).to receive(:move_files)
       debian.mirror_implementation
     end
 
@@ -68,7 +68,7 @@ describe RMT::Mirror::Debian do
       allow(debian).to receive(:mirror_metadata).and_return([])
       expect(debian).to receive(:mirror_packages)
       expect(debian).to receive(:create_repository_path)
-      allow(debian).to receive(:copy_directory_content)
+      allow(debian).to receive(:move_files)
       debian.mirror_implementation
     end
 
@@ -77,7 +77,7 @@ describe RMT::Mirror::Debian do
       allow(debian).to receive(:mirror_metadata).and_return([])
       allow(debian).to receive(:mirror_packages)
       expect(debian).to receive(:create_repository_path)
-      expect(debian).to receive(:copy_directory_content)
+      expect(debian).to receive(:move_files)
       debian.mirror_implementation
     end
   end

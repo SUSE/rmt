@@ -13,8 +13,9 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
     sources = mirror_metadata
     mirror_packages(sources)
 
+    # We can not simply move the whole directory here, since there a
     glob_metadata = File.join(temp(:metadata), '*')
-    copy_directory_content(source: glob_metadata, destination: repository_path)
+    move_files(glob: glob_metadata, destination: repository_path)
   end
 
   def mirror_metadata
