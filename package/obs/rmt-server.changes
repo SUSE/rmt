@@ -1,3 +1,9 @@
+Thu April 18 09:27:00 UTC 2024 - Adnilson Delgado <adnilson.delgado@suse.com>
+
+- Version 2.16 :
+  * Improve CLI mirroring summary information by adding the mirror repositories, the file count and size. This fixes issue #702.
+
+-------------------------------------------------------------------
 Thu April 11 15:22:00 UTC 2024 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Version 2.16 :
@@ -73,7 +79,7 @@ Mon Mar  6 09:41:32 UTC 2023 - Felix Schnizlein <fschnizlein@suse.com>
 -------------------------------------------------------------------
 Tue Jan 24 22:03:53 UTC 2023 - Thomas Schmidt <tschmidt@suse.com>
 
-- Adding -f to the file move command when moving the mirrored directory to its final location (bsc#1203171) 
+- Adding -f to the file move command when moving the mirrored directory to its final location (bsc#1203171)
 
 -------------------------------------------------------------------
 Wed Dec 21 14:07:21 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>
