@@ -1,5 +1,13 @@
+Thu April 11 15:22:00 UTC 2024 - Felix Schnizlein <fschnizlein@suse.com>
+
+- Version 2.16 :
+  * Support bzip2 compressed repositories (bsc#1222122)
+  * Remove automatic backup generation for repodata within repository. .old_repodata
+    directories are obsolete and can be removed savely.
+  * Add support for debian repositories using flat or nested structures (jsc#PED-3684)
+
 -------------------------------------------------------------------
-Thu Mar 07 15:33:00 UTC 2024 - Likhitha Priya <likhitha.priyad@suse.com>
+Wed Oct 04 13:23:00 UTC 2023 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Version 2.15:
   * Moving system hardware information to systems database table to
