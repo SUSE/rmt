@@ -298,15 +298,6 @@ The `web_server` section lets you tune the performance of your RMT server.
     Acceptable values: Integer greater than or equal to 1.
 
 
-**Container registry settings**
-
-The `registry` setting lets you adjust behavior of the container registry integration.
-
-  * `token_expiration` setting:
-    Specifies the timeout, from issuance, of the authentication/authorization token used by container clients (e.g. podman, docker).
-    Default value is 8 hours.
-    Acceptable values: Integer greater than 1, in seconds.
-
 **Settings for accessing SUSE repositories**
 
 The `scc` section contains your organization credentials for mirroring SUSE repositories from SUSE Customer Center.
