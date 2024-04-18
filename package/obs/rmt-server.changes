@@ -1,3 +1,10 @@
+-------------------------------------------------------------------
+Thu Apr 18 01:04:21 UTC 2024 - James Mason <jmason@suse.com>
+
+- Add registry section to rmt.yml config.
+  - registry JWT expiration defaults to 8 hours from issuance. 
+
+-------------------------------------------------------------------
 Thu April 11 15:22:00 UTC 2024 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Version 2.16 :
