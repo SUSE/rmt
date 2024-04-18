@@ -20,7 +20,7 @@ class AccessToken
       hash['iss']    = 'RMT' # "matching issuer in registry auth token config"
       hash['sub']    = @account
       hash['aud']    = @service
-      hash['exp']    = Time.now.getlocal.to_i + (5 * 60) # expires at
+      hash['exp']    = Time.now.getlocal.to_i + Settings[:registry].token_expiration # expires at
       hash['nbf']    = Time.now.getlocal.to_i # not before
       hash['iat']    = Time.now.getlocal.to_i # issued at
       hash['jti']    = Base64.urlsafe_encode64(SecureRandom.uuid, padding: false)
