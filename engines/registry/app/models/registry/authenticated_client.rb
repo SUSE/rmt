@@ -16,7 +16,8 @@ class Registry::AuthenticatedClient
 
   def authenticate_by_system_credentials(login, password)
     @systems = System.get_by_credentials(login, password)
-    if @systems.any? { |system| system.last_seen_at > Settings[:registry].token_expiration.seconds.ago }
+    expiration_value = Settings[:registry].try(:token_expiration) || 8.hours.to_i
+    if @systems.any? { |system| system.last_seen_at > expiration_value.seconds.ago }
       @account = login
       @auth_strategy = :system_credentials
     end
