@@ -12,7 +12,7 @@ module Registry
       end
 
       context 'login request with valid credentials' do
-        let(:system) { create(:system) }
+        let(:system) { create(:system, :with_last_seen_at) }
         let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
 
         it 'succeeds with login + password from secrets' do
@@ -21,10 +21,21 @@ module Registry
           expect(response).to have_http_status(:ok)
         end
       end
+
+      context 'expired login request' do
+        let(:system) { create(:system, last_seen_at: Settings[:registry].token_expiration.seconds.ago) }
+        let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
+
+        it 'fails if system has not been seen lately' do
+          get('/api/registry/authorize', headers: auth_headers)
+
+          expect(response).to have_http_status(:unauthorized)
+        end
+      end
     end
 
     describe '#catalog without access token' do
-      let(:system) { create(:system) }
+      let(:system) { create(:system, :with_last_seen_at) }
       let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
 
       it 'returns 401' do
@@ -44,7 +55,7 @@ module Registry
     end
 
     describe '#catalog access' do
-      let(:system) { create(:system) }
+      let(:system) { create(:system, :with_last_seen_at) }
       let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
       let(:auth_headers_token) { {} }
 
