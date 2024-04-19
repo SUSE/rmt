@@ -1,3 +1,5 @@
+require 'fileutils'
+
 module Registry
   describe RegistryController, type: :request do
     describe '#authenticate' do
@@ -16,9 +18,12 @@ module Registry
         let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
 
         it 'succeeds with login + password from secrets' do
+          FileUtils.touch(Rails.root.join('foo'))
+          allow(Rails.root).to receive(:join).and_return('foo')
           get('/api/registry/authorize', headers: auth_headers)
 
           expect(response).to have_http_status(:ok)
+          File.delete(Rails.root.join('foo'))
         end
       end
 
@@ -45,6 +50,8 @@ module Registry
       end
 
       it 'with a token that has no access to catalog' do
+        allow(Rails.root).to receive(:join).and_return('foo')
+
         get('/api/registry/authorize', params: { scope: '' }, headers: auth_headers)
 
         request.headers.merge({ 'HTTP_AUTHORIZATION' => "Bearer #{json_response[:token]}" })
@@ -87,6 +94,9 @@ module Registry
       context 'with a valid token' do
         it 'has catalog access' do
           allow(File).to receive(:read).and_return(access_policy_content)
+          FileUtils.touch(Rails.root.join('foo'))
+          allow(Rails.root).to receive(:join).and_return('foo')
+
           get(
             '/api/registry/authorize',
             params: { service: 'SUSE Linux OCI Registry', scope: 'registry:catalog:*' },
@@ -97,11 +107,13 @@ module Registry
           get('/api/registry/catalog', headers: auth_headers_token)
 
           expect(response).to have_http_status(:ok)
+          File.delete(Rails.root.join('foo'))
         end
       end
 
       context 'when token is invalid' do
         it 'raise an exception' do
+          allow(Rails.root).to receive(:join).and_return('foo')
           get(
             '/api/registry/authorize',
             params: { service: 'SUSE Linux OCI Registry', scope: 'registry:catalog:*' },
