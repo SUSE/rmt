@@ -54,9 +54,11 @@ module Registry
       # skip authentication if this is not a login request
       return unless request.authorization
 
+      @remote_ip = request.remote_ip
+
       authenticate_or_request_with_http_basic('SUSE Registry Authentication') do |login, password|
         begin
-          @client = Registry::AuthenticatedClient.new(login, password)
+          @client = Registry::AuthenticatedClient.new(login, password, @remote_ip)
         rescue StandardError
           logger.info _('Could not find system with login \"%{login}\" and password \"%{password}\"') %
             { login: login, password: password }
