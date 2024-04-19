@@ -15,17 +15,18 @@ class Registry::AuthenticatedClient
   private
 
   def authenticate_by_system_credentials(login, password, remote_ip)
-    @systems = System.get_by_credentials(login, password)
     expiration_value = Settings[:registry].try(:token_expiration) || 8.hours.to_i
     cache_key = [remote_ip, login].join('-')
     registry_cache_path = Rails.root.join('tmp', 'registry', 'cache', cache_key)
     cache_created = File.exist?(registry_cache_path)
-    time_has_not_expired = @systems.any? { |system| system.last_seen_at > expiration_value.seconds.ago }
-    if time_has_not_expired && cache_created
-      @account = login
-      @auth_strategy = :system_credentials
+    if cache_created
+      is_registry_cache_active = File.ctime(registry_cache_path) > expiration_value.seconds.ago
+      if is_registry_cache_active
+        @account = login
+        @auth_strategy = :system_credentials
+      end
+      File.delete(registry_cache_path) unless is_registry_cache_active
     end
-    File.delete(registry_cache_path) unless time_has_not_expired
     @auth_strategy
   end
 end

@@ -12,11 +12,18 @@ module Registry
         def handle_cache
           # get request header
           if request.headers['X-Registry']
-            registry_cache_path = Rails.root.join('tmp/registry/cache')
-            Dir.mkdir(registry_cache_path) unless Dir.exist?(registry_cache_path)
+            # creatte cache directory
+            registry_cache_dir_path = Rails.root.join('tmp/registry/cache')
+            FileUtils.mkdir_p(registry_cache_dir_path)
 
+            # update cache if expired
+            # if file exists and exists longer than the cache expiration time
+            # it needs to be updated
             cache_key = [request.remote_ip, @system.login].join('-')
-            FileUtils.touch File.join(registry_cache_path, cache_key)
+            registry_cache_path = File.join(registry_cache_dir_path, cache_key)
+            expiration_value = Settings[:registry].try(:token_expiration) || 8.hours.to_i
+            cache_is_valid = File.exist?(registry_cache_path) && File.ctime(registry_cache_path) > expiration_value.seconds.ago
+            FileUtils.touch(registry_cache_path) unless cache_is_valid
           end
         end
       end
