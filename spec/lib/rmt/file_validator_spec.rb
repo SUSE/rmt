@@ -238,30 +238,6 @@ RSpec.describe RMT::FileValidator do
     end
   end
 
-  RSpec::Matchers.define :contain_records_like do |expected|
-    match do |actual|
-      record_struct = Struct.new(:local_path, :checksum, :checksum_type, :size)
-
-      @actual = actual.map { |r| record_struct.new(r.local_path, r.checksum, r.checksum_type, r.size) }
-      @expected = expected.map { |r| record_struct.new(r.local_path, r.checksum, r.checksum_type, r.size) }
-
-      actual.all? do |record|
-        expected.any? do |object|
-          record.local_path == object.local_path &&
-            record.checksum == object.checksum &&
-            record.checksum_type == object.checksum_type &&
-            record.size == object.size
-        end
-      end
-    end
-
-    failure_message do |actual|
-      "expected that collection #{actual} would contain #{expected}"
-    end
-
-    diffable
-  end
-
   describe '#find_valid_files_by_checksum' do
     let(:valid_file) do
       fixture_path = file_fixture('dummy_product/product/apples-0.1-0.x86_64.rpm').to_s

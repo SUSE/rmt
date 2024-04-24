@@ -1,3 +1,5 @@
+require 'repomd_parser'
+
 class RMT::CLI::Clean < RMT::CLI::Base
   DANGLING_FILE_MINIMUM_AGE = 48 * 60 * 60 # 2 days (in seconds)
   CleanedFile = Struct.new(:path, :file_size, :db_entries, :db_entries_count,
@@ -143,7 +145,7 @@ class RMT::CLI::Clean < RMT::CLI::Base
   end
 
   def parse_packages_data(repomd_file, repo_base_dir)
-    metadata_files = RepomdParser::RepomdXmlParser.new(repomd_file).parse
+    metadata_files = RepomdParser::RepomdXmlParser.new.parse_file(repomd_file)
 
     xml_parsers = { deltainfo: RepomdParser::DeltainfoXmlParser,
                     primary: RepomdParser::PrimaryXmlParser }
@@ -152,7 +154,7 @@ class RMT::CLI::Clean < RMT::CLI::Base
       next acc unless xml_parsers.key?(metadata.type)
 
       metadata_path = File.join(repo_base_dir, metadata.location)
-      acc << xml_parsers[metadata.type].new(metadata_path).parse
+      acc << xml_parsers[metadata.type].new.parse_file(metadata_path)
     end.flatten
   end
 
