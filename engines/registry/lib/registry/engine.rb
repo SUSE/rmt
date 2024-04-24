@@ -11,8 +11,8 @@ module Registry
 
         def handle_cache
           # get request header
-          if request.headers['X-Registry']
-            # creatte cache directory
+          if request.headers['X-Refresh-Registry-Creds'] && ZypperAuth.verify_instance(request, logger, @system)
+            # create cache directory
             registry_cache_dir_path = Rails.root.join('tmp/registry/cache')
             FileUtils.mkdir_p(registry_cache_dir_path)
 
