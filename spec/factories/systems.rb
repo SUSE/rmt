@@ -65,5 +65,11 @@ FactoryBot.define do
     trait :with_system_token do
       sequence(:system_token) { |n| "00000000-0000-4000-9000-#{n.to_s.rjust(12, '0')}" }
     end
+
+    trait :with_system_uptimes do
+      after :create do |system, _|
+        create(:system_uptime, system: system)
+      end
+    end
   end
 end
