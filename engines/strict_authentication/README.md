@@ -1,26 +1,8 @@
 # StrictAuthentication
-Short description and motivation.
 
-## Usage
-How to use my plugin.
+This engine enables strict authentication for accessing the service.
+It checks if the authenticated system has the product the service belongs to activated.
 
-## Installation
-Add this line to your application's Gemfile:
+Works only in conjunction with the `zypper_auth` engine, that injects the `plugin:/susecloud` prefix into the service + repo urls, so that zypper includes the system credentials as authorization headers.
 
-```ruby
-gem 'strict_authentication'
-```
-
-And then execute:
-```bash
-$ bundle
-```
-
-Or install it yourself as:
-```bash
-$ gem install strict_authentication
-```
-
-## Contributing
-Contribution directions go here.
 
