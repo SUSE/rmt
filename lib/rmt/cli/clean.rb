@@ -1,3 +1,5 @@
+require 'repomd_parser'
+
 class RMT::CLI::Clean < RMT::CLI::Base
   DANGLING_FILE_MINIMUM_AGE = 48 * 60 * 60 # 2 days (in seconds)
   CleanedFile = Struct.new(:path, :file_size, :db_entries, :db_entries_count,

@@ -31,6 +31,7 @@ From SUSE Linux Enterprise Server 15 onward, only RMT and SUMA are available.
 |Air gap sync/mirroring for secure environments|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |NTLM Proxy support|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Custom repositories|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+|Debian repository mirroring|:x:|:heavy_check_mark:<sup>[3](#rdeb_support)</sup>|:x:|
 |YaST installation wizard|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Management wizard|:heavy_check_mark: (Yast)|:x:|:heavy_check_mark: (SUMA WebUI)|
 |Client management|:heavy_check_mark:|:x:|:heavy_check_mark:|
@@ -53,4 +54,5 @@ From SUSE Linux Enterprise Server 15 onward, only RMT and SUMA are available.
 Some modules are not required, as they provide additional functionality.
 RMT fully supports migrations into and within SLE 15, so it will only add the minimal required modules.
 SMT does not fully support these migrations, and it will enable all available modules on the system.\
-<a name="self-support">2</a>: Only available with [self-support](https://www.suse.com/support/self-support/).
+<a name="self-support">2</a>: Only available with [self-support](https://www.suse.com/support/self-support/). \
+<a name="rdeb_support">3</a>: This feature is availble versions 2.16 and above. Some debian repositories might not work due to checksum issue caused by inconsistent packaging.
