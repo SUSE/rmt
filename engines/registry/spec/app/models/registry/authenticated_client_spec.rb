@@ -24,7 +24,7 @@ describe Registry::AuthenticatedClient do
     end
 
     context 'with system not seen recently' do
-      let(:system) { create(:system, last_seen_at: Settings[:registry].token_expiration.seconds.ago) }
+      let(:system) { create(:system, last_seen_at: 9.hours.ago) }
 
       context 'even with valid credentials' do
         subject(:client) { described_class.new(system.login, system.password) }

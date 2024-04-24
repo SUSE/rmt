@@ -23,7 +23,7 @@ module Registry
       end
 
       context 'expired login request' do
-        let(:system) { create(:system, last_seen_at: Settings[:registry].token_expiration.seconds.ago) }
+        let(:system) { create(:system, last_seen_at: 9.hours.ago) }
         let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
 
         it 'fails if system has not been seen lately' do

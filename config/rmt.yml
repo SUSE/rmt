@@ -47,6 +47,3 @@ web_server:
 
 connect_api:
   disable_system_tokens: false
-
-registry:
-  token_expiration: 28800 # 8.hours.to_i
