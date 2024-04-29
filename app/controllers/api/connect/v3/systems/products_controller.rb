@@ -111,20 +111,8 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     return activation if @system.proxy_byos
 
     if @subscription.present?
-      if @subscription.expired?
-        error = N_('The subscription with the provided Registration Code is expired')
-        raise ActionController::TranslatedError.new(error)
-      end
-
-      unless @product.free
-        unless @subscription.products.include?(@product)
-          error = N_("The subscription with the provided Registration Code does not include the requested product '%s'")
-          raise ActionController::TranslatedError.new(error, @product.friendly_name)
-        end
-
-        activation.subscription = @subscription
-        activation.save
-      end
+      activation.subscription = @subscription
+      activation.save
     end
 
     activation
@@ -141,8 +129,20 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
       unless @subscription
         raise ActionController::TranslatedError.new(N_('No subscription with this Registration Code found'))
       end
+
+      if @subscription.expired?
+        error = N_('The subscription with the provided Registration Code is expired')
+        raise ActionController::TranslatedError.new(error)
+      end
+
+      unless @product.free
+        unless @subscription.products.include?(@product)
+          error = N_("The subscription with the provided Registration Code does not include the requested product '%s'")
+          raise ActionController::TranslatedError.new(error, @product.friendly_name)
+        end
+      end
     else
-      @system.activations.where(service_id: @product.service.id).first&.subscription
+      @subscription = @system.activations.where(service_id: @product.service.id).first&.subscription
     end
   end
 
