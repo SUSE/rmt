@@ -1,17 +1,13 @@
-Thu April 18 09:27:00 UTC 2024 - Adnilson Delgado <adnilson.delgado@suse.com>
+-------------------------------------------------------------------
+Mon Apr 29 12:47:33 UTC 2024 - Natnael Getahun <natnael.getahun@suse.com>
 
 - Version 2.17 :
-  * Improve CLI mirroring summary information by adding the mirror repositories, the file count and size. This fixes issue #702.
-
--------------------------------------------------------------------
-Thu April 17 15:22:00 UTC 2024 - Yogalakshmi Arunachalam <yarunachalam@suse.com>
-
-- Adding Uptime tracking capability
-  * Uptime data is included in the data sent to SCC via RMT
-  * https://jira.suse.com/browse/PED-7982
-  * https://jira.suse.com/browse/PED-8018
-
--------------------------------------------------------------------
+  * Improve CLI mirroring summary information by adding the mirror repositories, 
+    the file count and size. This fixes issue #702.
+  * Ensure subscriptions are activated after migration (bsc#1220109)
+  * Adding Uptime tracking capability (PED-7982,PED-8018)
+    
+--------------------------------------------------------------------
 Thu April 11 15:22:00 UTC 2024 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Version 2.16 :
