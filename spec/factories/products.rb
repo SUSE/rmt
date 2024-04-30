@@ -179,12 +179,17 @@ FactoryBot.define do
     trait :activated do
       transient do
         system { nil }
+        subscription { nil }
       end
 
       after :create do |product, evaluator|
         if evaluator.system
           unless evaluator.system.activations.map(&:product).flatten.include?(product)
-            evaluator.system.activations << FactoryBot.create(:activation, system: evaluator.system, service: product.service)
+            evaluator.system.activations << FactoryBot.create(:activation,
+                                            system: evaluator.system,
+                                            service: product.service,
+                                            subscription: evaluator.subscription)
+
           end
         else
           fail 'activated requires a system'

@@ -72,7 +72,7 @@ shared_examples 'product must have mirrored repositories' do
     subject { response }
 
     let(:product) { FactoryBot.create(:product, :with_not_mirrored_repositories) }
-    let(:missing_repo_ids) { (product.repositories.only_enabled - product.repositories.only_enabled.only_fully_mirrored).pluck(:id).join(', ') }
+    let(:missing_repo_ids) { (product.repositories.only_enabled - product.repositories.only_enabled.only_fully_mirrored).pluck(:scc_id).join(', ') }
     # rubocop:disable Layout/LineLength
     let(:error_json) do
       {

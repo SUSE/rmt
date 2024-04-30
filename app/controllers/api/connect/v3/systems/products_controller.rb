@@ -93,7 +93,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
     mandatory_repos = @product.repositories.only_enabled
     mirrored_repos = @product.repositories.only_enabled.only_fully_mirrored
-    missing_repo_ids = (mandatory_repos - mirrored_repos).pluck(:id).join(', ')
+    missing_repo_ids = (mandatory_repos - mirrored_repos).pluck(:scc_id).join(', ')
 
     unless mandatory_repos.size == mirrored_repos.size
       # rubocop:disable Layout/LineLength
@@ -135,14 +135,13 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
         raise ActionController::TranslatedError.new(error)
       end
 
-      unless @product.free
-        unless @subscription.products.include?(@product)
-          error = N_("The subscription with the provided Registration Code does not include the requested product '%s'")
-          raise ActionController::TranslatedError.new(error, @product.friendly_name)
-        end
+      if !@product.free && @subscription.products.exclude?(@product)
+        error = N_("The subscription with the provided Registration Code does not include the requested product '%s'")
+        raise ActionController::TranslatedError.new(error, @product.friendly_name)
       end
     else
-      @subscription = @system.activations.where(service_id: @product.service.id).first&.subscription
+      subscription_id = @system.activations.includes(:subscription).where.not(subscription_id: nil).pluck(:subscription_id).uniq.first
+      @subscription = Subscription.find(subscription_id) if subscription_id
     end
   end
 
