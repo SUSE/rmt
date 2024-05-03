@@ -9,13 +9,8 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
         if dthours.count == 2
           online_day = online_at.split(':')[0]
           online_hours = online_at.split(':')[1]
-          system_uptime = @system.system_uptimes.find_by(online_at_day: online_day)
-
-          if system_uptime
-            system_uptime.update!(online_at_hours: online_hours)
-          else
-            SystemUptime.create!(system_id: @system.id, online_at_day: online_day, online_at_hours: online_hours)
-          end
+          @system.update_system_uptime(day: online_day,
+                                       hours: online_hours)
         else
           logger.error(N_("Uptime data is malformed '%s'") % online_at)
         end
