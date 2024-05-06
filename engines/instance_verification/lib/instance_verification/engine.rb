@@ -1,7 +1,7 @@
 require 'fileutils'
 
 module InstanceVerification
-  def self.update_cache(remote_ip, system_login, product_id, is_byos: false, registry: false)
+  def self.update_cache(remote_ip, system_login, product_id, is_byos: false, registry: false) # rubocop:disable Lint/UnusedMethodArgument
     # TODO: BYOS scenario
     # to be addressed on a different PR
     cache_config_data = InstanceVerification.cache_config

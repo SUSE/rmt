@@ -18,6 +18,7 @@ describe Registry::AuthenticatedClient do
       context 'with system credentials' do
         before { allow_any_instance_of(described_class).to receive(:cache_file_exist?).and_return(true) }
 
+        # rubocop:disable RSpec/NestedGroups
         context 'with valid credentials' do
           subject(:client) { described_class.new(system.login, system.password, '127.0.0.1') }
 
@@ -34,6 +35,7 @@ describe Registry::AuthenticatedClient do
             expect { client }.to raise_error(Registry::Exceptions::InvalidCredentials)
           end
         end
+        # rubocop:enable RSpec/NestedGroups
       end
     end
   end
