@@ -1,16 +1,18 @@
 require 'fileutils'
 
 module InstanceVerification
-  def self.update_cache(remote_ip, system_login, product_id, _is_byos)
+  def self.update_cache(remote_ip, system_login, product_id, is_byos: false, registry: false)
     # TODO: BYOS scenario
     # to be addressed on a different PR
     cache_config_data = InstanceVerification.cache_config
-    cache_key = [remote_ip, system_login, product_id].join('-')
-    # caches verification result to be used by zypper auth plugin
-    InstanceVerification.write_cache_file(
-      cache_config_data['REPOSITORY_CLIENT_CACHE_DIRECTORY'],
-      cache_key
-      )
+    unless registry
+      cache_key = [remote_ip, system_login, product_id].join('-')
+      InstanceVerification.write_cache_file(
+        cache_config_data['REPOSITORY_CLIENT_CACHE_DIRECTORY'],
+        cache_key
+        )
+    end
+
     registry_cache_key = [remote_ip, system_login].join('-')
     InstanceVerification.write_cache_file(
       cache_config_data['REGISTRY_CLIENT_CACHE_DIRECTORY'],
@@ -123,7 +125,7 @@ module InstanceVerification
           )
 
           raise 'Unspecified error' unless verification_provider.instance_valid?
-          InstanceVerification.update_cache(request.remote_ip, @system.login, product.id, @system.proxy_byos)
+          InstanceVerification.update_cache(request.remote_ip, @system.login, product.id, is_byos: @system.proxy_byos)
         end
 
         # Verify that the base product doesn't change in the offline migration
