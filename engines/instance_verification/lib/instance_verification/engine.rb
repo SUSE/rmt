@@ -25,7 +25,8 @@ module InstanceVerification
   end
 
   def self.write_cache_file(cache_dir, cache_key)
-    FileUtils.mkdir_p(cache_dir)
+    Dir.mkdir(cache_dir) unless File.directory?(cache_dir)
+
     FileUtils.touch(File.join(cache_dir, cache_key))
   end
 

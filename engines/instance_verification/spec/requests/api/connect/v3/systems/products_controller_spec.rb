@@ -26,7 +26,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       it 'class instance verification provider' do
         expect(InstanceVerification::Providers::Example).to receive(:new)
           .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, nil).and_call_original
-        allow(FileUtils).to receive(:mkdir_p)
+        allow(File).to receive(:directory?)
+        allow(Dir).to receive(:mkdir)
         allow(FileUtils).to receive(:touch)
         post url, params: payload, headers: headers
       end
@@ -116,7 +117,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             'REPOSITORY_CLIENT_CACHE_DIRECTORY' => 'cache_repo_dir',
             'REGISTRY_CLIENT_CACHE_DIRECTORY' => 'cache_registry_dir'
             )
-          allow(FileUtils).to receive(:mkdir_p)
+          allow(File).to receive(:directory?)
+          allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
           expect(InstanceVerification).to receive(:write_cache_file).once.with('cache_repo_dir', "127.0.0.1-#{system.login}-#{product_sap.id}")
           post url, params: payload_sap, headers: headers

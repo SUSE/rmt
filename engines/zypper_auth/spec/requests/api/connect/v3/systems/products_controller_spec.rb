@@ -19,7 +19,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     end
 
     before do
-      allow(FileUtils).to receive(:mkdir_p)
+      allow(File).to receive(:directory?)
+      allow(Dir).to receive(:mkdir)
       allow(FileUtils).to receive(:touch)
       post url, headers: headers, params: payload
     end
