@@ -19,6 +19,14 @@ Rails.application.configure do
   # Apache or NGINX already handles this.
   config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
 
+  config.cache_config_file = '/var/lib/rmt/rmt-cache-trim.sh'
+  config.repo_cache_dir = '/run/rmt/cache/repository'
+  cache_config_content = [
+    "REPOSITORY_CLIENT_CACHE_DIRECTORY=#{config.repo_cache_dir}",
+    'REPOSITORY_CACHE_EXPIRY_MINUTES=20'
+  ].join("\n")
+  File.write(config.cache_config_file, cache_config_content)
+
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.action_controller.asset_host = 'http://assets.example.com'
 
