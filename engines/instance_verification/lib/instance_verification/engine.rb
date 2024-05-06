@@ -1,7 +1,7 @@
 require 'fileutils'
 
 module InstanceVerification
-  def self.update_cache(remote_ip, system_login, product_id, is_byos)
+  def self.update_cache(remote_ip, system_login, product_id, _is_byos)
     # TODO: BYOS scenario
     # to be addressed on a different PR
     cache_config_data = InstanceVerification.cache_config
@@ -27,7 +27,7 @@ module InstanceVerification
   def self.write_cache_file(cache_dir, cache_key)
     FileUtils.mkdir_p(cache_dir)
     FileUtils.touch(File.join(cache_dir, cache_key))
-   end
+  end
 
   class Engine < ::Rails::Engine
     isolate_namespace InstanceVerification
