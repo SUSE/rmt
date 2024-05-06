@@ -5,8 +5,8 @@ RSpec.describe RMT::Mirror::Repomd do
 
   let(:logger) { RMT::Logger.new('/dev/null') }
 
-
-  let(:repository_url) { 'https://updates.suse.com/sample/repository/15.4/product' }
+  # Remember that RMT forces a trialing slash on all repository URLS!
+  let(:repository_url) { 'https://updates.suse.com/sample/repository/15.4/product/' }
   let(:repository) do
     create :repository,
            name: 'SUSE Linux Enterprise Server 15 SP4',

@@ -6,7 +6,7 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
     create_repository_path
     create_temp_dir(:metadata)
 
-    if repository_url.ends_with?('product')
+    if repository_url.ends_with?('product/')
       licenses = RMT::Mirror::License.new(repository: repository, logger: logger, mirroring_base_dir: mirroring_base_dir)
       licenses.mirror
     end
