@@ -69,11 +69,8 @@ module RMT
       config.access_policies = '/etc/rmt/access_policies.yml'
 
       config.cache_config_file = '/var/lib/rmt/rmt-cache-trim.sh'
-      registry_cache_expiration_time = Settings[:registry].try(:token_expiration) || 480 # 8 hours in minutes
       cache_config_content = %(REPOSITORY_CLIENT_CACHE_DIRECTORY="/run/rmt/cache/repository"
 REPOSITORY_CACHE_EXPIRY_MINUTES=20
-REGISTRY_CLIENT_CACHE_DIRECTORY="/run/rmt/cache/registry"
-REGISTRY_CACHE_EXPIRY_MINUTES=#{registry_cache_expiration_time}
 )
       File.write(config.cache_config_file, cache_config_content)
       # registry config needed end
