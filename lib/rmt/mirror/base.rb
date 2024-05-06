@@ -92,7 +92,8 @@ class RMT::Mirror::Base
   end
 
   def create_temp_dir(name)
-    temp_dirs[name] = Dir.mktmpdir(name.to_s)
+    temp_dirs[name] = repository_path(".tmp_#{name}")
+    FileUtils.mkpath(temp_dirs[name])
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Could not create a temporary directory: %{error}') % { error: e.message })
   end
@@ -132,10 +133,14 @@ class RMT::Mirror::Base
   end
 
   def cleanup_stale_metadata
+    logger.debug('Removing stale metadata files...')
     # A bug introduced in 2.16 writes metadata into its own directory if exists having
     # directory structure like repodata/repodata.
     # see: https://github.com/SUSE/rmt/issues/1136
-    FileUtils.remove_entry(repository_path('repodata', 'repodata')) if Dir.exist?(repository_path('repodata', 'repodata'))
+    if Dir.exist?(repository_path('repodata', 'repodata'))
+      logger.debug("Removing broken repodata/repodata directory from `#{repository_path}`")
+      FileUtils.remove_entry(repository_path('repodata', 'repodata'))
+    end
 
     # With 1.0.0 a backup mechanism was introduced creating .old_* backups of metadata which was never really used
     # we remove these files now from the mirrored repositories
@@ -143,6 +148,7 @@ class RMT::Mirror::Base
     glob_old_backups = Dir.glob(repository_path('.old_*'))
 
     glob_old_backups.each do |old|
+      logger.debug("Removing old metadata backup directory `#{old}`")
       FileUtils.remove_entry(old)
     end
   rescue StandardError => e
