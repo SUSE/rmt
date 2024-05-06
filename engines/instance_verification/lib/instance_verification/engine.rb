@@ -10,6 +10,11 @@ module InstanceVerification
     InstanceVerification.write_cache_file(
       cache_config_data['REPOSITORY_CLIENT_CACHE_DIRECTORY'],
       cache_key
+      )
+    registry_cache_key = [remote_ip, system_login].join('-')
+    InstanceVerification.write_cache_file(
+      cache_config_data['REGISTRY_CLIENT_CACHE_DIRECTORY'],
+      registry_cache_key
     )
   end
 
