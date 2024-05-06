@@ -29,6 +29,7 @@ class RMT::Mirror::Base
     raise RMT::Mirror::Exception.new(_('Error while mirroring repository: %{error}' % { error: e.message }))
   ensure
     cleanup_temp_dirs
+    cleanup_stale_metadata
   end
 
   protected
@@ -130,18 +131,26 @@ class RMT::Mirror::Base
     true
   end
 
-  def move_directory(source:, destination:)
-    FileUtils.mv(source, destination, force: true)
-    FileUtils.chmod(0o755, destination)
+  def cleanup_stale_metadata
+    # A bug introduced in 2.16 writes metadata into its own directory if exists having
+    # directory structure like repodata/repodata.
+    # see: https://github.com/SUSE/rmt/issues/1136
+    FileUtils.remove_entry(repository_path('repodata', 'repodata')) if Dir.exist?(repository_path('repodata', 'repodata'))
+
+    # With 1.0.0 a backup mechanism was introduced creating .old_* backups of metadata which was never really used
+    # we remove these files now from the mirrored repositories
+    # see: https://github.com/SUSE/rmt/pull/1120/files#diff-69bc4fdeb7aa7ceab24bec11c65a184357e5b71317125516edfa2d819653a969L131
+    glob_old_backups = Dir.glob(repository_path('.old_*'))
+
+    glob_old_backups.each do |old|
+      FileUtils.remove_entry(old)
+    end
   rescue StandardError => e
-    raise RMT::Mirror::Exception.new(_('Error while moving directory %{src} to %{dest}: %{error}') % {
-      src: source,
-      dest: destination,
-      error: e.message
-    })
+    logger.debug("Can not remove stale metadata directory: #{e}")
   end
 
   def move_files(glob:, destination:)
+    FileUtils.mkpath(destination) unless Dir.exist?(destination)
     FileUtils.mv(Dir.glob(glob), destination, force: true)
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Error while moving files %{glob} to %{dest}: %{error}') % {
