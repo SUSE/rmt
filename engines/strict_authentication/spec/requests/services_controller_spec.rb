@@ -51,6 +51,8 @@ RSpec.describe ServicesController, type: :request do
             allow_any_instance_of(InstanceVerification::Providers::Example).to(
               receive(:instance_valid?).and_return(true)
             )
+            allow(FileUtils).to receive(:mkdir_p)
+            allow(FileUtils).to receive(:touch)
             get "/services/#{activated_service.id}", headers: auth_header
           end
           its(:code) { is_expected.to eq '200' }
@@ -63,6 +65,8 @@ RSpec.describe ServicesController, type: :request do
         allow_any_instance_of(InstanceVerification::Providers::Example).to(
           receive(:instance_valid?).and_return(true)
         )
+        allow(FileUtils).to receive(:mkdir_p)
+        allow(FileUtils).to receive(:touch)
         get "/services/#{activated_service.id}", headers: auth_header
       end
 
