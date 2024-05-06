@@ -6,15 +6,18 @@ module ZypperAuth
       Thread.current[:logger]
     end
 
-    def verify_instance(request, logger, system)
+    def verify_instance(request, logger, system, registry: false)
       instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
 
       base_product = system.products.find_by(product_type: 'base')
       return false unless base_product
 
-      cache_key = [request.remote_ip, system.login, base_product.id].join('-')
-      cached_result = Rails.cache.fetch(cache_key)
-      return cached_result unless cached_result.nil?
+      unless registry
+        # check the cache for the system (20 min) if no registry case
+        cache_key = [request.remote_ip, system.login, base_product.id].join('-')
+        cache_path = File.join(InstanceVerification.cache_config['REPOSITORY_CLIENT_CACHE_DIRECTORY'], cache_key)
+        return true if File.exist?(cache_path)
+      end
 
       verification_provider = InstanceVerification.provider.new(
         logger,
@@ -24,14 +27,14 @@ module ZypperAuth
       )
 
       is_valid = verification_provider.instance_valid?
-      InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id, system.proxy_byos)
+      InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id, is_byos: system.proxy_byos, registry: registry)
       is_valid
     rescue InstanceVerification::Exception => e
       message = ''
       if system.proxy_byos
         result = SccProxy.scc_check_subscription_expiration(request.headers, system.login, system.system_token, logger)
         if result[:is_active]
-          InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id, system.proxy_byos)
+          InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id, is_byos: system.proxy_byos)
           return true
         end
 

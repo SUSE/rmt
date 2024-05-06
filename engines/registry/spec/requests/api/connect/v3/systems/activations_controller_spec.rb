@@ -7,9 +7,8 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
     let(:headers) { auth_header.merge(version_header) }
 
     before do
-      headers['X-Registry'] = 'foo'
-      allow(Dir).to receive(:mkdir)
-      allow(FileUtils).to receive(:touch)
+      headers['X-Instance-Data'] = 'IMDS'
+      allow(ZypperAuth).to receive(:verify_instance).and_return(true)
       get '/connect/systems/activations', headers: headers
     end
 
