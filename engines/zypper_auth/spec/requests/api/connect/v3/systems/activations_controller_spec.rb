@@ -9,7 +9,8 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
     let(:headers) { auth_header.merge(version_header) }
 
     before do
-      allow(ZypperAuth).to receive(:verify_instance).and_return(true)
+      allow_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
+      allow(InstanceVerification).to receive(:update_cache)
       get '/connect/systems/activations', headers: headers
     end
 

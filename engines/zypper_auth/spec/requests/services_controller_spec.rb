@@ -20,7 +20,6 @@ describe ServicesController do
 
       before do
         Thread.current[:logger] = RMT::Logger.new('/dev/null')
-        expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(false)
         allow(File).to receive(:directory?)
         allow(FileUtils).to receive(:touch)
         get "/services/#{service.id}", headers: headers

@@ -27,7 +27,7 @@ module StrictAuthentication
               receive(:instance_valid?).and_return(true)
             )
             allow(InstanceVerification).to receive(:update_cache)
-            get '/api/auth/check', headers: auth_header.merge({ 'X-Original-URI': requested_uri })
+            get '/api/auth/check', headers: auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': 'IMDS' })
           end
 
           context 'when requested path is not activated' do

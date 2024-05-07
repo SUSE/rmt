@@ -16,7 +16,6 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri }) }
 
         before do
-          expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(false)
           allow(File).to receive(:directory?)
           allow(FileUtils).to receive(:touch)
           get '/api/auth/check', headers: headers
