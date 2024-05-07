@@ -67,7 +67,7 @@ REPOSITORY_CACHE_EXPIRY_MINUTES=20
       File.write(config.cache_config_file, cache_config_content)
     end
     # :nocov:
-    if defined?(Registry::Engine) && 
+    if defined?(Registry::Engine)
       # registry config needed
       config.autoloader = :classic
       config.registry_private_key = OpenSSL::PKey::RSA.new(
