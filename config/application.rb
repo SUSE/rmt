@@ -67,7 +67,6 @@ module RMT
         )
       config.registry_public_key = config.registry_private_key.public_key
       config.access_policies = '/etc/rmt/access_policies.yml'
-      config.registry_cache_dir = '/run/rmt/cache/registry'
       # registry config needed end
     end
     # :nocov:

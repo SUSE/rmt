@@ -26,6 +26,7 @@ Rails.application.configure do
     'REPOSITORY_CACHE_EXPIRY_MINUTES=20'
   ]
   if defined?(Registry::Engine)
+    config.registry_cache_dir = '/run/rmt/cache/registry'
     cache_config_content.append[
       "REGISTRY_CLIENT_CACHE_DIRECTORY=#{config.registry_cache_dir}",
       "REGISTRY_CACHE_EXPIRY_MINUTES=#{Settings[:registry].try(:token_expiration) || 480}" # 480: 8 hours in minutes
