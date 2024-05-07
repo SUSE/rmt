@@ -4,7 +4,7 @@ class Registry::AuthenticatedClient
   attr_reader :auth_strategy
 
   def initialize(login, password, remote_ip)
-    raise Registry::Exceptions::InvalidCredentials.new(message: 'invalid cache', login: login) unless cache_file_exist?(remote_ip, login)
+    raise Registry::Exceptions::InvalidCredentials.new(message: 'expired credentials', login: login) unless cache_file_exist?(remote_ip, login)
 
     authenticate_by_system_credentials(login, password)
     if @auth_strategy

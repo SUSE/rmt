@@ -9,7 +9,7 @@ describe Registry::AuthenticatedClient do
 
       it 'raises an exception' do
         expect { described_class.new(system.login, system.password, '127.0.0.1') }.to raise_error(
-          Registry::Exceptions::InvalidCredentials, /invalid cache/
+          Registry::Exceptions::InvalidCredentials, /expired credentials/
           )
       end
     end
