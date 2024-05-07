@@ -37,8 +37,7 @@ describe ServicesController do
       context 'when instance verification succeeds' do
         before do
           expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
-          allow(FileUtils).to receive(:mkdir_p)
-          allow(FileUtils).to receive(:touch)
+          allow(InstanceVerification).to receive(:update_cache)
           get "/services/#{service.id}", headers: headers
         end
 
@@ -58,8 +57,7 @@ describe ServicesController do
       context 'when instance verification returns false' do
         before do
           expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(false)
-          allow(FileUtils).to receive(:mkdir_p)
-          allow(FileUtils).to receive(:touch)
+          allow(InstanceVerification).to receive(:update_cache)
           get "/services/#{service.id}", headers: headers
         end
 
@@ -75,8 +73,7 @@ describe ServicesController do
       context 'when instance verification raises StandardError' do
         before do
           expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_raise('Test')
-          allow(FileUtils).to receive(:mkdir_p)
-          allow(FileUtils).to receive(:touch)
+          allow(InstanceVerification).to receive(:update_cache)
           get "/services/#{service.id}", headers: headers
         end
 

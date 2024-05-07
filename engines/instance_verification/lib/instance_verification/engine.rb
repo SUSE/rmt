@@ -4,33 +4,20 @@ module InstanceVerification
   def self.update_cache(remote_ip, system_login, product_id, _is_byos)
     # TODO: BYOS scenario
     # to be addressed on a different PR
-    cache_config_data = InstanceVerification.cache_config
-    cache_key = [remote_ip, system_login, product_id].join('-')
     # caches verification result to be used by zypper auth plugin
     InstanceVerification.write_cache_file(
-      cache_config_data['REPOSITORY_CLIENT_CACHE_DIRECTORY'],
-      cache_key
-      )
-    registry_cache_key = [remote_ip, system_login].join('-')
+      Rails.application.config.repo_cache_dir,
+      [remote_ip, system_login, product_id].join('-')
+    )
     InstanceVerification.write_cache_file(
-      cache_config_data['REGISTRY_CLIENT_CACHE_DIRECTORY'],
-      registry_cache_key
+      Rails.application.config.registry_cache_dir,
+      [remote_ip, system_login].join('-')
     )
   end
 
-  def self.cache_config
-    cache_config_data = {}
-    File.open(Rails.application.config.cache_config_file, 'r') do |cache_config_file|
-      cache_config_file.each_line do |line|
-        line_data = line.split(/=|\n/)
-        cache_config_data[line_data[0]] = line_data[1]
-      end
-    end
-    cache_config_data
-  end
-
   def self.write_cache_file(cache_dir, cache_key)
-    FileUtils.mkdir_p(cache_dir)
+    Dir.mkdir(cache_dir) unless File.directory?(cache_dir)
+
     FileUtils.touch(File.join(cache_dir, cache_key))
   end
 

@@ -13,8 +13,8 @@ module ZypperAuth
       return false unless base_product
 
       cache_key = [request.remote_ip, system.login, base_product.id].join('-')
-      cached_result = Rails.cache.fetch(cache_key)
-      return cached_result unless cached_result.nil?
+      cache_path = File.join(Rails.application.config.repo_cache_dir, cache_key)
+      return true if File.exist?(cache_path)
 
       verification_provider = InstanceVerification.provider.new(
         logger,
