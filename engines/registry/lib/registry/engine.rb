@@ -1,6 +1,6 @@
 module Registry
   class << self
-    def remove_cache(registry_cache_key)
+    def remove_auth_cache(registry_cache_key)
       cache_config_data = {}
       File.open(Rails.application.config.cache_config_file, 'r') do |cache_config_file|
         cache_config_file.each_line do |line|
@@ -30,11 +30,11 @@ module Registry
       end
 
       Api::Connect::V3::Systems::SystemsController.class_eval do
-        before_action :remove_cache, only: %w[deregister]
+        before_action :remove_auth_cache, only: %w[deregister]
 
-        def remove_cache
+        def remove_auth_cache
           registry_cache_key = [request.remote_ip, @system.login].join('-')
-          Registry.remove_cache(registry_cache_key)
+          Registry.remove_auth_cache(registry_cache_key)
         end
       end
     end
