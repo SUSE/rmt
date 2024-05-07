@@ -67,24 +67,8 @@ module RMT
         )
       config.registry_public_key = config.registry_private_key.public_key
       config.access_policies = '/etc/rmt/access_policies.yml'
-      config.regisry_cache_dir = '/run/rmt/cache/registry'
+      config.registry_cache_dir = '/run/rmt/cache/registry'
       # registry config needed end
-    end
-    # :nocov:
-
-    # :nocov:
-    if Rails.env.production?
-      config.cache_config_file = '/var/lib/rmt/rmt-cache-trim.sh'
-      config.repo_cache_dir = '/run/rmt/cache/repository'
-      cache_config_content = %(REPOSITORY_CLIENT_CACHE_DIRECTORY=#{config.repo_cache_dir}
-REPOSITORY_CACHE_EXPIRY_MINUTES=20
-)
-      if defined?(Registry::Engine)
-        cache_config_content += %(REGISTRY_CLIENT_CACHE_DIRECTORY=#{config.registry_cache_dir}
-REGISTRY_CACHE_EXPIRY_MINUTES=#{Settings[:registry].try(:token_expiration) || 480} # 480: 8 hours in minutes
-)
-      end
-      File.write(config.cache_config_file, cache_config_content)
     end
     # :nocov:
 
