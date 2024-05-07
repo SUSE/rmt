@@ -113,14 +113,10 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         before do
           expect(InstanceVerification::Providers::Example).to receive(:new)
             .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload_sap, instance_data).and_call_original
-          allow(InstanceVerification).to receive(:cache_config).and_return(
-            'REPOSITORY_CLIENT_CACHE_DIRECTORY' => 'cache_repo_dir',
-            'REGISTRY_CLIENT_CACHE_DIRECTORY' => 'cache_registry_dir'
-            )
           allow(File).to receive(:directory?)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
-          expect(InstanceVerification).to receive(:write_cache_file).once.with('cache_repo_dir', "127.0.0.1-#{system.login}-#{product_sap.id}")
+          expect(InstanceVerification).to receive(:write_cache_file).once.with('repo/cache', "127.0.0.1-#{system.login}-#{product_sap.id}")
           post url, params: payload_sap, headers: headers
         end
 
