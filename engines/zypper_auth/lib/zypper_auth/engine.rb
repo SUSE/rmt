@@ -15,7 +15,7 @@ module ZypperAuth
       unless registry
         # check the cache for the system (20 min) if no registry case
         cache_key = [request.remote_ip, system.login, base_product.id].join('-')
-        cache_path = File.join(InstanceVerification.cache_config['REPOSITORY_CLIENT_CACHE_DIRECTORY'], cache_key)
+        cache_path = File.join(Rails.application.config.repo_cache_dir, cache_key)
         return true if File.exist?(cache_path)
       end
 
