@@ -32,6 +32,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
       let(:headers) { auth_header.merge(version_header).merge({ 'X-Instance-Data' => 'instance_data' }) }
 
       it 'has service URLs with HTTP scheme' do
+        allow(File).to receive(:exist?).and_return(true)
         data = JSON.parse(response.body)
         expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
       end
