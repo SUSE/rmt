@@ -21,7 +21,7 @@ describe ServicesController do
       before do
         Thread.current[:logger] = RMT::Logger.new('/dev/null')
         expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(false)
-        allow(FileUtils).to receive(:mkdir_p)
+        allow(File).to receive(:directory?)
         allow(FileUtils).to receive(:touch)
         get "/services/#{service.id}", headers: headers
       end
@@ -89,7 +89,7 @@ describe ServicesController do
       context 'when instance verification raises InstanceVerification::Exception' do
         before do
           expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_raise(InstanceVerification::Exception, 'Test')
-          allow(FileUtils).to receive(:mkdir_p)
+          allow(File).to receive(:directory?).twice
           allow(FileUtils).to receive(:touch)
           get "/services/#{service.id}", headers: headers
         end

@@ -26,7 +26,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       it 'class instance verification provider' do
         expect(InstanceVerification::Providers::Example).to receive(:new)
           .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, nil).and_call_original
-        allow(FileUtils).to receive(:mkdir_p)
+        allow(File).to receive(:directory?)
         allow(FileUtils).to receive(:touch)
         post url, params: payload, headers: headers
       end
