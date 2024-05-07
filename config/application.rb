@@ -59,17 +59,6 @@ module RMT
     config.eager_load_paths << Rails.root.join('app', 'validators')
 
     # :nocov:
-    if Rails.env.production?
-      config.cache_config_file = '/var/lib/rmt/rmt-cache-trim.sh'
-      config.repo_cache_dir = '/run/rmt/cache/repository'
-      cache_config_content = %(REPOSITORY_CLIENT_CACHE_DIRECTORY=#{config.repo_cache_dir}
-REPOSITORY_CACHE_EXPIRY_MINUTES=20
-)
-      File.write(config.cache_config_file, cache_config_content)
-    end
-    # :nocov:
-
-    # :nocov:
     if defined?(Registry::Engine) && Rails.env.production?
       # registry config needed
       config.autoloader = :classic
@@ -78,7 +67,6 @@ REPOSITORY_CACHE_EXPIRY_MINUTES=20
         )
       config.registry_public_key = config.registry_private_key.public_key
       config.access_policies = '/etc/rmt/access_policies.yml'
-
       # registry config needed end
     end
     # :nocov:
