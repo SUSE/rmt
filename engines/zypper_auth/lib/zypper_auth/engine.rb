@@ -17,13 +17,12 @@ module ZypperAuth
       if registry
         cache_key = [request.remote_ip, system.login].join('-')
         cache_path = File.join(Rails.application.config.registry_cache_dir, cache_key)
-        return true if File.exist?(cache_path)
       else
         # check the cache for the system (20 min)
         cache_key = [request.remote_ip, system.login, base_product.id].join('-')
         cache_path = File.join(Rails.application.config.repo_cache_dir, cache_key)
-        return true if File.exist?(cache_path)
       end
+      return true if File.exist?(cache_path)
 
       verification_provider = InstanceVerification.provider.new(
         logger,
