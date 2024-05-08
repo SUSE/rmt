@@ -63,6 +63,12 @@ Rails.application.routes.draw do
   mount RegistrationSharing::Engine, at: '/api/regsharing' if defined?(RegistrationSharing::Engine)
   mount InstanceVerification::Engine, at: '/api/instance' if defined?(InstanceVerification::Engine)
 
+  if defined?(Registry::Engine)
+    mount Registry::Engine, at: '/api/registry'
+
+    get '/v2/_catalog', to: 'registry/registry#catalog'
+  end
+
   if defined?(SccSumaApi::Engine)
     mount SccSumaApi::Engine, at: '/api/scc'
 

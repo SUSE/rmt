@@ -28,6 +28,8 @@ describe RMT::Mirror::Base do
     described_class.send(:public, *described_class.protected_instance_methods)
 
     allow(base).to receive(:downloader).and_return(downloader)
+    allow(downloader).to receive(:downloaded_files_count)
+    allow(downloader).to receive(:downloaded_files_size)
   end
 
   describe '#mirror' do
@@ -198,62 +200,38 @@ describe RMT::Mirror::Base do
     end
   end
 
-  describe '#replace_directory' do
+  describe '#move_directory' do
     let(:src) { '/source/path' }
     let(:dest) { '/destination/path' }
     let(:backup) { '/destination/.backup_path' }
 
     it 'moves content from source to destination' do
-      allow(Dir).to receive(:exist?).with(backup).and_return(false)
-      allow(Dir).to receive(:exist?).with(dest).and_return(false)
-
       expect(FileUtils).to receive(:mv).with(src, dest, force: true)
       expect(FileUtils).to receive(:chmod).with(0o755, dest)
 
-      base.replace_directory(source: src, destination: dest)
-    end
-
-    it 'removes the backup directory if it already exists' do
-      allow(Dir).to receive(:exist?).with(backup).and_return(true)
-      allow(Dir).to receive(:exist?).with(dest).and_return(false)
-
-      expect(FileUtils).to receive(:remove_entry).with(backup)
-      expect(FileUtils).to receive(:mv).with(src, dest, force: true)
-      expect(FileUtils).to receive(:chmod).with(0o755, dest)
-
-      base.replace_directory(source: src, destination: dest)
-    end
-
-    it 'creates an backup directory if the destination directory already exists' do
-      allow(Dir).to receive(:exist?).with(backup).and_return(false)
-      allow(Dir).to receive(:exist?).with(dest).and_return(true)
-
-      expect(FileUtils).to receive(:mv).with(dest, backup)
-      expect(FileUtils).to receive(:mv).with(src, dest, force: true)
-      expect(FileUtils).to receive(:chmod).with(0o755, dest)
-
-      base.replace_directory(source: src, destination: dest)
-    end
-
-    it 'yields when block is given' do
-      expect { |b| base.replace_directory(source: src, destination: dest, with_backup: false, &b) }.to yield_with_args
+      base.move_directory(source: src, destination: dest)
     end
 
     it 'fails on file system errors' do
-      allow(Dir).to receive(:exist?).with(backup).and_raise(StandardError)
+      allow(FileUtils).to receive(:mv).with(src, dest, force: true).and_raise(StandardError)
 
-      expect { base.replace_directory(source: src, destination: dest) }.to raise_exception(/Error while moving directory/)
+      expect { base.move_directory(source: src, destination: dest) }.to raise_exception(/Error while moving directory/)
     end
   end
 
-  describe '#copy_directory_content' do
+  describe '#move_files' do
     let(:src) { '/source/path' }
     let(:dest) { '/destination/path' }
 
     it 'copies content from source to destination without backup' do
-      expect(base).to receive(:replace_directory).with(source: src, destination: dest, with_backup: false).and_yield
       expect(FileUtils).to receive(:mv).with(Dir.glob(src), dest, force: true)
-      base.copy_directory_content(source: src, destination: dest)
+      base.move_files(glob: src, destination: dest)
+    end
+
+    it 'fails on file system errors' do
+      allow(FileUtils).to receive(:mv).with(Dir.glob(src), dest, force: true).and_raise(StandardError)
+
+      expect { base.move_files(glob: src, destination: dest) }.to raise_exception(/Error while moving files/)
     end
   end
 

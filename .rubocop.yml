@@ -26,6 +26,22 @@ AllCops:
 Style/TrailingUnderscoreVariable:
   Enabled: false
 
+RSpec/ExampleLength:
+  Exclude:
+    - spec/lib/rmt/cli/mirror_spec.rb
+
+RSpec/ExpectOutput:
+  Exclude:
+    - spec/lib/rmt/cli/mirror_spec.rb
+
+RSpec/MultipleExpectations:
+  Exclude:
+    - spec/lib/rmt/cli/mirror_spec.rb
+
+Metrics/ClassLength:
+  Exclude:
+    - lib/rmt/downloader.rb
+
 Naming/FileName:
   Exclude:
     - Dangerfile
@@ -44,6 +60,8 @@ RSpec/NestedGroups:
 
 Style/FormatStringToken:
   EnforcedStyle: template
+  Exclude:
+    - lib/rmt/cli/mirror.rb
 
 Style/OpenStructUse:
   Enabled: false

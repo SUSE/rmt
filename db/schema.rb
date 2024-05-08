@@ -149,6 +149,15 @@ ActiveRecord::Schema.define(version: 2024_01_29_140413) do
     t.index ["regcode"], name: "index_subscriptions_on_regcode"
   end
 
+  create_table "system_uptimes", charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
+    t.bigint "system_id", null: false
+    t.date "online_at_day", null: false
+    t.binary "online_at_hours", limit: 24, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["system_id", "online_at_day"], name: "id_online_day", unique: true
+  end
+
   create_table "systems", charset: "utf8", force: :cascade do |t|
     t.string "login"
     t.string "password"
@@ -180,4 +189,5 @@ ActiveRecord::Schema.define(version: 2024_01_29_140413) do
   add_foreign_key "repositories_services", "services", on_delete: :cascade
   add_foreign_key "services", "products"
   add_foreign_key "subscription_product_classes", "subscriptions", on_delete: :cascade
+  add_foreign_key "system_uptimes", "systems"
 end

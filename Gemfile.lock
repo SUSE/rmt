@@ -34,6 +34,7 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     ast (2.4.2)
     awesome_print (1.9.2)
+    base32 (0.3.4)
     base64 (0.2.0)
     bigdecimal (3.1.6)
     builder (3.2.4)
@@ -140,7 +141,7 @@ GEM
       concurrent-ruby (~> 1.0)
     json (2.3.1)
     jsonapi-renderer (0.2.2)
-    jwt (2.8.0)
+    jwt (2.8.1)
       base64
     listen (3.6.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -332,6 +333,7 @@ DEPENDENCIES
   activerecord (~> 6.1.7)
   activesupport (~> 6.1.7)
   awesome_print
+  base32
   byebug
   config (~> 3.0, >= 2.2.1)
   coveralls (~> 0.8.21)

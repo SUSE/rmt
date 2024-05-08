@@ -23,6 +23,8 @@ class RMT::Mirror::Base
   def mirror
     logger.info _('Mirroring repository %{repo} to %{dir}') % { repo: repository.name || repository_url, dir: repository_path }
     mirror_implementation
+
+    [downloader.downloaded_files_count, downloader.downloaded_files_size]
   rescue RMT::Mirror::Exception, RMT::Downloader::Exception => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring repository: %{error}' % { error: e.message }))
   ensure
@@ -128,22 +130,9 @@ class RMT::Mirror::Base
     true
   end
 
-  def replace_directory(source:, destination:, with_backup: true, &block)
-    # Repomd repositories are stored within /repodata so we can use a backup for it
-    # However, for Debian, repositories are stored in the top-level repository path -> backup: false
-
-    if with_backup
-      backup = File.join(File.dirname(destination), '.backup_' + File.basename(destination))
-      FileUtils.remove_entry(backup) if Dir.exist?(backup)
-      FileUtils.mv(destination, backup) if Dir.exist?(destination)
-    end
-
-    if block
-      yield(source, destination, with_backup ? backup : nil)
-    else
-      FileUtils.mv(source, destination, force: true)
-      FileUtils.chmod(0o755, destination)
-    end
+  def move_directory(source:, destination:)
+    FileUtils.mv(source, destination, force: true)
+    FileUtils.chmod(0o755, destination)
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Error while moving directory %{src} to %{dest}: %{error}') % {
       src: source,
@@ -152,9 +141,13 @@ class RMT::Mirror::Base
     })
   end
 
-  def copy_directory_content(source:, destination:)
-    replace_directory(source: source, destination: destination, with_backup: false) do
-      FileUtils.mv(Dir.glob(source), destination, force: true)
-    end
+  def move_files(glob:, destination:)
+    FileUtils.mv(Dir.glob(glob), destination, force: true)
+  rescue StandardError => e
+    raise RMT::Mirror::Exception.new(_('Error while moving files %{glob} to %{dest}: %{error}') % {
+      glob: glob,
+      dest: destination,
+      error: e.message
+    })
   end
 end
