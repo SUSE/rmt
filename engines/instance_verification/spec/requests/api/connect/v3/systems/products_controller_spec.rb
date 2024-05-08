@@ -117,6 +117,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
           expect(InstanceVerification).to receive(:write_cache_file).once.with('repo/cache', "127.0.0.1-#{system.login}-#{product_sap.id}")
+          expect(InstanceVerification).to receive(:write_cache_file).once.with('registry/cache', "127.0.0.1-#{system.login}")
           post url, params: payload_sap, headers: headers
         end
 

@@ -26,6 +26,7 @@ module StrictAuthentication
             allow_any_instance_of(InstanceVerification::Providers::Example).to(
               receive(:instance_valid?).and_return(true)
             )
+            allow(InstanceVerification).to receive(:update_cache)
             allow(File).to receive(:directory?)
             allow(Dir).to receive(:mkdir)
             allow(FileUtils).to receive(:touch)

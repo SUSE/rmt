@@ -4,11 +4,14 @@ module InstanceVerification
   def self.update_cache(remote_ip, system_login, product_id, _is_byos)
     # TODO: BYOS scenario
     # to be addressed on a different PR
-    cache_key = [remote_ip, system_login, product_id].join('-')
     # caches verification result to be used by zypper auth plugin
     InstanceVerification.write_cache_file(
       Rails.application.config.repo_cache_dir,
-      cache_key
+      [remote_ip, system_login, product_id].join('-')
+    )
+    InstanceVerification.write_cache_file(
+      Rails.application.config.registry_cache_dir,
+      [remote_ip, system_login].join('-')
     )
   end
 
