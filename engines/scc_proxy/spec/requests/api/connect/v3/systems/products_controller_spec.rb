@@ -110,12 +110,14 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                 body: '{"id": "bar"}',
                 headers: {}
               )
+            allow(FileUtils).to receive(:mkdir_p)
+            allow(FileUtils).to receive(:touch)
+
+            allow(InstanceVerification).to receive(:write_cache_file).twice.with('repo/cache', "127.0.0.1-#{system.login}-#{product.id}")
+            allow(InstanceVerification).to receive(:write_cache_file).twice.with('repo/cache', "127.0.0.1-#{system.login}")
           end
 
           it 'renders service JSON' do
-            expect(Rails.cache).to receive(:write).twice.with(
-              ['127.0.0.1', system.login, product.id].join('-'), true, expires_in: 24.hours
-              )
             post url, params: payload_byos, headers: headers
             expect(response.body).to eq(serialized_service_json)
           end
@@ -129,6 +131,10 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                 body: '{"error": "No product found on SCC for: foo bar x86_64 json api"}',
                 headers: {}
               )
+            allow(InstanceVerification).to receive(:write_cache_file).twice.with('repo/cache', "127.0.0.1-#{system.login}-#{product.id}")
+            allow(FileUtils).to receive(:mkdir_p)
+            allow(FileUtils).to receive(:touch)
+
             post url, params: payload_byos, headers: headers
           end
 
@@ -157,6 +163,10 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                 body: '{"id": "bar"}',
                 headers: {}
               )
+            allow(InstanceVerification).to receive(:write_cache_file).twice.with('repo/cache', "127.0.0.1-#{system.login}-#{product.id}")
+            allow(FileUtils).to receive(:mkdir_p)
+            allow(FileUtils).to receive(:touch)
+
             post url, params: payload_byos, headers: headers
           end
 
@@ -186,6 +196,11 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                 body: '{"id": "bar"}',
                 headers: {}
               )
+
+            allow(InstanceVerification).to receive(:write_cache_file).twice.with('repo/cache', "127.0.0.1-#{system.login}-#{product.id}")
+            allow(FileUtils).to receive(:mkdir_p)
+            allow(FileUtils).to receive(:touch)
+
             post url, params: payload_byos, headers: headers
           end
 

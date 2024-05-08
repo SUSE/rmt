@@ -1,9 +1,21 @@
+require 'fileutils'
+
 module InstanceVerification
-  def self.update_cache(remote_ip, system_login, product_id, is_byos)
+  def self.update_cache(remote_ip, system_login, product_id, _is_byos)
+    # TODO: BYOS scenario
+    # to be addressed on a different PR
     cache_key = [remote_ip, system_login, product_id].join('-')
     # caches verification result to be used by zypper auth plugin
-    expire_cache_time = is_byos ? 24.hours : 20.minutes
-    Rails.cache.write(cache_key, true, expires_in: expire_cache_time)
+    InstanceVerification.write_cache_file(
+      Rails.application.config.repo_cache_dir,
+      cache_key
+    )
+  end
+
+  def self.write_cache_file(cache_dir, cache_key)
+    Dir.mkdir(cache_dir) unless File.directory?(cache_dir)
+
+    FileUtils.touch(File.join(cache_dir, cache_key))
   end
 
   class Engine < ::Rails::Engine

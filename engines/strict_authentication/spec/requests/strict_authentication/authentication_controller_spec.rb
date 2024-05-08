@@ -26,6 +26,9 @@ module StrictAuthentication
             allow_any_instance_of(InstanceVerification::Providers::Example).to(
               receive(:instance_valid?).and_return(true)
             )
+            allow(File).to receive(:directory?)
+            allow(Dir).to receive(:mkdir)
+            allow(FileUtils).to receive(:touch)
             get '/api/auth/check', headers: auth_header.merge({ 'X-Original-URI': requested_uri })
           end
 
