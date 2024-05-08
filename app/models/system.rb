@@ -49,6 +49,15 @@ class System < ApplicationRecord
     where(login: login, password: password).order(:id)
   end
 
+  def update_system_uptime(day: nil, hours: nil)
+    system_uptime = system_uptimes.find_by(online_at_day: day)
+    if system_uptime
+      system_uptime.update!(online_at_hours: hours)
+    else
+      system_uptimes.create!(online_at_day: day, online_at_hours: hours)
+    end
+  end
+
   before_update do |system|
     # reset SCC sync timestamp so that the system can be re-synced on change
     system.scc_synced_at = nil
