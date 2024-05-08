@@ -22,6 +22,7 @@ describe ServicesController do
         Thread.current[:logger] = RMT::Logger.new('/dev/null')
         expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(false)
         allow(File).to receive(:directory?)
+        allow(FileUtils).to receive(:mkdir_p)
         allow(FileUtils).to receive(:touch)
         get "/services/#{service.id}", headers: headers
       end
@@ -38,6 +39,9 @@ describe ServicesController do
         before do
           expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
           allow(InstanceVerification).to receive(:update_cache)
+          allow(File).to receive(:directory?)
+          allow(Dir).to receive(:mkdir)
+          allow(FileUtils).to receive(:touch)
           get "/services/#{service.id}", headers: headers
         end
 
@@ -58,6 +62,9 @@ describe ServicesController do
         before do
           expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(false)
           allow(InstanceVerification).to receive(:update_cache)
+          allow(File).to receive(:directory?)
+          allow(Dir).to receive(:mkdir)
+          allow(FileUtils).to receive(:touch)
           get "/services/#{service.id}", headers: headers
         end
 
@@ -74,6 +81,9 @@ describe ServicesController do
         before do
           expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_raise('Test')
           allow(InstanceVerification).to receive(:update_cache)
+          allow(File).to receive(:directory?)
+          allow(Dir).to receive(:mkdir)
+          allow(FileUtils).to receive(:touch)
           get "/services/#{service.id}", headers: headers
         end
 
@@ -90,6 +100,8 @@ describe ServicesController do
         before do
           expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_raise(InstanceVerification::Exception, 'Test')
           allow(File).to receive(:directory?).twice
+          allow(File).to receive(:directory?)
+          allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
           get "/services/#{service.id}", headers: headers
         end

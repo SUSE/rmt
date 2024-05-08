@@ -111,6 +111,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                 headers: {}
               )
             allow(File).to receive(:directory?)
+            allow(FileUtils).to receive(:mkdir_p)
             allow(FileUtils).to receive(:touch)
 
             allow(InstanceVerification).to receive(:write_cache_file).twice.with('repo/cache', "127.0.0.1-#{system.login}-#{product.id}")
@@ -133,6 +134,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               )
             allow(InstanceVerification).to receive(:write_cache_file).twice.with('repo/cache', "127.0.0.1-#{system.login}-#{product.id}")
             allow(InstanceVerification).to receive(:write_cache_file).twice.with('registry/cache', "127.0.0.1-#{system.login}")
+            allow(FileUtils).to receive(:mkdir_p)
             allow(FileUtils).to receive(:touch)
 
             post url, params: payload_byos, headers: headers
@@ -166,6 +168,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             allow(InstanceVerification).to receive(:write_cache_file).twice.with('repo/cache', "127.0.0.1-#{system.login}-#{product.id}")
             allow(InstanceVerification).to receive(:write_cache_file).twice.with('registry/cache', "127.0.0.1-#{system.login}")
             allow(File).to receive(:directory?)
+            allow(FileUtils).to receive(:mkdir_p)
             allow(FileUtils).to receive(:touch)
 
             post url, params: payload_byos, headers: headers
@@ -201,6 +204,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             allow(InstanceVerification).to receive(:write_cache_file).twice.with('repo/cache', "127.0.0.1-#{system.login}-#{product.id}")
             allow(InstanceVerification).to receive(:write_cache_file).twice.with('registry/cache', "127.0.0.1-#{system.login}")
             allow(File).to receive(:directory?)
+            allow(FileUtils).to receive(:mkdir_p)
             allow(FileUtils).to receive(:touch)
 
             post url, params: payload_byos, headers: headers

@@ -51,6 +51,9 @@ RSpec.describe ServicesController, type: :request do
             allow_any_instance_of(InstanceVerification::Providers::Example).to(
               receive(:instance_valid?).and_return(true)
             )
+            allow(File).to receive(:directory?)
+            allow(Dir).to receive(:mkdir)
+            allow(FileUtils).to receive(:touch)
             allow(InstanceVerification).to receive(:update_cache)
             get "/services/#{activated_service.id}", headers: auth_header
           end
@@ -64,6 +67,9 @@ RSpec.describe ServicesController, type: :request do
         allow_any_instance_of(InstanceVerification::Providers::Example).to(
           receive(:instance_valid?).and_return(true)
         )
+        allow(File).to receive(:directory?)
+        allow(Dir).to receive(:mkdir)
+        allow(FileUtils).to receive(:touch)
         allow(InstanceVerification).to receive(:update_cache)
         get "/services/#{activated_service.id}", headers: auth_header
       end
