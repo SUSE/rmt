@@ -132,8 +132,8 @@ class RMT::Mirror::Base
   end
 
   def cleanup_stale_metadata
-    # A bug introduced in 2.16 writes metadata into its own directory if exists having
-    # directory structure like repodata/repodata.
+    # A bug introduced in 2.16 writes metadata into its own directory if it exists
+    # resulting in a directory structure like repodata/repodata.
     # see: https://github.com/SUSE/rmt/issues/1136
     FileUtils.remove_entry(repository_path('repodata', 'repodata')) if Dir.exist?(repository_path('repodata', 'repodata'))
 
