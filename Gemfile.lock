@@ -137,7 +137,7 @@ GEM
       rspec (>= 2.99.0, < 4.0)
     hashdiff (1.1.0)
     hpricot (0.8.6)
-    i18n (1.14.4)
+    i18n (1.14.1)
       concurrent-ruby (~> 1.0)
     json (2.3.1)
     jsonapi-renderer (0.2.2)
@@ -277,8 +277,8 @@ GEM
       rubocop-thread_safety (~> 0.4)
     sexp_processor (4.16.1)
     shellany (0.0.1)
-    shoulda-matchers (6.2.0)
-      activesupport (>= 5.2.0)
+    shoulda-matchers (4.5.1)
+      activesupport (>= 4.2.0)
     simplecov (0.16.1)
       docile (~> 1.1)
       json (>= 1.8, < 3)
@@ -365,7 +365,7 @@ DEPENDENCIES
   rubocop-ast (<= 1.17.0)
   ruby_parser (< 3.20)
   scc-codestyle (<= 0.5.0)
-  shoulda-matchers
+  shoulda-matchers (~> 4.5.1)
   simplecov
   spring
   spring-commands-rspec
