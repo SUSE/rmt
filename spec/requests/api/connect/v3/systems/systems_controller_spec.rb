@@ -20,6 +20,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
   let(:payload) { { hostname: 'test', hwinfo: hwinfo } }
   let(:system_uptime) { system.system_uptimes.first }
   let(:online_hours) { ':111111111111111111111111' }
+  let(:upd_online_hours) { ':111111111111111111111100' }
 
   describe '#update' do
     subject(:update_action) { put url, params: payload, headers: headers }
@@ -54,6 +55,18 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
         it 'inserts the uptime data in system_uptimes table' do
           update_action
 
+          expect(system_uptime.system_id).to eq(system.reload.id)
+          expect(system_uptime.online_at_day.to_date).to eq(1.day.ago.to_date)
+          expect(system_uptime.online_at_hours.to_s).to eq('111111111111111111111111')
+        end
+      end
+
+      context 'updates uptime data online_at_hours' do
+        let(:payload) { { hostname: 'test', hwinfo: hwinfo, online_at: [1.day.ago.to_date.to_s << upd_online_hours, 1.day.ago.to_date.to_s << online_hours] } }
+
+        it 'updates the uptime online_at_hours entry' do
+          update_action
+          expect(system.system_uptimes.count).to eq(1)
           expect(system_uptime.system_id).to eq(system.reload.id)
           expect(system_uptime.online_at_day.to_date).to eq(1.day.ago.to_date)
           expect(system_uptime.online_at_hours.to_s).to eq('111111111111111111111111')
