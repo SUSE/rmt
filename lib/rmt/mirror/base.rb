@@ -140,6 +140,7 @@ class RMT::Mirror::Base
     # With 1.0.0 a backup mechanism was introduced creating .old_* backups of metadata which was never really used
     # we remove these files now from the mirrored repositories
     # see: https://github.com/SUSE/rmt/pull/1120/files#diff-69bc4fdeb7aa7ceab24bec11c65a184357e5b71317125516edfa2d819653a969L131
+    # NOTE: In an short amount of time we had the .old_* changed to .backup_* but this was never released.
     glob_old_backups = Dir.glob(repository_path('.old_*'))
 
     glob_old_backups.each do |old|
