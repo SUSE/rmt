@@ -64,7 +64,7 @@ group :test do
   gem 'ffaker', '<= 2.21.0' # Locked because of Ruby >= 3.0 dependency
   gem 'rspec-its'
   gem 'fakefs', '~> 1.4', require: 'fakefs/safe'
-  gem 'shoulda-matchers'
+  gem 'shoulda-matchers', '~> 4.5.1' # Locked because of Ruby >= 3.0 dependency
   gem 'webmock'
   gem 'fuubar'
   gem 'timecop'
