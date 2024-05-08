@@ -20,6 +20,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
     before do
       allow(InstanceVerification).to receive(:update_cache)
+      allow(File).to receive(:directory?)
+      allow(Dir).to receive(:mkdir)
+      allow(FileUtils).to receive(:touch)
       post url, headers: headers, params: payload
     end
 

@@ -57,7 +57,6 @@ module ZypperAuth
         #{details.join(', ')}
       LOGMSG
 
-      Rails.cache.write(cache_key, false, expires_in: 2.minutes)
       false
     rescue StandardError => e
       logger.error('Unexpected instance verification error has occurred:')

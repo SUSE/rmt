@@ -28,6 +28,9 @@ module StrictAuthentication
             )
             allow(InstanceVerification).to receive(:update_cache)
             get '/api/auth/check', headers: auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': 'IMDS' })
+            allow(File).to receive(:directory?)
+            allow(Dir).to receive(:mkdir)
+            allow(FileUtils).to receive(:touch)
           end
 
           context 'when requested path is not activated' do
