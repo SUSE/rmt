@@ -8,7 +8,7 @@ module Registry
         before_action :handle_auth_cache, only: %w[index]
 
         def handle_auth_cache
-          unless ZypperAuth.verify_instance(request, logger, @system, registry: true)
+          unless ZypperAuth.verify_instance(request, logger, @system)
             render(xml: { error: 'Instance verification failed' }, status: :forbidden)
           end
         end
