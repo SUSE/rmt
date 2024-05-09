@@ -34,26 +34,35 @@ RSpec.describe ServicesController, type: :request do
 
         include_context 'auth header', :system, :login, :password
 
+        let(:headers) { auth_header }
+
         context 'when service doesn\'t exist' do
-          before { get '/services/0', headers: auth_header }
+          before { get '/services/0', headers: headers }
           its(:code) { is_expected.to eq '403' }
           its(:body) { is_expected.to eq 'Product is not registered' }
         end
 
         context 'when service is not registered' do
-          before { get "/services/#{service.id}", headers: auth_header }
+          before do
+            headers['X-Instance-Data'] = 'IMDS'
+            get "/services/#{service.id}", headers: headers
+          end
+
           its(:code) { is_expected.to eq '403' }
           its(:body) { is_expected.to eq 'Product is not registered' }
         end
 
         context 'when service is registered' do
           before do
+            headers['X-Instance-Data'] = 'IMDS'
             allow_any_instance_of(InstanceVerification::Providers::Example).to(
               receive(:instance_valid?).and_return(true)
             )
-            allow(FileUtils).to receive(:mkdir_p)
+            allow(File).to receive(:directory?)
+            allow(Dir).to receive(:mkdir)
             allow(FileUtils).to receive(:touch)
-            get "/services/#{activated_service.id}", headers: auth_header
+            allow(InstanceVerification).to receive(:update_cache)
+            get "/services/#{activated_service.id}", headers: headers
           end
           its(:code) { is_expected.to eq '200' }
         end
@@ -61,25 +70,30 @@ RSpec.describe ServicesController, type: :request do
     end
 
     describe 'response XML URLs' do
+      include_context 'auth header', :system, :login, :password
+
       before do
+        headers['X-Instance-Data'] = 'IMDS'
         allow_any_instance_of(InstanceVerification::Providers::Example).to(
           receive(:instance_valid?).and_return(true)
         )
-        allow(FileUtils).to receive(:mkdir_p)
+        allow(File).to receive(:directory?)
+        allow(Dir).to receive(:mkdir)
         allow(FileUtils).to receive(:touch)
-        get "/services/#{activated_service.id}", headers: auth_header
+        allow(InstanceVerification).to receive(:update_cache)
+        get "/services/#{activated_service.id}", headers: headers
       end
 
       include_context 'auth header', :system, :login, :password
 
       subject { xml_urls }
 
+      let(:headers) { auth_header }
       let(:xml_urls) do
         doc = Nokogiri::XML::Document.parse(response.body)
         repo_items = doc.xpath('/repoindex/repo')
         repo_items.map { |r| r.attr(:url) }
       end
-
       let(:model_urls) do
         activated_service.repositories.reject(&:installer_updates).map do |repo|
           RMT::Misc.make_repo_url('http://www.example.com', repo.local_path, activated_service.name)

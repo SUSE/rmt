@@ -4,10 +4,12 @@ After=rmt-server.service
 Wants=rmt-server.service
 
 [Service]
-Type=simple
+Type=oneshot
 Restart=no
 Environment="LOG_TO_JOURNALD=1" "LANG=en"
-ExecStart=find /var/lib/rmt/tmp/cache -mmin +20 -type f -delete
+EnvironmentFile=/var/lib/rmt/rmt-cache-trim.sh
+ExecStart=find ${REPOSITORY_CLIENT_CACHE_DIRECTORY} -mmin +${REPOSITORY_CACHE_EXPIRY_MINUTES} -type f -delete
+ExecStart=find ${REGISTRY_CLIENT_CACHE_DIRECTORY} -mmin +${REGISTRY_CACHE_EXPIRY_MINUTES} -type f -delete
 
 [Install]
 WantedBy=multi-user.target

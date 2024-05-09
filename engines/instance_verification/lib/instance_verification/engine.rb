@@ -4,31 +4,17 @@ module InstanceVerification
   def self.update_cache(remote_ip, system_login, product_id, is_byos: false, registry: false) # rubocop:disable Lint/UnusedMethodArgument
     # TODO: BYOS scenario
     # to be addressed on a different PR
-    cache_config_data = InstanceVerification.cache_config
     unless registry
-      cache_key = [remote_ip, system_login, product_id].join('-')
       InstanceVerification.write_cache_file(
-        cache_config_data['REPOSITORY_CLIENT_CACHE_DIRECTORY'],
-        cache_key
-        )
+        Rails.application.config.repo_cache_dir,
+        [remote_ip, system_login, product_id].join('-')
+      )
     end
 
-    registry_cache_key = [remote_ip, system_login].join('-')
     InstanceVerification.write_cache_file(
-      cache_config_data['REGISTRY_CLIENT_CACHE_DIRECTORY'],
-      registry_cache_key
+      Rails.application.config.registry_cache_dir,
+      [remote_ip, system_login].join('-')
     )
-  end
-
-  def self.cache_config
-    cache_config_data = {}
-    File.open(Rails.application.config.cache_config_file, 'r') do |cache_config_file|
-      cache_config_file.each_line do |line|
-        line_data = line.split(/=|\n/)
-        cache_config_data[line_data[0]] = line_data[1]
-      end
-    end
-    cache_config_data
   end
 
   def self.write_cache_file(cache_dir, cache_key)

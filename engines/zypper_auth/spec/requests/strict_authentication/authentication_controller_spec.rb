@@ -16,8 +16,8 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri }) }
 
         before do
-          expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(false)
-          allow(FileUtils).to receive(:mkdir_p)
+          allow(File).to receive(:directory?)
+          allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
           get '/api/auth/check', headers: headers
         end
@@ -31,7 +31,8 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         before do
           Rails.cache.clear
           expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(false)
-          allow(FileUtils).to receive(:mkdir_p)
+          allow(File).to receive(:directory?)
+          allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
           get '/api/auth/check', headers: headers
         end
@@ -130,7 +131,8 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           before do
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_active].to_json, headers: {})
             expect(URI).to receive(:encode_www_form).with({ byos: true })
-            allow(FileUtils).to receive(:mkdir_p)
+            allow(File).to receive(:directory?).and_return(true)
+            allow(Dir).to receive(:mkdir)
             allow(FileUtils).to receive(:touch)
             get '/api/auth/check', headers: headers
           end
@@ -162,7 +164,8 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           before do
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_unknown_status].to_json, headers: {})
             expect(URI).to receive(:encode_www_form).with({ byos: true })
-            allow(FileUtils).to receive(:mkdir_p)
+            allow(File).to receive(:directory?)
+            allow(Dir).to receive(:mkdir)
             allow(FileUtils).to receive(:touch)
             get '/api/auth/check', headers: headers
           end
@@ -174,7 +177,8 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           before do
             stub_request(:get, scc_systems_activations_url).to_return(status: 401, body: [body_expired].to_json, headers: {})
             expect(URI).to receive(:encode_www_form).with({ byos: true })
-            allow(FileUtils).to receive(:mkdir_p)
+            allow(File).to receive(:directory?)
+            allow(Dir).to receive(:mkdir)
             allow(FileUtils).to receive(:touch)
             get '/api/auth/check', headers: headers
           end
@@ -189,7 +193,9 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         before do
           Rails.cache.clear
           expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
-          allow(FileUtils).to receive(:mkdir_p)
+          allow(InstanceVerification).to receive(:update_cache)
+          allow(File).to receive(:directory?)
+          allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
           get '/api/auth/check', headers: headers
         end

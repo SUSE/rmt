@@ -6,17 +6,21 @@ module ZypperAuth
       Thread.current[:logger]
     end
 
-    def verify_instance(request, logger, system, registry: false)
+    def verify_instance(request, logger, system)
+      return false unless request.headers['X-Instance-Data']
+
       instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
 
       base_product = system.products.find_by(product_type: 'base')
       return false unless base_product
 
-      unless registry
-        # check the cache for the system (20 min) if no registry case
-        cache_key = [request.remote_ip, system.login, base_product.id].join('-')
-        cache_path = File.join(InstanceVerification.cache_config['REPOSITORY_CLIENT_CACHE_DIRECTORY'], cache_key)
-        return true if File.exist?(cache_path)
+      # check the cache for the system (20 min)
+      cache_key = [request.remote_ip, system.login, base_product.id].join('-')
+      cache_path = File.join(Rails.application.config.repo_cache_dir, cache_key)
+      if File.exist?(cache_path)
+        # only update registry cache key
+        InstanceVerification.update_cache(request.remote_ip, system.login, nil, is_byos: system.proxy_byos, registry: true)
+        return true
       end
 
       verification_provider = InstanceVerification.provider.new(
@@ -27,7 +31,8 @@ module ZypperAuth
       )
 
       is_valid = verification_provider.instance_valid?
-      InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id, is_byos: system.proxy_byos, registry: registry)
+      # update repository and registry cache
+      InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id, is_byos: system.proxy_byos)
       is_valid
     rescue InstanceVerification::Exception => e
       message = ''
@@ -51,7 +56,6 @@ module ZypperAuth
         #{details.join(', ')}
       LOGMSG
 
-      Rails.cache.write(cache_key, false, expires_in: 2.minutes)
       false
     rescue StandardError => e
       logger.error('Unexpected instance verification error has occurred:')

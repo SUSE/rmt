@@ -20,10 +20,10 @@ module Registry
 
     config.after_initialize do
       Api::Connect::V3::Systems::ActivationsController.class_eval do
-        before_action :handle_cache, only: %w[index]
+        before_action :handle_auth_cache, only: %w[index]
 
-        def handle_cache
-          unless request.headers['X-Instance-Data'] && ZypperAuth.verify_instance(request, logger, @system, registry: true)
+        def handle_auth_cache
+          unless ZypperAuth.verify_instance(request, logger, @system)
             render(xml: { error: 'Instance verification failed' }, status: :forbidden)
           end
         end

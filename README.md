@@ -39,7 +39,7 @@ following compression formats:
 If you encounter a repository with different compression and want support in RMT, please open
 an [issue](https://github.com/SUSE/rmt/issues) and let the RMT development team know!
 
-## Mirroring none SUSE repositories using RMT
+## Mirroring non-SUSE repositories using RMT
 
 RMT provides a mechanism to mirror custom repositories, named custom repositories.
 
