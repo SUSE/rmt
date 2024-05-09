@@ -1,14 +1,16 @@
 require 'fileutils'
 
 module InstanceVerification
-  def self.update_cache(remote_ip, system_login, product_id, _is_byos)
+  def self.update_cache(remote_ip, system_login, product_id, is_byos: false, registry: false) # rubocop:disable Lint/UnusedMethodArgument
     # TODO: BYOS scenario
     # to be addressed on a different PR
-    # caches verification result to be used by zypper auth plugin
-    InstanceVerification.write_cache_file(
-      Rails.application.config.repo_cache_dir,
-      [remote_ip, system_login, product_id].join('-')
-    )
+    unless registry
+      InstanceVerification.write_cache_file(
+        Rails.application.config.repo_cache_dir,
+        [remote_ip, system_login, product_id].join('-')
+      )
+    end
+
     InstanceVerification.write_cache_file(
       Rails.application.config.registry_cache_dir,
       [remote_ip, system_login].join('-')
@@ -16,8 +18,7 @@ module InstanceVerification
   end
 
   def self.write_cache_file(cache_dir, cache_key)
-    Dir.mkdir(cache_dir) unless File.directory?(cache_dir)
-
+    FileUtils.mkdir_p(cache_dir)
     FileUtils.touch(File.join(cache_dir, cache_key))
   end
 
@@ -110,7 +111,7 @@ module InstanceVerification
           )
 
           raise 'Unspecified error' unless verification_provider.instance_valid?
-          InstanceVerification.update_cache(request.remote_ip, @system.login, product.id, @system.proxy_byos)
+          InstanceVerification.update_cache(request.remote_ip, @system.login, product.id, is_byos: @system.proxy_byos)
         end
 
         # Verify that the base product doesn't change in the offline migration

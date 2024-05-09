@@ -21,13 +21,13 @@ Rails.application.configure do
 
   config.cache_config_file = '/var/lib/rmt/rmt-cache-trim.sh'
   config.repo_cache_dir = '/run/rmt/cache/repository'
+  config.registry_cache_dir = '/run/rmt/cache/registry'
   cache_config_content = [
     "REPOSITORY_CLIENT_CACHE_DIRECTORY=#{config.repo_cache_dir}",
     'REPOSITORY_CACHE_EXPIRY_MINUTES=20',
     "REGISTRY_CLIENT_CACHE_DIRECTORY=#{config.registry_cache_dir}",
     "REGISTRY_CACHE_EXPIRY_MINUTES=#{Settings[:registry].try(:token_expiration) || 480}" # 480: 8 hours in minutes
   ].join("\n")
-  config.registry_cache_dir = '/run/rmt/cache/registry'
   File.write(config.cache_config_file, cache_config_content)
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
