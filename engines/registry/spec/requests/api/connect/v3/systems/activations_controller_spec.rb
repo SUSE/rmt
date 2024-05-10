@@ -26,21 +26,22 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
 
       before do
         allow(File).to receive(:join).and_call_original
-        # allow(File).to receive(:exist?).with('repo/cache/127.0.0.1-login45-1052122')
-        # allow(File).to receive(:exist?).with("repo/cache/127.0.0.1-#{system.login}-#{system.products.first.id}").and_return(true)
-        # allow(File).to receive(:exist?).with("repo/cache/127.0.0.1-#{system.login}-#{system.products.first.id}").and_return(true)
-        # allow(File).to receive(:exist?)
+        allow(File).to receive(:directory?)
+        allow(Dir).to receive(:mkdir)
+        allow(FileUtils).to receive(:touch)
+        allow(InstanceVerification).to receive(:repository_cache_path).and_return('.')
+        allow(InstanceVerification).to receive(:registry_cache_path)
+        allow(InstanceVerification).to receive(:write_cache_file)
         allow(InstanceVerification).to receive(:update_cache)
         allow(InstanceVerification).to receive(:verify_instance).and_call_original
         headers['X-Instance-Data'] = 'IMDS'
       end
 
       it 'refreshes registry cache key only' do
-        FileUtils.mkdir_p('repo/cache')
-        FileUtils.touch(cache_name)
+        allow(File).to receive(:directory?)
+        allow(Dir).to receive(:mkdir)
         expect(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, nil, is_byos: system.proxy_byos, registry: true)
         get '/connect/systems/activations', headers: headers
-        FileUtils.rm_rf('repo/cache')
         data = JSON.parse(response.body)
         expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
       end

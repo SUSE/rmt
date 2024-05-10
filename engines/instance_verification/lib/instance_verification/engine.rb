@@ -5,21 +5,46 @@ module InstanceVerification
     # TODO: BYOS scenario
     # to be addressed on a different PR
     unless registry
-      InstanceVerification.write_cache_file(
-        Rails.application.config.repo_cache_dir,
-        InstanceVerification.build_cache_key(remote_ip, system_login, base_product_id: product_id)
-      )
+      # write repository cache
+      repository_cache_path = InstanceVerification.repository_cache_path(remote_ip, system_login, product_id)
+      InstanceVerification.write_cache_file(repository_cache_path) unless registry
     end
 
-    InstanceVerification.write_cache_file(
+    # write registry cache
+    registry_cache_path = InstanceVerification.registry_cache_path(remote_ip, system_login)
+    InstanceVerification.write_cache_file(registry_cache_path)
+  end
+
+  def self.write_cache_file(cache_path)
+    Dir.mkdir(File.dirname(cache_path)) unless File.directory?(File.dirname(cache_path))
+
+    FileUtils.touch(cache_path)
+  end
+
+  def self.repository_cache_path(remote_ip, system_login, product_id)
+    File.join(
+      Rails.application.config.repo_cache_dir,
+      InstanceVerification.build_cache_key(remote_ip, system_login, product_id: product_id)
+    )
+  end
+
+  def self.registry_cache_path(remote_ip, system_login)
+    File.join(
       Rails.application.config.registry_cache_dir,
       InstanceVerification.build_cache_key(remote_ip, system_login)
     )
   end
 
-  def self.write_cache_file(cache_dir, cache_key)
-    FileUtils.mkdir_p(cache_dir)
-    FileUtils.touch(File.join(cache_dir, cache_key))
+  def self.remove_registry_cache(remote_ip, system_login)
+    registry_cache_path = InstanceVerification.registry_cache_path(remote_ip, system_login)
+    File.unlink(registry_cache_path) if File.exist?(registry_cache_path)
+  end
+
+  def self.build_cache_key(remote_ip, system_login, product_id: nil)
+    cache_key = [remote_ip, system_login]
+    cache_key.append(product_id) unless product_id.nil?
+
+    cache_key.join('-')
   end
 
   def self.verify_instance(request, logger, system)
@@ -30,10 +55,7 @@ module InstanceVerification
     return false unless base_product
 
     # check the cache for the system (20 min)
-    cache_path = File.join(
-      Rails.application.config.repo_cache_dir,
-      InstanceVerification.build_cache_key(request.remote_ip, system.login, base_product_id: base_product.id)
-    )
+    cache_path = InstanceVerification.repository_cache_path(request.remote_ip, system.login, base_product.id)
     if File.exist?(cache_path)
       # only update registry cache key
       InstanceVerification.update_cache(request.remote_ip, system.login, nil, is_byos: system.proxy_byos, registry: true)
@@ -80,13 +102,6 @@ module InstanceVerification
     logger.error('Backtrace:')
     logger.error(e.backtrace)
     false
-  end
-
-  def self.build_cache_key(remote_ip, login, base_product_id: nil)
-    cache_key = [remote_ip, login]
-    cache_key.append(base_product_id) unless base_product_id.nil?
-
-    cache_key.join('-')
   end
 
   class Engine < ::Rails::Engine
