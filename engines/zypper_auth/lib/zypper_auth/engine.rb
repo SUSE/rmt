@@ -5,66 +5,6 @@ module ZypperAuth
       Thread.current[:logger].reopen
       Thread.current[:logger]
     end
-
-    def verify_instance(request, logger, system)
-      return false unless request.headers['X-Instance-Data']
-
-      instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
-
-      base_product = system.products.find_by(product_type: 'base')
-      return false unless base_product
-
-      # check the cache for the system (20 min)
-      cache_key = [request.remote_ip, system.login, base_product.id].join('-')
-      cache_path = File.join(Rails.application.config.repo_cache_dir, cache_key)
-      if File.exist?(cache_path)
-        # only update registry cache key
-        InstanceVerification.update_cache(request.remote_ip, system.login, nil, is_byos: system.proxy_byos, registry: true)
-        return true
-      end
-
-      verification_provider = InstanceVerification.provider.new(
-        logger,
-        request,
-        base_product.attributes.symbolize_keys.slice(:identifier, :version, :arch, :release_type),
-        instance_data
-      )
-
-      is_valid = verification_provider.instance_valid?
-      # update repository and registry cache
-      InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id, is_byos: system.proxy_byos)
-      is_valid
-    rescue InstanceVerification::Exception => e
-      message = ''
-      if system.proxy_byos
-        result = SccProxy.scc_check_subscription_expiration(request.headers, system.login, system.system_token, logger)
-        if result[:is_active]
-          InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id, is_byos: system.proxy_byos)
-          return true
-        end
-
-        message = result[:message]
-      else
-        message = e.message
-      end
-      details = [ "System login: #{system.login}", "IP: #{request.remote_ip}" ]
-      details << "Instance ID: #{verification_provider.instance_id}" if verification_provider.instance_id
-      details << "Billing info: #{verification_provider.instance_billing_info}" if verification_provider.instance_billing_info
-
-      ZypperAuth.auth_logger.info <<~LOGMSG
-        Access to the repos denied: #{message}
-        #{details.join(', ')}
-      LOGMSG
-
-      false
-    rescue StandardError => e
-      logger.error('Unexpected instance verification error has occurred:')
-      logger.error(e.message)
-      logger.error("System login: #{system.login}, IP: #{request.remote_ip}")
-      logger.error('Backtrace:')
-      logger.error(e.backtrace)
-      false
-    end
   end
 
   class Engine < ::Rails::Engine
@@ -126,7 +66,7 @@ module ZypperAuth
         # additional validation for zypper service XML controller
         before_action :verify_instance
         def verify_instance
-          unless ZypperAuth.verify_instance(request, logger, @system)
+          unless InstanceVerification.verify_instance(request, logger, @system)
             render(xml: { error: 'Instance verification failed' }, status: 403)
           end
         end
@@ -138,7 +78,7 @@ module ZypperAuth
         # additional validation for strict_authentication auth subrequest
         def path_allowed?(path)
           return false unless original_path_allowed?(path)
-          ZypperAuth.verify_instance(request, logger, @system)
+          InstanceVerification.verify_instance(request, logger, @system)
         end
       end
     end
