@@ -7,14 +7,21 @@ module ZypperAuth
     end
 
     def verify_instance(request, logger, system)
+      return false unless request.headers['X-Instance-Data']
+
       instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
 
       base_product = system.products.find_by(product_type: 'base')
       return false unless base_product
 
+      # check the cache for the system (20 min)
       cache_key = [request.remote_ip, system.login, base_product.id].join('-')
-      cached_result = Rails.cache.fetch(cache_key)
-      return cached_result unless cached_result.nil?
+      cache_path = File.join(Rails.application.config.repo_cache_dir, cache_key)
+      if File.exist?(cache_path)
+        # only update registry cache key
+        InstanceVerification.update_cache(request.remote_ip, system.login, nil, registry: true)
+        return true
+      end
 
       verification_provider = InstanceVerification.provider.new(
         logger,
@@ -24,14 +31,15 @@ module ZypperAuth
       )
 
       is_valid = verification_provider.instance_valid?
-      InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id, system.proxy_byos)
+      # update repository and registry cache
+      InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id)
       is_valid
     rescue InstanceVerification::Exception => e
       message = ''
       if system.proxy_byos
         result = SccProxy.scc_check_subscription_expiration(request.headers, system.login, system.system_token, logger)
         if result[:is_active]
-          InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id, system.proxy_byos)
+          InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id)
           return true
         end
 
@@ -48,7 +56,6 @@ module ZypperAuth
         #{details.join(', ')}
       LOGMSG
 
-      Rails.cache.write(cache_key, false, expires_in: 2.minutes)
       false
     rescue StandardError => e
       logger.error('Unexpected instance verification error has occurred:')

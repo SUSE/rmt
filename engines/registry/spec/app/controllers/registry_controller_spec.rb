@@ -16,6 +16,7 @@ module Registry
         let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
 
         it 'succeeds with login + password from secrets' do
+          allow_any_instance_of(AuthenticatedClient).to receive(:cache_file_exist?).and_return(true)
           get('/api/registry/authorize', headers: auth_headers)
 
           expect(response).to have_http_status(:ok)
@@ -76,6 +77,7 @@ module Registry
       context 'with a valid token' do
         it 'has catalog access' do
           allow(File).to receive(:read).and_return(access_policy_content)
+          allow_any_instance_of(AuthenticatedClient).to receive(:cache_file_exist?).and_return(true)
           get(
             '/api/registry/authorize',
             params: { service: 'SUSE Linux OCI Registry', scope: 'registry:catalog:*' },
