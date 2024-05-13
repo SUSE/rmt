@@ -9,7 +9,7 @@ gem 'puma', '~> 5.6.2'
 gem 'mysql2', '~> 0.5.3'
 gem 'sqlite3'
 
-gem 'nokogiri', '< 1.13' # Locked because of Ruby >= 2.6 dependency
+gem 'nokogiri', '<= 1.16.5' # Locked because of Ruby >= 2.6 dependency
 gem 'thor', '<= 1.2.2' # Locked because of Ruby >= 2.6 dependency
 gem 'activesupport', '~> 6.1.7'
 gem 'actionpack', '~> 6.1.7'
