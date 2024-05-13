@@ -1,7 +1,7 @@
 require 'fileutils'
 
 module InstanceVerification
-  def self.update_cache(remote_ip, system_login, product_id, is_byos: false, registry: false) # rubocop:disable Lint/UnusedMethodArgument
+  def self.update_cache(remote_ip, system_login, product_id, registry: false)
     # TODO: BYOS scenario
     # to be addressed on a different PR
     unless registry
@@ -178,7 +178,7 @@ module InstanceVerification
           )
 
           raise 'Unspecified error' unless verification_provider.instance_valid?
-          InstanceVerification.update_cache(request.remote_ip, @system.login, product.id, is_byos: @system.proxy_byos)
+          InstanceVerification.update_cache(request.remote_ip, @system.login, product.id)
         end
 
         # Verify that the base product doesn't change in the offline migration

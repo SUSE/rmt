@@ -34,7 +34,7 @@
 %undefine _find_debuginfo_dwz_opts
 
 Name:           rmt-server
-Version:        2.16
+Version:        2.17
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later

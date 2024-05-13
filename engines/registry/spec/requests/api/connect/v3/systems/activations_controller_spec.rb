@@ -38,7 +38,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
       it 'refreshes registry cache key only' do
         FileUtils.mkdir_p('repo/cache')
         FileUtils.touch(cache_name)
-        expect(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, nil, is_byos: system.proxy_byos, registry: true)
+        expect(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, nil, registry: true)
         get '/connect/systems/activations', headers: headers
         FileUtils.rm_rf('repo/cache')
         data = JSON.parse(response.body)

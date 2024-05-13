@@ -5,8 +5,8 @@ RSpec.describe RMT::Mirror::Repomd do
 
   let(:logger) { RMT::Logger.new('/dev/null') }
 
-
-  let(:repository_url) { 'https://updates.suse.com/sample/repository/15.4/product' }
+  # Remember that RMT forces a trialing slash on all repository URLS!
+  let(:repository_url) { 'https://updates.suse.com/sample/repository/15.4/product/' }
   let(:repository) do
     create :repository,
            name: 'SUSE Linux Enterprise Server 15 SP4',
@@ -52,7 +52,7 @@ RSpec.describe RMT::Mirror::Repomd do
       expect(licenses).to receive(:mirror)
       expect(repomd).to receive(:mirror_metadata)
       expect(repomd).to receive(:mirror_packages)
-      expect(repomd).to receive(:move_directory).with(source: 'a/repodata', destination: repomd.repository_path('repodata'))
+      expect(repomd).to receive(:move_files).with(glob: 'a/repodata/*', destination: repomd.repository_path('repodata'))
 
       repomd.mirror_implementation
     end
@@ -65,7 +65,7 @@ RSpec.describe RMT::Mirror::Repomd do
         expect(repomd).to receive(:create_temp_dir).with(:metadata)
         expect(repomd).to receive(:mirror_metadata)
         expect(repomd).to receive(:mirror_packages)
-        expect(repomd).to receive(:move_directory).with(source: 'a/repodata', destination: repomd.repository_path('repodata'))
+        expect(repomd).to receive(:move_files).with(glob: 'a/repodata/*', destination: repomd.repository_path('repodata'))
 
         expect(licenses).not_to receive(:mirror)
 
