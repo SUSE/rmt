@@ -36,7 +36,7 @@ module InstanceVerification
     )
     if File.exist?(cache_path)
       # only update registry cache key
-      InstanceVerification.update_cache(request.remote_ip, system.login, nil, is_byos: system.proxy_byos, registry: true)
+      InstanceVerification.update_cache(request.remote_ip, system.login, nil, registry: true)
       return true
     end
 
@@ -49,14 +49,14 @@ module InstanceVerification
 
     is_valid = verification_provider.instance_valid?
     # update repository and registry cache
-    InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id, is_byos: system.proxy_byos)
+    InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id)
     is_valid
   rescue InstanceVerification::Exception => e
     message = ''
     if system.proxy_byos
       result = SccProxy.scc_check_subscription_expiration(request.headers, system.login, system.system_token, logger)
       if result[:is_active]
-        InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id, is_byos: system.proxy_byos)
+        InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id)
         return true
       end
 
