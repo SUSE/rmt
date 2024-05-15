@@ -4,7 +4,8 @@
 # and recreated between test runs. Don't rely on the data there!
 
 Rails.application.configure do
-  config.cache_config_file = Rails.root.join('engines/registry/spec/data/rmt-cache-trim.sh')
-  config.repo_cache_dir = 'repo/cache'
-  config.registry_cache_dir = 'registry/cache'
+  config.access_policies = 'engines/registry/spec/data/access_policies.yml'
+  config.registry_private_key = OpenSSL::PKey::RSA.new(2048)
+  config.registry_public_key = config.registry_private_key.public_key
+  config.autoload_paths << Rails.root.join('engines/registry/spec/support/')
 end
