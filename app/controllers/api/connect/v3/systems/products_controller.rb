@@ -92,7 +92,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
     mandatory_repos = @product.repositories.only_enabled
     mirrored_repos = @product.repositories.only_enabled.only_fully_mirrored
-    missing_repo_ids = (mandatory_repos - mirrored_repos).pluck(:id).join(', ')
+    missing_repo_ids = (mandatory_repos - mirrored_repos).pluck(:scc_id).join(', ')
 
     unless mandatory_repos.size == mirrored_repos.size
       # rubocop:disable Layout/LineLength
