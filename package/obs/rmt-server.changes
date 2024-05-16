@@ -1,13 +1,13 @@
 -------------------------------------------------------------------
-Mon Apr 29 12:47:33 UTC 2024 - Natnael Getahun <natnael.getahun@suse.com>
+Thu April 18 09:27:00 UTC 2024 - Adnilson Delgado <adnilson.delgado@suse.com>
 
 - Version 2.17 :
-  * Improve CLI mirroring summary information by adding the mirror repositories, 
-    the file count and size. This fixes issue #702.
-  * Ensure subscriptions are activated after migration (bsc#1220109)
-  * Adding Uptime tracking capability (PED-7982,PED-8018)
-    
---------------------------------------------------------------------
+  * Improve CLI mirroring summary information by adding the mirror repositories, the file count and size. (gh#702)
+  * Copy metadata content to repodata/ and not create a seperate subdirectory repodata/repodata (gh#1136)
+  * Adding Uptime tracking capability (jsc#PED-7982, jsc#PED-8018)
+  * Registry authentication host capability for public cloud
+
+-------------------------------------------------------------------
 Thu April 11 15:22:00 UTC 2024 - Felix Schnizlein <fschnizlein@suse.com>
 
 - Version 2.16 :
@@ -15,18 +15,6 @@ Thu April 11 15:22:00 UTC 2024 - Felix Schnizlein <fschnizlein@suse.com>
   * Remove automatic backup generation for repodata within repository. .old_repodata
     directories are obsolete and can be removed savely.
   * Add support for debian repositories using flat or nested structures (jsc#PED-3684)
-
--------------------------------------------------------------------
-Thu April 07 13:23:00 UTC 2024 - Felix Schnizlein <fschnizlein@suse.com>
-
-- Version 2.16 (unreleased):
-  * Support bzip2 compressed repositories (bsc#1222122)
-
--------------------------------------------------------------------
-Thu Mar 07 15:33:00 UTC 2024 - Likhitha Priya <likhitha.priyad@suse.com>
-
-- Version 2.16:
-  * Add support for debian repositories using flat or nested structures
 
 -------------------------------------------------------------------
 Wed Oct 04 13:23:00 UTC 2023 - Felix Schnizlein <fschnizlein@suse.com>

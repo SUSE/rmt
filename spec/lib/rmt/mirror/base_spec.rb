@@ -36,12 +36,14 @@ describe RMT::Mirror::Base do
     it 'mirrors repositories and licenses' do
       expect(base).to receive(:mirror_implementation)
       expect(base).to receive(:cleanup_temp_dirs)
+      expect(base).to receive(:cleanup_stale_metadata)
       base.mirror
     end
 
     it 'throws an exception if mirroring fails' do
       allow(base).to receive(:mirror_implementation).and_raise(RMT::Mirror::Exception)
       expect(base).to receive(:cleanup_temp_dirs)
+      expect(base).to receive(:cleanup_stale_metadata)
       expect { base.mirror }.to raise_error(RMT::Mirror::Exception)
     end
   end
@@ -200,35 +202,27 @@ describe RMT::Mirror::Base do
     end
   end
 
-  describe '#move_directory' do
-    let(:src) { '/source/path' }
-    let(:dest) { '/destination/path' }
-    let(:backup) { '/destination/.backup_path' }
-
-    it 'moves content from source to destination' do
-      expect(FileUtils).to receive(:mv).with(src, dest, force: true)
-      expect(FileUtils).to receive(:chmod).with(0o755, dest)
-
-      base.move_directory(source: src, destination: dest)
-    end
-
-    it 'fails on file system errors' do
-      allow(FileUtils).to receive(:mv).with(src, dest, force: true).and_raise(StandardError)
-
-      expect { base.move_directory(source: src, destination: dest) }.to raise_exception(/Error while moving directory/)
-    end
-  end
-
   describe '#move_files' do
-    let(:src) { '/source/path' }
+    let(:src) { '/source/path/*' }
     let(:dest) { '/destination/path' }
 
-    it 'copies content from source to destination without backup' do
+    it 'creates the destination directory if not yet existing' do
+      allow(Dir).to receive(:exist?).with(dest).and_return(false)
+      expect(FileUtils).to receive(:mkpath).with(dest)
       expect(FileUtils).to receive(:mv).with(Dir.glob(src), dest, force: true)
+
+      base.move_files(glob: src, destination: dest)
+    end
+
+    it 'copies content from source to destination' do
+      allow(Dir).to receive(:exist?).with(dest).and_return(true)
+      expect(FileUtils).to receive(:mv).with(Dir.glob(src), dest, force: true)
+
       base.move_files(glob: src, destination: dest)
     end
 
     it 'fails on file system errors' do
+      allow(Dir).to receive(:exist?).with(dest).and_return(true)
       allow(FileUtils).to receive(:mv).with(Dir.glob(src), dest, force: true).and_raise(StandardError)
 
       expect { base.move_files(glob: src, destination: dest) }.to raise_exception(/Error while moving files/)
@@ -284,6 +278,64 @@ describe RMT::Mirror::Base do
       allow(base).to receive(:deduplicate).with(package).and_return(true)
 
       expect(base.need_to_download?(package)).to be(false)
+    end
+  end
+
+  describe '#cleanup_stale_metadata' do
+    let(:duplicated_repodata_path) { base.repository_path('repodata', 'repodata') }
+    let(:old_backup_glob) { base.repository_path('.old_*') }
+    let(:found_old_backup_files) do
+      [
+        base.repository_path('.old_repodata'),
+        base.repository_path('.old_license')
+      ]
+    end
+
+    context 'with repodata/repodata/' do
+      it 'removes the directory' do
+        allow(Dir).to receive(:exist?).with(duplicated_repodata_path).and_return(true)
+        allow(Dir).to receive(:glob).with(old_backup_glob).and_return([])
+
+        expect(FileUtils).to receive(:remove_entry).with(duplicated_repodata_path)
+
+        base.cleanup_stale_metadata
+      end
+    end
+
+    context 'with .old_repodata' do
+      it 'removes stale .old_* backups' do
+        allow(Dir).to receive(:exist?).with(duplicated_repodata_path).and_return(false)
+        allow(Dir).to receive(:glob).with(old_backup_glob).and_return(found_old_backup_files)
+
+        expect(FileUtils).to receive(:remove_entry).with(found_old_backup_files[0])
+        expect(FileUtils).to receive(:remove_entry).with(found_old_backup_files[1])
+
+        base.cleanup_stale_metadata
+      end
+    end
+
+    context 'filesystem error' do
+      it 'does not raise' do
+        allow(Dir).to receive(:exist?).with(duplicated_repodata_path).and_return(false)
+        allow(Dir).to receive(:glob).with(old_backup_glob).and_return(found_old_backup_files)
+        allow(FileUtils).to receive(:remove_entry).with(found_old_backup_files[1]).and_raise(StandardError)
+
+        expect(FileUtils).to receive(:remove_entry).with(found_old_backup_files[0])
+        expect(base.logger).to receive(:debug)
+
+        base.cleanup_stale_metadata
+      end
+    end
+
+    context 'without stale metadata' do
+      it 'does not delete any directory' do
+        allow(Dir).to receive(:exist?).with(duplicated_repodata_path).and_return(false)
+        allow(Dir).to receive(:glob).with(old_backup_glob).and_return([])
+
+        expect(FileUtils).not_to receive(:remove_entry)
+
+        base.cleanup_stale_metadata
+      end
     end
   end
 end

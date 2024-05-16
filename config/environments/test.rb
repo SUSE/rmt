@@ -27,11 +27,6 @@ Rails.application.configure do
   config.action_controller.perform_caching = false
   config.cache_store = :null_store
 
-  # for registry
-  config.access_policies = 'engines/registry/spec/data/access_policies.yml'
-  config.registry_private_key = OpenSSL::PKey::RSA.new(2048)
-  config.registry_public_key = config.registry_private_key.public_key
-  config.autoload_paths << Rails.root.join('engines/registry/spec/support/')
   # Raise exceptions instead of rendering exception templates.
   config.action_dispatch.show_exceptions = false
 

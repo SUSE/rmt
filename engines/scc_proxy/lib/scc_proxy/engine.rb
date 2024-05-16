@@ -275,7 +275,7 @@ module SccProxy
               raise ActionController::TranslatedError.new(error['error'])
             end
             logger.info "Product #{@product.product_string} successfully activated with SCC"
-            InstanceVerification.update_cache(request.remote_ip, @system.login, @product.id, @system.proxy_byos)
+            InstanceVerification.update_cache(request.remote_ip, @system.login, @product.id)
           end
         end
       end
