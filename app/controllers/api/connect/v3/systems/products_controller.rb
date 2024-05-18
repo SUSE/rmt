@@ -124,7 +124,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
   def load_subscription
     # Find subscription by regcode if provided, otherwise use the first subscription (bsc#1220109)
-    if params[:token].present?
+    if params[:token].present? && !@system.proxy_byos
       @subscription = Subscription.find_by(regcode: params[:token])
       unless @subscription
         raise ActionController::TranslatedError.new(N_('No subscription with this Registration Code found'))
@@ -140,7 +140,10 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
         raise ActionController::TranslatedError.new(error, @product.friendly_name)
       end
     else
-      subscription_id = @system.activations.includes(:subscription).where.not(subscription_id: nil).pluck(:subscription_id).uniq.first
+      # pluck subscription based on product/extension
+      product_ids = ([@product] + @product.predecessors + @product.successors).map(&:id)
+      subscription_id = @system.activations.includes(:subscription,
+                                                     :product).where('products.id' => product_ids).pluck(:subscription_id).uniq.first
       @subscription = Subscription.find(subscription_id) if subscription_id
     end
   end
