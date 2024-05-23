@@ -61,7 +61,7 @@ module Registry
 
 
       before do
-        stub_request(:get, "https://www.example.com:80/api/registry/authorize?account=#{system.login}&scope=registry:catalog:*&service=SUSE%20Linux%20OCI%20Registry")
+        stub_request(:get, "https://registry-example.susecloud.net/api/registry/authorize?account=#{system.login}&scope=registry:catalog:*&service=SUSE%20Linux%20OCI%20Registry")
          .with(
            headers: {
              'Accept' => '*/*',
