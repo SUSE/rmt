@@ -71,20 +71,23 @@ describe RMT::Mirror::Base do
 
   describe '#create_temp_dir' do
     let(:error) { ArgumentError.new('parent directory is not sticky') }
+    let(:metadata_tmp_path) { base.repository_path('.tmp_metadata') }
+    let(:license_tmp_path) { base.repository_path('.tmp_license') }
 
     it 'creates the desired temp directories' do
-      allow(Dir).to receive(:mktmpdir).with('metadata').and_return('/tmp/rspec-metadata')
-      allow(Dir).to receive(:mktmpdir).with('license').and_return('/tmp/rspec-license')
+      allow(FileUtils).to receive(:mkpath).with(metadata_tmp_path)
+      allow(FileUtils).to receive(:mkpath).with(license_tmp_path)
 
       base.create_temp_dir(:metadata)
       base.create_temp_dir(:license)
 
       expect(base.temp_dirs.keys).to match(%i[metadata license])
-      expect(base.temp_dirs[:metadata]).to match('/tmp/rspec-metadata')
+      expect(base.temp_dirs[:metadata]).to match(metadata_tmp_path)
+      expect(base.temp_dirs[:license]).to match(license_tmp_path)
     end
 
     it 'fails when it could not create the temp directory' do
-      allow(Dir).to receive(:mktmpdir).and_raise(error)
+      allow(FileUtils).to receive(:mkpath).and_raise(error)
 
       expect { base.create_temp_dir(:metadata) }.to raise_error(RMT::Mirror::Exception, /parent directory/)
     end
@@ -106,12 +109,12 @@ describe RMT::Mirror::Base do
   end
 
   describe '#cleanup_temp_dirs' do
-    let(:temp_metadata) { '/tmp/metadata' }
-    let(:temp_licenses) { '/tmp/licenses' }
+    let(:temp_metadata) { base.repository_path('.tmp_metadata') }
+    let(:temp_licenses) { base.repository_path('.tmp_license') }
 
     before do
-      allow(Dir).to receive(:mktmpdir).with('metadata').and_return(temp_metadata)
-      allow(Dir).to receive(:mktmpdir).with('license').and_return(temp_licenses)
+      allow(FileUtils).to receive(:mkpath).with(temp_metadata)
+      allow(FileUtils).to receive(:mkpath).with(temp_licenses)
 
       base.create_temp_dir(:metadata)
       base.create_temp_dir(:license)
@@ -128,10 +131,10 @@ describe RMT::Mirror::Base do
   end
 
   describe '#temp' do
-    let(:temp_path) { '/tmp/path/' }
+    let(:temp_path) { base.repository_path('.tmp_test') }
 
     it 'gives back the created temp directory' do
-      allow(Dir).to receive(:mktmpdir).and_return(temp_path)
+      expect(FileUtils).to receive(:mkpath).with(temp_path)
 
       base.create_temp_dir(:test)
       expect(base.temp(:test)).to eq(temp_path)
@@ -321,7 +324,7 @@ describe RMT::Mirror::Base do
         allow(FileUtils).to receive(:remove_entry).with(found_old_backup_files[1]).and_raise(StandardError)
 
         expect(FileUtils).to receive(:remove_entry).with(found_old_backup_files[0])
-        expect(base.logger).to receive(:debug)
+        expect(base.logger).to receive(:debug).exactly(4).times
 
         base.cleanup_stale_metadata
       end
