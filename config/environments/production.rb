@@ -20,8 +20,8 @@ Rails.application.configure do
   config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
 
   config.cache_config_file = '/var/lib/rmt/rmt-cache-trim.sh'
-  config.repo_cache_dir = '/run/rmt/cache/repository'
-  config.registry_cache_dir = '/run/rmt/cache/registry'
+  config.repo_cache_dir = Rails.root.join('tmp/cache/repository')
+  config.registry_cache_dir = Rails.root.join('tmp/cache/registry')
   cache_config_content = [
     "REPOSITORY_CLIENT_CACHE_DIRECTORY=#{config.repo_cache_dir}",
     'REPOSITORY_CACHE_EXPIRY_MINUTES=20',

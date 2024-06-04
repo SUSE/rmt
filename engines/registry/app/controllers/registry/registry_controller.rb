@@ -20,8 +20,7 @@ module Registry
     # https://distribution.github.io/distribution/spec/api/#listing-repositories
     def catalog
       access_scope = AccessScope.parse('registry:catalog:*')
-      origin_url = request.protocol + request.host
-      repos = access_scope.allowed_paths(System.find_by(login: @client&.account), origin_url)
+      repos = access_scope.allowed_paths(System.find_by(login: @client&.account))
       logger.debug("Returning #{repos.size} repos for client #{@client}")
 
       response.set_header('Docker-Distribution-Api-Version', REGISTRY_API_VERSION)

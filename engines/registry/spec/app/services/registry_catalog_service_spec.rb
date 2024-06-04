@@ -4,7 +4,7 @@ describe RegistryCatalogService do
   subject(:registry) { described_class.new }
 
   let(:system) { create(:system) }
-  let(:root_url) { 'smt-ec2.susecloud.net' }
+  let(:root_url) { 'registry-example.susecloud.net' }
   let(:auth_url) { "https://#{root_url}/api/registry/authorize" }
   let(:params) { "account=#{system.login}&scope=registry:catalog:*&service=SUSE%20Linux%20OCI%20Registry" }
   let(:response) { { repositories: repositories_returned } }
@@ -30,6 +30,6 @@ describe RegistryCatalogService do
 
   it 'lists all repos' do
     allow(System).to receive(:where).and_return([system])
-    expect(registry.repos(system: system, origin_url: "https://#{root_url}").length).to eq repositories_returned.size
+    expect(registry.repos(system: system).length).to eq repositories_returned.size
   end
 end
