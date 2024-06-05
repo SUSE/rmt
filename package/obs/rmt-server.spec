@@ -53,9 +53,9 @@ BuildRequires:  gcc
 BuildRequires:  libcurl-devel
 BuildRequires:  libffi-devel
 BuildRequires:  libmysqlclient-devel
-BuildRequires:  sqlite-devel
 BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
+BuildRequires:  sqlite-devel
 BuildRequires:  pkgconfig(systemd)
 Requires:       gpg2
 Recommends:     mariadb
