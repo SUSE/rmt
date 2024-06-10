@@ -358,6 +358,32 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       its(:code) { is_expected.to eq('201') }
       its(:body) { is_expected.to eq(serialized_json) }
     end
+
+    context 'with paid activated previous product' do
+      let(:subscription) { create :subscription }
+      let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, subscription: subscription) }
+      let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories, predecessors: [old_product]) }
+      let(:serialized_json) do
+        V3::ServiceSerializer.new(
+          new_product.service,
+          obsoleted_service_name: old_product.service.name,
+          base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
+        ).to_json
+      end
+
+
+      its(:code) { is_expected.to eq('201') }
+      its(:body) { is_expected.to eq(serialized_json) }
+
+      it('has one activation') { expect(system.activations.count).to eq(1) }
+      it 'moves subscription to new_product' do
+        expect(system.activations.reload.first.subscription).to eq(subscription)
+      end
+
+      it 'deactivates old product and activates new product' do
+        expect(system.activations.first.reload.service_id).to equal(new_product.service.id)
+      end
+    end
   end
 
   describe 'online/offline migrations' do
