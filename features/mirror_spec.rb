@@ -2,7 +2,7 @@ require File.expand_path('support/command_rspec_helper', __dir__)
 
 describe 'mirror' do
   let(:files) { %w[repomd.xml repomd.xml.asc repomd.xml.key *-primary.xml.gz *-filelists.xml.gz *-other.xml.gz] }
-  let(:path) { '/var/lib/rmt/public/repo/SUSE/Products/SLE-Product-SLES/15-SP5/x86_64' }
+  let(:path) { '/var/lib/rmt/public/repo/SUSE/Products/SLE-Product-SLES/15-SP5/x86_64/product' }
 
   before do
     `/usr/bin/rmt-cli repos enable 5664`
@@ -40,7 +40,7 @@ describe 'mirror' do
 end
 
 describe 'mirror multiple times' do
-  let(:path) { '/var/lib/rmt/public/repo/SUSE/Products/SLE-Product-SLES/15-SP5/x86_64' }
+  let(:path) { '/var/lib/rmt/public/repo/SUSE/Products/SLE-Product-SLES/15-SP5/x86_64/product' }
 
   before do
     `/usr/bin/rmt-cli repos enable 3114`
