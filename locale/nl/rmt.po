@@ -6,34 +6,36 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2019-03-28 18:42+0000\n"
-"Last-Translator: Eva van Rein <vistatec@globaltextware.nl>\n"
+"PO-Revision-Date: 2024-06-12 17:46+0000\n"
+"Last-Translator: Freek de Kruijf <freek@opensuse.org>\n"
 "Language-Team: Dutch <https://l10n.opensuse.org/projects/rmt/i18n/nl/>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.3\n"
+"X-Generator: Weblate 5.5.5\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "%s is nog niet geactiveerd op het systeem."
 
 msgid "%{count} file"
 msgid_plural "%{count} files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%{count} bestand"
+msgstr[1] "%{count} bestanden"
 
 msgid "%{db_entries} database entry"
 msgid_plural "%{db_entries} database entries"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%{db_entries} database-item"
+msgstr[1] "%{db_entries} database-items"
 
 msgid "%{file} - File does not exist"
 msgstr "%{file} - Bestand bestaat niet"
 
 msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
 msgstr ""
+"%{file} - verzoek is mislukt met HTTP statuscode %{code}, returncode "
+"'%{return_code}'"
 
 msgid "%{file} does not exist."
 msgstr "%{file} bestaat niet."
@@ -45,11 +47,10 @@ msgid "%{path} is not writable by user %{username}."
 msgstr "%{path} is niet beschrijfbaar door gebruiker %{username}."
 
 msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
-msgstr ""
+msgstr "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 
-#, fuzzy
 msgid "A repository by the ID %{id} already exists."
-msgstr "Een opslagruimte met de URL %{url} bestaat al."
+msgstr "Een opslagruimte met de ID %{id} bestaat al."
 
 msgid "A repository by the URL %{url} already exists."
 msgstr "Een opslagruimte met de URL %{url} bestaat al."
@@ -57,9 +58,8 @@ msgstr "Een opslagruimte met de URL %{url} bestaat al."
 msgid "Added association between %{repo} and product %{product}"
 msgstr "Koppeling tussen %{repo} en product %{product} toegevoegd"
 
-#, fuzzy
 msgid "Adding/Updating product %{product}"
-msgstr "Product %{product} toevoegen"
+msgstr "Product %{product} toevoegen/bijwerken"
 
 msgid "All repositories have already been disabled."
 msgstr "Alle opslagruimtes zijn al uitgeschakeld."
@@ -69,17 +69,20 @@ msgstr "Alle opslagruimtes zijn al ingeschakeld."
 
 msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
 msgstr ""
+"Een ander exemplaar van di commando is al actief. Beëindig het andere "
+"exemplaar of wacht op het beëindigen."
 
 #. i18n: architecture
 msgid "Arch"
 msgstr "Boog"
 
-#, fuzzy
 msgid "Architecture"
-msgstr "Boog"
+msgstr "Architectuur"
 
 msgid "Ask for confirmation or do not ask for confirmation and require no user interaction"
 msgstr ""
+"Om bevestiging vragen of vraag niet om bevestiging en vereis geen interactie "
+"van de gebruiker"
 
 msgid "Attach an existing custom repository to a product"
 msgstr "Een bestaande aangepaste opslagruimte koppelen aan een product"
@@ -89,6 +92,9 @@ msgstr "Gekoppelde opslagruimte voor product '%{product_name}'."
 
 msgid "By default, inactive systems are those that have not contacted RMT in any way in the past 3 months. You can override this with the '-b / --before' flag."
 msgstr ""
+"Standaard zijn inactieve systemen diegenen die op geen enkele manier contact "
+"met RMT hebben gehad in de laatste 3 maanden. U kunt hier overheen gaan met "
+"de vlag '-b / --before'."
 
 msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr "Kan geen verbinding maken met databaseserver. Zorg ervoor dat de referenties correct zijn geconfigureerd in '%{path}' of configureer RMT met YaST ('%{command}')."
@@ -109,10 +115,10 @@ msgid "Checksum doesn't match"
 msgstr "Controlegetal komt niet overeen"
 
 msgid "Clean cancelled."
-msgstr ""
+msgstr "Opschonen geannuleerd."
 
 msgid "Clean dangling files and their database entries"
-msgstr ""
+msgstr "Hangende bestanden en hun database-items opschonen"
 
 msgid ""
 "Clean dangling package files based on current repository metadata.\n"
