@@ -126,6 +126,10 @@ if [[ ${SLL_version} > 8 ]]; then
 elif [[ ${SLL_version} -eq 7 ]]; then
    SLL_name="RES";
    SLL_release_package="sles_es-release-server"
+   #stop when HA, because HA is not supported within LTSS for SLL7
+   if [ -f /etc/product.d/RES-HA.prod ]; then
+        usage "HA product is not supported in RES7 LTSS, please remove the product";
+   fi
 elif [[ ${SLL_version} -eq 8 ]]; then
     SLL_name="RES";                      
     SLL_release_package="sles_es-release"
