@@ -119,13 +119,21 @@ if [ -x $UPDATE_CA_TRUST ]; then
     $UPDATE_CA_TRUST extract
 fi
 
-SLL_version=`cat /etc/os-release | grep "VERSION_ID" | cut -d\" -f2 | cut -d\. -f1`
+SLL_version=`cat /etc/os-release | grep "VERSION_ID" | cut -d\" -f2 | cut -d\. -f1`             
+SLL_name=`cat /etc/os-release | grep "^ID=" | cut -d\" -f2 | cut -d\. -f1`
 if [[ ${SLL_version} > 8 ]]; then
    SLL_name="SLL";                                                                                                                
    SLL_release_package="sll-release"                                                                                              
 elif [[ ${SLL_version} -eq 7 ]]; then
-   SLL_name="RES-LTSS";
-   SLL_release_package="sles_es-release-server"
+   if [ SLL_name = "ol" ]; then
+      SLL_name="RES-OL";
+      SLL_version="7-LTSS";
+      SLL_release_package="oracle-release";
+   else
+      SLL_name="RES";
+      SLL_version="7-LTSS";
+      SLL_release_package="sles_es-release-server";
+   fi
    #stop when HA, because HA is not supported within LTSS for SLL7
    if [ -f /etc/product.d/RES-HA.prod ]; then
         usage "HA product is not supported in RES7 LTSS, please remove the product";
@@ -153,13 +161,13 @@ if [[ ${SLL_version} > 7 ]]; then
         exit 1
     fi
 
-echo "Disabling all repositories"
-$DNF config-manager --disable $(dnf repolist -q | awk '{ print $1 }' | grep -v repo)
-#sed -i 's/^enabled=1/enabled=0/' /etc/yum.repos.d/*           
-# on RHEL9 (not RHEL8) redhat-release is protected and cannot be updated to sll-release
-if [ -f /etc/dnf/protected.d/redhat-release.conf ]; then
-    rm -f /etc/dnf/protected.d/redhat-release.conf;
-fi
+    echo "Disabling all repositories"
+    $DNF config-manager --disable $(dnf repolist -q | awk '{ print $1 }' | grep -v repo)
+    #sed -i 's/^enabled=1/enabled=0/' /etc/yum.repos.d/*           
+    # on RHEL9 (not RHEL8) redhat-release is protected and cannot be updated to sll-release
+    if [ -f /etc/dnf/protected.d/redhat-release.conf ]; then
+       rm -f /etc/dnf/protected.d/redhat-release.conf;
+    fi
 
     $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update
     $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}-AS/${SLL_version}/x86_64/update
@@ -193,12 +201,12 @@ elif [[ ${SLL_version} -eq 7 ]]; then
 	 $YUM_CONFIG_MGR --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update
 	 $YUM_CONFIG_MGR --enable *suse.* > /dev/null
 
-	$YUM install sles_es-release-server suseconnect-ng librepo
+	$YUM install ${SLL-release-package} suseconnect-ng librepo
 	$YUM update yum
 
 
 fi
-elif [[ ${SLL_version} -eq 8 ]]; then
+if [[ ${SLL_version} -eq 8 ]]; then
     # For SLL8, the release package is already installed, just import the keys
     import_rpm_signing_keys
 fi
