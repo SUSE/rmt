@@ -127,7 +127,7 @@ if [[ ${SLL_version} > 8 ]]; then
 elif [[ ${SLL_version} -eq 7 ]]; then
    #if RES7 is present we always assume customer has bought LTSS, if he does not, script fails
    #so no LTSS customers have to edit the script manually
-   if [ SLL_name = "ol" ]; then
+   if [ ${SLL_name} = "ol" ]; then
       SLL_name="RES-OL";
       SLL_version="7-LTSS";
       SLL_release_package="oracle-release";
