@@ -119,12 +119,14 @@ if [ -x $UPDATE_CA_TRUST ]; then
     $UPDATE_CA_TRUST extract
 fi
 
-SLL_version=`cat /etc/os-release | grep "VERSION_ID" | cut -d\" -f2 | cut -d\. -f1`             
+SLL_version=`cat /etc/os-release | grep "VERSION_ID" | cut -d\" -f2 | cut -d\. -f1`
 SLL_name=`cat /etc/os-release | grep "^ID=" | cut -d\" -f2 | cut -d\. -f1`
 if [[ ${SLL_version} > 8 ]]; then
    SLL_name="SLL";                                                                                                                
    SLL_release_package="sll-release"                                                                                              
 elif [[ ${SLL_version} -eq 7 ]]; then
+   #if RES7 is present we always assume customer has bought LTSS, if he does not, script fails
+   #so no LTSS customers have to edit the script manually
    if [ SLL_name = "ol" ]; then
       SLL_name="RES-OL";
       SLL_version="7-LTSS";
@@ -201,7 +203,7 @@ elif [[ ${SLL_version} -eq 7 ]]; then
 	 $YUM_CONFIG_MGR --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update
 	 $YUM_CONFIG_MGR --enable *suse.* > /dev/null
 
-	$YUM install ${SLL-release-package} suseconnect-ng librepo
+	$YUM install ${SLL_release_package} suseconnect-ng librepo
 	$YUM update yum
 
 
