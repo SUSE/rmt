@@ -151,7 +151,7 @@ GEM
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
     lumberjack (1.2.8)
-    memory_profiler (1.0.1)
+    memory_profiler (1.0.2)
     method_source (1.1.0)
     mini_portile2 (2.6.1)
     minitest (5.15.0)
