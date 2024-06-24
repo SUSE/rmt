@@ -227,8 +227,8 @@ elif [[ ${SLL_version} -eq 8 ]]; then
 fi
 
 $CURL --silent --show-error --insecure $REGURL/tools/rmt-client-setup --output rmt-client-setup
-echo "Running rmt-client-setup $PARAMS $YES_PARAM"
-sh rmt-client-setup $PARAMS $YES_PARAM
+echo "Running rmt-client-setup $PARAMS"
+sh rmt-client-setup $PARAMS
 
 if [[ ${SLL_version} -gt 8 ]]; then 
     systemctl start suseconnect-keepalive.timer
