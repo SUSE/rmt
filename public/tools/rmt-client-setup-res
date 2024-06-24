@@ -188,7 +188,7 @@ if [[ ${SLL_version} -gt 7 ]]; then
 
     $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update
     $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}-AS/${SLL_version}/x86_64/update
-    $DNF install --allowerasing ${SLL_release_package}
+    $DNF install -y --allowerasing ${SLL_release_package}
 
     # For RHEL8/CentOS8, remove all old signing keys and import SUSE keys installed with sles_es-release package
     if [[ ${SLL_version} -eq 8 ]]; then
@@ -218,8 +218,8 @@ elif [[ ${SLL_version} -eq 7 ]]; then
     $YUM_CONFIG_MGR --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name%%-LTSS}/${SLL_version}-LTSS/x86_64/update
     $YUM_CONFIG_MGR --enable *suse.* > /dev/null
 
-    $YUM install ${SLL_release_package} suseconnect-ng librepo
-    $YUM update yum
+    $YUM install -y ${SLL_release_package} suseconnect-ng librepo
+    $YUM update -y yum
 fi
 elif [[ ${SLL_version} -eq 8 ]]; then
     # For SLL8, the release package is already installed, just import the keys
