@@ -139,12 +139,12 @@ elif [[ ${SLL_version} -eq 7 ]]; then
    # if RES7 is present we always assume customer has bought LTSS, if he does not, script fails
    # so no LTSS customers have to edit the script manually
    if [ "${SLL_name}" = "ol" ]; then
-      SLL_name="RES-OL"
-      SLL_version="7-LTSS"
+      SLL_name="RES-OL-LTSS"
+      SLL_version="7"
       SLL_release_package="oracle-release"
    else
-      SLL_name="RES"
-      SLL_version="7-LTSS"
+      SLL_name="RES-LTSS"
+      SLL_version="7"
       SLL_release_package="sles_es-release-server"
    fi
    # stop when HA, because HA is not supported within LTSS for SLL7
@@ -162,7 +162,11 @@ fi
 echo "Detected ${SLL_name} version: ${SLL_version}"                                                                                  
 
 echo "Importing repomd.xml.key"
-$CURL --silent --show-error --insecure ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update/repodata/repomd.xml.key --output repomd.xml.key
+if [[ ${SLL_version} -eq 7 ]]; then
+  $CURL --silent --show-error --insecure ${REGURL}/repo/SUSE/Updates/${SLL_name%%-LTSS}/${SLL_version}-LTSS/x86_64/update/repodata/repomd.xml.key --output repomd.xml.key
+else
+  $CURL --silent --show-error --insecure ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update/repodata/repomd.xml.key --output repomd.xml.key
+fi
 $RPM --import repomd.xml.key
 
 if [ ! -x $SUSECONNECT ]; then
@@ -211,7 +215,7 @@ elif [[ ${SLL_version} -eq 7 ]]; then
        rm -f /usr/share/redhat-release
     fi
 
-    $YUM_CONFIG_MGR --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update
+    $YUM_CONFIG_MGR --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name%%-LTSS}/${SLL_version}-LTSS/x86_64/update
     $YUM_CONFIG_MGR --enable *suse.* > /dev/null
 
     $YUM install ${SLL_release_package} suseconnect-ng librepo
