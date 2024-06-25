@@ -229,7 +229,11 @@ fi
 
 $CURL --silent --show-error --insecure $REGURL/tools/rmt-client-setup --output rmt-client-setup
 echo "Running rmt-client-setup $PARAMS"
-sh rmt-client-setup $PARAMS
+if [ 0${YES_PARAM} = "yes" ]
+   yes | sh rmt-client-setup $PARAMS
+else
+   sh rmt-client-setup $PARAMS
+fi
 #if [[ ${SLL_version} -eq 7 ]]; then
 #   SUSEConnect -p RES-LTSS/7/x86_64
 #fi
