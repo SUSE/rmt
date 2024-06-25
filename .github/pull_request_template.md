@@ -4,8 +4,11 @@
 Please describe your change and provide as much context as needed including a link to the reference issue / ticket / Trello card. 
 -->
 
-* How to test the change: <description or reference to the Acceptance Criteria>
 * Related Issue / Ticket / Trello card: <link reference>
+
+## How to test 
+
+<!-- Describe the steps how verify your change -->
 
 ## Change Type
 
