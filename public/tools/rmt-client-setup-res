@@ -216,9 +216,9 @@ elif [[ ${SLL_version} -eq 7 ]]; then
     fi
 
     $YUM_CONFIG_MGR --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name%%-LTSS}/${SLL_version}-LTSS/x86_64/update
-#    if [ ${SLL_NAME} = "RES-OL-LTSS" ]; then
-    	$YUM_CONFIG_MGR --add-repo ${REGURL}/repo/SUSE/Updates/RES-BASE/${SLL_version}-LTSS/x86_64/update
-#    fi	
+    if [${SLL_name} = "RES-OL-LTSS" ]; then
+    	$YUM_CONFIG_MGR --add-repo ${REGURL}/repo/SUSE/Updates/RES-BASE/${SLL_version}/x86_64/update
+    fi	
     $YUM_CONFIG_MGR --enable *suse.* > /dev/null
 
     $YUM install -y ${SLL_release_package} suseconnect-ng librepo
