@@ -181,6 +181,9 @@ ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-trim-cache
 mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
+# registry cache
+mkdir -p %{_rundir}/rmt
+
 # nginx
 install -D -m 644 package/files/nginx/nginx-http.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
 install -D -m 644 package/files/nginx/nginx-https.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
@@ -312,6 +315,8 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %exclude %{app_dir}/engines/registration_sharing/package/
 %dir %{_sysconfdir}/nginx
 %dir %{_sysconfdir}/nginx/vhosts.d
+%dir %attr(740,%{rmt_user},root)
+%{_rundir}/rmt
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-pubcloud-http.conf
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-pubcloud-https.conf
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
