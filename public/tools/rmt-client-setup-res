@@ -141,7 +141,7 @@ elif [[ ${SLL_version} -eq 7 ]]; then
    if [ "${SLL_name}" = "ol" ]; then
       SLL_name="RES-OL-LTSS"
       SLL_version="7"
-      SLL_release_package="oracle-release"
+      SLL_release_package="oraclelinux-release"
    else
       SLL_name="RES-LTSS"
       SLL_version="7"
