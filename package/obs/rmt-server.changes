@@ -5,6 +5,7 @@ Thu April 18 09:27:00 UTC 2024 - Adnilson Delgado <adnilson.delgado@suse.com>
   * Improve CLI mirroring summary information by adding the mirror repositories, the file count and size. (gh#702)
   * Copy metadata content to repodata/ and not create a seperate subdirectory repodata/repodata (gh#1136)
   * Adding Uptime tracking capability (jsc#PED-7982, jsc#PED-8018)
+  * actionpack update, fixing CVE-2024-28103 (bsc#1225997)
   * Registry authentication host capability for public cloud
 
 -------------------------------------------------------------------
