@@ -40,7 +40,4 @@ class RMT::Mirror::License < RMT::Mirror::Base
   rescue RMT::Downloader::Exception => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring license files: %{error}') % { error: e.message })
   end
-
-
-
 end
