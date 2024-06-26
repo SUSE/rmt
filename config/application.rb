@@ -58,19 +58,6 @@ module RMT
     config.eager_load_paths << Rails.root.join('lib')
     config.eager_load_paths << Rails.root.join('app', 'validators')
 
-    # :nocov:
-    if defined?(Registry::Engine) && Rails.env.production?
-      # registry config needed
-      config.autoloader = :classic
-      config.registry_private_key = OpenSSL::PKey::RSA.new(
-        File.read('/etc/rmt/ssl/rmt-server.key')
-        )
-      config.registry_public_key = config.registry_private_key.public_key
-      config.access_policies = '/etc/rmt/access_policies.yml'
-      # registry config needed end
-    end
-    # :nocov:
-
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading

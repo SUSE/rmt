@@ -3,6 +3,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   before_action :authenticate_system
   before_action :require_product, only: %i[show activate upgrade destroy]
   before_action :check_product_service_and_repositories, only: %i[show activate]
+  before_action :load_subscription, only: %i[activate upgrade]
   before_action :check_base_product_dependencies, only: %i[activate upgrade show]
 
   def activate
@@ -92,7 +93,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
     mandatory_repos = @product.repositories.only_enabled
     mirrored_repos = @product.repositories.only_enabled.only_fully_mirrored
-    missing_repo_ids = (mandatory_repos - mirrored_repos).pluck(:id).join(', ')
+    missing_repo_ids = (mandatory_repos - mirrored_repos).pluck(:scc_id).join(', ')
 
     unless mandatory_repos.size == mirrored_repos.size
       # rubocop:disable Layout/LineLength
@@ -109,27 +110,9 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     # `engines/scc_proxy/lib/scc_proxy/engine.rb` and don't need further checks here
     return activation if @system.proxy_byos
 
-    if params[:token].present?
-      subscription = Subscription.find_by(regcode: params[:token])
-
-      unless subscription
-        raise ActionController::TranslatedError.new(N_('No subscription with this Registration Code found'))
-      end
-
-      if subscription.expired?
-        error = N_('The subscription with the provided Registration Code is expired')
-        raise ActionController::TranslatedError.new(error)
-      end
-
-      unless @product.free
-        unless subscription.products.include?(@product)
-          error = N_("The subscription with the provided Registration Code does not include the requested product '%s'")
-          raise ActionController::TranslatedError.new(error, @product.friendly_name)
-        end
-
-        activation.subscription = subscription
-        activation.save
-      end
+    if @subscription.present?
+      activation.subscription = @subscription
+      activation.save
     end
 
     activation
@@ -137,6 +120,32 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
   def remove_previous_product_activations(product_ids)
     @system.activations.includes(:product).where('products.id' => product_ids).destroy_all
+  end
+
+  def load_subscription
+    # Find subscription by regcode if provided, otherwise use the first subscription (bsc#1220109)
+    if params[:token].present? && !@system.proxy_byos
+      @subscription = Subscription.find_by(regcode: params[:token])
+      unless @subscription
+        raise ActionController::TranslatedError.new(N_('No subscription with this Registration Code found'))
+      end
+
+      if @subscription.expired?
+        error = N_('The subscription with the provided Registration Code is expired')
+        raise ActionController::TranslatedError.new(error)
+      end
+
+      if !@product.free && @subscription.products.exclude?(@product)
+        error = N_("The subscription with the provided Registration Code does not include the requested product '%s'")
+        raise ActionController::TranslatedError.new(error, @product.friendly_name)
+      end
+    else
+      # pluck subscription based on product/extension
+      product_ids = ([@product] + @product.predecessors + @product.successors).map(&:id)
+      subscription_id = @system.activations.includes(:subscription,
+                                                     :product).where('products.id' => product_ids).pluck(:subscription_id).uniq.first
+      @subscription = Subscription.find(subscription_id) if subscription_id
+    end
   end
 
   # Check if extension base product is already activated
