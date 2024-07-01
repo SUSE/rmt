@@ -3,6 +3,7 @@ Mon July 1 12:42:34 UTC 2024 - Adnilson Delgado <adnilson.delgado@suse.com>
 
 - unreleased:
   * Move /tmp to repo directory. (gh:#1137)
+  * Fixes for RES7-LTSS and OL7-LTSS clients
 
 -------------------------------------------------------------------
 Thu April 18 09:27:00 UTC 2024 - Adnilson Delgado <adnilson.delgado@suse.com>
