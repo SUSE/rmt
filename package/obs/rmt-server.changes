@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Mon July 1 12:42:34 UTC 2024 - Adnilson Delgado <adnilson.delgado@suse.com>
 
-- unreleased:
+- Unreleased (to be included in 2.18):
   * Move /tmp to repo directory. (gh:#1137)
   * Fixes for RES7-LTSS and OL7-LTSS clients
 
