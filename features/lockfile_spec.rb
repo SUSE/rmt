@@ -1,13 +1,17 @@
-require File.expand_path('../support/command_rspec_helper', __FILE__)
-
 describe 'rmt-cli' do
-  before do
+  around do |example|
+    parent_pidfile = "/tmp/rmt-parent-#{Process.pid}.pid"
+
     `echo long_text_but_not_the_process_id > /tmp/rmt.lock`
     `chown _rmt /tmp/rmt.lock`
-    `/usr/bin/rmt-cli sync > /dev/null &`
+
+    fork {
+      File.write(parent_pidfile, Process.pid)
+      exec "/usr/bin/rmt-cli sync >/dev/null"
+    }
+    example.run
+    Process.kill('TERM', File.read(parent_pidfile).to_i)
   end
-  # kill running process to let further specs pass
-  after { `pkill -9 -f rmt-cli` }
 
   describe 'lockfile' do
     command '/usr/bin/rmt-cli sync', allow_error: true
