@@ -1,9 +1,25 @@
+require 'fileutils'
+
 module InstanceVerification
-  def self.update_cache(remote_ip, system_login, product_id, is_byos)
-    cache_key = [remote_ip, system_login, product_id].join('-')
-    # caches verification result to be used by zypper auth plugin
-    expire_cache_time = is_byos ? 24.hours : 20.minutes
-    Rails.cache.write(cache_key, true, expires_in: expire_cache_time)
+  def self.update_cache(remote_ip, system_login, product_id, registry: false)
+    # TODO: BYOS scenario
+    # to be addressed on a different PR
+    unless registry
+      InstanceVerification.write_cache_file(
+        Rails.application.config.repo_cache_dir,
+        [remote_ip, system_login, product_id].join('-')
+      )
+    end
+
+    InstanceVerification.write_cache_file(
+      Rails.application.config.registry_cache_dir,
+      [remote_ip, system_login].join('-')
+    )
+  end
+
+  def self.write_cache_file(cache_dir, cache_key)
+    FileUtils.mkdir_p(cache_dir)
+    FileUtils.touch(File.join(cache_dir, cache_key))
   end
 
   class Engine < ::Rails::Engine
@@ -95,7 +111,7 @@ module InstanceVerification
           )
 
           raise 'Unspecified error' unless verification_provider.instance_valid?
-          InstanceVerification.update_cache(request.remote_ip, @system.login, product.id, @system.proxy_byos)
+          InstanceVerification.update_cache(request.remote_ip, @system.login, product.id)
         end
 
         # Verify that the base product doesn't change in the offline migration

@@ -6,7 +6,7 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
     create_repository_path
     create_temp_dir(:metadata)
 
-    if repository_url.ends_with?('product')
+    if repository_url.ends_with?('product/')
       licenses = RMT::Mirror::License.new(repository: repository, logger: logger, mirroring_base_dir: mirroring_base_dir)
       licenses.mirror
     end
@@ -14,7 +14,8 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
     metadata_files = mirror_metadata
     mirror_packages(metadata_files)
 
-    move_directory(source: File.join(temp(:metadata), 'repodata'), destination: repository_path('repodata'))
+    glob_metadata = File.join(temp(:metadata), 'repodata', '*')
+    move_files(glob: glob_metadata, destination: repository_path('repodata'))
   end
 
   protected

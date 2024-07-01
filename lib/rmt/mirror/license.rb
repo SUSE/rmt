@@ -35,11 +35,9 @@ class RMT::Mirror::License < RMT::Mirror::Base
 
     download_enqueued
 
-    move_directory(source: temp(:license), destination: repository_path)
+    glob_licenses = File.join(temp(:license), '*')
+    move_files(glob: glob_licenses, destination: repository_path)
   rescue RMT::Downloader::Exception => e
     raise RMT::Mirror::Exception.new(_('Error while mirroring license files: %{error}') % { error: e.message })
   end
-
-
-
 end

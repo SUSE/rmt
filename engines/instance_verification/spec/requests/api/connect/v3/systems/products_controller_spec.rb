@@ -26,6 +26,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       it 'class instance verification provider' do
         expect(InstanceVerification::Providers::Example).to receive(:new)
           .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, nil).and_call_original
+        allow(File).to receive(:directory?)
+        allow(Dir).to receive(:mkdir)
+        allow(FileUtils).to receive(:touch)
         post url, params: payload, headers: headers
       end
     end
@@ -110,10 +113,11 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         before do
           expect(InstanceVerification::Providers::Example).to receive(:new)
             .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload_sap, instance_data).and_call_original
-
-          expect(Rails.cache).to receive(:write).with(
-            ['127.0.0.1', system.login, product_sap.id].join('-'), true, expires_in: 20.minutes
-            )
+          allow(File).to receive(:directory?)
+          allow(Dir).to receive(:mkdir)
+          allow(FileUtils).to receive(:touch)
+          expect(InstanceVerification).to receive(:write_cache_file).once.with('repo/cache', "127.0.0.1-#{system.login}-#{product_sap.id}")
+          expect(InstanceVerification).to receive(:write_cache_file).once.with('registry/cache', "127.0.0.1-#{system.login}")
           post url, params: payload_sap, headers: headers
         end
 

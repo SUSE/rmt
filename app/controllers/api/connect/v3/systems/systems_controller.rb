@@ -3,6 +3,20 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
   before_action :authenticate_system
 
   def update
+    if params[:online_at].present?
+      params[:online_at].each do |online_at|
+        dthours = online_at.split(':')
+        if dthours.count == 2
+          online_day = online_at.split(':')[0]
+          online_hours = online_at.split(':')[1]
+          @system.update_system_uptime(day: online_day,
+                                       hours: online_hours)
+        else
+          logger.error(N_("Uptime data is malformed '%s'") % online_at)
+        end
+      end
+    end
+
     @system.hostname = params[:hostname]
 
     # Since the payload is handled by rails all values are converted to string

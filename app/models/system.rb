@@ -6,6 +6,7 @@ class System < ApplicationRecord
   has_many :services, through: :activations
   has_many :repositories, -> { distinct }, through: :services
   has_many :products, -> { distinct }, through: :services
+  has_many :system_uptimes, dependent: :destroy
 
   validates :system_token, uniqueness: { scope: %i[login password], case_sensitive: false }
 
@@ -46,6 +47,15 @@ class System < ApplicationRecord
 
   def self.get_by_credentials(login, password)
     where(login: login, password: password).order(:id)
+  end
+
+  def update_system_uptime(day: nil, hours: nil)
+    system_uptime = system_uptimes.find_by(online_at_day: day)
+    if system_uptime
+      system_uptime.update!(online_at_hours: hours)
+    else
+      system_uptimes.create!(online_at_day: day, online_at_hours: hours)
+    end
   end
 
   before_update do |system|

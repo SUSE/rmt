@@ -6,7 +6,7 @@
 This tool allows you to mirror RPM repositories in your own private network.
 Organization (mirroring) credentials are required to mirror SUSE repositories.
 
-The [SLE RMT Book](https://documentation.suse.com/sles/15-SP5/html/SLES-all/book-rmt.html) contains
+The [SUSE Linux Enterprise RMT Guide](https://documentation.suse.com/sles/html/SLES-all/book-rmt.html) contains
 the end-user documentation for RMT. `man` pages for `rmt-cli` are located in the file [MANUAL.md](MANUAL.md).
 
 If you would like to contribute to RMT, please see our [contribution guide](docs/CONTRIBUTING.md).
@@ -39,7 +39,7 @@ following compression formats:
 If you encounter a repository with different compression and want support in RMT, please open
 an [issue](https://github.com/SUSE/rmt/issues) and let the RMT development team know!
 
-## Mirroring none SUSE repositories using RMT
+## Mirroring non-SUSE repositories using RMT
 
 RMT provides a mechanism to mirror custom repositories, named custom repositories.
 
