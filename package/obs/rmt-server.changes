@@ -1,7 +1,10 @@
 -------------------------------------------------------------------
-Fri Jun 28 23:55:02 CEST 2024 - zpetrova@suse.de
+Mon July 1 12:42:34 UTC 2024 - Adnilson Delgado <adnilson.delgado@suse.com>
 
-- fixes for RES7-LTSS and OL7-LTSS clients
+- Version 2.18
+  * Move temporary storage of downloaded files to the repo directory to avoid filling up /tmp partition. (gh:#1137)
+  * Fixes for RES7-LTSS and OL7-LTSS clients
+  * Instance Verification: re-setting the repository and registry cache path to the right value; update the cache scrubber paths
 
 -------------------------------------------------------------------
 Thu April 18 09:27:00 UTC 2024 - Adnilson Delgado <adnilson.delgado@suse.com>
