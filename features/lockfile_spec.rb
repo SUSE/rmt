@@ -9,7 +9,7 @@ describe 'rmt-cli' do
       end
       example.run
       Process.kill('KILL', parent_pid)
-      ActiveRecord::Base.connection.execute("SELECT RELEASE_LOCK('rmt-cli')")
+      RMT::Lockfile.send(:release_lock, 'rmt-cli')
     end
 
     command '/usr/bin/rmt-cli sync', allow_error: true
