@@ -2,7 +2,7 @@ describe 'rmt-cli' do
   around do |example|
     parent_pidfile = "/tmp/rmt-parent-#{Process.pid}.pid"
 
-    File.write('long_text_but_not_the_process_id', '/tmp/rmt.lock')
+    File.write('/tmp/rmt.lock', 'long_text_but_not_the_process_id')
     `chown _rmt /tmp/rmt.lock`
 
     fork {
