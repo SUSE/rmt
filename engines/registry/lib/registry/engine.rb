@@ -2,7 +2,7 @@ module Registry
   class << self
     def remove_auth_cache(registry_cache_key)
       cache_path = File.join(Rails.application.config.registry_cache_dir, registry_cache_key)
-      File.unlink(registry_cache_path) if File.exist?(cache_path)
+      File.unlink(cache_path) if File.exist?(cache_path)
     end
   end
 
