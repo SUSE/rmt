@@ -11,6 +11,7 @@ describe 'rmt-cli' do
     }
     example.run
     Process.kill('TERM', File.read(parent_pidfile).to_i)
+    File.delete('/tmp/rmt.lock')
   end
 
   describe 'lockfile' do
