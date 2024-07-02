@@ -8,7 +8,8 @@ describe 'rmt-cli' do
         exec "/usr/bin/rmt-cli sync > /dev/null"
       end
       example.run
-      Process.kill('INT', parent_pid)
+      Process.kill('KILL', parent_pid)
+      ActiveRecord::Base.connection.execute("SELECT RELEASE_LOCK('rmt-cli')")
     end
 
     command '/usr/bin/rmt-cli sync', allow_error: true
