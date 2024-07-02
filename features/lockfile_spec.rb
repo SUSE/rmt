@@ -7,7 +7,7 @@ describe 'rmt-cli' do
 
     fork {
       File.write(parent_pidfile, Process.pid)
-      exec "/usr/bin/rmt-cli sync >/dev/null"
+      exec "/usr/bin/rmt-cli sync > /dev/null"
     }
     example.run
     Process.kill('TERM', File.read(parent_pidfile).to_i)
