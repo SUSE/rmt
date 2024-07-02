@@ -1,13 +1,10 @@
-describe 'rmt-cli' do
+describe 'rmt-cli lock' do
   around do |example|
-    parent_pidfile = "/tmp/rmt-parent-#{Process.pid}.pid"
-
-    fork {
-      File.write(parent_pidfile, Process.pid)
+    parent_pid = fork do
       exec "/usr/bin/rmt-cli sync > /dev/null"
-    }
+    end
     example.run
-    Process.kill('KILL', File.read(parent_pidfile).to_i)
+    Process.kill('KILL', parent_pid)
   end
 
   describe 'lockfile' do
