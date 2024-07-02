@@ -8,8 +8,8 @@ describe 'rmt-cli' do
         exec "/usr/bin/rmt-cli sync > /dev/null"
       end
       example.run
-      Process.kill('KILL', parent_pid)
-      RMT::Lockfile.send(:release_lock, 'rmt-cli')
+      # wait for the parent process to finish, so the lock is released
+      Process.waitpid(parent_pid)
     end
 
     command '/usr/bin/rmt-cli sync', allow_error: true
