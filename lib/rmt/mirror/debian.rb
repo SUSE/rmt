@@ -1,9 +1,12 @@
+require 'xz'
+
 class RMT::Mirror::Debian < RMT::Mirror::Base
   RELEASE_FILE_NAME = 'Release'.freeze
   SIGNATURE_FILE_NAME = 'Release.gpg'.freeze
   KEY_FILE_NAME = 'Release.key'.freeze
   INRELEASE_FILE_NAME = 'InRelease'.freeze
   NESTED_REPOSITORY_REGEX = %r{/dists/.*/$}.freeze
+  PACKAGE_INDEX_FILE_NAME = /Packages\.(gz|xz)/
 
 
   def mirror_implementation
@@ -48,7 +51,7 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
   end
 
   def mirror_packages(metadata_refs)
-    packagelists = metadata_refs.select { |ref| File.basename(ref.local_path) == 'Packages.gz' }
+    packagelists = metadata_refs.select { |ref| File.basename(ref.local_path).match?(PACKAGE_INDEX_FILE_NAME) }
 
     packagelists.each do |packagelist|
       parse_package_list(packagelist).each do |ref|
@@ -62,9 +65,18 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
   def parse_package_list(packagelist)
     packages = []
     hdl = File.open(packagelist.local_path, 'rb')
+    ext = File.extname(packagelist.local_path)
+    idx = ''
+
+    case ext
+    when '.gz'
+      idx = Zlib::GzipReader.new(hdl)
+    when '.xz'
+      idx = XZ::StreamReader.new(hdl)
+    end
 
     current = {}
-    Zlib::GzipReader.new(hdl).each_line do |line|
+    idx.each_line do |line|
       if line == "\n"
         ref = file_reference(current[:filename], to: repository_path)
         ref.arch = current[:architecture]
@@ -100,7 +112,7 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
       current[key.downcase.to_sym] = value.strip
     end
     packages
-  rescue Zlib::GzipFile::Error => e
+  rescue Zlib::GzipFile::Error, XZ::LZMAError => e
     message = _("Could not read '%{file}': %{error}" % { file: packagelist.local_path, error: e })
     raise RMT::Mirror::Exception.new(message)
   ensure
@@ -144,7 +156,7 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
 
   def is_mandatory?(file_ref)
     # This check is needed to separate what files are mandatory to download
-    # We expect only Packages.gz to always be present
-    File.basename(file_ref.relative_path) == 'Packages.gz'
+    # We expect only compressed package indices to always be present
+    File.basename(file_ref.relative_path).match?(PACKAGE_INDEX_FILE_NAME)
   end
 end
