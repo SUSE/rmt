@@ -238,9 +238,9 @@ $CURL --silent --show-error --insecure "$REGURL/tools/rmt-client-setup" --output
 echo "Running rmt-client-setup $PARAMS"
 if [ -n "$YES_PARAM" ]; then
     PARAMS=$(echo "$PARAMS" | sed 's/--yes//')
-    yes | sh rmt-client-setup "$PARAMS"
+    yes | sh rmt-client-setup $PARAMS
 else
-    sh rmt-client-setup "$PARAMS"
+    sh rmt-client-setup $PARAMS
 fi
 
 if [[ ${SLL_version} -gt 8 ]]; then 
