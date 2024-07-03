@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # rmt-client-setup-res: client use rmt-client-setup script to register with rmt.
 # This script assumes SUSEConnect is already installed on the system.
@@ -119,7 +119,7 @@ else
     CERTURL="$REGCERT"
 fi
 
-$CURL --tlsv1.2 --silent --insecure --connect-timeout 10 --output $TEMPFILE $CERTURL
+$CURL --tlsv1.2 --silent --insecure --connect-timeout 10 --output "$TEMPFILE" "$CERTURL"
 if [ $? -ne 0 ]; then
     echo "Download failed. Abort."
     exit 1
@@ -163,14 +163,12 @@ echo "Detected ${SLL_name} version: ${SLL_version}"
 
 echo "Importing repomd.xml.key"
 if [[ ${SLL_version} -eq 7 ]]; then
-  $CURL --silent --show-error --insecure ${REGURL}/repo/SUSE/Updates/${SLL_name%%-LTSS}/${SLL_version}-LTSS/x86_64/update/repodata/repomd.xml.key --output repomd.xml.key
+  $CURL --silent --show-error --insecure "${REGURL}/repo/SUSE/Updates/${SLL_name%%-LTSS}/${SLL_version}-LTSS/x86_64/update/repodata/repomd.xml.key" --output repomd.xml.key
 else
-  $CURL --silent --show-error --insecure ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update/repodata/repomd.xml.key --output repomd.xml.key
+  $CURL --silent --show-error --insecure "${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update/repodata/repomd.xml.key" --output repomd.xml.key
 fi
 $RPM --import repomd.xml.key
 
-if [ ! -x $SUSECONNECT ]; then
-    echo "Downloading SUSEConnect"
 if [[ ${SLL_version} -gt 7 ]]; then
 
     if [ ! -x $DNF ]; then
@@ -180,14 +178,13 @@ if [[ ${SLL_version} -gt 7 ]]; then
 
     echo "Disabling all repositories"
     $DNF config-manager --disable $(dnf repolist -q | awk '{ print $1 }' | grep -v repo)
-    # sed -i 's/^enabled=1/enabled=0/' /etc/yum.repos.d/*           
     # on RHEL9 (not RHEL8) redhat-release is protected and cannot be updated to sll-release
     if [ -f /etc/dnf/protected.d/redhat-release.conf ]; then
        rm -f /etc/dnf/protected.d/redhat-release.conf
     fi
 
-    $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update
-    $DNF config-manager --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name}-AS/${SLL_version}/x86_64/update
+    $DNF config-manager --add-repo "${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update"
+    $DNF config-manager --add-repo "${REGURL}/repo/SUSE/Updates/${SLL_name}-AS/${SLL_version}/x86_64/update"
     $DNF install -y --allowerasing ${SLL_release_package}
 
     # For RHEL8/CentOS8, remove all old signing keys and import SUSE keys installed with sles_es-release package
@@ -195,7 +192,9 @@ if [[ ${SLL_version} -gt 7 ]]; then
         import_rpm_signing_keys
     fi
 
+    echo "Downloading SUSEConnect"
     $DNF install SUSEConnect librepo
+
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}_${SLL_version}_x86_64_update"
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}-AS_${SLL_version}_x86_64_update"
 
@@ -215,25 +214,30 @@ elif [[ ${SLL_version} -eq 7 ]]; then
        rm -f /usr/share/redhat-release
     fi
 
-    $YUM_CONFIG_MGR --add-repo ${REGURL}/repo/SUSE/Updates/${SLL_name%%-LTSS}/${SLL_version}-LTSS/x86_64/update
+    $YUM_CONFIG_MGR --add-repo "${REGURL}/repo/SUSE/Updates/${SLL_name%%-LTSS}/${SLL_version}-LTSS/x86_64/update"
     if [ ${SLL_name} = "RES-OL-LTSS" ]; then
-    	$YUM_CONFIG_MGR --add-repo ${REGURL}/repo/SUSE/Updates/RES-BASE/${SLL_version}/x86_64/update
+    	$YUM_CONFIG_MGR --add-repo "${REGURL}/repo/SUSE/Updates/RES-BASE/${SLL_version}/x86_64/update"
     fi	
     $YUM_CONFIG_MGR --enable *suse.* > /dev/null
 
-    $YUM install -y ${SLL_release_package} suseconnect-ng librepo
+    if [ ! -x $SUSECONNECT ]; then
+        $YUM install -y ${SLL_release_package} suseconnect-ng librepo
+    else
+        $YUM update -y ${SLL_release_package} suseconnect-ng librepo
+    fi
+
     $YUM update -y yum
     $YUM_CONFIG_MGR --disable \* > /dev/null
-fi
+
 elif [[ ${SLL_version} -eq 8 ]]; then
     # For SLL8, the release package is already installed, just import the keys
     import_rpm_signing_keys
 fi
 
-$CURL --silent --show-error --insecure $REGURL/tools/rmt-client-setup --output rmt-client-setup
+$CURL --silent --show-error --insecure "$REGURL/tools/rmt-client-setup" --output rmt-client-setup
 echo "Running rmt-client-setup $PARAMS"
 if [ -n "$YES_PARAM" ]; then
-    PARAMS=$(echo $PARAMS | sed 's/--yes//')
+    PARAMS=$(echo "$PARAMS" | sed 's/--yes//')
     yes | sh rmt-client-setup $PARAMS
 else
     sh rmt-client-setup $PARAMS
