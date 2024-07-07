@@ -199,10 +199,16 @@ if [[ ${SLL_version} -gt 7 ]]; then
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}-AS_${SLL_version}_x86_64_update"
 
 elif [[ ${SLL_version} -eq 7 ]]; then
+
+    # disbale unavailable centos mirrors
+    sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo
+    sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo
+    sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/*.repo
+
     # Check for and install yum-config-manager if not available
     if [ ! -x $YUM_CONFIG_MGR ]; then
         echo "yum-config-manager not found. Attempting to install."
-        $YUM install -y https://vault.centos.org/centos/7/os/x86_64/Packages/yum-utils-1.1.31-54.el7_8.noarch.rpm
+        $YUM install -y yum-utils
         if [ $? -ne 0 ]; then
             echo "Failed to install yum-config-manager. Abort."
             exit 1
