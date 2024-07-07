@@ -199,12 +199,16 @@ if [[ ${SLL_version} -gt 7 ]]; then
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}-AS_${SLL_version}_x86_64_update"
 
 elif [[ ${SLL_version} -eq 7 ]]; then
-    # For SLL7 we need to have yum, yum_config_mgr, sles_os-release-server, etc.. 
-    if [ ! -x "$YUM_CONFIG_MGR" ]; then
-        echo "YUM config manager is not installed. Please install yum-config-manager and retry. Abort."
-        exit 1
-    fi	
-	
+    # Check for and install yum-config-manager if not available
+    if [ ! -x $YUM_CONFIG_MGR ]; then
+        echo "yum-config-manager not found. Attempting to install."
+        $YUM install -y https://vault.centos.org/centos/7/os/x86_64/Packages/yum-utils-1.1.31-54.el7_8.noarch.rpm
+        if [ $? -ne 0 ]; then
+            echo "Failed to install yum-config-manager. Abort."
+            exit 1
+        fi
+    fi
+
     echo "Disabling all repositories"
     $YUM_CONFIG_MGR --disable \* > /dev/null
 	
