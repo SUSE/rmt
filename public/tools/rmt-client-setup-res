@@ -225,14 +225,15 @@ elif [[ ${SLL_version} -eq 7 ]]; then
     $YUM_CONFIG_MGR --enable *suse.* > /dev/null
 
     if [ ! -x $SUSECONNECT ]; then
-        $YUM install -y ${SLL_release_package} suseconnect-ng librepo
+        $YUM install -y --nogpgcheck ${SLL_release_package}
+        import_rpm_signing_keys
+        $YUM install -y suseconnect-ng librepo
     else
         $YUM update -y ${SLL_release_package} suseconnect-ng librepo
     fi
 
     $YUM update -y yum
     $YUM_CONFIG_MGR --disable \* > /dev/null
-
 elif [[ ${SLL_version} -eq 8 ]]; then
     # For SLL8, the release package is already installed, just import the keys
     import_rpm_signing_keys
