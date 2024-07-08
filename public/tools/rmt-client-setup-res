@@ -199,12 +199,22 @@ if [[ ${SLL_version} -gt 7 ]]; then
     $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}-AS_${SLL_version}_x86_64_update"
 
 elif [[ ${SLL_version} -eq 7 ]]; then
-    # For SLL7 we need to have yum, yum_config_mgr, sles_os-release-server, etc.. 
-    if [ ! -x "$YUM_CONFIG_MGR" ]; then
-        echo "YUM config manager is not installed. Please install yum-config-manager and retry. Abort."
-        exit 1
-    fi	
-	
+
+    # disbale unavailable centos mirrors
+    sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo
+    sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo
+    sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/*.repo
+
+    # Check for and install yum-config-manager if not available
+    if [ ! -x $YUM_CONFIG_MGR ]; then
+        echo "yum-config-manager not found. Attempting to install."
+        $YUM install -y yum-utils
+        if [ $? -ne 0 ]; then
+            echo "Failed to install yum-config-manager. Abort."
+            exit 1
+        fi
+    fi
+
     echo "Disabling all repositories"
     $YUM_CONFIG_MGR --disable \* > /dev/null
 	
@@ -221,14 +231,15 @@ elif [[ ${SLL_version} -eq 7 ]]; then
     $YUM_CONFIG_MGR --enable *suse.* > /dev/null
 
     if [ ! -x $SUSECONNECT ]; then
-        $YUM install -y ${SLL_release_package} suseconnect-ng librepo
+        $YUM install -y --nogpgcheck ${SLL_release_package}
+        import_rpm_signing_keys
+        $YUM install -y suseconnect-ng librepo
     else
         $YUM update -y ${SLL_release_package} suseconnect-ng librepo
     fi
 
     $YUM update -y yum
     $YUM_CONFIG_MGR --disable \* > /dev/null
-
 elif [[ ${SLL_version} -eq 8 ]]; then
     # For SLL8, the release package is already installed, just import the keys
     import_rpm_signing_keys
