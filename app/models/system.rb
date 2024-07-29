@@ -1,6 +1,7 @@
 class System < ApplicationRecord
 
   enum proxy_byos: { payg: 0, byos: 1, hybrid: 2 }
+  self.ignored_columns = ['proxy_byos']
 
   after_initialize :init
 
