@@ -174,6 +174,7 @@ ActiveRecord::Schema.define(version: 2024_07_30_090211) do
     t.text "instance_data"
     t.index ["login", "password", "system_token"], name: "index_systems_on_login_and_password_and_system_token", unique: true
     t.index ["login", "password"], name: "index_systems_on_login_and_password"
+    t.index ["system_token"], name: "index_systems_on_system_token"
     t.check_constraint "json_valid(`system_information`)", name: "system_information"
   end
 

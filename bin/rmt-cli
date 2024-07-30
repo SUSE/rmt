@@ -42,6 +42,12 @@ if Settings.try(:host_system).blank? && File.exist?(RMT::CREDENTIALS_FILE_LOCATI
   warn "Run as root or adjust the permissions."
 end
 
+unless Settings['database']
+  warn "Error loading database config."
+  warn 'Please make sure that /etc/rmt.conf is readable by the rmt process and has your database configured.'
+  exit RMT::CLI::Error::ERROR_OTHER
+end
+
 db_config = RMT::Config.db_config
 ActiveRecord::Base.establish_connection(db_config)
 
