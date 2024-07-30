@@ -231,7 +231,7 @@ module SccProxy
               login: response['login'],
               password: response['password'],
               hostname: params[:hostname],
-              proxy_byos: true,
+              proxy_byos_mode: :byos,
               system_information: system_information
             )
           end
@@ -266,7 +266,7 @@ module SccProxy
         def scc_activate_product
           logger.info "Activating product #{@product.product_string} to SCC"
           auth = request.headers['HTTP_AUTHORIZATION']
-          if @system.proxy_byos
+          if @system.byos?
             response = SccProxy.scc_activate_product(@product, auth, params[:token], params[:email])
             unless response.code_type == Net::HTTPCreated
               error = JSON.parse(response.body)
@@ -287,7 +287,7 @@ module SccProxy
 
         def scc_deactivate_product
           auth = request.headers['HTTP_AUTHORIZATION']
-          if @system.proxy_byos && @product[:product_type] != 'base'
+          if @system.byos? && @product[:product_type] != 'base'
             response = SccProxy.deactivate_product_scc(auth, @product, @system.system_token)
             unless response.code_type == Net::HTTPOK
               error = JSON.parse(response.body)
@@ -306,7 +306,7 @@ module SccProxy
         protected
 
         def scc_deregistration
-          if @system.proxy_byos
+          if @system.byos?
             auth = request.headers['HTTP_AUTHORIZATION']
             response = SccProxy.deregister_system_scc(auth, @system.system_token)
             unless response.code_type == Net::HTTPNoContent
@@ -352,7 +352,7 @@ module SccProxy
         def get_system(systems)
           return nil if systems.blank?
 
-          byos_systems_with_token = systems.select { |system| system.proxy_byos && system.system_token }
+          byos_systems_with_token = systems.select { |system| system.byos? && system.system_token }
 
           return systems.first if byos_systems_with_token.empty?
 

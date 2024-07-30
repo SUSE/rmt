@@ -62,7 +62,7 @@ module InstanceVerification
             verify_extension_activation(product)
           end
         rescue InstanceVerification::Exception => e
-          unless @system.proxy_byos
+          unless @system.byos?
             # BYOS instances that use RMT as a proxy are expected to fail the
             # instance verification check, however, PAYG instances may send registration
             # code, as such, instance verification engine checks for those BYOS

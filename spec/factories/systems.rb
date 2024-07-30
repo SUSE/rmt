@@ -19,7 +19,7 @@ FactoryBot.define do
     end
 
     trait :byos do
-      proxy_byos { true }
+      proxy_byos_mode { :byos }
     end
 
     trait :with_activated_base_product do

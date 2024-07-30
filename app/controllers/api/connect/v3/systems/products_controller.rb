@@ -108,7 +108,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
     # in BYOS mode, we rely on the activation being performed in
     # `engines/scc_proxy/lib/scc_proxy/engine.rb` and don't need further checks here
-    return activation if @system.proxy_byos
+    return activation if @system.byos?
 
     if @subscription.present?
       activation.subscription = @subscription
@@ -124,7 +124,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
   def load_subscription
     # Find subscription by regcode if provided, otherwise use the first subscription (bsc#1220109)
-    if params[:token].present? && !@system.proxy_byos
+    if params[:token].present? && @system.payg?
       @subscription = Subscription.find_by(regcode: params[:token])
       unless @subscription
         raise ActionController::TranslatedError.new(N_('No subscription with this Registration Code found'))
