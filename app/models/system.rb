@@ -1,6 +1,6 @@
 class System < ApplicationRecord
 
-  enum proxy_byos_mode: { payg: 0, byos: 1, hybrid: 2 }
+  enum proxy_byos_mode: { byos: 1, hybrid: 2 }
 
   after_initialize :init
 

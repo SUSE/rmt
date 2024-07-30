@@ -469,6 +469,7 @@ describe RMT::SCC do
       end
 
       let(:system) { FactoryBot.create(:system) }
+      let(:system_hybrid) { FactoryBot.create(:system, :hybrid) }
 
       it 'syncs systems' do
         expect(api_double).to receive(:send_bulk_system_update).with([system])
@@ -481,6 +482,19 @@ describe RMT::SCC do
                               })
         described_class.new.sync_systems
       end
+
+      it 'syncs systems hybrid' do
+        expect(api_double).to receive(:send_bulk_system_update).with([system_hybrid])
+                              .and_return({
+                                systems: [{
+                                  id: 10,
+                                  login: system_hybrid.login,
+                                  password: system_hybrid.password
+                                }]
+                              })
+        described_class.new.sync_systems
+      end
+
     end
   end
 

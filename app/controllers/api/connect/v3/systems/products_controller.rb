@@ -124,7 +124,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
   def load_subscription
     # Find subscription by regcode if provided, otherwise use the first subscription (bsc#1220109)
-    if params[:token].present? && @system.payg?
+    if params[:token].present? && !@system.byos?
       @subscription = Subscription.find_by(regcode: params[:token])
       unless @subscription
         raise ActionController::TranslatedError.new(N_('No subscription with this Registration Code found'))

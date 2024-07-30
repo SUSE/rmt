@@ -10,6 +10,10 @@ FactoryBot.define do
       virtual { false }
     end
 
+    trait :hybrid do
+      proxy_byos_mode { :hybrid }
+    end
+
     trait :synced do
       sequence(:scc_system_id) { |n| n }
 

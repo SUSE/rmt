@@ -168,7 +168,7 @@ ActiveRecord::Schema.define(version: 2024_07_30_090211) do
     t.datetime "updated_at", null: false
     t.datetime "scc_registered_at"
     t.bigint "scc_system_id", comment: "System ID in SCC (if the system registration was forwarded; needed for forwarding de-registrations)"
-    t.integer "proxy_byos_mode", default: 0
+    t.integer "proxy_byos_mode", default: nil
     t.string "system_token"
     t.text "system_information", size: :long
     t.text "instance_data"
