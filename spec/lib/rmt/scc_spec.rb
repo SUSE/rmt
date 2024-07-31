@@ -494,7 +494,6 @@ describe RMT::SCC do
                               })
         described_class.new.sync_systems
       end
-
     end
   end
 
