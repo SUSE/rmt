@@ -84,8 +84,9 @@ class RMT::SCC
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
     # do not sync BYOS proxy systems to SCC
-    # using where in because `where not` does NOT work for enum on this Rails version
-    systems = System.where('scc_registered_at IS NULL OR last_seen_at > scc_registered_at').where(proxy_byos_mode: [nil, :hybrid])
+    # using 'where' because `where not` or negative scope does NOT include nil for enum
+    # nil must be in the query to include systems not created in a public cloud scenario
+    systems = System.where('scc_registered_at IS NULL OR last_seen_at > scc_registered_at').where(proxy_byos_mode: [nil, :payg, :hybrid])
     @logger.info(_('Syncing %{count} updated system(s) to SCC') % { count: systems.size })
 
     begin

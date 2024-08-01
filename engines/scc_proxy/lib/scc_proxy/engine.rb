@@ -223,7 +223,7 @@ module SccProxy
           if has_no_regcode?(auth_header)
             # no token sent to check with SCC
             # standard announce case
-            @system = System.create!(hostname: params[:hostname], system_information: system_information)
+            @system = System.create!(hostname: params[:hostname], system_information: system_information, proxy_byos_mode: :payg)
           else
             response = SccProxy.announce_system_scc(auth_header, request.request_parameters)
             @system = System.create!(

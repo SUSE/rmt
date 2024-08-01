@@ -1,6 +1,10 @@
 class System < ApplicationRecord
-
-  enum proxy_byos_mode: { byos: 1, hybrid: 2 }
+  # This value is only used in public cloud scenarios
+  # This value indicates that the system is using
+  # PAYG (pay as you go),
+  # BYOS (bring your own subscription) or
+  # a mix of both (hybrid).
+  enum proxy_byos_mode: { payg: 0, byos: 1, hybrid: 2 }
 
   after_initialize :init
 
