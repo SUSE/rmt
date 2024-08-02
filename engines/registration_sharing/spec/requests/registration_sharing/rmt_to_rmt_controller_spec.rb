@@ -28,6 +28,7 @@ module RegistrationSharing
             created_at: created_at,
             registered_at: registered_at,
             last_seen_at: last_seen_at,
+            proxy_byos: true,
             activations: [
               {
                 product_id: product.id,
@@ -61,6 +62,7 @@ module RegistrationSharing
           its(:created_at) { is_expected.to eq(created_at) }
           its(:registered_at) { is_expected.to eq(registered_at) }
           its(:last_seen_at) { is_expected.to eq(last_seen_at) }
+          its(:proxy_byos_mode) { is_expected.to eq('byos') }
           it 'saves instance data' do
             expect(system.instance_data).to eq(instance_data)
           end
