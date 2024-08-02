@@ -1,6 +1,7 @@
 require 'rails_helper'
 require 'securerandom'
 
+# rubocop:disable Metrics/ModuleLength
 module RegistrationSharing
   RSpec.describe RmtToRmtController, type: :request do
     let(:login_payg) { SecureRandom.hex }
@@ -152,3 +153,4 @@ module RegistrationSharing
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength
