@@ -32,6 +32,7 @@ describe RegistrationSharing::Client do
         'login' => system.login,
         'password' => system.password,
         'hostname' => system.hostname,
+        'proxy_byos' => system.byos?,
         'proxy_byos_mode' => system.proxy_byos_mode,
         'system_token' => system.system_token,
         'registered_at' => system.registered_at,

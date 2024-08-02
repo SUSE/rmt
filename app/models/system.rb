@@ -1,10 +1,13 @@
 class System < ApplicationRecord
-  # This value is only used in public cloud scenarios
+  # This value has meaning/relevance only used in public cloud scenarios
   # This value indicates that the system is using
+  # NOT_APPLICABLE (systems outside the public cloud),
   # PAYG (pay as you go),
   # BYOS (bring your own subscription) or
   # a mix of both (hybrid).
-  enum proxy_byos_mode: { payg: 0, byos: 1, hybrid: 2 }
+  # enum proxy_byos_mode: {:no_cloud, :payg, :byos, :hybrid]
+  # System.create(hostname: 'hostname')
+  enum proxy_byos_mode: { not_applicable: 0, payg: 1, byos: 2, hybrid: 3 }
 
   after_initialize :init
 
