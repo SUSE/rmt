@@ -16,7 +16,10 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
 
     context 'without X-Instance-Data headers or hw_info' do
       it 'has service URLs with HTTP scheme' do
-        expect(response.body).to include('Instance verification failed')
+        data = JSON.parse(response.body)
+        expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
+        expect_any_instance_of(InstanceVerification::Providers::Example).not_to receive(:instance_valid?)
+        expect(InstanceVerification).not_to receive(:update_cache)
       end
     end
 
@@ -24,7 +27,10 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
       let(:system) { FactoryBot.create(:system, :with_activated_product, :with_system_information, instance_data: '<repoformat>plugin:susecloud</repoformat>') }
 
       it 'has service URLs with HTTP scheme' do
-        expect(response.body).to include('Instance verification failed')
+        data = JSON.parse(response.body)
+        expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
+        expect_any_instance_of(InstanceVerification::Providers::Example).not_to receive(:instance_valid?)
+        expect(InstanceVerification).not_to receive(:update_cache)
       end
     end
 
