@@ -9,7 +9,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
     context 'without valid repository cache' do
       before do
         headers['X-Instance-Data'] = 'IMDS'
-        allow(ZypperAuth).to receive(:verify_instance).and_return(true)
+        allow(InstanceVerification).to receive(:verify_instance).and_return(true)
       end
 
       context 'without X-Instance-Data headers or hw_info' do
@@ -31,7 +31,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
         # allow(File).to receive(:exist?).with("repo/cache/127.0.0.1-#{system.login}-#{system.products.first.id}").and_return(true)
         # allow(File).to receive(:exist?)
         allow(InstanceVerification).to receive(:update_cache)
-        allow(ZypperAuth).to receive(:verify_instance).and_call_original
+        allow(InstanceVerification).to receive(:verify_instance).and_call_original
         headers['X-Instance-Data'] = 'IMDS'
       end
 
