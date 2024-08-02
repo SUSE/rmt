@@ -5,8 +5,6 @@ class System < ApplicationRecord
   # PAYG (pay as you go),
   # BYOS (bring your own subscription) or
   # a mix of both (hybrid).
-  # enum proxy_byos_mode: {:no_cloud, :payg, :byos, :hybrid]
-  # System.create(hostname: 'hostname')
   enum proxy_byos_mode: { not_applicable: 0, payg: 1, byos: 2, hybrid: 3 }
 
   after_initialize :init
