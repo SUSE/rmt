@@ -14,7 +14,7 @@ module RegistrationSharing
         if !params.key?(:proxy_byos_mode) && system.attribute_names.include?('proxy_byos_mode')
           # the info comes from a sibling that does not have proxy_byos_mode
           # to a sibling does have proxy_byos_mode
-          system.proxy_byos_mode = params[:proxy_byos] ? :byos : :payg
+          system.proxy_byos_mode = system.proxy_byos ? :byos : :payg
         end
         # end todo
         system.activations = []
