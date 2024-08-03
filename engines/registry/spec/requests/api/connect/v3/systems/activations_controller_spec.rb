@@ -7,14 +7,23 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
     let(:headers) { auth_header.merge(version_header) }
 
     context 'without valid repository cache' do
-      before do
-        headers['X-Instance-Data'] = 'IMDS'
+      context 'without X-Instance-Data headers or hw_info' do
+        it 'does not update InstanceVerification cache' do
+          get '/connect/systems/activations', headers: headers
+          data = JSON.parse(response.body)
+          expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
+          expect(InstanceVerification).not_to receive(:update_cache)
+        end
       end
 
-      context 'without X-Instance-Data headers or hw_info' do
-        it 'has no access and no registry cache credentials refresh' do
+      context 'with X-Instance-Data headers and bad metadata' do
+        before { headers['X-Instance-Data'] = 'IMDS' }
+
+        it 'does not update InstanceVerification cache' do
+          allow(ZypperAuth).to receive(:verify_instance).and_call_original
           get '/connect/systems/activations', headers: headers
           expect(response.body).to include('Instance verification failed')
+          expect(InstanceVerification).not_to receive(:update_cache)
         end
       end
     end
