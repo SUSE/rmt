@@ -17,9 +17,18 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
       end
 
       context 'with X-Instance-Data headers and bad metadata' do
-        before { headers['X-Instance-Data'] = 'IMDS' }
+        let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+
+        before do
+          headers['X-Instance-Data'] = 'IMDS'
+          Thread.current[:logger] = RMT::Logger.new('/dev/null')
+        end
 
         it 'does not update InstanceVerification cache' do
+          allow(plugin_double).to(
+            receive(:instance_valid?)
+              .and_raise(InstanceVerification::Exception, 'Custom plugin error')
+            )
           allow(ZypperAuth).to receive(:verify_instance).and_call_original
           get '/connect/systems/activations', headers: headers
           expect(response.body).to include('Instance verification failed')
