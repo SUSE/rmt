@@ -161,7 +161,7 @@ RSpec.describe AccessScope, type: :model do
           data[product1.product_class] = 'suse/**'
           File.write('engines/registry/spec/data/access_policy_yaml.yml', YAML.dump(data))
           allow_any_instance_of(RegistryCatalogService).to receive(:repos).and_return(['suse/sles/super_repo'])
-          allow(File).to receive(:read).and_return(access_policy_content)
+          allow(File).to receive(:read).and_return(File.read('engines/registry/spec/data/access_policy_yaml.yml'))
           possible_access = access_scope.granted(client: client)
 
           expect(possible_access).to eq(
