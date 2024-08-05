@@ -272,6 +272,8 @@ module SccProxy
 
         protected
 
+        # rubocop:disable Metrics/PerceivedComplexity
+        # rubocop:disable Metrics/CyclomaticComplexity
         def scc_activate_product
           logger.info "Activating product #{@product.product_string} to SCC"
           auth = nil
@@ -312,6 +314,8 @@ module SccProxy
           end
         end
       end
+      # rubocop:enable Metrics/CyclomaticComplexity
+      # rubocop:enable Metrics/PerceivedComplexity
 
       Api::Connect::V4::Systems::ProductsController.class_eval do
         before_action :scc_deactivate_product, only: %i[destroy]
