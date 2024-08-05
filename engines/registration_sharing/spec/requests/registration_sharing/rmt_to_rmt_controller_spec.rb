@@ -122,6 +122,47 @@ module RegistrationSharing
       end
     end
 
+    describe '#create hybrid' do
+      before do
+        post(
+          '/api/regsharing',
+          params: {
+            login: login_payg,
+            password: password,
+            created_at: created_at,
+            registered_at: registered_at,
+            last_seen_at: last_seen_at,
+            proxy_byos_mode: :hybrid,
+            activations: [
+              {
+                product_id: product.id,
+                created_at: created_at
+              }
+            ],
+            instance_data: instance_data
+          },
+          headers: { 'Authorization' => "Bearer #{request_token}" }
+        )
+      end
+
+      context 'with correct credentials' do
+        it 'performs HTTP request successfully' do
+          expect(response).to have_http_status(204)
+        end
+
+        context 'system' do
+          subject(:system) { System.find_by(login: login_payg) }
+
+          it { is_expected.not_to eq(nil) }
+          its(:proxy_byos_mode) { is_expected.to eq('hybrid') }
+          its(:proxy_byos) { is_expected.to eq(false) }
+          it 'saves instance data' do
+            expect(system.instance_data).to eq(instance_data)
+          end
+        end
+      end
+    end
+
     describe '#destroy' do
       let!(:system) { FactoryBot.create(:system) }
 
