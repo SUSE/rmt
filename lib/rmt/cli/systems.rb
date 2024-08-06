@@ -8,12 +8,12 @@ class RMT::CLI::Systems < RMT::CLI::Base
   desc 'list', _('List registered systems.')
   option :limit, aliases: '-l', type: :numeric, default: 20, desc: _('Number of systems to display')
   option :all, aliases: '-a', type: :boolean, desc: _('List all registered systems')
-  option :proxy_byos, type: :boolean, desc: _('Filter BYOS systems using RMT as a proxy')
+  option :proxy_byos_mode, type: :boolean, desc: _('Filter BYOS systems using RMT as a proxy')
   option :csv, type: :boolean, desc: _('Output data in CSV format')
 
   def list
     systems = System.order(id: :desc)
-    systems = systems.where(proxy_byos: true) if options.proxy_byos
+    systems = systems.where(proxy_byos_mode: :byos) if options.proxy_byos_mode
     systems = systems.limit(options.limit) unless options.all
 
     if System.count == 0
