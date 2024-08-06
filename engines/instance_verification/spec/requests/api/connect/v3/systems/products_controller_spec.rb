@@ -21,6 +21,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
   describe '#activate' do
     let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
+    after { FileUtils.rm_rf(File.dirname(Rails.application.config.registry_cache_dir)) }
+
     context 'when the system is byos' do
       context "when system doesn't have hw_info" do
         let(:system) { FactoryBot.create(:system, :byos) }

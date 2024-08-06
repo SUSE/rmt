@@ -6,5 +6,5 @@
 Rails.application.configure do
   config.cache_config_file = Rails.root.join('engines/registry/spec/data/rmt-cache-trim.sh')
   config.repo_cache_dir = 'repo/cache'
-  config.registry_cache_dir = 'registry/cache'
+  config.registry_cache_dir = 'test_registry/test_cache'
 end
