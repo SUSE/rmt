@@ -266,7 +266,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       stub_request(:post, scc_activate_url)
         .to_return(
           status: 401,
-          body: { error: 'bar' }.to_json,
+          body: { error: 'Instance verification failed: The product is not available for this instance' }.to_json,
           headers: {}
         )
       # stub the fake announcement call PAYG has to do to SCC
@@ -305,7 +305,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         it 'returns error when SCC call fails' do
           data = JSON.parse(response.body)
-          expect(data['error']).to eq('bar')
+          expect(data['error']).to eq('Instance verification failed: The product is not available for this instance')
         end
       end
     end
