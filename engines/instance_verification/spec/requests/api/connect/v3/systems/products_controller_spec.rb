@@ -1,5 +1,6 @@
 require 'rails_helper'
 
+# rubocop:disable RSpec/NestedGroups
 describe Api::Connect::V3::Systems::ProductsController, type: :request do
   include_context 'auth header', :system, :login, :password
   include_context 'version header', 3
@@ -470,9 +471,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         FactoryBot.create(:subscription, product_classes: product_classes)
         stub_request(:post, scc_activate_url)
           .to_return(
-          status: 401,
-          body: { error: 'Instance verification failed: The product is not available for this instance' }.to_json,
-          headers: {}
+            status: 401,
+            body: { error: 'Instance verification failed: The product is not available for this instance' }.to_json,
+            headers: {}
           )
         # stub the fake announcement call PAYG has to do to SCC
         # to create the system before activate product (and skip validation)
@@ -559,9 +560,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         FactoryBot.create(:subscription, product_classes: product_classes)
         stub_request(:post, scc_activate_url)
           .to_return(
-          status: 201,
-          body: {}.to_json,
-          headers: {}
+            status: 201,
+            body: {}.to_json,
+            headers: {}
           )
         # stub the fake announcement call PAYG has to do to SCC
         # to create the system before activate product (and skip validation)
@@ -669,3 +670,4 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     end
   end
 end
+# rubocop:enable RSpec/NestedGroups
