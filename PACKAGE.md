@@ -72,13 +72,7 @@ osc sr systemsmanagement:SCC:RMT rmt-server openSUSE:Factory
 
 ###### Get target codestreams where to submit
 
-To check out which codestreams the package is currently maintained in, run:
-
-```bash
-osc -A https://api.suse.de maintained rmt-server
-```
-
-For a more detailed view which target codestreams are in which state, check out: [Codestream overview](https://maintenance.suse.de/maintained/?package=rmt-server)
+To check out which codestreams RMT is currently maintained, see https://smelt.suse.de/maintained/?q=rmt-server.
 
 ###### Submit updates
 

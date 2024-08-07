@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Jul  8 09:59:59 UTC 2024 - Thomas Schmidt <tschmidt@suse.com>
+
+- Include new script to fix yum-utils issue (jsc#SLL-369)
+
+-------------------------------------------------------------------
 Mon July 1 12:42:34 UTC 2024 - Adnilson Delgado <adnilson.delgado@suse.com>
 
 - Version 2.18
