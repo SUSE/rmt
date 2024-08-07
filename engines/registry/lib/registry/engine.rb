@@ -12,7 +12,8 @@ module Registry
 
     config.after_initialize do
       Api::Connect::V3::Systems::ActivationsController.class_eval do
-        # only run instance verification and cache refresh in PAYG mode
+        # only run instance verification if the instance metadata is present
+        # and  run the cache refresh if instance metadata gets verified
         before_action :refresh_auth_cache, only: %w[index], if: -> { request.headers['X-Instance-Data'] }
 
         def refresh_auth_cache
