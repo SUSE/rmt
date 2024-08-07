@@ -77,7 +77,7 @@ jobs:
 
       - name: Prepare database
         run: |
-          bundle exec rails db:reset db:migrate
+          bundle exec rails db:drop db:create db:migrate
 
       - name: Run core tests
         run: |
