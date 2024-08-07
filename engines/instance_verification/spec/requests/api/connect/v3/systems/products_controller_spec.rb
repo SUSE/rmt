@@ -228,6 +228,13 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             }
           }
         end
+        let(:scc_response_body) do
+          {
+            id: 1234567,
+            login: 'SCC_3b336b126db1503a9513a14e92a6a62e',
+            password: '24f057b7941e80f9cf2d51e16e8af2d6'
+          }.to_json
+        end
 
         before do
           allow(InstanceVerification::Providers::Example).to receive(:new)
@@ -244,7 +251,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           # stub the fake announcement call PAYG has to do to SCC
           # to create the system before activate product (and skip validation)
           stub_request(:post, 'https://scc.suse.com/connect/subscriptions/systems')
-            .to_return(status: 201, body: { ok: 'OK' }.to_json, headers: {})
+            .to_return(status: 201, body: scc_response_body, headers: {})
 
           post url, params: payload, headers: headers
         end
@@ -317,6 +324,14 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           }
         end
 
+        let(:scc_response_body) do
+          {
+            id: 42,
+            login: 'SCC_3b336b126db1503a9513a14e92a6a62e',
+            password: '24f057b7941e80f9cf2d51e16e8af2d6'
+          }.to_json
+        end
+
         before do
           allow(InstanceVerification::Providers::Example).to receive(:new)
             .with(nil, nil, nil, instance_data).and_return(plugin_double)
@@ -332,7 +347,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           # stub the fake announcement call PAYG has to do to SCC
           # to create the system before activate product (and skip validation)
           stub_request(:post, 'https://scc.suse.com/connect/subscriptions/systems')
-            .to_return(status: 201, body: { ok: 'OK' }.to_json, headers: {})
+            .to_return(status: 201, body: scc_response_body, headers: {})
 
           post url, params: payload, headers: headers
         end
@@ -465,6 +480,14 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         }
       end
 
+      let(:scc_response_body) do
+        {
+          id: 1234567,
+          login: 'SCC_3b336b126db1503a9513a14e92a6a62e',
+          password: '24f057b7941e80f9cf2d51e16e8af2d6'
+        }.to_json
+      end
+
       before do
         allow(InstanceVerification::Providers::Example).to receive(:new)
           .with(nil, nil, nil, instance_data).and_return(plugin_double)
@@ -480,7 +503,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         # stub the fake announcement call PAYG has to do to SCC
         # to create the system before activate product (and skip validation)
         stub_request(:post, 'https://scc.suse.com/connect/subscriptions/systems')
-          .to_return(status: 201, body: { ok: 'OK' }.to_json, headers: {})
+          .to_return(status: 201, body: scc_response_body, headers: {})
 
         post url, params: payload, headers: headers
       end
@@ -554,6 +577,14 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         }
       end
 
+      let(:scc_response_body) do
+        {
+          id: 23,
+          login: 'SCC_3b336b126db1503a9513a14e92a6a62e',
+          password: '24f057b7941e80f9cf2d51e16e8af2d6'
+        }.to_json
+      end
+
       before do
         allow(InstanceVerification::Providers::Example).to receive(:new)
           .with(nil, nil, nil, instance_data).and_return(plugin_double)
@@ -569,7 +600,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         # stub the fake announcement call PAYG has to do to SCC
         # to create the system before activate product (and skip validation)
         stub_request(:post, 'https://scc.suse.com/connect/subscriptions/systems')
-          .to_return(status: 201, body: { ok: 'OK' }.to_json, headers: {})
+          .to_return(status: 201, body: scc_response_body, headers: {})
 
         post url, params: payload, headers: headers
       end
