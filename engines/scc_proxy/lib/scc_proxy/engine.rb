@@ -278,40 +278,42 @@ module SccProxy
           logger.info "Activating product #{@product.product_string} to SCC"
           auth = nil
           auth = request.headers['HTTP_AUTHORIZATION'] if request.headers.include?('HTTP_AUTHORIZATION')
-          if @system.byos? || (!@system.byos? && !@product.free? && @product.extension?)
-            mode = 'byos' if @system.byos?
-
-            unless @system.byos?
-              # system is not BYOS and
-              # product is a non free extension
-              mode = 'hybrid'
-              # the extensions must be the same version and arch
-              # than base product
-              base_prod = @system.products.find_by(product_type: :base)
-              if base_prod.present? && @product.arch == base_prod.arch && @product.version == base_prod.version
-                request.headers['proxy_byos_mode'] = mode
-                request.headers['scc_login'] = @system.login
-                request.headers['scc_password'] = @system.password
-                request.headers['instance_data'] = params[:instance_data]
-                request.headers['hwinfo'] = params[:hwinfo]
-                response = SccProxy.announce_system_scc(auth, request.headers)
-              end
+          mode = nil
+          if @system.byos?
+            mode = 'byos'
+          elsif !@product.free? && @product.extension?
+            # system is not BYOS and
+            # product is a non free extension
+            mode = 'hybrid'
+            # the extensions must be the same version and arch
+            # than base product
+            base_prod = @system.products.find_by(product_type: :base)
+            if base_prod.present? && @product.arch == base_prod.arch && @product.version == base_prod.version
+              request.headers['proxy_byos_mode'] = mode
+              request.headers['scc_login'] = @system.login
+              request.headers['scc_password'] = @system.password
+              request.headers['instance_data'] = params[:instance_data]
+              request.headers['hwinfo'] = params[:hwinfo]
+              response = SccProxy.announce_system_scc(auth, request.headers)
             end
-            response = SccProxy.scc_activate_product(@product, auth, params, mode)
+          end
 
+          unless mode.nil?
+            response = SccProxy.scc_activate_product(@product, auth, params, mode)
             unless response.code_type == Net::HTTPCreated
               error = JSON.parse(response.body)
               logger.info "Could not activate #{@product.product_string}, error: #{error['error']} #{response.code}"
               error['error'] = SccProxy.parse_error(error['error']) if error['error'].include? 'json'
               raise ActionController::TranslatedError.new(error['error'])
             end
-            logger.info "Product #{@product.product_string} successfully activated with SCC"
-            InstanceVerification.update_cache(request.remote_ip, @system.login, @product.id)
             # if the system was PAYG and the registration code is valid for the extension,
             # then the system is hybrid
             # update the system to HYBRID mode if HYBRID MODE and system not HYBRID already
             @system.hybrid! if mode == 'hybrid' && @system.payg?
+
+            logger.info "Product #{@product.product_string} successfully activated with SCC"
           end
+          InstanceVerification.update_cache(request.remote_ip, @system.login, @product.id)
         end
       end
       # rubocop:enable Metrics/CyclomaticComplexity
