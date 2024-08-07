@@ -100,14 +100,12 @@ After your requests have been accepted, they still have to pass maintenance test
 
 ## Container image and publishing to SUSE registry
 
-SUSE registry houses the rmt-server docker image. The image is built on OBS/IBS, and can be found [here](https://build.opensuse.org/package/show/devel:BCI:SLE-15-SP6/rmt-server-image).
-
-At the moment of writing, the publishing process has to be done manually. This can be achieved by reaching out to the Auto-Build team (only available internally).
+SUSE registry houses the rmt-server docker image. The image is built automatically on OBS/IBS, and can be found [here](https://build.opensuse.org/package/show/devel:BCI:SLE-15-SP6/rmt-server-image). It is getting published here: `registry.suse.com/suse/rmt-server`.
 
 
 #### Helm chart update process
 
-RMT helm chart is defined [here](https://github.com/SUSE/helm-charts.git) and published at registry.suse.com/suse/rmt-helm.
+RMT helm chart is defined [here](https://github.com/SUSE/helm-charts.git) and published at `registry.suse.com/suse/rmt-helm`.
 
 Edit `rmt-helm/Chart.yaml` to update the chart version (`version`) and rmt-version (`appVersion`). The `BuildTag` version needs to be updated. Look at this example [pull-request](https://github.com/SUSE/helm-charts/pull/5) bumping the version.
 
