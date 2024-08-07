@@ -85,6 +85,10 @@ module SccProxy
         hwinfo: params['hwinfo'],
         byos_mode: params['proxy_byos_mode']
       }
+      # when system is payg, we do not know whether it's hybrid or not
+      # we send the login and password information to skip the validation
+      # on the SCC side, that info is enough to validate the product later on
+      # if the system is, in fact, hybrid
       if params['proxy_byos_mode'].casecmp('hybrid').zero?
         scc_req_body[:login] = params['scc_login']
         scc_req_body[:password] = params['scc_password']
