@@ -89,6 +89,7 @@ module SccProxy
         scc_req_body[:login] = params['scc_login']
         scc_req_body[:password] = params['scc_password']
       end
+      scc_request.body = scc_req_body.to_json
       scc_request
     end
 
