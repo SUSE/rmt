@@ -311,7 +311,7 @@ module SccProxy
               error['error'] = SccProxy.parse_error(error['error']) if error['error'].include? 'json'
               raise ActionController::TranslatedError.new(error['error'])
             end
-            # if the system was PAYG and the registration code is valid for the extension,
+            # if the system is PAYG and the registration code is valid for the extension,
             # then the system is hybrid
             # update the system to HYBRID mode if HYBRID MODE and system not HYBRID already
             @system.hybrid! if mode == 'hybrid' && @system.payg?
