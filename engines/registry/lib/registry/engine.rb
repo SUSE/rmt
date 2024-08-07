@@ -20,12 +20,6 @@ module Registry
             render(xml: { error: 'Instance verification failed' }, status: :forbidden)
           end
         end
-
-        def handle_auth_cache
-          if request.headers['X-Instance-Data'] && !ZypperAuth.verify_instance(request, logger, @system)
-            render(xml: { error: 'Instance verification failed' }, status: :forbidden)
-          end
-        end
       end
 
       Api::Connect::V3::Systems::SystemsController.class_eval do
