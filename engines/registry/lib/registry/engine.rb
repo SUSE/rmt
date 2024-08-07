@@ -12,7 +12,14 @@ module Registry
 
     config.after_initialize do
       Api::Connect::V3::Systems::ActivationsController.class_eval do
-        before_action :handle_auth_cache, only: %w[index]
+        # only run instance verification and cache refresh in PAYG mode
+        before_action :refresh_auth_cache, only: %w[index], if: -> { request.headers['X-Instance-Data'] }
+
+        def refresh_auth_cache
+          unless ZypperAuth.verify_instance(request, logger, @system)
+            render(xml: { error: 'Instance verification failed' }, status: :forbidden)
+          end
+        end
 
         def handle_auth_cache
           if request.headers['X-Instance-Data'] && !ZypperAuth.verify_instance(request, logger, @system)
