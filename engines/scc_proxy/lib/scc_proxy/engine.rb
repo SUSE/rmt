@@ -99,12 +99,11 @@ module SccProxy
 
     def prepare_scc_request(uri_path, product, auth, params, mode)
       params_header = params
-      if mode == 'byos'
-        params_header = nil
-      end
+      params_header = nil if mode == 'byos'
+
       scc_request = Net::HTTP::Post.new(uri_path, headers(auth, params_header))
       scc_request.body = {
-        token: params[:token],
+        token: params[:token] || nil,
         identifier: product.identifier,
         version: product.version,
         arch: product.arch,
