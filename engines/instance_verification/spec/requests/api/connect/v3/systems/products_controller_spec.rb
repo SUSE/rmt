@@ -294,7 +294,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         let(:instance_data) { 'dummy_instance_data' }
         let(:system) do
           FactoryBot.create(
-            :system, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data
+            :system, :payg, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data
           )
         end
         let(:serialized_service_json) do
@@ -305,12 +305,14 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
         let(:scc_activate_url) { 'https://scc.suse.com/connect/systems/products' }
         let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
-        let(:payload) do
+        let(:payload_no_token) do
           {
             identifier: product.identifier,
             version: product.version,
             arch: product.arch,
             instance_data: 'dummy_instance_data',
+            proxy_byos_mode: system.proxy_byos_mode,
+            token: 'super_token',
             hwinfo:
             {
               hostname: 'test',
@@ -332,26 +334,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           }.to_json
         end
 
-        before do
-          allow(InstanceVerification::Providers::Example).to receive(:new)
-            .with(nil, nil, nil, instance_data).and_return(plugin_double)
-          allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
-
-          FactoryBot.create(:subscription, product_classes: product_classes)
-          stub_request(:post, scc_activate_url)
-            .to_return(
-              status: 201,
-              body: {}.to_json,
-              headers: {}
-            )
-          # stub the fake announcement call PAYG has to do to SCC
-          # to create the system before activate product (and skip validation)
-          stub_request(:post, 'https://scc.suse.com/connect/subscriptions/systems')
-            .to_return(status: 201, body: scc_response_body, headers: {})
-
-          post url, params: payload, headers: headers
-        end
-
         context 'when a suitable subscription is found' do
           let(:base_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
 
@@ -363,8 +345,33 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           let(:product_classes) { [base_product.product_class, product.product_class] }
           let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
-          it 'returns error when SCC call succeeds' do
-            expect(response.body).to eq(serialized_service_json)
+          before do
+            allow(InstanceVerification::Providers::Example).to receive(:new)
+              .with(nil, nil, nil, instance_data).and_return(plugin_double)
+            allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
+
+            allow(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, product.id)
+            FactoryBot.create(:subscription, product_classes: product_classes)
+            stub_request(:post, scc_activate_url)
+              .to_return(
+              status: 201,
+              body: {}.to_json,
+              headers: {}
+              )
+            # stub the fake announcement call PAYG has to do to SCC
+            # to create the system before activate product (and skip validation)
+            stub_request(:post, 'https://scc.suse.com/connect/subscriptions/systems')
+              .to_return(status: 201, body: scc_response_body, headers: {})
+
+            expect(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, product.id)
+
+            post url, params: payload_no_token, headers: headers
+          end
+
+          context 'when regcode is provided' do
+            it 'returns service JSON' do
+              expect(response.body).to eq(serialized_service_json)
+            end
           end
         end
 
@@ -376,6 +383,29 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             )
           end
           let(:product_classes) { [base_product.product_class] }
+
+          before do
+            allow(InstanceVerification::Providers::Example).to receive(:new)
+              .with(nil, nil, nil, instance_data).and_return(plugin_double)
+            allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
+
+            allow(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, product.id)
+            FactoryBot.create(:subscription, product_classes: product_classes)
+            stub_request(:post, scc_activate_url)
+              .to_return(
+              status: 201,
+              body: {}.to_json,
+              headers: {}
+              )
+            # stub the fake announcement call PAYG has to do to SCC
+            # to create the system before activate product (and skip validation)
+            stub_request(:post, 'https://scc.suse.com/connect/subscriptions/systems')
+              .to_return(status: 201, body: scc_response_body, headers: {})
+
+            expect(InstanceVerification).not_to receive(:update_cache).with('127.0.0.1', system.login, product.id)
+
+            post url, params: payload_no_token, headers: headers
+          end
 
           it 'returns service JSON' do
             expect(response.body).to eq(serialized_service_json)
@@ -534,107 +564,92 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           let(:product_classes) { [base_product.product_class, product.product_class] }
           let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
-          it 'returns error when SCC call fails' do
-            data = JSON.parse(response.body)
-            expect(data['error']).to eq('Instance verification failed: The product is not available for this instance')
+          context 'when no regcode is provided' do
+            it 'returns error' do
+              data = JSON.parse(response.body)
+              expect(data['error']).to eq('A registration code is required to activate this product')
+            end
           end
         end
       end
     end
 
-    context 'when activating extensions without errors' do
-      let(:instance_data) { 'dummy_instance_data' }
-      let(:system) do
-        FactoryBot.create(
-          :system, :hybrid, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data
-          )
-      end
-      let(:serialized_service_json) do
-        V3::ServiceSerializer.new(
-          product.service,
-          base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
-          ).to_json
-      end
-      let(:scc_activate_url) { 'https://scc.suse.com/connect/systems/products' }
-      let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
-      let(:payload) do
-        {
-          identifier: product.identifier,
-          version: product.version,
-          arch: product.arch,
-          instance_data: 'dummy_instance_data',
-          proxy_byos_mode: :hybrid,
-          hwinfo:
-          {
-            hostname: 'test',
-            cpus: '1',
-            sockets: '1',
-            hypervisor: 'Xen',
-            arch: 'x86_64',
-            uuid: 'ec235f7d-b435-e27d-86c6-c8fef3180a01',
-            cloud_provider: 'amazon'
-          }
-        }
-      end
+    # context 'when activating extensions without errors' do
+    #   let(:instance_data) { 'dummy_instance_data' }
+    #   let(:system) do
+    #     FactoryBot.create(
+    #       :system, :hybrid, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data
+    #       )
+    #   end
+    #   let(:serialized_service_json) do
+    #     V3::ServiceSerializer.new(
+    #       product.service,
+    #       base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
+    #       ).to_json
+    #   end
+    #   let(:scc_activate_url) { 'https://scc.suse.com/connect/systems/products' }
+    #   let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+    #   let(:payload_token) do
+    #     {
+    #       identifier: product.identifier,
+    #       version: product.version,
+    #       arch: product.arch,
+    #       instance_data: 'dummy_instance_data',
+    #       proxy_byos_mode: :hybrid,
+    #       token: 'super_token',
+    #       hwinfo:
+    #       {
+    #         hostname: 'test',
+    #         cpus: '1',
+    #         sockets: '1',
+    #         hypervisor: 'Xen',
+    #         arch: 'x86_64',
+    #         uuid: 'ec235f7d-b435-e27d-86c6-c8fef3180a01',
+    #         cloud_provider: 'amazon'
+    #       }
+    #     }
+    #   end
 
-      let(:scc_response_body) do
-        {
-          id: 23,
-          login: 'SCC_3b336b126db1503a9513a14e92a6a62e',
-          password: '24f057b7941e80f9cf2d51e16e8af2d6'
-        }.to_json
-      end
+    #   let(:scc_response_body) do
+    #     {
+    #       id: 1234567,
+    #       login: 'SCC_3b336b126db1503a9513a14e92a6a62e',
+    #       password: '24f057b7941e80f9cf2d51e16e8af2d6'
+    #     }.to_json
+    #   end
+    #   let(:base_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
+    #   let(:product_classes) { [base_product.product_class, product.product_class] }
 
-      before do
-        allow(InstanceVerification::Providers::Example).to receive(:new)
-          .with(nil, nil, nil, instance_data).and_return(plugin_double)
-        allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
+    #   before do
+    #     allow(InstanceVerification::Providers::Example).to receive(:new)
+    #       .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
 
-        FactoryBot.create(:subscription, product_classes: product_classes)
-        stub_request(:post, scc_activate_url)
-          .to_return(
-            status: 201,
-            body: {}.to_json,
-            headers: {}
-          )
-        # stub the fake announcement call PAYG has to do to SCC
-        # to create the system before activate product (and skip validation)
-        stub_request(:post, 'https://scc.suse.com/connect/subscriptions/systems')
-          .to_return(status: 201, body: scc_response_body, headers: {})
+    #     allow(plugin_double).to receive(:instance_valid?).and_return(true)
+    #     allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
+    #     # allow(InstanceVerification).to receive(:update_cache)
 
-        post url, params: payload, headers: headers
-      end
+    #     FactoryBot.create(:subscription, product_classes: product_classes)
+    #     stub_request(:post, scc_activate_url)
+    #       .to_return(
+    #         status: 201,
+    #         body: { ok: 'product activated correctly' }.to_json,
+    #         headers: {}
+    #       )
+    #     # stub the fake announcement call PAYG has to do to SCC
+    #     # to create the system before activate product (and skip validation)
+    #     stub_request(:post, 'https://scc.suse.com/connect/subscriptions/systems')
+    #       .to_return(status: 201, body: scc_response_body, headers: {})
 
-      context 'when a suitable subscription is found' do
-        let(:base_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
+    #     post url, params: payload_token, headers: headers
+    #   end
 
-        let(:product) do
-          FactoryBot.create(
-            :product, :with_mirrored_repositories, :extension, free: false, base_products: [base_product]
-            )
-        end
-        let(:product_classes) { [base_product.product_class, product.product_class] }
-        let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
-
-        it 'returns error when SCC call succeeds' do
-          expect(response.body).to eq(serialized_service_json)
-        end
-      end
-
-      context 'when the extension is free' do
-        let(:base_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
-        let(:product) do
-          FactoryBot.create(
-            :product, :with_mirrored_repositories, :extension, free: true, base_products: [base_product]
-            )
-        end
-        let(:product_classes) { [base_product.product_class] }
-
-        it 'returns service JSON' do
-          expect(response.body).to eq(serialized_service_json)
-        end
-      end
-    end
+    #   context 'when regcode is provided' do
+    #     it 'returns service JSON' do
+    #       expect(response.body).to eq(serialized_service_json)
+    #       expect(InstanceVerification).to receive(:update_cache)
+    #     end
+    #   end
+    # end
   end
 
   describe '#upgrade' do

@@ -286,8 +286,12 @@ module SccProxy
           if @system.byos?
             mode = 'byos'
           elsif !@product.free? && @product.extension?
+            regcode_error_message = 'A registration code is required to activate this product'
+            raise ActionController::TranslatedError.new(regcode_error_message) if (@system.payg? || @system.hybrid?) && params[:token].nil?
+
             # system is not BYOS and
             # product is a non free extension
+            # and a registration code is provided
             mode = 'hybrid'
             # the extensions must be the same version and arch
             # than base product
@@ -303,6 +307,8 @@ module SccProxy
           end
 
           unless mode.nil?
+            # if system is byos or hybrid and there is a token
+            # make a request to SCC
             response = SccProxy.scc_activate_product(@product, auth, params, mode)
             unless response.code_type == Net::HTTPCreated
               error = JSON.parse(response.body)
@@ -316,8 +322,8 @@ module SccProxy
             @system.hybrid! if mode == 'hybrid' && @system.payg?
 
             logger.info "Product #{@product.product_string} successfully activated with SCC"
+            InstanceVerification.update_cache(request.remote_ip, @system.login, @product.id)
           end
-          InstanceVerification.update_cache(request.remote_ip, @system.login, @product.id)
         end
       end
       # rubocop:enable Metrics/CyclomaticComplexity
