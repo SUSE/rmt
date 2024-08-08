@@ -278,6 +278,7 @@ module SccProxy
 
         # rubocop:disable Metrics/PerceivedComplexity
         # rubocop:disable Metrics/CyclomaticComplexity
+        # rubocop:disable Metrics/AbcSize
         def scc_activate_product
           logger.info "Activating product #{@product.product_string} to SCC"
           auth = nil
@@ -326,6 +327,7 @@ module SccProxy
           end
         end
       end
+      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/CyclomaticComplexity
       # rubocop:enable Metrics/PerceivedComplexity
 

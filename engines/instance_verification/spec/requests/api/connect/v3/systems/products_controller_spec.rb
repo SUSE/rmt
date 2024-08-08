@@ -354,9 +354,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             FactoryBot.create(:subscription, product_classes: product_classes)
             stub_request(:post, scc_activate_url)
               .to_return(
-              status: 201,
-              body: {}.to_json,
-              headers: {}
+                status: 201,
+                body: {}.to_json,
+                headers: {}
               )
             # stub the fake announcement call PAYG has to do to SCC
             # to create the system before activate product (and skip validation)
@@ -393,9 +393,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             FactoryBot.create(:subscription, product_classes: product_classes)
             stub_request(:post, scc_activate_url)
               .to_return(
-              status: 201,
-              body: {}.to_json,
-              headers: {}
+                status: 201,
+                body: {}.to_json,
+                headers: {}
               )
             # stub the fake announcement call PAYG has to do to SCC
             # to create the system before activate product (and skip validation)
