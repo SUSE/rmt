@@ -109,4 +109,4 @@ RMT helm chart is defined [here](https://github.com/SUSE/helm-charts.git) and pu
 
 Edit `rmt-helm/Chart.yaml` to update the chart version (`version`) and rmt-version (`appVersion`). The `BuildTag` version needs to be updated. Look at this example [pull-request](https://github.com/SUSE/helm-charts/pull/5) bumping the version.
 
-[Bruno Leon](mailto:bruno.leon@suse.com) is the maintainer and point of contact for rmt-helm.
+Please reach out to the BCI team if you have build related questions.
