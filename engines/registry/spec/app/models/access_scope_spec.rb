@@ -157,7 +157,6 @@ RSpec.describe AccessScope, type: :model do
 
         it 'returns default auth actions (no free repos included)' do
           yaml_string = access_policy_content
-          FileUtils.cp('engines/registry/spec/data/access_policy_yaml.yml', 'engines/registry/spec/data/access_policy_yaml_old.yml')
           data = YAML.safe_load yaml_string
           data[product1.product_class] = 'suse/**'
           File.write('engines/registry/spec/data/access_policy_yaml.yml', YAML.dump(data))
@@ -172,8 +171,7 @@ RSpec.describe AccessScope, type: :model do
               'class' => nil,
               'name' => 'suse/sles/*'
             }
-            )
-          FileUtils.mv('engines/registry/spec/data/access_policy_yaml_old.yml', 'engines/registry/spec/data/access_policy_yaml.yml')
+          )
         end
       end
 
