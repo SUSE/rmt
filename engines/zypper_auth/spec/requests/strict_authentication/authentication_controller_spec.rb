@@ -9,6 +9,8 @@ describe StrictAuthentication::AuthenticationController, type: :request do
   after { FileUtils.rm_rf(File.dirname(Rails.application.config.registry_cache_dir)) }
 
   describe '#check' do
+    before { Thread.current[:logger] = RMT::Logger.new('/dev/null') }
+
     context 'with valid credentials' do
       include_context 'auth header', :system, :login, :password
 
@@ -203,6 +205,41 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         end
 
         it { is_expected.to have_http_status(200) }
+      end
+
+      context 'system is hybrid' do
+        include_context 'auth header', :system_hybrid, :login, :password
+        let(:system_hybrid) { FactoryBot.create(:system, :hybrid, :with_activated_product) }
+        let(:requested_uri) { '/repo' + system_hybrid.repositories.first[:local_path] + '/repodata/repomd.xml' }
+        let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': 'test' }) }
+        let(:scc_response) do
+          {
+            is_active: false,
+            message: 'You shall not have access to those repos !'
+          }
+        end
+
+        context 'regcode check fails' do
+          before do
+            Rails.cache.clear
+            expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
+            allow(InstanceVerification).to receive(:update_cache)
+            allow(SccProxy).to receive(:scc_check_subscription_expiration).and_return(scc_response)
+            expect(SccProxy).to receive(:scc_check_subscription_expiration)
+            allow(File).to receive(:directory?)
+            allow(Dir).to receive(:mkdir)
+            allow(FileUtils).to receive(:touch)
+            allow(ZypperAuth.auth_logger).to receive(:info)
+            expect(ZypperAuth.auth_logger).to(
+              receive(:info).with(
+                "Access to the repos denied: You shall not have access to those repos !\n"
+                )
+              )
+            get '/api/auth/check', headers: headers
+          end
+
+          it { is_expected.to have_http_status(403) }
+        end
       end
     end
   end
