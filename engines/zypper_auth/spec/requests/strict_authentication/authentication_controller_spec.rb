@@ -220,6 +220,10 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         end
 
         context 'regcode check fails' do
+          let(:error_message) do
+            "Access to the repos denied: You shall not have access to those repos !\nSystem login: #{system_hybrid.login}, IP: 127.0.0.1\n"
+          end
+
           before do
             Rails.cache.clear
             expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
@@ -230,11 +234,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
             allow(Dir).to receive(:mkdir)
             allow(FileUtils).to receive(:touch)
             allow(ZypperAuth.auth_logger).to receive(:info)
-            expect(ZypperAuth.auth_logger).to(
-              receive(:info).with(
-                "Access to the repos denied: You shall not have access to those repos !\n"
-                )
-              )
+            expect(ZypperAuth.auth_logger).to(receive(:info).with(error_message))
             get '/api/auth/check', headers: headers
           end
 
