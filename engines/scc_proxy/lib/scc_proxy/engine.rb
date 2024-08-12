@@ -80,24 +80,39 @@ module SccProxy
       # to SCC.
       # SCC will make sure to handle the data correctly. This removes the need
       # to adapt here if information send by the client changes.
-      scc_request.body = {
+      scc_req_body = {
         hostname: params['hostname'],
         hwinfo: params['hwinfo'],
-        byos: true
-      }.to_json
+        byos_mode: params['proxy_byos_mode']
+      }
+      # when system is payg, we do not know whether it's hybrid or not
+      # we send the login and password information to skip the validation
+      # on the SCC side, that info is enough to validate the product later on
+      # if the system is, in fact, hybrid
+      # When activating a BYOS extension on top of a PAYG system ('hybrid mode'),
+      # the system already has credentials in RMT, but is not known to SCC.
+      # We announce it to SCC including its credentials in this case.
+      if params['proxy_byos_mode'] == 'hybrid'
+        scc_req_body[:login] = params['scc_login']
+        scc_req_body[:password] = params['scc_password']
+      end
+      scc_request.body = scc_req_body.to_json
       scc_request
     end
 
-    def prepare_scc_request(uri_path, product, auth, token, email)
-      scc_request = Net::HTTP::Post.new(uri_path, headers(auth, nil))
+    def prepare_scc_request(uri_path, product, auth, params, mode)
+      params_header = params
+      params_header = nil if mode == 'byos'
+
+      scc_request = Net::HTTP::Post.new(uri_path, headers(auth, params_header))
       scc_request.body = {
-        token: token,
+        token: params[:token] || nil,
         identifier: product.identifier,
         version: product.version,
         arch: product.arch,
         release_type: product.release_type,
-        email: email || nil,
-        byos: true
+        email: params[:email] || nil,
+        byos_mode: mode
       }.to_json
       scc_request
     end
@@ -113,11 +128,11 @@ module SccProxy
       JSON.parse(response.body)
     end
 
-    def scc_activate_product(product, auth, token, email)
+    def scc_activate_product(product, auth, params, mode)
       uri = URI.parse(ACTIVATE_PRODUCT_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      scc_request = prepare_scc_request(uri.path, product, auth, token, email)
+      scc_request = prepare_scc_request(uri.path, product, auth, params, mode)
       http.request(scc_request)
     end
 
@@ -225,6 +240,7 @@ module SccProxy
             # standard announce case
             @system = System.create!(hostname: params[:hostname], system_information: system_information, proxy_byos_mode: :payg)
           else
+            request.request_parameters['proxy_byos_mode'] = 'byos'
             response = SccProxy.announce_system_scc(auth_header, request.request_parameters)
             @system = System.create!(
               system_token: SccProxy.instance_id,
@@ -263,22 +279,60 @@ module SccProxy
 
         protected
 
+        # rubocop:disable Metrics/PerceivedComplexity
+        # rubocop:disable Metrics/CyclomaticComplexity
+        # rubocop:disable Metrics/AbcSize
         def scc_activate_product
           logger.info "Activating product #{@product.product_string} to SCC"
-          auth = request.headers['HTTP_AUTHORIZATION']
+          auth = nil
+          auth = request.headers['HTTP_AUTHORIZATION'] if request.headers.include?('HTTP_AUTHORIZATION')
+          mode = nil
           if @system.byos?
-            response = SccProxy.scc_activate_product(@product, auth, params[:token], params[:email])
+            mode = 'byos'
+          elsif !@product.free? && @product.extension?
+            regcode_error_message = 'A registration code is required to activate this product'
+            raise ActionController::TranslatedError.new(regcode_error_message) if (@system.payg? || @system.hybrid?) && params[:token].nil?
+
+            # system is not BYOS and
+            # product is a non free extension
+            # and a registration code is provided
+            mode = 'hybrid'
+            # the extensions must be the same version and arch
+            # than base product
+            base_prod = @system.products.find_by(product_type: :base)
+            if base_prod.present? && @product.arch == base_prod.arch && @product.version == base_prod.version
+              request.headers['proxy_byos_mode'] = mode
+              request.headers['scc_login'] = @system.login
+              request.headers['scc_password'] = @system.password
+              request.headers['instance_data'] = params[:instance_data]
+              request.headers['hwinfo'] = params[:hwinfo]
+              response = SccProxy.announce_system_scc(auth, request.headers)
+            end
+          end
+
+          unless mode.nil?
+            # if system is byos or hybrid and there is a token
+            # make a request to SCC
+            response = SccProxy.scc_activate_product(@product, auth, params, mode)
             unless response.code_type == Net::HTTPCreated
               error = JSON.parse(response.body)
               logger.info "Could not activate #{@product.product_string}, error: #{error['error']} #{response.code}"
               error['error'] = SccProxy.parse_error(error['error']) if error['error'].include? 'json'
               raise ActionController::TranslatedError.new(error['error'])
             end
+            # if the system is PAYG and the registration code is valid for the extension,
+            # then the system is hybrid
+            # update the system to HYBRID mode if HYBRID MODE and system not HYBRID already
+            @system.hybrid! if mode == 'hybrid' && @system.payg?
+
             logger.info "Product #{@product.product_string} successfully activated with SCC"
             InstanceVerification.update_cache(request.remote_ip, @system.login, @product.id)
           end
         end
       end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/CyclomaticComplexity
+      # rubocop:enable Metrics/PerceivedComplexity
 
       Api::Connect::V4::Systems::ProductsController.class_eval do
         before_action :scc_deactivate_product, only: %i[destroy]
