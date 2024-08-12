@@ -23,7 +23,11 @@ mv /etc/zypp/repos.d/* /tmp/ # move out BCI repos
 #     httpsOnly = false
 # in /etc/regionserverclnt.cfg
 
-registercloudguest
+# Comment out line 227 + 228 in /usr/lib/python3.6/site-packages/cloudregister/smt.py
+# #if isinstance(ipaddress.ip_address(rmt_ip), ipaddress.IPv6Address):
+# #    rmt_ip = '[%s]' %srv_ip
+
+registercloudguest --smt-fqdn http://172.17.0.1:4224 --smt-ip 172.17.0.1 --smt-fp XX:XX:XX
 
 ```
 
