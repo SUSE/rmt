@@ -123,8 +123,10 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   end
 
   def load_subscription
-    # Find subscription by regcode if provided, otherwise use the first subscription (bsc#1220109)
-    if params[:token].present? && !@system.byos?
+    # Find subscription by regcode if provided and not a public cloud system,
+    # otherwise check if there's already an activation with a matching
+    # subscription (for migrations, bsc#1220109)
+    if params[:token].present? && @system.not_applicable?
       @subscription = Subscription.find_by(regcode: params[:token])
       unless @subscription
         raise ActionController::TranslatedError.new(N_('No subscription with this Registration Code found'))

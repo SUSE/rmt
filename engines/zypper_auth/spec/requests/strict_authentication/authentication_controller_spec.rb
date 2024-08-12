@@ -6,6 +6,8 @@ describe StrictAuthentication::AuthenticationController, type: :request do
 
   let(:system) { FactoryBot.create(:system, :with_activated_product) }
 
+  after { FileUtils.rm_rf(File.dirname(Rails.application.config.registry_cache_dir)) }
+
   describe '#check' do
     context 'with valid credentials' do
       include_context 'auth header', :system, :login, :password

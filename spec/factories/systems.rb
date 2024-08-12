@@ -10,6 +10,10 @@ FactoryBot.define do
       virtual { false }
     end
 
+    trait :payg do
+      proxy_byos_mode { :payg }
+    end
+
     trait :hybrid do
       proxy_byos_mode { :hybrid }
     end
