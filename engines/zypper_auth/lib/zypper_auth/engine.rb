@@ -50,7 +50,7 @@ module ZypperAuth
     end
 
     def handle_scc_subscription(request, system, verification_provider, logger)
-      result = SccProxy.scc_check_subscription_expiration(request.headers, system.login, system.system_token, logger)
+      result = SccProxy.scc_check_subscription_expiration(request.headers, system.login, system.system_token, logger, system.proxy_byos_mode)
       return true if result[:is_active]
 
       ZypperAuth.zypper_auth_message(request, system, verification_provider, result[:message])

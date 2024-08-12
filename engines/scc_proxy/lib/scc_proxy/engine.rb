@@ -165,16 +165,71 @@ module SccProxy
       error_message
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity
-    # rubocop:disable Metrics/PerceivedComplexity
-    def scc_check_subscription_expiration(headers, login, system_token, logger)
+    def get_scc_activations(headers, system_token, mode)
       auth = headers['HTTP_AUTHORIZATION'] if headers.include?('HTTP_AUTHORIZATION')
       uri = URI.parse(SYSTEMS_ACTIVATIONS_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      uri.query = URI.encode_www_form({ byos: true })
+      uri.query = URI.encode_www_form({ byos_mode: mode })
       scc_request = Net::HTTP::Get.new(uri.path, headers(auth, system_token))
-      response = http.request(scc_request)
+      http.request(scc_request)
+    end
+
+    def product_path_access(x_original_uri, products_ids)
+      products = Product.where(id: products_ids)
+      product_paths = products.map { |prod| prod.repositories.pluck(:local_path) }.flatten
+      product_paths.any? { |path| x_original_uri.include?(path) }
+    end
+
+    def product_class_access(scc_systems_activations, product)
+      active_products_ids = scc_systems_activations.map { |act| act['service']['product']['id'] if act['status'].casecmp('active').zero? }.flatten
+      if active_products_ids.include?(product)
+        { is_active: true }
+      else
+        expired_products_ids = scc_systems_activations.map { |act| act['service']['product']['id'] unless act['status'].casecmp('active').zero? }.flatten
+        message = if expired_products_ids.all?(&:nil?)
+                    'Product not activated.'
+                  elsif expired_products_ids.include?(product)
+                    'Subscription expired.'
+                  else
+                    'Unexpected error when checking product subscription.'
+                  end
+        { is_active: false, message: message }
+      end
+    end
+
+    def activations_fail_state(scc_systems_activations, headers, product = nil)
+      return SccProxy.product_class_access(scc_systems_activations, product) unless product.nil?
+
+      active_products_ids = scc_systems_activations.map { |act| act['service']['product']['id'] if act['status'].casecmp('active').zero? }.flatten
+      x_original_uri = headers.fetch('X-Original-URI', '')
+      if SccProxy.product_path_access(x_original_uri, active_products_ids)
+        { is_active: true }
+      else
+        # product not found in the active subscriptions, check the expired ones
+        expired_products_ids = scc_systems_activations.map { |act| act['service']['product']['id'] unless act['status'].casecmp('active').zero? }.flatten
+        if expired_products_ids.all?(&:nil?)
+          {
+            is_active: false,
+            message: 'Product not activated.'
+          }
+        end
+        if SccProxy.product_path_access(x_original_uri, expired_products_ids)
+          {
+            is_active: false,
+            message: 'Subscription expired.'
+          }
+        else
+          {
+            is_active: false,
+            message: 'Unexpected error when checking product subscription.'
+          }
+        end
+      end
+    end
+
+    def scc_check_subscription_expiration(headers, login, system_token, logger, mode, product = nil)
+      response = SccProxy.get_scc_activations(headers, system_token, mode)
       unless response.code_type == Net::HTTPOK
         logger.info "Could not get the system (#{login}) activations, error: #{response.message} #{response.code}"
         response.message = SccProxy.parse_error(response.message) if response.message.include? 'json'
@@ -188,39 +243,8 @@ module SccProxy
       end.flatten.compact
       return { is_active: true } unless no_status_products_ids.all?(&:nil?)
 
-      active_products_ids = scc_systems_activations.map { |act| act['service']['product']['id'] if act['status'].casecmp('active').zero? }.flatten
-      products = Product.where(id: active_products_ids)
-      product_paths = products.map { |prod| prod.repositories.pluck(:local_path) }.flatten
-      active_subscription = product_paths.any? { |path| headers.fetch('X-Original-URI', '').include?(path) }
-      if active_subscription
-        { is_active: true }
-      else
-        # product not found in the active subscriptions, check the expired ones
-        expired_products_ids = scc_systems_activations.map { |act| act['service']['product']['id'] unless act['status'].casecmp('active').zero? }.flatten
-        if expired_products_ids.all?(&:nil?)
-          return {
-            is_active: false,
-            message: 'Product not activated.'
-          }
-        end
-        products = Product.where(id: expired_products_ids)
-        product_paths = products.map { |prod| prod.repositories.pluck(:local_path) }.flatten
-        expired_subscription = product_paths.any? { |path| headers.fetch('X-Original-URI', '').include?(path) }
-        if expired_subscription
-          {
-            is_active: false,
-            message: 'Subscription expired.'
-          }
-        else
-          {
-            is_active: false,
-            message: 'Unexpected error when checking product subscription.'
-          }
-        end
-      end
+      SccProxy.activations_fail_state(scc_systems_activations, headers, product)
     end
-    # rubocop:enable Metrics/PerceivedComplexity
-    # rubocop:enable Metrics/CyclomaticComplexity
   end
 
   class Engine < ::Rails::Engine
