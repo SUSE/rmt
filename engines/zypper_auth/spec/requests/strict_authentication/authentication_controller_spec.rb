@@ -212,33 +212,55 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         let(:system_hybrid) { FactoryBot.create(:system, :hybrid, :with_activated_product) }
         let(:requested_uri) { '/repo' + system_hybrid.repositories.first[:local_path] + '/repodata/repomd.xml' }
         let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': 'test' }) }
-        let(:scc_response) do
-          {
-            is_active: false,
-            message: 'You shall not have access to those repos !'
-          }
+
+        before do
+          Rails.cache.clear
+          expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
+          allow(InstanceVerification).to receive(:update_cache)
+          allow(Dir).to receive(:mkdir)
+          allow(FileUtils).to receive(:touch)
         end
 
         context 'regcode check fails' do
           let(:error_message) do
-            "Access to the repos denied: You shall not have access to those repos !\nSystem login: #{system_hybrid.login}, IP: 127.0.0.1\n"
+            "Access to the repos denied: #{scc_response[:message]}\nSystem login: #{system_hybrid.login}, IP: 127.0.0.1\n"
+          end
+
+          let(:scc_response) do
+            {
+              is_active: false,
+              message: 'You shall not have access to those repos !'
+            }
           end
 
           before do
-            Rails.cache.clear
-            expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
-            allow(InstanceVerification).to receive(:update_cache)
             allow(SccProxy).to receive(:scc_check_subscription_expiration).and_return(scc_response)
             expect(SccProxy).to receive(:scc_check_subscription_expiration)
-            allow(File).to receive(:directory?)
-            allow(Dir).to receive(:mkdir)
-            allow(FileUtils).to receive(:touch)
             allow(ZypperAuth.auth_logger).to receive(:info)
-            expect(ZypperAuth.auth_logger).to(receive(:info).with(error_message))
+            expect(ZypperAuth.auth_logger).to receive(:info).with(error_message)
+            expect(FileUtils).not_to receive(:touch)
             get '/api/auth/check', headers: headers
           end
 
           it { is_expected.to have_http_status(403) }
+        end
+
+        context 'regcode check suceeds' do
+          let(:scc_response) do
+            {
+              is_active: true
+            }
+          end
+
+          before do
+            allow(SccProxy).to receive(:scc_check_subscription_expiration).and_return(scc_response)
+            expect(SccProxy).to receive(:scc_check_subscription_expiration)
+            allow(ZypperAuth.auth_logger).to receive(:info)
+            expect(ZypperAuth.auth_logger).not_to(receive(:info))
+            get '/api/auth/check', headers: headers
+          end
+
+          it { is_expected.to have_http_status(200) }
         end
       end
     end
