@@ -68,7 +68,7 @@ module SccProxy
         nil,
         params['instance_data']
       )
-      instance_id_key = INSTANCE_ID_KEYS[params['hwinfo']['cloud_provider'].downcase.to_sym]
+      instance_id_key = INSTANCE_ID_KEYS[params['hwinfo']['cloud_provider']&.downcase&.to_sym]
       iid = verification_provider.parse_instance_data
       iid[instance_id_key]
     end
@@ -228,6 +228,7 @@ module SccProxy
             response = SccProxy.announce_system_scc(auth_header, request.request_parameters)
             @system = System.create!(
               system_token: SccProxy.instance_id,
+              scc_system_id: response['id'],
               login: response['login'],
               password: response['password'],
               hostname: params[:hostname],
