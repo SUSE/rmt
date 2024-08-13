@@ -171,7 +171,7 @@ RSpec.describe AccessScope, type: :model do
               'class' => nil,
               'name' => 'suse/sles/*'
             }
-            )
+          )
         end
       end
 

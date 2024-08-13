@@ -10,21 +10,45 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
   let(:headers) { auth_header.merge(version_header) }
   let(:product) { FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions) }
   let(:product_sap) { FactoryBot.create(:product, :product_sles_sap, :with_mirrored_repositories, :with_mirrored_extensions) }
+  let(:instance_data) { '<instance_data/>' }
 
   let(:payload) do
     {
       identifier: product.identifier,
       version: product.version,
-      arch: product.arch
+      arch: product.arch,
+      instance_data: instance_data,
+      hwinfo:
+        {
+          hostname: 'super_test',
+          cpus: '1',
+          sockets: '1',
+          hypervisor: 'Xen',
+          arch: 'x86_64',
+          uuid: 'ec235f7d-b435-e27d-86c6-c8fef3180a01',
+          cloud_provider: 'amazon'
+        }
     }
   end
+
   let(:payload_byos) do
     {
       identifier: product.identifier,
       version: product.version,
       arch: product.arch,
       email: 'foo',
-      token: 'bar'
+      token: 'bar',
+      byos_mode: 'byos',
+      hwinfo:
+        {
+          hostname: 'test',
+          cpus: '1',
+          sockets: '1',
+          hypervisor: 'Xen',
+          arch: 'x86_64',
+          uuid: 'ec235f7d-b435-e27d-86c6-c8fef3180a01',
+          cloud_provider: 'amazon'
+        }
     }
   end
 
@@ -114,8 +138,12 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             allow(FileUtils).to receive(:mkdir_p)
             allow(FileUtils).to receive(:touch)
 
-            allow(InstanceVerification).to receive(:write_cache_file).twice.with('repo/cache', "127.0.0.1-#{system.login}-#{product.id}")
-            allow(InstanceVerification).to receive(:write_cache_file).twice.with('registry/cache', "127.0.0.1-#{system.login}")
+            allow(InstanceVerification).to receive(:write_cache_file).twice.with(
+              Rails.application.config.repo_cache_dir, "127.0.0.1-#{system.login}-#{product.id}"
+            )
+            allow(InstanceVerification).to receive(:write_cache_file).twice.with(
+              Rails.application.config.registry_cache_dir, "127.0.0.1-#{system.login}"
+            )
           end
 
           it 'renders service JSON' do
@@ -132,8 +160,12 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                 body: '{"error": "No product found on SCC for: foo bar x86_64 json api"}',
                 headers: {}
               )
-            allow(InstanceVerification).to receive(:write_cache_file).twice.with('repo/cache', "127.0.0.1-#{system.login}-#{product.id}")
-            allow(InstanceVerification).to receive(:write_cache_file).twice.with('registry/cache', "127.0.0.1-#{system.login}")
+            allow(InstanceVerification).to receive(:write_cache_file).twice.with(
+              Rails.application.config.repo_cache_dir, "127.0.0.1-#{system.login}-#{product.id}"
+            )
+            allow(InstanceVerification).to receive(:write_cache_file).twice.with(
+              Rails.application.config.registry_cache_dir, "127.0.0.1-#{system.login}"
+            )
             allow(FileUtils).to receive(:mkdir_p)
             allow(FileUtils).to receive(:touch)
 
@@ -165,8 +197,12 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                 body: '{"id": "bar"}',
                 headers: {}
               )
-            allow(InstanceVerification).to receive(:write_cache_file).twice.with('repo/cache', "127.0.0.1-#{system.login}-#{product.id}")
-            allow(InstanceVerification).to receive(:write_cache_file).twice.with('registry/cache', "127.0.0.1-#{system.login}")
+            allow(InstanceVerification).to receive(:write_cache_file).twice.with(
+              Rails.application.config.repo_cache_dir, "127.0.0.1-#{system.login}-#{product.id}"
+            )
+            allow(InstanceVerification).to receive(:write_cache_file).twice.with(
+              Rails.application.config.registry_cache_dir, "127.0.0.1-#{system.login}"
+            )
             allow(File).to receive(:directory?)
             allow(FileUtils).to receive(:mkdir_p)
             allow(FileUtils).to receive(:touch)
@@ -201,8 +237,12 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                 headers: {}
               )
 
-            allow(InstanceVerification).to receive(:write_cache_file).twice.with('repo/cache', "127.0.0.1-#{system.login}-#{product.id}")
-            allow(InstanceVerification).to receive(:write_cache_file).twice.with('registry/cache', "127.0.0.1-#{system.login}")
+            allow(InstanceVerification).to receive(:write_cache_file).twice.with(
+              Rails.application.config.repo_cache_dir, "127.0.0.1-#{system.login}-#{product.id}"
+            )
+            allow(InstanceVerification).to receive(:write_cache_file).twice.with(
+              Rails.application.config.registry_cache_dir, "127.0.0.1-#{system.login}"
+            )
             allow(File).to receive(:directory?)
             allow(FileUtils).to receive(:mkdir_p)
             allow(FileUtils).to receive(:touch)
@@ -232,15 +272,23 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       ).to_json
     end
     let(:scc_activate_url) { 'https://scc.suse.com/connect/systems/products' }
+    let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
     before do
+      allow(InstanceVerification::Providers::Example).to receive(:new)
+        .with(nil, nil, nil, 'dummy_instance_data').and_return(plugin_double)
+      allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
       FactoryBot.create(:subscription, product_classes: product_classes)
       stub_request(:post, scc_activate_url)
         .to_return(
           status: 401,
-          body: 'bar',
+          body: { error: 'Instance verification failed: The product is not available for this instance' }.to_json,
           headers: {}
         )
+      # stub the fake announcement call PAYG has to do to SCC
+      # to create the system before activate product (and skip validation)
+      stub_request(:post, 'https://scc.suse.com/connect/subscriptions/systems')
+        .to_return(status: 201, body: { ok: 'OK' }.to_json, headers: {})
 
       post url, params: payload, headers: headers
     end
@@ -271,8 +319,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
         let(:product_classes) { [base_product.product_class, product.product_class] }
 
-        it 'returns service JSON' do
-          expect(response.body).to eq(serialized_service_json)
+        it 'returns error when SCC call fails' do
+          data = JSON.parse(response.body)
+          expect(data['error']).to eq('Instance verification failed: The product is not available for this instance')
         end
       end
     end

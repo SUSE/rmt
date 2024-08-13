@@ -14,7 +14,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       {
         identifier: product.identifier.downcase,
         version: product.version,
-        arch: product.arch
+        arch: product.arch,
+        byos_mode: 'byos'
       }
     end
 
