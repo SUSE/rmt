@@ -105,6 +105,7 @@ RSpec.describe AccessScope, type: :model do
     end
   end
 
+  # rubocop:disable RSpec/NestedGroups
   describe ".granted['actions']" do
     let(:product1) do
       product = FactoryBot.create(:product, :with_mirrored_repositories)
@@ -176,15 +177,6 @@ RSpec.describe AccessScope, type: :model do
       end
 
       context 'when product is LTSS' do
-        let(:system) do
-          system = FactoryBot.create(:system, :hybrid)
-          system.activations << [
-            FactoryBot.create(:activation, system: system, service: product1.service),
-            FactoryBot.create(:activation, system: system, service: product2.service)
-          ]
-          system
-        end
-
         subject(:access_scope) do
           described_class.new(
             type: 'a',
@@ -193,6 +185,14 @@ RSpec.describe AccessScope, type: :model do
             )
         end
 
+        let(:system) do
+          system = FactoryBot.create(:system, :hybrid)
+          system.activations << [
+            FactoryBot.create(:activation, system: system, service: product1.service),
+            FactoryBot.create(:activation, system: system, service: product2.service)
+          ]
+          system
+        end
         let(:product1) do
           product = FactoryBot.create(:product, :with_mirrored_repositories)
           product.repositories.where(enabled: false).update(mirroring_enabled: false)
@@ -284,4 +284,5 @@ RSpec.describe AccessScope, type: :model do
       end
     end
   end
+  # rubocop:enable RSpec/NestedGroups
 end

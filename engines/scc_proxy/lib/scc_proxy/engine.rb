@@ -186,7 +186,9 @@ module SccProxy
       if active_products_names.include?(product)
         { is_active: true }
       else
-        expired_products_names = scc_systems_activations.map { |act| act['service']['product']['product_class'] unless act['status'].casecmp('active').zero? }.flatten
+        expired_products_names = scc_systems_activations.map do |act|
+          act['service']['product']['product_class'] unless act['status'].casecmp('active').zero?
+        end.flatten
         message = if expired_products_names.all?(&:nil?)
                     'Product not activated.'
                   elsif expired_products_names.include?(product)
@@ -228,7 +230,7 @@ module SccProxy
       end
     end
 
-    def scc_check_subscription_expiration(headers, login, system_token, logger, mode, product = nil)
+    def scc_check_subscription_expiration(headers, login, system_token, logger, mode, product = nil) # rubocop:disable Metrics/ParameterLists
       response = SccProxy.get_scc_activations(headers, system_token, mode)
       unless response.code_type == Net::HTTPOK
         logger.info "Could not get the system (#{login}) activations, error: #{response.message} #{response.code}"
