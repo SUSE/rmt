@@ -60,6 +60,18 @@ module SccProxy
     end
     # rubocop:enable ThreadSafety/InstanceVariableInClassMethod
 
+    def get_instance_id(params)
+      verification_provider = InstanceVerification.provider.new(
+        nil,
+        nil,
+        nil,
+        params['instance_data']
+      )
+      instance_id_key = INSTANCE_ID_KEYS[params['hwinfo']['cloud_provider']&.downcase&.to_sym]
+      iid = verification_provider.parse_instance_data
+      iid[instance_id_key]
+    end
+
     def prepare_scc_announce_request(uri_path, auth, params)
       scc_request = Net::HTTP::Post.new(uri_path, headers(auth, params))
 
@@ -320,6 +332,7 @@ module SccProxy
             response = SccProxy.announce_system_scc(auth_header, request.request_parameters)
             @system = System.create!(
               system_token: SccProxy.instance_id,
+              scc_system_id: response['id'],
               login: response['login'],
               password: response['password'],
               hostname: params[:hostname],
