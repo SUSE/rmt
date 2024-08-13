@@ -166,7 +166,7 @@ module SccProxy
     end
 
     def get_scc_activations(headers, system_token, mode)
-      auth = headers['HTTP_AUTHORIZATION'] if headers.include?('HTTP_AUTHORIZATION')
+      auth = headers['HTTP_AUTHORIZATION'] if headers && headers.include?('HTTP_AUTHORIZATION')
       uri = URI.parse(SYSTEMS_ACTIVATIONS_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
@@ -182,14 +182,14 @@ module SccProxy
     end
 
     def product_class_access(scc_systems_activations, product)
-      active_products_ids = scc_systems_activations.map { |act| act['service']['product']['id'] if act['status'].casecmp('active').zero? }.flatten
-      if active_products_ids.include?(product)
+      active_products_names = scc_systems_activations.map { |act| act['service']['product']['product_class'] if act['status'].casecmp('active').zero? }.flatten
+      if active_products_names.include?(product)
         { is_active: true }
       else
-        expired_products_ids = scc_systems_activations.map { |act| act['service']['product']['id'] unless act['status'].casecmp('active').zero? }.flatten
-        message = if expired_products_ids.all?(&:nil?)
+        expired_products_names = scc_systems_activations.map { |act| act['service']['product']['product_class'] unless act['status'].casecmp('active').zero? }.flatten
+        message = if expired_products_names.all?(&:nil?)
                     'Product not activated.'
-                  elsif expired_products_ids.include?(product)
+                  elsif expired_products_names.include?(product)
                     'Subscription expired.'
                   else
                     'Unexpected error when checking product subscription.'
