@@ -63,9 +63,6 @@ Style/FormatStringToken:
   Exclude:
     - lib/rmt/cli/mirror.rb
 
-Style/OpenStructUse:
-  Enabled: false
-
 RSpec/MessageChain:
   Enabled: false
 
