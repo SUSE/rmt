@@ -100,7 +100,7 @@ module InstanceVerification
             )
           end
           logger.info "Product #{@product.product_string} available for this instance"
-          InstanceVerification.update_cache(request.remote_ip, @system.login, @product.id)
+          InstanceVerification.update_cache(request.remote_ip, @system.login, product.id)
         end
 
         def verify_base_product_activation(product)
