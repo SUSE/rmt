@@ -177,17 +177,17 @@ module SccProxy
     end
 
     # this method is also in PR#1202
-    def product_class_access(scc_systems_activations, product)
-      active_products_names = scc_systems_activations.map { |act| act['service']['product']['product_class'] if act['status'].casecmp('active').zero? }.flatten
-      if active_products_names.include?(product)
+    def product_class_access(scc_systems_activations, product_class)
+      active_products_classes = scc_systems_activations.map { |act| act['service']['product']['product_class'] if act['status'].casecmp('active').zero? }.flatten
+      if active_products_classes.include?(product_class)
         { is_active: true }
       else
-        expired_products_names = scc_systems_activations.map do |act|
+        expired_products_classes = scc_systems_activations.map do |act|
           act['service']['product']['product_class'] unless act['status'].casecmp('active').zero?
         end.flatten
-        message = if expired_products_names.all?(&:nil?)
+        message = if expired_products_classes.all?(&:nil?)
                     'Product not activated.'
-                  elsif expired_products_names.include?(product)
+                  elsif expired_products_classes.include?(product_class)
                     'Subscription expired.'
                   else
                     'Unexpected error when checking product subscription.'
@@ -349,6 +349,7 @@ module SccProxy
               error = JSON.parse(response.body)
               logger.info "Could not activate #{@product.product_string}, error: #{error['error']} #{response.code}"
               error['error'] = SccProxy.parse_error(error['error']) if error['error'].include? 'json'
+              pp "FOA #{@system.payg?}"
               if @system.payg?
                 # if trying to activate first product on a hybrid system
                 # it means the system was "just" announced on this call
@@ -391,25 +392,21 @@ module SccProxy
           auth = request.headers['HTTP_AUTHORIZATION']
           if @system.byos? && @product[:product_type] != 'base'
             response = SccProxy.deactivate_product_scc(auth, @product, @system.system_token)
-          elsif @system.hybrid? && product.extension?
+            handle_response(response)
+          elsif @system.hybrid? && @product.extension?
             # check if product is on SCC and
             # if it is -> de-activate it
             scc_systems_activations = find_hybrid_product_on_scc(headers)
-            result = Scc.product_class_access(scc_systems_activations, @product)
+            result = SccProxy.product_class_access(scc_systems_activations, @product.product_class)
             if result[:is_active] || (!result[:is_active] && result[:message].downcase.include?('expired'))
               # if product is active on SCC or
               # product subscription expired
               # it is OK to remove it from SCC
               response = SccProxy.deactivate_product_scc(auth, @product, @system.system_token)
-            elsif result[:message].downcase.include('unexpected error')
+              handle_response(response)
+            elsif result[:message].downcase.include?('unexpected error')
               raise ActionController::TranslatedError.new(result[:message])
             end
-          end
-          unless response.code_type == Net::HTTPOK
-            error = JSON.parse(response.body)
-            error['error'] = SccProxy.parse_error(error['error'], params[:token], params[:email]) if error['error'].include? 'json'
-            logger.info "Could not de-activate product '#{@product.friendly_name}', error: #{error['error']} #{response.code}"
-            raise ActionController::TranslatedError.new(error['error'])
           end
           logger.info "Product '#{@product.friendly_name}' successfully deactivated from SCC"
         end
@@ -418,10 +415,19 @@ module SccProxy
           response = SccProxy.get_scc_activations(headers, @system.system_token, @system.proxy_byos_mode)
           unless response.code_type == Net::HTTPOK
             logger.info "Could not get the system (#{@system.login}) activations, error: #{response.message} #{response.code}"
-            response.message = SccProxy.parse_error(response.message) if response.message.include? 'json'
-            raise ActionController::TranslatedError.new(response.message)
+            raise ActionController::TranslatedError.new(response.body)
           end
           JSON.parse(response.body)
+        end
+
+        def handle_response(response)
+          unless response.code_type == Net::HTTPOK
+            error = JSON.parse(response.body)
+            error['error'] = SccProxy.parse_error(error['error'], params[:token], params[:email]) if error['error'].include? 'json'
+            logger.info "Could not de-activate product '#{@product.friendly_name}', error: #{error['error']} #{response.code}"
+            raise ActionController::TranslatedError.new(error['error'])
+          end
+        end
       end
 
       Api::Connect::V3::Systems::SystemsController.class_eval do
@@ -430,7 +436,7 @@ module SccProxy
         protected
 
         def scc_deregistration
-          if @system.not_payg?
+          if @system.byos? || @system.hybrid?
             # byos and hybrid systems should get de-register from SCC
             auth = request.headers['HTTP_AUTHORIZATION']
             response = SccProxy.deregister_system_scc(auth, @system.system_token)
