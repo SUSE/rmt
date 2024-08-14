@@ -58,9 +58,8 @@ module InstanceVerification
 
           if product.base?
             verify_base_product_activation(product)
-          elsif !product.free? && @system.payg?
-            token_not_provided = !params.key?(:token) || params[:token].empty?
-            verify_payg_extension_activation!(product) if token_not_provided
+          elsif !product.free? && (!params.key?(:token) || params[:token].empty?)
+            verify_payg_extension_activation!(product)
           end
         rescue InstanceVerification::Exception => e
           unless @system.byos?
