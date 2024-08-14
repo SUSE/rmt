@@ -296,13 +296,12 @@ module SccProxy
             base_prod = @system.products.find_by(product_type: :base)
             if @system.payg? && base_prod.present?
               raise 'Incompatible extension product' unless @product.arch == base_prod.arch && @product.version == base_prod.version
-                # =>  @product.arch == base_prod.arch && @product.version == base_prod.version
-              request.headers['proxy_byos_mode'] = mode
-              request.headers['scc_login'] = @system.login
-              request.headers['scc_password'] = @system.password
-              request.headers['instance_data'] = params[:instance_data]
-              request.headers['hwinfo'] = params[:hwinfo]
-              response = SccProxy.announce_system_scc(auth, request.headers)
+
+              params['proxy_byos_mode'] = mode
+              params['scc_login'] = @system.login
+              params['scc_password'] = @system.password
+              params['hwinfo']['instance_data'] = params['instance_data']
+              response = SccProxy.announce_system_scc(auth, params)
             end
           end
 
