@@ -11,10 +11,12 @@ describe Api::Connect::V4::Systems::ProductsController, type: :request do
       let(:system_byos) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
       let(:scc_systems_activations_url) { 'https://scc.suse.com/connect/systems/activations' }
 
+      # rubocop:disable RSpec/NestedGroups
       context 'an activated non base module' do
         context 'with right credentials' do
           let(:product) do
-            FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system_byos, product_type: 'module')
+            FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system_byos,
+product_type: 'module')
           end
           let(:payload) do
             {
@@ -33,9 +35,9 @@ describe Api::Connect::V4::Systems::ProductsController, type: :request do
           before do
             stub_request(:delete, scc_systems_products_url)
               .to_return(
-              status: 200,
-              body: '',
-              headers: {}
+                status: 200,
+                body: '',
+                headers: {}
               )
             allow(Rails.logger).to receive(:info)
             delete url, params: payload, headers: headers
@@ -53,7 +55,8 @@ describe Api::Connect::V4::Systems::ProductsController, type: :request do
 
         context 'when SCC API returns an error' do
           let(:product) do
-            FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system_byos, product_type: 'module')
+            FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system_byos,
+product_type: 'module')
           end
           let(:payload) do
             {
@@ -72,9 +75,9 @@ describe Api::Connect::V4::Systems::ProductsController, type: :request do
           before do
             stub_request(:delete, scc_systems_products_url)
               .to_return(
-              status: 422,
-              body: "{\"error\": \"Could not de-activate product \'#{product.friendly_name}\'\"}",
-              headers: {}
+                status: 422,
+                body: "{\"error\": \"Could not de-activate product \'#{product.friendly_name}\'\"}",
+                headers: {}
             )
             delete url, params: payload, headers: headers
           end
@@ -85,6 +88,7 @@ describe Api::Connect::V4::Systems::ProductsController, type: :request do
           end
         end
       end
+      # rubocop:enable RSpec/NestedGroups
 
       context 'an activated base module with right credentials' do
         let(:product) { FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system_byos) }
@@ -105,6 +109,7 @@ describe Api::Connect::V4::Systems::ProductsController, type: :request do
       end
     end
 
+    # rubocop:disable RSpec/NestedGroups
     context 'when system is hybrid' do
       include_context 'auth header', :system_hybrid, :login, :password
       include_context 'version header', 4
@@ -114,7 +119,8 @@ describe Api::Connect::V4::Systems::ProductsController, type: :request do
       context 'an activated non base module' do
         context 'with right credentials' do
           let(:product) do
-            FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system_hybrid, product_type: 'module')
+            FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system_hybrid,
+product_type: 'module')
           end
           let(:payload) do
             {
@@ -133,9 +139,9 @@ describe Api::Connect::V4::Systems::ProductsController, type: :request do
           before do
             stub_request(:delete, scc_systems_products_url)
               .to_return(
-              status: 200,
-              body: '',
-              headers: {}
+                status: 200,
+                body: '',
+                headers: {}
               )
             allow(Rails.logger).to receive(:info)
             delete url, params: payload, headers: headers
@@ -171,7 +177,7 @@ describe Api::Connect::V4::Systems::ProductsController, type: :request do
           let(:scc_systems_activations_url) { 'https://scc.suse.com/connect/systems/activations' }
 
           before do
-            stub_request(:get, scc_systems_activations_url).to_return(status: 401,  body: "{\"error\": \"Error\'\"}", headers: {})
+            stub_request(:get, scc_systems_activations_url).to_return(status: 401, body: "{\"error\": \"Error\'\"}", headers: {})
             delete url, params: payload, headers: headers
           end
 
@@ -222,9 +228,9 @@ describe Api::Connect::V4::Systems::ProductsController, type: :request do
           before do
             stub_request(:delete, scc_systems_products_url)
               .to_return(
-              status: 422,
-              body: "{\"error\": \"Could not de-activate product \'#{product.friendly_name}\'\"}",
-              headers: {}
+                status: 422,
+                body: "{\"error\": \"Could not de-activate product \'#{product.friendly_name}\'\"}",
+                headers: {}
               )
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_active].to_json, headers: {})
             delete url, params: payload, headers: headers
@@ -277,9 +283,9 @@ describe Api::Connect::V4::Systems::ProductsController, type: :request do
           before do
             stub_request(:delete, scc_systems_products_url)
               .to_return(
-              status: 422,
-              body: "{\"error\": \"Could not de-activate product \'#{product.friendly_name}\'\"}",
-              headers: {}
+                status: 422,
+                body: "{\"error\": \"Could not de-activate product \'#{product.friendly_name}\'\"}",
+                headers: {}
               )
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_expired].to_json, headers: {})
             delete url, params: payload, headers: headers
@@ -322,7 +328,7 @@ describe Api::Connect::V4::Systems::ProductsController, type: :request do
               service: {
                 product: {
                   id: 1,
-                  product_class: product.product_class + "FOO"
+                  product_class: product.product_class + 'FOO'
                 }
               }
             }
@@ -340,7 +346,7 @@ describe Api::Connect::V4::Systems::ProductsController, type: :request do
           end
         end
 
-        context 'when product is not active' do
+        context 'when product has unknown status' do
           let(:product) do
             FactoryBot.create(:product, :product_sles, :extension, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system_hybrid)
           end
@@ -371,7 +377,7 @@ describe Api::Connect::V4::Systems::ProductsController, type: :request do
               service: {
                 product: {
                   id: system_hybrid.activations.first.product.id,
-                  product_class: system_hybrid.activations.first.product.product_class + "FOO"
+                  product_class: system_hybrid.activations.first.product.product_class + 'FOO'
                 }
               }
             }
@@ -381,9 +387,9 @@ describe Api::Connect::V4::Systems::ProductsController, type: :request do
           before do
             stub_request(:delete, scc_systems_products_url)
               .to_return(
-              status: 422,
-              body: "{\"error\": \"Could not de-activate product \'#{product.friendly_name}\'\"}",
-              headers: {}
+                status: 422,
+                body: "{\"error\": \"Could not de-activate product \'#{product.friendly_name}\'\"}",
+                headers: {}
               )
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_unknown_status].to_json, headers: {})
             delete url, params: payload, headers: headers
@@ -414,5 +420,6 @@ describe Api::Connect::V4::Systems::ProductsController, type: :request do
         end
       end
     end
+    # rubocop:enable RSpec/NestedGroups
   end
 end

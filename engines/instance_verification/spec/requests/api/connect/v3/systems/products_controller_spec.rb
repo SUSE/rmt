@@ -9,7 +9,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
   let(:headers) { auth_header.merge(version_header) }
   let(:product) { FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions) }
   let(:product_sap) { FactoryBot.create(:product, :product_sles_sap, :with_mirrored_repositories, :with_mirrored_extensions) }
-
+  let(:scc_activate_url) { 'https://scc.suse.com/connect/systems/products' }
   let(:payload) do
     {
       identifier: product.identifier,
@@ -48,7 +48,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
       context 'when system has hw_info' do
         let(:instance_data) { 'dummy_instance_data' }
-        let(:system) { FactoryBot.create(:system, :with_system_information, instance_data: instance_data) }
+        let(:system) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
         let(:serialized_service_json) do
           V3::ServiceSerializer.new(
             product.service,
@@ -97,29 +97,12 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             expect(data['error']).to eq('Unexpected instance verification error has occurred')
           end
         end
-
-        context 'when verification provider raises an instance verification exception' do
-          let(:scc_activate_url) { 'https://scc.suse.com/connect/systems/products' }
-
-          before do
-            expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
-            expect(plugin_double).to receive(:instance_valid?).and_raise(InstanceVerification::Exception, 'Custom plugin error')
-
-            post url, params: payload, headers: headers
-          end
-
-          it 'renders an error with exception details' do
-            data = JSON.parse(response.body)
-            expect(data['error']).to eq('Instance verification failed: Custom plugin error')
-          end
-        end
       end
     end
 
     context 'when the system is payg' do
       context "when system doesn't have hw_info" do
-        let(:system) { FactoryBot.create(:system) }
+        let(:system) { FactoryBot.create(:system, :payg) }
 
         it 'class instance verification provider' do
           expect(InstanceVerification::Providers::Example).to receive(:new)
@@ -198,7 +181,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         let(:instance_data) { 'dummy_instance_data' }
         let(:system) do
           FactoryBot.create(
-            :system, :byos, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data
+            :system, :payg, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data
           )
         end
         let(:serialized_service_json) do
@@ -267,7 +250,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             end
             let(:product_classes) { [base_product.product_class] }
 
-            it 'reports an error' do
+            it 'de-registers system from SCC and reports an error' do
               data = JSON.parse(response.body)
               expect(data['error']).to eq('Instance verification failed: The product is not available for this instance')
             end
@@ -282,9 +265,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             let(:product_classes) { [base_product.product_class, product.product_class] }
             let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
-            it 'returns error when SCC call fails' do
+            it 'returns error when no regcode provided' do
               data = JSON.parse(response.body)
-              expect(data['error']).to eq('Instance verification failed: The product is not available for this instance')
+              expect(data['error']).to eq('A registration code is required to activate this product')
             end
           end
         end

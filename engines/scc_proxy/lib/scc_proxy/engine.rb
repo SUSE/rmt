@@ -178,7 +178,9 @@ module SccProxy
 
     # this method is also in PR#1202
     def product_class_access(scc_systems_activations, product_class)
-      active_products_classes = scc_systems_activations.map { |act| act['service']['product']['product_class'] if act['status'].casecmp('active').zero? }.flatten
+      active_products_classes = scc_systems_activations.map do |act|
+        act['service']['product']['product_class'] if act['status'].casecmp('active').zero?
+      end.flatten
       if active_products_classes.include?(product_class)
         { is_active: true }
       else
@@ -254,6 +256,7 @@ module SccProxy
     # rubocop:enable Metrics/CyclomaticComplexity
   end
 
+  # rubocop:disable Metrics/ClassLength
   class Engine < ::Rails::Engine
     isolate_namespace SccProxy
     config.generators.api_only = true
@@ -331,7 +334,7 @@ module SccProxy
             # the extensions must be the same version and arch
             # than base product
             base_prod = @system.products.find_by(product_type: :base)
-            if base_prod.present? && @product.arch == base_prod.arch && @product.version == base_prod.version
+            if @system.payg? && base_prod.present? && @product.arch == base_prod.arch && @product.version == base_prod.version
               request.headers['proxy_byos_mode'] = mode
               request.headers['scc_login'] = @system.login
               request.headers['scc_password'] = @system.password
@@ -349,7 +352,6 @@ module SccProxy
               error = JSON.parse(response.body)
               logger.info "Could not activate #{@product.product_string}, error: #{error['error']} #{response.code}"
               error['error'] = SccProxy.parse_error(error['error']) if error['error'].include? 'json'
-              pp "FOA #{@system.payg?}"
               if @system.payg?
                 # if trying to activate first product on a hybrid system
                 # it means the system was "just" announced on this call
@@ -510,5 +512,6 @@ module SccProxy
       end
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end
 # rubocop:enable Metrics/ModuleLength
