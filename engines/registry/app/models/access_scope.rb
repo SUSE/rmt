@@ -92,7 +92,7 @@ class AccessScope
       allowed_product_class = allowed_products.detect { |s| s.downcase.include?('ltss') }
       if allowed_product_class.present?
         activation_state = SccProxy.scc_check_subscription_expiration(
-          nil, system.login, system.system_token, Rails.logger, system.proxy_byos_mode, allowed_product_class
+          {}, system.login, system.system_token, Rails.logger, system.proxy_byos_mode, allowed_product_class
           )
         unless activation_state[:is_active]
           Rails.logger.info(
