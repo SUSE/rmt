@@ -88,9 +88,9 @@ class AccessScope
     allowed_products = (active_products & access_policies_yml.keys)
     allowed_glob_paths = access_policies_yml.values_at(*allowed_products).flatten
 
-    if !system.nil? && system.hybrid?
+    if system && system.hybrid?
       allowed_product_class = allowed_products.detect { |s| s.downcase.include?('ltss') }
-      unless allowed_product_class.empty?
+      if allowed_product_class.present?
         activation_state = SccProxy.scc_check_subscription_expiration(
           nil, system.login, system.system_token, Rails.logger, system.proxy_byos_mode, allowed_product_class
           )
