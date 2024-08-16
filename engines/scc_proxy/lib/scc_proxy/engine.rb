@@ -307,6 +307,7 @@ module SccProxy
 
         # rubocop:disable Metrics/PerceivedComplexity
         # rubocop:disable Metrics/CyclomaticComplexity
+        # rubocop:disable Metrics/AbcSize
         def scc_activate_product
           logger.info "Activating product #{@product.product_string} to SCC"
           auth = nil
@@ -322,10 +323,14 @@ module SccProxy
             if @system.payg? && base_prod.present?
               raise 'Incompatible extension product' unless @product.arch == base_prod.arch && @product.version == base_prod.version
 
+              params['hostname'] = @system.system_information['hostname']
               params['proxy_byos_mode'] = mode
               params['scc_login'] = @system.login
               params['scc_password'] = @system.password
-              params['hwinfo']['instance_data'] = params['instance_data']
+              params['hwinfo'] = JSON.parse(@system.system_information)
+              params['hwinfo']['instance_data'] = @system.instance_data
+              auth = "Token token=#{params[:token]}"
+
               response = SccProxy.announce_system_scc(auth, params)
             end
           end
@@ -351,6 +356,7 @@ module SccProxy
           logger.info 'No token provided' if params[:token].blank?
         end
       end
+      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/CyclomaticComplexity
       # rubocop:enable Metrics/PerceivedComplexity
 

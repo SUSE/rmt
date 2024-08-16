@@ -312,6 +312,24 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
           let(:product_classes) { [base_product.product_class, product.product_class] }
           let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+          let(:scc_annouce_body) do
+            {
+              hostname: system.system_information['hostname'],
+              hwinfo: JSON.parse(system.system_information).merge({ instance_data: system.instance_data }),
+              byos_mode: 'hybrid',
+              login: system.login,
+              password: system.password
+            }
+          end
+          let(:scc_announce_headers) do
+            {
+              Accept: 'application/json,application/vnd.scc.suse.com.v4+json',
+              'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+              Authorization: 'Token token=super_token',
+              'Content-Type' => 'application/json',
+              'User-Agent' => 'Ruby'
+            }
+          end
 
           before do
             allow(InstanceVerification::Providers::Example).to receive(:new)
@@ -329,6 +347,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             # stub the fake announcement call PAYG has to do to SCC
             # to create the system before activate product (and skip validation)
             stub_request(:post, 'https://scc.suse.com/connect/subscriptions/systems')
+              .with({ headers: scc_announce_headers, body: scc_annouce_body.to_json })
               .to_return(status: 201, body: scc_response_body, headers: {})
 
             expect(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, product.id)
