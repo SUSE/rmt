@@ -67,7 +67,7 @@ module SccProxy
         nil,
         nil,
         params['instance_data']
-      )
+        )
       instance_id_key = INSTANCE_ID_KEYS[params['hwinfo']['cloud_provider'].downcase.to_sym]
       iid = verification_provider.parse_instance_data
       iid[instance_id_key]
@@ -264,7 +264,12 @@ module SccProxy
           if has_no_regcode?(auth_header)
             # no token sent to check with SCC
             # standard announce case
-            @system = System.create!(hostname: params[:hostname], system_information: system_information, proxy_byos_mode: :payg)
+            @system = System.create!(
+              hostname: params[:hostname],
+              system_information: system_information,
+              proxy_byos_mode: :payg,
+              system_token: SccProxy.get_instance_id(request.request_parameters)
+            )
           else
             request.request_parameters['proxy_byos_mode'] = 'byos'
             response = SccProxy.announce_system_scc(auth_header, request.request_parameters)
