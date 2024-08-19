@@ -27,7 +27,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
               hypervisor: 'Xen',
               arch: 'x86_64',
               uuid: 'ec235f7d-b435-e27d-86c6-c8fef3180a01',
-              cloud_provider: 'super_cloud'
+              cloud_provider: 'amazon'
             }
         }
       end
@@ -110,7 +110,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
               hypervisor: 'Xen',
               arch: 'x86_64',
               uuid: 'ec235f7d-b435-e27d-86c6-c8fef3180a01',
-              cloud_provider: 'super_cloud'
+              cloud_provider: 'amazon'
             }
         }
       end
@@ -148,6 +148,34 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           expect(response.code).to eq('401')
           expect(data['type']).to eq('error')
           expect(data['error']).to include('Unauthorized')
+        end
+      end
+
+      context 'unknown cloud provider' do
+        let(:params) do
+          {
+            hostname: 'test',
+            proxy_byos_mode: :payg,
+            instance_data: instance_data,
+            hwinfo:
+            {
+              hostname: 'test',
+              cpus: '1',
+              sockets: '1',
+              hypervisor: 'Xen',
+              arch: 'x86_64',
+              uuid: 'ec235f7d-b435-e27d-86c6-c8fef3180a01',
+              cloud_provider: 'super_cloud'
+            }
+          }
+        end
+
+        it 'returns error' do
+          post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
+          data = JSON.parse(response.body)
+          expect(response.code).to eq('422')
+          expect(data['type']).to eq('error')
+          expect(data['error']).to include('Unknown cloud provider')
         end
       end
 
