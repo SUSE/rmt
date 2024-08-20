@@ -315,24 +315,23 @@ module SccProxy
           mode = nil
           if @system.byos?
             mode = 'byos'
-          elsif !@product.free? && @product.extension?
-            regcode_error_message = 'A registration code is required to activate this product'
-            raise ActionController::TranslatedError.new(regcode_error_message) if (@system.payg? || @system.hybrid?) && params[:token].nil?
-
-            # system is not BYOS and
-            # product is a non free extension
-            # and a registration code is provided
+          elsif !@product.free? && @product.extension? && params[:token].present?
             mode = 'hybrid'
             # the extensions must be the same version and arch
             # than base product
             base_prod = @system.products.find_by(product_type: :base)
-            if base_prod.present? && @product.arch == base_prod.arch && @product.version == base_prod.version
-              request.headers['proxy_byos_mode'] = mode
-              request.headers['scc_login'] = @system.login
-              request.headers['scc_password'] = @system.password
-              request.headers['instance_data'] = params[:instance_data]
-              request.headers['hwinfo'] = params[:hwinfo]
-              response = SccProxy.announce_system_scc(auth, request.headers)
+            if @system.payg? && base_prod.present?
+              raise 'Incompatible extension product' unless @product.arch == base_prod.arch && @product.version == base_prod.version
+
+              params['hostname'] = @system.system_information['hostname']
+              params['proxy_byos_mode'] = mode
+              params['scc_login'] = @system.login
+              params['scc_password'] = @system.password
+              params['hwinfo'] = JSON.parse(@system.system_information)
+              params['hwinfo']['instance_data'] = @system.instance_data
+              auth = "Token token=#{params[:token]}"
+
+              response = SccProxy.announce_system_scc(auth, params)
             end
           end
 
@@ -354,6 +353,7 @@ module SccProxy
             logger.info "Product #{@product.product_string} successfully activated with SCC"
             InstanceVerification.update_cache(request.remote_ip, @system.login, @product.id)
           end
+          logger.info 'No token provided' if params[:token].blank?
         end
       end
       # rubocop:enable Metrics/AbcSize
