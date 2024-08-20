@@ -91,8 +91,11 @@ class AccessScope
     if system && system.hybrid?
       allowed_product_class = allowed_products.detect { |s| s.downcase.include?('ltss') }
       if allowed_product_class.present?
+        auth_header = {
+          Authorization: ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password)
+        }
         activation_state = SccProxy.scc_check_subscription_expiration(
-          {}, system.login, system.system_token, Rails.logger, system.proxy_byos_mode, allowed_product_class
+          auth_header, system.login, system.system_token, Rails.logger, system.proxy_byos_mode, allowed_product_class
           )
         unless activation_state[:is_active]
           Rails.logger.info(
