@@ -436,10 +436,10 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               stub_request(:post, scc_activate_url)
                 .to_return(
                   status: 401,
-                  body: { error: 'No product found on 
-                  
-                  
-                  
+                  body: { error: 'No product found on
+
+
+
                   for: foo bar x86_64 json api' }.to_json,
                   headers: {}
                 )
