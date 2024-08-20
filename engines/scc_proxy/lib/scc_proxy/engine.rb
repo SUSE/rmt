@@ -348,7 +348,7 @@ module SccProxy
                 # if trying to activate first product on a hybrid system
                 # it means the system was "just" announced on this call
                 # if product activation failed, system should get de-register from SCC
-                de_register_hybrid(request.headers['HTTP_AUTHORIZATION'])
+                deregister_hybrid(request.headers['HTTP_AUTHORIZATION'])
               end
               raise ActionController::TranslatedError.new(error['error'])
             end
@@ -363,7 +363,7 @@ module SccProxy
           logger.info 'No token provided' if params[:token].blank?
         end
 
-        def de_register_hybrid(auth)
+        def deregister_hybrid(auth)
           response = SccProxy.deregister_system_scc(auth, @system.system_token)
           unless response.code_type == Net::HTTPNoContent
             error = JSON.parse(response.body)
