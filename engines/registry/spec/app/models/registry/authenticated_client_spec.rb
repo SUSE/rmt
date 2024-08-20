@@ -24,7 +24,7 @@ describe Registry::AuthenticatedClient do
 
           it 'returns the auth strategy' do
             expect(client.systems).to eq([system])
-            expect(client.auth_strategy).to eq(:system_credentials)
+            expect(client.account).to eq(system.login)
           end
         end
 
