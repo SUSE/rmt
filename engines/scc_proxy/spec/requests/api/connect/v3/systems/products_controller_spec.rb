@@ -426,6 +426,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             end
 
             it 'renders service JSON' do
+              stub_request(:post, scc_register_system_url)
+                .to_return(status: 201, body: { ok: 'OK' }.to_json, headers: {})
+
               post url, params: payload, headers: headers
               expect(response.body).to eq(serialized_service_json)
             end
@@ -436,11 +439,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               stub_request(:post, scc_activate_url)
                 .to_return(
                   status: 401,
-                  body: { error: 'No product found on
-
-
-
-                  for: foo bar x86_64 json api' }.to_json,
+                  body: { error: 'No product found on SCC for: foo bar x86_64 json api' }.to_json,
                   headers: {}
                 )
               allow(InstanceVerification).to receive(:write_cache_file).twice.with(
@@ -461,6 +460,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                     body: '',
                     headers: {}
                   )
+
+                stub_request(:post, scc_register_system_url)
+                  .to_return(status: 201, body: { ok: 'OK' }.to_json, headers: {})
                 post url, params: payload, headers: headers
               end
 
@@ -479,6 +481,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                     body: { error: 'Could not de-register system' }.to_json,
                     headers: {}
                   )
+                stub_request(:post, scc_register_system_url)
+                  .to_return(status: 201, body: { ok: 'OK' }.to_json, headers: {})
+
                 post url, params: payload, headers: headers
               end
 

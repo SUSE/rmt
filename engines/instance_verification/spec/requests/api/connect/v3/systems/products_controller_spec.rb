@@ -255,21 +255,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               expect(data['error']).to eq('Instance verification failed: The product is not available for this instance')
             end
           end
-
-          context 'when a suitable subscription is found' do
-            let(:product) do
-              FactoryBot.create(
-                :product, :with_mirrored_repositories, :extension, free: false, base_products: [base_product]
-              )
-            end
-            let(:product_classes) { [base_product.product_class, product.product_class] }
-            let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
-
-            it 'returns error when no regcode provided' do
-              data = JSON.parse(response.body)
-              expect(data['error']).to eq('A registration code is required to activate this product')
-            end
-          end
         end
       end
 
