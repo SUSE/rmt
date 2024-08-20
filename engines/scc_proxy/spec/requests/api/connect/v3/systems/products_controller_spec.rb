@@ -436,7 +436,11 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               stub_request(:post, scc_activate_url)
                 .to_return(
                   status: 401,
-                  body: { error: 'No product found on SCC for: foo bar x86_64 json api' }.to_json,
+                  body: { error: 'No product found on 
+                  
+                  
+                  
+                  for: foo bar x86_64 json api' }.to_json,
                   headers: {}
                 )
               allow(InstanceVerification).to receive(:write_cache_file).twice.with(

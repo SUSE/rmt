@@ -88,6 +88,21 @@ class AccessScope
     allowed_products = (active_products & access_policies_yml.keys)
     allowed_glob_paths = access_policies_yml.values_at(*allowed_products).flatten
 
+    if system && system.hybrid?
+      allowed_product_class = allowed_products.detect { |s| s.downcase.include?('ltss') }
+      if allowed_product_class.present?
+        activation_state = SccProxy.scc_check_subscription_expiration(
+          {}, system.login, system.system_token, Rails.logger, system.proxy_byos_mode, allowed_product_class
+          )
+        unless activation_state[:is_active]
+          Rails.logger.info(
+            "Access to #{allowed_product_class} from system #{system.login} denied: #{activation_state[:message]}"
+          )
+          @allowed_paths = []
+          return
+        end
+      end
+    end
     @allowed_paths = parse_repos(repo_list, allowed_glob_paths)
   end
 
