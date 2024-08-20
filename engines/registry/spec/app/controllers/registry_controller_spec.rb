@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ModuleLength
 module Registry
   describe RegistryController, type: :request do
     describe '#authenticate' do
@@ -65,11 +66,11 @@ module Registry
         before do
           stub_request(:get, "https://registry-example.susecloud.net/api/registry/authorize?account=#{system.login}&scope=registry:catalog:*&service=SUSE%20Linux%20OCI%20Registry")
             .with(
-            headers: {
-              'Accept' => '*/*',
-              'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-              'User-Agent' => 'Ruby'
-            }
+              headers: {
+                'Accept' => '*/*',
+                'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+                'User-Agent' => 'Ruby'
+              }
             ).to_return(status: 200, body: JSON.dump({ foo: 'foo' }), headers: {})
 
           stub_request(:get, "#{RegistryCatalogService.new.catalog_api_url}?n=1000")
@@ -187,3 +188,4 @@ module Registry
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength
