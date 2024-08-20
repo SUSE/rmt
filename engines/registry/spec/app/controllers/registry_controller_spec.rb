@@ -112,7 +112,7 @@ module Registry
 
         context 'when an error happens' do
           it 'denies the access' do
-            allow_any_instance_of(AccessScope).to receive(:allowed_paths).and_raise(StandardError, 'Foo')
+            allow_any_instance_of(AccessScope).to receive(:allowed_paths).and_raise(RegistryAuthError, 'Foo')
             allow(File).to receive(:read).and_return(access_policy_content)
             allow_any_instance_of(AuthenticatedClient).to receive(:cache_file_exist?).and_return(true)
             get(
