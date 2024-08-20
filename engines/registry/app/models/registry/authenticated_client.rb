@@ -22,7 +22,6 @@ class Registry::AuthenticatedClient
       @account = login
       @auth_strategy = :system_credentials
     end
-    @auth_strategy
   end
 
   def cache_file_exist?(remote_ip, login)
