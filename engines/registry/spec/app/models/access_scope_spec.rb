@@ -221,6 +221,10 @@ RSpec.describe AccessScope, type: :model do
                 system.proxy_byos_mode,
                 'SLES15-SP4-LTSS-X86'
             ).and_return(scc_response)
+          end
+
+          # rubocop:disable RSpec/ExampleLength
+          it 'returns no actions allowed' do
             expect(SccProxy).to receive(:scc_check_subscription_expiration).with(
               header_expected,
               system.login,
@@ -229,9 +233,6 @@ RSpec.describe AccessScope, type: :model do
               system.proxy_byos_mode,
               'SLES15-SP4-LTSS-X86'
             )
-          end
-
-          it 'returns no actions allowed' do
             yaml_string = access_policy_content
             data = YAML.safe_load yaml_string
             data[product1.product_class] = 'suse/ltss/**'
@@ -249,6 +250,7 @@ RSpec.describe AccessScope, type: :model do
               }
             )
           end
+          # rubocop:enable RSpec/ExampleLength
         end
       end
 
