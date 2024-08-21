@@ -330,9 +330,9 @@ module SccProxy
               params['scc_password'] = @system.password
               params['hwinfo'] = JSON.parse(@system.system_information)
               params['hwinfo']['instance_data'] = @system.instance_data
-              auth = "Token token=#{params[:token]}"
+              announce_auth = "Token token=#{params[:token]}"
 
-              response = SccProxy.announce_system_scc(auth, params)
+              response = SccProxy.announce_system_scc(announce_auth, params)
             end
           end
 
