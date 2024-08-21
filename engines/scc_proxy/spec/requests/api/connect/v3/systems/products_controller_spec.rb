@@ -262,7 +262,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     let(:instance_data) { 'dummy_instance_data' }
     let(:system) do
       FactoryBot.create(
-        :system, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data
+        :system, :payg, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data
       )
     end
     let(:serialized_service_json) do
@@ -293,7 +293,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       post url, params: payload, headers: headers
     end
 
-    context 'when the extension is not free' do
+    context 'when the extension is not free and not regcode is provided' do
       let(:base_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
 
       context 'when a suitable subscription is not found' do
@@ -319,9 +319,10 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
         let(:product_classes) { [base_product.product_class, product.product_class] }
 
-        it 'returns error when SCC call fails' do
+        it 'activates the product' do
           data = JSON.parse(response.body)
-          expect(data['error']).to eq('Instance verification failed: The product is not available for this instance')
+          expect(data['id']).to eq(product.id)
+          # expect(data['error']).to eq('A registration code is required to activate this product')
         end
       end
     end
@@ -352,7 +353,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
       it 'reports an error' do
         data = JSON.parse(response.body)
-        expect(data['error']).to eq('Unexpected instance verification error has occurred')
+        expect(data['error']).to eq(
+          "Instance verification failed: Can't find a subscription for base product #{base_product.product_string}"
+        )
       end
     end
   end

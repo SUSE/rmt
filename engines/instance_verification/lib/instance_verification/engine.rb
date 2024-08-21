@@ -58,8 +58,8 @@ module InstanceVerification
 
           if product.base?
             verify_base_product_activation(product)
-          else
-            verify_extension_activation(product)
+          elsif !product.free? && params[:token].blank?
+            verify_payg_extension_activation!(product)
           end
         rescue InstanceVerification::Exception => e
           unless @system.byos?
@@ -79,11 +79,10 @@ module InstanceVerification
           raise ActionController::TranslatedError.new('Unexpected instance verification error has occurred')
         end
 
-        def verify_extension_activation(product)
+        def verify_payg_extension_activation!(product)
           return if product.free?
 
           base_product = @system.products.find_by(product_type: :base)
-
           subscription = Subscription.joins(:product_classes).find_by(
             subscription_product_classes: {
               product_class: base_product.product_class
@@ -91,7 +90,7 @@ module InstanceVerification
           )
 
           # This error would occur only if there's a problem with subscription setup on SCC side
-          raise "Can't find a subscription for base product #{base_product.product_string}" unless subscription
+          raise InstanceVerification::Exception, "Can't find a subscription for base product #{base_product.product_string}" unless subscription
 
           allowed_product_classes = subscription.product_classes.pluck(:product_class)
 
@@ -100,6 +99,8 @@ module InstanceVerification
               'The product is not available for this instance'
             )
           end
+          logger.info "Product #{@product.product_string} available for this instance"
+          InstanceVerification.update_cache(request.remote_ip, @system.login, product.id)
         end
 
         def verify_base_product_activation(product)
