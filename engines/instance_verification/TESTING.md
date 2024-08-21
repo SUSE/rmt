@@ -36,7 +36,7 @@ def RESOLVEURL(self, headers, body):
     )
 ```
 
-Create a test instance_data file: `echo "<instance_data/>" > /tmp/idata.xml`
+Create a test instance_data file: `echo "<instance_data product="SUSE"/>" > /tmp/idata.xml`
 
 Register client in PAYG mode:
 
@@ -65,8 +65,12 @@ Register the client base product with PAYG, then the extension with BYOS:
 
 ```
 suseconnect --url http://172.17.0.1:4224 --instance-data /tmp/idata.xml
-suseconnect --url http://172.17.0.1:4224 -r <regcode> -p sle-module-live-patching/15.6/x86_64 --instance-data /tmp/idata.xml`
+suseconnect --url http://172.17.0.1:4224 -r <regcode> -p sle-module-live-patching/15.6/x86_64 --instance-data /tmp/idata.xml
 ```
+
+De-register the extension:
+
+`suseconnect --url http://172.17.0.1:4224 -d -p sle-module-live-patching/15.6/x86_64 --instance-data /tmp/idata.xml`
 
 
 ## Notes
