@@ -21,9 +21,7 @@ module Registry
     # Returns a Distribution Registry HTTP API V2 - compatible repository catalog as defined in
     # https://distribution.github.io/distribution/spec/api/#listing-repositories
     def catalog
-      unless @client && @client.account
-        raise RegistryAuthError, 'Could not find system with current credentials'
-      end
+      raise RegistryAuthError, 'Could not find system with current credentials' unless @client && @client.account
 
       access_scope = AccessScope.parse('registry:catalog:*')
       repos = access_scope.allowed_paths(System.find_by(login: @client&.account))
