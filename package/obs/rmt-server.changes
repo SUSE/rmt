@@ -1,4 +1,17 @@
 -------------------------------------------------------------------
+Wed Aug 21 15:27:24 UTC 2024 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Version 2.19
+- rmt-server-pubcloud:
+  - Handle empty credentials sent from container runtime tools
+  - De-registration of hybrid systems
+  - De-activation of a hybrid system non free extension
+  - Update SccProxy engine to support LTSS
+  - Check access for repository or registy for LTSS
+    verify instance method and registry engine update to support that
+  - Add support for non free extensions
+
+-------------------------------------------------------------------
 Mon Jul  8 09:59:59 UTC 2024 - Thomas Schmidt <tschmidt@suse.com>
 
 - Include new script to fix yum-utils issue (jsc#SLL-369)
