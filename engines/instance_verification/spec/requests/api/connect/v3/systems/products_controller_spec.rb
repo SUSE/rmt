@@ -314,7 +314,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
           let(:scc_annouce_body) do
             {
-              hostname: system.system_information['hostname'],
+              hostname: system.hostname,
               hwinfo: JSON.parse(system.system_information).merge({ instance_data: system.instance_data }),
               byos_mode: 'hybrid',
               login: system.login,

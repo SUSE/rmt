@@ -324,7 +324,7 @@ module SccProxy
             if @system.payg? && base_prod.present?
               raise 'Incompatible extension product' unless @product.arch == base_prod.arch && @product.version == base_prod.version
 
-              params['hostname'] = @system.system_information['hostname']
+              params['hostname'] = @system.hostname
               params['proxy_byos_mode'] = mode
               params['scc_login'] = @system.login
               params['scc_password'] = @system.password
@@ -391,7 +391,7 @@ module SccProxy
           elsif @system.hybrid? && @product.extension?
             # check if product is on SCC and
             # if it is -> de-activate it
-            scc_systems_activations = find_hybrid_product_on_scc(headers)
+            scc_systems_activations = find_hybrid_product_on_scc(request.headers)
             result = SccProxy.product_class_access(scc_systems_activations, @product.product_class)
             if result[:is_active] || (!result[:is_active] && result[:message].downcase.include?('expired'))
               # if product is active on SCC or
