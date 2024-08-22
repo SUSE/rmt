@@ -1,8 +1,9 @@
 -------------------------------------------------------------------
-Wed Aug 21 15:04:28 UTC 2024 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+Wed Aug 21 15:27:24 UTC 2024 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
 - Version 2.19
 - rmt-server-pubcloud:
+  - Handle empty credentials sent from container runtime tools
   - De-registration of hybrid systems
   - De-activation of a hybrid system non free extension
   - Update SccProxy engine to support LTSS
