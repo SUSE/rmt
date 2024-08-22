@@ -207,12 +207,32 @@ RSpec.describe AccessScope, type: :model do
               message: 'You shall not have access to those repos !'
             }
           end
-
-          before do
-            allow(SccProxy).to receive(:scc_check_subscription_expiration).and_return(scc_response)
+          let(:header_expected) do
+            { Authorization: ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) }
           end
 
+          before do
+            allow(SccProxy).to receive(:scc_check_subscription_expiration)
+              .with(
+                header_expected,
+                system.login,
+                system.system_token,
+                Rails.logger,
+                system.proxy_byos_mode,
+                'SLES15-SP4-LTSS-X86'
+            ).and_return(scc_response)
+          end
+
+          # rubocop:disable RSpec/ExampleLength
           it 'returns no actions allowed' do
+            expect(SccProxy).to receive(:scc_check_subscription_expiration).with(
+              header_expected,
+              system.login,
+              system.system_token,
+              Rails.logger,
+              system.proxy_byos_mode,
+              'SLES15-SP4-LTSS-X86'
+            )
             yaml_string = access_policy_content
             data = YAML.safe_load yaml_string
             data[product1.product_class] = 'suse/ltss/**'
@@ -230,6 +250,7 @@ RSpec.describe AccessScope, type: :model do
               }
             )
           end
+          # rubocop:enable RSpec/ExampleLength
         end
       end
 

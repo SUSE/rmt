@@ -9,7 +9,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
   let(:headers) { auth_header.merge(version_header) }
   let(:product) { FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions) }
   let(:product_sap) { FactoryBot.create(:product, :product_sles_sap, :with_mirrored_repositories, :with_mirrored_extensions) }
-
+  let(:scc_activate_url) { 'https://scc.suse.com/connect/systems/products' }
   let(:payload) do
     {
       identifier: product.identifier,
@@ -250,7 +250,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             end
             let(:product_classes) { [base_product.product_class] }
 
-            it 'reports an error' do
+            it 'de-registers system from SCC and reports an error' do
               data = JSON.parse(response.body)
               expect(data['error']).to eq('Instance verification failed: The product is not available for this instance')
             end
@@ -314,7 +314,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
           let(:scc_annouce_body) do
             {
-              hostname: system.system_information['hostname'],
+              hostname: system.hostname,
               hwinfo: JSON.parse(system.system_information).merge({ instance_data: system.instance_data }),
               byos_mode: 'hybrid',
               login: system.login,
