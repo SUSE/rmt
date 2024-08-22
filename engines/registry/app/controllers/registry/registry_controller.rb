@@ -1,4 +1,6 @@
 module Registry
+  class RegistryAuthError < ArgumentError; end
+
   class RegistryController < Registry::ApplicationController
     REGISTRY_SERVICE = 'SUSE Linux OCI Registry'.freeze
     REGISTRY_API_VERSION = 'registry/2.0'.freeze
@@ -19,12 +21,23 @@ module Registry
     # Returns a Distribution Registry HTTP API V2 - compatible repository catalog as defined in
     # https://distribution.github.io/distribution/spec/api/#listing-repositories
     def catalog
+      raise RegistryAuthError, 'Could not find system with current credentials' unless @client && @client.account
+
       access_scope = AccessScope.parse('registry:catalog:*')
       repos = access_scope.allowed_paths(System.find_by(login: @client&.account))
       logger.debug("Returning #{repos.size} repos for client #{@client}")
 
       response.set_header('Docker-Distribution-Api-Version', REGISTRY_API_VERSION)
       render json: { repositories: repos }, status: :ok
+    rescue RegistryAuthError => e
+      logger.error("Could not search in catalog: #{e.message}")
+      error = if e.message.include?('credentials')
+                ActionController::TranslatedError.new(N_('Please, re-authenticate'))
+              else
+                ActionController::TranslatedError.new(N_(e.message))
+              end
+      error.status = :unauthorized
+      render json: { error: error.message }.to_json, status: :unauthorized
     end
 
     private
