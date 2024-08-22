@@ -89,6 +89,7 @@ class AccessScope
     allowed_glob_paths = access_policies_yml.values_at(*allowed_product_classes).flatten
 
     if system && system.hybrid? && allowed_product_classes.any? { |s| !Product.find_by(product_class: s).free? }.present?
+      # if the system is hybrid => check if the non free product subscription is still valid for accessing images
       auth_header = {
         Authorization: ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password)
       }
