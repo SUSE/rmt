@@ -83,21 +83,21 @@ class AccessScope
     access_policies_yml = YAML.safe_load(
       File.read(Rails.application.config.access_policies)
     )
-    active_products = system.activations.includes(:product).pluck(:product_class)
+    active_product_classes = system.activations.includes(:product).pluck(:product_class)
 
-    allowed_products = (active_products & access_policies_yml.keys)
-    allowed_glob_paths = access_policies_yml.values_at(*allowed_products).flatten
+    allowed_product_classes = (active_product_classes & access_policies_yml.keys)
+    allowed_glob_paths = access_policies_yml.values_at(*allowed_product_classes).flatten
 
-    if system && system.hybrid? && allowed_products.any? { |s| !Product.find_by(product_class: s).free? }.present?
+    if system && system.hybrid? && allowed_product_classes.any? { |s| !Product.find_by(product_class: s).free? }.present?
       auth_header = {
         Authorization: ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password)
       }
       activation_state = SccProxy.scc_check_subscription_expiration(
-        auth_header, system.login, system.system_token, Rails.logger, system.proxy_byos_mode, allowed_products.first
-        )
+        auth_header, system.login, system.system_token, Rails.logger, system.proxy_byos_mode, allowed_product_classes.first
+      )
       unless activation_state[:is_active]
         Rails.logger.info(
-          "Access to #{allowed_products.first} from system #{system.login} denied: #{activation_state[:message]}"
+          "Access to #{allowed_product_classes.first} from system #{system.login} denied: #{activation_state[:message]}"
           )
         @allowed_paths = []
         return
