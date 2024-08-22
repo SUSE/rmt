@@ -92,7 +92,6 @@ class AccessScope
         auth_header = {
           Authorization: ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password)
         }
-        non_active_prods = false
         allowed_non_free_product_classes.each do |non_free_prod_class|
           activation_state = SccProxy.scc_check_subscription_expiration(
             auth_header, system.login, system.system_token, Rails.logger, system.proxy_byos_mode, non_free_prod_class
@@ -105,7 +104,6 @@ class AccessScope
             allowed_product_classes -= [non_free_prod_class]
           end
         end
-        return if non_active_prods
       end
     end
     allowed_glob_paths = access_policies_yml.values_at(*allowed_product_classes).flatten
