@@ -67,7 +67,7 @@ module SccSumaApi
               allow_any_instance_of(InstanceVerification::Providers::Example).to(
                 receive(:instance_valid?).and_return(false)
                 )
-              System.stub(:find_by).and_return('foo')
+              allow(System).to receive(:find_by).and_return 'foo'
 
               allow(SUSE::Connect::Api).to receive(:new).and_return api_double
               allow(api_double).to receive(:list_products_unscoped).and_return products
