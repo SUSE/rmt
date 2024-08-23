@@ -9,7 +9,7 @@ FactoryBot.define do
     product_type { :base }
     sequence(:description) { FFaker::Lorem.sentence }
     release_type { nil }
-    version { 42 }
+    version { 15.3 }
     arch { 'x86_64' }
     release_stage { 'released' }
 

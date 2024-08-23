@@ -7,16 +7,32 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
     let(:headers) { auth_header.merge(version_header) }
 
     context 'without valid repository cache' do
-      before do
-        headers['X-Instance-Data'] = 'IMDS'
-        allow(ZypperAuth).to receive(:verify_instance).and_return(true)
-      end
-
       context 'without X-Instance-Data headers or hw_info' do
-        it 'has service URLs with HTTP scheme' do
+        it 'does not update InstanceVerification cache' do
           get '/connect/systems/activations', headers: headers
           data = JSON.parse(response.body)
           expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
+          expect(InstanceVerification).not_to receive(:update_cache)
+        end
+      end
+
+      context 'with X-Instance-Data headers and bad metadata' do
+        let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+
+        before do
+          headers['X-Instance-Data'] = 'IMDS'
+          Thread.current[:logger] = RMT::Logger.new('/dev/null')
+        end
+
+        it 'does not update InstanceVerification cache' do
+          allow(plugin_double).to(
+            receive(:instance_valid?)
+              .and_raise(InstanceVerification::Exception, 'Custom plugin error')
+            )
+          allow(ZypperAuth).to receive(:verify_instance).and_call_original
+          get '/connect/systems/activations', headers: headers
+          expect(response.body).to include('Instance verification failed')
+          expect(InstanceVerification).not_to receive(:update_cache)
         end
       end
     end
@@ -26,10 +42,6 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
 
       before do
         allow(File).to receive(:join).and_call_original
-        # allow(File).to receive(:exist?).with('repo/cache/127.0.0.1-login45-1052122')
-        # allow(File).to receive(:exist?).with("repo/cache/127.0.0.1-#{system.login}-#{system.products.first.id}").and_return(true)
-        # allow(File).to receive(:exist?).with("repo/cache/127.0.0.1-#{system.login}-#{system.products.first.id}").and_return(true)
-        # allow(File).to receive(:exist?)
         allow(InstanceVerification).to receive(:update_cache)
         allow(ZypperAuth).to receive(:verify_instance).and_call_original
         headers['X-Instance-Data'] = 'IMDS'
