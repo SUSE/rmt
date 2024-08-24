@@ -3,7 +3,6 @@ Wed Aug 21 15:28:43 UTC 2024 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
 - Version 2.19
   * Fix for mirroring products that contain special characters (eg.: '$') in their path
-  * Fix for packages with path longer 255 characters (bsc#1229152)
   * rmt-server-pubcloud:
     * Support registration of extensions in BYOS mode on top of a PAYG system (hybrid mode) (jsc#PCT-400)
     * Validate repository and registy access for hybrid systems
