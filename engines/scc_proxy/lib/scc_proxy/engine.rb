@@ -261,7 +261,7 @@ module SccProxy
           auth_header = nil
           auth_header = request.headers['HTTP_AUTHORIZATION'] if request.headers.include?('HTTP_AUTHORIZATION')
           system_information = hwinfo_params[:hwinfo].to_json
-          instance_data = hwinfo_params[:hwinfo] && params[:hwinfo].key?('instance_data') ? hwinfo_params[:hwinfo][:instance_data] : nil
+          instance_data = hwinfo_params[:hwinfo].fetch('instance_data', nil)
           if has_no_regcode?(auth_header)
             # no token sent to check with SCC
             # standard announce case
