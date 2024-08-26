@@ -110,7 +110,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
               arch: 'x86_64',
               uuid: 'ec235f7d-b435-e27d-86c6-c8fef3180a01',
               cloud_provider: 'super_cloud',
-              instance_data: instance_data,
+              instance_data: instance_data
             }
         }
       end
