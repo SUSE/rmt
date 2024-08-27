@@ -261,11 +261,16 @@ module SccProxy
           auth_header = nil
           auth_header = request.headers['HTTP_AUTHORIZATION'] if request.headers.include?('HTTP_AUTHORIZATION')
           system_information = hwinfo_params[:hwinfo].to_json
-
+          instance_data = params.fetch(:instance_data, nil)
           if has_no_regcode?(auth_header)
             # no token sent to check with SCC
             # standard announce case
-            @system = System.create!(hostname: params[:hostname], system_information: system_information, proxy_byos_mode: :payg)
+            @system = System.create!(
+              hostname: params[:hostname],
+              system_information: system_information,
+              proxy_byos_mode: :payg,
+              instance_data: instance_data
+            )
           else
             request.request_parameters['proxy_byos_mode'] = 'byos'
             response = SccProxy.announce_system_scc(auth_header, request.request_parameters)
@@ -275,7 +280,8 @@ module SccProxy
               password: response['password'],
               hostname: params[:hostname],
               proxy_byos_mode: :byos,
-              system_information: system_information
+              system_information: system_information,
+              instance_data: instance_data
             )
           end
           logger.info("System '#{@system.hostname}' announced")
@@ -329,7 +335,7 @@ module SccProxy
               params['scc_login'] = @system.login
               params['scc_password'] = @system.password
               params['hwinfo'] = JSON.parse(@system.system_information)
-              params['hwinfo']['instance_data'] = @system.instance_data
+              params['instance_data'] = @system.instance_data
               announce_auth = "Token token=#{params[:token]}"
 
               response = SccProxy.announce_system_scc(announce_auth, params)

@@ -315,7 +315,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           let(:scc_annouce_body) do
             {
               hostname: system.hostname,
-              hwinfo: JSON.parse(system.system_information).merge({ instance_data: system.instance_data }),
+              hwinfo: JSON.parse(system.system_information),
               byos_mode: 'hybrid',
               login: system.login,
               password: system.password
