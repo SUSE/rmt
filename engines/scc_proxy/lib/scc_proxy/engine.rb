@@ -66,7 +66,7 @@ module SccProxy
         nil,
         nil,
         nil,
-        params['hwinfo']['instance_data']
+        params['instance_data']
       )
       instance_id_key = INSTANCE_ID_KEYS[params['hwinfo']['cloud_provider'].downcase.to_sym]
       iid = verification_provider.parse_instance_data
@@ -261,7 +261,7 @@ module SccProxy
           auth_header = nil
           auth_header = request.headers['HTTP_AUTHORIZATION'] if request.headers.include?('HTTP_AUTHORIZATION')
           system_information = hwinfo_params[:hwinfo].to_json
-          instance_data = hwinfo_params[:hwinfo].fetch(:instance_data, nil) if hwinfo_params[:hwinfo]
+          instance_data = params.fetch(:instance_data, nil)
           if has_no_regcode?(auth_header)
             # no token sent to check with SCC
             # standard announce case
@@ -335,7 +335,7 @@ module SccProxy
               params['scc_login'] = @system.login
               params['scc_password'] = @system.password
               params['hwinfo'] = JSON.parse(@system.system_information)
-              params['hwinfo']['instance_data'] = @system.instance_data
+              params['instance_data'] = @system.instance_data
               announce_auth = "Token token=#{params[:token]}"
 
               response = SccProxy.announce_system_scc(announce_auth, params)

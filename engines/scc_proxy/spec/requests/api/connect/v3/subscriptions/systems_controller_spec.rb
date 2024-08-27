@@ -18,6 +18,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         {
           hostname: 'test',
           proxy_byos_mode: :byos,
+          instance_data: instance_data,
           hwinfo:
             {
               hostname: 'test',
@@ -26,8 +27,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
               hypervisor: 'Xen',
               arch: 'x86_64',
               uuid: 'ec235f7d-b435-e27d-86c6-c8fef3180a01',
-              cloud_provider: 'super_cloud',
-              instance_data: instance_data
+              cloud_provider: 'super_cloud'
             }
         }
       end
@@ -101,6 +101,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         {
           hostname: 'test',
           proxy_byos_mode: :payg,
+          instance_data: instance_data,
           hwinfo:
             {
               hostname: 'test',
@@ -109,8 +110,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
               hypervisor: 'Xen',
               arch: 'x86_64',
               uuid: 'ec235f7d-b435-e27d-86c6-c8fef3180a01',
-              cloud_provider: 'super_cloud',
-              instance_data: instance_data
+              cloud_provider: 'super_cloud'
             }
         }
       end
