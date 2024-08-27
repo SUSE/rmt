@@ -405,6 +405,9 @@ module SccProxy
               # it is OK to remove it from SCC
               response = SccProxy.deactivate_product_scc(auth, @product, @system.system_token)
               handle_response(response)
+              # if the system does not have more non free products activated on SCC
+              # system should turn to hybrid
+              @system.payg! if no_more_activations scc_systems_activations
             elsif result[:message].downcase.include?('unexpected error')
               raise ActionController::TranslatedError.new(result[:message])
             end
@@ -428,6 +431,15 @@ module SccProxy
             logger.info "Could not de-activate product '#{@product.friendly_name}', error: #{error['error']} #{response.code}"
             raise ActionController::TranslatedError.new(error['error'])
           end
+        end
+
+        def no_more_activations(scc_systems_activations)
+          active_products_classes = scc_systems_activations.map do |act|
+            if act['status'].casecmp('active').zero? && act['service']['product']['product_class'] != @product.product_class
+              act['service']['product']['product_class']
+            end
+          end.flatten.compact
+          active_products_classes.empty?
         end
       end
 

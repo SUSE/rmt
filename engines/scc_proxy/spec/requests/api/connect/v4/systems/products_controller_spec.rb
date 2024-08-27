@@ -187,6 +187,110 @@ product_type: 'module')
           end
         end
 
+        context 'when SCC API suceeds for HYBRiD system' do
+          let(:product) do
+            FactoryBot.create(:product, :product_sles, :extension, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system_hybrid)
+          end
+          let(:payload) do
+            {
+              identifier: product.identifier,
+              version: product.version,
+              arch: product.arch
+            }
+          end
+          let(:serialized_service_json) do
+            V3::ServiceSerializer.new(
+              product.service,
+              base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
+              ).to_json
+          end
+
+          let(:scc_systems_activations_url) { 'https://scc.suse.com/connect/systems/activations' }
+
+          before do
+            stub_request(:delete, scc_systems_products_url)
+              .to_return(
+                status: 200,
+                body: "{\"error\": \"Could not de-activate product \'#{product.friendly_name}\'\"}",
+                headers: {}
+              )
+            stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: body_active, headers: {})
+            delete url, params: payload, headers: headers
+          end
+
+          context 'when only one product was active' do
+            let(:body_active) do
+              [{
+                id: 1,
+                regcode: '631dc51f',
+                name: 'Subscription 1',
+                type: 'FULL',
+                status: 'ACTIVE',
+                starts_at: 'null',
+                expires_at: DateTime.parse((Time.zone.today + 1).to_s),
+                system_limit: 6,
+                systems_count: 1,
+                service: {
+                  product: {
+                    id: system_hybrid.activations.first.product.id,
+                    product_class: system_hybrid.activations.first.product.product_class
+                  }
+                }
+              }].to_json
+            end
+
+            it 'makes the hybrid system payg' do
+              updated_system = System.find_by(login: system_hybrid.login)
+              expect(updated_system.payg?).to eq(true)
+            end
+          end
+
+          context 'when more activations are left' do
+            let(:body_active) do
+              [
+                {
+                  id: 1,
+                  regcode: '631dc51f',
+                  name: 'Subscription 1',
+                  type: 'FULL',
+                  status: 'ACTIVE',
+                  starts_at: 'null',
+                  expires_at: DateTime.parse((Time.zone.today + 1).to_s),
+                  system_limit: 6,
+                  systems_count: 1,
+                  service: {
+                    product: {
+                      id: system_hybrid.activations.first.product.id,
+                      product_class: system_hybrid.activations.first.product.product_class
+                    }
+                  }
+                }, {
+                  id: 2,
+                  regcode: '631dc51f',
+                  name: 'Subscription 1',
+                  type: 'FULL',
+                  status: 'ACTIVE',
+                  starts_at: 'null',
+                  expires_at: DateTime.parse((Time.zone.today + 1).to_s),
+                  system_limit: 6,
+                  systems_count: 1,
+                  service: {
+                    product: {
+                      id: '30',
+                      product_class: '23'
+                    }
+                  }
+                }
+              ].to_json
+            end
+
+            it 'keeps the system as hybrid' do
+              updated_system = System.find_by(login: system_hybrid.login)
+              expect(updated_system.hybrid?).to eq(true)
+            end
+          end
+        end
+
         context 'when SCC API returns an error' do
           let(:product) do
             FactoryBot.create(:product, :product_sles, :extension, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system_hybrid)
