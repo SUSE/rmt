@@ -136,7 +136,7 @@ module SccProxy
       http.request(scc_request)
     end
 
-    def deactivate_product_scc(auth, product, params)
+    def deactivate_product_scc(auth, product, params, logger)
       uri = URI.parse(DEREGISTER_PRODUCT_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
@@ -147,7 +147,14 @@ module SccProxy
         arch: product.arch,
         byos: true
       }.to_json
-      http.request(scc_request)
+      response = http.request(scc_request)
+      unless response.code_type == Net::HTTPOK
+        error = JSON.parse(response.body)
+        error['error'] = SccProxy.parse_error(error['error'], params[:token], params[:email]) if error['error'].include? 'json'
+        logger.info "Could not de-activate product '#{product.friendly_name}', error: #{error['error']} #{response.code}"
+        raise ActionController::TranslatedError.new(error['error'])
+      end
+      response
     end
 
     def deregister_system_scc(auth, system_token)
@@ -392,27 +399,22 @@ module SccProxy
         def scc_deactivate_product
           auth = request.headers['HTTP_AUTHORIZATION']
           if @system.byos? && @product[:product_type] != 'base'
-            response = SccProxy.deactivate_product_scc(auth, @product, @system.system_token)
-            handle_response(response)
+            SccProxy.deactivate_product_scc(auth, @product, @system.system_token, logger)
           elsif @system.hybrid? && @product.extension?
             # check if product is on SCC and
             # if it is -> de-activate it
-            scc_systems_activations = find_hybrid_product_on_scc(request.headers)
-            result = SccProxy.product_class_access(scc_systems_activations, @product.product_class)
-            if result[:is_active] || (!result[:is_active] && result[:message].downcase.include?('expired'))
-              # if product is active on SCC or
-              # product subscription expired
+            scc_systems_activations = find_hybrid_activations_on_scc(request.headers)
+            if scc_systems_activations.map { |act| act['service']['product']['id'] == @product.id }.present?
+              # if product is found on SCC, regardless of the state
               # it is OK to remove it from SCC
-              response = SccProxy.deactivate_product_scc(auth, @product, @system.system_token)
-              handle_response(response)
-            elsif result[:message].downcase.include?('unexpected error')
-              raise ActionController::TranslatedError.new(result[:message])
+              SccProxy.deactivate_product_scc(auth, @product, @system.system_token, logger)
+              make_system_payg(auth) if scc_systems_activations.reject { |act| act['service']['product']['id'] == @product.id }.blank?
             end
           end
           logger.info "Product '#{@product.friendly_name}' successfully deactivated from SCC"
         end
 
-        def find_hybrid_product_on_scc(headers)
+        def find_hybrid_activations_on_scc(headers)
           response = SccProxy.get_scc_activations(headers, @system.system_token, @system.proxy_byos_mode)
           unless response.code_type == Net::HTTPOK
             logger.info "Could not get the system (#{@system.login}) activations, error: #{response.message} #{response.code}"
@@ -421,13 +423,20 @@ module SccProxy
           JSON.parse(response.body)
         end
 
-        def handle_response(response)
-          unless response.code_type == Net::HTTPOK
+        def make_system_payg(auth)
+          # if the system does not have more products activated on SCC
+          # switch it back to payg
+          # drop the just de-activated activation from the list to avoid another call to SCC
+          # and check if there is any product
+          response = SccProxy.deregister_system_scc(auth, @system.system_token)
+          unless response.code_type == Net::HTTPNoContent
             error = JSON.parse(response.body)
+            logger.info "Could not de-activate system #{@system.login}, error: #{error['error']} #{response.code}"
             error['error'] = SccProxy.parse_error(error['error'], params[:token], params[:email]) if error['error'].include? 'json'
-            logger.info "Could not de-activate product '#{@product.friendly_name}', error: #{error['error']} #{response.code}"
             raise ActionController::TranslatedError.new(error['error'])
           end
+          logger.info 'System successfully deregistered from SCC'
+          @system.payg!
         end
       end
 
