@@ -65,7 +65,7 @@ module SccProxy
         nil,
         nil,
         nil,
-        params['hwinfo']['instance_data']
+        params['instance_data']
       )
       instance_id_key = INSTANCE_ID_KEYS[params['hwinfo']&.fetch('cloud_provider', nil)&.downcase&.to_sym] || 'example_id'
       iid = verification_provider.parse_instance_data
