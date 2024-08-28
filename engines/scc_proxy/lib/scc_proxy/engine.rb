@@ -408,7 +408,7 @@ module SccProxy
               # if product is found on SCC, regardless of the state
               # it is OK to remove it from SCC
               SccProxy.deactivate_product_scc(auth, @product, @system.system_token, logger)
-              handle_system_mode(auth) if scc_systems_activations.reject { |act| act['service']['product']['id'] == @product.id }.blank?
+              make_system_payg(auth) if scc_systems_activations.reject { |act| act['service']['product']['id'] == @product.id }.blank?
             end
           end
           logger.info "Product '#{@product.friendly_name}' successfully deactivated from SCC"
@@ -423,7 +423,7 @@ module SccProxy
           JSON.parse(response.body)
         end
 
-        def handle_system_mode(auth)
+        def make_system_payg(auth)
           # if the system does not have more products activated on SCC
           # switch it back to payg
           # drop the just de-activated activation from the list to avoid another call to SCC
