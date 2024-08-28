@@ -407,7 +407,7 @@ module SccProxy
               handle_response(response)
               # if the system does not have more products activated on SCC
               # switch it back to payg
-              @system.payg! if no_more_activations scc_systems_activations
+              @system.payg! unless system_has_paid_extension? scc_systems_activations
             elsif result[:message].downcase.include?('unexpected error')
               raise ActionController::TranslatedError.new(result[:message])
             end
@@ -433,13 +433,13 @@ module SccProxy
           end
         end
 
-        def no_more_activations(scc_systems_activations)
+        def system_has_paid_extension?(scc_systems_activations)
           active_products_classes = scc_systems_activations.map do |act|
             if act['status'].casecmp('active').zero? && act['service']['product']['product_class'] != @product.product_class
               act['service']['product']['product_class']
             end
           end.flatten.compact
-          active_products_classes.empty?
+          active_products_classes.present?
         end
       end
 
