@@ -90,7 +90,7 @@ class AccessScope
       allowed_non_free_product_classes = allowed_product_classes.map { |s| s unless Product.find_by(product_class: s).free? }
       unless allowed_non_free_product_classes.empty?
         auth_header = {
-          Authorization: ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password)
+          'HTTP_AUTHORIZATION' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password)
         }
         allowed_non_free_product_classes.each do |non_free_prod_class|
           activation_state = SccProxy.scc_check_subscription_expiration(
