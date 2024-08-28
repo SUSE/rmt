@@ -414,7 +414,7 @@ module SccProxy
               # switch it back to payg
               # drop the just de-activated activation from the list to avoid another call to SCC
               # and check if there is any product
-              @system.payg! if @scc_systems_activations.reject! { |act| act['service']['product']['id'] == @product.id }.blank?
+              @system.payg! if @scc_systems_activations.reject { |act| act['service']['product']['id'] == @product.id }.blank?
             elsif result[:message].downcase.include?('unexpected error')
               raise ActionController::TranslatedError.new(result[:message])
             end
