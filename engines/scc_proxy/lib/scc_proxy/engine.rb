@@ -407,7 +407,9 @@ module SccProxy
               handle_response(response)
               # if the system does not have more products activated on SCC
               # switch it back to payg
-              @system.payg! unless system_has_paid_extension? scc_systems_activations
+              # drop the just de-activated activation from the list to avoid another call to SCC
+              # and check if there is any product
+              @system.payg! if scc_systems_activations.reject! { |act| act['service']['product']['id'] == @product.id }.blank?
             elsif result[:message].downcase.include?('unexpected error')
               raise ActionController::TranslatedError.new(result[:message])
             end
@@ -431,15 +433,6 @@ module SccProxy
             logger.info "Could not de-activate product '#{@product.friendly_name}', error: #{error['error']} #{response.code}"
             raise ActionController::TranslatedError.new(error['error'])
           end
-        end
-
-        def system_has_paid_extension?(scc_systems_activations)
-          active_products_classes = scc_systems_activations.map do |act|
-            if act['status'].casecmp('active').zero? && act['service']['product']['product_class'] != @product.product_class
-              act['service']['product']['product_class']
-            end
-          end.flatten.compact
-          active_products_classes.present?
         end
       end
 
