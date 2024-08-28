@@ -405,8 +405,8 @@ module SccProxy
               # it is OK to remove it from SCC
               response = SccProxy.deactivate_product_scc(auth, @product, @system.system_token)
               handle_response(response)
-              # if the system does not have more non free products activated on SCC
-              # system should turn to hybrid
+              # if the system does not have more products activated on SCC
+              # switch it back to payg
               @system.payg! if no_more_activations scc_systems_activations
             elsif result[:message].downcase.include?('unexpected error')
               raise ActionController::TranslatedError.new(result[:message])
