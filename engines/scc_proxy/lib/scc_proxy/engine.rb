@@ -389,6 +389,7 @@ module SccProxy
 
         protected
 
+        # rubocop:disable Metrics/PerceivedComplexity
         def scc_deactivate_product
           auth = request.headers['HTTP_AUTHORIZATION']
           if @system.byos? && @product[:product_type] != 'base'
@@ -416,6 +417,7 @@ module SccProxy
           end
           logger.info "Product '#{@product.friendly_name}' successfully deactivated from SCC"
         end
+        # rubocop:enable Metrics/PerceivedComplexity
 
         def find_hybrid_product_on_scc(headers)
           response = SccProxy.get_scc_activations(headers, @system.system_token, @system.proxy_byos_mode)
