@@ -580,7 +580,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           # pp headers
           stub_request(:put, scc_systems_products_url)
             .with({ headers: scc_headers, body: payload.merge({ byos_mode: 'byos' }) })
-            .and_return(status: 200, body: '', headers: {})
+            .and_return(status: 201, body: '', headers: {})
           request
         end
 

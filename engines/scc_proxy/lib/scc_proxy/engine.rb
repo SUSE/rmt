@@ -272,7 +272,7 @@ module SccProxy
       http.use_ssl = true
       scc_request = prepare_scc_update_request(uri.path, product, auth, mode)
       response = http.request(scc_request)
-      unless response.code_type == Net::HTTPOK
+      unless response.code_type == Net::HTTPCreated
         logger.info "Could not upgrade the system (#{system_login}), error: #{response.message} #{response.code}"
         response.message = SccProxy.parse_error(response.message) if response.message.include? 'json'
         raise ActionController::TranslatedError.new(response.body)
