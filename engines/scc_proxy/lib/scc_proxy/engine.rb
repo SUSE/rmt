@@ -117,7 +117,7 @@ module SccProxy
       scc_request
     end
 
-    def prepare_scc_update_request(uri_path, product, auth, mode)
+    def prepare_scc_upgrade_request(uri_path, product, auth, mode)
       scc_request = Net::HTTP::Put.new(uri_path, headers(auth, nil))
       scc_request.body = {
         identifier: product.identifier,
@@ -270,7 +270,7 @@ module SccProxy
       uri = URI.parse(SYSTEM_PRODUCTS_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      scc_request = prepare_scc_update_request(uri.path, product, auth, mode)
+      scc_request = prepare_scc_upgrade_request(uri.path, product, auth, mode)
       response = http.request(scc_request)
       unless response.code_type == Net::HTTPCreated
         logger.info "Could not upgrade the system (#{system_login}), error: #{response.message} #{response.code}"
@@ -363,12 +363,6 @@ module SccProxy
               raise 'Incompatible extension product' unless @product.arch == base_prod.arch && @product.version == base_prod.version
 
               update_params_system_info mode
-              # params['hostname'] = @system.hostname
-              # params['proxy_byos_mode'] = mode
-              # params['scc_login'] = @system.login
-              # params['scc_password'] = @system.password
-              # params['hwinfo'] = JSON.parse(@system.system_information)
-              # params['instance_data'] = @system.instance_data
               announce_auth = "Token token=#{params[:token]}"
 
               response = SccProxy.announce_system_scc(announce_auth, params)
