@@ -18,6 +18,7 @@ In the container prepare the needed packages:
 zypper rm -y container-suseconnect
 zypper in -y suseconnect vim less curl
 zypper in -y http://updates.suse.de/SUSE/Products/SLE-Module-Public-Cloud/15-SP6/x86_64/product/noarch/cloud-regionsrv-client-10.1.7-150000.6.108.1.noarch.rpm
+# on SP5: http://updates.suse.de/SUSE/Products/SLE-Module-Public-Cloud/15-SP5/x86_64/product/noarch/cloud-regionsrv-client-10.1.0-150000.6.91.1.noarch.rpm
 
 mv /etc/zypp/repos.d/* /tmp/ # move out BCI repos
 ```
@@ -25,15 +26,15 @@ mv /etc/zypp/repos.d/* /tmp/ # move out BCI repos
 Patch the `susecloud` zypp resolver to point to the local RMT without relying on a region server. Replace the RESOLVEURL in `/usr/lib/zypp/plugins/urlresolver/susecloud`:
 
 ```
-def RESOLVEURL(self, headers, body):
-    repo_url = 'http://172.17.0.1:4224' + headers.get('path')
-    repo_credentials = headers.get('credentials')
-    repo_url += '?credentials=' + repo_credentials
-    self.answer(
-        'RESOLVEDURL',
-        {'X-Instance-Data': ''},
-        repo_url
-    )
+    def RESOLVEURL(self, headers, body):
+        repo_url = 'http://172.17.0.1:4224' + headers.get('path')
+        repo_credentials = headers.get('credentials')
+        repo_url += '?credentials=' + repo_credentials
+        self.answer(
+            'RESOLVEDURL',
+            {'X-Instance-Data': ''},
+            repo_url
+        )
 ```
 
 Create a test instance_data file: `echo "<instance_data product="SUSE"/>" > /tmp/idata.xml`
