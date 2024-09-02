@@ -187,7 +187,7 @@ product_type: 'module')
           end
         end
 
-        context 'when SCC API returns an error' do
+        context 'when SCC API suceeds for HYBRID system' do
           let(:product) do
             FactoryBot.create(:product, :product_sles, :extension, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system_hybrid)
           end
@@ -204,200 +204,123 @@ product_type: 'module')
               base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
               ).to_json
           end
-          let(:body_active) do
-            {
-              id: 1,
-              regcode: '631dc51f',
-              name: 'Subscription 1',
-              type: 'FULL',
-              status: 'ACTIVE',
-              starts_at: 'null',
-              expires_at: DateTime.parse((Time.zone.today + 1).to_s),
-              system_limit: 6,
-              systems_count: 1,
-              service: {
-                product: {
-                  id: system_hybrid.activations.first.product.id,
-                  product_class: system_hybrid.activations.first.product.product_class
-                }
-              }
-            }
-          end
           let(:scc_systems_activations_url) { 'https://scc.suse.com/connect/systems/activations' }
+          let(:scc_systems_url) { 'https://scc.suse.com/connect/systems' }
 
           before do
             stub_request(:delete, scc_systems_products_url)
               .to_return(
-                status: 422,
+                status: 200,
                 body: "{\"error\": \"Could not de-activate product \'#{product.friendly_name}\'\"}",
                 headers: {}
               )
-            stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_active].to_json, headers: {})
-            delete url, params: payload, headers: headers
+            stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: body_active, headers: {})
           end
 
-          it 'reports an error' do
-            data = JSON.parse(response.body)
-            expect(data['error']).to eq('Could not de-activate product \'SUSE Linux Enterprise Server 15 SP3 x86_64\'')
-          end
-        end
-
-        context 'when product is expired' do
-          let(:product) do
-            FactoryBot.create(:product, :product_sles, :extension, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system_hybrid)
-          end
-          let(:payload) do
-            {
-              identifier: product.identifier,
-              version: product.version,
-              arch: product.arch
-            }
-          end
-          let(:serialized_service_json) do
-            V3::ServiceSerializer.new(
-              product.service,
-              base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
-              ).to_json
-          end
-          let(:body_expired) do
-            {
-              id: 1,
-              regcode: '631dc51f',
-              name: 'Subscription 1',
-              type: 'FULL',
-              status: 'EXPIRED',
-              starts_at: 'null',
-              expires_at: DateTime.parse((Time.zone.today - 1).to_s),
-              system_limit: 6,
-              systems_count: 1,
-              service: {
-                product: {
-                  id: system_hybrid.activations.first.product.id,
-                  product_class: system_hybrid.activations.first.product.product_class
+          context 'when only one product was active' do
+            let(:body_active) do
+              [{
+                id: 1,
+                regcode: '631dc51f',
+                name: 'Subscription 1',
+                type: 'FULL',
+                status: 'ACTIVE',
+                starts_at: 'null',
+                expires_at: DateTime.parse((Time.zone.today + 1).to_s),
+                system_limit: 6,
+                systems_count: 1,
+                service: {
+                  product: {
+                    id: system_hybrid.activations.first.product.id,
+                    product_class: system_hybrid.activations.first.product.product_class
+                  }
                 }
-              }
-            }
-          end
-          let(:scc_systems_activations_url) { 'https://scc.suse.com/connect/systems/activations' }
+              }].to_json
+            end
 
-          before do
-            stub_request(:delete, scc_systems_products_url)
-              .to_return(
-                status: 422,
-                body: "{\"error\": \"Could not de-activate product \'#{product.friendly_name}\'\"}",
-                headers: {}
-              )
-            stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_expired].to_json, headers: {})
-            delete url, params: payload, headers: headers
+            context 'when deactivating the system succeeds' do
+              before do
+                stub_request(:delete, scc_systems_url).to_return(status: 204, body: '', headers: {})
+                delete url, params: payload, headers: headers
+              end
+
+              it 'makes the hybrid system payg' do
+                updated_system = System.find_by(login: system_hybrid.login)
+                expect(updated_system.payg?).to eq(true)
+              end
+            end
+
+            context 'when deactivating the system fails' do
+              before do
+                allow(Rails.logger).to receive(:info)
+                stub_request(:delete, scc_systems_url).to_return(
+                  status: 422,
+                  body: '{"error": "Oh oh, something went wrong"}',
+                  headers: {}
+                )
+                delete url, params: payload, headers: headers
+              end
+
+              it 'makes the hybrid system payg' do
+                expect(Rails.logger).to(
+                  have_received(:info).with(
+                    "Could not de-activate system #{system_hybrid.login}, error: Oh oh, something went wrong 422"
+                    ).once
+                  )
+                data = JSON.parse(response.body)
+                expect(data['error']).to eq('Oh oh, something went wrong')
+              end
+            end
           end
 
-          it 'reports an error' do
-            data = JSON.parse(response.body)
-            expect(data['error']).to eq('Could not de-activate product \'SUSE Linux Enterprise Server 15 SP3 x86_64\'')
-          end
-        end
-
-        context 'when product is not active' do
-          let(:product) do
-            FactoryBot.create(:product, :product_sles, :extension, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system_hybrid)
-          end
-          let(:payload) do
-            {
-              identifier: product.identifier,
-              version: product.version,
-              arch: product.arch
-            }
-          end
-          let(:serialized_service_json) do
-            V3::ServiceSerializer.new(
-              product.service,
-              base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
-              ).to_json
-          end
-          let(:body_not_activated) do
-            {
-              id: 1,
-              regcode: '631dc51f',
-              name: 'Subscription 1',
-              type: 'FULL',
-              status: 'ACTIVE',
-              starts_at: 'null',
-              expires_at: DateTime.parse((Time.zone.today - 1).to_s),
-              system_limit: 6,
-              systems_count: 1,
-              service: {
-                product: {
+          context 'when more activations are left' do
+            let(:body_active) do
+              [
+                {
                   id: 1,
-                  product_class: product.product_class + 'FOO'
+                  regcode: '631dc51f',
+                  name: 'Subscription 1',
+                  type: 'FULL',
+                  status: 'ACTIVE',
+                  starts_at: 'null',
+                  expires_at: DateTime.parse((Time.zone.today + 1).to_s),
+                  system_limit: 6,
+                  systems_count: 1,
+                  service: {
+                    product: {
+                      id: system_hybrid.activations.first.product.id,
+                      product_class: system_hybrid.activations.first.product.product_class
+                    }
+                  }
+                }, {
+                  id: 2,
+                  regcode: '631dc51f',
+                  name: 'Subscription 1',
+                  type: 'FULL',
+                  status: 'ACTIVE',
+                  starts_at: 'null',
+                  expires_at: DateTime.parse((Time.zone.today + 1).to_s),
+                  system_limit: 6,
+                  systems_count: 1,
+                  service: {
+                    product: {
+                      id: '30',
+                      product_class: '23'
+                    }
+                  }
                 }
-              }
-            }
-          end
-          let(:scc_systems_activations_url) { 'https://scc.suse.com/connect/systems/activations' }
+              ].to_json
+            end
 
-          before do
-            stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_not_activated].to_json, headers: {})
-            delete url, params: payload, headers: headers
-          end
+            before do
+              stub_request(:delete, scc_systems_url).to_return(status: 204, body: '', headers: {})
+              delete url, params: payload, headers: headers
+            end
 
-          it 'reports an error' do
-            data = JSON.parse(response.body)
-            expect(data['error']).to eq(nil)
-          end
-        end
-
-        context 'when product has unknown status' do
-          let(:product) do
-            FactoryBot.create(:product, :product_sles, :extension, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system_hybrid)
-          end
-          let(:payload) do
-            {
-              identifier: product.identifier,
-              version: product.version,
-              arch: product.arch
-            }
-          end
-          let(:serialized_service_json) do
-            V3::ServiceSerializer.new(
-              product.service,
-              base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
-              ).to_json
-          end
-          let(:body_unknown_status) do
-            {
-              id: 1,
-              regcode: '631dc51f',
-              name: 'Subscription 1',
-              type: 'FULL',
-              status: 'FOO',
-              starts_at: 'null',
-              expires_at: DateTime.parse((Time.zone.today - 1).to_s),
-              system_limit: 6,
-              systems_count: 1,
-              service: {
-                product: {
-                  id: system_hybrid.activations.first.product.id,
-                  product_class: system_hybrid.activations.first.product.product_class + 'FOO'
-                }
-              }
-            }
-          end
-          let(:scc_systems_activations_url) { 'https://scc.suse.com/connect/systems/activations' }
-
-          before do
-            stub_request(:delete, scc_systems_products_url)
-              .to_return(
-                status: 422,
-                body: "{\"error\": \"Could not de-activate product \'#{product.friendly_name}\'\"}",
-                headers: {}
-              )
-            stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_unknown_status].to_json, headers: {})
-            delete url, params: payload, headers: headers
-          end
-
-          it 'reports an error' do
-            data = JSON.parse(response.body)
-            expect(data['error']).to eq('Unexpected error when checking product subscription.')
+            it 'keeps the system as hybrid' do
+              updated_system = System.find_by(login: system_hybrid.login)
+              expect(updated_system.hybrid?).to eq(true)
+            end
           end
         end
       end

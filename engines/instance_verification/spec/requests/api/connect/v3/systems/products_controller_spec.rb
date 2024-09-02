@@ -315,7 +315,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           let(:scc_annouce_body) do
             {
               hostname: system.hostname,
-              hwinfo: JSON.parse(system.system_information).merge({ instance_data: system.instance_data }),
+              hwinfo: JSON.parse(system.system_information),
               byos_mode: 'hybrid',
               login: system.login,
               password: system.password
@@ -551,65 +551,176 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
   describe '#upgrade' do
     subject { response }
 
-    let(:system) { FactoryBot.create(:system) }
+    let(:instance_data) { 'dummy_instance_data' }
     let(:request) { put url, headers: headers, params: payload }
-    let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system) }
-    let(:payload) do
-      {
-        identifier: new_product.identifier,
-        version: new_product.version,
-        arch: new_product.arch
-      }
+
+    context 'when system is byos' do
+      let(:system) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
+      let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system) }
+      let(:payload) do
+        {
+          identifier: new_product.identifier,
+          version: new_product.version,
+          arch: new_product.arch
+        }
+      end
+      let(:scc_systems_products_url) { 'https://scc.suse.com/connect/systems/products' }
+      let(:scc_headers) do
+        {
+          'Accept' => 'application/json,application/vnd.scc.suse.com.v4+json',
+          'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+          'Authorization' => headers['HTTP_AUTHORIZATION'],
+          'Content-Type' => 'application/json',
+          'User-Agent' => 'Ruby'
+        }
+      end
+
+      context 'when SCC upgrade success' do
+        before do
+          # pp headers
+          stub_request(:put, scc_systems_products_url)
+            .with({ headers: scc_headers, body: payload.merge({ byos_mode: 'byos' }) })
+            .and_return(status: 201, body: '', headers: {})
+          request
+        end
+
+        context "when migration target base product doesn't have an activated successor/predecessor" do
+          let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
+
+          it 'HTTP response code is 422' do
+            expect(response).to have_http_status(422)
+          end
+
+          it 'renders an error' do
+            data = JSON.parse(response.body)
+            expect(data['error']).to eq('Migration target not allowed on this instance type')
+          end
+        end
+
+        context 'when migration target base product has the same identifier' do
+          let(:new_product) do
+            FactoryBot.create(
+              :product, :with_mirrored_repositories, identifier: old_product.identifier,
+              version: '999', predecessors: [ old_product ]
+              )
+          end
+
+          it 'HTTP response code is 201' do
+            expect(response).to have_http_status(201)
+          end
+
+          it "doesn't render an error" do
+            data = JSON.parse(response.body)
+            expect(data).not_to have_key('error')
+          end
+        end
+      end
+
+      context 'when SCC upgrade fails' do
+        before do
+          stub_request(:put, scc_systems_products_url)
+            .with({ headers: scc_headers, body: payload.merge({ byos_mode: 'byos' }) })
+            .and_return(
+              status: 401,
+              body: { error: 'error_message' }.to_json,
+              headers: {}
+            )
+          request
+        end
+
+        context "when migration target base product doesn't have an activated successor/predecessor" do
+          let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
+
+          it 'HTTP response code is 422' do
+            expect(response).to have_http_status(422)
+          end
+
+          it 'renders an error' do
+            data = JSON.parse(response.body)
+            expect(data['error']).to eq('Migration target not allowed on this instance type')
+          end
+        end
+
+        context 'when migration target base product has the same identifier' do
+          let(:new_product) do
+            FactoryBot.create(
+              :product, :with_mirrored_repositories, identifier: old_product.identifier,
+              version: '999', predecessors: [ old_product ]
+              )
+          end
+
+          it 'HTTP response code is 422' do
+            expect(response).to have_http_status(422)
+          end
+
+          it 'renders an error' do
+            data = JSON.parse(response.body)
+            expect(data).to have_key('error')
+          end
+        end
+      end
     end
 
-    before { request }
-
-    context "when migration target base product doesn't have an activated successor/predecessor" do
-      let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
-
-      it 'HTTP response code is 422' do
-        expect(response).to have_http_status(422)
+    context 'when system is payg' do
+      let(:system) { FactoryBot.create(:system, :payg, :with_system_information, instance_data: instance_data) }
+      let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system) }
+      let(:payload) do
+        {
+          identifier: new_product.identifier,
+          version: new_product.version,
+          arch: new_product.arch
+        }
       end
 
-      it 'renders an error' do
-        data = JSON.parse(response.body)
-        expect(data['error']).to eq('Migration target not allowed on this instance type')
-      end
-    end
+      before { request }
 
-    context 'when migration target base product has a different identifier' do
-      let(:new_product) do
-        FactoryBot.create(
-          :product, :with_mirrored_repositories,
-          identifier: old_product.identifier + '-foo', predecessors: [ old_product ]
-        )
-      end
+      context "when migration target base product doesn't have an activated successor/predecessor" do
+        let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
 
-      it 'HTTP response code is 422' do
-        expect(response).to have_http_status(422)
+        it 'HTTP response code is 422' do
+          expect(response).to have_http_status(422)
+        end
+
+        it 'renders an error' do
+          data = JSON.parse(response.body)
+          expect(data['error']).to eq('Migration target not allowed on this instance type')
+        end
       end
 
-      it 'renders an error' do
-        data = JSON.parse(response.body)
-        expect(data['error']).to eq('Migration target not allowed on this instance type')
-      end
-    end
+      context 'when migration target base product has a different identifier' do
+        let(:new_product) do
+          FactoryBot.create(
+            :product, :with_mirrored_repositories,
+            identifier: old_product.identifier + '-foo', predecessors: [ old_product ]
+            )
+        end
 
-    context 'when migration target base product has the same identifier' do
-      let(:new_product) do
-        FactoryBot.create(
-          :product, :with_mirrored_repositories, identifier: old_product.identifier,
-          version: '999', predecessors: [ old_product ]
-        )
+        it 'HTTP response code is 422' do
+          expect(response).to have_http_status(422)
+        end
+
+        it 'renders an error' do
+          data = JSON.parse(response.body)
+          expect(data['error']).to eq('Migration target not allowed on this instance type')
+        end
       end
 
-      it 'HTTP response code is 201' do
-        expect(response).to have_http_status(201)
-      end
+      context 'when migration target base product has the same identifier' do
+        let(:new_product) do
+          FactoryBot.create(
+            :product, :with_mirrored_repositories, identifier: old_product.identifier,
+            version: '999', predecessors: [ old_product ]
+            )
+        end
 
-      it "doesn't render an error" do
-        data = JSON.parse(response.body)
-        expect(data).not_to have_key('error')
+        it 'HTTP response code is 201' do
+          expect(response).to have_http_status(201)
+        end
+
+        it "doesn't render an error" do
+          data = JSON.parse(response.body)
+          expect(data).not_to have_key('error')
+        end
       end
     end
   end

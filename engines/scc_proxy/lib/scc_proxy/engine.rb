@@ -2,7 +2,7 @@ require 'json'
 require 'net/http'
 
 ANNOUNCE_URL = 'https://scc.suse.com/connect/subscriptions/systems'.freeze
-ACTIVATE_PRODUCT_URL = 'https://scc.suse.com/connect/systems/products'.freeze
+SYSTEM_PRODUCTS_URL = 'https://scc.suse.com/connect/systems/products'.freeze
 SYSTEMS_ACTIVATIONS_URL = 'https://scc.suse.com/connect/systems/activations'.freeze
 DEREGISTER_SYSTEM_URL = 'https://scc.suse.com/connect/systems'.freeze
 DEREGISTER_PRODUCT_URL = 'https://scc.suse.com/connect/systems/products'.freeze
@@ -117,6 +117,17 @@ module SccProxy
       scc_request
     end
 
+    def prepare_scc_upgrade_request(uri_path, product, auth, mode)
+      scc_request = Net::HTTP::Put.new(uri_path, headers(auth, nil))
+      scc_request.body = {
+        identifier: product.identifier,
+        version: product.version,
+        arch: product.arch,
+        byos_mode: mode
+      }.to_json
+      scc_request
+    end
+
     def announce_system_scc(auth, params)
       uri = URI.parse(ANNOUNCE_URL)
       http = Net::HTTP.new(uri.host, uri.port)
@@ -129,14 +140,14 @@ module SccProxy
     end
 
     def scc_activate_product(product, auth, params, mode)
-      uri = URI.parse(ACTIVATE_PRODUCT_URL)
+      uri = URI.parse(SYSTEM_PRODUCTS_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
       scc_request = prepare_scc_request(uri.path, product, auth, params, mode)
       http.request(scc_request)
     end
 
-    def deactivate_product_scc(auth, product, params)
+    def deactivate_product_scc(auth, product, params, logger)
       uri = URI.parse(DEREGISTER_PRODUCT_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
@@ -147,7 +158,14 @@ module SccProxy
         arch: product.arch,
         byos: true
       }.to_json
-      http.request(scc_request)
+      response = http.request(scc_request)
+      unless response.code_type == Net::HTTPOK
+        error = JSON.parse(response.body)
+        error['error'] = SccProxy.parse_error(error['error'], params[:token], params[:email]) if error['error'].include? 'json'
+        logger.info "Could not de-activate product '#{product.friendly_name}', error: #{error['error']} #{response.code}"
+        raise ActionController::TranslatedError.new(error['error'])
+      end
+      response
     end
 
     def deregister_system_scc(auth, system_token)
@@ -247,6 +265,20 @@ module SccProxy
 
       SccProxy.activations_fail_state(scc_systems_activations, headers, product)
     end
+
+    def scc_upgrade(auth, product, system_login, mode, logger)
+      uri = URI.parse(SYSTEM_PRODUCTS_URL)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      scc_request = prepare_scc_upgrade_request(uri.path, product, auth, mode)
+      response = http.request(scc_request)
+      unless response.code_type == Net::HTTPCreated
+        logger.info "Could not upgrade the system (#{system_login}), error: #{response.message} #{response.code}"
+        response.message = SccProxy.parse_error(response.message) if response.message.include? 'json'
+        raise ActionController::TranslatedError.new(response.body)
+      end
+      response
+    end
   end
 
   # rubocop:disable Metrics/ClassLength
@@ -261,11 +293,16 @@ module SccProxy
           auth_header = nil
           auth_header = request.headers['HTTP_AUTHORIZATION'] if request.headers.include?('HTTP_AUTHORIZATION')
           system_information = hwinfo_params[:hwinfo].to_json
-
+          instance_data = params.fetch(:instance_data, nil)
           if has_no_regcode?(auth_header)
             # no token sent to check with SCC
             # standard announce case
-            @system = System.create!(hostname: params[:hostname], system_information: system_information, proxy_byos_mode: :payg)
+            @system = System.create!(
+              hostname: params[:hostname],
+              system_information: system_information,
+              proxy_byos_mode: :payg,
+              instance_data: instance_data
+            )
           else
             request.request_parameters['proxy_byos_mode'] = 'byos'
             response = SccProxy.announce_system_scc(auth_header, request.request_parameters)
@@ -275,7 +312,8 @@ module SccProxy
               password: response['password'],
               hostname: params[:hostname],
               proxy_byos_mode: :byos,
-              system_information: system_information
+              system_information: system_information,
+              instance_data: instance_data
             )
           end
           logger.info("System '#{@system.hostname}' announced")
@@ -303,12 +341,12 @@ module SccProxy
 
       Api::Connect::V3::Systems::ProductsController.class_eval do
         before_action :scc_activate_product, only: %i[activate]
+        before_action :scc_upgrade, only: %i[upgrade], if: -> { @system.byos? }
 
         protected
 
         # rubocop:disable Metrics/PerceivedComplexity
         # rubocop:disable Metrics/CyclomaticComplexity
-        # rubocop:disable Metrics/AbcSize
         def scc_activate_product
           logger.info "Activating product #{@product.product_string} to SCC"
           auth = nil
@@ -324,12 +362,7 @@ module SccProxy
             if @system.payg? && base_prod.present?
               raise 'Incompatible extension product' unless @product.arch == base_prod.arch && @product.version == base_prod.version
 
-              params['hostname'] = @system.hostname
-              params['proxy_byos_mode'] = mode
-              params['scc_login'] = @system.login
-              params['scc_password'] = @system.password
-              params['hwinfo'] = JSON.parse(@system.system_information)
-              params['hwinfo']['instance_data'] = @system.instance_data
+              update_params_system_info mode
               announce_auth = "Token token=#{params[:token]}"
 
               response = SccProxy.announce_system_scc(announce_auth, params)
@@ -362,6 +395,8 @@ module SccProxy
           end
           logger.info 'No token provided' if params[:token].blank?
         end
+        # rubocop:enable Metrics/CyclomaticComplexity
+        # rubocop:enable Metrics/PerceivedComplexity
 
         def deregister_hybrid(auth)
           response = SccProxy.deregister_system_scc(auth, @system.system_token)
@@ -373,10 +408,25 @@ module SccProxy
           end
           logger.info 'System successfully deregistered from SCC'
         end
+
+        def scc_upgrade
+          logger.info "Upgrading system to product #{@product.product_string} to SCC"
+          auth = nil
+          auth = request.headers['HTTP_AUTHORIZATION'] if request.headers.include?('HTTP_AUTHORIZATION')
+          mode = 'byos' if @system.byos?
+          SccProxy.scc_upgrade(auth, @product, @system.login, mode, logger)
+          logger.info "System #{@system.login} successfully upgraded with SCC"
+        end
+
+        def update_params_system_info(mode)
+          params['hostname'] = @system.hostname
+          params['proxy_byos_mode'] = mode
+          params['scc_login'] = @system.login
+          params['scc_password'] = @system.password
+          params['hwinfo'] = JSON.parse(@system.system_information)
+          params['instance_data'] = @system.instance_data
+        end
       end
-      # rubocop:enable Metrics/AbcSize
-      # rubocop:enable Metrics/CyclomaticComplexity
-      # rubocop:enable Metrics/PerceivedComplexity
 
       Api::Connect::V4::Systems::ProductsController.class_eval do
         before_action :scc_deactivate_product, only: %i[destroy]
@@ -386,27 +436,22 @@ module SccProxy
         def scc_deactivate_product
           auth = request.headers['HTTP_AUTHORIZATION']
           if @system.byos? && @product[:product_type] != 'base'
-            response = SccProxy.deactivate_product_scc(auth, @product, @system.system_token)
-            handle_response(response)
+            SccProxy.deactivate_product_scc(auth, @product, @system.system_token, logger)
           elsif @system.hybrid? && @product.extension?
             # check if product is on SCC and
             # if it is -> de-activate it
-            scc_systems_activations = find_hybrid_product_on_scc(request.headers)
-            result = SccProxy.product_class_access(scc_systems_activations, @product.product_class)
-            if result[:is_active] || (!result[:is_active] && result[:message].downcase.include?('expired'))
-              # if product is active on SCC or
-              # product subscription expired
+            scc_systems_activations = find_hybrid_activations_on_scc(request.headers)
+            if scc_systems_activations.map { |act| act['service']['product']['id'] == @product.id }.present?
+              # if product is found on SCC, regardless of the state
               # it is OK to remove it from SCC
-              response = SccProxy.deactivate_product_scc(auth, @product, @system.system_token)
-              handle_response(response)
-            elsif result[:message].downcase.include?('unexpected error')
-              raise ActionController::TranslatedError.new(result[:message])
+              SccProxy.deactivate_product_scc(auth, @product, @system.system_token, logger)
+              make_system_payg(auth) if scc_systems_activations.reject { |act| act['service']['product']['id'] == @product.id }.blank?
             end
           end
           logger.info "Product '#{@product.friendly_name}' successfully deactivated from SCC"
         end
 
-        def find_hybrid_product_on_scc(headers)
+        def find_hybrid_activations_on_scc(headers)
           response = SccProxy.get_scc_activations(headers, @system.system_token, @system.proxy_byos_mode)
           unless response.code_type == Net::HTTPOK
             logger.info "Could not get the system (#{@system.login}) activations, error: #{response.message} #{response.code}"
@@ -415,13 +460,20 @@ module SccProxy
           JSON.parse(response.body)
         end
 
-        def handle_response(response)
-          unless response.code_type == Net::HTTPOK
+        def make_system_payg(auth)
+          # if the system does not have more products activated on SCC
+          # switch it back to payg
+          # drop the just de-activated activation from the list to avoid another call to SCC
+          # and check if there is any product
+          response = SccProxy.deregister_system_scc(auth, @system.system_token)
+          unless response.code_type == Net::HTTPNoContent
             error = JSON.parse(response.body)
+            logger.info "Could not de-activate system #{@system.login}, error: #{error['error']} #{response.code}"
             error['error'] = SccProxy.parse_error(error['error'], params[:token], params[:email]) if error['error'].include? 'json'
-            logger.info "Could not de-activate product '#{@product.friendly_name}', error: #{error['error']} #{response.code}"
             raise ActionController::TranslatedError.new(error['error'])
           end
+          logger.info 'System successfully deregistered from SCC'
+          @system.payg!
         end
       end
 

@@ -208,7 +208,7 @@ RSpec.describe AccessScope, type: :model do
             }
           end
           let(:header_expected) do
-            { Authorization: ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) }
+            { 'HTTP_AUTHORIZATION' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) }
           end
 
           before do
