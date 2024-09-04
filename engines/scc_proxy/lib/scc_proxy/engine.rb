@@ -312,6 +312,7 @@ module SccProxy
               password: response['password'],
               hostname: params[:hostname],
               proxy_byos_mode: :byos,
+              proxy_byos: true,
               system_information: system_information,
               instance_data: instance_data
             )
