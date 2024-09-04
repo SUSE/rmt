@@ -194,7 +194,7 @@ RSpec.describe AccessScope, type: :model do
           system
         end
         let(:product1) do
-          product = FactoryBot.create(:product, :with_mirrored_repositories)
+          product = FactoryBot.create(:product, :with_mirrored_repositories, :extension)
           product.repositories.where(enabled: false).update(mirroring_enabled: false)
           product.update(product_class: 'SLES15-SP4-LTSS-X86')
           product
