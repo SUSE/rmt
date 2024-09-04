@@ -218,11 +218,17 @@ module SccProxy
       end
     end
 
+    # rubocop:disable Metrics/PerceivedComplexity
     def activations_fail_state(scc_systems_activations, headers, product = nil)
       return SccProxy.product_class_access(scc_systems_activations, product) unless product.nil?
 
       active_products_ids = scc_systems_activations.map { |act| act['service']['product']['id'] if act['status'].casecmp('active').zero? }.flatten
       x_original_uri = headers.fetch('X-Original-URI', '')
+      # if there is no product info to compare the activations with
+      # probably means the query is to refresh credentials
+      # in any case, verification is true if ALL activations are ACTIVE
+      return { is_active: (scc_systems_activations.length == active_products_ids.length) } if x_original_uri.empty?
+
       if SccProxy.product_path_access(x_original_uri, active_products_ids)
         { is_active: true }
       else
@@ -247,6 +253,7 @@ module SccProxy
         end
       end
     end
+    # rubocop:enable Metrics/PerceivedComplexity
 
     def scc_check_subscription_expiration(headers, login, system_token, logger, mode, product = nil) # rubocop:disable Metrics/ParameterLists
       response = SccProxy.get_scc_activations(headers, system_token, mode)
