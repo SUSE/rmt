@@ -18,6 +18,7 @@ class ApplicationController < ActionController::API
         return true if skip_on_duplicated && @systems.size > 1
 
         @system = find_system_by_token_header(@systems)
+        update_user_agent
 
         # If SYSTEM_TOKEN_HEADER is present, RMT assumes the client uses a SUSEConnect version
         # that supports this feature. In this case, refresh the token and include it in the response.
@@ -41,6 +42,15 @@ class ApplicationController < ActionController::API
   end
 
   private
+
+  def zypper_request?
+    user_agent = request.headers['HTTP_USER_AGENT']
+    user_agent&.downcase&.starts_with?('zypp')
+  end
+
+  def update_user_agent
+    @system.set_system_information('user_agent', request.headers['HTTP_USER_AGENT']) unless zypper_request?
+  end
 
   # Token mechanism to detect duplicated systems.
   # 1: system doesn't send a token header (old SUSEConnect version)
