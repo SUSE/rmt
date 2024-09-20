@@ -34,7 +34,7 @@ ActiveRecord::Schema.define(version: 2024_08_21_114908) do
   create_table "downloaded_files", charset: "utf8", force: :cascade do |t|
     t.string "checksum_type"
     t.string "checksum"
-    t.text "local_path"
+    t.text "local_path", limit: 512
     t.bigint "file_size", unsigned: true
     t.index ["checksum_type", "checksum"], name: "index_downloaded_files_on_checksum_type_and_checksum"
     t.index ["local_path"], name: "index_downloaded_files_on_local_path", unique: true
@@ -104,7 +104,7 @@ ActiveRecord::Schema.define(version: 2024_08_21_114908) do
     t.string "auth_token"
     t.boolean "installer_updates", default: false, null: false
     t.boolean "mirroring_enabled", default: false, null: false
-    t.text "local_path", null: false
+    t.text "local_path", limit: 512, null: false
     t.datetime "last_mirrored_at"
     t.string "friendly_id"
     t.index ["external_url"], name: "index_repositories_on_external_url", unique: true
