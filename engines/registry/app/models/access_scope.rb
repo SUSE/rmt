@@ -87,7 +87,7 @@ class AccessScope
     allowed_product_classes = (active_product_classes & access_policies_yml.keys)
     if system && system.hybrid?
       # if the system is hybrid => check if the non free product subscription is still valid for accessing images
-      allowed_non_free_product_classes = allowed_product_classes.map { |s| s unless Product.find_by(product_class: s).free? }
+      allowed_non_free_product_classes = allowed_product_classes.map { |s| s unless Product.find_by(product_class: s, product_type: 'extension').free? }.compact
       unless allowed_non_free_product_classes.empty?
         auth_header = {
           'HTTP_AUTHORIZATION' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password)

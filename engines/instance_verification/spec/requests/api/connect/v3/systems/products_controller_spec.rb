@@ -540,6 +540,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           context 'when no regcode is provided' do
             it 'activates the product' do
               data = JSON.parse(response.body)
+              expect(data['product']['free']).to eq(false)
               expect(data['id']).to eq(product.id)
             end
           end
