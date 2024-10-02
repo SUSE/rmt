@@ -474,7 +474,10 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             end
 
             context 'when de-register system from SCC fails' do
+              let(:error_message) { "Could not activate #{product.product_string}, error: No product found on SCC for: foo bar x86_64 json api 401" }
+
               before do
+                allow(Rails.logger).to receive(:info)
                 stub_request(:delete, scc_systems_url)
                   .to_return(
                     status: 401,
@@ -490,6 +493,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               it 'renders an error with exception details' do
                 data = JSON.parse(response.body)
                 expect(data['error']).to eq('Could not de-register system')
+                expect(Rails.logger).to(have_received(:info).with(error_message)) # rubocop:disable RSpec/MessageSpies
               end
             end
           end
