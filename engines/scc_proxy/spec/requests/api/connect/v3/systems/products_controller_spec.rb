@@ -486,14 +486,13 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                   )
                 stub_request(:post, scc_register_system_url)
                   .to_return(status: 201, body: { ok: 'OK' }.to_json, headers: {})
-
-                post url, params: payload, headers: headers
               end
 
               it 'renders an error with exception details' do
+                expect(Rails.logger).to receive(:info).with(error_message)
+                post url, params: payload, headers: headers
                 data = JSON.parse(response.body)
                 expect(data['error']).to eq('Could not de-register system')
-                expect(Rails.logger).to(have_received(:info).with(error_message)) # rubocop:disable RSpec/MessageSpies
               end
             end
           end
