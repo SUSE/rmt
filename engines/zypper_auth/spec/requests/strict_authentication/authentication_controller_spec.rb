@@ -258,7 +258,6 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               headers,
               system_hybrid.login,
               system_hybrid.system_token,
-              nil,
               system_hybrid.proxy_byos_mode,
               system_hybrid.activations.first.product.product_class + '-LTSS'
             )
@@ -300,7 +299,6 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               headers,
               system_hybrid.login,
               system_hybrid.system_token,
-              nil,
               system_hybrid.proxy_byos_mode,
               system_hybrid.activations.first.product.product_class + '-LTSS'
             )
@@ -343,7 +341,6 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               headers,
               system_hybrid.login,
               system_hybrid.system_token,
-              nil,
               system_hybrid.proxy_byos_mode,
               system_hybrid.activations.first.product.product_class + '-LTSS'
             )
@@ -386,7 +383,6 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               headers,
               system_hybrid.login,
               system_hybrid.system_token,
-              nil,
               system_hybrid.proxy_byos_mode,
               system_hybrid.activations.first.product.product_class + '-LTSS'
             )
