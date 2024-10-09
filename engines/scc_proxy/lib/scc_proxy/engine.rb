@@ -68,7 +68,13 @@ module SccProxy
         nil,
         params['instance_data']
       )
-      instance_id_key = INSTANCE_ID_KEYS[params['hwinfo']['cloud_provider'].downcase.to_sym]
+      id_key = params['hwinfo']['cloud_provider'].downcase.to_sym
+      unless INSTANCE_ID_KEYS.key?(id_key)
+        error_message = 'Unknown cloud provider'
+        Rails.logger.error error_message
+        raise ActionController::TranslatedError.new(error_message)
+      end
+      instance_id_key = INSTANCE_ID_KEYS[id_key]
       iid = verification_provider.parse_instance_data
       iid[instance_id_key]
     end
