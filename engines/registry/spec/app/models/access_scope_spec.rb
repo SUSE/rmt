@@ -217,7 +217,6 @@ RSpec.describe AccessScope, type: :model do
                 header_expected,
                 system.login,
                 system.system_token,
-                Rails.logger,
                 system.proxy_byos_mode,
                 'SLES15-SP4-LTSS-X86'
             ).and_return(scc_response)
@@ -229,7 +228,6 @@ RSpec.describe AccessScope, type: :model do
               header_expected,
               system.login,
               system.system_token,
-              Rails.logger,
               system.proxy_byos_mode,
               'SLES15-SP4-LTSS-X86'
             )

@@ -201,14 +201,19 @@ module SccProxy
       error_message
     end
 
-    def get_scc_activations(headers, system_token, mode)
+    def get_scc_activations(headers, system_token, mode, login)
       auth = headers['HTTP_AUTHORIZATION'] if headers && headers.include?('HTTP_AUTHORIZATION')
       uri = URI.parse(SYSTEMS_ACTIVATIONS_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
       uri.query = URI.encode_www_form({ byos_mode: mode })
       scc_request = Net::HTTP::Get.new(uri.path, headers(auth, system_token))
-      http.request(scc_request)
+      response = http.request(scc_request)
+      unless response.code_type == Net::HTTPOK
+        Rails.logger.info "Could not get the system (#{login}) activations, error: #{response.message} #{response.code}"
+        raise ActionController::TranslatedError.new(response.body)
+      end
+      JSON.parse(response.body)
     end
 
     def product_path_access(x_original_uri, products_ids)
@@ -266,14 +271,10 @@ module SccProxy
       end
     end
 
-    def scc_check_subscription_expiration(headers, login, system_token, logger, mode, product = nil) # rubocop:disable Metrics/ParameterLists
-      response = SccProxy.get_scc_activations(headers, system_token, mode)
-      unless response.code_type == Net::HTTPOK
-        logger.info "Could not get the system (#{login}) activations, error: #{response.message} #{response.code}"
-        response.message = SccProxy.parse_error(response.message) if response.message.include? 'json'
-        return { is_active: false, message: response.message }
-      end
-      scc_systems_activations = JSON.parse(response.body)
+    def scc_check_subscription_expiration(headers, login, system_token, mode, product = nil)
+      scc_systems_activations = SccProxy.get_scc_activations(
+        headers, system_token, mode, login
+        )
       return { is_active: false, message: 'No activations.' } if scc_systems_activations.empty?
 
       no_status_products_ids = scc_systems_activations.map do |act|
@@ -282,6 +283,8 @@ module SccProxy
       return { is_active: true } unless no_status_products_ids.all?(&:nil?)
 
       SccProxy.activations_fail_state(scc_systems_activations, headers, product)
+    rescue StandardError
+      { is_active: false, message: 'Could not check the activations from SCC' }
     end
 
     def scc_upgrade(auth, product, system_login, mode, logger)
@@ -440,24 +443,17 @@ module SccProxy
           elsif @system.hybrid? && @product.extension?
             # check if product is on SCC and
             # if it is -> de-activate it
-            scc_systems_activations = find_hybrid_activations_on_scc(request.headers)
-            if scc_systems_activations.map { |act| act['service']['product']['id'] == @product.id }.present?
+            scc_hybrid_system_activations = SccProxy.get_scc_activations(
+              headers, @system.system_token, @system.proxy_byos_mode, @system.login
+            )
+            if scc_hybrid_system_activations.map { |act| act['service']['product']['id'] == @product.id }.present?
               # if product is found on SCC, regardless of the state
               # it is OK to remove it from SCC
               SccProxy.deactivate_product_scc(auth, @product, @system.system_token, logger)
-              make_system_payg(auth) if scc_systems_activations.reject { |act| act['service']['product']['id'] == @product.id }.blank?
+              make_system_payg(auth) if scc_hybrid_system_activations.reject { |act| act['service']['product']['id'] == @product.id }.blank?
             end
           end
           logger.info "Product '#{@product.friendly_name}' successfully deactivated from SCC"
-        end
-
-        def find_hybrid_activations_on_scc(headers)
-          response = SccProxy.get_scc_activations(headers, @system.system_token, @system.proxy_byos_mode)
-          unless response.code_type == Net::HTTPOK
-            logger.info "Could not get the system (#{@system.login}) activations, error: #{response.message} #{response.code}"
-            raise ActionController::TranslatedError.new(response.body)
-          end
-          JSON.parse(response.body)
         end
 
         def make_system_payg(auth)
