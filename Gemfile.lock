@@ -351,7 +351,7 @@ DEPENDENCIES
   guard-rspec
   jwt (~> 2.1)
   listen (>= 3.0.5, <= 3.6.0)
-  memory_profiler
+  memory_profiler (~> 1.0.2)
   minitest (~> 5.15.0)
   mysql2 (~> 0.5.3)
   nokogiri (< 1.13)
