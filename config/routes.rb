@@ -69,6 +69,12 @@ Rails.application.routes.draw do
     get '/v2/_catalog', to: 'registry/registry#catalog'
   end
 
+  # For bin/rails s users: expose the metrics endpoint via rails instead of puma
+  if Rails.env.development? && ENV['STARTED_FROM_PUMA'].blank?
+    Rails.logger.info('Mounting Yabeda in Rails.routes')
+    mount Yabeda::Prometheus::Exporter, at: '/metrics'
+  end
+
   if defined?(SccSumaApi::Engine)
     mount SccSumaApi::Engine, at: '/api/scc'
 

@@ -24,6 +24,14 @@ scc:
   username: <%= ENV['SCC_USERNAME'] %>
   password: <%= ENV['SCC_PASSWORD'] %>
   sync_systems: true
+  metrics:
+    enabled: true
+    interval: 60
+    job_name: yabeda
+    url: <%= ENV.fetch('PROMETHEUS_ENDPOINT') { 'http://localhost:9091' } %>
+    username: <%= ENV.fetch('PROMETHEUS_USERNAME') { 'admin' }%>
+    password: <%= ENV.fetch('PROMETHEUS_PASSWORD') { 'admin' }%>
+
 
 mirroring:
   mirror_src: false
