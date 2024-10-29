@@ -27,10 +27,6 @@ scc:
   metrics:
     enabled: <%= ENV.fetch('RMT_METRICS_ENABLED') { false } %>
     job_name: <%= ENV.fetch('PROMETHEUS_JOB_NAME') { 'rmt-webserver' } %>
-    url: <%= ENV.fetch('PROMETHEUS_ENDPOINT') { 'http://localhost:9091' } %>
-    username: <%= ENV.fetch('PROMETHEUS_USERNAME') { 'admin' }%>
-    password: <%= ENV.fetch('PROMETHEUS_PASSWORD') { 'admin' }%>
-
 
 mirroring:
   mirror_src: false

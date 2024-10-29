@@ -50,7 +50,6 @@ GEM
     config (3.0.0)
       deep_merge (~> 1.2, >= 1.2.1)
       dry-validation (~> 1.0, >= 1.0.0)
-    connection_pool (2.4.1)
     coveralls (0.8.23)
       json (>= 1.8, < 3)
       simplecov (~> 0.16.1)
@@ -206,7 +205,6 @@ GEM
     rb-inotify (0.10.1)
       ffi (~> 1.0)
     rdiscount (2.2.0.2)
-    redis (4.8.1)
     regexp_parser (2.6.0)
     repomd_parser (1.1.0)
       bzip2-ffi (~> 1.1.1)
@@ -288,10 +286,6 @@ GEM
     shellany (0.0.1)
     shoulda-matchers (4.5.1)
       activesupport (>= 4.2.0)
-    sidekiq (6.5.12)
-      connection_pool (>= 2.2.5, < 3)
-      rack (~> 2.0)
-      redis (>= 4.5.0, < 5)
     simplecov (0.16.1)
       docile (~> 1.1)
       json (>= 1.8, < 3)
@@ -349,10 +343,6 @@ GEM
       anyway_config (>= 1.3, < 3)
       railties
       yabeda (~> 0.8)
-    yabeda-sidekiq (0.12.0)
-      anyway_config (>= 1.3, < 3)
-      sidekiq
-      yabeda (~> 0.6)
     yard (0.9.35)
     zeitwerk (2.6.15)
     zstd-ruby (1.5.6.1)
@@ -418,7 +408,6 @@ DEPENDENCIES
   yabeda-prometheus
   yabeda-puma-plugin
   yabeda-rails
-  yabeda-sidekiq
 
 BUNDLED WITH
    1.17.3
