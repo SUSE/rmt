@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
-return if Settings.scc.try(:metrics) && (Settings.scc.metrics.try(:enabled) && (!!Settings.scc.metrics.enabled  == false))
-
-# require 'yabeda'
-# require 'yabeda/rails'
-# require 'yabeda/sidekiq'
-# require 'yabeda/prometheus'
+return unless Settings.dig(:scc, :metrics, :enabled)
 
 # Configure prometheus client
 Prometheus::Client.config.data_store = Prometheus::Client::DataStores::DirectFileStore.new(
@@ -19,10 +14,8 @@ Yabeda.configure do
     default_tag :application, 'rmt'
   }
 
-  group :sidekiq, &assign_labels
   group :rails, &assign_labels
   group :rake, &assign_labels
-  group :scc, &assign_labels
 
   group :rails do
     counter :started_requests_total,
@@ -46,10 +39,6 @@ Yabeda.configure do
     gauge :task_finished_at,
           comment: 'Time when the task finished: unix time with decimals',
           tags: %i[task_name]
-  end
-
-  group :pct do
-  
   end
 end
 

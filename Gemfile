@@ -36,7 +36,6 @@ gem 'repomd_parser', '~> 1.1.0'
 gem 'yabeda'
 gem 'yabeda-rails'
 gem 'yabeda-puma-plugin'
-gem 'yabeda-sidekiq'
 gem 'yabeda-prometheus'
 
 gem 'strong_migrations'

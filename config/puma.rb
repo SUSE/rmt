@@ -38,6 +38,6 @@ workers RMT::Config.web_server.workers
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
 
-if Settings.scc.try(:metrics) && (Settings.scc.metrics.try(:enabled) && (!!Settings.scc.metrics.enabled  == false))
+if Settings.dig(:scc, :metrics, :enabled)
   configure_prometheus!(self)
 end
