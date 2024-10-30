@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Oct 30 09:01:32 UTC 2024 - Natnael Getahun <natnael.getahun@suse.com>
+
+- Version 2.20 (unreleased)
+  * RMT packaging: make sync/mirror timer changes survive upgrade 
+
+-------------------------------------------------------------------
 Wed Aug 21 15:28:43 UTC 2024 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
 - Version 2.19
