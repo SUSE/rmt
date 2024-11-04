@@ -10,13 +10,12 @@ unless ENV['NO_COVERAGE']
       # omit registration sharing (removing systems using rmt-cli)
       add_filter('engines/registration_sharing/lib/registration_sharing.rb')
 
-      track_files('app/**/*.rb')
-      track_files('lib/**/*.rb')
-
-      add_filter('lib/rmt/config.rb')
       add_filter('lib/rmt/db.rb')
       add_filter('lib/rmt.rb')
-      add_filter('config/**/*(.rb|.yml)')
+      add_filter('config')
+
+      track_files('app/**/*.rb')
+      track_files('lib/**/*.rb')
     end
   end
 

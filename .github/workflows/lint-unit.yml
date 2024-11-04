@@ -81,7 +81,7 @@ jobs:
 
       - name: Run core tests
         run: |
-          bundle exec rspec --format documentation
+          bundle exec rake test:core
         
       - name: Run PubCloud engines tests
         run: |
@@ -93,16 +93,6 @@ jobs:
           ruby ci/check-version-matches.rb
           echo "::endgroup::"
 
-      - name: Run PubCloud engines tests
-        run: |
-          bundle exec rake test:engines
-
-      - name: Run version checks
-        run: |
-          echo "::group::Version verification checks"
-          ruby ci/check-version-matches.rb
-          echo "::endgroup::"
-         
       - name: Export coverage report
         uses: actions/upload-artifact@v4
         if: always()
