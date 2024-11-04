@@ -60,6 +60,12 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
+      
+      - name: Export coverage report
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage
+          path: ${{ github.workspace }}/coverage
 
       - name: Setup database config file
         run: |
@@ -82,6 +88,16 @@ jobs:
       - name: Run core tests
         run: |
           bundle exec rspec --format documentation
+        
+      - name: Run PubCloud engines tests
+        run: |
+          bundle exec rake test:engines
+
+      - name: Run version checks
+        run: |
+          echo "::group::Version verification checks"
+          ruby ci/check-version-matches.rb
+          echo "::endgroup::"
 
       - name: Run PubCloud engines tests
         run: |
