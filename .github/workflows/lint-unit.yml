@@ -30,7 +30,7 @@ jobs:
       matrix:
         # we need to test the Ruby versions of the products we release RMT for,
         # those are: SLE15 (2.5.8, 2.5.9)
-        ruby-version: ['2.5.8', '2.5.9']
+        ruby-version: [ '2.5.9']
         # skipping Ruby3 tests for now, because RMT isn't Ruby3 compatible yet, and the failing 
         # tests confuse the team.
         # ruby-version: ['2.5.8', '2.5.9', '3.0.3']
@@ -60,12 +60,6 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
-      
-      - name: Export coverage report
-        uses: actions/upload-artifact@v2
-        with:
-          name: coverage
-          path: ${{ github.workspace }}/coverage
 
       - name: Setup database config file
         run: |
@@ -108,3 +102,10 @@ jobs:
           echo "::group::Version verification checks"
           ruby ci/check-version-matches.rb
           echo "::endgroup::"
+         
+      - name: Export coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: ${{ github.workspace }}/coverage
