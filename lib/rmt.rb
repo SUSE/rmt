@@ -1,4 +1,3 @@
-# :nocov:
 module RMT
   VERSION ||= '2.19'.freeze
 
@@ -8,4 +7,3 @@ module RMT
   DEFAULT_MIRROR_URL_PREFIX = '/repo/'.freeze
   CREDENTIALS_FILE_LOCATION = '/etc/zypp/credentials.d/SCCcredentials'.freeze
 end
-# :nocov:

@@ -12,6 +12,11 @@ unless ENV['NO_COVERAGE']
 
       track_files('app/**/*.rb')
       track_files('lib/**/*.rb')
+
+      add_filter('lib/rmt/config.rb')
+      add_filter('lib/rmt/db.rb')
+      add_filter('lib/rmt.rb')
+      add_filter('config/**/*(.rb|.yml)')
     end
   end
 

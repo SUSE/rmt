@@ -1,4 +1,3 @@
-# :nocov:
 require 'config'
 require_relative '../rmt'
 
@@ -11,6 +10,7 @@ Config.load_and_set_settings(
   File.join(__dir__, '../../config/rmt.yml'),
   File.join(__dir__, '../../config/rmt.local.yml')
 )
+
 
 module RMT::Config
   class << self
@@ -77,4 +77,3 @@ module RMT::Config
     end
   end
 end
-# :nocov:
