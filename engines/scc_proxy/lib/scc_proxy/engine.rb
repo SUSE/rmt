@@ -201,16 +201,16 @@ module SccProxy
       error_message
     end
 
-    def get_scc_activations(headers, system_token, mode, login)
+    def get_scc_activations(headers, system)
       auth = headers['HTTP_AUTHORIZATION'] if headers && headers.include?('HTTP_AUTHORIZATION')
       uri = URI.parse(SYSTEMS_ACTIVATIONS_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      uri.query = URI.encode_www_form({ byos_mode: mode })
-      scc_request = Net::HTTP::Get.new(uri.path, headers(auth, system_token))
+      uri.query = URI.encode_www_form({ byos_mode: system.proxy_byos_mode })
+      scc_request = Net::HTTP::Get.new(uri.path, headers(auth, system.system_token))
       response = http.request(scc_request)
       unless response.code_type == Net::HTTPOK
-        Rails.logger.info "Could not get the system (#{login}) activations, error: #{response.message} #{response.code}"
+        Rails.logger.info "Could not get the system (#{system.login}) activations, error: #{response.message} #{response.code}"
         raise ActionController::TranslatedError.new(response.body)
       end
       JSON.parse(response.body)
@@ -271,10 +271,8 @@ module SccProxy
       end
     end
 
-    def scc_check_subscription_expiration(headers, login, system_token, mode, product = nil)
-      scc_systems_activations = SccProxy.get_scc_activations(
-        headers, system_token, mode, login
-        )
+    def scc_check_subscription_expiration(headers, system, product = nil)
+      scc_systems_activations = SccProxy.get_scc_activations(headers, system)
       return { is_active: false, message: 'No activations.' } if scc_systems_activations.empty?
 
       no_status_products_ids = scc_systems_activations.map do |act|
@@ -443,9 +441,7 @@ module SccProxy
           elsif @system.hybrid? && @product.extension?
             # check if product is on SCC and
             # if it is -> de-activate it
-            scc_hybrid_system_activations = SccProxy.get_scc_activations(
-              headers, @system.system_token, @system.proxy_byos_mode, @system.login
-            )
+            scc_hybrid_system_activations = SccProxy.get_scc_activations(headers, @system)
             if scc_hybrid_system_activations.map { |act| act['service']['product']['id'] == @product.id }.present?
               # if product is found on SCC, regardless of the state
               # it is OK to remove it from SCC

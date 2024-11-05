@@ -94,7 +94,7 @@ class AccessScope
         }
         allowed_non_free_product_classes.each do |non_free_prod_class|
           activation_state = SccProxy.scc_check_subscription_expiration(
-            auth_header, system.login, system.system_token, system.proxy_byos_mode, non_free_prod_class
+            auth_header, system, non_free_prod_class
           )
           unless activation_state[:is_active]
             Rails.logger.info(

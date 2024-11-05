@@ -215,20 +215,15 @@ RSpec.describe AccessScope, type: :model do
             allow(SccProxy).to receive(:scc_check_subscription_expiration)
               .with(
                 header_expected,
-                system.login,
-                system.system_token,
-                system.proxy_byos_mode,
+                system,
                 'SLES15-SP4-LTSS-X86'
             ).and_return(scc_response)
           end
 
-          # rubocop:disable RSpec/ExampleLength
           it 'returns no actions allowed' do
             expect(SccProxy).to receive(:scc_check_subscription_expiration).with(
               header_expected,
-              system.login,
-              system.system_token,
-              system.proxy_byos_mode,
+              system,
               'SLES15-SP4-LTSS-X86'
             )
             yaml_string = access_policy_content
@@ -248,7 +243,6 @@ RSpec.describe AccessScope, type: :model do
               }
             )
           end
-          # rubocop:enable RSpec/ExampleLength
         end
       end
 
