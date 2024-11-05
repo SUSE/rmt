@@ -78,9 +78,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               body: { error: 'Unexpected instance verification error has occurred' }.to_json,
               headers: {}
             )
-            # expect(InstanceVerification::Providers::Example).to receive(:new)
-            #  .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
-            # expect(plugin_double).to receive(:instance_valid?).and_return(false)
             post url, params: payload, headers: headers
           end
 
@@ -99,9 +96,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               headers: {}
             )
 
-            # expect(InstanceVerification::Providers::Example).to receive(:new)
-            #  .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
-            # expect(plugin_double).to receive(:instance_valid?).and_raise('Custom plugin error')
             post url, params: payload, headers: headers
           end
 
