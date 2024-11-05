@@ -21,7 +21,7 @@ Note: Look below for direction on publishing to registry.
           ```
       * Alternatively, if an OBS working copy is already checked out, update the working copy by running `osc up`
 2. Run `make dist` in your RMT working directory to build a tarball.
-3. Copy the files from the `package/obs` directory to the OBS working directory.
+3. Copy the files from the `package/obs` directory to the OBS working directory `systemsmanagement:SCC:RMT/rmt-server`.
 4. Examine the changes by running `osc status` and `osc diff`.
 5. Stage the changes by running `osc addremove`.
 6. Build the package with osc:
