@@ -72,9 +72,12 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         context 'when verification provider returns false' do
           before do
-            expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
-            expect(plugin_double).to receive(:instance_valid?).and_return(false)
+            stub_request(:post, scc_activate_url)
+            .to_return(
+              status: 200,
+              body: { error: 'Unexpected instance verification error has occurred' }.to_json,
+              headers: {}
+            )
             post url, params: payload, headers: headers
           end
 
@@ -86,9 +89,13 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         context 'when verification provider raises an unhandled exception' do
           before do
-            expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
-            expect(plugin_double).to receive(:instance_valid?).and_raise('Custom plugin error')
+            stub_request(:post, scc_activate_url)
+            .to_return(
+              status: 422,
+              body: { error: 'Unexpected instance verification error has occurred' }.to_json,
+              headers: {}
+            )
+
             post url, params: payload, headers: headers
           end
 
@@ -623,7 +630,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             .with({ headers: scc_headers, body: payload.merge({ byos_mode: 'byos' }) })
             .and_return(
               status: 401,
-              body: { error: 'error_message' }.to_json,
+              body: 'Migration target not allowed on this instance type',
               headers: {}
             )
           request
