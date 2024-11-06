@@ -6,7 +6,7 @@ module ZypperAuth
       Thread.current[:logger]
     end
 
-    def verify_instance(request, logger, system)
+    def verify_instance(request, logger, system, params_product_id = nil)
       return false unless request.headers['X-Instance-Data']
 
       instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
@@ -31,7 +31,8 @@ module ZypperAuth
       )
 
       is_valid = verification_provider.instance_valid?
-      return false if is_valid && system.hybrid? && !handle_scc_subscription(request, system, verification_provider)
+      return false if is_valid && system.hybrid? && !handle_scc_subscription(request, system, verification_provider, logger, params_product_id)
+
       # update repository and registry cache
       InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id)
       is_valid
@@ -49,8 +50,9 @@ module ZypperAuth
       false
     end
 
-    def handle_scc_subscription(request, system, verification_provider)
-      result = SccProxy.scc_check_subscription_expiration(request.headers, system)
+    def handle_scc_subscription(request, system, verification_provider, logger, params_product_id = nil)
+      product_class = Product.find_by(id: params_product_id).product_class if params_product_id.present?
+      result = SccProxy.scc_check_subscription_expiration(request.headers, system.login, system.system_token, logger, system.proxy_byos_mode, product_class)
       return true if result[:is_active]
 
       ZypperAuth.zypper_auth_message(request, system, verification_provider, result[:message])
@@ -128,7 +130,7 @@ module ZypperAuth
         # additional validation for zypper service XML controller
         before_action :verify_instance
         def verify_instance
-          unless ZypperAuth.verify_instance(request, logger, @system)
+          unless ZypperAuth.verify_instance(request, logger, @system, params.fetch('id', nil))
             render(xml: { error: 'Instance verification failed' }, status: 403)
           end
         end
