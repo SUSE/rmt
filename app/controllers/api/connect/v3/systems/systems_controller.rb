@@ -21,8 +21,8 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
 
     # Since the payload is handled by rails all values are converted to string
     # e.g. cpus: 16 becomes cpus: "16". We save this as string for now and expect
-    # SCC to handle the convertation correctly
-    @system.system_information = hwinfo_params[:hwinfo].to_json
+    # SCC to handle the conversion correctly
+    @system.system_information = @system.system_information_hash.update(hwinfo_params[:hwinfo]).to_json
 
     if @system.save
       logger.info(N_("Updated system information for host '%s'") % @system.hostname)
