@@ -31,12 +31,13 @@ module ZypperAuth
       )
 
       is_valid = verification_provider.instance_valid?
-      return false if is_valid && system.hybrid? && !handle_scc_subscription(request, system, verification_provider, logger, params_product_id)
+      return false if is_valid && system.hybrid? && !handle_scc_subscription(request, system, verification_provider, params_product_id)
+
       # update repository and registry cache
       InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id)
       is_valid
     rescue InstanceVerification::Exception => e
-      return handle_scc_subscription(request, system, verification_provider, logger) if system.byos?
+      return handle_scc_subscription(request, system, verification_provider) if system.byos?
 
       ZypperAuth.zypper_auth_message(request, system, verification_provider, e.message)
       false
@@ -49,9 +50,9 @@ module ZypperAuth
       false
     end
 
-    def handle_scc_subscription(request, system, verification_provider, logger, params_product_id = nil)
+    def handle_scc_subscription(request, system, verification_provider, params_product_id = nil)
       product_class = Product.find_by(id: params_product_id).product_class if params_product_id.present?
-      result = SccProxy.scc_check_subscription_expiration(request.headers, system.login, system.system_token, logger, system.proxy_byos_mode, product_class)
+      result = SccProxy.scc_check_subscription_expiration(request.headers, system, product_class)
       return true if result[:is_active]
 
       ZypperAuth.zypper_auth_message(request, system, verification_provider, result[:message])
