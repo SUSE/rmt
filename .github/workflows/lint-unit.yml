@@ -92,3 +92,10 @@ jobs:
           echo "::group::Version verification checks"
           ruby ci/check-version-matches.rb
           echo "::endgroup::"
+      
+      - name: Export artifacts
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: test-results
+          path: ${{ github.workspace }}/coverage
