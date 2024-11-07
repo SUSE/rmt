@@ -32,6 +32,8 @@ GEM
       zeitwerk (~> 2.3)
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
+    anyway_config (2.6.4)
+      ruby-next-core (~> 1.0)
     ast (2.4.2)
     awesome_print (1.9.2)
     base32 (0.3.4)
@@ -173,6 +175,8 @@ GEM
     prime (0.1.2)
       forwardable
       singleton
+    prometheus-client (4.2.3)
+      base64
     pry (0.14.0)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -266,6 +270,7 @@ GEM
       rubocop (~> 1.19)
     rubocop-thread_safety (0.4.4)
       rubocop (>= 0.53.0)
+    ruby-next-core (1.0.3)
     ruby-progressbar (1.11.0)
     ruby_parser (3.19.2)
       sexp_processor (~> 4.16)
@@ -319,6 +324,23 @@ GEM
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
+    yabeda (0.13.1)
+      anyway_config (>= 1.0, < 3)
+      concurrent-ruby
+      dry-initializer
+    yabeda-prometheus (0.9.1)
+      prometheus-client (>= 3.0, < 5.0)
+      rack
+      yabeda (~> 0.10)
+    yabeda-puma-plugin (0.7.1)
+      json
+      puma
+      yabeda (~> 0.5)
+    yabeda-rails (0.9.0)
+      activesupport
+      anyway_config (>= 1.3, < 3)
+      railties
+      yabeda (~> 0.8)
     yard (0.9.35)
     zeitwerk (2.6.15)
     zstd-ruby (1.5.6.1)
@@ -380,6 +402,10 @@ DEPENDENCIES
   vcr (~> 6.0)
   versionist
   webmock
+  yabeda
+  yabeda-prometheus
+  yabeda-puma-plugin
+  yabeda-rails
 
 BUNDLED WITH
    1.17.3
