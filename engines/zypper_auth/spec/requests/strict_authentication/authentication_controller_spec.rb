@@ -245,21 +245,16 @@ describe StrictAuthentication::AuthenticationController, type: :request do
 
           before do
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_active].to_json, headers: {})
-            # allow(SccProxy).to receive(:get_scc_activations).and_return(status: 200, body: [body_active].to_json, headers: {})
             expect(URI).to receive(:encode_www_form).with({ byos_mode: 'hybrid' })
             allow(File).to receive(:directory?).and_return(true)
             allow(Dir).to receive(:mkdir)
             allow(FileUtils).to receive(:touch)
-            # get '/api/auth/check', headers: headers
           end
 
           it 'returns true' do
             result = SccProxy.scc_check_subscription_expiration(
               headers,
-              system_hybrid.login,
-              system_hybrid.system_token,
-              nil,
-              system_hybrid.proxy_byos_mode,
+              system_hybrid,
               system_hybrid.activations.first.product.product_class + '-LTSS'
             )
             expect(result[:is_active]).to be(true)
@@ -298,10 +293,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           it 'returns false, expired' do
             result = SccProxy.scc_check_subscription_expiration(
               headers,
-              system_hybrid.login,
-              system_hybrid.system_token,
-              nil,
-              system_hybrid.proxy_byos_mode,
+              system_hybrid,
               system_hybrid.activations.first.product.product_class + '-LTSS'
             )
             expect(result[:is_active]).to eq(false)
@@ -341,10 +333,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           it 'returns product not activated' do
             result = SccProxy.scc_check_subscription_expiration(
               headers,
-              system_hybrid.login,
-              system_hybrid.system_token,
-              nil,
-              system_hybrid.proxy_byos_mode,
+              system_hybrid,
               system_hybrid.activations.first.product.product_class + '-LTSS'
             )
             expect(result[:is_active]).to eq(false)
@@ -384,10 +373,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           it 'returns unexpected error' do
             result = SccProxy.scc_check_subscription_expiration(
               headers,
-              system_hybrid.login,
-              system_hybrid.system_token,
-              nil,
-              system_hybrid.proxy_byos_mode,
+              system_hybrid,
               system_hybrid.activations.first.product.product_class + '-LTSS'
             )
             expect(result[:is_active]).to eq(false)
