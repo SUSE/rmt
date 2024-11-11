@@ -24,6 +24,9 @@ scc:
   username: <%= ENV['SCC_USERNAME'] %>
   password: <%= ENV['SCC_PASSWORD'] %>
   sync_systems: true
+  metrics:
+    enabled: <%= ENV.fetch('RMT_METRICS_ENABLED') { false } %>
+    job_name: <%= ENV.fetch('PROMETHEUS_JOB_NAME') { 'rmt-webserver' } %>
 
 mirroring:
   mirror_src: false
