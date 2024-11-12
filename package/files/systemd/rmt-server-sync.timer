@@ -3,7 +3,7 @@ Description=RMT Sync timer
 
 [Timer]
 OnCalendar=*-*-* 01:00:00
-RandomizedDelaySec=15m
+RandomizedDelaySec=9h
 Unit=rmt-server-sync.service
 
 [Install]
