@@ -3,10 +3,12 @@ Wed Oct 30 09:01:32 UTC 2024 - Natnael Getahun <natnael.getahun@suse.com>
 
 - Version 2.20 (unreleased)
   * RMT packaging: don't overwrite custom sync/mirror timer config on package update
-  * Extend column size for repository and file paths (bsc#1229152) 
+  * Extend column size for repository and file paths (bsc#1229152)
+  * Forward suseconnect client user-agents to SCC
   * rmt-server-pubcloud:
     * Fix LTSS product verification (bsc#1230154)
     * Fix activations check when no product info is available (bsc#1230157)
+
 -------------------------------------------------------------------
 Wed Aug 21 15:28:43 UTC 2024 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
