@@ -372,6 +372,15 @@ module SccProxy
         protected
 
         def scc_activate_product
+          if (@system.system_information &&
+              JSON.parse(@system.system_information)['cloud_provider'].casecmp('microsoft').zero? &&
+              @product.product_class.downcase.include?('ltss') &&
+              InstanceVerification.provider.new(logger, request, nil, @system.instance_data).basic?
+            )
+            error = ActionController::TranslatedError.new(N_('Product not supported for this instance'))
+            error.status = :forbidden
+            raise error
+          end
           mode = find_mode
           unless mode.nil?
             # if system is byos or hybrid and there is a token
