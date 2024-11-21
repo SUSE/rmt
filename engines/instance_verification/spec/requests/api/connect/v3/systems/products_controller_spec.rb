@@ -38,7 +38,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         it 'class instance verification provider' do
           expect(InstanceVerification::Providers::Example).to receive(:new)
-            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, nil).and_call_original
+            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, nil).and_call_original.at_least(:once)
           allow(File).to receive(:directory?)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
@@ -71,13 +71,17 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
 
         context 'when verification provider returns false' do
+          # let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+
           before do
             stub_request(:post, scc_activate_url)
             .to_return(
               status: 200,
               body: { error: 'Unexpected instance verification error has occurred' }.to_json,
               headers: {}
-            )
+              )
+            # allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+            # allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload, headers: headers
           end
 
@@ -113,7 +117,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         it 'class instance verification provider' do
           expect(InstanceVerification::Providers::Example).to receive(:new)
-            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, nil).and_call_original
+            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, nil).and_call_original.at_least(:once)
           allow(File).to receive(:directory?)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
@@ -123,7 +127,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
       context 'when system has hw_info' do
         let(:instance_data) { 'dummy_instance_data' }
-        let(:system) { FactoryBot.create(:system, :payg, :with_system_information_az, instance_data: instance_data) }
+        let(:system) { FactoryBot.create(:system, :payg, :with_system_information, instance_data: instance_data) }
         let(:serialized_service_json) do
           V3::ServiceSerializer.new(
             product.service,
@@ -188,7 +192,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         let(:instance_data) { 'dummy_instance_data' }
         let(:system) do
           FactoryBot.create(
-            :system, :payg, :with_system_information_az, :with_activated_product, product: base_product, instance_data: instance_data
+            :system, :payg, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data
           )
         end
         let(:serialized_service_json) do
@@ -340,8 +344,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
           before do
             allow(InstanceVerification::Providers::Example).to receive(:new)
-              .with(nil, nil, nil, instance_data).and_return(plugin_double)
+              .and_return(plugin_double)
             allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
             allow(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, product.id)
             FactoryBot.create(:subscription, product_classes: product_classes)
@@ -380,8 +385,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
           before do
             allow(InstanceVerification::Providers::Example).to receive(:new)
-              .with(nil, nil, nil, instance_data).and_return(plugin_double)
+              .and_return(plugin_double)
             allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
             allow(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, product.id)
             FactoryBot.create(:subscription, product_classes: product_classes)
@@ -414,7 +420,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         it 'class instance verification provider' do
           expect(InstanceVerification::Providers::Example).to receive(:new)
-            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, nil).and_call_original
+              .and_call_original.at_least(:once)
           allow(File).to receive(:directory?)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
@@ -514,8 +520,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
       before do
         allow(InstanceVerification::Providers::Example).to receive(:new)
-          .with(nil, nil, nil, instance_data).and_return(plugin_double)
+          .and_return(plugin_double)
         allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
+        allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
         FactoryBot.create(:subscription, product_classes: product_classes)
         stub_request(:post, scc_activate_url)

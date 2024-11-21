@@ -373,11 +373,8 @@ module SccProxy
         protected
 
         def scc_activate_product
-          if (@system.system_information &&
-              JSON.parse(@system.system_information)['cloud_provider'].casecmp('microsoft').zero? &&
-              @product.product_class.downcase.include?('ltss') &&
-              InstanceVerification.provider.new(logger, request, nil, @system.instance_data).basic?
-            )
+          product_hash = @product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
+          unless InstanceVerification.provider.new(logger, request, product_hash, @system.instance_data).allowed_extension?
             error = ActionController::TranslatedError.new(N_('Product not supported for this instance'))
             error.status = :forbidden
             raise error

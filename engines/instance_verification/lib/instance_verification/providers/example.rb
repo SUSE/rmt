@@ -50,7 +50,9 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
     return true if (identifier.casecmp('sles_sap').zero? && SLES4SAP_PRODUCT_IDENTIFIER.include?(instance_billing_info[:marketplace_code]))
   end
 
-  def basic?
-    false
+  def allowed_extension?
+    # method to check if a product (extension) meet the criteria
+    # to be acivated on SCC or not, i.e. LTSS in Azure Basic VM
+    true
   end
 end
