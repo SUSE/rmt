@@ -444,7 +444,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
       end
 
-      context 'when system has hw_info' do
+      context 'when system has hw info' do
         let(:instance_data) { '<document>{"instanceId": "dummy_instance_data"}</document>' }
         let(:new_system_token) { 'BBBBBBBB-BBBB-4BBB-9BBB-BBBBBBBBBBBB' }
         let(:serialized_service_json) do
