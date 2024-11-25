@@ -341,7 +341,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           before do
             allow(InstanceVerification::Providers::Example).to receive(:new)
               .with(nil, nil, nil, instance_data).and_return(plugin_double)
-            allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
+            allow(plugin_double).to receive(:instance_identifier).and_return('foo')
 
             allow(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, product.id)
             FactoryBot.create(:subscription, product_classes: product_classes)

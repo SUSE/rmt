@@ -43,7 +43,12 @@ module SccProxy
     # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
     def headers(auth, params)
       @instance_id = if params && params.class != String
-                       get_instance_id(params)
+                       InstanceVerification.provider.new(
+                         nil,
+                         nil,
+                         nil,
+                         params['instance_data']
+                       ).instance_identifier
                      else
                        # if it is not JSON, it is the system_token already
                        # announce system has metadata
@@ -60,19 +65,6 @@ module SccProxy
       }
     end
     # rubocop:enable ThreadSafety/InstanceVariableInClassMethod
-
-    def get_instance_id(params)
-      verification_provider = InstanceVerification.provider.new(
-        nil,
-        nil,
-        nil,
-        params['instance_data']
-      )
-      csp = params['hwinfo']['cloud_provider'].downcase
-      instance_id_key = INSTANCE_ID_KEYS[csp.to_sym]
-      instance_data = verification_provider.parse_instance_data
-      csp.casecmp('microsoft').zero? ? instance_data['attestedData'][instance_id_key] : instance_data[instance_id_key]
-    end
 
     def prepare_scc_announce_request(uri_path, auth, params)
       scc_request = Net::HTTP::Post.new(uri_path, headers(auth, params))
