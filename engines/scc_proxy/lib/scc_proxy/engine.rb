@@ -25,12 +25,6 @@ NET_HTTP_ERRORS = [
   Net::HTTPRetriableError
 ].freeze
 
-INSTANCE_ID_KEYS = {
-  amazon: 'instanceId',
-  google: 'instance_id',
-  microsoft: 'vmId'
-}.freeze
-
 # rubocop:disable Metrics/ModuleLength
 module SccProxy
   class << self
