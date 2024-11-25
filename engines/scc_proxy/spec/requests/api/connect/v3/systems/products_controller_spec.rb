@@ -349,7 +349,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         context 'when system is connected to SCC' do
           let(:system_payg) do
-            FactoryBot.create(:system, :payg, :with_system_information_az, :with_activated_base_product, instance_data: instance_data,
+            FactoryBot.create(:system, :payg, :with_system_information, :with_activated_base_product, instance_data: instance_data,
               system_token: new_system_token)
           end
           let(:product) do
@@ -416,7 +416,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
               allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
-              allow(plugin_double).to receive(:basic?).and_return(false)
+              allow(plugin_double).to receive(:allowed_extension?).and_return(true)
               allow(InstanceVerification).to receive(:write_cache_file).twice.with(
                 Rails.application.config.repo_cache_dir, "127.0.0.1-#{system_payg.login}-#{product.id}"
               )
@@ -428,7 +428,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
             context 'when LTSS not allowed' do
               before do
-                allow(plugin_double).to receive(:basic?).and_return(true)
+                allow(plugin_double).to receive(:allowed_extension?).and_return(false)
               end
 
               it 'raises an error' do
@@ -463,7 +463,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         context 'when system is connected to SCC' do
           let(:system_payg) do
-            FactoryBot.create(:system, :payg, :with_system_information_az, :with_activated_base_product, instance_data: instance_data,
+            FactoryBot.create(:system, :payg, :with_system_information, :with_activated_base_product, instance_data: instance_data,
               system_token: new_system_token)
           end
           let(:product) do
