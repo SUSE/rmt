@@ -68,9 +68,10 @@ module SccProxy
         nil,
         params['instance_data']
       )
-      instance_id_key = INSTANCE_ID_KEYS[params['hwinfo']['cloud_provider'].downcase.to_sym]
-      iid = verification_provider.parse_instance_data
-      iid[instance_id_key]
+      csp = params['hwinfo']['cloud_provider'].downcase
+      instance_id_key = INSTANCE_ID_KEYS[csp.to_sym]
+      instance_data = verification_provider.parse_instance_data
+      csp.casecmp('microsoft').zero? ? instance_data['attestedData'][instance_id_key] : instance_data[instance_id_key]
     end
 
     def prepare_scc_announce_request(uri_path, auth, params)
