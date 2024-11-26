@@ -27,10 +27,6 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
   end
 
   def parse_instance_data
-    if @instance_data.include? '<instance_data/>'
-      return { 'instance_data' => 'parsed_instance_data' }
-    end
-
     if @instance_data.include?('SUSE')
       if @instance_data.include?('SAP')
         return { 'billingProducts' => nil, 'marketplaceProductCodes' => ['6789_SUSE_SAP'] }
@@ -48,6 +44,10 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
     }
     return true if (identifier.casecmp('sles').zero? && instance_billing_info[:billing_product] == SLES_PRODUCT_IDENTIFIER)
     return true if (identifier.casecmp('sles_sap').zero? && SLES4SAP_PRODUCT_IDENTIFIER.include?(instance_billing_info[:marketplace_code]))
+  end
+
+  def instance_identifier
+    'foo'
   end
 
   def allowed_extension?

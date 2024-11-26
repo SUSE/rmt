@@ -346,8 +346,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           before do
-            allow(InstanceVerification::Providers::Example).to receive(:new)
-              .and_return(plugin_double)
+            allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+            allow(plugin_double).to receive(:instance_identifier).and_return('foo')
             allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
