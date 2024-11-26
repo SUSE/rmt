@@ -71,7 +71,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
 
         context 'when verification provider returns false' do
-          # let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+          let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
           before do
             stub_request(:post, scc_activate_url)
@@ -80,8 +80,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               body: { error: 'Unexpected instance verification error has occurred' }.to_json,
               headers: {}
               )
-            # allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
-            # allow(plugin_double).to receive(:allowed_extension?).and_return(true)
+            allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
+            allow(plugin_double).to receive(:instance_valid?).and_return(false)
             post url, params: payload, headers: headers
           end
 
@@ -145,8 +146,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         context 'when verification provider returns false' do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double).at_least(:once)
             expect(plugin_double).to receive(:instance_valid?).and_return(false)
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload, headers: headers
           end
 
@@ -159,8 +161,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         context 'when verification provider raises an unhandled exception' do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double).at_least(:once)
             expect(plugin_double).to receive(:instance_valid?).and_raise('Custom plugin error')
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload, headers: headers
           end
 
@@ -175,9 +178,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double).at_least(:once)
             expect(plugin_double).to receive(:instance_valid?).and_raise(InstanceVerification::Exception, 'Custom plugin error')
-
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload, headers: headers
           end
 
@@ -231,9 +234,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
 
         before do
-          allow(InstanceVerification::Providers::Example).to receive(:new)
-            .with(nil, nil, nil, instance_data).and_return(plugin_double)
+          allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
           allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
+          allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
           FactoryBot.create(:subscription, product_classes: product_classes)
           stub_request(:post, scc_activate_url)
@@ -403,7 +406,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               .to_return(status: 201, body: scc_response_body, headers: {})
 
             expect(InstanceVerification).not_to receive(:update_cache).with('127.0.0.1', system.login, product.id)
-
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload_no_token, headers: headers
           end
 
@@ -415,6 +418,10 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     end
 
     context 'when the system is hybrid' do
+      before do
+        allow_any_instance_of(InstanceVerification::Providers::Example).to receive(:allowed_extension?).and_return(true)
+      end
+
       context "when system doesn't have hw_info" do
         let(:system) { FactoryBot.create(:system, :hybrid) }
 
@@ -448,7 +455,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         context 'when verification provider returns false' do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double).at_least(:once)
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             expect(plugin_double).to receive(:instance_valid?).and_return(false)
             post url, params: payload, headers: headers
           end
@@ -462,7 +470,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         context 'when verification provider raises an unhandled exception' do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double).at_least(:once)
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             expect(plugin_double).to receive(:instance_valid?).and_raise('Custom plugin error')
             post url, params: payload, headers: headers
           end
