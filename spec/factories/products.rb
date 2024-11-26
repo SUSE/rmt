@@ -57,6 +57,23 @@ FactoryBot.define do
       friendly_version { '15 SP3' }
     end
 
+    trait :product_sles_ltss do
+      identifier { 'SLES-LTSS' }
+      name { 'SUSE Linux Enterprise Server LTSS' }
+      description { 'SUSE Linux Enterprise offers a comprehensive suite of products...' }
+      shortname { 'SLES15-SP3-LTSS' }
+      former_identifier { 'SLES_LTSS' }
+      product_type { 'extension' }
+      product_class { 'LTSS' }
+      release_type { nil }
+      release_stage { 'released' }
+      version { '15.3' }
+      arch { 'x86_64' }
+      free { false }
+      cpe { 'cpe:/o:suse:sles:15:sp3' }
+      friendly_version { '15 SP3' }
+    end
+
     trait :product_sles_sap do
       identifier { 'SLES_SAP' }
       name { 'SUSE Linux Enterprise Server' }
