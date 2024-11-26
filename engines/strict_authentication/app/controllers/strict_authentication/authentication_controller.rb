@@ -45,7 +45,7 @@ module StrictAuthentication
         # SUMA 5.0 must have access to SUMA 4.3, 4.2 and so on
         micro = p.identifier.downcase.include?('sle-micro')
         instance_id_header = headers.fetch('X-Instance-Identifier', '').casecmp('suse-manager-server').zero?
-        instance_version_header = headers.fetch('X-Instance-Version', '') == '5.0'
+        instance_version_header = headers.fetch('X-Instance-Version', '0').split('.')[0] >= '5'
         manager || (micro && instance_id_header && instance_version_header)
       end
 
