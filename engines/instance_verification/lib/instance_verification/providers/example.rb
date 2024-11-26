@@ -49,4 +49,10 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
   def instance_identifier
     'foo'
   end
+
+  def allowed_extension?
+    # method to check if a product (extension) meet the criteria
+    # to be acivated on SCC or not, i.e. LTSS in Azure Basic VM
+    true
+  end
 end

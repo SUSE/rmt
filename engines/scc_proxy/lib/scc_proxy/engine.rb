@@ -294,6 +294,7 @@ module SccProxy
     end
   end
 
+  # rubocop:disable Metrics/ClassLength
   class Engine < ::Rails::Engine
     isolate_namespace SccProxy
     config.generators.api_only = true
@@ -359,6 +360,12 @@ module SccProxy
         protected
 
         def scc_activate_product
+          product_hash = @product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
+          unless InstanceVerification.provider.new(logger, request, product_hash, @system.instance_data).allowed_extension?
+            error = ActionController::TranslatedError.new(N_('Product not supported for this instance'))
+            error.status = :forbidden
+            raise error
+          end
           mode = find_mode
           unless mode.nil?
             # if system is byos or hybrid and there is a token
@@ -527,5 +534,6 @@ module SccProxy
       end
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end
 # rubocop:enable Metrics/ModuleLength
