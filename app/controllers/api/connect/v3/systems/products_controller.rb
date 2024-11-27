@@ -12,7 +12,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   end
 
   def show
-    if @product.identifier.casecmp('sles').zero?
+    if @product.identifier.casecmp?('sles')
       # if system has SLE Micro
       # it should access to SLES products
       sle_micro = @system.products.any? { |p| p.identifier.downcase.include?('sle-micro') }
