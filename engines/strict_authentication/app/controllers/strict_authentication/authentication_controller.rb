@@ -28,6 +28,8 @@ module StrictAuthentication
       all_allowed_paths(headers).find { |allowed_path| path =~ /^#{Regexp.escape(allowed_path)}/ }
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     def all_allowed_paths(headers)
       # return all versions of the same product and arch
       # (that the system has available with that subscription)
@@ -71,5 +73,7 @@ module StrictAuthentication
       end
       allowed_paths
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/PerceivedComplexity
   end
 end
