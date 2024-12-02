@@ -246,6 +246,33 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       end
     end
 
+    context 'when SLE Micro product is activated' do
+      let(:system) { FactoryBot.create(:system, :with_activated_product_sle_micro) }
+      let(:product) { FactoryBot.create(:product, :product_sles, :with_mirrored_repositories) }
+      let(:payload) do
+        {
+          identifier: product.identifier,
+          version: product.version,
+          arch: system.products.first.arch
+        }
+      end
+      let(:serialized_json) do
+        V3::ProductSerializer.new(
+          product,
+          base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
+        ).to_json
+      end
+
+      describe 'response' do
+        subject { response }
+
+        before { get url, headers: headers, params: payload }
+
+        its(:code) { is_expected.to eq('200') }
+        its(:body) { is_expected.to eq(serialized_json) }
+      end
+    end
+
     context 'with eula_url' do
       subject { response }
 

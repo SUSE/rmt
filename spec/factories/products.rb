@@ -90,6 +90,22 @@ FactoryBot.define do
       friendly_version { '15 SP3' }
     end
 
+    trait :product_sle_micro do
+      identifier { 'SLE-Micro' }
+      name { 'SUSE Linux Enterprise Server' }
+      description { 'SUSE Linux Enterprise offers a comprehensive suite of products...' }
+      shortname { 'SLES15-SP6' }
+      former_identifier { 'SUSE_SLES_MICRO' }
+      product_type { :base }
+      release_type { nil }
+      release_stage { 'released' }
+      version { '15.6' }
+      arch { 'x86_64' }
+      free { false }
+      cpe { 'cpe:/o:suse:sles_sap:15:sp6' }
+      friendly_version { '15 SP6' }
+    end
+
     trait :extension do
       product_type { 'extension' }
     end

@@ -28,6 +28,8 @@ module StrictAuthentication
       all_allowed_paths(headers).find { |allowed_path| path =~ /^#{Regexp.escape(allowed_path)}/ }
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     def all_allowed_paths(headers)
       # return all versions of the same product and arch
       # (that the system has available with that subscription)
@@ -37,6 +39,20 @@ module StrictAuthentication
       # to them or verify paths
       all_product_versions = @system.products.map { |p| Product.where(identifier: p.identifier, arch: p.arch) }.flatten
       allowed_paths = all_product_versions.map { |prod| prod.repositories.pluck(:local_path) }.flatten
+      # Allow SLE Micro to access all free SLES repositories
+      sle_micro = @system.products.any? { |p| p.identifier.downcase.include?('sle-micro') }
+      if sle_micro
+        system_products_archs = @system.products.pluck(:arch)
+        product_free_sles_modules_only = Product.where(
+          "(lower(identifier) like 'sle-module%' or lower(identifier) like 'packagehub')
+           and lower(identifier) not like '%sap%'
+           and arch = '#{system_products_archs.first}'
+           and free = 1"
+          )
+      end
+      same_arch = product_free_sles_modules_only.any? { |p| system_products_archs.include?(p.arch) } if product_free_sles_modules_only.present?
+      allowed_paths += product_free_sles_modules_only.map { |prod| prod.repositories.pluck(:local_path) }.flatten if same_arch
+
       # for the SUMa PAYG offers, RMT access verification code allows access
       # to the SUMa Client Tools channels and SUMa Proxy channels
       # when product is SUMA_Server and PAYG or SUMA_Server and used as SCC proxy
@@ -57,5 +73,7 @@ module StrictAuthentication
       end
       allowed_paths
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/PerceivedComplexity
   end
 end
