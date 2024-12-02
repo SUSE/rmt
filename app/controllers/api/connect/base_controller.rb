@@ -44,4 +44,12 @@ class Api::Connect::BaseController < ApplicationController
     end
   end
 
+  def system_token_header
+    headers[SYSTEM_TOKEN_HEADER] = @system.system_token
+  end
+
+  def refresh_system_token
+    @system.update(system_token: SecureRandom.uuid)
+    system_token_header
+  end
 end
