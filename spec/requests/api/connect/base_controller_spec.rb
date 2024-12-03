@@ -65,7 +65,6 @@ RSpec.describe Api::Connect::BaseController, type: :controller do
 
   shared_examples 'creates a duplicate system' do
     it 'creates a new System (duplicate)' do
-
       expect { get :service, params: { id: 1 } }
         .to change { System.get_by_credentials(system.login, system.password).count }
         .by(1)
@@ -182,7 +181,6 @@ RSpec.describe Api::Connect::BaseController, type: :controller do
 
         include_examples 'does not create a duplicate system'
         include_examples "does not update the old system's token"
-
       end
 
       context 'when the system has a token and the header is blank' do
