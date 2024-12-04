@@ -8,6 +8,9 @@ Wed Oct 30 09:01:32 UTC 2024 - Natnael Getahun <natnael.getahun@suse.com>
   * rmt-server-pubcloud:
     * Fix LTSS product verification (bsc#1230154)
     * Fix activations check when no product info is available (bsc#1230157)
+    * Fix Azure SCC connection (bsc#1233314)
+    * Deny access of Azure Basic type images to LTSS
+    * Allow SLE Micro system to access SLES repositories (bsc#1230419)
 
 -------------------------------------------------------------------
 Wed Aug 21 15:28:43 UTC 2024 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
