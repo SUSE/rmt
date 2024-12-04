@@ -24,7 +24,7 @@ class ApplicationController < ActionController::API
         # that supports this feature.
         if system_tokens_enabled? && request.headers.key?(SYSTEM_TOKEN_HEADER)
           @system.update(last_seen_at: Time.zone.now)
-          headers[SYSTEM_TOKEN_HEADER] = @system.system_token
+          system_token_header
         # only update last_seen_at each 3 minutes,
         # so that a system that calls SCC every second doesn't write + lock the database row
         elsif !@system.last_seen_at || @system.last_seen_at < 3.minutes.ago
