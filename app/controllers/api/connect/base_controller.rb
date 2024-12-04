@@ -49,7 +49,9 @@ class Api::Connect::BaseController < ApplicationController
   end
 
   def refresh_system_token
-    @system.update(system_token: SecureRandom.uuid)
-    system_token_header
+    if system_tokens_enabled?
+      @system.update(system_token: SecureRandom.uuid)
+      system_token_header
+    end
   end
 end
