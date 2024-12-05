@@ -21,7 +21,7 @@ Note: Look below for direction on publishing to registry.
           ```
       * Alternatively, if an OBS working copy is already checked out, update the working copy by running `osc up`
 2. Run `make dist` in your RMT working directory to build a tarball.
-3. Copy the files from the `package/obs` directory to the OBS working directory.
+3. Copy the files from the `package/obs` directory to the OBS working directory `systemsmanagement:SCC:RMT/rmt-server`.
 4. Examine the changes by running `osc status` and `osc diff`.
 5. Stage the changes by running `osc addremove`.
 6. Build the package with osc:
@@ -40,14 +40,6 @@ Note: Look below for direction on publishing to registry.
     git push --tags
     ```
 2. On github, submit a release for the tag. See https://help.github.com/en/articles/creating-releases for assistance.
-
-#### Helm chart update process
-
-RMT helm chart is found [here](https://github.com/SUSE/helm-charts.git). 
-
-Edit `rmt-helm/Chart.yaml` to update the chart version (`version`) and rmt-version (`appVersion`). The `BuildTag` version needs to be updated. Look at this example [pull-request](https://github.com/SUSE/helm-charts/pull/5) bumping the version.
-
-[Bruno Leon](mailto:bruno.leon@suse.com) is the maintainer and point of contact for rmt-helm.
 
 #### Submit Requests to openSUSE Factory and SLES
 
@@ -72,13 +64,7 @@ osc sr systemsmanagement:SCC:RMT rmt-server openSUSE:Factory
 
 ###### Get target codestreams where to submit
 
-To check out which codestreams the package is currently maintained in, run:
-
-```bash
-osc -A https://api.suse.de maintained rmt-server
-```
-
-For a more detailed view which target codestreams are in which state, check out: [Codestream overview](https://maintenance.suse.de/maintained/?package=rmt-server)
+To check out which codestreams RMT is currently maintained, see https://smelt.suse.de/maintained/?q=rmt-server.
 
 ###### Submit updates
 
@@ -112,8 +98,15 @@ You can check the status of your requests [here](https://build.opensuse.org/pack
 After your requests have been accepted, they still have to pass maintenance testing before they are released to customers. You can check their progress at [maintenance.suse.de](https://maintenance.suse.de/search/?q=rmt-server). If you still need help, the maintenance team can be reached at [maint-coord@suse.de](maint-coord@suse.de) or #maintenance on irc.suse.de.
 
 
-## Packaging and publishing to SUSE registry
+## Container image and publishing to SUSE registry
 
-SUSE registry houses the rmt-server docker image. The image is built on OBS/IBS, project for SLES 15sp4 based distributions can be found [here](https://build.opensuse.org/package/show/devel:BCI:SLE-15-SP4/rmt-server-image).
+SUSE registry houses the rmt-server docker image. The image is built automatically on OBS/IBS, and can be found [here](https://build.opensuse.org/package/show/devel:BCI:SLE-15-SP6/rmt-server-image). It is getting published here: `registry.suse.com/suse/rmt-server`.
 
-At the moment of writing, the publishing process has to be done manually. This can be achieved by reaching out to the Auto-Build team (only available internally).
+
+#### Helm chart update process
+
+RMT helm chart is defined [here](https://github.com/SUSE/helm-charts.git) and published at `registry.suse.com/suse/rmt-helm`.
+
+Edit `rmt-helm/Chart.yaml` to update the chart version (`version`) and rmt-version (`appVersion`). The `BuildTag` version needs to be updated. Look at this example [pull-request](https://github.com/SUSE/helm-charts/pull/5) bumping the version.
+
+Reach out to the BCI team (Dirk Mueller or `#proj-bci` slack channel) to trigger the release of the helm-chart.

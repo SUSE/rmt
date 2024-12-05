@@ -105,6 +105,7 @@ RSpec.describe AccessScope, type: :model do
     end
   end
 
+  # rubocop:disable RSpec/NestedGroups
   describe ".granted['actions']" do
     let(:product1) do
       product = FactoryBot.create(:product, :with_mirrored_repositories)
@@ -152,16 +153,16 @@ RSpec.describe AccessScope, type: :model do
             type: 'a',
             name: 'suse/sles/*',
             actions: ['pull']
-            )
+          )
         end
 
         it 'returns default auth actions (no free repos included)' do
           yaml_string = access_policy_content
           data = YAML.safe_load yaml_string
-          data[product1.product_class] = 'suse/**'
+          data[product1.product_class] = 'suse/sles/**'
           File.write('engines/registry/spec/data/access_policy_yaml.yml', YAML.dump(data))
           allow_any_instance_of(RegistryCatalogService).to receive(:repos).and_return(['suse/sles/super_repo'])
-          allow(File).to receive(:read).and_return(access_policy_content)
+          allow(File).to receive(:read).and_return(File.read('engines/registry/spec/data/access_policy_yaml.yml'))
           possible_access = access_scope.granted(client: client)
 
           expect(possible_access).to eq(
@@ -171,7 +172,77 @@ RSpec.describe AccessScope, type: :model do
               'class' => nil,
               'name' => 'suse/sles/*'
             }
+          )
+        end
+      end
+
+      context 'when product is LTSS' do
+        subject(:access_scope) do
+          described_class.new(
+            type: 'a',
+            name: 'suse/ltss/**',
+            actions: ['pull']
             )
+        end
+
+        let(:system) do
+          system = FactoryBot.create(:system, :hybrid)
+          system.activations << [
+            FactoryBot.create(:activation, system: system, service: product1.service),
+            FactoryBot.create(:activation, system: system, service: product2.service)
+          ]
+          system
+        end
+        let(:product1) do
+          product = FactoryBot.create(:product, :with_mirrored_repositories, :extension)
+          product.repositories.where(enabled: false).update(mirroring_enabled: false)
+          product.update(product_class: 'SLES15-SP4-LTSS-X86')
+          product
+        end
+
+        context 'when activation expired' do
+          let(:scc_response) do
+            {
+              is_active: false,
+              message: 'You shall not have access to those repos !'
+            }
+          end
+          let(:header_expected) do
+            { 'HTTP_AUTHORIZATION' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) }
+          end
+
+          before do
+            allow(SccProxy).to receive(:scc_check_subscription_expiration)
+              .with(
+                header_expected,
+                system,
+                'SLES15-SP4-LTSS-X86'
+            ).and_return(scc_response)
+          end
+
+          it 'returns no actions allowed' do
+            expect(SccProxy).to receive(:scc_check_subscription_expiration).with(
+              header_expected,
+              system,
+              'SLES15-SP4-LTSS-X86'
+            )
+            yaml_string = access_policy_content
+            data = YAML.safe_load yaml_string
+            data[product1.product_class] = 'suse/ltss/**'
+            File.write('engines/registry/spec/data/access_policy_yaml.yml', YAML.dump(data))
+            allow_any_instance_of(RegistryCatalogService).to receive(:repos).and_return(['suse/ltss/ltss_repo'])
+            allow(File).to receive(:read).and_return(File.read('engines/registry/spec/data/access_policy_yaml.yml'))
+            possible_access = access_scope.granted(client: client)
+
+            expect(possible_access).to eq(
+              {
+                'type' => 'a',
+                'actions' => [],
+                'class' => nil,
+                'name' => 'suse/ltss/**'
+              }
+            )
+          end
         end
       end
 
@@ -226,4 +297,5 @@ RSpec.describe AccessScope, type: :model do
       end
     end
   end
+  # rubocop:enable RSpec/NestedGroups
 end

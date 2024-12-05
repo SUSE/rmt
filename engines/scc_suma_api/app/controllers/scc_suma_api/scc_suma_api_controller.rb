@@ -48,7 +48,9 @@ module SccSumaApi
         )
       # check auth for registered BYOS systems
       iid = verification_provider.parse_instance_data
-      systems_found = System.find_by(system_token: iid['instanceId'], proxy_byos: true)
+      # at this point, we do not know nor is available the login information of the system
+      # so querying the instance ID, which is a unique value, to fetch the system
+      systems_found = System.find_by(system_token: iid['instanceId'], proxy_byos_mode: :byos)
 
       raise 'Unspecified error' unless systems_found.present? || verification_provider.instance_valid?
     end

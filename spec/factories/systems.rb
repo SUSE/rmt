@@ -10,6 +10,14 @@ FactoryBot.define do
       virtual { false }
     end
 
+    trait :payg do
+      proxy_byos_mode { :payg }
+    end
+
+    trait :hybrid do
+      proxy_byos_mode { :hybrid }
+    end
+
     trait :synced do
       sequence(:scc_system_id) { |n| n }
 
@@ -19,7 +27,7 @@ FactoryBot.define do
     end
 
     trait :byos do
-      proxy_byos { true }
+      proxy_byos_mode { :byos }
     end
 
     trait :with_activated_base_product do
@@ -41,6 +49,17 @@ FactoryBot.define do
     trait :with_activated_product do
       transient do
         product { create(:product, :with_mirrored_repositories) }
+        subscription { nil }
+      end
+
+      after :create do |system, evaluator|
+        create(:activation, system: system, service: evaluator.product.service, subscription: evaluator.subscription)
+      end
+    end
+
+    trait :with_activated_product_sle_micro do
+      transient do
+        product { create(:product, :product_sle_micro, :with_mirrored_repositories) }
         subscription { nil }
       end
 

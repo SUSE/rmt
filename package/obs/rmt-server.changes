@@ -1,7 +1,39 @@
 -------------------------------------------------------------------
-Fri Jun 28 23:55:02 CEST 2024 - zpetrova@suse.de
+Wed Oct 30 09:01:32 UTC 2024 - Natnael Getahun <natnael.getahun@suse.com>
 
-- fixes for RES7-LTSS and OL7-LTSS clients
+- Version 2.20 (unreleased)
+  * RMT packaging: don't overwrite custom sync/mirror timer config on package update
+  * Extend column size for repository and file paths (bsc#1229152)
+  * Forward suseconnect client user-agents to SCC
+  * rmt-server-pubcloud:
+    * Fix LTSS product verification (bsc#1230154)
+    * Fix activations check when no product info is available (bsc#1230157)
+    * Fix Azure SCC connection (bsc#1233314)
+    * Deny access of Azure Basic type images to LTSS
+    * Allow SLE Micro system to access SLES repositories (bsc#1230419)
+
+-------------------------------------------------------------------
+Wed Aug 21 15:28:43 UTC 2024 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Version 2.19
+  * Fix for mirroring products that contain special characters (eg.: '$') in their path
+  * Fix for packages with path longer 255 characters (bsc#1229152)
+  * rmt-server-pubcloud:
+    * Support registration of extensions in BYOS mode on top of a PAYG system (hybrid mode) (jsc#PCT-400)
+    * Validate repository and registy access for hybrid systems
+
+-------------------------------------------------------------------
+Mon Jul  8 09:59:59 UTC 2024 - Thomas Schmidt <tschmidt@suse.com>
+
+- Include new script to fix yum-utils issue (jsc#SLL-369)
+
+-------------------------------------------------------------------
+Mon July 1 12:42:34 UTC 2024 - Adnilson Delgado <adnilson.delgado@suse.com>
+
+- Version 2.18
+  * Move temporary storage of downloaded files to the repo directory to avoid filling up /tmp partition. (gh:#1137)
+  * Fixes for RES7-LTSS and OL7-LTSS clients
+  * Instance Verification: re-setting the repository and registry cache path to the right value; update the cache scrubber paths
 
 -------------------------------------------------------------------
 Thu April 18 09:27:00 UTC 2024 - Adnilson Delgado <adnilson.delgado@suse.com>

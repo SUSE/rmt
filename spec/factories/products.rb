@@ -9,7 +9,7 @@ FactoryBot.define do
     product_type { :base }
     sequence(:description) { FFaker::Lorem.sentence }
     release_type { nil }
-    version { 42 }
+    version { 15.3 }
     arch { 'x86_64' }
     release_stage { 'released' }
 
@@ -57,6 +57,23 @@ FactoryBot.define do
       friendly_version { '15 SP3' }
     end
 
+    trait :product_sles_ltss do
+      identifier { 'SLES-LTSS' }
+      name { 'SUSE Linux Enterprise Server LTSS' }
+      description { 'SUSE Linux Enterprise offers a comprehensive suite of products...' }
+      shortname { 'SLES15-SP3-LTSS' }
+      former_identifier { 'SLES_LTSS' }
+      product_type { 'extension' }
+      product_class { 'LTSS' }
+      release_type { nil }
+      release_stage { 'released' }
+      version { '15.3' }
+      arch { 'x86_64' }
+      free { false }
+      cpe { 'cpe:/o:suse:sles:15:sp3' }
+      friendly_version { '15 SP3' }
+    end
+
     trait :product_sles_sap do
       identifier { 'SLES_SAP' }
       name { 'SUSE Linux Enterprise Server' }
@@ -71,6 +88,22 @@ FactoryBot.define do
       free { false }
       cpe { 'cpe:/o:suse:sles_sap:15:sp3' }
       friendly_version { '15 SP3' }
+    end
+
+    trait :product_sle_micro do
+      identifier { 'SLE-Micro' }
+      name { 'SUSE Linux Enterprise Server' }
+      description { 'SUSE Linux Enterprise offers a comprehensive suite of products...' }
+      shortname { 'SLES15-SP6' }
+      former_identifier { 'SUSE_SLES_MICRO' }
+      product_type { :base }
+      release_type { nil }
+      release_stage { 'released' }
+      version { '15.6' }
+      arch { 'x86_64' }
+      free { false }
+      cpe { 'cpe:/o:suse:sles_sap:15:sp6' }
+      friendly_version { '15 SP6' }
     end
 
     trait :extension do

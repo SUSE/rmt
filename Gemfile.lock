@@ -30,13 +30,15 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
-    addressable (2.8.6)
-      public_suffix (>= 2.0.2, < 6.0)
+    addressable (2.8.7)
+      public_suffix (>= 2.0.2, < 7.0)
+    anyway_config (2.6.4)
+      ruby-next-core (~> 1.0)
     ast (2.4.2)
     awesome_print (1.9.2)
     base32 (0.3.4)
     base64 (0.2.0)
-    bigdecimal (3.1.6)
+    bigdecimal (3.1.8)
     builder (3.2.4)
     byebug (11.1.3)
     bzip2-ffi (1.1.1)
@@ -104,7 +106,8 @@ GEM
       factory_bot (~> 6.2.0)
       railties (>= 5.0.0)
     fakefs (1.8.0)
-    fast_gettext (2.3.0)
+    fast_gettext (2.4.0)
+      prime
     ffaker (2.21.0)
     ffi (1.16.3)
     formatador (0.2.5)
@@ -118,7 +121,7 @@ GEM
       prime
       racc
       text (>= 1.3.0)
-    gettext_i18n_rails (1.12.0)
+    gettext_i18n_rails (1.13.0)
       fast_gettext (>= 0.9.0)
     gettext_test_log (0.2.1)
     guard (2.16.2)
@@ -135,13 +138,13 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
-    hashdiff (1.1.0)
+    hashdiff (1.1.1)
     hpricot (0.8.6)
     i18n (1.14.5)
       concurrent-ruby (~> 1.0)
     json (2.3.1)
     jsonapi-renderer (0.2.2)
-    jwt (2.8.1)
+    jwt (2.9.3)
       base64
     listen (3.6.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -151,7 +154,7 @@ GEM
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
     lumberjack (1.2.8)
-    memory_profiler (1.0.1)
+    memory_profiler (1.0.2)
     method_source (1.1.0)
     mini_portile2 (2.6.1)
     minitest (5.15.0)
@@ -159,7 +162,7 @@ GEM
     mustache (1.1.1)
     mysql2 (0.5.6)
     nenv (0.3.0)
-    nio4r (2.7.0)
+    nio4r (2.7.3)
     nokogiri (1.12.5)
       mini_portile2 (~> 2.6.1)
       racc (~> 1.4)
@@ -172,11 +175,13 @@ GEM
     prime (0.1.2)
       forwardable
       singleton
+    prometheus-client (4.2.3)
+      base64
     pry (0.14.0)
       coderay (~> 1.1)
       method_source (~> 1.0)
     public_suffix (4.0.7)
-    puma (5.6.8)
+    puma (5.6.9)
       nio4r (~> 2.0)
     racc (1.8.0)
     rack (2.2.9)
@@ -208,8 +213,7 @@ GEM
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
-    rexml (3.2.8)
-      strscan (>= 3.0.9)
+    rexml (3.3.9)
     ronn (0.7.3)
       hpricot (>= 0.8.2)
       mustache (>= 0.7.0)
@@ -266,6 +270,7 @@ GEM
       rubocop (~> 1.19)
     rubocop-thread_safety (0.4.4)
       rubocop (>= 0.53.0)
+    ruby-next-core (1.0.3)
     ruby-progressbar (1.11.0)
     ruby_parser (3.19.2)
       sexp_processor (~> 4.16)
@@ -295,7 +300,6 @@ GEM
     sqlite3 (1.4.4)
     strong_migrations (0.7.9)
       activerecord (>= 5)
-    strscan (3.1.0)
     sync (0.5.0)
     term-ansicolor (1.7.1)
       tins (~> 1.0)
@@ -303,7 +307,7 @@ GEM
       unicode-display_width (>= 1.1.1, < 3)
     text (1.3.1)
     thor (1.2.2)
-    timecop (0.9.9)
+    timecop (0.9.10)
     tins (1.26.0)
       sync
     typhoeus (1.4.1)
@@ -316,10 +320,27 @@ GEM
       activesupport (>= 3)
       railties (>= 3)
       yard (~> 0.9.20)
-    webmock (3.23.0)
+    webmock (3.24.0)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
+    yabeda (0.13.1)
+      anyway_config (>= 1.0, < 3)
+      concurrent-ruby
+      dry-initializer
+    yabeda-prometheus (0.9.1)
+      prometheus-client (>= 3.0, < 5.0)
+      rack
+      yabeda (~> 0.10)
+    yabeda-puma-plugin (0.7.1)
+      json
+      puma
+      yabeda (~> 0.5)
+    yabeda-rails (0.9.0)
+      activesupport
+      anyway_config (>= 1.3, < 3)
+      railties
+      yabeda (~> 0.8)
     yard (0.9.35)
     zeitwerk (2.6.15)
     zstd-ruby (1.5.6.1)
@@ -350,7 +371,7 @@ DEPENDENCIES
   guard-rspec
   jwt (~> 2.1)
   listen (>= 3.0.5, <= 3.6.0)
-  memory_profiler
+  memory_profiler (~> 1.0.2)
   minitest (~> 5.15.0)
   mysql2 (~> 0.5.3)
   nokogiri (< 1.13)
@@ -381,6 +402,10 @@ DEPENDENCIES
   vcr (~> 6.0)
   versionist
   webmock
+  yabeda
+  yabeda-prometheus
+  yabeda-puma-plugin
+  yabeda-rails
 
 BUNDLED WITH
    1.17.3

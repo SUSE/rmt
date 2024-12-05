@@ -32,6 +32,12 @@ gem 'repomd_parser', '~> 1.1.0'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
 
+# Prometheus Exporter:
+gem 'yabeda'
+gem 'yabeda-rails'
+gem 'yabeda-puma-plugin'
+gem 'yabeda-prometheus'
+
 gem 'strong_migrations'
 
 group :development, :test do
@@ -43,7 +49,7 @@ group :development, :test do
   gem 'gettext', require: false # needed for gettext_i18n_rails tasks
   gem 'ruby_parser', '< 3.20', require: false # needed for gettext_i18n_rails tasks, Locked because of Ruby >= 2.6 dependency
   gem 'gettext_test_log'
-  gem 'memory_profiler'
+  gem 'memory_profiler', '~> 1.0.2' # locked because 1.1.0 requires ruby version >= 3.1.0
   gem 'awesome_print'
 end
 

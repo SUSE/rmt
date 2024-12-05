@@ -1,4 +1,11 @@
 class System < ApplicationRecord
+  # This value has meaning/relevance only used in public cloud scenarios
+  # This value indicates that the system is using
+  # NOT_APPLICABLE (systems outside the public cloud),
+  # PAYG (pay as you go),
+  # BYOS (bring your own subscription) or
+  # a mix of both (hybrid).
+  enum proxy_byos_mode: { not_applicable: 0, payg: 1, byos: 2, hybrid: 3 }
 
   after_initialize :init
 
@@ -30,10 +37,17 @@ class System < ApplicationRecord
   end
 
   def cloud_provider
+    system_information_hash.fetch(:cloud_provider, nil)
+  end
+
+  def system_information_hash
     # system_information is checked for valid JSON on save. It is safe
     # to assume the structure is valid.
-    info = JSON.parse(system_information).symbolize_keys
-    info.fetch(:cloud_provider, nil)
+    JSON.parse(system_information || '{}').symbolize_keys
+  end
+
+  def set_system_information(key, value)
+    update(system_information: system_information_hash.update(key => value).to_json)
   end
 
   # Generate secure token for System password

@@ -12,7 +12,13 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   end
 
   def show
-    if @system.products.include? @product
+    if @product.identifier.casecmp?('sles')
+      # if system has SLE Micro
+      # it should access to SLES products
+      sle_micro = @system.products.any? { |p| p.identifier.downcase.include?('sle-micro') }
+      sle_micro_same_arch = @system.products.pluck(:arch).include?(@product.arch) if sle_micro
+    end
+    if @system.products.include?(@product) || sle_micro_same_arch
       respond_with(
         @product,
         serializer: ::V3::ProductSerializer,
@@ -108,7 +114,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
     # in BYOS mode, we rely on the activation being performed in
     # `engines/scc_proxy/lib/scc_proxy/engine.rb` and don't need further checks here
-    return activation if @system.proxy_byos
+    return activation if @system.byos?
 
     if @subscription.present?
       activation.subscription = @subscription
@@ -123,8 +129,10 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   end
 
   def load_subscription
-    # Find subscription by regcode if provided, otherwise use the first subscription (bsc#1220109)
-    if params[:token].present? && !@system.proxy_byos
+    # Find subscription by regcode if provided and not a public cloud system,
+    # otherwise check if there's already an activation with a matching
+    # subscription (for migrations, bsc#1220109)
+    if params[:token].present? && @system.not_applicable?
       @subscription = Subscription.find_by(regcode: params[:token])
       unless @subscription
         raise ActionController::TranslatedError.new(N_('No subscription with this Registration Code found'))

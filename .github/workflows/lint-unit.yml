@@ -77,17 +77,17 @@ jobs:
 
       - name: Prepare database
         run: |
-          bundle exec rails db:migrate
+          bundle exec rails db:drop db:create db:migrate
 
       - name: Run core tests
         run: |
-          bundle exec rspec --format documentation
+          bundle exec rake test:core
 
       - name: Run core tests with sqlite
         run: |
           sed -i 's/adapter: mysql2/adapter: sqlite3/' config/rmt.yml
-          bundle exec rspec --format documentation
-
+          bundle exec rake test:core
+          
       - name: Run PubCloud engines tests
         run: |
           bundle exec rake test:engines

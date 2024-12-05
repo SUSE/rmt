@@ -6,7 +6,7 @@ module ZypperAuth
       Thread.current[:logger]
     end
 
-    def verify_instance(request, logger, system)
+    def verify_instance(request, logger, system, params_product_id = nil)
       return false unless request.headers['X-Instance-Data']
 
       instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
@@ -31,31 +31,15 @@ module ZypperAuth
       )
 
       is_valid = verification_provider.instance_valid?
+      return false if is_valid && system.hybrid? && !handle_scc_subscription(request, system, verification_provider, params_product_id)
+
       # update repository and registry cache
       InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id)
       is_valid
     rescue InstanceVerification::Exception => e
-      message = ''
-      if system.proxy_byos
-        result = SccProxy.scc_check_subscription_expiration(request.headers, system.login, system.system_token, logger)
-        if result[:is_active]
-          InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id)
-          return true
-        end
+      return handle_scc_subscription(request, system, verification_provider) if system.byos?
 
-        message = result[:message]
-      else
-        message = e.message
-      end
-      details = [ "System login: #{system.login}", "IP: #{request.remote_ip}" ]
-      details << "Instance ID: #{verification_provider.instance_id}" if verification_provider.instance_id
-      details << "Billing info: #{verification_provider.instance_billing_info}" if verification_provider.instance_billing_info
-
-      ZypperAuth.auth_logger.info <<~LOGMSG
-        Access to the repos denied: #{message}
-        #{details.join(', ')}
-      LOGMSG
-
+      ZypperAuth.zypper_auth_message(request, system, verification_provider, e.message)
       false
     rescue StandardError => e
       logger.error('Unexpected instance verification error has occurred:')
@@ -64,6 +48,26 @@ module ZypperAuth
       logger.error('Backtrace:')
       logger.error(e.backtrace)
       false
+    end
+
+    def handle_scc_subscription(request, system, verification_provider, params_product_id = nil)
+      product_class = Product.find_by(id: params_product_id).product_class if params_product_id.present?
+      result = SccProxy.scc_check_subscription_expiration(request.headers, system, product_class)
+      return true if result[:is_active]
+
+      ZypperAuth.zypper_auth_message(request, system, verification_provider, result[:message])
+      false
+    end
+
+    def zypper_auth_message(request, system, verification_provider, message)
+      details = [ "System login: #{system.login}", "IP: #{request.remote_ip}" ]
+      details << "Instance ID: #{verification_provider.instance_id}" if verification_provider.instance_id
+      details << "Billing info: #{verification_provider.instance_billing_info}" if verification_provider.instance_billing_info
+
+      ZypperAuth.auth_logger.info <<~LOGMSG
+        Access to the repos denied: #{message}
+        #{details.join(', ')}
+      LOGMSG
     end
   end
 
@@ -126,7 +130,7 @@ module ZypperAuth
         # additional validation for zypper service XML controller
         before_action :verify_instance
         def verify_instance
-          unless ZypperAuth.verify_instance(request, logger, @system)
+          unless ZypperAuth.verify_instance(request, logger, @system, params.fetch('id', nil))
             render(xml: { error: 'Instance verification failed' }, status: 403)
           end
         end
