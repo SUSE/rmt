@@ -5,7 +5,7 @@ module InstanceVerification
       # belongs to a PAYG or BYOS instance
       verification_provider = InstanceVerification.provider.new(
         logger,
-        nil,
+        request,
         nil,
         params[:metadata]
       )
