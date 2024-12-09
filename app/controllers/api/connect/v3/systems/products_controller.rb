@@ -5,6 +5,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   before_action :check_product_service_and_repositories, only: %i[show activate]
   before_action :load_subscription, only: %i[activate upgrade]
   before_action :check_base_product_dependencies, only: %i[activate upgrade show]
+  after_action :refresh_system_token, only: %i[activate upgrade], if: -> { request.headers.key?(SYSTEM_TOKEN_HEADER) }
 
   def activate
     create_product_activation
