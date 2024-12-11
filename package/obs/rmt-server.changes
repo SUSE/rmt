@@ -11,6 +11,7 @@ Wed Oct 30 09:01:32 UTC 2024 - Natnael Getahun <natnael.getahun@suse.com>
     * Fix Azure SCC connection (bsc#1233314)
     * Deny access of Azure Basic type images to LTSS
     * Allow SLE Micro system to access SLES repositories (bsc#1230419)
+   * Skip system token rotation in read-only APIs
 
 -------------------------------------------------------------------
 Wed Aug 21 15:28:43 UTC 2024 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
