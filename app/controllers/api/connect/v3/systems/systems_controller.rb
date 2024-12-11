@@ -1,6 +1,7 @@
 class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseController
 
   before_action :authenticate_system
+  after_action :refresh_system_token, only: [:update], if: -> { request.headers.key?(SYSTEM_TOKEN_HEADER) }
 
   def update
     if params[:online_at].present?

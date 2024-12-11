@@ -125,6 +125,25 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
         expect(system.reload.system_information_hash[:user_agent]).to be_nil
       end
     end
+
+    context 'response header should contain token' do
+      let(:headers) { auth_header.merge('System-Token': 'existing-token') }
+
+      it 'contains refreshed token in response' do
+        update_action
+        expect(response.headers).to include('System-Token')
+        expect(response.headers['System-Token']).not_to equal('existing-token')
+      end
+    end
+
+    context 'response header should not contain token' do
+      let(:headers) { auth_header }
+
+      it 'contains refreshed token in response' do
+        update_action
+        expect(response.headers).not_to include('System-Token')
+      end
+    end
   end
 
   describe '#deregister' do
