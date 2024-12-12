@@ -238,7 +238,7 @@ describe RMT::SCC do
         described_class.new.sync
       end
 
-      it 'removes existing predecessor associations' do
+      it 'removes existing predecessor associations', :skip_sqlite do
         expect { ProductPredecessorAssociation.find(existing_association.id) }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
