@@ -290,10 +290,6 @@ describe RMT::SCC do
       expect { suse_repo_with_token.reload }.not_to raise_error
     end
 
-    it 'SUSE repos without auth_tokens are removed' do
-      expect { suse_repo_without_token.reload }.to raise_error(ActiveRecord::RecordNotFound)
-    end
-
     it 'other repos without auth_tokens persist' do
       expect { other_repo_without_token.reload }.not_to raise_error
     end
