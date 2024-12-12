@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'rmt/cli/smt_importer'
 
-describe RMT::CLI::SMTImporter do
+describe RMT::CLI::SMTImporter, :skip_sqlite do
   let(:data_dir) { File.join(Dir.pwd, 'spec/fixtures/files/csv') }
   let(:no_systems) { false }
   let(:importer) { described_class.new(data_dir, no_systems) }
