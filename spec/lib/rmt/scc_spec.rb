@@ -265,6 +265,16 @@ describe RMT::SCC do
         installer_updates: true
       )
     end
+    let!(:custom_repo) do
+      FactoryBot.create(
+        :repository,
+        :with_products,
+        auth_token: nil,
+        external_url: 'http://customer.com/stuff.suse.com/x86',
+        installer_updates: false,
+        scc_id: nil
+      )
+    end
 
     before do
       # to prevent 'does not implement' verifying doubles error
@@ -297,6 +307,10 @@ describe RMT::SCC do
 
     it 'other repos without auth_tokens persist' do
       expect { other_repo_without_token.reload }.not_to raise_error
+    end
+
+    it 'custom repos without auth_tokens persist' do
+      expect { custom_repo.reload }.not_to raise_error
     end
   end
 
