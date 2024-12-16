@@ -261,7 +261,8 @@ describe RMT::SCC do
         :repository,
         :with_products,
         auth_token: nil,
-        external_url: 'https://example.com/repos/not/updates.suse.com/'
+        external_url: 'https://installer-updates.suse.com/repos/not/updates',
+        installer_updates: true
       )
     end
 
@@ -288,6 +289,10 @@ describe RMT::SCC do
 
     it 'SUSE repos with auth_tokens persist' do
       expect { suse_repo_with_token.reload }.not_to raise_error
+    end
+
+    it 'SUSE repos without auth_tokens are removed' do
+      expect { suse_repo_without_token.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it 'other repos without auth_tokens persist' do

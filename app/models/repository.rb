@@ -21,6 +21,11 @@ class Repository < ApplicationRecord
   before_destroy :ensure_destroy_possible
 
   class << self
+
+    def remove_suse_repos_without_tokens!
+      where(auth_token: nil).where("external_url LIKE '%.suse.com%'").where(installer_updates: 0).delete_all
+    end
+
     # Mangles remote repo URL to make a nicer local path, see specs for examples
     def make_local_path(url)
       uri = URI(url)
