@@ -1,6 +1,7 @@
 require 'English'
 require 'fileutils'
 require 'tmpdir'
+require 'shellwords'
 
 class RMT::GPG
   class RMT::GPG::Exception < RuntimeError
@@ -28,7 +29,8 @@ class RMT::GPG
   protected
 
   def run_import_key
-    cmd = "gpg --homedir #{@tmpdir} --no-default-keyring --keyring #{@keyring} --import #{@key_file} 2>&1"
+    cmd = "gpg --homedir #{@tmpdir.shellescape} --no-default-keyring " \
+      "--keyring #{@keyring.shellescape} --import #{@key_file.shellescape} 2>&1"
     out = `#{cmd}`
 
     if $CHILD_STATUS.exitstatus != 0
@@ -39,7 +41,8 @@ class RMT::GPG
   end
 
   def run_verify_signature
-    cmd = "gpg --homedir #{@tmpdir} --no-default-keyring --keyring #{@keyring} --verify #{@signature_file} #{@metadata_file} 2>&1"
+    cmd = "gpg --homedir #{@tmpdir.shellescape} --no-default-keyring " \
+      "--keyring #{@keyring.shellescape} --verify #{@signature_file.shellescape} #{@metadata_file.shellescape} 2>&1"
     out = `#{cmd}`
 
     if $CHILD_STATUS.exitstatus != 0

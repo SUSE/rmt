@@ -57,6 +57,17 @@ FactoryBot.define do
       end
     end
 
+    trait :with_activated_product_sle_micro do
+      transient do
+        product { create(:product, :product_sle_micro, :with_mirrored_repositories) }
+        subscription { nil }
+      end
+
+      after :create do |system, evaluator|
+        create(:activation, system: system, service: evaluator.product.service, subscription: evaluator.subscription)
+      end
+    end
+
     trait :with_system_information do
       system_information do
         {

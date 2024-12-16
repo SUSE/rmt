@@ -23,6 +23,14 @@ describe RMT::GPG do
       end
     end
 
+    context 'when the path contains characters that need to get escaped' do
+      it 'returns true' do
+        allow(Dir).to receive(:mktmpdir).with('rmt-mirror-gpg')
+          .and_return(Dir.mktmpdir('rmt-mirr$r-gpg'))
+        expect(verifier.verify_signature).to eq(true)
+      end
+    end
+
     context 'when the GPG key is invalid' do
       let(:key_file) { File.join(file_fixture('gpg'), 'bad.xml.key') }
 

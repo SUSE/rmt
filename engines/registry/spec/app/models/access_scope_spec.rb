@@ -194,7 +194,7 @@ RSpec.describe AccessScope, type: :model do
           system
         end
         let(:product1) do
-          product = FactoryBot.create(:product, :with_mirrored_repositories)
+          product = FactoryBot.create(:product, :with_mirrored_repositories, :extension)
           product.repositories.where(enabled: false).update(mirroring_enabled: false)
           product.update(product_class: 'SLES15-SP4-LTSS-X86')
           product
@@ -207,12 +207,25 @@ RSpec.describe AccessScope, type: :model do
               message: 'You shall not have access to those repos !'
             }
           end
+          let(:header_expected) do
+            { 'HTTP_AUTHORIZATION' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) }
+          end
 
           before do
-            allow(SccProxy).to receive(:scc_check_subscription_expiration).and_return(scc_response)
+            allow(SccProxy).to receive(:scc_check_subscription_expiration)
+              .with(
+                header_expected,
+                system,
+                'SLES15-SP4-LTSS-X86'
+            ).and_return(scc_response)
           end
 
           it 'returns no actions allowed' do
+            expect(SccProxy).to receive(:scc_check_subscription_expiration).with(
+              header_expected,
+              system,
+              'SLES15-SP4-LTSS-X86'
+            )
             yaml_string = access_policy_content
             data = YAML.safe_load yaml_string
             data[product1.product_class] = 'suse/ltss/**'

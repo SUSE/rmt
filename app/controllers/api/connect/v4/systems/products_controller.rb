@@ -1,5 +1,6 @@
 class Api::Connect::V4::Systems::ProductsController < Api::Connect::V3::Systems::ProductsController
 
+  after_action :refresh_system_token, only: %i[activate upgrade synchronize destroy], if: -> { request.headers.key?(SYSTEM_TOKEN_HEADER) }
   def destroy
     if @product.base?
       raise ActionController::TranslatedError.new(N_('The product "%s" is a base product and cannot be deactivated'), @product.name)

@@ -21,7 +21,7 @@ Note: Look below for direction on publishing to registry.
           ```
       * Alternatively, if an OBS working copy is already checked out, update the working copy by running `osc up`
 2. Run `make dist` in your RMT working directory to build a tarball.
-3. Copy the files from the `package/obs` directory to the OBS working directory.
+3. Copy the files from the `package/obs` directory to the OBS working directory `systemsmanagement:SCC:RMT/rmt-server`.
 4. Examine the changes by running `osc status` and `osc diff`.
 5. Stage the changes by running `osc addremove`.
 6. Build the package with osc:
@@ -109,4 +109,4 @@ RMT helm chart is defined [here](https://github.com/SUSE/helm-charts.git) and pu
 
 Edit `rmt-helm/Chart.yaml` to update the chart version (`version`) and rmt-version (`appVersion`). The `BuildTag` version needs to be updated. Look at this example [pull-request](https://github.com/SUSE/helm-charts/pull/5) bumping the version.
 
-Please reach out to the BCI team if you have build related questions.
+Reach out to the BCI team (Dirk Mueller or `#proj-bci` slack channel) to trigger the release of the helm-chart.

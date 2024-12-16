@@ -69,5 +69,28 @@ RSpec.describe Api::Connect::V3::Systems::ActivationsController do
         expect(system.scc_synced_at).to be_nil
       end
     end
+
+    context 'system token header' do
+      context 'when system token header is present in request' do
+        let(:token_headers) do
+          authenticated_headers.merge({ 'System-Token' => 'some_token' })
+        end
+
+        it 'sets system token in response headers' do
+          get url, headers: token_headers
+          expect(response.code).to eq '200'
+          expect(response.headers).to include('System-Token')
+          expect(response.headers['System-Token']).not_to be_nil
+          expect(response.headers['System-Token']).not_to be_empty
+        end
+
+        it 'does not set system token header if no system token header in request' do
+          get url, headers: authenticated_headers
+
+          expect(response.code).to eq '200'
+          expect(response.headers).not_to include('System-Token')
+        end
+      end
+    end
   end
 end

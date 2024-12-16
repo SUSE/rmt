@@ -55,15 +55,6 @@ RSpec.describe Api::Connect::BaseController, type: :controller do
     end
   end
 
-  shared_examples 'updates the system token' do
-    it 'updates the system token' do
-      allow(SecureRandom).to receive(:uuid).and_return(new_system_token)
-
-      expect { get :service, params: { id: 1 } }
-        .to change { system.reload.system_token }
-        .from(current_system_token).to(new_system_token)
-    end
-  end
 
   shared_examples "does not update the old system's token" do
     it 'does not update the system token' do
@@ -74,8 +65,6 @@ RSpec.describe Api::Connect::BaseController, type: :controller do
 
   shared_examples 'creates a duplicate system' do
     it 'creates a new System (duplicate)' do
-      allow(SecureRandom).to receive(:uuid).and_return(new_system_token)
-
       expect { get :service, params: { id: 1 } }
         .to change { System.get_by_credentials(system.login, system.password).count }
         .by(1)
@@ -85,7 +74,6 @@ RSpec.describe Api::Connect::BaseController, type: :controller do
       expect(duplicate_system).not_to eq(system)
       expect(duplicate_system.activations.count).to eq(system.activations.count)
       expect(duplicate_system.system_token).not_to eq(system.system_token)
-      expect(duplicate_system.system_token).to eq(new_system_token)
     end
   end
 
@@ -182,8 +170,7 @@ RSpec.describe Api::Connect::BaseController, type: :controller do
         let(:system) { create(:system, hostname: 'system') }
 
         include_examples 'does not create a duplicate system'
-        include_examples 'updates the system token'
-        include_examples 'responds with a new token'
+        include_examples "does not update the old system's token"
       end
 
       context 'when the system has a token and the header matches it' do
@@ -193,8 +180,7 @@ RSpec.describe Api::Connect::BaseController, type: :controller do
         let(:system) { create(:system, hostname: 'system', system_token: current_system_token) }
 
         include_examples 'does not create a duplicate system'
-        include_examples 'updates the system token'
-        include_examples 'responds with a new token'
+        include_examples "does not update the old system's token"
       end
 
       context 'when the system has a token and the header is blank' do
@@ -208,7 +194,6 @@ RSpec.describe Api::Connect::BaseController, type: :controller do
 
         include_examples "does not update the old system's token"
         include_examples 'creates a duplicate system'
-        include_examples 'responds with a new token'
       end
 
       context 'when the system has a token and the header does not match it' do

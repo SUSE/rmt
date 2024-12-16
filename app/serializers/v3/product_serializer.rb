@@ -33,8 +33,11 @@ class V3::ProductSerializer < ApplicationSerializer
   end
 
   def free
-    # Everything is free on RMT :-)
+    # Everything is free on RMT :-) outside of the Public Cloud (i.e. LTSS)
     # Otherwise Yast and SUSEConnect will request a regcode when activating an extension
+    # FIXME
+    return object.free if defined?(SccProxy::Engine) && object.extension?
+
     true
   end
 

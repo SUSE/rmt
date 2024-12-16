@@ -37,10 +37,17 @@ class System < ApplicationRecord
   end
 
   def cloud_provider
+    system_information_hash.fetch(:cloud_provider, nil)
+  end
+
+  def system_information_hash
     # system_information is checked for valid JSON on save. It is safe
     # to assume the structure is valid.
-    info = JSON.parse(system_information).symbolize_keys
-    info.fetch(:cloud_provider, nil)
+    JSON.parse(system_information || '{}').symbolize_keys
+  end
+
+  def set_system_information(key, value)
+    update(system_information: system_information_hash.update(key => value).to_json)
   end
 
   # Generate secure token for System password
