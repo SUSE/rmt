@@ -20,7 +20,7 @@ database_test:
   database: rmt_test
 
 scc:
-  host: https://scc.suse.com/connect
+  host: <%= ENV.fetch('SCC_HOST'){ 'https://scc.suse.com/connect' } %>
   username: <%= ENV['SCC_USERNAME'] %>
   password: <%= ENV['SCC_PASSWORD'] %>
   sync_systems: true

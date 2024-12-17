@@ -5,7 +5,7 @@ module StrictAuthentication
   RSpec.describe AuthenticationController, type: :request do
     subject { response }
 
-    let(:system) { FactoryBot.create(:system, :with_activated_product) }
+    let(:system) { FactoryBot.create(:system, :with_activated_product_sle_micro) }
 
     describe '#check' do
       context 'without authentication' do
@@ -35,6 +35,36 @@ module StrictAuthentication
 
           context 'when requested path is not activated' do
             let(:requested_uri) { '/repo/some/uri' }
+
+            its(:code) { is_expected.to eq '403' }
+          end
+
+          context 'when requesting a file in an activated SLES repo on a SLE Micro system' do
+            let(:free_product) do
+              prod = FactoryBot.create(
+                :product, :module, :with_mirrored_repositories
+                )
+              prod.identifier = 'sle-module-foo'
+              prod.arch = system.products.first.arch
+              prod.save!
+              prod
+            end
+            let(:requested_uri) { '/repo' + free_product.repositories.first[:local_path] + '/repodata/repomd.xml' }
+
+            its(:code) { is_expected.to eq '200' }
+          end
+
+          context 'when requesting a file in an activated SLES SAP repo on a SLE Micro system' do
+            let(:free_product) do
+              prod = FactoryBot.create(
+                :product, :module, :with_mirrored_repositories
+                )
+              prod.identifier = 'sle-module-foo-sap'
+              prod.arch = system.products.first.arch
+              prod.save!
+              prod
+            end
+            let(:requested_uri) { '/repo' + free_product.repositories.first[:local_path] + '/repodata/repomd.xml' }
 
             its(:code) { is_expected.to eq '403' }
           end

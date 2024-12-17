@@ -238,7 +238,7 @@ describe RMT::SCC do
         described_class.new.sync
       end
 
-      it 'removes existing predecessor associations' do
+      it 'removes existing predecessor associations', :skip_sqlite do
         expect { ProductPredecessorAssociation.find(existing_association.id) }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -261,7 +261,18 @@ describe RMT::SCC do
         :repository,
         :with_products,
         auth_token: nil,
-        external_url: 'https://example.com/repos/not/updates.suse.com/'
+        external_url: 'https://installer-updates.suse.com/repos/not/updates',
+        installer_updates: true
+      )
+    end
+    let!(:custom_repo) do
+      FactoryBot.create(
+        :repository,
+        :with_products,
+        auth_token: nil,
+        external_url: 'http://customer.com/stuff.suse.com/x86',
+        installer_updates: false,
+        scc_id: nil
       )
     end
 
@@ -296,6 +307,10 @@ describe RMT::SCC do
 
     it 'other repos without auth_tokens persist' do
       expect { other_repo_without_token.reload }.not_to raise_error
+    end
+
+    it 'custom repos without auth_tokens persist' do
+      expect { custom_repo.reload }.not_to raise_error
     end
   end
 
