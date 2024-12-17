@@ -157,6 +157,7 @@ class RMT::Mirror::Base
 
   def move_files(glob:, destination:)
     FileUtils.mkpath(destination) unless Dir.exist?(destination)
+    FileUtils.rm_rf(Dir.glob(File.join(destination, '*')))
     FileUtils.mv(Dir.glob(glob), destination, force: true)
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Error while moving files %{glob} to %{dest}: %{error}') % {
