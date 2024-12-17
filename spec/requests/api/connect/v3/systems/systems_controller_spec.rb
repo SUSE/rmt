@@ -3,6 +3,8 @@ require 'rails_helper'
 RSpec.describe Api::Connect::V3::Systems::SystemsController do
   include_context 'auth header', :system, :login, :password
   include_context 'version header', 3
+  include_context 'user-agent header'
+  include_context 'zypp user-agent header'
 
   let(:system) { FactoryBot.create(:system, hostname: 'initial') }
   let(:url) { '/connect/systems' }
@@ -103,6 +105,43 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
       it do
         update_action
         expect(system.reload.hostname).to be_nil
+      end
+    end
+
+    context 'stores client\'s user-agent' do
+      let(:headers) { auth_header.merge(user_agent_header) }
+
+      it 'stores suseconnect version' do
+        update_action
+        expect(system.reload.system_information_hash[:user_agent]).to eq('suseconnect-ng/1.2')
+      end
+    end
+
+    context 'doesn\'t store zypp user-agent' do
+      let(:headers) { auth_header.merge(zypp_user_agent_header) }
+
+      it 'ignores zypp user-agent' do
+        update_action
+        expect(system.reload.system_information_hash[:user_agent]).to be_nil
+      end
+    end
+
+    context 'response header should contain token' do
+      let(:headers) { auth_header.merge('System-Token': 'existing-token') }
+
+      it 'contains refreshed token in response' do
+        update_action
+        expect(response.headers).to include('System-Token')
+        expect(response.headers['System-Token']).not_to equal('existing-token')
+      end
+    end
+
+    context 'response header should not contain token' do
+      let(:headers) { auth_header }
+
+      it 'contains refreshed token in response' do
+        update_action
+        expect(response.headers).not_to include('System-Token')
       end
     end
   end

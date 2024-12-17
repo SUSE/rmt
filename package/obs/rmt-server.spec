@@ -269,6 +269,7 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %dir %{_sysconfdir}/slp.reg.d
 %config(noreplace) %attr(0640, %{rmt_user}, root) %{_sysconfdir}/rmt.conf
 %config(noreplace) %{_sysconfdir}/slp.reg.d/rmt-server.reg
+
 %{_mandir}/man8/rmt-cli.8%{?ext_man}
 %{_bindir}/rmt-cli
 %{_bindir}/rmt-data-import
@@ -289,6 +290,11 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %{_unitdir}/rmt-server-systems-scc-sync.timer
 %{_unitdir}/rmt-uptime-cleanup.service
 %{_unitdir}/rmt-uptime-cleanup.timer
+%config(noreplace) %{_unitdir}/rmt-server-mirror.timer
+%config(noreplace) %{_unitdir}/rmt-server-sync.timer
+%config(noreplace) %{_unitdir}/rmt-server-systems-scc-sync.timer
+%config(noreplace) %{_unitdir}/rmt-uptime-cleanup.timer
+
 %dir %{_datadir}/bash-completion/
 %dir %{_datadir}/bash-completion/completions/
 %{_datadir}/bash-completion/completions/rmt-cli
@@ -323,6 +329,8 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %{_unitdir}/rmt-server-regsharing.timer
 %{_unitdir}/rmt-server-trim-cache.service
 %{_unitdir}/rmt-server-trim-cache.timer
+%config(noreplace) %{_unitdir}/rmt-server-regsharing.timer
+%config(noreplace) %{_unitdir}/rmt-server-trim-cache.timer
 
 %pre
 getent group %{rmt_group} >/dev/null || %{_sbindir}/groupadd -r %{rmt_group}

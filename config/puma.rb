@@ -1,4 +1,5 @@
 require 'rmt/config'
+require_relative 'puma/prometheus'
 
 # Puma can serve each request in a thread from an internal thread pool.
 # The `threads` method setting takes two numbers: a minimum and maximum.
@@ -36,3 +37,7 @@ workers RMT::Config.web_server.workers
 
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
+
+if Settings.dig(:scc, :metrics, :enabled)
+  configure_prometheus!(self)
+end

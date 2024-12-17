@@ -87,15 +87,15 @@ class AccessScope
     allowed_product_classes = (active_product_classes & access_policies_yml.keys)
     if system && system.hybrid?
       # if the system is hybrid => check if the non free product subscription is still valid for accessing images
-      allowed_non_free_product_classes = allowed_product_classes.map { |s| s unless Product.find_by(product_class: s).free? }
+      allowed_non_free_product_classes = allowed_product_classes.map { |s| s unless Product.find_by(product_class: s, product_type: 'extension').free? }.compact
       unless allowed_non_free_product_classes.empty?
         auth_header = {
-          Authorization: ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password)
+          'HTTP_AUTHORIZATION' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password)
         }
         allowed_non_free_product_classes.each do |non_free_prod_class|
           activation_state = SccProxy.scc_check_subscription_expiration(
-            auth_header, system.login, system.system_token, Rails.logger, system.proxy_byos_mode, non_free_prod_class
-            )
+            auth_header, system, non_free_prod_class
+          )
           unless activation_state[:is_active]
             Rails.logger.info(
               "Access to #{non_free_prod_class} from system #{system.login} denied: #{activation_state[:message]}"

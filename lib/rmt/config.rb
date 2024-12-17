@@ -1,3 +1,4 @@
+# :nocov:
 require 'config'
 require_relative '../rmt'
 
@@ -77,3 +78,4 @@ module RMT::Config
     end
   end
 end
+# :nocov:

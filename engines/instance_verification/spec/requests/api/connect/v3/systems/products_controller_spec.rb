@@ -38,7 +38,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         it 'class instance verification provider' do
           expect(InstanceVerification::Providers::Example).to receive(:new)
-            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, nil).and_call_original
+            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, nil).and_call_original.at_least(:once)
           allow(File).to receive(:directory?)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
@@ -71,10 +71,18 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
 
         context 'when verification provider returns false' do
+          let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+
           before do
-            expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
-            expect(plugin_double).to receive(:instance_valid?).and_return(false)
+            stub_request(:post, scc_activate_url)
+            .to_return(
+              status: 200,
+              body: { error: 'Unexpected instance verification error has occurred' }.to_json,
+              headers: {}
+              )
+            allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
+            allow(plugin_double).to receive(:instance_valid?).and_return(false)
             post url, params: payload, headers: headers
           end
 
@@ -86,9 +94,13 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         context 'when verification provider raises an unhandled exception' do
           before do
-            expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
-            expect(plugin_double).to receive(:instance_valid?).and_raise('Custom plugin error')
+            stub_request(:post, scc_activate_url)
+            .to_return(
+              status: 422,
+              body: { error: 'Unexpected instance verification error has occurred' }.to_json,
+              headers: {}
+            )
+
             post url, params: payload, headers: headers
           end
 
@@ -106,7 +118,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         it 'class instance verification provider' do
           expect(InstanceVerification::Providers::Example).to receive(:new)
-            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, nil).and_call_original
+            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, nil).and_call_original.at_least(:once)
           allow(File).to receive(:directory?)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
@@ -134,8 +146,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         context 'when verification provider returns false' do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double).at_least(:once)
             expect(plugin_double).to receive(:instance_valid?).and_return(false)
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload, headers: headers
           end
 
@@ -148,8 +161,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         context 'when verification provider raises an unhandled exception' do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double).at_least(:once)
             expect(plugin_double).to receive(:instance_valid?).and_raise('Custom plugin error')
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload, headers: headers
           end
 
@@ -164,9 +178,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double).at_least(:once)
             expect(plugin_double).to receive(:instance_valid?).and_raise(InstanceVerification::Exception, 'Custom plugin error')
-
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload, headers: headers
           end
 
@@ -220,9 +234,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
 
         before do
-          allow(InstanceVerification::Providers::Example).to receive(:new)
-            .with(nil, nil, nil, instance_data).and_return(plugin_double)
+          allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
           allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
+          allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
           FactoryBot.create(:subscription, product_classes: product_classes)
           stub_request(:post, scc_activate_url)
@@ -315,7 +329,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           let(:scc_annouce_body) do
             {
               hostname: system.hostname,
-              hwinfo: JSON.parse(system.system_information).merge({ instance_data: system.instance_data }),
+              hwinfo: JSON.parse(system.system_information),
               byos_mode: 'hybrid',
               login: system.login,
               password: system.password
@@ -332,9 +346,10 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           before do
-            allow(InstanceVerification::Providers::Example).to receive(:new)
-              .with(nil, nil, nil, instance_data).and_return(plugin_double)
+            allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+            allow(plugin_double).to receive(:instance_identifier).and_return('foo')
             allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
             allow(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, product.id)
             FactoryBot.create(:subscription, product_classes: product_classes)
@@ -373,8 +388,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
           before do
             allow(InstanceVerification::Providers::Example).to receive(:new)
-              .with(nil, nil, nil, instance_data).and_return(plugin_double)
+              .and_return(plugin_double)
             allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
             allow(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, product.id)
             FactoryBot.create(:subscription, product_classes: product_classes)
@@ -390,7 +406,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               .to_return(status: 201, body: scc_response_body, headers: {})
 
             expect(InstanceVerification).not_to receive(:update_cache).with('127.0.0.1', system.login, product.id)
-
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload_no_token, headers: headers
           end
 
@@ -402,12 +418,16 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     end
 
     context 'when the system is hybrid' do
+      before do
+        allow_any_instance_of(InstanceVerification::Providers::Example).to receive(:allowed_extension?).and_return(true)
+      end
+
       context "when system doesn't have hw_info" do
         let(:system) { FactoryBot.create(:system, :hybrid) }
 
         it 'class instance verification provider' do
           expect(InstanceVerification::Providers::Example).to receive(:new)
-            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, nil).and_call_original
+              .and_call_original.at_least(:once)
           allow(File).to receive(:directory?)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
@@ -435,7 +455,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         context 'when verification provider returns false' do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double).at_least(:once)
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             expect(plugin_double).to receive(:instance_valid?).and_return(false)
             post url, params: payload, headers: headers
           end
@@ -449,7 +470,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         context 'when verification provider raises an unhandled exception' do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double).at_least(:once)
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             expect(plugin_double).to receive(:instance_valid?).and_raise('Custom plugin error')
             post url, params: payload, headers: headers
           end
@@ -507,8 +529,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
       before do
         allow(InstanceVerification::Providers::Example).to receive(:new)
-          .with(nil, nil, nil, instance_data).and_return(plugin_double)
+          .and_return(plugin_double)
         allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
+        allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
         FactoryBot.create(:subscription, product_classes: product_classes)
         stub_request(:post, scc_activate_url)
@@ -540,6 +563,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           context 'when no regcode is provided' do
             it 'activates the product' do
               data = JSON.parse(response.body)
+              expect(data['product']['free']).to eq(false)
               expect(data['id']).to eq(product.id)
             end
           end
@@ -551,65 +575,176 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
   describe '#upgrade' do
     subject { response }
 
-    let(:system) { FactoryBot.create(:system) }
+    let(:instance_data) { 'dummy_instance_data' }
     let(:request) { put url, headers: headers, params: payload }
-    let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system) }
-    let(:payload) do
-      {
-        identifier: new_product.identifier,
-        version: new_product.version,
-        arch: new_product.arch
-      }
+
+    context 'when system is byos' do
+      let(:system) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
+      let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system) }
+      let(:payload) do
+        {
+          identifier: new_product.identifier,
+          version: new_product.version,
+          arch: new_product.arch
+        }
+      end
+      let(:scc_systems_products_url) { 'https://scc.suse.com/connect/systems/products' }
+      let(:scc_headers) do
+        {
+          'Accept' => 'application/json,application/vnd.scc.suse.com.v4+json',
+          'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+          'Authorization' => headers['HTTP_AUTHORIZATION'],
+          'Content-Type' => 'application/json',
+          'User-Agent' => 'Ruby'
+        }
+      end
+
+      context 'when SCC upgrade success' do
+        before do
+          # pp headers
+          stub_request(:put, scc_systems_products_url)
+            .with({ headers: scc_headers, body: payload.merge({ byos_mode: 'byos' }) })
+            .and_return(status: 201, body: '', headers: {})
+          request
+        end
+
+        context "when migration target base product doesn't have an activated successor/predecessor" do
+          let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
+
+          it 'HTTP response code is 422' do
+            expect(response).to have_http_status(422)
+          end
+
+          it 'renders an error' do
+            data = JSON.parse(response.body)
+            expect(data['error']).to eq('Migration target not allowed on this instance type')
+          end
+        end
+
+        context 'when migration target base product has the same identifier' do
+          let(:new_product) do
+            FactoryBot.create(
+              :product, :with_mirrored_repositories, identifier: old_product.identifier,
+              version: '999', predecessors: [ old_product ]
+              )
+          end
+
+          it 'HTTP response code is 201' do
+            expect(response).to have_http_status(201)
+          end
+
+          it "doesn't render an error" do
+            data = JSON.parse(response.body)
+            expect(data).not_to have_key('error')
+          end
+        end
+      end
+
+      context 'when SCC upgrade fails' do
+        before do
+          stub_request(:put, scc_systems_products_url)
+            .with({ headers: scc_headers, body: payload.merge({ byos_mode: 'byos' }) })
+            .and_return(
+              status: 401,
+              body: 'Migration target not allowed on this instance type',
+              headers: {}
+            )
+          request
+        end
+
+        context "when migration target base product doesn't have an activated successor/predecessor" do
+          let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
+
+          it 'HTTP response code is 422' do
+            expect(response).to have_http_status(422)
+          end
+
+          it 'renders an error' do
+            data = JSON.parse(response.body)
+            expect(data['error']).to eq('Migration target not allowed on this instance type')
+          end
+        end
+
+        context 'when migration target base product has the same identifier' do
+          let(:new_product) do
+            FactoryBot.create(
+              :product, :with_mirrored_repositories, identifier: old_product.identifier,
+              version: '999', predecessors: [ old_product ]
+              )
+          end
+
+          it 'HTTP response code is 422' do
+            expect(response).to have_http_status(422)
+          end
+
+          it 'renders an error' do
+            data = JSON.parse(response.body)
+            expect(data).to have_key('error')
+          end
+        end
+      end
     end
 
-    before { request }
-
-    context "when migration target base product doesn't have an activated successor/predecessor" do
-      let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
-
-      it 'HTTP response code is 422' do
-        expect(response).to have_http_status(422)
+    context 'when system is payg' do
+      let(:system) { FactoryBot.create(:system, :payg, :with_system_information, instance_data: instance_data) }
+      let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system) }
+      let(:payload) do
+        {
+          identifier: new_product.identifier,
+          version: new_product.version,
+          arch: new_product.arch
+        }
       end
 
-      it 'renders an error' do
-        data = JSON.parse(response.body)
-        expect(data['error']).to eq('Migration target not allowed on this instance type')
-      end
-    end
+      before { request }
 
-    context 'when migration target base product has a different identifier' do
-      let(:new_product) do
-        FactoryBot.create(
-          :product, :with_mirrored_repositories,
-          identifier: old_product.identifier + '-foo', predecessors: [ old_product ]
-        )
-      end
+      context "when migration target base product doesn't have an activated successor/predecessor" do
+        let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
 
-      it 'HTTP response code is 422' do
-        expect(response).to have_http_status(422)
+        it 'HTTP response code is 422' do
+          expect(response).to have_http_status(422)
+        end
+
+        it 'renders an error' do
+          data = JSON.parse(response.body)
+          expect(data['error']).to eq('Migration target not allowed on this instance type')
+        end
       end
 
-      it 'renders an error' do
-        data = JSON.parse(response.body)
-        expect(data['error']).to eq('Migration target not allowed on this instance type')
-      end
-    end
+      context 'when migration target base product has a different identifier' do
+        let(:new_product) do
+          FactoryBot.create(
+            :product, :with_mirrored_repositories,
+            identifier: old_product.identifier + '-foo', predecessors: [ old_product ]
+            )
+        end
 
-    context 'when migration target base product has the same identifier' do
-      let(:new_product) do
-        FactoryBot.create(
-          :product, :with_mirrored_repositories, identifier: old_product.identifier,
-          version: '999', predecessors: [ old_product ]
-        )
+        it 'HTTP response code is 422' do
+          expect(response).to have_http_status(422)
+        end
+
+        it 'renders an error' do
+          data = JSON.parse(response.body)
+          expect(data['error']).to eq('Migration target not allowed on this instance type')
+        end
       end
 
-      it 'HTTP response code is 201' do
-        expect(response).to have_http_status(201)
-      end
+      context 'when migration target base product has the same identifier' do
+        let(:new_product) do
+          FactoryBot.create(
+            :product, :with_mirrored_repositories, identifier: old_product.identifier,
+            version: '999', predecessors: [ old_product ]
+            )
+        end
 
-      it "doesn't render an error" do
-        data = JSON.parse(response.body)
-        expect(data).not_to have_key('error')
+        it 'HTTP response code is 201' do
+          expect(response).to have_http_status(201)
+        end
+
+        it "doesn't render an error" do
+          data = JSON.parse(response.body)
+          expect(data).not_to have_key('error')
+        end
       end
     end
   end

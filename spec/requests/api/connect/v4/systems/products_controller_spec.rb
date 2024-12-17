@@ -140,4 +140,77 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
       end
     end
   end
+
+  describe 'system token refresh' do
+    let(:system) { FactoryBot.create(:system, :with_activated_base_product) }
+    let(:headers) { auth_header.merge(version_header).merge('System-Token' => 'existing_token') }
+
+    context 'token refresh for destroy action' do
+      let(:product) { FactoryBot.create(:product, :extension, :with_mirrored_repositories, :activated, system: system) }
+      let(:payload) { { identifier: product.identifier, version: product.version, arch: product.arch } }
+
+      it 'refreshes system token when System-Token header is present' do
+        delete connect_systems_products_url,
+               headers: headers,
+               params: payload
+
+        expect(response.status).to eq(200)
+        expect(response.headers).to include('System-Token')
+        expect(response.headers['System-Token']).not_to eq('existing_token')
+      end
+
+      it 'does not refresh token when System-Token header is absent' do
+        headers_without_token = auth_header.merge(version_header)
+        expect_any_instance_of(described_class).not_to receive(:refresh_system_token)
+
+        delete connect_systems_products_url,
+               headers: headers_without_token,
+               params: payload
+
+        expect(response.status).to eq(200)
+        expect(response.headers).not_to include('System-Token')
+      end
+    end
+
+    context 'token refresh for synchronize action' do
+      let(:path) { '/connect/systems/products/synchronize' }
+
+      it 'refreshes system token when System-Token header is present' do
+        params = system.products.map do |product|
+          {
+            identifier: product.identifier,
+            version: product.version,
+            arch: product.arch,
+            release_type: product.release_type
+          }
+        end
+        post path,
+             params: { products: params },
+             headers: headers
+
+        expect(response.status).to eq(200)
+        expect(response.headers).to include('System-Token')
+        expect(response.headers['System-Token']).not_to eq('existing_token')
+      end
+
+      it 'does not refresh token when System-Token header is absent' do
+        headers_without_token = auth_header.merge(version_header)
+
+        params = system.products.map do |product|
+          {
+            identifier: product.identifier,
+            version: product.version,
+            arch: product.arch,
+            release_type: product.release_type
+          }
+        end
+        post path,
+             params: { products: params },
+             headers: headers_without_token
+
+        expect(response.status).to eq(200)
+        expect(response.headers).not_to include('System-Token')
+      end
+    end
+  end
 end
