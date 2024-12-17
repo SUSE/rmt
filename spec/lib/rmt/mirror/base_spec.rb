@@ -231,7 +231,7 @@ describe RMT::Mirror::Base do
       expect { base.move_files(glob: src, destination: dest) }.to raise_exception(/Error while moving files/)
     end
 
-    it 'removes existing files in the destination directory before moving' do
+    it 'remove existing files in the destination directory before moving' do
       allow(Dir).to receive(:exist?).with(dest).and_return(true)
       allow(Dir).to receive(:glob).with(File.join(dest, '*')).and_return(%w[/destination/path/file1.txt /destination/path/file2.txt])
       allow(Dir).to receive(:glob).with(src).and_return(%w[/source/path/newfile1.txt /source/path/newfile2.txt])
