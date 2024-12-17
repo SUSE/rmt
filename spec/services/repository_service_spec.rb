@@ -88,7 +88,7 @@ describe RepositoryService do
 
       it('is not custom') { expect(repository.custom?).to eq(true) }
 
-      context 'already existing repositories with changing URL' do
+      context 'already existing repositories with changing URL', :skip_sqlite do
         subject(:repository) do
           service.create_repository!(product, url, attributes, custom: custom).reload
           url = 'https://foo.bar.com/bar/foo'
