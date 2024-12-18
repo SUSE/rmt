@@ -155,9 +155,9 @@ class RMT::Mirror::Base
     logger.debug("Can not remove stale metadata directory: #{e}")
   end
 
-  def move_files(glob:, destination:)
+  def move_files(glob:, destination:, clean_before: true)
     FileUtils.mkpath(destination) unless Dir.exist?(destination)
-    FileUtils.rm_rf(Dir.glob(File.join(destination, '*')))
+    FileUtils.rm_rf(Dir.glob(File.join(destination, '*'))) if clean_before
     FileUtils.mv(Dir.glob(glob), destination, force: true)
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(_('Error while moving files %{glob} to %{dest}: %{error}') % {
