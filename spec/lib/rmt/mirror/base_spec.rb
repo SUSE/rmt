@@ -231,17 +231,6 @@ describe RMT::Mirror::Base do
       expect { base.move_files(glob: src, destination: dest) }.to raise_exception(/Error while moving files/)
     end
 
-    it 'remove existing files in the destination directory before moving' do
-      allow(Dir).to receive(:exist?).with(dest).and_return(true)
-      allow(Dir).to receive(:glob).with(File.join(dest, '*')).and_return(%w[/destination/path/file1.txt /destination/path/file2.txt])
-      allow(Dir).to receive(:glob).with(src).and_return(%w[/source/path/newfile1.txt /source/path/newfile2.txt])
-      expect(FileUtils).not_to receive(:mkpath).with(dest)
-      expect(FileUtils).to receive(:rm_rf).with(%w[/destination/path/file1.txt /destination/path/file2.txt])
-      expect(FileUtils).to receive(:mv).with(%w[/source/path/newfile1.txt /source/path/newfile2.txt], dest, force: true)
-
-      base.move_files(glob: src, destination: dest)
-    end
-
     it 'removes existing files when destination directory is empty' do
       allow(Dir).to receive(:exist?).with(dest).and_return(false)
       allow(Dir).to receive(:glob).with(src).and_return(%w[/source/path/newfile1.txt /source/path/newfile2.txt])
@@ -250,7 +239,7 @@ describe RMT::Mirror::Base do
       expect(FileUtils).to receive(:rm_rf).with([])
       expect(FileUtils).to receive(:mv).with(%w[/source/path/newfile1.txt /source/path/newfile2.txt], dest, force: true)
 
-      base.move_files(glob: src, destination: dest)
+      base.move_files(glob: src, destination: dest, clean_before: true)
     end
 
     it 'handles errors during removal of existing files' do
@@ -261,7 +250,7 @@ describe RMT::Mirror::Base do
       allow(FileUtils).to receive(:rm_rf).with(existing_files).and_raise(StandardError.new('Remove failed'))
 
       expect do
-        base.move_files(glob: src, destination: dest)
+        base.move_files(glob: src, destination: dest, clean_before: true)
       end.to raise_exception(/Error while moving files/)
     end
 
