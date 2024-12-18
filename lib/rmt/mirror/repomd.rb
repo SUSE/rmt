@@ -15,7 +15,7 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
     mirror_packages(metadata_files)
 
     glob_metadata = File.join(temp(:metadata), 'repodata', '*')
-    move_files(glob: glob_metadata, destination: repository_path('repodata'))
+    move_files(glob: glob_metadata, destination: repository_path('repodata'), clean_before: true)
   end
 
   protected

@@ -230,6 +230,54 @@ describe RMT::Mirror::Base do
 
       expect { base.move_files(glob: src, destination: dest) }.to raise_exception(/Error while moving files/)
     end
+
+    it 'removes existing files when destination directory is empty' do
+      allow(Dir).to receive(:exist?).with(dest).and_return(false)
+      allow(Dir).to receive(:glob).with(src).and_return(%w[/source/path/newfile1.txt /source/path/newfile2.txt])
+      allow(Dir).to receive(:glob).with(File.join(dest, '*')).and_return([])
+      expect(FileUtils).to receive(:mkpath).with(dest)
+      expect(FileUtils).to receive(:rm_rf).with([])
+      expect(FileUtils).to receive(:mv).with(%w[/source/path/newfile1.txt /source/path/newfile2.txt], dest, force: true)
+
+      base.move_files(glob: src, destination: dest, clean_before: true)
+    end
+
+    it 'handles errors during removal of existing files' do
+      allow(Dir).to receive(:exist?).with(dest).and_return(true)
+      existing_files = ['/destination/path/file1.txt']
+
+      allow(Dir).to receive(:glob).with(File.join(dest, '*')).and_return(existing_files)
+      allow(FileUtils).to receive(:rm_rf).with(existing_files).and_raise(StandardError.new('Remove failed'))
+
+      expect do
+        base.move_files(glob: src, destination: dest, clean_before: true)
+      end.to raise_exception(/Error while moving files/)
+    end
+
+    it 'does not remove existing files when clean_before is false' do
+      allow(Dir).to receive(:exist?).with(dest).and_return(true)
+      allow(Dir).to receive(:glob).with(src).and_return(%w[/source/path/newfile1.txt /source/path/newfile2.txt])
+      allow(Dir).to receive(:glob).with(File.join(dest, '*')).and_return(%w[/destination/path/existing1.txt /destination/path/existing2.txt])
+
+      expect(FileUtils).not_to receive(:rm_rf)
+      expect(FileUtils).to receive(:mv).with(%w[/source/path/newfile1.txt /source/path/newfile2.txt], dest, force: true)
+
+      base.move_files(glob: src, destination: dest, clean_before: false)
+    end
+
+    it 'removes existing files when clean_before is true' do
+      allow(Dir).to receive(:exist?).with(dest).and_return(true)
+      existing_files = %w[/destination/path/file1.txt /destination/path/file2.txt]
+      source_files = %w[/source/path/newfile1.txt /source/path/newfile2.txt]
+
+      allow(Dir).to receive(:glob).with(File.join(dest, '*')).and_return(existing_files)
+      allow(Dir).to receive(:glob).with(src).and_return(source_files)
+
+      expect(FileUtils).to receive(:rm_rf).with(existing_files)
+      expect(FileUtils).to receive(:mv).with(source_files, dest, force: true)
+
+      base.move_files(glob: src, destination: dest, clean_before: true)
+    end
   end
 
   describe '#need_to_download?' do
