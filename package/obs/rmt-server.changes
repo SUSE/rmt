@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
-Wed Oct 30 09:01:32 UTC 2024 - Natnael Getahun <natnael.getahun@suse.com>
+Mon Dec 23 08:03:56 UTC 2024 - Parag Jain <parag.jain@suse.com>
 
-- Version 2.20 (unreleased)
+- Version 2.20
   * RMT packaging: don't overwrite custom sync/mirror timer config on package update
   * Extend column size for repository and file paths (bsc#1229152)
   * Forward suseconnect client user-agents to SCC
