@@ -1,3 +1,9 @@
+Mon Dec 23 14:07:00 UTC 2024 - Luís Caparroz <lcaparroz@suse.com>
+
+- Version 2.21
+- Allow users to configure the SUMA product tree base URL to download
+  'product_tree.json' from host other than 'scc.suse.com'.
+
 -------------------------------------------------------------------
 Mon Dec 23 08:03:56 UTC 2024 - Parag Jain <parag.jain@suse.com>
 
