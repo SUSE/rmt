@@ -40,7 +40,7 @@ module StrictAuthentication
       all_product_versions = @system.products.map { |p| Product.where(identifier: p.identifier, arch: p.arch) }.flatten
       allowed_paths = all_product_versions.map { |prod| prod.repositories.pluck(:local_path) }.flatten
       # Allow SLE Micro to access all free SLES repositories
-      sle_micro = @system.products.any? { |p| p.identifier.downcase.include?('sle-micro') }
+      sle_micro = @system.products.any? { |p| p.identifier.downcase.include?('micro') }
       if sle_micro
         system_products_archs = @system.products.pluck(:arch)
         product_free_sles_modules_only = Product.where(
@@ -59,7 +59,7 @@ module StrictAuthentication
       manager_prod = @system.products.any? do |p|
         manager = p.identifier.downcase.include?('manager-server')
         # SUMA 5.0 must have access to SUMA 4.3, 4.2 and so on
-        micro = p.identifier.downcase.include?('sle-micro')
+        micro = p.identifier.downcase.include?('micro')
         instance_id_header = headers.fetch('X-Instance-Identifier', '').casecmp('suse-manager-server').zero?
         instance_version_header = headers.fetch('X-Instance-Version', '0').split('.')[0] >= '5'
         manager || (micro && instance_id_header && instance_version_header)

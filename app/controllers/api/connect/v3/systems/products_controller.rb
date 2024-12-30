@@ -16,7 +16,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     if @product.identifier.casecmp?('sles')
       # if system has SLE Micro
       # it should access to SLES products
-      sle_micro = @system.products.any? { |p| p.identifier.downcase.include?('sle-micro') }
+      sle_micro = @system.products.any? { |p| p.identifier.downcase.include?('micro') }
       sle_micro_same_arch = @system.products.pluck(:arch).include?(@product.arch) if sle_micro
     end
     if @system.products.include?(@product) || sle_micro_same_arch
