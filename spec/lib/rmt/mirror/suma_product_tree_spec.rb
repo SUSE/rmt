@@ -12,7 +12,7 @@ RSpec.describe RMT::Mirror::SumaProductTree do
   let(:ref_configuration) do
     {
       relative_path: 'product_tree.json',
-      base_url: described_class::FILE_URL,
+      base_url: base_url,
       cache_dir: nil,
       base_dir: File.join(base_dir, '/suma/')
     }
@@ -21,11 +21,7 @@ RSpec.describe RMT::Mirror::SumaProductTree do
   let(:base_dir) { '/tmp' }
   let(:downloader) { instance_double RMT::Downloader }
 
-  describe '#mirror' do
-    before do
-      allow(RMT::Downloader).to receive(:new).and_return downloader
-    end
-
+  shared_examples 'mirror SUMA product tree' do
     it 'mirrors the product_tree file' do
       expect(RMT::Mirror::FileReference).to receive(:new).with(**ref_configuration)
       expect(downloader).to receive(:download_multi)
@@ -45,6 +41,36 @@ RSpec.describe RMT::Mirror::SumaProductTree do
         expect(RMT::Mirror::FileReference).to receive(:new).with(**ref_configuration)
         expect(downloader).to receive(:download_multi)
         suma.mirror
+      end
+    end
+  end
+
+  describe '#mirror' do
+    before do
+      allow(RMT::Downloader).to receive(:new).and_return downloader
+    end
+
+    context 'with default SUMA product tree URL' do
+      before do
+        allow(Settings).to receive(:try).with(:mirroring).and_return(nil)
+      end
+
+      it_behaves_like 'mirror SUMA product tree' do
+        let(:base_url) { 'https://scc.suse.com/suma/' }
+      end
+    end
+
+    context 'with custom SUMA product tree URL' do
+      before do
+        allow(Settings).to receive(:try).with(:mirroring).and_return(mirroring_configuration)
+        allow(mirroring_configuration).to receive(:try)
+          .with(:suma_product_tree_base_url).and_return(base_url)
+      end
+
+      let(:mirroring_configuration) { instance_double(Config::Options) }
+
+      it_behaves_like 'mirror SUMA product tree' do
+        let(:base_url) { 'http://localhost:3000/suma/' }
       end
     end
   end
