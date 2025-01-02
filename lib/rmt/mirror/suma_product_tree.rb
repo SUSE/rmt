@@ -3,9 +3,9 @@ class RMT::Mirror::SumaProductTree
 
   attr_reader :mirroring_base_dir, :url, :logger
 
-  def initialize(logger:, mirroring_base_dir:, url: nil)
+  def initialize(logger:, mirroring_base_dir:, url: FILE_URL)
     @mirroring_base_dir = mirroring_base_dir
-    @url = url || Settings.try(:mirroring).try(:suma_product_tree_base_url) || FILE_URL
+    @url = url
     @logger = logger
   end
 
