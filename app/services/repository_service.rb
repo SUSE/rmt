@@ -3,7 +3,7 @@ class RepositoryService
   class RepositoryNotFound < RuntimeError
   end
 
-  def create_repository!(product, url, attributes, custom: false)
+  def update_or_create_repository!(product, url, attributes, custom: false)
     repository = if custom
                    Repository.find_or_initialize_by(external_url: url)
                  else

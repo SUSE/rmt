@@ -23,11 +23,28 @@ class RMT::SCC
     data.each { |item| create_product(item) }
     data.each { |item| migration_paths(item) }
 
+    # Update repositories with details (eg. access token) from API
     update_repositories(scc_api_client.list_repositories)
 
     Repository.remove_suse_repos_without_tokens!
+    remove_obsolete_repositories(scc_api_client.list_repositories)
 
     update_subscriptions(scc_api_client.list_subscriptions)
+  end
+
+  def remove_obsolete_repositories(repos_data)
+    @logger.info _('Removing obsolete repositories')
+    scc_repo_ids = repos_data.pluck(:id)
+
+
+    # Find repositories in RMT that no longer exist in SCC
+    # Only consider repositories that have a non-null scc_id
+    repos_to_remove = Repository.where.not(scc_id: nil)
+                                .where.not(scc_id: scc_repo_ids)
+    if repos_to_remove.any?
+      repos_to_remove.delete_all
+      @logger.info("Successfully removed #{repos_to_remove.count} obsolete repositories")
+    end
   end
 
   def export(path)
@@ -185,9 +202,9 @@ class RMT::SCC
   end
 
   def create_service(item, product)
-    product.create_service!
+    product.find_or_create_service!
     item[:repositories].each do |repo_item|
-      repository_service.create_repository!(product, repo_item[:url], repo_item)
+      repository_service.update_or_create_repository!(product, repo_item[:url], repo_item)
     end
   end
 

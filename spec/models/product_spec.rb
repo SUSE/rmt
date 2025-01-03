@@ -218,13 +218,13 @@ RSpec.describe Product, type: :model do
     end
   end
 
-  describe '#create_service!' do
+  describe '#find_or_create_service!' do
     context 'when service already exists' do
       let!(:product) { create :product }
       let!(:service) { create :service, product_id: product.id }
 
       it 'returns the existing service' do
-        expect(product.create_service!).to eq(service)
+        expect(product.find_or_create_service!).to eq(service)
       end
     end
 
@@ -234,7 +234,7 @@ RSpec.describe Product, type: :model do
       let!(:other_service) { create :service, id: product.id, product_id: other_product.id }
 
       it 'creates a service with a random ID' do
-        expect(product.create_service!.id).not_to eq(other_service.id)
+        expect(product.find_or_create_service!.id).not_to eq(other_service.id)
       end
     end
 
@@ -242,7 +242,7 @@ RSpec.describe Product, type: :model do
       let!(:product) { create :product }
 
       it 'creates a service with a matching ID' do
-        expect(product.create_service!.id).to eq(product.id)
+        expect(product.find_or_create_service!.id).to eq(product.id)
       end
     end
   end
