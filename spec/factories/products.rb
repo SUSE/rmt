@@ -117,7 +117,7 @@ FactoryBot.define do
 
     trait :with_service do
       after :create do |product, _evaluator|
-        product.create_service!
+        product.find_or_create_service!
       end
     end
 

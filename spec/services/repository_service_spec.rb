@@ -6,7 +6,7 @@ describe RepositoryService do
   let(:product) { create :product, :with_service }
 
   describe '#create_repository' do
-    subject(:repository) { service.create_repository!(product, url, attributes, custom: custom).reload }
+    subject(:repository) { service.update_or_create_repository!(product, url, attributes, custom: custom).reload }
 
     let(:attributes) do
       {
@@ -38,10 +38,10 @@ describe RepositoryService do
 
     context 'URLs of SCC repositories changes' do
       subject(:repository) do
-        service.create_repository!(product, old_url, attributes, custom: custom)
+        service.update_or_create_repository!(product, old_url, attributes, custom: custom)
         expect(Repository.find_by(external_url: old_url)).not_to eq(nil)
 
-        service.create_repository!(product, url, attributes, custom: custom).reload
+        service.update_or_create_repository!(product, url, attributes, custom: custom).reload
       end
 
       let(:old_url) { 'https://foo.bar.com/bar/foo' }
@@ -53,10 +53,10 @@ describe RepositoryService do
 
     context 'self heals SCC repos' do
       subject(:repository) do
-        service.create_repository!(product, url, attributes, custom: custom).update(scc_id: old_scc_id)
+        service.update_or_create_repository!(product, url, attributes, custom: custom).update(scc_id: old_scc_id)
         expect(Repository.find_by(scc_id: old_scc_id)).not_to eq(nil)
 
-        service.create_repository!(product, url, attributes, custom: custom).reload
+        service.update_or_create_repository!(product, url, attributes, custom: custom).reload
       end
 
       let(:old_scc_id) { 666 }
@@ -68,8 +68,8 @@ describe RepositoryService do
 
     context 'custom repo with same url' do
       subject(:repository) do
-        service.create_repository!(product, url, attributes, custom: custom).update(scc_id: nil)
-        service.create_repository!(product, url, attributes, custom: custom).reload
+        service.update_or_create_repository!(product, url, attributes, custom: custom).update(scc_id: nil)
+        service.update_or_create_repository!(product, url, attributes, custom: custom).reload
       end
 
       it_behaves_like 'scc repositories'
@@ -90,9 +90,9 @@ describe RepositoryService do
 
       context 'already existing repositories with changing URL', :skip_sqlite do
         subject(:repository) do
-          service.create_repository!(product, url, attributes, custom: custom).reload
+          service.update_or_create_repository!(product, url, attributes, custom: custom).reload
           url = 'https://foo.bar.com/bar/foo'
-          service.create_repository!(product, url, attributes, custom: custom).reload
+          service.update_or_create_repository!(product, url, attributes, custom: custom).reload
         end
 
         it('raises error when the id is the same') { expect { repository }.to raise_error(/Duplicate entry/) }

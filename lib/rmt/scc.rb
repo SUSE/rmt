@@ -23,6 +23,7 @@ class RMT::SCC
     data.each { |item| create_product(item) }
     data.each { |item| migration_paths(item) }
 
+    # Update repositories with details (eg. access token) from API
     update_repositories(scc_api_client.list_repositories)
 
     Repository.remove_suse_repos_without_tokens!
@@ -201,9 +202,9 @@ class RMT::SCC
   end
 
   def create_service(item, product)
-    product.create_service!
+    product.find_or_create_service!
     item[:repositories].each do |repo_item|
-      repository_service.create_repository!(product, repo_item[:url], repo_item)
+      repository_service.update_or_create_repository!(product, repo_item[:url], repo_item)
     end
   end
 
