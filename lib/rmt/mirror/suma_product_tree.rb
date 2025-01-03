@@ -1,16 +1,10 @@
 class RMT::Mirror::SumaProductTree
   FILE_URL = 'https://scc.suse.com/suma/'.freeze
 
-  attr_reader :mirroring_base_dir, :url, :logger
-
-  def initialize(logger:, mirroring_base_dir:, url: FILE_URL)
+  def initialize(logger:, mirroring_base_dir:, url: nil)
     @mirroring_base_dir = mirroring_base_dir
-    @url = url
+    @url = url || default_suma_url
     @logger = logger
-  end
-
-  def downloader
-    @downloader ||= RMT::Downloader.new(logger: logger, track_files: false)
   end
 
   def mirror
@@ -24,8 +18,7 @@ class RMT::Mirror::SumaProductTree
     ref = RMT::Mirror::FileReference.new(
       relative_path: 'product_tree.json',
       base_url: url,
-      base_dir: dest,
-      cache_dir: nil
+      base_dir: dest
     )
 
     logger.info _('Mirroring SUSE Manager product tree to %{dir}') % { dir: dest }
@@ -34,4 +27,19 @@ class RMT::Mirror::SumaProductTree
     raise RMT::Mirror::Exception.new(_('Could not mirror SUSE Manager product tree with error: %{error}') % { error: e.message })
   end
 
+  private
+
+  attr_reader :mirroring_base_dir, :url, :logger
+
+  def default_suma_url
+    scc_host = Settings.try(:scc).try(:host)
+
+    return FILE_URL if scc_host.blank?
+
+    URI.parse(scc_host).tap { |uri| uri.path = '/suma/' }.to_s
+  end
+
+  def downloader
+    @downloader ||= RMT::Downloader.new(logger: logger, track_files: false)
+  end
 end

@@ -1,3 +1,9 @@
+Fri Jan 03 10:44:00 UTC 2025 - Luís Caparroz <lcaparroz@suse.com>
+
+- Version 2.20.1
+- Fix bug that hardcoded the SUMA product tree URL to 'scc.suse.com' even if a
+  different host was specified in the RMT configuration file. (bsc#1234844)
+
 -------------------------------------------------------------------
 Mon Dec 23 08:03:56 UTC 2024 - Parag Jain <parag.jain@suse.com>
 
