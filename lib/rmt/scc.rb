@@ -26,8 +26,24 @@ class RMT::SCC
     update_repositories(scc_api_client.list_repositories)
 
     Repository.remove_suse_repos_without_tokens!
+    remove_obsolete_repositories(scc_api_client.list_repositories)
 
     update_subscriptions(scc_api_client.list_subscriptions)
+  end
+
+  def remove_obsolete_repositories(repos_data)
+    @logger.info _('Removing obsolete repositories')
+    scc_repo_ids = repos_data.pluck(:id)
+
+
+    # Find repositories in RMT that no longer exist in SCC
+    # Only consider repositories that have a non-null scc_id
+    repos_to_remove = Repository.where.not(scc_id: nil)
+                                .where.not(scc_id: scc_repo_ids)
+    if repos_to_remove.any?
+      repos_to_remove.delete_all
+      @logger.info("Successfully removed #{repos_to_remove.count} obsolete repositories")
+    end
   end
 
   def export(path)
