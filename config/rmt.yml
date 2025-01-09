@@ -31,7 +31,6 @@ scc:
 mirroring:
   mirror_src: false
   dedup_method: hardlink
-  suma_product_tree_base_url: <%= ENV['SUMA_PRODUCT_TREE_BASE_URL'] %>
 
 http_client:
   verbose: false
