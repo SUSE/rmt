@@ -51,9 +51,22 @@ module ZypperAuth
     end
 
     def handle_scc_subscription(request, system, verification_provider, params_product_id = nil)
-      product_class = Product.find_by(id: params_product_id).product_class if params_product_id.present?
-      result = SccProxy.scc_check_subscription_expiration(request.headers, system, product_class)
-      return true if result[:is_active]
+      if params_product_id.present?
+        product_class = Product.find_by(id: params_product_id).product_class
+        result = SccProxy.scc_check_subscription_expiration(request.headers, system, product_class)
+        return true if result[:is_active]
+      else
+        # no product id provided
+        # check all non free extensions subscriptions with SCC, if any
+        paid_extensions = system.products.select { |prod| prod if !prod.free && prod.product_type == 'extension' }
+        return true if paid_extensions.empty?
+
+        all_active = paid_extensions.all? do |paid_extension|
+          result = SccProxy.scc_check_subscription_expiration(request.headers, system, paid_extension.product_class)
+          result[:is_active]
+        end
+        return true if all_active
+      end
 
       ZypperAuth.zypper_auth_message(request, system, verification_provider, result[:message])
       false
@@ -140,8 +153,23 @@ module ZypperAuth
         alias_method :original_path_allowed?, :path_allowed?
 
         # additional validation for strict_authentication auth subrequest
-        def path_allowed?(path)
-          return false unless original_path_allowed?(path)
+        def path_allowed?(headers)
+          return false unless original_path_allowed?(headers)
+
+          if @system.hybrid?
+            paid_extensions = @system.products.select { |prod| prod if !prod.free && prod.product_type == 'extension' }
+            paid_extensions.each do |paid_extension|
+              repos_paths = paid_extension.repositories.pluck(:local_path)
+              repos_paths.each do |repo_path|
+                if headers.fetch('X-Original-URI', '').include? repo_path
+                  logger.info "verifying paid extension #{paid_extension.identifier}"
+                  return ZypperAuth.verify_instance(request, logger, @system, paid_extension.id)
+                end
+              end
+            end
+          end
+          # either no hybrid system, no need to check for paid extensions
+          # or path not found on paid extensions and system is hybrid
           ZypperAuth.verify_instance(request, logger, @system)
         end
       end
