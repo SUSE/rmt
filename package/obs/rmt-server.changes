@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Fri Jan 03 13:06:20 UTC 2025 - Parag Jain <parag.jain@suse.com>
 
-- Version 2.21
+- Version 2.21 (unreleased)
   * Fix: Remove obsolete repositories from rmt during SCC sync (bsc#1232808)
 
 -------------------------------------------------------------------
