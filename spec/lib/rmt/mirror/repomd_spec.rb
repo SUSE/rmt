@@ -52,7 +52,7 @@ RSpec.describe RMT::Mirror::Repomd do
       expect(licenses).to receive(:mirror)
       expect(repomd).to receive(:mirror_metadata)
       expect(repomd).to receive(:mirror_packages)
-      expect(repomd).to receive(:move_files).with(glob: 'a/repodata/*', destination: repomd.repository_path('repodata'))
+      expect(repomd).to receive(:move_files).with(glob: 'a/repodata/*', destination: repomd.repository_path('repodata'), clean_before: true)
 
       repomd.mirror_implementation
     end
@@ -65,7 +65,7 @@ RSpec.describe RMT::Mirror::Repomd do
         expect(repomd).to receive(:create_temp_dir).with(:metadata)
         expect(repomd).to receive(:mirror_metadata)
         expect(repomd).to receive(:mirror_packages)
-        expect(repomd).to receive(:move_files).with(glob: 'a/repodata/*', destination: repomd.repository_path('repodata'))
+        expect(repomd).to receive(:move_files).with(glob: 'a/repodata/*', destination: repomd.repository_path('repodata'), clean_before: true)
 
         expect(licenses).not_to receive(:mirror)
 
