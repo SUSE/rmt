@@ -41,6 +41,7 @@ RSpec/MultipleExpectations:
 Metrics/ClassLength:
   Exclude:
     - lib/rmt/downloader.rb
+  Max: 250
 
 Naming/FileName:
   Exclude:

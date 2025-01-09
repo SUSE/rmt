@@ -294,7 +294,6 @@ module SccProxy
     end
   end
 
-  # rubocop:disable Metrics/ClassLength
   class Engine < ::Rails::Engine
     isolate_namespace SccProxy
     config.generators.api_only = true
@@ -534,6 +533,5 @@ module SccProxy
       end
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end
 # rubocop:enable Metrics/ModuleLength

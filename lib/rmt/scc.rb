@@ -34,13 +34,14 @@ class RMT::SCC
 
   def remove_obsolete_repositories(repos_data)
     @logger.info _('Removing obsolete repositories')
+    return if repos_data.empty?
+
     scc_repo_ids = repos_data.pluck(:id)
 
 
     # Find repositories in RMT that no longer exist in SCC
     # Only consider repositories that have a non-null scc_id
-    repos_to_remove = Repository.where.not(scc_id: nil)
-                                .where.not(scc_id: scc_repo_ids)
+    repos_to_remove = Repository.only_scc.where.not(scc_id: scc_repo_ids)
     if repos_to_remove.any?
       repos_to_remove.delete_all
       @logger.info("Successfully removed #{repos_to_remove.count} obsolete repositories")
@@ -203,8 +204,23 @@ class RMT::SCC
 
   def create_service(item, product)
     product.find_or_create_service!
+    existing_repo_ids = product.repositories.only_scc.pluck(:scc_id)
+
     item[:repositories].each do |repo_item|
       repository_service.update_or_create_repository!(product, repo_item[:url], repo_item)
+      existing_repo_ids.delete(repo_item[:id])
+    end
+    disassociate_obsolete_repositories(product, existing_repo_ids)
+  end
+
+  def disassociate_obsolete_repositories(product, existing_repo_ids)
+    existing_repo_ids.each do |repo_id|
+      repository = product.repositories.only_scc.find_by(scc_id: repo_id)
+      if repository
+        product.service.repositories_services_associations
+               .where(repository_id: repository.id)
+               .destroy_all
+      end
     end
   end
 
