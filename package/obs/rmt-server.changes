@@ -1,10 +1,19 @@
+-------------------------------------------------------------------
 Fri Jan 03 10:44:00 UTC 2025 - Luís Caparroz <lcaparroz@suse.com>
 
 - Version 2.21
   * Allow users to configure the SUMA product tree base URL to download
     'product_tree.json' from host other than 'scc.suse.com'. (bsc#1234844)
+<<<<<<< HEAD
   * Update Micro check due to Micro 6.0 and 6.1 identifier to keep bsc#1230419 in place
   * Remove obsolete repositories and associations from rmt during SCC sync (bsc#1232808)
+  * Do not re-download repomd metadata if already exists and be the latest version
+  * rmt-server-pubcloud
+=======
+  * rmt-server-pubcloud:
+>>>>>>> 82a34d00 (Add pubcloud section to changelog)
+    * Update Micro check due to Micro 6.0 and 6.1 identifier to keep bsc#1230419 in place
+    * Update Zypper path allowing check to handle paid extensions (i.e. LTSS) (bsc#1230157)
 
 -------------------------------------------------------------------
 Mon Dec 23 08:03:56 UTC 2024 - Parag Jain <parag.jain@suse.com>
