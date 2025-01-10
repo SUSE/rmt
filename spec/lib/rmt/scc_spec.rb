@@ -382,7 +382,7 @@ describe RMT::SCC do
   end
 
 
-  describe '#disassociate_obsolete_repositories' do
+  describe '#disassociate_repositories' do
     let(:logger) { instance_double('RMT::Logger').as_null_object }
     let(:product) { create(:product) }
     let(:service) { create(:service, product: product) }
@@ -393,7 +393,7 @@ describe RMT::SCC do
 
     context 'when existing_repo_ids is empty' do
       it 'does not remove any associations' do
-        expect { described_class.new.send(:disassociate_obsolete_repositories, product, []) }.not_to change(RepositoriesServicesAssociation, :count)
+        expect { described_class.new.send(:disassociate_repositories, service, []) }.not_to change(RepositoriesServicesAssociation, :count)
       end
     end
 
@@ -414,48 +414,16 @@ describe RMT::SCC do
 
       it 'removes repository associations for the specified repo IDs' do
         expect do
-          described_class.new.send(:disassociate_obsolete_repositories, product, existing_repo_ids)
+          described_class.new.send(:disassociate_repositories, service, [repo_one, repo_two])
         end.to change(RepositoriesServicesAssociation, :count).by(-2)
       end
 
       it 'only removes associations for specified repositories' do
-        described_class.new.send(:disassociate_obsolete_repositories, product, existing_repo_ids)
+        described_class.new.send(:disassociate_repositories, service, [repo_one, repo_two])
 
         expect(product.repositories).not_to include(repo_one)
         expect(product.repositories).not_to include(repo_two)
         expect(product.repositories).to include(repo_three)
-      end
-    end
-
-    context 'when repository no longer exists' do
-      let(:nonexistent_repo_id) { 999 }
-
-      it 'handles missing repositories gracefully' do
-        expect { described_class.new.send(:disassociate_obsolete_repositories, product, [nonexistent_repo_id]) }.not_to raise_error
-      end
-    end
-
-    context 'when product has no service' do
-      let(:product_without_service) { create(:product) }
-
-      it 'handles missing service gracefully' do
-        expect { described_class.new.send(:disassociate_obsolete_repositories, product_without_service, [123]) }.not_to raise_error
-      end
-    end
-
-    context 'with non-SCC repositories' do
-      let!(:custom_repo) { create(:repository, scc_id: nil) }
-
-      before do
-        create(:repositories_services_association,
-               repository: custom_repo,
-               service: service)
-      end
-
-      it 'only considers SCC repositories' do
-        expect do
-          described_class.new.send(:disassociate_obsolete_repositories, product, [custom_repo.id])
-        end.not_to change(RepositoriesServicesAssociation, :count)
       end
     end
   end

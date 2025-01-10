@@ -24,10 +24,11 @@ class RMT::SCC
     data.each { |item| migration_paths(item) }
 
     # Update repositories with details (eg. access token) from API
-    update_repositories(scc_api_client.list_repositories)
+    repositories_data = scc_api_client.list_repositories
+    update_repositories(repositories_data)
 
     Repository.remove_suse_repos_without_tokens!
-    remove_obsolete_repositories(scc_api_client.list_repositories)
+    remove_obsolete_repositories(repositories_data)
 
     update_subscriptions(scc_api_client.list_subscriptions)
   end
@@ -43,8 +44,8 @@ class RMT::SCC
     # Only consider repositories that have a non-null scc_id
     repos_to_remove = Repository.only_scc.where.not(scc_id: scc_repo_ids)
     if repos_to_remove.any?
-      repos_to_remove.delete_all
-      @logger.info("Successfully removed #{repos_to_remove.count} obsolete repositories")
+      repos_to_remove.destroy_all
+      @logger.debug("Successfully removed #{repos_to_remove.count} obsolete repositories")
     end
   end
 
@@ -203,25 +204,21 @@ class RMT::SCC
   end
 
   def create_service(item, product)
-    product.find_or_create_service!
-    existing_repo_ids = product.repositories.only_scc.pluck(:scc_id)
+    service = product.find_or_create_service!
 
     item[:repositories].each do |repo_item|
       repository_service.update_or_create_repository!(product, repo_item[:url], repo_item)
-      existing_repo_ids.delete(repo_item[:id])
     end
-    disassociate_obsolete_repositories(product, existing_repo_ids)
+
+    # detect repositories removed from the product in SCC
+    removed_repos = service.repositories.only_scc.where.not(scc_id: item[:repositories].pluck(:id))
+    disassociate_repositories(service, removed_repos) if removed_repos.present?
+
   end
 
-  def disassociate_obsolete_repositories(product, existing_repo_ids)
-    existing_repo_ids.each do |repo_id|
-      repository = product.repositories.only_scc.find_by(scc_id: repo_id)
-      if repository
-        product.service.repositories_services_associations
-               .where(repository_id: repository.id)
-               .destroy_all
-      end
-    end
+  def disassociate_repositories(service, repos)
+    service.repositories.delete(repos)
+    @logger.debug("Removed repositories #{repos.pluck(:scc_id)} from '#{service.product.friendly_name}'")
   end
 
   def migration_paths(item)
