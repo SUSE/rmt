@@ -4,12 +4,7 @@ Mon Dec 23 14:07:00 UTC 2024 - Luís Caparroz <lcaparroz@suse.com>
   * Allow users to configure the SUMA product tree base URL to download
     'product_tree.json' from host other than 'scc.suse.com'. (bsc#1234844)
   * Update Micro check due to Micro 6.0 and 6.1 identifier to keep bsc#1230419 in place
-
--------------------------------------------------------------------
-Fri Jan 03 13:06:20 UTC 2025 - Parag Jain <parag.jain@suse.com>
-
-- Version 2.21 (unreleased)
-  * Fix: Remove obsolete repositories from rmt during SCC sync (bsc#1232808)
+  * Remove obsolete repositories and associations from rmt during SCC sync (bsc#1232808)
 
 -------------------------------------------------------------------
 Mon Dec 23 08:03:56 UTC 2024 - Parag Jain <parag.jain@suse.com>
