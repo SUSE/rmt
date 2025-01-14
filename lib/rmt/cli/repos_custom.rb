@@ -35,7 +35,7 @@ $ rmt-cli repos custom add https://download.example.com?some_auth_token
       raise RMT::CLI::Error.new(_("Couldn't add custom repository."))
     end
 
-    repository_service.create_repository!(nil, url, {
+    repository_service.update_or_create_repository!(nil, url, {
       name: name.strip,
       mirroring_enabled: true,
       autorefresh: true,

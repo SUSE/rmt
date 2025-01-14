@@ -153,7 +153,7 @@ class Product < ApplicationRecord
     joins(:product_extensions_associations).where(products_extensions: { recommended: true, root_product_id: root_product_ids })
   end
 
-  def create_service!
+  def find_or_create_service!
     service = Service.find_by(product_id: id)
     return service if service
 

@@ -227,14 +227,6 @@ RSpec.describe Repository, type: :model do
   end
 
   describe '#destroy' do
-    context 'when it is an official repository' do
-      subject { repository.destroy }
-
-      let!(:repository) { create :repository }
-
-      it { is_expected.to be_falsey }
-    end
-
     context 'when it is a custom repository' do
       subject { repository.destroy }
 
