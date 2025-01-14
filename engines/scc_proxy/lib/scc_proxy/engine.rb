@@ -440,7 +440,7 @@ module SccProxy
           elsif @system.hybrid? && @product.extension?
             # check if product is on SCC and
             # if it is -> de-activate it
-            scc_hybrid_system_activations = SccProxy.get_scc_activations(headers, @system)
+            scc_hybrid_system_activations = SccProxy.get_scc_activations(request.headers, @system)
             if scc_hybrid_system_activations.map { |act| act['service']['product']['id'] == @product.id }.present?
               # if product is found on SCC, regardless of the state
               # it is OK to remove it from SCC
