@@ -210,25 +210,19 @@ module SccProxy
     end
 
     def product_class_access(scc_systems_activations, product)
-      active_products_names = scc_systems_activations.map { |act| act['service']['product']['product_class'] if act['status'].casecmp('active').zero? }.flatten
-      if active_products_names.include?(product)
-        { is_active: true }
-      else
-        expired_products_names = scc_systems_activations.map do |act|
-          act['service']['product']['product_class'] unless act['status'].casecmp('active').zero?
-        end.flatten
-        message = if expired_products_names.all?(&:nil?)
-                    'Product not activated.'
-                  elsif expired_products_names.include?(product)
-                    'Subscription expired.'
-                  else
-                    'Unexpected error when checking product subscription.'
-                  end
-        { is_active: false, message: message }
-      end
+      expired_products_names = scc_systems_activations.map do |act|
+        act['service']['product']['product_class'] unless act['status'].casecmp('active').zero?
+      end.flatten
+      message = if expired_products_names.all?(&:nil?)
+                  'Product not activated.'
+                elsif expired_products_names.include?(product)
+                  'Subscription expired.'
+                else
+                  'Unexpected error when checking product subscription.'
+                end
+      { is_active: false, message: message }
     end
 
-    # rubocop:disable Metrics/PerceivedComplexity
     def activations_fail_state(scc_systems_activations, headers, product = nil)
       return SccProxy.product_class_access(scc_systems_activations, product) unless product.nil?
 
@@ -239,40 +233,35 @@ module SccProxy
       # in any case, verification is true if ALL activations are ACTIVE
       return { is_active: (scc_systems_activations.length == active_products_ids.length) } if x_original_uri.empty?
 
-      if SccProxy.product_path_access(x_original_uri, active_products_ids)
-        { is_active: true }
+      # product not found in the active subscriptions, check the expired ones
+      expired_products_ids = scc_systems_activations.map { |act| act['service']['product']['id'] unless act['status'].casecmp('active').zero? }.flatten
+      if expired_products_ids.all?(&:nil?)
+        {
+          is_active: false,
+          message: 'Product not activated.'
+        }
+      end
+      if SccProxy.product_path_access(x_original_uri, expired_products_ids)
+        {
+          is_active: false,
+          message: 'Subscription expired.'
+        }
       else
-        # product not found in the active subscriptions, check the expired ones
-        expired_products_ids = scc_systems_activations.map { |act| act['service']['product']['id'] unless act['status'].casecmp('active').zero? }.flatten
-        if expired_products_ids.all?(&:nil?)
-          {
-            is_active: false,
-            message: 'Product not activated.'
-          }
-        end
-        if SccProxy.product_path_access(x_original_uri, expired_products_ids)
-          {
-            is_active: false,
-            message: 'Subscription expired.'
-          }
-        else
-          {
-            is_active: false,
-            message: 'Unexpected error when checking product subscription.'
-          }
-        end
+        {
+          is_active: false,
+          message: 'Unexpected error when checking product subscription.'
+        }
       end
     end
-    # rubocop:enable Metrics/PerceivedComplexity
 
     def scc_check_subscription_expiration(headers, system, product = nil)
       scc_systems_activations = SccProxy.get_scc_activations(headers, system)
       return { is_active: false, message: 'No activations.' } if scc_systems_activations.empty?
 
-      no_status_products_ids = scc_systems_activations.map do |act|
-        act['service']['product']['id'] if (act['status'].nil? && act['expires_at'].nil?)
-      end.flatten.compact
-      return { is_active: true } unless no_status_products_ids.all?(&:nil?)
+      status_products_classes = scc_systems_activations.select do |act|
+        act['service']['product']['product_class'] if act['status'].casecmp('active').zero? && act['service']['product']['product_class'] == product
+      end.flatten
+      return { is_active: true } unless status_products_classes.empty?
 
       SccProxy.activations_fail_state(scc_systems_activations, headers, product)
     rescue StandardError

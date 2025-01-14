@@ -9,8 +9,6 @@ module ZypperAuth
     def verify_instance(request, logger, system, params_product_id = nil)
       return false unless request.headers['X-Instance-Data']
 
-      instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
-
       base_product = system.products.find_by(product_type: 'base')
       return false unless base_product
 
@@ -27,7 +25,7 @@ module ZypperAuth
         logger,
         request,
         base_product.attributes.symbolize_keys.slice(:identifier, :version, :arch, :release_type),
-        instance_data
+        Base64.decode64(request.headers['X-Instance-Data'].to_s) # instance data
       )
 
       is_valid = verification_provider.instance_valid?
@@ -37,7 +35,7 @@ module ZypperAuth
       InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id)
       is_valid
     rescue InstanceVerification::Exception => e
-      return handle_scc_subscription(request, system, verification_provider) if system.byos?
+      return handle_scc_subscription(request, system, verification_provider, params_product_id) if system.byos?
 
       ZypperAuth.zypper_auth_message(request, system, verification_provider, e.message)
       false
@@ -54,19 +52,22 @@ module ZypperAuth
       if params_product_id.present?
         product_class = Product.find_by(id: params_product_id).product_class
         result = SccProxy.scc_check_subscription_expiration(request.headers, system, product_class)
-        return true if result[:is_active]
       else
         # no product id provided
         # check all non free extensions subscriptions with SCC, if any
         paid_extensions = system.products.select { |prod| prod if !prod.free && prod.product_type == 'extension' }
-        return true if paid_extensions.empty?
+        return true if paid_extensions.empty? && system.hybrid?
 
         all_active = paid_extensions.all? do |paid_extension|
           result = SccProxy.scc_check_subscription_expiration(request.headers, system, paid_extension.product_class)
           result[:is_active]
         end
         return true if all_active
+
+        # check BYOS on SCC
+        result = SccProxy.scc_check_subscription_expiration(request.headers, system) if system.byos?
       end
+      return true if result[:is_active]
 
       ZypperAuth.zypper_auth_message(request, system, verification_provider, result[:message])
       false
@@ -156,7 +157,7 @@ module ZypperAuth
         def path_allowed?(headers)
           return false unless original_path_allowed?(headers)
 
-          if @system.hybrid?
+          if @system.hybrid? || @system.byos?
             paid_extensions = @system.products.select { |prod| prod if !prod.free && prod.product_type == 'extension' }
             paid_extensions.each do |paid_extension|
               repos_paths = paid_extension.repositories.pluck(:local_path)
