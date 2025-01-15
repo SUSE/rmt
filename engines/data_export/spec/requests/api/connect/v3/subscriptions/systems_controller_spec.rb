@@ -1,5 +1,6 @@
 require 'rails_helper'
 
+# rubocop:disable RSpec/NestedGroups
 describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
   describe '#announce_system' do
     let(:instance_data) { '<instance_data/>' }
@@ -60,9 +61,9 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
             allow(Rails.logger).to receive(:error)
             stub_request(:post, scc_register_system_url)
               .to_return(
-              status: 201,
-              body: scc_register_response.to_s,
-              headers: {}
+                status: 201,
+                body: scc_register_response.to_s,
+                headers: {}
             )
           end
 
@@ -76,3 +77,4 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
     end
   end
 end
+# rubocop:enable RSpec/NestedGroups
