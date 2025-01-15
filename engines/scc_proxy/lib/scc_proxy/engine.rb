@@ -314,7 +314,7 @@ module SccProxy
               system_information: system_information,
               proxy_byos_mode: :payg,
               instance_data: instance_data
-            )
+              )
           else
             request.request_parameters['proxy_byos_mode'] = 'byos'
             response = SccProxy.announce_system_scc(auth_header, request.request_parameters)
