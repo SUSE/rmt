@@ -27,9 +27,12 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
   end
 
   def parse_instance_data
+    # :nocov:
     if @instance_data.include? '<instance_data/>'
-      return { 'instance_data' => 'parsed_instance_data', 'example_id' => '1234' }
+      return { 'instance_data' => 'parsed_instance_data', 'example_id' => '1234' } # :nocov:
     end
+
+    # :nocov:
 
     if @instance_data.include?('SUSE')
       if @instance_data.include?('SAP')
