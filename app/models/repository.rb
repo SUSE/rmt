@@ -18,8 +18,6 @@ class Repository < ApplicationRecord
   validates :local_path, presence: true
   validates :friendly_id, presence: true
 
-  before_destroy :ensure_destroy_possible
-
   class << self
 
     def remove_suse_repos_without_tokens!
@@ -68,12 +66,6 @@ class Repository < ApplicationRecord
 
   def custom?
     scc_id.nil?
-  end
-
-  private
-
-  def ensure_destroy_possible
-    throw(:abort) unless custom?
   end
 
 end

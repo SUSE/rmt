@@ -1,7 +1,16 @@
--------------------------------------------------------------------
-Wed Oct 30 09:01:32 UTC 2024 - Natnael Getahun <natnael.getahun@suse.com>
+Fri Jan 03 10:44:00 UTC 2025 - Luís Caparroz <lcaparroz@suse.com>
 
-- Version 2.20 (unreleased)
+- Version 2.21
+  * Allow users to configure the SUMA product tree base URL to download
+    'product_tree.json' from host other than 'scc.suse.com'. (bsc#1234844)
+  * Update Micro check due to Micro 6.0 and 6.1 identifier to keep bsc#1230419 in place
+  * Remove obsolete repositories and associations from rmt during SCC sync (bsc#1232808)
+  * Do not re-download repomd metadata if already exists and be the latest version
+
+-------------------------------------------------------------------
+Mon Dec 23 08:03:56 UTC 2024 - Parag Jain <parag.jain@suse.com>
+
+- Version 2.20
   * RMT packaging: don't overwrite custom sync/mirror timer config on package update
   * Extend column size for repository and file paths (bsc#1229152)
   * Forward suseconnect client user-agents to SCC
@@ -13,6 +22,7 @@ Wed Oct 30 09:01:32 UTC 2024 - Natnael Getahun <natnael.getahun@suse.com>
     * Allow SLE Micro system to access SLES repositories (bsc#1230419)
   * Skip system token rotation in read-only APIs
   * Enable RMT to handle the new dl.suse.com CDN domain (bsc#1234641)
+  * Clean up RMT metadata after repo update (bsc#1233308)
 
 -------------------------------------------------------------------
 Wed Aug 21 15:28:43 UTC 2024 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>

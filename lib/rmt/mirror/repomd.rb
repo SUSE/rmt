@@ -15,7 +15,7 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
     mirror_packages(metadata_files)
 
     glob_metadata = File.join(temp(:metadata), 'repodata', '*')
-    move_files(glob: glob_metadata, destination: repository_path('repodata'))
+    move_files(glob: glob_metadata, destination: repository_path('repodata'), clean_before: true)
   end
 
   protected
@@ -28,7 +28,7 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
 
     metadata_files = RepomdParser::RepomdXmlParser.new.parse_file(repomd_xml.local_path)
       .map do |reference|
-        ref = RMT::Mirror::FileReference.build_from_metadata(reference, base_dir: temp(:metadata), base_url: repomd_xml.base_url)
+        ref = RMT::Mirror::FileReference.build_from_metadata(reference, base_dir: temp(:metadata), base_url: repomd_xml.base_url, cache_dir: repository_path)
         enqueue ref
         ref
       end

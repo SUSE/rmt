@@ -177,13 +177,15 @@ product_type: 'module')
           let(:scc_systems_activations_url) { 'https://scc.suse.com/connect/systems/activations' }
 
           before do
-            stub_request(:get, scc_systems_activations_url).to_return(status: 401, body: "{\"error\": \"Error\'\"}", headers: {})
+            stub_request(:get, scc_systems_activations_url).to_return(status: 401, body: "{\"error\": \"Error\'\"}", headers: headers)
+            allow(SccProxy).to receive(:headers)
             delete url, params: payload, headers: headers
           end
 
           it 'reports an error' do
             data = JSON.parse(response.body)
             expect(data['error']).to eq("{\"error\": \"Error'\"}")
+            expect(SccProxy).to have_received(:headers).with(headers['HTTP_AUTHORIZATION'], nil)
           end
         end
 

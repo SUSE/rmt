@@ -247,7 +247,7 @@ describe RMT::SCC do
 
   describe '#remove_suse_repos_without_tokens' do
     let(:api_double) { double }
-    let!(:suse_repo_with_token) { FactoryBot.create(:repository, :with_products, auth_token: 'auth_token') }
+    let!(:suse_repo_with_token) { FactoryBot.create(:repository, :with_products, auth_token: 'auth_token', scc_id: 200000) }
     let!(:suse_repo_without_token) do
       FactoryBot.create(
         :repository,
@@ -262,7 +262,8 @@ describe RMT::SCC do
         :with_products,
         auth_token: nil,
         external_url: 'https://installer-updates.suse.com/repos/not/updates',
-        installer_updates: true
+        installer_updates: true,
+        scc_id: 200001
       )
     end
     let!(:custom_repo) do
@@ -311,6 +312,119 @@ describe RMT::SCC do
 
     it 'custom repos without auth_tokens persist' do
       expect { custom_repo.reload }.not_to raise_error
+    end
+  end
+
+  describe '#remove_obsolete_repositories' do
+    let(:api_double) { instance_double 'SUSE::Connect::Api' }
+    let(:logger) { instance_double('RMT::Logger').as_null_object }
+    let!(:suse_repo_one) { create(:repository, :with_products, scc_id: 1) }
+    let!(:suse_repo_two) { create(:repository, :with_products, scc_id: 2) }
+    let!(:custom_repo) { create(:repository, :with_products, scc_id: nil) }
+
+    before do
+      allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
+      allow(RMT::Logger).to receive(:new).and_return(logger)
+    end
+
+    context 'when repos_data is empty' do
+      it 'returns early and does not remove any repositories' do
+        expect(Repository).not_to receive(:only_scc)
+        described_class.new.remove_obsolete_repositories([])
+        expect(Repository.count).to eq(3)
+      end
+    end
+
+    context 'when repos_data contains all existing SCC repositories' do
+      let(:repos_data) do
+        [
+          { id: suse_repo_one.scc_id },
+          { id: suse_repo_two.scc_id }
+        ]
+      end
+
+      it 'does not remove any repositories' do
+        expect { described_class.new.remove_obsolete_repositories(repos_data) }.not_to change(Repository, :count)
+      end
+    end
+
+    context 'when repos_data is missing some existing SCC repositories' do
+      let(:repos_data) do
+        [
+          { id: suse_repo_one.scc_id }
+        ]
+      end
+
+      it 'removes only the obsolete SCC repositories' do
+        expect { described_class.new.remove_obsolete_repositories(repos_data) }.to change(Repository, :count).by(-1)
+
+        expect(Repository.find_by(id: suse_repo_one.id)).to be_present
+        expect(Repository.find_by(id: suse_repo_two.id)).to be_nil
+        expect(Repository.find_by(id: custom_repo.id)).to be_present
+      end
+    end
+
+    context 'when repos_data does not contain any existing SCC repository IDs' do
+      let(:repos_data) do
+        [
+          { id: 999 }
+        ]
+      end
+
+      it 'removes all SCC repositories' do
+        expect { described_class.new.remove_obsolete_repositories(repos_data) }.to change(Repository, :count).by(-2)
+
+        expect(Repository.find_by(id: suse_repo_one.id)).to be_nil
+        expect(Repository.find_by(id: suse_repo_two.id)).to be_nil
+        expect(Repository.find_by(id: custom_repo.id)).to be_present
+      end
+    end
+  end
+
+
+  describe '#disassociate_repositories' do
+    let(:logger) { instance_double('RMT::Logger').as_null_object }
+    let(:product) { create(:product) }
+    let(:service) { create(:service, product: product) }
+
+    before do
+      allow(RMT::Logger).to receive(:new).and_return(logger)
+    end
+
+    context 'when existing_repo_ids is empty' do
+      it 'does not remove any associations' do
+        expect { described_class.new.send(:disassociate_repositories, service, []) }.not_to change(RepositoriesServicesAssociation, :count)
+      end
+    end
+
+    context 'when existing_repo_ids contains repository IDs' do
+      let!(:repo_one) { create(:repository, :with_products, scc_id: 101) }
+      let!(:repo_two) { create(:repository, :with_products, scc_id: 102) }
+      let!(:repo_three) { create(:repository, :with_products, scc_id: 103) }
+      let(:existing_repo_ids) { [repo_one.scc_id, repo_two.scc_id] }
+
+      before do
+        # Associate repositories with the product through services
+        [repo_one, repo_two, repo_three].each do |repo|
+          create(:repositories_services_association,
+                 repository: repo,
+                 service: service)
+        end
+      end
+
+      it 'removes repository associations for the specified repo IDs' do
+        expect do
+          described_class.new.send(:disassociate_repositories, service, [repo_one, repo_two])
+        end.to change(RepositoriesServicesAssociation, :count).by(-2)
+      end
+
+      it 'only removes associations for specified repositories' do
+        described_class.new.send(:disassociate_repositories, service, [repo_one, repo_two])
+
+        expect(product.repositories).not_to include(repo_one)
+        expect(product.repositories).not_to include(repo_two)
+        expect(product.repositories).to include(repo_three)
+      end
     end
   end
 
