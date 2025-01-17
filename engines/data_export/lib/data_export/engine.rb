@@ -18,7 +18,7 @@ module DataExport
             logger
           )
           data_export_handler.update_info
-          logger.info "System #{@system.login} info updated by data warehouse handler after announcing the system"
+          logger.info "System #{@system.login} info updated by data export handler after announcing the system"
         rescue StandardError => e
           logger.error('Unexpected data export error has occurred:')
           logger.error(e.message)
@@ -39,9 +39,9 @@ module DataExport
             logger
           )
           data_export_handler.update_info
-          logger.info "System #{@system.login} info updated by data warehouse handler after updating the system"
+          logger.info "System #{@system.login} info updated by data export handler after updating the system"
         rescue StandardError => e
-          logger.error('Unexpected data warehouse error has occurred:')
+          logger.error('Unexpected data export error has occurred:')
           logger.error(e.message)
           logger.error("System login: #{@system.login}, IP: #{request.remote_ip}")
           logger.error('Backtrace:')
