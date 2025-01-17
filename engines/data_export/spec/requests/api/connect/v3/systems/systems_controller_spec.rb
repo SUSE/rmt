@@ -30,22 +30,22 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
       before { allow(DataExport::Handlers::Example).to receive(:new).and_return(plugin_double) }
 
       context 'when data export success' do
-        before { allow(plugin_double).to receive(:update_info) }
+        before { allow(plugin_double).to receive(:export_rmt_data) }
 
         it do
-          expect(plugin_double).to receive(:update_info)
+          expect(plugin_double).to receive(:export_rmt_data)
           expect { update_action }.to change { system.reload.hostname }.from('initial').to(payload[:hostname])
         end
       end
 
       context 'when data export fails' do
         before do
-          allow(plugin_double).to receive(:update_info).and_raise('foo')
+          allow(plugin_double).to receive(:export_rmt_data).and_raise('foo')
           allow(Rails.logger).to receive(:error)
         end
 
         it do
-          expect(plugin_double).to receive(:update_info)
+          expect(plugin_double).to receive(:export_rmt_data)
           expect(Rails.logger).to receive(:error)
           update_action
         end
