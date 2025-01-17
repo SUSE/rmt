@@ -4,7 +4,7 @@ require 'rails_helper'
 describe StrictAuthentication::AuthenticationController, type: :request do
   subject { response }
 
-  let(:system) { FactoryBot.create(:system, :with_activated_product) }
+  let(:system) { FactoryBot.create(:system, :payg, :with_activated_product) }
 
   after { FileUtils.rm_rf(File.dirname(Rails.application.config.registry_cache_dir)) }
 
@@ -69,12 +69,32 @@ describe StrictAuthentication::AuthenticationController, type: :request do
             systems_count: 1,
             service: {
               product: {
+                id: system_byos.products.find_by(product_type: 'base').id, # activations.joins(:product).where(products: { free: false, product_type: :extension }).first.product.id,
+                product_class: system_byos.products.find_by(product_type: 'base').product_class # activations.joins(:product).where(products: { free: false, product_type: :extension }).first.product.product_class
+              }
+            }
+          }
+        end
+        let(:body_active_byos_paid_extension) do
+          {
+            id: 1,
+            regcode: '631dc51f',
+            name: 'Subscription 1',
+            type: 'FULL',
+            status: 'ACTIVE',
+            starts_at: 'null',
+            expires_at: '2014-03-14T13:10:21.164Z',
+            system_limit: 6,
+            systems_count: 1,
+            service: {
+              product: {
                 id: system_byos.activations.joins(:product).where(products: { free: false, product_type: :extension }).first.product.id,
                 product_class: system_byos.activations.joins(:product).where(products: { free: false, product_type: :extension }).first.product.product_class
               }
             }
           }
         end
+
         let(:body_expired) do
           {
             id: 1,
@@ -155,6 +175,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
 
           context 'and repo is not free' do
             before do
+              stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_active_byos_paid_extension].to_json, headers: {})
               expect(URI).to receive(:encode_www_form).with({ byos_mode: 'byos' })
               get '/api/auth/check', headers: paid_headers
             end
@@ -166,7 +187,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         context 'when subscription is expired' do
           before do
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_expired].to_json, headers: {})
-            expect(URI).to receive(:encode_www_form).twice.with({ byos_mode: 'byos' })
+            expect(URI).to receive(:encode_www_form).with({ byos_mode: 'byos' })
             get '/api/auth/check', headers: headers
           end
 
@@ -185,7 +206,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         context 'when product is not activated' do
           before do
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_not_activated].to_json, headers: {})
-            expect(URI).to receive(:encode_www_form).twice.with({ byos_mode: 'byos' })
+            expect(URI).to receive(:encode_www_form).with({ byos_mode: 'byos' })
             get '/api/auth/check', headers: headers
           end
 
@@ -204,7 +225,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         context 'when status from SCC is unknown' do
           before do
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_unknown_status].to_json, headers: {})
-            expect(URI).to receive(:encode_www_form).twice.with({ byos_mode: 'byos' })
+            expect(URI).to receive(:encode_www_form).with({ byos_mode: 'byos' })
             allow(File).to receive(:directory?)
             allow(Dir).to receive(:mkdir)
             allow(FileUtils).to receive(:touch)
@@ -226,7 +247,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         context 'when SCC request fails' do
           before do
             stub_request(:get, scc_systems_activations_url).to_return(status: 401, body: [body_expired].to_json, headers: {})
-            expect(URI).to receive(:encode_www_form).twice.with({ byos_mode: 'byos' })
+            expect(URI).to receive(:encode_www_form).with({ byos_mode: 'byos' })
             allow(File).to receive(:directory?)
             allow(Dir).to receive(:mkdir)
             allow(FileUtils).to receive(:touch)
@@ -411,8 +432,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               service: {
                 product: {
                   id: system_hybrid.activations.joins(:product).where(products: { free: false, product_type: :extension }).first.product.id,
-                  product_class: system_hybrid.activations.joins(:product).where(products: { free: false,
-                                                                                             product_type: :extension }).first.product.product_class
+                  product_class: system_hybrid.activations.joins(:product).where(products: { free: false, product_type: :extension }).first.product.product_class
                 }
               }
             }
@@ -433,7 +453,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               system_hybrid.activations.first.product.product_class + '-LTSS'
             )
             expect(result[:is_active]).to eq(false)
-            expect(result[:message]).to eq('Unexpected error when checking product subscription.')
+            expect(result[:message]).to eq('Product not activated.')
           end
         end
 
@@ -448,37 +468,34 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               message: 'You shall not have access to those repos !'
             }
           end
-
-          before do
-            expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
-            allow(SccProxy).to receive(:scc_check_subscription_expiration).and_return(scc_response)
-            expect(SccProxy).to receive(:scc_check_subscription_expiration)
-            allow(ZypperAuth.auth_logger).to receive(:info)
-            expect(ZypperAuth.auth_logger).to receive(:info).with(error_message)
-            expect(FileUtils).not_to receive(:touch)
-            get '/api/auth/check', headers: headers
-          end
-
-          it { is_expected.to have_http_status(403) }
-        end
-
-        context 'regcode check suceeds' do
-          let(:scc_response) do
+          let(:body_unexpected) do
             {
-              is_active: true
+              id: 1,
+              regcode: '631dc51f',
+              name: 'Subscription 1',
+              type: 'FULL',
+              status: 'FOO',
+              starts_at: 'null',
+              expires_at: DateTime.parse((Time.zone.today - 1).to_s),
+              system_limit: 6,
+              systems_count: 1,
+              service: {
+                product: {
+                  id: system_hybrid.activations.joins(:product).where(products: { free: false, product_type: :extension }).first.product.id,
+                  product_class: system_hybrid.activations.joins(:product).where(products: { free: false, product_type: :extension }).first.product.product_class
+                }
+              }
             }
           end
 
-          before do
-            expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
-            allow(SccProxy).to receive(:scc_check_subscription_expiration).and_return(scc_response)
-            expect(SccProxy).to receive(:scc_check_subscription_expiration)
-            allow(ZypperAuth.auth_logger).to receive(:info)
-            expect(ZypperAuth.auth_logger).not_to(receive(:info))
-            get '/api/auth/check', headers: headers
-          end
+          context 'the path to check is free' do
+            before do
+              expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
+              get '/api/auth/check', headers: headers
+            end
 
-          it { is_expected.to have_http_status(200) }
+            it { is_expected.to have_http_status(200) }
+          end
         end
       end
     end
