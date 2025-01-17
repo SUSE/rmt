@@ -28,9 +28,11 @@ module StrictAuthentication
       return true if (has_sles11 && (path =~ %r{/12/} || path =~ %r{/12-SP1/}))
 
       found_path = all_allowed_paths(headers).find { |allowed_path| path =~ /^#{Regexp.escape(allowed_path)}/ }
+      return false if found_path.blank?
+
       return true if found_path.present? && @system.payg?
 
-      if found_path.present? && (@system.hybrid? || @system.byos?)
+      if @system.hybrid? || @system.byos?
         path_in_repos = false
         # check if the path is paid for hybrid or byos instances
         base_product = @system.products.find_by(product_type: 'base')
@@ -77,8 +79,6 @@ module StrictAuthentication
           # check if it belongs to the free products repositories list
           true
         end
-      elsif found_path.blank?
-        false
       end
     end
     # rubocop:enable Metrics/CyclomaticComplexity
