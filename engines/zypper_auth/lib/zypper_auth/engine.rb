@@ -6,7 +6,7 @@ module ZypperAuth
       Thread.current[:logger]
     end
 
-    def verify_instance(request, logger, system)
+    def verify_instance(request, logger, system, _params_product_id = nil)
       return false unless request.headers['X-Instance-Data']
 
       base_product = system.products.find_by(product_type: 'base')
