@@ -209,24 +209,25 @@ module SccProxy
       product_paths.any? { |path| x_original_uri.include?(path) }
     end
 
-    def product_class_access(scc_systems_activations, product)
-      expired_products_names = scc_systems_activations.map do |act|
-        act['service']['product']['product_class'] unless act['status'].casecmp('active').zero?
-      end.flatten
-      message = if expired_products_names.all?(&:nil?)
+    def product_class_access(scc_systems_activations, product_class)
+      expired_products_classes = scc_systems_activations.map do |act|
+        act_product_class = act['service']['product']['product_class']
+        act_product_class if act_product_class == product_class && act['status'].casecmp('expired').zero?
+      end.compact.flatten
+      message = if expired_products_classes.empty?
                   'Product not activated.'
-                elsif expired_products_names.include?(product)
+                elsif expired_products_classes.include?(product_class)
                   'Subscription expired.'
-                else
-                  'Unexpected error when checking product subscription.'
                 end
       { is_active: false, message: message }
     end
 
-    def activations_fail_state(scc_systems_activations, headers, product = nil)
-      return SccProxy.product_class_access(scc_systems_activations, product) unless product.nil?
+    def activations_fail_state(scc_systems_activations, headers, product_class = nil)
+      return SccProxy.product_class_access(scc_systems_activations, product_class) unless product_class.nil?
 
-      active_products_ids = scc_systems_activations.map { |act| act['service']['product']['id'] if act['status'].casecmp('active').zero? }.flatten
+      active_products_ids = scc_systems_activations.map do |act|
+        act['service']['product']['id'] if act['status'].casecmp('active').zero?
+      end.flatten
       x_original_uri = headers.fetch('X-Original-URI', '')
       # if there is no product info to compare the activations with
       # probably means the query is to refresh credentials
@@ -236,7 +237,7 @@ module SccProxy
       # product not found in the active subscriptions, check the expired ones
       expired_products_ids = scc_systems_activations.map { |act| act['service']['product']['id'] unless act['status'].casecmp('active').zero? }.flatten
       if expired_products_ids.all?(&:nil?)
-        {
+        return {
           is_active: false,
           message: 'Product not activated.'
         }
@@ -254,19 +255,35 @@ module SccProxy
       end
     end
 
-    def scc_check_subscription_expiration(headers, system, product = nil)
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
+    def scc_check_subscription_expiration(headers, system, product_class = nil)
       scc_systems_activations = SccProxy.get_scc_activations(headers, system)
       return { is_active: false, message: 'No activations.' } if scc_systems_activations.empty?
 
-      status_products_classes = scc_systems_activations.select do |act|
-        act['service']['product']['product_class'] if act['status'].casecmp('active').zero? && act['service']['product']['product_class'] == product
-      end.flatten
-      return { is_active: true } unless status_products_classes.empty?
+      status_products_classes = if system.byos?
+                                  scc_systems_activations.map do |act|
+                                    product = act['service']['product']
+                                    if product['product_class'] == product_class && (product['free'] || (!act['status'].nil? && act['status'].casecmp('active').zero?))
+                                      # free module or (paid extension or base product))
+                                      true
+                                    end
+                                  end.compact
+                                elsif system.hybrid?
+                                  scc_systems_activations.map do |act|
+                                    product = act['service']['product']
+                                    true if act['status'].casecmp('active').zero? && product['product_class'] == product_class
+                                  end.compact
+                                end
 
-      SccProxy.activations_fail_state(scc_systems_activations, headers, product)
+      return { is_active: true } if !status_products_classes.empty? && status_products_classes.all?(true)
+
+      SccProxy.activations_fail_state(scc_systems_activations, headers, product_class)
     rescue StandardError
       { is_active: false, message: 'Could not check the activations from SCC' }
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/PerceivedComplexity
 
     def scc_upgrade(auth, product, system_login, mode, logger)
       uri = URI.parse(SYSTEM_PRODUCTS_URL)
