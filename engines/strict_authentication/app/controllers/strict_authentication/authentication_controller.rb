@@ -14,6 +14,8 @@ module StrictAuthentication
 
     protected
 
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     def path_allowed?(headers)
       path = headers['X-Original-URI']
       return false if path.blank?
@@ -79,6 +81,8 @@ module StrictAuthentication
         false
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/PerceivedComplexity
 
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity

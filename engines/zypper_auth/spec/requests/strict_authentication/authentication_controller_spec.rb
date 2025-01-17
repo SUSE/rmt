@@ -69,8 +69,8 @@ describe StrictAuthentication::AuthenticationController, type: :request do
             systems_count: 1,
             service: {
               product: {
-                id: system_byos.products.find_by(product_type: 'base').id, # activations.joins(:product).where(products: { free: false, product_type: :extension }).first.product.id,
-                product_class: system_byos.products.find_by(product_type: 'base').product_class # activations.joins(:product).where(products: { free: false, product_type: :extension }).first.product.product_class
+                id: system_byos.products.find_by(product_type: 'base').id, # activations.joins(:product).where(products: { free: false, product_type: :extension }).first.product.id, # rubocop:disable Layout/LineLength
+                product_class: system_byos.products.find_by(product_type: 'base').product_class # activations.joins(:product).where(products: { free: false, product_type: :extension }).first.product.product_class # rubocop:disable Layout/LineLength
               }
             }
           }
@@ -432,7 +432,8 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               service: {
                 product: {
                   id: system_hybrid.activations.joins(:product).where(products: { free: false, product_type: :extension }).first.product.id,
-                  product_class: system_hybrid.activations.joins(:product).where(products: { free: false, product_type: :extension }).first.product.product_class
+                  product_class: system_hybrid.activations.joins(:product).where(products: { free: false,
+                                                                                             product_type: :extension }).first.product.product_class
                 }
               }
             }
@@ -482,7 +483,8 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               service: {
                 product: {
                   id: system_hybrid.activations.joins(:product).where(products: { free: false, product_type: :extension }).first.product.id,
-                  product_class: system_hybrid.activations.joins(:product).where(products: { free: false, product_type: :extension }).first.product.product_class
+                  product_class: system_hybrid.activations.joins(:product).where(products: { free: false,
+                                                                                             product_type: :extension }).first.product.product_class
                 }
               }
             }

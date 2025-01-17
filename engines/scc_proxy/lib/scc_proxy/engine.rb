@@ -264,7 +264,7 @@ module SccProxy
       status_products_classes = if system.byos?
                                   scc_systems_activations.map do |act|
                                     product = act['service']['product']
-                                    if product['product_class'] == product_class && (product['free'] || (!act['status'].nil? && act['status'].casecmp('active').zero?))
+                                    if product['product_class'] == product_class && (product['free'] || (!act['status'].nil? && act['status'].casecmp('active').zero?)) # rubocop:disable Layout/LineLength
                                       # free module or (paid extension or base product))
                                       true
                                     end
