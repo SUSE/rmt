@@ -38,7 +38,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
 
         before do
           allow(DataExport::Handlers::Example).to receive(:new).and_return(plugin_double)
-          allow(plugin_double).to receive(:update_info)
+          allow(plugin_double).to receive(:export_rmt_data)
           stub_request(:post, scc_register_system_url)
             .to_return(
               status: 201,
@@ -48,7 +48,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         end
 
         it 'saves the data' do
-          expect(plugin_double).to receive(:update_info)
+          expect(plugin_double).to receive(:export_rmt_data)
           post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=' }
         end
 
@@ -57,7 +57,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
 
           before do
             allow(DataExport::Handlers::Example).to receive(:new).and_return(plugin_double)
-            allow(plugin_double).to receive(:update_info).and_raise('foo')
+            allow(plugin_double).to receive(:export_rmt_data).and_raise('foo')
             allow(Rails.logger).to receive(:error)
             stub_request(:post, scc_register_system_url)
               .to_return(
@@ -68,7 +68,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           end
 
           it 'does not save the data and log error' do
-            expect(plugin_double).to receive(:update_info)
+            expect(plugin_double).to receive(:export_rmt_data)
             expect(Rails.logger).to receive(:error)
             post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=' }
           end

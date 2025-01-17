@@ -1,5 +1,5 @@
 class DataExport::Handlers::Example < DataExport::HandlerBase
-  def update_info
+  def export_rmt_data
     true
   end
 end
