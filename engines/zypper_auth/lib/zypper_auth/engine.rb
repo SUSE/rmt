@@ -6,7 +6,7 @@ module ZypperAuth
       Thread.current[:logger]
     end
 
-    def verify_instance(request, logger, system, _params_product_id = nil)
+    def verify_instance(request, logger, system)
       return false unless request.headers['X-Instance-Data']
 
       base_product = system.products.find_by(product_type: 'base')
@@ -123,7 +123,7 @@ module ZypperAuth
         # additional validation for zypper service XML controller
         before_action :verify_instance
         def verify_instance
-          unless ZypperAuth.verify_instance(request, logger, @system, params.fetch('id', nil))
+          unless ZypperAuth.verify_instance(request, logger, @system)
             render(xml: { error: 'Instance verification failed' }, status: 403)
           end
         end
