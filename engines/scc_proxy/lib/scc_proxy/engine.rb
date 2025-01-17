@@ -203,12 +203,6 @@ module SccProxy
       JSON.parse(response.body)
     end
 
-    def product_path_access(x_original_uri, products_ids)
-      products = Product.where(id: products_ids)
-      product_paths = products.map { |prod| prod.repositories.pluck(:local_path) }.flatten
-      product_paths.any? { |path| x_original_uri.include?(path) }
-    end
-
     def product_class_access(scc_systems_activations, product_class)
       expired_products_classes = scc_systems_activations.map do |act|
         act_product_class = act['service']['product']['product_class']
@@ -220,39 +214,6 @@ module SccProxy
                   'Subscription expired.'
                 end
       { is_active: false, message: message }
-    end
-
-    def activations_fail_state(scc_systems_activations, headers, product_class = nil)
-      return SccProxy.product_class_access(scc_systems_activations, product_class) unless product_class.nil?
-
-      active_products_ids = scc_systems_activations.map do |act|
-        act['service']['product']['id'] if act['status'].casecmp('active').zero?
-      end.flatten
-      x_original_uri = headers.fetch('X-Original-URI', '')
-      # if there is no product info to compare the activations with
-      # probably means the query is to refresh credentials
-      # in any case, verification is true if ALL activations are ACTIVE
-      return { is_active: (scc_systems_activations.length == active_products_ids.length) } if x_original_uri.empty?
-
-      # product not found in the active subscriptions, check the expired ones
-      expired_products_ids = scc_systems_activations.map { |act| act['service']['product']['id'] unless act['status'].casecmp('active').zero? }.flatten
-      if expired_products_ids.all?(&:nil?)
-        return {
-          is_active: false,
-          message: 'Product not activated.'
-        }
-      end
-      if SccProxy.product_path_access(x_original_uri, expired_products_ids)
-        {
-          is_active: false,
-          message: 'Subscription expired.'
-        }
-      else
-        {
-          is_active: false,
-          message: 'Unexpected error when checking product subscription.'
-        }
-      end
     end
 
     # rubocop:disable Metrics/CyclomaticComplexity
@@ -278,7 +239,7 @@ module SccProxy
 
       return { is_active: true } if !status_products_classes.empty? && status_products_classes.all?(true)
 
-      SccProxy.activations_fail_state(scc_systems_activations, headers, product_class)
+      SccProxy.product_class_access(scc_systems_activations, product_class)
     rescue StandardError
       { is_active: false, message: 'Could not check the activations from SCC' }
     end
