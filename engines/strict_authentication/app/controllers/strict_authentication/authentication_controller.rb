@@ -33,7 +33,6 @@ module StrictAuthentication
       return true if found_path.present? && @system.payg?
 
       if @system.hybrid? || @system.byos?
-        path_in_repos = false
         # check if the path is paid for hybrid or byos instances
         base_product = @system.products.find_by(product_type: 'base')
         verification_provider = InstanceVerification.provider.new(
@@ -47,7 +46,6 @@ module StrictAuthentication
           repos_paths = paid_extension.repositories.pluck(:local_path)
           repos_paths.each do |repo_path|
             if found_path == repo_path
-              path_in_repos = true
               logger.info "verifying paid extension #{paid_extension.identifier}"
               result = SccProxy.scc_check_subscription_expiration(request.headers, @system, paid_extension.product_class)
               Rails.logger.info "Result from check subscription with SCC #{result}"
