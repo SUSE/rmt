@@ -16,14 +16,17 @@ describe StrictAuthentication::AuthenticationController, type: :request do
 
       let(:requested_uri) { '/repo' + system.repositories.first[:local_path] + '/repodata/repomd.xml' }
       let(:paid_requested_uri) { '/repo' + system.products.where(free: false).first.repositories.first[:local_path] + '/repodata/repomd.xml' }
+      let(:data_export_double) { instance_double('DataExport::Handlers::Example') }
 
       context 'without instance_data headers' do
         let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri }) }
 
         before do
+          allow(DataExport::Handlers::Example).to receive(:new).and_return(data_export_double)
           allow(File).to receive(:directory?)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
+          expect(data_export_double).not_to receive(:export_rmt_data)
           get '/api/auth/check', headers: headers
         end
 
@@ -39,6 +42,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           allow(File).to receive(:directory?)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
+          expect(data_export_double).not_to receive(:export_rmt_data)
           get '/api/auth/check', headers: headers
         end
 
@@ -269,14 +273,17 @@ describe StrictAuthentication::AuthenticationController, type: :request do
 
       context 'with instance_data headers and instance data is valid' do
         let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': 'test' }) }
+        let(:data_export_double) { instance_double('DataExport::Handlers::Example') }
 
         before do
           Rails.cache.clear
           expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
           allow(InstanceVerification).to receive(:update_cache)
+          allow(DataExport::Handlers::Example).to receive(:new).and_return(data_export_double)
           allow(File).to receive(:directory?)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
+          expect(data_export_double).to receive(:export_rmt_data)
           get '/api/auth/check', headers: headers
         end
 
@@ -491,8 +498,12 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           end
 
           context 'the path to check is free' do
+            let(:data_export_double) { instance_double('DataExport::Handlers::Example') }
+
             before do
+              allow(DataExport::Handlers::Example).to receive(:new).and_return(data_export_double)
               expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
+              expect(data_export_double).to receive(:export_rmt_data)
               get '/api/auth/check', headers: headers
             end
 
