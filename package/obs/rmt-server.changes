@@ -3,7 +3,7 @@ Tue Jan 21 10:49:54 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
 - Version 2.22
   * rmt-server-pubcloud:
-    * Add reg_code column to systems table
+    * Add pubcloud_reg_code column to systems table
 
 -------------------------------------------------------------------
 Fri Jan 03 10:44:00 UTC 2025 - Luís Caparroz <lcaparroz@suse.com>
