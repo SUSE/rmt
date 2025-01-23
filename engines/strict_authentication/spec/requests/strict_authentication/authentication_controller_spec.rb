@@ -5,7 +5,7 @@ module StrictAuthentication
   RSpec.describe AuthenticationController, type: :request do
     subject { response }
 
-    let(:system) { FactoryBot.create(:system, :with_activated_product_sle_micro) }
+    let(:system) { FactoryBot.create(:system, :payg, :with_activated_product_sle_micro) }
 
     describe '#check' do
       context 'without authentication' do
@@ -101,7 +101,7 @@ module StrictAuthentication
               )
             end
 
-            let(:system) { FactoryBot.create(:system, :with_activated_product, product: product) }
+            let(:system) { FactoryBot.create(:system, :payg, :with_activated_product, product: product) }
             let(:requested_uri) { '/repo/$path/*with/.funky/(characters)/repodata/repomd.xml' }
 
             its(:code) { is_expected.to eq '200' }
@@ -164,7 +164,7 @@ module StrictAuthentication
                 identifier: 'SUSE-Manager-Server', version: '15', arch: 'x86_64'
                 )
             end
-            let(:system) { FactoryBot.create(:system, :with_activated_product, product: my_product) }
+            let(:system) { FactoryBot.create(:system, :payg, :with_activated_product, product: my_product) }
 
             let(:suma_prod_id) do
               system.products.find do |p|
