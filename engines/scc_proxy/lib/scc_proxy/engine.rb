@@ -133,6 +133,13 @@ module SccProxy
       scc_request = prepare_scc_request(uri.path, product, auth, params, mode)
       response = http.request(scc_request)
       unless response.code_type == Net::HTTPCreated
+        # if product can not be activated
+        # set the registration code as invalid in the cache
+        product_hash = product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
+        product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
+        cache_entry = "#{Base64.encode64(params[:token])}-#{product_triplet}-inactive"
+        InstanceVerification.update_cache_not_payg(cache_entry, mode)
+
         error = JSON.parse(response.body)
         Rails.logger.info "Could not activate #{product.product_string}, error: #{error['error']} #{response.code}"
         error['error'] = SccProxy.parse_error(error['error']) if error['error'].include? 'json'
@@ -325,6 +332,7 @@ module SccProxy
 
         protected
 
+        # rubocop:disable Metrics/PerceivedComplexity
         def scc_activate_product
           product_hash = @product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
           unless InstanceVerification.provider.new(logger, request, product_hash, @system.instance_data).allowed_extension?
@@ -334,22 +342,41 @@ module SccProxy
           end
           mode = find_mode
           unless mode.nil?
-            # if system is byos or hybrid and there is a token
-            # make a request to SCC
-            logger.info "Activating product #{@product.product_string} to SCC"
-            logger.info 'No token provided' if params[:token].blank?
-            SccProxy.scc_activate_product(
-              @system, @product, request.headers['HTTP_AUTHORIZATION'], params, mode
-            )
+            # check cache first
+            cache_entry = InstanceVerification.reg_code_in_cache?(params[:token], product_hash, mode)
+            if cache_entry.present? && cache_entry.include?('-inactive')
+              error = ActionController::TranslatedError.new(N_('Subscription inactive'))
+              error.status = :forbidden
+              raise error
+            elsif cache_entry.blank?
+              # if system is byos or hybrid and
+              # there is a token
+              # and not found in the cache
+              # make a request to SCC
+              logger.info "Activating product #{@product.product_string} to SCC"
+              logger.info 'No token provided' if params[:token].blank?
+              SccProxy.scc_activate_product(
+                @system, @product, request.headers['HTTP_AUTHORIZATION'], params, mode
+              )
+              logger.info "Product #{@product.product_string} successfully activated with SCC"
+              product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
+              cache_entry = "#{Base64.encode64(params[:token])}-#{product_triplet}-active"
+            end
+            InstanceVerification.update_cache(request.remote_ip, @system.login, @product.id)
+            InstanceVerification.update_cache_not_payg(cache_entry, mode)
+            if @system.pubcloud_reg_code.present? && @system.pubcloud_reg_code != params[:token]
+              combination_reg_code = @system.pubcloud_reg_code + ',' + params[:token]
+              @system.update(pubcloud_reg_code: combination_reg_code)
+            elsif @system.pubcloud_reg_code.nil?
+              @system.update(pubcloud_reg_code: params[:token])
+            end
             # if the system is PAYG and the registration code is valid for the extension,
             # then the system is hybrid
             # update the system to HYBRID mode if HYBRID MODE and system not HYBRID already
             @system.hybrid! if mode == 'hybrid' && @system.payg?
-
-            logger.info "Product #{@product.product_string} successfully activated with SCC"
-            InstanceVerification.update_cache(request.remote_ip, @system.login, @product.id)
           end
         end
+        # rubocop:enable Metrics/PerceivedComplexity
 
         def find_mode
           if @system.byos?

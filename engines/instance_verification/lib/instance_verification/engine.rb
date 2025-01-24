@@ -1,3 +1,4 @@
+require 'base64'
 require 'fileutils'
 
 module InstanceVerification
@@ -6,7 +7,7 @@ module InstanceVerification
     # to be addressed on a different PR
     unless registry
       InstanceVerification.write_cache_file(
-        Rails.application.config.repo_cache_dir,
+        Rails.application.config.repo_payg_cache_dir,
         [remote_ip, system_login, product_id].join('-')
       )
     end
@@ -17,9 +18,40 @@ module InstanceVerification
     )
   end
 
+  def self.update_cache_not_payg(cache_key, mode)
+    cache_path = get_cache_path(mode)
+    InstanceVerification.write_cache_file(cache_path, cache_key)
+  end
+
   def self.write_cache_file(cache_dir, cache_key)
     FileUtils.mkdir_p(cache_dir)
     FileUtils.touch(File.join(cache_dir, cache_key))
+    Rails.logger.info "#{cache_dir} updated for #{cache_key}"
+  end
+
+  def self.get_cache_path(mode)
+    if mode == 'byos'
+      Rails.application.config.repo_byos_cache_dir
+    elsif mode == 'hybrid'
+      Rails.application.config.repo_hybrid_cache_dir
+    else
+      # payg
+      Rails.application.config.repo_payg_cache_dir
+    end
+  end
+
+  def self.get_cache_entries(mode)
+    cache_path = InstanceVerification.get_cache_path(mode)
+    FileUtils.mkdir_p(cache_dir)
+    Dir.children(cache_path)
+  end
+
+  def self.reg_code_in_cache?(reg_code, product_hash, mode)
+    cache_entries = InstanceVerification.get_cache_entries(mode)
+    encoded_reg_code = Base64.encode64(reg_code)
+    product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
+    cache_key = "#{encoded_reg_code}-#{product_triplet}"
+    cache_entries.find { |cache_entry| cache_entry.include?(cache_key) }
   end
 
   class Engine < ::Rails::Engine
