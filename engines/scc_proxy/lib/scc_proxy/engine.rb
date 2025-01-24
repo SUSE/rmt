@@ -271,9 +271,10 @@ module SccProxy
         def announce_system
           auth_header = nil
           auth_header = request.headers['HTTP_AUTHORIZATION'] if request.headers.include?('HTTP_AUTHORIZATION')
+          reg_code = get_reg_code(auth_header)
           system_information = hwinfo_params[:hwinfo].to_json
           instance_data = params.fetch(:instance_data, nil)
-          if has_no_regcode?(auth_header)
+          if reg_code.empty?
             # no token sent to check with SCC
             # standard announce case
             @system = System.create!(
@@ -293,7 +294,8 @@ module SccProxy
               proxy_byos_mode: :byos,
               proxy_byos: true,
               system_information: system_information,
-              instance_data: instance_data
+              instance_data: instance_data,
+              pubcloud_reg_code: reg_code
             )
           end
           logger.info("System '#{@system.hostname}' announced")
@@ -312,10 +314,9 @@ module SccProxy
           error_message[0..(error_message.index(' ') - 1)].to_i
         end
 
-        def has_no_regcode?(auth_header)
+        def get_reg_code(auth_header)
           auth_header ||= '='
-          auth_header = auth_header[(auth_header.index('=') + 1)..-1]
-          auth_header.empty?
+          auth_header[(auth_header.index('=') + 1)..-1]
         end
       end
 
