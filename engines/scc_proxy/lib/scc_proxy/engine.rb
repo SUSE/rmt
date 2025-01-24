@@ -345,7 +345,10 @@ module SccProxy
             # if the system is PAYG and the registration code is valid for the extension,
             # then the system is hybrid
             # update the system to HYBRID mode if HYBRID MODE and system not HYBRID already
-            @system.hybrid! if mode == 'hybrid' && @system.payg?
+            if mode == 'hybrid' && @system.payg?
+              @system.hybrid!
+              @system.update(pubcloud_reg_code: params[:token])
+            end
 
             logger.info "Product #{@product.product_string} successfully activated with SCC"
             InstanceVerification.update_cache(request.remote_ip, @system.login, @product.id)
