@@ -13,11 +13,12 @@ module ZypperAuth
       return false unless base_product
 
       # check the cache for the system (20 min)
-      cache_key = [request.remote_ip, system.login, base_product.id].join('-')
-      cache_path = File.join(Rails.application.config.repo_cache_dir, cache_key)
+      cache_key = InstanceVerification.build_cache_entry(request.remote_ip, system.login, system.pubcloud_reg_code, system.proxy_byos_mode, base_product)
+      # cache_key = [request.remote_ip, system.login, base_product.id].join('-')
+      cache_path = InstanceVerification.get_cache_path(system.proxy_byos_mode)
       if File.exist?(cache_path)
         # only update registry cache key
-        InstanceVerification.update_cache(request.remote_ip, system.login, nil, registry: true)
+        InstanceVerification.update_cache(cache_key, system.proxy_byos_mode, registry: true)
         return true
       end
 
@@ -30,14 +31,19 @@ module ZypperAuth
 
       is_valid = verification_provider.instance_valid?
       # update repository and registry cache
-      InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id)
+      InstanceVerification.update_cache(cache_key, 'payg', base_product)
       is_valid
     rescue InstanceVerification::Exception => e
       if system.byos?
         result = SccProxy.scc_check_subscription_expiration(request.headers, system, base_product.product_class)
         if result[:is_active]
-          InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id)
+          # update the cache for the base product
+          cache_key = InstanceVerification.build_cache_entry(nil, nil, system.pubcloud_reg_code, 'byos', base_product)
+          InstanceVerification.update_cache(cache_key, 'byos')
           return true
+        else
+          a = 3
+          # if subscription expired update cache
         end
       end
 

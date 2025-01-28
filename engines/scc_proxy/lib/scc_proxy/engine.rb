@@ -135,11 +135,8 @@ module SccProxy
       unless response.code_type == Net::HTTPCreated
         # if product can not be activated
         # set the registration code as invalid in the cache
-        product_hash = product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
-        product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
-        cache_entry = "#{Base64.encode64(params[:token])}-#{product_triplet}-inactive"
-        InstanceVerification.update_cache_not_payg(cache_entry, mode)
-
+        cache_key = InstanceVerification.build_cache_entry(nil, nil, Base64.encode64(params[:token]), mode, product)
+        InstanceVerification.set_cache_inactive(cache_key, mode)
         error = JSON.parse(response.body)
         Rails.logger.info "Could not activate #{product.product_string}, error: #{error['error']} #{response.code}"
         error['error'] = SccProxy.parse_error(error['error']) if error['error'].include? 'json'
@@ -343,7 +340,8 @@ module SccProxy
           mode = find_mode
           unless mode.nil?
             # check cache first
-            cache_entry = InstanceVerification.reg_code_in_cache?(params[:token], product_hash, mode)
+            cache_key = InstanceVerification.build_cache_entry(nil, nil, Base64.strict_encode64(params[:token]), mode, @product)
+            cache_entry = InstanceVerification.reg_code_in_cache?(cache_key, mode)
             if cache_entry.present? && cache_entry.include?('-inactive')
               error = ActionController::TranslatedError.new(N_('Subscription inactive'))
               error.status = :forbidden
@@ -359,16 +357,19 @@ module SccProxy
                 @system, @product, request.headers['HTTP_AUTHORIZATION'], params, mode
               )
               logger.info "Product #{@product.product_string} successfully activated with SCC"
-              product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
-              cache_entry = "#{Base64.encode64(params[:token])}-#{product_triplet}-active"
             end
-            InstanceVerification.update_cache(request.remote_ip, @system.login, @product.id)
-            InstanceVerification.update_cache_not_payg(cache_entry, mode)
+            if mode.nil?
+              # get the payg cache entry
+              # in order to update the cache
+              mode = 'payg'
+              cache_entry = InstanceVerification.build_cache_entry(request.remote_ip, @system.login, nil, 'payg', @product)
+            end
+            InstanceVerification.update_cache(cache_entry, mode)
             if @system.pubcloud_reg_code.present? && @system.pubcloud_reg_code != params[:token]
-              combination_reg_code = @system.pubcloud_reg_code + ',' + params[:token]
+              combination_reg_code = @system.pubcloud_reg_code + ',' + Base64.strict_encode64(params[:token])
               @system.update(pubcloud_reg_code: combination_reg_code)
             elsif @system.pubcloud_reg_code.nil?
-              @system.update(pubcloud_reg_code: params[:token])
+              @system.update(pubcloud_reg_code: Base64.strict_encode64(params[:token]))
             end
             # if the system is PAYG and the registration code is valid for the extension,
             # then the system is hybrid
