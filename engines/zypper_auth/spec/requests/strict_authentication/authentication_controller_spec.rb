@@ -278,6 +278,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         before do
           Rails.cache.clear
           expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
+          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
           allow(InstanceVerification).to receive(:update_cache)
           allow(DataExport::Handlers::Example).to receive(:new).and_return(data_export_double)
           allow(File).to receive(:directory?)
@@ -501,6 +502,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
             let(:data_export_double) { instance_double('DataExport::Handlers::Example') }
 
             before do
+              allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
               allow(DataExport::Handlers::Example).to receive(:new).and_return(data_export_double)
               expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
               expect(data_export_double).to receive(:export_rmt_data)
