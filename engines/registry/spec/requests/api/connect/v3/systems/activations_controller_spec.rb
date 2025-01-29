@@ -241,11 +241,11 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
           let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
           let(:product_hash) { system.activations.first.product.attributes.symbolize_keys.slice(:identifier, :version, :arch) }
           let(:product_triplet) { "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}" }
-          let(:scc_response) do
-            {
-              is_active: true
-            }
-          end
+          # let(:scc_response) do
+          #   {
+          #     is_active: true
+          #   }
+          # end
 
           before do
             allow(InstanceVerification).to receive(:update_cache)
@@ -259,7 +259,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
                 .and_raise(InstanceVerification::Exception, 'Custom plugin error')
               )
             allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
-            allow(InstanceVerification).to receive(:remove_entry_from_cache)
+            # allow(InstanceVerification).to receive(:remove_entry_from_cache)
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_active].to_json, headers: {})
             allow(ZypperAuth).to receive(:verify_instance).and_call_original
             expect(InstanceVerification).to receive(:update_cache).with("#{system.pubcloud_reg_code}-#{product_triplet}-active", 'byos')
@@ -271,6 +271,41 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
             expect(data[0]['service']['product']['id']).to match(system.activations.first.service_id)
             expect(data[0]['id']).to match(system.activations.first.id)
             expect(data[0]['system_id']).to match(system.activations.first.system_id)
+          end
+        end
+
+        context 'with X-Instance-Data headers and bad metadata and bad subscription on SCC' do
+          let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+          let(:product_hash) { system.activations.first.product.attributes.symbolize_keys.slice(:identifier, :version, :arch) }
+          let(:product_triplet) { "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}" }
+          let(:scc_response) do
+            {
+              is_active: false,
+              message: 'error'
+            }
+          end
+
+          before do
+            allow(InstanceVerification).to receive(:update_cache)
+            headers['X-Instance-Data'] = 'IMDS'
+            Thread.current[:logger] = RMT::Logger.new('/dev/null')
+          end
+
+          it 'set InstanceVerification cache inactive' do
+            allow(plugin_double).to(
+              receive(:instance_valid?)
+                .and_raise(InstanceVerification::Exception, 'Custom plugin error')
+              )
+            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
+            # allow(InstanceVerification).to receive(:remove_entry_from_cache)
+            allow(SccProxy).to receive(:scc_check_subscription_expiration).and_return(scc_response)
+            # stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_active].to_json, headers: {})
+            allow(ZypperAuth).to receive(:verify_instance).and_call_original
+            # expect(InstanceVerification).to receive(:update_cache).with("#{system.pubcloud_reg_code}-#{product_triplet}-active", 'byos')
+            expect(InstanceVerification).to receive(:update_cache).with("#{system.pubcloud_reg_code}-#{product_triplet}-inactive", 'byos')
+            get '/connect/systems/activations', headers: headers
+
+            expect(response.body).to include('Instance verification failed')
           end
         end
       end

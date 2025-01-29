@@ -57,6 +57,34 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
       end
 
+      context "when system doesn't have hw_info and cache is inactive" do
+        let(:system) { FactoryBot.create(:system, :byos, pubcloud_reg_code: Base64.strict_encode64('super_token')) }
+
+        before do
+          stub_request(:post, 'https://scc.suse.com/connect/systems/products')
+            .to_return(
+              status: 201,
+              body: { ok: 'ok' }.to_json,
+              headers: {}
+            )
+        end
+
+        it 'class instance verification provider' do
+          expect(InstanceVerification::Providers::Example).to receive(:new)
+            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, nil).and_call_original.at_least(:once)
+          allow(File).to receive(:directory?)
+          allow(Dir).to receive(:mkdir)
+          allow(Dir).to receive(:children)
+          allow(FileUtils).to receive(:touch)
+          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(
+            "#{system.pubcloud_reg_code}-inactive"
+          )
+          post url, params: payload, headers: headers
+          expect(response.body).to include('Subscription inactive')
+          expect(response).to have_http_status(403)
+        end
+      end
+
       context 'when system has hw_info' do
         let(:instance_data) { 'dummy_instance_data' }
         let(:system) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
@@ -105,6 +133,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         context 'when verification provider raises an unhandled exception' do
           before do
+            expect(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+            expect(plugin_double).to receive(:instance_valid?).and_return(false)
+            allow(InstanceVerification).to receive(:set_cache_inactive).and_return(nil)
             stub_request(:post, scc_activate_url)
             .to_return(
               status: 422,
@@ -287,7 +318,13 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         let(:instance_data) { 'dummy_instance_data' }
         let(:system) do
           FactoryBot.create(
-            :system, :payg, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data, pubcloud_reg_code: Base64.strict_encode64('super_token')
+            :system,
+            :payg,
+            :with_system_information,
+            :with_activated_product,
+            product: base_product,
+            instance_data: instance_data,
+            pubcloud_reg_code: Base64.strict_encode64('super_token_different')
           )
         end
         let(:serialized_service_json) do
@@ -358,7 +395,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           let(:cache_entry) do
             product_hash = product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
             product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
-            "#{system.pubcloud_reg_code}-#{product_triplet}-active"
+            "#{Base64.strict_encode64(payload_token[:token])}-#{product_triplet}-active"
           end
 
           before do
@@ -386,10 +423,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               .with({ headers: scc_announce_headers, body: scc_annouce_body.to_json })
               .to_return(status: 201, body: scc_response_body, headers: {})
 
-            expect(InstanceVerification).to receive(:update_cache).with(
-              File.join(Rails.application.config.repo_hybrid_cache_dir, cache_entry),
-              'hybrid'
-            )
+            expect(InstanceVerification).to receive(:update_cache).with(cache_entry, 'hybrid')
 
             post url, params: payload_token, headers: headers
           end

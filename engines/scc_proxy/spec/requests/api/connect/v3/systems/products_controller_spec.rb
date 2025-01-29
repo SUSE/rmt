@@ -148,7 +148,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                   body: { error: 'No product found on SCC for: foo bar x86_64 json api' }.to_json,
                   headers: {}
                 )
-              allow(InstanceVerification).to receive(:remove_entry_from_cache)
+              # allow(InstanceVerification).to receive(:remove_entry_from_cache)
               allow(InstanceVerification).to receive(:write_cache_file)
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
@@ -539,7 +539,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               allow(InstanceVerification).to receive(:write_cache_file)
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
-              allow(InstanceVerification).to receive(:remove_entry_from_cache)
+              # allow(InstanceVerification).to receive(:remove_entry_from_cache)
               allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return('')
             end
 
