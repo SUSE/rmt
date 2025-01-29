@@ -14,9 +14,7 @@ module ZypperAuth
 
       # check the cache for the system (20 min)
       cache_key = InstanceVerification.build_cache_entry(request.remote_ip, system.login, system.pubcloud_reg_code, system.proxy_byos_mode, base_product)
-      # cache_key = [request.remote_ip, system.login, base_product.id].join('-')
-      cache_path = InstanceVerification.get_cache_path(system.proxy_byos_mode)
-      if File.exist?(cache_path)
+      if InstanceVerification.reg_code_in_cache?(cache_key, system.proxy_byos_mode)
         # only update registry cache key
         InstanceVerification.update_cache(cache_key, system.proxy_byos_mode, registry: true)
         return true
@@ -31,22 +29,20 @@ module ZypperAuth
 
       is_valid = verification_provider.instance_valid?
       # update repository and registry cache
-      InstanceVerification.update_cache(cache_key, 'payg', base_product)
+      InstanceVerification.update_cache(cache_key, system.proxy_byos_mode)
       is_valid
     rescue InstanceVerification::Exception => e
       if system.byos?
         result = SccProxy.scc_check_subscription_expiration(request.headers, system, base_product.product_class)
+        # cache_key = InstanceVerification.build_cache_entry(nil, nil, system.pubcloud_reg_code, system.proxy_byos_mode, base_product)
         if result[:is_active]
           # update the cache for the base product
-          cache_key = InstanceVerification.build_cache_entry(nil, nil, system.pubcloud_reg_code, 'byos', base_product)
           InstanceVerification.update_cache(cache_key, 'byos')
           return true
-        else
-          a = 3
-          # if subscription expired update cache
         end
+        # if can not get the activations, set the cache inactive
+        InstanceVerification.set_cache_inactive(cache_key, system.proxy_byos_mode)
       end
-
       ZypperAuth.zypper_auth_message(request, system, verification_provider, e.message)
       false
     rescue StandardError => e

@@ -4,13 +4,13 @@ require 'fileutils'
 module InstanceVerification
   def self.update_cache(cache_entry, mode, registry: false)
     unless registry
-      cache_path = get_cache_path(mode)
+      cache_path = InstanceVerification.get_cache_path(mode)
       InstanceVerification.write_cache_file(cache_path, cache_entry)
     end
 
     # update the registry cache every time
     InstanceVerification.write_cache_file(
-      Rails.application.config.registry_cache_dir,
+      InstanceVerification.get_cache_path('registry'),
       cache_entry
     )
   end
@@ -59,15 +59,14 @@ module InstanceVerification
   def self.remove_entry_from_cache(cache_key, mode)
     cache_path = InstanceVerification.get_cache_path(mode)
     full_path_cache_key = File.join(cache_path, cache_key)
-    File.delete(full_path_cache_key)
+    File.unlink(full_path_cache_key) if File.exist?(full_path_cache_key)
   end
 
   def self.set_cache_inactive(cache_key, mode)
-    #InstanceVerification.remove_entry_from_cache(cache_key, mode)
-    #*all, _ = cache_key.split('-')
-    #cache_key = [all, 'inactive'].join('-')
-    #InstanceVerification.update_cache(cache_key, mode)
-    'foo'
+    InstanceVerification.remove_entry_from_cache(cache_key, mode)
+    *all, _ = cache_key.split('-')
+    cache_key = [all, 'inactive'].join('-')
+    InstanceVerification.update_cache(cache_key, mode)
   end
 
   class Engine < ::Rails::Engine
@@ -162,22 +161,15 @@ module InstanceVerification
 
           raise 'Unspecified error' unless verification_provider.instance_valid?
 
+          encoded_reg_code = @system.pubcloud_reg_code
+          # we use the token sent from the client if present
+          # instead of the value stored in the DB
+          encoded_reg_code = Base64.strict_encode64(params[:token]) if params[:token].present?
 
-          if @system.payg? || @system.hybrid
-            cache_key = InstanceVerification.build_cache_entry(request.remote_ip, @system.login, nil, 'payg', product)
-            InstanceVerification.update_cache(cache_key, 'payg')
-          end
-
-          if @system.hybrid? || @system.byos?
-            mode = @system.hybrid? ? 'hybrid' : 'byos'
-            cache_key = InstanceVerification.build_cache_entry(nil, nil, @system.pubcloud_reg_code, mode, product)
-            InstanceVerification.update_cache(cache_key, mode)
-            #product_hash = product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
-            #product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
-            #cache_entry = "#{Base64.strict_encode64(@system.pubcloud_reg_code)}-#{product_triplet}-active"
-            #mode = @system.hybrid? ? 'hybrid' : 'byos'
-            # InstanceVerification.update_cache_not_payg(cache_entry, mode)
-          end
+          cache_key = InstanceVerification.build_cache_entry(
+            request.remote_ip, @system.login, encoded_reg_code, @system.proxy_byos_mode, product
+          )
+          InstanceVerification.update_cache(cache_key, @system.proxy_byos_mode)
         end
 
         # Verify that the base product doesn't change in the offline migration
