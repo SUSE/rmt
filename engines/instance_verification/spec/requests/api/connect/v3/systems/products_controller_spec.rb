@@ -624,6 +624,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           let(:new_product) do
             FactoryBot.create(
               :product, :with_mirrored_repositories, identifier: old_product.identifier,
+              product_class: old_product.product_class,
               version: '999', predecessors: [ old_product ]
               )
           end
@@ -667,7 +668,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         context 'when migration target base product has the same identifier' do
           let(:new_product) do
             FactoryBot.create(
-              :product, :with_mirrored_repositories, identifier: old_product.identifier,
+              :product, :with_mirrored_repositories, product_class: old_product.product_class,
               version: '999', predecessors: [ old_product ]
               )
           end
@@ -732,6 +733,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         let(:new_product) do
           FactoryBot.create(
             :product, :with_mirrored_repositories, identifier: old_product.identifier,
+            product_class: old_product.product_class,
             version: '999', predecessors: [ old_product ]
             )
         end
