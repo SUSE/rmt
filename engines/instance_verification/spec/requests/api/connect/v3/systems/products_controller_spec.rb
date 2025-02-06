@@ -237,6 +237,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
           allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
           allow(plugin_double).to receive(:allowed_extension?).and_return(true)
+          allow(plugin_double).to receive(:add_on).and_return(nil)
 
           FactoryBot.create(:subscription, product_classes: product_classes)
           stub_request(:post, scc_activate_url)
@@ -532,6 +533,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           .and_return(plugin_double)
         allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
         allow(plugin_double).to receive(:allowed_extension?).and_return(true)
+        allow(plugin_double).to receive(:add_on).and_return(nil)
 
         FactoryBot.create(:subscription, product_classes: product_classes)
         stub_request(:post, scc_activate_url)
@@ -598,17 +600,23 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           'User-Agent' => 'Ruby'
         }
       end
+      let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
       context 'when SCC upgrade success' do
-        before do
-          stub_request(:put, scc_systems_products_url)
-            .with({ headers: scc_headers, body: payload.merge({ byos_mode: 'byos' }) })
-            .and_return(status: 201, body: '', headers: {})
-          request
-        end
+        let(:fake_subscription) { double(SubscriptionProductClass, subscription_id: 1) }
 
         context "when migration target base product doesn't have an activated successor/predecessor" do
           let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
+
+          before do
+            allow(InstanceVerification::Providers::Example).to receive(:new)
+              .and_return(plugin_double)
+            allow(plugin_double).to receive(:add_on).and_return('foo')
+            stub_request(:put, scc_systems_products_url)
+              .with({ headers: scc_headers, body: payload.merge({ byos_mode: 'byos' }) })
+              .and_return(status: 201, body: '', headers: {})
+            request
+          end
 
           it 'HTTP response code is 422' do
             expect(response).to have_http_status(422)
@@ -626,6 +634,17 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               :product, :with_mirrored_repositories, identifier: old_product.identifier,
               version: '999', predecessors: [ old_product ]
               )
+          end
+
+          before do
+            allow(InstanceVerification::Providers::Example).to receive(:new)
+              .and_return(plugin_double)
+            allow(plugin_double).to receive(:add_on).and_return('foo')
+            allow_any_instance_of(described_class).to receive(:find_subscription).and_return(fake_subscription)
+            stub_request(:put, scc_systems_products_url)
+              .with({ headers: scc_headers, body: payload.merge({ byos_mode: 'byos' }) })
+              .and_return(status: 201, body: '', headers: {})
+            request
           end
 
           it 'HTTP response code is 201' do
@@ -648,11 +667,12 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               body: 'Migration target not allowed on this instance type',
               headers: {}
             )
-          request
         end
 
         context "when migration target base product doesn't have an activated successor/predecessor" do
           let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
+
+          before { request }
 
           it 'HTTP response code is 422' do
             expect(response).to have_http_status(422)
@@ -671,8 +691,15 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               version: '999', predecessors: [ old_product ]
               )
           end
+          let(:fake_subscription) { double(SubscriptionProductClass, subscription_id: 1) }
+
+          before do
+            allow_any_instance_of(described_class).to receive(:find_subscription).and_return(fake_subscription)
+            request
+          end
 
           it 'HTTP response code is 422' do
+            # problem here
             expect(response).to have_http_status(422)
           end
 
@@ -694,11 +721,13 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           arch: new_product.arch
         }
       end
-
-      before { request }
+      # let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+      # before { request }
 
       context "when migration target base product doesn't have an activated successor/predecessor" do
         let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
+
+        before { request }
 
         it 'HTTP response code is 422' do
           expect(response).to have_http_status(422)
@@ -718,6 +747,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             )
         end
 
+        before { request }
+
         it 'HTTP response code is 422' do
           expect(response).to have_http_status(422)
         end
@@ -734,6 +765,16 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             :product, :with_mirrored_repositories, identifier: old_product.identifier,
             version: '999', predecessors: [ old_product ]
             )
+        end
+        let(:fake_subscription) { double(SubscriptionProductClass, subscription_id: 1) }
+
+        before do
+          #allow(InstanceVerification::Providers::Example).to receive(:new)
+          #  .and_return(plugin_double)
+          # allow(plugin_double).to receive(:add_on).and_return('foo')
+          allow_any_instance_of(described_class).to receive(:find_subscription).and_return(fake_subscription)
+
+          request
         end
 
         it 'HTTP response code is 201' do

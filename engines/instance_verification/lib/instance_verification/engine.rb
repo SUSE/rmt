@@ -53,6 +53,30 @@ module InstanceVerification
           product
         end
 
+        def find_subscription(base_product, logger, request)
+          # this method is needed because
+          # https://bugzilla.suse.com/show_bug.cgi?id=1236816
+          # https://bugzilla.suse.com/show_bug.cgi?id=1236836
+          product_hash = {
+            identifer: base_product.identifier,
+            version: base_product.version,
+            arch: base_product.arch,
+            release_type: base_product.release_type
+          }
+          add_on_product_class = InstanceVerification.provider.new(
+            logger,
+            request,
+            product_hash,
+            @system.instance_data
+          ).add_on
+          product_class = add_on_product_class.presence || base_product.product_class
+          Subscription.joins(:product_classes).find_by(
+            subscription_product_classes: {
+              product_class: product_class
+            }
+          )
+        end
+
         def verify_product_activation
           product = find_product
 
@@ -83,12 +107,7 @@ module InstanceVerification
           return if product.free?
 
           base_product = @system.products.find_by(product_type: :base)
-          subscription = Subscription.joins(:product_classes).find_by(
-            subscription_product_classes: {
-              product_class: base_product.product_class
-            }
-          )
-
+          subscription = find_subscription(base_product, logger, request)
           # This error would occur only if there's a problem with subscription setup on SCC side
           raise InstanceVerification::Exception, "Can't find a subscription for base product #{base_product.product_string}" unless subscription
 
@@ -121,8 +140,11 @@ module InstanceVerification
           return unless upgrade_product.base?
 
           activated_bases = @system.products.where(product_type: 'base')
+          upgrade_product_subscription = find_subscription(upgrade_product, logger, request)
+          upgrade_product_subscription_id = upgrade_product_subscription.subscription_id if upgrade_product_subscription.present?
           activated_bases.each do |base_product|
-            return true if (base_product.identifier == upgrade_product.identifier)
+            base_product_subscription = find_subscription(base_product, logger, request)
+            return true if base_product_subscription.present? && base_product_subscription.subscription_id == upgrade_product_subscription_id
           end
 
           raise ActionController::TranslatedError.new('Migration target not allowed on this instance type')

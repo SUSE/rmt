@@ -55,4 +55,7 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
     # to be activated on SCC or not, i.e. LTSS in Azure Basic VM
     true
   end
+
+  def add_on
+  end
 end
