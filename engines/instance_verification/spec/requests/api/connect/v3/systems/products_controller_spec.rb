@@ -603,7 +603,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
       context 'when SCC upgrade success' do
-        let(:fake_subscription) { double(SubscriptionProductClass, subscription_id: 1) }
+        let(:fake_subscription) { instance_double(SubscriptionProductClass, subscription_id: 1) }
 
         context "when migration target base product doesn't have an activated successor/predecessor" do
           let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
@@ -691,7 +691,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               version: '999', predecessors: [ old_product ]
               )
           end
-          let(:fake_subscription) { double(SubscriptionProductClass, subscription_id: 1) }
+          let(:fake_subscription) { instance_double(SubscriptionProductClass, subscription_id: 1) }
 
           before do
             allow_any_instance_of(described_class).to receive(:find_subscription).and_return(fake_subscription)
@@ -766,12 +766,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             version: '999', predecessors: [ old_product ]
             )
         end
-        let(:fake_subscription) { double(SubscriptionProductClass, subscription_id: 1) }
+        let(:fake_subscription) { instance_double(SubscriptionProductClass, subscription_id: 1) }
 
         before do
-          #allow(InstanceVerification::Providers::Example).to receive(:new)
-          #  .and_return(plugin_double)
-          # allow(plugin_double).to receive(:add_on).and_return('foo')
           allow_any_instance_of(described_class).to receive(:find_subscription).and_return(fake_subscription)
 
           request
