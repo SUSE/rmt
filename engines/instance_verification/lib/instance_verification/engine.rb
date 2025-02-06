@@ -69,6 +69,9 @@ module InstanceVerification
             product_hash,
             @system.instance_data
           ).add_on
+          # add_on_product_class, if present, is the real product class
+          # i.e. in the case of SUMA, it would SUMA product class
+          # not the SUMA base product class (Micro)
           product_class = add_on_product_class.presence || base_product.product_class
           Subscription.joins(:product_classes).find_by(
             subscription_product_classes: {
