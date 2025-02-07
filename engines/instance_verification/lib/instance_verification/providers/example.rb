@@ -57,5 +57,8 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
   end
 
   def add_on
+    # method to check if a system has an add on product
+    # based on the system metadata
+    # and if so, it returns its real product class
   end
 end
