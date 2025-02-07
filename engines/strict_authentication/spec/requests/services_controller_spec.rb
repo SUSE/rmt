@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe ServicesController, type: :request do
   describe '#show' do
-    let(:system) { FactoryBot.create(:system) }
+    let(:system) { FactoryBot.create(:system, :payg) }
     let(:service) { FactoryBot.create(:service, :with_repositories) }
     let(:activated_service) do
       service = FactoryBot.create(:service, :with_repositories)
@@ -61,6 +61,7 @@ RSpec.describe ServicesController, type: :request do
             allow(File).to receive(:directory?)
             allow(Dir).to receive(:mkdir)
             allow(FileUtils).to receive(:touch)
+            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
             allow(InstanceVerification).to receive(:update_cache)
             get "/services/#{activated_service.id}", headers: headers
           end
@@ -80,6 +81,7 @@ RSpec.describe ServicesController, type: :request do
         allow(File).to receive(:directory?)
         allow(Dir).to receive(:mkdir)
         allow(FileUtils).to receive(:touch)
+        allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
         allow(InstanceVerification).to receive(:update_cache)
         get "/services/#{activated_service.id}", headers: headers
       end

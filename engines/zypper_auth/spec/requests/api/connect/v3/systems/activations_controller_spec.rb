@@ -10,6 +10,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
 
     before do
       allow_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
+      allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
       allow(InstanceVerification).to receive(:update_cache)
       get '/connect/systems/activations', headers: headers
     end

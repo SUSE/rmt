@@ -27,6 +27,8 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
           end
 
           it 'does not update InstanceVerification cache' do
+            FileUtils.rm_rf('registry/cache') if File.exist?('registry/cache')
+            FileUtils.rm_rf('repo/payg/cache') if File.exist?('repo/payg/cache')
             allow(plugin_double).to(
               receive(:instance_valid?)
                 .and_raise(InstanceVerification::Exception, 'Custom plugin error')
@@ -40,7 +42,8 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
       end
 
       context 'with repository cache valid' do
-        let(:cache_name) { "repo/cache/127.0.0.1-#{system.login}-#{system.products.first.id}" }
+        let(:cache_path) { "repo/#{system.proxy_byos_mode}/cache" }
+        let(:cache_name) { "#{cache_path}/127.0.0.1-#{system.login}-#{system.products.first.id}" }
 
         before do
           allow(File).to receive(:join).and_call_original
@@ -50,20 +53,22 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
         end
 
         it 'refreshes registry cache key only' do
-          FileUtils.mkdir_p('repo/cache')
+          FileUtils.mkdir_p(cache_path)
           FileUtils.touch(cache_name)
-          expect(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, nil, registry: true)
+          expect(InstanceVerification).to receive(:update_cache).with(
+            "127.0.0.1-#{system.login}-#{system.products.first.id}", system.proxy_byos_mode, registry: true
+          )
           get '/connect/systems/activations', headers: headers
-          FileUtils.rm_rf('repo/cache')
+          FileUtils.rm_rf(cache_path)
           data = JSON.parse(response.body)
           expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
         end
       end
 
       context 'system is hybrid' do
-        let(:system) { FactoryBot.create(:system, :hybrid, :with_activated_product) }
+        let(:system) { FactoryBot.create(:system, :hybrid, :with_activated_product, pubcloud_reg_code: Base64.strict_encode64('foo')) }
         let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
-        let(:cache_name) { "repo/cache/127.0.0.1-#{system.login}-#{system.products.first.id}" }
+        let(:cache_name) { "repo/payg/cache/127.0.0.1-#{system.login}-#{system.products.first.id}" }
         let(:scc_systems_activations_url) { 'https://scc.suse.com/connect/systems/activations' }
         let(:body_active) do
           {
@@ -83,6 +88,8 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
             }
           }
         end
+        let(:product_hash) { system.activations.first.product.attributes.symbolize_keys.slice(:identifier, :version, :arch) }
+        let(:product_triplet) { "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}" }
 
         before do
           allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
@@ -90,7 +97,6 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
           allow(plugin_double).to(
             receive(:instance_valid?).and_return(true)
             )
-          allow(File).to receive(:join).and_call_original
           allow(InstanceVerification).to receive(:update_cache)
           allow(ZypperAuth).to receive(:verify_instance).and_call_original
           stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_active].to_json, headers: {})
@@ -99,10 +105,14 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
 
         context 'no registry' do
           it 'refreshes registry cache key only' do
-            FileUtils.mkdir_p('repo/cache')
-            expect(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, system.activations.first.product.id)
+            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
+            FileUtils.mkdir_p('repo/payg/cache')
+            expect(InstanceVerification).to receive(:update_cache).with(
+              "#{system.pubcloud_reg_code}-#{product_triplet}-active",
+              system.proxy_byos_mode
+            )
             get '/connect/systems/activations', headers: headers
-            FileUtils.rm_rf('repo/cache')
+            FileUtils.rm_rf('repo/payg/cache')
             data = JSON.parse(response.body)
             expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
           end
@@ -110,11 +120,14 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
 
         context 'registry' do
           it 'refreshes registry cache key only' do
-            FileUtils.mkdir_p('repo/cache')
-            FileUtils.touch(cache_name)
-            expect(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, nil, registry: true)
+            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(true)
+            expect(InstanceVerification).to receive(:update_cache).with(
+              "#{system.pubcloud_reg_code}-#{product_triplet}-active",
+              system.proxy_byos_mode,
+              registry: true
+            )
             get '/connect/systems/activations', headers: headers
-            FileUtils.rm_rf('repo/cache')
+            FileUtils.rm_rf('repo/payg/cache')
             data = JSON.parse(response.body)
             expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
           end
@@ -123,7 +136,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
     end
 
     context 'byos' do
-      let(:system) { FactoryBot.create(:system, :byos, :with_activated_product) }
+      let(:system) { FactoryBot.create(:system, :byos, :with_activated_product, pubcloud_reg_code: Base64.strict_encode64('bar')) }
       let(:headers) { auth_header.merge(version_header) }
       let(:scc_systems_activations_url) { 'https://scc.suse.com/connect/systems/activations' }
       let(:body_active) do
@@ -226,11 +239,8 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
       context 'without valid repository cache' do
         context 'with X-Instance-Data headers and bad metadata and good subscription on SCC' do
           let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
-          let(:scc_response) do
-            {
-              is_active: true
-            }
-          end
+          let(:product_hash) { system.activations.first.product.attributes.symbolize_keys.slice(:identifier, :version, :arch) }
+          let(:product_triplet) { "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}" }
 
           before do
             allow(InstanceVerification).to receive(:update_cache)
@@ -243,9 +253,10 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
               receive(:instance_valid?)
                 .and_raise(InstanceVerification::Exception, 'Custom plugin error')
               )
+            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_active].to_json, headers: {})
             allow(ZypperAuth).to receive(:verify_instance).and_call_original
-            expect(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, system.activations.first.product.id)
+            expect(InstanceVerification).to receive(:update_cache).with("#{system.pubcloud_reg_code}-#{product_triplet}-active", 'byos')
             get '/connect/systems/activations', headers: headers
 
             data = JSON.parse(response.body)
@@ -254,6 +265,38 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
             expect(data[0]['service']['product']['id']).to match(system.activations.first.service_id)
             expect(data[0]['id']).to match(system.activations.first.id)
             expect(data[0]['system_id']).to match(system.activations.first.system_id)
+          end
+        end
+
+        context 'with X-Instance-Data headers and bad metadata and bad subscription on SCC' do
+          let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+          let(:product_hash) { system.activations.first.product.attributes.symbolize_keys.slice(:identifier, :version, :arch) }
+          let(:product_triplet) { "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}" }
+          let(:scc_response) do
+            {
+              is_active: false,
+              message: 'error'
+            }
+          end
+
+          before do
+            allow(InstanceVerification).to receive(:update_cache)
+            headers['X-Instance-Data'] = 'IMDS'
+            Thread.current[:logger] = RMT::Logger.new('/dev/null')
+          end
+
+          it 'set InstanceVerification cache inactive' do
+            allow(plugin_double).to(
+              receive(:instance_valid?)
+                .and_raise(InstanceVerification::Exception, 'Custom plugin error')
+              )
+            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
+            allow(SccProxy).to receive(:scc_check_subscription_expiration).and_return(scc_response)
+            allow(ZypperAuth).to receive(:verify_instance).and_call_original
+            expect(InstanceVerification).to receive(:update_cache).with("#{system.pubcloud_reg_code}-#{product_triplet}-inactive", 'byos')
+            get '/connect/systems/activations', headers: headers
+
+            expect(response.body).to include('Instance verification failed')
           end
         end
       end

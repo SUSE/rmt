@@ -1,10 +1,8 @@
 module Registry
+  # rubocop:disable Lint/EmptyClass
   class << self
-    def remove_auth_cache(registry_cache_key)
-      cache_path = File.join(Rails.application.config.registry_cache_dir, registry_cache_key)
-      File.unlink(cache_path) if File.exist?(cache_path)
-    end
   end
+  # rubocop:enable Lint/EmptyClass
 
   class Engine < ::Rails::Engine
     isolate_namespace Registry
@@ -27,8 +25,8 @@ module Registry
         before_action :remove_auth_cache, only: %w[deregister]
 
         def remove_auth_cache
-          registry_cache_key = [request.remote_ip, @system.login].join('-')
-          Registry.remove_auth_cache(registry_cache_key)
+          registry_cache_key = InstanceVerification.build_cache_entry(request.remote_ip, @system.login, @system.pubcloud_reg_code, 'registry', nil)
+          InstanceVerification.remove_entry_from_cache(registry_cache_key, 'registry')
         end
       end
     end
