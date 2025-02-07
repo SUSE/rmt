@@ -58,7 +58,7 @@ module InstanceVerification
           # https://bugzilla.suse.com/show_bug.cgi?id=1236816
           # https://bugzilla.suse.com/show_bug.cgi?id=1236836
           product_hash = {
-            identifer: base_product.identifier,
+            identifier: base_product.identifier,
             version: base_product.version,
             arch: base_product.arch,
             release_type: base_product.release_type
