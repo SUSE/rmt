@@ -55,4 +55,10 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
     # to be activated on SCC or not, i.e. LTSS in Azure Basic VM
     true
   end
+
+  def add_on
+    # method to check if a system has an add on product
+    # based on the system metadata
+    # and if so, it returns its real product class
+  end
 end
