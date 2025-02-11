@@ -8,7 +8,9 @@ Type=oneshot
 Restart=no
 Environment="LOG_TO_JOURNALD=1" "LANG=en"
 EnvironmentFile=/var/lib/rmt/rmt-cache-trim.sh
-ExecStart=find ${REPOSITORY_CLIENT_CACHE_DIRECTORY} -mmin +${REPOSITORY_CACHE_EXPIRY_MINUTES} -type f -delete
+ExecStart=find ${REPOSITORY_CLIENT_PAYG_CACHE_DIRECTORY} -mmin +${REPOSITORY_PAYG_CACHE_EXPIRY_MINUTES} -type f -delete
+ExecStart=find ${REPOSITORY_CLIENT_BYOS_CACHE_DIRECTORY} -mmin +${REPOSITORY_BYOS_CACHE_EXPIRY_MINUTES} -type f -delete
+ExecStart=find ${REPOSITORY_CLIENT_HYBRID_CACHE_DIRECTORY} -mmin +${REPOSITORY_HYBRID_CACHE_EXPIRY_MINUTES} -type f -delete
 ExecStart=find ${REGISTRY_CLIENT_CACHE_DIRECTORY} -mmin +${REGISTRY_CACHE_EXPIRY_MINUTES} -type f -delete
 
 [Install]
