@@ -143,12 +143,9 @@ module InstanceVerification
           return unless upgrade_product.base?
 
           activated_bases = @system.products.where(product_type: 'base')
-          upgrade_product_subscription = find_subscription(upgrade_product, logger, request)
-          if upgrade_product_subscription.present?
-            activated_bases.each do |base_product|
-              base_product_subscription = find_subscription(base_product, logger, request)
-              return true if base_product_subscription.present? && base_product_subscription.id == upgrade_product_subscription.id
-            end
+          activated_bases.each do |base_product|
+            base_product_subscription = find_subscription(base_product, logger, request)
+            return true if base_product_subscription && base_product_subscription.products.include?(upgrade_product)
           end
 
           raise ActionController::TranslatedError.new('Migration target not allowed on this instance type')

@@ -603,7 +603,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
       context 'when SCC upgrade success' do
-        let(:fake_subscription) { instance_double(Subscription, id: 1) }
+        let(:fake_subscription) { instance_double(Subscription, id: 1, products: [new_product]) }
 
         context "when migration target base product doesn't have an activated successor/predecessor" do
           let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
@@ -691,7 +691,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               version: '999', predecessors: [ old_product ]
               )
           end
-          let(:fake_subscription) { instance_double(Subscription, id: 1) }
+          let(:fake_subscription) { instance_double(Subscription, id: 1, products: [new_product]) }
 
           before do
             allow_any_instance_of(described_class).to receive(:find_subscription).and_return(fake_subscription)
@@ -721,8 +721,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           arch: new_product.arch
         }
       end
-      # let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
-      # before { request }
 
       context "when migration target base product doesn't have an activated successor/predecessor" do
         let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
@@ -766,7 +764,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             version: '999', predecessors: [ old_product ]
             )
         end
-        let(:fake_subscription) { instance_double(Subscription, id: 1) }
+        let(:fake_subscription) { instance_double(Subscription, id: 1, products: [new_product]) }
 
         before do
           allow_any_instance_of(described_class).to receive(:find_subscription).and_return(fake_subscription)
