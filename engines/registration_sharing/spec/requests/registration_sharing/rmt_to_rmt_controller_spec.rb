@@ -22,6 +22,10 @@ module RegistrationSharing
 
     describe '#create byos' do
       before do
+        allow(System).to receive(:find_or_create_by).with(
+          login: login_byos, password: password, system_token: nil
+        ).and_call_original
+
         post(
           '/api/regsharing',
           params: {
