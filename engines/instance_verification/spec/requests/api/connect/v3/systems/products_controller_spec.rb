@@ -131,6 +131,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         context 'when verification provider raises an unhandled exception' do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+            allow_any_instance_of(InstanceVerification::Providers::Example).to receive(:allowed_extension?).and_call_original
             expect(plugin_double).to receive(:instance_valid?).and_return(false)
             allow(InstanceVerification).to receive(:set_cache_inactive).and_return(nil)
             stub_request(:post, scc_activate_url)
