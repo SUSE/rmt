@@ -24,7 +24,7 @@
     **Experimental: SQLite**
 
     For development purposes it can be easier to run with SQLite, to avoid extra dependencies.
-    To run RMT with SQLite, switch the database adapter in `config/rmt.yml` to `sqlite3`.
+    To run RMT with SQLite, set the `RMT_DB_ADAPTER` environment variable to `sqlite3`.
 
 5. Clone the RMT repository:
     ```
