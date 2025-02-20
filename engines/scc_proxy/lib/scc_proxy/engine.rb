@@ -405,8 +405,7 @@ module SccProxy
           logger.info "Upgrading system to product #{@product.product_string} to SCC"
           auth = nil
           auth = request.headers['HTTP_AUTHORIZATION'] if request.headers.include?('HTTP_AUTHORIZATION')
-          mode = 'byos' if @system.byos?
-          SccProxy.scc_upgrade(auth, @product, @system.login, mode, logger)
+          SccProxy.scc_upgrade(auth, @product, @system.login, @system.proxy_byos_mode, logger)
           logger.info "System #{@system.login} successfully upgraded with SCC"
         end
 
