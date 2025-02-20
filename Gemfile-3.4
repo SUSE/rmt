@@ -1,0 +1,97 @@
+source 'https://rubygems.org'
+
+git_source(:github) do |repo_name|
+  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
+  "https://github.com/#{repo_name}.git"
+end
+
+gem 'puma'
+gem 'mysql2'
+gem 'sqlite3'
+
+gem 'nokogiri'
+gem 'thor'
+gem 'activesupport', '~> 7'
+gem 'actionpack', '~> 7'
+gem 'actionview', '~> 7'
+gem 'activemodel', '~> 7'
+gem 'activerecord', '~> 7'
+gem 'railties', '~> 7'
+gem 'repomd_parser', '~> 1.1.0'
+gem 'csv'
+
+# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
+# gem 'jbuilder', '~> 2.5'
+# Use Redis adapter to run Action Cable in production
+# gem 'redis', '~> 3.0'
+# Use ActiveModel has_secure_password
+# gem 'bcrypt', '~> 3.1.7'
+
+# Use Capistrano for deployment
+# gem 'capistrano-rails', group: :development
+
+# Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
+# gem 'rack-cors'
+
+# Prometheus Exporter:
+gem 'yabeda'
+gem 'yabeda-rails'
+gem 'yabeda-puma-plugin'
+gem 'yabeda-prometheus'
+
+gem 'strong_migrations'
+
+group :development, :test do
+  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  gem 'scc-codestyle'
+  gem 'rubocop'
+  gem 'rubocop-ast'
+  gem 'gettext', require: false # needed for gettext_i18n_rails tasks
+  gem 'gettext_test_log'
+  gem 'memory_profiler'
+  gem 'awesome_print'
+end
+
+group :development do
+  gem 'listen', '>= 3.0.5', '<= 3.6.0'
+  gem 'ronn-ng'
+  gem 'guard-rspec', require: false
+end
+
+group :test do
+  gem 'rspec-command', '1.0.3'
+  gem 'rspec-rails', '~> 7'
+  gem 'factory_bot_rails', '~> 6'
+  gem 'ffaker'
+  gem 'rspec-its'
+  gem 'fakefs', '~> 1.4', require: 'fakefs/safe'
+  gem 'shoulda-matchers'
+  gem 'webmock'
+  gem 'webrick'
+  gem 'fuubar'
+  gem 'timecop'
+  gem 'vcr', '~> 6.0'
+  gem 'coveralls', '~> 0.8.21', require: false
+  gem 'minitest'
+  gem 'public_suffix'
+  gem 'rackup'
+end
+
+gem 'simplecov', require: false, group: :test
+
+gem 'versionist'
+gem 'responders', '~> 3.1.1'
+gem 'typhoeus'
+gem 'active_model_serializers'
+
+# i18n
+gem 'fast_gettext', '~> 2.2'
+gem 'gettext_i18n_rails'
+
+gem 'config', '~> 3.0', '>= 2.2.1'
+gem 'terminal-table', '~> 3.0'
+
+# needed by rmt-server-pubcloud
+gem 'jwt', '~> 2.1'
+gem 'base32'
