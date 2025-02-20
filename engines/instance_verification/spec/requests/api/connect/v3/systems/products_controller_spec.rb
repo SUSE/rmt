@@ -48,11 +48,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         it 'class instance verification provider' do
           expect(InstanceVerification::Providers::Example).to receive(:new)
             .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, nil).and_call_original.at_least(:once)
-          allow(File).to receive(:directory?)
           allow(Dir).to receive(:mkdir)
-          allow(Dir).to receive(:children)
           allow(FileUtils).to receive(:touch)
-          allow(InstanceVerification).to receive(:get_cache_entries).and_return([])
           post url, params: payload, headers: headers
         end
       end
