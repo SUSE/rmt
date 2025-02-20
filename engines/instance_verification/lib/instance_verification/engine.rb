@@ -49,6 +49,9 @@ module InstanceVerification
   def self.get_cache_entries(mode)
     cache_path = InstanceVerification.get_cache_path(mode)
     Dir.children(cache_path)
+  rescue SystemCallError
+    Rails.logger.info "#{cache_path} does not exist"
+    []
   end
 
   def self.reg_code_in_cache?(cache_key, mode)
