@@ -1,121 +1,47 @@
 require 'rails_helper'
 
-describe ServicesController do
+describe Api::Connect::V3::Systems::ActivationsController, type: :request do
   include_context 'auth header', :system, :login, :password
+  include_context 'version header', 3
 
-  before { Rails.cache.clear }
-
-  describe '#show' do
-    subject(:xml_urls) do
-      doc = Nokogiri::XML::Document.parse(response.body)
-      repo_items = doc.xpath('/repoindex/repo')
-      repo_items.map { |r| r.attr(:url) }
-    end
-
+  describe '#activations' do
     let(:system) { FactoryBot.create(:system, :with_activated_product) }
-    let(:service) { system.products.first.service }
+    let(:headers) { auth_header.merge(version_header) }
 
-    context 'without X-Instance-Data header' do
-      let(:headers) { auth_header }
+    before do
+      allow_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
+      allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
+      allow(InstanceVerification).to receive(:update_cache)
+      get '/connect/systems/activations', headers: headers
+    end
 
-      before do
-        Thread.current[:logger] = RMT::Logger.new('/dev/null')
-        allow(File).to receive(:directory?)
-        allow(FileUtils).to receive(:mkdir_p)
-        allow(FileUtils).to receive(:touch)
-        get "/services/#{service.id}", headers: headers
-      end
-
-      it 'repo URLs have http scheme' do
-        expect(xml_urls).to all(match(%r{^http://}))
+    context 'without X-Instance-Data headers or hw_info' do
+      it 'has service URLs with HTTP scheme' do
+        data = JSON.parse(response.body)
+        expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
+        expect_any_instance_of(InstanceVerification::Providers::Example).not_to receive(:instance_valid?)
+        expect(InstanceVerification).not_to receive(:update_cache)
       end
     end
 
-    context 'with X-Instance-Data header' do
-      let(:headers) { auth_header.merge('X-Instance-Data' => 'test') }
+    context 'with instance_data in hw_info' do
+      let(:system) { FactoryBot.create(:system, :with_activated_product, :with_system_information, instance_data: '<repoformat>plugin:susecloud</repoformat>') }
 
-      context 'when instance verification succeeds' do
-        before do
-          expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
-          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
-          allow(InstanceVerification).to receive(:update_cache)
-          allow(File).to receive(:directory?)
-          allow(Dir).to receive(:mkdir)
-          allow(FileUtils).to receive(:touch)
-          get "/services/#{service.id}", headers: headers
-        end
-
-        it 'request succeeds' do
-          expect(response).to have_http_status(200)
-        end
-
-        it 'XML has all product repos' do
-          expect(xml_urls.size).to eq(system.products.first.repositories.size - 1)
-        end
-
-        it 'repo URLs have plugin:/susecloud scheme' do
-          expect(xml_urls).to all(match(%r{^plugin:/susecloud}))
-        end
+      it 'has service URLs with HTTP scheme' do
+        data = JSON.parse(response.body)
+        expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
+        expect_any_instance_of(InstanceVerification::Providers::Example).not_to receive(:instance_valid?)
+        expect(InstanceVerification).not_to receive(:update_cache)
       end
+    end
 
-      context 'when instance verification returns false' do
-        before do
-          expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(false)
-          allow(InstanceVerification).to receive(:update_cache)
-          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
-          allow(File).to receive(:directory?)
-          allow(Dir).to receive(:mkdir)
-          allow(FileUtils).to receive(:touch)
-          get "/services/#{service.id}", headers: headers
-        end
+    context 'with X-Instance-Data headers' do
+      let(:headers) { auth_header.merge(version_header).merge({ 'X-Instance-Data' => 'instance_data' }) }
 
-        it 'request fails with 403' do
-          expect(response).to have_http_status(403)
-        end
-
-        it 'reports an error' do
-          expect(response.body).to match(/Instance verification failed/)
-        end
-      end
-
-      context 'when instance verification raises StandardError' do
-        before do
-          expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_raise('Test')
-          allow(InstanceVerification).to receive(:update_cache)
-          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
-          allow(File).to receive(:directory?)
-          allow(Dir).to receive(:mkdir)
-          allow(FileUtils).to receive(:touch)
-          get "/services/#{service.id}", headers: headers
-        end
-
-        it 'request fails with 403' do
-          expect(response).to have_http_status(403)
-        end
-
-        it 'reports an error' do
-          expect(response.body).to match(/Instance verification failed/)
-        end
-      end
-
-      context 'when instance verification raises InstanceVerification::Exception' do
-        before do
-          expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_raise(InstanceVerification::Exception, 'Test')
-          allow(File).to receive(:directory?).twice
-          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
-          allow(File).to receive(:directory?)
-          allow(Dir).to receive(:mkdir)
-          allow(FileUtils).to receive(:touch)
-          get "/services/#{service.id}", headers: headers
-        end
-
-        it 'request fails with 403' do
-          expect(response).to have_http_status(403)
-        end
-
-        it 'reports an error' do
-          expect(response.body).to match(/Instance verification failed/)
-        end
+      it 'has service URLs with HTTP scheme' do
+        allow(File).to receive(:exist?).and_return(true)
+        data = JSON.parse(response.body)
+        expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
       end
     end
   end

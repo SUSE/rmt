@@ -137,7 +137,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             stub_request(:post, scc_activate_url)
             .to_return(
               status: 422,
-              body: { error: 'aUnexpected instance verification error has occurred' }.to_json,
+              body: { error: 'Unexpected instance verification error has occurred' }.to_json,
               headers: {}
             )
 
