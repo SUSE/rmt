@@ -122,7 +122,7 @@ module InstanceVerification
 
           activated_bases = @system.products.where(product_type: 'base')
           activated_bases.each do |base_product|
-            return true if (base_product.identifier == upgrade_product.identifier)
+            return true if base_product.product_class == upgrade_product.product_class
           end
 
           raise ActionController::TranslatedError.new('Migration target not allowed on this instance type')
