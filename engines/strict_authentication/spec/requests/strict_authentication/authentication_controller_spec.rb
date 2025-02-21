@@ -26,6 +26,7 @@ module StrictAuthentication
             allow_any_instance_of(InstanceVerification::Providers::Example).to(
               receive(:instance_valid?).and_return(true)
             )
+            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
             allow(InstanceVerification).to receive(:update_cache)
             get '/api/auth/check', headers: auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': 'IMDS' })
             allow(File).to receive(:directory?)
