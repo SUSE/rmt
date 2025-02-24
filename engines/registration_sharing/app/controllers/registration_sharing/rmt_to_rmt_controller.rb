@@ -45,7 +45,10 @@ module RegistrationSharing
     protected
 
     def system_params
-      params.permit(:login, :password, :hostname, :proxy_byos, :proxy_byos_mode, :system_token, :registered_at, :created_at, :last_seen_at, :instance_data)
+      params.permit(
+        :login, :password, :hostname, :proxy_byos, :proxy_byos_mode,
+        :system_token, :registered_at, :created_at, :last_seen_at,
+        :instance_data, :pubcloud_reg_code)
     end
 
     def authenticate
