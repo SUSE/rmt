@@ -1,3 +1,4 @@
+require 'base64'
 require 'rails_helper'
 
 # rubocop:disable RSpec/NestedGroups
@@ -10,11 +11,19 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
   let(:product) { FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions) }
   let(:product_sap) { FactoryBot.create(:product, :product_sles_sap, :with_mirrored_repositories, :with_mirrored_extensions) }
   let(:scc_activate_url) { 'https://scc.suse.com/connect/systems/products' }
-  let(:payload) do
+  let(:expected_payload) do
     {
       identifier: product.identifier,
       version: product.version,
       arch: product.arch
+    }
+  end
+  let(:payload) do
+    {
+      identifier: product.identifier,
+      version: product.version,
+      arch: product.arch,
+      token: 'super_reg_code'
     }
   end
 
@@ -38,11 +47,38 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         it 'class instance verification provider' do
           expect(InstanceVerification::Providers::Example).to receive(:new)
-            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, nil).and_call_original.at_least(:once)
-          allow(File).to receive(:directory?)
+            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, nil).and_call_original.at_least(:once)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
           post url, params: payload, headers: headers
+        end
+      end
+
+      context "when system doesn't have hw_info and cache is inactive" do
+        let(:system) { FactoryBot.create(:system, :byos, pubcloud_reg_code: Base64.strict_encode64('super_token')) }
+
+        before do
+          stub_request(:post, 'https://scc.suse.com/connect/systems/products')
+            .to_return(
+              status: 201,
+              body: { ok: 'ok' }.to_json,
+              headers: {}
+            )
+        end
+
+        it 'class instance verification provider' do
+          expect(InstanceVerification::Providers::Example).to receive(:new)
+            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, nil).and_call_original.at_least(:once)
+          allow(File).to receive(:directory?)
+          allow(Dir).to receive(:mkdir)
+          allow(Dir).to receive(:children)
+          allow(FileUtils).to receive(:touch)
+          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(
+            "#{system.pubcloud_reg_code}-inactive"
+          )
+          post url, params: payload, headers: headers
+          expect(response.body).to include('Subscription inactive')
+          expect(response).to have_http_status(403)
         end
       end
 
@@ -94,6 +130,10 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         context 'when verification provider raises an unhandled exception' do
           before do
+            expect(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
+            allow(plugin_double).to receive(:instance_valid?).and_raise('not expected')
+            allow(InstanceVerification).to receive(:set_cache_inactive).and_return(nil)
             stub_request(:post, scc_activate_url)
             .to_return(
               status: 422,
@@ -118,7 +158,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         it 'class instance verification provider' do
           expect(InstanceVerification::Providers::Example).to receive(:new)
-            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, nil).and_call_original.at_least(:once)
+            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, nil).and_call_original.at_least(:once)
           allow(File).to receive(:directory?)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
@@ -146,7 +186,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         context 'when verification provider returns false' do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double).at_least(:once)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, instance_data).and_return(plugin_double).at_least(:once)
             expect(plugin_double).to receive(:instance_valid?).and_return(false)
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload, headers: headers
@@ -161,7 +201,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         context 'when verification provider raises an unhandled exception' do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double).at_least(:once)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, instance_data).and_return(plugin_double).at_least(:once)
             expect(plugin_double).to receive(:instance_valid?).and_raise('Custom plugin error')
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload, headers: headers
@@ -178,7 +218,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double).at_least(:once)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, instance_data).and_return(plugin_double).at_least(:once)
             expect(plugin_double).to receive(:instance_valid?).and_raise(InstanceVerification::Exception, 'Custom plugin error')
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload, headers: headers
@@ -277,7 +317,13 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         let(:instance_data) { 'dummy_instance_data' }
         let(:system) do
           FactoryBot.create(
-            :system, :payg, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data
+            :system,
+            :payg,
+            :with_system_information,
+            :with_activated_product,
+            product: base_product,
+            instance_data: instance_data,
+            pubcloud_reg_code: Base64.strict_encode64('super_token_different')
           )
         end
         let(:serialized_service_json) do
@@ -288,7 +334,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
         let(:scc_activate_url) { 'https://scc.suse.com/connect/systems/products' }
         let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
-        let(:payload_no_token) do
+        let(:payload_token) do
           {
             identifier: product.identifier,
             version: product.version,
@@ -345,6 +391,11 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               'User-Agent' => 'Ruby'
             }
           end
+          let(:cache_entry) do
+            product_hash = product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
+            product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
+            "#{Base64.strict_encode64(payload_token[:token])}-#{product_triplet}-active"
+          end
 
           before do
             allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
@@ -352,7 +403,10 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
-            allow(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, product.id)
+            allow(InstanceVerification).to receive(:update_cache).with("127.0.0.1-#{system.login}-#{product.id}", 'payg')
+            allow(InstanceVerification).to receive(:get_cache_entries).and_return(
+              [File.join(Rails.application.config.repo_hybrid_cache_dir, cache_entry)]
+            )
             FactoryBot.create(:subscription, product_classes: product_classes)
             stub_request(:post, scc_activate_url)
               .to_return(
@@ -366,14 +420,18 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               .with({ headers: scc_announce_headers, body: scc_annouce_body.to_json })
               .to_return(status: 201, body: scc_response_body, headers: {})
 
-            expect(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, product.id)
+            expect(InstanceVerification).to receive(:update_cache).with(cache_entry, 'hybrid')
 
-            post url, params: payload_no_token, headers: headers
+            post url, params: payload_token, headers: headers
           end
 
           context 'when regcode is provided' do
             it 'returns service JSON' do
               expect(response.body).to eq(serialized_service_json)
+              updated_system = System.find_by(login: system.login)
+              expect(updated_system.pubcloud_reg_code).to include(',')
+              expect(updated_system.pubcloud_reg_code).to include(Base64.strict_encode64(payload_token[:token]).to_s)
+              expect(updated_system.pubcloud_reg_code).to include(system.pubcloud_reg_code)
             end
           end
         end
@@ -393,7 +451,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
-            allow(InstanceVerification).to receive(:update_cache).with('127.0.0.1', system.login, product.id)
+            allow(InstanceVerification).to receive(:update_cache).with("127.0.0.1-#{system.login}-#{product.id}", 'foo')
             FactoryBot.create(:subscription, product_classes: product_classes)
             stub_request(:post, scc_activate_url)
               .to_return(
@@ -406,9 +464,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             stub_request(:post, 'https://scc.suse.com/connect/subscriptions/systems')
               .to_return(status: 201, body: scc_response_body, headers: {})
 
-            expect(InstanceVerification).not_to receive(:update_cache).with('127.0.0.1', system.login, product.id)
+            expect(InstanceVerification).not_to receive(:update_cache) # .with('127.0.0.1', system.login, product.id)
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
-            post url, params: payload_no_token, headers: headers
+            post url, params: payload_token, headers: headers
           end
 
           it 'returns service JSON' do
@@ -456,7 +514,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         context 'when verification provider returns false' do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double).at_least(:once)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, instance_data).and_return(plugin_double).at_least(:once)
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             expect(plugin_double).to receive(:instance_valid?).and_return(false)
             post url, params: payload, headers: headers
@@ -471,7 +529,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         context 'when verification provider raises an unhandled exception' do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
-              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), payload, instance_data).and_return(plugin_double).at_least(:once)
+              .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, instance_data).and_return(plugin_double).at_least(:once)
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             expect(plugin_double).to receive(:instance_valid?).and_raise('Custom plugin error')
             post url, params: payload, headers: headers

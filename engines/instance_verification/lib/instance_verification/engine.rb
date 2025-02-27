@@ -1,25 +1,75 @@
+require 'base64'
 require 'fileutils'
 
 module InstanceVerification
-  def self.update_cache(remote_ip, system_login, product_id, registry: false)
-    # TODO: BYOS scenario
-    # to be addressed on a different PR
+  def self.update_cache(cache_entry, mode, registry: false)
     unless registry
-      InstanceVerification.write_cache_file(
-        Rails.application.config.repo_cache_dir,
-        [remote_ip, system_login, product_id].join('-')
-      )
+      cache_path = InstanceVerification.get_cache_path(mode)
+      InstanceVerification.write_cache_file(cache_path, cache_entry)
     end
 
+    # update the registry cache every time
     InstanceVerification.write_cache_file(
-      Rails.application.config.registry_cache_dir,
-      [remote_ip, system_login].join('-')
+      InstanceVerification.get_cache_path('registry'),
+      cache_entry
     )
+  end
+
+  def self.build_cache_entry(remote_ip, system_login, encoded_reg_code, mode, product)
+    if mode == 'payg'
+      [remote_ip, system_login, product.id].join('-')
+    elsif mode == 'registry'
+      [remote_ip, system_login].join('-')
+    else
+      # for byos or hybrid cache
+      product_hash = product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
+      product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
+      "#{encoded_reg_code}-#{product_triplet}-active"
+    end
   end
 
   def self.write_cache_file(cache_dir, cache_key)
     FileUtils.mkdir_p(cache_dir)
     FileUtils.touch(File.join(cache_dir, cache_key))
+    Rails.logger.info "#{cache_dir} updated for #{cache_key}"
+  end
+
+  def self.get_cache_path(mode)
+    if mode == 'byos'
+      Rails.application.config.repo_byos_cache_dir
+    elsif mode == 'hybrid'
+      Rails.application.config.repo_hybrid_cache_dir
+    elsif mode == 'payg'
+      Rails.application.config.repo_payg_cache_dir
+    else
+      Rails.application.config.registry_cache_dir
+    end
+  end
+
+  def self.get_cache_entries(mode)
+    cache_path = InstanceVerification.get_cache_path(mode)
+    Dir.children(cache_path)
+  rescue SystemCallError
+    Rails.logger.info "#{cache_path} does not exist"
+    []
+  end
+
+  def self.reg_code_in_cache?(cache_key, mode)
+    cache_entries = InstanceVerification.get_cache_entries(mode)
+    cache_entries.find { |cache_entry| cache_entry.include?(cache_key) }
+  end
+
+  def self.remove_entry_from_cache(cache_key, mode)
+    cache_path = InstanceVerification.get_cache_path(mode)
+    full_path_cache_key = File.join(cache_path, cache_key)
+    File.unlink(full_path_cache_key) if File.exist?(full_path_cache_key)
+  end
+
+  def self.set_cache_inactive(cache_key, mode)
+    InstanceVerification.remove_entry_from_cache(cache_key, mode)
+    *all, _ = cache_key.split('-')
+    cache_key = [all, 'inactive'].join('-')
+    InstanceVerification.update_cache(cache_key, mode)
   end
 
   class Engine < ::Rails::Engine
@@ -124,7 +174,8 @@ module InstanceVerification
             )
           end
           logger.info "Product #{@product.product_string} available for this instance"
-          InstanceVerification.update_cache(request.remote_ip, @system.login, product.id)
+          cache_key = InstanceVerification.build_cache_entry(request.remote_ip, @system.login, nil, 'payg', product)
+          InstanceVerification.update_cache(cache_key, 'payg')
         end
 
         def verify_base_product_activation(product)
@@ -136,7 +187,16 @@ module InstanceVerification
           )
 
           raise 'Unspecified error' unless verification_provider.instance_valid?
-          InstanceVerification.update_cache(request.remote_ip, @system.login, product.id)
+
+          encoded_reg_code = @system.pubcloud_reg_code
+          # we use the token sent from the client if present
+          # instead of the value stored in the DB
+          encoded_reg_code = Base64.strict_encode64(params[:token]) if params[:token].present?
+
+          cache_key = InstanceVerification.build_cache_entry(
+            request.remote_ip, @system.login, encoded_reg_code, @system.proxy_byos_mode, product
+          )
+          InstanceVerification.update_cache(cache_key, @system.proxy_byos_mode)
         end
 
         # Verify that the base product doesn't change in the offline migration
