@@ -39,6 +39,7 @@ describe RegistrationSharing::Client do
         'created_at' => system.created_at,
         'last_seen_at' => nil,
         'instance_data' => instance_data,
+        'pubcloud_reg_code' => system.pubcloud_reg_code,
         'activations' => [
           { 'product_id' => system.products.first.id, 'created_at' => system.activations.first.created_at }
         ]
