@@ -52,4 +52,43 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
       end
     end
   end
+
+  describe 'db check' do
+    before do
+      FactoryBot.create(:system, :with_system_information, hostname: 'initial')
+    end
+
+    context 'when the db changes' do
+      let(:columns) { System.column_names }
+      let(:expected_columns) do
+        [
+          'id',
+          'login',
+          'password',
+          'hostname',
+          'registered_at',
+          'last_seen_at',
+          'created_at',
+          'updated_at',
+          'scc_registered_at',
+          'scc_system_id',
+          'proxy_byos',
+          'system_token',
+          'system_information',
+          'instance_data',
+          'proxy_byos_mode',
+          'pubcloud_reg_code'
+        ]
+      end
+      let(:check_system) { System.all.first }
+
+      it 'raises an error' do
+        expect(columns).to eq(expected_columns)
+        expect(JSON.parse(check_system.system_information)['cpus']).to eq(2)
+        expect(JSON.parse(check_system.system_information)['arch']).to eq('x86_64')
+        expect(JSON.parse(check_system.system_information)['mem_total']).to eq(64)
+        expect(JSON.parse(check_system.system_information)['cloud_provider']).to eq('Amazon')
+      end
+    end
+  end
 end
