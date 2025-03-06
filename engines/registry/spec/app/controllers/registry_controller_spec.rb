@@ -24,7 +24,7 @@ module Registry
         end
       end
 
-      context 'login request with invalid credentials' do
+      context 'login request with credentials raising exception' do
         let(:system) { create(:system) }
         let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
 
