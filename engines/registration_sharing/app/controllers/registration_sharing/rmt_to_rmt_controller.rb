@@ -7,7 +7,11 @@ module RegistrationSharing
 
     def create
       System.transaction do
-        system = System.find_or_create_by(login: params[:login])
+        system = System.find_or_create_by(
+          login: params[:login],
+          password: params[:password],
+          system_token: params[:system_token]
+        )
         system.update(system_params)
 
         # TODO: remove this block when proxy_byos column gets dropped
@@ -41,7 +45,11 @@ module RegistrationSharing
     protected
 
     def system_params
-      params.permit(:login, :password, :hostname, :proxy_byos, :proxy_byos_mode, :system_token, :registered_at, :created_at, :last_seen_at, :instance_data)
+      params.permit(
+        :login, :password, :hostname, :proxy_byos, :proxy_byos_mode,
+        :system_token, :registered_at, :created_at, :last_seen_at,
+        :instance_data, :pubcloud_reg_code
+)
     end
 
     def authenticate

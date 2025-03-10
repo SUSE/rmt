@@ -57,6 +57,21 @@ FactoryBot.define do
       end
     end
 
+    trait :with_activated_paid_extension do
+      transient do
+        product_base { create(:product, :with_mirrored_repositories, free: true) }
+        paid_product { create(:product, :with_mirrored_repositories, free: false, product_type: :extension) }
+        free_product { create(:product, :with_mirrored_repositories, free: true, product_type: :extension) }
+        subscription { nil }
+      end
+
+      after :create do |system, evaluator|
+        create(:activation, system: system, service: evaluator.product_base.service, subscription: evaluator.subscription)
+        create(:activation, system: system, service: evaluator.paid_product.service, subscription: evaluator.subscription)
+        create(:activation, system: system, service: evaluator.free_product.service, subscription: evaluator.subscription)
+      end
+    end
+
     trait :with_activated_product_sle_micro do
       transient do
         product { create(:product, :product_sle_micro, :with_mirrored_repositories) }
