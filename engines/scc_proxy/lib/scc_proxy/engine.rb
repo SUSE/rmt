@@ -291,6 +291,7 @@ module SccProxy
             response = SccProxy.announce_system_scc(auth_header, request.request_parameters)
             @system = System.create!(
               system_token: SccProxy.instance_id,
+              scc_system_id: response['id'],
               login: response['login'],
               password: response['password'],
               hostname: params[:hostname],
