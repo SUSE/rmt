@@ -27,6 +27,8 @@ package/obs/.osc
 package/obs/rmt-cli.8.gz
 package/obs/_link
 package/systemsmanagement:SCC:RMT
+repo
+registry
 
 vendor/
 coverage/
