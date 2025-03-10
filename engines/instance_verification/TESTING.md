@@ -1,5 +1,5 @@
 ## Testing public cloud PAYG client registrations locally
-The file `/etc/rmt.conf` should have the following content
+The file `config/rmt.local.yml` should have the following content
 
 scc:
   username: <user>
