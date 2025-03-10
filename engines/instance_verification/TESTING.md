@@ -1,4 +1,14 @@
 ## Testing public cloud PAYG client registrations locally
+The file `/etc/rmt.conf` should have the following content
+
+scc:
+  username: <user>
+  password: <pass>
+  sync_systems: false
+
+Then sync the products
+
+bin/rmt-cli sync
 
 Start RMT with pubcloud engines enabled:
 
