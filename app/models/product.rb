@@ -41,6 +41,7 @@ class Product < ApplicationRecord
     association_foreign_key: :product_id, foreign_key: :predecessor_id
 
   enum product_type: { base: 'base', module: 'module', extension: 'extension' }
+  enum product_type: { base: 'base', module: 'module', extension: 'extension', saas: 'SaaS' }
 
   scope :free, -> { where(free: true) }
   scope :mirrored, lambda {
