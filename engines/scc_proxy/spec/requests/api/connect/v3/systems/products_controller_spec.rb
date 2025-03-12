@@ -1,3 +1,4 @@
+require 'base64'
 require 'rails_helper'
 
 # rubocop:disable RSpec/NestedGroups
@@ -19,6 +20,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       include_context 'version header', 3
       let(:product) { FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions) }
       let(:headers) { auth_header.merge(version_header) }
+      let(:product_hash) { product.attributes.symbolize_keys.slice(:identifier, :version, :arch) }
+      let(:product_triplet) { "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}" }
 
       let(:payload_byos) do
         {
@@ -122,11 +125,12 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
 
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.repo_cache_dir, "127.0.0.1-#{system_byos.login}-#{product.id}"
+              allow(InstanceVerification).to receive(:write_cache_file).with(
+                Rails.application.config.repo_byos_cache_dir, "#{Base64.strict_encode64(payload_byos[:token])}-#{product_triplet}-active"
               )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.registry_cache_dir, "127.0.0.1-#{system_byos.login}"
+              allow(InstanceVerification).to receive(:write_cache_file).with(
+                Rails.application.config.registry_cache_dir,
+                "#{Base64.strict_encode64(payload_byos[:token])}-#{product_triplet}-active"
               )
             end
 
@@ -144,12 +148,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                   body: { error: 'No product found on SCC for: foo bar x86_64 json api' }.to_json,
                   headers: {}
                 )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.repo_cache_dir, "127.0.0.1-#{system_byos.login}-#{product.id}"
-              )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.registry_cache_dir, "127.0.0.1-#{system_byos.login}"
-              )
+              allow(InstanceVerification).to receive(:write_cache_file)
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
 
@@ -181,12 +180,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                   body: { id: 'bar' }.to_json,
                   headers: {}
                 )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.repo_cache_dir, "127.0.0.1-#{system_byos.login}-#{product.id}"
-              )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.registry_cache_dir, "127.0.0.1-#{system_byos.login}"
-              )
+              allow(InstanceVerification).to receive(:write_cache_file)
               allow(File).to receive(:directory?)
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
@@ -221,12 +215,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                   headers: {}
                 )
 
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.repo_cache_dir, "127.0.0.1-#{system_byos.login}-#{product.id}"
-              )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.registry_cache_dir, "127.0.0.1-#{system_byos.login}"
-              )
+              allow(InstanceVerification).to receive(:write_cache_file)
               allow(File).to receive(:directory?)
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
@@ -417,12 +406,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               allow(FileUtils).to receive(:touch)
               allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
               allow(plugin_double).to receive(:allowed_extension?).and_return(true)
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.repo_cache_dir, "127.0.0.1-#{system_payg.login}-#{product.id}"
-              )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.registry_cache_dir, "127.0.0.1-#{system_payg.login}"
-                )
+              allow(InstanceVerification).to receive(:write_cache_file)
               allow(plugin_double).to receive(:instance_valid?).and_return(true)
             end
 
@@ -529,12 +513,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               allow(File).to receive(:directory?)
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.repo_cache_dir, "127.0.0.1-#{system_payg.login}-#{product.id}"
-              )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.registry_cache_dir, "127.0.0.1-#{system_payg.login}"
-                )
+              allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return('')
+              allow(InstanceVerification).to receive(:write_cache_file)
               allow(plugin_double).to receive(:instance_valid?).and_return(true)
             end
 
@@ -555,14 +535,10 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                   body: { error: 'No product found on SCC for: foo bar x86_64 json api' }.to_json,
                   headers: {}
                 )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.repo_cache_dir, "127.0.0.1-#{system_payg.login}-#{product.id}"
-              )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.registry_cache_dir, "127.0.0.1-#{system_payg.login}"
-              )
+              allow(InstanceVerification).to receive(:write_cache_file)
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
+              allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return('')
             end
 
             context 'when de-register system from SCC suceeds' do
