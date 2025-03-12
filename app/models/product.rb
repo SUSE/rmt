@@ -40,7 +40,6 @@ class Product < ApplicationRecord
   has_and_belongs_to_many :successors, class_name: 'Product', join_table: :product_predecessors,
     association_foreign_key: :product_id, foreign_key: :predecessor_id
 
-  enum product_type: { base: 'base', module: 'module', extension: 'extension' }
   enum product_type: { base: 'base', module: 'module', extension: 'extension', saas: 'SaaS' }
 
   scope :free, -> { where(free: true) }
