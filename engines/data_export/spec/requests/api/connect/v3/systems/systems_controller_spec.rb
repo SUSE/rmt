@@ -54,6 +54,11 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
   end
 
   describe 'db check' do
+    # this test needs to be updated if the system table change structure
+    # the reason is that if this check fails => the engine data_export could not
+    # send data to the Data Warehouse telemetry, that CAN NOT happen
+    # if this test fails, the implementation of the call `data_export_handler.export_rmt_data`
+    # invoked in engines/data_export/lib/data_export/engine.rb needs to change accordingly
     before do
       FactoryBot.create(:system, :with_system_information, hostname: 'initial')
     end
