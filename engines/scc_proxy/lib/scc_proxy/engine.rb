@@ -477,7 +477,7 @@ module SccProxy
               # this situation.
               return true if skip_on_duplicated && @systems.size > 1
 
-              @system = get_system
+              @system = find_system
               if system_tokens_enabled? && request.headers.key?(ApplicationController::SYSTEM_TOKEN_HEADER)
                 @system.update(last_seen_at: Time.zone.now)
                 headers[ApplicationController::SYSTEM_TOKEN_HEADER] = @system.system_token
@@ -495,7 +495,7 @@ module SccProxy
           end
         end
 
-        def get_system
+        def find_system
           return nil if @systems.blank?
 
           systems_with_token = @systems.select(&:system_token)
