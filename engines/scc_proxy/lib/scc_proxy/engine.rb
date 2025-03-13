@@ -496,8 +496,6 @@ module SccProxy
         end
 
         def find_system
-          return nil if @systems.blank?
-
           systems_with_token = @systems.select(&:system_token)
           if systems_with_token.empty?
             @systems.each do |system|
