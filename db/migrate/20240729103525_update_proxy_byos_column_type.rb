@@ -1,6 +1,7 @@
 class UpdateProxyByosColumnType < ActiveRecord::Migration[6.1]
   def up
-    add_column :systems, :proxy_byos_mode, :integer, default: 0
+    add_column :systems, :proxy_byos_mode, :integer
+    change_column_default :systems, :proxy_byos_mode, 0
     System.where(proxy_byos: false).where.not(instance_data: nil).in_batches.update_all proxy_byos_mode: :payg
     System.where(proxy_byos: true).in_batches.update_all proxy_byos_mode: :byos
   end
