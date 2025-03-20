@@ -1,4 +1,4 @@
-class BackfillUpdateProxyByosColumnType < ActiveRecord::Migration[6.1]
+class BackfillAddProxyByosModeToSystems < ActiveRecord::Migration[6.1]
   disable_ddl_transaction!
 
   def up
