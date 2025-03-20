@@ -38,6 +38,9 @@ class AccessToken
       mem << slice.join
       mem
     end.join(':')
+  rescue StandardError => e
+    Rails.logger.error "Error getting the ID from JWT: #{e.message}"
+    raise
   end
 
   def private_key
