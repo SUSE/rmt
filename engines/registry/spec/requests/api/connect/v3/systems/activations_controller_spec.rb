@@ -105,6 +105,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
 
         context 'no registry' do
           it 'refreshes registry cache key only' do
+            allow(plugin_double).to receive(:instance_identifier).and_return('foo')
             allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
             FileUtils.mkdir_p('repo/payg/cache')
             expect(InstanceVerification).to receive(:update_cache).with(
@@ -120,6 +121,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
 
         context 'registry' do
           it 'refreshes registry cache key only' do
+            allow(plugin_double).to receive(:instance_identifier).and_return('foo')
             allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(true)
             expect(InstanceVerification).to receive(:update_cache).with(
               "#{system.pubcloud_reg_code}-#{product_triplet}-active",
