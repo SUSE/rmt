@@ -91,7 +91,8 @@ FactoryBot.define do
           hypervisor: nil,
           arch: 'x86_64',
           uuid: SecureRandom.uuid,
-          cloud_provider: 'Amazon'
+          cloud_provider: 'Amazon',
+          mem_total: 64
         }.to_json
       end
     end
