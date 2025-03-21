@@ -12,7 +12,6 @@ Config.load_and_set_settings(
   File.join(__dir__, '../../config/rmt.local.yml')
 )
 
-
 module RMT::Config
   class << self
     def db_config(key = 'database')
@@ -36,6 +35,10 @@ module RMT::Config
 
     def mirror_src_files?
       ActiveModel::Type::Boolean.new.cast(Settings.try(:mirroring).try(:mirror_src))
+    end
+
+    def mirror_drpm_files?
+      ActiveModel::Type::Boolean.new.cast(Settings.try(:mirroring).try(:mirror_drpm)) || false
     end
 
     WebServerConfig = Struct.new(
