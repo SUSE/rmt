@@ -27,14 +27,21 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
   end
 
   def parse_instance_data
+    # :nocov:
+    if @instance_data.include? '<instance_data/>'
+      return { 'instance_data' => 'parsed_instance_data', 'example_id' => '1234' } # :nocov:
+    end
+
+    # :nocov:
+
     if @instance_data.include?('SUSE')
       if @instance_data.include?('SAP')
-        return { 'billingProducts' => nil, 'marketplaceProductCodes' => ['6789_SUSE_SAP'] }
+        return { 'billingProducts' => nil, 'marketplaceProductCodes' => ['6789_SUSE_SAP'], 'example_id' => '1234' }
       end
 
-      return { 'billingProducts' => ['1234_SUSE_SLES'], 'marketplaceProductCodes' => nil }
+      return { 'billingProducts' => ['1234_SUSE_SLES'], 'marketplaceProductCodes' => nil, 'example_id' => '1234' }
     end
-    { 'billingProducts' => ['foo'], 'marketplaceProductCodes' => ['bar'] }
+    { 'billingProducts' => ['foo'], 'marketplaceProductCodes' => ['bar'], 'example_id' => '1234' }
   end
 
   def payg_billing_code?(iid, identifier)
