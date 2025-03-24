@@ -192,8 +192,7 @@ module SccProxy
       error_message
     end
 
-    def get_scc_activations(headers, system)
-      auth = headers['HTTP_AUTHORIZATION'] if headers && headers.include?('HTTP_AUTHORIZATION')
+    def get_scc_activations(auth, system)
       uri = URI.parse(SYSTEMS_ACTIVATIONS_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
@@ -223,7 +222,8 @@ module SccProxy
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
     def scc_check_subscription_expiration(headers, system, product_class = nil)
-      scc_systems_activations = SccProxy.get_scc_activations(headers, system)
+      auth = headers.fetch('HTTP_AUTHORIZATION', '')
+      scc_systems_activations = SccProxy.get_scc_activations(auth, system)
       return { is_active: false, message: 'No activations.' } if scc_systems_activations.empty?
 
       status_products_classes = if system.byos?
@@ -273,8 +273,7 @@ module SccProxy
       # replaces RMT registration for SCC registration
       Api::Connect::V3::Subscriptions::SystemsController.class_eval do
         def announce_system
-          auth_header = nil
-          auth_header = request.headers['HTTP_AUTHORIZATION'] if request.headers.include?('HTTP_AUTHORIZATION')
+          auth_header = request.headers.fetch('HTTP_AUTHORIZATION', nil)
           system_information = hwinfo_params[:hwinfo].to_json
           instance_data = params.fetch(:instance_data, nil)
           if has_no_regcode?(auth_header)
@@ -404,8 +403,7 @@ module SccProxy
 
         def scc_upgrade
           logger.info "Upgrading system to product #{@product.product_string} to SCC"
-          auth = nil
-          auth = request.headers['HTTP_AUTHORIZATION'] if request.headers.include?('HTTP_AUTHORIZATION')
+          auth = request.headers.fetch('HTTP_AUTHORIZATION', '')
           SccProxy.scc_upgrade(auth, @product, @system.login, @system.proxy_byos_mode, logger)
           logger.info "System #{@system.login} successfully upgraded with SCC"
         end
@@ -426,13 +424,13 @@ module SccProxy
         protected
 
         def scc_deactivate_product
-          auth = request.headers['HTTP_AUTHORIZATION']
+          auth = request.headers.fetch('HTTP_AUTHORIZATION', '')
           if @system.byos? && @product[:product_type] != 'base'
             SccProxy.deactivate_product_scc(auth, @product, @system.system_token, logger)
           elsif @system.hybrid? && @product.extension?
             # check if product is on SCC and
             # if it is -> de-activate it
-            scc_hybrid_system_activations = SccProxy.get_scc_activations(request.headers, @system)
+            scc_hybrid_system_activations = SccProxy.get_scc_activations(auth, @system)
             if scc_hybrid_system_activations.map { |act| act['service']['product']['id'] == @product.id }.present?
               # if product is found on SCC, regardless of the state
               # it is OK to remove it from SCC
