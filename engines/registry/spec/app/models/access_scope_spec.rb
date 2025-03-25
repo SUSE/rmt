@@ -135,7 +135,6 @@ RSpec.describe AccessScope, type: :model do
 
     context 'when namespace is null' do
       subject(:access_scope) { described_class.new(type: 'a', name: 'b', actions: 'c') }
-      # let(:scope) { build(:registry_access_scope, namespace: 'suse', image: 'leap') }
 
       it 'returns default auth actions' do
         possible_access = access_scope.granted(client: client)
@@ -173,6 +172,14 @@ RSpec.describe AccessScope, type: :model do
               'name' => 'suse/sles/*'
             }
           )
+        end
+
+        context 'when client is null' do
+          it 'returns no actions allowed' do
+            possible_access = access_scope.granted
+
+            expect(possible_access).to eq({ 'type' => 'a', 'actions' => [], 'class' => nil, 'name' => 'suse/sles/*' })
+          end
         end
       end
 

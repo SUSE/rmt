@@ -61,7 +61,10 @@ class AccessScope
     if @namespace.nil?
       @image == 'catalog' ? @actions : AUTHORIZED_ACTION
     else
-      allowed_paths(client.systems.first)
+      @allowed_paths = []
+      allowed_paths(client.systems.first) if client.present?
+
+      Rails.logger.info 'Client is not present' if client.blank?
       if @allowed_paths.any? { |allowed_path| File.fnmatch(@namespace + '*', allowed_path) }
         @actions & AUTHORIZED_ACTION
       else
