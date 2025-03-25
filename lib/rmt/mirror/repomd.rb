@@ -65,9 +65,16 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
                     primary: RepomdParser::PrimaryXmlParser }
 
     metadata_references.map do |file|
+      next if file.type == :deltainfo && !RMT::Config.mirror_drpm_files?
       next unless xml_parsers.key? file.type
 
       xml_parsers[file.type].new.parse_file(file.local_path)
     end.flatten.compact
+  end
+
+  def need_to_download?(ref)
+    return false if !RMT::Config.mirror_drpm_files? && ref.local_path.match?(/\.drpm$/)
+
+    super(ref)
   end
 end
