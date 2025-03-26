@@ -59,6 +59,10 @@ RSpec.describe RMT::CLI::Clean do
         rpm4: {
           fixture: 'dummy_repo/blueberry-0.2-0.x86_64.rpm',
           file: File.join(dummy_repo[:dir], 'cranberry-0.4-0.x86_64.rpm')
+        },
+        drpm3: {
+          fixture: 'dummy_repo/oranges-0.1-0.x86_64.drpm',
+          file: File.join(dummy_repo[:dir], 'oranges-0.1-0.x86_64.drpm')
         }
       }
     end
@@ -113,6 +117,8 @@ RSpec.describe RMT::CLI::Clean do
       FileUtils.rm_r(tmp_dir, secure: false)
     end
 
+    before { allow(RMT::Config).to receive(:mirror_drpm_files?).and_return(true) }
+
     context 'when no repomd files have been found' do
       let(:argv) { ['packages'] }
       let(:mirrored_repos) { [] }
@@ -159,8 +165,6 @@ RSpec.describe RMT::CLI::Clean do
 
       context 'and --non-interactive option is set' do
         include_context 'command with non-interactive mode'
-
-        let(:confirmation_prompt) { '' }
 
         include_examples 'prints to stdout'
         include_examples 'does not remove files'
@@ -371,6 +375,53 @@ RSpec.describe RMT::CLI::Clean do
         include_examples 'does not remove fresh dangling files'
         include_examples 'does not remove database entries of fresh dangling files'
       end
+    end
+
+    context 'when .drpm mirroring is enabled and there are .drpm packages' do
+      let(:expected_result_output) { "\e[32;1mNo dangling packages have been found!\e[0m" }
+
+      before { allow(RMT::Config).to receive(:mirror_drpm_files?).and_return(true) }
+
+      include_context 'mirror repositories'
+      include_context 'command with non-interactive mode'
+
+      include_examples 'prints to stdout'
+      include_examples 'does not remove files'
+      include_examples 'does not remove database entries'
+    end
+
+    context 'when .drpm mirroring is disabled and there are .drpm packages' do
+      let(:dangling_list) do
+        DanglingList.new(files: dangling_files.values_at(:drpm1, :drpm2, :drpm3),
+                         db_entries: dangling_files.values_at(:drpm1, :drpm2, :drpm3))
+      end
+
+      let(:expected_result_output) do
+        <<~OUTPUT.chomp
+          \e[1mDirectory: #{dummy_repo[:dir]}\e[0m
+            Cleaned 'apples-0.1-0.x86_64.drpm' (#{file_human_size(2087)}), 1 database entry.
+            Cleaned 'oranges-0.1-0.x86_64.drpm' (#{file_human_size(2083)}), 1 database entry.
+          Cleaned 2 files (#{file_human_size(4170)}), 2 database entries.
+
+          \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
+            Cleaned 'x86_64/apples-0.0.1_0.0.2-lp151.2.1.x86_64.drpm' (#{file_human_size(3544)}), 1 database entry.
+          Cleaned 1 file (#{file_human_size(3544)}), 1 database entry.
+
+          #{'-' * 80}
+          \e[32;1mTotal: cleaned 3 files (#{file_human_size(7714)}), 3 database entries.\e[0m
+        OUTPUT
+      end
+
+      let(:argv) { ['packages', '--non-interactive', '--verbose'] }
+      let(:confirmation_prompt) { '' }
+
+      before { allow(RMT::Config).to receive(:mirror_drpm_files?).and_return(false) }
+
+      include_context 'mirror repositories'
+
+      include_examples 'prints to stdout'
+      include_examples 'removes files'
+      include_examples 'removes database entries'
     end
   end
 end
