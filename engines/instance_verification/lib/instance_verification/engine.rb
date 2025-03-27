@@ -72,6 +72,52 @@ module InstanceVerification
     InstanceVerification.update_cache(cache_key, mode)
   end
 
+  def self.verify_instance(request, logger, system)
+    return false unless request.headers['X-Instance-Data']
+
+    base_product = system.products.find_by(product_type: 'base')
+    return false unless base_product
+
+    # check the cache for the system (20 min)
+    cache_key = InstanceVerification.build_cache_entry(request.remote_ip, system.login, system.pubcloud_reg_code, system.proxy_byos_mode, base_product)
+    if InstanceVerification.reg_code_in_cache?(cache_key, system.proxy_byos_mode)
+      # only update registry cache key
+      InstanceVerification.update_cache(cache_key, system.proxy_byos_mode, registry: true)
+      return true
+    end
+
+    verification_provider = InstanceVerification.provider.new(
+      logger,
+      request,
+      base_product.attributes.symbolize_keys.slice(:identifier, :version, :arch, :release_type),
+      Base64.decode64(request.headers['X-Instance-Data'].to_s) # instance data
+    )
+    is_valid = verification_provider.instance_valid?
+    # update repository and registry cache
+    InstanceVerification.update_cache(cache_key, system.proxy_byos_mode)
+    is_valid
+  rescue InstanceVerification::Exception => e
+    if system.byos?
+      result = SccProxy.scc_check_subscription_expiration(request.headers, system, base_product.product_class)
+      if result[:is_active]
+        # update the cache for the base product
+        InstanceVerification.update_cache(cache_key, 'byos')
+        return true
+      end
+      # if can not get the activations, set the cache inactive
+      InstanceVerification.set_cache_inactive(cache_key, system.proxy_byos_mode)
+    end
+    ZypperAuth.zypper_auth_message(request, system, verification_provider, e.message)
+    false
+  rescue StandardError => e
+    logger.error('Unexpected instance verification error has occurred:')
+    logger.error(e.message)
+    logger.error("System login: #{system.login}, IP: #{request.remote_ip}")
+    logger.error('Backtrace:')
+    logger.error(e.backtrace)
+    false
+  end
+
   class Engine < ::Rails::Engine
     isolate_namespace InstanceVerification
     config.generators.api_only = true
