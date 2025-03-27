@@ -81,8 +81,8 @@ class AccessScope
     raise Registry::Exceptions::InvalidScope.new('Invalid scope format') unless %r{^[a-z0-9\-_/:*(),.]+$}i.match?(scope)
   end
 
-  def allowed_paths(system = nil)
-    repo_list = RegistryCatalogService.new.repos(reload: false, system: system)
+  def allowed_paths(system)
+    repo_list = RegistryCatalogService.new.repos(system, reload: false)
     access_policies_yml = YAML.safe_load(
       File.read(Rails.application.config.access_policies)
     )

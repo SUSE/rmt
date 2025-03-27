@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'json'
 require 'net/http'
 
@@ -19,7 +20,7 @@ class RegistryCatalogService
   end
 
   # be aware that this takes about 20-25 seconds to be finished if not in cache
-  def repos(reload: false, system: nil)
+  def repos(system, reload: false)
     Rails.cache.fetch(@catalog_api_url, expires_in: 1.hour, force: reload) do
       fetch_registry_repos(system)
     end
