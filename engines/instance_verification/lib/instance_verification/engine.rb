@@ -78,7 +78,7 @@ module InstanceVerification
     base_product = system.products.find_by(product_type: 'base')
     return false unless base_product
 
-    # check the cache for the system (20 min)
+    # check the cache for the system
     cache_key = InstanceVerification.build_cache_entry(request.remote_ip, system.login, system.pubcloud_reg_code, system.proxy_byos_mode, base_product)
     if InstanceVerification.reg_code_in_cache?(cache_key, system.proxy_byos_mode)
       # only update registry cache key
