@@ -15,7 +15,7 @@ module Registry
         before_action :refresh_auth_cache, only: %w[index], if: -> { request.headers['X-Instance-Data'] }
 
         def refresh_auth_cache
-          unless ZypperAuth.verify_instance(request, logger, @system)
+          unless InstanceVerification.verify_instance(request, logger, @system)
             render(xml: { error: 'Instance verification failed' }, status: :forbidden)
           end
         end
