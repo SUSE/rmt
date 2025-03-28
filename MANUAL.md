@@ -257,6 +257,9 @@ Executing this script will import the RMT CA's certificate into the trusted stor
 
 The `mirroring` section lets you adjust mirroring behavior.
 
+  * `mirroring.mirror_drpm`:
+    Whether to mirror delta (extension = `.drpm`) RPM packages or not. Defaults
+    to `false` if absent.
   * `mirroring.mirror_src`:
     Whether to mirror source (arch = `src`) RPM packages or not.
   * `mirroring.dedup_method`:
