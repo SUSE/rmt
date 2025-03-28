@@ -31,7 +31,7 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
       .map do |reference|
         ref = RMT::Mirror::FileReference.build_from_metadata(reference, base_dir: temp(:metadata), base_url: repomd_xml.base_url, cache_dir: repository_path)
         enqueue ref
-        process_metadata?(ref) ? ref : nil
+        (metadata_updated?(ref) || RMT::Config.revalidate_metadata?) ? ref : nil
       end.compact
 
     download_enqueued
@@ -75,7 +75,7 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
   end
 
   # only parse metadata file and verify/download files when metadata changed
-  def process_metadata?(ref)
+  def metadata_updated?(ref)
     local_path = ref.cache_dir + ref.relative_path
     !File.exist?(local_path) ||
           !RMT::ChecksumVerifier.match_checksum?(ref.checksum_type, ref.checksum, local_path)
