@@ -65,7 +65,7 @@ module InstanceVerification
     File.unlink(full_path_cache_key) if File.exist?(full_path_cache_key)
   end
 
-  def self.set_cache_active(cache_key, mode, registry = false)
+  def self.set_cache_active(cache_key, mode, registry = false) # rubocop:disable Style/OptionalBooleanParameter
     cache_key = [cache_key, 'active'].join('-') if ['byos', 'hybrid'].include?(mode)
 
     InstanceVerification.update_cache(cache_key, mode, registry: registry)
