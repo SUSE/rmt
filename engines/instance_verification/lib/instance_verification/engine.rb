@@ -65,6 +65,12 @@ module InstanceVerification
     File.unlink(full_path_cache_key) if File.exist?(full_path_cache_key)
   end
 
+  def self.set_cache_active(cache_key, mode, registry = false)
+    cache_key = [cache_key, 'active'].join('-') if ['byos', 'hybrid'].include?(mode)
+
+    InstanceVerification.update_cache(cache_key, mode, registry: registry)
+  end
+
   def self.set_cache_inactive(cache_key, mode)
     InstanceVerification.remove_entry_from_cache("#{cache_key}-active", mode)
     cache_key = [cache_key, 'inactive'].join('-')
@@ -194,7 +200,7 @@ module InstanceVerification
           cache_key = InstanceVerification.build_cache_entry(
             request.remote_ip, @system.login, encoded_reg_code, @system.proxy_byos_mode, product
           )
-          InstanceVerification.update_cache("#{cache_key}-active", @system.proxy_byos_mode)
+          InstanceVerification.set_cache_active(cache_key, @system.proxy_byos_mode)
         end
 
         # Verify that the base product doesn't change in the offline migration

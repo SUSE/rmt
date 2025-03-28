@@ -421,7 +421,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               .with({ headers: scc_announce_headers, body: scc_annouce_body.to_json })
               .to_return(status: 201, body: scc_response_body, headers: {})
 
-            expect(InstanceVerification).to receive(:update_cache).with(active_cache_entry, 'hybrid')
+            expect(InstanceVerification).to receive(:update_cache).with(active_cache_entry, 'hybrid', registry: false)
 
             post url, params: payload_token, headers: headers
           end
