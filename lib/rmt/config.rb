@@ -34,6 +34,12 @@ module RMT::Config
       Settings.try(:mirroring).try(:dedup_method).to_s.to_sym != :copy
     end
 
+    # This method checks whether to re-validate metadata content and packages
+    # when the metadata did not change
+    def revalidate_metadata?
+      Settings.try(:mirroring).try(:revalidate_metadata) || false
+    end
+
     def mirror_src_files?
       ActiveModel::Type::Boolean.new.cast(Settings.try(:mirroring).try(:mirror_src))
     end

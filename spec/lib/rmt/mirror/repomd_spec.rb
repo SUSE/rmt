@@ -111,6 +111,16 @@ RSpec.describe RMT::Mirror::Repomd do
       expect(metadatas.count).to eq(4)
     end
 
+    it 'returns only changed files' do
+      allow(repomd).to receive(:download_cached!).and_return(repomd_ref)
+      allow(repomd).to receive(:check_signature)
+      allow(repomd).to receive(:download_enqueued)
+      allow(repomd).to receive(:metadata_updated?).and_return(false)
+
+      metadatas = repomd.mirror_metadata
+      expect(metadatas.count).to eq(0)
+    end
+
     it 'downloads the metadata files' do
       allow(repomd).to receive(:download_cached!).and_return(repomd_ref)
       allow(repomd).to receive(:check_signature)
