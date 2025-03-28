@@ -72,7 +72,7 @@ class RMT::CLI::Clean < RMT::CLI::Base
     partial_reports =
       dangling_packages_list_by_dir(repomd_files).map do |repo_dir, dangling_files|
         unless options.dry_run
-          FileUtils.rm(dangling_files.map(&:path))
+          FileUtils.rm_f(dangling_files.map(&:path))
           dangling_files.each { |file| file.db_entries.destroy_all }
         end
 
@@ -121,17 +121,21 @@ class RMT::CLI::Clean < RMT::CLI::Base
     packages = (actual_packages - expected_packages).sort
 
     packages.map do |file|
-      file_status = File.stat(file)
-      next nil unless eligible_for_cleaning?(file, file_status)
-
       file_size, hardlink =
-        # We keep the count of times an inode has been referenced to know
-        # if it's the last link (name) referencing the inode, so we can compute
-        # the actual file size removed from disk.
-        if (@inodes[file_status.ino] += 1) == file_status.nlink
-          [file_status.size, false]
-        else
-          [0, true]
+        begin
+          file_stat = File.stat(file)
+          next nil unless eligible_for_cleaning?(file, file_stat)
+
+          # We keep the count of times an inode has been referenced to know
+          # if it's the last link (name) referencing the inode, so we can compute
+          # the actual file size removed from disk.
+          if (@inodes[file_stat.ino] += 1) == file_stat.nlink
+            [file_stat.size, false]
+          else
+            [0, true]
+          end
+        rescue Errno::ENOENT
+          [0, false]
         end
 
       db_entries = DownloadedFile.where(local_path: file)
@@ -157,8 +161,6 @@ class RMT::CLI::Clean < RMT::CLI::Base
   end
 
   def eligible_for_cleaning?(file, status)
-    return false unless File.exist?(file)
-
     # Clean .drpm files whenever .drpm mirroring is disabled, regardless of age
     return true if !RMT::Config.mirror_drpm_files? && file =~ /\.drpm$/
 

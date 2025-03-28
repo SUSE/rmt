@@ -412,12 +412,52 @@ RSpec.describe RMT::CLI::Clean do
         OUTPUT
       end
 
-      let(:argv) { ['packages', '--non-interactive', '--verbose'] }
-      let(:confirmation_prompt) { '' }
-
       before { allow(RMT::Config).to receive(:mirror_drpm_files?).and_return(false) }
 
+      include_context 'command with non-interactive and verbose options'
       include_context 'mirror repositories'
+
+      include_examples 'prints to stdout'
+      include_examples 'removes files'
+      include_examples 'removes database entries'
+    end
+
+    # This scenario emulates a "race condition", where, during the scanning
+    # steps, a file is identified as "dangling" candidate, and then removed just
+    # before checking it's stats (size and hardlink).
+    context 'when a dangling file is removed before the command completes' do
+      let(:dangling_list) do
+        DanglingList.new(files: dangling_files.values_at(:rpm1, :rpm2),
+                         db_entries: dangling_files.values_at(:rpm1, :rpm2))
+      end
+      let(:removed_file) { dangling_files.dig(:rpm2, :file) }
+
+      let(:expected_result_output) do
+        <<~OUTPUT.chomp
+          \e[1mDirectory: #{dummy_repo[:dir]}\e[0m
+            Cleaned 'blueberry-0.2-0.x86_64.rpm' (#{file_human_size(0)}), 1 database entry.
+          Cleaned 1 file (#{file_human_size(0)}), 1 database entry.
+
+          \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
+            Cleaned 'x86_64/lemon-0.0.2-lp151.2.1.x86_64.rpm' (#{file_human_size(7280)}), 1 database entry.
+          Cleaned 1 file (#{file_human_size(7280)}), 1 database entry.
+
+          #{'-' * 80}
+          \e[32;1mTotal: cleaned 2 files (#{file_human_size(7280)}), 2 database entries.\e[0m
+        OUTPUT
+      end
+
+      include_context 'command with non-interactive and verbose options'
+      include_context 'mirror repositories with dangling files'
+
+      before do
+        allow(File).to receive(:stat).and_call_original
+        allow(File).to receive(:stat).with(removed_file)
+          .and_wrap_original do |original_method, *args, &block|
+            FileUtils.rm(removed_file)
+            original_method.call(*args, &block)
+          end
+      end
 
       include_examples 'prints to stdout'
       include_examples 'removes files'
