@@ -56,7 +56,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
           FileUtils.mkdir_p(cache_path)
           FileUtils.touch(cache_name)
           expect(InstanceVerification).to receive(:update_cache).with(
-            "127.0.0.1-#{system.login}-#{system.products.first.id}", system.proxy_byos_mode, registry: true
+            "127.0.0.1-#{system.login}-#{system.products.first.id}-active", system.proxy_byos_mode, registry: true
           )
           get '/connect/systems/activations', headers: headers
           FileUtils.rm_rf(cache_path)

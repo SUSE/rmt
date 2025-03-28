@@ -16,7 +16,7 @@ module ZypperAuth
       cache_key = InstanceVerification.build_cache_entry(request.remote_ip, system.login, system.pubcloud_reg_code, system.proxy_byos_mode, base_product)
       if InstanceVerification.reg_code_in_cache?(cache_key, system.proxy_byos_mode)
         # only update registry cache key
-        InstanceVerification.update_cache(cache_key, system.proxy_byos_mode, registry: true)
+        InstanceVerification.update_cache("#{cache_key}-active", system.proxy_byos_mode, registry: true)
         return true
       end
 
@@ -29,14 +29,14 @@ module ZypperAuth
 
       is_valid = verification_provider.instance_valid?
       # update repository and registry cache
-      InstanceVerification.update_cache(cache_key, system.proxy_byos_mode)
+      InstanceVerification.update_cache("#{cache_key}-active", system.proxy_byos_mode)
       is_valid
     rescue InstanceVerification::Exception => e
       if system.byos?
         result = SccProxy.scc_check_subscription_expiration(request.headers, system, base_product.product_class)
         if result[:is_active]
           # update the cache for the base product
-          InstanceVerification.update_cache(cache_key, 'byos')
+          InstanceVerification.update_cache("#{cache_key}-active", 'byos')
           return true
         end
         # if can not get the activations, set the cache inactive

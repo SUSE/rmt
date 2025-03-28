@@ -394,8 +394,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           let(:cache_entry) do
             product_hash = product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
             product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
-            "#{Base64.strict_encode64(payload_token[:token])}-#{product_triplet}-active"
+            "#{Base64.strict_encode64(payload_token[:token])}-#{product_triplet}"
           end
+          let(:active_cache_entry) { cache_entry + '-active' }
 
           before do
             allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
@@ -420,7 +421,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               .with({ headers: scc_announce_headers, body: scc_annouce_body.to_json })
               .to_return(status: 201, body: scc_response_body, headers: {})
 
-            expect(InstanceVerification).to receive(:update_cache).with(cache_entry, 'hybrid')
+            expect(InstanceVerification).to receive(:update_cache).with(active_cache_entry, 'hybrid')
 
             post url, params: payload_token, headers: headers
           end

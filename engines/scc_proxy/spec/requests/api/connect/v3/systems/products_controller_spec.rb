@@ -126,12 +126,12 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               allow(FileUtils).to receive(:touch)
 
               allow(InstanceVerification).to receive(:write_cache_file).with(
-                Rails.application.config.repo_byos_cache_dir, "#{Base64.strict_encode64(payload_byos[:token])}-#{product_triplet}-active"
+                Rails.application.config.repo_byos_cache_dir,
+                "#{Base64.strict_encode64(payload_byos[:token])}-#{product_triplet}-active"
               )
               allow(InstanceVerification).to receive(:write_cache_file).with(
                 Rails.application.config.registry_cache_dir,
-                "#{Base64.strict_encode64(payload_byos[:token])}-#{product_triplet}-active"
-              )
+                "#{Base64.strict_encode64(payload_byos[:token])}-#{product_triplet}-active" )
             end
 
             it 'renders service JSON' do

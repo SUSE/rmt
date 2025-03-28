@@ -24,7 +24,7 @@ module InstanceVerification
       # for byos or hybrid cache
       product_hash = product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
       product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
-      "#{encoded_reg_code}-#{product_triplet}-active"
+      "#{encoded_reg_code}-#{product_triplet}"
     end
   end
 
@@ -66,9 +66,8 @@ module InstanceVerification
   end
 
   def self.set_cache_inactive(cache_key, mode)
-    InstanceVerification.remove_entry_from_cache(cache_key, mode)
-    *all, _ = cache_key.split('-')
-    cache_key = [all, 'inactive'].join('-')
+    InstanceVerification.remove_entry_from_cache("#{cache_key}-active", mode)
+    cache_key = [cache_key, 'inactive'].join('-')
     InstanceVerification.update_cache(cache_key, mode)
   end
 
@@ -185,7 +184,6 @@ module InstanceVerification
             params.permit(:identifier, :version, :arch, :release_type).to_h,
             @system.instance_data
           )
-
           raise 'Unspecified error' unless verification_provider.instance_valid?
 
           encoded_reg_code = @system.pubcloud_reg_code
@@ -196,7 +194,7 @@ module InstanceVerification
           cache_key = InstanceVerification.build_cache_entry(
             request.remote_ip, @system.login, encoded_reg_code, @system.proxy_byos_mode, product
           )
-          InstanceVerification.update_cache(cache_key, @system.proxy_byos_mode)
+          InstanceVerification.update_cache("#{cache_key}-active", @system.proxy_byos_mode)
         end
 
         # Verify that the base product doesn't change in the offline migration

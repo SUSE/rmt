@@ -365,7 +365,7 @@ module SccProxy
               # update the system to HYBRID mode if HYBRID MODE and system not HYBRID already
               @system.hybrid! if mode == 'hybrid' && @system.payg?
             end
-            InstanceVerification.update_cache(cache_entry, mode)
+            InstanceVerification.update_cache("#{cache_entry}-active", mode)
             if @system.pubcloud_reg_code.present? && @system.pubcloud_reg_code != encoded_reg_code
               combination_reg_code = @system.pubcloud_reg_code + ',' + encoded_reg_code
               @system.update(pubcloud_reg_code: combination_reg_code)
