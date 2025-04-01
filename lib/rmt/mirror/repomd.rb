@@ -31,7 +31,7 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
       .map do |reference|
         ref = RMT::Mirror::FileReference.build_from_metadata(reference, base_dir: temp(:metadata), base_url: repomd_xml.base_url, cache_dir: repository_path)
         enqueue ref
-        (metadata_updated?(ref) || RMT::Config.revalidate_metadata?) ? ref : nil
+        (RMT::Config.revalidate_repodata? || metadata_updated?(ref)) ? ref : nil
       end.compact
 
     download_enqueued

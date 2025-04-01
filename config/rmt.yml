@@ -30,7 +30,7 @@ scc:
 
 mirroring:
   mirror_src: false
-  revalidate_metadata: false
+  revalidate_repodata: true
   dedup_method: hardlink
 
 http_client:

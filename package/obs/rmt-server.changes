@@ -6,7 +6,7 @@ Tue Jan 21 10:49:54 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
     * Add pubcloud_reg_code column to systems table
     * Add cache directories and their expiration times to the scrubber
   * Update Puma webserver
-  * During 'rmt-cli mirror', only validate metadata and packages when the metadata changed
+  * Add option during 'rmt-cli mirror' to re-validate repodata and packages only when repodata was updated
 
 -------------------------------------------------------------------
 Fri Jan 03 10:44:00 UTC 2025 - Luís Caparroz <lcaparroz@suse.com>

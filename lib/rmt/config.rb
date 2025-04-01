@@ -35,9 +35,11 @@ module RMT::Config
     end
 
     # This method checks whether to re-validate metadata content and packages
-    # when the metadata did not change
-    def revalidate_metadata?
-      Settings.try(:mirroring).try(:revalidate_metadata) || false
+    # when the metadata did not change (default=true)
+    def revalidate_repodata?
+      return true if Settings.try(:mirroring).try(:revalidate_repodata).nil?
+
+      !!ActiveModel::Type::Boolean.new.cast(Settings.mirroring.revalidate_repodata)
     end
 
     def mirror_src_files?
