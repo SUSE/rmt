@@ -108,7 +108,7 @@ RSpec.configure do |config|
   end
 
   # Reload configuration only from "default" RMT config file to avoid
-  # interference from '/etc/resolv.conf' or 'config/rmt.local.yml' when running
+  # interference from '/etc/rmt.conf' or 'config/rmt.local.yml' when running
   # tests randomly.
   config.before(:suite) do
     Settings.reload_from_files(

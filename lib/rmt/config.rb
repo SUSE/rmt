@@ -6,6 +6,7 @@ Config.setup do |config|
   config.merge_nil_values = false
 end
 
+# In specs, configuration will only be loaded from 'config/rmt.yml'
 Config.load_and_set_settings(
   ('/etc/rmt.conf' if File.readable?('/etc/rmt.conf')),
   File.join(__dir__, '../../config/rmt.yml'),
