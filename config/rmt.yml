@@ -29,6 +29,7 @@ scc:
     job_name: <%= ENV.fetch('PROMETHEUS_JOB_NAME') { 'rmt-webserver' } %>
 
 mirroring:
+  mirror_drpm: false
   mirror_src: false
   revalidate_repodata: true
   dedup_method: hardlink

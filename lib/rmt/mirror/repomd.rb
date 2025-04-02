@@ -67,6 +67,7 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
                     primary: RepomdParser::PrimaryXmlParser }
 
     metadata_references.map do |file|
+      next if file.type == :deltainfo && !RMT::Config.mirror_drpm_files?
       next unless xml_parsers.key? file.type
 
       @logger.debug _("Parsing '#{file.relative_path} (#{(file.size.to_f / (1024 * 1024)).round(1)}MB)'")
@@ -79,5 +80,11 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
     local_path = ref.cache_dir + ref.relative_path
     !File.exist?(local_path) ||
           !RMT::ChecksumVerifier.match_checksum?(ref.checksum_type, ref.checksum, local_path)
+  end
+
+  def need_to_download?(ref)
+    return false if !RMT::Config.mirror_drpm_files? && ref.local_path.match?(/\.drpm$/)
+
+    super(ref)
   end
 end
