@@ -24,6 +24,87 @@ RSpec.describe RMT::Config do
     end
   end
 
+  describe '.mirror_drpm_files?' do
+    let!(:tmp_dir) { Dir.mktmpdir('rmt') }
+    let(:config_path) { File.join(tmp_dir, 'rmt.yml') }
+    let(:config_yaml) do
+      <<~CONFIG.chomp
+      mirroring:
+        mirror_drpm: #{mirror_drpm_value}
+        mirror_src: false
+        dedup_method: hardlink
+      CONFIG
+    end
+
+    around do |example|
+      # Load the configuration from mock file to emulate user input on RMT'
+      # configuration file.
+      File.open(config_path, 'w') { |f| f.puts config_yaml }
+      Settings.reload_from_files(config_path)
+
+      example.run
+
+      # Reload the configuration from the same sources as defined in
+      # 'lib/rmt/config.rb' to avoid breaking other tests.
+      Settings.reload_from_files(Rails.root.join('config/rmt.yml'))
+      FileUtils.remove_entry(tmp_dir, force: true)
+    end
+
+    shared_examples 'config with falsey values' do
+      it 'returns false' do
+        expect(described_class.mirror_drpm_files?).to be false
+      end
+    end
+
+    shared_examples 'config with truthy values' do
+      it 'returns true' do
+        expect(described_class.mirror_drpm_files?).to be true
+      end
+    end
+
+    context "when config YAML 'mirroring/mirror_drpm' is an empty string" do
+      let(:mirror_drpm_value) { '' }
+
+      include_examples 'config with falsey values'
+    end
+
+    context "when config YAML 'mirroring/mirror_drpm' key is absent" do
+      let(:config_yaml) do
+        <<~CONFIG.chomp
+        mirroring:
+          mirror_src: false
+          dedup_method: hardlink
+        CONFIG
+      end
+
+      include_examples 'config with falsey values'
+    end
+
+    context "when config YAML 'mirroring/mirror_drpm' is false" do
+      let(:mirror_drpm_value) { 'false' }
+
+      include_examples 'config with falsey values'
+    end
+
+    context "when config YAML 'mirroring/mirror_drpm' is 'false'" do
+      let(:mirror_drpm_value) { "'false'" }
+
+      include_examples 'config with falsey values'
+    end
+
+    context "when config YAML 'mirroring/mirror_drpm' is true" do
+      let(:mirror_drpm_value) { 'true' }
+
+      include_examples 'config with truthy values'
+    end
+
+    context "when config YAML 'mirroring/mirror_drpm' is 'true'" do
+      let(:mirror_drpm_value) { "'true'" }
+
+      include_examples 'config with truthy values'
+    end
+  end
+
   describe '#mirroring dedup_method' do
     context 'defaults' do
       [nil, ''].each do |dedup_method|
