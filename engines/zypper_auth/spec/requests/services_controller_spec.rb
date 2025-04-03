@@ -70,36 +70,6 @@ describe ServicesController do
           expect(response.body).to match(/Instance verification failed/)
         end
       end
-
-      context 'when instance verification raises StandardError' do
-        before do
-          expect(InstanceVerification).to receive(:verify_instance).and_return(false)
-          get "/services/#{service.id}", headers: headers
-        end
-
-        it 'request fails with 403' do
-          expect(response).to have_http_status(403)
-        end
-
-        it 'reports an error' do
-          expect(response.body).to match(/Instance verification failed/)
-        end
-      end
-
-      context 'when instance verification raises InstanceVerification::Exception' do
-        before do
-          expect(InstanceVerification).to receive(:verify_instance).and_return(false)
-          get "/services/#{service.id}", headers: headers
-        end
-
-        it 'request fails with 403' do
-          expect(response).to have_http_status(403)
-        end
-
-        it 'reports an error' do
-          expect(response.body).to match(/Instance verification failed/)
-        end
-      end
     end
   end
 end

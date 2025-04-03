@@ -247,7 +247,6 @@ module InstanceVerification
 
           raise 'Unspecified error' unless verification_provider.instance_valid?
 
-          # encoded_reg_code = @system.pubcloud_reg_code
           # we use the token sent from the client if present
           # instead of the value stored in the DB
           params[:instance_data] = @system.instance_data
@@ -256,7 +255,7 @@ module InstanceVerification
             @system.login,
             params,
             @system.proxy_byos_mode,
-            @product
+            product
           )
           InstanceVerification.update_cache(cache_key, @system.proxy_byos_mode)
         end

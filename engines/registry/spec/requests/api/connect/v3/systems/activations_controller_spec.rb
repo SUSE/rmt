@@ -60,7 +60,6 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
             expect(response.body).to include('Instance verification failed')
             expect(InstanceVerification).not_to receive(:update_cache)
           end
-
         end
       end
 

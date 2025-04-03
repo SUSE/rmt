@@ -59,7 +59,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           FactoryBot.create(
             :system,
             :byos,
-            pubcloud_reg_code: 'aaa', # Base64.strict_encode64('super_token'),
+            pubcloud_reg_code: Base64.strict_encode64('super_token'),
             instance_data: 'dummy_instance_data'
           )
         end
@@ -413,7 +413,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
-            # allow(InstanceVerification).to receive(:update_cache).with("127.0.0.1-#{system.login}-#{product.id}", 'payg')
             allow(InstanceVerification).to receive(:get_cache_entries).and_return(
               [File.join(Rails.application.config.repo_hybrid_cache_dir, cache_entry)]
             )

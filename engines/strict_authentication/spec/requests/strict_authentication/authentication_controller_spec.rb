@@ -127,7 +127,6 @@ module StrictAuthentication
               before do
                 allow(InstanceVerification).to receive(:verify_instance).and_return(true)
                 allow(DataExport::Handlers::Example).to receive(:new).and_return(data_export_double)
-                # expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
                 allow(data_export_double).to receive(:export_rmt_data)
                 allow(ZypperAuth).to receive(:zypper_auth_message)
               end
