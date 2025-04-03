@@ -59,6 +59,7 @@ BuildRequires:  sqlite-devel
 BuildRequires:  pkgconfig(systemd)
 Requires:       gpg2
 Recommends:     mariadb
+Recommends:     valkey
 Recommends:     nginx
 # The config is not really required by rmt-server, but by nginx ...
 Requires:       rmt-server-configuration
