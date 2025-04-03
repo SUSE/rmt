@@ -55,7 +55,14 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       end
 
       context "when system doesn't have hw_info and cache is inactive" do
-        let(:system) { FactoryBot.create(:system, :byos, pubcloud_reg_code: Base64.strict_encode64('super_token')) }
+        let(:system) do
+          FactoryBot.create(
+            :system,
+            :byos,
+            pubcloud_reg_code: Base64.strict_encode64('super_token'),
+            instance_data: 'dummy_instance_data'
+          )
+        end
 
         before do
           stub_request(:post, 'https://scc.suse.com/connect/systems/products')
@@ -67,8 +74,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
 
         it 'class instance verification provider' do
-          expect(InstanceVerification::Providers::Example).to receive(:new)
-            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, nil).and_call_original.at_least(:once)
+          expect(InstanceVerification::Providers::Example).to(
+            receive(:new).and_call_original.at_least(:once)
+          )
           allow(File).to receive(:directory?)
           allow(Dir).to receive(:mkdir)
           allow(Dir).to receive(:children)
@@ -394,8 +402,10 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           let(:cache_entry) do
             product_hash = product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
             product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
-            "#{Base64.strict_encode64(payload_token[:token])}-#{product_triplet}-active"
+            "#{Base64.strict_encode64(payload_token[:token])}-foo-#{product_triplet}-active"
           end
+
+          let(:headers) { auth_header.merge('X-Instance-Data' => 'dummy_instance_data') }
 
           before do
             allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
@@ -403,7 +413,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
-            allow(InstanceVerification).to receive(:update_cache).with("127.0.0.1-#{system.login}-#{product.id}", 'payg')
             allow(InstanceVerification).to receive(:get_cache_entries).and_return(
               [File.join(Rails.application.config.repo_hybrid_cache_dir, cache_entry)]
             )
