@@ -25,7 +25,8 @@ module Registry
         before_action :remove_auth_cache, only: %w[deregister]
 
         def remove_auth_cache
-          registry_cache_key = InstanceVerification.build_cache_entry(request.remote_ip, @system.login, @system.pubcloud_reg_code, 'registry', nil)
+          cache_params = { token: @system.pubcloud_reg_code, instance_data: @system.instance_data }
+          registry_cache_key = InstanceVerification.build_cache_entry(request.remote_ip, @system.login, cache_params, 'registry', nil)
           InstanceVerification.remove_entry_from_cache(registry_cache_key, 'registry')
         end
       end

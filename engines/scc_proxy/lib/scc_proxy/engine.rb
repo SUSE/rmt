@@ -135,7 +135,7 @@ module SccProxy
       unless response.code_type == Net::HTTPCreated
         # if product can not be activated
         # set the registration code as invalid in the cache
-        cache_key = InstanceVerification.build_cache_entry(nil, nil, Base64.strict_encode64(params[:token]), mode, product)
+        cache_key = InstanceVerification.build_cache_entry(nil, nil, params, mode, product)
         InstanceVerification.set_cache_inactive(cache_key, mode)
         error = JSON.parse(response.body)
         Rails.logger.info "Could not activate #{product.product_string}, error: #{error['error']} #{response.code}"
@@ -340,9 +340,10 @@ module SccProxy
           mode = find_mode
           unless mode.nil?
             # check cache first
-            encoded_reg_code = Base64.strict_encode64(params[:token])
+            params[:instance_data] = request.headers.fetch('X-Instance-Data', '')
+
             cache_entry = InstanceVerification.build_cache_entry(
-              request.remote_ip, @system.login, encoded_reg_code, mode, @product
+              request.remote_ip, @system.login, params, mode, @product
             )
             found_cache_entry = InstanceVerification.reg_code_in_cache?(cache_entry, mode)
             if found_cache_entry.present? && found_cache_entry.include?('-inactive')
@@ -355,7 +356,7 @@ module SccProxy
               # and not found in the cache
               # make a request to SCC
               logger.info "Activating product #{@product.product_string} to SCC"
-              logger.info 'No token provided' if params[:token].blank?
+              logger.info 'No token provided' if params.fetch(:token, nil).blank?
               SccProxy.scc_activate_product(
                 @system, @product, request.headers['HTTP_AUTHORIZATION'], params, mode
               )
@@ -366,6 +367,7 @@ module SccProxy
               @system.hybrid! if mode == 'hybrid' && @system.payg?
             end
             InstanceVerification.update_cache(cache_entry, mode)
+            encoded_reg_code = Base64.strict_encode64(params.fetch(:token, ''))
             if @system.pubcloud_reg_code.present? && @system.pubcloud_reg_code != encoded_reg_code
               combination_reg_code = @system.pubcloud_reg_code + ',' + encoded_reg_code
               @system.update(pubcloud_reg_code: combination_reg_code)
