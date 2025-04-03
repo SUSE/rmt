@@ -15,16 +15,23 @@ module InstanceVerification
     )
   end
 
-  def self.build_cache_entry(remote_ip, system_login, encoded_reg_code, mode, product)
+  def self.build_cache_entry(remote_ip, system_login, params, mode, product)
     if mode == 'payg'
       [remote_ip, system_login, product.id].join('-')
     elsif mode == 'registry'
       [remote_ip, system_login].join('-')
     else
       # for byos or hybrid cache
+      instance_data = params.fetch(:instance_data, '')
+      iid = if instance_data.present?
+              InstanceVerification.provider.new(nil, nil, nil, instance_data).instance_identifier
+            else
+              ''
+            end
+      encoded_reg_code = Base64.strict_encode64(params.fetch(:token, ''))
       product_hash = product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
       product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
-      "#{encoded_reg_code}-#{product_triplet}-active"
+      "#{encoded_reg_code}-#{iid}-#{product_triplet}-active"
     end
   end
 
@@ -73,25 +80,31 @@ module InstanceVerification
   end
 
   def self.verify_instance(request, logger, system)
-    return false unless request.headers['X-Instance-Data']
+    return false unless request.headers.fetch('X-Instance-Data', false)
 
     base_product = system.products.find_by(product_type: 'base')
     return false unless base_product
 
-    # check the cache for the system
-    cache_key = InstanceVerification.build_cache_entry(request.remote_ip, system.login, system.pubcloud_reg_code, system.proxy_byos_mode, base_product)
+    instance_data = request.headers['X-Instance-Data'].to_s
+    verification_provider = InstanceVerification.provider.new(
+      logger,
+      request,
+      base_product.attributes.symbolize_keys.slice(:identifier, :version, :arch, :release_type),
+      Base64.decode64(instance_data)
+    )
+    cache_params = {}
+    # we are checking the base product so we pick the first registration code
+    # PAYG instances have no registration code
+    cache_params = { token: Base64.decode64(system.pubcloud_reg_code.split(',')[0]), instance_data: instance_data } unless system.payg?
+    cache_key = InstanceVerification.build_cache_entry(
+      request.remote_ip, system.login, cache_params, system.proxy_byos_mode, base_product
+    )
     if InstanceVerification.reg_code_in_cache?(cache_key, system.proxy_byos_mode)
       # only update registry cache key
       InstanceVerification.update_cache(cache_key, system.proxy_byos_mode, registry: true)
       return true
     end
 
-    verification_provider = InstanceVerification.provider.new(
-      logger,
-      request,
-      base_product.attributes.symbolize_keys.slice(:identifier, :version, :arch, :release_type),
-      Base64.decode64(request.headers['X-Instance-Data'].to_s) # instance data
-    )
     is_valid = verification_provider.instance_valid?
     # update repository and registry cache
     InstanceVerification.update_cache(cache_key, system.proxy_byos_mode)
@@ -234,13 +247,16 @@ module InstanceVerification
 
           raise 'Unspecified error' unless verification_provider.instance_valid?
 
-          encoded_reg_code = @system.pubcloud_reg_code
+          # encoded_reg_code = @system.pubcloud_reg_code
           # we use the token sent from the client if present
           # instead of the value stored in the DB
-          encoded_reg_code = Base64.strict_encode64(params[:token]) if params[:token].present?
-
+          params[:instance_data] = @system.instance_data
           cache_key = InstanceVerification.build_cache_entry(
-            request.remote_ip, @system.login, encoded_reg_code, @system.proxy_byos_mode, product
+            request.remote_ip,
+            @system.login,
+            params,
+            @system.proxy_byos_mode,
+            @product
           )
           InstanceVerification.update_cache(cache_key, @system.proxy_byos_mode)
         end
