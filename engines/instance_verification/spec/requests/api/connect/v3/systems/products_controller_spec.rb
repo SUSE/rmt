@@ -377,8 +377,10 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           let(:cache_entry) do
             product_hash = product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
             product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
-            "#{Base64.strict_encode64(payload_token[:token])}-#{product_triplet}-active"
+            "#{Base64.strict_encode64(payload_token[:token])}-foo-#{product_triplet}"
           end
+          let(:active_cache_entry) { cache_entry + '-active' }
+          let(:headers) { auth_header.merge('X-Instance-Data' => 'dummy_instance_data') }
 
           before do
             allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
@@ -386,7 +388,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
-            allow(InstanceVerification).to receive(:update_cache).with("127.0.0.1-#{system.login}-#{product.id}", 'payg')
             allow(InstanceVerification).to receive(:get_cache_entries).and_return(
               [File.join(Rails.application.config.repo_hybrid_cache_dir, cache_entry)]
             )
@@ -403,7 +404,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               .with({ headers: scc_announce_headers, body: scc_annouce_body.to_json })
               .to_return(status: 201, body: scc_response_body, headers: {})
 
-            expect(InstanceVerification).to receive(:update_cache).with(cache_entry, 'hybrid')
+             expect(InstanceVerification).to receive(:update_cache).with(active_cache_entry, 'hybrid', registry: false)
+
+             headers['X-Instance-Data'] = instance_data
             post url, params: payload_token, headers: headers
           end
 
@@ -748,7 +751,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           it 'HTTP response code is 422' do
-            # problem here
             expect(response).to have_http_status(422)
           end
 

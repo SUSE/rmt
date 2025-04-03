@@ -108,7 +108,7 @@ module SccProxy
       unless response.code_type == Net::HTTPCreated
         # if product can not be activated
         # set the registration code as invalid in the cache
-        cache_key = InstanceVerification.build_cache_entry(nil, nil, Base64.strict_encode64(params[:token]), mode, product)
+        cache_key = InstanceVerification.build_cache_entry(nil, nil, params, mode, product)
         InstanceVerification.set_cache_inactive(cache_key, mode)
         error = JSON.parse(response.body)
         Rails.logger.info "Could not activate #{product.product_string}, error: #{error['error']} #{response.code}"
@@ -331,13 +331,13 @@ module SccProxy
             # update the system to HYBRID mode if HYBRID MODE and system not HYBRID already
             @system.hybrid! if mode == 'hybrid' && @system.payg?
 
-            encoded_reg_code = Base64.strict_encode64(params[:token])
-            InstanceVerification.update_cache(
-              InstanceVerification.build_cache_entry(nil, nil, encoded_reg_code, mode, @product),
+            params[:instance_data] = request.headers.fetch('X-Instance-Data', '')
+            InstanceVerification.set_cache_active(
+              InstanceVerification.build_cache_entry(nil, nil, params, mode, @product),
               mode
             )
           end
-          update_pubcloud_reg_code(encoded_reg_code)
+          update_pubcloud_reg_code(Base64.strict_encode64(params.fetch(:token, '')))
         rescue *NET_HTTP_ERRORS => e
           logger.error(
             "Could not activate product for system with regcode #{params[:token]}" \
@@ -347,7 +347,7 @@ module SccProxy
         end
 
         def update_pubcloud_reg_code(encoded_reg_code)
-          return if encoded_reg_code.nil?
+          return if encoded_reg_code.blank?
 
           return if @system.pubcloud_reg_code&.include?(encoded_reg_code) # the reg code is already in that system
 
