@@ -83,10 +83,6 @@ FactoryBot.define do
       end
     end
 
-    # trait :with_instance_data do
-    #   instance_data { '<document>foo</document>' }
-    # end
-
     trait :with_system_information do
       system_information do
         {
