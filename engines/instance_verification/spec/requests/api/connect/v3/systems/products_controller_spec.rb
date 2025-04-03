@@ -382,6 +382,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           let(:active_cache_entry) { cache_entry + '-active' }
           let(:headers) { auth_header.merge('X-Instance-Data' => 'dummy_instance_data') }
 
+          let(:headers) { auth_header.merge('X-Instance-Data' => 'dummy_instance_data') }
+
           before do
             allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
             allow(plugin_double).to receive(:instance_identifier).and_return('foo')

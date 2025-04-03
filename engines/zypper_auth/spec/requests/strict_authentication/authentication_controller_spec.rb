@@ -501,6 +501,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
 
           context 'the path to check is free' do
             let(:data_export_double) { instance_double('DataExport::Handlers::Example') }
+            let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
             before do
               allow(InstanceVerification).to receive(:verify_instance).and_return(true)

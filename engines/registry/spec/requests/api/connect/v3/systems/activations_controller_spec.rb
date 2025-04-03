@@ -5,7 +5,12 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
 
   describe '#activations' do
     context 'payg' do
-      let(:system) { FactoryBot.create(:system, :payg, :with_activated_product) }
+      let(:system) do
+        FactoryBot.create(
+          :system, :payg, :with_activated_product,
+          pubcloud_reg_code: Base64.strict_encode64('super_token_different')
+          )
+      end
       let(:headers) { auth_header.merge(version_header) }
 
       context 'without valid repository cache' do
@@ -27,6 +32,11 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
           end
 
           it 'does not update InstanceVerification cache' do
+            allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+            allow(plugin_double).to receive(:instance_identifier).and_return('instance_identifier')
+            allow(plugin_double).to receive(:instance_valid?)
+            allow(plugin_double).to receive(:instance_id)
+            allow(plugin_double).to receive(:instance_billing_info)
             FileUtils.rm_rf('registry/cache') if File.exist?('registry/cache')
             FileUtils.rm_rf('repo/payg/cache') if File.exist?('repo/payg/cache')
             allow(plugin_double).to(
@@ -38,6 +48,19 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
             expect(response.body).to include('Instance verification failed')
             expect(InstanceVerification).not_to receive(:update_cache)
           end
+
+          it 'does not update InstanceVerification cache because unexpected exception' do
+            allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+            allow(plugin_double).to receive(:instance_identifier)
+            FileUtils.rm_rf('registry/cache') if File.exist?('registry/cache')
+            FileUtils.rm_rf('repo/payg/cache') if File.exist?('repo/payg/cache')
+            allow(plugin_double).to receive(:instance_valid?).and_raise('E27drror')
+            allow(InstanceVerification).to receive(:verify_instance).and_call_original
+            get '/connect/systems/activations', headers: headers
+            expect(response.body).to include('Instance verification failed')
+            expect(InstanceVerification).not_to receive(:update_cache)
+          end
+
         end
       end
 

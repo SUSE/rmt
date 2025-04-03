@@ -31,7 +31,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
       it 'has service URLs with HTTP scheme' do
         data = JSON.parse(response.body)
         expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
-        expect_any_instance_of(InstanceVerification::Providers::Example).not_to receive(:instance_valid?)
+        expect(plugin_double).not_to receive(:instance_valid?)
         expect(InstanceVerification).not_to receive(:update_cache)
       end
     end
