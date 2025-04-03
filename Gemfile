@@ -16,6 +16,7 @@ gem 'actionpack', '~> 6.1.7'
 gem 'actionview', '~> 6.1.7'
 gem 'activemodel', '~> 6.1.7'
 gem 'activerecord', '~> 6.1.7'
+gem 'activejob', '~>6.1.7'
 gem 'railties', '~> 6.1.7'
 gem 'repomd_parser', '~> 1.1.0'
 
@@ -97,3 +98,4 @@ gem 'terminal-table', '~> 3.0'
 # needed by rmt-server-pubcloud
 gem 'jwt', '~> 2.1'
 gem 'base32'
+gem 'resque'
