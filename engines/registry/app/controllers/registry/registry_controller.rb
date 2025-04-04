@@ -15,6 +15,9 @@ module Registry
     def authorize
       token = AccessToken.new(@client&.account, params['service'], @requested_scopes.map { |s| s.granted(client: @client) }).token
       render json: { token: token }, status: :ok
+    rescue StandardError => e
+      Rails.logger.error "Could not authorize: #{e.message}"
+      render json: { error: e.message }, status: :unauthorized
     end
 
     # Catalog handler

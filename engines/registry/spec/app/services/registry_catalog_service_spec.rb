@@ -30,6 +30,6 @@ describe RegistryCatalogService do
 
   it 'lists all repos' do
     allow(System).to receive(:where).and_return([system])
-    expect(registry.repos(system: system).length).to eq repositories_returned.size
+    expect(registry.repos(system).length).to eq repositories_returned.size
   end
 end
