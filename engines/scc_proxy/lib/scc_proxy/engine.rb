@@ -329,7 +329,6 @@ module SccProxy
 
         protected
 
-        # rubocop:disable Metrics/PerceivedComplexity
         def scc_activate_product
           product_hash = @product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
           unless InstanceVerification.provider.new(logger, request, product_hash, @system.instance_data).allowed_extension?
@@ -366,7 +365,6 @@ module SccProxy
             end
           end
         end
-        # rubocop:enable Metrics/PerceivedComplexity
 
         def find_mode
           if @system.byos?
