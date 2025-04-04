@@ -387,7 +387,7 @@ module SccProxy
         def scc_upgrade
           logger.info "Upgrading system to product #{@product.product_string} to SCC"
           auth = request.headers.fetch('HTTP_AUTHORIZATION', '')
-          SccProxy.scc_upgrade(auth, @product, @system.login, @system.proxy_byos_mode, logger)
+          SccProxy.scc_upgrade(auth, @product, @system, logger)
           logger.info "System #{@system.login} successfully upgraded with SCC"
         end
 
