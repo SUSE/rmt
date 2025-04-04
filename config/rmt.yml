@@ -31,6 +31,7 @@ scc:
 mirroring:
   mirror_drpm: false
   mirror_src: false
+  revalidate_repodata: true
   dedup_method: hardlink
 
 http_client:
