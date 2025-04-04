@@ -304,8 +304,6 @@ module SccProxy
 
         protected
 
-        # rubocop:disable Metrics/PerceivedComplexity
-        # rubocop:disable Metrics/CyclomaticComplexity
         def scc_activate_product
           product_hash = @product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
           unless InstanceVerification.provider.new(logger, request, product_hash, @system.instance_data).allowed_extension?
@@ -317,15 +315,7 @@ module SccProxy
           unless mode.nil?
             # check cache first
             encoded_reg_code = Base64.strict_encode64(params[:token])
-            cache_entry = InstanceVerification.build_cache_entry(
-              request.remote_ip, @system.login, encoded_reg_code, mode, @product
-            )
-            found_cache_entry = InstanceVerification.reg_code_in_cache?(cache_entry, mode)
-            if found_cache_entry.present? && found_cache_entry.include?('-inactive')
-              error = ActionController::TranslatedError.new(N_('Subscription inactive'))
-              error.status = :forbidden
-              raise error
-            elsif found_cache_entry.blank?
+            unless system_in_cache(encoded_reg_code, mode)
               # if system is byos or hybrid and
               # there is a token
               # and not found in the cache
@@ -344,7 +334,7 @@ module SccProxy
               # update the system to HYBRID mode if HYBRID MODE and system not HYBRID already
               @system.hybrid! if mode == 'hybrid' && @system.payg?
             end
-            InstanceVerification.update_cache(cache_entry, mode)
+            InstanceVerification.update_cache(@cache_entry, mode)
             if @system.pubcloud_reg_code.present? && @system.pubcloud_reg_code != encoded_reg_code
               combination_reg_code = @system.pubcloud_reg_code + ',' + encoded_reg_code
               @system.update(pubcloud_reg_code: combination_reg_code)
@@ -353,8 +343,6 @@ module SccProxy
             end
           end
         end
-        # rubocop:enable Metrics/CyclomaticComplexity
-        # rubocop:enable Metrics/PerceivedComplexity
 
         def update_system_token
           iid = InstanceVerification.provider.new(nil, nil, nil, @system.instance_data).instance_identifier
@@ -385,10 +373,14 @@ module SccProxy
         end
 
         def scc_upgrade
-          logger.info "Upgrading system to product #{@product.product_string} to SCC"
-          auth = request.headers.fetch('HTTP_AUTHORIZATION', '')
-          SccProxy.scc_upgrade(auth, @product, @system, logger)
-          logger.info "System #{@system.login} successfully upgraded with SCC"
+          unless system_in_cache(@system.pubcloud_reg_code, @system.proxy_byos_mode)
+            # not found in the cache, make a request to SCC
+            logger.info "Upgrading system to product #{@product.product_string} to SCC"
+            auth = request.headers.fetch('HTTP_AUTHORIZATION', '')
+            SccProxy.scc_upgrade(auth, @product, @system, logger)
+            logger.info "System #{@system.login} successfully upgraded with SCC"
+          end
+          InstanceVerification.update_cache(@cache_entry, @system.proxy_byos_mode)
         end
 
         def update_params_system_info(mode)
@@ -399,6 +391,19 @@ module SccProxy
           params['hwinfo'] = JSON.parse(@system.system_information)
           params['instance_data'] = @system.instance_data
           params['system_token'] = @system.system_token
+        end
+
+        def system_in_cache(reg_code, mode)
+          @cache_entry = InstanceVerification.build_cache_entry(
+            request.remote_ip, @system.login, reg_code, mode, @product
+          )
+          found_cache_entry = InstanceVerification.reg_code_in_cache?(@cache_entry, mode)
+          if found_cache_entry.present? && found_cache_entry.include?('-inactive')
+            error = ActionController::TranslatedError.new(N_('Subscription inactive'))
+            error.status = :forbidden
+            raise error
+          end
+          found_cache_entry.present?
         end
       end
 

@@ -641,7 +641,13 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     let(:request) { put url, headers: headers, params: payload }
 
     context 'when system is byos' do
-      let(:system) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
+      let(:system) do
+        FactoryBot.create(
+          :system, :byos, :with_system_information,
+          pubcloud_reg_code: Base64.strict_encode64('super_token'),
+          instance_data: instance_data
+        )
+      end
       let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system) }
       let(:payload) do
         {
@@ -701,6 +707,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               .and_return(plugin_double)
             allow(plugin_double).to receive(:add_on).and_return('foo')
             allow_any_instance_of(described_class).to receive(:find_subscription).and_return(fake_subscription)
+            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return('')
+            allow(InstanceVerification).to receive(:update_cache)
             stub_request(:put, scc_systems_products_url)
               .with({ headers: scc_headers, body: payload.merge({ byos_mode: 'byos' }) })
               .and_return(status: 201, body: '', headers: {})
