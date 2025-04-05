@@ -59,7 +59,6 @@ BuildRequires:  sqlite-devel
 BuildRequires:  pkgconfig(systemd)
 Requires:       gpg2
 Recommends:     mariadb
-Recommends:     valkey
 Recommends:     nginx
 # The config is not really required by rmt-server, but by nginx ...
 Requires:       rmt-server-configuration
@@ -103,6 +102,7 @@ Default nginx configuration for RMT.
 Summary:        RMT pubcloud extensions
 Group:          Productivity/Networking/Web/Proxy
 Requires:       rmt-server = %version
+Recommends:     valkey
 Provides:       rmt-server-configuration
 Conflicts:      rmt-server-configuration
 
