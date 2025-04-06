@@ -28,41 +28,17 @@ NET_HTTP_ERRORS = [
 # rubocop:disable Metrics/ModuleLength
 module SccProxy
   class << self
-
-    # rubocop:disable ThreadSafety/ClassAndModuleAttributes
-    attr_accessor :instance_id
-
-    # rubocop:enable ThreadSafety/ClassAndModuleAttributes
-
-    # rubocop:disable ThreadSafety/InstanceVariableInClassMethod
-    def headers(auth, params)
-      @instance_id = if params && params.class != String
-                       InstanceVerification.provider.new(
-                         nil,
-                         nil,
-                         nil,
-                         params['instance_data']
-                       ).instance_identifier
-                     else
-                       # if it is not JSON, it is the system_token already
-                       # announce system has metadata
-                       # activate product does not have metadata
-                       # so instance id comes as string
-                       params
-                     end
-
+    def headers(auth, system_token)
       {
         'accept' => 'application/json,application/vnd.scc.suse.com.v4+json',
         'Content-Type' => 'application/json',
         'Authorization' => auth,
-        ApplicationController::SYSTEM_TOKEN_HEADER => @instance_id
+        ApplicationController::SYSTEM_TOKEN_HEADER => system_token
       }
     end
-    # rubocop:enable ThreadSafety/InstanceVariableInClassMethod
 
-    def prepare_scc_announce_request(uri_path, auth, params)
-      scc_request = Net::HTTP::Post.new(uri_path, headers(auth, params))
-
+    def prepare_scc_announce_request(uri_path, auth, params, system_token)
+      scc_request = Net::HTTP::Post.new(uri_path, headers(auth, system_token))
       # Do not filter hardware information here but redirect the whole payload
       # to SCC.
       # SCC will make sure to handle the data correctly. This removes the need
@@ -88,10 +64,7 @@ module SccProxy
     end
 
     def prepare_scc_request(uri_path, product, auth, params, mode)
-      params_header = params
-      params_header = nil if mode == 'byos'
-
-      scc_request = Net::HTTP::Post.new(uri_path, headers(auth, params_header))
+      scc_request = Net::HTTP::Post.new(uri_path, headers(auth, params[:system_token]))
       scc_request.body = {
         token: params[:token] || nil,
         identifier: product.identifier,
@@ -104,8 +77,8 @@ module SccProxy
       scc_request
     end
 
-    def prepare_scc_upgrade_request(uri_path, product, auth, mode)
-      scc_request = Net::HTTP::Put.new(uri_path, headers(auth, nil))
+    def prepare_scc_upgrade_request(uri_path, product, auth, system_token, mode)
+      scc_request = Net::HTTP::Put.new(uri_path, headers(auth, system_token))
       scc_request.body = {
         identifier: product.identifier,
         version: product.version,
@@ -115,11 +88,11 @@ module SccProxy
       scc_request
     end
 
-    def announce_system_scc(auth, params)
+    def announce_system_scc(auth, params, system_token)
       uri = URI.parse(ANNOUNCE_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      scc_request = prepare_scc_announce_request(uri.path, auth, params)
+      scc_request = prepare_scc_announce_request(uri.path, auth, params, system_token)
       response = http.request(scc_request)
       response.error! unless response.code_type == Net::HTTPCreated
 
@@ -250,14 +223,14 @@ module SccProxy
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/PerceivedComplexity
 
-    def scc_upgrade(auth, product, system_login, mode, logger)
+    def scc_upgrade(auth, product, system, logger)
       uri = URI.parse(SYSTEM_PRODUCTS_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      scc_request = prepare_scc_upgrade_request(uri.path, product, auth, mode)
+      scc_request = prepare_scc_upgrade_request(uri.path, product, auth, system.system_token, system.proxy_byos_mode)
       response = http.request(scc_request)
       unless response.code_type == Net::HTTPCreated
-        logger.info "Could not upgrade the system (#{system_login}), error: #{response.message} #{response.code}"
+        logger.info "Could not upgrade the system (#{system.login}), error: #{response.message} #{response.code}"
         response.message = SccProxy.parse_error(response.message) if response.message.include? 'json'
         raise ActionController::TranslatedError.new(response.body)
       end
@@ -276,6 +249,7 @@ module SccProxy
           auth_header = request.headers.fetch('HTTP_AUTHORIZATION', nil)
           system_information = hwinfo_params[:hwinfo].to_json
           instance_data = params.fetch(:instance_data, nil)
+          system_token = InstanceVerification.provider.new(nil, nil, nil, params['instance_data']).instance_identifier
           if has_no_regcode?(auth_header)
             # no token sent to check with SCC
             # standard announce case
@@ -283,13 +257,14 @@ module SccProxy
               hostname: params[:hostname],
               system_information: system_information,
               proxy_byos_mode: :payg,
-              instance_data: instance_data
-              )
+              instance_data: instance_data,
+              system_token: system_token
+            )
           else
             request.request_parameters['proxy_byos_mode'] = 'byos'
-            response = SccProxy.announce_system_scc(auth_header, request.request_parameters)
+            response = SccProxy.announce_system_scc(auth_header, request.request_parameters, system_token)
             @system = System.create!(
-              system_token: SccProxy.instance_id,
+              system_token: system_token,
               scc_system_id: response['id'],
               login: response['login'],
               password: response['password'],
@@ -330,6 +305,7 @@ module SccProxy
         protected
 
         # rubocop:disable Metrics/PerceivedComplexity
+        # rubocop:disable Metrics/CyclomaticComplexity
         def scc_activate_product
           product_hash = @product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
           unless InstanceVerification.provider.new(logger, request, product_hash, @system.instance_data).allowed_extension?
@@ -356,9 +332,12 @@ module SccProxy
               # make a request to SCC
               logger.info "Activating product #{@product.product_string} to SCC"
               logger.info 'No token provided' if params[:token].blank?
-              SccProxy.scc_activate_product(
-                @system, @product, request.headers['HTTP_AUTHORIZATION'], params, mode
-              )
+              # take care of old hybrid systems that do not have a system_token
+              # all (old and new) byos have a system token
+              update_system_token if @system.system_token.nil?
+
+              params[:system_token] = @system.system_token
+              SccProxy.scc_activate_product(@system, @product, request.headers['HTTP_AUTHORIZATION'], params, mode)
               logger.info "Product #{@product.product_string} successfully activated with SCC"
               # if the system is PAYG and the registration code is valid for the extension,
               # then the system is hybrid
@@ -374,7 +353,13 @@ module SccProxy
             end
           end
         end
+        # rubocop:enable Metrics/CyclomaticComplexity
         # rubocop:enable Metrics/PerceivedComplexity
+
+        def update_system_token
+          iid = InstanceVerification.provider.new(nil, nil, nil, @system.instance_data).instance_identifier
+          @system.update!(system_token: iid)
+        end
 
         def find_mode
           if @system.byos?
@@ -395,16 +380,14 @@ module SccProxy
             raise 'Incompatible extension product' unless @product.arch == base_prod.arch && @product.version == base_prod.version
 
             update_params_system_info mode
-            SccProxy.announce_system_scc(
-              "Token token=#{params[:token]}", params
-            )
+            SccProxy.announce_system_scc("Token token=#{params[:token]}", params, params['system_token'])
           end
         end
 
         def scc_upgrade
           logger.info "Upgrading system to product #{@product.product_string} to SCC"
           auth = request.headers.fetch('HTTP_AUTHORIZATION', '')
-          SccProxy.scc_upgrade(auth, @product, @system.login, @system.proxy_byos_mode, logger)
+          SccProxy.scc_upgrade(auth, @product, @system, logger)
           logger.info "System #{@system.login} successfully upgraded with SCC"
         end
 
@@ -415,6 +398,7 @@ module SccProxy
           params['scc_password'] = @system.password
           params['hwinfo'] = JSON.parse(@system.system_information)
           params['instance_data'] = @system.instance_data
+          params['system_token'] = @system.system_token
         end
       end
 

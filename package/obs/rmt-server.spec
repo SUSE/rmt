@@ -102,6 +102,7 @@ Default nginx configuration for RMT.
 Summary:        RMT pubcloud extensions
 Group:          Productivity/Networking/Web/Proxy
 Requires:       rmt-server = %version
+Recommends:     valkey
 Provides:       rmt-server-configuration
 Conflicts:      rmt-server-configuration
 
