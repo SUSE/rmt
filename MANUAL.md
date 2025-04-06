@@ -263,7 +263,7 @@ The `mirroring` section lets you adjust mirroring behavior.
   * `mirroring.mirror_src`:
     Whether to mirror source (arch = `src`) RPM packages or not.
   * `mirroring.revalidate_repodata`:
-    Whether to re-validate repodata content and packages when the repodata did not change
+    Whether to re-validate repodata content and packages when the repodata did not change. Defaults to `true` if absent.
   * `mirroring.dedup_method`:
     Whether to deduplicate files by a hardlink or copy. Possible values are:
     `hardlink`, `copy`
