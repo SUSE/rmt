@@ -77,7 +77,7 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
 
   # only parse metadata file and verify/download files when metadata changed
   def metadata_updated?(ref)
-    local_path = ref.cache_dir + ref.relative_path
+    local_path = ref.cache_path
     !File.exist?(local_path) ||
           !RMT::ChecksumVerifier.match_checksum?(ref.checksum_type, ref.checksum, local_path)
   end
