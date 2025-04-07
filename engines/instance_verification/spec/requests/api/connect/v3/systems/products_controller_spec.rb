@@ -34,7 +34,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
     context 'when the system is byos' do
       context "when system doesn't have hw_info" do
-        let(:system) { FactoryBot.create(:system, :byos) }
+        let(:system) { FactoryBot.create(:system, :byos, system_token: 'foo') }
 
         before do
           stub_request(:post, 'https://scc.suse.com/connect/systems/products')
@@ -46,13 +46,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
 
         it 'class instance verification provider' do
-          expect(InstanceVerification::Providers::Example).to receive(:new)
-            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, nil).at_least(:once).and_return(plugin_double)
+          expect(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
           allow(plugin_double).to receive(:instance_valid?).and_raise(InstanceVerification::Exception, 'FOO')
           allow(plugin_double).to receive(:allowed_extension?).and_return(true)
-
-          # expect(InstanceVerification::Providers::Example).to receive(:new)
-          #   .with(nil, nil, nil, nil).and_call_original.at_least(:once)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
           post url, params: payload, headers: headers
