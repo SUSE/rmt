@@ -15,16 +15,15 @@ module InstanceVerification
     )
   end
 
-  def self.build_cache_entry(remote_ip, system_login, encoded_reg_code, mode, product)
+  def self.build_cache_entry(remote_ip, system_login, encoded_reg_code, mode, product, product_class)
     if mode == 'payg'
       [remote_ip, system_login, product.id].join('-')
     elsif mode == 'registry'
       [remote_ip, system_login].join('-')
     else
       # for byos or hybrid cache
-      product_hash = product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
-      product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
-      "#{encoded_reg_code}-#{product_triplet}-active"
+      # product is the product_class here
+      "#{encoded_reg_code}-#{product_class}-active"
     end
   end
 
@@ -79,7 +78,10 @@ module InstanceVerification
     return false unless base_product
 
     # check the cache for the system
-    cache_key = InstanceVerification.build_cache_entry(request.remote_ip, system.login, system.pubcloud_reg_code, system.proxy_byos_mode, base_product)
+    cache_key = InstanceVerification.build_cache_entry(
+      request.remote_ip, system.login, system.pubcloud_reg_code,
+      system.proxy_byos_mode, base_product, base_product.product_class
+    )
     if InstanceVerification.reg_code_in_cache?(cache_key, system.proxy_byos_mode)
       # only update registry cache key
       InstanceVerification.update_cache(cache_key, system.proxy_byos_mode, registry: true)
@@ -98,7 +100,9 @@ module InstanceVerification
     is_valid
   rescue InstanceVerification::Exception => e
     if system.byos?
-      result = SccProxy.scc_check_subscription_expiration(request.headers, system, base_product.product_class)
+      result = SccProxy.scc_check_subscription_expiration(
+        request.headers, system, request.remote_ip, false, base_product, base_product.product_class
+      )
       if result[:is_active]
         # update the cache for the base product
         InstanceVerification.update_cache(cache_key, 'byos')
@@ -219,8 +223,8 @@ module InstanceVerification
               'The product is not available for this instance'
             )
           end
-          logger.info "Product #{@product.product_string} available for this instance"
-          cache_key = InstanceVerification.build_cache_entry(request.remote_ip, @system.login, nil, 'payg', product)
+          logger.info "Product #{product.product_string} available for this instance"
+          cache_key = InstanceVerification.build_cache_entry(request.remote_ip, @system.login, nil, 'payg', product, product.product_class)
           InstanceVerification.update_cache(cache_key, 'payg')
         end
 
@@ -240,7 +244,7 @@ module InstanceVerification
           encoded_reg_code = Base64.strict_encode64(params[:token]) if params[:token].present?
 
           cache_key = InstanceVerification.build_cache_entry(
-            request.remote_ip, @system.login, encoded_reg_code, @system.proxy_byos_mode, product
+            request.remote_ip, @system.login, encoded_reg_code, @system.proxy_byos_mode, product, product.product_class
           )
           InstanceVerification.update_cache(cache_key, @system.proxy_byos_mode)
         end
