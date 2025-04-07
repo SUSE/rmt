@@ -162,7 +162,7 @@ RSpec.describe AccessScope, type: :model do
           File.write('engines/registry/spec/data/access_policy_yaml.yml', YAML.dump(data))
           allow_any_instance_of(RegistryCatalogService).to receive(:repos).and_return(['suse/sles/super_repo'])
           allow(File).to receive(:read).and_return(File.read('engines/registry/spec/data/access_policy_yaml.yml'))
-          possible_access = access_scope.granted(client: client)
+          possible_access = access_scope.granted('127.0.0.1', client: client)
 
           expect(possible_access).to eq(
             {
@@ -176,7 +176,7 @@ RSpec.describe AccessScope, type: :model do
 
         context 'when client is null' do
           it 'returns no actions allowed' do
-            possible_access = access_scope.granted
+            possible_access = access_scope.granted('127.0.0.1')
 
             expect(possible_access).to eq({ 'type' => 'a', 'actions' => [], 'class' => nil, 'name' => 'suse/sles/*' })
           end
@@ -223,14 +223,21 @@ RSpec.describe AccessScope, type: :model do
               .with(
                 header_expected,
                 system,
+                '127.0.0.1',
+                true,
+                nil,
                 'SLES15-SP4-LTSS-X86'
             ).and_return(scc_response)
           end
 
+          # rubocop:disable RSpec/ExampleLength
           it 'returns no actions allowed' do
             expect(SccProxy).to receive(:scc_check_subscription_expiration).with(
               header_expected,
               system,
+              '127.0.0.1',
+              true,
+              nil,
               'SLES15-SP4-LTSS-X86'
             )
             yaml_string = access_policy_content
@@ -239,7 +246,7 @@ RSpec.describe AccessScope, type: :model do
             File.write('engines/registry/spec/data/access_policy_yaml.yml', YAML.dump(data))
             allow_any_instance_of(RegistryCatalogService).to receive(:repos).and_return(['suse/ltss/ltss_repo'])
             allow(File).to receive(:read).and_return(File.read('engines/registry/spec/data/access_policy_yaml.yml'))
-            possible_access = access_scope.granted(client: client)
+            possible_access = access_scope.granted('127.0.0.1', client: client)
 
             expect(possible_access).to eq(
               {
@@ -250,6 +257,7 @@ RSpec.describe AccessScope, type: :model do
               }
             )
           end
+          # rubocop:enable RSpec/ExampleLength
         end
       end
 

@@ -88,8 +88,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
             }
           }
         end
-        let(:product_hash) { system.activations.first.product.attributes.symbolize_keys.slice(:identifier, :version, :arch) }
-        let(:product_triplet) { "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}" }
+        let(:product_class) { system.activations.first.product.product_class }
 
         before do
           allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
@@ -108,7 +107,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
             allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
             FileUtils.mkdir_p('repo/payg/cache')
             expect(InstanceVerification).to receive(:update_cache).with(
-              "#{system.pubcloud_reg_code}-#{product_triplet}-active",
+              "#{system.pubcloud_reg_code}-#{product_class}-active",
               system.proxy_byos_mode
             )
             get '/connect/systems/activations', headers: headers
@@ -122,7 +121,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
           it 'refreshes registry cache key only' do
             allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(true)
             expect(InstanceVerification).to receive(:update_cache).with(
-              "#{system.pubcloud_reg_code}-#{product_triplet}-active",
+              "#{system.pubcloud_reg_code}-#{product_class}-active",
               system.proxy_byos_mode,
               registry: true
             )
@@ -239,8 +238,9 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
       context 'without valid repository cache' do
         context 'with X-Instance-Data headers and bad metadata and good subscription on SCC' do
           let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
-          let(:product_hash) { system.activations.first.product.attributes.symbolize_keys.slice(:identifier, :version, :arch) }
-          let(:product_triplet) { "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}" }
+          let(:product_class) { system.activations.first.product.product_class }
+          # .attributes.symbolize_keys.slice(:identifier, :version, :arch) }
+          # let(:product_triplet) { "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}" }
 
           before do
             allow(InstanceVerification).to receive(:update_cache)
@@ -253,10 +253,11 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
               receive(:instance_valid?)
                 .and_raise(InstanceVerification::Exception, 'Custom plugin error')
               )
+            allow(SccProxy).to receive(:system_in_cache?).and_return(nil)
             allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_active].to_json, headers: {})
             allow(InstanceVerification).to receive(:verify_instance).and_call_original
-            expect(InstanceVerification).to receive(:update_cache).with("#{system.pubcloud_reg_code}-#{product_triplet}-active", 'byos')
+            expect(InstanceVerification).to receive(:update_cache).with("#{system.pubcloud_reg_code}-#{product_class}-active", 'byos')
             get '/connect/systems/activations', headers: headers
 
             data = JSON.parse(response.body)
@@ -270,8 +271,8 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
 
         context 'with X-Instance-Data headers and bad metadata and bad subscription on SCC' do
           let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
-          let(:product_hash) { system.activations.first.product.attributes.symbolize_keys.slice(:identifier, :version, :arch) }
-          let(:product_triplet) { "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}" }
+          let(:product_class) { system.activations.first.product.product_class } # attributes.symbolize_keys.slice(:identifier, :version, :arch) }
+          # let(:product_triplet) { "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}" }
           let(:scc_response) do
             {
               is_active: false,
@@ -293,7 +294,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
             allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
             allow(SccProxy).to receive(:scc_check_subscription_expiration).and_return(scc_response)
             allow(InstanceVerification).to receive(:verify_instance).and_call_original
-            expect(InstanceVerification).to receive(:update_cache).with("#{system.pubcloud_reg_code}-#{product_triplet}-inactive", 'byos')
+            expect(InstanceVerification).to receive(:update_cache).with("#{system.pubcloud_reg_code}-#{product_class}-inactive", 'byos')
             get '/connect/systems/activations', headers: headers
 
             expect(response.body).to include('Instance verification failed')
