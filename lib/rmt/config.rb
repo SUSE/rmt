@@ -39,7 +39,7 @@ module RMT::Config
     def revalidate_repodata?
       return true if Settings.try(:mirroring).try(:revalidate_repodata).nil?
 
-      !!ActiveModel::Type::Boolean.new.cast(Settings.mirroring.revalidate_repodata)
+      ActiveModel::Type::Boolean.new.cast(Settings.mirroring.revalidate_repodata)
     end
 
     def mirror_src_files?
