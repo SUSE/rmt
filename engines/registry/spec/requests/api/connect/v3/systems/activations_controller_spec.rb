@@ -114,8 +114,6 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
             }
           }
         end
-        # let(:product_hash) { system.activations.first.product.attributes.symbolize_keys.slice(:identifier, :version, :arch) }
-        # let(:product_triplet) { "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}" }
         let(:product_class) { system.activations.first.product.product_class }
 
         before do
