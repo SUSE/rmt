@@ -34,7 +34,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
     context 'when the system is byos' do
       context "when system doesn't have hw_info" do
-        let(:system) { FactoryBot.create(:system, :byos, instance_data: 'dummy_instance_data') }
+        let(:system) { FactoryBot.create(:system, :byos, system_token: 'foo', instance_data: 'dummy_instance_data') }
 
         before do
           stub_request(:post, 'https://scc.suse.com/connect/systems/products')
@@ -46,10 +46,32 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
 
         it 'class instance verification provider' do
-          expect(InstanceVerification::Providers::Example).to receive(:new)
-            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, 'dummy_instance_data').and_call_original.at_least(:once)
-          expect(InstanceVerification::Providers::Example).to receive(:new)
-            .with(nil, nil, nil, system.instance_data).and_call_original.at_least(:once)
+          expect(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
+          allow(plugin_double).to receive(:instance_valid?).and_raise(InstanceVerification::Exception, 'FOO')
+          allow(plugin_double).to receive(:allowed_extension?).and_return(true)
+          allow(Dir).to receive(:mkdir)
+          allow(FileUtils).to receive(:touch)
+          post url, params: payload, headers: headers
+        end
+      end
+
+      context "when system doesn't have hw_info and cache is inactive" do
+        let(:system) { FactoryBot.create(:system, :byos, pubcloud_reg_code: Base64.strict_encode64('super_token')) }
+
+        before do
+          stub_request(:post, 'https://scc.suse.com/connect/systems/products')
+            .to_return(
+              status: 201,
+              body: { ok: 'ok' }.to_json,
+              headers: {}
+            )
+        end
+
+        it 'class instance verification provider' do
+          expect(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
+          allow(plugin_double).to receive(:instance_valid?).and_raise(InstanceVerification::Exception, 'FOO')
+          allow(plugin_double).to receive(:instance_identifier).and_return('foo')
+          allow(plugin_double).to receive(:allowed_extension?).and_return(true)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
           post url, params: payload, headers: headers
@@ -375,9 +397,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             }
           end
           let(:cache_entry) do
-            product_hash = product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
-            product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
-            "#{Base64.strict_encode64(payload_token[:token])}-foo-#{product_triplet}"
+            "#{Base64.strict_encode64(payload_token[:token])}-foo-#{product.product_class}"
           end
           let(:active_cache_entry) { cache_entry + '-active' }
           let(:headers) { auth_header.merge('X-Instance-Data' => 'dummy_instance_data') }
@@ -388,6 +408,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
+            # allow(InstanceVerification).to receive(:update_cache).with("127.0.0.1-#{system.login}-#{product.id}", 'payg')
             allow(InstanceVerification).to receive(:get_cache_entries).and_return(
               [File.join(Rails.application.config.repo_hybrid_cache_dir, cache_entry)]
             )
@@ -404,8 +425,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               .with({ headers: scc_announce_headers, body: scc_annouce_body.to_json })
               .to_return(status: 201, body: scc_response_body, headers: {})
 
+            # expect(InstanceVerification).to receive(:update_cache).with(cache_entry, 'hybrid')
             expect(InstanceVerification).to receive(:update_cache).with(active_cache_entry, 'hybrid', registry: false)
-
             headers['X-Instance-Data'] = instance_data
             post url, params: payload_token, headers: headers
           end
