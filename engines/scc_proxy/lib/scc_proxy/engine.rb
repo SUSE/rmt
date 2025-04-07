@@ -196,7 +196,7 @@ module SccProxy
 
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
-    def scc_check_subscription_expiration(headers, system, remote_ip, registry, product, product_class = nil)
+    def scc_check_subscription_expiration(headers, system, remote_ip, registry, product, product_class = nil) # rubocop:disable Metrics/ParameterLists
       cache_status = SccProxy.system_in_cache?(remote_ip, system, product, product_class, registry)
       return cache_status if cache_status.present?
 

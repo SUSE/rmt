@@ -15,7 +15,7 @@ module InstanceVerification
     )
   end
 
-  def self.build_cache_entry(remote_ip, system_login, encoded_reg_code, mode, product, product_class)
+  def self.build_cache_entry(remote_ip, system_login, encoded_reg_code, mode, product, product_class) # rubocop:disable Metrics/ParameterLists
     if mode == 'payg'
       [remote_ip, system_login, product.id].join('-')
     elsif mode == 'registry'
