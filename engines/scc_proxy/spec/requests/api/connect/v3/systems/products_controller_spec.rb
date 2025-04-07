@@ -20,8 +20,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       include_context 'version header', 3
       let(:product) { FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions) }
       let(:headers) { auth_header.merge(version_header) }
-      let(:product_hash) { product.attributes.symbolize_keys.slice(:identifier, :version, :arch) }
-      let(:product_triplet) { "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}" }
+      # let(:product_class) { product.attributes.symbolize_keys.slice(:identifier, :version, :arch) }
+      # let(:product_triplet) { "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}" }
 
       let(:payload_byos) do
         {
@@ -126,15 +126,16 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               allow(FileUtils).to receive(:touch)
 
               allow(InstanceVerification).to receive(:write_cache_file).with(
-                Rails.application.config.repo_byos_cache_dir, "#{Base64.strict_encode64(payload_byos[:token])}-#{product_triplet}-active"
+                Rails.application.config.repo_byos_cache_dir, "#{Base64.strict_encode64(payload_byos[:token])}-#{product.product_class}-active"
               )
               allow(InstanceVerification).to receive(:write_cache_file).with(
                 Rails.application.config.registry_cache_dir,
-                "#{Base64.strict_encode64(payload_byos[:token])}-#{product_triplet}-active"
+                "#{Base64.strict_encode64(payload_byos[:token])}-#{product.product_class}-active"
               )
             end
 
             it 'renders service JSON' do
+              system_byos.update!(system_token: nil)
               post url, params: payload_byos, headers: headers
               expect(response.body).to eq(serialized_service_json)
             end

@@ -11,6 +11,43 @@ describe StrictAuthentication::AuthenticationController, type: :request do
   describe '#check' do
     before { Thread.current[:logger] = RMT::Logger.new('/dev/null') }
 
+    context 'with cache found' do
+      include_context 'auth header', :system, :login, :password
+
+      let(:requested_uri) { '/repo' + system.repositories.first[:local_path] + '/repodata/repomd.xml' }
+      let(:paid_requested_uri) { '/repo' + system.products.where(free: false).first.repositories.first[:local_path] + '/repodata/repomd.xml' }
+      let(:data_export_double) { instance_double('DataExport::Handlers::Example') }
+
+      context 'inactive subscription' do
+        it 'return false and message for expired subscription' do
+          allow(InstanceVerification).to receive(:build_cache_entry).and_return('foo')
+          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return('foo-inactive')
+          result = SccProxy.system_in_cache?('foo', system, 'prod', 'prod_class', 'registry')
+          expect(result[:is_active]).to eq(false)
+          expect(result[:message]).to eq('Subscription expired.')
+        end
+      end
+
+      context 'active subscription' do
+        it 'return false and message for expired subscription' do
+          allow(InstanceVerification).to receive(:build_cache_entry).and_return('foo')
+          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return('foo-active')
+          allow(InstanceVerification).to receive(:update_cache)
+          result = SccProxy.system_in_cache?('foo', system, 'prod', 'prod_class', 'registry')
+          expect(result[:is_active]).to eq(true)
+        end
+      end
+
+      context 'not found in the cache' do
+        it 'return false and message for expired subscription' do
+          allow(InstanceVerification).to receive(:build_cache_entry).and_return('foo')
+          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
+          result = SccProxy.system_in_cache?('foo', system, 'prod', 'prod_class', 'registry')
+          expect(result).to be(nil)
+        end
+      end
+    end
+
     context 'with valid credentials' do
       include_context 'auth header', :system, :login, :password
 
@@ -173,6 +210,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
             allow(File).to receive(:directory?).and_return(true)
             allow(Dir).to receive(:mkdir)
             allow(FileUtils).to receive(:touch)
+            allow(SccProxy).to receive(:system_in_cache?).and_return(nil)
             get '/api/auth/check', headers: headers
           end
 
@@ -192,6 +230,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         context 'when subscription is expired' do
           before do
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_expired].to_json, headers: {})
+            allow(SccProxy).to receive(:system_in_cache?).and_return(nil)
             expect(URI).to receive(:encode_www_form).with({ byos_mode: 'byos' })
             get '/api/auth/check', headers: headers
           end
@@ -211,6 +250,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         context 'when product is not activated' do
           before do
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_not_activated].to_json, headers: {})
+            allow(SccProxy).to receive(:system_in_cache?).and_return(nil)
             expect(URI).to receive(:encode_www_form).with({ byos_mode: 'byos' })
             get '/api/auth/check', headers: headers
           end
@@ -219,6 +259,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
 
           context 'and repo is not free' do
             before do
+              allow(SccProxy).to receive(:system_in_cache?).and_return(nil)
               expect(URI).to receive(:encode_www_form).with({ byos_mode: 'byos' })
               get '/api/auth/check', headers: paid_headers
             end
@@ -230,6 +271,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         context 'when status from SCC is unknown' do
           before do
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_unknown_status].to_json, headers: {})
+            allow(SccProxy).to receive(:system_in_cache?).and_return(nil)
             expect(URI).to receive(:encode_www_form).with({ byos_mode: 'byos' })
             allow(File).to receive(:directory?)
             allow(Dir).to receive(:mkdir)
@@ -251,6 +293,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
 
         context 'when SCC request fails' do
           before do
+            allow(SccProxy).to receive(:system_in_cache?).and_return(nil)
             stub_request(:get, scc_systems_activations_url).to_return(status: 401, body: [body_expired].to_json, headers: {})
             expect(URI).to receive(:encode_www_form).with({ byos_mode: 'byos' })
             allow(File).to receive(:directory?)
@@ -337,9 +380,13 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           end
 
           it 'returns true' do
+            allow(SccProxy).to receive(:system_in_cache?).and_return(nil)
             result = SccProxy.scc_check_subscription_expiration(
               headers,
               system_hybrid,
+              '127.0.0.1',
+              'false',
+              nil,
               system_hybrid.activations.first.product.product_class + '-LTSS'
             )
             expect(result[:is_active]).to be(true)
@@ -376,9 +423,14 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           end
 
           it 'returns false, expired' do
+            allow(SccProxy).to receive(:system_in_cache?).and_return(nil)
+            allow(InstanceVerification).to receive(:set_cache_inactive)
             result = SccProxy.scc_check_subscription_expiration(
               headers,
               system_hybrid,
+              '127.0.0.1',
+              'false',
+              nil,
               system_hybrid.activations.first.product.product_class + '-LTSS'
             )
             expect(result[:is_active]).to eq(false)
@@ -416,9 +468,14 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           end
 
           it 'returns product not activated' do
+            allow(SccProxy).to receive(:system_in_cache?).and_return(nil)
+            allow(InstanceVerification).to receive(:set_cache_inactive)
             result = SccProxy.scc_check_subscription_expiration(
               headers,
               system_hybrid,
+              '127.0.0.1',
+              'false',
+              nil,
               system_hybrid.activations.first.product.product_class + '-LTSS'
             )
             expect(result[:is_active]).to eq(false)
@@ -457,9 +514,14 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           end
 
           it 'returns unexpected error' do
+            allow(SccProxy).to receive(:system_in_cache?).and_return(nil)
+            allow(InstanceVerification).to receive(:set_cache_inactive)
             result = SccProxy.scc_check_subscription_expiration(
               headers,
               system_hybrid,
+              '127.0.0.1',
+              'false',
+              nil,
               system_hybrid.activations.first.product.product_class + '-LTSS'
             )
             expect(result[:is_active]).to eq(false)
