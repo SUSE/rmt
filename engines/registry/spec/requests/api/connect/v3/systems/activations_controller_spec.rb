@@ -33,7 +33,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
               receive(:instance_valid?)
                 .and_raise(InstanceVerification::Exception, 'Custom plugin error')
               )
-            allow(ZypperAuth).to receive(:verify_instance).and_call_original
+            allow(InstanceVerification).to receive(:verify_instance).and_call_original
             get '/connect/systems/activations', headers: headers
             expect(response.body).to include('Instance verification failed')
             expect(InstanceVerification).not_to receive(:update_cache)
@@ -48,7 +48,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
         before do
           allow(File).to receive(:join).and_call_original
           allow(InstanceVerification).to receive(:update_cache)
-          allow(ZypperAuth).to receive(:verify_instance).and_call_original
+          allow(InstanceVerification).to receive(:verify_instance).and_call_original
           headers['X-Instance-Data'] = 'IMDS'
         end
 
@@ -98,7 +98,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
             receive(:instance_valid?).and_return(true)
             )
           allow(InstanceVerification).to receive(:update_cache)
-          allow(ZypperAuth).to receive(:verify_instance).and_call_original
+          allow(InstanceVerification).to receive(:verify_instance).and_call_original
           stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_active].to_json, headers: {})
           headers['X-Instance-Data'] = 'IMDS'
         end
@@ -293,7 +293,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
               )
             allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
             allow(SccProxy).to receive(:scc_check_subscription_expiration).and_return(scc_response)
-            allow(ZypperAuth).to receive(:verify_instance).and_call_original
+            allow(InstanceVerification).to receive(:verify_instance).and_call_original
             expect(InstanceVerification).to receive(:update_cache).with("#{system.pubcloud_reg_code}-#{product_triplet}-inactive", 'byos')
             get '/connect/systems/activations', headers: headers
 

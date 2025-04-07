@@ -5,6 +5,11 @@ Tue Jan 21 10:49:54 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
   * rmt-server-pubcloud:
     * Add pubcloud_reg_code column to systems table
     * Add cache directories and their expiration times to the scrubber
+  * rmt-cli:
+    * Disable delta RPM mirroring by default (gh#1288)
+  * rmt-server:
+    Add `activejob` and `resque` gems to vendored gemfile, to enable background
+    job support in RMT and all engines.
 
 -------------------------------------------------------------------
 Fri Jan 03 10:44:00 UTC 2025 - Luís Caparroz <lcaparroz@suse.com>
