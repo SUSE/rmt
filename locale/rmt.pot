@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-09 12:20+0200\n"
-"PO-Revision-Date: 2023-10-09 12:20+0200\n"
+"POT-Creation-Date: 2025-03-24 13:35+0000\n"
+"PO-Revision-Date: 2025-03-24 13:35+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -32,50 +32,57 @@ msgid ""
 "."
 msgstr ""
 
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:21
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:29
 msgid "The requested product '%s' is not activated on this system."
 msgstr ""
 
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:84
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:92
 msgid "No product found"
 msgstr ""
 
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:90
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:98
 msgid "No repositories found for product: %s"
 msgstr ""
 
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:97
-msgid "Not all mandatory repositories are mirrored for product %s"
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:107
+msgid ""
+"Not all mandatory repositories are mirrored for product %s. Missing Repositori"
+"es (by ids): %s. On the RMT server, the missing repositories can get enabled w"
+"ith: rmt-cli repos enable %s;  rmt-cli mirror"
 msgstr ""
 
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:112
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:139
 msgid "No subscription with this Registration Code found"
 msgstr ""
 
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:116
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:143
 msgid "The subscription with the provided Registration Code is expired"
 msgstr ""
 
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:122
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:148
 msgid ""
 "The subscription with the provided Registration Code does not include the requ"
 "ested product '%s'"
 msgstr ""
 
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:148
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:170
 msgid ""
 "The product you are attempting to activate (%{product}) requires one of these "
 "products to be activated first: %{required_bases}"
 msgstr ""
 
-#: ../app/controllers/api/connect/v3/systems/products_controller.rb:154
+#: ../app/controllers/api/connect/v3/systems/products_controller.rb:176
 msgid ""
 "The product you are attempting to activate (%{product}) is not available on yo"
 "ur system's base product (%{system_base}). %{product} is available on %{requir"
 "ed_bases}."
 msgstr ""
 
-#: ../app/controllers/api/connect/v3/systems/systems_controller.rb:14
+#: ../app/controllers/api/connect/v3/systems/systems_controller.rb:16
+msgid "Uptime data is malformed '%s'"
+msgstr ""
+
+#: ../app/controllers/api/connect/v3/systems/systems_controller.rb:29
 msgid "Updated system information for host '%s'"
 msgstr ""
 
@@ -83,41 +90,41 @@ msgstr ""
 msgid "No product found on RMT for: %s"
 msgstr ""
 
-#: ../app/controllers/api/connect/v4/systems/products_controller.rb:5
+#: ../app/controllers/api/connect/v4/systems/products_controller.rb:6
 msgid "The product \"%s\" is a base product and cannot be deactivated"
 msgstr ""
 
-#: ../app/controllers/api/connect/v4/systems/products_controller.rb:7
+#: ../app/controllers/api/connect/v4/systems/products_controller.rb:8
 msgid "Cannot deactivate the product \"%s\". Other activated products depend upon it."
 msgstr ""
 
-#: ../app/controllers/api/connect/v4/systems/products_controller.rb:15
+#: ../app/controllers/api/connect/v4/systems/products_controller.rb:16
 msgid "%s is not yet activated on the system."
 msgstr ""
 
-#: ../app/controllers/application_controller.rb:34
+#: ../app/controllers/application_controller.rb:35
 msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
 msgstr ""
 
-#: ../app/controllers/application_controller.rb:36
+#: ../app/controllers/application_controller.rb:37
 msgid "Invalid system credentials"
 msgstr ""
 
-#: ../app/controllers/application_controller.rb:59
+#: ../app/controllers/application_controller.rb:69
 msgid "System with login \\\"%{login}\\\" authenticated without token header"
 msgstr ""
 
-#: ../app/controllers/application_controller.rb:68
+#: ../app/controllers/application_controller.rb:78
 msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
 msgstr ""
 
-#: ../app/controllers/application_controller.rb:80
+#: ../app/controllers/application_controller.rb:90
 msgid ""
 "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated fro"
 "m ID %{base_id} due to token mismatch"
 msgstr ""
 
-#: ../app/controllers/services_controller.rb:48
+#: ../app/controllers/services_controller.rb:52
 msgid "Requested service not found"
 msgstr ""
 
@@ -147,51 +154,51 @@ msgstr ""
 msgid "Unknown hash function %{checksum_type}"
 msgstr ""
 
-#: ../lib/rmt/cli/base.rb:15
+#: ../lib/rmt/cli/base.rb:16
 msgid "Commands:"
 msgstr ""
 
-#: ../lib/rmt/cli/base.rb:21
+#: ../lib/rmt/cli/base.rb:22
 msgid "Run '%{command}' for more information on a command and its subcommands."
 msgstr ""
 
-#: ../lib/rmt/cli/base.rb:24
+#: ../lib/rmt/cli/base.rb:25
 msgid "Do you have any suggestions for improvement? We would love to hear from you!"
 msgstr ""
 
-#: ../lib/rmt/cli/base.rb:25
+#: ../lib/rmt/cli/base.rb:26
 msgid "Check out %{url}"
 msgstr ""
 
-#: ../lib/rmt/cli/base.rb:43
+#: ../lib/rmt/cli/base.rb:44
 msgid "Could not create deduplication hardlink: %{error}."
 msgstr ""
 
-#: ../lib/rmt/cli/base.rb:49
+#: ../lib/rmt/cli/base.rb:50
 msgid ""
 "Cannot connect to database server. Ensure its credentials are correctly config"
 "ured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr ""
 
-#: ../lib/rmt/cli/base.rb:58
+#: ../lib/rmt/cli/base.rb:59
 msgid ""
 "Cannot connect to database server. Make sure it is running and its credentials"
 " are configured in '%{path}'."
 msgstr ""
 
-#: ../lib/rmt/cli/base.rb:67
+#: ../lib/rmt/cli/base.rb:68
 msgid ""
 "The RMT database has not yet been initialized. Run '%{command}' to set up the "
 "database."
 msgstr ""
 
-#: ../lib/rmt/cli/base.rb:73
+#: ../lib/rmt/cli/base.rb:74
 msgid ""
 "The SCC credentials are not configured correctly in '%{path}'. You can obtain "
 "them from %{url}"
 msgstr ""
 
-#: ../lib/rmt/cli/base.rb:83
+#: ../lib/rmt/cli/base.rb:84
 msgid ""
 "SCC API request failed. Error details:\n"
 "Request URL: %{url}\n"
@@ -201,31 +208,31 @@ msgid ""
 "%{body}"
 msgstr ""
 
-#: ../lib/rmt/cli/base.rb:125
+#: ../lib/rmt/cli/base.rb:124
 msgid "%{path} is not a directory."
 msgstr ""
 
-#: ../lib/rmt/cli/base.rb:129
+#: ../lib/rmt/cli/base.rb:128
 msgid "%{path} is not writable by user %{username}."
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:6
+#: ../lib/rmt/cli/clean.rb:8
 msgid "Clean dangling package files, based on current repository data."
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:8
+#: ../lib/rmt/cli/clean.rb:10
 msgid "Do not ask anything; use default answers automatically. Default: false"
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:10
+#: ../lib/rmt/cli/clean.rb:12
 msgid "Run the clean process without actually removing files."
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:12
+#: ../lib/rmt/cli/clean.rb:14
 msgid "List files during the cleaning process."
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:13
+#: ../lib/rmt/cli/clean.rb:15
 msgid ""
 "Clean dangling package files based on current repository metadata.\n"
 "\n"
@@ -237,77 +244,77 @@ msgid ""
 "se entries.\n"
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:27
+#: ../lib/rmt/cli/clean.rb:29
 msgid "Scanning the mirror directory for 'repomd.xml' files..."
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:35
+#: ../lib/rmt/cli/clean.rb:37
 msgid "RMT found no repomd.xml files. Check if RMT is properly configured."
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:42
+#: ../lib/rmt/cli/clean.rb:44
 msgid "RMT found repomd.xml files: %{repomd_count}."
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:43
+#: ../lib/rmt/cli/clean.rb:45
 msgid ""
 "Now, it will parse all repomd.xml files, search for dangling packages on disk "
 "and clean them."
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:47
+#: ../lib/rmt/cli/clean.rb:49
 msgid ""
 "This can take several minutes. Would you like to continue and clean dangling p"
 "ackages?"
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:49 ../lib/rmt/cli/repos.rb:40
+#: ../lib/rmt/cli/clean.rb:51 ../lib/rmt/cli/repos.rb:40
 msgid "Only '%{input}' will be accepted."
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:49 ../lib/rmt/cli/clean.rb:55
+#: ../lib/rmt/cli/clean.rb:51 ../lib/rmt/cli/clean.rb:57
 msgid "yes"
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:51 ../lib/rmt/cli/repos.rb:42
+#: ../lib/rmt/cli/clean.rb:53 ../lib/rmt/cli/repos.rb:42
 msgid "Enter a value:"
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:56 ../lib/rmt/cli/repos.rb:48
+#: ../lib/rmt/cli/clean.rb:58 ../lib/rmt/cli/repos.rb:48
 msgid "Clean cancelled."
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:87
+#: ../lib/rmt/cli/clean.rb:89
 msgid "No dangling packages have been found!"
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:95
+#: ../lib/rmt/cli/clean.rb:97
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:165
+#: ../lib/rmt/cli/clean.rb:167
 msgid "Directory: %{dir}"
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:172
+#: ../lib/rmt/cli/clean.rb:174
 msgid "Cleaned '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}."
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:175
+#: ../lib/rmt/cli/clean.rb:177
 msgid "hardlink"
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:182
+#: ../lib/rmt/cli/clean.rb:184
 msgid "Cleaned %{file_count_text} (%{total_size}), %{db_entries}."
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:196
+#: ../lib/rmt/cli/clean.rb:198
 msgid "%{count} file"
 msgid_plural "%{count} files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../lib/rmt/cli/clean.rb:200
+#: ../lib/rmt/cli/clean.rb:202
 msgid "%{db_entries} database entry"
 msgid_plural "%{db_entries} database entries"
 msgstr[0] ""
@@ -515,7 +522,11 @@ msgid ""
 "ble storage device."
 msgstr ""
 
-#: ../lib/rmt/cli/export.rb:42 ../lib/rmt/cli/import.rb:19
+#: ../lib/rmt/cli/export.rb:37
+msgid "Exporting SUSE Manager product tree failed: %{error_message}"
+msgstr ""
+
+#: ../lib/rmt/cli/export.rb:41 ../lib/rmt/cli/import.rb:17
 msgid "%{file} does not exist."
 msgstr ""
 
@@ -527,7 +538,11 @@ msgstr ""
 msgid "Mirror repos from given path"
 msgstr ""
 
-#: ../lib/rmt/cli/import.rb:33
+#: ../lib/rmt/cli/import.rb:28
+msgid "Importing suma product tree failed: %{error_message}"
+msgstr ""
+
+#: ../lib/rmt/cli/import.rb:36
 msgid "repository by URL %{url} does not exist in database"
 msgstr ""
 
@@ -579,63 +594,79 @@ msgstr ""
 msgid "Mirror all enabled repositories"
 msgstr ""
 
-#: ../lib/rmt/cli/mirror.rb:10
+#: ../lib/rmt/cli/mirror.rb:14
 msgid "Mirroring SUMA product tree failed: %{error_message}"
 msgstr ""
 
-#: ../lib/rmt/cli/mirror.rb:13
+#: ../lib/rmt/cli/mirror.rb:18
 msgid "There are no repositories marked for mirroring."
 msgstr ""
 
-#: ../lib/rmt/cli/mirror.rb:33
+#: ../lib/rmt/cli/mirror.rb:47
 msgid "Mirror enabled repositories with given repository IDs"
 msgstr ""
 
-#: ../lib/rmt/cli/mirror.rb:37 ../lib/rmt/cli/repos_base.rb:10
+#: ../lib/rmt/cli/mirror.rb:53 ../lib/rmt/cli/repos_base.rb:10
 msgid "No repository IDs supplied"
 msgstr ""
 
-#: ../lib/rmt/cli/mirror.rb:42
+#: ../lib/rmt/cli/mirror.rb:58
 msgid "Repository with ID %{repo_id} not found"
 msgstr ""
 
-#: ../lib/rmt/cli/mirror.rb:51
+#: ../lib/rmt/cli/mirror.rb:73
 msgid "Mirror enabled repositories for a product with given product IDs"
 msgstr ""
 
-#: ../lib/rmt/cli/mirror.rb:55 ../lib/rmt/cli/products.rb:115
+#: ../lib/rmt/cli/mirror.rb:79 ../lib/rmt/cli/products.rb:115
 msgid "No product IDs supplied"
 msgstr ""
 
-#: ../lib/rmt/cli/mirror.rb:60
+#: ../lib/rmt/cli/mirror.rb:84
 msgid "Product for target %{target} not found"
 msgstr ""
 
-#: ../lib/rmt/cli/mirror.rb:64
+#: ../lib/rmt/cli/mirror.rb:88
 msgid "Product %{target} has no repositories enabled"
 msgstr ""
 
-#: ../lib/rmt/cli/mirror.rb:70
+#: ../lib/rmt/cli/mirror.rb:94
 msgid "Product with ID %{target} not found"
 msgstr ""
 
-#: ../lib/rmt/cli/mirror.rb:129
+#: ../lib/rmt/cli/mirror.rb:162
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
 msgstr ""
 
-#: ../lib/rmt/cli/mirror.rb:141
+#: ../lib/rmt/cli/mirror.rb:180
 msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
 msgstr ""
 
-#: ../lib/rmt/cli/mirror.rb:150
+#: ../lib/rmt/cli/mirror.rb:191
+msgid "Total mirrored repositories: %{repo_count}"
+msgstr ""
+
+#: ../lib/rmt/cli/mirror.rb:192
+msgid "Total transferred files: %{files_count}"
+msgstr ""
+
+#: ../lib/rmt/cli/mirror.rb:193
+msgid "Total transferred file size: %{files_size}"
+msgstr ""
+
+#: ../lib/rmt/cli/mirror.rb:194
+msgid "Total Mirror Time: %{time}"
+msgstr ""
+
+#: ../lib/rmt/cli/mirror.rb:195
 msgid "Mirroring complete."
 msgstr ""
 
-#: ../lib/rmt/cli/mirror.rb:152
+#: ../lib/rmt/cli/mirror.rb:197
 msgid "The following errors occurred while mirroring:"
 msgstr ""
 
-#: ../lib/rmt/cli/mirror.rb:154
+#: ../lib/rmt/cli/mirror.rb:199
 msgid "Mirroring completed with errors."
 msgstr ""
 
@@ -886,7 +917,7 @@ msgid "Provide a custom ID instead of allowing RMT to generate one."
 msgstr ""
 
 #: ../lib/rmt/cli/repos_custom.rb:24
-msgid "A repository by the URL %{url} already exists."
+msgid "A repository by the URL %{url} already exists (ID %{id})."
 msgstr ""
 
 #: ../lib/rmt/cli/repos_custom.rb:27
@@ -1128,23 +1159,23 @@ msgid ""
 "t '<year>-<month>-<day>'."
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:77
+#: ../lib/rmt/downloader.rb:80
 msgid ""
 "Downloading %{file_reference} failed with %{message}. Retrying %{retries} more"
 " times after %{seconds} seconds"
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:131
+#: ../lib/rmt/downloader.rb:134
 msgid ""
 "Poking %{file_reference} failed with %{message}. Retrying %{retries} more time"
 "s after %{seconds} seconds"
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:224
+#: ../lib/rmt/downloader.rb:230
 msgid "Checksum doesn't match"
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:237
+#: ../lib/rmt/downloader.rb:243
 msgid "%{file} - File does not exist"
 msgstr ""
 
@@ -1182,69 +1213,81 @@ msgid ""
 "code}'"
 msgstr ""
 
-#: ../lib/rmt/gpg.rb:37
+#: ../lib/rmt/gpg.rb:39
 msgid "GPG key import failed"
 msgstr ""
 
-#: ../lib/rmt/gpg.rb:48
+#: ../lib/rmt/gpg.rb:51
 msgid "GPG signature verification failed"
 msgstr ""
 
-#: ../lib/rmt/lockfile.rb:11
+#: ../lib/rmt/lockfile.rb:16
 msgid ""
 "Another instance of this command is already running. Terminate the other insta"
 "nce or wait for it to finish."
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:41
-msgid "Mirroring SUSE Manager product tree to %{dir}"
-msgstr ""
-
-#: ../lib/rmt/mirror.rb:44
-msgid "Could not mirror SUSE Manager product tree with error: %{error}"
-msgstr ""
-
-#: ../lib/rmt/mirror.rb:50
+#: ../lib/rmt/mirror/base.rb:24
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:76
-msgid "Could not create local directory %{dir} with error: %{error}"
+#: ../lib/rmt/mirror/base.rb:29
+msgid "Error while mirroring repository: %{error}"
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:83
-msgid "Could not create a temporary directory: %{error}"
-msgstr ""
-
-#: ../lib/rmt/mirror.rb:111
+#: ../lib/rmt/mirror/base.rb:72
 msgid "Repository metadata signatures are missing"
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:113
+#: ../lib/rmt/mirror/base.rb:74
 msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:124
-msgid "Error while mirroring metadata: %{error}"
+#: ../lib/rmt/mirror/base.rb:90
+msgid "Could not create local directory %{dir} with error: %{error}"
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:148
+#: ../lib/rmt/mirror/base.rb:98
+msgid "Could not create a temporary directory: %{error}"
+msgstr ""
+
+#: ../lib/rmt/mirror/base.rb:103
+msgid "Try to access non existing temporary directory %{name}"
+msgstr ""
+
+#: ../lib/rmt/mirror/base.rb:163
+msgid "Error while moving files %{glob} to %{dest}: %{error}"
+msgstr ""
+
+#: ../lib/rmt/mirror/debian.rb:104
+msgid "Could not read '%{file}': %{error}"
+msgstr ""
+
+#: ../lib/rmt/mirror/license.rb:41
 msgid "Error while mirroring license files: %{error}"
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:162
+#: ../lib/rmt/mirror/repomd.rb:40
+msgid "Error while mirroring metadata: %{error}"
+msgstr ""
+
+#: ../lib/rmt/mirror/repomd.rb:58
 msgid "Failed to download %{failed_count} files"
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:164
+#: ../lib/rmt/mirror/repomd.rb:60
 msgid "Error while mirroring packages: %{error}"
 msgstr ""
 
-#: ../lib/rmt/mirror.rb:199
-msgid "Error while moving directory %{src} to %{dest}: %{error}"
+#: ../lib/rmt/mirror/suma_product_tree.rb:24
+msgid "Mirroring SUSE Manager product tree to %{dir}"
 msgstr ""
 
-#: ../lib/rmt/scc.rb:16 ../lib/rmt/scc.rb:83
+#: ../lib/rmt/mirror/suma_product_tree.rb:27
+msgid "Could not mirror SUSE Manager product tree with error: %{error}"
+msgstr ""
+
+#: ../lib/rmt/scc.rb:16 ../lib/rmt/scc.rb:102
 msgid "SCC credentials not set."
 msgstr ""
 
@@ -1252,66 +1295,82 @@ msgstr ""
 msgid "Downloading data from SCC"
 msgstr ""
 
-#: ../lib/rmt/scc.rb:21 ../lib/rmt/scc.rb:63
+#: ../lib/rmt/scc.rb:22 ../lib/rmt/scc.rb:82
 msgid "Updating products"
 msgstr ""
 
-#: ../lib/rmt/scc.rb:36
+#: ../lib/rmt/scc.rb:37
+msgid "Removing obsolete repositories"
+msgstr ""
+
+#: ../lib/rmt/scc.rb:55
 msgid "Exporting data from SCC to %{path}"
 msgstr ""
 
-#: ../lib/rmt/scc.rb:40
+#: ../lib/rmt/scc.rb:59
 msgid "Exporting products"
 msgstr ""
 
-#: ../lib/rmt/scc.rb:45
+#: ../lib/rmt/scc.rb:64
 msgid "Exporting repositories"
 msgstr ""
 
-#: ../lib/rmt/scc.rb:48
+#: ../lib/rmt/scc.rb:67
 msgid "Exporting subscriptions"
 msgstr ""
 
-#: ../lib/rmt/scc.rb:51
+#: ../lib/rmt/scc.rb:70
 msgid "Exporting orders"
 msgstr ""
 
-#: ../lib/rmt/scc.rb:59
+#: ../lib/rmt/scc.rb:78
 msgid "Missing data files: %{files}"
 msgstr ""
 
-#: ../lib/rmt/scc.rb:61
+#: ../lib/rmt/scc.rb:80
 msgid "Importing SCC data from %{path}"
 msgstr ""
 
-#: ../lib/rmt/scc.rb:79
+#: ../lib/rmt/scc.rb:98
 msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
 msgstr ""
 
-#: ../lib/rmt/scc.rb:88
+#: ../lib/rmt/scc.rb:107
 msgid "Syncing %{count} updated system(s) to SCC"
 msgstr ""
 
-#: ../lib/rmt/scc.rb:93
+#: ../lib/rmt/scc.rb:112
 msgid "Failed to sync systems: %{error}"
 msgstr ""
 
-#: ../lib/rmt/scc.rb:98
+#: ../lib/rmt/scc.rb:117
 msgid "Couldn't sync %{count} systems."
 msgstr ""
 
-#: ../lib/rmt/scc.rb:117
+#: ../lib/rmt/scc.rb:136
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
 msgstr ""
 
-#: ../lib/rmt/scc.rb:134
+#: ../lib/rmt/scc.rb:153
 msgid "Updating repositories"
 msgstr ""
 
-#: ../lib/rmt/scc.rb:141
+#: ../lib/rmt/scc.rb:160
 msgid "Updating subscriptions"
 msgstr ""
 
-#: ../lib/rmt/scc.rb:160
+#: ../lib/rmt/scc.rb:179
 msgid "Adding/Updating product %{product}"
+msgstr ""
+
+#: ../lib/suse/connect/api.rb:48 ../lib/suse/connect/api.rb:53
+msgid "Loading product data from SCC"
+msgstr ""
+
+#: ../lib/suse/connect/api.rb:58
+msgid "Loading repository data from SCC"
+msgstr ""
+
+#: ../lib/suse/connect/api.rb:63
+msgid "Loading subscription data from SCC"
 msgstr ""
