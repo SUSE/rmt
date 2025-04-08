@@ -119,7 +119,7 @@ module InstanceVerification
 
     is_valid = verification_provider.instance_valid?
     # update repository and registry cache
-    InstanceVerification.update_cache(cache_key, system.proxy_byos_mode)
+    InstanceVerification.set_cache_active(cache_key, system.proxy_byos_mode)
     is_valid
   rescue InstanceVerification::Exception => e
     if system.byos?
@@ -247,7 +247,7 @@ module InstanceVerification
           end
           logger.info "Product #{@product.product_string} available for this instance"
           cache_key = InstanceVerification.build_cache_entry(request.remote_ip, @system.login, nil, 'payg', product)
-          InstanceVerification.update_cache(cache_key, 'payg')
+          InstanceVerification.set_cache_active(cache_key, 'payg')
         end
 
         def verify_base_product_activation(product)
