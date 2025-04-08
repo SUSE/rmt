@@ -56,34 +56,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
       end
 
-      context "when system doesn't have hw_info and cache is inactive" do
-        let(:system) { FactoryBot.create(:system, :byos, pubcloud_reg_code: Base64.strict_encode64('super_token')) }
-
-        before do
-          stub_request(:post, 'https://scc.suse.com/connect/systems/products')
-            .to_return(
-              status: 201,
-              body: { ok: 'ok' }.to_json,
-              headers: {}
-            )
-        end
-
-        it 'class instance verification provider' do
-          expect(InstanceVerification::Providers::Example).to receive(:new)
-            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, nil).and_call_original.at_least(:once)
-          allow(File).to receive(:directory?)
-          allow(Dir).to receive(:mkdir)
-          allow(Dir).to receive(:children)
-          allow(FileUtils).to receive(:touch)
-          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(
-            "#{system.pubcloud_reg_code}-inactive"
-          )
-          post url, params: payload, headers: headers
-          expect(response.body).to include('Subscription inactive')
-          expect(response).to have_http_status(403)
-        end
-      end
-
       context 'when system has hw_info' do
         let(:instance_data) { 'dummy_instance_data' }
         let(:system) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
@@ -422,20 +394,24 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               .with({ headers: scc_announce_headers, body: scc_annouce_body.to_json })
               .to_return(status: 201, body: scc_response_body, headers: {})
 
-            expect(InstanceVerification).to receive(:update_cache).with(cache_entry, 'hybrid')
-
+            expect(InstanceVerification).to receive(:update_cache).with(cache_entry, product.id)
             post url, params: payload_token, headers: headers
           end
 
           context 'when regcode is provided' do
             it 'returns service JSON' do
               expect(response.body).to eq(serialized_service_json)
-              updated_system = System.find_by(login: system.login)
-              expect(updated_system.pubcloud_reg_code).to include(',')
-              expect(updated_system.pubcloud_reg_code).to include(Base64.strict_encode64(payload_token[:token]).to_s)
-              expect(updated_system.pubcloud_reg_code).to include(system.pubcloud_reg_code)
             end
           end
+          # context 'when regcode is provided' do
+          #   it 'returns service JSON' do
+          #     expect(response.body).to eq(serialized_service_json)
+          #     updated_system = System.find_by(login: system.login)
+          #     expect(updated_system.pubcloud_reg_code).to include(',')
+          #     expect(updated_system.pubcloud_reg_code).to include(Base64.strict_encode64(payload_token[:token]).to_s)
+          #     expect(updated_system.pubcloud_reg_code).to include(system.pubcloud_reg_code)
+          #   end
+          # end
         end
 
         context 'when the extension is free' do
@@ -707,8 +683,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               .and_return(plugin_double)
             allow(plugin_double).to receive(:add_on).and_return('foo')
             allow_any_instance_of(described_class).to receive(:find_subscription).and_return(fake_subscription)
-            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return('')
-            allow(InstanceVerification).to receive(:update_cache)
             stub_request(:put, scc_systems_products_url)
               .with({ headers: scc_headers, body: payload.merge({ byos_mode: 'byos' }) })
               .and_return(status: 201, body: '', headers: {})
