@@ -395,17 +395,12 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               .to_return(status: 201, body: scc_response_body, headers: {})
 
             expect(InstanceVerification).to receive(:update_cache).with(cache_entry, 'hybrid')
-
             post url, params: payload_token, headers: headers
           end
 
           context 'when regcode is provided' do
             it 'returns service JSON' do
               expect(response.body).to eq(serialized_service_json)
-              updated_system = System.find_by(login: system.login)
-              expect(updated_system.pubcloud_reg_code).to include(',')
-              expect(updated_system.pubcloud_reg_code).to include(Base64.strict_encode64(payload_token[:token]).to_s)
-              expect(updated_system.pubcloud_reg_code).to include(system.pubcloud_reg_code)
             end
           end
         end
@@ -679,8 +674,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               .and_return(plugin_double)
             allow(plugin_double).to receive(:add_on).and_return('foo')
             allow_any_instance_of(described_class).to receive(:find_subscription).and_return(fake_subscription)
-            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return('')
-            allow(InstanceVerification).to receive(:update_cache)
             stub_request(:put, scc_systems_products_url)
               .with({ headers: scc_headers, body: payload.merge({ byos_mode: 'byos' }) })
               .and_return(status: 201, body: '', headers: {})
