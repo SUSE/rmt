@@ -31,7 +31,7 @@ module InstanceVerification
       encoded_reg_code = Base64.strict_encode64(params.fetch(:token, ''))
       product_hash = product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
       product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
-      "#{encoded_reg_code}-#{iid}-#{product_triplet}-active"
+      "#{encoded_reg_code}-#{iid}-#{product_triplet}"
     end
   end
 
@@ -72,10 +72,15 @@ module InstanceVerification
     File.unlink(full_path_cache_key) if File.exist?(full_path_cache_key)
   end
 
+  def self.set_cache_active(cache_key, mode, registry = false) # rubocop:disable Style/OptionalBooleanParameter
+    cache_key = [cache_key, 'active'].join('-') if ['byos', 'hybrid'].include?(mode)
+
+    InstanceVerification.update_cache(cache_key, mode, registry: registry)
+  end
+
   def self.set_cache_inactive(cache_key, mode)
-    InstanceVerification.remove_entry_from_cache(cache_key, mode)
-    *all, _ = cache_key.split('-')
-    cache_key = [all, 'inactive'].join('-')
+    InstanceVerification.remove_entry_from_cache("#{cache_key}-active", mode)
+    cache_key = [cache_key, 'inactive'].join('-')
     InstanceVerification.update_cache(cache_key, mode)
   end
 
@@ -99,22 +104,28 @@ module InstanceVerification
     cache_key = InstanceVerification.build_cache_entry(
       request.remote_ip, system.login, cache_params, system.proxy_byos_mode, base_product
     )
-    if InstanceVerification.reg_code_in_cache?(cache_key, system.proxy_byos_mode)
+    found_cache_entry = InstanceVerification.reg_code_in_cache?(cache_key, system.proxy_byos_mode)
+    if found_cache_entry.present? && found_cache_entry.exclude?('-inactive')
       # only update registry cache key
-      InstanceVerification.update_cache(cache_key, system.proxy_byos_mode, registry: true)
+      # even if the cache check was for PAYG/ repos cache
+      # the registry cache should last longer than PAYG
+      registry_cache_key = InstanceVerification.build_cache_entry(
+        request.remote_ip, system.login, {}, 'registry', ''
+      )
+      InstanceVerification.update_cache(registry_cache_key, 'registry', registry: true)
       return true
     end
 
     is_valid = verification_provider.instance_valid?
     # update repository and registry cache
-    InstanceVerification.update_cache(cache_key, system.proxy_byos_mode)
+    InstanceVerification.set_cache_active(cache_key, system.proxy_byos_mode)
     is_valid
   rescue InstanceVerification::Exception => e
     if system.byos?
       result = SccProxy.scc_check_subscription_expiration(request.headers, system, base_product.product_class)
       if result[:is_active]
         # update the cache for the base product
-        InstanceVerification.update_cache(cache_key, 'byos')
+        InstanceVerification.set_cache_active(cache_key, 'byos')
         return true
       end
       # if can not get the activations, set the cache inactive
@@ -234,7 +245,7 @@ module InstanceVerification
           end
           logger.info "Product #{@product.product_string} available for this instance"
           cache_key = InstanceVerification.build_cache_entry(request.remote_ip, @system.login, nil, 'payg', product)
-          InstanceVerification.update_cache(cache_key, 'payg')
+          InstanceVerification.set_cache_active(cache_key, 'payg')
         end
 
         def verify_base_product_activation(product)
@@ -257,7 +268,7 @@ module InstanceVerification
             @system.proxy_byos_mode,
             product
           )
-          InstanceVerification.update_cache(cache_key, @system.proxy_byos_mode)
+          InstanceVerification.set_cache_active(cache_key, @system.proxy_byos_mode)
         end
 
         # Verify that the base product doesn't change in the offline migration
