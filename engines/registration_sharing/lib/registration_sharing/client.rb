@@ -1,4 +1,7 @@
 class RegistrationSharing::Client
+  # default is 60 seconds, should be shorter than regsharing timer (30 seconds)
+  REGSHARING_TIMEOUT = 25
+
   def initialize(peer, system_login)
     @peer = peer
     @system_login = system_login
@@ -18,7 +21,8 @@ class RegistrationSharing::Client
   def peer_register_system(system)
     params = {}
 
-    %w[login password hostname proxy_byos system_token registered_at created_at last_seen_at instance_data].each do |attribute|
+    %w[login password hostname proxy_byos proxy_byos_mode system_token registered_at created_at last_seen_at instance_data
+       pubcloud_reg_code].each do |attribute|
       params[attribute] = system.send(attribute)
     end
 
@@ -42,6 +46,7 @@ class RegistrationSharing::Client
         'Authorization' => "Bearer #{RegistrationSharing.config_api_secret}",
         'User-Agent' => "RMT::Regsharing/#{RMT::VERSION}"
       },
+      timeout: REGSHARING_TIMEOUT,
       body: JSON.dump(params),
       capath: RegistrationSharing.config_ca_path
     )

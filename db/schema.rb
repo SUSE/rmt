@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_11_152732) do
+ActiveRecord::Schema.define(version: 2025_03_19_155325) do
 
   create_table "activations", charset: "utf8", force: :cascade do |t|
     t.bigint "service_id", null: false
@@ -34,7 +34,7 @@ ActiveRecord::Schema.define(version: 2022_07_11_152732) do
   create_table "downloaded_files", charset: "utf8", force: :cascade do |t|
     t.string "checksum_type"
     t.string "checksum"
-    t.string "local_path"
+    t.string "local_path", limit: 512
     t.bigint "file_size", unsigned: true
     t.index ["checksum_type", "checksum"], name: "index_downloaded_files_on_checksum_type_and_checksum"
     t.index ["local_path"], name: "index_downloaded_files_on_local_path", unique: true
@@ -51,7 +51,6 @@ ActiveRecord::Schema.define(version: 2022_07_11_152732) do
     t.datetime "updated_at", null: false
     t.text "instance_data", comment: "Additional client information, e.g. instance identity document"
     t.string "cloud_provider"
-    t.boolean "proxy_byos", default: false
     t.index ["hypervisor"], name: "index_hw_infos_on_hypervisor"
     t.index ["system_id"], name: "index_hw_infos_on_system_id", unique: true
   end
@@ -105,7 +104,7 @@ ActiveRecord::Schema.define(version: 2022_07_11_152732) do
     t.string "auth_token"
     t.boolean "installer_updates", default: false, null: false
     t.boolean "mirroring_enabled", default: false, null: false
-    t.string "local_path", null: false
+    t.string "local_path", limit: 512, null: false
     t.datetime "last_mirrored_at"
     t.string "friendly_id"
     t.index ["external_url"], name: "index_repositories_on_external_url", unique: true
@@ -150,6 +149,15 @@ ActiveRecord::Schema.define(version: 2022_07_11_152732) do
     t.index ["regcode"], name: "index_subscriptions_on_regcode"
   end
 
+  create_table "system_uptimes", charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
+    t.bigint "system_id", null: false
+    t.date "online_at_day", null: false
+    t.binary "online_at_hours", limit: 24, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["system_id", "online_at_day"], name: "id_online_day", unique: true
+  end
+
   create_table "systems", charset: "utf8", force: :cascade do |t|
     t.string "login"
     t.string "password"
@@ -161,11 +169,13 @@ ActiveRecord::Schema.define(version: 2022_07_11_152732) do
     t.datetime "scc_registered_at"
     t.bigint "scc_system_id", comment: "System ID in SCC (if the system registration was forwarded; needed for forwarding de-registrations)"
     t.boolean "proxy_byos", default: false
+    t.integer "proxy_byos_mode", default: 0
     t.string "system_token"
     t.text "system_information", size: :long
-    t.string "instance_data"
+    t.text "instance_data"
     t.index ["login", "password", "system_token"], name: "index_systems_on_login_and_password_and_system_token", unique: true
     t.index ["login", "password"], name: "index_systems_on_login_and_password"
+    t.index ["system_token"], name: "index_systems_on_system_token"
     t.check_constraint "json_valid(`system_information`)", name: "system_information"
   end
 
@@ -181,4 +191,5 @@ ActiveRecord::Schema.define(version: 2022_07_11_152732) do
   add_foreign_key "repositories_services", "services", on_delete: :cascade
   add_foreign_key "services", "products"
   add_foreign_key "subscription_product_classes", "subscriptions", on_delete: :cascade
+  add_foreign_key "system_uptimes", "systems"
 end

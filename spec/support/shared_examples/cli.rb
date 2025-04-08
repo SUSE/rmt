@@ -17,7 +17,7 @@ shared_examples 'handles non-writable path' do
 end
 
 shared_examples 'handles lockfile exception' do
-  context 'with existing lockfile' do
+  context 'with existing lockfile', if: running_mysql do
     before do
       allow(RMT::Lockfile).to receive(:obtain_lock).and_return(false)
     end

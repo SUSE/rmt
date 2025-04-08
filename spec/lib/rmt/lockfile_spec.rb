@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe RMT::Lockfile do
   let(:lock_name) { nil }
 
-  describe '#lock' do
+  describe '#lock', :skip_sqlite do
     subject(:lock) { described_class.lock(lock_name) { nil } }
 
     context 'with an unnamed lock' do
@@ -49,6 +49,13 @@ RSpec.describe RMT::Lockfile do
           RMT::Lockfile::ExecutionLockedError,
           'Another instance of this command is already running. Terminate the other instance or wait for it to finish.'
         )
+      end
+    end
+
+    context 'with sqlite backend' do
+      it 'yields block' do
+        allow(ActiveRecord::Base).to receive_message_chain(:connection, :adapter_name).and_return('sqlite3')
+        expect(lock).to eq nil
       end
     end
   end

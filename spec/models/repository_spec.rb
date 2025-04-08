@@ -146,7 +146,7 @@ RSpec.describe Repository, type: :model do
       expect(friendly_id).to eq('my-repo-100000')
     end
 
-    it 'appends with unicode within the chain' do
+    it 'appends with unicode within the chain', :skip_sqlite do
       create(:repository, friendly_id: 'my-repo')
       create(:repository, friendly_id: 'my-repö-1')
       expect(friendly_id).to eq('my-repo-2')
@@ -165,13 +165,13 @@ RSpec.describe Repository, type: :model do
         expect(friendly_id).to eq('dümmy-repö')
       end
 
-      it 'appends with unicode within the chain' do
+      it 'appends with unicode within the chain', :skip_sqlite do
         create(:repository, friendly_id: 'dummy-repo')
         create(:repository, friendly_id: 'dümmy-repö-1')
         expect(friendly_id).to eq('dümmy-repö-2')
       end
 
-      it 'correctly appends' do
+      it 'correctly appends', :skip_sqlite do
         create(:repository, friendly_id: 'dummy-repo')
         create(:repository, friendly_id: 'dummy-repo-1')
         expect(friendly_id).to eq('dümmy-repö-2')
@@ -227,14 +227,6 @@ RSpec.describe Repository, type: :model do
   end
 
   describe '#destroy' do
-    context 'when it is an official repository' do
-      subject { repository.destroy }
-
-      let!(:repository) { create :repository }
-
-      it { is_expected.to be_falsey }
-    end
-
     context 'when it is a custom repository' do
       subject { repository.destroy }
 

@@ -1,3 +1,5 @@
+require 'repomd_parser'
+
 class RMT::CLI::Clean < RMT::CLI::Base
   DANGLING_FILE_MINIMUM_AGE = 48 * 60 * 60 # 2 days (in seconds)
   CleanedFile = Struct.new(:path, :file_size, :db_entries, :db_entries_count,
@@ -70,7 +72,7 @@ class RMT::CLI::Clean < RMT::CLI::Base
     partial_reports =
       dangling_packages_list_by_dir(repomd_files).map do |repo_dir, dangling_files|
         unless options.dry_run
-          FileUtils.rm(dangling_files.map(&:path))
+          FileUtils.rm_f(dangling_files.map(&:path))
           dangling_files.each { |file| file.db_entries.destroy_all }
         end
 
@@ -119,20 +121,21 @@ class RMT::CLI::Clean < RMT::CLI::Base
     packages = (actual_packages - expected_packages).sort
 
     packages.map do |file|
-      next nil unless File.exist?(file)
-
-      # Only remove files if they were not recently created
-      file_stat = File.stat(file)
-      next nil if (Time.current - file_stat.mtime) < DANGLING_FILE_MINIMUM_AGE
-
       file_size, hardlink =
-        # We keep the count of times an inode has been referenced to know
-        # if it's the last link (name) referencing the inode, so we can compute
-        # the actual file size removed from disk.
-        if (@inodes[file_stat.ino] += 1) == file_stat.nlink
-          [file_stat.size, false]
-        else
-          [0, true]
+        begin
+          file_stat = File.stat(file)
+          next nil unless eligible_for_cleaning?(file, file_stat)
+
+          # We keep the count of times an inode has been referenced to know
+          # if it's the last link (name) referencing the inode, so we can compute
+          # the actual file size removed from disk.
+          if (@inodes[file_stat.ino] += 1) == file_stat.nlink
+            [file_stat.size, false]
+          else
+            [0, true]
+          end
+        rescue Errno::ENOENT
+          [0, false]
         end
 
       db_entries = DownloadedFile.where(local_path: file)
@@ -143,17 +146,28 @@ class RMT::CLI::Clean < RMT::CLI::Base
   end
 
   def parse_packages_data(repomd_file, repo_base_dir)
-    metadata_files = RepomdParser::RepomdXmlParser.new(repomd_file).parse
+    metadata_files = RepomdParser::RepomdXmlParser.new.parse_file(repomd_file)
 
     xml_parsers = { deltainfo: RepomdParser::DeltainfoXmlParser,
                     primary: RepomdParser::PrimaryXmlParser }
 
     metadata_files.reduce([]) do |acc, metadata|
+      next acc if metadata.type == :deltainfo && !RMT::Config.mirror_drpm_files?
       next acc unless xml_parsers.key?(metadata.type)
 
       metadata_path = File.join(repo_base_dir, metadata.location)
-      acc << xml_parsers[metadata.type].new(metadata_path).parse
+      acc << xml_parsers[metadata.type].new.parse_file(metadata_path)
     end.flatten
+  end
+
+  def eligible_for_cleaning?(file, status)
+    # Clean .drpm files whenever .drpm mirroring is disabled, regardless of age
+    return true if !RMT::Config.mirror_drpm_files? && file =~ /\.drpm$/
+
+    # Clean files if they were not recently created
+    return false if (Time.current - status.mtime) < DANGLING_FILE_MINIMUM_AGE
+
+    true
   end
 
   def generate_partial_report(repo_base_dir, cleaned_files)

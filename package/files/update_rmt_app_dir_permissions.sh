@@ -16,3 +16,10 @@ if [[ $app_dir_ownership == "_rmt nginx" ]]; then
 
   find -P $app_dir -type f -user _rmt -group nginx | xargs -I {} chown -h root:root {}
 fi
+
+# Change secrets encrypted and key files to nginx readable
+secret_key_files=('config/secrets.yml.key' 'config/secrets.yml.enc')
+
+for secretFile in ${secret_key_files[@]}; do
+  rm -f "$app_dir/$secretFile"
+done

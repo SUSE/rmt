@@ -86,4 +86,13 @@ describe SUSE::Connect::SystemSerializer do
       expect(serializer.key? :system_token).to eq(false)
     end
   end
+
+  context 'system with systemuptime' do
+    let(:system) { create :system, :with_system_uptimes }
+
+    it 'match systemuptime data' do
+      expect((serializer[:online_at][0][:online_at_day]).to_date).to eq(Time.zone.now.to_date)
+      expect((serializer[:online_at][0][:online_at_hours]).to_s).to eq('111111111111111111111111')
+    end
+  end
 end

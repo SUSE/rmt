@@ -1,7 +1,7 @@
 #
 # spec file for package rmt-server
 #
-# Copyright (c) 2023 SUSE LLC
+# Copyright (c) 2024 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -29,8 +29,12 @@
 %define rb_build_ruby_abis    %{rb_default_ruby_abi}
 %define ruby_version          %{rb_default_ruby_suffix}
 
+# disabling dwz for now, as it is not available in SLE15
+# related bugzilla https://bugzilla.suse.com/show_bug.cgi?id=1180984
+%undefine _find_debuginfo_dwz_opts
+
 Name:           rmt-server
-Version:        2.15
+Version:        2.21
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -51,6 +55,7 @@ BuildRequires:  libffi-devel
 BuildRequires:  libmysqlclient-devel
 BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
+BuildRequires:  sqlite-devel
 BuildRequires:  pkgconfig(systemd)
 Requires:       gpg2
 Recommends:     mariadb
@@ -65,6 +70,7 @@ Requires(post): util-linux
 Conflicts:      yast2-rmt < 1.0.3
 Recommends:     rmt-server-config
 Recommends:     yast2-rmt >= 1.3.0
+Provides:       user(%{rmt_user})
 # Does not build for i586 and s390 and is not supported on those architectures
 ExcludeArch:    %{ix86} s390
 %{systemd_ordering}
@@ -96,6 +102,7 @@ Default nginx configuration for RMT.
 Summary:        RMT pubcloud extensions
 Group:          Productivity/Networking/Web/Proxy
 Requires:       rmt-server = %version
+Recommends:     valkey
 Provides:       rmt-server-configuration
 Conflicts:      rmt-server-configuration
 
@@ -143,6 +150,7 @@ mkdir -p %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server-mirror.timer %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server-sync.timer %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server-systems-scc-sync.timer %{buildroot}%{_unitdir}
+install -m 444 package/files/systemd/rmt-uptime-cleanup.timer %{buildroot}%{_unitdir}
 
 install -m 444 package/files/systemd/rmt-server-mirror.service %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server-sync.service %{buildroot}%{_unitdir}
@@ -150,6 +158,7 @@ install -m 444 package/files/systemd/rmt-server-systems-scc-sync.service %{build
 install -m 444 package/files/systemd/rmt-server.service %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server.target %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server-migration.service %{buildroot}%{_unitdir}
+install -m 444 package/files/systemd/rmt-uptime-cleanup.service %{buildroot}%{_unitdir}
 
 install -m 444 engines/registration_sharing/package/rmt-server-regsharing.service %{buildroot}%{_unitdir}
 install -m 444 engines/registration_sharing/package/rmt-server-regsharing.timer %{buildroot}%{_unitdir}
@@ -162,6 +171,7 @@ ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-migration
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-mirror
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-sync
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-systems-scc-sync
+ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-uptime-cleanup
 
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-regsharing
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-trim-cache
@@ -240,6 +250,7 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 
 %files
 %attr(0755,root,root) %{app_dir}
+%attr(0755,root,root) %{app_dir}/public/tools
 %exclude %{app_dir}/engines/
 %exclude %{app_dir}/package/
 %exclude %{app_dir}/rmt/tmp
@@ -253,12 +264,13 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %ghost %{_datadir}/rmt/public/suma
 
 # The secrets file is created by running the initial rake tasks in the `post` section
-%ghost %{app_dir}/config/secrets.yml.key
-%ghost %{app_dir}/config/secrets.yml.enc
+%ghost %attr(0640,root,%{rmt_group}) %{app_dir}/config/secrets.yml.key
+%ghost %attr(0640,root,%{rmt_group}) %{app_dir}/config/secrets.yml.enc
 
 %dir %{_sysconfdir}/slp.reg.d
 %config(noreplace) %attr(0640, %{rmt_user}, root) %{_sysconfdir}/rmt.conf
 %config(noreplace) %{_sysconfdir}/slp.reg.d/rmt-server.reg
+
 %{_mandir}/man8/rmt-cli.8%{?ext_man}
 %{_bindir}/rmt-cli
 %{_bindir}/rmt-data-import
@@ -267,6 +279,7 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %{_sbindir}/rcrmt-server-sync
 %{_sbindir}/rcrmt-server-mirror
 %{_sbindir}/rcrmt-server-systems-scc-sync
+%{_sbindir}/rcrmt-uptime-cleanup
 %{_unitdir}/rmt-server.target
 %{_unitdir}/rmt-server.service
 %{_unitdir}/rmt-server-migration.service
@@ -276,6 +289,13 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %{_unitdir}/rmt-server-sync.timer
 %{_unitdir}/rmt-server-systems-scc-sync.service
 %{_unitdir}/rmt-server-systems-scc-sync.timer
+%{_unitdir}/rmt-uptime-cleanup.service
+%{_unitdir}/rmt-uptime-cleanup.timer
+%config(noreplace) %{_unitdir}/rmt-server-mirror.timer
+%config(noreplace) %{_unitdir}/rmt-server-sync.timer
+%config(noreplace) %{_unitdir}/rmt-server-systems-scc-sync.timer
+%config(noreplace) %{_unitdir}/rmt-uptime-cleanup.timer
+
 %dir %{_datadir}/bash-completion/
 %dir %{_datadir}/bash-completion/completions/
 %{_datadir}/bash-completion/completions/rmt-cli
@@ -310,18 +330,19 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %{_unitdir}/rmt-server-regsharing.timer
 %{_unitdir}/rmt-server-trim-cache.service
 %{_unitdir}/rmt-server-trim-cache.timer
+%config(noreplace) %{_unitdir}/rmt-server-regsharing.timer
+%config(noreplace) %{_unitdir}/rmt-server-trim-cache.timer
 
 %pre
 getent group %{rmt_group} >/dev/null || %{_sbindir}/groupadd -r %{rmt_group}
 getent passwd %{rmt_user} >/dev/null || \
 	%{_sbindir}/useradd -g %{rmt_group} -s /bin/false -r \
 	-c "user for RMT" %{rmt_user}
-%service_add_pre rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
+%service_add_pre rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service rmt-uptime-cleanup.service
 
 %post
-%service_add_post rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
-cd %{_datadir}/rmt && bin/rails rmt:secrets:create_encryption_key >/dev/null RAILS_ENV=production && \
-cd %{_datadir}/rmt && bin/rails rmt:secrets:create_secret_key_base >/dev/null RAILS_ENV=production && \
+%service_add_post rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service rmt-uptime-cleanup.service
+
 # Run only on install
 if [ $1 -eq 1 ]; then
   echo "Please run the YaST RMT module (or 'yast2 rmt' from the command line) to complete the configuration of your RMT" >> /dev/stdout
@@ -337,6 +358,11 @@ if [ $1 -eq 2 ]; then
     mv %{app_dir}/config/system_uuid /var/lib/rmt/system_uuid
   fi
   bash %{script_dir}/update_rmt_app_dir_permissions.sh %{app_dir}
+
+  echo "RMT database migration in progress. This could take some time."
+  echo ""
+  echo "To check current migration status:"
+  echo "  systemctl status rmt-server-migration.service"
 fi
 
 if [ ! -e %{_datadir}/rmt/public/repo ]; then
@@ -348,10 +374,10 @@ if [ ! -e %{_datadir}/rmt/public/suma ]; then
 fi
 
 %preun
-%service_del_preun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
+%service_del_preun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service rmt-uptime-cleanup.service
 
 %postun
-%service_del_postun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service
+%service_del_postun rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service rmt-uptime-cleanup.service
 
 %posttrans config
 # Don't fail if either systemd or nginx are not running

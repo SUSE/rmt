@@ -3,7 +3,7 @@
 RMT replaces some functionality of [SMT](https://github.com/SUSE/smt).
 The following table outlines the differences and similarities between the three tools.
 The last SUSE Linux Enterprise Server version where SMT is available is 12 SP5.
-From SUSE Linux Enterprise Server 15 onward, only RMT or SUMA is available.
+From SUSE Linux Enterprise Server 15 onward, only RMT and SUMA are available.
 
 > Note: RMT is fully maintained and receives new features, bug fixes, and perfomance improvements.
 > SMT no longer receives new features, only critical security and bug fixes.
@@ -23,14 +23,15 @@ From SUSE Linux Enterprise Server 15 onward, only RMT or SUMA is available.
 |Registration of SLE 11 systems|:heavy_check_mark:|:x:|:heavy_check_mark:|
 |Registration of openSUSE Leap 15 systems|:x:|:x:|:heavy_check_mark:|
 |Registration of non-SUSE products (RHEL, Ubuntu, etc)|:x:|:x:|:heavy_check_mark:|
-|Red Hat 7 and earlier support ([Expanded Support](https://www.suse.com/products/expandedsupport/))|:heavy_check_mark:|:x:|:heavy_check_mark:|
-|Red Hat 8 support ([Expanded Support](https://www.suse.com/products/expandedsupport/))|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+|Red Hat 6 and earlier support (via [SUSE Liberty](https://www.suse.com/products/suse-liberty-linux/))|:heavy_check_mark:|:x:|:heavy_check_mark:|
+|Red Hat 7+ support (via [SUSE Liberty](https://www.suse.com/products/suse-liberty-linux/))|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Support for migrating SLE 12 systems to 15|:warning:<sup>[1](#partial-migration)</sup>|:heavy_check_mark:|:heavy_check_mark:|
 |Support for migrating SLE 15 SPx systems to 15 SPx+1|:warning:<sup>[1](#partial-migration)</sup>|:heavy_check_mark:|:heavy_check_mark:|
 |Staging repositories|:heavy_check_mark:|:x:|:heavy_check_mark:|
 |Air gap sync/mirroring for secure environments|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |NTLM Proxy support|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Custom repositories|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+|Debian repository mirroring|:x:|:heavy_check_mark:<sup>[3](#rdeb_support)</sup>|:x:|
 |YaST installation wizard|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Management wizard|:heavy_check_mark: (Yast)|:x:|:heavy_check_mark: (SUMA WebUI)|
 |Client management|:heavy_check_mark:|:x:|:heavy_check_mark:|
@@ -41,7 +42,7 @@ From SUSE Linux Enterprise Server 15 onward, only RMT or SUMA is available.
 |Clean up data from repositories that are not used any longer|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Bash completion|:x:|:heavy_check_mark:|:x:|
 |Available on [openSUSE Leap 15](https://github.com/SUSE/rmt/blob/master/docs/installation.md#installation-on-opensuse-leap-15)|:x:|:heavy_check_mark:<sup>[2](#self-support)</sup>|:heavy_check_mark: (Uyuni, #self-support)|
-|Option to [run as container](https://github.com/SUSE/rmt/blob/master/README.md#development-setup---docker-compose)|:x:|:heavy_check_mark:<sup>[2](#self-support)</sup>|:x:|
+|Option to [deploy on Kubernetes](https://documentation.suse.com/sles/html/SLES-all/cha-rmt-installation.html#sec-rmt-deploy-kubernetes)|:x:|:heavy_check_mark:|:x:|
 |Easy development setup |:x:|:heavy_check_mark:|:heavy_check_mark:|
 |100% test [coverage](https://coveralls.io/github/SUSE/rmt?branch=master)|:x:|:heavy_check_mark:|:x:|
 |[Plugin functionality](https://github.com/SUSE/rmt/blob/master/docs/PLUGINS.md)|:x:|:heavy_check_mark:|:heavy_check_mark:|
@@ -53,4 +54,5 @@ From SUSE Linux Enterprise Server 15 onward, only RMT or SUMA is available.
 Some modules are not required, as they provide additional functionality.
 RMT fully supports migrations into and within SLE 15, so it will only add the minimal required modules.
 SMT does not fully support these migrations, and it will enable all available modules on the system.\
-<a name="self-support">2</a>: Only available with [self-support](https://www.suse.com/support/self-support/).
+<a name="self-support">2</a>: Only available with [self-support](https://www.suse.com/support/self-support/). \
+<a name="rdeb_support">3</a>: This feature is availble versions 2.16 and above. Some debian repositories might not work due to checksum issue caused by inconsistent packaging.

@@ -72,5 +72,16 @@ module RMT
       g.test_framework :rspec
     end
 
+    # Rails initialization process requires a secret key base present in either:
+    # - SECRET_KEY_BASE env
+    # - credentials.secret_key_base
+    # - secrets.secret_key_base
+    #
+    # Else the boot process will be halted. RMT does not use any of those
+    # facilities. Hardcoding it here keeps rails happy and allows the boot
+    # process to continue.
+    config.require_master_key = false
+    config.read_encrypted_secrets = false
+    config.secret_key_base = 'rmt-does-not-use-this'
   end
 end

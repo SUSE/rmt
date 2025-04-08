@@ -14,12 +14,10 @@ class ServicesController < ApplicationController
   # authenticate requests on this method for Zypper so we have a better picture
   # which systems are still being active (even if not using SUSEConnect).
   before_action only: %w[show] do
-    ua = request.headers['HTTP_USER_AGENT']
-
     # Zypper will never provide the `system_token` credentials for the system.
     # Hence, if there are duplicates, we will not be able to deterministically
     # tell which system is to be updated. Just skip it altogether on this case.
-    authenticate_system(skip_on_duplicated: true) if ua && ua.downcase.starts_with?('zypp')
+    authenticate_system(skip_on_duplicated: true) if zypper_request?
   end
 
   ZYPPER_SERVICE_TTL = 86400
@@ -30,9 +28,15 @@ class ServicesController < ApplicationController
 
     builder = Builder::XmlMarkup.new
     service_xml = builder.repoindex(ttl: ZYPPER_SERVICE_TTL) do
+      # NOTE: We only care to add the ?credentials parameter to the repository URL if
+      # we are *NOT* dealing with plain RMT but the authentication engine of Public Cloud.
+      # The engine requires to supply the service name to function properly, since repositories
+      # are authenticated in this case.
+      service_name = defined?(StrictAuthentication::Engine) ? service.name : nil
+
       repos.each do |repo|
         attributes = {
-          url: make_repo_url(request.base_url, repo.local_path, service.name),
+          url: make_repo_url(request.base_url, repo.local_path, service_name),
           alias: repo.name,
           name: repo.name,
           autorefresh: repo.autorefresh,

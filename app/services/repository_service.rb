@@ -3,7 +3,7 @@ class RepositoryService
   class RepositoryNotFound < RuntimeError
   end
 
-  def create_repository!(product, url, attributes, custom: false)
+  def update_or_create_repository!(product, url, attributes, custom: false)
     repository = if custom
                    Repository.find_or_initialize_by(external_url: url)
                  else
@@ -35,6 +35,19 @@ class RepositoryService
     end
 
     repository
+  end
+
+  def update_repository!(repo_data)
+    uri = URI(repo_data[:url])
+    auth_token = uri.query
+
+    Repository.find_by!(scc_id: repo_data[:id]).update!(
+      auth_token: auth_token,
+      enabled: repo_data[:enabled],
+      autorefresh: repo_data[:autorefresh],
+      external_url: "#{uri.scheme}://#{uri.host}#{uri.path}",
+      local_path: Repository.make_local_path(uri)
+    )
   end
 
   def attach_product!(product, repository)

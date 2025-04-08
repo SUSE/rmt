@@ -3,7 +3,9 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   before_action :authenticate_system
   before_action :require_product, only: %i[show activate upgrade destroy]
   before_action :check_product_service_and_repositories, only: %i[show activate]
+  before_action :load_subscription, only: %i[activate upgrade]
   before_action :check_base_product_dependencies, only: %i[activate upgrade show]
+  after_action :refresh_system_token, only: %i[activate upgrade], if: -> { request.headers.key?(SYSTEM_TOKEN_HEADER) }
 
   def activate
     create_product_activation
@@ -11,7 +13,13 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   end
 
   def show
-    if @system.products.include? @product
+    if @product.identifier.casecmp?('sles')
+      # if system has SLE Micro
+      # it should access to SLES products
+      sle_micro = @system.products.any? { |p| p.identifier.downcase.include?('micro') }
+      sle_micro_same_arch = @system.products.pluck(:arch).include?(@product.arch) if sle_micro
+    end
+    if @system.products.include?(@product) || sle_micro_same_arch
       respond_with(
         @product,
         serializer: ::V3::ProductSerializer,
@@ -92,9 +100,13 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
     mandatory_repos = @product.repositories.only_enabled
     mirrored_repos = @product.repositories.only_enabled.only_fully_mirrored
+    missing_repo_ids = (mandatory_repos - mirrored_repos).pluck(:scc_id).join(', ')
 
     unless mandatory_repos.size == mirrored_repos.size
-      fail ActionController::TranslatedError.new(N_('Not all mandatory repositories are mirrored for product %s'), @product.friendly_name)
+      # rubocop:disable Layout/LineLength
+      fail ActionController::TranslatedError.new(N_('Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can get enabled with: rmt-cli repos enable %s;  rmt-cli mirror'),
+                                                 @product.friendly_name, missing_repo_ids, missing_repo_ids)
+      # rubocop:enable Layout/LineLength
     end
   end
 
@@ -103,29 +115,11 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
     # in BYOS mode, we rely on the activation being performed in
     # `engines/scc_proxy/lib/scc_proxy/engine.rb` and don't need further checks here
-    return activation if @system.proxy_byos
+    return activation if @system.byos?
 
-    if params[:token].present?
-      subscription = Subscription.find_by(regcode: params[:token])
-
-      unless subscription
-        raise ActionController::TranslatedError.new(N_('No subscription with this Registration Code found'))
-      end
-
-      if subscription.expired?
-        error = N_('The subscription with the provided Registration Code is expired')
-        raise ActionController::TranslatedError.new(error)
-      end
-
-      unless @product.free
-        unless subscription.products.include?(@product)
-          error = N_("The subscription with the provided Registration Code does not include the requested product '%s'")
-          raise ActionController::TranslatedError.new(error, @product.friendly_name)
-        end
-
-        activation.subscription = subscription
-        activation.save
-      end
+    if @subscription.present?
+      activation.subscription = @subscription
+      activation.save
     end
 
     activation
@@ -133,6 +127,34 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
   def remove_previous_product_activations(product_ids)
     @system.activations.includes(:product).where('products.id' => product_ids).destroy_all
+  end
+
+  def load_subscription
+    # Find subscription by regcode if provided and not a public cloud system,
+    # otherwise check if there's already an activation with a matching
+    # subscription (for migrations, bsc#1220109)
+    if params[:token].present? && @system.not_applicable?
+      @subscription = Subscription.find_by(regcode: params[:token])
+      unless @subscription
+        raise ActionController::TranslatedError.new(N_('No subscription with this Registration Code found'))
+      end
+
+      if @subscription.expired?
+        error = N_('The subscription with the provided Registration Code is expired')
+        raise ActionController::TranslatedError.new(error)
+      end
+
+      if !@product.free && @subscription.products.exclude?(@product)
+        error = N_("The subscription with the provided Registration Code does not include the requested product '%s'")
+        raise ActionController::TranslatedError.new(error, @product.friendly_name)
+      end
+    else
+      # pluck subscription based on product/extension
+      product_ids = ([@product] + @product.predecessors + @product.successors).map(&:id)
+      subscription_id = @system.activations.includes(:subscription,
+                                                     :product).where('products.id' => product_ids).pluck(:subscription_id).uniq.first
+      @subscription = Subscription.find(subscription_id) if subscription_id
+    end
   end
 
   # Check if extension base product is already activated

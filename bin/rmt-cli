@@ -42,8 +42,19 @@ if Settings.try(:host_system).blank? && File.exist?(RMT::CREDENTIALS_FILE_LOCATI
   warn "Run as root or adjust the permissions."
 end
 
+unless Settings['database']
+  warn "Error loading database config."
+  warn 'Please make sure that /etc/rmt.conf is readable by the rmt process and has your database configured.'
+  exit RMT::CLI::Error::ERROR_OTHER
+end
+
 db_config = RMT::Config.db_config
 ActiveRecord::Base.establish_connection(db_config)
+
+if ActiveRecord::Base.connection.adapter_name != "Mysql2"
+  warn "Running with experimental support for #{ActiveRecord::Base.connection.adapter_name}."
+  warn 'RMT is running without locking operations, make sure not to run it in multipe processes.'
+end
 
 begin
   RMT::CLI::Main.start(ARGV)

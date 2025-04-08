@@ -6,39 +6,7 @@ module ZypperAuth
       Thread.current[:logger]
     end
 
-    def verify_instance(request, logger, system)
-      instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
-
-      base_product = system.products.find_by(product_type: 'base')
-      return false unless base_product
-
-      cache_key = [request.remote_ip, system.login, base_product.id].join('-')
-      cached_result = Rails.cache.fetch(cache_key)
-      return cached_result unless cached_result.nil?
-
-      verification_provider = InstanceVerification.provider.new(
-        logger,
-        request,
-        base_product.attributes.symbolize_keys.slice(:identifier, :version, :arch, :release_type),
-        instance_data
-      )
-
-      is_valid = verification_provider.instance_valid?
-      InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id)
-      is_valid
-    rescue InstanceVerification::Exception => e
-      message = ''
-      if system.proxy_byos
-        result = SccProxy.scc_check_subscription_expiration(request.headers, system.login, system.system_token, logger)
-        if result[:is_active]
-          InstanceVerification.update_cache(request.remote_ip, system.login, base_product.id)
-          return true
-        end
-
-        message = result[:message]
-      else
-        message = e.message
-      end
+    def zypper_auth_message(request, system, verification_provider, message)
       details = [ "System login: #{system.login}", "IP: #{request.remote_ip}" ]
       details << "Instance ID: #{verification_provider.instance_id}" if verification_provider.instance_id
       details << "Billing info: #{verification_provider.instance_billing_info}" if verification_provider.instance_billing_info
@@ -47,16 +15,6 @@ module ZypperAuth
         Access to the repos denied: #{message}
         #{details.join(', ')}
       LOGMSG
-
-      Rails.cache.write(cache_key, false, expires_in: 2.minutes)
-      false
-    rescue StandardError => e
-      logger.error('Unexpected instance verification error has occurred:')
-      logger.error(e.message)
-      logger.error("System login: #{system.login}, IP: #{request.remote_ip}")
-      logger.error('Backtrace:')
-      logger.error(e.backtrace)
-      false
     end
   end
 
@@ -119,7 +77,7 @@ module ZypperAuth
         # additional validation for zypper service XML controller
         before_action :verify_instance
         def verify_instance
-          unless ZypperAuth.verify_instance(request, logger, @system)
+          unless InstanceVerification.verify_instance(request, logger, @system)
             render(xml: { error: 'Instance verification failed' }, status: 403)
           end
         end
@@ -129,9 +87,16 @@ module ZypperAuth
         alias_method :original_path_allowed?, :path_allowed?
 
         # additional validation for strict_authentication auth subrequest
-        def path_allowed?(path)
-          return false unless original_path_allowed?(path)
-          ZypperAuth.verify_instance(request, logger, @system)
+        def path_allowed?(headers)
+          paths_allowed = original_path_allowed?(headers)
+          return false unless paths_allowed
+
+          return true if @system.byos?
+
+          instance_verified = InstanceVerification.verify_instance(request, logger, @system)
+          DataExport.handler.new(@system, request, params, logger).export_rmt_data if instance_verified
+
+          instance_verified
         end
       end
     end

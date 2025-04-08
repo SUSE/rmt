@@ -66,3 +66,10 @@ FactoryBot.define do
     end
   end
 end
+
+FactoryBot.define do
+  factory :repositories_services_association do
+    association :repository
+    association :service
+  end
+end

@@ -12,6 +12,7 @@ class RMT::Downloader
   RETRY_DELAY_SECONDS = 2
 
   attr_accessor :concurrency, :logger, :auth_token
+  attr_reader :downloaded_files_count, :downloaded_files_size
 
   def initialize(logger:, auth_token: nil, track_files: true)
     Typhoeus::Config.user_agent = "RMT/#{RMT::VERSION}"
@@ -22,6 +23,8 @@ class RMT::Downloader
     @logger = logger
     @track_files = track_files
     @queue = []
+    @downloaded_files_count = 0
+    @downloaded_files_size = 0
   end
 
   # returns the list of files that failed to download when 'ignore_errors: true',
@@ -209,6 +212,9 @@ class RMT::Downloader
                                 local_path: file.local_path,
                                 size: File.size(file.local_path))
     end
+
+    @downloaded_files_count += 1
+    @downloaded_files_size += File.size(file.local_path)
 
     @logger.info("↓ #{File.basename(file.local_path)}")
     @logger.debug("  (new mtime: #{File.mtime(file.local_path).utc})")

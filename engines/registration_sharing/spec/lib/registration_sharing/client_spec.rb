@@ -32,12 +32,14 @@ describe RegistrationSharing::Client do
         'login' => system.login,
         'password' => system.password,
         'hostname' => system.hostname,
-        'proxy_byos' => system.proxy_byos,
+        'proxy_byos' => system.byos?,
+        'proxy_byos_mode' => system.proxy_byos_mode,
         'system_token' => system.system_token,
         'registered_at' => system.registered_at,
         'created_at' => system.created_at,
         'last_seen_at' => nil,
         'instance_data' => instance_data,
+        'pubcloud_reg_code' => system.pubcloud_reg_code,
         'activations' => [
           { 'product_id' => system.products.first.id, 'created_at' => system.activations.first.created_at }
         ]

@@ -43,6 +43,11 @@ shared_context 'command with non-interactive mode' do
   let(:confirmation_prompt) { '' }
 end
 
+shared_context 'command with non-interactive and verbose options' do
+  let(:argv) { ['packages', '--non-interactive', '--verbose'] }
+  let(:confirmation_prompt) { '' }
+end
+
 shared_context 'mirror repositories' do
   before do
     mirrored_repos.each do |repo|

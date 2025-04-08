@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+
+# Where is the rmt-server source code located
+SOURCE=${SOURCE:-/usr/src/rmt-server}
+
+group() { echo "::group::$1"; }
+groupend() { echo "::groupend::"; }
+
+group "synchronize SCC product/repositories"
+  rmt-cli sync
+groupend
+
+group "run feature tests"
+pushd "$SOURCE"
+  NO_COVERAGE=true bundle exec rspec features/
+popd
+groupend

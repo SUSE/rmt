@@ -14,11 +14,18 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       {
         identifier: product.identifier.downcase,
         version: product.version,
-        arch: product.arch
+        arch: product.arch,
+        byos_mode: 'byos'
       }
     end
 
-    before { post url, headers: headers, params: payload }
+    before do
+      allow(InstanceVerification).to receive(:update_cache)
+      allow(File).to receive(:directory?)
+      allow(Dir).to receive(:mkdir)
+      allow(FileUtils).to receive(:touch)
+      post url, headers: headers, params: payload
+    end
 
     context 'when system is registered with the old client' do
       let(:system) { FactoryBot.create(:system, :with_system_information, instance_data: '<document>test</document>') }

@@ -135,6 +135,26 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
         end
       end
 
+      shared_context 'activate with token in request headers' do
+        let(:payload) do
+          {
+            identifier: product.identifier,
+            version: product.version,
+            arch: product.arch,
+            token: regcode
+          }
+        end
+
+        before { post url, headers: { 'System-Token' => 'existing_token' }.merge(headers), params: payload }
+        subject do
+          Struct.new(:body, :code, :headers).new(
+            JSON.parse(response.body, symbolize_names: true),
+            response.status,
+            response.headers
+          )
+        end
+      end
+
       context 'unknown subscription' do
         include_context 'with subscriptions'
         let(:regcode) { 'NOT-EXISTING-SUBSCRIPTION' }
@@ -172,6 +192,17 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
           activation = Activation.find_by(subscription: subscription)
           expect(activation.product).to eq(product)
         end
+      end
+
+      context 'token update after activation is success' do
+        let(:subscription) { create :subscription, :with_products }
+        let(:product) { subscription.products.first }
+        let(:regcode) { subscription.regcode }
+
+        include_context 'activate with token in request headers'
+        its(:code) { is_expected.to eq(201) }
+        its(:headers) { is_expected.to include('System-Token') }
+        its(:headers['System-Token']) { is_expected.not_to eq('existing_token') }
       end
     end
   end
@@ -225,6 +256,18 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
         its(:body) { is_expected.to eq(serialized_json) }
       end
 
+      describe 'response header should contain token' do
+        subject { response }
+
+        let(:token_headers) do
+          headers.merge({ 'System-Token' => 'some_token' })
+        end
+
+        before { get url, headers: token_headers, params: payload }
+        its(:code) { is_expected.to eq('200') }
+        its(:headers) { is_expected.to include('System-Token') }
+      end
+
       describe 'response with "-" in version' do
         subject { response }
 
@@ -240,6 +283,33 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
           activation.service.product.update_attribute(:version, '24.0')
           get url, headers: headers, params: payload
         end
+
+        its(:code) { is_expected.to eq('200') }
+        its(:body) { is_expected.to eq(serialized_json) }
+      end
+    end
+
+    context 'when SLE Micro product is activated' do
+      let(:system) { FactoryBot.create(:system, :with_activated_product_sle_micro) }
+      let(:product) { FactoryBot.create(:product, :product_sles, :with_mirrored_repositories) }
+      let(:payload) do
+        {
+          identifier: product.identifier,
+          version: product.version,
+          arch: system.products.first.arch
+        }
+      end
+      let(:serialized_json) do
+        V3::ProductSerializer.new(
+          product,
+          base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
+        ).to_json
+      end
+
+      describe 'response' do
+        subject { response }
+
+        before { get url, headers: headers, params: payload }
 
         its(:code) { is_expected.to eq('200') }
         its(:body) { is_expected.to eq(serialized_json) }
@@ -312,6 +382,18 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       system.reload
     end
 
+    it 'calls refresh_system_token after upgrade action when system token header is present' do
+      put url, headers: headers.merge('System-Token' => 'test_token'), params: payload
+      expect(response.code).to eq('201')
+      expect(response.headers).to include('System-Token')
+      expect(response.headers['System-Token']).not_to eq('test_token')
+    end
+
+    it 'No update in token after upgrade action when system token header is absent' do
+      put url, headers: headers, params: payload
+      expect(response.code).to eq('201')
+      expect(response.headers).not_to include('System-Token')
+    end
     context 'new product' do
       its(:code) { is_expected.to eq('201') }
       its(:body) { is_expected.to eq(serialized_json) }
@@ -357,6 +439,32 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
 
       its(:code) { is_expected.to eq('201') }
       its(:body) { is_expected.to eq(serialized_json) }
+    end
+
+    context 'with paid activated previous product' do
+      let(:subscription) { create :subscription }
+      let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, subscription: subscription) }
+      let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories, predecessors: [old_product]) }
+      let(:serialized_json) do
+        V3::ServiceSerializer.new(
+          new_product.service,
+          obsoleted_service_name: old_product.service.name,
+          base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
+        ).to_json
+      end
+
+
+      its(:code) { is_expected.to eq('201') }
+      its(:body) { is_expected.to eq(serialized_json) }
+
+      it('has one activation') { expect(system.activations.count).to eq(1) }
+      it 'moves subscription to new_product' do
+        expect(system.activations.reload.first.subscription).to eq(subscription)
+      end
+
+      it 'deactivates old product and activates new product' do
+        expect(system.activations.first.reload.service_id).to equal(new_product.service.id)
+      end
     end
   end
 

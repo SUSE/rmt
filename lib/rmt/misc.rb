@@ -4,6 +4,9 @@ module RMT
   module Misc
     def self.make_repo_url(base_url, local_path, service_name = nil)
       uri = URI.join(base_url, File.join(RMT::DEFAULT_MIRROR_URL_PREFIX, local_path))
+      # NOTE: Make sure to only add the credentials where necessary (Pubcloud? or SMT?)
+      # In all other cases do not add them, since this will break other repository
+      # managers such as yum!
       uri.query = "credentials=#{service_name}" if service_name
       uri.to_s
     end

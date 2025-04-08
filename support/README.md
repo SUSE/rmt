@@ -1,7 +1,7 @@
 Supportconfig plugin development notes
 ======================================
 
-Library of useful functions is installed by supportutils at: /usr/lib/supportconfig/resources/scplugin.rc
+Library of useful functions is installed by supportutils at: /usr/lib/supportconfig/resources/supportconfig.rc
 
 plugin functions begin with 'p'.
 

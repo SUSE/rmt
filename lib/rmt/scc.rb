@@ -18,16 +18,35 @@ class RMT::SCC
     @logger.info(_('Downloading data from SCC'))
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
-    @logger.info(_('Updating products'))
     data = scc_api_client.list_products
+    @logger.info(_('Updating products'))
     data.each { |item| create_product(item) }
     data.each { |item| migration_paths(item) }
 
-    update_repositories(scc_api_client.list_repositories)
+    # Update repositories with details (eg. access token) from API
+    repositories_data = scc_api_client.list_repositories
+    update_repositories(repositories_data)
 
     Repository.remove_suse_repos_without_tokens!
+    remove_obsolete_repositories(repositories_data)
 
     update_subscriptions(scc_api_client.list_subscriptions)
+  end
+
+  def remove_obsolete_repositories(repos_data)
+    @logger.info _('Removing obsolete repositories')
+    return if repos_data.empty?
+
+    scc_repo_ids = repos_data.pluck(:id)
+
+
+    # Find repositories in RMT that no longer exist in SCC
+    # Only consider repositories that have a non-null scc_id
+    repos_to_remove = Repository.only_scc.where.not(scc_id: scc_repo_ids)
+    if repos_to_remove.any?
+      repos_to_remove.destroy_all
+      @logger.debug("Successfully removed #{repos_to_remove.count} obsolete repositories")
+    end
   end
 
   def export(path)
@@ -84,7 +103,7 @@ class RMT::SCC
     scc_api_client = SUSE::Connect::Api.new(Settings.scc.username, Settings.scc.password)
 
     # do not sync BYOS proxy systems to SCC
-    systems = System.where('scc_registered_at IS NULL OR last_seen_at > scc_registered_at').where(proxy_byos: false)
+    systems = System.where('scc_registered_at IS NULL OR last_seen_at > scc_registered_at').not_byos
     @logger.info(_('Syncing %{count} updated system(s) to SCC') % { count: systems.size })
 
     begin
@@ -132,8 +151,8 @@ class RMT::SCC
 
   def update_repositories(repos)
     @logger.info _('Updating repositories')
-    repos.each do |item|
-      update_auth_token_enabled_attr(item)
+    repos.each do |repo|
+      repository_service.update_repository!(repo)
     end
   end
 
@@ -185,17 +204,21 @@ class RMT::SCC
   end
 
   def create_service(item, product)
-    product.create_service!
+    service = product.find_or_create_service!
+
     item[:repositories].each do |repo_item|
-      repository_service.create_repository!(product, repo_item[:url], repo_item)
+      repository_service.update_or_create_repository!(product, repo_item[:url], repo_item)
     end
+
+    # detect repositories removed from the product in SCC
+    removed_repos = service.repositories.only_scc.where.not(scc_id: item[:repositories].pluck(:id))
+    disassociate_repositories(service, removed_repos) if removed_repos.present?
+
   end
 
-  def update_auth_token_enabled_attr(item)
-    uri = URI(item[:url])
-    auth_token = uri.query
-
-    Repository.find_by!(scc_id: item[:id]).update! auth_token: auth_token, enabled: item[:enabled]
+  def disassociate_repositories(service, repos)
+    service.repositories.delete(repos)
+    @logger.debug("Removed repositories #{repos.pluck(:scc_id)} from '#{service.product.friendly_name}'")
   end
 
   def migration_paths(item)

@@ -40,7 +40,7 @@ class Product < ApplicationRecord
   has_and_belongs_to_many :successors, class_name: 'Product', join_table: :product_predecessors,
     association_foreign_key: :product_id, foreign_key: :predecessor_id
 
-  enum product_type: { base: 'base', module: 'module', extension: 'extension' }
+  enum product_type: { base: 'base', module: 'module', extension: 'extension', saas: 'SaaS' }
 
   scope :free, -> { where(free: true) }
   scope :mirrored, lambda {
@@ -153,7 +153,7 @@ class Product < ApplicationRecord
     joins(:product_extensions_associations).where(products_extensions: { recommended: true, root_product_id: root_product_ids })
   end
 
-  def create_service!
+  def find_or_create_service!
     service = Service.find_by(product_id: id)
     return service if service
 

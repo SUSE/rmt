@@ -1,0 +1,11 @@
+---
+update-ci-container:
+  filters:
+    event: push
+  steps:
+    - trigger_services:
+        project: systemsmanagement:SCC:containers
+        package: rmt-ci-container
+    - rebuild_package:
+        project: systemsmanagement:SCC:containers
+        package: rmt-ci-container

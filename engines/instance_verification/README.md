@@ -1,7 +1,22 @@
 # InstanceVerification
-This plugin implements a framework for additional checks during product activation. The checks themselves are provider-specific, see `lib/instance_verification/providers/example.rb` for an example implementation.
 
-# Instance metadata
+This plugin implements a framework for additional client validation.
+It hooks into the API endpoints:
+
+* `Api::Connect::V3::Subscriptions::SystemsController#announce_system`
+  (initial storing of provided system instance data)
+* `Api::Connect::V3::Systems::ProductsController#activate`,
+  `Api::Connect::V3::Systems::ProductsController#upgrade`
+  (verify that the system has access to the product during product activation)
+
+After successful verification, the cache key for that system is added to a Rails cache
+for a fixed amount of time which varies depending on whether the system is PAYG, BYOS or HYBRID.
+This cache is also used by the `zypper_auth` engine.
+
+How to verify the instance data is provider-specific, see `lib/instance_verification/providers/example.rb` for an example implementation.
+
+## Instance metadata
+
 Depending on the CSP the metadata can look more or less like this
 
 ```json

@@ -44,7 +44,6 @@ RSpec.describe SUSE::Connect::Api do
     end
   end
 
-  # rubocop:disable RSpec/MessageChain
   describe '#connect_api' do
     subject(:method_call) { api_client.send(:connect_api) }
 
@@ -77,7 +76,6 @@ RSpec.describe SUSE::Connect::Api do
       end
     end
   end
-  # rubocop:enable RSpec/MessageChain
 
   context 'api requests' do
     before do

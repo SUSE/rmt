@@ -18,19 +18,18 @@ class Repository < ApplicationRecord
   validates :local_path, presence: true
   validates :friendly_id, presence: true
 
-  before_destroy :ensure_destroy_possible
-
   class << self
 
     def remove_suse_repos_without_tokens!
-      where(auth_token: nil).where('external_url LIKE ?', 'https://updates.suse.com%').delete_all
+      where(auth_token: nil).where("external_url LIKE '%.suse.com%'").where(installer_updates: 0).where.not(scc_id: nil).delete_all
     end
 
     # Mangles remote repo URL to make a nicer local path, see specs for examples
     def make_local_path(url)
       uri = URI(url)
       path = uri.path.to_s
-      path.gsub!(%r{^/repo}, '') if (uri.hostname == 'updates.suse.com')
+      # drop '/repo' from SLE11 paths, to avoid double /repo/repo in local storage path.
+      path.gsub!(%r{^/repo/\$RCE/}, '/$RCE/')
       (path == '') ? '/' : path
     end
 
@@ -67,12 +66,6 @@ class Repository < ApplicationRecord
 
   def custom?
     scc_id.nil?
-  end
-
-  private
-
-  def ensure_destroy_possible
-    throw(:abort) unless custom?
   end
 
 end

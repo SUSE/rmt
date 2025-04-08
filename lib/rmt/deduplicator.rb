@@ -16,7 +16,7 @@ module RMT::Deduplicator
     make_file_dir(target_file.local_path)
     source_file_path = source_files.first.local_path
 
-    if RMT::Config.deduplication_by_hardlink? && !airgap_mode
+    if RMT::Config.deduplication_by_hardlink? && !is_airgapped
       hardlink(source_file_path, target_file.local_path)
       logger.info("← #{File.basename(target_file.local_path)}")
     else
@@ -25,7 +25,7 @@ module RMT::Deduplicator
     end
 
     # we don't want to track airgap files in our database
-    unless airgap_mode
+    unless is_airgapped
       DownloadedFile.track_file(checksum: target_file.checksum,
                                 checksum_type: target_file.checksum_type,
                                 local_path: target_file.local_path,

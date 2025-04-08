@@ -1,7 +1,88 @@
 -------------------------------------------------------------------
-Thu Oct 12 11:00:00 UTC 2023 - Zuzana Petrova <zpetrova@suse.com>
+Tue Jan 21 10:49:54 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
-- rmt-client-setup-res script: fix for CentOS8 clients (bsc#1214709)
+- Version 2.22
+  * rmt-server-pubcloud:
+    * Add pubcloud_reg_code column to systems table
+    * Add cache directories and their expiration times to the scrubber
+  * rmt-cli:
+    * Disable delta RPM mirroring by default (gh#1288)
+  * rmt-server:
+    Add `activejob` and `resque` gems to vendored gemfile, to enable background
+    job support in RMT and all engines.
+
+-------------------------------------------------------------------
+Fri Jan 03 10:44:00 UTC 2025 - Luís Caparroz <lcaparroz@suse.com>
+
+- Version 2.21
+  * Allow users to configure the SUMA product tree base URL to download
+    'product_tree.json' from host other than 'scc.suse.com'. (bsc#1234844)
+  * Update Micro check due to Micro 6.0 and 6.1 identifier to keep bsc#1230419 in place
+  * Remove obsolete repositories and associations from rmt during SCC sync (bsc#1232808)
+  * Do not re-download repomd metadata if already exists and be the latest version
+  * rmt-server-pubcloud:
+    * Update Micro check due to Micro 6.0 and 6.1 identifier to keep bsc#1230419 in place
+    * Update Zypper path allowing check to handle paid extensions (i.e. LTSS) (bsc#1230157)
+    * Add data export engine
+
+-------------------------------------------------------------------
+Mon Dec 23 08:03:56 UTC 2024 - Parag Jain <parag.jain@suse.com>
+
+- Version 2.20
+  * RMT packaging: don't overwrite custom sync/mirror timer config on package update
+  * Extend column size for repository and file paths (bsc#1229152)
+  * Forward suseconnect client user-agents to SCC
+  * rmt-server-pubcloud:
+    * Fix LTSS product verification (bsc#1230154)
+    * Fix activations check when no product info is available (bsc#1230157)
+    * Fix Azure SCC connection (bsc#1233314)
+    * Deny access of Azure Basic type images to LTSS
+    * Allow SLE Micro system to access SLES repositories (bsc#1230419)
+  * Skip system token rotation in read-only APIs
+  * Enable RMT to handle the new dl.suse.com CDN domain (bsc#1234641)
+  * Clean up RMT metadata after repo update (bsc#1233308)
+
+-------------------------------------------------------------------
+Wed Aug 21 15:28:43 UTC 2024 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Version 2.19
+  * Fix for mirroring products that contain special characters (eg.: '$') in their path
+  * Fix for packages with path longer 255 characters (bsc#1229152)
+  * rmt-server-pubcloud:
+    * Support registration of extensions in BYOS mode on top of a PAYG system (hybrid mode) (jsc#PCT-400)
+    * Validate repository and registy access for hybrid systems
+
+-------------------------------------------------------------------
+Mon Jul  8 09:59:59 UTC 2024 - Thomas Schmidt <tschmidt@suse.com>
+
+- Include new script to fix yum-utils issue (jsc#SLL-369)
+
+-------------------------------------------------------------------
+Mon July 1 12:42:34 UTC 2024 - Adnilson Delgado <adnilson.delgado@suse.com>
+
+- Version 2.18
+  * Move temporary storage of downloaded files to the repo directory to avoid filling up /tmp partition. (gh:#1137)
+  * Fixes for RES7-LTSS and OL7-LTSS clients
+  * Instance Verification: re-setting the repository and registry cache path to the right value; update the cache scrubber paths
+
+-------------------------------------------------------------------
+Thu April 18 09:27:00 UTC 2024 - Adnilson Delgado <adnilson.delgado@suse.com>
+
+- Version 2.17 :
+  * Improve CLI mirroring summary information by adding the mirror repositories, the file count and size. (gh#702)
+  * Copy metadata content to repodata/ and not create a seperate subdirectory repodata/repodata (gh#1136)
+  * Adding Uptime tracking capability (jsc#PED-7982, jsc#PED-8018)
+  * actionpack update, fixing CVE-2024-28103 (bsc#1225997)
+  * Registry authentication host capability for public cloud
+
+-------------------------------------------------------------------
+Thu April 11 15:22:00 UTC 2024 - Felix Schnizlein <fschnizlein@suse.com>
+
+- Version 2.16 :
+  * Support bzip2 compressed repositories (bsc#1222122)
+  * Remove automatic backup generation for repodata within repository. .old_repodata
+    directories are obsolete and can be removed savely.
+  * Add support for debian repositories using flat or nested structures (jsc#PED-3684)
 
 -------------------------------------------------------------------
 Wed Oct 04 13:23:00 UTC 2023 - Felix Schnizlein <fschnizlein@suse.com>
@@ -9,6 +90,18 @@ Wed Oct 04 13:23:00 UTC 2023 - Felix Schnizlein <fschnizlein@suse.com>
 - Version 2.15:
   * Moving system hardware information to systems database table to
     allow transmitting system information dynamically. (jsc#PED-3734)
+  * Dropping Rails Secrets facilities and related config files (bsc#1215176)
+  * Updated supportconfig script (bsc#1216389)
+  * Support zstd compression for repository metadata (bsc#1218775)
+  * Do not add credential handling to normal repository URLs (bsc#1219153)
+  * Fix for SUSE Liberty registration script to allow RHEL7/SLL7/CentOS7 clients to register to RMT servers
+    * make sure yum that can read repomd.xml correctly is installed (bsc#1221223)
+  * Provide user/group symbol for user created during pre (boo#1219540)
+  * Disable authentication for license files in pubcloud context
+  * Higher registration sharing timeout
+  * rmt-server-pubcloud:
+    * Extend cache expiration time for BYOS systems (PAYG: 20 min, BYOS: 24 hours)
+    * Include byos parameter when checking subscription validity for BYOS systems with SCC
 
 -------------------------------------------------------------------
 Thu Jun 06 15:44:00 UTC 2023 - Luís Caparroz <lcaparroz@suse.com>
@@ -58,7 +151,7 @@ Mon Mar  6 09:41:32 UTC 2023 - Felix Schnizlein <fschnizlein@suse.com>
 -------------------------------------------------------------------
 Tue Jan 24 22:03:53 UTC 2023 - Thomas Schmidt <tschmidt@suse.com>
 
-- Adding -f to the file move command when moving the mirrored directory to its final location (bsc#1203171) 
+- Adding -f to the file move command when moving the mirrored directory to its final location (bsc#1203171)
 
 -------------------------------------------------------------------
 Wed Dec 21 14:07:21 UTC 2022 - Thomas Schmidt <tschmidt@suse.com>

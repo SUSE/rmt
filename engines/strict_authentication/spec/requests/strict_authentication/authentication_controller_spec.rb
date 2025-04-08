@@ -5,7 +5,7 @@ module StrictAuthentication
   RSpec.describe AuthenticationController, type: :request do
     subject { response }
 
-    let(:system) { FactoryBot.create(:system, :with_activated_product) }
+    let(:system) { FactoryBot.create(:system, :payg, :with_activated_product_sle_micro) }
 
     describe '#check' do
       context 'without authentication' do
@@ -26,11 +26,46 @@ module StrictAuthentication
             allow_any_instance_of(InstanceVerification::Providers::Example).to(
               receive(:instance_valid?).and_return(true)
             )
-            get '/api/auth/check', headers: auth_header.merge({ 'X-Original-URI': requested_uri })
+            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
+            allow(InstanceVerification).to receive(:update_cache)
+            get '/api/auth/check', headers: auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': 'IMDS' })
+            allow(File).to receive(:directory?)
+            allow(Dir).to receive(:mkdir)
+            allow(FileUtils).to receive(:touch)
           end
 
           context 'when requested path is not activated' do
             let(:requested_uri) { '/repo/some/uri' }
+
+            its(:code) { is_expected.to eq '403' }
+          end
+
+          context 'when requesting a file in an activated SLES repo on a SLE Micro system' do
+            let(:free_product) do
+              prod = FactoryBot.create(
+                :product, :module, :with_mirrored_repositories
+                )
+              prod.identifier = 'sle-module-foo'
+              prod.arch = system.products.first.arch
+              prod.save!
+              prod
+            end
+            let(:requested_uri) { '/repo' + free_product.repositories.first[:local_path] + '/repodata/repomd.xml' }
+
+            its(:code) { is_expected.to eq '200' }
+          end
+
+          context 'when requesting a file in an activated SLES SAP repo on a SLE Micro system' do
+            let(:free_product) do
+              prod = FactoryBot.create(
+                :product, :module, :with_mirrored_repositories
+                )
+              prod.identifier = 'sle-module-foo-sap'
+              prod.arch = system.products.first.arch
+              prod.save!
+              prod
+            end
+            let(:requested_uri) { '/repo' + free_product.repositories.first[:local_path] + '/repodata/repomd.xml' }
 
             its(:code) { is_expected.to eq '403' }
           end
@@ -67,7 +102,7 @@ module StrictAuthentication
               )
             end
 
-            let(:system) { FactoryBot.create(:system, :with_activated_product, product: product) }
+            let(:system) { FactoryBot.create(:system, :payg, :with_activated_product, product: product) }
             let(:requested_uri) { '/repo/$path/*with/.funky/(characters)/repodata/repomd.xml' }
 
             its(:code) { is_expected.to eq '200' }
@@ -130,7 +165,7 @@ module StrictAuthentication
                 identifier: 'SUSE-Manager-Server', version: '15', arch: 'x86_64'
                 )
             end
-            let(:system) { FactoryBot.create(:system, :with_activated_product, product: my_product) }
+            let(:system) { FactoryBot.create(:system, :payg, :with_activated_product, product: my_product) }
 
             let(:suma_prod_id) do
               system.products.find do |p|
@@ -153,6 +188,30 @@ module StrictAuthentication
               its(:code) { is_expected.to eq '200' }
             end
           end
+        end
+      end
+
+      context 'wrong url' do
+        let(:my_exception) { ActionController::RoutingError.new('foo') }
+        let(:request) { ActionDispatch::TestRequest.new('a') }
+
+        it 'logs a warning' do
+          ActionDispatch::DebugExceptions.new('foo').log_error(request, my_exception)
+        end
+      end
+
+      context 'OK url' do
+        let(:request) { ActionDispatch::TestRequest.new('a') }
+        let(:my_exception) { ActionController::ParameterMissing.new('standard') }
+        let(:wrapper) do
+          ActionDispatch::ExceptionWrapper.new(
+            request.get_header('action_dispatch.backtrace_cleaner'),
+            my_exception
+          )
+        end
+
+        it 'logs error' do
+          ActionDispatch::DebugExceptions.new('foo').log_error(request, wrapper)
         end
       end
     end

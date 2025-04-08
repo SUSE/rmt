@@ -5,18 +5,20 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'puma', '~> 5.6.2'
+gem 'puma'
 gem 'mysql2', '~> 0.5.3'
+gem 'sqlite3'
 
 gem 'nokogiri', '< 1.13' # Locked because of Ruby >= 2.6 dependency
-gem 'thor'
+gem 'thor', '<= 1.2.2' # Locked because of Ruby >= 2.6 dependency
 gem 'activesupport', '~> 6.1.7'
 gem 'actionpack', '~> 6.1.7'
 gem 'actionview', '~> 6.1.7'
 gem 'activemodel', '~> 6.1.7'
 gem 'activerecord', '~> 6.1.7'
+gem 'activejob', '~> 6.1.7'
 gem 'railties', '~> 6.1.7'
-gem 'repomd_parser', '~> 0.1.4'
+gem 'repomd_parser', '~> 1.1.0'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
@@ -31,6 +33,12 @@ gem 'repomd_parser', '~> 0.1.4'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
 
+# Prometheus Exporter:
+gem 'yabeda'
+gem 'yabeda-rails'
+gem 'yabeda-puma-plugin'
+gem 'yabeda-prometheus'
+
 gem 'strong_migrations'
 
 group :development, :test do
@@ -42,7 +50,7 @@ group :development, :test do
   gem 'gettext', require: false # needed for gettext_i18n_rails tasks
   gem 'ruby_parser', '< 3.20', require: false # needed for gettext_i18n_rails tasks, Locked because of Ruby >= 2.6 dependency
   gem 'gettext_test_log'
-  gem 'memory_profiler'
+  gem 'memory_profiler', '~> 1.0.2' # locked because 1.1.0 requires ruby version >= 3.1.0
   gem 'awesome_print'
 end
 
@@ -60,10 +68,10 @@ group :test do
   gem 'rspec-command', '1.0.3'
   gem 'rspec-rails', '~> 5.0'
   gem 'factory_bot_rails', '~> 6.2.0'
-  gem 'ffaker'
+  gem 'ffaker', '<= 2.21.0' # Locked because of Ruby >= 3.0 dependency
   gem 'rspec-its'
   gem 'fakefs', '~> 1.4', require: 'fakefs/safe'
-  gem 'shoulda-matchers'
+  gem 'shoulda-matchers', '~> 4.5.1' # Locked because of Ruby >= 3.0 dependency
   gem 'webmock'
   gem 'fuubar'
   gem 'timecop'
@@ -76,7 +84,7 @@ end
 gem 'simplecov', require: false, group: :test
 
 gem 'versionist'
-gem 'responders'
+gem 'responders', '~> 3.1.1'
 gem 'typhoeus'
 gem 'active_model_serializers'
 
@@ -89,3 +97,5 @@ gem 'terminal-table', '~> 3.0'
 
 # needed by rmt-server-pubcloud
 gem 'jwt', '~> 2.1'
+gem 'base32'
+gem 'resque'
