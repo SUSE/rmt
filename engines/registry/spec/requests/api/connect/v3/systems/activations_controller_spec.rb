@@ -64,9 +64,6 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
       end
 
       context 'with repository cache valid' do
-        let(:cache_path) { "repo/#{system.proxy_byos_mode}/cache" }
-        let(:cache_name) { "#{cache_path}/127.0.0.1-#{system.login}-#{system.products.first.id}" }
-
         before do
           allow(File).to receive(:join).and_call_original
           allow(InstanceVerification).to receive(:update_cache)
@@ -75,14 +72,15 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
         end
 
         it 'refreshes registry cache key only' do
-          FileUtils.mkdir_p(cache_path)
-          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(true)
-          FileUtils.touch(cache_name)
+          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(
+            "127.0.0.1-#{system.login}-#{system.products.first.id}"
+          )
           expect(InstanceVerification).to receive(:update_cache).with(
-            "127.0.0.1-#{system.login}-#{system.products.first.id}", system.proxy_byos_mode, registry: true
+            "127.0.0.1-#{system.login}",
+            'registry',
+            registry: true
           )
           get '/connect/systems/activations', headers: headers
-          FileUtils.rm_rf(cache_path)
           data = JSON.parse(response.body)
           expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
         end
@@ -136,11 +134,12 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
 
         context 'no registry' do
           it 'refreshes registry cache key only' do
-            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(true)
+            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return("127.0.0.1-#{system.login}")
             FileUtils.mkdir_p('repo/payg/cache')
             expect(InstanceVerification).to receive(:update_cache).with(
-              "#{system.pubcloud_reg_code}-iid-#{product_triplet}-active",
-              system.proxy_byos_mode, { registry: true }
+              "127.0.0.1-#{system.login}",
+              'registry',
+              registry: true
             )
             get '/connect/systems/activations', headers: headers
             FileUtils.rm_rf('repo/payg/cache')
@@ -151,10 +150,12 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
 
         context 'registry' do
           it 'refreshes registry cache key only' do
-            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(true)
+            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(
+              "127.0.0.1-#{system.login}-#{system.products.first.id}"
+            )
             expect(InstanceVerification).to receive(:update_cache).with(
-              "#{system.pubcloud_reg_code}-iid-#{product_triplet}-active",
-              system.proxy_byos_mode,
+              "127.0.0.1-#{system.login}",
+              'registry',
               registry: true
             )
             get '/connect/systems/activations', headers: headers
@@ -289,7 +290,8 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
             allow(InstanceVerification).to receive(:verify_instance).and_call_original
             expect(InstanceVerification).to receive(:update_cache).with(
               "#{system.pubcloud_reg_code}-foo-#{product_triplet}-active",
-              'byos'
+              'byos',
+              registry: false
             )
             get '/connect/systems/activations', headers: headers
 

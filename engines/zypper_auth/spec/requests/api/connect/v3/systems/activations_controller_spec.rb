@@ -10,7 +10,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
     let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
     before do
-      allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(true)
+      allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return('foo')
       allow(InstanceVerification).to receive(:update_cache)
       get '/connect/systems/activations', headers: headers
     end
