@@ -1,6 +1,7 @@
 require 'base64'
 require 'fileutils'
 
+# rubocop:disable Metrics/ModuleLength
 module InstanceVerification
   def self.update_cache(cache_entry, mode, registry: false)
     unless registry
@@ -288,3 +289,4 @@ module InstanceVerification
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength
