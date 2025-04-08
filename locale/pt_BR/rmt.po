@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-10 23:15+0000\n"
+"PO-Revision-Date: 2025-04-08 21:56+0000\n"
 "Last-Translator: Samanta Magalhaes <samanta_texttrans@outlook.com>\n"
 "Language-Team: Portuguese (Brazil) <https://l10n.opensuse.org/projects/rmt/"
 "i18n/pt_BR/>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.9.1\n"
+"X-Generator: Weblate 5.10.3\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "%s ainda não está ativado no sistema."
@@ -71,7 +71,7 @@ msgstr "Outra instância deste comando já está em execução. Encerre a outra 
 
 #. i18n: architecture
 msgid "Arch"
-msgstr "Arquitetura"
+msgstr "Arquit."
 
 msgid "Architecture"
 msgstr "Arquitetura"
@@ -362,10 +362,10 @@ msgid "Invalid system credentials"
 msgstr "Credenciais do sistema inválidas"
 
 msgid "Last Mirrored"
-msgstr "Última espelhada"
+msgstr "Último Espelhamento"
 
 msgid "Last mirrored"
-msgstr "Última espelhada"
+msgstr "Último espelhamento"
 
 msgid "Last seen"
 msgstr "Visto pela última vez"
