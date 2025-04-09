@@ -159,7 +159,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
         include_context 'with subscriptions'
         let(:regcode) { 'NOT-EXISTING-SUBSCRIPTION' }
 
-        its(:body) { is_expected.to include(error: /No subscription with this Registration Code found/) }
+        its(:body) { is_expected.to include(error: /No subscription found with this registration code/) }
         its(:code) { is_expected.to eq(422) }
       end
 

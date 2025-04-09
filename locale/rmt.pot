@@ -47,12 +47,12 @@ msgstr ""
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:107
 msgid ""
 "Not all mandatory repositories are mirrored for product %s. Missing Repositori"
-"es (by ids): %s. On the RMT server, the missing repositories can get enabled w"
+"es (by ids): %s. On the RMT server, the missing repositories can be enabled w"
 "ith: rmt-cli repos enable %s;  rmt-cli mirror"
 msgstr ""
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:139
-msgid "No subscription with this Registration Code found"
+msgid "No subscription found with this registration code"
 msgstr ""
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:143
@@ -523,7 +523,7 @@ msgid ""
 msgstr ""
 
 #: ../lib/rmt/cli/export.rb:37
-msgid "Exporting SUSE Manager product tree failed: %{error_message}"
+msgid "Failed to export the SUSE Manager product tree: %{error_message}"
 msgstr ""
 
 #: ../lib/rmt/cli/export.rb:41 ../lib/rmt/cli/import.rb:17
@@ -539,7 +539,7 @@ msgid "Mirror repos from given path"
 msgstr ""
 
 #: ../lib/rmt/cli/import.rb:28
-msgid "Importing suma product tree failed: %{error_message}"
+msgid "Failed to import the suma product tree: %{error_message}"
 msgstr ""
 
 #: ../lib/rmt/cli/import.rb:36
