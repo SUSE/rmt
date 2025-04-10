@@ -80,13 +80,6 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
     end.flatten.compact
   end
 
-  # checks if the repodata file checksum from repodata.xml matches with the local file
-  def metadata_updated?(ref)
-    local_path = ref.cache_path
-    !File.exist?(local_path) ||
-          !RMT::ChecksumVerifier.match_checksum?(ref.checksum_type, ref.checksum, local_path)
-  end
-
   def need_to_download?(ref)
     return false if !RMT::Config.mirror_drpm_files? && ref.local_path.match?(/\.drpm$/)
 
