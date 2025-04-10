@@ -30,7 +30,12 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
     updated_metadata_files = RepomdParser::RepomdXmlParser.new.parse_file(repomd_xml.local_path)
       .map do |reference|
         ref = RMT::Mirror::FileReference.build_from_metadata(reference, base_dir: temp(:metadata), base_url: repomd_xml.base_url, cache_dir: repository_path)
-        enqueue ref
+        # only enqueue repodata file for download when it has an updated checksum, else copy from cache
+        if metadata_updated?(ref)
+          enqueue ref
+        else
+          FileUtils.cp(ref.cache_path, File.join(temp(:metadata), ref.relative_path))
+        end
         (RMT::Config.revalidate_repodata? || metadata_updated?(ref)) ? ref : nil
       end.compact
 
@@ -75,7 +80,7 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
     end.flatten.compact
   end
 
-  # only parse metadata file and verify/download files when metadata changed
+  # checks if the repodata file checksum from repodata.xml matches with the local file
   def metadata_updated?(ref)
     local_path = ref.cache_path
     !File.exist?(local_path) ||
