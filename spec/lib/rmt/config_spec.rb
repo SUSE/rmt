@@ -24,6 +24,29 @@ RSpec.describe RMT::Config do
     end
   end
 
+  describe '#mirroring revalidate_repodata' do
+    context 'defaults' do
+      [nil].each do |config_provided|
+        before { Settings['mirroring'].revalidate_repodata = config_provided }
+        it("defaults when supplied #{config_provided}") { expect(described_class.revalidate_repodata?).to be_truthy }
+      end
+    end
+
+    context 'true' do
+      [true, 'true'].each do |config_provided|
+        before { Settings['mirroring'].revalidate_repodata = config_provided }
+        it("defaults when supplied #{config_provided}") { expect(described_class.revalidate_repodata?).to be_truthy }
+      end
+    end
+
+    context 'false' do
+      [false, 'false'].each do |config_provided|
+        before { Settings['mirroring'].revalidate_repodata = config_provided }
+        it("defaults when supplied #{config_provided}") { expect(described_class.revalidate_repodata?).to be_falsey }
+      end
+    end
+  end
+
   describe '.mirror_drpm_files?' do
     let!(:tmp_dir) { Dir.mktmpdir('rmt') }
     let(:config_path) { File.join(tmp_dir, 'rmt.yml') }

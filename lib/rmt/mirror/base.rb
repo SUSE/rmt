@@ -166,4 +166,11 @@ class RMT::Mirror::Base
       error: e.message
     })
   end
+
+  # checks if the metadata file checksum from repodata.xml/Release matches with the local file
+  def metadata_updated?(ref)
+    local_path = ref.cache_path
+    !File.exist?(local_path) || !ref.checksum_type ||
+          !RMT::ChecksumVerifier.match_checksum?(ref.checksum_type, ref.checksum, local_path)
+  end
 end
