@@ -72,7 +72,7 @@ module StrictAuthentication
           false
         else
           # system is hybrid but the path is not a paid extension
-          # or path is in not free and belongs to the base product repositories
+          # or path is not free and belongs to the base product repositories
           # i.e. HA for SAP
           # check if it belongs to the free products repositories list
           true
