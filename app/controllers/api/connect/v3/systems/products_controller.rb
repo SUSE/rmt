@@ -104,7 +104,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
     unless mandatory_repos.size == mirrored_repos.size
       # rubocop:disable Layout/LineLength
-      fail ActionController::TranslatedError.new(N_('Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can get enabled with: rmt-cli repos enable %s;  rmt-cli mirror'),
+      fail ActionController::TranslatedError.new(N_('Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror'),
                                                  @product.friendly_name, missing_repo_ids, missing_repo_ids)
       # rubocop:enable Layout/LineLength
     end
@@ -136,7 +136,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     if params[:token].present? && @system.not_applicable?
       @subscription = Subscription.find_by(regcode: params[:token])
       unless @subscription
-        raise ActionController::TranslatedError.new(N_('No subscription with this Registration Code found'))
+        raise ActionController::TranslatedError.new(N_('No subscription found with this registration code'))
       end
 
       if @subscription.expired?
