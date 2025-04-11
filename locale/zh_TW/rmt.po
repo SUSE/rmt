@@ -8,8 +8,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "PO-Revision-Date: 2024-03-06 03:42+0000\n"
 "Last-Translator: Grace Yu <grace.yu@excel-gits.com>\n"
-"Language-Team: Chinese (Taiwan) <https://l10n.opensuse.org/projects/rmt/i18n/"
-"zh_TW/>\n"
+"Language-Team: Chinese (Taiwan) <https://l10n.opensuse.org/projects/rmt/i18n/z"
+"h_TW/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -49,7 +49,8 @@ msgstr "* %{name} (id：%{id}) (%{mandatory}，%{enabled}，%{mirrored_at})"
 msgid "A repository by the ID %{id} already exists."
 msgstr "已存在 ID 為 %{id} 的儲存庫。"
 
-msgid "A repository by the URL %{url} already exists."
+#, fuzzy
+msgid "A repository by the URL %{url} already exists (ID %{id})."
 msgstr "URL 為 %{url} 的儲存庫已存在。"
 
 msgid "Added association between %{repo} and product %{product}"
@@ -84,8 +85,7 @@ msgid "Attached repository to product '%{product_name}'."
 msgstr "已將儲存庫關聯至產品「%{product_name}」。"
 
 msgid "By default, inactive systems are those that have not contacted RMT in any way in the past 3 months. You can override this with the '-b / --before' flag."
-msgstr ""
-"依預設，非使用中系統是指過去 3 個月內未以任何方式與 RMT 進行聯絡的系統。您可以使用 \"-b / --before\" 旗標覆寫此預設值。"
+msgstr "依預設，非使用中系統是指過去 3 個月內未以任何方式與 RMT 進行聯絡的系統。您可以使用 \"-b / --before\" 旗標覆寫此預設值。"
 
 msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr "無法連接至資料庫伺服器。請確定已在「%{path}」中正確設定其身分證明，或使用 YaST (「%{command}」) 設定 RMT。"
@@ -157,6 +157,10 @@ msgstr "使用登入名称「%{login}」和密碼「%{password}」找不到系�
 
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "無法鏡像 SUSE Manager 產品樹，發生錯誤：%{error}"
+
+#, fuzzy
+msgid "Could not read '%{file}': %{error}"
+msgstr "n"
 
 msgid "Couldn't add custom repository."
 msgstr "無法新增自訂儲存庫。"
@@ -275,7 +279,12 @@ msgstr "鏡像中繼資料時發生錯誤：%{error}"
 msgid "Error while mirroring packages: %{error}"
 msgstr "鏡像套件時發生錯誤：%{error}"
 
-msgid "Error while moving directory %{src} to %{dest}: %{error}"
+#, fuzzy
+msgid "Error while mirroring repository: %{error}"
+msgstr "鏡像中繼資料時發生錯誤：%{error}"
+
+#, fuzzy
+msgid "Error while moving files %{glob} to %{dest}: %{error}"
 msgstr "將目錄 %{src} 移至 %{dest} 時發生錯誤：%{error}"
 
 msgid "Examples"
@@ -305,8 +314,15 @@ msgstr "正在輸出訂閱"
 msgid "Failed to download %{failed_count} files"
 msgstr "無法下載 %{failed_count} 個文件"
 
+#, fuzzy
+msgid "Failed to export the SUSE Manager product tree: %{error_message}"
+msgstr "n"
+
 msgid "Failed to import system %{system}"
 msgstr "無法輸入系統 %{system}"
+
+msgid "Failed to import the suma product tree: %{error_message}"
+msgstr ""
 
 msgid "Failed to sync systems: %{error}"
 msgstr "無法同步系統：%{error}"
@@ -389,6 +405,18 @@ msgstr "列出已註冊的系統。"
 
 msgid "List repositories which are marked to be mirrored"
 msgstr "列出標示為要鏡像的儲存庫"
+
+#, fuzzy
+msgid "Loading product data from SCC"
+msgstr "n"
+
+#, fuzzy
+msgid "Loading repository data from SCC"
+msgstr "n"
+
+#, fuzzy
+msgid "Loading subscription data from SCC"
+msgstr "n"
 
 msgid "Login"
 msgstr "登入"
@@ -486,13 +514,15 @@ msgstr "找不到產品 %s 的儲存庫"
 msgid "No repository IDs supplied"
 msgstr "未提供儲存庫 ID"
 
-msgid "No subscription with this Registration Code found"
+#, fuzzy
+msgid "No subscription found with this registration code"
 msgstr "找不到使用此註冊代碼的訂閱"
 
 msgid "Not Mandatory"
 msgstr "非強制"
 
-msgid "Not all mandatory repositories are mirrored for product %s"
+#, fuzzy
+msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
 msgstr "未鏡像產品 %s 的所有強制儲存庫"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
@@ -648,6 +678,10 @@ msgstr "移除未標示為有待鏡像的儲存庫的本地鏡像檔案"
 
 msgid "Removes old systems and their activations if they are inactive."
 msgstr "移除處於非使用中狀態的舊系統以及系統上啟用的產品。"
+
+#, fuzzy
+msgid "Removing obsolete repositories"
+msgstr "n"
 
 msgid "Repositories are not available for this product."
 msgstr "儲存庫不可用於此產品。"
@@ -862,8 +896,28 @@ msgstr "若要清理下載的檔案，請執行「%{command}」"
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr "若要指定某個有待移除的系統做為目標，請針對一系列系統及其相應登入名稱使用指令「%{command}」。"
 
+#, fuzzy
+msgid "Total Mirror Time: %{time}"
+msgstr "鏡像"
+
+#, fuzzy
+msgid "Total mirrored repositories: %{repo_count}"
+msgstr "n"
+
+#, fuzzy
+msgid "Total transferred file size: %{files_size}"
+msgstr "n"
+
+#, fuzzy
+msgid "Total transferred files: %{files_count}"
+msgstr "n"
+
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
 msgstr "總計：已清理 %{total_count} (%{total_size})，%{total_db_entries}。"
+
+#, fuzzy
+msgid "Try to access non existing temporary directory %{name}"
+msgstr "n"
 
 msgid "URL"
 msgstr "URL"
@@ -885,6 +939,9 @@ msgstr "正在更新儲存庫"
 
 msgid "Updating subscriptions"
 msgstr "正在更新訂閱"
+
+msgid "Uptime data is malformed '%s'"
+msgstr ""
 
 msgid "Version"
 msgstr "版本"

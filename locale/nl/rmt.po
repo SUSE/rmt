@@ -33,9 +33,7 @@ msgid "%{file} - File does not exist"
 msgstr "%{file} - Bestand bestaat niet"
 
 msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
-msgstr ""
-"%{file} - verzoek is mislukt met HTTP statuscode %{code}, returncode "
-"'%{return_code}'"
+msgstr "%{file} - verzoek is mislukt met HTTP statuscode %{code}, returncode '%{return_code}'"
 
 msgid "%{file} does not exist."
 msgstr "%{file} bestaat niet."
@@ -52,7 +50,8 @@ msgstr "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 msgid "A repository by the ID %{id} already exists."
 msgstr "Een opslagruimte met de ID %{id} bestaat al."
 
-msgid "A repository by the URL %{url} already exists."
+#, fuzzy
+msgid "A repository by the URL %{url} already exists (ID %{id})."
 msgstr "Een opslagruimte met de URL %{url} bestaat al."
 
 msgid "Added association between %{repo} and product %{product}"
@@ -68,9 +67,7 @@ msgid "All repositories have already been enabled."
 msgstr "Alle opslagruimtes zijn al ingeschakeld."
 
 msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
-msgstr ""
-"Een ander exemplaar van di commando is al actief. Beëindig het andere "
-"exemplaar of wacht op het beëindigen."
+msgstr "Een ander exemplaar van di commando is al actief. Beëindig het andere exemplaar of wacht op het beëindigen."
 
 #. i18n: architecture
 msgid "Arch"
@@ -80,9 +77,7 @@ msgid "Architecture"
 msgstr "Architectuur"
 
 msgid "Ask for confirmation or do not ask for confirmation and require no user interaction"
-msgstr ""
-"Om bevestiging vragen of vraag niet om bevestiging en vereis geen interactie "
-"van de gebruiker"
+msgstr "Om bevestiging vragen of vraag niet om bevestiging en vereis geen interactie van de gebruiker"
 
 msgid "Attach an existing custom repository to a product"
 msgstr "Een bestaande aangepaste opslagruimte koppelen aan een product"
@@ -91,10 +86,7 @@ msgid "Attached repository to product '%{product_name}'."
 msgstr "Gekoppelde opslagruimte voor product '%{product_name}'."
 
 msgid "By default, inactive systems are those that have not contacted RMT in any way in the past 3 months. You can override this with the '-b / --before' flag."
-msgstr ""
-"Standaard zijn inactieve systemen diegenen die op geen enkele manier contact "
-"met RMT hebben gehad in de laatste 3 maanden. U kunt hier overheen gaan met "
-"de vlag '-b / --before'."
+msgstr "Standaard zijn inactieve systemen diegenen die op geen enkele manier contact met RMT hebben gehad in de laatste 3 maanden. U kunt hier overheen gaan met de vlag '-b / --before'."
 
 msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr "Kan geen verbinding maken met databaseserver. Zorg ervoor dat de referenties correct zijn geconfigureerd in '%{path}' of configureer RMT met YaST ('%{command}')."
@@ -160,6 +152,9 @@ msgstr "Kan systeem met aanmeldingsnaam \\\"%{login}\\\" en wachtwoord \\\"%{pas
 #, fuzzy
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "Kan SUMA-productstructuur niet spiegelen met fout: %{error}"
+
+msgid "Could not read '%{file}': %{error}"
+msgstr ""
 
 #, fuzzy
 msgid "Couldn't add custom repository."
@@ -284,7 +279,12 @@ msgstr "Fout bij het spiegelen van metagegevens: %{error}"
 msgid "Error while mirroring packages: %{error}"
 msgstr "Fout bij het spiegelen van de licentie: %{error}"
 
-msgid "Error while moving directory %{src} to %{dest}: %{error}"
+#, fuzzy
+msgid "Error while mirroring repository: %{error}"
+msgstr "Fout bij het spiegelen van metagegevens: %{error}"
+
+#, fuzzy
+msgid "Error while moving files %{glob} to %{dest}: %{error}"
 msgstr "Fout bij het verplaatsen van directory %{src} naar %{dest}: %{error}"
 
 msgid "Examples"
@@ -314,7 +314,13 @@ msgstr "Abonnementen exporteren"
 msgid "Failed to download %{failed_count} files"
 msgstr ""
 
+msgid "Failed to export the SUSE Manager product tree: %{error_message}"
+msgstr ""
+
 msgid "Failed to import system %{system}"
+msgstr ""
+
+msgid "Failed to import the suma product tree: %{error_message}"
 msgstr ""
 
 msgid "Failed to sync systems: %{error}"
@@ -399,6 +405,15 @@ msgstr ""
 
 msgid "List repositories which are marked to be mirrored"
 msgstr "Maak een lijst met opslagruimtes die zijn gemarkeerd om te worden gespiegeld"
+
+msgid "Loading product data from SCC"
+msgstr ""
+
+msgid "Loading repository data from SCC"
+msgstr ""
+
+msgid "Loading subscription data from SCC"
+msgstr ""
 
 msgid "Login"
 msgstr ""
@@ -504,13 +519,14 @@ msgstr "Geen opslagruimtes gevonden voor product: %s"
 msgid "No repository IDs supplied"
 msgstr "Geen opslagruimte-id's opgegeven"
 
-msgid "No subscription with this Registration Code found"
+msgid "No subscription found with this registration code"
 msgstr ""
 
 msgid "Not Mandatory"
 msgstr "Niet verplicht"
 
-msgid "Not all mandatory repositories are mirrored for product %s"
+#, fuzzy
+msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
 msgstr "Niet alle verplichte opslagruimtes zijn gespiegeld voor product %s"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
@@ -678,6 +694,9 @@ msgid "Removes locally mirrored files of repositories which are not marked to be
 msgstr ""
 
 msgid "Removes old systems and their activations if they are inactive."
+msgstr ""
+
+msgid "Removing obsolete repositories"
 msgstr ""
 
 msgid "Repositories are not available for this product."
@@ -892,7 +911,23 @@ msgstr ""
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr ""
 
+#, fuzzy
+msgid "Total Mirror Time: %{time}"
+msgstr "Spiegelen"
+
+msgid "Total mirrored repositories: %{repo_count}"
+msgstr ""
+
+msgid "Total transferred file size: %{files_size}"
+msgstr ""
+
+msgid "Total transferred files: %{files_count}"
+msgstr ""
+
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
+msgstr ""
+
+msgid "Try to access non existing temporary directory %{name}"
 msgstr ""
 
 msgid "URL"
@@ -915,6 +950,9 @@ msgstr "Opslagruimtes bijwerken"
 
 msgid "Updating subscriptions"
 msgstr "Abonnementen bijwerken"
+
+msgid "Uptime data is malformed '%s'"
+msgstr ""
 
 msgid "Version"
 msgstr "Versie"
