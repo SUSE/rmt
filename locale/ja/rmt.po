@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-10 05:15+0000\n"
+"PO-Revision-Date: 2025-04-12 01:56+0000\n"
 "Last-Translator: Yasuhiko Kamata <belphegor@belbel.or.jp>\n"
 "Language-Team: Japanese <https://l10n.opensuse.org/projects/rmt/i18n/ja/>\n"
 "Language: ja\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.9.1\n"
+"X-Generator: Weblate 5.10.4\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "%s はシステム上でまだ有効化されていません。"
@@ -48,9 +48,8 @@ msgstr "* %{name} (ID: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 msgid "A repository by the ID %{id} already exists."
 msgstr "ID %{id} のリポジトリはすでに存在しています。"
 
-#, fuzzy
 msgid "A repository by the URL %{url} already exists (ID %{id})."
-msgstr "URL %{url} のリポジトリはすでに存在しています。"
+msgstr "URL %{url} のリポジトリはすでに存在しています (ID %{id}) 。"
 
 msgid "Added association between %{repo} and product %{product}"
 msgstr "%{repo} と製品 %{product} の関連付けを追加しました"
@@ -157,9 +156,8 @@ msgstr "ログイン「%{login}」とパスワード「%{password}」を持つ�
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "SUSE Manager 製品ツリーが下記のエラーでミラーリングできませんでした: %{error}"
 
-#, fuzzy
 msgid "Could not read '%{file}': %{error}"
-msgstr "n"
+msgstr "'%{file}' を読み込めませんでした: %{error}"
 
 msgid "Couldn't add custom repository."
 msgstr "カスタムリポジトリを追加できませんでした。"
@@ -278,13 +276,11 @@ msgstr "メタデータのミラーリング中にエラーが発生しました
 msgid "Error while mirroring packages: %{error}"
 msgstr "パッケージのミラーリング中にエラーが発生しました: %{error}"
 
-#, fuzzy
 msgid "Error while mirroring repository: %{error}"
-msgstr "メタデータのミラーリング中にエラーが発生しました: %{error}"
+msgstr "リポジトリのミラーリング中にエラーが発生しました: %{error}"
 
-#, fuzzy
 msgid "Error while moving files %{glob} to %{dest}: %{error}"
-msgstr "ディレクトリ %{src} から %{dest} への移動中にエラーが発生しました: %{error}"
+msgstr "ファイル %{glob} を %{dest} に移動する際にエラーが発生しました: %{error}"
 
 msgid "Examples"
 msgstr "例"
@@ -313,15 +309,14 @@ msgstr "サブスクリプションをエクスポートしています"
 msgid "Failed to download %{failed_count} files"
 msgstr "%{failed_count} 個のファイルのダウンロードに失敗しました"
 
-#, fuzzy
 msgid "Failed to export the SUSE Manager product tree: %{error_message}"
-msgstr "n"
+msgstr "SUSE Manager 製品ツリーのエクスポートに失敗しました: %{error_message}"
 
 msgid "Failed to import system %{system}"
 msgstr "システム %{system} の取り込みに失敗しました"
 
 msgid "Failed to import the suma product tree: %{error_message}"
-msgstr ""
+msgstr "suma 製品ツリーの取り込みに失敗しました: %{error_message}"
 
 msgid "Failed to sync systems: %{error}"
 msgstr "システムの同期に失敗しました: %{error}"
@@ -405,17 +400,14 @@ msgstr "登録済みのシステムを一覧表示します。"
 msgid "List repositories which are marked to be mirrored"
 msgstr "ミラーリング対象にマーク付けされているリポジトリを一覧表示します"
 
-#, fuzzy
 msgid "Loading product data from SCC"
-msgstr "n"
+msgstr "SCC から製品データを読み込んでいます"
 
-#, fuzzy
 msgid "Loading repository data from SCC"
-msgstr "n"
+msgstr "SCC からリポジトリデータを読み込んでいます"
 
-#, fuzzy
 msgid "Loading subscription data from SCC"
-msgstr "n"
+msgstr "SCC からサブスクリプションデータを読み込んでいます"
 
 msgid "Login"
 msgstr "ログイン"
@@ -513,16 +505,18 @@ msgstr "製品: %s のリポジトリが見つかりません"
 msgid "No repository IDs supplied"
 msgstr "リポジトリ ID が指定されていません"
 
-#, fuzzy
 msgid "No subscription found with this registration code"
 msgstr "この登録コードのサブスクリプションが見つかりません"
 
 msgid "Not Mandatory"
 msgstr "必須ではありません"
 
-#, fuzzy
 msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
-msgstr "すべての必須リポジトリが製品 %s 用にミラーリングされるわけではありません"
+msgstr ""
+"一部の必須リポジトリが製品 %s 用にミラーリングされていません。"
+"ミラーリングされていないリポジトリは下記のとおりです (ID): %s 。なお、 RMT "
+"サーバ側で下記を実行することで、リポジトリの有効化を実施できます: rmt-cli "
+"repos enable %s;  rmt-cli mirror"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "登録コードがまだアクティブ化されていません。https://scc.suse.comにアクセスしてアクティブ化してください。"
@@ -678,9 +672,8 @@ msgstr "ミラーリング対象としてマークされていないリポジト
 msgid "Removes old systems and their activations if they are inactive."
 msgstr "稼働していない古いシステムを削除し、アクティベーションも解除します。"
 
-#, fuzzy
 msgid "Removing obsolete repositories"
-msgstr "n"
+msgstr "廃止済みのリポジトリを削除しています"
 
 msgid "Repositories are not available for this product."
 msgstr "この製品に対してはリポジトリが提供されていません。"
@@ -895,28 +888,23 @@ msgstr "ダウンロードしたファイルをクリーンアップするには
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr "システムの削除を行なうには、対応するログイン情報を指定して \"%{command}\" コマンドを実行してください。"
 
-#, fuzzy
 msgid "Total Mirror Time: %{time}"
-msgstr "ミラーリング"
+msgstr "合計ミラーリング時間: %{time}"
 
-#, fuzzy
 msgid "Total mirrored repositories: %{repo_count}"
-msgstr "n"
+msgstr "ミラー済みリポジトリ数合計: %{repo_count}"
 
-#, fuzzy
 msgid "Total transferred file size: %{files_size}"
-msgstr "n"
+msgstr "転送済みファイルサイズ合計: %{files_size}"
 
-#, fuzzy
 msgid "Total transferred files: %{files_count}"
-msgstr "n"
+msgstr "転送済みファイル数合計: %{files_count}"
 
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
 msgstr "合計: %{total_count} 個 (%{total_size}), %{total_db_entries} 個のデータベース項目。"
 
-#, fuzzy
 msgid "Try to access non existing temporary directory %{name}"
-msgstr "n"
+msgstr "存在していない一時ディレクトリ %{name} にアクセスを試みます"
 
 msgid "URL"
 msgstr "URL"
@@ -940,7 +928,7 @@ msgid "Updating subscriptions"
 msgstr "サブスクリプションを更新しています"
 
 msgid "Uptime data is malformed '%s'"
-msgstr ""
+msgstr "連続稼働時間のデータ '%s' が正しくありません"
 
 msgid "Version"
 msgstr "バージョン"
