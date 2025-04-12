@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-06-12 17:46+0000\n"
+"PO-Revision-Date: 2025-04-12 12:56+0000\n"
 "Last-Translator: Freek de Kruijf <freek@opensuse.org>\n"
 "Language-Team: Dutch <https://l10n.opensuse.org/projects/rmt/i18n/nl/>\n"
 "Language: nl\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.5.5\n"
+"X-Generator: Weblate 5.10.4\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "%s is nog niet geactiveerd op het systeem."
@@ -50,9 +50,8 @@ msgstr "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 msgid "A repository by the ID %{id} already exists."
 msgstr "Een opslagruimte met de ID %{id} bestaat al."
 
-#, fuzzy
 msgid "A repository by the URL %{url} already exists (ID %{id})."
-msgstr "Een opslagruimte met de URL %{url} bestaat al."
+msgstr "Een opslagruimte met de URL %{url} bestaat al (ID %{id})."
 
 msgid "Added association between %{repo} and product %{product}"
 msgstr "Koppeling tussen %{repo} en product %{product} toegevoegd"
@@ -121,18 +120,31 @@ msgid ""
 "\n"
 "Then, it removes all dangling files from disk along with any associated database entries.\n"
 msgstr ""
+"Los hangende pakketbestanden opschonen gebaseerd op huidige metagegevens van "
+"de opslagruimte.\n"
+"\n"
+"Dit commando scant de spiegelmap op bestanden 'repomd.xml', ontleedt de\n"
+"metagegevensbestanden en vergelijkt hun inhoud met bestanden op schijf. "
+"Bestanden niet\n"
+"in de lijst in de metagegevens en minstens 2 dagen oud worden hangend "
+"beschouwd.\n"
+"\n"
+"Daarna verwijdert het alle hagende bestanden van de schijf samen met elke "
+"geassocieerde items in de database.\n"
 
 msgid "Clean dangling package files, based on current repository data."
 msgstr ""
+"Hangende pakketbestanden schonen, gebaseerd op huidige opslagruimtegegevens."
 
 msgid "Clean finished. An estimated %{total_file_size} was removed."
 msgstr ""
+"Opschonen is beëindigd. Een geschat aantal %{total_file_size} is verwijderd."
 
 msgid "Cleaned %{file_count_text} (%{total_size}), %{db_entries}."
-msgstr ""
+msgstr "Opgeschoond %{file_count_text} (%{total_size}), %{db_entries}."
 
 msgid "Cleaned '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}."
-msgstr ""
+msgstr "Opgeschoond '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}."
 
 msgid "Commands:"
 msgstr "Opdrachten:"
@@ -149,31 +161,31 @@ msgstr "Kan lokale directory %{dir} niet maken met fout: %{error}"
 msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
 msgstr "Kan systeem met aanmeldingsnaam \\\"%{login}\\\" en wachtwoord \\\"%{password}\\\" niet vinden"
 
-#, fuzzy
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
-msgstr "Kan SUMA-productstructuur niet spiegelen met fout: %{error}"
+msgstr ""
+"Kon productboomstructuur van SUSE Manager niet spiegelen met fout: %{error}"
 
 msgid "Could not read '%{file}': %{error}"
-msgstr ""
+msgstr "Kon '%{file}' niet lezen: %{error}"
 
-#, fuzzy
 msgid "Couldn't add custom repository."
-msgstr "Maakt een aangepaste opslagruimte."
+msgstr "Kon de aangepaste opslagruimte niet toevoegen."
 
 msgid "Couldn't sync %{count} systems."
-msgstr ""
+msgstr "Kon %{count} systemen niet synchroniseren."
 
 msgid "Creates a custom repository."
 msgstr "Maakt een aangepaste opslagruimte."
 
 msgid "Deleting locally mirrored files from repository '%{repo}'..."
 msgstr ""
+"Lokaal gespiegelde bestanden uit opslagruimte '%{repo}' worden verwijderd..."
 
 msgid "Description"
-msgstr ""
+msgstr "Beschrijving"
 
 msgid "Description: %{description}"
-msgstr ""
+msgstr "Beschrijving: %{description}"
 
 msgid "Detach an existing custom repository from a product"
 msgstr "Koppel een bestaande aangepaste opslagruimte los van een product"
@@ -182,15 +194,16 @@ msgid "Detached repository from product '%{product_name}'."
 msgstr "Opslagruimte van product '%{product_name}' losgekoppeld."
 
 msgid "Directory: %{dir}"
-msgstr ""
+msgstr "Map: %{dir}"
 
-#, fuzzy
 msgid "Disable mirroring of custom repositories by a list of IDs"
-msgstr "Het spiegelen van aangepaste opslagruimte per id uitschakelen"
+msgstr ""
+"Het spiegelen van aangepaste opslagruimtes via een lijst met ID's "
+"uitschakelen"
 
-#, fuzzy
 msgid "Disable mirroring of custom repository by a list of IDs"
-msgstr "Het spiegelen van aangepaste opslagruimte per id uitschakelen"
+msgstr ""
+"Het spiegelen van aangepaste opslagruimte via een lijst met ID's uitschakelen"
 
 msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
 msgstr "Schakel het spiegelen van productopslagruimtes uit door middel van een lijst met product-id's of productreeksen."
@@ -205,16 +218,18 @@ msgid "Disabling %{product}:"
 msgstr "%{product} uitschakelen:"
 
 msgid "Displays product with all its repositories and their attributes."
-msgstr ""
+msgstr "Toont product met al zijn opslagruimten en hun attributen."
 
 msgid "Do not ask anything; use default answers automatically. Default: false"
 msgstr ""
+"Niets vragen; standaard antwoorden automatisch gebruiken. Standaard: false"
 
 msgid "Do not fail the command if product is in alpha or beta stage"
 msgstr ""
+"Het commando niet laten mislukken als het product in alfa of beta stadium is"
 
 msgid "Do not import system hardware info from MachineData table"
-msgstr ""
+msgstr "Systeemhardware-informatie niet importeren uit tabel MachineData"
 
 msgid "Do not import the systems that were registered to the SMT"
 msgstr "Importeer geen systemen die zijn geregistreerd bij de SMT"
@@ -223,19 +238,23 @@ msgid "Do you have any suggestions for improvement? We would love to hear from y
 msgstr "Hebt u suggesties voor verbetering? We horen graag van u!"
 
 msgid "Do you want to delete these systems?"
-msgstr ""
+msgstr "Wilt u deze systemen verwijderen?"
 
 msgid "Don't Mirror"
 msgstr "Niet spiegelen"
 
 msgid "Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
 msgstr ""
+"Downloaden van %{file_reference} is mislukt met %{message}. Nog %{retries} "
+"keer opnieuw proberen na %{seconds} seconden"
 
 msgid "Downloading data from SCC"
 msgstr "Gegevens van SSC downloaden"
 
 msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
 msgstr ""
+"Downloaden van ondertekening/sleutel van opslagruimte is mislukt met: "
+"%{message}, HTTP-code %{http_code}"
 
 msgid "Duplicate entry for system %{system}, skipping"
 msgstr ""
