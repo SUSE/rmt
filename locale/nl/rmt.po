@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-04-12 12:56+0000\n"
+"PO-Revision-Date: 2025-04-12 22:56+0000\n"
 "Last-Translator: Freek de Kruijf <freek@opensuse.org>\n"
 "Language-Team: Dutch <https://l10n.opensuse.org/projects/rmt/i18n/nl/>\n"
 "Language: nl\n"
@@ -257,14 +257,14 @@ msgstr ""
 "%{message}, HTTP-code %{http_code}"
 
 msgid "Duplicate entry for system %{system}, skipping"
-msgstr ""
+msgstr "Dubbel item voor systeem %{system}, wordt overgeslagen"
 
 msgid "Enable debug output"
 msgstr "Schakel Fouten oplossen in uitvoer in"
 
-#, fuzzy
 msgid "Enable mirroring of custom repositories by a list of IDs"
-msgstr "Schakel het spiegelen van aangepaste opslagruimte per id in"
+msgstr ""
+"Schakel het spiegelen van aangepaste opslagruimtes via een lijst met ID's in"
 
 msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
 msgstr "Schakel het spiegelen van productopslagruimtes in door middel van een lijst met product-id's of productreeksen."
@@ -285,32 +285,28 @@ msgid "Enabling %{product}:"
 msgstr "%{product} inschakelen:"
 
 msgid "Enter a value:"
-msgstr ""
+msgstr "Voer een waarde in:"
 
-#, fuzzy
 msgid "Error while mirroring license files: %{error}"
-msgstr "Fout bij het spiegelen van de licentie: %{error}"
+msgstr "Fout bij het spiegelen van bestanden met licentie: %{error}"
 
 msgid "Error while mirroring metadata: %{error}"
 msgstr "Fout bij het spiegelen van metagegevens: %{error}"
 
-#, fuzzy
 msgid "Error while mirroring packages: %{error}"
-msgstr "Fout bij het spiegelen van de licentie: %{error}"
+msgstr "Fout bij het spiegelen van pakketten %{error}"
 
-#, fuzzy
 msgid "Error while mirroring repository: %{error}"
-msgstr "Fout bij het spiegelen van metagegevens: %{error}"
+msgstr "Fout bij het spiegelen van opslagruimte: %{error}"
 
-#, fuzzy
 msgid "Error while moving files %{glob} to %{dest}: %{error}"
-msgstr "Fout bij het verplaatsen van directory %{src} naar %{dest}: %{error}"
+msgstr "Fout bij het verplaatsen van %{glob} naar %{dest}: %{error}"
 
 msgid "Examples"
-msgstr ""
+msgstr "Voorbeelden"
 
 msgid "Examples:"
-msgstr ""
+msgstr "Voorbeelden:"
 
 msgid "Export commands for Offline Sync"
 msgstr "Opdrachten exporteren voor offline synchronisatie"
@@ -331,25 +327,28 @@ msgid "Exporting subscriptions"
 msgstr "Abonnementen exporteren"
 
 msgid "Failed to download %{failed_count} files"
-msgstr ""
+msgstr "Downloaden van %{failed_count} bestanden is mislukt"
 
 msgid "Failed to export the SUSE Manager product tree: %{error_message}"
 msgstr ""
+"Exporteren van de SUSE Manager productboomstructuur is mislukt: "
+"%{error_message}"
 
 msgid "Failed to import system %{system}"
-msgstr ""
+msgstr "Importeren van systeem %{system} is mislukt"
 
 msgid "Failed to import the suma product tree: %{error_message}"
 msgstr ""
+"Importeren van de suma-productboomstructuur is mislukt: %{error_message}"
 
 msgid "Failed to sync systems: %{error}"
-msgstr ""
+msgstr "Systemen synchroniseren is mislukt: %{error}"
 
 msgid "Filter BYOS systems using RMT as a proxy"
-msgstr ""
+msgstr "Filter BYOS systemem met RMT als een proxy"
 
 msgid "Forward registered systems data to SCC"
-msgstr ""
+msgstr "Stuur geregistreerde systeemgegevens naar SCC"
 
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
@@ -357,16 +356,16 @@ msgstr[0] "Product gevonden door doel %{target}: %{products}."
 msgstr[1] "Producten gevonden door doel %{target}: %{products}."
 
 msgid "GPG key import failed"
-msgstr ""
+msgstr "GPG sleutel importeren is mislukt"
 
 msgid "GPG signature verification failed"
-msgstr ""
+msgstr "Verificatie van GPG ondertekening is mislukt"
 
 msgid "Hardware information stored for system %{system}"
 msgstr "Hardware-informatie opgeslagen voor systeem %{system}"
 
 msgid "Hostname"
-msgstr ""
+msgstr "Hostnaam"
 
 msgid "ID"
 msgstr "Id"
@@ -387,7 +386,7 @@ msgid "Last mirrored"
 msgstr "Laatst gespiegeld"
 
 msgid "Last seen"
-msgstr ""
+msgstr "Laatst gezien"
 
 msgid "List all custom repositories"
 msgstr "Maak een lijst met alle aangepaste opslagruimtes"
@@ -396,13 +395,13 @@ msgid "List all products, including ones which are not marked to be mirrored"
 msgstr "Maak een lijst met alle producten, inclusief producten die niet zijn gemarkeerd om te worden gespiegeld"
 
 msgid "List all registered systems"
-msgstr ""
+msgstr "Alle geregistreerde systemen in een lijst weergeven"
 
 msgid "List all repositories, including ones which are not marked to be mirrored"
 msgstr "Maak een lijst met alle opslagplaatsen, inclusief opslagruimtes die niet zijn gemarkeerd om te worden gespiegeld"
 
 msgid "List and manipulate registered systems"
-msgstr ""
+msgstr "Maak een lijst van geregistreerde systemen en manipuleer ze"
 
 msgid "List and modify custom repositories"
 msgstr "Maak een lijst met aangepaste opslagplaatsen en pas deze aan"
@@ -414,28 +413,28 @@ msgid "List and modify repositories"
 msgstr "Maak een lijst met opslagruimtes en pas deze aan"
 
 msgid "List files during the cleaning process."
-msgstr ""
+msgstr "Maak een lijst van bestanden tijdens het opschoonproces."
 
 msgid "List products which are marked to be mirrored."
 msgstr "Maak een lijst met producten die zijn gemarkeerd om te worden gespiegeld."
 
 msgid "List registered systems."
-msgstr ""
+msgstr "Maak een lijst van geregistreerde systemen."
 
 msgid "List repositories which are marked to be mirrored"
 msgstr "Maak een lijst met opslagruimtes die zijn gemarkeerd om te worden gespiegeld"
 
 msgid "Loading product data from SCC"
-msgstr ""
+msgstr "Productgegevens laden uit SCC"
 
 msgid "Loading repository data from SCC"
-msgstr ""
+msgstr "Opslagruimtegegevens uit SCC"
 
 msgid "Loading subscription data from SCC"
-msgstr ""
+msgstr "Inschrijvingsgegevens laden uit SCC"
 
 msgid "Login"
-msgstr ""
+msgstr "Aanmelden"
 
 msgid "Mandatory"
 msgstr "Verplicht"
@@ -446,17 +445,16 @@ msgstr "Verplicht?"
 msgid "Mirror"
 msgstr "Spiegelen"
 
-#, fuzzy
 msgid "Mirror all enabled repositories"
-msgstr "Spiegelen"
+msgstr "Alle ingeschakelde opslagruimten spiegelen"
 
-#, fuzzy
 msgid "Mirror enabled repositories for a product with given product IDs"
-msgstr "Spiegelen"
+msgstr ""
+"Ingeschakelde opslagruimten spiegelen voor een product met gegeven product-"
+"ID's"
 
-#, fuzzy
 msgid "Mirror enabled repositories with given repository IDs"
-msgstr "Spiegelen"
+msgstr "Ingeschakelde opslagruimten met gegeven opslagruimte-ID's spiegelen"
 
 msgid "Mirror repos at given path"
 msgstr "Spiegel opslagruimtes op het opgegeven pad"
@@ -470,24 +468,20 @@ msgstr "Opslagruimtes spiegelen"
 msgid "Mirror?"
 msgstr "Spiegelen?"
 
-#, fuzzy
 msgid "Mirroring SUMA product tree failed: %{error_message}"
-msgstr "Spiegelen"
+msgstr "SUMA productboomstructuur spiegelen is mislukt: %{error_message}"
 
 msgid "Mirroring SUSE Manager product tree to %{dir}"
 msgstr "SUSE Manager productstructuur spiegelen met %{dir}"
 
-#, fuzzy
 msgid "Mirroring complete."
-msgstr "Spiegelen"
+msgstr "Spiegelen is gereed."
 
-#, fuzzy
 msgid "Mirroring completed with errors."
-msgstr "Spiegelen"
+msgstr "Spiegelen gereed met fouten."
 
-#, fuzzy
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
-msgstr "Spiegelen"
+msgstr "Opslagruimte met ID %{repo_id} spiegelen is niet ingeschakeld"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "Opslagruimte %{repo} spiegelen naar %{dir}"
@@ -508,7 +502,7 @@ msgid "No custom repositories found."
 msgstr "Geen aangepaste opslagruimtes gevonden."
 
 msgid "No dangling packages have been found!"
-msgstr ""
+msgstr "Geen hangende pakketten gevonden!"
 
 msgid "No matching products found in the database."
 msgstr "Geen overeenkomende producten gevonden in de database."
@@ -534,28 +528,32 @@ msgstr "Geen opslagruimtes ingeschakeld."
 msgid "No repositories found for product: %s"
 msgstr "Geen opslagruimtes gevonden voor product: %s"
 
-#, fuzzy
 msgid "No repository IDs supplied"
-msgstr "Geen opslagruimte-id's opgegeven"
+msgstr "Geen opslagruimte-ID's opgegeven"
 
 msgid "No subscription found with this registration code"
-msgstr ""
+msgstr "Geen inschrijving gevonden met deze registratiecode"
 
 msgid "Not Mandatory"
 msgstr "Niet verplicht"
 
-#, fuzzy
 msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
-msgstr "Niet alle verplichte opslagruimtes zijn gespiegeld voor product %s"
+msgstr ""
+"Niet alle verplichte opslagruimtes zijn gespiegeld voor product %s. "
+"Ontbrekende opslagruimten (per ID's):%s. Op de RMT-server kunnen de "
+"ontbrekende opslagruimten ingeschakeld worden met: rmt-cli repos enable %s  "
+"rmt-cli mirror"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "Nog geen registratiecode geactiveerd. Ga naar https://scc.suse.com om de registratiecode te activeren."
 
 msgid "Now, it will parse all repomd.xml files, search for dangling packages on disk and clean them."
 msgstr ""
+"Nu zal het alle repomd.xml bestanden ontleden, zoeken naar hangende "
+"pakketten op schijf en ze opschonen."
 
 msgid "Number of systems to display"
-msgstr ""
+msgstr "Aantal te tonen systemen"
 
 msgid "Only '%{input}' will be accepted."
 msgstr ""
