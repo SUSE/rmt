@@ -6,15 +6,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-10 19:15+0000\n"
-"Last-Translator: Antonio Simón <antonio@trans-mission.com>\n"
+"PO-Revision-Date: 2025-04-14 13:56+0000\n"
+"Last-Translator: \"Marina J. Donis\" <marinajdonis@gmail.com>\n"
 "Language-Team: Spanish <https://l10n.opensuse.org/projects/rmt/i18n/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.9.1\n"
+"X-Generator: Weblate 5.10.4\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "%s aún no se ha activado en el sistema."
@@ -50,9 +50,8 @@ msgstr "* %{name} (ID: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 msgid "A repository by the ID %{id} already exists."
 msgstr "Ya existe un repositorio con el ID %{id}."
 
-#, fuzzy
 msgid "A repository by the URL %{url} already exists (ID %{id})."
-msgstr "Ya existe un repositorio en la URL %{url}."
+msgstr "Ya existe un repositorio con la URL %{url} (ID %{id})."
 
 msgid "Added association between %{repo} and product %{product}"
 msgstr "Se ha añadido una asociación entre %{repo} y el producto %{product}"
@@ -159,9 +158,8 @@ msgstr "No se encuentra el sistema con los datos de entrada \\\"%{login}\\\" y l
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "No es posible duplicar el árbol de producto de SUSE Manager. Error: %{error}"
 
-#, fuzzy
 msgid "Could not read '%{file}': %{error}"
-msgstr "n"
+msgstr "No se pudo leer '%{file}': %{error}"
 
 msgid "Couldn't add custom repository."
 msgstr "No es posible añadir un repositorio personalizado."
@@ -280,13 +278,11 @@ msgstr "Error al duplicar metadatos: %{error}"
 msgid "Error while mirroring packages: %{error}"
 msgstr "Error al duplicar los paquetes: %{error}"
 
-#, fuzzy
 msgid "Error while mirroring repository: %{error}"
-msgstr "Error al duplicar metadatos: %{error}"
+msgstr "Error al crear mirror del repositorio: %{error}"
 
-#, fuzzy
 msgid "Error while moving files %{glob} to %{dest}: %{error}"
-msgstr "Error al mover el directorio %{src} a %{dest}: %{error}"
+msgstr "Error al mover los archivos %{glob} a %{dest}: %{error}"
 
 msgid "Examples"
 msgstr "Ejemplos"
@@ -315,15 +311,15 @@ msgstr "Exportando suscripciones"
 msgid "Failed to download %{failed_count} files"
 msgstr "Error al descargar %{failed_count} archivos"
 
-#, fuzzy
 msgid "Failed to export the SUSE Manager product tree: %{error_message}"
-msgstr "n"
+msgstr ""
+"No se pudo exportar el árbol de productos SUSE Manager: %{error_message}"
 
 msgid "Failed to import system %{system}"
 msgstr "Error al importar el sistema %{system}"
 
 msgid "Failed to import the suma product tree: %{error_message}"
-msgstr ""
+msgstr "No se pudo importar el árbol de productos suma: %{error_message}"
 
 msgid "Failed to sync systems: %{error}"
 msgstr "Error al sincronizar los sistemas: %{error}"
@@ -408,17 +404,14 @@ msgstr "Mostrar sistemas registrados."
 msgid "List repositories which are marked to be mirrored"
 msgstr "Muestra los repositorios que están marcados para duplicarse"
 
-#, fuzzy
 msgid "Loading product data from SCC"
-msgstr "n"
+msgstr "Cargando datos de productos desde SCC"
 
-#, fuzzy
 msgid "Loading repository data from SCC"
-msgstr "n"
+msgstr "Cargando datos de repositorios desde SCC"
 
-#, fuzzy
 msgid "Loading subscription data from SCC"
-msgstr "n"
+msgstr "Cargando datos de suscripción desde SCC"
 
 msgid "Login"
 msgstr "Entrar a la sesión"
@@ -516,16 +509,17 @@ msgstr "No se encuentra ningún repositorio para el destino: %s"
 msgid "No repository IDs supplied"
 msgstr "No se ha proporcionado ningún ID de repositorio"
 
-#, fuzzy
 msgid "No subscription found with this registration code"
-msgstr "No se encuentra ninguna suscripción con este código de registro"
+msgstr "No se encontró ninguna suscripción con este código de registro"
 
 msgid "Not Mandatory"
 msgstr "No es obligatorio"
 
-#, fuzzy
 msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
-msgstr "No se han duplicado todos los repositorios obligatorios para el producto %s"
+msgstr ""
+"No todos los repositorios obligatorios tienen un mirror para el producto %s. "
+"Repositorios faltantes (por id): %s. En el servidor RMT, los repositorios "
+"faltantes se pueden habilitar con: rmt-cli repos enable %s;  rmt-cli mirror"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "El código de registro aún no se ha activado. Visite https://scc.suse.com para activarlo."
@@ -683,9 +677,8 @@ msgstr "Elimina los archivos duplicados localmente de los repositorios que no es
 msgid "Removes old systems and their activations if they are inactive."
 msgstr "Elimina sistemas antiguos y sus activaciones si están inactivos."
 
-#, fuzzy
 msgid "Removing obsolete repositories"
-msgstr "n"
+msgstr "Eliminando repositorios obsoletos"
 
 msgid "Repositories are not available for this product."
 msgstr "Los repositorios no están disponibles para este producto."
@@ -902,28 +895,23 @@ msgstr "Para limpiar los archivos descargados, ejecute \"%{command}\""
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr "Para señalar que un sistema se debe eliminar, use el comando \"%{command}\" para obtener una lista de sistemas con sus entradas a la sesión correspondientes."
 
-#, fuzzy
 msgid "Total Mirror Time: %{time}"
-msgstr "Duplicar"
+msgstr "Tiempo total de Mirror: %{time}"
 
-#, fuzzy
 msgid "Total mirrored repositories: %{repo_count}"
-msgstr "n"
+msgstr "Total de repositorios con mirror: %{repo_count}"
 
-#, fuzzy
 msgid "Total transferred file size: %{files_size}"
-msgstr "n"
+msgstr "Tamaño total de archivos transferidos: %{repo_count}"
 
-#, fuzzy
 msgid "Total transferred files: %{files_count}"
-msgstr "n"
+msgstr "Total de archivos transferidos: %{files_count}"
 
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
 msgstr "Total borrado: %{total_count} (%{total_size}), %{total_db_entries}."
 
-#, fuzzy
 msgid "Try to access non existing temporary directory %{name}"
-msgstr "n"
+msgstr "Intente acceder el directorio temporal inexistente %{name}"
 
 msgid "URL"
 msgstr "URL"
@@ -947,7 +935,7 @@ msgid "Updating subscriptions"
 msgstr "Actualizando suscripciones"
 
 msgid "Uptime data is malformed '%s'"
-msgstr ""
+msgstr "Los datos de tiempo de actividad tienen un formato incorrecto '%s'"
 
 msgid "Version"
 msgstr "Versión"
