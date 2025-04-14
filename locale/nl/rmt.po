@@ -32,8 +32,12 @@ msgstr[1] "%{db_entries} database-items"
 msgid "%{file} - File does not exist"
 msgstr "%{file} - Bestand bestaat niet"
 
-msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
-msgstr "%{file} - verzoek is mislukt met HTTP statuscode %{code}, returncode '%{return_code}'"
+msgid ""
+"%{file} - request failed with HTTP status code %{code}, return code "
+"'%{return_code}'"
+msgstr ""
+"%{file} - verzoek is mislukt met HTTP statuscode %{code}, returncode "
+"'%{return_code}'"
 
 msgid "%{file} does not exist."
 msgstr "%{file} bestaat niet."
@@ -50,9 +54,8 @@ msgstr "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 msgid "A repository by the ID %{id} already exists."
 msgstr "Een opslagruimte met de ID %{id} bestaat al."
 
-#, fuzzy
 msgid "A repository by the URL %{url} already exists (ID %{id})."
-msgstr "Een opslagruimte met de URL %{url} bestaat al."
+msgstr "Een opslagruimte met de URL %{url} bestaat al (ID %{id})."
 
 msgid "Added association between %{repo} and product %{product}"
 msgstr "Koppeling tussen %{repo} en product %{product} toegevoegd"
@@ -66,8 +69,12 @@ msgstr "Alle opslagruimtes zijn al uitgeschakeld."
 msgid "All repositories have already been enabled."
 msgstr "Alle opslagruimtes zijn al ingeschakeld."
 
-msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
-msgstr "Een ander exemplaar van di commando is al actief. Beëindig het andere exemplaar of wacht op het beëindigen."
+msgid ""
+"Another instance of this command is already running. Terminate the other "
+"instance or wait for it to finish."
+msgstr ""
+"Een ander exemplaar van di commando is al actief. Beëindig het andere "
+"exemplaar of wacht op het beëindigen."
 
 #. i18n: architecture
 msgid "Arch"
@@ -76,8 +83,12 @@ msgstr "Boog"
 msgid "Architecture"
 msgstr "Architectuur"
 
-msgid "Ask for confirmation or do not ask for confirmation and require no user interaction"
-msgstr "Om bevestiging vragen of vraag niet om bevestiging en vereis geen interactie van de gebruiker"
+msgid ""
+"Ask for confirmation or do not ask for confirmation and require no user "
+"interaction"
+msgstr ""
+"Om bevestiging vragen of vraag niet om bevestiging en vereis geen interactie "
+"van de gebruiker"
 
 msgid "Attach an existing custom repository to a product"
 msgstr "Een bestaande aangepaste opslagruimte koppelen aan een product"
@@ -85,17 +96,36 @@ msgstr "Een bestaande aangepaste opslagruimte koppelen aan een product"
 msgid "Attached repository to product '%{product_name}'."
 msgstr "Gekoppelde opslagruimte voor product '%{product_name}'."
 
-msgid "By default, inactive systems are those that have not contacted RMT in any way in the past 3 months. You can override this with the '-b / --before' flag."
-msgstr "Standaard zijn inactieve systemen diegenen die op geen enkele manier contact met RMT hebben gehad in de laatste 3 maanden. U kunt hier overheen gaan met de vlag '-b / --before'."
+msgid ""
+"By default, inactive systems are those that have not contacted RMT in any "
+"way in the past 3 months. You can override this with the '-b / --before' "
+"flag."
+msgstr ""
+"Standaard zijn inactieve systemen diegenen die op geen enkele manier contact "
+"met RMT hebben gehad in de laatste 3 maanden. U kunt hier overheen gaan met "
+"de vlag '-b / --before'."
 
-msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
-msgstr "Kan geen verbinding maken met databaseserver. Zorg ervoor dat de referenties correct zijn geconfigureerd in '%{path}' of configureer RMT met YaST ('%{command}')."
+msgid ""
+"Cannot connect to database server. Ensure its credentials are correctly "
+"configured in '%{path}' or configure RMT with YaST ('%{command}')."
+msgstr ""
+"Kan geen verbinding maken met databaseserver. Zorg ervoor dat de referenties "
+"correct zijn geconfigureerd in '%{path}' of configureer RMT met YaST "
+"('%{command}')."
 
-msgid "Cannot connect to database server. Make sure it is running and its credentials are configured in '%{path}'."
-msgstr "Kan geen verbinding maken met databaseserver. Controleer of deze actief is en of de identificatiegegevens zijn geconfigureerd in '%{path}'."
+msgid ""
+"Cannot connect to database server. Make sure it is running and its "
+"credentials are configured in '%{path}'."
+msgstr ""
+"Kan geen verbinding maken met databaseserver. Controleer of deze actief is "
+"en of de identificatiegegevens zijn geconfigureerd in '%{path}'."
 
-msgid "Cannot deactivate the product \"%s\". Other activated products depend upon it."
-msgstr "Het product \"%s\" kan niet worden gedeactiveerd. Andere geactiveerde producten zijn ervan afhankelijk."
+msgid ""
+"Cannot deactivate the product \"%s\". Other activated products depend upon "
+"it."
+msgstr ""
+"Het product \"%s\" kan niet worden gedeactiveerd. Andere geactiveerde "
+"producten zijn ervan afhankelijk."
 
 msgid "Cannot find product by ID %{id}."
 msgstr "Kan het product niet vinden met id %{id}."
@@ -119,20 +149,34 @@ msgid ""
 "metadata files, and compares their content with files on disk. Files not\n"
 "listed in the metadata and at least 2 days old are considered dangling.\n"
 "\n"
-"Then, it removes all dangling files from disk along with any associated database entries.\n"
+"Then, it removes all dangling files from disk along with any associated "
+"database entries.\n"
 msgstr ""
+"Los hangende pakketbestanden opschonen gebaseerd op huidige metagegevens van "
+"de opslagruimte.\n"
+"\n"
+"Dit commando scant de spiegelmap op bestanden 'repomd.xml', ontleedt de\n"
+"metagegevensbestanden en vergelijkt hun inhoud met bestanden op schijf. "
+"Bestanden niet\n"
+"in de lijst in de metagegevens en minstens 2 dagen oud worden hangend "
+"beschouwd.\n"
+"\n"
+"Daarna verwijdert het alle hagende bestanden van de schijf samen met elke "
+"geassocieerde items in de database.\n"
 
 msgid "Clean dangling package files, based on current repository data."
 msgstr ""
+"Hangende pakketbestanden schonen, gebaseerd op huidige opslagruimtegegevens."
 
 msgid "Clean finished. An estimated %{total_file_size} was removed."
 msgstr ""
+"Opschonen is beëindigd. Een geschat aantal %{total_file_size} is verwijderd."
 
 msgid "Cleaned %{file_count_text} (%{total_size}), %{db_entries}."
-msgstr ""
+msgstr "Opgeschoond %{file_count_text} (%{total_size}), %{db_entries}."
 
 msgid "Cleaned '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}."
-msgstr ""
+msgstr "Opgeschoond '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}."
 
 msgid "Commands:"
 msgstr "Opdrachten:"
@@ -146,34 +190,38 @@ msgstr "Kan ontdubbelingshardlink niet maken: %{error}."
 msgid "Could not create local directory %{dir} with error: %{error}"
 msgstr "Kan lokale directory %{dir} niet maken met fout: %{error}"
 
-msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
-msgstr "Kan systeem met aanmeldingsnaam \\\"%{login}\\\" en wachtwoord \\\"%{password}\\\" niet vinden"
+msgid ""
+"Could not find system with login \\\"%{login}\\\" and password \\"
+"\"%{password}\\\""
+msgstr ""
+"Kan systeem met aanmeldingsnaam \\\"%{login}\\\" en wachtwoord \\"
+"\"%{password}\\\" niet vinden"
 
-#, fuzzy
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
-msgstr "Kan SUMA-productstructuur niet spiegelen met fout: %{error}"
+msgstr ""
+"Kon productboomstructuur van SUSE Manager niet spiegelen met fout: %{error}"
 
 msgid "Could not read '%{file}': %{error}"
-msgstr ""
+msgstr "Kon '%{file}' niet lezen: %{error}"
 
-#, fuzzy
 msgid "Couldn't add custom repository."
-msgstr "Maakt een aangepaste opslagruimte."
+msgstr "Kon de aangepaste opslagruimte niet toevoegen."
 
 msgid "Couldn't sync %{count} systems."
-msgstr ""
+msgstr "Kon %{count} systemen niet synchroniseren."
 
 msgid "Creates a custom repository."
 msgstr "Maakt een aangepaste opslagruimte."
 
 msgid "Deleting locally mirrored files from repository '%{repo}'..."
 msgstr ""
+"Lokaal gespiegelde bestanden uit opslagruimte '%{repo}' worden verwijderd..."
 
 msgid "Description"
-msgstr ""
+msgstr "Beschrijving"
 
 msgid "Description: %{description}"
-msgstr ""
+msgstr "Beschrijving: %{description}"
 
 msgid "Detach an existing custom repository from a product"
 msgstr "Koppel een bestaande aangepaste opslagruimte los van een product"
@@ -182,21 +230,28 @@ msgid "Detached repository from product '%{product_name}'."
 msgstr "Opslagruimte van product '%{product_name}' losgekoppeld."
 
 msgid "Directory: %{dir}"
-msgstr ""
+msgstr "Map: %{dir}"
 
-#, fuzzy
 msgid "Disable mirroring of custom repositories by a list of IDs"
-msgstr "Het spiegelen van aangepaste opslagruimte per id uitschakelen"
+msgstr ""
+"Het spiegelen van aangepaste opslagruimtes via een lijst met ID's "
+"uitschakelen"
 
-#, fuzzy
 msgid "Disable mirroring of custom repository by a list of IDs"
-msgstr "Het spiegelen van aangepaste opslagruimte per id uitschakelen"
+msgstr ""
+"Het spiegelen van aangepaste opslagruimte via een lijst met ID's uitschakelen"
 
-msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
-msgstr "Schakel het spiegelen van productopslagruimtes uit door middel van een lijst met product-id's of productreeksen."
+msgid ""
+"Disable mirroring of product repositories by a list of product IDs or "
+"product strings."
+msgstr ""
+"Schakel het spiegelen van productopslagruimtes uit door middel van een lijst "
+"met product-id's of productreeksen."
 
 msgid "Disable mirroring of repositories by a list of repository IDs"
-msgstr "Het spiegelen van opslagruimtes uitschakelen door middel van een lijst met opslagruimte-id's"
+msgstr ""
+"Het spiegelen van opslagruimtes uitschakelen door middel van een lijst met "
+"opslagruimte-id's"
 
 msgid "Disabled repository %{repository}."
 msgstr "Uitgeschakelde opslagruimte %{repository}."
@@ -205,53 +260,70 @@ msgid "Disabling %{product}:"
 msgstr "%{product} uitschakelen:"
 
 msgid "Displays product with all its repositories and their attributes."
-msgstr ""
+msgstr "Toont product met al zijn opslagruimten en hun attributen."
 
 msgid "Do not ask anything; use default answers automatically. Default: false"
 msgstr ""
+"Niets vragen; standaard antwoorden automatisch gebruiken. Standaard: false"
 
 msgid "Do not fail the command if product is in alpha or beta stage"
 msgstr ""
+"Het commando niet laten mislukken als het product in alfa of beta stadium is"
 
 msgid "Do not import system hardware info from MachineData table"
-msgstr ""
+msgstr "Systeemhardware-informatie niet importeren uit tabel MachineData"
 
 msgid "Do not import the systems that were registered to the SMT"
 msgstr "Importeer geen systemen die zijn geregistreerd bij de SMT"
 
-msgid "Do you have any suggestions for improvement? We would love to hear from you!"
+msgid ""
+"Do you have any suggestions for improvement? We would love to hear from you!"
 msgstr "Hebt u suggesties voor verbetering? We horen graag van u!"
 
 msgid "Do you want to delete these systems?"
-msgstr ""
+msgstr "Wilt u deze systemen verwijderen?"
 
 msgid "Don't Mirror"
 msgstr "Niet spiegelen"
 
-msgid "Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
+msgid ""
+"Downloading %{file_reference} failed with %{message}. Retrying %{retries} "
+"more times after %{seconds} seconds"
 msgstr ""
+"Downloaden van %{file_reference} is mislukt met %{message}. Nog %{retries} "
+"keer opnieuw proberen na %{seconds} seconden"
 
 msgid "Downloading data from SCC"
 msgstr "Gegevens van SSC downloaden"
 
-msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
+msgid ""
+"Downloading repo signature/key failed with: %{message}, HTTP code "
+"%{http_code}"
 msgstr ""
+"Downloaden van ondertekening/sleutel van opslagruimte is mislukt met: "
+"%{message}, HTTP-code %{http_code}"
 
 msgid "Duplicate entry for system %{system}, skipping"
-msgstr ""
+msgstr "Dubbel item voor systeem %{system}, wordt overgeslagen"
 
 msgid "Enable debug output"
 msgstr "Schakel Fouten oplossen in uitvoer in"
 
-#, fuzzy
 msgid "Enable mirroring of custom repositories by a list of IDs"
-msgstr "Schakel het spiegelen van aangepaste opslagruimte per id in"
+msgstr ""
+"Schakel het spiegelen van aangepaste opslagruimtes via een lijst met ID's in"
 
-msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
-msgstr "Schakel het spiegelen van productopslagruimtes in door middel van een lijst met product-id's of productreeksen."
+msgid ""
+"Enable mirroring of product repositories by a list of product IDs or product "
+"strings."
+msgstr ""
+"Schakel het spiegelen van productopslagruimtes in door middel van een lijst "
+"met product-id's of productreeksen."
 
 msgid "Enable mirroring of repositories by a list of repository IDs"
-msgstr "Schakel het spiegelen van opslagplaatsen in door middel van een lijst met opslagplaats-id's"
+msgstr ""
+"Schakel het spiegelen van opslagplaatsen in door middel van een lijst met "
+"opslagplaats-id's"
 
 msgid "Enabled mirroring for repository %{repo}"
 msgstr "Het spiegelen is ingeschakeld voor opslagruimte %{repo}"
@@ -266,32 +338,28 @@ msgid "Enabling %{product}:"
 msgstr "%{product} inschakelen:"
 
 msgid "Enter a value:"
-msgstr ""
+msgstr "Voer een waarde in:"
 
-#, fuzzy
 msgid "Error while mirroring license files: %{error}"
-msgstr "Fout bij het spiegelen van de licentie: %{error}"
+msgstr "Fout bij het spiegelen van bestanden met licentie: %{error}"
 
 msgid "Error while mirroring metadata: %{error}"
 msgstr "Fout bij het spiegelen van metagegevens: %{error}"
 
-#, fuzzy
 msgid "Error while mirroring packages: %{error}"
-msgstr "Fout bij het spiegelen van de licentie: %{error}"
+msgstr "Fout bij het spiegelen van pakketten %{error}"
 
-#, fuzzy
 msgid "Error while mirroring repository: %{error}"
-msgstr "Fout bij het spiegelen van metagegevens: %{error}"
+msgstr "Fout bij het spiegelen van opslagruimte: %{error}"
 
-#, fuzzy
 msgid "Error while moving files %{glob} to %{dest}: %{error}"
-msgstr "Fout bij het verplaatsen van directory %{src} naar %{dest}: %{error}"
+msgstr "Fout bij het verplaatsen van %{glob} naar %{dest}: %{error}"
 
 msgid "Examples"
-msgstr ""
+msgstr "Voorbeelden"
 
 msgid "Examples:"
-msgstr ""
+msgstr "Voorbeelden:"
 
 msgid "Export commands for Offline Sync"
 msgstr "Opdrachten exporteren voor offline synchronisatie"
@@ -312,25 +380,28 @@ msgid "Exporting subscriptions"
 msgstr "Abonnementen exporteren"
 
 msgid "Failed to download %{failed_count} files"
-msgstr ""
+msgstr "Downloaden van %{failed_count} bestanden is mislukt"
 
 msgid "Failed to export the SUSE Manager product tree: %{error_message}"
 msgstr ""
+"Exporteren van de SUSE Manager productboomstructuur is mislukt: "
+"%{error_message}"
 
 msgid "Failed to import system %{system}"
-msgstr ""
+msgstr "Importeren van systeem %{system} is mislukt"
 
 msgid "Failed to import the suma product tree: %{error_message}"
 msgstr ""
+"Importeren van de suma-productboomstructuur is mislukt: %{error_message}"
 
 msgid "Failed to sync systems: %{error}"
-msgstr ""
+msgstr "Systemen synchroniseren is mislukt: %{error}"
 
 msgid "Filter BYOS systems using RMT as a proxy"
-msgstr ""
+msgstr "Filter BYOS systemem met RMT als een proxy"
 
 msgid "Forward registered systems data to SCC"
-msgstr ""
+msgstr "Stuur geregistreerde systeemgegevens naar SCC"
 
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
@@ -338,16 +409,16 @@ msgstr[0] "Product gevonden door doel %{target}: %{products}."
 msgstr[1] "Producten gevonden door doel %{target}: %{products}."
 
 msgid "GPG key import failed"
-msgstr ""
+msgstr "GPG sleutel importeren is mislukt"
 
 msgid "GPG signature verification failed"
-msgstr ""
+msgstr "Verificatie van GPG ondertekening is mislukt"
 
 msgid "Hardware information stored for system %{system}"
 msgstr "Hardware-informatie opgeslagen voor systeem %{system}"
 
 msgid "Hostname"
-msgstr ""
+msgstr "Hostnaam"
 
 msgid "ID"
 msgstr "Id"
@@ -368,22 +439,27 @@ msgid "Last mirrored"
 msgstr "Laatst gespiegeld"
 
 msgid "Last seen"
-msgstr ""
+msgstr "Laatst gezien"
 
 msgid "List all custom repositories"
 msgstr "Maak een lijst met alle aangepaste opslagruimtes"
 
 msgid "List all products, including ones which are not marked to be mirrored"
-msgstr "Maak een lijst met alle producten, inclusief producten die niet zijn gemarkeerd om te worden gespiegeld"
+msgstr ""
+"Maak een lijst met alle producten, inclusief producten die niet zijn "
+"gemarkeerd om te worden gespiegeld"
 
 msgid "List all registered systems"
-msgstr ""
+msgstr "Alle geregistreerde systemen in een lijst weergeven"
 
-msgid "List all repositories, including ones which are not marked to be mirrored"
-msgstr "Maak een lijst met alle opslagplaatsen, inclusief opslagruimtes die niet zijn gemarkeerd om te worden gespiegeld"
+msgid ""
+"List all repositories, including ones which are not marked to be mirrored"
+msgstr ""
+"Maak een lijst met alle opslagplaatsen, inclusief opslagruimtes die niet "
+"zijn gemarkeerd om te worden gespiegeld"
 
 msgid "List and manipulate registered systems"
-msgstr ""
+msgstr "Maak een lijst van geregistreerde systemen en manipuleer ze"
 
 msgid "List and modify custom repositories"
 msgstr "Maak een lijst met aangepaste opslagplaatsen en pas deze aan"
@@ -395,28 +471,30 @@ msgid "List and modify repositories"
 msgstr "Maak een lijst met opslagruimtes en pas deze aan"
 
 msgid "List files during the cleaning process."
-msgstr ""
+msgstr "Maak een lijst van bestanden tijdens het opschoonproces."
 
 msgid "List products which are marked to be mirrored."
-msgstr "Maak een lijst met producten die zijn gemarkeerd om te worden gespiegeld."
+msgstr ""
+"Maak een lijst met producten die zijn gemarkeerd om te worden gespiegeld."
 
 msgid "List registered systems."
-msgstr ""
+msgstr "Maak een lijst van geregistreerde systemen."
 
 msgid "List repositories which are marked to be mirrored"
-msgstr "Maak een lijst met opslagruimtes die zijn gemarkeerd om te worden gespiegeld"
+msgstr ""
+"Maak een lijst met opslagruimtes die zijn gemarkeerd om te worden gespiegeld"
 
 msgid "Loading product data from SCC"
-msgstr ""
+msgstr "Productgegevens laden uit SCC"
 
 msgid "Loading repository data from SCC"
-msgstr ""
+msgstr "Opslagruimtegegevens uit SCC"
 
 msgid "Loading subscription data from SCC"
-msgstr ""
+msgstr "Inschrijvingsgegevens laden uit SCC"
 
 msgid "Login"
-msgstr ""
+msgstr "Aanmelden"
 
 msgid "Mandatory"
 msgstr "Verplicht"
@@ -427,17 +505,16 @@ msgstr "Verplicht?"
 msgid "Mirror"
 msgstr "Spiegelen"
 
-#, fuzzy
 msgid "Mirror all enabled repositories"
-msgstr "Spiegelen"
+msgstr "Alle ingeschakelde opslagruimten spiegelen"
 
-#, fuzzy
 msgid "Mirror enabled repositories for a product with given product IDs"
-msgstr "Spiegelen"
+msgstr ""
+"Ingeschakelde opslagruimten spiegelen voor een product met gegeven product-"
+"ID's"
 
-#, fuzzy
 msgid "Mirror enabled repositories with given repository IDs"
-msgstr "Spiegelen"
+msgstr "Ingeschakelde opslagruimten met gegeven opslagruimte-ID's spiegelen"
 
 msgid "Mirror repos at given path"
 msgstr "Spiegel opslagruimtes op het opgegeven pad"
@@ -451,24 +528,20 @@ msgstr "Opslagruimtes spiegelen"
 msgid "Mirror?"
 msgstr "Spiegelen?"
 
-#, fuzzy
 msgid "Mirroring SUMA product tree failed: %{error_message}"
-msgstr "Spiegelen"
+msgstr "SUMA productboomstructuur spiegelen is mislukt: %{error_message}"
 
 msgid "Mirroring SUSE Manager product tree to %{dir}"
 msgstr "SUSE Manager productstructuur spiegelen met %{dir}"
 
-#, fuzzy
 msgid "Mirroring complete."
-msgstr "Spiegelen"
+msgstr "Spiegelen is gereed."
 
-#, fuzzy
 msgid "Mirroring completed with errors."
-msgstr "Spiegelen"
+msgstr "Spiegelen gereed met fouten."
 
-#, fuzzy
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
-msgstr "Spiegelen"
+msgstr "Opslagruimte met ID %{repo_id} spiegelen is niet ingeschakeld"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "Opslagruimte %{repo} spiegelen naar %{dir}"
@@ -489,7 +562,7 @@ msgid "No custom repositories found."
 msgstr "Geen aangepaste opslagruimtes gevonden."
 
 msgid "No dangling packages have been found!"
-msgstr ""
+msgstr "Geen hangende pakketten gevonden!"
 
 msgid "No matching products found in the database."
 msgstr "Geen overeenkomende producten gevonden in de database."
@@ -515,37 +588,58 @@ msgstr "Geen opslagruimtes ingeschakeld."
 msgid "No repositories found for product: %s"
 msgstr "Geen opslagruimtes gevonden voor product: %s"
 
-#, fuzzy
 msgid "No repository IDs supplied"
-msgstr "Geen opslagruimte-id's opgegeven"
+msgstr "Geen opslagruimte-ID's opgegeven"
 
 msgid "No subscription found with this registration code"
-msgstr ""
+msgstr "Geen inschrijving gevonden met deze registratiecode"
 
 msgid "Not Mandatory"
 msgstr "Niet verplicht"
 
-#, fuzzy
-msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
-msgstr "Niet alle verplichte opslagruimtes zijn gespiegeld voor product %s"
-
-msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
-msgstr "Nog geen registratiecode geactiveerd. Ga naar https://scc.suse.com om de registratiecode te activeren."
-
-msgid "Now, it will parse all repomd.xml files, search for dangling packages on disk and clean them."
+msgid ""
+"Not all mandatory repositories are mirrored for product %s. Missing "
+"Repositories (by ids): %s. On the RMT server, the missing repositories can "
+"be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
 msgstr ""
+"Niet alle verplichte opslagruimtes zijn gespiegeld voor product %s. "
+"Ontbrekende opslagruimten (per ID's):%s. Op de RMT-server kunnen de "
+"ontbrekende opslagruimten ingeschakeld worden met: rmt-cli repos enable %s  "
+"rmt-cli mirror"
+
+msgid ""
+"Not yet activated Registration Code. Visit https://scc.suse.com to activate "
+"it."
+msgstr ""
+"Nog geen registratiecode geactiveerd. Ga naar https://scc.suse.com om de "
+"registratiecode te activeren."
+
+msgid ""
+"Now, it will parse all repomd.xml files, search for dangling packages on "
+"disk and clean them."
+msgstr ""
+"Nu zal het alle repomd.xml bestanden ontleden, zoeken naar hangende "
+"pakketten op schijf en ze opschonen."
 
 msgid "Number of systems to display"
-msgstr ""
+msgstr "Aantal te tonen systemen"
 
 msgid "Only '%{input}' will be accepted."
 msgstr ""
 
-msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
-msgstr "Alleen geactiveerde producten worden standaard weergegeven. Gebruik de optie '%{command}' om alle producten te bekijken."
+msgid ""
+"Only enabled products are shown by default. Use the '%{command}' option to "
+"see all products."
+msgstr ""
+"Alleen geactiveerde producten worden standaard weergegeven. Gebruik de optie "
+"'%{command}' om alle producten te bekijken."
 
-msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
-msgstr "Alleen ingeschakelde opslagruimtes worden standaard weergegeven. Gebruik de optie '%{option}' om alle opslagruimtes te bekijken."
+msgid ""
+"Only enabled repositories are shown by default. Use the '%{option}' option "
+"to see all repositories."
+msgstr ""
+"Alleen ingeschakelde opslagruimtes worden standaard weergegeven. Gebruik de "
+"optie '%{option}' om alle opslagruimtes te bekijken."
 
 msgid "Output data in CSV format"
 msgstr "Uitvoergegevens in CSV-indeling"
@@ -560,7 +654,9 @@ msgstr ""
 msgid "Please provide a non-numeric ID for your custom repository."
 msgstr "Id"
 
-msgid "Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
+msgid ""
+"Poking %{file_reference} failed with %{message}. Retrying %{retries} more "
+"times after %{seconds} seconds"
 msgstr ""
 
 msgid "Product"
@@ -568,13 +664,17 @@ msgstr "Product"
 
 msgid "Product %{products} could not be found and was not disabled."
 msgid_plural "Products %{products} could not be found and were not disabled."
-msgstr[0] "Product %{products} kan niet worden gevonden en is niet uitgeschakeld."
-msgstr[1] "Producten %{products} kunnen niet worden gevonden en zijn niet uitgeschakeld."
+msgstr[0] ""
+"Product %{products} kan niet worden gevonden en is niet uitgeschakeld."
+msgstr[1] ""
+"Producten %{products} kunnen niet worden gevonden en zijn niet uitgeschakeld."
 
 msgid "Product %{products} could not be found and was not enabled."
 msgid_plural "Products %{products} could not be found and were not enabled."
-msgstr[0] "Product %{products} kan niet worden gevonden en is niet ingeschakeld."
-msgstr[1] "Producten %{products} kunnen niet worden gevonden en zijn niet ingeschakeld."
+msgstr[0] ""
+"Product %{products} kan niet worden gevonden en is niet ingeschakeld."
+msgstr[1] ""
+"Producten %{products} kunnen niet worden gevonden en zijn niet ingeschakeld."
 
 msgid "Product %{product} not found"
 msgstr "Product %{product} niet gevonden"
@@ -586,7 +686,8 @@ msgid ""
 "by running '%{command}'\n"
 msgstr ""
 "Product %{product} niet gevonden.\n"
-"Er is geprobeerd een aangepaste opslagruimte %{repo} aan product %{product} te koppelen,\n"
+"Er is geprobeerd een aangepaste opslagruimte %{repo} aan product %{product} "
+"te koppelen,\n"
 "maar dat product is niet gevonden. Koppel deze aan een ander product\n"
 "door '%{command}' uit te voeren\n"
 
@@ -645,7 +746,9 @@ msgstr "Product"
 msgid "Provide a custom ID instead of allowing RMT to generate one."
 msgstr "Id"
 
-msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
+msgid ""
+"RMT found locally mirrored files from the following repositories which are "
+"not marked to be mirrored:"
 msgstr ""
 
 msgid "RMT found no repomd.xml files. Check if RMT is properly configured."
@@ -657,10 +760,14 @@ msgstr ""
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr "RMT is nog niet gesynchroniseerd met SCC. Voer eerst '%{command}' uit"
 
-msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
+msgid ""
+"RMT only found locally mirrored files of repositories that are marked to be "
+"mirrored."
 msgstr ""
 
-msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
+msgid ""
+"RMT will mirror the specified repositories in %{file} to PATH, usually a "
+"portable storage device."
 msgstr ""
 
 msgid "Read SCC data from given path"
@@ -690,7 +797,9 @@ msgstr ""
 msgid "Removes inactive systems"
 msgstr ""
 
-msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
+msgid ""
+"Removes locally mirrored files of repositories which are not marked to be "
+"mirrored"
 msgstr ""
 
 msgid "Removes old systems and their activations if they are inactive."
@@ -705,8 +814,12 @@ msgstr ""
 msgid "Repositories:"
 msgstr ""
 
-msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
-msgstr "Opslagruimte %{repo} is niet gevonden in de RMT-database, mogelijk hebt u er geen geldig abonnement meer voor"
+msgid ""
+"Repository %{repo} was not found in RMT database, perhaps you no longer have "
+"a valid subscription for it"
+msgstr ""
+"Opslagruimte %{repo} is niet gevonden in de RMT-database, mogelijk hebt u er "
+"geen geldig abonnement meer voor"
 
 msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
 msgstr ""
@@ -723,15 +836,22 @@ msgstr "Opslagruimte met id %{id} is ingeschakeld."
 
 #, fuzzy
 msgid "Repository by ID %{repos} could not be found and was not disabled."
-msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
-msgstr[0] "Opslagruimte %{repos} kan niet worden gevonden en is niet uitgeschakeld."
-msgstr[1] "Opslagruimtes %{repos} kunnen niet worden gevonden en zijn niet uitgeschakeld."
+msgid_plural ""
+"Repositories by IDs %{repos} could not be found and were not disabled."
+msgstr[0] ""
+"Opslagruimte %{repos} kan niet worden gevonden en is niet uitgeschakeld."
+msgstr[1] ""
+"Opslagruimtes %{repos} kunnen niet worden gevonden en zijn niet "
+"uitgeschakeld."
 
 #, fuzzy
 msgid "Repository by ID %{repos} could not be found and was not enabled."
-msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
-msgstr[0] "Opslagruimte %{repos} kan niet worden gevonden en is niet ingeschakeld."
-msgstr[1] "Opslagruimtes %{repos} kunnen niet worden gevonden en zijn niet ingeschakeld."
+msgid_plural ""
+"Repositories by IDs %{repos} could not be found and were not enabled."
+msgstr[0] ""
+"Opslagruimte %{repos} kan niet worden gevonden en is niet ingeschakeld."
+msgstr[1] ""
+"Opslagruimtes %{repos} kunnen niet worden gevonden en zijn niet ingeschakeld."
 
 msgid "Repository metadata signatures are missing"
 msgstr "Metagegevenshandtekeningen voor opslagruimte ontbreken"
@@ -763,10 +883,15 @@ msgid "Response headers"
 msgstr ""
 
 msgid "Run '%{command}' for more information on a command and its subcommands."
-msgstr "Voer '%{command}' uit voor meer informatie over een opdracht en de bijbehorende subopdrachten."
+msgstr ""
+"Voer '%{command}' uit voor meer informatie over een opdracht en de "
+"bijbehorende subopdrachten."
 
-msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
-msgstr "Voer '%{command}' uit om eerst met uw SUSE Customer Center-gegevens te synchroniseren."
+msgid ""
+"Run '%{command}' to synchronize with your SUSE Customer Center data first."
+msgstr ""
+"Voer '%{command}' uit om eerst met uw SUSE Customer Center-gegevens te "
+"synchroniseren."
 
 msgid "Run the clean process without actually removing files."
 msgstr ""
@@ -796,7 +921,9 @@ msgstr "Instellingen opgeslagen in %{file}."
 msgid "Show RMT version"
 msgstr "RMT-versie tonen"
 
-msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
+msgid ""
+"Showing last %{limit} registrations. Use the '--all' option to see all "
+"registered systems."
 msgstr ""
 
 msgid "Shows products attached to a custom repository"
@@ -836,38 +963,61 @@ msgid "System with login %{login} not found."
 msgstr ""
 
 #, fuzzy
-msgid "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated from ID %{base_id} due to token mismatch"
+msgid ""
+"System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and "
+"duplicated from ID %{base_id} due to token mismatch"
 msgstr "Id"
 
-msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
+msgid ""
+"System with login \\\"%{login}\\\" authenticated with token \\"
+"\"%{system_token}\\\""
 msgstr ""
 
 msgid "System with login \\\"%{login}\\\" authenticated without token header"
 msgstr ""
 
 #, fuzzy
-msgid "The RMT database has not yet been initialized. Run '%{command}' to set up the database."
-msgstr "De RMT-database is nog niet geïnitialiseerd. Voer '%{command}' uit om de database te configureren."
+msgid ""
+"The RMT database has not yet been initialized. Run '%{command}' to set up "
+"the database."
+msgstr ""
+"De RMT-database is nog niet geïnitialiseerd. Voer '%{command}' uit om de "
+"database te configureren."
 
-msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
-msgstr "De SCC-referenties zijn niet correct geconfigureerd in '%{path}'. U kunt deze verkrijgen via %{url}"
+msgid ""
+"The SCC credentials are not configured correctly in '%{path}'. You can "
+"obtain them from %{url}"
+msgstr ""
+"De SCC-referenties zijn niet correct geconfigureerd in '%{path}'. U kunt "
+"deze verkrijgen via %{url}"
 
-msgid "The command will list the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
+msgid ""
+"The command will list the candidates for removal and will ask for "
+"confirmation. You can tell this subcommand to go ahead without asking with "
+"the '--no-confirmation' flag."
 msgstr ""
 
 msgid "The following errors occurred while mirroring:"
 msgstr ""
 
-msgid "The given date does not follow the proper format. Ensure it follows this format '<year>-<month>-<day>'."
+msgid ""
+"The given date does not follow the proper format. Ensure it follows this "
+"format '<year>-<month>-<day>'."
 msgstr ""
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
-msgstr "Het product \"%s\" is een basisproduct en kan niet worden gedeactiveerd"
+msgstr ""
+"Het product \"%s\" is een basisproduct en kan niet worden gedeactiveerd"
 
-msgid "The product you are attempting to activate (%{product}) is not available on your system's base product (%{system_base}). %{product} is available on %{required_bases}."
+msgid ""
+"The product you are attempting to activate (%{product}) is not available on "
+"your system's base product (%{system_base}). %{product} is available on "
+"%{required_bases}."
 msgstr ""
 
-msgid "The product you are attempting to activate (%{product}) requires one of these products to be activated first: %{required_bases}"
+msgid ""
+"The product you are attempting to activate (%{product}) requires one of "
+"these products to be activated first: %{required_bases}"
 msgstr ""
 
 msgid "The requested product '%s' is not activated on this system."
@@ -876,17 +1026,22 @@ msgstr "Het aangevraagde product '%s' is niet geactiveerd op dit systeem."
 msgid "The requested products '%s' are not activated on the system."
 msgstr "De aangevraagde producten '%s' zijn niet geactiveerd op het systeem."
 
-msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
+msgid ""
+"The specified PATH must contain a %{file} file. An offline RMT can create "
+"this file with the command '%{command}'."
 msgstr ""
 
-msgid "The subscription with the provided Registration Code does not include the requested product '%s'"
+msgid ""
+"The subscription with the provided Registration Code does not include the "
+"requested product '%s'"
 msgstr ""
 
 msgid "The subscription with the provided Registration Code is expired"
 msgstr ""
 
 msgid ""
-"There are activated extensions/modules on this system that cannot be migrated. \n"
+"There are activated extensions/modules on this system that cannot be "
+"migrated. \n"
 "Deactivate them first, and then try migrating again. \n"
 "The product(s) are '%s'. \n"
 "You can deactivate them with \n"
@@ -899,7 +1054,9 @@ msgstr "Er zijn geen opslagruimtes gemarkeerd om te spiegelen."
 msgid "There are no systems registered to this RMT instance."
 msgstr ""
 
-msgid "This can take several minutes. Would you like to continue and clean dangling packages?"
+msgid ""
+"This can take several minutes. Would you like to continue and clean dangling "
+"packages?"
 msgstr ""
 
 msgid "To clean up downloaded files, please run '%{command}'"
@@ -908,7 +1065,9 @@ msgstr ""
 msgid "To clean up downloaded files, run '%{command}'"
 msgstr ""
 
-msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
+msgid ""
+"To target a system for removal, use the command \"%{command}\" for a list of "
+"systems with their corresponding logins."
 msgstr ""
 
 #, fuzzy
@@ -957,7 +1116,9 @@ msgstr ""
 msgid "Version"
 msgstr "Versie"
 
-msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
+msgid ""
+"Would you like to continue and remove the locally mirrored files of these "
+"repositories?"
 msgstr ""
 
 msgid "curl return code"
@@ -1004,3 +1165,13 @@ msgstr ""
 
 msgid "yes"
 msgstr ""
+
+#~ msgid "A repository by the URL %{url} already exists."
+#~ msgstr "Een opslagruimte met de URL %{url} bestaat al."
+
+#~ msgid "Error while moving directory %{src} to %{dest}: %{error}"
+#~ msgstr ""
+#~ "Fout bij het verplaatsen van directory %{src} naar %{dest}: %{error}"
+
+#~ msgid "Not all mandatory repositories are mirrored for product %s"
+#~ msgstr "Niet alle verplichte opslagruimtes zijn gespiegeld voor product %s"
