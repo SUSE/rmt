@@ -352,6 +352,12 @@ module SccProxy
               @system.update(pubcloud_reg_code: encoded_reg_code)
             end
           end
+        rescue *NET_HTTP_ERRORS => e
+          logger.error(
+            "Could not activate product for system with regcode #{params[:token]}" \
+              "to SCC: #{e.message}"
+          )
+          render json: { type: 'error', error: e.message }, status: status_code(e.message), location: nil
         end
         # rubocop:enable Metrics/CyclomaticComplexity
         # rubocop:enable Metrics/PerceivedComplexity
@@ -385,12 +391,6 @@ module SccProxy
 
             SccProxy.announce_system_scc("Token token=#{params[:token]}", params, params['system_token'])
           end
-        rescue *NET_HTTP_ERRORS => e
-          logger.error(
-            "Could not register system with regcode #{params[:token]}" \
-              "to SCC: #{e.message}"
-          )
-          render json: { type: 'error', error: e.message }, status: status_code(e.message), location: nil
         end
 
         def status_code(error_message)
