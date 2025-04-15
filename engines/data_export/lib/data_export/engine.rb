@@ -32,14 +32,14 @@ module DataExport
         after_action :export_rmt_data, only: %i[update], if: -> { response.successful? }
 
         def export_rmt_data
-          data_export_handler = DataExport.handler.new(
-            @system,
-            request,
-            params,
-            logger
-          )
-          data_export_handler.export_rmt_data
-          logger.info "System #{@system.login} info updated by data export handler after updating the system"
+          if @system.products.empty?
+            send_data
+          else
+            @system.products.pluck(:name).each do |prod_name|
+              params[:dw_product_name] = prod_name
+              send_data
+            end
+          end
         rescue StandardError => e
           logger.error('Unexpected data export error has occurred:')
           logger.error(e.message)
@@ -47,13 +47,26 @@ module DataExport
           logger.error('Backtrace:')
           logger.error(e.backtrace)
         end
+
+        protected
+
+        def send_data
+          data_export_handler = DataExport.handler.new(
+            @system,
+            request,
+            params,
+            logger
+          )
+          data_export_handler.export_rmt_data
+          logger.info "System #{@system.login} info with #{params} params updated by data export handler after updating the system"
+        end
       end
 
       Api::Connect::V3::Systems::ProductsController.class_eval do
         after_action :export_rmt_data, only: %i[activate upgrade], if: -> { response.successful? && !@system.byos? }
 
         def export_rmt_data
-          params[:product_triplet] = @product.product_string
+          params[:dw_product_name] = @product.name
           data_export_handler = DataExport.handler.new(
             @system,
             request,

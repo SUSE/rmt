@@ -6,7 +6,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
   include_context 'user-agent header'
   include_context 'zypp user-agent header'
 
-  let(:system) { FactoryBot.create(:system, hostname: 'initial') }
+  let(:system) { FactoryBot.create(:system, :with_activated_base_product, hostname: 'initial') }
   let(:url) { '/connect/systems' }
   let(:headers) { auth_header.merge(version_header) }
   let(:hwinfo) do
@@ -39,6 +39,8 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
       end
 
       context 'when data export fails' do
+        let(:system) { FactoryBot.create(:system, hostname: 'initial') }
+
         before do
           allow(plugin_double).to receive(:export_rmt_data).and_raise('foo')
           allow(Rails.logger).to receive(:error)
