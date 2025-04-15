@@ -495,13 +495,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             }
           end
 
-          before do
-            allow(plugin_double).to(
-              receive(:instance_valid?)
-                .and_raise(InstanceVerification::Exception, 'Custom plugin error')
-            )
-          end
-
           context 'with a valid registration code' do
             before do
               stub_request(:post, scc_activate_url)
@@ -528,61 +521,20 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           context 'with a not valid registration code' do
+            let(:scc_register_systems_url) { 'https://scc.suse.com/connect/subscriptions/systems' }
+
             before do
-              stub_request(:post, scc_activate_url)
+              stub_request(:post, scc_register_systems_url)
                 .to_return(
-                  status: 401,
-                  body: { error: 'No product found on SCC for: foo bar x86_64 json api' }.to_json,
+                  status: [422, 'Bad Request'],
+                  body: { error: 'Oh oh, something went wrong' }.to_json,
                   headers: {}
-                )
-              allow(InstanceVerification).to receive(:write_cache_file)
-              allow(FileUtils).to receive(:mkdir_p)
-              allow(FileUtils).to receive(:touch)
-              allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return('')
+              )
             end
 
-            context 'when de-register system from SCC suceeds' do
-              before do
-                stub_request(:delete, scc_systems_url)
-                  .to_return(
-                    status: 204,
-                    body: '',
-                    headers: {}
-                  )
-
-                stub_request(:post, scc_register_system_url)
-                  .to_return(status: 201, body: { ok: 'OK' }.to_json, headers: {})
-                post url, params: payload, headers: headers
-              end
-
-              it 'renders an error with exception details' do
-                data = JSON.parse(response.body)
-                expect(data['error']).to include('No product found on SCC')
-                expect(data['error']).not_to include('json api')
-              end
-            end
-
-            context 'when de-register system from SCC fails' do
-              let(:error_message) { "Could not activate #{product.product_string}, error: No product found on SCC for: foo bar x86_64 json api 401" }
-
-              before do
-                allow(Rails.logger).to receive(:info)
-                stub_request(:delete, scc_systems_url)
-                  .to_return(
-                    status: 401,
-                    body: { error: 'Could not de-register system' }.to_json,
-                    headers: {}
-                  )
-                stub_request(:post, scc_register_system_url)
-                  .to_return(status: 201, body: { ok: 'OK' }.to_json, headers: {})
-              end
-
-              it 'renders an error with exception details' do
-                expect(Rails.logger).to receive(:info).with(error_message)
-                post url, params: payload, headers: headers
-                data = JSON.parse(response.body)
-                expect(data['error']).to eq('Could not de-register system')
-              end
+            it 'renders the error' do
+              post url, params: payload, headers: headers
+              expect(response.body).to include('Bad Request')
             end
           end
         end

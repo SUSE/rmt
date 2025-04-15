@@ -380,8 +380,21 @@ module SccProxy
             raise 'Incompatible extension product' unless @product.arch == base_prod.arch && @product.version == base_prod.version
 
             update_params_system_info mode
+            params['system_token'] = @system.system_token.presence || params.fetch('system_token', '')
+            Rails.logger.info 'No system token' if params['system_token'].blank?
+
             SccProxy.announce_system_scc("Token token=#{params[:token]}", params, params['system_token'])
           end
+        rescue *NET_HTTP_ERRORS => e
+          logger.error(
+            "Could not register system with regcode #{params[:token]}" \
+              "to SCC: #{e.message}"
+          )
+          render json: { type: 'error', error: e.message }, status: status_code(e.message), location: nil
+        end
+
+        def status_code(error_message)
+          error_message[0..(error_message.index(' ') - 1)].to_i
         end
 
         def scc_upgrade
