@@ -467,7 +467,7 @@ module SccProxy
               # this situation.
               return true if skip_on_duplicated && @systems.size > 1
 
-              @system = get_system(@systems)
+              @system = find_system
               if system_tokens_enabled? && request.headers.key?(ApplicationController::SYSTEM_TOKEN_HEADER)
                 @system.update(last_seen_at: Time.zone.now)
                 headers[ApplicationController::SYSTEM_TOKEN_HEADER] = @system.system_token
@@ -485,29 +485,40 @@ module SccProxy
           end
         end
 
-        def get_system(systems)
-          return nil if systems.blank?
+        def find_system
+          systems_with_token = @systems.select(&:system_token)
+          if systems_with_token.empty?
+            @systems.each do |system|
+              if system.payg? || system.hybrid?
+                # if PAYG or HYBRID and no system_token  =>
+                # update the system_token
+                iid = InstanceVerification.provider.new(nil, nil, nil, system.instance_data).instance_identifier
+                system.update!(system_token: iid)
+                return system
+              end
+            end
+            return @systems.first
+          end
 
-          byos_systems_with_token = systems.select { |system| system.byos? && system.system_token }
-
-          return systems.first if byos_systems_with_token.empty?
-
-          system = byos_systems_with_token.first
-          if byos_systems_with_token.length > 1
+          system = systems_with_token.first
+          if systems_with_token.length > 1
+            # this check is for old systems
+            # new systems can not have same login + pass + system_token
+            # as that has a unique constrain at DB level
             # check for possible duplicated system_tokens
-            duplicated_system_tokens = byos_systems_with_token.group_by { |sys| sys[:system_token] }.keys
+            duplicated_system_tokens = systems_with_token.group_by { |sys| sys[:system_token] }.keys
 
             if duplicated_system_tokens.length > 1
-              logger.info _('BYOS system with login \"%{login}\" authenticated and duplicated due to token (system tokens %{system_tokens}) mismatch') %
+              logger.info _('System with login \"%{login}\" authenticated and duplicated due to token (system tokens %{system_tokens}) mismatch') %
                 { login: system.login, system_tokens: duplicated_system_tokens.join(',') }
             else
               # no different systems
               # first system is chosen
-              logger.info _('BYOS system with login \"%{login}\" authenticated, system  token \"%{system_token}\"') %
+              logger.info _('System with login \"%{login}\" authenticated, system  token \"%{system_token}\"') %
                 { login: system.login, system_token: system.system_token }
             end
           else
-            logger.info _('BYOS system with login \"%{login}\" authenticated, system  token \"%{system_token}\"') %
+            logger.info _('System with login \"%{login}\" authenticated, system  token \"%{system_token}\"') %
               { login: system.login, system_token: system.system_token }
           end
           system

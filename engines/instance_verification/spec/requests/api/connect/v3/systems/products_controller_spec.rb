@@ -133,6 +133,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         it 'class instance verification provider' do
           expect(InstanceVerification::Providers::Example).to receive(:new)
             .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, nil).and_call_original.at_least(:once)
+          expect(InstanceVerification::Providers::Example).to receive(:new)
+            .with(nil, nil, nil, nil).and_call_original.at_least(:once)
           allow(File).to receive(:directory?)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
@@ -161,6 +163,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
               .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, instance_data).and_return(plugin_double).at_least(:once)
+            expect(InstanceVerification::Providers::Example).to receive(:new)
+              .with(nil, nil, nil, instance_data).and_call_original.at_least(:once)
             expect(plugin_double).to receive(:instance_valid?).and_return(false)
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload, headers: headers
@@ -176,6 +180,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
               .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, instance_data).and_return(plugin_double).at_least(:once)
+            expect(InstanceVerification::Providers::Example).to receive(:new)
+              .with(nil, nil, nil, instance_data).and_call_original.at_least(:once)
             expect(plugin_double).to receive(:instance_valid?).and_raise('Custom plugin error')
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload, headers: headers
@@ -193,6 +199,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
               .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, instance_data).and_return(plugin_double).at_least(:once)
+            expect(InstanceVerification::Providers::Example).to receive(:new)
+              .with(nil, nil, nil, instance_data).and_call_original.at_least(:once)
             expect(plugin_double).to receive(:instance_valid?).and_raise(InstanceVerification::Exception, 'Custom plugin error')
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload, headers: headers
@@ -249,6 +257,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         before do
           allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+          allow(plugin_double).to receive(:instance_identifier).and_return('foo')
           allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
           allow(plugin_double).to receive(:allowed_extension?).and_return(true)
           allow(plugin_double).to receive(:add_on).and_return(nil)
@@ -417,6 +426,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           before do
             allow(InstanceVerification::Providers::Example).to receive(:new)
               .and_return(plugin_double)
+            allow(plugin_double).to receive(:instance_identifier).and_return('instance_identifier_foo')
             allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
@@ -484,6 +494,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
               .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, instance_data).and_return(plugin_double).at_least(:once)
+            expect(InstanceVerification::Providers::Example).to receive(:new)
+              .with(nil, nil, nil, instance_data).and_call_original.at_least(:once)
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             expect(plugin_double).to receive(:instance_valid?).and_return(false)
             post url, params: payload, headers: headers
@@ -499,6 +511,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
               .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, instance_data).and_return(plugin_double).at_least(:once)
+            expect(InstanceVerification::Providers::Example).to receive(:new)
+              .with(nil, nil, nil, instance_data).and_return(plugin_double).at_least(:once)
+            allow(plugin_double).to receive(:instance_identifier).and_return('foo')
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             expect(plugin_double).to receive(:instance_valid?).and_raise('Custom plugin error')
             post url, params: payload, headers: headers
@@ -558,6 +573,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       before do
         allow(InstanceVerification::Providers::Example).to receive(:new)
           .and_return(plugin_double)
+        allow(plugin_double).to receive(:instance_identifier).and_return('instance_identifier_foo')
         allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
         allow(plugin_double).to receive(:allowed_extension?).and_return(true)
         allow(plugin_double).to receive(:add_on).and_return(nil)
