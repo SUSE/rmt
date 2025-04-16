@@ -8,6 +8,9 @@ RUN zypper --non-interactive install --no-recommends \
     update-alternatives --install /usr/bin/bundle bundle /usr/bin/bundle.ruby2.5 5 && \
     update-alternatives --install /usr/bin/bundler bundler /usr/bin/bundler.ruby2.5 5
 
+RUN zypper --non-interactive install --no-recommends \
+        vim jq curl
+
 WORKDIR /srv/www/rmt/
 
 COPY Gemfile* /srv/www/rmt/
