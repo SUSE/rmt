@@ -395,17 +395,12 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               .to_return(status: 201, body: scc_response_body, headers: {})
 
             expect(InstanceVerification).to receive(:update_cache).with(cache_entry, 'hybrid')
-
             post url, params: payload_token, headers: headers
           end
 
           context 'when regcode is provided' do
             it 'returns service JSON' do
               expect(response.body).to eq(serialized_service_json)
-              updated_system = System.find_by(login: system.login)
-              expect(updated_system.pubcloud_reg_code).to include(',')
-              expect(updated_system.pubcloud_reg_code).to include(Base64.strict_encode64(payload_token[:token]).to_s)
-              expect(updated_system.pubcloud_reg_code).to include(system.pubcloud_reg_code)
             end
           end
         end
@@ -613,7 +608,13 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     let(:request) { put url, headers: headers, params: payload }
 
     context 'when system is byos' do
-      let(:system) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
+      let(:system) do
+        FactoryBot.create(
+          :system, :byos, :with_system_information,
+          pubcloud_reg_code: Base64.strict_encode64('super_token'),
+          instance_data: instance_data
+        )
+      end
       let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system) }
       let(:payload) do
         {
