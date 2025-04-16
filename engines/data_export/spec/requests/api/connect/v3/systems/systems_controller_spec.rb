@@ -62,7 +62,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
     # if this test fails, the implementation of the call `data_export_handler.export_rmt_data`
     # invoked in engines/data_export/lib/data_export/engine.rb needs to change accordingly
     before do
-      FactoryBot.create(:system, :with_system_information, hostname: 'initial')
+      FactoryBot.create(:system, :payg, :with_system_information, hostname: 'initial')
     end
 
     context 'when the db changes' do
