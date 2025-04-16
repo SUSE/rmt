@@ -13,9 +13,10 @@ services:
     volumes:
       - .:/srv/www/rmt
       - ./config/rmt.yml:/etc/rmt.conf
-      - public:/srv/www/repo/public/
     depends_on:
       - db
+    pre_stop:
+      - command: rm -f /srv/www/rmt/tmp/pids/server.pid
     privileged: true
     command: bundle exec rails runner /srv/www/rmt/bin/compose-init.rb
 
@@ -31,7 +32,6 @@ services:
     entrypoint: /bin/bash -c 'cat /tmp/default.template | sed "s/\\\$$server_port/$EXTERNAL_PORT/g" > /etc/nginx/conf.d/default.conf && nginx -g "daemon off;"'
 
 volumes:
-  public:
   mariadb:
   db_storage:
     driver: local

@@ -96,7 +96,7 @@ server: build database-up
 	docker-compose up --no-recreate
 
 shell: build database-up
-	docker-compose exec -ti rmt /bin/bash
+	docker-compose run --rm -ti rmt /bin/bash
 
 console: build database-up
-	docker-compose exec -ti rmt bundle exec rails c
+	docker-compose run --rm -ti rmt bundle exec rails c

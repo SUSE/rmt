@@ -28,6 +28,8 @@ RUN sed -i 's/#!\/usr\/bin\/env ruby/#!\/usr\/bin\/ruby.ruby2.5/g' /srv/www/rmt/
     chown _rmt /srv/www/rmt/public/repo && \
     chown _rmt /srv/www/rmt/public/suma
 
+RUN echo "development-rmt" > /var/lib/rmt/system_uuid
+
 EXPOSE 4224
 
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "4224"]
