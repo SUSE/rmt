@@ -56,45 +56,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
       end
 
-# <<<<<<< HEAD
-# =======
-#       context "when system doesn't have hw_info and cache is inactive" do
-#         let(:system) do
-#           FactoryBot.create(
-#             :system,
-#             :byos,
-#             pubcloud_reg_code: Base64.strict_encode64('super_token'),
-#             instance_data: 'dummy_instance_data'
-#           )
-#         end
-
-#         before do
-#           stub_request(:post, 'https://scc.suse.com/connect/systems/products')
-#             .to_return(
-#               status: 201,
-#               body: { ok: 'ok' }.to_json,
-#               headers: {}
-#             )
-#         end
-
-#         it 'class instance verification provider' do
-#           expect(InstanceVerification::Providers::Example).to(
-#             receive(:new).and_call_original.at_least(:once)
-#           )
-#           allow(File).to receive(:directory?)
-#           allow(Dir).to receive(:mkdir)
-#           allow(Dir).to receive(:children)
-#           allow(FileUtils).to receive(:touch)
-#           allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(
-#             "#{system.pubcloud_reg_code}-inactive"
-#           )
-#           post url, params: payload, headers: headers
-#           expect(response.body).to include('Subscription inactive')
-#           expect(response).to have_http_status(403)
-#         end
-#       end
-
-# >>>>>>> a9d2b4b9 (Fix linter offenses)
       context 'when system has hw_info' do
         let(:instance_data) { 'dummy_instance_data' }
         let(:system) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }

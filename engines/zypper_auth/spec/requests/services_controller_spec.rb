@@ -58,10 +58,6 @@ describe ServicesController do
 
       context 'when instance verification returns false' do
         before do
-# <<<<<<< HEAD
-# =======
-#           expect(InstanceVerification).to receive(:verify_instance).and_return(false)
-# >>>>>>> a9d2b4b9 (Fix linter offenses)
           get "/services/#{service.id}", headers: headers
         end
 
