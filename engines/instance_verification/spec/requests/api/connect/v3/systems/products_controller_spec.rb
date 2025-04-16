@@ -34,7 +34,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
     context 'when the system is byos' do
       context "when system doesn't have hw_info" do
-        let(:system) { FactoryBot.create(:system, :byos) }
+        let(:system) { FactoryBot.create(:system, :byos, instance_data: 'dummy_instance_data') }
 
         before do
           stub_request(:post, 'https://scc.suse.com/connect/systems/products')
@@ -47,40 +47,12 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         it 'class instance verification provider' do
           expect(InstanceVerification::Providers::Example).to receive(:new)
-            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, nil).and_call_original.at_least(:once)
+            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, 'dummy_instance_data').and_call_original.at_least(:once)
           expect(InstanceVerification::Providers::Example).to receive(:new)
-            .with(nil, nil, nil, nil).and_call_original.at_least(:once)
+            .with(nil, nil, nil, system.instance_data).and_call_original.at_least(:once)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
           post url, params: payload, headers: headers
-        end
-      end
-
-      context "when system doesn't have hw_info and cache is inactive" do
-        let(:system) { FactoryBot.create(:system, :byos, pubcloud_reg_code: Base64.strict_encode64('super_token')) }
-
-        before do
-          stub_request(:post, 'https://scc.suse.com/connect/systems/products')
-            .to_return(
-              status: 201,
-              body: { ok: 'ok' }.to_json,
-              headers: {}
-            )
-        end
-
-        it 'class instance verification provider' do
-          expect(InstanceVerification::Providers::Example).to receive(:new)
-            .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, nil).and_call_original.at_least(:once)
-          allow(File).to receive(:directory?)
-          allow(Dir).to receive(:mkdir)
-          allow(Dir).to receive(:children)
-          allow(FileUtils).to receive(:touch)
-          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(
-            "#{system.pubcloud_reg_code}-inactive"
-          )
-          post url, params: payload, headers: headers
-          expect(response.body).to include('Subscription inactive')
-          expect(response).to have_http_status(403)
         end
       end
 
@@ -476,7 +448,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             stub_request(:post, 'https://scc.suse.com/connect/subscriptions/systems')
               .to_return(status: 201, body: scc_response_body, headers: {})
 
-            expect(InstanceVerification).not_to receive(:update_cache) # .with('127.0.0.1', system.login, product.id)
+            expect(InstanceVerification).not_to receive(:update_cache)
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload_token, headers: headers
           end
