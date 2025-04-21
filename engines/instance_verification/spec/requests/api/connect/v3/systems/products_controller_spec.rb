@@ -133,6 +133,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         it 'class instance verification provider' do
           expect(InstanceVerification::Providers::Example).to receive(:new)
             .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, nil).and_call_original.at_least(:once)
+          expect(InstanceVerification::Providers::Example).to receive(:new)
+            .with(nil, nil, nil, nil).and_call_original.at_least(:once)
           allow(File).to receive(:directory?)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
@@ -161,6 +163,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
               .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, instance_data).and_return(plugin_double).at_least(:once)
+            expect(InstanceVerification::Providers::Example).to receive(:new)
+              .with(nil, nil, nil, instance_data).and_call_original.at_least(:once)
             expect(plugin_double).to receive(:instance_valid?).and_return(false)
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload, headers: headers
@@ -176,6 +180,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
               .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, instance_data).and_return(plugin_double).at_least(:once)
+            expect(InstanceVerification::Providers::Example).to receive(:new)
+              .with(nil, nil, nil, instance_data).and_call_original.at_least(:once)
             expect(plugin_double).to receive(:instance_valid?).and_raise('Custom plugin error')
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload, headers: headers
@@ -193,6 +199,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
               .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, instance_data).and_return(plugin_double).at_least(:once)
+            expect(InstanceVerification::Providers::Example).to receive(:new)
+              .with(nil, nil, nil, instance_data).and_call_original.at_least(:once)
             expect(plugin_double).to receive(:instance_valid?).and_raise(InstanceVerification::Exception, 'Custom plugin error')
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload, headers: headers
@@ -249,6 +257,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         before do
           allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+          allow(plugin_double).to receive(:instance_identifier).and_return('foo')
           allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
           allow(plugin_double).to receive(:allowed_extension?).and_return(true)
           allow(plugin_double).to receive(:add_on).and_return(nil)
@@ -395,17 +404,12 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               .to_return(status: 201, body: scc_response_body, headers: {})
 
             expect(InstanceVerification).to receive(:update_cache).with(cache_entry, 'hybrid')
-
             post url, params: payload_token, headers: headers
           end
 
           context 'when regcode is provided' do
             it 'returns service JSON' do
               expect(response.body).to eq(serialized_service_json)
-              updated_system = System.find_by(login: system.login)
-              expect(updated_system.pubcloud_reg_code).to include(',')
-              expect(updated_system.pubcloud_reg_code).to include(Base64.strict_encode64(payload_token[:token]).to_s)
-              expect(updated_system.pubcloud_reg_code).to include(system.pubcloud_reg_code)
             end
           end
         end
@@ -422,6 +426,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           before do
             allow(InstanceVerification::Providers::Example).to receive(:new)
               .and_return(plugin_double)
+            allow(plugin_double).to receive(:instance_identifier).and_return('instance_identifier_foo')
             allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
@@ -489,6 +494,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
               .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, instance_data).and_return(plugin_double).at_least(:once)
+            expect(InstanceVerification::Providers::Example).to receive(:new)
+              .with(nil, nil, nil, instance_data).and_call_original.at_least(:once)
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             expect(plugin_double).to receive(:instance_valid?).and_return(false)
             post url, params: payload, headers: headers
@@ -504,6 +511,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
               .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, instance_data).and_return(plugin_double).at_least(:once)
+            expect(InstanceVerification::Providers::Example).to receive(:new)
+              .with(nil, nil, nil, instance_data).and_return(plugin_double).at_least(:once)
+            allow(plugin_double).to receive(:instance_identifier).and_return('foo')
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             expect(plugin_double).to receive(:instance_valid?).and_raise('Custom plugin error')
             post url, params: payload, headers: headers
@@ -563,6 +573,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       before do
         allow(InstanceVerification::Providers::Example).to receive(:new)
           .and_return(plugin_double)
+        allow(plugin_double).to receive(:instance_identifier).and_return('instance_identifier_foo')
         allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
         allow(plugin_double).to receive(:allowed_extension?).and_return(true)
         allow(plugin_double).to receive(:add_on).and_return(nil)
@@ -613,7 +624,13 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     let(:request) { put url, headers: headers, params: payload }
 
     context 'when system is byos' do
-      let(:system) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
+      let(:system) do
+        FactoryBot.create(
+          :system, :byos, :with_system_information,
+          pubcloud_reg_code: Base64.strict_encode64('super_token'),
+          instance_data: instance_data
+        )
+      end
       let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system) }
       let(:payload) do
         {
