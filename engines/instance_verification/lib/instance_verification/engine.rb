@@ -245,7 +245,7 @@ module InstanceVerification
               'The product is not available for this instance'
             )
           end
-          logger.info "Product #{@product.product_string} available for this instance"
+          logger.info "Product #{product.product_string} available for this instance"
           cache_key = InstanceVerification.build_cache_entry(request.remote_ip, @system.login, nil, 'payg', product)
           InstanceVerification.update_cache(cache_key, 'payg')
         end

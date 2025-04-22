@@ -223,7 +223,12 @@ module SccProxy
       product_access_status = SccProxy.product_class_access(scc_systems_activations, product_class)
       if product_access_status[:is_active] == false && product_access_status[:message].downcase.include?('subscription expired')
         cache_params = {}
-        cache_params = { token: Base64.decode64(system.pubcloud_reg_code.split(',')[0]), instance_data: headers.fetch('X-Instance-Data', '') } unless system.payg?
+        unless system.payg?
+          cache_params = {
+            token: Base64.decode64(system.pubcloud_reg_code.split(',')[0]),
+            instance_data: headers.fetch('X-Instance-Data', '')
+          }
+        end
         cache_key = InstanceVerification.build_cache_entry(
           remote_ip, system.login, cache_params, system.proxy_byos_mode, prod
         )

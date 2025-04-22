@@ -354,6 +354,11 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         end
 
         context 'when subscription is active' do
+          # let(:ltss_prod) do
+          #   system_hybrid.activations.find do |act|
+          #     act.product.product_class.include?('LTSS')
+          #   end
+          # end
           let(:body_active) do
             {
               id: 1,
