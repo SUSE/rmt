@@ -27,16 +27,12 @@ module DataExport
       end
 
       Api::Connect::V3::Systems::SystemsController.class_eval do
-        after_action :export_rmt_data, only: %i[update], if: -> { response.successful? && !@system.byos? }
+        after_action :export_rmt_data, only: %i[update], if: -> { response.successful? && !@system.byos? && !@system.products.empty? }
 
         def export_rmt_data
-          if @system.products.empty?
+          @system.products.pluck(:name).each do |prod_name|
+            params[:dw_product_name] = prod_name
             send_data
-          else
-            @system.products.pluck(:name).each do |prod_name|
-              params[:dw_product_name] = prod_name
-              send_data
-            end
           end
         rescue StandardError => e
           logger.error('Unexpected data export error has occurred:')
