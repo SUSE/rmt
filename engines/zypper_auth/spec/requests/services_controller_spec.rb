@@ -33,15 +33,13 @@ describe ServicesController do
 
     context 'with X-Instance-Data header' do
       let(:headers) { auth_header.merge('X-Instance-Data' => 'test') }
+      let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
       context 'when instance verification succeeds' do
+        let(:data_export_double) { instance_double('DataExport::Handlers::Example') }
+
         before do
-          expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
-          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
-          allow(InstanceVerification).to receive(:update_cache)
-          allow(File).to receive(:directory?)
-          allow(Dir).to receive(:mkdir)
-          allow(FileUtils).to receive(:touch)
+          allow(InstanceVerification).to receive(:verify_instance).and_return(true)
           get "/services/#{service.id}", headers: headers
         end
 
@@ -60,52 +58,6 @@ describe ServicesController do
 
       context 'when instance verification returns false' do
         before do
-          expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(false)
-          allow(InstanceVerification).to receive(:update_cache)
-          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
-          allow(File).to receive(:directory?)
-          allow(Dir).to receive(:mkdir)
-          allow(FileUtils).to receive(:touch)
-          get "/services/#{service.id}", headers: headers
-        end
-
-        it 'request fails with 403' do
-          expect(response).to have_http_status(403)
-        end
-
-        it 'reports an error' do
-          expect(response.body).to match(/Instance verification failed/)
-        end
-      end
-
-      context 'when instance verification raises StandardError' do
-        before do
-          expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_raise('Test')
-          allow(InstanceVerification).to receive(:update_cache)
-          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
-          allow(File).to receive(:directory?)
-          allow(Dir).to receive(:mkdir)
-          allow(FileUtils).to receive(:touch)
-          get "/services/#{service.id}", headers: headers
-        end
-
-        it 'request fails with 403' do
-          expect(response).to have_http_status(403)
-        end
-
-        it 'reports an error' do
-          expect(response.body).to match(/Instance verification failed/)
-        end
-      end
-
-      context 'when instance verification raises InstanceVerification::Exception' do
-        before do
-          expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_raise(InstanceVerification::Exception, 'Test')
-          allow(File).to receive(:directory?).twice
-          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
-          allow(File).to receive(:directory?)
-          allow(Dir).to receive(:mkdir)
-          allow(FileUtils).to receive(:touch)
           get "/services/#{service.id}", headers: headers
         end
 

@@ -501,11 +501,11 @@ describe StrictAuthentication::AuthenticationController, type: :request do
 
           context 'the path to check is free' do
             let(:data_export_double) { instance_double('DataExport::Handlers::Example') }
+            let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
             before do
-              allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
+              allow(InstanceVerification).to receive(:verify_instance).and_return(true)
               allow(DataExport::Handlers::Example).to receive(:new).and_return(data_export_double)
-              expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
               expect(data_export_double).to receive(:export_rmt_data)
               get '/api/auth/check', headers: headers
             end

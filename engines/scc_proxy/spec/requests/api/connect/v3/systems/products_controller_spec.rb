@@ -105,12 +105,14 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               ]
             }
           end
+          let(:headers) { auth_header.merge('X-Instance-Data' => 'dummy_instance_data') }
 
           before do
             allow(plugin_double).to(
               receive(:instance_valid?)
                 .and_raise(InstanceVerification::Exception, 'Custom plugin error')
             )
+            allow(plugin_double).to receive(:instance_identifier).and_return('foo')
           end
 
           context 'with a valid registration code' do
@@ -126,11 +128,12 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               allow(FileUtils).to receive(:touch)
 
               allow(InstanceVerification).to receive(:write_cache_file).with(
-                Rails.application.config.repo_byos_cache_dir, "#{Base64.strict_encode64(payload_byos[:token])}-#{product_triplet}-active"
+                Rails.application.config.repo_byos_cache_dir,
+                "#{Base64.strict_encode64(payload_byos[:token])}-foo-#{product_triplet}-active"
               )
               allow(InstanceVerification).to receive(:write_cache_file).with(
                 Rails.application.config.registry_cache_dir,
-                "#{Base64.strict_encode64(payload_byos[:token])}-#{product_triplet}-active"
+                "#{Base64.strict_encode64(payload_byos[:token])}-foo-#{product_triplet}-active"
               )
             end
 
