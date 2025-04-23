@@ -113,6 +113,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               headers: {}
               )
             allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+            allow(plugin_double).to receive(:instance_identifier).and_return('foo')
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             allow(plugin_double).to receive(:instance_valid?).and_return(false)
             post url, params: payload, headers: headers
@@ -126,9 +127,10 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         context 'when verification provider raises an unhandled exception' do
           before do
-            expect(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+            expect(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double).at_least(:once)
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             allow(plugin_double).to receive(:instance_valid?).and_raise('not expected')
+            allow(plugin_double).to receive(:instance_identifier).and_return('foo')
             allow(InstanceVerification).to receive(:set_cache_inactive).and_return(nil)
             stub_request(:post, scc_activate_url)
             .to_return(
