@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-04-22 15:59+0000\n"
-"Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
+"PO-Revision-Date: 2025-04-24 13:59+0000\n"
+"Last-Translator: Gemineo <vistatec@gemineo.de>\n"
 "Language-Team: German <https://l10n.opensuse.org/projects/rmt/i18n/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -50,9 +50,8 @@ msgstr "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 msgid "A repository by the ID %{id} already exists."
 msgstr "Ein Repository durch ID %{url} ist bereits vorhanden."
 
-#, fuzzy
 msgid "A repository by the URL %{url} already exists (ID %{id})."
-msgstr "Ein Repository für URL %{url} ist bereits vorhanden."
+msgstr "Ein Repository für URL %{url} ist bereits vorhanden (ID %{id})."
 
 msgid "Added association between %{repo} and product %{product}"
 msgstr "Zuordnung zwischen %{repo} und Produkt %{product} hinzugefügt"
@@ -279,9 +278,8 @@ msgstr "Fehler beim Spiegeln von Metadaten: %{error}"
 msgid "Error while mirroring packages: %{error}"
 msgstr "Fehler beim Spiegeln von Paketen: %{error}"
 
-#, fuzzy
 msgid "Error while mirroring repository: %{error}"
-msgstr "Fehler beim Spiegeln von Metadaten: %{error}"
+msgstr "Fehler beim Spiegeln des Repository: %{error}"
 
 msgid "Error while moving files %{glob} to %{dest}: %{error}"
 msgstr "Fehler beim Verschieben von Dateien %{glob} nach %{dest}: %{error}"
@@ -410,7 +408,7 @@ msgid "Loading product data from SCC"
 msgstr "Produktdaten von SCC werden geladen"
 
 msgid "Loading repository data from SCC"
-msgstr ""
+msgstr "Laden von Repository-Daten aus SCC"
 
 msgid "Loading subscription data from SCC"
 msgstr "Abonnementdaten von SCC werden geladen"
