@@ -23,11 +23,7 @@ module StrictAuthentication
 
         context 'valid instance' do
           before do
-            allow_any_instance_of(InstanceVerification::Providers::Example).to(
-              receive(:instance_valid?).and_return(true)
-            )
-            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
-            allow(InstanceVerification).to receive(:update_cache)
+            allow(InstanceVerification).to receive(:verify_instance).and_return(true)
             get '/api/auth/check', headers: auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': 'IMDS' })
             allow(File).to receive(:directory?)
             allow(Dir).to receive(:mkdir)
@@ -125,12 +121,23 @@ module StrictAuthentication
 
             context 'when requested path is version 12' do
               let(:requested_uri) { '/repo/SUSE/Updates/SLE-Module-Adv-Systems-Management/12/x86_64/update' }
+              let(:data_export_double) { instance_double('DataExport::Handlers::Example') }
+              let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+
+              before do
+                allow(InstanceVerification).to receive(:verify_instance).and_return(true)
+                allow(DataExport::Handlers::Example).to receive(:new).and_return(data_export_double)
+                allow(data_export_double).to receive(:export_rmt_data)
+                allow(ZypperAuth).to receive(:zypper_auth_message)
+              end
 
               its(:code) { is_expected.to eq '200' }
             end
 
             context 'when requested path is version 12.1' do
               let(:requested_uri) { '/repo/SUSE/Products/SLE-SERVER/12-SP1/x86_64/product' }
+
+              before { allow(InstanceVerification).to receive(:verify_instance).and_return(true) }
 
               its(:code) { is_expected.to eq '200' }
             end
