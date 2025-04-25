@@ -194,11 +194,15 @@ module SccProxy
 
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
-    def scc_check_subscription_expiration(headers, system, product_class = nil)
+    def scc_check_subscription_expiration(headers, system, remote_ip, registry, prod)
+      cache_status = SccProxy.system_in_cache?(remote_ip, system, prod, registry)
+      return cache_status if cache_status.present?
+
       auth = headers.fetch('HTTP_AUTHORIZATION', '')
       scc_systems_activations = SccProxy.get_scc_activations(auth, system)
       return { is_active: false, message: 'No activations.' } if scc_systems_activations.empty?
 
+      product_class = prod.product_class
       status_products_classes = if system.byos?
                                   scc_systems_activations.map do |act|
                                     product = act['service']['product']
@@ -216,12 +220,43 @@ module SccProxy
 
       return { is_active: true } if !status_products_classes.empty? && status_products_classes.all?(true)
 
-      SccProxy.product_class_access(scc_systems_activations, product_class)
+      product_access_status = SccProxy.product_class_access(scc_systems_activations, product_class)
+      if product_access_status[:is_active] == false && product_access_status[:message].downcase.include?('subscription expired')
+        cache_params = {}
+        unless system.payg?
+          cache_params = {
+            token: Base64.decode64(system.pubcloud_reg_code.split(',')[0]),
+            instance_data: headers.fetch('X-Instance-Data', '')
+          }
+        end
+        cache_key = InstanceVerification.build_cache_entry(
+          remote_ip, system.login, cache_params, system.proxy_byos_mode, prod
+        )
+        InstanceVerification.set_cache_inactive(cache_key, system.proxy_byos_mode)
+      end
+      product_access_status
     rescue StandardError
       { is_active: false, message: 'Could not check the activations from SCC' }
     end
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/PerceivedComplexity
+
+    def system_in_cache?(remote_ip, system, product, registry)
+      cache_key = InstanceVerification.build_cache_entry(
+        remote_ip, system.login, system.pubcloud_reg_code, system.proxy_byos_mode, product
+      )
+      found_cache_entry = InstanceVerification.reg_code_in_cache?(cache_key, system.proxy_byos_mode)
+      if found_cache_entry.present?
+        if found_cache_entry.include?('-inactive')
+          return { is_active: false, message: 'Subscription expired.' }
+        elsif found_cache_entry.include?('-active')
+          InstanceVerification.update_cache(cache_key, system.proxy_byos_mode, registry: registry)
+          return { is_active: true }
+        end
+      end
+      Rails.logger.info "System #{system.login} not in cache, reaching to SCC"
+      nil
+    end
 
     def scc_upgrade(auth, product, system, logger)
       uri = URI.parse(SYSTEM_PRODUCTS_URL)

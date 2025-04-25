@@ -30,9 +30,7 @@ module InstanceVerification
               ''
             end
       encoded_reg_code = Base64.strict_encode64(params.fetch(:token, ''))
-      product_hash = product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
-      product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
-      "#{encoded_reg_code}-#{iid}-#{product_triplet}"
+      "#{encoded_reg_code}-#{iid}-#{product.product_class}"
     end
   end
 
@@ -123,7 +121,9 @@ module InstanceVerification
     is_valid
   rescue InstanceVerification::Exception => e
     if system.byos?
-      result = SccProxy.scc_check_subscription_expiration(request.headers, system, base_product.product_class)
+      result = SccProxy.scc_check_subscription_expiration(
+        request.headers, system, request.remote_ip, false, base_product
+      )
       if result[:is_active]
         # update the cache for the base product
         InstanceVerification.set_cache_active(cache_key, 'byos')
@@ -245,9 +245,9 @@ module InstanceVerification
               'The product is not available for this instance'
             )
           end
-          logger.info "Product #{@product.product_string} available for this instance"
+          logger.info "Product #{product.product_string} available for this instance"
           cache_key = InstanceVerification.build_cache_entry(request.remote_ip, @system.login, nil, 'payg', product)
-          InstanceVerification.set_cache_active(cache_key, 'payg')
+          InstanceVerification.update_cache(cache_key, 'payg')
         end
 
         def verify_base_product_activation(product)
