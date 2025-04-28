@@ -1,7 +1,7 @@
 #
 # spec file for package rmt-server
 #
-# Copyright (c) 2024 SUSE LLC
+# Copyright (c) 2025 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -115,6 +115,10 @@ cp -p %{SOURCE2} .
 
 %setup -q
 sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
+# Set the version of bundler available within the build environment instead
+# of expect a hardcoded version. This ensures we bundle with the available version of bundler no matter which version available
+# NOTE: This relies on the fact that the lock file format does not change between bundler versions (which is not yet the case)
+sed -i "s/2\.2\.34/$(bundle.%{ruby_version} --version | grep -oE '([0-9]+\.?){3}')/g" Gemfile.lock
 
 %build
 bundle.%{ruby_version} config build.nio4r --with-cflags='%{optflags} -Wno-return-type'
