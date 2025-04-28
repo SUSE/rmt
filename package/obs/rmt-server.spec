@@ -116,6 +116,12 @@ cp -p %{SOURCE2} .
 %setup -q
 sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
 
+# Everything below 15.6 does not have bundler version 2.2.34 available
+# Fallback to the old version 1.16.1 for those
+%if 0%{?sle_version} < 150600
+sed -i 's/2\.2\.34/1\.16\.1/g' Gemfile.lock
+%endif
+
 %build
 bundle.%{ruby_version} config build.nio4r --with-cflags='%{optflags} -Wno-return-type'
 bundle.%{ruby_version} config set deployment 'true'
