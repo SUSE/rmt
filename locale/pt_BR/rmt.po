@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-04-08 21:56+0000\n"
+"PO-Revision-Date: 2025-04-29 22:59+0000\n"
 "Last-Translator: Samanta Magalhaes <samanta_texttrans@outlook.com>\n"
-"Language-Team: Portuguese (Brazil) <https://l10n.opensuse.org/projects/rmt/i18"
-"n/pt_BR/>\n"
+"Language-Team: Portuguese (Brazil) <https://l10n.opensuse.org/projects/rmt/"
+"i18n/pt_BR/>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.10.3\n"
+"X-Generator: Weblate 5.11.1\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "%s ainda não está ativado no sistema."
@@ -51,9 +51,8 @@ msgstr "* %{name} (identificação: %{id}) (%{mandatory}, %{enabled}, %{mirrored
 msgid "A repository by the ID %{id} already exists."
 msgstr "Um repositório pelo ID %{url} já existe."
 
-#, fuzzy
 msgid "A repository by the URL %{url} already exists (ID %{id})."
-msgstr "Um repositório pelo URL %{url} já existe."
+msgstr "Já existe um repositório com o URL %{url} (ID %{id})."
 
 msgid "Added association between %{repo} and product %{product}"
 msgstr "Adicionado associação entre %{repo} e produto %{product}"
@@ -160,9 +159,8 @@ msgstr "Não foi possível encontrar o sistema com login \\\"%{login}\\\" e senh
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "Não foi possível espelhar a árvore do produto SUSE Manager com erro: %{error}"
 
-#, fuzzy
 msgid "Could not read '%{file}': %{error}"
-msgstr "n"
+msgstr "Não foi possível ler o '%{file}': %{error}"
 
 msgid "Couldn't add custom repository."
 msgstr "Não foi possível adicionar repositório personalizado."
@@ -281,13 +279,11 @@ msgstr "Erro ao espelhar metadados: %{error}"
 msgid "Error while mirroring packages: %{error}"
 msgstr "Erro ao espelhar pacotes: %{error}"
 
-#, fuzzy
 msgid "Error while mirroring repository: %{error}"
-msgstr "Erro ao espelhar metadados: %{error}"
+msgstr "Erro ao espelhar o repositório: %{error}"
 
-#, fuzzy
 msgid "Error while moving files %{glob} to %{dest}: %{error}"
-msgstr "Erro ao mover o diretório %{src} para %{dest}: %{error}"
+msgstr "Erro ao mover os arquivos %{glob} para %{dest}: %{error}"
 
 msgid "Examples"
 msgstr "Exemplos"
@@ -316,15 +312,14 @@ msgstr "Exportando assinaturas"
 msgid "Failed to download %{failed_count} files"
 msgstr "Falha ao baixar %{failed_count} arquivos"
 
-#, fuzzy
 msgid "Failed to export the SUSE Manager product tree: %{error_message}"
-msgstr "n"
+msgstr "Falha ao exportar a árvore de produtos SUSE Manager: %{error_message}"
 
 msgid "Failed to import system %{system}"
 msgstr "Falha ao importar sistema %{system}"
 
 msgid "Failed to import the suma product tree: %{error_message}"
-msgstr ""
+msgstr "Falha ao importar a árvore de produtos suma: %{error_message}"
 
 msgid "Failed to sync systems: %{error}"
 msgstr "Falha ao sincronizar sistemas: %{error}"
@@ -409,17 +404,14 @@ msgstr "Lista os sistemas registrados."
 msgid "List repositories which are marked to be mirrored"
 msgstr "Listar produtos que estão marcados para serem espelhados"
 
-#, fuzzy
 msgid "Loading product data from SCC"
-msgstr "n"
+msgstr "Carregando dados dos produtos do SCC"
 
-#, fuzzy
 msgid "Loading repository data from SCC"
-msgstr "n"
+msgstr "Carregando dados de repositório do SCC"
 
-#, fuzzy
 msgid "Loading subscription data from SCC"
-msgstr "n"
+msgstr "Carregando dados de assinatura do SCC"
 
 msgid "Login"
 msgstr "Conecte-se"
@@ -443,10 +435,10 @@ msgid "Mirror enabled repositories with given repository IDs"
 msgstr "Repositórios habilitados para espelho com IDs de repositório fornecidos"
 
 msgid "Mirror repos at given path"
-msgstr "Repos de espelho em determinado caminho"
+msgstr "Espelhar repositórios no caminho especificado"
 
 msgid "Mirror repos from given path"
-msgstr "Repos de espelho em determinado caminho"
+msgstr "Espelhar repositórios do caminho especificado"
 
 msgid "Mirror repositories"
 msgstr "Repositórios espelhados"
@@ -517,16 +509,17 @@ msgstr "Nenhum repositório encontrado para o produto: %s"
 msgid "No repository IDs supplied"
 msgstr "Nenhum ID de repositório fornecido"
 
-#, fuzzy
 msgid "No subscription found with this registration code"
-msgstr "Nenhuma assinatura encontrada com este Código de Registro"
+msgstr "Nenhuma assinatura foi encontrada com este código de registro"
 
 msgid "Not Mandatory"
 msgstr "Não é obrigatório"
 
-#, fuzzy
 msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
-msgstr "Nem todos os repositórios obrigatórios são espelhados para o produto %s"
+msgstr ""
+"Nem todos os repositórios obrigatórios foram espelhados para o produto %s. "
+"Repositórios Ausentes (por IDs): %s. No servidor RMT, é possível habilitar "
+"os repositórios ausentes com: rmt-cli repos enable %s;  rmt-cli mirror"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "Código de registro ainda não ativado. Visite https://scc.suse.com para ativá-lo."
@@ -684,9 +677,8 @@ msgstr "Remove arquivos duplicados localmente de repositórios que não estão m
 msgid "Removes old systems and their activations if they are inactive."
 msgstr "Removes sistemas antigos e as respectivas ativações se estiverem inativos."
 
-#, fuzzy
 msgid "Removing obsolete repositories"
-msgstr "n"
+msgstr "Removendo repositórios obsoletos"
 
 msgid "Repositories are not available for this product."
 msgstr "Repositórios não estão disponíveis para este produto."
@@ -903,28 +895,23 @@ msgstr "Para limpar os arquivos baixados, execute \"% {command}\""
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr "Para sinalizar que um sistema deve ser removido, use o comando \"%{command}\" para obter uma lista de sistemas com suas entradas de sessão correspondentes."
 
-#, fuzzy
 msgid "Total Mirror Time: %{time}"
-msgstr "Espelhar"
+msgstr "Tempo Total de Espelhamento: %{time}"
 
-#, fuzzy
 msgid "Total mirrored repositories: %{repo_count}"
-msgstr "n"
+msgstr "Total de repositórios espelhados: %{repo_count}"
 
-#, fuzzy
 msgid "Total transferred file size: %{files_size}"
-msgstr "n"
+msgstr "Tamanho total do arquivo transferido: %{files_size}"
 
-#, fuzzy
 msgid "Total transferred files: %{files_count}"
-msgstr "n"
+msgstr "Total de arquivos transferidos: %{files_count}"
 
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
 msgstr "Total: foi feita a limpeza de %{total_count} (%{total_size}), %{total_db_entries}."
 
-#, fuzzy
 msgid "Try to access non existing temporary directory %{name}"
-msgstr "n"
+msgstr "Tentativa de acessar um diretório temporário inexistente %{name}"
 
 msgid "URL"
 msgstr "URL"
@@ -948,7 +935,7 @@ msgid "Updating subscriptions"
 msgstr "Atualizando assinaturas"
 
 msgid "Uptime data is malformed '%s'"
-msgstr ""
+msgstr "Dados de tempo de atividade malformados '%s'"
 
 msgid "Version"
 msgstr "Versão"
