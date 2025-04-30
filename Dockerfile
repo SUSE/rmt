@@ -1,9 +1,9 @@
-FROM opensuse/leap:15.3
+FROM opensuse/leap:15.6
 
 RUN zypper --non-interactive install --no-recommends \
         timezone wget gcc-c++ libffi-devel git-core zlib-devel \
         libxml2-devel libxslt-devel cron libmariadb-devel mariadb-client sqlite3-devel \
-        vim ruby2.5 ruby2.5-devel ruby2.5-rubygem-bundler SUSEConnect && \
+        vim ruby2.5 ruby2.5-devel ruby2.5-rubygem-bundler SUSEConnect bzip2 gzip && \
     zypper --non-interactive install -t pattern devel_basis && \
     update-alternatives --install /usr/bin/bundle bundle /usr/bin/bundle.ruby2.5 5 && \
     update-alternatives --install /usr/bin/bundler bundler /usr/bin/bundler.ruby2.5 5
