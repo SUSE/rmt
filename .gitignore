@@ -33,6 +33,7 @@ registry
 vendor/
 coverage/
 .idea/
+.mise.toml
 integration/prophet/options-local.yml
 
 # Ignore encrypted secrets key file.

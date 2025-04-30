@@ -1,6 +1,8 @@
 NAME          = rmt-server
 VERSION       = $(shell ruby -e 'require "./lib/rmt.rb"; print RMT::VERSION')
 
+.PHONY = all clean man dist build-tarball
+
 all:
 	@:
 
@@ -13,7 +15,10 @@ man:
 	ronn --roff --pipe --manual RMT MANUAL.md > rmt-cli.8 && gzip -f rmt-cli.8
 	mv rmt-cli.8.gz package/obs
 
-dist: clean man
+dist:
+	docker-compose run -it -v $(PWD):/srv/www/rmt --rm rmt make build-tarball
+
+build-tarball: clean man
 	@mkdir -p $(NAME)-$(VERSION)/
 
 	@cp -r app $(NAME)-$(VERSION)/

@@ -6,7 +6,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
   include_context 'user-agent header'
   include_context 'zypp user-agent header'
 
-  let(:system) { FactoryBot.create(:system, :payg, hostname: 'initial') }
+  let(:system) { FactoryBot.create(:system, :with_activated_base_product, hostname: 'initial') }
   let(:url) { '/connect/systems' }
   let(:headers) { auth_header.merge(version_header) }
   let(:hwinfo) do

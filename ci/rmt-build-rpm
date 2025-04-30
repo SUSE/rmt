@@ -22,7 +22,7 @@ mkdir -p "$ARTIFACT_DIR"
 
 group "create rmt-server tarball"
 pushd "$SOURCE"
-  make dist
+  make build-tarball
   cp "$SOURCE/package/obs/rmt-server-$VERSION.tar.bz2" "$ARTIFACT_DIR"
 popd
 groupend
