@@ -8,7 +8,7 @@ Tue Jan 21 10:49:54 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
     * Add cache checking to reduce queries to SCC when activating a product
     * Add cache checking to reduce queries to SCC when upgrading a product
     * Refactor and move verify_instance from ZypperAuth to InstanceVerification
-    * Update auth to find a system based on the instance ID (system_token)
+    * Add system_token to regsharing to find the system
     * Add system_token to system without one
     * Add data_export engine for DataWarehouse telemetry
     * Fix 500 errors
