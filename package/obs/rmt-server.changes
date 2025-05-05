@@ -5,6 +5,13 @@ Tue Jan 21 10:49:54 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
   * rmt-server-pubcloud:
     * Add pubcloud_reg_code column to systems table
     * Add cache directories and their expiration times to the scrubber
+    * Add cache checking to reduce queries to SCC when activating a product
+    * Add cache checking to reduce queries to SCC when upgrading a product
+    * Refactor and move verify_instance from ZypperAuth to InstanceVerification
+    * Update auth to find a system based on the instance ID (system_token)
+    * Add system_token to system without one
+    * Add data_export engine for DataWarehouse telemetry
+    * Fix 500 errors
   * rmt-cli:
     * Disable delta RPM mirroring by default (gh#1288)
   * rmt-server:
