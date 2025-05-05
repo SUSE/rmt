@@ -11,8 +11,8 @@ Tue Jan 21 10:49:54 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
     * Add system_token to regsharing to find the system
     * Add system_token to system without one
     * Add data_export engine for DataWarehouse telemetry (jsc#PCT-476)
-    * Fix 500 errors (issue#1316, issue#1302)
-    * Fix routing error(issue1300)
+    * Fix 500 errors (gh#1316, gh#1302)
+    * Fix routing error(gh#1300)
     * Fix SUMA ARM64 (bsc#1236836)
     * Fix Migration from Micro 5.5 to Micro 6.X (bsc#1236816)
     * Add registry optional (bsc#1237373)
