@@ -8,7 +8,7 @@ Tue Jan 21 10:49:54 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
     * Add cache checking to reduce queries to SCC when activating a product (jsc#PCT-473)
     * Add cache checking to reduce queries to SCC when upgrading a product (jsc#PCT-473)
     * Refactor and move verify_instance from ZypperAuth to InstanceVerification
-    * Add system_token to regsharing to find the system
+    * Add system_token to regsharing to find the system (bsc#1236600)
     * Add system_token to system without one
     * Add data_export engine for DataWarehouse telemetry (jsc#PCT-476)
     * Fix 500 errors (gh#1316, gh#1302)
