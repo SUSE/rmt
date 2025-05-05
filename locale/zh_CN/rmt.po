@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-10 05:15+0000\n"
-"Last-Translator: Grace Yu <grace.yu@excel-gits.com>\n"
+"PO-Revision-Date: 2025-04-21 04:59+0000\n"
+"Last-Translator: Emily Dong <Emily.Dong@excel-gits.com>\n"
 "Language-Team: Chinese (China) <https://l10n.opensuse.org/projects/rmt/i18n/"
 "zh_CN/>\n"
 "Language: zh_CN\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.9.1\n"
+"X-Generator: Weblate 5.11\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "尚未在系统中激活 %s。"
@@ -49,8 +49,8 @@ msgstr "* %{name}（id：%{id}）（%{mandatory}，%{enabled}，%{mirrored_at}�
 msgid "A repository by the ID %{id} already exists."
 msgstr "已存在 ID 为 %{id} 的储存库。"
 
-msgid "A repository by the URL %{url} already exists."
-msgstr "URL 为 %{url} 的储存库已存在。"
+msgid "A repository by the URL %{url} already exists (ID %{id})."
+msgstr "URL 为 %{url} 的储存库已存在 (ID %{id})。"
 
 msgid "Added association between %{repo} and product %{product}"
 msgstr "已在 %{repo} 与产品 %{product} 之间添加关联"
@@ -84,8 +84,7 @@ msgid "Attached repository to product '%{product_name}'."
 msgstr "已将储存库关联到产品“%{product_name}”。"
 
 msgid "By default, inactive systems are those that have not contacted RMT in any way in the past 3 months. You can override this with the '-b / --before' flag."
-msgstr ""
-"默认情况下，非活动系统是指过去 3 个月内未以任何方式与 RMT 进行联系的系统。您可以使用 \"-b / --before\" 标志覆盖此默认值。"
+msgstr "默认情况下，非活动系统是指过去 3 个月内未以任何方式与 RMT 进行联系的系统。您可以使用 \"-b / --before\" 标志覆盖此默认值。"
 
 msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr "无法连接到数据库服务器。请确保已在“%{path}”中正确配置其身份凭证，或使用 YaST（运行 %{command}）来配置 RMT。"
@@ -157,6 +156,9 @@ msgstr "通过登录名“%{login}”和密码“%{password}”找不到系统"
 
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "无法镜像 SUSE Manager 产品树，发生错误：%{error}"
+
+msgid "Could not read '%{file}': %{error}"
+msgstr "无法读取 '%{file}'：%{error}"
 
 msgid "Couldn't add custom repository."
 msgstr "无法添加自定义储存库。"
@@ -275,8 +277,11 @@ msgstr "镜像元数据时发生错误：%{error}"
 msgid "Error while mirroring packages: %{error}"
 msgstr "镜像软件包时发生错误：%{error}"
 
-msgid "Error while moving directory %{src} to %{dest}: %{error}"
-msgstr "将目录 %{src} 移至 %{dest} 时发生错误：%{error}"
+msgid "Error while mirroring repository: %{error}"
+msgstr "镜像储存库时发生错误：%{error}"
+
+msgid "Error while moving files %{glob} to %{dest}: %{error}"
+msgstr "将文件 %{glob} 移至 %{dest} 时发生错误：%{error}"
 
 msgid "Examples"
 msgstr "示例"
@@ -305,8 +310,14 @@ msgstr "正在导出订阅"
 msgid "Failed to download %{failed_count} files"
 msgstr "无法下载 %{failed_count} 个文件"
 
+msgid "Failed to export the SUSE Manager product tree: %{error_message}"
+msgstr "无法导出 SUSE Manager 产品树：%{error_message}"
+
 msgid "Failed to import system %{system}"
 msgstr "无法导入系统 %{system}"
+
+msgid "Failed to import the suma product tree: %{error_message}"
+msgstr "无法导入 Suma 产品树：%{error_message}"
 
 msgid "Failed to sync systems: %{error}"
 msgstr "无法同步系统：%{error}"
@@ -389,6 +400,15 @@ msgstr "列出已注册的系统。"
 
 msgid "List repositories which are marked to be mirrored"
 msgstr "列出标记为要镜像的储存库"
+
+msgid "Loading product data from SCC"
+msgstr "正在从 SCC 加载产品数据"
+
+msgid "Loading repository data from SCC"
+msgstr "正在从 SCC 加载储存库数据"
+
+msgid "Loading subscription data from SCC"
+msgstr "正在从 SCC 加载订阅数据"
 
 msgid "Login"
 msgstr "登录"
@@ -486,14 +506,17 @@ msgstr "找不到产品 %s 的储存库"
 msgid "No repository IDs supplied"
 msgstr "未提供储存库 ID"
 
-msgid "No subscription with this Registration Code found"
-msgstr "找不到使用此注册码的订阅"
+msgid "No subscription found with this registration code"
+msgstr "找不到使用此注册代码的订阅"
 
 msgid "Not Mandatory"
 msgstr "非强制"
 
-msgid "Not all mandatory repositories are mirrored for product %s"
-msgstr "未为产品 %s 镜像所有强制储存库"
+msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
+msgstr ""
+"未为产品 %s 镜像所有必需的储存库。缺少以下储存库（按 ID 列出）：%s。在 RMT "
+"服务器上，可以使用以下命令启用缺少的储存库：rmt-cli repos enable %s；rmt-cli "
+"mirror"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "尚未激活注册代码。请访问 https://scc.suse.com 激活。"
@@ -648,6 +671,9 @@ msgstr "移除未标记为有待镜像的储存库的本地镜像文件"
 
 msgid "Removes old systems and their activations if they are inactive."
 msgstr "移除处于非活动状态的旧系统以及系统上激活的产品。"
+
+msgid "Removing obsolete repositories"
+msgstr "正在去除孤立的储存库"
 
 msgid "Repositories are not available for this product."
 msgstr "储存库不可用于此产品。"
@@ -862,8 +888,23 @@ msgstr "要清理下载的文件，请运行“%{command}”"
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr "要指定某个有待移除的系统作为目标，请针对一系列系统及其相应登录名使用命令“%{command}”。"
 
+msgid "Total Mirror Time: %{time}"
+msgstr "总镜像时长：%{time}"
+
+msgid "Total mirrored repositories: %{repo_count}"
+msgstr "镜像的储存库总数：%{repo_count}"
+
+msgid "Total transferred file size: %{files_size}"
+msgstr "传输的文件总大小：%{files_size}"
+
+msgid "Total transferred files: %{files_count}"
+msgstr "传输的文件总数：%{files_size}"
+
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
 msgstr "总计：已清理 %{total_count} (%{total_size})，%{total_db_entries}。"
+
+msgid "Try to access non existing temporary directory %{name}"
+msgstr "尝试访问不存在的临时目录 %{name}"
 
 msgid "URL"
 msgstr "URL"
@@ -885,6 +926,9 @@ msgstr "正在更新储存库"
 
 msgid "Updating subscriptions"
 msgstr "正在更新订阅"
+
+msgid "Uptime data is malformed '%s'"
+msgstr "正常运行时间数据格式 '%s' 不正确"
 
 msgid "Version"
 msgstr "版本"

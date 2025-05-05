@@ -50,7 +50,7 @@ msgstr ""
 msgid "A repository by the ID %{id} already exists."
 msgstr ""
 
-msgid "A repository by the URL %{url} already exists."
+msgid "A repository by the URL %{url} already exists (ID %{id})."
 msgstr ""
 
 msgid "Added association between %{repo} and product %{product}"
@@ -149,6 +149,9 @@ msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{pass
 msgstr ""
 
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
+msgstr ""
+
+msgid "Could not read '%{file}': %{error}"
 msgstr ""
 
 msgid "Couldn't add custom repository."
@@ -268,7 +271,10 @@ msgstr ""
 msgid "Error while mirroring packages: %{error}"
 msgstr ""
 
-msgid "Error while moving directory %{src} to %{dest}: %{error}"
+msgid "Error while mirroring repository: %{error}"
+msgstr ""
+
+msgid "Error while moving files %{glob} to %{dest}: %{error}"
 msgstr ""
 
 msgid "Examples"
@@ -298,7 +304,13 @@ msgstr ""
 msgid "Failed to download %{failed_count} files"
 msgstr ""
 
+msgid "Failed to export the SUSE Manager product tree: %{error_message}"
+msgstr ""
+
 msgid "Failed to import system %{system}"
+msgstr ""
+
+msgid "Failed to import the suma product tree: %{error_message}"
 msgstr ""
 
 msgid "Failed to sync systems: %{error}"
@@ -382,6 +394,15 @@ msgid "List registered systems."
 msgstr ""
 
 msgid "List repositories which are marked to be mirrored"
+msgstr ""
+
+msgid "Loading product data from SCC"
+msgstr ""
+
+msgid "Loading repository data from SCC"
+msgstr ""
+
+msgid "Loading subscription data from SCC"
 msgstr ""
 
 msgid "Login"
@@ -480,13 +501,13 @@ msgstr ""
 msgid "No repository IDs supplied"
 msgstr ""
 
-msgid "No subscription with this Registration Code found"
+msgid "No subscription found with this registration code"
 msgstr ""
 
 msgid "Not Mandatory"
 msgstr ""
 
-msgid "Not all mandatory repositories are mirrored for product %s"
+msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
 msgstr ""
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
@@ -639,6 +660,9 @@ msgid "Removes locally mirrored files of repositories which are not marked to be
 msgstr ""
 
 msgid "Removes old systems and their activations if they are inactive."
+msgstr ""
+
+msgid "Removing obsolete repositories"
 msgstr ""
 
 msgid "Repositories are not available for this product."
@@ -845,7 +869,22 @@ msgstr ""
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr ""
 
+msgid "Total Mirror Time: %{time}"
+msgstr ""
+
+msgid "Total mirrored repositories: %{repo_count}"
+msgstr ""
+
+msgid "Total transferred file size: %{files_size}"
+msgstr ""
+
+msgid "Total transferred files: %{files_count}"
+msgstr ""
+
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
+msgstr ""
+
+msgid "Try to access non existing temporary directory %{name}"
 msgstr ""
 
 msgid "URL"
@@ -867,6 +906,9 @@ msgid "Updating repositories"
 msgstr ""
 
 msgid "Updating subscriptions"
+msgstr ""
+
+msgid "Uptime data is malformed '%s'"
 msgstr ""
 
 msgid "Version"
