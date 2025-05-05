@@ -60,7 +60,7 @@ FactoryBot.define do
     trait :with_activated_paid_extension do
       transient do
         product_base { create(:product, :with_mirrored_repositories, free: true) }
-        paid_product { create(:product, :with_mirrored_repositories, free: false, product_type: :extension) }
+        paid_product { create(:product, :with_mirrored_repositories, :product_sles_ltss) }
         free_product { create(:product, :with_mirrored_repositories, free: true, product_type: :extension) }
         subscription { nil }
       end

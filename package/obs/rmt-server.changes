@@ -12,8 +12,10 @@ Tue Jan 21 10:49:54 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
     * Add system_token to system without one
     * Add data_export engine for DataWarehouse telemetry
     * Fix 500 errors
+  * Update Puma webserver
   * rmt-cli:
     * Disable delta RPM mirroring by default (gh#1288)
+    * Add option during 'rmt-cli mirror' to re-validate repodata and packages only when repodata was updated
   * rmt-server:
     Add `activejob` and `resque` gems to vendored gemfile, to enable background
     job support in RMT and all engines.

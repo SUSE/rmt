@@ -111,6 +111,42 @@ RSpec.describe RMT::Mirror::Repomd do
       expect(metadatas.count).to eq(4)
     end
 
+    it 'does not enqueue unchanged repodata files' do
+      allow(repomd).to receive(:download_cached!).and_return(repomd_ref)
+      allow(repomd).to receive(:check_signature)
+      allow(repomd).to receive(:download_enqueued)
+      allow(repomd).to receive(:metadata_updated?).and_return(false)
+      expect(FileUtils).to receive(:cp).exactly(4).times
+
+      metadatas = repomd.mirror_metadata
+      expect(metadatas.count).to eq(4)
+    end
+
+    it 'returns only changed files when revalidate_repodata is disabled' do
+      allow(repomd).to receive(:download_cached!).and_return(repomd_ref)
+      allow(repomd).to receive(:check_signature)
+      allow(repomd).to receive(:download_enqueued)
+      allow(FileUtils).to receive(:cp)
+      allow(RMT::Config).to receive(:revalidate_repodata?).and_return(false)
+
+      metadatas = repomd.mirror_metadata
+      expect(metadatas.count).to eq(4)
+
+      allow(repomd).to receive(:metadata_updated?).and_return(false)
+
+      metadatas = repomd.mirror_metadata
+      expect(metadatas.count).to eq(0)
+    end
+
+    it 'returns metadata files' do
+      allow(repomd).to receive(:download_cached!).and_return(repomd_ref)
+      allow(repomd).to receive(:check_signature)
+      allow(repomd).to receive(:download_enqueued)
+
+      metadatas = repomd.mirror_metadata
+      expect(metadatas.count).to eq(4)
+    end
+
     it 'downloads the metadata files' do
       allow(repomd).to receive(:download_cached!).and_return(repomd_ref)
       allow(repomd).to receive(:check_signature)

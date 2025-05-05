@@ -47,7 +47,9 @@ module StrictAuthentication
           repos_paths.each do |repo_path|
             if found_path == repo_path
               logger.info "verifying paid extension #{paid_extension.identifier}"
-              result = SccProxy.scc_check_subscription_expiration(request.headers, @system, paid_extension.product_class)
+              result = SccProxy.scc_check_subscription_expiration(
+                request.headers, @system, request.remote_ip, false, paid_extension
+              )
               Rails.logger.info "Result from check subscription with SCC #{result}"
               return true if result[:is_active]
 
@@ -64,7 +66,9 @@ module StrictAuthentication
           end
         end
         if @system.byos?
-          result = SccProxy.scc_check_subscription_expiration(request.headers, @system, base_product.product_class)
+          result = SccProxy.scc_check_subscription_expiration(
+            request.headers, @system, request.remote_ip, false, base_product
+          )
           Rails.logger.info "Result from check subscription with SCC #{result}"
           return true if result[:is_active]
 

@@ -42,8 +42,8 @@ class AccessScope
     "#{full_type}:#{name}:#{@actions.join(',')}"
   end
 
-  def granted(client: nil)
-    aa = authorized_actions(client)
+  def granted(remote_ip, client: nil)
+    aa = authorized_actions(client, remote_ip)
     Rails.logger.info "Granted actions for user '#{client&.account || '<anonymous>'}': #{aa}"
     {
       'type' => @type,
@@ -57,12 +57,12 @@ class AccessScope
     [namespace, image].map(&:presence).compact.join('/')
   end
 
-  def authorized_actions(client = nil)
+  def authorized_actions(client, remote_ip)
     if @namespace.nil?
       @image == 'catalog' ? @actions : AUTHORIZED_ACTION
     else
       @allowed_paths = []
-      allowed_paths(client.systems.first) if client.present?
+      allowed_paths(client.systems.first, remote_ip) if client.present?
 
       Rails.logger.info 'Client is not present' if client.blank?
       if @allowed_paths.any? { |allowed_path| File.fnmatch(@namespace + '*', allowed_path) }
@@ -81,7 +81,7 @@ class AccessScope
     raise Registry::Exceptions::InvalidScope.new('Invalid scope format') unless %r{^[a-z0-9\-_/:*(),.]+$}i.match?(scope)
   end
 
-  def allowed_paths(system)
+  def allowed_paths(system, remote_ip)
     repo_list = RegistryCatalogService.new.repos(system, reload: false)
     access_policies_yml = YAML.safe_load(
       File.read(Rails.application.config.access_policies)
@@ -90,21 +90,21 @@ class AccessScope
     allowed_product_classes = (active_product_classes & access_policies_yml.keys)
     if system && system.hybrid?
       # if the system is hybrid => check if the non free product subscription is still valid for accessing images
-      allowed_non_free_product_classes = allowed_product_classes.map { |s| s unless Product.find_by(product_class: s, product_type: 'extension').free? }.compact
-      unless allowed_non_free_product_classes.empty?
+      allowed_non_free_products = Product.where(product_class: allowed_product_classes).where(product_type: 'extension').where(free: false)
+      unless allowed_non_free_products.empty?
         auth_header = {
           'HTTP_AUTHORIZATION' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password)
         }
-        allowed_non_free_product_classes.each do |non_free_prod_class|
+        allowed_non_free_products.each do |non_free_prod|
           activation_state = SccProxy.scc_check_subscription_expiration(
-            auth_header, system, non_free_prod_class
+            auth_header, system, remote_ip, true, non_free_prod
           )
           unless activation_state[:is_active]
             Rails.logger.info(
-              "Access to #{non_free_prod_class} from system #{system.login} denied: #{activation_state[:message]}"
+              "Access to #{non_free_prod.product_class} from system #{system.login} denied: #{activation_state[:message]}"
             )
             # remove the non active non free product extension from the allowed paths
-            allowed_product_classes -= [non_free_prod_class]
+            allowed_product_classes -= [non_free_prod.product_class]
           end
         end
       end

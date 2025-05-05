@@ -114,8 +114,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
             }
           }
         end
-        let(:product_hash) { system.activations.first.product.attributes.symbolize_keys.slice(:identifier, :version, :arch) }
-        let(:product_triplet) { "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}" }
+        let(:product_class) { system.activations.first.product.product_class }
 
         before do
           allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
@@ -243,7 +242,8 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
           service: {
             product: {
               id: 0o0000,
-              product_class: 'foo'
+              product_class: 'foo',
+              free: false
             }
           }
         }
@@ -262,7 +262,8 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
           service: {
             product: {
               id: 0o0000,
-              product_class: 'bar'
+              product_class: 'bar',
+              free: false
             }
           }
         }
@@ -271,8 +272,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
       context 'without valid repository cache' do
         context 'with X-Instance-Data headers and bad metadata and good subscription on SCC' do
           let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
-          let(:product_hash) { system.activations.first.product.attributes.symbolize_keys.slice(:identifier, :version, :arch) }
-          let(:product_triplet) { "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}" }
+          let(:product_class) { system.activations.first.product.product_class }
 
           before do
             allow(InstanceVerification).to receive(:update_cache)
@@ -285,11 +285,12 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
               receive(:instance_valid?)
                 .and_raise(InstanceVerification::Exception, 'Custom plugin error')
               )
+            allow(SccProxy).to receive(:system_in_cache?).and_return(nil)
             allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(false)
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_active].to_json, headers: {})
             allow(InstanceVerification).to receive(:verify_instance).and_call_original
             expect(InstanceVerification).to receive(:update_cache).with(
-              "#{system.pubcloud_reg_code}-foo-#{product_triplet}-active",
+              "#{system.pubcloud_reg_code}-foo-#{product_class}-active",
               'byos',
               registry: false
             )
@@ -306,8 +307,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
 
         context 'with X-Instance-Data headers and bad metadata and bad subscription on SCC' do
           let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
-          let(:product_hash) { system.activations.first.product.attributes.symbolize_keys.slice(:identifier, :version, :arch) }
-          let(:product_triplet) { "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}" }
+          let(:product_class) { system.activations.first.product.product_class }
           let(:scc_response) do
             {
               is_active: false,
@@ -330,7 +330,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
             allow(SccProxy).to receive(:scc_check_subscription_expiration).and_return(scc_response)
             allow(InstanceVerification).to receive(:verify_instance).and_call_original
             expect(InstanceVerification).to receive(:update_cache).with(
-              "#{system.pubcloud_reg_code}-foo-#{product_triplet}-inactive",
+              "#{system.pubcloud_reg_code}-foo-#{product_class}-inactive",
               'byos'
             )
             get '/connect/systems/activations', headers: headers

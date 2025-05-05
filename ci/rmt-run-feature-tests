@@ -11,6 +11,12 @@ group "synchronize SCC product/repositories"
   rmt-cli sync
 groupend
 
+group "install feature test dependencies"
+pushd "$SOURCE"
+  bundle install --with test
+popd
+groupend
+
 group "run feature tests"
 pushd "$SOURCE"
   NO_COVERAGE=true bundle exec rspec features/
