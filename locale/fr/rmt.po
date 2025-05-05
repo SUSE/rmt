@@ -308,20 +308,21 @@ msgstr "Exportation des dépôts"
 msgid "Exporting subscriptions"
 msgstr "Exportation des abonnements"
 
+#, fuzzy
+msgid "Extracting package list from metadata"
+msgstr "n"
+
 msgid "Failed to download %{failed_count} files"
 msgstr "Échec du téléchargement de %{failed_count} fichiers"
 
 msgid "Failed to export the SUSE Manager product tree: %{error_message}"
-msgstr ""
-"Échec de l'exportation de l'arborescence du produit SUSE Manager : "
-"%{error_message}"
+msgstr "Échec de l'exportation de l'arborescence du produit SUSE Manager : %{error_message}"
 
 msgid "Failed to import system %{system}"
 msgstr "Échec de l'importation du système %{system}"
 
 msgid "Failed to import the suma product tree: %{error_message}"
-msgstr ""
-"Échec de l'importation de l'arborescence du produit suma : %{error_message}"
+msgstr "Échec de l'importation de l'arborescence du produit suma : %{error_message}"
 
 msgid "Failed to sync systems: %{error}"
 msgstr "Échec de la synchronisation des systèmes : %{error}"
@@ -460,8 +461,20 @@ msgstr "Mise en miroir terminée."
 msgid "Mirroring completed with errors."
 msgstr "Mise en miroir terminée avec des erreurs."
 
+#, fuzzy
+msgid "Mirroring metadata files"
+msgstr "Mettre en miroir"
+
+#, fuzzy
+msgid "Mirroring new packages"
+msgstr "Mettre en miroir"
+
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
 msgstr "La mise en miroir du dépôt portant l'ID %{repo_id} n'est pas activée"
+
+#, fuzzy
+msgid "Mirroring packages"
+msgstr "Mettre en miroir"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "Mise en miroir du dépôt %{repo} vers %{dir}"
@@ -518,11 +531,7 @@ msgid "Not Mandatory"
 msgstr "Non obligatoire"
 
 msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
-msgstr ""
-"Tous les dépôts obligatoires ne sont pas mis en miroir pour le produit %s. "
-"Dépôts manquants (par ID) : %s. Sur le serveur RMT, les dépôts manquants "
-"peuvent être activés avec la commande : rmt-cli repos enable %s;  rmt-cli "
-"mirror"
+msgstr "Tous les dépôts obligatoires ne sont pas mis en miroir pour le produit %s. Dépôts manquants (par ID) : %s. Sur le serveur RMT, les dépôts manquants peuvent être activés avec la commande : rmt-cli repos enable %s;  rmt-cli mirror"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "Le code d'enregistrement n'a pas encore été activé. Visitez le site https://scc.suse.com pour l'activer."

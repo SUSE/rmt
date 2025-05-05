@@ -8,8 +8,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "PO-Revision-Date: 2025-04-29 22:59+0000\n"
 "Last-Translator: Samanta Magalhaes <samanta_texttrans@outlook.com>\n"
-"Language-Team: Portuguese (Brazil) <https://l10n.opensuse.org/projects/rmt/"
-"i18n/pt_BR/>\n"
+"Language-Team: Portuguese (Brazil) <https://l10n.opensuse.org/projects/rmt/i18"
+"n/pt_BR/>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -309,6 +309,10 @@ msgstr "Exportando repositórios"
 msgid "Exporting subscriptions"
 msgstr "Exportando assinaturas"
 
+#, fuzzy
+msgid "Extracting package list from metadata"
+msgstr "n"
+
 msgid "Failed to download %{failed_count} files"
 msgstr "Falha ao baixar %{failed_count} arquivos"
 
@@ -458,8 +462,20 @@ msgstr "Espelhamento completo."
 msgid "Mirroring completed with errors."
 msgstr "Espelhamento completo com erros."
 
+#, fuzzy
+msgid "Mirroring metadata files"
+msgstr "Espelhar"
+
+#, fuzzy
+msgid "Mirroring new packages"
+msgstr "Espelhar"
+
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
 msgstr "O espelhamento do repositório com ID% {repo_id} não está habilitado"
+
+#, fuzzy
+msgid "Mirroring packages"
+msgstr "Espelhar"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "Repositório de Espelhamento %{repo} para %{dir}"
@@ -516,10 +532,7 @@ msgid "Not Mandatory"
 msgstr "Não é obrigatório"
 
 msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
-msgstr ""
-"Nem todos os repositórios obrigatórios foram espelhados para o produto %s. "
-"Repositórios Ausentes (por IDs): %s. No servidor RMT, é possível habilitar "
-"os repositórios ausentes com: rmt-cli repos enable %s;  rmt-cli mirror"
+msgstr "Nem todos os repositórios obrigatórios foram espelhados para o produto %s. Repositórios Ausentes (por IDs): %s. No servidor RMT, é possível habilitar os repositórios ausentes com: rmt-cli repos enable %s;  rmt-cli mirror"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "Código de registro ainda não ativado. Visite https://scc.suse.com para ativá-lo."

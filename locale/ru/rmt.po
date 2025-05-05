@@ -315,6 +315,9 @@ msgstr "Выполняется экспорт репозиториев"
 msgid "Exporting subscriptions"
 msgstr "Выполняется экспорт подписок"
 
+msgid "Extracting package list from metadata"
+msgstr ""
+
 msgid "Failed to download %{failed_count} files"
 msgstr ""
 
@@ -472,7 +475,19 @@ msgid "Mirroring completed with errors."
 msgstr "Зеркальное отображение"
 
 #, fuzzy
+msgid "Mirroring metadata files"
+msgstr "Зеркальное отображение"
+
+#, fuzzy
+msgid "Mirroring new packages"
+msgstr "Зеркальное отображение"
+
+#, fuzzy
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
+msgstr "Зеркальное отображение"
+
+#, fuzzy
+msgid "Mirroring packages"
 msgstr "Зеркальное отображение"
 
 msgid "Mirroring repository %{repo} to %{dir}"

@@ -314,6 +314,10 @@ msgstr "Exportují se repozitáře"
 msgid "Exporting subscriptions"
 msgstr "Exportují se předplatná"
 
+#, fuzzy
+msgid "Extracting package list from metadata"
+msgstr "n"
+
 msgid "Failed to download %{failed_count} files"
 msgstr "Nepodařilo se stáhnout %{failed_count} souborů"
 
@@ -468,8 +472,20 @@ msgstr "Zrcadlení dokončeno."
 msgid "Mirroring completed with errors."
 msgstr "Zrcadlení dokončeno s chybami."
 
+#, fuzzy
+msgid "Mirroring metadata files"
+msgstr "Zrcadlit"
+
+#, fuzzy
+msgid "Mirroring new packages"
+msgstr "Zrcadlit"
+
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
 msgstr "Zrcadlení úložiště s ID %{repo_id} není povoleno"
+
+#, fuzzy
+msgid "Mirroring packages"
+msgstr "Zrcadlit"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "Zrcadlí se repozitář %{repo} do %{dir}"

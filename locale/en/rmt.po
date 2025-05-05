@@ -301,6 +301,9 @@ msgstr ""
 msgid "Exporting subscriptions"
 msgstr ""
 
+msgid "Extracting package list from metadata"
+msgstr ""
+
 msgid "Failed to download %{failed_count} files"
 msgstr ""
 
@@ -450,7 +453,16 @@ msgstr ""
 msgid "Mirroring completed with errors."
 msgstr ""
 
+msgid "Mirroring metadata files"
+msgstr ""
+
+msgid "Mirroring new packages"
+msgstr ""
+
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
+msgstr ""
+
+msgid "Mirroring packages"
 msgstr ""
 
 msgid "Mirroring repository %{repo} to %{dir}"

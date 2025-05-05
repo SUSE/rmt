@@ -308,12 +308,15 @@ msgstr "Esportazione di repository"
 msgid "Exporting subscriptions"
 msgstr "Esportazione di sottoscrizioni"
 
+#, fuzzy
+msgid "Extracting package list from metadata"
+msgstr "n"
+
 msgid "Failed to download %{failed_count} files"
 msgstr "Download di %{failed_count} file non riuscito"
 
 msgid "Failed to export the SUSE Manager product tree: %{error_message}"
-msgstr ""
-"Esportazione dell'albero prodotti SUSE Manager non riuscita: %{error_message}"
+msgstr "Esportazione dell'albero prodotti SUSE Manager non riuscita: %{error_message}"
 
 msgid "Failed to import system %{system}"
 msgstr "Importazione del sistema %{system} non riuscita"
@@ -458,8 +461,20 @@ msgstr "Mirroring completato."
 msgid "Mirroring completed with errors."
 msgstr "Mirroring completato con errori."
 
+#, fuzzy
+msgid "Mirroring metadata files"
+msgstr "Esegui mirroring"
+
+#, fuzzy
+msgid "Mirroring new packages"
+msgstr "Esegui mirroring"
+
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
 msgstr "Il mirroring del repository con ID %{repo_id} non è abilitato"
+
+#, fuzzy
+msgid "Mirroring packages"
+msgstr "Esegui mirroring"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "Mirroring repository %{repo} in %{dir}"
@@ -510,17 +525,13 @@ msgid "No repository IDs supplied"
 msgstr "Nessun ID repository fornito"
 
 msgid "No subscription found with this registration code"
-msgstr ""
-"Nessuna sottoscrizione trovata con il codice di registrazione specificato"
+msgstr "Nessuna sottoscrizione trovata con il codice di registrazione specificato"
 
 msgid "Not Mandatory"
 msgstr "Non obbligatorio"
 
 msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
-msgstr ""
-"Per il prodotto %s non viene eseguito il mirroring di tutti i repository "
-"obbligatori. Repository mancanti (per id): %s. Nel server RMT, è possibile "
-"abilitare i repsitory mancanti con: rmt-cli repos enable %s; rmt-cli mirror"
+msgstr "Per il prodotto %s non viene eseguito il mirroring di tutti i repository obbligatori. Repository mancanti (per id): %s. Nel server RMT, è possibile abilitare i repsitory mancanti con: rmt-cli repos enable %s; rmt-cli mirror"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "Codice di registrazione non ancora attivato. Visitare https://scc.suse.com per attivarlo."

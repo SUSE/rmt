@@ -315,6 +315,9 @@ msgstr "جارِ تصدير المخازن"
 msgid "Exporting subscriptions"
 msgstr "جارِ تصدير الاشتراكات"
 
+msgid "Extracting package list from metadata"
+msgstr ""
+
 msgid "Failed to download %{failed_count} files"
 msgstr "فشل تحميل {failure_count} ملف"
 
@@ -471,8 +474,20 @@ msgstr "اكتمل الانعكاس."
 msgid "Mirroring completed with errors."
 msgstr "اكتمل النسخ المتطابق مع وجود أخطاء."
 
+#, fuzzy
+msgid "Mirroring metadata files"
+msgstr "نسخ"
+
+#, fuzzy
+msgid "Mirroring new packages"
+msgstr "نسخ"
+
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
 msgstr "لم يتم تمكين نسخ المستودع بالمعرف {repo_id}"
+
+#, fuzzy
+msgid "Mirroring packages"
+msgstr "نسخ"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "جارِ نسخ المخزن %{repo} إلى %{dir}"

@@ -8,8 +8,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "PO-Revision-Date: 2025-04-21 04:59+0000\n"
 "Last-Translator: Emily Dong <Emily.Dong@excel-gits.com>\n"
-"Language-Team: Chinese (China) <https://l10n.opensuse.org/projects/rmt/i18n/"
-"zh_CN/>\n"
+"Language-Team: Chinese (China) <https://l10n.opensuse.org/projects/rmt/i18n/zh"
+"_CN/>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -307,6 +307,10 @@ msgstr "正在导出储存库"
 msgid "Exporting subscriptions"
 msgstr "正在导出订阅"
 
+#, fuzzy
+msgid "Extracting package list from metadata"
+msgstr "n"
+
 msgid "Failed to download %{failed_count} files"
 msgstr "无法下载 %{failed_count} 个文件"
 
@@ -455,8 +459,20 @@ msgstr "镜像已完成。"
 msgid "Mirroring completed with errors."
 msgstr "镜像已完成但出错。"
 
+#, fuzzy
+msgid "Mirroring metadata files"
+msgstr "镜像"
+
+#, fuzzy
+msgid "Mirroring new packages"
+msgstr "镜像"
+
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
 msgstr "未启用 ID 为 %{repo_id} 的储存库的镜像"
+
+#, fuzzy
+msgid "Mirroring packages"
+msgstr "镜像"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "正在将储存库 %{repo} 镜像到 %{dir}"
@@ -513,10 +529,7 @@ msgid "Not Mandatory"
 msgstr "非强制"
 
 msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
-msgstr ""
-"未为产品 %s 镜像所有必需的储存库。缺少以下储存库（按 ID 列出）：%s。在 RMT "
-"服务器上，可以使用以下命令启用缺少的储存库：rmt-cli repos enable %s；rmt-cli "
-"mirror"
+msgstr "未为产品 %s 镜像所有必需的储存库。缺少以下储存库（按 ID 列出）：%s。在 RMT 服务器上，可以使用以下命令启用缺少的储存库：rmt-cli repos enable %s；rmt-cli mirror"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "尚未激活注册代码。请访问 https://scc.suse.com 激活。"

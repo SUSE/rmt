@@ -308,12 +308,15 @@ msgstr "Repositorys werden exportiert."
 msgid "Exporting subscriptions"
 msgstr "Subscriptions werden exportiert."
 
+#, fuzzy
+msgid "Extracting package list from metadata"
+msgstr "n"
+
 msgid "Failed to download %{failed_count} files"
 msgstr "%{failed_count} Dateien konnten nicht heruntergeladen werden"
 
 msgid "Failed to export the SUSE Manager product tree: %{error_message}"
-msgstr ""
-"Der Export des SUSE Manager-Produktbaums ist fehlgeschlagen: %{error_message}"
+msgstr "Der Export des SUSE Manager-Produktbaums ist fehlgeschlagen: %{error_message}"
 
 msgid "Failed to import system %{system}"
 msgstr "%{system} konnte nicht importiert werden"
@@ -429,8 +432,7 @@ msgid "Mirror all enabled repositories"
 msgstr "Alle aktivierten Repositorys spiegeln"
 
 msgid "Mirror enabled repositories for a product with given product IDs"
-msgstr ""
-"Spiegeln aktivierter Repositorys für ein Produkt mit angegebenen Produkt-IDs"
+msgstr "Spiegeln aktivierter Repositorys für ein Produkt mit angegebenen Produkt-IDs"
 
 msgid "Mirror enabled repositories with given repository IDs"
 msgstr "Spiegeln von aktivierten Repositorys mit angegebenen Repository-IDs"
@@ -459,8 +461,20 @@ msgstr "Spiegeln abgeschlossen."
 msgid "Mirroring completed with errors."
 msgstr "Spiegeln mit Fehlern abgeschlossen."
 
+#, fuzzy
+msgid "Mirroring metadata files"
+msgstr "Spiegeln"
+
+#, fuzzy
+msgid "Mirroring new packages"
+msgstr "Spiegeln"
+
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
 msgstr "Die Spiegelung des Repositorys mit der ID %{repo_id} ist nicht aktiviert"
+
+#, fuzzy
+msgid "Mirroring packages"
+msgstr "Spiegeln"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "Repository %{repo} wird in %{dir} gespiegelt"
@@ -517,11 +531,7 @@ msgid "Not Mandatory"
 msgstr "Nicht obligatorisch"
 
 msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
-msgstr ""
-"Nicht alle obligatorischen Repositorien werden für das Produkt %s "
-"gespiegelt. Fehlende Repositorien (nach IDs): %s. Auf dem RMT-Server können "
-"die fehlenden Repositorien aktiviert werden mit: rmt-cli repos enable %s;  "
-"rmt-cli mirror"
+msgstr "Nicht alle obligatorischen Repositorien werden für das Produkt %s gespiegelt. Fehlende Repositorien (nach IDs): %s. Auf dem RMT-Server können die fehlenden Repositorien aktiviert werden mit: rmt-cli repos enable %s;  rmt-cli mirror"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "Registrierungscode wurde noch nicht aktiviert. Rufen Sie zum Aktivieren https://scc.suse.com auf."
@@ -913,8 +923,7 @@ msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
 msgstr "Gesamt: %{total_count} (%{total_size}), %{total_db_entries} bereinigt."
 
 msgid "Try to access non existing temporary directory %{name}"
-msgstr ""
-"Versuch, auf ein nicht vorhandenes temporäres Verzeichnis %{name} zuzugreifen"
+msgstr "Versuch, auf ein nicht vorhandenes temporäres Verzeichnis %{name} zuzugreifen"
 
 msgid "URL"
 msgstr "URL"

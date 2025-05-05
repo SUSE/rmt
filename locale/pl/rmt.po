@@ -309,6 +309,9 @@ msgstr "Eksportowanie repozytoriów"
 msgid "Exporting subscriptions"
 msgstr "Eksportowanie subskrypcji"
 
+msgid "Extracting package list from metadata"
+msgstr ""
+
 msgid "Failed to download %{failed_count} files"
 msgstr ""
 
@@ -460,8 +463,20 @@ msgstr "Odzwierciedlanie zakończone."
 msgid "Mirroring completed with errors."
 msgstr "Odzwierciedlanie zakończone z błędami."
 
+#, fuzzy
+msgid "Mirroring metadata files"
+msgstr "Odzwierciedlaj"
+
+#, fuzzy
+msgid "Mirroring new packages"
+msgstr "Odzwierciedlaj"
+
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
 msgstr "Odzwierciedlanie repozytorium o ID %{repo_id} nie jest włączone"
+
+#, fuzzy
+msgid "Mirroring packages"
+msgstr "Odzwierciedlaj"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "Odzwierciedlanie repozytorium %{repo} w katalogu %{dir}"

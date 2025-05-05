@@ -313,6 +313,9 @@ msgstr "Exporterar lagringsplatser"
 msgid "Exporting subscriptions"
 msgstr "Exporterar abonnemang"
 
+msgid "Extracting package list from metadata"
+msgstr ""
+
 msgid "Failed to download %{failed_count} files"
 msgstr ""
 
@@ -469,7 +472,19 @@ msgid "Mirroring completed with errors."
 msgstr "Spegla"
 
 #, fuzzy
+msgid "Mirroring metadata files"
+msgstr "Spegla"
+
+#, fuzzy
+msgid "Mirroring new packages"
+msgstr "Spegla"
+
+#, fuzzy
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
+msgstr "Spegla"
+
+#, fuzzy
+msgid "Mirroring packages"
 msgstr "Spegla"
 
 msgid "Mirroring repository %{repo} to %{dir}"

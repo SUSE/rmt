@@ -314,6 +314,9 @@ msgstr "Adattárak exportálása"
 msgid "Exporting subscriptions"
 msgstr "Előfizetések exportálása"
 
+msgid "Extracting package list from metadata"
+msgstr ""
+
 msgid "Failed to download %{failed_count} files"
 msgstr ""
 
@@ -470,7 +473,19 @@ msgid "Mirroring completed with errors."
 msgstr "Tükrözés"
 
 #, fuzzy
+msgid "Mirroring metadata files"
+msgstr "Tükrözés"
+
+#, fuzzy
+msgid "Mirroring new packages"
+msgstr "Tükrözés"
+
+#, fuzzy
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
+msgstr "Tükrözés"
+
+#, fuzzy
+msgid "Mirroring packages"
 msgstr "Tükrözés"
 
 msgid "Mirroring repository %{repo} to %{dir}"

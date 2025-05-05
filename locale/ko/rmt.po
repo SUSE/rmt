@@ -314,6 +314,9 @@ msgstr "리포지토리 엑스포트 중"
 msgid "Exporting subscriptions"
 msgstr "구독 엑스포트 중"
 
+msgid "Extracting package list from metadata"
+msgstr ""
+
 msgid "Failed to download %{failed_count} files"
 msgstr ""
 
@@ -469,7 +472,19 @@ msgid "Mirroring completed with errors."
 msgstr "미러"
 
 #, fuzzy
+msgid "Mirroring metadata files"
+msgstr "미러"
+
+#, fuzzy
+msgid "Mirroring new packages"
+msgstr "미러"
+
+#, fuzzy
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
+msgstr "미러"
+
+#, fuzzy
+msgid "Mirroring packages"
 msgstr "미러"
 
 msgid "Mirroring repository %{repo} to %{dir}"
