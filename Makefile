@@ -16,7 +16,7 @@ man:
 	mv rmt-cli.8.gz package/obs
 
 dist:
-	docker-compose run -it -v $(PWD):/srv/www/rmt --rm rmt make build-tarball
+	docker compose run -it -v $(PWD):/srv/www/rmt --rm rmt make build-tarball
 
 build-tarball: clean man
 	@mkdir -p $(NAME)-$(VERSION)/
@@ -87,16 +87,16 @@ build-tarball: clean man
 	rm -rf $(NAME)-$(VERSION)/
 
 database-up:
-	docker-compose up db -d
+	 docker compose up db -d
 
 build: Dockerfile Gemfile
-	docker-compose build rmt
+	 docker compose build rmt
 
 server: build database-up
-	docker-compose up
+	 docker compose up
 
 shell: build database-up
-	docker-compose run --rm -ti rmt /bin/bash
+	 docker compose run --rm -ti rmt /bin/bash
 
 console: build database-up
-	docker-compose run --rm -ti rmt bundle exec rails c
+	 docker compose run --rm -ti rmt bundle exec rails c
