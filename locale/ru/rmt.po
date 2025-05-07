@@ -52,7 +52,8 @@ msgstr ""
 msgid "A repository by the ID %{id} already exists."
 msgstr "Репозиторий по ссылке URL %{url} уже существует."
 
-msgid "A repository by the URL %{url} already exists."
+#, fuzzy
+msgid "A repository by the URL %{url} already exists (ID %{id})."
 msgstr "Репозиторий по ссылке URL %{url} уже существует."
 
 msgid "Added association between %{repo} and product %{product}"
@@ -155,6 +156,9 @@ msgstr "Не удалось найти систему с именем польз
 #, fuzzy
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "Не удалось создать зеркальное отображение дерева продукта suma, ошибка: %{error}"
+
+msgid "Could not read '%{file}': %{error}"
+msgstr ""
 
 #, fuzzy
 msgid "Couldn't add custom repository."
@@ -279,7 +283,12 @@ msgstr "Ошибка при зеркальном отображении мета
 msgid "Error while mirroring packages: %{error}"
 msgstr "Ошибка при зеркальном отображении лицезнии: %{error}"
 
-msgid "Error while moving directory %{src} to %{dest}: %{error}"
+#, fuzzy
+msgid "Error while mirroring repository: %{error}"
+msgstr "Ошибка при зеркальном отображении метаданных: %{error}"
+
+#, fuzzy
+msgid "Error while moving files %{glob} to %{dest}: %{error}"
 msgstr "Ошибка при переносе каталога из %{src} в %{dest}: %{error}"
 
 msgid "Examples"
@@ -306,10 +315,19 @@ msgstr "Выполняется экспорт репозиториев"
 msgid "Exporting subscriptions"
 msgstr "Выполняется экспорт подписок"
 
+msgid "Extracting package list from metadata"
+msgstr ""
+
 msgid "Failed to download %{failed_count} files"
 msgstr ""
 
+msgid "Failed to export the SUSE Manager product tree: %{error_message}"
+msgstr ""
+
 msgid "Failed to import system %{system}"
+msgstr ""
+
+msgid "Failed to import the suma product tree: %{error_message}"
 msgstr ""
 
 msgid "Failed to sync systems: %{error}"
@@ -396,6 +414,15 @@ msgstr ""
 msgid "List repositories which are marked to be mirrored"
 msgstr "Вывести список репозиториев, помеченных для зеркального отображения"
 
+msgid "Loading product data from SCC"
+msgstr ""
+
+msgid "Loading repository data from SCC"
+msgstr ""
+
+msgid "Loading subscription data from SCC"
+msgstr ""
+
 msgid "Login"
 msgstr ""
 
@@ -448,7 +475,19 @@ msgid "Mirroring completed with errors."
 msgstr "Зеркальное отображение"
 
 #, fuzzy
+msgid "Mirroring metadata files"
+msgstr "Зеркальное отображение"
+
+#, fuzzy
+msgid "Mirroring new packages"
+msgstr "Зеркальное отображение"
+
+#, fuzzy
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
+msgstr "Зеркальное отображение"
+
+#, fuzzy
+msgid "Mirroring packages"
 msgstr "Зеркальное отображение"
 
 msgid "Mirroring repository %{repo} to %{dir}"
@@ -500,13 +539,14 @@ msgstr "Не найдены репозитории для продукта %s"
 msgid "No repository IDs supplied"
 msgstr "Не указаны идентификаторы репозиториев"
 
-msgid "No subscription with this Registration Code found"
+msgid "No subscription found with this registration code"
 msgstr ""
 
 msgid "Not Mandatory"
 msgstr "Необязательно"
 
-msgid "Not all mandatory repositories are mirrored for product %s"
+#, fuzzy
+msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
 msgstr "Зеркальное отображение выполнено не для всех обязательных репозиториев продукта %s"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
@@ -676,6 +716,9 @@ msgid "Removes locally mirrored files of repositories which are not marked to be
 msgstr ""
 
 msgid "Removes old systems and their activations if they are inactive."
+msgstr ""
+
+msgid "Removing obsolete repositories"
 msgstr ""
 
 msgid "Repositories are not available for this product."
@@ -892,7 +935,23 @@ msgstr ""
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr ""
 
+#, fuzzy
+msgid "Total Mirror Time: %{time}"
+msgstr "Зеркальное отображение"
+
+msgid "Total mirrored repositories: %{repo_count}"
+msgstr ""
+
+msgid "Total transferred file size: %{files_size}"
+msgstr ""
+
+msgid "Total transferred files: %{files_count}"
+msgstr ""
+
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
+msgstr ""
+
+msgid "Try to access non existing temporary directory %{name}"
 msgstr ""
 
 msgid "URL"
@@ -915,6 +974,9 @@ msgstr "Выполняется обновление репозиториев"
 
 msgid "Updating subscriptions"
 msgstr "Выполняется обновление подписок"
+
+msgid "Uptime data is malformed '%s'"
+msgstr ""
 
 msgid "Version"
 msgstr "Версия"

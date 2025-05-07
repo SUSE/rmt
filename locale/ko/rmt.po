@@ -51,7 +51,8 @@ msgstr ""
 msgid "A repository by the ID %{id} already exists."
 msgstr "URL이 %{url}인 리포지토리가 이미 있습니다."
 
-msgid "A repository by the URL %{url} already exists."
+#, fuzzy
+msgid "A repository by the URL %{url} already exists (ID %{id})."
 msgstr "URL이 %{url}인 리포지토리가 이미 있습니다."
 
 msgid "Added association between %{repo} and product %{product}"
@@ -154,6 +155,9 @@ msgstr "로그인 \\\"%{login}\\\" 및 비밀번호 \\\"%{password}\\\"을(를) 
 #, fuzzy
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "suma 제품 트리를 미러링할 수 없는 오류: %{error}"
+
+msgid "Could not read '%{file}': %{error}"
+msgstr ""
 
 #, fuzzy
 msgid "Couldn't add custom repository."
@@ -278,7 +282,12 @@ msgstr "메터데이터를 미러링하는 동안 오류 발생: %{error}"
 msgid "Error while mirroring packages: %{error}"
 msgstr "라이선스를 미러링하는 동안 오류 발생: %{error}"
 
-msgid "Error while moving directory %{src} to %{dest}: %{error}"
+#, fuzzy
+msgid "Error while mirroring repository: %{error}"
+msgstr "메터데이터를 미러링하는 동안 오류 발생: %{error}"
+
+#, fuzzy
+msgid "Error while moving files %{glob} to %{dest}: %{error}"
 msgstr "%{src} 디렉토리를 %{dest}(으)로 이동하는 동안 오류 발생: %{error}"
 
 msgid "Examples"
@@ -305,10 +314,19 @@ msgstr "리포지토리 엑스포트 중"
 msgid "Exporting subscriptions"
 msgstr "구독 엑스포트 중"
 
+msgid "Extracting package list from metadata"
+msgstr ""
+
 msgid "Failed to download %{failed_count} files"
 msgstr ""
 
+msgid "Failed to export the SUSE Manager product tree: %{error_message}"
+msgstr ""
+
 msgid "Failed to import system %{system}"
+msgstr ""
+
+msgid "Failed to import the suma product tree: %{error_message}"
 msgstr ""
 
 msgid "Failed to sync systems: %{error}"
@@ -393,6 +411,15 @@ msgstr ""
 msgid "List repositories which are marked to be mirrored"
 msgstr "미러링으로 표시된 리포지토리 나열"
 
+msgid "Loading product data from SCC"
+msgstr ""
+
+msgid "Loading repository data from SCC"
+msgstr ""
+
+msgid "Loading subscription data from SCC"
+msgstr ""
+
 msgid "Login"
 msgstr ""
 
@@ -445,7 +472,19 @@ msgid "Mirroring completed with errors."
 msgstr "미러"
 
 #, fuzzy
+msgid "Mirroring metadata files"
+msgstr "미러"
+
+#, fuzzy
+msgid "Mirroring new packages"
+msgstr "미러"
+
+#, fuzzy
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
+msgstr "미러"
+
+#, fuzzy
+msgid "Mirroring packages"
 msgstr "미러"
 
 msgid "Mirroring repository %{repo} to %{dir}"
@@ -497,13 +536,14 @@ msgstr "%s 제품에 대한 리포지토리가 없습니다"
 msgid "No repository IDs supplied"
 msgstr "입력한 리포지토리 id가 없습니다"
 
-msgid "No subscription with this Registration Code found"
+msgid "No subscription found with this registration code"
 msgstr ""
 
 msgid "Not Mandatory"
 msgstr "필수가 아님"
 
-msgid "Not all mandatory repositories are mirrored for product %s"
+#, fuzzy
+msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
 msgstr "%s 제품에 대해 일부 필수 리포지토리가 미러링되지 않았습니다"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
@@ -669,6 +709,9 @@ msgid "Removes locally mirrored files of repositories which are not marked to be
 msgstr ""
 
 msgid "Removes old systems and their activations if they are inactive."
+msgstr ""
+
+msgid "Removing obsolete repositories"
 msgstr ""
 
 msgid "Repositories are not available for this product."
@@ -881,7 +924,23 @@ msgstr ""
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr ""
 
+#, fuzzy
+msgid "Total Mirror Time: %{time}"
+msgstr "미러"
+
+msgid "Total mirrored repositories: %{repo_count}"
+msgstr ""
+
+msgid "Total transferred file size: %{files_size}"
+msgstr ""
+
+msgid "Total transferred files: %{files_count}"
+msgstr ""
+
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
+msgstr ""
+
+msgid "Try to access non existing temporary directory %{name}"
 msgstr ""
 
 msgid "URL"
@@ -904,6 +963,9 @@ msgstr "리포지토리 업데이트 중"
 
 msgid "Updating subscriptions"
 msgstr "구독 업데이트 중"
+
+msgid "Uptime data is malformed '%s'"
+msgstr ""
 
 msgid "Version"
 msgstr "버전"

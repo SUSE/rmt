@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-24 13:35+0000\n"
-"PO-Revision-Date: 2025-03-24 13:35+0000\n"
+"POT-Creation-Date: 2025-05-05 14:01+0000\n"
+"PO-Revision-Date: 2025-05-05 14:01+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -47,8 +47,8 @@ msgstr ""
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:107
 msgid ""
 "Not all mandatory repositories are mirrored for product %s. Missing Repositori"
-"es (by ids): %s. On the RMT server, the missing repositories can be enabled w"
-"ith: rmt-cli repos enable %s;  rmt-cli mirror"
+"es (by ids): %s. On the RMT server, the missing repositories can be enabled wi"
+"th: rmt-cli repos enable %s;  rmt-cli mirror"
 msgstr ""
 
 #: ../app/controllers/api/connect/v3/systems/products_controller.rb:139
@@ -292,29 +292,29 @@ msgstr ""
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:167
+#: ../lib/rmt/cli/clean.rb:179
 msgid "Directory: %{dir}"
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:174
+#: ../lib/rmt/cli/clean.rb:186
 msgid "Cleaned '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}."
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:177
+#: ../lib/rmt/cli/clean.rb:189
 msgid "hardlink"
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:184
+#: ../lib/rmt/cli/clean.rb:196
 msgid "Cleaned %{file_count_text} (%{total_size}), %{db_entries}."
 msgstr ""
 
-#: ../lib/rmt/cli/clean.rb:198
+#: ../lib/rmt/cli/clean.rb:210
 msgid "%{count} file"
 msgid_plural "%{count} files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../lib/rmt/cli/clean.rb:202
+#: ../lib/rmt/cli/clean.rb:214
 msgid "%{db_entries} database entry"
 msgid_plural "%{db_entries} database entries"
 msgstr[0] ""
@@ -1171,11 +1171,11 @@ msgid ""
 "s after %{seconds} seconds"
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:230
+#: ../lib/rmt/downloader.rb:232
 msgid "Checksum doesn't match"
 msgstr ""
 
-#: ../lib/rmt/downloader.rb:243
+#: ../lib/rmt/downloader.rb:245
 msgid "%{file} - File does not exist"
 msgstr ""
 
@@ -1259,7 +1259,15 @@ msgstr ""
 msgid "Error while moving files %{glob} to %{dest}: %{error}"
 msgstr ""
 
-#: ../lib/rmt/mirror/debian.rb:104
+#: ../lib/rmt/mirror/debian.rb:22 ../lib/rmt/mirror/repomd.rb:24
+msgid "Mirroring metadata files"
+msgstr ""
+
+#: ../lib/rmt/mirror/debian.rb:65
+msgid "Mirroring packages"
+msgstr ""
+
+#: ../lib/rmt/mirror/debian.rb:112
 msgid "Could not read '%{file}': %{error}"
 msgstr ""
 
@@ -1267,15 +1275,23 @@ msgstr ""
 msgid "Error while mirroring license files: %{error}"
 msgstr ""
 
-#: ../lib/rmt/mirror/repomd.rb:40
+#: ../lib/rmt/mirror/repomd.rb:45
 msgid "Error while mirroring metadata: %{error}"
 msgstr ""
 
+#: ../lib/rmt/mirror/repomd.rb:49
+msgid "Extracting package list from metadata"
+msgstr ""
+
 #: ../lib/rmt/mirror/repomd.rb:58
+msgid "Mirroring new packages"
+msgstr ""
+
+#: ../lib/rmt/mirror/repomd.rb:65
 msgid "Failed to download %{failed_count} files"
 msgstr ""
 
-#: ../lib/rmt/mirror/repomd.rb:60
+#: ../lib/rmt/mirror/repomd.rb:67
 msgid "Error while mirroring packages: %{error}"
 msgstr ""
 
