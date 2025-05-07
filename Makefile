@@ -93,7 +93,7 @@ build: Dockerfile Gemfile
 	docker-compose build rmt
 
 server: build database-up
-	docker-compose up --no-recreate
+	docker-compose up
 
 shell: build database-up
 	docker-compose run --rm -ti rmt /bin/bash
