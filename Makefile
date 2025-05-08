@@ -1,7 +1,7 @@
 NAME          = rmt-server
 VERSION       = $(shell ruby -e 'require "./lib/rmt.rb"; print RMT::VERSION')
 
-.PHONY = all clean man dist build-tarball
+.PHONY: clean man dist build-tarball database-up server shell console
 
 all:
 	@:
@@ -16,7 +16,7 @@ man:
 	mv rmt-cli.8.gz package/obs
 
 dist:
-	docker-compose run -it -v $(PWD):/srv/www/rmt --rm rmt make build-tarball
+	docker compose run -it -v $(PWD):/srv/www/rmt --rm rmt make build-tarball
 
 build-tarball: clean man
 	@mkdir -p $(NAME)-$(VERSION)/
@@ -85,3 +85,18 @@ build-tarball: clean man
 	find $(NAME)-$(VERSION) -name \*~ -exec rm {} \;
 	tar cfvj package/obs/$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)/
 	rm -rf $(NAME)-$(VERSION)/
+
+database-up:
+	 docker compose up db -d
+
+build: Dockerfile Gemfile
+	 docker compose build rmt
+
+server: build database-up
+	 docker compose up
+
+shell: build database-up
+	 docker compose run --rm -ti rmt /bin/bash
+
+console: build database-up
+	 docker compose run --rm -ti rmt bundle exec rails c

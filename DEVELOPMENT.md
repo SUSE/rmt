@@ -72,12 +72,18 @@ In order to run the application locally using docker-compose:
    `chmod -R 0777 public`). This is needed so the docker container can write
    into this specific directory which is protected by default by the `rmt-cli`
    tool.
-4. Build the containers needed by `docker-compose`:
+4. Build the image (can be also used to update gems)
     ```
-    docker-compose build
+    make build
     ```
-5. Run everything with `docker-compose up`.
-
+5. Run the server
+    ```
+    make server
+    ```
+6. Shell access
+    ```
+    make shell
+    ```
 After doing all this, there will be `http://localhost:${EXTERNAL_PORT}` exposed
 to the network of the host, and you will be able to register clients by using
 this url. At this point, though, notice that there are two ways to run clients

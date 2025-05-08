@@ -13,4 +13,8 @@ unless File.exist?('/var/lib/rmt/system_uuid')
   system('dmidecode -s system-uuid > /var/lib/rmt/system_uuid')
 end
 
+# bundle if we have updates ready
+system('bundle install')
+
+# Run rails and therefore the API
 system('bundle exec rails s -b rmt -p 4224')
