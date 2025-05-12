@@ -22,7 +22,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         it 'return false and message for expired subscription' do
           allow(InstanceVerification).to receive(:build_cache_entry).and_return('foo')
           allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return('foo-inactive')
-          result = SccProxy.system_in_cache?('foo', system, 'prod', 'registry')
+          result = SccProxy.system_in_cache?('foo', system, 'prod', 'registry', {})
           expect(result[:is_active]).to eq(false)
           expect(result[:message]).to eq('Subscription expired.')
         end
@@ -33,7 +33,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           allow(InstanceVerification).to receive(:build_cache_entry).and_return('foo')
           allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return('foo-active')
           allow(InstanceVerification).to receive(:update_cache)
-          result = SccProxy.system_in_cache?('foo', system, 'prod', 'registry')
+          result = SccProxy.system_in_cache?('foo', system, 'prod', 'registry', {})
           expect(result[:is_active]).to eq(true)
         end
       end
@@ -42,7 +42,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         it 'return false and message for expired subscription' do
           allow(InstanceVerification).to receive(:build_cache_entry).and_return('foo')
           allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
-          result = SccProxy.system_in_cache?('foo', system, 'prod', 'registry')
+          result = SccProxy.system_in_cache?('foo', system, 'prod', 'registry', {})
           expect(result).to be(nil)
         end
       end
@@ -194,7 +194,13 @@ describe StrictAuthentication::AuthenticationController, type: :request do
             }
           }
         end
-        let(:system_byos) { FactoryBot.create(:system, :byos, :with_activated_paid_extension) }
+        let(:system_byos) do
+          system = FactoryBot.create(:system, :byos, :with_activated_paid_extension)
+          system.pubcloud_reg_code = 'pubcloud_reg_code'
+          system.save!
+          system
+        end
+
         let(:scc_systems_activations_url) { 'https://scc.suse.com/connect/systems/activations' }
 
         include_context 'auth header', :system_byos, :login, :password
@@ -396,6 +402,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               system_hybrid,
               '127.0.0.1',
               'false',
+              {},
               ltss_prod
             )
             expect(result[:is_active]).to be(true)
@@ -436,6 +443,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               system_hybrid,
               '127.0.0.1',
               'false',
+              {},
               ltss_prod
             )
             expect(result[:is_active]).to eq(false)
@@ -480,6 +488,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               system_hybrid,
               '127.0.0.1',
               'false',
+              {},
               ltss_prod
             )
             expect(result[:is_active]).to eq(false)
@@ -524,6 +533,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               system_hybrid,
               '127.0.0.1',
               'false',
+              {},
               ltss_prod
             )
             expect(result[:is_active]).to eq(false)
