@@ -226,7 +226,7 @@ module SccProxy
         unless system.payg?
           cache_params = {
             token: Base64.decode64(system.pubcloud_reg_code.split(',')[0]),
-            instance_data: headers.fetch('X-Instance-Data', '')
+            instance_data: Base64.decode64(headers.fetch('X-Instance-Data', ''))
           }
         end
         cache_key = InstanceVerification.build_cache_entry(
