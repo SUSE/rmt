@@ -122,7 +122,7 @@ module InstanceVerification
   rescue InstanceVerification::Exception => e
     if system.byos?
       result = SccProxy.scc_check_subscription_expiration(
-        request.headers, system, request.remote_ip, false, base_product
+        request.headers, system, request.remote_ip, false, cache_params, base_product
       )
       if result[:is_active]
         # update the cache for the base product
