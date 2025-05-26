@@ -194,10 +194,13 @@ RSpec.describe AccessScope, type: :model do
 
         let(:system) do
           system = FactoryBot.create(:system, :hybrid)
+          system.pubcloud_reg_code = 'pubcloud_reg_code'
+          system.instance_data = 'dummy_instance_data'
           system.activations << [
             FactoryBot.create(:activation, system: system, service: product1.service),
             FactoryBot.create(:activation, system: system, service: product2.service)
           ]
+          system.save!
           system
         end
         let(:product1) do
@@ -225,6 +228,10 @@ RSpec.describe AccessScope, type: :model do
                 system,
                 '127.0.0.1',
                 true,
+                {
+                  token: Base64.decode64(system.pubcloud_reg_code.split(',')[0]),
+                  instance_data: Base64.decode64(system.instance_data)
+                },
                 product1
             ).and_return(scc_response)
           end
@@ -236,6 +243,10 @@ RSpec.describe AccessScope, type: :model do
               system,
               '127.0.0.1',
               true,
+              {
+                token: Base64.decode64(system.pubcloud_reg_code.split(',')[0]),
+                instance_data: Base64.decode64(system.instance_data)
+              },
               product1
             )
             yaml_string = access_policy_content

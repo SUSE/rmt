@@ -194,8 +194,8 @@ module SccProxy
 
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
-    def scc_check_subscription_expiration(headers, system, remote_ip, registry, prod)
-      cache_status = SccProxy.system_in_cache?(remote_ip, system, prod, registry)
+    def scc_check_subscription_expiration(headers, system, remote_ip, registry, cache_params, prod) # rubocop:disable Metrics/ParameterLists
+      cache_status = SccProxy.system_in_cache?(remote_ip, system, prod, registry, cache_params)
       return cache_status if cache_status.present?
 
       auth = headers.fetch('HTTP_AUTHORIZATION', '')
@@ -226,7 +226,7 @@ module SccProxy
         unless system.payg?
           cache_params = {
             token: Base64.decode64(system.pubcloud_reg_code.split(',')[0]),
-            instance_data: headers.fetch('X-Instance-Data', '')
+            instance_data: Base64.decode64(headers.fetch('X-Instance-Data', ''))
           }
         end
         cache_key = InstanceVerification.build_cache_entry(
@@ -241,9 +241,9 @@ module SccProxy
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/PerceivedComplexity
 
-    def system_in_cache?(remote_ip, system, product, registry)
+    def system_in_cache?(remote_ip, system, product, registry, cache_params)
       cache_key = InstanceVerification.build_cache_entry(
-        remote_ip, system.login, system.pubcloud_reg_code, system.proxy_byos_mode, product
+        remote_ip, system.login, cache_params, system.proxy_byos_mode, product
       )
       found_cache_entry = InstanceVerification.reg_code_in_cache?(cache_key, system.proxy_byos_mode)
       if found_cache_entry.present?

@@ -89,17 +89,17 @@ module InstanceVerification
     base_product = system.products.find_by(product_type: 'base')
     return false unless base_product
 
-    instance_data = request.headers['X-Instance-Data'].to_s
+    decoded_instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
     verification_provider = InstanceVerification.provider.new(
       logger,
       request,
       base_product.attributes.symbolize_keys.slice(:identifier, :version, :arch, :release_type),
-      Base64.decode64(instance_data)
+      decoded_instance_data
     )
     cache_params = {}
     # we are checking the base product so we pick the first registration code
     # PAYG instances have no registration code
-    cache_params = { token: Base64.decode64(system.pubcloud_reg_code.split(',')[0]), instance_data: instance_data } unless system.payg?
+    cache_params = { token: Base64.decode64(system.pubcloud_reg_code.split(',')[0]), instance_data: decoded_instance_data } unless system.payg?
     cache_key = InstanceVerification.build_cache_entry(
       request.remote_ip, system.login, cache_params, system.proxy_byos_mode, base_product
     )
@@ -122,7 +122,7 @@ module InstanceVerification
   rescue InstanceVerification::Exception => e
     if system.byos?
       result = SccProxy.scc_check_subscription_expiration(
-        request.headers, system, request.remote_ip, false, base_product
+        request.headers, system, request.remote_ip, false, cache_params, base_product
       )
       if result[:is_active]
         # update the cache for the base product
