@@ -9,7 +9,7 @@ class System < ApplicationRecord
 
   after_initialize :init
 
-  has_many :activations, dependent: :delete_all
+  has_many :activations, dependent: :delete_all # this is set this way because of performance reasons
   has_many :services, through: :activations
   has_many :repositories, -> { distinct }, through: :services
   has_many :products, -> { distinct }, through: :services
