@@ -17,6 +17,7 @@ Tue Jan 21 10:49:54 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
     * Fix Migration from Micro 5.5 to Micro 6.X (bsc#1236816)
     * Add registry optional (bsc#1237373)
   * Update Puma webserver
+  * Update rack (bsc#1242898)
   * rmt-cli:
     * Disable delta RPM mirroring by default (gh#1288)
     * Add option during 'rmt-cli mirror' to re-validate repodata and packages only when repodata was updated
