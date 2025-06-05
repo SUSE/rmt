@@ -372,7 +372,8 @@ module SccProxy
               mode
             )
           end
-          update_pubcloud_reg_code(Base64.strict_encode64(params.fetch(:token, '')))
+          token = params.fetch(:token, '') || ''
+          update_pubcloud_reg_code(Base64.strict_encode64(token))
         rescue *NET_HTTP_ERRORS => e
           logger.error(
             "Could not activate product for system with regcode #{params[:token]}" \
