@@ -95,9 +95,17 @@ class AccessScope
         auth_header = {
           'HTTP_AUTHORIZATION' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password)
         }
+        cache_params = {}
+        if system.pubcloud_reg_code.presence
+          decoded_instance_data = Base64.decode64(system.instance_data)
+          cache_params = {
+            token: Base64.decode64(system.pubcloud_reg_code.split(',')[0]),
+            instance_data: decoded_instance_data
+          }
+        end
         allowed_non_free_products.each do |non_free_prod|
           activation_state = SccProxy.scc_check_subscription_expiration(
-            auth_header, system, remote_ip, true, non_free_prod
+            auth_header, system, remote_ip, true, cache_params, non_free_prod
           )
           unless activation_state[:is_active]
             Rails.logger.info(
