@@ -575,6 +575,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           arch: product.arch,
           instance_data: 'dummy_instance_data',
           proxy_byos_mode: :hybrid,
+          token: nil,
           hwinfo:
           {
             hostname: 'test',
@@ -636,6 +637,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               data = JSON.parse(response.body)
               expect(data['product']['free']).to eq(false)
               expect(data['id']).to eq(product.id)
+              expect(controller).not_to receive(:update_pubcloud_reg_code)
             end
           end
         end
