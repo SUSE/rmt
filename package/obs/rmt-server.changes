@@ -4,6 +4,7 @@ Fri Jun  6 11:38:57 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 - Version 2.23
   * rmt-server-pubcloud:
     * Only update the pubcloud regcode if there is a value (bsc#1244166)
+  * Update rack (bsc#1242898)
 
 -------------------------------------------------------------------
 Tue Jan 21 10:49:54 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
