@@ -32,6 +32,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
       it 'service url has http scheme' do
         expect(service_url).to match(%r{^plugin:/susecloud})
+        # when no token in params we do not update the pubcloud registration code
+        # bsc#1244166
+        expect(controller).not_to receive(:update_pubcloud_reg_code)
       end
     end
 
