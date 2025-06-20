@@ -46,6 +46,25 @@ module InstanceVerification
           expect(JSON.parse(response.body)['flavor']).to eq('BYOS')
         end
       end
+
+      context 'when metadata can not be parsed' do
+        let(:billing_info) do
+          {
+            billing_product: ['foo'],
+            marketplace_code: ['bar']
+          }
+        end
+        let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+
+        it 'returns BYOS' do
+          expect(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
+          allow(plugin_double).to receive(:parse_instance_data).and_raise(InstanceVerification::Exception, 'Malformed instance data')
+          get '/api/instance/check', params: { metadata: billing_info.to_s, identifier: 'SLES' }
+          expect(JSON.parse(response.body)['flavor']).to eq('BYOS')
+          expect(response.message).to eq('Unprocessable Entity')
+          expect(response.code).to eq("422")
+        end
+      end
     end
   end
 end

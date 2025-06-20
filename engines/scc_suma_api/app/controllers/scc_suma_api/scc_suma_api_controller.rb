@@ -53,6 +53,9 @@ module SccSumaApi
       systems_found = System.find_by(system_token: iid['instanceId'], proxy_byos_mode: :byos)
 
       raise 'Unspecified error' unless systems_found.present? || verification_provider.instance_valid?
+    rescue InstanceVerification::Exception => e
+      logger.error "Could not check if instance metadata '#{instance_data}' is valid: #{e.message}"
+      raise e.message
     end
 
     def product_tree_json

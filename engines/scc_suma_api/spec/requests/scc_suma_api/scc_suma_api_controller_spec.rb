@@ -98,6 +98,25 @@ module SccSumaApi
           its(:code) { is_expected.to eq '200' }
           its(:body) { is_expected.to eq products.to_json.to_s }
         end
+
+        context 'metadata is not valid' do
+          before do
+            allow(plugin_double).to(
+              receive(:parse_instance_data)
+                .and_raise(InstanceVerification::Exception, 'Missing signature')
+              )
+            allow(SUSE::Connect::Api).to receive(:new).and_return api_double
+            allow(api_double).to receive(:list_products_unscoped).and_return products
+            allow(RMT::Logger).to receive(:new).and_return(logger)
+            # File.delete(unscoped_file) if File.exist?(unscoped_file)
+            get '/api/scc/unscoped-products', headers: payload
+          end
+
+          it 'raise an exception' do
+            expect(response.code).to eq '400'
+            expect(response.body).to eq 'foo'
+          end
+        end
       end
 
       context 'get repos redirect' do
