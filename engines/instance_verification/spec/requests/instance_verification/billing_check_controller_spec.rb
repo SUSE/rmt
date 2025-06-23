@@ -62,7 +62,7 @@ module InstanceVerification
           get '/api/instance/check', params: { metadata: billing_info.to_s, identifier: 'SLES' }
           expect(JSON.parse(response.body)['flavor']).to eq('BYOS')
           expect(response.message).to eq('Unprocessable Entity')
-          expect(response.code).to eq("422")
+          expect(response.code).to eq('422')
         end
       end
     end
