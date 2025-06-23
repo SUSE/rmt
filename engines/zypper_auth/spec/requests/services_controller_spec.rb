@@ -12,7 +12,7 @@ describe ServicesController do
       repo_items.map { |r| r.attr(:url) }
     end
 
-    let(:system) { FactoryBot.create(:system, :with_activated_product) }
+    let(:system) { FactoryBot.create(:system, :byos, :with_activated_product) }
     let(:service) { system.products.first.service }
 
     context 'without X-Instance-Data header' do
@@ -58,6 +58,11 @@ describe ServicesController do
 
       context 'when instance verification returns false' do
         before do
+          stub_request(:get, 'https://scc.suse.com/connect/systems/activations')
+            .to_return(status: 200, body: '', headers: {})
+          expect(InstanceVerification).to receive(:build_cache_entry).with(
+            '127.0.0.1', system.login, {}, system.proxy_byos_mode, system.products.find_by(product_type: 'base')
+          )
           get "/services/#{service.id}", headers: headers
         end
 
