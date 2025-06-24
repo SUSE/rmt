@@ -28,6 +28,9 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
 
   def parse_instance_data
     # :nocov:
+    if @product_hash && @product_hash[:identifier] == 'Raise error'
+      raise InstanceVerification::Exception, 'Missing signature'
+    end
     if @instance_data.include? '<instance_data/>'
       return { 'instance_data' => 'parsed_instance_data', 'example_id' => '1234' } # :nocov:
     end

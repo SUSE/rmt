@@ -251,15 +251,12 @@ module InstanceVerification
         end
 
         def verify_base_product_activation(product)
-          verification_provider = InstanceVerification.provider.new(
+          InstanceVerification.provider.new(
             logger,
             request,
             params.permit(:identifier, :version, :arch, :release_type).to_h,
             @system.instance_data
-          )
-
-          raise 'Unspecified error' unless verification_provider.instance_valid?
-
+          ).instance_valid?
           # we use the token sent from the client if present
           # instead of the value stored in the DB
           params[:instance_data] = @system.instance_data

@@ -189,7 +189,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, instance_data).and_return(plugin_double).at_least(:once)
             expect(InstanceVerification::Providers::Example).to receive(:new)
               .with(nil, nil, nil, instance_data).and_call_original.at_least(:once)
-            expect(plugin_double).to receive(:instance_valid?).and_return(false)
+            expect(plugin_double).to receive(:instance_valid?).and_raise('ERROR')
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             post url, params: payload, headers: headers
           end
@@ -516,14 +516,14 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           ).to_json
         end
 
-        context 'when verification provider returns false' do
+        context 'when verification provider raises an exception' do
           before do
             expect(InstanceVerification::Providers::Example).to receive(:new)
               .with(be_a(ActiveSupport::Logger), be_a(ActionDispatch::Request), expected_payload, instance_data).and_return(plugin_double).at_least(:once)
             expect(InstanceVerification::Providers::Example).to receive(:new)
               .with(nil, nil, nil, instance_data).and_call_original.at_least(:once)
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
-            expect(plugin_double).to receive(:instance_valid?).and_return(false)
+            expect(plugin_double).to receive(:instance_valid?).and_raise('WELL SOMETHING WENT WRONG')
             post url, params: payload, headers: headers
           end
 
