@@ -99,7 +99,7 @@ module InstanceVerification
     cache_params = {}
     # we are checking the base product so we pick the first registration code
     # PAYG instances have no registration code
-    cache_params = { token: Base64.decode64(system.pubcloud_reg_code.split(',')[0]), instance_data: decoded_instance_data } unless system.payg?
+    cache_params = { token: Base64.decode64(system.pubcloud_reg_code.split(',')[0]), instance_data: decoded_instance_data } if system.pubcloud_reg_code.present?
     cache_key = InstanceVerification.build_cache_entry(
       request.remote_ip, system.login, cache_params, system.proxy_byos_mode, base_product
     )
