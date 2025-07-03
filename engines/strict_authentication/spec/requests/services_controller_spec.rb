@@ -44,7 +44,7 @@ RSpec.describe ServicesController, type: :request do
 
         context 'when service is not registered' do
           before do
-            headers['X-Instance-Data'] = 'IMDS'
+            headers['X-Instance-Data'] = Base64.strict_encode64('IMDS')
             get "/services/#{service.id}", headers: headers
           end
 
@@ -54,7 +54,7 @@ RSpec.describe ServicesController, type: :request do
 
         context 'when service is registered' do
           before do
-            headers['X-Instance-Data'] = 'IMDS'
+            headers['X-Instance-Data'] = Base64.strict_encode64('IMDS')
             allow_any_instance_of(InstanceVerification::Providers::Example).to(
               receive(:instance_valid?).and_return(true)
             )
@@ -74,7 +74,7 @@ RSpec.describe ServicesController, type: :request do
       include_context 'auth header', :system, :login, :password
 
       before do
-        headers['X-Instance-Data'] = 'IMDS'
+        headers['X-Instance-Data'] = Base64.strict_encode64('IMDS')
         allow_any_instance_of(InstanceVerification::Providers::Example).to(
           receive(:instance_valid?).and_return(true)
         )
