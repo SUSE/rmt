@@ -132,6 +132,8 @@ module InstanceVerification
       if result[:is_active]
         # update the cache for the base product
         InstanceVerification.set_cache_active(cache_key, 'byos')
+        system.instance_data = decoded_instance_data
+        system.save!
         return true
       end
       # if can not get the activations, set the cache inactive
