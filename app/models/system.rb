@@ -73,7 +73,7 @@ class System < ApplicationRecord
   end
 
   def update_instance_data(instance_data)
-    update(instance_data: instance_data)
+    update!(instance_data: instance_data)
   end
 
   before_update do |system|
