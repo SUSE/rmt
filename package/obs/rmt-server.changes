@@ -5,6 +5,7 @@ Fri Jun  6 11:38:57 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
   * rmt-server-pubcloud:
     * Only update the pubcloud regcode if there is a value (bsc#1244166)
   * Update rack (bsc#1242898)
+  * Enable delta RPM mirroring by default (revert behavior introduced on 2.22).
 
 -------------------------------------------------------------------
 Tue Jan 21 10:49:54 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
