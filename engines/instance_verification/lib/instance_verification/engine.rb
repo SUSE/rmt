@@ -121,8 +121,7 @@ module InstanceVerification
     # update the instance data when valid and not in the cache
     # before RMT 2.22, there was no need as the instance data was fresh from the client
     # after 2.22 we are using instance data from the DB and we need to refresh that data
-    system.instance_data = decoded_instance_data
-    system.save!
+    system.update_instance_data(decoded_instance_data)
     is_valid
   rescue InstanceVerification::Exception => e
     if system.byos?
@@ -132,8 +131,7 @@ module InstanceVerification
       if result[:is_active]
         # update the cache for the base product
         InstanceVerification.set_cache_active(cache_key, 'byos')
-        system.instance_data = decoded_instance_data
-        system.save!
+        system.update_instance_data(decoded_instance_data)
         return true
       end
       # if can not get the activations, set the cache inactive
