@@ -14,6 +14,10 @@ module InstanceVerification
       is_payg = verification_provider.payg_billing_code?(iid, params[:identifier])
 
       render status: :ok, json: { flavor: is_payg ? 'PAYG' : 'BYOS' }
+    rescue InstanceVerification::Exception => e
+      logger.error "Instance metadata '#{params[:metadata]}' could not be parsed: #{e.message}"
+      # when the verification failed for any reason, the agreed flavor is BYOS
+      render status: :unprocessable_entity, json: { flavor: 'BYOS' }
     end
   end
 end
