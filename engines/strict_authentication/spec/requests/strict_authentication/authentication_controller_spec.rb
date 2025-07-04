@@ -24,7 +24,7 @@ module StrictAuthentication
         context 'valid instance' do
           before do
             allow(InstanceVerification).to receive(:verify_instance).and_return(true)
-            get '/api/auth/check', headers: auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': 'IMDS' })
+            get '/api/auth/check', headers: auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': Base64.strict_encode64('IMDS') })
             allow(File).to receive(:directory?)
             allow(Dir).to receive(:mkdir)
             allow(FileUtils).to receive(:touch)

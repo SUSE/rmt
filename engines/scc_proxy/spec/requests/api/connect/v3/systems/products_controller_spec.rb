@@ -102,7 +102,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               ]
             }
           end
-          let(:headers) { auth_header.merge('X-Instance-Data' => 'dummy_instance_data') }
+          let(:headers) { auth_header.merge('X-Instance-Data' => Base64.strict_encode64('dummy_instance_data')) }
 
           before do
             allow(plugin_double).to(

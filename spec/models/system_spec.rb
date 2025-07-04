@@ -68,6 +68,11 @@ RSpec.describe System, type: :model do
       system.reload
       expect(system.scc_synced_at).to be(nil)
     end
+
+    it 'update the instance data' do
+      system.update_instance_data('foo')
+      expect(system.instance_data).to eq('foo')
+    end
   end
 
   it 'assigns nil system_token on create' do
