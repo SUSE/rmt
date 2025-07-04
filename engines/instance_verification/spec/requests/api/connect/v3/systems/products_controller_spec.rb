@@ -402,7 +402,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             "#{Base64.strict_encode64(payload_token[:token])}-foo-#{product.product_class}"
           end
           let(:active_cache_entry) { cache_entry + '-active' }
-          let(:headers) { auth_header.merge('X-Instance-Data' => 'dummy_instance_data') }
+          let(:headers) { auth_header.merge('X-Instance-Data' => Base64.strict_encode64('dummy_instance_data')) }
 
           before do
             allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
@@ -429,7 +429,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
             # expect(InstanceVerification).to receive(:update_cache).with(cache_entry, 'hybrid')
             expect(InstanceVerification).to receive(:update_cache).with(active_cache_entry, 'hybrid', registry: false)
-            headers['X-Instance-Data'] = instance_data
+            headers['X-Instance-Data'] = Base64.strict_encode64(instance_data)
             post url, params: payload_token, headers: headers
           end
 

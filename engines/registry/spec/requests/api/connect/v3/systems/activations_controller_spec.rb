@@ -27,7 +27,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
           let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
           before do
-            headers['X-Instance-Data'] = 'IMDS'
+            headers['X-Instance-Data'] = Base64.strict_encode64('IMDS')
             Thread.current[:logger] = RMT::Logger.new('/dev/null')
           end
 
@@ -68,7 +68,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
           allow(File).to receive(:join).and_call_original
           allow(InstanceVerification).to receive(:update_cache)
           allow(InstanceVerification).to receive(:verify_instance).and_call_original
-          headers['X-Instance-Data'] = 'IMDS'
+          headers['X-Instance-Data'] = Base64.strict_encode64('IMDS')
         end
 
         it 'refreshes registry cache key only' do
@@ -128,7 +128,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
           allow(InstanceVerification).to receive(:update_cache)
           allow(InstanceVerification).to receive(:verify_instance).and_call_original
           stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: [body_active].to_json, headers: {})
-          headers['X-Instance-Data'] = 'IMDS'
+          headers['X-Instance-Data'] = Base64.strict_encode64('IMDS')
         end
 
         context 'no registry' do
@@ -276,7 +276,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
 
           before do
             allow(InstanceVerification).to receive(:update_cache)
-            headers['X-Instance-Data'] = 'IMDS'
+            headers['X-Instance-Data'] = Base64.strict_encode64('IMDS')
             Thread.current[:logger] = RMT::Logger.new('/dev/null')
           end
 
@@ -317,7 +317,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
 
           before do
             allow(InstanceVerification).to receive(:update_cache)
-            headers['X-Instance-Data'] = 'IMDS'
+            headers['X-Instance-Data'] = Base64.strict_encode64('IMDS')
             Thread.current[:logger] = RMT::Logger.new('/dev/null')
           end
 

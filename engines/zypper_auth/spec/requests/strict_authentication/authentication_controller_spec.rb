@@ -71,7 +71,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
       end
 
       context 'with instance_data headers and instance data is invalid' do
-        let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': 'test' }) }
+        let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': Base64.strict_encode64('test') }) }
 
         before do
           allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
@@ -96,8 +96,8 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         end
         let(:requested_uri_byos) { '/repo' + local_path + '/repodata/repomd.xml' }
         let(:paid_requested_uri_byos) { '/repo' + paid_local_path + '/repodata/repomd.xml' }
-        let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri_byos, 'X-Instance-Data': 'test' }) }
-        let(:paid_headers) { auth_header.merge({ 'X-Original-URI': paid_requested_uri_byos, 'X-Instance-Data': 'test' }) }
+        let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri_byos, 'X-Instance-Data': Base64.strict_encode64('test') }) }
+        let(:paid_headers) { auth_header.merge({ 'X-Original-URI': paid_requested_uri_byos, 'X-Instance-Data': Base64.strict_encode64('test') }) }
         let(:body_active) do
           {
             id: 1,
@@ -322,7 +322,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
       end
 
       context 'with instance_data headers and instance data is valid' do
-        let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': 'test' }) }
+        let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': Base64.strict_encode64('test') }) }
         let(:data_export_double) { instance_double('DataExport::Handlers::Example') }
 
         before do
@@ -346,7 +346,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         let(:scc_systems_activations_url) { 'https://scc.suse.com/connect/systems/activations' }
         let(:system_hybrid) { FactoryBot.create(:system, :hybrid, :with_activated_paid_extension, pubcloud_reg_code: 'INTERNAL-USE-FOO') }
         let(:requested_uri) { '/repo' + system_hybrid.repositories.first[:local_path] + '/repodata/repomd.xml' }
-        let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': 'test' }) }
+        let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': Base64.strict_encode64('test') }) }
         let(:ltss_prod) do
           activation = system_hybrid.activations.find { |act| act.product.product_class.include?('LTSS') }
           activation.product

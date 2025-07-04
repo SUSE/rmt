@@ -72,6 +72,10 @@ class System < ApplicationRecord
     end
   end
 
+  def update_instance_data(instance_data)
+    update!(instance_data: instance_data)
+  end
+
   before_update do |system|
     # reset SCC sync timestamp so that the system can be re-synced on change
     system.scc_synced_at = nil

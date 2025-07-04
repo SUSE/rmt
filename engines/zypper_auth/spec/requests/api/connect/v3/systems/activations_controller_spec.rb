@@ -37,7 +37,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
     end
 
     context 'with X-Instance-Data headers' do
-      let(:headers) { auth_header.merge(version_header).merge({ 'X-Instance-Data' => 'instance_data' }) }
+      let(:headers) { auth_header.merge(version_header).merge({ 'X-Instance-Data' => Base64.strict_encode64('instance_data') }) }
 
       it 'has service URLs with HTTP scheme' do
         data = JSON.parse(response.body)
