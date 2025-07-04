@@ -88,7 +88,7 @@ RSpec.describe RMT::Config do
     context "when config YAML 'mirroring/mirror_drpm' is an empty string" do
       let(:mirror_drpm_value) { '' }
 
-      include_examples 'config with falsey values'
+      include_examples 'config with truthy values'
     end
 
     context "when config YAML 'mirroring/mirror_drpm' key is absent" do
@@ -100,7 +100,7 @@ RSpec.describe RMT::Config do
         CONFIG
       end
 
-      include_examples 'config with falsey values'
+      include_examples 'config with truthy values'
     end
 
     context "when config YAML 'mirroring/mirror_drpm' is false" do
