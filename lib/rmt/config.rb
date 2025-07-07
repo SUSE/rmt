@@ -47,7 +47,8 @@ module RMT::Config
     end
 
     def mirror_drpm_files?
-      ActiveModel::Type::Boolean.new.cast(Settings.try(:mirroring).try(:mirror_drpm)) || false
+      mirror_drpm_files = ActiveModel::Type::Boolean.new.cast(Settings.try(:mirroring).try(:mirror_drpm))
+      mirror_drpm_files.nil? ? true : mirror_drpm_files
     end
 
     WebServerConfig = Struct.new(
