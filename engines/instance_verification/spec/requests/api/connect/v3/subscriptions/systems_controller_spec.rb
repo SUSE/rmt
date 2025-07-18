@@ -10,7 +10,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         data = JSON.parse(response.body)
         system = System.find_by(login: data['login'])
         expect(system.instance_data).to eq(instance_data)
-        expect(system.login.to_s.start_with?('SCC_'))
+        expect(system.login).to start_with('SCC_')
       end
     end
 
@@ -21,9 +21,8 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         data = JSON.parse(response.body)
         system = System.find_by(login: data['login'])
         expect(system.instance_data).to eq(instance_data)
-        expect(system.login.to_s.start_with?('i-'))
+        expect(system.login).to start_with('i-')
       end
     end
-
   end
 end
