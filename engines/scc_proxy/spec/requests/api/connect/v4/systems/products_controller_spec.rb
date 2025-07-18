@@ -185,7 +185,7 @@ product_type: 'module')
           it 'reports an error' do
             data = JSON.parse(response.body)
             expect(data['error']).to eq("{\"error\": \"Error'\"}")
-            expect(SccProxy).to have_received(:headers).with(headers['HTTP_AUTHORIZATION'], 'foo')
+            expect(SccProxy).to have_received(:headers).with(headers['HTTP_AUTHORIZATION'], nil)
           end
         end
 

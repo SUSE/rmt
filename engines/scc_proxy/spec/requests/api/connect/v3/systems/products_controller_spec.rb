@@ -123,7 +123,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               allow(File).to receive(:directory?)
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
-
+              allow_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_identifier).and_return('foo')
               allow(InstanceVerification).to receive(:write_cache_file).with(
                 Rails.application.config.repo_byos_cache_dir,
                 "#{Base64.strict_encode64(payload_byos[:token])}-foo-#{product.product_class}-active"
