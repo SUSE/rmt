@@ -57,7 +57,7 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
   end
 
   def instance_identifier
-    'foo'
+    nil
   end
 
   def allowed_extension?
