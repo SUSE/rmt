@@ -47,6 +47,19 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           system = System.find_by(login: 'SCC_foo')
           expect(system.instance_data).to eq(instance_data)
         end
+
+        context 'instance verification error' do
+          let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+
+          it 'returns error' do
+            expect(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
+            allow(plugin_double).to receive(:instance_identifier).and_raise(InstanceVerification::Exception, 'Malformed instance data')
+            post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=' }
+            expect(JSON.parse(response.body)['error']).to eq('Malformed instance data')
+            expect(response.message).to eq('Unprocessable Entity')
+            expect(response.code).to eq('422')
+          end
+        end
       end
 
       context 'credentials not found' do
