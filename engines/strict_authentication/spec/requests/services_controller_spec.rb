@@ -89,7 +89,6 @@ RSpec.describe ServicesController, type: :request do
           end
           its(:code) { is_expected.to eq '200' }
         end
-
       end
     end
 

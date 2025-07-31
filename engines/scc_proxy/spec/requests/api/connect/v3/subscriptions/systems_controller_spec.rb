@@ -4,6 +4,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
   describe '#announce_system' do
     let(:instance_data) { '<instance_data/>' }
 
+    # rubocop:disable RSpec/NestedGroups
     context 'using SCC generated credentials (BYOS mode)' do
       let(:scc_register_system_url) { 'https://scc.suse.com/connect/subscriptions/systems' }
       let(:scc_register_response) do
@@ -99,6 +100,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         end
       end
     end
+    # rubocop:enable RSpec/NestedGroups
 
     context 'using SCC generated credentials (PAYG/LTSS mode)' do
       let(:scc_register_system_url) { 'https://scc.suse.com/connect/subscriptions/systems' }
