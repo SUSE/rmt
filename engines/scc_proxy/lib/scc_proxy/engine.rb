@@ -315,7 +315,7 @@ module SccProxy
         rescue *NET_HTTP_ERRORS => e
           message = 'Could not register system'
           message += " with regcode #{auth_header} to SCC" unless has_no_regcode?(auth_header) # rubocop:disable Lint/UselessAssignment
-          logger.error("message}: #{e.message}")
+          logger.error("#{message}: #{e.message}")
           render json: { type: 'error', error: e.message }, status: status_code(e.message), location: nil
         rescue InstanceVerification::Exception => e
           message = 'Could not register system'
