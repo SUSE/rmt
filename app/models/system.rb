@@ -20,11 +20,6 @@ class System < ApplicationRecord
   alias_attribute :scc_synced_at, :scc_registered_at
 
   def init
-    # if we are in the public cloud
-    # system_token should be not nil
-    self.login ||= system_token if system_token.presence
-    # if we are not in the public cloud
-    # use the regular SCC_UUID generated value
     self.login ||= System.generate_secure_login
     self.password ||= System.generate_secure_password
     self.registered_at ||= Time.zone.now

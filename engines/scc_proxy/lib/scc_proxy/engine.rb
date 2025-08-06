@@ -293,7 +293,8 @@ module SccProxy
               system_information: system_information,
               proxy_byos_mode: :payg,
               instance_data: instance_data,
-              system_token: system_token
+              system_token: system_token,
+              login: system_token
             )
           else
             request.request_parameters['proxy_byos_mode'] = 'byos'
@@ -301,7 +302,7 @@ module SccProxy
             @system = System.create!(
               system_token: system_token,
               scc_system_id: response['id'],
-              login: response['login'],
+              login: system_token.presence,
               password: response['password'],
               hostname: params[:hostname],
               proxy_byos_mode: :byos,
