@@ -314,12 +314,12 @@ module SccProxy
           respond_with(@system, serializer: ::V3::SystemSerializer, location: nil)
         rescue *NET_HTTP_ERRORS => e
           message = 'Could not register system'
-          message += " with regcode #{auth_header} to SCC" unless has_no_regcode?(auth_header) # rubocop:disable Lint/UselessAssignment
+          message += " with regcode #{auth_header} to SCC" unless has_no_regcode?(auth_header)
           logger.error("#{message}: #{e.message}")
           render json: { type: 'error', error: e.message }, status: status_code(e.message), location: nil
         rescue InstanceVerification::Exception => e
           message = 'Could not register system'
-          message += " with regcode #{auth_header} to SCC" unless has_no_regcode?(auth_header) # rubocop:disable Lint/UselessAssignment
+          message += " with regcode #{auth_header} to SCC" unless has_no_regcode?(auth_header)
           logger.error("#{message}: #{e.message}")
           render json: { type: 'error', error: e.message }, status: :unprocessable_entity, location: nil
         end
