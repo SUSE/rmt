@@ -398,6 +398,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             it 'de-registers system from SCC and reports an error' do
               data = JSON.parse(response.body)
               expect(data['error']).to eq('Unexpected instance verification error has occurred')
+              expect(response).to have_http_status(422)
             end
           end
         end
