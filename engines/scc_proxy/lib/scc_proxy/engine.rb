@@ -290,6 +290,8 @@ module SccProxy
             system_information: system_information,
             instance_data: instance_data,
             system_token: instance_identifier,
+            # using instance identifier instead of 'SCC_FOO' as login
+            # it is a unique value per instance across all CSPs
             login: instance_identifier
           }
           if has_no_regcode?(auth_header)
