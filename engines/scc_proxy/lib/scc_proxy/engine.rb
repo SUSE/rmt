@@ -530,8 +530,11 @@ module SccProxy
         def find_system
           systems_with_token = @systems.select(&:system_token)
           if systems_with_token.empty?
+            found_iid = false
+            non_byos_systems = false
             @systems.each do |system|
               if system.payg? || system.hybrid?
+                non_byos_systems = true
                 # if PAYG or HYBRID and no system_token  =>
                 # update the system_token
                 begin
@@ -540,10 +543,15 @@ module SccProxy
                   logger.error("Could not find system (login #{system.login} instance identifier: #{e.message}")
                   next
                 end
+                found_iid = true
                 system.update!(system_token: iid)
                 return system
               end
             end
+            logger.info('No PAYG or HYBRID systems') unless non_byos_systems
+
+            logger.info('No instance identifier found') if non_byos_systems && !found_iid
+
             return @systems.first
           end
 
