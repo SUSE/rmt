@@ -1,7 +1,7 @@
 NAME          = rmt-server
 VERSION       = $(shell ruby -e 'require "./lib/rmt.rb"; print RMT::VERSION')
 
-.PHONY: clean man dist build-tarball database-up server shell console
+.PHONY: clean man dist build-tarball database-up server shell console public_repo public_perm
 
 all:
 	@:
@@ -89,7 +89,7 @@ build-tarball: clean man
 database-up:
 	 docker compose up db -d
 
-build: Dockerfile Gemfile
+build: Dockerfile Gemfile public_perm
 	 docker compose build rmt
 
 server: build database-up
@@ -100,3 +100,11 @@ shell: build database-up
 
 console: build database-up
 	 docker compose run --rm -ti rmt bundle exec rails c
+
+public_repo:
+	@echo ensure public/repo exists
+	@mkdir -p public/repo
+
+public_perm: public_repo
+	@echo ensure public permission is 0777
+	@chmod -R 0777 public
