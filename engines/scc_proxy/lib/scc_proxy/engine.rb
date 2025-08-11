@@ -527,6 +527,8 @@ module SccProxy
           end
         end
 
+        # rubocop:disable Metrics/CyclomaticComplexity
+        # rubocop:disable Metrics/PerceivedComplexity
         def find_system
           systems_with_token = @systems.select(&:system_token)
           if systems_with_token.empty?
@@ -578,6 +580,8 @@ module SccProxy
           end
           system
         end
+        # rubocop:enable Metrics/CyclomaticComplexity
+        # rubocop:enable Metrics/PerceivedComplexity
       end
     end
   end
