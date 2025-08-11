@@ -294,6 +294,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
               'byos',
               registry: false
             )
+            allow_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_identifier).and_return('foo')
             get '/connect/systems/activations', headers: headers
 
             data = JSON.parse(response.body)
@@ -329,6 +330,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
             allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
             allow(SccProxy).to receive(:scc_check_subscription_expiration).and_return(scc_response)
             allow(InstanceVerification).to receive(:verify_instance).and_call_original
+            allow_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_identifier).and_return('foo')
             expect(InstanceVerification).to receive(:update_cache).with(
               "#{system.pubcloud_reg_code}-foo-#{product_class}-inactive",
               'byos'
