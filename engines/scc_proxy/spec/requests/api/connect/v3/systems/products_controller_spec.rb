@@ -519,6 +519,19 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               post url, params: payload, headers: headers
               expect(response.body).to eq(serialized_service_json)
             end
+
+            context 'instance verification error' do
+              let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+
+              it 'returns error' do
+                expect(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
+                allow(plugin_double).to receive(:allowed_extension?).and_raise(InstanceVerification::Exception, 'Malformed instance data')
+                post url, params: payload, headers: headers
+                expect(JSON.parse(response.body)['error']).to eq('Malformed instance data')
+                expect(response.message).to eq('Unprocessable Entity')
+                expect(response.code).to eq('422')
+              end
+            end
           end
 
           context 'with a not valid registration code' do

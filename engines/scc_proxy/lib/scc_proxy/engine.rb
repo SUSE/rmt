@@ -314,11 +314,15 @@ module SccProxy
           logger.info("System '#{@system.hostname}' announced")
           respond_with(@system, serializer: ::V3::SystemSerializer, location: nil)
         rescue *NET_HTTP_ERRORS => e
-          logger.error(
-            "Could not register system with regcode #{auth_header} " \
-              "to SCC: #{e.message}"
-          )
+          message = 'Could not register system'
+          message += " with regcode #{auth_header} to SCC" unless has_no_regcode?(auth_header)
+          logger.error("#{message}: #{e.message}")
           render json: { type: 'error', error: e.message }, status: status_code(e.message), location: nil
+        rescue InstanceVerification::Exception => e
+          message = 'Could not register system'
+          message += " with regcode #{auth_header} to SCC" unless has_no_regcode?(auth_header)
+          logger.error("#{message}: #{e.message}")
+          render json: { type: 'error', error: e.message }, status: :unprocessable_entity, location: nil
         end
 
         protected
@@ -378,8 +382,11 @@ module SccProxy
           logger.error(
             "Could not activate product for system with regcode #{params[:token]}" \
               "to SCC: #{e.message}"
-          )
+            )
           render json: { type: 'error', error: e.message }, status: status_code(e.message), location: nil
+        rescue InstanceVerification::Exception => e
+          logger.error("Could not activate product for system to SCC: #{e.message}")
+          render json: { type: 'error', error: e.message }, status: :unprocessable_entity, location: nil
         end
 
         def update_pubcloud_reg_code(encoded_reg_code)
@@ -521,18 +528,33 @@ module SccProxy
           end
         end
 
+        # rubocop:disable Metrics/CyclomaticComplexity
+        # rubocop:disable Metrics/PerceivedComplexity
         def find_system
           systems_with_token = @systems.select(&:system_token)
           if systems_with_token.empty?
+            found_iid = false
+            non_byos_systems = false
             @systems.each do |system|
               if system.payg? || system.hybrid?
+                non_byos_systems = true
                 # if PAYG or HYBRID and no system_token  =>
                 # update the system_token
-                iid = InstanceVerification.provider.new(nil, nil, nil, system.instance_data).instance_identifier
+                begin
+                  iid = InstanceVerification.provider.new(nil, nil, nil, system.instance_data).instance_identifier
+                rescue InstanceVerification::Exception => e
+                  logger.error("Could not find system (login #{system.login} instance identifier: #{e.message}")
+                  next
+                end
+                found_iid = true
                 system.update!(system_token: iid)
                 return system
               end
             end
+            logger.info('No PAYG or HYBRID systems') unless non_byos_systems
+
+            logger.info('No instance identifier found') if non_byos_systems && !found_iid
+
             return @systems.first
           end
 
@@ -559,6 +581,8 @@ module SccProxy
           end
           system
         end
+        # rubocop:enable Metrics/CyclomaticComplexity
+        # rubocop:enable Metrics/PerceivedComplexity
       end
     end
   end

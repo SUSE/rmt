@@ -189,12 +189,17 @@ module InstanceVerification
             arch: base_product.arch,
             release_type: base_product.release_type
           }
-          add_on_product_class = InstanceVerification.provider.new(
-            logger,
-            request,
-            product_hash,
-            @system.instance_data
-          ).add_on
+          begin
+            add_on_product_class = InstanceVerification.provider.new(
+              logger,
+              request,
+              product_hash,
+              @system.instance_data
+              ).add_on
+          rescue InstanceVerification::Exception => e
+            logger.error("Could not find subscription: #{e.message}")
+            raise ActionController::TranslatedError.new("Could not find subscription: #{e.message}")
+          end
           # add_on_product_class, if present, is the real product class
           # i.e. in the case of SUMA, it would be SUMA product class
           # not the SUMA base product's product class (Micro)

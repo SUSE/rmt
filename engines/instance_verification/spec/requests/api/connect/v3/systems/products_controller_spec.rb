@@ -320,6 +320,90 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
       end
 
+      context 'when activating extensions with exception' do
+        let(:instance_data) { 'dummy_instance_data' }
+        let(:system) do
+          FactoryBot.create(
+            :system, :payg, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data
+          )
+        end
+        let(:serialized_service_json) do
+          V3::ServiceSerializer.new(
+            product.service,
+            base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
+          ).to_json
+        end
+        let(:scc_activate_url) { 'https://scc.suse.com/connect/systems/products' }
+        let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+        let(:payload) do
+          {
+            identifier: product.identifier,
+            version: product.version,
+            arch: product.arch,
+            instance_data: 'dummy_instance_data',
+            proxy_byos_mode: :payg,
+            hwinfo:
+            {
+              hostname: 'test',
+              cpus: '1',
+              sockets: '1',
+              hypervisor: 'Xen',
+              arch: 'x86_64',
+              uuid: 'ec235f7d-b435-e27d-86c6-c8fef3180a01',
+              cloud_provider: 'amazon'
+            }
+          }
+        end
+        let(:scc_response_body) do
+          {
+            id: 1234567,
+            login: 'SCC_3b336b126db1503a9513a14e92a6a62e',
+            password: '24f057b7941e80f9cf2d51e16e8af2d6'
+          }.to_json
+        end
+
+        before do
+          allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+          allow(plugin_double).to receive(:instance_identifier).and_return('foo')
+          allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
+          allow(plugin_double).to receive(:allowed_extension?).and_return(true)
+          allow(plugin_double).to receive(:add_on).and_raise(InstanceVerification::Exception, 'FOO')
+
+          FactoryBot.create(:subscription, product_classes: product_classes)
+          stub_request(:post, scc_activate_url)
+            .to_return(
+              status: 401,
+              body: { error: 'Instance verification failed: The product is not available for this instance' }.to_json,
+              headers: {}
+            )
+          # stub the fake announcement call PAYG has to do to SCC
+          # to create the system before activate product (and skip validation)
+          stub_request(:post, 'https://scc.suse.com/connect/subscriptions/systems')
+            .to_return(status: 201, body: scc_response_body, headers: {})
+
+          post url, params: payload, headers: headers
+        end
+
+        context 'when the extension is not free' do
+          let(:base_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
+
+          context 'when a suitable subscription is not found' do
+            let(:product) do
+              FactoryBot.create(
+                :product, :with_mirrored_repositories, :extension, free: false, base_products: [base_product]
+              )
+            end
+            let(:product_classes) { [base_product.product_class] }
+
+            it 'de-registers system from SCC and reports an error' do
+              data = JSON.parse(response.body)
+              expect(data['error']).to eq('Unexpected instance verification error has occurred')
+              expect(response).to have_http_status(422)
+            end
+          end
+        end
+      end
+
       context 'when activating extensions without errors' do
         let(:instance_data) { 'dummy_instance_data' }
         let(:system) do
