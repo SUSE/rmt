@@ -284,32 +284,33 @@ module SccProxy
           auth_header = request.headers.fetch('HTTP_AUTHORIZATION', nil)
           system_information = hwinfo_params[:hwinfo].to_json
           instance_data = params.fetch(:instance_data, nil)
-          system_token = InstanceVerification.provider.new(nil, nil, nil, params['instance_data']).instance_identifier
+          instance_identifier = InstanceVerification.provider.new(nil, nil, nil, params['instance_data']).instance_identifier
+          system_values = {
+            hostname: params[:hostname],
+            system_information: system_information,
+            instance_data: instance_data,
+            system_token: instance_identifier,
+            # using instance identifier instead of 'SCC_FOO' as login
+            # it is a unique value per instance across all CSPs
+            login: instance_identifier
+          }
           if has_no_regcode?(auth_header)
+            # NON BYOS case
             # no token sent to check with SCC
-            # standard announce case
-            @system = System.create!(
-              hostname: params[:hostname],
-              system_information: system_information,
-              proxy_byos_mode: :payg,
-              instance_data: instance_data,
-              system_token: system_token
-            )
+            system_values.merge({ proxy_byos_mode: :payg })
           else
             request.request_parameters['proxy_byos_mode'] = 'byos'
-            response = SccProxy.announce_system_scc(auth_header, request.request_parameters, system_token)
-            @system = System.create!(
-              system_token: system_token,
-              scc_system_id: response['id'],
-              login: response['login'],
-              password: response['password'],
-              hostname: params[:hostname],
-              proxy_byos_mode: :byos,
-              proxy_byos: true,
-              system_information: system_information,
-              instance_data: instance_data
+            response = SccProxy.announce_system_scc(auth_header, request.request_parameters, instance_identifier)
+            system_values.merge(
+              {
+                scc_system_id: response['id'],
+                password: response['password'],
+                proxy_byos_mode: :byos,
+                proxy_byos: true
+              }
             )
           end
+          @system = System.create!(system_values)
           logger.info("System '#{@system.hostname}' announced")
           respond_with(@system, serializer: ::V3::SystemSerializer, location: nil)
         rescue *NET_HTTP_ERRORS => e
