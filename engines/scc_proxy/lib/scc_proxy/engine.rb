@@ -273,6 +273,7 @@ module SccProxy
     end
   end
 
+  # rubocop:disable Metrics/ClassLength
   class Engine < ::Rails::Engine
     isolate_namespace SccProxy
     config.generators.api_only = true
@@ -514,9 +515,9 @@ module SccProxy
               instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s) if request.headers['X-Instance-Data'].present?
               @system = find_system(login, instance_data)
               if @system.blank?
-                error = ActionController::TranslatedError.new(N_(
-                    "Can not find system with present credentials #{login} #{instance_data}"
-                ))
+                error = ActionController::TranslatedError.new(
+                  N_("Can not find system with present credentials #{login} #{instance_data}")
+                )
                 error.status = :unauthorized
                 raise error
               end
@@ -590,13 +591,10 @@ module SccProxy
             # check for possible duplicated system_tokens
             multiple_system_tokens = systems_with_token.group_by { |sys| sys[:system_token] }.keys
 
-            message = if multiple_system_tokens.length > 1
-                        "System with login #{login} authenticated, multiple system tokens (system tokens #{duplicated_system_tokens.join(',')})"
-                      else
-                        # no different systems
-                        # first system is chosen
-                        message = "System with login #{login} authenticated, system token #{system.system_token}"
-                      end
+            message = "System with login #{login} authenticated, system token #{system.system_token}"
+            if multiple_system_tokens.length > 1
+              message = "System with login #{login} authenticated, multiple system tokens (system tokens #{multiple_system_tokens.join(',')})"
+            end
           end
           logger.info _(message)
           system
@@ -632,3 +630,4 @@ module SccProxy
   end
 end
 # rubocop:enable Metrics/ModuleLength
+# rubocop:enable Metrics/ClassLength
