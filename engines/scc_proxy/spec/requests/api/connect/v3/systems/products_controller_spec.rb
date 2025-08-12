@@ -44,7 +44,13 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       context 'when system has hw_info' do
         let(:instance_data) { '<document>{"instanceId": "dummy_instance_data"}</document>' }
         let(:new_system_token) { 'BBBBBBBB-BBBB-4BBB-9BBB-BBBBBBBBBBBB' }
-        let(:system_byos) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
+        let(:system_byos) do
+          FactoryBot.create(
+            :system, :byos, :with_system_information,
+            instance_data: instance_data,
+            system_token: 'dummy_instance_data'
+            )
+        end
         let(:serialized_service_json) do
           V3::ServiceSerializer.new(
             product.service,
@@ -152,6 +158,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               allow(InstanceVerification).to receive(:write_cache_file)
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
+              allow_any_instance_of(ApplicationController).to receive(:find_system).and_return(system_byos)
 
               post url, params: payload_byos, headers: headers
             end
@@ -185,6 +192,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               allow(File).to receive(:directory?)
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
+              allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+              allow(plugin_double).to receive(:instance_identifier).and_return('login78')
+              allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
               post url, params: payload_byos, headers: headers
             end
@@ -194,10 +204,50 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             end
           end
 
+          context 'with different system_tokens can not get instance identifier' do
+            let(:system_byos2) do
+              FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data,
+                system_token: 'foo')
+            end
+
+            before do
+              allow(System).to receive(:get_by_credentials).and_return([system_byos, system_byos2])
+              allow(plugin_double).to(
+                receive(:instance_valid?)
+                  .and_raise(InstanceVerification::Exception, 'Custom plugin error')
+              )
+              stub_request(:post, scc_activate_url)
+                .to_return(
+                  status: 201,
+                  body: { id: 'bar' }.to_json,
+                  headers: {}
+                )
+              allow(InstanceVerification).to receive(:write_cache_file)
+              allow(File).to receive(:directory?)
+              allow(FileUtils).to receive(:mkdir_p)
+              allow(FileUtils).to receive(:touch)
+              allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+              allow(plugin_double).to(
+                receive(:instance_identifier).and_raise(InstanceVerification::Exception, 'login78')
+              )
+              allow(plugin_double).to receive(:allowed_extension?).and_return(true)
+
+              post url, params: payload_byos, headers: headers
+            end
+
+            it 'renders service JSON' do
+              expect(JSON.parse(response.body)['error']).to eq(
+                'Can not find system with present credentials login80 dummy_instance_data'
+              )
+              expect(response.message).to eq('Unauthorized')
+              expect(response.code).to eq('401')
+            end
+          end
+
           context 'with duplicated system_tokens' do
             let(:system_byos3) do
               FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data,
-                system_token: 'foo')
+                system_token: 'BBBBBBBB-BBBB-4BBB-9BBB-BBBBBBBBBBBB')
             end
 
             before do
@@ -220,6 +270,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               allow(File).to receive(:directory?)
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
+              allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+              allow(plugin_double).to receive(:instance_identifier).and_return('BBBBBBBB-BBBB-4BBB-9BBB-BBBBBBBBBBBB')
+              allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
               post url, params: payload_byos, headers: headers
             end
@@ -409,6 +462,110 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               allow(plugin_double).to receive(:allowed_extension?).and_return(true)
               allow(InstanceVerification).to receive(:write_cache_file)
               allow(plugin_double).to receive(:instance_valid?).and_return(true)
+            end
+
+            context 'when LTSS not allowed' do
+              before do
+                allow(plugin_double).to receive(:allowed_extension?).and_return(false)
+              end
+
+              it 'raises an error' do
+                stub_request(:post, scc_register_system_url)
+                  .to_return(status: 403, body: { ok: 'OK' }.to_json, headers: {})
+
+                post url, params: payload, headers: headers
+                data = JSON.parse(response.body)
+                expect(data['error']).to include('Product not supported for this instance')
+              end
+            end
+          end
+        end
+
+
+        context 'when system is connected to SCC' do
+          let(:system_payg) do
+            FactoryBot.create(:system, :payg, :with_system_information, :with_activated_base_product, instance_data: instance_data,
+              system_token: new_system_token)
+          end
+          let(:system_payg2) do
+            system = FactoryBot.create(
+              :system, :payg, :with_system_information,
+              :with_activated_base_product, instance_data: instance_data,
+              system_token: new_system_token + 'foo'
+            )
+            system.update!(login: system_payg.login, password: system_payg.password)
+            system
+          end
+          let(:product) do
+            FactoryBot.create(
+              :product, :product_sles_ltss, :extension, :with_mirrored_repositories, :with_mirrored_extensions,
+              base_products: [system_payg.products.first]
+              )
+          end
+          let(:subscription_response) do
+            {
+              id: 4206714,
+              regcode: 'bar',
+              name: 'SUSE Employee subscription for SUSE Linux Enterprise Server for SAP Applications',
+              type: 'internal',
+              status: 'ACTIVE',
+              starts_at: '2019-03-20T09:48:52.658Z',
+              expires_at: '2024-03-20T09:48:52.658Z',
+              system_limit: '100',
+              systems_count: '156',
+              virtual_count: nil,
+              product_classes: [
+                'AiO',
+                '7261',
+                'SLE-HAE-X86',
+                '7261-BETA',
+                'SLE-HAE-X86-BETA',
+                'AiO-BETA',
+                '7261-ALPHA',
+                'SLE-HAE-X86-ALPHA',
+                'AiO-ALPHA'
+              ],
+              product_ids: [
+                1959,
+                1421
+              ],
+              skus: [],
+              systems: [
+                {
+                  id: 3021957,
+                  login: 'SCC_foo',
+                  password: '5ee7273ac6ac4d7f',
+                  last_seen_at: '2019-03-20T14:01:05.424Z'
+                }
+              ]
+            }
+          end
+
+          before do
+            allow(plugin_double).to(
+              receive(:instance_valid?)
+                .and_raise(InstanceVerification::Exception, 'Custom plugin error')
+            )
+          end
+
+          context 'with a valid registration code' do
+            before do
+              stub_request(:post, scc_activate_url)
+                .to_return(
+                  status: 201,
+                  body: { id: 'bar' }.to_json,
+                  headers: {}
+                )
+              allow(File).to receive(:directory?)
+              allow(FileUtils).to receive(:mkdir_p)
+              allow(FileUtils).to receive(:touch)
+              allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+              allow(plugin_double).to receive(:allowed_extension?).and_return(true)
+              allow(InstanceVerification).to receive(:write_cache_file)
+              allow(plugin_double).to receive(:instance_valid?).and_return(true)
+              allow(System).to receive(:get_by_credentials).and_return(
+                [system_payg, system_payg2]
+              )
             end
 
             context 'when LTSS not allowed' do

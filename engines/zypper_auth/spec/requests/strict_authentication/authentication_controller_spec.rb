@@ -360,11 +360,6 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         end
 
         context 'when subscription is active' do
-          # let(:ltss_prod) do
-          #   system_hybrid.activations.find do |act|
-          #     act.product.product_class.include?('LTSS')
-          #   end
-          # end
           let(:body_active) do
             {
               id: 1,
@@ -579,6 +574,8 @@ describe StrictAuthentication::AuthenticationController, type: :request do
 
             before do
               allow(InstanceVerification).to receive(:verify_instance).and_return(true)
+              allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+              allow(plugin_double).to receive(:instance_identifier).and_return('i-1234')
               allow(DataExport::Handlers::Example).to receive(:new).and_return(data_export_double)
               expect(data_export_double).to receive(:export_rmt_data)
               get '/api/auth/check', headers: headers
