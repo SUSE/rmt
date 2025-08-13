@@ -511,13 +511,14 @@ module SccProxy
               # this situation.
               return true if skip_on_duplicated && @systems.size > 1
 
-              instance_data = ''
-              instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s) if request.headers['X-Instance-Data'].present?
-              @system = find_system(login, instance_data)
+              @system = find_system(login)
               if @system.blank?
-                error = ActionController::TranslatedError.new(
-                  N_("Can not find system with present credentials #{login} #{instance_data}")
-                )
+                message = "Can not find system with present credentials #{login}"
+                if request.headers['X-Instance-Data']
+                  instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
+                  message += " #{instance_data}"
+                end
+                error = ActionController::TranslatedError.new(N_(message))
                 error.status = :unauthorized
                 raise error
               end
@@ -539,16 +540,24 @@ module SccProxy
           end
         end
 
-        def find_system(login, instance_data)
-          if instance_data.present?
-            find_system_with_iid(login, instance_data)
-          else
-            find_system_without_iid(login)
+        def find_system(login)
+          iid = ''
+          if request.headers['X-Instance-Data'].present?
+            instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
+            iid = InstanceVerification.provider.new(nil, nil, nil, instance_data).instance_identifier
           end
+          return find_system_with_iid(login, iid) if iid.present?
+
+          find_system_without_iid(login)
+        rescue InstanceVerification::Exception => e
+          logger.error(
+            "Could not find instance identifier for system (login #{login}) and instance data #{instance_data}: #{e.message}"
+            )
+          nil
         end
 
-        def find_system_with_iid(login, instance_data)
-          iid = InstanceVerification.provider.new(nil, nil, nil, instance_data).instance_identifier
+        def find_system_with_iid(login, iid)
+
           if login == iid
             logger.warn "Multiple systems (#{@systems.length}) with login #{iid}" if @systems.length > 1
 
@@ -570,11 +579,6 @@ module SccProxy
               end
             end
           end
-        rescue InstanceVerification::Exception => e
-          logger.error(
-            "Could not find instance identifier for system (login #{login}) and instance data #{instance_data}: #{e.message}"
-          )
-          nil
         end
 
         def find_system_without_iid(login)
