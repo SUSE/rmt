@@ -42,6 +42,18 @@ RSpec.describe ServicesController, type: :request do
           its(:body) { is_expected.to eq 'Product is not registered' }
         end
 
+        context 'when service doesn\'t exist and instance identifier raise an exception' do
+          let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+
+          before do
+            allow(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
+            allow(plugin_double).to receive(:instance_identifier).and_raise(InstanceVerification::Exception, 'ERROR A')
+            get '/services/0', headers: headers
+          end
+          its(:code) { is_expected.to eq '403' }
+          its(:body) { is_expected.to eq 'Product is not registered' }
+        end
+
         context 'when service is not registered' do
           before do
             headers['X-Instance-Data'] = Base64.strict_encode64('IMDS')
@@ -63,28 +75,6 @@ RSpec.describe ServicesController, type: :request do
             allow(FileUtils).to receive(:touch)
             allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
             allow(InstanceVerification).to receive(:update_cache)
-            get "/services/#{activated_service.id}", headers: headers
-          end
-          its(:code) { is_expected.to eq '200' }
-        end
-
-        context 'when instance identifier error for all systems' do
-          let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
-
-          before do
-            headers['X-Instance-Data'] = Base64.strict_encode64('IMDS')
-            allow_any_instance_of(InstanceVerification::Providers::Example).to(
-              receive(:instance_valid?).and_return(true)
-            )
-            allow(File).to receive(:directory?)
-            allow(Dir).to receive(:mkdir)
-            allow(FileUtils).to receive(:touch)
-            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
-            allow(InstanceVerification).to receive(:update_cache)
-            allow(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
-            allow(plugin_double).to receive(:instance_valid?).and_return(true)
-            allow(plugin_double).to receive(:instance_identifier).and_raise(InstanceVerification::Exception, 'FOO')
-
             get "/services/#{activated_service.id}", headers: headers
           end
           its(:code) { is_expected.to eq '200' }

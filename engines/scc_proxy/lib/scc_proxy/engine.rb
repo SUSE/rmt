@@ -273,6 +273,7 @@ module SccProxy
     end
   end
 
+  # rubocop:disable Metrics/ClassLength
   class Engine < ::Rails::Engine
     isolate_namespace SccProxy
     config.generators.api_only = true
@@ -510,7 +511,18 @@ module SccProxy
               # this situation.
               return true if skip_on_duplicated && @systems.size > 1
 
-              @system = find_system
+              @system = find_system(login)
+              if @system.blank?
+                message = "Can not find system with present credentials #{login}"
+                if request.headers['X-Instance-Data']
+                  instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
+                  message += " #{instance_data}"
+                end
+                error = ActionController::TranslatedError.new(N_(message))
+                error.status = :unauthorized
+                raise error
+              end
+
               if system_tokens_enabled? && request.headers.key?(ApplicationController::SYSTEM_TOKEN_HEADER)
                 @system.update(last_seen_at: Time.zone.now)
                 headers[ApplicationController::SYSTEM_TOKEN_HEADER] = @system.system_token
@@ -528,63 +540,98 @@ module SccProxy
           end
         end
 
-        # rubocop:disable Metrics/CyclomaticComplexity
-        # rubocop:disable Metrics/PerceivedComplexity
-        def find_system
-          systems_with_token = @systems.select(&:system_token)
-          if systems_with_token.empty?
-            found_iid = false
-            non_byos_systems = false
-            @systems.each do |system|
-              if system.payg? || system.hybrid?
-                non_byos_systems = true
-                # if PAYG or HYBRID and no system_token  =>
-                # update the system_token
-                begin
-                  iid = InstanceVerification.provider.new(nil, nil, nil, system.instance_data).instance_identifier
-                rescue InstanceVerification::Exception => e
-                  logger.error("Could not find system (login #{system.login} instance identifier: #{e.message}")
-                  next
-                end
-                found_iid = true
-                system.update!(system_token: iid)
-                return system
+        def find_system(login)
+          iid = ''
+          if request.headers['X-Instance-Data'].present?
+            instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
+            iid = InstanceVerification.provider.new(nil, nil, nil, instance_data).instance_identifier
+          end
+          return find_system_with_iid(login, iid) if iid.present?
+
+          find_system_without_iid(login)
+        rescue InstanceVerification::Exception => e
+          logger.error(
+            "Could not find instance identifier for system (login #{login}) and instance data #{instance_data}: #{e.message}"
+            )
+          nil
+        end
+
+        def find_system_with_iid(login, iid)
+
+          if login == iid
+            logger.warn "Multiple systems (#{@systems.length}) with login #{iid}" if @systems.length > 1
+
+            @systems.first
+          else
+            # login is not IID, possible duplication
+            match_systems = @systems.select { |system| system.system_token.present? && system.system_token == iid }
+            if match_systems.presence
+              logger.info "Multiple systems (#{match_systems.length}) with login #{iid}" if match_systems.length > 1
+
+              match_systems.first
+            else
+              # no system_token match with iid
+              system_no_token = @systems.find { |system| system.system_token.blank? }
+              if system_no_token.present?
+                logger.info "System with login #{login} updating its token to #{iid} "
+                system_no_token.update!(system_token: iid)
+                system_no_token
               end
             end
-            logger.info('No PAYG or HYBRID systems') unless non_byos_systems
-
-            logger.info('No instance identifier found') if non_byos_systems && !found_iid
-
-            return @systems.first
           end
+        end
+
+        def find_system_without_iid(login)
+          systems_with_token = @systems.select(&:system_token)
+          return find_system_no_token if systems_with_token.empty?
 
           system = systems_with_token.first
+          message = "System with login #{login} authenticated, system  token #{system.system_token}"
           if systems_with_token.length > 1
             # this check is for old systems
-            # new systems can not have same login + pass + system_token
-            # as that has a unique constrain at DB level
+            # new systems can not have same login + pass
+            # as login is unique plus the combination of login + pass + system_token
+            # has a unique constrain at DB level
             # check for possible duplicated system_tokens
-            duplicated_system_tokens = systems_with_token.group_by { |sys| sys[:system_token] }.keys
+            multiple_system_tokens = systems_with_token.group_by { |sys| sys[:system_token] }.keys
 
-            if duplicated_system_tokens.length > 1
-              logger.info _('System with login \"%{login}\" authenticated and duplicated due to token (system tokens %{system_tokens}) mismatch') %
-                { login: system.login, system_tokens: duplicated_system_tokens.join(',') }
-            else
-              # no different systems
-              # first system is chosen
-              logger.info _('System with login \"%{login}\" authenticated, system  token \"%{system_token}\"') %
-                { login: system.login, system_token: system.system_token }
+            message = "System with login #{login} authenticated, system token #{system.system_token}"
+            if multiple_system_tokens.length > 1
+              message = "System with login #{login} authenticated, multiple system tokens (system tokens #{multiple_system_tokens.join(',')})"
             end
-          else
-            logger.info _('System with login \"%{login}\" authenticated, system  token \"%{system_token}\"') %
-              { login: system.login, system_token: system.system_token }
           end
+          logger.info _(message)
           system
         end
-        # rubocop:enable Metrics/CyclomaticComplexity
-        # rubocop:enable Metrics/PerceivedComplexity
+
+        def find_system_no_token
+          found_iid = false
+          non_byos_systems = false
+          @systems.each do |system|
+            if system.payg? || system.hybrid?
+              non_byos_systems = true
+              # if PAYG or HYBRID and no system_token  =>
+              # update the system_token
+              begin
+                iid = InstanceVerification.provider.new(nil, nil, nil, system.instance_data).instance_identifier
+              rescue InstanceVerification::Exception => e
+                logger.error("Could not find instance identifier for system (login #{system.login}): #{e.message}")
+                next
+              end
+              found_iid = true
+              system.update!(system_token: iid)
+              return system
+            end
+          end
+          logger.info('No PAYG or HYBRID systems') unless non_byos_systems
+
+          logger.info('No instance identifier found') if non_byos_systems && !found_iid
+
+          @systems.first
+        end
       end
     end
   end
 end
 # rubocop:enable Metrics/ModuleLength
+# rubocop:enable Metrics/ClassLength
