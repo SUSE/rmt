@@ -100,7 +100,7 @@ After your requests have been accepted, they still have to pass maintenance test
 
 ## Container image and publishing to SUSE registry
 
-SUSE registry houses the rmt-server docker image. The image is built automatically on OBS/IBS, and can be found [here](https://build.opensuse.org/package/show/devel:BCI:SLE-15-SP6/rmt-server-image). It is getting published here: `registry.suse.com/suse/rmt-server`.
+SUSE registry houses the rmt-server docker image. The image is built automatically on OBS/IBS, and can be found [here](https://build.opensuse.org/package/show/devel:BCI:SLE-15-SP7/rmt-server-image). It is getting published here: `registry.suse.com/suse/rmt-server` and is available in the registry catalogue at  [registry.suse.com/repositories/rmt](https://registry.suse.com/repositories/rmt).
 
 
 #### Helm chart update process
