@@ -107,4 +107,4 @@ public_repo:
 
 public_perm: public_repo
 	@echo ensure public permission is 0777
-	@chmod -R 0777 public
+	@chmod -fR 0777 public || true
