@@ -1,10 +1,28 @@
-## Development Setup
+# Development Setup
 
-1. Install the system dependencies:
+## Overview
+
+This guide will walk you through setting up a local environment. 
+RMT is a Ruby on Rails application, so a basic understanding of Rails will be helpful.
+
+What you'll need to get started:
+- Ruby and Ruby on Rails 
+- MySQL or MariaDB database.
+- System dependencies.
+
+## Setup
+
+1. Install the system dependencies
     ```
     sudo zypper in libxml2-devel libxslt-devel libmariadb-devel sqlite3-devel gcc
     ```
 2. Install the ruby version specified in the `.ruby-version` [file](.ruby-version).
+    Check your version with:
+    ```
+    ruby --version
+    ```
+    If you need to install the required Ruby version, use your system's package manager or a Ruby version manager like rbenv.
+    
 3. Install and setup the database:
 
    **Default: MariaDB or MySQL server**
@@ -67,7 +85,7 @@ In order to run the application locally using docker-compose:
    be obtained from the [SUSE Customer
    Center](https://scc.suse.com/organization). At this point you might also want
    to tweak the `EXTERNAL_PORT` environment variable from this file if you want
-   to expose the main service with a port different than from the default one.
+   to expose the main service with a port different than the default one.
 3. Build the image (can be also used to update gems)
     ```
     make build
@@ -124,6 +142,78 @@ All in all, the code you might be working on sits as a volume inside of the
 Docker container. Thus, you will be able to code as usual and the Docker
 container will behave as if you were working entirely locally.
 
-## API documentation
+## Development Workflow
+
+### Testing
+
+RMT uses RSpec for testing. Run tests with:
+
+``` sh
+# All tests
+bundle exec rspec
+
+# Specific categories
+bundle exec rspec spec/models/      # Models
+bundle exec rspec spec/controllers/ # Controllers  
+bundle exec rspec spec/lib/rmt/    # Libraries
+
+# With coverage
+bundle exec rspec --format progress
+```
+
+**Feature Tests with Act**: You can also run the feature tests from the GitHub Actions workflow locally using [Act](https://github.com/nektos/act).
+
+``` sh
+# 1. Install the GitHub CLI and log in
+# https://cli.github.com/
+gh auth login
+
+# 2. Install the Act extension
+gh extension install nektos/gh-act
+
+# 3. Run the tests
+act pull_request
+```
+
+**Coverage**: SimpleCov tracks coverage (target: 100%)  
+**Database**: Tests use separate test database, automatically managed
+
+### Development Commands
+``` sh
+# Start the development server
+bundle exec rails server
+
+# Run database migrations
+bundle exec rails db:migrate
+
+# Access Rails console
+bundle exec rails console
+
+# Generate new components
+bundle exec rails generate model Product name:string
+bundle exec rails generate controller Api::Products
+```
+
+### Key Development Files
+- **`app/models/`**: Database models and business logic
+- **`app/controllers/`**: API endpoints and request handling
+- **`config/routes.rb`**: URL routing and API endpoints
+- **`lib/rmt/`**: Core RMT functionality
+- **`spec/`**: Test files (RSpec framework)
+
+## API Documentation
 
 RMT partially implements the [SUSE Customer Center API](https://scc.suse.com/connect/v4/documentation). You can read the details of each endpoint to find out whether they are supported by RMT.
+
+## Troubleshooting
+
+### Common Test Issues
+
+**Database Connection Error**: Ensure MariaDB is running and `rmt` user exists  
+**Gem Installation Error**: Install Ruby dev headers: `sudo zypper install ruby2.5-devel`  
+
+### Getting Help
+
+- **Rails Guides**: [Rails Documentation](https://guides.rubyonrails.org/)
+- **RSpec**: [RSpec Documentation](https://rspec.info/)
+- **Issues**: [GitHub Issues](https://github.com/SUSE/rmt/issues)
