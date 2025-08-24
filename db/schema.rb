@@ -173,6 +173,7 @@ ActiveRecord::Schema.define(version: 2025_03_19_155325) do
     t.string "system_token"
     t.text "system_information", size: :long
     t.text "instance_data"
+    t.string "pubcloud_reg_code"
     t.index ["login", "password", "system_token"], name: "index_systems_on_login_and_password_and_system_token", unique: true
     t.index ["login", "password"], name: "index_systems_on_login_and_password"
     t.index ["system_token"], name: "index_systems_on_system_token"
