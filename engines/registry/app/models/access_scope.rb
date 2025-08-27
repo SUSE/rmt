@@ -97,10 +97,9 @@ class AccessScope
         }
         cache_params = {}
         if system.pubcloud_reg_code.presence
-          decoded_instance_data = Base64.decode64(system.instance_data)
           cache_params = {
             token: Base64.decode64(system.pubcloud_reg_code.split(',')[0]),
-            instance_data: decoded_instance_data
+            instance_data: system.instance_data
           }
         end
         allowed_non_free_products.each do |non_free_prod|
