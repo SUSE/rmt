@@ -19,6 +19,7 @@ class SUSE::Connect::SystemSerializer < ActiveModel::Serializer
   attribute :hwinfo, if: :has_hwinfo_and_needs_full_update?
   attribute :products, if: :needs_full_update?
   attribute :online_at, if: :has_system_uptime?
+  attribute :data_profiles, if: :has_data_profiles?
 
   # We send the internal system id as system_token if the system (in RMT) is
   # duplicated (therefore using the system_token mechanism).
@@ -56,6 +57,14 @@ class SUSE::Connect::SystemSerializer < ActiveModel::Serializer
       }
       payload
     end
+  end
+
+  def data_profiles
+    JSON.parse(object.data_profiles).symbolize_keys
+  end
+
+  def has_data_profiles?
+    object.data_profiles.present?
   end
 
   def hwinfo
