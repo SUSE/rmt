@@ -20,52 +20,57 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
 
     @system.hostname = params[:hostname]
 
-    hwinfo = hwinfo_params[:hwinfo]
+    hwinfo = params[:hwinfo]
 
-    # list of known system data profile types to check for
-    sdp_types = [:mod_list, :pci_data]
+    logger.debug("FMCC NEEDS TRANS pre data_profiles hwinfo = #{hwinfo}")
 
-    sdp_types.each do |sdp_type|
-      puts "sdp_type: #{sdp_type}"
-      #logger.info(N_("Checking for sdp_type %s"), sdp_type)
-      hwinfo_sdp = hwinfo.fetch(sdp_type, nil)
+    if params[:data_profiles].present?
+      params[:data_profiles].each do |sdp_type, sdp_info|
+        logger.debug("FMCC NEEDS TRANS sdp_type: #{sdp_type}")
+        logger.debug("FMCC NEEDS TRANS sdp_info: #{sdp_info}")
 
-      # skip if no entry exist in hwinfo for specified type
-      next unless hwinfo_sdp
+        sdp_id = sdp_info.fetch(:profileId, nil)
+        sdp_data = sdp_info.fetch(:profileData, nil)
 
-      puts "hwinfo_sdp: #{hwinfo_sdp}"
-      sdp_id = hwinfo_sdp.fetch(:profileId, nil)
-      puts "#{sdp_type}[:profileId]: #{sdp_id.inspect}"
-      sdp_data = hwinfo_sdp.fetch(:profileData, nil)
-      puts "#{sdp_type}[:profileData]: #{sdp_data.inspect}"
-
-      # search for existing entry in system_data_profiles
-      sdp_entry = SystemDataProfile.find_by(
-        profile_type: sdp_type,
-        profile_id: sdp_id,
-      )
-
-      # add a new entry to system data profiles if not found
-      unless sdp_entry
-        sdp_entry = SystemDataProfile.new(
+        # search for existing entry in system_data_profiles
+        sdp_entry = SystemDataProfile.find_by(
           profile_type: sdp_type,
           profile_id: sdp_id,
-          profile_data: sdp_data
         )
 
-        puts "#{sdp_type}: #{sdp_entry}"
-        sdp_entry.save
-      end
+        # add a new entry to system data profiles if not found
+        unless sdp_entry
+          unless sdp_data
+            logger.error("FMCC NEEDS TRANS cannot create new data profile entry for #{sdp_type}, #{sdp_id}")
+            raise ActionController::TranslatedError.new(
+              "FMCC NEEDS TRANS unrecognised profileId provided without profileData"
+            )
+          end
+          logger.debug("FMCC NEEDS TRANS creating new data profile entry for #{sdp_type}, #{sdp_id}")
 
-      # delete the profileData entry from the associated hwinfo entry
-      hwinfo[sdp_type].delete(:profileData)
-      puts "hwinfo[#{sdp_type}] = #{hwinfo[sdp_type]}"
+          sdp_entry = SystemDataProfile.new(
+            profile_type: sdp_type,
+            profile_id: sdp_id,
+            profile_data: sdp_data
+          )
+
+          puts "#{sdp_type}: #{sdp_entry}"
+          sdp_entry.save
+          logger.info("FMCC NEEDS TRANS created new data profile entry for #{sdp_type}, #{sdp_id}")
+        end
+
+        # add profile entry to hwinfo
+        hwinfo_field = sdp_type + "_profile"
+        hwinfo[hwinfo_field] = { :profileId => sdp_id }
+        logger.debug("FMCC NEEDS TRANS hwinfo[#{hwinfo_field}] = #{hwinfo[hwinfo_field]}")
+      end
     end
 
+    logger.debug("FMCC NEEDS TRANS post data_profiles hwinfo = #{hwinfo}")
     # Since the payload is handled by rails all values are converted to string
     # e.g. cpus: 16 becomes cpus: "16". We save this as string for now and expect
     # SCC to handle the conversion correctly
-    @system.system_information = @system.system_information_hash.update(hwinfo).to_json
+    @system.system_information = @system.system_information_hash.update(hwinfo_params[:hwinfo]).to_json
 
     if @system.save
       logger.info(N_("Updated system information for host '%s'") % @system.hostname)
