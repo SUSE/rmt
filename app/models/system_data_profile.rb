@@ -18,8 +18,16 @@ class SystemDataProfile < ApplicationRecord
         profile_id: sdp_id,
       )
 
-      # add a new entry to system data profiles if not found
-      unless sdp_entry
+      # if an entry already exists, update it's last_seen_at if it was
+      # last updated more than 1 day ago. Otherwise create a new entry.
+      if sdp_entry
+        if sdp_entry.last_seen_at.before?(1.day.ago)
+          logger.debug("FMCC NEEDS TRANS updating last_seen_at for existing data profile entry for #{sdp_type}, #{sdp_id}")
+          sdp_entry.update(last_seen_at: Time.current)
+          sdp_entry.save
+        end
+      else
+        # fail if profileData was not provided
         unless sdp_data
           logger.error("FMCC NEEDS TRANS cannot create new data profile entry for #{sdp_type}, #{sdp_id}")
           raise ActionController::TranslatedError.new(
@@ -31,7 +39,8 @@ class SystemDataProfile < ApplicationRecord
         sdp_entry = self.new(
           profile_type: sdp_type,
           profile_id: sdp_id,
-          profile_data: sdp_data
+          profile_data: sdp_data,
+          last_seen_at: Time.current
         )
 
         puts "#{sdp_type}: #{sdp_entry}"
