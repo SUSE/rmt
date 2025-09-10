@@ -1,6 +1,10 @@
 class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseController
 
   def announce_system
+    if params[:data_profiles].present?
+      SystemDataProfile.process_data_profiles(params[:data_profiles], params[:hwinfo])
+    end
+
     @system = System.create!(hostname: params[:hostname], system_information: hwinfo_params[:hwinfo].to_json)
 
     logger.info("System '#{@system.hostname}' announced")
