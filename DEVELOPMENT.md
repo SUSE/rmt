@@ -82,12 +82,15 @@ In order to run the application locally using docker-compose:
     ```
    The server will be started in the foreground and must be terminated to get
    back to the user's shell session.
+   NOTE: If you want to interact with the RMT server, leave this running.
 5. Shell access (Ctrl-D or `exit` to terminate)
     ```
     make shell
     ```
    This will start an interactive shell session within the `rmt` container that
    must be exited to return to the user's shell session.
+   NOTE: You will need to run this in a separate user shell session (window) if
+   you want to leave the RMT instance started by `make server` up and running.
 
 After doing all this, there will be `http://localhost:${EXTERNAL_PORT}` exposed
 to the network of the host, and you will be able to register clients by using
