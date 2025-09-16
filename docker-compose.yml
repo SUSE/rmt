@@ -1,6 +1,6 @@
 services:
   db:
-    image: mariadb:10.2
+    image: registry.suse.com/suse/mariadb:10.11
     restart: unless-stopped
     volumes:
       - mariadb:/var/lib/mysql
