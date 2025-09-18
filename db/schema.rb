@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_03_19_155325) do
+ActiveRecord::Schema.define(version: 2025_09_10_161549) do
 
   create_table "activations", charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
     t.bigint "service_id", null: false
@@ -147,6 +147,16 @@ ActiveRecord::Schema.define(version: 2025_03_19_155325) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["regcode"], name: "index_subscriptions_on_regcode"
+  end
+
+  create_table "system_data_profiles", charset: "utf8mb4", collation: "utf8mb4_unicode_520_ci", force: :cascade do |t|
+    t.string "profile_type", limit: 32, null: false
+    t.string "profile_id", limit: 64, null: false
+    t.text "profile_data", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "last_seen_at", precision: 6, null: false
+    t.index ["profile_type", "profile_id"], name: "index_system_data_profiles_on_profile_type_and_profile_id", unique: true
   end
 
   create_table "system_uptimes", charset: "utf8mb4", collation: "utf8mb4_unicode_520_ci", force: :cascade do |t|
