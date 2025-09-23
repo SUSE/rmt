@@ -392,6 +392,9 @@ fi
 
 %post pubcloud
 %service_add_post rmt-server-regsharing.service rmt-server-trim-cache.service
+if [ $"(ls %{data_dir}/engines/data_export/lib/data_export/handlers/ | grep '*.rb' | wc -l > 1)" ]; then
+    mv %{data_dir}/engines/data_export/lib/data_export/handlers/example.rb %{data_dir}/engines/data_export/lib/data_export/handlers/example
+fi
 
 %preun pubcloud
 %service_del_preun rmt-server-regsharing.service rmt-server-trim-cache.service
