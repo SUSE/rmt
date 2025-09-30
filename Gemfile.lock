@@ -77,7 +77,7 @@ GEM
       concurrent-ruby (~> 1.0)
     dry-equalizer (0.3.0)
     dry-inflector (0.2.0)
-    dry-initializer (3.2.0)
+    dry-initializer (3.0.4)
     dry-logic (1.1.0)
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.5, >= 0.5)
@@ -372,7 +372,7 @@ GEM
       railties
       yabeda (~> 0.8)
     yard (0.9.35)
-    zeitwerk (2.7.3)
+    zeitwerk (2.6.15)
     zstd-ruby (1.5.6.1)
 
 PLATFORMS
