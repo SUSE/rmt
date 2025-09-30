@@ -89,7 +89,7 @@ build-tarball: clean man
 database-up:
 	 docker compose up db -d
 
-build: Dockerfile Gemfile public_perm
+build: Dockerfile Gemfile public_repo
 	 docker compose build rmt
 
 server: build database-up
@@ -104,7 +104,4 @@ console: build database-up
 public_repo:
 	@echo ensure public/repo exists
 	@mkdir -p public/repo
-
-public_perm: public_repo
-	@echo ensure public permission is 0777
-	@chmod -fR 0777 public || true
+	@chmod -f 0777 public/repo || true
