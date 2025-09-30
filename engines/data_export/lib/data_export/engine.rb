@@ -27,7 +27,10 @@ module DataExport
       end
 
       Api::Connect::V3::Systems::SystemsController.class_eval do
-        after_action :export_rmt_data, only: %i[update], if: -> { DataExport.handler.presence && response.successful? && !@system.byos? && @system.products.present? }
+        after_action :export_rmt_data, only: %i[update], if: lambda {
+          DataExport.handler.presence && response.successful? && !@system.byos? &&
+          @system.products.present?
+        }
 
         def export_rmt_data
           @system.products.pluck(:name).each do |prod_name|
