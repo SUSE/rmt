@@ -18,6 +18,8 @@ require 'data_export/handler_base'
 
 handlers = Dir.glob(File.join(__dir__, 'data_export/handlers/*.rb'))
 
+logger.info 'No data exporter handler found' unless handlers.size
+
 raise 'Too many data export handlers found' if handlers.size > 1
 
 # rubocop:disable Lint:UnreachableLoop
