@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_09_10_161549) do
+ActiveRecord::Schema.define(version: 2025_10_14_162025) do
 
   create_table "activations", charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
     t.bigint "service_id", null: false
@@ -159,6 +159,15 @@ ActiveRecord::Schema.define(version: 2025_09_10_161549) do
     t.index ["profile_type", "profile_id"], name: "index_system_data_profiles_on_profile_type_and_profile_id", unique: true
   end
 
+  create_table "system_profiles", charset: "utf8mb4", collation: "utf8mb4_unicode_520_ci", force: :cascade do |t|
+    t.bigint "system_id", null: false
+    t.bigint "system_data_profile_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["system_data_profile_id"], name: "index_system_profiles_on_system_data_profile_id"
+    t.index ["system_id"], name: "index_system_profiles_on_system_id"
+  end
+
   create_table "system_uptimes", charset: "utf8mb4", collation: "utf8mb4_unicode_520_ci", force: :cascade do |t|
     t.bigint "system_id", null: false
     t.date "online_at_day", null: false
@@ -202,5 +211,7 @@ ActiveRecord::Schema.define(version: 2025_09_10_161549) do
   add_foreign_key "repositories_services", "services", on_delete: :cascade
   add_foreign_key "services", "products"
   add_foreign_key "subscription_product_classes", "subscriptions", on_delete: :cascade
+  add_foreign_key "system_profiles", "system_data_profiles"
+  add_foreign_key "system_profiles", "systems"
   add_foreign_key "system_uptimes", "systems"
 end
