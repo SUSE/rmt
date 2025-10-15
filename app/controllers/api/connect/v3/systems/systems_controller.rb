@@ -21,13 +21,13 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
     @system.hostname = params[:hostname]
 
     if params[:data_profiles].present?
-      SystemDataProfile.process_data_profiles(params[:data_profiles], params[:hwinfo])
+      @system.update(data_profiles: info_params(key: :data_profiles)[:data_profiles].to_h)
     end
 
     # Since the payload is handled by rails all values are converted to string
     # e.g. cpus: 16 becomes cpus: "16". We save this as string for now and expect
     # SCC to handle the conversion correctly
-    @system.system_information = @system.system_information_hash.update(hwinfo_params[:hwinfo]).to_json
+    @system.system_information = @system.system_information_hash.update(info_params(key: :hwinfo)[:hwinfo]).to_json
 
     if @system.save
       logger.info(N_("Updated system information for host '%s'") % @system.hostname)
@@ -42,11 +42,12 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
 
   private
 
-  def hwinfo_params
+  def info_params(key:)
     # Allow all attributes without validating the key structure
     # This is fine since the systems are only internal and RMT users
     # can save in their own database whatever they want.
     # When forwarded to SCC, SCC validates the payload for correctness.
-    params.permit(hwinfo: {})
+    permit_args = { key => {} }
+    params.permit(permit_args)
   end
 end

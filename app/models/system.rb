@@ -14,10 +14,14 @@ class System < ApplicationRecord
   has_many :repositories, -> { distinct }, through: :services
   has_many :products, -> { distinct }, through: :services
   has_many :system_uptimes, dependent: :destroy
+  has_many :system_profiles, dependent: :destroy
+  has_many :system_data_profiles, through: :system_profiles
 
   validates :system_token, uniqueness: { scope: %i[login password], case_sensitive: false }
 
   alias_attribute :scc_synced_at, :scc_registered_at
+
+  accepts_nested_attributes_for :system_data_profiles
 
   def init
     self.login ||= System.generate_secure_login
@@ -74,6 +78,47 @@ class System < ApplicationRecord
 
   def update_instance_data(instance_data)
     update!(instance_data: instance_data)
+  end
+
+  def data_profiles=(data_profiles)
+    #logger.debug("FMCC NEEDS TRANS create/update system_data_profiles based upon #{data_profiles}")
+    #logger.debug("FMCC NEEDS TRANS provided data_profiles is a #{data_profiles.class}")
+    #logger.debug("FMCC NEEDS TRANS provided data_profiles responds to .to_h #{data_profiles.respond_to?(:to_h)}")
+    #logger.debug("FMCC NEEDS TRANS provided data_profiles responds to .map #{data_profiles.respond_to?(:map)}")
+
+    self.system_data_profiles = data_profiles.map do |sdp_type, sdp_info|
+
+      sdp_id = sdp_info.fetch(:profileId, nil)
+      #logger.debug("FMCC NEEDS TRANS sdp_id: #{sdp_id}")
+      sdp_data = sdp_info.fetch(:profileData, nil)
+      unless sdp_data.nil?
+        #logger.debug("FMCC NEEDS TRANS sdp_data: #{sdp_data&.[](0..50)}")
+      end
+
+      begin
+        #logger.debug("FMCC NEEDS TRANS create/find data profile entry for #{sdp_type}, #{sdp_id}")
+        sdp_entry = SystemDataProfile.find_or_create_by(
+          profile_type: sdp_type,
+          profile_id: sdp_id
+        ) do | new_sdp_entry |
+          new_sdp_entry.profile_data = sdp_data.to_json,
+          new_sdp_entry.last_seen_at = Time.current
+        end
+
+        # update last_seen_at if existing value is more that 1 day ago
+        if sdp_entry.last_seen_at.before?(1.day.ago)
+          logger.debug("FMCC NEEDS TRANS updating last_seen_at for existing data profile entry for #{sdp_type}, #{sdp_id}")
+        end
+
+        logger.debug("FMCC NEEDS TRANS processed data profile entry for #{sdp_type}, #{sdp_id}")
+        # returns the created/updated entry
+        sdp_entry
+
+      rescue ActiveRecord::RecordNotUnique
+        logger.debug("FMCC NEEDS TRANS retry create/find data profile entry for #{sdp_type}, #{sdp_id}")
+        retry
+      end
+    end
   end
 
   before_update do |system|

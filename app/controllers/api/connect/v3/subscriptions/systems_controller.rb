@@ -1,11 +1,11 @@
 class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseController
 
   def announce_system
-    if params[:data_profiles].present?
-      SystemDataProfile.process_data_profiles(params[:data_profiles], params[:hwinfo])
-    end
-
-    @system = System.create!(hostname: params[:hostname], system_information: hwinfo_params[:hwinfo].to_json)
+    @system = System.create!(
+      hostname: params[:hostname],
+      system_information: info_params(key: :hwinfo)[:hwinfo].to_json,
+      data_profiles: info_params(key: :data_profiles)[:data_profiles].to_h
+    )
 
     logger.info("System '#{@system.hostname}' announced")
     respond_with(@system, serializer: ::V3::SystemSerializer, location: nil)
@@ -13,11 +13,13 @@ class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseCon
 
   private
 
-  def hwinfo_params
+  def info_params(key:)
     # Allow all attributes without validating the key structure
     # This is fine since the systems are only internal and RMT users
     # can save in their own database whatever they want.
     # When forwarded to SCC, SCC validates the payload for correctness.
-    params.permit(hwinfo: {})
+    #logger.debug("FMCC NEEDS TRANS info_params for key #{key}")
+    permit_args = { key => {} }
+    params.permit(permit_args)
   end
 end
