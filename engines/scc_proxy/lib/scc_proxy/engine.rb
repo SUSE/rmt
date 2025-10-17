@@ -282,7 +282,7 @@ module SccProxy
       Api::Connect::V3::Subscriptions::SystemsController.class_eval do
         def announce_system
           auth_header = request.headers.fetch('HTTP_AUTHORIZATION', nil)
-          system_information = hwinfo_params[:hwinfo].to_json
+          system_information = info_params(key: :hwinfo)[:hwinfo].to_json
           instance_data = params.fetch(:instance_data, nil)
           instance_identifier = InstanceVerification.provider.new(nil, nil, nil, params['instance_data']).instance_identifier
           system_values = {
