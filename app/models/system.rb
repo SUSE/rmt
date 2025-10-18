@@ -86,37 +86,81 @@ class System < ApplicationRecord
     #logger.debug("FMCC NEEDS TRANS provided data_profiles responds to .to_h #{data_profiles.respond_to?(:to_h)}")
     #logger.debug("FMCC NEEDS TRANS provided data_profiles responds to .map #{data_profiles.respond_to?(:map)}")
 
-    self.system_data_profiles = data_profiles.map do |sdp_type, sdp_info|
+    return if data_profiles.empty?
 
-      sdp_id = sdp_info.fetch(:profileId, nil)
-      #logger.debug("FMCC NEEDS TRANS sdp_id: #{sdp_id}")
-      sdp_data = sdp_info.fetch(:profileData, nil)
-      unless sdp_data.nil?
-        #logger.debug("FMCC NEEDS TRANS sdp_data: #{sdp_data&.[](0..50)}")
+    complete_profiles, incomplete_profiles = data_profiles.partition do |_, sdp_info|
+      sdp_info.key?(:profileData)
+    end
+
+    # permitted number of retries
+    remaining_retries = 3
+
+    begin
+      current_time = Time.current
+
+      # create/update any provided complete data profiles as part of a
+      # single upsert_all() request to avoid deadlock.
+      unless complete_profiles.empty?
+        logger.debug("FMCC NEEDS TRANS create/update complete data profiles #{complete_profiles}")
+        upsert_rows = complete_profiles.map do |sdp_type, sdp_info|
+          {
+            profile_type: sdp_type,
+            profile_id: sdp_info[:profileId],
+            profile_data: sdp_info[:profileData],
+            last_seen_at: current_time,
+            created_at: current_time,
+          }
+        end
+        SystemDataProfile.upsert_all(upsert_rows)
       end
 
-      begin
-        #logger.debug("FMCC NEEDS TRANS create/find data profile entry for #{sdp_type}, #{sdp_id}")
-        sdp_entry = SystemDataProfile.find_or_create_by(
-          profile_type: sdp_type,
-          profile_id: sdp_id
-        ) do | new_sdp_entry |
-          new_sdp_entry.profile_data = sdp_data.to_json,
-          new_sdp_entry.last_seen_at = Time.current
+      # verify that all incomplete profiles already exist
+      unless incomplete_profiles.empty?
+        logger.debug("FMCC NEEDS TRANS check for existence of incomplete data profiles #{incomplete_profiles}")
+        if SystemDataProfile.Where_Unique_Keys(
+            incomplete_profiles.map { |sdp_type, sdp_info| [sdp_type, sdp_info[:profileId]] },
+          ).count != required_profiles.length
+          # TODO handle this better.
+          # Should
+          #   - ensure request completes with HTTP Resent Content (205) status
+          #   - continue processing for valid profiles
+          errors.add(:base, "FMCC NEEDS TRANS missing data for one or more unrecognised profiles")
+          return
         end
+      end
 
-        # update last_seen_at if existing value is more that 1 day ago
-        if sdp_entry.last_seen_at.before?(1.day.ago)
-          logger.debug("FMCC NEEDS TRANS updating last_seen_at for existing data profile entry for #{sdp_type}, #{sdp_id}")
+      # retrieve profile entries matching all provided data profiles for this system
+      system_profiles = SystemDataProfile.Where_Unique_Keys(
+        data_profiles.map { |sdp_type, sdp_info| [sdp_type, sdp_info[:profileId]] },
+      )
+
+      # update any last_seen_at values that are older than a day
+      stale_last_seen_ats = system_profiles.select { |sdp| sdp.last_seen_at < 1.day.ago }
+      unless stale_last_seen_ats.empty?
+        logger.debug("FMCC NEEDS TRANS updating last_seen_at for data profiles #{stale_last_seen_ats}")
+        upsert_rows = stale_last_seen_at.map do |sdp_type, sdp_info|
+          {
+            profile_type: sdp_type,
+            profile_id: sdp_info[:profileId],
+            last_seen_at: current_time,
+          }
         end
+        SystemDataProfile.upsert_all(upsert_rows)
+      end
 
-        logger.debug("FMCC NEEDS TRANS processed data profile entry for #{sdp_type}, #{sdp_id}")
-        # returns the created/updated entry
-        sdp_entry
+      # setup associations this system for all profiles
+      self.system_data_profiles = system_profiles
 
-      rescue ActiveRecord::RecordNotUnique
-        logger.debug("FMCC NEEDS TRANS retry create/find data profile entry for #{sdp_type}, #{sdp_id}")
+    # retry if a racing deregister triggered a cascaded delete of a
+    # data profile, while there are remaining retry attempts
+    rescue ActiveRecord::InvalidForeignKey
+      if remaining_retries > 0
+        logger.debug("FMCC NEEDS TRANS caught invalid forign key, remaining retries #{remaining_retries}")
+        remaining_retries -= 1
         retry
+      else
+        logger.debug("FMCC NEEDS TRANS caught invalid forign key, retries exhausted")
+        raise
       end
     end
   end
