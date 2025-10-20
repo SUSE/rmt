@@ -204,6 +204,8 @@ class RMT::Downloader
     if last_modified
       timestamp = Time.parse(last_modified).utc
       File.utime(timestamp, timestamp, file.local_path)
+    else
+      @logger.debug("Server did not provide 'Last-Modified' header, using current time")
     end
 
     if @track_files && file.local_path.match?(/\.(rpm|drpm)$/)

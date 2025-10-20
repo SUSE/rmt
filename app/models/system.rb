@@ -10,7 +10,7 @@ class System < ApplicationRecord
 
   after_initialize :init
 
-  has_many :activations, dependent: :destroy
+  has_many :activations, dependent: :delete_all # this is set this way because of performance reasons
   has_many :services, through: :activations
   has_many :repositories, -> { distinct }, through: :services
   has_many :products, -> { distinct }, through: :services
@@ -71,6 +71,10 @@ class System < ApplicationRecord
     else
       system_uptimes.create!(online_at_day: day, online_at_hours: hours)
     end
+  end
+
+  def update_instance_data(instance_data)
+    update!(instance_data: instance_data)
   end
 
   before_update do |system|

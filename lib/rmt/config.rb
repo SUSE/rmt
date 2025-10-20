@@ -6,12 +6,12 @@ Config.setup do |config|
   config.merge_nil_values = false
 end
 
+# In specs, configuration will only be loaded from 'config/rmt.yml'
 Config.load_and_set_settings(
   ('/etc/rmt.conf' if File.readable?('/etc/rmt.conf')),
   File.join(__dir__, '../../config/rmt.yml'),
   File.join(__dir__, '../../config/rmt.local.yml')
 )
-
 
 module RMT::Config
   class << self
@@ -34,8 +34,21 @@ module RMT::Config
       Settings.try(:mirroring).try(:dedup_method).to_s.to_sym != :copy
     end
 
+    # This method checks whether to re-validate metadata content and packages
+    # when the metadata did not change (default=true)
+    def revalidate_repodata?
+      return true if Settings.try(:mirroring).try(:revalidate_repodata).nil?
+
+      ActiveModel::Type::Boolean.new.cast(Settings.mirroring.revalidate_repodata)
+    end
+
     def mirror_src_files?
       ActiveModel::Type::Boolean.new.cast(Settings.try(:mirroring).try(:mirror_src))
+    end
+
+    def mirror_drpm_files?
+      mirror_drpm_files = ActiveModel::Type::Boolean.new.cast(Settings.try(:mirroring).try(:mirror_drpm))
+      mirror_drpm_files.nil? ? true : mirror_drpm_files
     end
 
     WebServerConfig = Struct.new(

@@ -23,11 +23,8 @@ module StrictAuthentication
 
         context 'valid instance' do
           before do
-            allow_any_instance_of(InstanceVerification::Providers::Example).to(
-              receive(:instance_valid?).and_return(true)
-            )
-            allow(InstanceVerification).to receive(:update_cache)
-            get '/api/auth/check', headers: auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': 'IMDS' })
+            allow(InstanceVerification).to receive(:verify_instance).and_return(true)
+            get '/api/auth/check', headers: auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': Base64.strict_encode64('IMDS') })
             allow(File).to receive(:directory?)
             allow(Dir).to receive(:mkdir)
             allow(FileUtils).to receive(:touch)
@@ -124,12 +121,23 @@ module StrictAuthentication
 
             context 'when requested path is version 12' do
               let(:requested_uri) { '/repo/SUSE/Updates/SLE-Module-Adv-Systems-Management/12/x86_64/update' }
+              let(:data_export_double) { instance_double('DataExport::Handlers::Example') }
+              let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+
+              before do
+                allow(InstanceVerification).to receive(:verify_instance).and_return(true)
+                allow(DataExport::Handlers::Example).to receive(:new).and_return(data_export_double)
+                allow(data_export_double).to receive(:export_rmt_data)
+                allow(ZypperAuth).to receive(:zypper_auth_message)
+              end
 
               its(:code) { is_expected.to eq '200' }
             end
 
             context 'when requested path is version 12.1' do
               let(:requested_uri) { '/repo/SUSE/Products/SLE-SERVER/12-SP1/x86_64/product' }
+
+              before { allow(InstanceVerification).to receive(:verify_instance).and_return(true) }
 
               its(:code) { is_expected.to eq '200' }
             end
@@ -187,6 +195,30 @@ module StrictAuthentication
               its(:code) { is_expected.to eq '200' }
             end
           end
+        end
+      end
+
+      context 'wrong url' do
+        let(:my_exception) { ActionController::RoutingError.new('foo') }
+        let(:request) { ActionDispatch::TestRequest.new('a') }
+
+        it 'logs a warning' do
+          ActionDispatch::DebugExceptions.new('foo').log_error(request, my_exception)
+        end
+      end
+
+      context 'OK url' do
+        let(:request) { ActionDispatch::TestRequest.new('a') }
+        let(:my_exception) { ActionController::ParameterMissing.new('standard') }
+        let(:wrapper) do
+          ActionDispatch::ExceptionWrapper.new(
+            request.get_header('action_dispatch.backtrace_cleaner'),
+            my_exception
+          )
+        end
+
+        it 'logs error' do
+          ActionDispatch::DebugExceptions.new('foo').log_error(request, wrapper)
         end
       end
     end

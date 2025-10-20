@@ -1,10 +1,44 @@
 -------------------------------------------------------------------
+Thu Aug 28 10:16:11 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Version 2.24
+  * rmt-server-pubcloud:
+    * Do not decode instance data coming from the system (bsc#1248510)
+
+-------------------------------------------------------------------
+Fri Jul 7 11:38:57 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Version 2.23
+  * rmt-server-pubcloud:
+    * Only update the pubcloud regcode if there is a value (bsc#1244166)
+  * Update rack, fixing CVEs CVE-2025-46727, CVE-2025-32441 (bsc#1242898, bsc#1242893)
+  * Enable delta RPM mirroring by default (revert behavior introduced on 2.22)
+
+-------------------------------------------------------------------
 Tue Jan 21 10:49:54 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
 - Version 2.22
   * rmt-server-pubcloud:
-    * Add pubcloud_reg_code column to systems table
-    * Add cache directories and their expiration times to the scrubber
+    * Add pubcloud_reg_code column to systems table (jsc#PCT-473)
+    * Add cache directories and their expiration times to the scrubber (jsc#PCT-473)
+    * Add cache checking to reduce queries to SCC when activating a product (jsc#PCT-473)
+    * Add cache checking to reduce queries to SCC when upgrading a product (jsc#PCT-473)
+    * Refactor and move verify_instance from ZypperAuth to InstanceVerification
+    * Add system_token to regsharing to find the system (bsc#1236600)
+    * Add system_token to system without one
+    * Add data_export engine for DataWarehouse telemetry (jsc#PCT-476)
+    * Fix 500 errors (gh#1316, gh#1302)
+    * Fix routing error(gh#1300)
+    * Fix SUMA ARM64 (bsc#1236836)
+    * Fix Migration from Micro 5.5 to Micro 6.X (bsc#1236816)
+    * Add registry optional (bsc#1237373)
+  * Update Puma webserver
+  * rmt-cli:
+    * Disable delta RPM mirroring by default (gh#1288)
+    * Add option during 'rmt-cli mirror' to re-validate repodata and packages only when repodata was updated
+  * rmt-server:
+    Add `activejob` and `resque` gems to vendored gemfile, to enable background
+    job support in RMT and all engines.
 
 -------------------------------------------------------------------
 Fri Jan 03 10:44:00 UTC 2025 - Luís Caparroz <lcaparroz@suse.com>

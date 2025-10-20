@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_08_21_114908) do
+ActiveRecord::Schema[7.2].define(version: 2025_03_19_155325) do
   create_table "activations", force: :cascade do |t|
     t.bigint "service_id", null: false
     t.bigint "system_id", null: false
@@ -23,9 +23,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_21_114908) do
   end
 
   create_table "deregistered_systems", force: :cascade do |t|
-    t.bigint "scc_system_id", null: false
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.bigint "scc_system_id", null: false, comment: "SCC IDs of deregistered systems; used for forwarding to SCC"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["scc_system_id"], name: "index_deregistered_systems_on_scc_system_id", unique: true
   end
 
@@ -93,7 +93,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_21_114908) do
   end
 
   create_table "repositories", force: :cascade do |t|
-    t.bigint "scc_id"
+    t.bigint "scc_id", unsigned: true
     t.string "name", null: false
     t.string "description"
     t.boolean "enabled", default: false, null: false
@@ -168,9 +168,10 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_21_114908) do
     t.bigint "scc_system_id"
     t.boolean "proxy_byos", default: false
     t.string "system_token"
-    t.json "system_information"
+    t.text "system_information", size: :long, collation: "utf8mb4_bin"
     t.text "instance_data"
     t.integer "proxy_byos_mode", default: 0
+    t.string "pubcloud_reg_code"
     t.index ["login", "password", "system_token"], name: "index_systems_on_login_and_password_and_system_token", unique: true
     t.index ["login", "password"], name: "index_systems_on_login_and_password"
     t.index ["system_token"], name: "index_systems_on_system_token"

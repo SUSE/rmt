@@ -7,7 +7,6 @@ RSpec.describe System, type: :model do
   let(:login) { described_class.generate_secure_login }
   let(:password) { described_class.generate_secure_password }
 
-  it { is_expected.to have_many(:activations).dependent(:destroy) }
   it { is_expected.to have_many(:services).through(:activations) }
   it { is_expected.to have_many(:repositories).through(:services) }
 
@@ -68,6 +67,11 @@ RSpec.describe System, type: :model do
       system.save!
       system.reload
       expect(system.scc_synced_at).to be(nil)
+    end
+
+    it 'update the instance data' do
+      system.update_instance_data('foo')
+      expect(system.instance_data).to eq('foo')
     end
   end
 

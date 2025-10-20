@@ -26,6 +26,13 @@
     For development purposes it can be easier to run with SQLite, to avoid extra dependencies.
     To run RMT with SQLite, set the `RMT_DB_ADAPTER` environment variable to `sqlite3`.
 
+4. **Background jobs:** If you plan on implementing background jobs (via [Active Job](https://guides.rubyonrails.org/v6.1/active_job_basics.html)), you will need to install or utilize a service compatible with the Redis API. We recommend [Valkey](https://valkey.io/), a BSD-licensed server, which is packaged for (open)SUSE distributions:
+
+    ```
+    sudo zypper in valkey
+    sudo systemctl enable --now valkey
+    ```
+
 5. Clone the RMT repository:
     ```
     git clone git@github.com:SUSE/rmt.git
@@ -61,15 +68,29 @@ In order to run the application locally using docker-compose:
    Center](https://scc.suse.com/organization). At this point you might also want
    to tweak the `EXTERNAL_PORT` environment variable from this file if you want
    to expose the main service with a port different than from the default one.
-3. Change the permissions on the `public` folder so anyone can access it (i.e.
-   `chmod -R 0777 public`). This is needed so the docker container can write
-   into this specific directory which is protected by default by the `rmt-cli`
-   tool.
-4. Build the containers needed by `docker-compose`:
+3. Build the image (can be also used to update gems)
     ```
-    docker-compose build
+    make build
     ```
-5. Run everything with `docker-compose up`.
+   Note that this will change the permissions on the `public` folder so anyone
+   can access it (i.e. `chmod -R 0777 public`). This is needed so the docker
+   container can write into this specific directory which is protected by default
+   by the `rmt-cli` tool.
+4. Run the server (Ctrl-C to terminate)
+    ```
+    make server
+    ```
+   The server will be started in the foreground and must be terminated to get
+   back to the user's shell session.
+   NOTE: If you want to interact with the RMT server, leave this running.
+5. Shell access (Ctrl-D or `exit` to terminate)
+    ```
+    make shell
+    ```
+   This will start an interactive shell session within the `rmt` container that
+   must be exited to return to the user's shell session.
+   NOTE: You will need to run this in a separate user shell session (window) if
+   you want to leave the RMT instance started by `make server` up and running.
 
 After doing all this, there will be `http://localhost:${EXTERNAL_PORT}` exposed
 to the network of the host, and you will be able to register clients by using

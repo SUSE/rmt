@@ -1,3 +1,4 @@
+require 'base64'
 require 'rails_helper'
 
 # rubocop:disable RSpec/NestedGroups
@@ -19,7 +20,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       include_context 'version header', 3
       let(:product) { FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions) }
       let(:headers) { auth_header.merge(version_header) }
-
       let(:payload_byos) do
         {
           identifier: product.identifier,
@@ -102,12 +102,14 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               ]
             }
           end
+          let(:headers) { auth_header.merge('X-Instance-Data' => Base64.strict_encode64('dummy_instance_data')) }
 
           before do
             allow(plugin_double).to(
               receive(:instance_valid?)
                 .and_raise(InstanceVerification::Exception, 'Custom plugin error')
             )
+            allow(plugin_double).to receive(:instance_identifier).and_return('foo')
           end
 
           context 'with a valid registration code' do
@@ -121,16 +123,19 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               allow(File).to receive(:directory?)
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
-
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.repo_cache_dir, "127.0.0.1-#{system_byos.login}-#{product.id}"
+              allow_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_identifier).and_return('foo')
+              allow(InstanceVerification).to receive(:write_cache_file).with(
+                Rails.application.config.repo_byos_cache_dir,
+                "#{Base64.strict_encode64(payload_byos[:token])}-foo-#{product.product_class}-active"
               )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.registry_cache_dir, "127.0.0.1-#{system_byos.login}"
+              allow(InstanceVerification).to receive(:write_cache_file).with(
+                Rails.application.config.registry_cache_dir,
+                "#{Base64.strict_encode64(payload_byos[:token])}-foo-#{product.product_class}-active"
               )
             end
 
             it 'renders service JSON' do
+              system_byos.update!(system_token: nil)
               post url, params: payload_byos, headers: headers
               expect(response.body).to eq(serialized_service_json)
             end
@@ -144,12 +149,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                   body: { error: 'No product found on SCC for: foo bar x86_64 json api' }.to_json,
                   headers: {}
                 )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.repo_cache_dir, "127.0.0.1-#{system_byos.login}-#{product.id}"
-              )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.registry_cache_dir, "127.0.0.1-#{system_byos.login}"
-              )
+              allow(InstanceVerification).to receive(:write_cache_file)
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
 
@@ -181,12 +181,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                   body: { id: 'bar' }.to_json,
                   headers: {}
                 )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.repo_cache_dir, "127.0.0.1-#{system_byos.login}-#{product.id}"
-              )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.registry_cache_dir, "127.0.0.1-#{system_byos.login}"
-              )
+              allow(InstanceVerification).to receive(:write_cache_file)
               allow(File).to receive(:directory?)
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
@@ -221,12 +216,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                   headers: {}
                 )
 
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.repo_cache_dir, "127.0.0.1-#{system_byos.login}-#{product.id}"
-              )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.registry_cache_dir, "127.0.0.1-#{system_byos.login}"
-              )
+              allow(InstanceVerification).to receive(:write_cache_file)
               allow(File).to receive(:directory?)
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
@@ -417,12 +407,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               allow(FileUtils).to receive(:touch)
               allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
               allow(plugin_double).to receive(:allowed_extension?).and_return(true)
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.repo_cache_dir, "127.0.0.1-#{system_payg.login}-#{product.id}"
-              )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.registry_cache_dir, "127.0.0.1-#{system_payg.login}"
-                )
+              allow(InstanceVerification).to receive(:write_cache_file)
               allow(plugin_double).to receive(:instance_valid?).and_return(true)
             end
 
@@ -511,13 +496,6 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             }
           end
 
-          before do
-            allow(plugin_double).to(
-              receive(:instance_valid?)
-                .and_raise(InstanceVerification::Exception, 'Custom plugin error')
-            )
-          end
-
           context 'with a valid registration code' do
             before do
               stub_request(:post, scc_activate_url)
@@ -529,12 +507,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               allow(File).to receive(:directory?)
               allow(FileUtils).to receive(:mkdir_p)
               allow(FileUtils).to receive(:touch)
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.repo_cache_dir, "127.0.0.1-#{system_payg.login}-#{product.id}"
-              )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.registry_cache_dir, "127.0.0.1-#{system_payg.login}"
-                )
+              allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return('')
+              allow(InstanceVerification).to receive(:write_cache_file)
               allow(plugin_double).to receive(:instance_valid?).and_return(true)
             end
 
@@ -545,68 +519,36 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               post url, params: payload, headers: headers
               expect(response.body).to eq(serialized_service_json)
             end
+
+            context 'instance verification error' do
+              let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+
+              it 'returns error' do
+                expect(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
+                allow(plugin_double).to receive(:allowed_extension?).and_raise(InstanceVerification::Exception, 'Malformed instance data')
+                post url, params: payload, headers: headers
+                expect(JSON.parse(response.body)['error']).to eq('Malformed instance data')
+                expect(response.message).to eq('Unprocessable Entity')
+                expect(response.code).to eq('422')
+              end
+            end
           end
 
           context 'with a not valid registration code' do
+            let(:scc_register_systems_url) { 'https://scc.suse.com/connect/subscriptions/systems' }
+
             before do
-              stub_request(:post, scc_activate_url)
+              stub_request(:post, scc_register_systems_url)
                 .to_return(
-                  status: 401,
-                  body: { error: 'No product found on SCC for: foo bar x86_64 json api' }.to_json,
+                  status: [422, 'Bad Request'],
+                  body: { error: 'Oh oh, something went wrong' }.to_json,
                   headers: {}
-                )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.repo_cache_dir, "127.0.0.1-#{system_payg.login}-#{product.id}"
               )
-              allow(InstanceVerification).to receive(:write_cache_file).twice.with(
-                Rails.application.config.registry_cache_dir, "127.0.0.1-#{system_payg.login}"
-              )
-              allow(FileUtils).to receive(:mkdir_p)
-              allow(FileUtils).to receive(:touch)
             end
 
-            context 'when de-register system from SCC suceeds' do
-              before do
-                stub_request(:delete, scc_systems_url)
-                  .to_return(
-                    status: 204,
-                    body: '',
-                    headers: {}
-                  )
-
-                stub_request(:post, scc_register_system_url)
-                  .to_return(status: 201, body: { ok: 'OK' }.to_json, headers: {})
-                post url, params: payload, headers: headers
-              end
-
-              it 'renders an error with exception details' do
-                data = JSON.parse(response.body)
-                expect(data['error']).to include('No product found on SCC')
-                expect(data['error']).not_to include('json api')
-              end
-            end
-
-            context 'when de-register system from SCC fails' do
-              let(:error_message) { "Could not activate #{product.product_string}, error: No product found on SCC for: foo bar x86_64 json api 401" }
-
-              before do
-                allow(Rails.logger).to receive(:info)
-                stub_request(:delete, scc_systems_url)
-                  .to_return(
-                    status: 401,
-                    body: { error: 'Could not de-register system' }.to_json,
-                    headers: {}
-                  )
-                stub_request(:post, scc_register_system_url)
-                  .to_return(status: 201, body: { ok: 'OK' }.to_json, headers: {})
-              end
-
-              it 'renders an error with exception details' do
-                expect(Rails.logger).to receive(:info).with(error_message)
-                post url, params: payload, headers: headers
-                data = JSON.parse(response.body)
-                expect(data['error']).to eq('Could not de-register system')
-              end
+            it 'renders the error' do
+              post url, params: payload, headers: headers
+              expect(response.body).to include('Bad Request')
             end
           end
         end

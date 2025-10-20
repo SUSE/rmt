@@ -1,9 +1,9 @@
-FROM opensuse/leap:15.3
+FROM opensuse/leap:15.6
 
 RUN zypper --non-interactive install --no-recommends \
         timezone wget gcc-c++ libffi-devel git-core zlib-devel \
         libxml2-devel libxslt-devel cron libmariadb-devel mariadb-client sqlite3-devel \
-        vim ruby2.5 ruby2.5-devel ruby2.5-rubygem-bundler SUSEConnect && \
+        vim ruby2.5 ruby2.5-devel ruby2.5-rubygem-bundler SUSEConnect jq bzip2 gzip && \
     zypper --non-interactive install -t pattern devel_basis && \
     update-alternatives --install /usr/bin/bundle bundle /usr/bin/bundle.ruby2.5 5 && \
     update-alternatives --install /usr/bin/bundler bundler /usr/bin/bundler.ruby2.5 5
@@ -24,6 +24,8 @@ RUN sed -i 's/#!\/usr\/bin\/env ruby/#!\/usr\/bin\/ruby.ruby2.5/g' /srv/www/rmt/
     useradd -g nginx -s /bin/false -r -c "user for RMT" _rmt && \
     chown _rmt /srv/www/rmt/public/repo && \
     chown _rmt /srv/www/rmt/public/suma
+
+RUN uuidgen > /var/lib/rmt/system_uuid
 
 EXPOSE 4224
 

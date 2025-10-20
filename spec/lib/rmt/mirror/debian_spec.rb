@@ -112,7 +112,16 @@ describe RMT::Mirror::Debian do
         expect(debian).to receive(:download_cached!).with(release_path, to: 'bar')
         expect(debian).to receive(:check_signature)
         expect(debian).to receive(:download_enqueued).twice
-        debian.mirror_metadata
+        expect(debian.mirror_metadata.size).to eq(3)
+      end
+
+      it 'skips download and parsing the file when revalidate_repodata is disabled and checksum is unchanged' do
+        allow(RMT::Config).to receive(:revalidate_repodata?).and_return(false)
+        allow(debian).to receive(:metadata_updated?).and_return(false)
+        expect(debian).to receive(:download_cached!).with(release_path, to: 'bar')
+        expect(debian).to receive(:check_signature)
+        expect(debian).to receive(:download_enqueued).twice
+        expect(debian.mirror_metadata.size).to eq(0)
       end
     end
 

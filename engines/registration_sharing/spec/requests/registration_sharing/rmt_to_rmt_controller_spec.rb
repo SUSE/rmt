@@ -14,6 +14,7 @@ module RegistrationSharing
     let(:api_secret) { 's3cr3tt0k3n' }
     let(:request_token) { api_secret }
     let(:instance_data) { '<document>test</document>' }
+    let(:pubcloud_reg_code) { 'INTERNAL-FOO' }
 
     before do
       expect(RegistrationSharing).not_to receive(:save_for_sharing)
@@ -35,6 +36,7 @@ module RegistrationSharing
             registered_at: registered_at,
             last_seen_at: last_seen_at,
             proxy_byos: true,
+            pubcloud_reg_code: pubcloud_reg_code,
             activations: [
               {
                 product_id: product.id,
@@ -69,6 +71,7 @@ module RegistrationSharing
           its(:registered_at) { is_expected.to eq(registered_at) }
           its(:last_seen_at) { is_expected.to eq(last_seen_at) }
           its(:proxy_byos_mode) { is_expected.to eq('byos') }
+          its(:pubcloud_reg_code) { is_expected.to eq('INTERNAL-FOO') }
           it 'saves instance data' do
             expect(system.instance_data).to eq(instance_data)
           end
@@ -97,6 +100,7 @@ module RegistrationSharing
             registered_at: registered_at,
             last_seen_at: last_seen_at,
             proxy_byos: false,
+            pubcloud_reg_code: pubcloud_reg_code,
             activations: [
               {
                 product_id: product.id,
@@ -137,6 +141,7 @@ module RegistrationSharing
             registered_at: registered_at,
             last_seen_at: last_seen_at,
             proxy_byos_mode: :hybrid,
+            pubcloud_reg_code: pubcloud_reg_code,
             activations: [
               {
                 product_id: product.id,
