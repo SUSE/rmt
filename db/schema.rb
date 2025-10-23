@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_10_14_162025) do
+ActiveRecord::Schema.define(version: 2025_10_27_130143) do
 
   create_table "activations", charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
     t.bigint "service_id", null: false
@@ -155,7 +155,7 @@ ActiveRecord::Schema.define(version: 2025_10_14_162025) do
     t.text "profile_data", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.datetime "last_seen_at", precision: 6, null: false
+    t.datetime "last_exported_at"
     t.index ["profile_type", "profile_id"], name: "index_system_data_profiles_on_profile_type_and_profile_id", unique: true
   end
 

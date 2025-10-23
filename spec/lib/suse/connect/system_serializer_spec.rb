@@ -9,6 +9,14 @@ describe SUSE::Connect::SystemSerializer do
     let(:hwinfo_parameters) { JSON.parse(system.system_information).symbolize_keys }
     let(:activation) { system.activations.first }
     let(:product) { activation.product }
+    let(:data_profiles) do
+      system.system_data_profiles.each_with_object({}) do |sdp, hash|
+        hash[sdp.profile_type] = {
+          profileId: sdp.profile_id,
+          profileData: sdp.profile_data
+        }
+      end
+    end
 
     let(:expected) do
       {
@@ -18,6 +26,7 @@ describe SUSE::Connect::SystemSerializer do
         created_at: system.created_at,
         hostname: system.hostname,
         hwinfo: hwinfo_parameters,
+        data_profiles: data_profiles,
         products: [
           {
             id: product.id,
@@ -35,11 +44,20 @@ describe SUSE::Connect::SystemSerializer do
 
   context 'synchronized system' do
     let(:system) { create :system, :full, :synced }
+    let(:data_profiles) do
+      system.system_data_profiles.each_with_object({}) do |sdp, hash|
+        hash[sdp.profile_type] = {
+          profileId: sdp.profile_id,
+          profileData: sdp.profile_data
+        }
+      end
+    end
     let(:expected) do
       {
         login: system.login,
         password: system.password,
         last_seen_at: system.last_seen_at,
+        data_profiles: data_profiles,
         created_at: system.created_at
       }
     end
@@ -49,12 +67,21 @@ describe SUSE::Connect::SystemSerializer do
 
   context 'system with system_token' do
     let(:system) { create :system, :full, :synced, :with_system_token }
+    let(:data_profiles) do
+      system.system_data_profiles.each_with_object({}) do |sdp, hash|
+        hash[sdp.profile_type] = {
+          profileId: sdp.profile_id,
+          profileData: sdp.profile_data
+        }
+      end
+    end
     let(:expected) do
       {
         login: system.login,
         password: system.password,
         last_seen_at: system.last_seen_at,
         created_at: system.created_at,
+        data_profiles: data_profiles,
         system_token: system.id
       }
     end
@@ -93,6 +120,31 @@ describe SUSE::Connect::SystemSerializer do
     it 'match systemuptime data' do
       expect((serializer[:online_at][0][:online_at_day]).to_date).to eq(Time.zone.now.to_date)
       expect((serializer[:online_at][0][:online_at_hours]).to_s).to eq('111111111111111111111111')
+    end
+  end
+
+  context 'system without data profiles' do
+    let(:system) { create :system, :synced }
+
+    it 'does not add the profiles attribute' do
+      expect(serializer.key? :data_profiles).to eq(false)
+    end
+  end
+
+  context 'system with data_profiles' do
+    let(:system) { create :system, :with_data_profiles }
+    let(:data_profiles) do
+      system.system_data_profiles.each_with_object({}) do |sdp, hash|
+        hash[sdp.profile_type] = {
+          profileId: sdp.profile_id,
+          profileData: sdp.profile_data
+        }
+      end
+    end
+
+    it 'match data_profiles data' do
+      expect(serializer.key? :data_profiles).to eq(true)
+      expect(serializer[:data_profiles]).to match(data_profiles)
     end
   end
 end

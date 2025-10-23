@@ -15,7 +15,7 @@ class System < ApplicationRecord
   has_many :products, -> { distinct }, through: :services
   has_many :system_uptimes, dependent: :destroy
   has_many :system_profiles, dependent: :destroy
-  has_many :system_data_profiles, through: :system_profiles
+  has_many :system_data_profiles, -> { distinct }, through: :system_profiles
 
   validates :system_token, uniqueness: { scope: %i[login password], case_sensitive: false }
 
@@ -80,15 +80,11 @@ class System < ApplicationRecord
     update!(instance_data: instance_data)
   end
 
-  def data_profiles=(data_profiles)
-    #logger.debug("FMCC NEEDS TRANS create/update system_data_profiles based upon #{data_profiles}")
-    #logger.debug("FMCC NEEDS TRANS provided data_profiles is a #{data_profiles.class}")
-    #logger.debug("FMCC NEEDS TRANS provided data_profiles responds to .to_h #{data_profiles.respond_to?(:to_h)}")
-    #logger.debug("FMCC NEEDS TRANS provided data_profiles responds to .map #{data_profiles.respond_to?(:map)}")
+  def data_profiles=(profiles)
+    # Even if profiles is empty we want to process it to allow any
+    # existing data profile associations to be removed
 
-    return if data_profiles.empty?
-
-    complete_profiles, incomplete_profiles = data_profiles.partition do |_, sdp_info|
+    complete_profiles, incomplete_profiles = profiles.partition do |_, sdp_info|
       sdp_info.key?(:profileData)
     end
 
@@ -96,57 +92,32 @@ class System < ApplicationRecord
     remaining_retries = 3
 
     begin
-      current_time = Time.current
-
-      # create/update any provided complete data profiles as part of a
+      # create/update any provided complete profiles as part of a
       # single upsert_all() request to avoid deadlock.
       unless complete_profiles.empty?
-        logger.debug("FMCC NEEDS TRANS create/update complete data profiles #{complete_profiles}")
-        upsert_rows = complete_profiles.map do |sdp_type, sdp_info|
-          {
-            profile_type: sdp_type,
-            profile_id: sdp_info[:profileId],
-            profile_data: sdp_info[:profileData],
-            last_seen_at: current_time,
-            created_at: current_time,
-          }
-        end
-        SystemDataProfile.upsert_all(upsert_rows)
+        create_profiles_if_needed(complete_profiles, Time.current)
       end
 
       # verify that all incomplete profiles already exist
       unless incomplete_profiles.empty?
-        logger.debug("FMCC NEEDS TRANS check for existence of incomplete data profiles #{incomplete_profiles}")
-        if SystemDataProfile.Where_Unique_Keys(
-            incomplete_profiles.map { |sdp_type, sdp_info| [sdp_type, sdp_info[:profileId]] },
-          ).count != required_profiles.length
-          # TODO handle this better.
+        logger.debug("FMCC NEEDS TRANS check for existence of incomplete profiles #{incomplete_profiles}")
+        found_sdps = SystemDataProfile.where_unique_keys(
+          incomplete_profiles.map { |sdp_type, sdp_info| [sdp_type, sdp_info[:profileId]] }
+        )
+        if found_sdps.count != incomplete_profiles.length
+          # TODO: handle this better.
           # Should
           #   - ensure request completes with HTTP Resent Content (205) status
           #   - continue processing for valid profiles
-          errors.add(:base, "FMCC NEEDS TRANS missing data for one or more unrecognised profiles")
+          errors.add(:base, 'FMCC NEEDS TRANS missing data for one or more unrecognised profiles')
           return
         end
       end
 
-      # retrieve profile entries matching all provided data profiles for this system
-      system_profiles = SystemDataProfile.Where_Unique_Keys(
-        data_profiles.map { |sdp_type, sdp_info| [sdp_type, sdp_info[:profileId]] },
+      # retrieve profile entries matching all provided profiles for this system
+      system_profiles = SystemDataProfile.where_unique_keys(
+        profiles.map { |sdp_type, sdp_info| [sdp_type, sdp_info[:profileId]] }
       )
-
-      # update any last_seen_at values that are older than a day
-      stale_last_seen_ats = system_profiles.select { |sdp| sdp.last_seen_at < 1.day.ago }
-      unless stale_last_seen_ats.empty?
-        logger.debug("FMCC NEEDS TRANS updating last_seen_at for data profiles #{stale_last_seen_ats}")
-        upsert_rows = stale_last_seen_at.map do |sdp_type, sdp_info|
-          {
-            profile_type: sdp_type,
-            profile_id: sdp_info[:profileId],
-            last_seen_at: current_time,
-          }
-        end
-        SystemDataProfile.upsert_all(upsert_rows)
-      end
 
       # setup associations this system for all profiles
       self.system_data_profiles = system_profiles
@@ -159,10 +130,28 @@ class System < ApplicationRecord
         remaining_retries -= 1
         retry
       else
-        logger.debug("FMCC NEEDS TRANS caught invalid forign key, retries exhausted")
+        logger.debug('FMCC NEEDS TRANS caught invalid forign key, retries exhausted')
         raise
       end
     end
+  end
+
+  def create_profiles_if_needed(profiles, current_time = nil)
+    # init current_time if not specified
+    current_time = Time.current if current_time.nil?
+
+    # create/update any provided complete profiles as part of a
+    # single upsert_all() request to avoid deadlock.
+    logger.debug("FMCC NEEDS TRANS create/update complete profiles #{profiles}")
+    upsert_rows = profiles.map do |sdp_type, sdp_info|
+      {
+        profile_type: sdp_type,
+        profile_id: sdp_info[:profileId],
+        profile_data: sdp_info[:profileData],
+        created_at: current_time
+      }
+    end
+    SystemDataProfile.upsert_all(upsert_rows)
   end
 
   before_update do |system|

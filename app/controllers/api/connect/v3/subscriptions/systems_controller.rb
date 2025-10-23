@@ -18,7 +18,6 @@ class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseCon
     # This is fine since the systems are only internal and RMT users
     # can save in their own database whatever they want.
     # When forwarded to SCC, SCC validates the payload for correctness.
-    #logger.debug("FMCC NEEDS TRANS info_params for key #{key}")
     permit_args = { key => {} }
     params.permit(permit_args)
   end

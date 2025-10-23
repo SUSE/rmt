@@ -27,6 +27,19 @@ RSpec.describe System, type: :model do
     it { is_expected.to validate_uniqueness_of(:system_token).scoped_to(:login, :password).case_insensitive }
   end
 
+  describe 'system_data_profiles' do
+    let(:system) { FactoryBot.create(:system, :with_data_profiles) }
+
+    it { is_expected.to have_many(:system_data_profiles).through(:system_profiles) }
+
+    it 'links through system_profiles to system_data_profiles' do
+      expect(system.system_profiles.count).to eq(1)
+      expect(system.system_data_profiles.count).to eq(1)
+      expect(SystemProfile.first.system_id).to eq(system.id)
+      expect(SystemProfile.first.system_data_profile_id).to eq(SystemDataProfile.first.id)
+    end
+  end
+
   context 'when system is deleted' do
     context 'activation' do
       let(:activation) do

@@ -5,6 +5,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
   include_context 'version header', 3
   include_context 'user-agent header'
   include_context 'zypp user-agent header'
+  include_context 'data profile sets'
 
   let(:system) { FactoryBot.create(:system, hostname: 'initial') }
   let(:url) { '/connect/systems' }
@@ -105,6 +106,265 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
       it do
         update_action
         expect(system.reload.hostname).to be_nil
+      end
+    end
+
+    context 'when data_profiles are provided' do
+      # init with set a1
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_a1 } }
+
+      it 'they match expected set' do
+        update_action
+
+        # verify expected record counts in linked tables
+        expect(System.count).to eq(1)
+        expect(SystemProfile.count).to eq(2)
+        expect(SystemDataProfile.count).to eq(2)
+
+        # verify expected record linkage count between System record and SystemDataProfile records
+        expect(system.system_data_profiles.count).to eq(2)
+
+        expect(
+          system.system_data_profiles.each_with_object({}) do |sdp, hash|
+            hash[sdp.profile_type] = {
+              profileId: sdp.profile_id,
+              profileData: sdp.profile_data
+            }
+          end.symbolize_keys
+        ).to match(data_profiles_a1)
+      end
+    end
+
+    context 'when data_profiles are updated' do
+      # init with set a1
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_a1 } }
+
+      it 'init system data profiles with set a1' do
+        update_action
+
+        # verify expected record counts in linked tables
+        expect(System.count).to eq(1)
+        expect(SystemProfile.count).to eq(2)
+        expect(SystemDataProfile.count).to eq(2)
+
+        # verify expected record linkage count between System record and SystemDataProfile records
+        expect(system.system_data_profiles.count).to eq(2)
+
+        expect(
+          system.system_data_profiles.each_with_object({}) do |sdp, hash|
+            hash[sdp.profile_type] = {
+              profileId: sdp.profile_id,
+              profileData: sdp.profile_data
+            }
+          end.symbolize_keys
+        ).to match(data_profiles_a1)
+      end
+
+      context 'to set a2' do
+        # update with set a2 which has same types but different values
+        let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_a2 } }
+
+        it 'they match set a2' do
+          update_action
+
+          # verify expected record counts in linked tables
+          expect(System.count).to eq(1)
+          expect(SystemProfile.count).to eq(2)
+          expect(SystemDataProfile.count).to eq(2)
+
+          # verify expected record linkage count between System record and SystemDataProfile records
+          expect(system.system_data_profiles.count).to eq(2)
+
+          expect(
+            system.system_data_profiles.each_with_object({}) do |sdp, hash|
+              hash[sdp.profile_type] = {
+                profileId: sdp.profile_id,
+                profileData: sdp.profile_data
+              }
+            end.symbolize_keys
+          ).to match(data_profiles_a2)
+        end
+      end
+    end
+
+    context 'when data_profiles are replaced' do
+      # init with set a1
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_a1 } }
+
+      it 'init system data profiles with set a1' do
+        update_action
+
+        # verify expected record counts in linked tables
+        expect(System.count).to eq(1)
+        expect(SystemProfile.count).to eq(2)
+        expect(SystemDataProfile.count).to eq(2)
+
+        # verify expected record linkage count between System record and SystemDataProfile records
+        expect(system.system_data_profiles.count).to eq(2)
+
+        expect(
+          system.system_data_profiles.each_with_object({}) do |sdp, hash|
+            hash[sdp.profile_type] = {
+              profileId: sdp.profile_id,
+              profileData: sdp.profile_data
+            }
+          end.symbolize_keys
+        ).to match(data_profiles_a1)
+      end
+
+      context 'with set b' do
+        # update with set b which has different types
+        let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_b } }
+
+        it 'they match set b' do
+          update_action
+
+          # verify expected record counts in linked tables
+          expect(System.count).to eq(1)
+          expect(SystemProfile.count).to eq(1)
+          expect(SystemDataProfile.count).to eq(1)
+
+          # verify expected record linkage count between System record and SystemDataProfile records
+          expect(system.system_data_profiles.count).to eq(1)
+
+          expect(
+            system.system_data_profiles.each_with_object({}) do |sdp, hash|
+              hash[sdp.profile_type] = {
+                profileId: sdp.profile_id,
+                profileData: sdp.profile_data
+              }
+            end.symbolize_keys
+          ).to match(data_profiles_b)
+        end
+      end
+    end
+
+    context 'when data_profiles are removed' do
+      # init with set a1
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_a1 } }
+
+      it 'init system data profiles with set a1' do
+        update_action
+
+        # verify expected record counts in linked tables
+        expect(System.count).to eq(1)
+        expect(SystemProfile.count).to eq(2)
+        expect(SystemDataProfile.count).to eq(2)
+
+        # verify expected record linkage count between System record and SystemDataProfile records
+        expect(system.system_data_profiles.count).to eq(2)
+
+        expect(
+          system.system_data_profiles.each_with_object({}) do |sdp, hash|
+            hash[sdp.profile_type] = {
+              profileId: sdp.profile_id,
+              profileData: sdp.profile_data
+            }
+          end.symbolize_keys
+        ).to match(data_profiles_a1)
+      end
+
+      context 'and no longer associated' do
+        # update with no data_profiles
+        let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: {} } }
+
+        it 'no profiles are associated' do
+          update_action
+
+          # verify expected record counts in linked tables
+          expect(System.count).to eq(1)
+          expect(SystemProfile.count).to eq(0)
+          expect(SystemDataProfile.count).to eq(0)
+
+          system.reload
+
+          expect(system.system_data_profiles.count).to eq(0)
+        end
+      end
+    end
+
+    context 'when data_profiles are incomplete' do
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_a1_no_data } }
+
+      it 'no data profiles inserted' do
+        update_action
+
+        expect(system.system_data_profiles.count).to eq(0)
+      end
+    end
+
+    context 'when data_profiles are missing profileIds' do
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_a1_no_id } }
+
+      it 'not null exception raised' do
+        expect { update_action }.to raise_error(ActiveRecord::NotNullViolation)
+      end
+    end
+
+    context 'when data_profiles are not provided' do
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo } }
+
+      it 'no data profiles inserted' do
+        update_action
+
+        expect(system.system_data_profiles.count).to eq(0)
+      end
+    end
+
+    context 'when data_profiles upsert needs to retry' do
+      # simulate the first SystemDataProfile.upsert_all() failed with a collision
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_a1 } }
+
+      it 'they match set a1' do
+        forced_retries = 1 # force one retry
+        upsert_calls = 0
+        allow_any_instance_of(System).to receive(:create_profiles_if_needed).and_wrap_original do |orig_method, profiles, current_time|
+          upsert_calls += 1
+          if upsert_calls <= forced_retries
+            raise ActiveRecord::InvalidForeignKey
+          else
+            orig_method.call(profiles, current_time)
+          end
+        end
+
+        update_action
+
+        expect(upsert_calls).to eq(2)
+
+        expect(system.system_data_profiles.count).to eq(2)
+
+        expect(
+          system.system_data_profiles.each_with_object({}) do |sdp, hash|
+            hash[sdp.profile_type] = {
+              profileId: sdp.profile_id,
+              profileData: sdp.profile_data
+            }
+          end.symbolize_keys
+        ).to match(data_profiles_a1)
+      end
+    end
+
+    context 'when data_profiles upsert retries too many times' do
+      # simulate the first SystemDataProfile.upsert_all() failed with a collision
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_a1 } }
+
+      it 'they match set a1' do
+        forced_retries = 5 # set this to higher than the number of expected retries
+        upsert_calls = 0
+        allow_any_instance_of(System).to receive(:create_profiles_if_needed).and_wrap_original do |orig_method, profiles, current_time|
+          upsert_calls += 1
+          if upsert_calls <= forced_retries
+            raise ActiveRecord::InvalidForeignKey
+          else
+            orig_method.call(profiles, current_time)
+          end
+        end
+
+        expect { update_action }.to raise_error(ActiveRecord::InvalidForeignKey)
+
+        expect(upsert_calls).to eq(4)
+
+        expect(system.system_data_profiles.count).to eq(0)
       end
     end
 
