@@ -20,7 +20,7 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
 
     @system.hostname = params[:hostname]
 
-    if params[:data_profiles].present?
+    if params.key? :data_profiles
       @system.update(data_profiles: info_params(key: :data_profiles)[:data_profiles].to_h)
     end
 
