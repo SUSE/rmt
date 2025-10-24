@@ -29,7 +29,7 @@ class RMT::CLI::Base < Thor
     def dispatch(command, given_args, given_opts, config)
       handle_exceptions { super(command, given_args, given_opts, config) }
     rescue RMT::CLI::Error => e
-      warn e.to_s
+      warn e
       if config[:shell]&.base&.options&.[]('debug')
         warn e.cause ? e.cause.inspect : e.inspect
         warn e.cause ? e.cause.backtrace : e.backtrace
@@ -112,7 +112,7 @@ class RMT::CLI::Base < Thor
 
   def logger
     @logger ||= RMT::Logger.new($stdout)
-    debug = options[:debug] || Settings&.log_level&.cli == 'debug'
+    debug = options[:debug] || Settings.log_level&.cli == 'debug'
     @logger.level = debug ? Logger::DEBUG : Logger::INFO
     @logger
   end

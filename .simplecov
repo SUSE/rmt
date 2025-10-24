@@ -3,7 +3,7 @@ unless ENV['NO_COVERAGE']
   if !ENV['SIMPLECOV_CMD'] || ENV['SIMPLECOV_CMD'] == 'test:core'
     SimpleCov.minimum_coverage 100
     SimpleCov.start do
-      SimpleCov.command_name ENV['SIMPLECOV_CMD']
+      SimpleCov.command_name ENV.fetch('SIMPLECOV_CMD', nil)
       add_filter '/spec/'
       add_filter '/tasks/'
 

@@ -8,7 +8,10 @@ class CreateSystemUptimes < ActiveRecord::Migration[6.1]
         t.timestamps
       end
 
-      commit_db_transaction
+      # NOTE: it was originally here but it doesn't make sense and it's
+      # (rightfully) failing on SQLite3. Let's comment this one out.
+      #
+      # commit_db_transaction
 
       add_index :system_uptimes, %i[system_id online_at_day], unique: true, name: 'id_online_day'
 

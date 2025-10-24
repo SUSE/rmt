@@ -32,7 +32,7 @@ Rails.application.configure do
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
 
-  log_level = Settings&.log_level&.rails&.to_s&.upcase
+  log_level = Settings.log_level&.rails&.to_s&.upcase
   config.log_level = if RMT::Logger::LABEL_TO_SEVERITY_MAPPING[log_level]
                        log_level
                      else

@@ -24,7 +24,7 @@
     **Experimental: SQLite**
 
     For development purposes it can be easier to run with SQLite, to avoid extra dependencies.
-    To run RMT with SQLite, switch the database adapter in `config/rmt.yml` to `sqlite3`.
+    To run RMT with SQLite, set the `RMT_DB_ADAPTER` environment variable to `sqlite3`.
 
 4. **Background jobs:** If you plan on implementing background jobs (via [Active Job](https://guides.rubyonrails.org/v6.1/active_job_basics.html)), you will need to install or utilize a service compatible with the Redis API. We recommend [Valkey](https://valkey.io/), a BSD-licensed server, which is packaged for (open)SUSE distributions:
 

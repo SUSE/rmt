@@ -42,7 +42,7 @@ module SccSumaApi
             get '/api/scc/unscoped-products', headers: payload
           end
 
-          after { File.delete(unscoped_file) if File.exist?(unscoped_file) }
+          after { FileUtils.rm_f(unscoped_file) }
 
           context 'redirect from SCC endpoint' do
             before do
@@ -71,7 +71,7 @@ module SccSumaApi
 
               allow(SUSE::Connect::Api).to receive(:new).and_return api_double
               allow(api_double).to receive(:list_products_unscoped).and_return products
-              File.delete(unscoped_file) if File.exist?(unscoped_file)
+              FileUtils.rm_f(unscoped_file)
 
               get '/api/scc/unscoped-products', headers: payload
             end
@@ -90,7 +90,7 @@ module SccSumaApi
             allow(SUSE::Connect::Api).to receive(:new).and_return api_double
             allow(api_double).to receive(:list_products_unscoped).and_return products
             allow(RMT::Logger).to receive(:new).and_return(logger)
-            File.delete(unscoped_file) if File.exist?(unscoped_file)
+            FileUtils.rm_f(unscoped_file)
 
             get '/api/scc/unscoped-products', headers: payload
           end
@@ -112,7 +112,7 @@ module SccSumaApi
             allow(SUSE::Connect::Api).to receive(:new).and_return api_double
             allow(api_double).to receive(:list_products_unscoped).and_return products
             allow(RMT::Logger).to receive(:new).and_return(logger)
-            File.delete(unscoped_file) if File.exist?(unscoped_file)
+            FileUtils.rm_f(unscoped_file)
             get '/api/scc/unscoped-products', headers: error_payload
           end
 
@@ -149,7 +149,7 @@ module SccSumaApi
           get '/suma/product_tree.json'
         end
 
-        after { File.delete(product_tree_file) if File.exist?(product_tree_file) }
+        after { FileUtils.rm_f(product_tree_file) }
 
         context 'SCC endpoint redirect' do
           before do

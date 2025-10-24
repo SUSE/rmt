@@ -7,7 +7,7 @@ class Api::Connect::BaseController < ApplicationController
   protected
 
   def require_params(keys)
-    payload = JSON.parse(params[:payload]) if params[:payload] && params[:payload].is_a?(String)
+    payload = JSON.parse(params[:payload]) if params[:payload].is_a?(String)
     parameters = payload ? payload : params
 
     missing_keys = []

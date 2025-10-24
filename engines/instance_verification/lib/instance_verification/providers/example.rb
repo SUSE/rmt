@@ -23,7 +23,7 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
 
     return '1234_SUSE_SLES' if @product_hash[:identifier].casecmp('sles').zero?
 
-    return '6789_SUSE_SAP' if @product_hash[:identifier].casecmp('sles_sap').zero?
+    '6789_SUSE_SAP' if @product_hash[:identifier].casecmp('sles_sap').zero?
   end
 
   def parse_instance_data
@@ -53,7 +53,8 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
       marketplace_code: iid['marketplaceProductCodes']&.first
     }
     return true if (identifier.casecmp('sles').zero? && instance_billing_info[:billing_product] == SLES_PRODUCT_IDENTIFIER)
-    return true if (identifier.casecmp('sles_sap').zero? && SLES4SAP_PRODUCT_IDENTIFIER.include?(instance_billing_info[:marketplace_code]))
+
+    true if (identifier.casecmp('sles_sap').zero? && SLES4SAP_PRODUCT_IDENTIFIER.include?(instance_billing_info[:marketplace_code]))
   end
 
   def instance_identifier

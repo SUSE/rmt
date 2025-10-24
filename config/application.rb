@@ -23,7 +23,7 @@ Bundler.require(*Rails.groups)
 
 # Engine loading mechanism
 # :nocov:
-if (Rails.env.production? || ENV['RMT_LOAD_ENGINES'])
+if (Rails.env.production? || ENV.fetch('RMT_LOAD_ENGINES', nil))
   Dir.glob("#{__dir__}/../engines/*").select { |i| File.directory?(i) }.each do |dir|
     engine_name = File.basename(dir)
     filename = File.expand_path(File.join(dir, 'lib', "#{engine_name}.rb"))
@@ -53,7 +53,7 @@ module RMT
   class Application < Rails::Application
 
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.0
+    config.load_defaults 7.1
 
     config.eager_load_paths << Rails.root.join('lib')
     config.eager_load_paths << Rails.root.join('app', 'validators')

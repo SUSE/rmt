@@ -37,8 +37,8 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
             allow(plugin_double).to receive(:instance_valid?)
             allow(plugin_double).to receive(:instance_id)
             allow(plugin_double).to receive(:instance_billing_info)
-            FileUtils.rm_rf('registry/cache') if File.exist?('registry/cache')
-            FileUtils.rm_rf('repo/payg/cache') if File.exist?('repo/payg/cache')
+            FileUtils.rm_rf('registry/cache')
+            FileUtils.rm_rf('repo/payg/cache')
             allow(plugin_double).to(
               receive(:instance_valid?)
                 .and_raise(InstanceVerification::Exception, 'Custom plugin error')
@@ -52,8 +52,8 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
           it 'does not update InstanceVerification cache because unexpected exception' do
             allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
             allow(plugin_double).to receive(:instance_identifier)
-            FileUtils.rm_rf('registry/cache') if File.exist?('registry/cache')
-            FileUtils.rm_rf('repo/payg/cache') if File.exist?('repo/payg/cache')
+            FileUtils.rm_rf('registry/cache')
+            FileUtils.rm_rf('repo/payg/cache')
             allow(plugin_double).to receive(:instance_valid?).and_raise('E27drror')
             allow(InstanceVerification).to receive(:verify_instance).and_call_original
             get '/connect/systems/activations', headers: headers

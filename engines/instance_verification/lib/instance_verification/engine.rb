@@ -68,7 +68,7 @@ module InstanceVerification
   def self.remove_entry_from_cache(cache_key, mode)
     cache_path = InstanceVerification.get_cache_path(mode)
     full_path_cache_key = File.join(cache_path, cache_key)
-    File.unlink(full_path_cache_key) if File.exist?(full_path_cache_key)
+    FileUtils.rm_f(full_path_cache_key)
   end
 
   def self.set_cache_active(cache_key, mode, registry = false) # rubocop:disable Style/OptionalBooleanParameter
@@ -287,7 +287,7 @@ module InstanceVerification
           activated_bases = @system.products.where(product_type: 'base')
           activated_bases.each do |base_product|
             base_product_subscription = find_subscription(base_product, logger, request)
-            return true if base_product_subscription && base_product_subscription.products.include?(upgrade_product)
+            return true if base_product_subscription&.products&.include?(upgrade_product)
           end
 
           raise ActionController::TranslatedError.new('Migration target not allowed on this instance type')

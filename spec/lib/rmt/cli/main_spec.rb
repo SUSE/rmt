@@ -78,8 +78,8 @@ RSpec.describe RMT::CLI::Main, :with_fakefs do
           let(:exception_class) { Mysql2::Error }
           let(:error_message) { 'Access denied for user `rmt`@`localhost`' }
           let(:error_output) do
-            'Cannot connect to database server. Ensure its credentials are correctly configured in \'/etc/rmt.conf\'' \
-            " or configure RMT with YaST ('yast2 rmt').\n"
+            'Cannot connect to database server. Ensure its credentials are correctly configured in \'/etc/rmt.conf\' ' \
+            "or configure RMT with YaST ('yast2 rmt').\n"
           end
 
           it 'outputs custom error message' do

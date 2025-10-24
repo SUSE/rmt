@@ -1,23 +1,31 @@
 class AddUniquenessToDownloadedFilesLocalPath < ActiveRecord::Migration[5.2]
+  def sqlite?
+    ActiveRecord::Base.connection.adapter_name == 'SQLite'
+  end
+
   def change
     logger = RMT::Logger.new(STDOUT)
 
     logger.info('Adding index to `downloaded_files.local_path` before querying duplicates...')
     add_index :downloaded_files, :local_path, unique: false
 
-    logger.info('Removing duplicated records on `downloaded_files.local_path`...')
-    ActiveRecord::Base.connection.execute(
-      <<~SQL
-        DELETE df1 FROM downloaded_files AS df1
-            JOIN(
-                SELECT local_path, max(id) AS max_id FROM downloaded_files
-                GROUP BY downloaded_files.local_path
-                HAVING (count(*) > 1)
-            ) AS df2
-            ON df1.local_path = df2.local_path
-        WHERE df1.id != df2.max_id
-      SQL
-    )
+    # This only matters for existing databases. Since SQLite3 support has been
+    # introduced at a much later stage, no databases should be affected by this.
+    unless sqlite?
+      logger.info('Removing duplicated records on `downloaded_files.local_path`...')
+      ActiveRecord::Base.connection.execute(
+        <<~SQL
+          DELETE df1 FROM downloaded_files AS df1
+              JOIN(
+                  SELECT local_path, max(id) AS max_id FROM downloaded_files
+                  GROUP BY downloaded_files.local_path
+                  HAVING (count(*) > 1)
+              ) AS df2
+              ON df1.local_path = df2.local_path
+          WHERE df1.id != df2.max_id
+        SQL
+      )
+    end
 
     # Add unique index to `local_path`
     logger.info('Adding an unique index to `downloaded_file.local_path`...')
