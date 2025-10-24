@@ -77,3 +77,108 @@ RSpec/MessageChain:
 # Count: 107 offenses
 RSpec/SubjectStub:
   Enabled: false
+
+FactoryBot/SyntaxMethods:
+  Enabled: false
+
+FactoryBot/ConsistentParenthesesStyle:
+  Enabled: false
+
+RSpec/IndexedLet:
+  Enabled: false
+
+RSpecRails/HaveHttpStatus:
+  Enabled: false
+
+Rails/HttpStatus:
+  Enabled: false
+
+RSpecRails/InferredSpecType:
+  Enabled: false
+
+Style/RedundantConstantBase:
+  Enabled: false
+
+RSpec/MatchArray:
+  Enabled: false
+
+RSpec/BeNil:
+  Enabled: false
+
+RSpec/ClassCheck:
+  Enabled: false
+
+RSpec/VerifiedDoubleReference:
+  Enabled: false
+
+RSpec/ExampleWording:
+  Enabled: false
+
+RSpec/ReceiveMessages:
+  Enabled: false  
+
+Style/RedundantParentheses:
+  Enabled: false
+
+Style/FileNull:
+  Enabled: false
+
+Rails/StripHeredoc:
+  Enabled: false
+
+Performance/StringIdentifierArgument:
+  Enabled: false
+
+Layout/HeredocIndentation:
+  Enabled: false
+
+FactoryBot/FactoryAssociationWithStrategy:
+  Enabled: false
+
+Rails/DurationArithmetic:
+  Enabled: false
+
+FactoryBot/AssociationStyle:
+  Enabled: false
+
+Style/NumericPredicate:
+  Enabled: false
+
+Style/ReturnNilInPredicateMethodDefinition:
+  Enabled: false
+
+Rails/FindEach:
+  Enabled: false
+
+RSpec/RemoveConst:
+  Enabled: false
+
+RSpec/NoExpectationExample:
+  Enabled: false
+
+Style/RedundantStringEscape:
+  Enabled: false
+
+Style/RedundantFormat:
+  Enabled: false
+
+RSpec/SpecFilePathFormat:
+  Enabled: false
+
+Rails/RedundantActiveRecordAllMethod:
+  Enabled: false
+
+Rails/ThreeStateBooleanColumn:
+  Enabled: false
+
+Rails/SelectMap:
+  Enabled: false
+
+Rails/RootPathnameMethods:
+  Enabled: false
+
+Performance/MapMethodChain:
+  Enabled: false
+
+Style/SafeNavigationChainLength:
+  Enabled: false

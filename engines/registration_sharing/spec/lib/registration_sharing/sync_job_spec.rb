@@ -15,7 +15,7 @@ describe RegistrationSharing::SyncJob do
     File.write(system_file, 'test')
   end
 
-  after { FileUtils.remove_entry_secure(data_dir) if File.exist?(data_dir) }
+  after { FileUtils.rm_rf(data_dir) }
 
   describe '#sync_registrations' do
     let(:client_double) { instance_double(RegistrationSharing::Client) }

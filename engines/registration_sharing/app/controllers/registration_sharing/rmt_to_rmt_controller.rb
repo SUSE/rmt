@@ -39,7 +39,7 @@ module RegistrationSharing
 
     def destroy
       system = System.find_by(login: params[:login])
-      system.destroy if system
+      system&.destroy
     end
 
     protected

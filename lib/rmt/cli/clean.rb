@@ -186,7 +186,7 @@ class RMT::CLI::Clean < RMT::CLI::Base
           _("Cleaned '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}.") % {
             file_name: file.path.gsub(%r{^#{quoted_repo_base_dir}/?}, ''),
             file_size: ActiveSupport::NumberHelper.number_to_human_size(file.file_size),
-            hardlink: file.hardlink == true ? (', ' + _('hardlink')) : '',
+            hardlink: (file.hardlink == true) ? (', ' + _('hardlink')) : '',
             db_entries: db_entries_text(file.db_entries_count)
           }
         )

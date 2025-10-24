@@ -8,7 +8,7 @@ class MoveHwInfoToSystemsTable < ActiveRecord::Migration[6.1]
       change_column :systems, :instance_data, :text
 
       unless sqlite?
-      execute "UPDATE systems AS s INNER JOIN hw_infos hw ON s.id=hw.system_id \
+        execute "UPDATE systems AS s INNER JOIN hw_infos hw ON s.id=hw.system_id \
                 SET s.system_information = json_object(                        \
                 'cpus', hw.cpus,                                               \
                 'sockets', hw.sockets,                                         \

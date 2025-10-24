@@ -31,7 +31,7 @@ class RMT::Mirror::FileReference
   end
 
   def local_path
-    File.join(@base_dir, @relative_path.gsub(/\.\./, '__'))
+    File.join(@base_dir, @relative_path.gsub('..', '__'))
   end
 
   def sanitise_relative_path

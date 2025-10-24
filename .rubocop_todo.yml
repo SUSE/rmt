@@ -322,9 +322,8 @@ RSpec/ExpectInHook:
 # Configuration parameters: Include, EnforcedStyle.
 # Include: **/*_spec.rb, **/spec/**/*, spec/factories.rb, spec/factories/**/*.rb, features/support/factories/**/*.rb
 # SupportedStyles: create_list, n_times
-RSpec/FactoryBot/CreateList:
-  Exclude:
-    - 'spec/factories/products.rb'
+FactoryBot/CreateList:
+  Enabled: false
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -400,19 +399,6 @@ RSpec/MultipleExpectations:
 RSpec/MultipleMemoizedHelpers:
   Max: 21
 
-# Offense count: 19
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: numeric, symbolic
-RSpec/Rails/HttpStatus:
-  Exclude:
-    - 'engines/instance_verification/spec/requests/api/connect/v3/systems/products_controller_spec.rb'
-    - 'engines/registration_sharing/spec/requests/registration_sharing/rmt_to_rmt_controller_spec.rb'
-    - 'engines/registration_sharing/spec/requests/registration_sharing/smt_to_rmt_controller_spec.rb'
-    - 'engines/zypper_auth/spec/requests/services_controller_spec.rb'
-    - 'engines/zypper_auth/spec/requests/strict_authentication/authentication_controller_spec.rb'
-    - 'spec/requests/services_controller_spec.rb'
-
 # Offense count: 9
 # Cop supports --auto-correct.
 RSpec/ReceiveCounts:
@@ -475,12 +461,17 @@ Rails/HasManyOrHasOneDependent:
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
 # SupportedStyles: numeric, symbolic
-Rails/HttpStatus:
+RSpecRails/HttpStatus:
   Exclude:
     - 'app/controllers/api/health_controller.rb'
     - 'app/controllers/services_controller.rb'
     - 'engines/zypper_auth/lib/zypper_auth/engine.rb'
-
+    - 'engines/instance_verification/spec/requests/api/connect/v3/systems/products_controller_spec.rb'
+    - 'engines/registration_sharing/spec/requests/registration_sharing/rmt_to_rmt_controller_spec.rb'
+    - 'engines/registration_sharing/spec/requests/registration_sharing/smt_to_rmt_controller_spec.rb'
+    - 'engines/zypper_auth/spec/requests/services_controller_spec.rb'
+    - 'engines/zypper_auth/spec/requests/strict_authentication/authentication_controller_spec.rb'
+    - 'spec/requests/services_controller_spec.rb'
 # Offense count: 2
 # Configuration parameters: Include.
 # Include: app/models/**/*.rb
@@ -651,4 +642,7 @@ Style/SoleNestedConditional:
 # Cop supports --auto-correct.
 # Configuration parameters: Mode.
 Style/StringConcatenation:
+  Enabled: false
+
+RSpec/BeEq:
   Enabled: false

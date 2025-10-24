@@ -124,7 +124,7 @@ class MigrationEngine
           arch: base.arch,
           version: base.version
         )
-        migration.concat([python2_module]) if python2_module.present?
+        migration.push(python2_module) if python2_module.present?
       end
       migration
     end

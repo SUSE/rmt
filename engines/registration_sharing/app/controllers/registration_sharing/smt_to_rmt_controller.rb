@@ -95,7 +95,7 @@ module RegistrationSharing
       raise 'System GUID not found' unless guid
 
       system = System.find_by(login: guid.text)
-      system.destroy if system
+      system&.destroy
     end
   end
 end

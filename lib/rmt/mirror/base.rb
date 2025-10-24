@@ -84,7 +84,7 @@ class RMT::Mirror::Base
   end
 
   def create_repository_path
-    FileUtils.mkpath(repository_path) unless Dir.exist?(repository_path)
+    FileUtils.mkpath(repository_path)
   rescue StandardError => e
     raise RMT::Mirror::Exception.new(
       _('Could not create local directory %{dir} with error: %{error}') % { dir: repository_path, error: e.message }
@@ -156,7 +156,7 @@ class RMT::Mirror::Base
   end
 
   def move_files(glob:, destination:, clean_before: false)
-    FileUtils.mkpath(destination) unless Dir.exist?(destination)
+    FileUtils.mkpath(destination)
     FileUtils.rm_rf(Dir.glob(File.join(destination, '*'))) if clean_before
     FileUtils.mv(Dir.glob(glob), destination, force: true)
   rescue StandardError => e

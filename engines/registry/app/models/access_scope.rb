@@ -59,7 +59,7 @@ class AccessScope
 
   def authorized_actions(client, remote_ip)
     if @namespace.nil?
-      @image == 'catalog' ? @actions : AUTHORIZED_ACTION
+      (@image == 'catalog') ? @actions : AUTHORIZED_ACTION
     else
       @allowed_paths = []
       allowed_paths(client.systems.first, remote_ip) if client.present?
@@ -88,7 +88,7 @@ class AccessScope
     )
     active_product_classes = system.activations.includes(:product).pluck(:product_class)
     allowed_product_classes = (active_product_classes & access_policies_yml.keys)
-    if system && system.hybrid?
+    if system&.hybrid?
       # if the system is hybrid => check if the non free product subscription is still valid for accessing images
       allowed_non_free_products = Product.where(product_class: allowed_product_classes).where(product_type: 'extension').where(free: false)
       unless allowed_non_free_products.empty?
