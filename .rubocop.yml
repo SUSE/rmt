@@ -9,7 +9,7 @@ inherit_mode:
     - Exclude
 
 AllCops:
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 3.4
   SuggestExtensions: false
   NewCops: enable
   Exclude:
@@ -23,8 +23,8 @@ AllCops:
     - package/**/*
 
 
-Style/TrailingUnderscoreVariable:
-  Enabled: false
+Naming/PredicatePrefix:
+  Enabled: true
 
 RSpec/ExampleLength:
   Exclude:

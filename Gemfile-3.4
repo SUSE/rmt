@@ -1,0 +1,13 @@
+# This is the main Gemfile that points to the appropriate version-specific Gemfile
+# based on the Ruby version
+
+ruby_version = RUBY_VERSION
+
+case ruby_version
+when /^3\.4/
+  eval_gemfile 'Gemfile-3.4.1'
+when /^2\.5/
+  eval_gemfile 'Gemfile-2.5.9'
+else
+  raise "Unsupported Ruby version: #{ruby_version}"
+end
