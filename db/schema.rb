@@ -93,7 +93,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_19_155325) do
   end
 
   create_table "repositories", force: :cascade do |t|
-    t.bigint "scc_id", unsigned: true
+    t.bigint "scc_id"
     t.string "name", null: false
     t.string "description"
     t.boolean "enabled", default: false, null: false
@@ -168,7 +168,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_19_155325) do
     t.bigint "scc_system_id"
     t.boolean "proxy_byos", default: false
     t.string "system_token"
-    t.text "system_information", size: :long, collation: "utf8mb4_bin"
+    t.text "system_information"
     t.text "instance_data"
     t.integer "proxy_byos_mode", default: 0
     t.string "pubcloud_reg_code"
