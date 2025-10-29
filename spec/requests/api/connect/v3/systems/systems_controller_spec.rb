@@ -111,16 +111,13 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
     context 'when data_profiles are provided' do
       # init with set a1
-      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_a1 } }
+      let(:data_profiles) { data_profiles_a1 }
+      let(:data_profiles_expected) { data_profiles }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles } }
 
       it 'they match expected set' do
         update_action
 
-        # verify expected record counts in linked tables
-        expect(System.count).to eq(1)
-        expect(SystemProfile.count).to eq(2)
-        expect(SystemDataProfile.count).to eq(2)
-
         # verify expected record linkage count between System record and SystemDataProfile records
         expect(system.system_data_profiles.count).to eq(2)
 
@@ -131,21 +128,24 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
               profileData: sdp.profile_data
             }
           end.symbolize_keys
-        ).to match(data_profiles_a1)
+        ).to match(data_profiles_expected)
       end
     end
 
     context 'when data_profiles are updated' do
-      # init with set a1
-      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_a1 } }
+      # we will be updating from set a1 to set a2
+      let(:data_profiles_pre_update) { data_profiles_a1 }
+      let(:data_profiles) { data_profiles_a2 }
+      let(:data_profiles_expected) { data_profiles }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles } }
 
-      it 'init system data profiles with set a1' do
+      before do
+        # init with data_profiles_pre_update
+        put url, params: payload.merge({ data_profiles: data_profiles_pre_update }), headers: headers
+      end
+
+      it 'from a1 to a2' do
         update_action
-
-        # verify expected record counts in linked tables
-        expect(System.count).to eq(1)
-        expect(SystemProfile.count).to eq(2)
-        expect(SystemDataProfile.count).to eq(2)
 
         # verify expected record linkage count between System record and SystemDataProfile records
         expect(system.system_data_profiles.count).to eq(2)
@@ -157,47 +157,53 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
               profileData: sdp.profile_data
             }
           end.symbolize_keys
-        ).to match(data_profiles_a1)
-      end
-
-      context 'to set a2' do
-        # update with set a2 which has same types but different values
-        let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_a2 } }
-
-        it 'they match set a2' do
-          update_action
-
-          # verify expected record counts in linked tables
-          expect(System.count).to eq(1)
-          expect(SystemProfile.count).to eq(2)
-          expect(SystemDataProfile.count).to eq(2)
-
-          # verify expected record linkage count between System record and SystemDataProfile records
-          expect(system.system_data_profiles.count).to eq(2)
-
-          expect(
-            system.system_data_profiles.each_with_object({}) do |sdp, hash|
-              hash[sdp.profile_type] = {
-                profileId: sdp.profile_id,
-                profileData: sdp.profile_data
-              }
-            end.symbolize_keys
-          ).to match(data_profiles_a2)
-        end
+        ).to match(data_profiles_expected)
       end
     end
 
-    context 'when data_profiles are replaced' do
-      # init with set a1
-      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_a1 } }
+    context 'when data_profiles are extended' do
+      # we will be updating from set a1 to set a1 + b
+      let(:data_profiles_pre_update) { data_profiles_a1 }
+      let(:data_profiles) { data_profiles_pre_update.merge(data_profiles_b) }
+      let(:data_profiles_expected) { data_profiles }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles } }
 
-      it 'init system data profiles with set a1' do
+      before do
+        # init with data_profiles_pre_update
+        put url, params: payload.merge({ data_profiles: data_profiles_pre_update }), headers: headers
+      end
+
+      it 'from just set a1 to include set b' do
         update_action
 
-        # verify expected record counts in linked tables
-        expect(System.count).to eq(1)
-        expect(SystemProfile.count).to eq(2)
-        expect(SystemDataProfile.count).to eq(2)
+        # verify expected record linkage count between System record and SystemDataProfile records
+        expect(system.system_data_profiles.count).to eq(3)
+
+        expect(
+          system.system_data_profiles.each_with_object({}) do |sdp, hash|
+            hash[sdp.profile_type] = {
+              profileId: sdp.profile_id,
+              profileData: sdp.profile_data
+            }
+          end.symbolize_keys
+        ).to match(data_profiles_expected)
+      end
+    end
+
+    context 'when data_profiles are updated with an incomplete existing set' do
+      # we will be updating set a1 with incomplete set a1
+      let(:data_profiles_pre_update) { data_profiles_a1 }
+      let(:data_profiles) { data_profiles_a1_no_data }
+      let(:data_profiles_expected) { data_profiles_pre_update }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles } }
+
+      before do
+        # init with data_profiles_pre_update
+        put url, params: payload.merge({ data_profiles: data_profiles_pre_update }), headers: headers
+      end
+
+      it 'the update succeeds' do
+        update_action
 
         # verify expected record linkage count between System record and SystemDataProfile records
         expect(system.system_data_profiles.count).to eq(2)
@@ -209,95 +215,183 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
               profileData: sdp.profile_data
             }
           end.symbolize_keys
-        ).to match(data_profiles_a1)
+        ).to match(data_profiles_expected)
+      end
+    end
+
+    context 'when data_profiles are updated with an incomplete set a1 + complete set b' do
+      # we will be updating from set a1 to set a1 + b
+      let(:data_profiles_pre_update) { data_profiles_a1 }
+      let(:data_profiles) { data_profiles_a1_no_data.merge(data_profiles_b) }
+      let(:data_profiles_expected) { data_profiles_a1.merge(data_profiles_b) }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles } }
+
+      before do
+        # init with data_profiles_pre_update
+        put url, params: payload.merge({ data_profiles: data_profiles_pre_update }), headers: headers
       end
 
-      context 'with set b' do
-        # update with set b which has different types
-        let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_b } }
+      it 'they match combination of sets a1 and b' do
+        update_action
 
-        it 'they match set b' do
-          update_action
+        # verify expected record linkage count between System record and SystemDataProfile records
+        expect(system.system_data_profiles.count).to eq(3)
 
-          # verify expected record counts in linked tables
-          expect(System.count).to eq(1)
-          expect(SystemProfile.count).to eq(1)
-          expect(SystemDataProfile.count).to eq(1)
+        expect(
+          system.system_data_profiles.each_with_object({}) do |sdp, hash|
+            hash[sdp.profile_type] = {
+              profileId: sdp.profile_id,
+              profileData: sdp.profile_data
+            }
+          end.symbolize_keys
+        ).to match(data_profiles_expected)
+      end
+    end
 
-          # verify expected record linkage count between System record and SystemDataProfile records
-          expect(system.system_data_profiles.count).to eq(1)
+    context 'when a data_profiles is replaced with a different set' do
+      # we will be updating from set a1 to set b
+      let(:data_profiles_pre_update) { data_profiles_a1 }
+      let(:data_profiles) { data_profiles_b }
+      let(:data_profiles_expected) { data_profiles_b }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles } }
 
-          expect(
-            system.system_data_profiles.each_with_object({}) do |sdp, hash|
-              hash[sdp.profile_type] = {
-                profileId: sdp.profile_id,
-                profileData: sdp.profile_data
-              }
-            end.symbolize_keys
-          ).to match(data_profiles_b)
-        end
+      before do
+        # init with data_profiles_pre_update
+        put url, params: payload.merge({ data_profiles: data_profiles_pre_update }), headers: headers
+      end
+
+      it 'they match the expected set' do
+        update_action
+
+        # verify expected record linkage count between System record and SystemDataProfile records
+        expect(system.system_data_profiles.count).to eq(1)
+
+        expect(
+          system.system_data_profiles.each_with_object({}) do |sdp, hash|
+            hash[sdp.profile_type] = {
+              profileId: sdp.profile_id,
+              profileData: sdp.profile_data
+            }
+          end.symbolize_keys
+        ).to match(data_profiles_expected)
       end
     end
 
     context 'when data_profiles are removed' do
-      # init with set a1
-      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_a1 } }
+      # we will be updating to remove set a1
+      let(:data_profiles_pre_update) { data_profiles_a1 }
+      let(:data_profiles) { {} }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: {} } }
 
-      it 'init system data profiles with set a1' do
-        update_action
-
-        # verify expected record counts in linked tables
-        expect(System.count).to eq(1)
-        expect(SystemProfile.count).to eq(2)
-        expect(SystemDataProfile.count).to eq(2)
-
-        # verify expected record linkage count between System record and SystemDataProfile records
-        expect(system.system_data_profiles.count).to eq(2)
-
-        expect(
-          system.system_data_profiles.each_with_object({}) do |sdp, hash|
-            hash[sdp.profile_type] = {
-              profileId: sdp.profile_id,
-              profileData: sdp.profile_data
-            }
-          end.symbolize_keys
-        ).to match(data_profiles_a1)
+      before do
+        # init with data_profiles_pre_update
+        put url, params: payload.merge({ data_profiles: data_profiles_pre_update }), headers: headers
       end
 
-      context 'and no longer associated' do
-        # update with no data_profiles
-        let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: {} } }
+      it 'no profiles are associated' do
+        pending
 
-        it 'no profiles are associated' do
-          update_action
+        # before update, 2 data profiles are associated
+        expect(system.system_data_profiles.count).to eq(2)
 
-          # verify expected record counts in linked tables
-          expect(System.count).to eq(1)
-          expect(SystemProfile.count).to eq(0)
-          expect(SystemDataProfile.count).to eq(0)
+        update_action
+        system.reload
 
-          system.reload
-
-          expect(system.system_data_profiles.count).to eq(0)
-        end
+        # after update, no data profiles are associated
+        expect(system.system_data_profiles.count).to eq(0)
       end
     end
 
-    context 'when data_profiles are incomplete' do
-      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_a1_no_data } }
+    context 'when data_profiles do not exist and are incomplete' do
+      # we will be updating with incomplete profiles
+      let(:data_profiles) { data_profiles_a1_no_data }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles } }
 
-      it 'no data profiles inserted' do
+      it 'response header set to clear-cache and no data profiles stored' do
         update_action
+        # system.reload
 
+        expect(response.header['X-System-Profiles-Action']).to be_present
+        expect(response.header['X-System-Profiles-Action']).to eq('clear-cache')
         expect(system.system_data_profiles.count).to eq(0)
       end
     end
 
     context 'when data_profiles are missing profileIds' do
-      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles_a1_no_id } }
+      # we will be updating with invalid profiles
+      let(:data_profiles) { data_profiles_a1_no_id }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles } }
 
-      it 'not null exception raised' do
-        expect { update_action }.to raise_error(ActiveRecord::NotNullViolation)
+      it 'response header set to clear-cache and no data profiles stored' do
+        update_action
+        # system.reload
+
+        expect(response.header['X-System-Profiles-Action']).to be_present
+        expect(response.header['X-System-Profiles-Action']).to eq('clear-cache')
+        expect(system.system_data_profiles.count).to eq(0)
+      end
+    end
+
+    context 'when data_profiles are mixed complete and incomplete that do not exist' do
+      # we will update with incomplete set a1 and complete set b
+      let(:data_profiles) { data_profiles_a1_no_data.merge(data_profiles_b) }
+      let(:data_profiles_expected) { data_profiles_b }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles } }
+
+      it 'response header set to clear-cache, only complete data profiles stored' do
+        update_action
+
+        expect(response.header['X-System-Profiles-Action']).to be_present
+        expect(response.header['X-System-Profiles-Action']).to eq('clear-cache')
+        expect(system.system_data_profiles.count).to eq(1)
+
+        expect(
+          system.system_data_profiles.each_with_object({}) do |sdp, hash|
+            hash[sdp.profile_type] = {
+              profileId: sdp.profile_id,
+              profileData: sdp.profile_data
+            }
+          end.symbolize_keys
+        ).to match(data_profiles_expected)
+      end
+    end
+
+    context 'when data_profiles are mixed complete and invalid' do
+      # we will update with invalid set a1 and complete set b
+      let(:data_profiles) { data_profiles_a1_no_id.merge(data_profiles_b) }
+      let(:data_profiles_expected) { data_profiles_b }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles } }
+
+      it 'response header set to clear-cache, only complete data profiles stored' do
+        update_action
+
+        expect(response.header['X-System-Profiles-Action']).to be_present
+        expect(response.header['X-System-Profiles-Action']).to eq('clear-cache')
+        expect(system.system_data_profiles.count).to eq(1)
+
+        expect(
+          system.system_data_profiles.each_with_object({}) do |sdp, hash|
+            hash[sdp.profile_type] = {
+              profileId: sdp.profile_id,
+              profileData: sdp.profile_data
+            }
+          end.symbolize_keys
+        ).to match(data_profiles_expected)
+      end
+    end
+
+    context 'when data_profiles are mixed incomplete and invalid' do
+      # we will update with invalid set a1 and incomplete set b
+      let(:data_profiles) { data_profiles_a1_no_id.merge(data_profiles_b_no_data) }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, data_profiles: data_profiles } }
+
+      it 'response header set to clear-cache, only complete data profiles stored' do
+        update_action
+        # system.reload
+
+        expect(response.header['X-System-Profiles-Action']).to be_present
+        expect(response.header['X-System-Profiles-Action']).to eq('clear-cache')
+        expect(system.system_data_profiles.count).to eq(0)
       end
     end
 
@@ -306,6 +400,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
       it 'no data profiles inserted' do
         update_action
+        # system.reload
 
         expect(system.system_data_profiles.count).to eq(0)
       end

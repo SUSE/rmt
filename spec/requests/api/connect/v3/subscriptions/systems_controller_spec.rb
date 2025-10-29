@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
   describe '#announce' do
     include_context 'version header', 3
+    include_context 'data profile sets'
     let(:url) { connect_systems_url(format: :json) }
     let(:headers) { { 'Content-Type' => 'application/json; charset=utf-8' }.merge(version_header) }
 
@@ -76,6 +77,38 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
         system = System.find_by(login: json_response[:login])
 
         expect(system.system_information).to eq(hwinfo_parameter.to_json)
+      end
+    end
+
+    context 'with data_profile parameters' do
+      it 'stores the supplied data_profiles via the linked tables' do
+        post url, params: { data_profiles: data_profiles_a1 }.to_json, headers: headers
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:created)
+
+        system = System.find_by(login: json_response[:login])
+
+        expect(
+          system.system_data_profiles.each_with_object({}) do |sdp, hash|
+            hash[sdp.profile_type] = {
+              profileId: sdp.profile_id,
+              profileData: sdp.profile_data
+            }
+          end.symbolize_keys
+        ).to match(data_profiles_a1)
+      end
+
+      it 'handles incomplete data_profiles appropriately' do
+        post url, params: { data_profiles: data_profiles_a1_no_data }.to_json, headers: headers
+
+        expect(response).to be_successful
+        expect(response.headers['X-System-Profiles-Action']).to be_present
+        expect(response.headers['X-System-Profiles-Action']).to eq('clear-cache')
+
+        system = System.find_by(login: json_response[:login])
+
+        expect(system.system_data_profiles.count).to eq(0)
       end
     end
   end

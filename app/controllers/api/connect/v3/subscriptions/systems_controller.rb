@@ -1,10 +1,36 @@
 class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseController
 
   def announce_system
-    @system = System.create!(
+
+    create_params = {
       hostname: params[:hostname],
-      system_information: info_params(key: :hwinfo)[:hwinfo].to_json,
-      data_profiles: info_params(key: :data_profiles)[:data_profiles].to_h
+      system_information: info_params(key: :hwinfo)[:hwinfo].to_json
+    }
+
+    # check if any data profiles have been provided
+    data_profiles = info_params(key: :data_profiles)[:data_profiles]
+    if params[:data_profiles].present?
+      complete_profiles, incomplete_profiles, invalid_profiles = System.filter_data_profiles(data_profiles.to_h)
+
+      # if any of the provided profiles are incomplete or invalid, then
+      # set response header indicating that the cache needs to be cleared
+      # TODO: Should we have different header values for incomplete vs invalid profiles?
+      if incomplete_profiles.any? || invalid_profiles.any?
+        response.headers['X-System-Profiles-Action'] = 'clear-cache'
+      end
+
+      # only include a data_profiles entry in the create params if
+      # there are valid complete profiles provided.
+      if complete_profiles.any?
+        create_params[:data_profiles] = complete_profiles
+      end
+    end
+
+    @system = System.create!(
+      # hostname: params[:hostname],
+      # system_information: info_params(key: :hwinfo)[:hwinfo].to_json,
+      # data_profiles: complete_profiles
+      **create_params
     )
 
     logger.info("System '#{@system.hostname}' announced")
