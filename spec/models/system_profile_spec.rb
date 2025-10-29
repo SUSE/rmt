@@ -32,8 +32,14 @@ RSpec.describe SystemProfile, type: :model do
         expect { system_profile_a.destroy }.not_to change(SystemDataProfile, :count)
       end
 
-      it 'only destroys the system profile link to the shared data profile' do
+      it 'only destroys the specific system profile link to the shared data profile' do
         expect { system_profile_a.destroy }.to change(described_class, :count).by(-1)
+      end
+
+      it 'does not destroy the other system profile link to the shared data profile' do
+        system_profile_a.destroy
+
+        expect(described_class.find(system_profile_b.id)).to eq(system_profile_b)
       end
     end
   end

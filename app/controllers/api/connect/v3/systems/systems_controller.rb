@@ -20,8 +20,28 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
 
     @system.hostname = params[:hostname]
 
+    # if a set of data profiles has been provided, we should process it,
+    # even if empty, to allow an empty hash to indicate the removal of
+    # existing data profiles associations for this system
     if params.key? :data_profiles
-      @system.update(data_profiles: info_params(key: :data_profiles)[:data_profiles].to_h)
+      data_profiles = info_params(key: :data_profiles)[:data_profiles]
+      complete_profiles, incomplete_profiles, invalid_profiles = System.filter_data_profiles(data_profiles.to_h)
+
+      # need to check if any of the imcomplete profiles don't exist
+      existing_incomplete_profiles = System.identify_existing_data_profiles(incomplete_profiles)
+      if existing_incomplete_profiles.count != incomplete_profiles.count
+        response.headers['X-System-Profiles-Action'] = 'clear-cache'
+      end
+
+      # TODO: Should we have different header values for incomplete vs invalid profiles?
+      if invalid_profiles.any?
+        response.headers['X-System-Profiles-Action'] = 'clear-cache'
+      end
+
+      # combine the complete and existing incomplete profile
+      update_profiles = complete_profiles.merge(existing_incomplete_profiles)
+
+      @system.update(data_profiles: update_profiles)
     end
 
     # Since the payload is handled by rails all values are converted to string

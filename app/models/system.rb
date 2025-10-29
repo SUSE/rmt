@@ -80,38 +80,51 @@ class System < ApplicationRecord
     update!(instance_data: instance_data)
   end
 
+  def self.filter_data_profiles(profiles)
+    # split profiles into those that validly contain a profileId field
+    # and those that don't
+    valid_profiles, invalid_profiles = profiles.partition do |_dp_type, dp_info|
+      dp_info.key?(:profileId)
+    end
+
+    # further filter the valid profiles into those that are complete,
+    # have a profileData field, and those that don't
+    complete_profiles, incomplete_profiles = valid_profiles.partition do |_dp_type, dp_info|
+      dp_info.key?(:profileData)
+    end
+
+    [complete_profiles.to_h, incomplete_profiles.to_h, invalid_profiles.to_h]
+  end
+
+  def self.identify_existing_data_profiles(profiles)
+    return {} if profiles.empty?
+
+    # identify complete profiles that exist
+    found_sdps = SystemDataProfile.where_unique_keys(
+      profiles.map { |sdp_type, sdp_info| [sdp_type, sdp_info[:profileId]] }
+    )
+
+    # convert the found entries to a hash with symbolised keys
+    found_sdps.each_with_object({}) do |sdp, hash|
+      hash[sdp.profile_type] = {
+        profileId: sdp.profile_id,
+        profileData: sdp.profile_data
+      }
+    end.symbolize_keys
+  end
+
   def data_profiles=(profiles)
     # Even if profiles is empty we want to process it to allow any
     # existing data profile associations to be removed
 
-    complete_profiles, incomplete_profiles = profiles.partition do |_, sdp_info|
-      sdp_info.key?(:profileData)
-    end
-
-    # permitted number of retries
+    # permitted number of retries for upsert attempts
     remaining_retries = 3
 
     begin
-      # create/update any provided complete profiles as part of a
-      # single upsert_all() request to avoid deadlock.
-      unless complete_profiles.empty?
-        create_profiles_if_needed(complete_profiles, Time.current)
-      end
-
-      # verify that all incomplete profiles already exist
-      unless incomplete_profiles.empty?
-        logger.debug("FMCC NEEDS TRANS check for existence of incomplete profiles #{incomplete_profiles}")
-        found_sdps = SystemDataProfile.where_unique_keys(
-          incomplete_profiles.map { |sdp_type, sdp_info| [sdp_type, sdp_info[:profileId]] }
-        )
-        if found_sdps.count != incomplete_profiles.length
-          # TODO: handle this better.
-          # Should
-          #   - ensure request completes with HTTP Resent Content (205) status
-          #   - continue processing for valid profiles
-          errors.add(:base, 'FMCC NEEDS TRANS missing data for one or more unrecognised profiles')
-          return
-        end
+      # create any provided profiles as part of a single upsert_all()
+      # request to avoid deadlock.
+      unless profiles.empty?
+        create_profiles_if_needed(profiles, Time.current)
       end
 
       # retrieve profile entries matching all provided profiles for this system

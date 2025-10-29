@@ -1,5 +1,5 @@
 shared_context 'data profile sets' do
-  # data_profile_a1
+  # data profiles set a1 variants
   let(:data_profiles_a1) do
     { mod: { profileId: 'mod_a1_id', profileData: 'mod_a1_data' },
       pci: { profileId: 'pci_a1_id', profileData: 'pci_a1_data' } }
@@ -15,7 +15,7 @@ shared_context 'data profile sets' do
     end
   end
 
-  # data_profile_a2
+  # data profiles set a2 variants
   let(:data_profiles_a2) do
     { mod: { profileId: 'mod_a2_id', profileData: 'mod_a2_data' },
       pci: { profileId: 'pci_a2_id', profileData: 'pci_a2_data' } }
@@ -26,7 +26,7 @@ shared_context 'data profile sets' do
     end
   end
 
-  # data_profile_b
+  # data profiles set b variants
   let(:data_profiles_b) do
     { pkg: { profileId: 'pkg_id', profileData: 'pkg_data' } }
   end

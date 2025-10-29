@@ -86,7 +86,7 @@ build-tarball: clean man
 	tar cfvj package/obs/$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)/
 	rm -rf $(NAME)-$(VERSION)/
 
-database-up:
+database-up: remove_test_config
 	 docker compose up db -d
 
 build: Dockerfile Gemfile public_repo
@@ -105,3 +105,51 @@ public_repo:
 	@echo ensure public/repo exists
 	@mkdir -p public/repo
 	@chmod -f 0777 public/repo || true
+
+.PHONY: lint rubocop
+lint rubocop:
+	 docker compose run --rm -ti testrmt bundle exec rubocop -D
+
+RMT_TEST_CFG = config/rmt.local.yml
+RMT_TEST_DB_HOST = testdb
+RMT_TEST_DB_PORT = 3306
+RMT_TEST_DB_NAME = rmt_test
+
+.PHONY: create_test_config mysql2_db_config sqlite3_db_config test_config_exists remove_test_config
+create_test_config:
+	 ruby -e "require 'yaml'; puts({'database_test'=>{'host' => '$(RMT_TEST_DB_HOST)', 'port' => $(RMT_TEST_DB_PORT), 'username'=>'rmt','password'=>'rmt','database'=>'$(RMT_TEST_DB_NAME)','adapter'=>'mysql2','encoding'=>'utf8','timeout'=>5000,'pool'=>5}}.to_yaml)" > $(RMT_TEST_CFG)
+
+mysql2_db_config: create_test_config
+	 sed -i -e 's/adapter: .*/adapter: mysql2/' $(RMT_TEST_CFG)
+
+sqlite3_db_config: create_test_config
+	 sed -i -e 's/adapter: .*/adapter: sqlite3/' $(RMT_TEST_CFG)
+
+test_config_exists:
+	 if ! [ -e $(RMT_TEST_CFG) ]; then \
+	   echo "Create the testing config using 'make create_test_config'"; \
+		 exit 1; \
+	 fi
+
+remove_test_config:
+	 rm -f $(RMT_TEST_CFG)
+
+.PHONY: rails_db_setup mysql2_db_setup sqlite3_db_setup
+rails_db_setup:
+	 docker compose run --rm -ti testrmt bundle exec rails db:drop db:create db:migrate RAILS_ENV=test
+
+mysql2_db_setup: mysql2_db_config rails_db_setup
+
+#sqlite3_db_setup: sqlite3_db_config rails_db_setup
+sqlite3_db_setup: sqlite3_db_config
+
+.PHONY: rake_test_core rake_test_engines
+rake_test_core rake_test_engines: test_config_exists
+	 docker compose run --rm -ti testrmt bundle exec rake test:$(subst rake_test_,,$@)
+
+.PHONY: mysql2_tests sqlite3_tests pubcloud_tests
+mysql2_tests: mysql2_db_setup rake_test_core remove_test_config
+
+sqlite3_tests: sqlite3_db_setup rake_test_core remove_test_config
+
+pubcloud_tests: mysql2_db_setup rake_test_core remove_test_config
