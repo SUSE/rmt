@@ -601,7 +601,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
             allow(plugin_double).to receive(:add_on).and_return(nil)
             allow_any_instance_of(described_class).to receive(:find_subscription).and_return(fake_subscription)
-            allow(fake_subscription).to receive(:product_classes).and_return([{product_class: 'foo'}])
+            allow(fake_subscription).to receive(:product_classes).and_return([{ product_class: 'foo' }])
             # stub the fake announcement call PAYG has to do to SCC
             # to create the system before activate product (and skip validation)
             stub_request(:post, 'https://scc.suse.com/connect/subscriptions/systems')
