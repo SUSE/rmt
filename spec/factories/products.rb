@@ -106,6 +106,23 @@ FactoryBot.define do
       friendly_version { '15 SP6' }
     end
 
+    trait :product_live_patch do
+      identifier { 'SLE-LP' }
+      name { 'SUSE Linux Enterprise Live Patching' }
+      description { 'Liva Patcha offers a comprehensive suite of products...' }
+      shortname { 'SLES-LP' }
+      former_identifier { 'SLE-LP' }
+      product_type { :extension }
+      product_class { 'SLE-LP' }
+      release_type { nil }
+      release_stage { 'released' }
+      version { '15.3' } # must match SLES product version
+      arch { 'x86_64' }  # must match SLES product arch
+      free { false }
+      cpe { 'cpe:/o:suse:sle_live_paching:15:sp3' }
+      friendly_version { 'Live Patching' }
+    end
+
     trait :extension do
       product_type { 'extension' }
     end

@@ -562,6 +562,62 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             expect(response.body).to eq(serialized_service_json)
           end
         end
+
+        context 'when the extension is Live-Patching for SLES' do
+          let(:payload_no_token) do
+            {
+              identifier: product.identifier,
+              version: product.version,
+              arch: product.arch,
+              instance_data: 'dummy_instance_data',
+              proxy_byos_mode: system.proxy_byos_mode,
+              hwinfo:
+              {
+                hostname: 'test',
+                cpus: '1',
+                sockets: '1',
+                hypervisor: 'Xen',
+                arch: 'x86_64',
+                uuid: 'ec235f7d-b435-e27d-86c6-c8fef3180a01',
+                cloud_provider: 'amazon'
+              }
+            }
+          end
+
+          let(:base_product) { FactoryBot.create(:product, :product_sles, :with_mirrored_repositories) }
+          let(:product) do
+            FactoryBot.create(
+              :product, :product_live_patch, :with_mirrored_repositories, base_products: [base_product]
+              )
+          end
+          let(:product_classes) { [base_product.product_class] }
+          let(:fake_subscription) { instance_double(Subscription, id: 1, products: [base_product]) }
+          let(:fake_subscription_prod_class) { FactoryBot.create(:subscription_product_class) }
+
+          before do
+            allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+            allow(plugin_double).to receive(:instance_identifier).and_return('foo')
+            allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
+            allow(plugin_double).to receive(:allowed_extension?).and_return(true)
+            allow(plugin_double).to receive(:add_on).and_return(nil)
+            allow_any_instance_of(described_class).to receive(:find_subscription).and_return(fake_subscription)
+            allow(fake_subscription).to receive(:product_classes).and_return([{ product_class: 'foo' }])
+            # stub the fake announcement call PAYG has to do to SCC
+            # to create the system before activate product (and skip validation)
+            stub_request(:post, 'https://scc.suse.com/connect/subscriptions/systems')
+              .to_return(status: 201, body: scc_response_body, headers: {})
+
+            headers['X-Instance-Data'] = Base64.strict_encode64(instance_data)
+            post url, params: payload_no_token, headers: headers
+          end
+
+          it 'allow the extension' do
+            expect(response.body).to eq(serialized_service_json)
+            data = JSON.parse(response.body)
+            expect(data['name']).to include('Live_Patch')
+            expect(data['product']['product_class']).to eq('SLE-LP')
+          end
+        end
       end
     end
 
