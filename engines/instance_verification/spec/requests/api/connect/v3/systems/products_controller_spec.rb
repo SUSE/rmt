@@ -614,7 +614,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           it 'allow the extension' do
             expect(response.body).to eq(serialized_service_json)
             data = JSON.parse(response.body)
-            expect(data['name']).to include("Live_Patch")
+            expect(data['name']).to include('Live_Patch')
             expect(data['product']['product_class']).to eq('SLE-LP')
           end
         end
