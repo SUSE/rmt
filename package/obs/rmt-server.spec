@@ -392,6 +392,7 @@ fi
 
 %post pubcloud
 %service_add_post rmt-server-regsharing.service rmt-server-trim-cache.service
+valkey-server &
 
 %preun pubcloud
 %service_del_preun rmt-server-regsharing.service rmt-server-trim-cache.service
