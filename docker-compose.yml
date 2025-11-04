@@ -6,26 +6,8 @@ services:
       - mariadb:/var/lib/mysql
     env_file: '.env'
 
-  testdb:
-    # ephemeral test instance of DB with no storage attached
-    image: registry.suse.com/suse/mariadb:10.11
-    profiles:
-      # assign to test profile so it only runs if explicitly selected
-      - test
-    restart: unless-stopped
-    networks:
-      # use a separate network for service isolation
-      - test
-    env_file: '.env'
-    # override env settings
-    environment:
-      MYSQL_DATABASE: rmt_test
-      MYSQL_HOST: testdb
-
   rmt:
     build: .
-    # name rmt image so it can be re-used
-    image: rmt-rmt
     restart: unless-stopped
     env_file: '.env'
     volumes:
@@ -37,28 +19,6 @@ services:
       - command: rm -f /srv/www/rmt/tmp/pids/server.pid
     privileged: true
     command: bundle exec rails runner /srv/www/rmt/bin/compose-init.rb
-
-  testrmt:
-    # re-use image built for rmt
-    image: rmt-rmt
-    profiles:
-      # assign to test profile so it only runs if explicitly selected
-      - test
-    networks:
-      # use a separate network for service isolation
-      - test
-    env_file: '.env'
-    # override env settings
-    environment:
-      RAILS_ENV: test
-      MYSQL_HOST: testdb
-      MYSQL_DATABASE: rmt_test
-    volumes:
-      - .:/srv/www/rmt
-    depends_on:
-      - testdb
-    privileged: true
-    command: /bin/bash
 
   nginx:
     image: nginx:1.14
@@ -73,12 +33,5 @@ services:
 
 volumes:
   mariadb:
-    driver: local
   db_storage:
     driver: local
-
-networks:
-  default:
-    name: rmt_default
-  test:
-    name: rmt_test
