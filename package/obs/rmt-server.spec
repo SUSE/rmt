@@ -334,6 +334,7 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %{_unitdir}/rmt-server-regsharing.timer
 %{_unitdir}/rmt-server-trim-cache.service
 %{_unitdir}/rmt-server-trim-cache.timer
+%{_unitdir}/rmt-server-valkey.service
 %config(noreplace) %{_unitdir}/rmt-server-regsharing.timer
 %config(noreplace) %{_unitdir}/rmt-server-trim-cache.timer
 
@@ -388,17 +389,16 @@ fi
 /usr/bin/systemctl try-reload-or-restart nginx.service || true
 
 %pre pubcloud
-%service_add_pre rmt-server-regsharing.service rmt-server-trim-cache.service
+%service_add_pre rmt-server-regsharing.service rmt-server-trim-cache.service rmt-server-valkey.service
 
 %post pubcloud
-%service_add_post rmt-server-regsharing.service rmt-server-trim-cache.service
-valkey-server &
+%service_add_post rmt-server-regsharing.service rmt-server-trim-cache.service rmt-server-valkey.service
 
 %preun pubcloud
-%service_del_preun rmt-server-regsharing.service rmt-server-trim-cache.service
+%service_del_preun rmt-server-regsharing.service rmt-server-trim-cache.service rmt-server-valkey.service
 
 %postun pubcloud
-%service_del_postun rmt-server-regsharing.service rmt-server-trim-cache.service
+%service_del_postun rmt-server-regsharing.service rmt-server-trim-cache.service rmt-server-valkey.service
 
 %posttrans pubcloud
 /usr/bin/systemctl try-restart rmt-server.service
