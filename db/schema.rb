@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 2025_10_27_130143) do
     t.index ["system_id"], name: "index_activations_on_system_id"
   end
 
-  create_table "deregistered_systems", charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
+  create_table "deregistered_systems", charset: "utf8mb4", collation: "utf8mb4_unicode_520_ci", force: :cascade do |t|
     t.bigint "scc_system_id", null: false, comment: "SCC IDs of deregistered systems; used for forwarding to SCC"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -149,7 +149,7 @@ ActiveRecord::Schema.define(version: 2025_10_27_130143) do
     t.index ["regcode"], name: "index_subscriptions_on_regcode"
   end
 
-  create_table "system_data_profiles", charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
+  create_table "system_data_profiles", charset: "utf8mb4", collation: "utf8mb4_unicode_520_ci", force: :cascade do |t|
     t.string "profile_type", limit: 32, null: false
     t.string "profile_id", limit: 64, null: false
     t.text "profile_data", null: false
@@ -159,7 +159,7 @@ ActiveRecord::Schema.define(version: 2025_10_27_130143) do
     t.index ["profile_type", "profile_id"], name: "index_system_data_profiles_on_profile_type_and_profile_id", unique: true
   end
 
-  create_table "system_profiles", charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
+  create_table "system_profiles", charset: "utf8mb4", collation: "utf8mb4_unicode_520_ci", force: :cascade do |t|
     t.bigint "system_id", null: false
     t.bigint "system_data_profile_id", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -168,7 +168,7 @@ ActiveRecord::Schema.define(version: 2025_10_27_130143) do
     t.index ["system_id"], name: "index_system_profiles_on_system_id"
   end
 
-  create_table "system_uptimes", charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
+  create_table "system_uptimes", charset: "utf8mb4", collation: "utf8mb4_unicode_520_ci", force: :cascade do |t|
     t.bigint "system_id", null: false
     t.date "online_at_day", null: false
     t.binary "online_at_hours", limit: 24, null: false
