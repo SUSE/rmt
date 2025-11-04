@@ -168,6 +168,7 @@ install -m 444 engines/registration_sharing/package/rmt-server-regsharing.servic
 install -m 444 engines/registration_sharing/package/rmt-server-regsharing.timer %{buildroot}%{_unitdir}
 install -m 444 engines/registration_sharing/package/rmt-server-trim-cache.service %{buildroot}%{_unitdir}
 install -m 444 engines/registration_sharing/package/rmt-server-trim-cache.timer %{buildroot}%{_unitdir}
+install -m 444 engines/data_export/package/rmt-server-valkey.service %{buildroot}%{_unitdir}
 
 mkdir -p %{buildroot}%{_sbindir}
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server
