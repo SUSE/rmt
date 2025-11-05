@@ -4,7 +4,7 @@ require 'rails'
 
 # Pick the frameworks you want:
 require 'active_model/railtie'
-# require "active_job/railtie"
+require "active_job/railtie"
 require 'active_record/railtie'
 # require "active_storage/engine"
 require 'action_controller/railtie'
@@ -83,5 +83,6 @@ module RMT
     config.require_master_key = false
     config.read_encrypted_secrets = false
     config.secret_key_base = 'rmt-does-not-use-this'
+    config.active_job.queue_adapter = :resque
   end
 end
