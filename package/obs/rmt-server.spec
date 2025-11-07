@@ -58,6 +58,7 @@ BuildRequires:  libxslt-devel
 BuildRequires:  sqlite-devel
 BuildRequires:  pkgconfig(systemd)
 Requires:       gpg2
+Requires:       redis
 Recommends:     mariadb
 Recommends:     nginx
 # The config is not really required by rmt-server, but by nginx ...
