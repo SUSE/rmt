@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-10-10 19:15+0000\n"
+"PO-Revision-Date: 2025-04-25 10:52+0000\n"
 "Last-Translator: Sophie Leroy <sophie@stoquart.com>\n"
 "Language-Team: French <https://l10n.opensuse.org/projects/rmt/i18n/fr/>\n"
 "Language: fr\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.9.1\n"
+"X-Generator: Weblate 5.11\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "%s n'est pas encore activé(e) sur le système."
@@ -50,8 +50,8 @@ msgstr "* %{name} (ID : %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 msgid "A repository by the ID %{id} already exists."
 msgstr "Un dépôt portant l'ID %{id} existe déjà."
 
-msgid "A repository by the URL %{url} already exists."
-msgstr "Un dépôt existe déjà au niveau de l'URL %{url}."
+msgid "A repository by the URL %{url} already exists (ID %{id})."
+msgstr "Un dépôt au niveau de l'URL %{url} existe déjà (ID %{id})."
 
 msgid "Added association between %{repo} and product %{product}"
 msgstr "Une association a été ajoutée entre %{repo} et le produit %{product}"
@@ -85,10 +85,7 @@ msgid "Attached repository to product '%{product_name}'."
 msgstr "Le dépôt a été attaché au produit '%{product_name}'."
 
 msgid "By default, inactive systems are those that have not contacted RMT in any way in the past 3 months. You can override this with the '-b / --before' flag."
-msgstr ""
-"Par défaut, les systèmes inactifs sont ceux qui n'ont plus contacté RMT de "
-"quelque manière que ce soit au cours des 3 derniers mois. Vous pouvez "
-"ignorer ce comportement par défaut avec l'indicateur '-b / --before'."
+msgstr "Par défaut, les systèmes inactifs sont ceux qui n'ont plus contacté RMT de quelque manière que ce soit au cours des 3 derniers mois. Vous pouvez ignorer ce comportement par défaut avec l'indicateur '-b / --before'."
 
 msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr "Impossible de se connecter au serveur de base de données. Vérifiez que ses références sont bien configurées dans '%{path}' ou configurez RMT avec YaST ('%{command}')."
@@ -123,23 +120,16 @@ msgid ""
 "\n"
 "Then, it removes all dangling files from disk along with any associated database entries.\n"
 msgstr ""
-"Nettoyez les fichiers de paquet en suspens sur la base des métadonnées de "
-"dépôt actuelles.\n"
+"Nettoyez les fichiers de paquet en suspens sur la base des métadonnées de dépôt actuelles.\n"
 "\n"
-"Cette commande scanne le répertoire de mise en miroir pour les fichiers "
-"'repomd.xml', analyse\n"
-"les fichiers de métadonnées et compare leur contenu avec celui des fichiers "
-"sur le disque. Les fichiers non\n"
-"répertoriés dans les métadonnées et âgés d'au moins 2 jours sont considérés "
-"comme en suspens.\n"
+"Cette commande scanne le répertoire de mise en miroir pour les fichiers 'repomd.xml', analyse\n"
+"les fichiers de métadonnées et compare leur contenu avec celui des fichiers sur le disque. Les fichiers non\n"
+"répertoriés dans les métadonnées et âgés d'au moins 2 jours sont considérés comme en suspens.\n"
 "\n"
-"Ensuite, elle supprime du disque tous les fichiers en suspens ainsi que "
-"toutes les entrées de base de données associées.\n"
+"Ensuite, elle supprime du disque tous les fichiers en suspens ainsi que toutes les entrées de base de données associées.\n"
 
 msgid "Clean dangling package files, based on current repository data."
-msgstr ""
-"Nettoyez les fichiers de paquet en suspens sur la base des données de dépôt "
-"actuelles."
+msgstr "Nettoyez les fichiers de paquet en suspens sur la base des données de dépôt actuelles."
 
 msgid "Clean finished. An estimated %{total_file_size} was removed."
 msgstr "Nettoyage terminé. Un total estimé de %{total_file_size} a été supprimé."
@@ -167,6 +157,9 @@ msgstr "Impossible de trouver le système avec le nom de connexion \\\"%{login}\
 
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "Impossible de mettre en miroir l'arborescence du produit SUSE Manager - Erreur : %{error}"
+
+msgid "Could not read '%{file}': %{error}"
+msgstr "Impossible de lire '%{file}' : %{error}"
 
 msgid "Couldn't add custom repository."
 msgstr "Impossible d'ajouter un dépôt personnalisé."
@@ -217,9 +210,7 @@ msgid "Displays product with all its repositories and their attributes."
 msgstr "Affiche le produit avec tous ses dépôts et leurs attributs."
 
 msgid "Do not ask anything; use default answers automatically. Default: false"
-msgstr ""
-"Ne rien demander ; utiliser les réponses par défaut automatiquement. Valeur "
-"par défaut : false"
+msgstr "Ne rien demander ; utiliser les réponses par défaut automatiquement. Valeur par défaut : false"
 
 msgid "Do not fail the command if product is in alpha or beta stage"
 msgstr "Ne pas faire échouer la commande si le produit est à un stade alpha ou bêta"
@@ -287,8 +278,11 @@ msgstr "Erreur lors de la mise en miroir des métadonnées : %{error}"
 msgid "Error while mirroring packages: %{error}"
 msgstr "Erreur lors de la mise en miroir des paquets : %{error}"
 
-msgid "Error while moving directory %{src} to %{dest}: %{error}"
-msgstr "Erreur lors du déplacement du répertoire %{src} vers %{dest} : %{error}"
+msgid "Error while mirroring repository: %{error}"
+msgstr "Erreur lors de la mise en miroir du dépôt : %{error}"
+
+msgid "Error while moving files %{glob} to %{dest}: %{error}"
+msgstr "Erreur lors du déplacement des fichiers %{glob} vers %{dest} : %{error}"
 
 msgid "Examples"
 msgstr "Exemples"
@@ -314,11 +308,21 @@ msgstr "Exportation des dépôts"
 msgid "Exporting subscriptions"
 msgstr "Exportation des abonnements"
 
+#, fuzzy
+msgid "Extracting package list from metadata"
+msgstr "n"
+
 msgid "Failed to download %{failed_count} files"
 msgstr "Échec du téléchargement de %{failed_count} fichiers"
 
+msgid "Failed to export the SUSE Manager product tree: %{error_message}"
+msgstr "Échec de l'exportation de l'arborescence du produit SUSE Manager : %{error_message}"
+
 msgid "Failed to import system %{system}"
 msgstr "Échec de l'importation du système %{system}"
+
+msgid "Failed to import the suma product tree: %{error_message}"
+msgstr "Échec de l'importation de l'arborescence du produit suma : %{error_message}"
 
 msgid "Failed to sync systems: %{error}"
 msgstr "Échec de la synchronisation des systèmes : %{error}"
@@ -403,6 +407,15 @@ msgstr "Liste les systèmes enregistrés."
 msgid "List repositories which are marked to be mirrored"
 msgstr "Lister les dépôts qui sont marqués pour la mise en miroir"
 
+msgid "Loading product data from SCC"
+msgstr "Chargement des données du produit à partir de SCC"
+
+msgid "Loading repository data from SCC"
+msgstr "Chargement des données du dépôt à partir de SCC"
+
+msgid "Loading subscription data from SCC"
+msgstr "Chargement des données d'abonnement à partir de SCC"
+
 msgid "Login"
 msgstr "Connexion"
 
@@ -448,8 +461,20 @@ msgstr "Mise en miroir terminée."
 msgid "Mirroring completed with errors."
 msgstr "Mise en miroir terminée avec des erreurs."
 
+#, fuzzy
+msgid "Mirroring metadata files"
+msgstr "Mettre en miroir"
+
+#, fuzzy
+msgid "Mirroring new packages"
+msgstr "Mettre en miroir"
+
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
 msgstr "La mise en miroir du dépôt portant l'ID %{repo_id} n'est pas activée"
+
+#, fuzzy
+msgid "Mirroring packages"
+msgstr "Mettre en miroir"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "Mise en miroir du dépôt %{repo} vers %{dir}"
@@ -499,22 +524,20 @@ msgstr "Aucun dépôt trouvé pour le produit : %s"
 msgid "No repository IDs supplied"
 msgstr "Aucun ID de dépôt fourni"
 
-msgid "No subscription with this Registration Code found"
+msgid "No subscription found with this registration code"
 msgstr "Aucun abonnement trouvé avec ce code d'enregistrement"
 
 msgid "Not Mandatory"
 msgstr "Non obligatoire"
 
-msgid "Not all mandatory repositories are mirrored for product %s"
-msgstr "Tous les dépôts obligatoires ne sont pas mis en miroir pour les produits %s"
+msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
+msgstr "Tous les dépôts obligatoires ne sont pas mis en miroir pour le produit %s. Dépôts manquants (par ID) : %s. Sur le serveur RMT, les dépôts manquants peuvent être activés avec la commande : rmt-cli repos enable %s;  rmt-cli mirror"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "Le code d'enregistrement n'a pas encore été activé. Visitez le site https://scc.suse.com pour l'activer."
 
 msgid "Now, it will parse all repomd.xml files, search for dangling packages on disk and clean them."
-msgstr ""
-"À présent, le système va analyser tous les fichiers repomd.xml, rechercher "
-"les paquets en suspens sur le disque et nettoyer ces derniers."
+msgstr "À présent, le système va analyser tous les fichiers repomd.xml, rechercher les paquets en suspens sur le disque et nettoyer ces derniers."
 
 msgid "Number of systems to display"
 msgstr "Nombre de systèmes à afficher"
@@ -619,9 +642,7 @@ msgid "RMT found locally mirrored files from the following repositories which ar
 msgstr "RMT a trouvé des fichiers mis en miroir localement à partir des dépôts suivants, qui ne sont pas marqués comme mis en miroir :"
 
 msgid "RMT found no repomd.xml files. Check if RMT is properly configured."
-msgstr ""
-"RMT n'a trouvé aucun fichier repomd.xml. Vérifiez si RMT est correctement "
-"configuré."
+msgstr "RMT n'a trouvé aucun fichier repomd.xml. Vérifiez si RMT est correctement configuré."
 
 msgid "RMT found repomd.xml files: %{repomd_count}."
 msgstr "RMT a trouvé des fichiers repomd.xml : %{repomd_count}."
@@ -667,6 +688,9 @@ msgstr "Supprime les fichiers de dépôts mis en miroir localement qui ne sont p
 
 msgid "Removes old systems and their activations if they are inactive."
 msgstr "Supprime les anciens systèmes et leur activation s'ils sont inactifs."
+
+msgid "Removing obsolete repositories"
+msgstr "Suppression des dépôts obsolètes"
 
 msgid "Repositories are not available for this product."
 msgstr "Les dépôts ne sont pas disponibles pour ce produit."
@@ -733,8 +757,7 @@ msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first
 msgstr "Exécutez '%{command}' pour effectuer au préalable une synchronisation avec vos données SUSE Customer Center."
 
 msgid "Run the clean process without actually removing files."
-msgstr ""
-"Exécutez le processus de nettoyage sans réellement supprimer les fichiers."
+msgstr "Exécutez le processus de nettoyage sans réellement supprimer les fichiers."
 
 msgid "Run this command on an online RMT."
 msgstr "Exécutez cette commande sur une instance RMT en ligne."
@@ -758,9 +781,7 @@ msgid "SCC credentials not set."
 msgstr "Informations d'identification SCC non définies."
 
 msgid "Scanning the mirror directory for 'repomd.xml' files..."
-msgstr ""
-"Analyse du répertoire de mise en miroir à la recherche des fichiers 'repomd."
-"xml'..."
+msgstr "Analyse du répertoire de mise en miroir à la recherche des fichiers 'repomd.xml'..."
 
 msgid "Settings saved at %{file}."
 msgstr "Paramètres enregistrés dans %{file}."
@@ -823,19 +844,13 @@ msgid "The SCC credentials are not configured correctly in '%{path}'. You can ob
 msgstr "Les références de SCC ne sont pas configurées correctement dans '%{path}'. Vous pouvez vous les procurer à l'adresse %{url}"
 
 msgid "The command will list the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
-msgstr ""
-"La commande répertorie les candidats à la suppression et demande "
-"confirmation. À l'aide de l'indicateur '--no-confirmation', vous pouvez "
-"signaler à cette sous-commande de poursuivre le traitement sans demander "
-"confirmation."
+msgstr "La commande répertorie les candidats à la suppression et demande confirmation. À l'aide de l'indicateur '--no-confirmation', vous pouvez signaler à cette sous-commande de poursuivre le traitement sans demander confirmation."
 
 msgid "The following errors occurred while mirroring:"
 msgstr "Les erreurs suivantes se sont produites lors de la mise en miroir :"
 
 msgid "The given date does not follow the proper format. Ensure it follows this format '<year>-<month>-<day>'."
-msgstr ""
-"La date fournie ne respecte pas le format approprié. Elle doit se présenter "
-"comme suit : '<année>-<mois>-<jour>'."
+msgstr "La date fournie ne respecte pas le format approprié. Elle doit se présenter comme suit : '<année>-<mois>-<jour>'."
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
 msgstr "Le produit \"%s\" est un produit de base et ne peut pas être désactivé"
@@ -881,12 +896,10 @@ msgid "There are no systems registered to this RMT instance."
 msgstr "Aucun système n'est enregistré auprès de cette instance RMT."
 
 msgid "This can take several minutes. Would you like to continue and clean dangling packages?"
-msgstr ""
-"Cette opération peut prendre plusieurs minutes. Voulez-vous poursuivre et "
-"nettoyer les paquets en suspens ?"
+msgstr "Cette opération peut prendre plusieurs minutes. Voulez-vous poursuivre et nettoyer les paquets en suspens ?"
 
 msgid "To clean up downloaded files, please run '%{command}'"
-msgstr "Pour nettoyer les fichiers téléchargés, exécutez '%{command}'"
+msgstr "Pour nettoyer les fichiers téléchargés, exécutez la commande '%{command}'"
 
 msgid "To clean up downloaded files, run '%{command}'"
 msgstr "Pour nettoyer les fichiers téléchargés, exécutez '%{command}'"
@@ -894,8 +907,23 @@ msgstr "Pour nettoyer les fichiers téléchargés, exécutez '%{command}'"
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr "Pour cibler un système en vue de la suppression, utilisez la commande \"%{command}\" pour une liste de systèmes avec leurs connexions correspondantes."
 
+msgid "Total Mirror Time: %{time}"
+msgstr "Durée totale de mise en miroir : %{time}"
+
+msgid "Total mirrored repositories: %{repo_count}"
+msgstr "Nombre total de dépôts en miroir : %{repo_count}"
+
+msgid "Total transferred file size: %{files_size}"
+msgstr "Taille totale des fichiers transférés : %{files_size}"
+
+msgid "Total transferred files: %{files_count}"
+msgstr "Nombre otal des fichiers transférés : %{files_count}"
+
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
 msgstr "Total : %{total_count} nettoyé(s) (%{total_size}), %{total_db_entries}."
+
+msgid "Try to access non existing temporary directory %{name}"
+msgstr "Essayez d'accéder à un répertoire temporaire non existant %{nom}"
 
 msgid "URL"
 msgstr "URL"
@@ -917,6 +945,9 @@ msgstr "Mise à jour des dépôts"
 
 msgid "Updating subscriptions"
 msgstr "Mise à jour des abonnements"
+
+msgid "Uptime data is malformed '%s'"
+msgstr "Les données relatives au temps de fonctionnement sont malformées '%s'"
 
 msgid "Version"
 msgstr "Version"

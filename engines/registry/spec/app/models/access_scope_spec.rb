@@ -135,7 +135,6 @@ RSpec.describe AccessScope, type: :model do
 
     context 'when namespace is null' do
       subject(:access_scope) { described_class.new(type: 'a', name: 'b', actions: 'c') }
-      # let(:scope) { build(:registry_access_scope, namespace: 'suse', image: 'leap') }
 
       it 'returns default auth actions' do
         possible_access = access_scope.granted(client: client)
@@ -163,7 +162,7 @@ RSpec.describe AccessScope, type: :model do
           File.write('engines/registry/spec/data/access_policy_yaml.yml', YAML.dump(data))
           allow_any_instance_of(RegistryCatalogService).to receive(:repos).and_return(['suse/sles/super_repo'])
           allow(File).to receive(:read).and_return(File.read('engines/registry/spec/data/access_policy_yaml.yml'))
-          possible_access = access_scope.granted(client: client)
+          possible_access = access_scope.granted('127.0.0.1', client: client)
 
           expect(possible_access).to eq(
             {
@@ -173,6 +172,14 @@ RSpec.describe AccessScope, type: :model do
               'name' => 'suse/sles/*'
             }
           )
+        end
+
+        context 'when client is null' do
+          it 'returns no actions allowed' do
+            possible_access = access_scope.granted('127.0.0.1')
+
+            expect(possible_access).to eq({ 'type' => 'a', 'actions' => [], 'class' => nil, 'name' => 'suse/sles/*' })
+          end
         end
       end
 
@@ -187,10 +194,13 @@ RSpec.describe AccessScope, type: :model do
 
         let(:system) do
           system = FactoryBot.create(:system, :hybrid)
+          system.pubcloud_reg_code = 'pubcloud_reg_code'
+          system.instance_data = 'dummy_instance_data'
           system.activations << [
             FactoryBot.create(:activation, system: system, service: product1.service),
             FactoryBot.create(:activation, system: system, service: product2.service)
           ]
+          system.save!
           system
         end
         let(:product1) do
@@ -216,15 +226,28 @@ RSpec.describe AccessScope, type: :model do
               .with(
                 header_expected,
                 system,
-                'SLES15-SP4-LTSS-X86'
+                '127.0.0.1',
+                true,
+                {
+                  token: Base64.decode64(system.pubcloud_reg_code.split(',')[0]),
+                  instance_data: system.instance_data
+                },
+                product1
             ).and_return(scc_response)
           end
 
+          # rubocop:disable RSpec/ExampleLength
           it 'returns no actions allowed' do
             expect(SccProxy).to receive(:scc_check_subscription_expiration).with(
               header_expected,
               system,
-              'SLES15-SP4-LTSS-X86'
+              '127.0.0.1',
+              true,
+              {
+                token: Base64.decode64(system.pubcloud_reg_code.split(',')[0]),
+                instance_data: system.instance_data
+              },
+              product1
             )
             yaml_string = access_policy_content
             data = YAML.safe_load yaml_string
@@ -232,7 +255,7 @@ RSpec.describe AccessScope, type: :model do
             File.write('engines/registry/spec/data/access_policy_yaml.yml', YAML.dump(data))
             allow_any_instance_of(RegistryCatalogService).to receive(:repos).and_return(['suse/ltss/ltss_repo'])
             allow(File).to receive(:read).and_return(File.read('engines/registry/spec/data/access_policy_yaml.yml'))
-            possible_access = access_scope.granted(client: client)
+            possible_access = access_scope.granted('127.0.0.1', client: client)
 
             expect(possible_access).to eq(
               {
@@ -243,6 +266,7 @@ RSpec.describe AccessScope, type: :model do
               }
             )
           end
+          # rubocop:enable RSpec/ExampleLength
         end
       end
 

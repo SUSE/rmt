@@ -6,53 +6,6 @@ module ZypperAuth
       Thread.current[:logger]
     end
 
-    def verify_instance(request, logger, system)
-      return false unless request.headers['X-Instance-Data']
-
-      base_product = system.products.find_by(product_type: 'base')
-      return false unless base_product
-
-      # check the cache for the system (20 min)
-      cache_key = InstanceVerification.build_cache_entry(request.remote_ip, system.login, system.pubcloud_reg_code, system.proxy_byos_mode, base_product)
-      if InstanceVerification.reg_code_in_cache?(cache_key, system.proxy_byos_mode)
-        # only update registry cache key
-        InstanceVerification.update_cache(cache_key, system.proxy_byos_mode, registry: true)
-        return true
-      end
-
-      verification_provider = InstanceVerification.provider.new(
-        logger,
-        request,
-        base_product.attributes.symbolize_keys.slice(:identifier, :version, :arch, :release_type),
-        Base64.decode64(request.headers['X-Instance-Data'].to_s) # instance data
-      )
-
-      is_valid = verification_provider.instance_valid?
-      # update repository and registry cache
-      InstanceVerification.update_cache(cache_key, system.proxy_byos_mode)
-      is_valid
-    rescue InstanceVerification::Exception => e
-      if system.byos?
-        result = SccProxy.scc_check_subscription_expiration(request.headers, system, base_product.product_class)
-        if result[:is_active]
-          # update the cache for the base product
-          InstanceVerification.update_cache(cache_key, 'byos')
-          return true
-        end
-        # if can not get the activations, set the cache inactive
-        InstanceVerification.set_cache_inactive(cache_key, system.proxy_byos_mode)
-      end
-      ZypperAuth.zypper_auth_message(request, system, verification_provider, e.message)
-      false
-    rescue StandardError => e
-      logger.error('Unexpected instance verification error has occurred:')
-      logger.error(e.message)
-      logger.error("System login: #{system.login}, IP: #{request.remote_ip}")
-      logger.error('Backtrace:')
-      logger.error(e.backtrace)
-      false
-    end
-
     def zypper_auth_message(request, system, verification_provider, message)
       details = [ "System login: #{system.login}", "IP: #{request.remote_ip}" ]
       details << "Instance ID: #{verification_provider.instance_id}" if verification_provider.instance_id
@@ -124,7 +77,7 @@ module ZypperAuth
         # additional validation for zypper service XML controller
         before_action :verify_instance
         def verify_instance
-          unless ZypperAuth.verify_instance(request, logger, @system)
+          unless InstanceVerification.verify_instance(request, logger, @system)
             render(xml: { error: 'Instance verification failed' }, status: 403)
           end
         end
@@ -140,8 +93,8 @@ module ZypperAuth
 
           return true if @system.byos?
 
-          instance_verified = ZypperAuth.verify_instance(request, logger, @system)
-          DataExport.handler.new(@system, request, params, logger).export_rmt_data if instance_verified
+          instance_verified = InstanceVerification.verify_instance(request, logger, @system)
+          DataExport.handler.new(@system, request, params, logger).export_rmt_data if DataExport.handler.presence && instance_verified
 
           instance_verified
         end

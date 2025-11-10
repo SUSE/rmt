@@ -77,8 +77,8 @@ shared_examples 'product must have mirrored repositories' do
     let(:error_json) do
       {
         type: 'error',
-        error: "Not all mandatory repositories are mirrored for product #{product.friendly_name}. Missing Repositories (by ids): #{missing_repo_ids}. On the RMT server, the missing repositories can get enabled with: rmt-cli repos enable #{missing_repo_ids};  rmt-cli mirror",
-        localized_error: "Not all mandatory repositories are mirrored for product #{product.friendly_name}. Missing Repositories (by ids): #{missing_repo_ids}. On the RMT server, the missing repositories can get enabled with: rmt-cli repos enable #{missing_repo_ids};  rmt-cli mirror"
+        error: "Not all mandatory repositories are mirrored for product #{product.friendly_name}. Missing Repositories (by ids): #{missing_repo_ids}. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable #{missing_repo_ids};  rmt-cli mirror",
+        localized_error: "Not all mandatory repositories are mirrored for product #{product.friendly_name}. Missing Repositories (by ids): #{missing_repo_ids}. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable #{missing_repo_ids};  rmt-cli mirror"
       }.to_json
     end
     # rubocop:enable Layout/LineLength

@@ -5,7 +5,7 @@ RSpec.describe RMT::Mirror::Repomd do
 
   let(:logger) { RMT::Logger.new('/dev/null') }
 
-  # Remember that RMT forces a trialing slash on all repository URLS!
+  # Remember that RMT forces a trailing slash on all repository URLS!
   let(:repository_url) { 'https://updates.suse.com/sample/repository/15.4/product/' }
   let(:repository) do
     create :repository,
@@ -13,7 +13,7 @@ RSpec.describe RMT::Mirror::Repomd do
            external_url: repository_url
   end
 
-  # Configuration for Debian mirroring instance
+  # Configuration for repomd mirroring instance
   let(:base_dir) { '/test/repository/base/path/' }
   let(:repomd_mirror_configuration) do
     {
@@ -111,6 +111,42 @@ RSpec.describe RMT::Mirror::Repomd do
       expect(metadatas.count).to eq(4)
     end
 
+    it 'does not enqueue unchanged repodata files' do
+      allow(repomd).to receive(:download_cached!).and_return(repomd_ref)
+      allow(repomd).to receive(:check_signature)
+      allow(repomd).to receive(:download_enqueued)
+      allow(repomd).to receive(:metadata_updated?).and_return(false)
+      expect(FileUtils).to receive(:cp).exactly(4).times
+
+      metadatas = repomd.mirror_metadata
+      expect(metadatas.count).to eq(4)
+    end
+
+    it 'returns only changed files when revalidate_repodata is disabled' do
+      allow(repomd).to receive(:download_cached!).and_return(repomd_ref)
+      allow(repomd).to receive(:check_signature)
+      allow(repomd).to receive(:download_enqueued)
+      allow(FileUtils).to receive(:cp)
+      allow(RMT::Config).to receive(:revalidate_repodata?).and_return(false)
+
+      metadatas = repomd.mirror_metadata
+      expect(metadatas.count).to eq(4)
+
+      allow(repomd).to receive(:metadata_updated?).and_return(false)
+
+      metadatas = repomd.mirror_metadata
+      expect(metadatas.count).to eq(0)
+    end
+
+    it 'returns metadata files' do
+      allow(repomd).to receive(:download_cached!).and_return(repomd_ref)
+      allow(repomd).to receive(:check_signature)
+      allow(repomd).to receive(:download_enqueued)
+
+      metadatas = repomd.mirror_metadata
+      expect(metadatas.count).to eq(4)
+    end
+
     it 'downloads the metadata files' do
       allow(repomd).to receive(:download_cached!).and_return(repomd_ref)
       allow(repomd).to receive(:check_signature)
@@ -148,6 +184,8 @@ RSpec.describe RMT::Mirror::Repomd do
       context 'with deltainfo files' do
         let(:fixture) { 'repodata/a546b430098b8a3fb7d65493a9ce608fafcb32f451d0ce8bf85410191f347cc3-deltainfo.xml.gz' }
         let(:type) { :deltainfo }
+
+        before { allow(RMT::Config).to receive(:mirror_drpm_files?).and_return(true) }
 
         it 'parses' do
           expect_any_instance_of(RepomdParser::DeltainfoXmlParser).to receive :parse
@@ -188,6 +226,116 @@ RSpec.describe RMT::Mirror::Repomd do
       expect(repomd).to receive(:enqueue).exactly(4).times
 
       expect { repomd.mirror_packages([primary_ref]) }.to raise_exception(RMT::Mirror::Exception, /Error while mirroring packages: Failed to download 1 files/)
+    end
+  end
+
+  describe 'mirroring .drpm packages' do
+    let!(:base_dir) { Dir.mktmpdir('rmt') }
+    let(:repository_tmp_dir) { File.join(base_dir, repository.local_path, '.tmp_metadata') }
+
+    # Fixtures
+    let(:fixture_dir) { 'dummy_product/product' }
+
+    # Metadata fixtures
+    let(:repomd_xml) { 'repodata/repomd.xml' }
+
+    let(:repodata_xml_gz_files) do
+      ['repodata/837fb50abc9680b1e11e050901a56721855a5e854e85e46ceaad2c6816297e69-filelists.xml.gz',
+       'repodata/a546b430098b8a3fb7d65493a9ce608fafcb32f451d0ce8bf85410191f347cc3-deltainfo.xml.gz',
+       'repodata/2d12587a74d924bad597fd8e25b8955270dfbe7591e020f9093edbb4a0d04444-other.xml.gz',
+       'repodata/abf421e45af5cd686f050bab3d2a98e0a60d1b5ca3b07c86cb948fc1abfa675e-primary.xml.gz']
+    end
+
+    # Package fixtures
+    let(:drpm_packages) { ['apples-0.1-0.x86_64.drpm', 'oranges-0.1-0.x86_64.drpm'] }
+    let(:rpm_packages) do
+      ['apples-0.1-0.x86_64.rpm',
+       'apples-0.2-0.x86_64.rpm',
+       'oranges-0.1-0.x86_64.rpm',
+       'oranges-0.2-0.x86_64.rpm']
+    end
+
+    let(:license_mirror) { instance_double(RMT::Mirror::License) }
+    let(:downloader) { instance_double(RMT::Downloader) }
+    let(:gpg_verifier) { instance_double(RMT::GPG) }
+
+    around do |example|
+      example.run
+      FileUtils.remove_entry(base_dir, force: true)
+    end
+
+    before do
+      allow(RMT::Mirror::License).to receive(:new)
+        .with(repository: repository, logger: logger, mirroring_base_dir: base_dir)
+        .and_return(license_mirror)
+      allow(RMT::Downloader).to receive(:new)
+        .with(logger: logger, track_files: true)
+        .and_return(downloader)
+      allow(RMT::GPG).to receive(:new).and_return(gpg_verifier)
+
+      # Download licenses
+      allow(license_mirror).to receive(:mirror).once
+
+      # Download repomd.xml file
+      allow(downloader).to receive(:download_multi).once
+        .with([have_attributes(relative_path: repomd_xml)]) do
+          mirror_fixtures(repomd_xml, from: fixture_dir, to: repository_tmp_dir)
+        end
+
+      # Download metadata signature/key files
+      allow(downloader).to receive(:download_multi).once
+        .with(match_array([
+          have_attributes(relative_path: 'repodata/repomd.xml.asc'),
+          have_attributes(relative_path: 'repodata/repomd.xml.key')
+        ]))
+
+      # Verify metadata signature
+      allow(gpg_verifier).to receive(:verify_signature).once
+
+      # Download package metadata files
+      allow(downloader).to receive(:download_multi).once
+        .with(
+          match_array(repodata_xml_gz_files.map { |f| have_attributes(relative_path: f) }),
+          ignore_errors: false
+        ) do
+          mirror_fixtures(*repodata_xml_gz_files, from: fixture_dir, to: repository_tmp_dir)
+        end
+    end
+
+    context 'with drpm mirroring enabled' do
+      before { allow(RMT::Config).to receive(:mirror_drpm_files?).and_return(true) }
+
+      it 'download both .drpm and .rpm packages' do
+        expect(downloader).to receive(:download_multi).once
+          .with(
+            match_array((drpm_packages + rpm_packages).map { |f| have_attributes(relative_path: f) }),
+            ignore_errors: true
+          ).and_return([])
+        allow(downloader).to receive(:downloaded_files_count).and_return(6)
+        allow(downloader).to receive(:downloaded_files_size).and_return(11936)
+
+        result = repomd.mirror
+
+        expect(result).to eq [6, 11936]
+      end
+    end
+
+    context 'with drpm mirroring disabled' do
+      before { allow(RMT::Config).to receive(:mirror_drpm_files?).and_return(false) }
+
+      it 'download only .rpm packages' do
+        expect(downloader).to receive(:download_multi).once
+          .with(
+            match_array(rpm_packages.map { |f| have_attributes(relative_path: f) }),
+            ignore_errors: true
+          ).and_return([])
+        allow(downloader).to receive(:downloaded_files_count).and_return(4)
+        allow(downloader).to receive(:downloaded_files_size).and_return(7766)
+
+        result = repomd.mirror
+
+        expect(result).to eq [4, 7766]
+      end
     end
   end
 end

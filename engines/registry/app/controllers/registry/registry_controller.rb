@@ -13,8 +13,11 @@ module Registry
     # AuthZ will validate which of the requested scope policies are fulfilled
     # with the current login access and prepare the token to be sent back to the client
     def authorize
-      token = AccessToken.new(@client&.account, params['service'], @requested_scopes.map { |s| s.granted(client: @client) }).token
+      token = AccessToken.new(@client&.account, params['service'], @requested_scopes.map { |s| s.granted(request.remote_ip, client: @client) }).token
       render json: { token: token }, status: :ok
+    rescue StandardError => e
+      Rails.logger.error "Could not authorize: #{e.message}"
+      render json: { error: e.message }, status: :unauthorized
     end
 
     # Catalog handler
@@ -24,7 +27,7 @@ module Registry
       raise RegistryAuthError, 'Could not find system with current credentials' unless @client && @client.account
 
       access_scope = AccessScope.parse('registry:catalog:*')
-      repos = access_scope.allowed_paths(System.find_by(login: @client&.account))
+      repos = access_scope.allowed_paths(System.find_by(login: @client&.account), request.remote_ip)
       logger.debug("Returning #{repos.size} repos for client #{@client}")
 
       response.set_header('Docker-Distribution-Api-Version', REGISTRY_API_VERSION)

@@ -1,37 +1,23 @@
-version: '3.7'
-
 services:
   db:
-    image: mariadb:10.2
+    image: registry.suse.com/suse/mariadb:10.11
     restart: unless-stopped
     volumes:
       - mariadb:/var/lib/mysql
-    extends:
-      service: base
-      file: docker-compose-base.yml
+    env_file: '.env'
 
   rmt:
     build: .
     restart: unless-stopped
-    environment:
-      - MYSQL_HOST=db
-      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
-      - SCC_USERNAME=${SCC_USERNAME}
-      - SCC_PASSWORD=${SCC_PASSWORD}
+    env_file: '.env'
     volumes:
       - .:/srv/www/rmt
-      - public:/srv/www/repo/public/
+      - ./config/rmt.yml:/etc/rmt.conf
     depends_on:
       - db
-    extends:
-      service: base
-      file: docker-compose-base.yml
-    # Needed if you want to run SUSEConnect from inside this container.
-    devices:
-      - "/dev/mem:/dev/mem"
-    # Needed if you want to run SUSEConnect from inside this container.
-    cap_add:
-      - sys_rawio
+    pre_stop:
+      - command: rm -f /srv/www/rmt/tmp/pids/server.pid
+    privileged: true
     command: bundle exec rails runner /srv/www/rmt/bin/compose-init.rb
 
   nginx:
@@ -46,7 +32,6 @@ services:
     entrypoint: /bin/bash -c 'cat /tmp/default.template | sed "s/\\\$$server_port/$EXTERNAL_PORT/g" > /etc/nginx/conf.d/default.conf && nginx -g "daemon off;"'
 
 volumes:
-  public:
   mariadb:
   db_storage:
     driver: local

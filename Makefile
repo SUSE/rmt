@@ -1,6 +1,8 @@
 NAME          = rmt-server
 VERSION       = $(shell ruby -e 'require "./lib/rmt.rb"; print RMT::VERSION')
 
+.PHONY: clean man dist build-tarball database-up server shell console public_repo public_perm
+
 all:
 	@:
 
@@ -13,7 +15,10 @@ man:
 	ronn --roff --pipe --manual RMT MANUAL.md > rmt-cli.8 && gzip -f rmt-cli.8
 	mv rmt-cli.8.gz package/obs
 
-dist: clean man
+dist:
+	docker compose run -it -v $(PWD):/srv/www/rmt --rm rmt make build-tarball
+
+build-tarball: clean man
 	@mkdir -p $(NAME)-$(VERSION)/
 
 	@cp -r app $(NAME)-$(VERSION)/
@@ -80,3 +85,23 @@ dist: clean man
 	find $(NAME)-$(VERSION) -name \*~ -exec rm {} \;
 	tar cfvj package/obs/$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)/
 	rm -rf $(NAME)-$(VERSION)/
+
+database-up:
+	 docker compose up db -d
+
+build: Dockerfile Gemfile public_repo
+	 docker compose build rmt
+
+server: build database-up
+	 docker compose up
+
+shell: build database-up
+	 docker compose run --rm -ti rmt /bin/bash
+
+console: build database-up
+	 docker compose run --rm -ti rmt bundle exec rails c
+
+public_repo:
+	@echo ensure public/repo exists
+	@mkdir -p public/repo
+	@chmod -f 0777 public/repo || true

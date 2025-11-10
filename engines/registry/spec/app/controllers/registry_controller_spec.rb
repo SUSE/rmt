@@ -23,6 +23,19 @@ module Registry
           expect(response).to have_http_status(:ok)
         end
       end
+
+      context 'login request with credentials raising exception' do
+        let(:system) { create(:system) }
+        let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
+
+        it 'raises exception and returns unauth' do
+          allow_any_instance_of(AuthenticatedClient).to receive(:cache_file_exist?).and_return(true)
+          allow(Base32).to receive(:encode).and_raise('FOO')
+          get('/api/registry/authorize', headers: auth_headers)
+
+          expect(response).to have_http_status(:unauthorized)
+        end
+      end
     end
 
     describe '#catalog without access token' do

@@ -12,6 +12,10 @@ class Registry::AuthenticatedClient
   private
 
   def authenticate_by_system_credentials(login, password)
+    # TODO: add system_token
+    # that would imply that the DB query should return ONE record
+    # not multiple systems
+    # that change is not small and should be done in a different PR
     @systems = System.get_by_credentials(login, password)
     @account = login if @systems.present?
   end
