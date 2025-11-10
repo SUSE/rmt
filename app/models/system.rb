@@ -14,10 +14,14 @@ class System < ApplicationRecord
   has_many :repositories, -> { distinct }, through: :services
   has_many :products, -> { distinct }, through: :services
   has_many :system_uptimes, dependent: :destroy
+  has_many :system_profiles, dependent: :destroy # TODO: can we used :destroy_async?
+  has_many :profiles, -> { distinct }, through: :system_profiles
 
   validates :system_token, uniqueness: { scope: %i[login password], case_sensitive: false }
 
   alias_attribute :scc_synced_at, :scc_registered_at
+
+  accepts_nested_attributes_for :profiles
 
   def init
     self.login ||= System.generate_secure_login
@@ -74,6 +78,12 @@ class System < ApplicationRecord
 
   def update_instance_data(instance_data)
     update!(instance_data: instance_data)
+  end
+
+  def complete_profiles=(profiles)
+    logger.debug("assigning complete profiles: #{profiles.keys}")
+    # NOTE: All provided profiles must be complete
+    self.profiles = Profile.ensure_complete_profiles_exist(profiles)
   end
 
   before_update do |system|

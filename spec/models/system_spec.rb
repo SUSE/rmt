@@ -27,6 +27,18 @@ RSpec.describe System, type: :model do
     it { is_expected.to validate_uniqueness_of(:system_token).scoped_to(:login, :password).case_insensitive }
   end
 
+  describe 'system_profiles' do
+    let(:system) { create(:system, :with_profiles) }
+
+    it { is_expected.to have_many(:profiles).through(:system_profiles) }
+
+    it 'links through system_profiles to profiles' do
+      expect(system.system_profiles.count).to eq(system.profiles.count)
+      expect(SystemProfile.first.system_id).to eq(system.id)
+      expect(SystemProfile.first.profile_id).to eq(Profile.first.id)
+    end
+  end
+
   context 'when system is deleted' do
     context 'activation' do
       let(:activation) do

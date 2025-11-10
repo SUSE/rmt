@@ -41,6 +41,7 @@ FactoryBot.define do
       with_activated_product
       with_system_information
       with_last_seen_at
+      with_profiles
     end
 
     trait :with_last_seen_at do
@@ -105,6 +106,18 @@ FactoryBot.define do
     trait :with_system_uptimes do
       after :create do |system, _|
         create(:system_uptime, system: system)
+      end
+    end
+
+    trait :with_profiles do
+      transient do
+        profile_a { create(:profile) }
+        profile_b { create(:profile) }
+      end
+
+      after :create do |system, evaluator|
+        create(:system_profile, system: system, profile: evaluator.profile_a)
+        create(:system_profile, system: system, profile: evaluator.profile_b)
       end
     end
   end

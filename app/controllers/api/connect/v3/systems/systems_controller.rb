@@ -20,10 +20,31 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
 
     @system.hostname = params[:hostname]
 
+    # if a system_profiles param has been provided, process
+    # the provided profiles
+    if params.key?(:system_profiles)
+      profiles = info_params(:system_profiles)[:system_profiles]
+      complete, incomplete, invalid = Profile.filter_profiles(profiles.to_h)
+
+      # identify the incomplete profiles that are known
+      existing = Profile.identify_existing_profiles(incomplete)
+
+      # if any of the provided profiles is invalid or if any of the
+      # incomplete profiles don't already exist
+      if invalid.any? || (existing.count < incomplete.count)
+        logger.debug("problematic profiles detected: #{incomplete.count - existing.count} missing incomplete, #{invalid.count} invalid")
+        response.headers['X-System-Profiles-Action'] = 'clear-cache'
+      end
+
+      # update the system with a combination of the provided complete
+      # and incomplete profiles that already exist
+      @system.update(complete_profiles: complete.merge(existing))
+    end
+
     # Since the payload is handled by rails all values are converted to string
     # e.g. cpus: 16 becomes cpus: "16". We save this as string for now and expect
     # SCC to handle the conversion correctly
-    @system.system_information = @system.system_information_hash.update(hwinfo_params[:hwinfo]).to_json
+    @system.system_information = @system.system_information_hash.update(info_params(:hwinfo)[:hwinfo]).to_json
 
     if @system.save
       logger.info(N_("Updated system information for host '%s'") % @system.hostname)
@@ -38,11 +59,12 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
 
   private
 
-  def hwinfo_params
+  def info_params(key)
     # Allow all attributes without validating the key structure
     # This is fine since the systems are only internal and RMT users
     # can save in their own database whatever they want.
     # When forwarded to SCC, SCC validates the payload for correctness.
-    params.permit(hwinfo: {})
+    permit_args = { key => {} }
+    params.permit(**permit_args)
   end
 end
