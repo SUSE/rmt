@@ -19,6 +19,7 @@ class SUSE::Connect::SystemSerializer < ActiveModel::Serializer
   attribute :hwinfo, if: :has_hwinfo_and_needs_full_update?
   attribute :products, if: :needs_full_update?
   attribute :online_at, if: :has_system_uptime?
+  attribute :system_profiles, if: :has_system_profiles?
 
   # We send the internal system id as system_token if the system (in RMT) is
   # duplicated (therefore using the system_token mechanism).
@@ -76,5 +77,19 @@ class SUSE::Connect::SystemSerializer < ActiveModel::Serializer
 
   def needs_full_update?
     !object.scc_synced_at
+  end
+
+  def system_profiles
+    # TODO: optimize this to only add data field on first occurrence
+    object.profiles.each_with_object({}) do |profile, hash|
+      hash[profile.profile_type] = {
+        identifier: profile.identifier,
+        data: profile.data
+      }
+    end
+  end
+
+  def has_system_profiles?
+    object.profiles.present?
   end
 end

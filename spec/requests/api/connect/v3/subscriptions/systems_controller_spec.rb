@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
   describe '#announce' do
     include_context 'version header', 3
+    include_context 'profile sets'
     let(:url) { connect_systems_url(format: :json) }
     let(:headers) { { 'Content-Type' => 'application/json; charset=utf-8' }.merge(version_header) }
 
@@ -76,6 +77,75 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
         system = System.find_by(login: json_response[:login])
 
         expect(system.system_information).to eq(hwinfo_parameter.to_json)
+      end
+    end
+
+    context 'with system_profiles parameters' do
+      it 'stores the supplied profiles via the linked table' do
+        post url, params: { system_profiles: profile_set_all }.to_json, headers: headers
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:created)
+        expect(response.headers['X-System-Profiles-Action']).not_to be_present
+
+        system = System.find_by(login: json_response[:login])
+
+        expect(
+          system.profiles.each_with_object({}) do |profile, hash|
+            hash[profile.profile_type] = {
+              identifier: profile.identifier,
+              data: profile.data
+            }
+          end.symbolize_keys
+        ).to match(profile_set_all)
+      end
+
+      it 'handles incomplete profiles correctly setting header to clear-cache' do
+        post url, params: { system_profiles: profile_set_a1_no_data }.to_json, headers: headers
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:created)
+        expect(response.headers['X-System-Profiles-Action']).to be_present
+        expect(response.headers['X-System-Profiles-Action']).to eq('clear-cache')
+
+        system = System.find_by(login: json_response[:login])
+
+        expect(system.system_profiles.count).to eq(0)
+        expect(system.profiles.count).to eq(0)
+      end
+
+      it 'handles invalid profiles correctly setting header to clear-cache' do
+        post url, params: { system_profiles: profile_set_a1_no_ident }.to_json, headers: headers
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:created)
+        expect(response.headers['X-System-Profiles-Action']).to be_present
+        expect(response.headers['X-System-Profiles-Action']).to eq('clear-cache')
+
+        system = System.find_by(login: json_response[:login])
+
+        expect(system.system_profiles.count).to eq(0)
+        expect(system.profiles.count).to eq(0)
+      end
+
+      it 'handles mixed profiles correctly setting header to clear-cache' do
+        post url, params: { system_profiles: profile_set_mixed }.to_json, headers: headers
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:created)
+        expect(response.headers['X-System-Profiles-Action']).to be_present
+        expect(response.headers['X-System-Profiles-Action']).to eq('clear-cache')
+
+        system = System.find_by(login: json_response[:login])
+
+        expect(
+          system.profiles.each_with_object({}) do |profile, hash|
+            hash[profile.profile_type] = {
+              identifier: profile.identifier,
+              data: profile.data
+            }
+          end.symbolize_keys
+        ).to match(profile_set_mixed_complete)
       end
     end
   end

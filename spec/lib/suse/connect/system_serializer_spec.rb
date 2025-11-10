@@ -4,6 +4,14 @@ describe SUSE::Connect::SystemSerializer do
   subject(:serializer) { described_class.new(system).to_h }
 
   let(:system) { create :system, :full }
+  let(:profiles) do
+    system.profiles.each_with_object({}) do |profile, hash|
+      hash[profile.profile_type] = {
+        identifier: profile.identifier,
+        data: profile.data
+      }
+    end
+  end
 
   context 'not synchronized system' do
     let(:hwinfo_parameters) { JSON.parse(system.system_information).symbolize_keys }
@@ -18,6 +26,7 @@ describe SUSE::Connect::SystemSerializer do
         created_at: system.created_at,
         hostname: system.hostname,
         hwinfo: hwinfo_parameters,
+        system_profiles: profiles,
         products: [
           {
             id: product.id,
@@ -40,7 +49,8 @@ describe SUSE::Connect::SystemSerializer do
         login: system.login,
         password: system.password,
         last_seen_at: system.last_seen_at,
-        created_at: system.created_at
+        created_at: system.created_at,
+        system_profiles: profiles
       }
     end
 
@@ -55,6 +65,7 @@ describe SUSE::Connect::SystemSerializer do
         password: system.password,
         last_seen_at: system.last_seen_at,
         created_at: system.created_at,
+        system_profiles: profiles,
         system_token: system.id
       }
     end
@@ -93,6 +104,26 @@ describe SUSE::Connect::SystemSerializer do
     it 'match systemuptime data' do
       expect((serializer[:online_at][0][:online_at_day]).to_date).to eq(Time.zone.now.to_date)
       expect((serializer[:online_at][0][:online_at_hours]).to_s).to eq('111111111111111111111111')
+    end
+  end
+
+  context 'system without profiles' do
+    let(:system) { create :system, :synced }
+
+    it 'does not add the system_profiles attribute' do
+      expect(serializer.key?(:system_profiles)).to eq(false)
+    end
+  end
+
+  context 'system with profiles' do
+    let(:system) { create :system, :with_profiles }
+
+    it 'does add the system_profiles attribute' do
+      expect(serializer.key?(:system_profiles)).to eq(true)
+    end
+
+    it 'matches system_profiles attribute' do
+      expect(serializer[:system_profiles]).to match(profiles)
     end
   end
 end
