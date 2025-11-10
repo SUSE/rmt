@@ -257,8 +257,13 @@ Executing this script will import the RMT CA's certificate into the trusted stor
 
 The `mirroring` section lets you adjust mirroring behavior.
 
+  * `mirroring.mirror_drpm`:
+    Whether to mirror delta (extension = `.drpm`) RPM packages or not. Defaults
+    to `true` if absent.
   * `mirroring.mirror_src`:
     Whether to mirror source (arch = `src`) RPM packages or not.
+  * `mirroring.revalidate_repodata`:
+    Whether to re-validate repodata content and packages when the repodata did not change. Defaults to `true` if absent.
   * `mirroring.dedup_method`:
     Whether to deduplicate files by a hardlink or copy. Possible values are:
     `hardlink`, `copy`

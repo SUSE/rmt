@@ -1,6 +1,7 @@
 require 'base64'
 require 'fileutils'
 
+# rubocop:disable Metrics/ModuleLength
 module InstanceVerification
   def self.update_cache(cache_entry, mode, registry: false)
     unless registry
@@ -15,16 +16,21 @@ module InstanceVerification
     )
   end
 
-  def self.build_cache_entry(remote_ip, system_login, encoded_reg_code, mode, product)
+  def self.build_cache_entry(remote_ip, system_login, params, mode, product)
     if mode == 'payg'
       [remote_ip, system_login, product.id].join('-')
     elsif mode == 'registry'
       [remote_ip, system_login].join('-')
     else
       # for byos or hybrid cache
-      product_hash = product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
-      product_triplet = "#{product_hash[:identifier]}_#{product_hash[:version]}_#{product_hash[:arch]}"
-      "#{encoded_reg_code}-#{product_triplet}-active"
+      instance_data = params.fetch(:instance_data, '')
+      iid = if instance_data.present?
+              InstanceVerification.provider.new(nil, nil, nil, instance_data).instance_identifier
+            else
+              ''
+            end
+      encoded_reg_code = Base64.strict_encode64(params.fetch(:token, ''))
+      "#{encoded_reg_code}-#{iid}-#{product.product_class}"
     end
   end
 
@@ -65,11 +71,81 @@ module InstanceVerification
     File.unlink(full_path_cache_key) if File.exist?(full_path_cache_key)
   end
 
+  def self.set_cache_active(cache_key, mode, registry = false) # rubocop:disable Style/OptionalBooleanParameter
+    cache_key = [cache_key, 'active'].join('-') if ['byos', 'hybrid'].include?(mode)
+
+    InstanceVerification.update_cache(cache_key, mode, registry: registry)
+  end
+
   def self.set_cache_inactive(cache_key, mode)
     InstanceVerification.remove_entry_from_cache(cache_key, mode)
-    *all, _ = cache_key.split('-')
-    cache_key = [all, 'inactive'].join('-')
+    cache_key = [cache_key, 'inactive'].join('-')
     InstanceVerification.update_cache(cache_key, mode)
+  end
+
+  def self.verify_instance(request, logger, system)
+    return false unless request.headers.fetch('X-Instance-Data', false)
+
+    base_product = system.products.find_by(product_type: 'base')
+    return false unless base_product
+
+    decoded_instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
+    verification_provider = InstanceVerification.provider.new(
+      logger,
+      request,
+      base_product.attributes.symbolize_keys.slice(:identifier, :version, :arch, :release_type),
+      decoded_instance_data
+    )
+    cache_params = {}
+    # we are checking the base product so we pick the first registration code
+    # PAYG instances have no registration code
+    cache_params = { token: Base64.decode64(system.pubcloud_reg_code.split(',')[0]), instance_data: decoded_instance_data } if system.pubcloud_reg_code.present?
+    cache_key = InstanceVerification.build_cache_entry(
+      request.remote_ip, system.login, cache_params, system.proxy_byos_mode, base_product
+    )
+    found_cache_entry = InstanceVerification.reg_code_in_cache?(cache_key, system.proxy_byos_mode)
+    if found_cache_entry.present? && found_cache_entry.exclude?('-inactive')
+      # only update registry cache key
+      # even if the cache check was for PAYG/ repos cache
+      # the registry cache should last longer than PAYG
+      registry_cache_key = InstanceVerification.build_cache_entry(
+        request.remote_ip, system.login, {}, 'registry', ''
+      )
+      InstanceVerification.update_cache(registry_cache_key, 'registry', registry: true)
+      return true
+    end
+
+    is_valid = verification_provider.instance_valid?
+    # update repository and registry cache
+    InstanceVerification.set_cache_active(cache_key, system.proxy_byos_mode)
+    # update the instance data when valid and not in the cache
+    # before RMT 2.22, there was no need as the instance data was fresh from the client
+    # after 2.22 we are using instance data from the DB and we need to refresh that data
+    system.update_instance_data(decoded_instance_data)
+    is_valid
+  rescue InstanceVerification::Exception => e
+    if system.byos?
+      result = SccProxy.scc_check_subscription_expiration(
+        request.headers, system, request.remote_ip, false, cache_params, base_product
+      )
+      if result[:is_active]
+        # update the cache for the base product
+        InstanceVerification.set_cache_active(cache_key, 'byos')
+        system.update_instance_data(decoded_instance_data)
+        return true
+      end
+      # if can not get the activations, set the cache inactive
+      InstanceVerification.set_cache_inactive(cache_key, system.proxy_byos_mode)
+    end
+    ZypperAuth.zypper_auth_message(request, system, verification_provider, e.message)
+    false
+  rescue StandardError => e
+    logger.error('Unexpected instance verification error has occurred:')
+    logger.error(e.message)
+    logger.error("System login: #{system.login}, IP: #{request.remote_ip}")
+    logger.error('Backtrace:')
+    logger.error(e.backtrace)
+    false
   end
 
   class Engine < ::Rails::Engine
@@ -113,12 +189,17 @@ module InstanceVerification
             arch: base_product.arch,
             release_type: base_product.release_type
           }
-          add_on_product_class = InstanceVerification.provider.new(
-            logger,
-            request,
-            product_hash,
-            @system.instance_data
-          ).add_on
+          begin
+            add_on_product_class = InstanceVerification.provider.new(
+              logger,
+              request,
+              product_hash,
+              @system.instance_data
+              ).add_on
+          rescue InstanceVerification::Exception => e
+            logger.error("Could not find subscription: #{e.message}")
+            raise ActionController::TranslatedError.new("Could not find subscription: #{e.message}")
+          end
           # add_on_product_class, if present, is the real product class
           # i.e. in the case of SUMA, it would be SUMA product class
           # not the SUMA base product's product class (Micro)
@@ -130,6 +211,16 @@ module InstanceVerification
               product_class: product_class
             }
           )
+        end
+
+        def add_extension_product_class(base_product, product)
+          # SLES identifier has 2 product classes 7261 and SLES-ARM64, for each arch
+          # using identifier to include both cases
+          payg_sles = @system.payg? && base_product.identifier.casecmp?('sles') && base_product.version.start_with?('15')
+          if payg_sles && product.product_class.casecmp?('sle-lp') && base_product.arch == product.arch && base_product.version == product.version
+            return [product.product_class]
+          end
+          []
         end
 
         def verify_product_activation
@@ -168,35 +259,35 @@ module InstanceVerification
 
           allowed_product_classes = subscription.product_classes.pluck(:product_class)
 
+          allowed_product_classes += add_extension_product_class(base_product, product)
           unless allowed_product_classes.include?(product.product_class)
             raise InstanceVerification::Exception.new(
               'The product is not available for this instance'
             )
           end
-          logger.info "Product #{@product.product_string} available for this instance"
+          logger.info "Product #{product.product_string} available for this instance"
           cache_key = InstanceVerification.build_cache_entry(request.remote_ip, @system.login, nil, 'payg', product)
           InstanceVerification.update_cache(cache_key, 'payg')
         end
 
         def verify_base_product_activation(product)
-          verification_provider = InstanceVerification.provider.new(
+          InstanceVerification.provider.new(
             logger,
             request,
             params.permit(:identifier, :version, :arch, :release_type).to_h,
             @system.instance_data
-          )
-
-          raise 'Unspecified error' unless verification_provider.instance_valid?
-
-          encoded_reg_code = @system.pubcloud_reg_code
+          ).instance_valid?
           # we use the token sent from the client if present
           # instead of the value stored in the DB
-          encoded_reg_code = Base64.strict_encode64(params[:token]) if params[:token].present?
-
+          params[:instance_data] = @system.instance_data
           cache_key = InstanceVerification.build_cache_entry(
-            request.remote_ip, @system.login, encoded_reg_code, @system.proxy_byos_mode, product
+            request.remote_ip,
+            @system.login,
+            params,
+            @system.proxy_byos_mode,
+            product
           )
-          InstanceVerification.update_cache(cache_key, @system.proxy_byos_mode)
+          InstanceVerification.set_cache_active(cache_key, @system.proxy_byos_mode)
         end
 
         # Verify that the base product doesn't change in the offline migration
@@ -216,3 +307,4 @@ module InstanceVerification
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength

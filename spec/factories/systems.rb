@@ -15,6 +15,7 @@ FactoryBot.define do
     end
 
     trait :hybrid do
+      pubcloud_reg_code { 'regitration_code' }
       proxy_byos_mode { :hybrid }
     end
 
@@ -60,7 +61,7 @@ FactoryBot.define do
     trait :with_activated_paid_extension do
       transient do
         product_base { create(:product, :with_mirrored_repositories, free: true) }
-        paid_product { create(:product, :with_mirrored_repositories, free: false, product_type: :extension) }
+        paid_product { create(:product, :with_mirrored_repositories, :product_sles_ltss) }
         free_product { create(:product, :with_mirrored_repositories, free: true, product_type: :extension) }
         subscription { nil }
       end
@@ -91,7 +92,8 @@ FactoryBot.define do
           hypervisor: nil,
           arch: 'x86_64',
           uuid: SecureRandom.uuid,
-          cloud_provider: 'Amazon'
+          cloud_provider: 'Amazon',
+          mem_total: 64
         }.to_json
       end
     end

@@ -1,9 +1,0 @@
-version: '2'
-
-services:
-  base:
-    environment:
-      - MYSQL_ROOT_PASSWORD=toor
-      - MYSQL_DATABASE=rmt
-      - MYSQL_USER=rmt
-      - MYSQL_PASSWORD=rmt

@@ -52,7 +52,8 @@ msgstr "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 msgid "A repository by the ID %{id} already exists."
 msgstr "Úložiště s ID %{url} už existuje."
 
-msgid "A repository by the URL %{url} already exists."
+#, fuzzy
+msgid "A repository by the URL %{url} already exists (ID %{id})."
 msgstr "Repozitář na adrese URL %{url} už existuje."
 
 msgid "Added association between %{repo} and product %{product}"
@@ -124,14 +125,11 @@ msgid ""
 msgstr ""
 "Vyčistí visící soubory balíčků na základě aktuálních metadat úložiště.\n"
 "\n"
-"Tento příkaz prohledá adresář zrcadla a vyhledá soubory metadat 'repomd.xml',"
-"\n"
-"rozebere je a porovná jejich obsah se soubory na disku. Soubory, které "
-"nejsou\n"
+"Tento příkaz prohledá adresář zrcadla a vyhledá soubory metadat 'repomd.xml',\n"
+"rozebere je a porovná jejich obsah se soubory na disku. Soubory, které nejsou\n"
 "uvedené v metadatech a jsou staré alespoň 2 dny, jsou považovány za visící.\n"
 "\n"
-"Pak odstraní všechny visící soubory z disku a všechny související záznamy "
-"databáze.\n"
+"Pak odstraní všechny visící soubory z disku a všechny související záznamy databáze.\n"
 
 msgid "Clean dangling package files, based on current repository data."
 msgstr "Vyčištění visících souborů balíčků na základě aktuálních dat úložiště."
@@ -162,6 +160,10 @@ msgstr "Nelze najít systém s přihlašovacím jménem „%{login}“ a heslem 
 
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr "Nelze zrcadlit produkt SUSE Manager s chybou: %{error}"
+
+#, fuzzy
+msgid "Could not read '%{file}': %{error}"
+msgstr "n"
 
 msgid "Couldn't add custom repository."
 msgstr "Nelze přidat vlastní úložiště."
@@ -212,8 +214,7 @@ msgid "Displays product with all its repositories and their attributes."
 msgstr "Zobrazí produkt se všemi jeho úložišti a jejich atributy."
 
 msgid "Do not ask anything; use default answers automatically. Default: false"
-msgstr ""
-"Na nic se neptat, automaticky použít výchozí odpovědi. Výchozí hodnota: false"
+msgstr "Na nic se neptat, automaticky použít výchozí odpovědi. Výchozí hodnota: false"
 
 msgid "Do not fail the command if product is in alpha or beta stage"
 msgstr "Nezadávejte příkaz, pokud je produkt ve fázi alfa nebo beta"
@@ -281,7 +282,12 @@ msgstr "Chyba při zrcadlení metadat: %{error}"
 msgid "Error while mirroring packages: %{error}"
 msgstr "Chyba při zrcadlení balíčků: %{error}"
 
-msgid "Error while moving directory %{src} to %{dest}: %{error}"
+#, fuzzy
+msgid "Error while mirroring repository: %{error}"
+msgstr "Chyba při zrcadlení metadat: %{error}"
+
+#, fuzzy
+msgid "Error while moving files %{glob} to %{dest}: %{error}"
 msgstr "Chyba při přesouvání adresáře %{src} do %{dest}: %{error}"
 
 msgid "Examples"
@@ -308,11 +314,22 @@ msgstr "Exportují se repozitáře"
 msgid "Exporting subscriptions"
 msgstr "Exportují se předplatná"
 
+#, fuzzy
+msgid "Extracting package list from metadata"
+msgstr "n"
+
 msgid "Failed to download %{failed_count} files"
 msgstr "Nepodařilo se stáhnout %{failed_count} souborů"
 
+#, fuzzy
+msgid "Failed to export the SUSE Manager product tree: %{error_message}"
+msgstr "n"
+
 msgid "Failed to import system %{system}"
 msgstr "Nepodařilo se importovat systém %{system}"
+
+msgid "Failed to import the suma product tree: %{error_message}"
+msgstr ""
 
 msgid "Failed to sync systems: %{error}"
 msgstr "Nepodařilo se synchronizovat systémy: %{error}"
@@ -398,6 +415,18 @@ msgstr "Seznam registrovaných systémů."
 msgid "List repositories which are marked to be mirrored"
 msgstr "Vypsat repozitáře označené k zrcadlení"
 
+#, fuzzy
+msgid "Loading product data from SCC"
+msgstr "n"
+
+#, fuzzy
+msgid "Loading repository data from SCC"
+msgstr "n"
+
+#, fuzzy
+msgid "Loading subscription data from SCC"
+msgstr "n"
+
 msgid "Login"
 msgstr "Přihlášení"
 
@@ -443,8 +472,20 @@ msgstr "Zrcadlení dokončeno."
 msgid "Mirroring completed with errors."
 msgstr "Zrcadlení dokončeno s chybami."
 
+#, fuzzy
+msgid "Mirroring metadata files"
+msgstr "Zrcadlit"
+
+#, fuzzy
+msgid "Mirroring new packages"
+msgstr "Zrcadlit"
+
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
 msgstr "Zrcadlení úložiště s ID %{repo_id} není povoleno"
+
+#, fuzzy
+msgid "Mirroring packages"
+msgstr "Zrcadlit"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "Zrcadlí se repozitář %{repo} do %{dir}"
@@ -494,13 +535,15 @@ msgstr "Nebyly nalezeny žádné repozitáře pro produkt: %s"
 msgid "No repository IDs supplied"
 msgstr "Nebyla zadána žádná ID úložišť"
 
-msgid "No subscription with this Registration Code found"
+#, fuzzy
+msgid "No subscription found with this registration code"
 msgstr "Předplatné s tímto registračním kódem nenalezeno"
 
 msgid "Not Mandatory"
 msgstr "Není povinné"
 
-msgid "Not all mandatory repositories are mirrored for product %s"
+#, fuzzy
+msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
 msgstr "Nejsou zrcadleny všechny povinné repozitáře pro produkt %s"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
@@ -660,6 +703,10 @@ msgstr "Odebere lokálně zrcadlené soubory z úložišť neoznačených jako z
 
 msgid "Removes old systems and their activations if they are inactive."
 msgstr "Odstraní staré systémy a jejich aktivace, pokud jsou neaktivní."
+
+#, fuzzy
+msgid "Removing obsolete repositories"
+msgstr "n"
 
 msgid "Repositories are not available for this product."
 msgstr "Pro tento produkt nejsou úložiště k dispozici."
@@ -878,8 +925,28 @@ msgstr "Chcete-li vyčistit stažené soubory, spusťte '%{command}'"
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr "Chcete-li označit systém k odstranění, použijte příkaz \"% {command}\" pro výpis systémů s jejichi přihlašovacími údaji."
 
+#, fuzzy
+msgid "Total Mirror Time: %{time}"
+msgstr "Zrcadlit"
+
+#, fuzzy
+msgid "Total mirrored repositories: %{repo_count}"
+msgstr "n"
+
+#, fuzzy
+msgid "Total transferred file size: %{files_size}"
+msgstr "n"
+
+#, fuzzy
+msgid "Total transferred files: %{files_count}"
+msgstr "n"
+
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
 msgstr "Celkem: vyčistěno %{total_count} (%{total_size}), %{total_db_entries}."
+
+#, fuzzy
+msgid "Try to access non existing temporary directory %{name}"
+msgstr "n"
 
 msgid "URL"
 msgstr "URL"
@@ -901,6 +968,9 @@ msgstr "Aktualizují se repozitáře"
 
 msgid "Updating subscriptions"
 msgstr "Aktualizují se předplatná"
+
+msgid "Uptime data is malformed '%s'"
+msgstr ""
 
 msgid "Version"
 msgstr "Verze"

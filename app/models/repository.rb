@@ -21,7 +21,8 @@ class Repository < ApplicationRecord
   class << self
 
     def remove_suse_repos_without_tokens!
-      where(auth_token: nil).where("external_url LIKE '%.suse.com%'").where(installer_updates: 0).where.not(scc_id: nil).delete_all
+      where(auth_token: nil).where("external_url LIKE '%.suse.com%' OR external_url LIKE '%.ranchergovernment.com%'")
+        .where(installer_updates: 0).where.not(scc_id: nil).delete_all
     end
 
     # Mangles remote repo URL to make a nicer local path, see specs for examples

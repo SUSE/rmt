@@ -13,8 +13,8 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
     create_repository_path
     create_temp_dir(:metadata)
 
-    sources = mirror_metadata
-    mirror_packages(sources)
+    updated_metadata_files = mirror_metadata
+    mirror_packages(updated_metadata_files)
 
     # We can not simply move the whole directory here, since there a
     glob_metadata = File.join(temp(:metadata), '*')
@@ -22,6 +22,7 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
   end
 
   def mirror_metadata
+    @logger.debug _('Mirroring metadata files')
     release = download_cached!(RELEASE_FILE_NAME, to: temp(:metadata))
 
     key = file_reference(KEY_FILE_NAME, to: temp(:metadata))
@@ -38,16 +39,21 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
     # The nested debian structure only contains the zipped version of packages sometimes
     # However, the release file still contains a reference to the unzipped versions
     # So, we don't error if they don't exist
-    packages, optionals = metadata_refs.partition { |ref| is_mandatory? ref }
+    packages_metadata, optional_metadata = metadata_refs.partition { |ref| is_mandatory? ref }
 
     # fail early if required Packages.gz files are missing
-    enqueue(packages)
+    enqueue(packages_metadata)
     download_enqueued
 
-    enqueue(optionals)
+    enqueue(optional_metadata)
     download_enqueued(continue_on_error: true)
 
-    metadata_refs
+    # If revalidate_repodata is turned off, only return changed metadata files
+    if RMT::Config.revalidate_repodata?
+      metadata_refs
+    else
+      metadata_refs.select { |m| metadata_updated?(m) }
+    end
   end
 
   def mirror_packages(metadata_refs)
@@ -59,10 +65,12 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
       end
     end
 
+    @logger.debug _('Mirroring packages')
     download_enqueued
   end
 
   def parse_package_list(packagelist)
+    @logger.debug "Extracting package list from metadata file #{packagelist.local_path}"
     packages = []
     hdl = File.open(packagelist.local_path, 'rb')
     ext = File.extname(packagelist.local_path)

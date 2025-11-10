@@ -16,6 +16,8 @@ module StrictAuthentication
 
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
     def path_allowed?(headers)
       path = headers['X-Original-URI']
       return false if path.blank?
@@ -35,11 +37,12 @@ module StrictAuthentication
       if @system.hybrid? || @system.byos?
         # check if the path is paid for hybrid or byos instances
         base_product = @system.products.find_by(product_type: 'base')
+        decoded_instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
         verification_provider = InstanceVerification.provider.new(
           logger,
           request,
           base_product.attributes.symbolize_keys.slice(:identifier, :version, :arch, :release_type),
-          Base64.decode64(request.headers['X-Instance-Data'].to_s) # instance data
+          decoded_instance_data
         )
         paid_extensions = @system.products.select { |prod| prod if !prod.free && prod.product_type == 'extension' }
         paid_extensions.each do |paid_extension|
@@ -47,7 +50,16 @@ module StrictAuthentication
           repos_paths.each do |repo_path|
             if found_path == repo_path
               logger.info "verifying paid extension #{paid_extension.identifier}"
-              result = SccProxy.scc_check_subscription_expiration(request.headers, @system, paid_extension.product_class)
+              cache_params = {}
+              if @system.pubcloud_reg_code.presence
+                cache_params = {
+                  token: Base64.decode64(@system.pubcloud_reg_code.split(',')[0]),
+                  instance_data: decoded_instance_data
+                }
+              end
+              result = SccProxy.scc_check_subscription_expiration(
+                request.headers, @system, request.remote_ip, false, cache_params, paid_extension
+              )
               Rails.logger.info "Result from check subscription with SCC #{result}"
               return true if result[:is_active]
 
@@ -64,7 +76,12 @@ module StrictAuthentication
           end
         end
         if @system.byos?
-          result = SccProxy.scc_check_subscription_expiration(request.headers, @system, base_product.product_class)
+          instance_data = Base64.decode64(headers['X-Instance-Data'].to_s)
+          cache_params = {}
+          cache_params = { token: Base64.decode64(@system.pubcloud_reg_code.split(',')[0]), instance_data: instance_data } if @system.pubcloud_reg_code.presence
+          result = SccProxy.scc_check_subscription_expiration(
+            request.headers, @system, request.remote_ip, false, cache_params, base_product
+          )
           Rails.logger.info "Result from check subscription with SCC #{result}"
           return true if result[:is_active]
 
@@ -72,13 +89,15 @@ module StrictAuthentication
           false
         else
           # system is hybrid but the path is not a paid extension
-          # or path is in not free and belongs to the base product repositories
+          # or path is not free and belongs to the base product repositories
           # i.e. HA for SAP
           # check if it belongs to the free products repositories list
           true
         end
       end
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/PerceivedComplexity
 
