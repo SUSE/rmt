@@ -66,17 +66,17 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
     packages = []
     hdl = File.open(packagelist.local_path, 'rb')
     ext = File.extname(packagelist.local_path)
-    idx = ''
+    ipackage_stream = ''
 
     case ext
     when '.gz'
-      idx = Zlib::GzipReader.new(hdl)
+      ipackage_stream = Zlib::GzipReader.new(hdl)
     when '.xz'
-      idx = XZ::StreamReader.new(hdl)
+      ipackage_stream = XZ::StreamReader.new(hdl)
     end
 
     current = {}
-    idx.each_line do |line|
+    ipackage_stream.each_line do |line|
       if line == "\n"
         ref = file_reference(current[:filename], to: repository_path)
         ref.arch = current[:architecture]

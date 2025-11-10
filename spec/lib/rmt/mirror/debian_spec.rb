@@ -185,6 +185,18 @@ describe RMT::Mirror::Debian do
       end
     end
 
+    context 'valid package list with xz compression' do
+      let(:fixture) { 'Packages.xz' }
+      let(:deb_file_path) { '/test/repository/base/path/sample/repository/15.3/amd64/venv-salt-minion_3006.0-2.6.3_amd64.deb' }
+
+      it 'parse package list into references' do
+        packages = debian.parse_package_list(packages_ref)
+        expect(packages.count).to be(4)
+        expect(packages[3].local_path).to eq(deb_file_path)
+        expect(packages[3].size).to eq(23333144)
+      end
+    end
+
     context 'malformed package list' do
       let(:fixture) { 'Invalid_Packages.gz' }
 
