@@ -4,7 +4,7 @@ module DataExport
     config.after_initialize do
       # replaces RMT registration for SCC registration
       Api::Connect::V3::Subscriptions::SystemsController.class_eval do
-        after_action :export_rmt_data, only: %i[announce_system], if: -> { response.successful? && !@system.byos? }
+        after_action :export_rmt_data, only: %i[announce_system], if: -> { DataExport.handler.presence && response.successful? && !@system.byos? }
 
         def export_rmt_data
           # no need to check if system is nil
@@ -27,7 +27,10 @@ module DataExport
       end
 
       Api::Connect::V3::Systems::SystemsController.class_eval do
-        after_action :export_rmt_data, only: %i[update], if: -> { response.successful? && !@system.byos? && @system.products.present? }
+        after_action :export_rmt_data, only: %i[update], if: lambda {
+          DataExport.handler.presence && response.successful? && !@system.byos? &&
+          @system.products.present?
+        }
 
         def export_rmt_data
           @system.products.pluck(:name).each do |prod_name|
@@ -57,7 +60,7 @@ module DataExport
       end
 
       Api::Connect::V3::Systems::ProductsController.class_eval do
-        after_action :export_rmt_data, only: %i[activate upgrade], if: -> { response.successful? && !@system.byos? }
+        after_action :export_rmt_data, only: %i[activate upgrade], if: -> { DataExport.handler.presence && response.successful? && !@system.byos? }
 
         def export_rmt_data
           params[:dw_product_name] = @product.name

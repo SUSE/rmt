@@ -32,6 +32,7 @@ following compression formats:
 
 ```
   (.gz)  GNU Gzip compression algorithm
+  (.xz)  Tukaani LZMA algorithm
   (.bz2) Burrows–Wheeler algorithm
   (.zst) Zstandard algorithm
 ```
