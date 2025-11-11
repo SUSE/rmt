@@ -213,6 +213,16 @@ module InstanceVerification
           )
         end
 
+        def add_extension_product_class(base_product, product)
+          # SLES identifier has 2 product classes 7261 and SLES-ARM64, for each arch
+          # using identifier to include both cases
+          payg_sles = @system.payg? && base_product.identifier.casecmp?('sles') && base_product.version.start_with?('15')
+          if payg_sles && product.product_class.casecmp?('sle-lp') && base_product.arch == product.arch && base_product.version == product.version
+            return [product.product_class]
+          end
+          []
+        end
+
         def verify_product_activation
           product = find_product
 
@@ -249,6 +259,7 @@ module InstanceVerification
 
           allowed_product_classes = subscription.product_classes.pluck(:product_class)
 
+          allowed_product_classes += add_extension_product_class(base_product, product)
           unless allowed_product_classes.include?(product.product_class)
             raise InstanceVerification::Exception.new(
               'The product is not available for this instance'
