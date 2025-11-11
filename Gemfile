@@ -102,3 +102,7 @@ gem 'base32'
 # Needed to parse Debian's Packages.xz
 gem 'ruby-xz', '~> 1.0'
 gem 'resque'
+
+gem 'webrick', '~> 1.9', group: :test
+
+gem 'fiddle', '~> 1.1'

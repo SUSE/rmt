@@ -50,7 +50,7 @@ GEM
       activesupport
     coderay (1.1.3)
     concurrent-ruby (1.3.5)
-    config (3.0.0)
+    config (3.1.1)
       deep_merge (~> 1.2, >= 1.2.1)
       dry-validation (~> 1.0, >= 1.0.0)
     connection_pool (2.5.0)
@@ -64,43 +64,44 @@ GEM
       bigdecimal
       rexml
     crass (1.0.6)
-    deep_merge (1.2.1)
+    deep_merge (1.2.2)
     diff-lcs (1.5.0)
     docile (1.3.2)
-    dry-configurable (0.12.1)
+    dry-configurable (1.3.0)
+      dry-core (~> 1.1)
+      zeitwerk (~> 2.6)
+    dry-core (1.1.0)
       concurrent-ruby (~> 1.0)
-      dry-core (~> 0.5, >= 0.5.0)
-    dry-container (0.7.2)
+      logger
+      zeitwerk (~> 2.6)
+    dry-inflector (1.2.0)
+    dry-initializer (3.2.0)
+    dry-logic (1.6.0)
+      bigdecimal
       concurrent-ruby (~> 1.0)
-      dry-configurable (~> 0.1, >= 0.1.3)
-    dry-core (0.5.0)
+      dry-core (~> 1.1)
+      zeitwerk (~> 2.6)
+    dry-schema (1.14.1)
       concurrent-ruby (~> 1.0)
-    dry-equalizer (0.3.0)
-    dry-inflector (0.2.0)
-    dry-initializer (3.0.4)
-    dry-logic (1.1.0)
+      dry-configurable (~> 1.0, >= 1.0.1)
+      dry-core (~> 1.1)
+      dry-initializer (~> 3.2)
+      dry-logic (~> 1.5)
+      dry-types (~> 1.8)
+      zeitwerk (~> 2.6)
+    dry-types (1.8.3)
+      bigdecimal (~> 3.0)
       concurrent-ruby (~> 1.0)
-      dry-core (~> 0.5, >= 0.5)
-    dry-schema (1.6.1)
+      dry-core (~> 1.0)
+      dry-inflector (~> 1.0)
+      dry-logic (~> 1.4)
+      zeitwerk (~> 2.6)
+    dry-validation (1.11.1)
       concurrent-ruby (~> 1.0)
-      dry-configurable (~> 0.8, >= 0.8.3)
-      dry-core (~> 0.5, >= 0.5)
-      dry-initializer (~> 3.0)
-      dry-logic (~> 1.0)
-      dry-types (~> 1.5)
-    dry-types (1.5.1)
-      concurrent-ruby (~> 1.0)
-      dry-container (~> 0.3)
-      dry-core (~> 0.5, >= 0.5)
-      dry-inflector (~> 0.1, >= 0.1.2)
-      dry-logic (~> 1.0, >= 1.0.2)
-    dry-validation (1.6.0)
-      concurrent-ruby (~> 1.0)
-      dry-container (~> 0.7, >= 0.7.1)
-      dry-core (~> 0.4)
-      dry-equalizer (~> 0.2)
-      dry-initializer (~> 3.0)
-      dry-schema (~> 1.5, >= 1.5.2)
+      dry-core (~> 1.1)
+      dry-initializer (~> 3.2)
+      dry-schema (~> 1.14)
+      zeitwerk (~> 2.6)
     erubi (1.13.1)
     ethon (0.16.0)
       ffi (>= 1.15.0)
@@ -114,6 +115,7 @@ GEM
       prime
     ffaker (2.21.0)
     ffi (1.16.3)
+    fiddle (1.1.8)
     formatador (0.2.5)
     forwardable (1.3.3)
     fuubar (2.5.1)
@@ -157,8 +159,7 @@ GEM
       rb-inotify (~> 0.9, >= 0.9.10)
     locale (2.1.4)
     loofah (2.24.1)
-      crass (~> 1.0.2)
-      nokogiri (>= 1.12.0)
+    logger (1.7.0)
     lumberjack (1.2.8)
     memory_profiler (1.0.2)
     method_source (1.1.0)
@@ -375,8 +376,8 @@ GEM
       railties
       yabeda (~> 0.8)
     yard (0.9.35)
-    zeitwerk (2.6.15)
-    zstd-ruby (1.5.7.1)
+    zeitwerk (2.7.3)
+    zstd-ruby (1.5.6.1)
 
 PLATFORMS
   ruby
@@ -398,6 +399,7 @@ DEPENDENCIES
   fakefs (~> 1.4)
   fast_gettext (~> 2.2)
   ffaker (<= 2.21.0)
+  fiddle (~> 1.1)
   fuubar
   gettext
   gettext_i18n_rails
@@ -438,6 +440,7 @@ DEPENDENCIES
   vcr (~> 6.0)
   versionist
   webmock
+  webrick (~> 1.9)
   yabeda
   yabeda-prometheus
   yabeda-puma-plugin
