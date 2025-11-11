@@ -1,4 +1,6 @@
 require 'repomd_parser'
+require 'tempfile'
+require 'xz'
 
 class RMT::Mirror::Repomd < RMT::Mirror::Base
 
@@ -76,7 +78,9 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
       next unless xml_parsers.key? file.type
 
       @logger.debug _("Parsing '#{file.relative_path} (#{(file.size.to_f / (1024 * 1024)).round(1)}MB)'")
-      xml_parsers[file.type].new.parse_file(file.local_path)
+      with_metadata_file(file) do |path|
+        xml_parsers[file.type].new.parse_file(path)
+      end
     end.flatten.compact
   end
 
@@ -84,5 +88,23 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
     return false if !RMT::Config.mirror_drpm_files? && ref.local_path.match?(/\.drpm$/)
 
     super(ref)
+  end
+
+  def with_metadata_file(file)
+    return yield(file.local_path) unless file.local_path.end_with?('.xz')
+
+    Tempfile.create(['rmt-metadata', decompressed_extension(file.local_path)]) do |tempfile|
+      tempfile.binmode
+      tempfile.write(XZ.decompress(File.binread(file.local_path)))
+      tempfile.flush
+      tempfile.rewind
+      yield tempfile.path
+    end
+  end
+
+  def decompressed_extension(path)
+    base = path.delete_suffix('.xz')
+    ext = File.extname(base)
+    ext.empty? ? '' : ext
   end
 end
