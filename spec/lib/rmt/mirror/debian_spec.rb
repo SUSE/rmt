@@ -139,14 +139,14 @@ describe RMT::Mirror::Debian do
         expect(debian).to receive(:download_enqueued).with(continue_on_error: true)
 
         allow(debian).to receive(:download_enqueued)
-        expect(debian).to receive(:enqueue).with(all(be_like_relative_path(/Packages.gz/)))
+        expect(debian).to receive(:enqueue).with(all(be_like_relative_path(/Packages.xz|gz/)))
 
         debian.mirror_metadata
       end
 
       it 'calls download_enqueued for the remaining valid paths' do
         expect(debian).to receive(:download_enqueued)
-        expect(debian).to receive(:enqueue).with(all(be_like_relative_path(/Packages.gz/))).once
+        expect(debian).to receive(:enqueue).with(all(be_like_relative_path(/Packages.xz|gz/))).once
 
         expect(debian).to receive(:enqueue).once
         expect(debian).to receive(:download_enqueued).with(continue_on_error: true)
@@ -196,13 +196,13 @@ describe RMT::Mirror::Debian do
 
     context 'valid package list with xz compression' do
       let(:fixture) { 'Packages.xz' }
-      let(:deb_file_path) { '/test/repository/base/path/sample/repository/15.3/amd64/venv-salt-minion_3006.0-2.6.3_amd64.deb' }
+      let(:deb_file_path) { '/test/repository/base/path/sample/repository/15.3/pool/updates/contrib/z/zfs-linux/zfs-dkms_2.0.3-9+deb11u2_all.deb' }
 
       it 'parse package list into references' do
         packages = debian.parse_package_list(packages_ref)
-        expect(packages.count).to be(4)
+        expect(packages.count).to be(6)
         expect(packages[3].local_path).to eq(deb_file_path)
-        expect(packages[3].size).to eq(23333144)
+        expect(packages[3].size).to eq(2234312)
       end
     end
 
