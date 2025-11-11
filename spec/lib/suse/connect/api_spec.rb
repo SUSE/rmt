@@ -10,6 +10,10 @@ RSpec.describe SUSE::Connect::Api do
   describe '#system_uuid' do
     subject(:method_call) { api_client.send(:system_uuid) }
 
+    before do
+      allow(File).to receive(:exist?).and_call_original
+    end
+
     context 'when system_uuid file exists' do
       it 'reads a file' do
         allow(File).to receive(:exist?).with(described_class::UUID_FILE_LOCATION).and_return(true)

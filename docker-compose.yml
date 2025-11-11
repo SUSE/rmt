@@ -15,8 +15,6 @@ services:
       - ./config/rmt.yml:/etc/rmt.conf
     depends_on:
       - db
-    pre_stop:
-      - command: rm -f /srv/www/rmt/tmp/pids/server.pid
     privileged: true
     command: bundle exec rails runner /srv/www/rmt/bin/compose-init.rb
 
