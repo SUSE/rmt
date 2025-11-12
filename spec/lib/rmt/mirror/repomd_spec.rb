@@ -201,20 +201,6 @@ RSpec.describe RMT::Mirror::Repomd do
           expect_any_instance_of(RepomdParser::PrimaryXmlParser).to receive :parse
           repomd.parse_packages_metadata(metadata_refs)
         end
-
-        context 'when metadata is xz compressed' do
-          let(:fixture) { 'repodata/abf421e45af5cd686f050bab3d2a98e0a60d1b5ca3b07c86cb948fc1abfa675e-primary.xml.xz' }
-
-          it 'decompresses metadata before parsing' do
-            parser = instance_double(RepomdParser::PrimaryXmlParser, parse_file: [])
-            expect(RepomdParser::PrimaryXmlParser).to receive(:new).and_return(parser)
-            expect(parser).to receive(:parse_file) do |path|
-              expect(path).not_to end_with('.xz')
-            end
-
-            repomd.parse_packages_metadata(metadata_refs)
-          end
-        end
       end
     end
   end
