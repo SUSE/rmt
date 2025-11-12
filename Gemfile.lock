@@ -148,7 +148,7 @@ GEM
     hpricot (0.8.6)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
-    json (2.3.1)
+    json (2.7.6)
     jsonapi-renderer (0.2.2)
     jwt (2.10.2)
       base64
@@ -363,7 +363,7 @@ GEM
       prometheus-client (>= 3.0, < 5.0)
       rack
       yabeda (~> 0.10)
-    yabeda-puma-plugin (0.7.1)
+    yabeda-puma-plugin (0.8.0)
       json
       puma
       yabeda (~> 0.5)
