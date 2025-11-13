@@ -1,24 +1,29 @@
 class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseController
 
   def announce_system
-    # construct the system creation parameters
+    # Construct the system creation parameters
     create_params = {
       hostname: params[:hostname],
       system_information: info_params(:hwinfo)[:hwinfo].to_json
     }
 
-    # check if any profiles have been provided
+    # Check if any profiles have been provided
     if params.key?(:system_profiles)
       profiles = info_params(:system_profiles)[:system_profiles]
+
+      # Partition profiles into three categories, namely complete,
+      # incomplete (missing the data field), and invalid (missing
+      # the identifier field)
       complete, incomplete, invalid = Profile.filter_profiles(profiles.to_h)
 
-      # all profiles provided to announce_system should be complete
+      # All profiles provided to announce_system should be complete; set
+      # response header if any invalid or incomplete profiles were provided.
       if incomplete.any? || invalid.any?
         logger.debug("problematic profiles detected: #{incomplete.count} incomplete, #{invalid.count} invalid")
         response.headers['X-System-Profiles-Action'] = 'clear-cache'
       end
 
-      # include the complete profiles in create_params only if
+      # Include the complete profiles in create_params only if
       # complete profiles were actually provided
       create_params[:complete_profiles] = complete if complete.any?
     end
