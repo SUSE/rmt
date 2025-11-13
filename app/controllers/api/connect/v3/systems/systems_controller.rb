@@ -20,25 +20,30 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
 
     @system.hostname = params[:hostname]
 
-    # if a system_profiles param has been provided, process
+    # If a system_profiles param has been provided, process
     # the provided profiles
     if params.key?(:system_profiles)
       profiles = info_params(:system_profiles)[:system_profiles]
+
+      # Partition profiles into three categories, namely complete,
+      # incomplete (missing the data field), and invalid (missing
+      # the identifier field)
       complete, incomplete, invalid = Profile.filter_profiles(profiles.to_h)
 
-      # identify the incomplete profiles that are known
-      existing = Profile.identify_existing_profiles(incomplete)
+      # Further refine the incomplete profiles to identify any that
+      # are known
+      known_incomplete = Profile.identify_known_profiles(incomplete)
 
-      # if any of the provided profiles is invalid or if any of the
-      # incomplete profiles don't already exist
-      if invalid.any? || (existing.count < incomplete.count)
-        logger.debug("problematic profiles detected: #{incomplete.count - existing.count} missing incomplete, #{invalid.count} invalid")
+      # If any of the provided profiles is invalid or if any of the
+      # incomplete profiles aren't known, set the response header
+      if invalid.any? || (known_incomplete.count < incomplete.count)
+        logger.debug("problematic profiles detected: #{incomplete.count - known_incomplete.count} unknown incomplete, #{invalid.count} invalid")
         response.headers['X-System-Profiles-Action'] = 'clear-cache'
       end
 
-      # update the system with a combination of the provided complete
-      # and incomplete profiles that already exist
-      @system.update(complete_profiles: complete.merge(existing))
+      # Update the system with a combination of the provided complete
+      # and known incomplete profiles.
+      @system.update(complete_profiles: complete.merge(known_incomplete))
     end
 
     # Since the payload is handled by rails all values are converted to string
