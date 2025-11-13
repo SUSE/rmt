@@ -35,15 +35,15 @@ RSpec.describe Profile, type: :model do
     end
 
     it 'finds existing profile' do
-      expect(described_class.identify_existing_profiles(profiles)).to match(expected)
+      expect(described_class.identify_known_profiles(profiles)).to match(expected)
     end
 
     it 'does not find missing profiles' do
-      expect(described_class.identify_existing_profiles(missing_profiles)).to match({})
+      expect(described_class.identify_known_profiles(missing_profiles)).to match({})
     end
 
     it 'handles empty profile search list' do
-      expect(described_class.identify_existing_profiles({})).to match({})
+      expect(described_class.identify_known_profiles({})).to match({})
     end
   end
 
