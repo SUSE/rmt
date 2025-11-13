@@ -6,5 +6,7 @@ class CreateSystemProfiles < ActiveRecord::Migration[6.1]
 
       t.timestamps
     end
+
+    add_index :system_profiles, %i[system_id profile_id], unique: true
   end
 end
