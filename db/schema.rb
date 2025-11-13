@@ -165,6 +165,7 @@ ActiveRecord::Schema.define(version: 2026_01_08_092033) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["profile_id"], name: "index_system_profiles_on_profile_id"
+    t.index ["system_id", "profile_id"], name: "index_system_profiles_on_system_id_and_profile_id", unique: true
     t.index ["system_id"], name: "index_system_profiles_on_system_id"
   end
 
