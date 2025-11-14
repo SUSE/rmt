@@ -1,7 +1,34 @@
 class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseController
 
   def announce_system
-    @system = System.create!(hostname: params[:hostname], system_information: hwinfo_params[:hwinfo].to_json)
+    # Construct the system creation parameters
+    create_params = {
+      hostname: params[:hostname],
+      system_information: info_params(:hwinfo)[:hwinfo].to_json
+    }
+
+    # Check if any profiles have been provided
+    if params.key?(:system_profiles)
+      profiles = info_params(:system_profiles)[:system_profiles]
+
+      # Partition profiles into three categories, namely complete,
+      # incomplete (missing the data field), and invalid (missing
+      # the identifier field)
+      complete, incomplete, invalid = Profile.filter_profiles(profiles.to_h)
+
+      # All profiles provided to announce_system should be complete; set
+      # response header if any invalid or incomplete profiles were provided.
+      if incomplete.any? || invalid.any?
+        logger.debug("problematic profiles detected: #{incomplete.count} incomplete, #{invalid.count} invalid")
+        response.headers['X-System-Profiles-Action'] = 'clear-cache'
+      end
+
+      # Include the complete profiles in create_params only if
+      # complete profiles were actually provided
+      create_params[:complete_profiles] = complete if complete.any?
+    end
+
+    @system = System.create!(**create_params)
 
     logger.info("System '#{@system.hostname}' announced")
     respond_with(@system, serializer: ::V3::SystemSerializer, location: nil)
@@ -9,11 +36,12 @@ class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseCon
 
   private
 
-  def hwinfo_params
+  def info_params(key)
     # Allow all attributes without validating the key structure
     # This is fine since the systems are only internal and RMT users
     # can save in their own database whatever they want.
     # When forwarded to SCC, SCC validates the payload for correctness.
-    params.permit(hwinfo: {})
+    permit_args = { key => {} }
+    params.permit(**permit_args)
   end
 end

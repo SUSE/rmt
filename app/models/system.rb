@@ -14,10 +14,14 @@ class System < ApplicationRecord
   has_many :repositories, -> { distinct }, through: :services
   has_many :products, -> { distinct }, through: :services
   has_many :system_uptimes, dependent: :destroy
+  has_many :system_profiles, dependent: :destroy # TODO: can we used :destroy_async?
+  has_many :profiles, -> { distinct }, through: :system_profiles
 
   validates :system_token, uniqueness: { scope: %i[login password], case_sensitive: false }
 
   alias_attribute :scc_synced_at, :scc_registered_at
+
+  accepts_nested_attributes_for :profiles
 
   def init
     self.login ||= System.generate_secure_login
@@ -74,6 +78,36 @@ class System < ApplicationRecord
 
   def update_instance_data(instance_data)
     update!(instance_data: instance_data)
+  end
+
+  def complete_profiles=(profiles_hash)
+    # NOTE: All provided profiles in profiles_hash must be complete
+    logger.debug("assigning complete profiles: #{profiles_hash.keys}")
+
+    # Lookup or create Profile records for the provided profiles
+    provided_profiles = Profile.ensure_complete_profiles_exist(profiles_hash)
+
+    # Determine the set of Profile record ids for the provided profiles
+    # and determine which ids are new, and which can be dropped, using
+    # the Rails provided profile_ids reader to retrieve the current set
+    # of associated ids.
+    provided_ids = provided_profiles.map(&:id)
+    # current_ids = profile_ids
+    new_ids = provided_ids - profile_ids
+    dropped_ids = profile_ids - provided_ids
+
+    # Remove any associations for dropped profile records
+    if dropped_ids.any?
+      profiles.delete(Profile.where(id: dropped_ids))
+    end
+
+    # Add new associations for any Profile records identified as
+    # being new in the set of provided profiles
+    if new_ids.any?
+      profiles << provided_profiles.select do |prof|
+        new_ids.include?(prof.id)
+      end
+    end
   end
 
   before_update do |system|
