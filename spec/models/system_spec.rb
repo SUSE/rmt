@@ -39,6 +39,43 @@ RSpec.describe System, type: :model do
     end
   end
 
+  describe '#complete_profiles=' do
+    let(:profile_to_keep) { create(:profile, identifier: 'keep_this_one') }
+    let(:profile_to_remove) { create(:profile, identifier: 'drop_this_one') }
+    let(:profile_to_add) { create(:profile, identifier: 'add_this_one') }
+
+    before do
+      # setup the initial system <=> profile associations
+      system.profiles << profile_to_keep
+      system.profiles << profile_to_remove
+    end
+
+    it 'updates profile associations with recreating existing associations' do
+      # lookup the current kept link
+      orig_kept_link_id = SystemProfile.find_by(system: system, profile: profile_to_keep).id
+
+      # assign the new set of profiles to system, and reload it
+      system.complete_profiles = {
+        profile_to_keep.profile_type => {
+          identifier: profile_to_keep.identifier,
+          data: profile_to_keep.data
+        },
+        profile_to_add.profile_type => {
+          identifier: profile_to_add.identifier,
+          data: profile_to_add.data
+        }
+      }
+      system.reload
+
+      # verify that the set of associations have been updated correctly,
+      # and that the kept profile association hasn't been recreated
+      expect(system.profiles).to include(profile_to_keep, profile_to_add)
+      expect(system.profiles).not_to include(profile_to_remove)
+      curr_kept_link_id = SystemProfile.find_by(system: system, profile: profile_to_keep).id
+      expect(curr_kept_link_id).to eq(orig_kept_link_id)
+    end
+  end
+
   context 'when system is deleted' do
     context 'activation' do
       let(:activation) do
