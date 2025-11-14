@@ -16,16 +16,16 @@ class Profile < ApplicationRecord
     # Profiles can be partitioned into 3 categories:
     #   * complete - containing both the identifier and data fields
     #   * incomplete - missing the data field
-    #   * invalid - missing the identifier field
+    #   * invalid - missing or empty identifier field
     # If a client knows that it has previously submitted a profile
     # with the same type and identifier, it is permitted for it to
     # send up an incomplete version of the profile in an update
     # request
 
     # Split profiles based upon whether they are valid or not, i.e
-    # they contain an identifier field.
+    # they contain a non-empty identifier field.
     valid_profiles, invalid_profiles = profiles.partition do |_ptype, pinfo|
-      pinfo.key?(:identifier)
+      pinfo[:identifier].present?
     end
 
     # Further split the valid profiles based upon whether they are

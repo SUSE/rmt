@@ -56,6 +56,11 @@ shared_context 'profile sets' do
     end
   end
 
+  # profile set empty
+  let(:profile_set_empty) do
+    { empty: { identifier: '', data: '' } }
+  end
+
   # profile set all valid and complete
   let(:profile_set_all) do
     profile_set_a1.merge(profile_set_b.merge(profile_set_c))
@@ -65,7 +70,7 @@ shared_context 'profile sets' do
   let(:profile_set_mixed_complete) { profile_set_a1 }
   let(:profile_set_mixed_incomplete) { profile_set_b_no_data }
   let(:profile_set_mixed_incomplete_full) { profile_set_b }
-  let(:profile_set_mixed_invalid) { profile_set_c_no_ident }
+  let(:profile_set_mixed_invalid) { profile_set_c_no_ident.merge(profile_set_empty) }
   let(:profile_set_mixed) do
     profile_set_mixed_complete.merge(profile_set_mixed_incomplete.merge(profile_set_mixed_invalid))
   end
