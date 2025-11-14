@@ -21,6 +21,14 @@ RSpec.describe Profile, type: :model do
       expect(incomplete).to eq(profile_set_mixed_incomplete)
       expect(invalid).to eq(profile_set_mixed_invalid)
     end
+
+    it 'considers profiles with empty identifiers as invalid' do
+      complete, incomplete, invalid = described_class.filter_profiles(profile_set_empty)
+
+      expect(complete).to eq({})
+      expect(incomplete).to eq({})
+      expect(invalid).to eq(profile_set_empty)
+    end
   end
 
   context 'identify_existing_profiles' do
