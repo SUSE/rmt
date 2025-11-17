@@ -21,6 +21,18 @@ class SUSE::Connect::SystemSerializer < ActiveModel::Serializer
   attribute :online_at, if: :has_system_uptime?
   attribute :system_profiles, if: :has_system_profiles?
 
+  # Define an initialize() method that overrides the inherited one,
+  # calling it appropriately, and then sets up @serialized_profiles
+  # with the optionally provided one.
+  def initialize(system, options = {})
+    # call inherited initialize() first
+    super(system, options)
+
+    # setup @serialized_profiles based upon provided options value,
+    # if any, otherwise default to a new empty set.
+    @serialized_profiles = (options || {}).fetch(:serialized_profiles, Set.new)
+  end
+
   # We send the internal system id as system_token if the system (in RMT) is
   # duplicated (therefore using the system_token mechanism).
   # SCC needs a stable identifier as system_token to uniquly identify duplicated
@@ -80,12 +92,22 @@ class SUSE::Connect::SystemSerializer < ActiveModel::Serializer
   end
 
   def system_profiles
-    # TODO: optimize this to only add data field on first occurrence
     object.profiles.each_with_object({}) do |profile, hash|
       hash[profile.profile_type] = {
-        identifier: profile.identifier,
-        data: profile.data
-      }
+        identifier: profile.identifier
+      }.merge(include_profile_data(profile))
+    end
+  end
+
+  def include_profile_data(profile)
+    # Check if this profile has previously been included in the
+    # serialized payload, and if not, return a hash including
+    # the data field to be merged with the required identifier.
+    if @serialized_profiles.include?(profile.id)
+      {}
+    else
+      @serialized_profiles.add(profile.id)
+      { data: profile.data }
     end
   end
 
