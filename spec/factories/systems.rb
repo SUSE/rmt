@@ -37,10 +37,14 @@ FactoryBot.define do
       end
     end
 
-    trait :full do
+    trait :full_no_profiles do
       with_activated_product
       with_system_information
       with_last_seen_at
+    end
+
+    trait :full do
+      full_no_profiles
       with_profiles
     end
 
