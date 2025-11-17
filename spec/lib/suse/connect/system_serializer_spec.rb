@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 describe SUSE::Connect::SystemSerializer do
-  subject(:serializer) { described_class.new(system).to_h }
+  subject(:serializer) { described_class.new(system, serializer_options).to_h }
 
   let(:system) { create :system, :full }
+  let(:serializer_options) { { serialized_profiles: Set.new } }
   let(:profiles) do
     system.profiles.each_with_object({}) do |profile, hash|
       hash[profile.profile_type] = {
@@ -123,6 +124,28 @@ describe SUSE::Connect::SystemSerializer do
     end
 
     it 'matches system_profiles attribute' do
+      expect(serializer[:system_profiles]).to match(profiles)
+    end
+  end
+
+  context 'system with profiles already serialized' do
+    # Create system, init a serialized_profiles with it's associated
+    # profile_ids, define an expected profiles without the data field
+    let(:system) { create :system, :with_profiles }
+    let(:serializer_options) { { serialized_profiles: Set.new.merge(system.profile_ids) } }
+    let(:profiles) do
+      system.profiles.each_with_object({}) do |profile, hash|
+        hash[profile.profile_type] = {
+          identifier: profile.identifier
+        }
+      end
+    end
+
+    it 'does add the system_profiles attribute' do
+      expect(serializer.key?(:system_profiles)).to eq(true)
+    end
+
+    it 'matches expected previously serialised system_profiles attribute' do
       expect(serializer[:system_profiles]).to match(profiles)
     end
   end
