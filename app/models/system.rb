@@ -92,7 +92,6 @@ class System < ApplicationRecord
     # the Rails provided profile_ids reader to retrieve the current set
     # of associated ids.
     provided_ids = provided_profiles.map(&:id)
-    # current_ids = profile_ids
     new_ids = provided_ids - profile_ids
     dropped_ids = profile_ids - provided_ids
 
