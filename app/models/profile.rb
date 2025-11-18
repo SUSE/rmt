@@ -34,7 +34,9 @@ class Profile < ApplicationRecord
       pinfo.key?(:data)
     end
 
-    [complete_profiles.to_h, incomplete_profiles.to_h, invalid_profiles.to_h]
+    [complete_profiles, incomplete_profiles, invalid_profiles].map do |profile|
+      profile.to_h.symbolize_keys
+    end
   end
 
   def self.where_unique_keys(key_tuples)
