@@ -19,13 +19,17 @@ class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseCon
       # All profiles provided to announce_system should be complete; set
       # response header if any invalid or incomplete profiles were provided.
       if incomplete.any? || invalid.any?
-        logger.debug("problematic profiles detected: #{incomplete.count} incomplete, #{invalid.count} invalid")
+        logger.debug("problematic incomplete (missing data field) profiles detected: #{incomplete.keys}") if incomplete.any?
+        logger.debug("problematic invalid (missing identifier field) profiles detected: #{invalid.keys}") if invalid.any?
         response.headers['X-System-Profiles-Action'] = 'clear-cache'
       end
 
       # Include the complete profiles in create_params only if
       # complete profiles were actually provided
-      create_params[:complete_profiles] = complete if complete.any?
+      if complete.any?
+        logger.debug("valid complete profiles detected: #{complete.keys}")
+        create_params[:complete_profiles] = complete
+      end
     end
 
     @system = System.create!(**create_params)
