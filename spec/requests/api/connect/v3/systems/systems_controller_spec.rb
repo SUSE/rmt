@@ -254,9 +254,40 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
       end
     end
 
-    context 'when profiles are incomplete and not previously reported' do
+    context 'when profiles are incomplete and not previously reported and no profiles were previously reported' do
       # update with incomplete set a1 that doesn't already exist
       let(:profiles_pre_update) { {} }
+      let(:profiles) { profile_set_a1_no_data }
+      let(:profiles_expected) { profiles_pre_update }
+      let(:payload_pre_update) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles_pre_update } }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles } }
+
+      before do
+        put url, params: payload_pre_update, headers: headers
+      end
+
+      it 'existing profile is matched' do
+        update_action
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:no_content)
+        expect(response.headers['X-System-Profiles-Action']).to be_present
+        expect(response.headers['X-System-Profiles-Action']).to eq('clear-cache')
+
+        expect(
+          system.profiles.each_with_object({}) do |profile, hash|
+            hash[profile.profile_type] = {
+              identifier: profile.identifier,
+              data: profile.data
+            }
+          end.symbolize_keys
+        ).to match(profiles_expected)
+      end
+    end
+
+    context 'when profiles are incomplete and not previously reported and profiles were previously reported' do
+      # update with incomplete set a1 that doesn't already exist
+      let(:profiles_pre_update) { profile_set_b }
       let(:profiles) { profile_set_a1_no_data }
       let(:profiles_expected) { profiles_pre_update }
       let(:payload_pre_update) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles_pre_update } }
