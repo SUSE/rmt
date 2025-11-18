@@ -6,11 +6,11 @@ git_source(:github) do |repo_name|
 end
 
 gem 'puma'
-gem 'mysql2', '~> 0.5.3'
+gem 'mysql2'
 gem 'sqlite3'
 
-gem 'nokogiri', '< 1.13' # Locked because of Ruby >= 2.6 dependency
-gem 'thor', '<= 1.2.2' # Locked because of Ruby >= 2.6 dependency
+gem 'nokogiri'
+gem 'thor'
 gem 'activesupport', '~> 6.1.7'
 gem 'actionpack', '~> 6.1.7'
 gem 'actionview', '~> 6.1.7'
@@ -18,7 +18,7 @@ gem 'activemodel', '~> 6.1.7'
 gem 'activerecord', '~> 6.1.7'
 gem 'activejob', '~> 6.1.7'
 gem 'railties', '~> 6.1.7'
-gem 'repomd_parser', '~> 1.1.0'
+gem 'repomd_parser'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
@@ -44,56 +44,55 @@ gem 'strong_migrations'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
-  gem 'scc-codestyle', '<= 0.5.0' # Locked because of Ruby >= 2.6 dependency
-  gem 'rubocop', '<= 1.25' # Locked because of Ruby >= 2.6 dependency
-  gem 'rubocop-ast', '<= 1.17.0' # Locked because of Ruby >= 2.6 dependency
+  gem 'scc-codestyle'
+  gem 'rubocop'
+  gem 'rubocop-ast'
   gem 'gettext', require: false # needed for gettext_i18n_rails tasks
-  gem 'ruby_parser', '< 3.20', require: false # needed for gettext_i18n_rails tasks, Locked because of Ruby >= 2.6 dependency
+  gem 'ruby_parser', require: false # needed for gettext_i18n_rails tasks, Locked because of Ruby >= 2.6 dependency
   gem 'gettext_test_log'
-  gem 'memory_profiler', '~> 1.0.2' # locked because 1.1.0 requires ruby version >= 3.1.0
+  gem 'memory_profiler'
   gem 'awesome_print'
 end
 
 group :development do
-  gem 'listen', '>= 3.0.5', '<= 3.6.0'
+  gem 'listen'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'spring-watcher-listen'
   gem 'spring-commands-rspec'
-  gem 'ronn'
   gem 'guard-rspec', require: false
 end
 
 group :test do
-  gem 'rspec-command', '1.0.3'
-  gem 'rspec-rails', '~> 5.0'
-  gem 'factory_bot_rails', '~> 6.2.0'
-  gem 'ffaker', '<= 2.21.0' # Locked because of Ruby >= 3.0 dependency
+  gem 'rspec-command'
+  gem 'rspec-rails'
+  gem 'factory_bot_rails'
+  gem 'ffaker'
   gem 'rspec-its'
-  gem 'fakefs', '~> 1.4', require: 'fakefs/safe'
-  gem 'shoulda-matchers', '~> 4.5.1' # Locked because of Ruby >= 3.0 dependency
+  gem 'fakefs', require: 'fakefs/safe'
+  gem 'shoulda-matchers'
   gem 'webmock'
   gem 'fuubar'
   gem 'timecop'
   gem 'vcr', '~> 6.0'
-  gem 'coveralls', '~> 0.8.21', require: false
-  gem 'minitest', '~> 5.15.0' # minitest 5.16 needs Ruby >= 2.6
-  gem 'public_suffix', '< 5' # Locked because of Ruby >= 2.6 dependency
+  gem 'coveralls', '~> 0.8.21', require: false # coveralls_reborn is the newer gem as this one was archived
+  gem 'minitest'
+  gem 'public_suffix'
 end
 
 gem 'simplecov', require: false, group: :test
 
 gem 'versionist'
-gem 'responders', '~> 3.1.1'
+gem 'responders'
 gem 'typhoeus'
 gem 'active_model_serializers'
 
 # i18n
-gem 'fast_gettext', '~> 2.2'
+gem 'fast_gettext'
 gem 'gettext_i18n_rails'
 
-gem 'config', '~> 3.0', '>= 2.2.1'
-gem 'terminal-table', '~> 3.0'
+gem 'config'
+gem 'terminal-table'
 
 # needed by rmt-server-pubcloud
 gem 'jwt', '~> 2.1'
