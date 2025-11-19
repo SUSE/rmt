@@ -85,7 +85,7 @@ class Product < ApplicationRecord
   }
 
   def has_extension?
-    ProductsExtensionsAssociation.exist?(product_id: id)
+    ProductsExtensionsAssociation.exists?(product_id: id)
   end
 
   def mirror?
