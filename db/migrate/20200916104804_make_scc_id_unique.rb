@@ -1,6 +1,6 @@
 class MakeSccIdUnique < ActiveRecord::Migration[6.0]
   def change
-    logger = RMT::Logger.new(STDOUT)
+    logger = RMT::Logger.new($STDOUT)
 
     logger.info('Adding index to `repositories.scc_id` before querying duplicates...')
     add_index :repositories, :scc_id, unique: false
