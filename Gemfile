@@ -78,6 +78,7 @@ group :test do
   gem 'coveralls', '~> 0.8.21', require: false # coveralls_reborn is the newer gem as this one was archived
   gem 'minitest'
   gem 'public_suffix'
+  gem 'webrick'
 end
 
 gem 'simplecov', require: false, group: :test
