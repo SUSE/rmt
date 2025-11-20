@@ -36,7 +36,7 @@ jobs:
       run:
         working-directory: /usr/src/rmt-server
     container:
-      image: registry.opensuse.org/systemsmanagement/scc/containers/15.5/rmt-ci-container:latest
+      image: opensuse/leap:15.6
       options: --user root
     services:
       mysql:
