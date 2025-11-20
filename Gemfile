@@ -44,9 +44,9 @@ gem 'strong_migrations'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
-  gem 'scc-codestyle'
-  gem 'rubocop'
-  gem 'rubocop-ast'
+  gem 'scc-codestyle', '~> 0.5.0'
+  gem 'rubocop', '<= 1.25.0'
+  gem 'rubocop-ast', '<= 1.17.0'
   gem 'gettext', require: false # needed for gettext_i18n_rails tasks
   gem 'ruby_parser', require: false # needed for gettext_i18n_rails tasks, Locked because of Ruby >= 2.6 dependency
   gem 'gettext_test_log'
@@ -60,16 +60,17 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen'
   gem 'spring-commands-rspec'
+  gem 'ronn-ng'
   gem 'guard-rspec', require: false
 end
 
 group :test do
-  gem 'rspec-command'
-  gem 'rspec-rails'
-  gem 'factory_bot_rails'
+  gem 'rspec-command', '1.0.3'
+  gem 'rspec-rails', '~> 5.0'
+  gem 'factory_bot_rails', '~> 6.2.0'
   gem 'ffaker'
   gem 'rspec-its'
-  gem 'fakefs', require: 'fakefs/safe'
+  gem 'fakefs', '~> 1.4', require: 'fakefs/safe'
   gem 'shoulda-matchers'
   gem 'webmock'
   gem 'fuubar'
