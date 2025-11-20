@@ -107,15 +107,22 @@ RSpec.describe Profile, type: :model do
     let!(:existing_profile) { create(:profile, profile_type: ptype, identifier: pinfo[:identifier], data: pinfo[:data]) }
 
     it 'create collision rescue handling returns newly created profile' do
-      # mock the first_or_create!() call on the result of the where()
-      # search in ensure_profile_exists
+      # Create a mock relation to use in the mocking of the ensure_profile_exists()
       profile_relation = instance_double('ActiveRecord::Relation')
+
+      # Next mock the where() call to return the above mock relation
       allow(described_class).to receive(:where).with(where_params).and_return(profile_relation)
+
+      # Then mock the first_or_create!()i call on that mock relation
+      # so that it raises ActiveRecord::RecordNotUnique to trigger the
+      # rescue block.
       allow(profile_relation).to receive(:first_or_create!).and_raise(ActiveRecord::RecordNotUnique)
 
-      # also need to mock the find_by() call to avoid issues caused
-      # by intercepting where() in above first_or_create!() mocking
-      allow(described_class).to receive(:find_by).with(where_params).and_return(existing_profile)
+      # Finally mock the lock() and first!() calls on the mocked
+      # relation that is returned by the where() call above so
+      # that the rescue actions can be completed.
+      allow(profile_relation).to receive(:lock).and_return(profile_relation)
+      allow(profile_relation).to receive(:first!).and_return(existing_profile)
 
       expect { described_class.ensure_profile_exists(ptype, pinfo) }.not_to raise_error
 

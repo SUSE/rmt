@@ -71,16 +71,23 @@ class Profile < ApplicationRecord
   end
 
   def self.ensure_profile_exists(ptype, pinfo)
-    # Attempt to create a new profile record if an existing one is not
-    # found
-    profile = where(profile_type: ptype, identifier: pinfo[:identifier]).first_or_create!(data: pinfo[:data])
-    logger.debug("ensure_profile_exists: found/created profile - profile_type: #{profile.profile_type}, identifier: #{profile.identifier}")
-    profile
+    # Define a query to retrieve possibly existing profile record
+    profile_query = where(profile_type: ptype, identifier: pinfo[:identifier])
+
+    # Start a nested transaction to act as a rollback target if racing
+    # creates collide.
+    transaction(requires_new: true) do
+      # Attempt to retrieve existing profile record, creating if not found
+      profile = profile_query.first_or_create!(data: pinfo[:data])
+      logger.debug("ensure_profile_exists: found/created profile - #{profile.profile_type}/#{profile.identifier}")
+      profile
+    end
   rescue ActiveRecord::RecordNotUnique
     # Only one concurrent create will succeed, others will raise this
-    # exception, so just find the newly created record and return it
-    profile = find_by(profile_type: ptype, identifier: pinfo[:identifier])
-    logger.debug("ensure_profile_exists: found(rescue) profile - profile_type: #{profile.profile_type}, identifier: #{profile.identifier}")
+    # exception, so just find the newly created record and return it,
+    # locking the query to ensure that the latest table content is used.
+    profile = profile_query.lock(true).first!
+    logger.debug("ensure_profile_exists: found(rescue) profile - #{profile.profile_type}/#{profile.identifier}")
     profile
   end
 end
