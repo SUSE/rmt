@@ -300,8 +300,8 @@ describe RMT::SCC do
       expect(api_double).to receive(:list_subscriptions) { [] }
 
       # disable output to stdout while running specs
-      allow($STDOUT).to receive(:puts)
-      allow($STDOUT).to receive(:write)
+      allow(STDOUT).to receive(:puts)
+      allow(STDOUT).to receive(:write)
 
       described_class.new.sync
     end
