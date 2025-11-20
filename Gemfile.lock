@@ -1,15 +1,16 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    actionpack (6.1.7.10)
-      actionview (= 6.1.7.10)
-      activesupport (= 6.1.7.10)
-      rack (~> 2.0, >= 2.0.9)
+    actionpack (7.0.10)
+      actionview (= 7.0.10)
+      activesupport (= 7.0.10)
+      racc
+      rack (~> 2.0, >= 2.2.4)
       rack-test (>= 0.6.3)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.2.0)
-    actionview (6.1.7.10)
-      activesupport (= 6.1.7.10)
+    actionview (7.0.10)
+      activesupport (= 7.0.10)
       builder (~> 3.1)
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
@@ -19,20 +20,26 @@ GEM
       activemodel (>= 4.1)
       case_transform (>= 0.2)
       jsonapi-renderer (>= 0.1.1.beta1, < 0.3)
-    activejob (6.1.7.10)
-      activesupport (= 6.1.7.10)
+    activejob (7.0.10)
+      activesupport (= 7.0.10)
       globalid (>= 0.3.6)
-    activemodel (6.1.7.10)
-      activesupport (= 6.1.7.10)
-    activerecord (6.1.7.10)
-      activemodel (= 6.1.7.10)
-      activesupport (= 6.1.7.10)
-    activesupport (6.1.7.10)
+    activemodel (7.0.10)
+      activesupport (= 7.0.10)
+    activerecord (7.0.10)
+      activemodel (= 7.0.10)
+      activesupport (= 7.0.10)
+    activesupport (7.0.10)
+      base64
+      benchmark (>= 0.3)
+      bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
+      drb
       i18n (>= 1.6, < 2)
+      logger (>= 1.4.2)
       minitest (>= 5.1)
+      mutex_m
+      securerandom (>= 0.3)
       tzinfo (~> 2.0)
-      zeitwerk (~> 2.3)
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
     anyway_config (2.7.2)
@@ -41,6 +48,7 @@ GEM
     awesome_print (1.9.2)
     base32 (0.3.4)
     base64 (0.3.0)
+    benchmark (0.5.0)
     bigdecimal (3.3.1)
     builder (3.3.0)
     byebug (12.0.0)
@@ -67,6 +75,7 @@ GEM
     deep_merge (1.2.2)
     diff-lcs (1.6.2)
     docile (1.4.1)
+    drb (2.2.3)
     dry-initializer (3.2.0)
     erubi (1.13.1)
     ethon (0.18.0)
@@ -148,6 +157,7 @@ GEM
     mustache (1.1.1)
     mustermann (3.0.4)
       ruby2_keywords (~> 0.0.1)
+    mutex_m (0.3.0)
     mysql2 (0.5.7)
       bigdecimal
     nenv (0.3.0)
@@ -188,12 +198,13 @@ GEM
     rails-html-sanitizer (1.6.2)
       loofah (~> 2.21)
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
-    railties (6.1.7.10)
-      actionpack (= 6.1.7.10)
-      activesupport (= 6.1.7.10)
+    railties (7.0.10)
+      actionpack (= 7.0.10)
+      activesupport (= 7.0.10)
       method_source
       rake (>= 12.2)
       thor (~> 1.0)
+      zeitwerk (~> 2.5)
     rainbow (3.1.1)
     rake (13.3.1)
     rb-fsevent (0.11.2)
@@ -293,6 +304,7 @@ GEM
       rubocop-rake (~> 0.6)
       rubocop-rspec (~> 2.5)
       rubocop-thread_safety (~> 0.4)
+    securerandom (0.4.1)
     sexp_processor (4.17.4)
     shellany (0.0.1)
     shoulda-matchers (6.5.0)
@@ -372,13 +384,13 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  actionpack (~> 6.1.7)
-  actionview (~> 6.1.7)
+  actionpack (~> 7.0.0)
+  actionview (~> 7.0.0)
   active_model_serializers
-  activejob (~> 6.1.7)
-  activemodel (~> 6.1.7)
-  activerecord (~> 6.1.7)
-  activesupport (~> 6.1.7)
+  activejob (~> 7.0.0)
+  activemodel (~> 7.0.0)
+  activerecord (~> 7.0.0)
+  activesupport (~> 7.0.0)
   awesome_print
   base32
   byebug
@@ -401,7 +413,7 @@ DEPENDENCIES
   nokogiri
   public_suffix
   puma
-  railties (~> 6.1.7)
+  railties (~> 7.0.0)
   repomd_parser
   responders
   resque
