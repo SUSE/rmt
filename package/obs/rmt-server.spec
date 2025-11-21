@@ -46,7 +46,6 @@ Source2:        rmt.conf
 Source3:        rmt-cli.8.gz
 BuildRequires:  %{ruby_version}
 BuildRequires:  %{ruby_version}-devel
-BuildRequires:  %{ruby_version}-rubygem-bundler
 BuildRequires:  chrpath
 BuildRequires:  fdupes
 BuildRequires:  gcc

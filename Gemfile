@@ -6,11 +6,11 @@ git_source(:github) do |repo_name|
 end
 
 gem 'puma'
-gem 'mysql2', '~> 0.5.3'
-gem 'sqlite3'
+gem 'mysql2', '~> 0.5.7'
+gem 'sqlite3', '>= 2.0'
 
-gem 'nokogiri', '< 1.13' # Locked because of Ruby >= 2.6 dependency
-gem 'thor', '<= 1.2.2' # Locked because of Ruby >= 2.6 dependency
+gem 'nokogiri', '>= 1.18' # Locked because of Ruby >= 2.6 dependency
+gem 'thor', '>= 1.4' # Locked because of Ruby >= 2.6 dependency
 gem 'activesupport', '~> 6.1.7'
 gem 'actionpack', '~> 6.1.7'
 gem 'actionview', '~> 6.1.7'
@@ -60,7 +60,6 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'spring-commands-rspec'
-  gem 'ronn'
   gem 'guard-rspec', require: false
 end
 
@@ -105,4 +104,6 @@ gem 'resque'
 
 gem 'webrick', '~> 1.9', group: :test
 
-gem 'fiddle', '~> 1.1'
+gem 'fiddle', '~> 1.1.8'
+
+gem "nronn", "~> 0.11.1"
