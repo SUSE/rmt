@@ -74,14 +74,15 @@ class Profile < ApplicationRecord
     # Define a query to retrieve possibly existing profile record
     profile_query = where(profile_type: ptype, identifier: pinfo[:identifier])
 
-    # Start a nested transaction to act as a rollback target if racing
-    # creates collide.
-    transaction(requires_new: true) do
-      # Attempt to retrieve existing profile record, creating if not found
-      profile = profile_query.first_or_create!(data: pinfo[:data])
-      logger.debug("ensure_profile_exists: found/created profile - #{profile.profile_type}/#{profile.identifier}")
-      profile
-    end
+    # NOTE: The following block can be wrapped in a nested
+    # transaction(requires_new: true) block to reduce the rollback cost
+    # of collisions from racing creates, but doing so will incur a more
+    # general performance hit when collisions don't occur frequently.
+
+    # Attempt to retrieve existing profile record, creating if not found
+    profile = profile_query.first_or_create!(data: pinfo[:data])
+    logger.debug("ensure_profile_exists: found/created profile - #{profile.profile_type}/#{profile.identifier}")
+    profile
   rescue ActiveRecord::RecordNotUnique
     # Only one concurrent create will succeed, others will raise this
     # exception, so just find the newly created record and return it,
