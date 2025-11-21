@@ -61,7 +61,7 @@ Rails.application.configure do
 
   # Use a different logger for distributed setups.
   # require 'syslog/logger'
-  config.logger = RMT::Logger.new($STDOUT)
+  config.logger = RMT::Logger.new($stdout)
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false

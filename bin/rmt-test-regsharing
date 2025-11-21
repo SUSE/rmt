@@ -57,7 +57,7 @@ if peers.blank?
 end
 
 timestamp = Time.now.utc
-logger = RMT::Logger.new(opt_nagios ? IO::NULL : $STDOUT)
+logger = RMT::Logger.new(opt_nagios ? IO::NULL : $stdout)
 
 params = {
   login: 'regsharing-test-script',
