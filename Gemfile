@@ -5,19 +5,14 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+gem 'rails', '~> 7.0.0'
+
 gem 'puma'
 gem 'mysql2'
 gem 'sqlite3'
 
 gem 'nokogiri'
 gem 'thor'
-gem 'activesupport', '~> 7.0.0'
-gem 'actionpack', '~> 7.0.0'
-gem 'actionview', '~> 7.0.0'
-gem 'activemodel', '~> 7.0.0'
-gem 'activerecord', '~> 7.0.0'
-gem 'activejob', '~> 7.0.0'
-gem 'railties', '~> 7.0.0'
 gem 'repomd_parser'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
