@@ -90,7 +90,7 @@ class Profile < ApplicationRecord
     # NOTE: To avoid deadlocks we need to use LOCK FOR SHARE MODE to
     # ensure that the generated SQL specifies FOR SHARE (shared locking)
     # rather than FOR UPDATE (exclusive locking)
-    profile = profile_query.lock("LOCK FOR SHARE MODE").first!
+    profile = profile_query.lock('LOCK FOR SHARE MODE').first!
     logger.debug("ensure_profile_exists: found(rescue) profile - #{profile.profile_type}/#{profile.identifier}")
     profile
   end
