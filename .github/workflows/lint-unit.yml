@@ -68,9 +68,9 @@ jobs:
         with:
           path: "ci/rmt-*"
 
-      # - name: Run Lint
-      #   run: |
-      #     bundle exec rubocop -D
+      - name: Run Lint
+        run: |
+          bundle exec rubocop -D
 
       - name: Prepare database
         run: |
