@@ -62,6 +62,10 @@ jobs:
         run: |
           [ -d $SOURCE ] && rm -r $SOURCE
           cp -r $GITHUB_WORKSPACE $SOURCE
+      # NOTE: Moved this up since nronn rubygems is not available for ruby3.2
+      - name: install test dependencies
+        run: |
+          bundle install
 
       - name: build RPM package
         run: |
@@ -76,10 +80,6 @@ jobs:
       - name: configure RMT to run feature tests
         run: |
           bash ci/rmt-configure
-
-      - name: install test dependencies
-        run: |
-          bundle install
 
       - name: run feature tests
         run: |

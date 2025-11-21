@@ -1,0 +1,39 @@
+#!BuildTag: rmt-ci-container-ruby3.2
+#!UseOBSRepositories
+FROM opensuse/tumbleweed
+
+RUN zypper --non-interactive ar https://download.opensuse.org/repositories/devel:/languages:/ruby/openSUSE_Tumbleweed/devel:languages:ruby.repo && zypper --non-interactive --gpg-auto-import-keys refresh
+
+RUN zypper --non-interactive install --no-recommends ruby3.2 ruby3.2-devel && \
+    zypper --non-interactive install -t pattern devel_basis
+    
+RUN zypper --non-interactive install libffi-devel libmysqlclient-devel libxml2-devel \
+                        libxslt-devel rpmbuild systemd gzip tar bzip2 nodejs sqlite-devel \
+                        make chrpath fdupes gcc libcurl-devel
+
+RUN rm /usr/bin/ruby /usr/bin/gem
+
+RUN update-alternatives --install /usr/bin/gem gem /usr/bin/gem.ruby3.2 1
+RUN update-alternatives --install /usr/bin/gem gem /usr/bin/gem.ruby3.4 2
+RUN update-alternatives --install /usr/bin/ruby ruby /usr/bin/ruby.ruby3.2 1
+RUN update-alternatives --install /usr/bin/ruby ruby /usr/bin/ruby.ruby3.4 2
+
+RUN update-alternatives --set ruby /usr/bin/ruby.ruby3.2 && \
+    update-alternatives --set gem /usr/bin/gem.ruby3.2 && \
+    update-alternatives --set bundle /usr/bin/bundle.ruby.ruby3.2 && \
+    update-alternatives --set bundler /usr/bin/bundler.ruby.ruby3.2 && \
+    update-alternatives --set racc /usr/bin/racc.ruby.ruby3.2 && \
+    update-alternatives --set rake /usr/bin/rake.ruby.ruby3.2 && \
+    update-alternatives --set rbs /usr/bin/rbs.ruby.ruby3.2 && \
+    update-alternatives --set rdoc /usr/bin/rdoc.ruby.ruby3.2 && \
+    update-alternatives --set ri /usr/bin/ri.ruby.ruby3.2 && \
+    update-alternatives --set typeprof /usr/bin/typeprof.ruby.ruby3.2 && \
+    update-alternatives --set rdbg /usr/bin/rdbg.ruby.ruby3.2 && \
+    update-alternatives --set syntax_suggest /usr/bin/syntax_suggest.ruby.ruby3.2
+
+# HACK: Manually set default macros for ruby builds
+RUN sed -i -e 's/3\.4/3\.2/g' -e 's/34/32/g' /usr/lib/rpm/macros.d/macros.suse-ruby3.4-default && \
+    cp /usr/lib/rpm/macros.d/macros.suse-ruby3.4-default /usr/lib/rpm/macros.d/macros.suse-ruby3.2-default 
+
+RUN mkdir /usr/src/rmt-server
+WORKDIR /usr/src/rmt-server
