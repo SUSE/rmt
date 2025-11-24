@@ -8,6 +8,17 @@ class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseCon
     }
 
     # Check if any profiles have been provided
+    process_system_profiles(create_params)
+
+    @system = System.create!(**create_params)
+
+    logger.info("System '#{@system.hostname}' announced")
+    respond_with(@system, serializer: ::V3::SystemSerializer, location: nil)
+  end
+
+  private
+
+  def process_system_profiles(create_params)
     if params.key?(:system_profiles)
       profiles = info_params(:system_profiles)[:system_profiles]
 
@@ -31,14 +42,7 @@ class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseCon
         create_params[:complete_profiles] = complete
       end
     end
-
-    @system = System.create!(**create_params)
-
-    logger.info("System '#{@system.hostname}' announced")
-    respond_with(@system, serializer: ::V3::SystemSerializer, location: nil)
   end
-
-  private
 
   def info_params(key)
     # Allow all attributes without validating the key structure
