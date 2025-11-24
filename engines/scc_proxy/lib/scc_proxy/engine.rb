@@ -63,6 +63,10 @@ module SccProxy
         scc_req_body[:login] = params['scc_login']
         scc_req_body[:password] = params['scc_password']
       end
+      # Check if system_profiles were provided
+      if params.key?('system_profiles')
+        scc_req_body[:system_profiles] = params['system_profiles']
+      end
       scc_request.body = scc_req_body.to_json
       scc_request
     end
@@ -100,7 +104,7 @@ module SccProxy
       response = http.request(scc_request)
       response.error! unless response.code_type == Net::HTTPCreated
 
-      JSON.parse(response.body)
+      [JSON.parse(response.body), response.to_hash]
     end
 
     def scc_activate_product(system, product, auth, params, mode)
@@ -302,17 +306,29 @@ module SccProxy
             # NON BYOS case
             # no token sent to check with SCC
             system_values[:proxy_byos_mode] = :payg
+
+            # Check if any profiles have been provided
+            process_system_profiles(system_values)
           else
             request.request_parameters['proxy_byos_mode'] = 'byos'
-            response = SccProxy.announce_system_scc(auth_header, request.request_parameters, instance_identifier)
+            scc_response, scc_response_headers = SccProxy.announce_system_scc(auth_header, request.request_parameters, instance_identifier)
             system_values.merge!(
               {
-                scc_system_id: response['id'],
-                password: response['password'],
+                scc_system_id: scc_response['id'],
+                password: scc_response['password'],
                 proxy_byos_mode: :byos,
                 proxy_byos: true
               }
             )
+            # Handle any X-System-Profiles-Action header in response
+            # appropriately, factoring in that scc_response_headers
+            # will have lowercased header names, with an array of
+            # values
+            spa_header = 'X-System-Profiles-Action'
+            if scc_response_headers[spa_header.downcase].present?
+              logger.debug('SCC detected problematic system profiles')
+              response.headers[spa_header] = scc_response_headers[spa_header.downcase].first
+            end
           end
           @system = System.create!(system_values)
           logger.info("System '#{@system.hostname}' announced")
@@ -452,7 +468,13 @@ module SccProxy
             params['system_token'] = @system.system_token.presence || params.fetch('system_token', '')
             Rails.logger.info 'No system token' if params['system_token'].blank?
 
-            SccProxy.announce_system_scc("Token token=#{params[:token]}", params, params['system_token'])
+            # TODO: Should this announce_system request include the system's
+            # profiles data?
+            # If so would need to retrieve them from the DB and add their
+            # representation as a :system_profiles entry in a copy of params
+            # before calling announce_system_scc() with that copy of params.
+            scc_response, _headers = SccProxy.announce_system_scc("Token token=#{params[:token]}", params, params['system_token'])
+            scc_response
           end
         end
 
