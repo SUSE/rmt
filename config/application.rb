@@ -53,7 +53,7 @@ module RMT
   class Application < Rails::Application
 
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.0
+    config.load_defaults 7.1
 
     config.eager_load_paths << Rails.root.join('lib')
     config.eager_load_paths << Rails.root.join('app', 'validators')
@@ -71,6 +71,8 @@ module RMT
     config.generators do |g|
       g.test_framework :rspec
     end
+
+    config.active_support.deprecation = true
 
     # Rails initialization process requires a secret key base present in either:
     # - SECRET_KEY_BASE env

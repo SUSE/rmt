@@ -77,3 +77,7 @@ RSpec/MessageChain:
 # Count: 107 offenses
 RSpec/SubjectStub:
   Enabled: false
+
+Layout/LineLength:
+  Exclude:
+    - config/initializers/new_framework_defaults_7_0.rb
