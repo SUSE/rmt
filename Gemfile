@@ -7,6 +7,8 @@ end
 
 gem 'rails', '~> 7.0.0'
 
+gem 'bootsnap', require: false
+
 gem 'puma'
 gem 'mysql2'
 gem 'sqlite3'
