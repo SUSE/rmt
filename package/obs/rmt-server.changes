@@ -6,6 +6,11 @@ Tue Nov 11 11:03:50 UTC 2025 - Natnael Getahun <natnael.getahun@suse.com>
   * Rack 2.2.20 security update (bsc#1253953, bsc#1251937)
   * rmt-server-pubcloud:
     * Do not decode instance data coming from the system (bsc#1248510)
+    * Include Live-Patching for SLES 15.X
+    * Handle only one data exporter (bsc#1248869)
+    * Do not decode instance data from db to access registry (bsc#1248510)
+    * Handle instance verification exceptions
+
 
 -------------------------------------------------------------------
 Fri Jul 7 11:38:57 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
