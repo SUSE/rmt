@@ -62,7 +62,6 @@ Recommends:     nginx
 # The config is not really required by rmt-server, but by nginx ...
 Requires:       rmt-server-configuration
 Requires(post): %{ruby_version}
-Requires:       %{ruby_version}-rubygem-bundler
 Requires(pre):  shadow
 Requires(post): timezone
 Requires(post): util-linux
