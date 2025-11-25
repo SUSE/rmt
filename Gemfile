@@ -106,4 +106,4 @@ gem 'webrick', '~> 1.9', group: :test
 
 gem 'fiddle', '~> 1.1.8'
 
-gem "nronn", "~> 0.11.1"
+gem 'nronn', '~> 0.11.1'
