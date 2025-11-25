@@ -19,6 +19,19 @@ class SUSE::Connect::SystemSerializer < ActiveModel::Serializer
   attribute :hwinfo, if: :has_hwinfo_and_needs_full_update?
   attribute :products, if: :needs_full_update?
   attribute :online_at, if: :has_system_uptime?
+  attribute :system_profiles, if: :has_system_profiles?
+
+  # Define an initialize() method that overrides the inherited one,
+  # calling it appropriately, and then sets up @serialized_profiles
+  # with the optionally provided one.
+  def initialize(system, options = {})
+    # call inherited initialize() first
+    super(system, options)
+
+    # setup @serialized_profiles based upon provided options value,
+    # if any, otherwise default to a new empty set.
+    @serialized_profiles = (options || {}).fetch(:serialized_profiles, Set.new)
+  end
 
   # We send the internal system id as system_token if the system (in RMT) is
   # duplicated (therefore using the system_token mechanism).
@@ -76,5 +89,29 @@ class SUSE::Connect::SystemSerializer < ActiveModel::Serializer
 
   def needs_full_update?
     !object.scc_synced_at
+  end
+
+  def system_profiles
+    object.profiles.each_with_object({}) do |profile, hash|
+      hash[profile.profile_type] = {
+        identifier: profile.identifier
+      }.merge(include_profile_data(profile))
+    end
+  end
+
+  def include_profile_data(profile)
+    # Check if this profile has previously been included in the
+    # serialized payload, and if not, return a hash including
+    # the data field to be merged with the required identifier.
+    if @serialized_profiles.include?(profile.id)
+      {}
+    else
+      @serialized_profiles.add(profile.id)
+      { data: profile.data }
+    end
+  end
+
+  def has_system_profiles?
+    object.profiles.present?
   end
 end
