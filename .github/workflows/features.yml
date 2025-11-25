@@ -40,7 +40,7 @@ jobs:
       options: --user root
     services:
       mysql:
-        image: registry.suse.com/suse/mariadb:10.6
+        image: registry.opensuse.org/opensuse/mariadb:11.8
         env:
           MYSQL_DATABASE: rmt_features
           MYSQL_USER: rmt
