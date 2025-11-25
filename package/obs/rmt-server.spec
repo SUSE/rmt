@@ -344,6 +344,7 @@ getent passwd %{rmt_user} >/dev/null || \
 	-c "user for RMT" %{rmt_user}
 %service_add_pre rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service rmt-uptime-cleanup.service
 
+
 %post
 %service_add_post rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service rmt-uptime-cleanup.service
 
