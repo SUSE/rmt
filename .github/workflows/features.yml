@@ -36,7 +36,7 @@ jobs:
       run:
         working-directory: /usr/src/rmt-server
     container:
-      image: registry.opensuse.org/systemsmanagement/scc/containers/15.5/rmt-ci-container:latest
+      image: registry.opensuse.org/systemsmanagement/scc/containers/opensuse_tumbleweed/rmt-ci-container-ruby3.2:latest
       options: --user root
     services:
       mysql:
