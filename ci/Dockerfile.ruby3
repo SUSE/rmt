@@ -2,8 +2,6 @@
 #!UseOBSRepositories
 FROM opensuse/tumbleweed
 
-RUN zypper --non-interactive ar https://download.opensuse.org/repositories/devel:/languages:/ruby/openSUSE_Tumbleweed/devel:languages:ruby.repo && zypper --non-interactive --gpg-auto-import-keys refresh
-
 RUN zypper --non-interactive install --no-recommends ruby3.2 ruby3.2-devel
     
 RUN zypper --non-interactive install libffi-devel libmysqlclient-devel libxml2-devel \
