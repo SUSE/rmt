@@ -43,7 +43,11 @@ module SccProxy
       # to SCC.
       # SCC will make sure to handle the data correctly. This removes the need
       # to adapt here if information send by the client changes.
+      # login and password are set to instance identifier (system_token) so SCC use those values
+      # instead of creating a random one
       scc_req_body = {
+        login: system_token,
+        password: system_token,
         hostname: params['hostname'],
         hwinfo: params['hwinfo'],
         byos_mode: params['proxy_byos_mode']
