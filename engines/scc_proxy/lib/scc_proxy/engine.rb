@@ -301,11 +301,11 @@ module SccProxy
           if has_no_regcode?(auth_header)
             # NON BYOS case
             # no token sent to check with SCC
-            system_values.merge({ proxy_byos_mode: :payg })
+            system_values[:proxy_byos_mode] = :payg
           else
             request.request_parameters['proxy_byos_mode'] = 'byos'
             response = SccProxy.announce_system_scc(auth_header, request.request_parameters, instance_identifier)
-            system_values.merge(
+            system_values.merge!(
               {
                 scc_system_id: response['id'],
                 password: response['password'],
