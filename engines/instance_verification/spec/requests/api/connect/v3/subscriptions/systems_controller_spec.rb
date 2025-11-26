@@ -11,6 +11,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         system = System.find_by(login: data['login'])
         expect(system.instance_data).to eq(instance_data)
         expect(system.login).to start_with('SCC_')
+        expect(system.proxy_byos_mode).to eq('payg')
       end
     end
 

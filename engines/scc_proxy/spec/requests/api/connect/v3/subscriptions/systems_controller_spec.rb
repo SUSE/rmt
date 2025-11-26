@@ -50,6 +50,8 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
 
           system = System.find_by(login: 'i-12345-payg')
+          expect(system.proxy_byos_mode).to eq('byos')
+          expect(system.proxy_byos).to eq(true)
           expect(system.instance_data).to eq(instance_data)
         end
 
