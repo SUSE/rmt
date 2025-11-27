@@ -4,7 +4,6 @@ require 'bundler/setup' # Set up gems listed in the Gemfile.
 require 'logger'
 
 require_relative '../lib/rmt/config'
-require 'logger'
 require 'rails/command'
 require 'rails/commands/server/server_command'
 
