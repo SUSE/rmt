@@ -466,11 +466,11 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
           let(:scc_annouce_body) do
             {
+              login: system.login,
+              password: system.password,
               hostname: system.hostname,
               hwinfo: JSON.parse(system.system_information),
-              byos_mode: 'hybrid',
-              login: system.login,
-              password: system.password
+              byos_mode: 'hybrid'
             }
           end
           let(:scc_announce_headers) do
