@@ -10,12 +10,11 @@ gem 'rails', '~> 7.1.0'
 gem 'bootsnap', require: false
 
 gem 'puma'
-gem 'mysql2'
-gem 'sqlite3'
+gem 'mysql2', '~> 0.5.7'
+gem 'sqlite3', '>= 2.0'
 
-gem 'nokogiri'
-gem 'thor'
-gem 'repomd_parser'
+gem 'nokogiri', '>= 1.18' # Locked because of Ruby >= 2.6 dependency
+gem 'thor', '>= 1.4' # Locked because of Ruby >= 2.6 dependency
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
@@ -57,7 +56,6 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen'
   gem 'spring-commands-rspec'
-  gem 'ronn-ng'
   gem 'guard-rspec', require: false
 end
 
@@ -96,4 +94,11 @@ gem 'terminal-table'
 # needed by rmt-server-pubcloud
 gem 'jwt', '~> 2.1'
 gem 'base32'
+
+# Needed to parse Debian's Packages.xz
+gem 'ruby-xz', '~> 1.0'
 gem 'resque'
+
+gem 'fiddle', '~> 1.1.8'
+
+gem 'nronn', '~> 0.11.1'

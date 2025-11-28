@@ -17,6 +17,8 @@ RUN bundle.ruby2.5 config build.nokogiri --use-system-libraries && \
 
 COPY . /srv/www/rmt/
 
+RUN mkdir /srv/www/rmt/public/repo 
+
 RUN sed -i 's/#!\/usr\/bin\/env ruby/#!\/usr\/bin\/ruby.ruby2.5/g' /srv/www/rmt/bin/rmt-cli && \
     ln -s /srv/www/rmt/bin/rmt-cli /usr/bin && \
     mkdir /var/lib/rmt/ && \

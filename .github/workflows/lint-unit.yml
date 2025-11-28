@@ -28,11 +28,13 @@ jobs:
       # Only use 2 workers, gh actions seems to kill jobs when we use more
       max-parallel: 2
       matrix:
+        # we need to test the Ruby versions of the products we release RMT for,
+        # those are: SLE15 (2.5.8, 2.5.9)
         ruby-version: ['3.2.9']
 
     services:
       mysql:
-        image: registry.suse.com/suse/mariadb:10.6
+        image: registry.opensuse.org/opensuse/mariadb:11.8
         env:
           MYSQL_DATABASE: rmt_test
           MYSQL_USER: rmt
