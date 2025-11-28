@@ -28,6 +28,7 @@ gem 'thor', '>= 1.4' # Locked because of Ruby >= 2.6 dependency
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
+gem 'rackup'
 
 # Prometheus Exporter:
 gem 'yabeda'
@@ -61,16 +62,16 @@ end
 
 group :test do
   gem 'rspec-command', '1.0.3'
-  gem 'rspec-rails', '~> 5.0'
-  gem 'factory_bot_rails', '~> 6.2.0'
+  gem 'rspec-rails', '> 5.0'
+  gem 'factory_bot_rails'
   gem 'ffaker'
   gem 'rspec-its'
-  gem 'fakefs', '~> 1.4', require: 'fakefs/safe'
+  gem 'fakefs', require: 'fakefs/safe'
   gem 'shoulda-matchers'
   gem 'webmock'
   gem 'fuubar'
   gem 'timecop'
-  gem 'vcr', '~> 6.0'
+  gem 'vcr'
   gem 'coveralls', '~> 0.8.21', require: false # coveralls_reborn is the newer gem as this one was archived
   gem 'minitest'
   gem 'public_suffix'
@@ -102,3 +103,5 @@ gem 'resque'
 gem 'fiddle', '~> 1.1.8'
 
 gem 'nronn', '~> 0.11.1'
+
+gem 'repomd_parser', '~> 1.2'

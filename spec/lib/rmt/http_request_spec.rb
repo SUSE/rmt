@@ -40,7 +40,7 @@ RSpec.describe RMT::HttpRequest do
       Thread.new do
         dev_null = WEBrick::Log.new('/dev/null', 7)
 
-        Rack::Server.start(
+        Rackup::Server.start(
           app: lambda do |_|
             sleep 5
             [200, { 'Content-Type' => 'text/html' }, ['hello world']]

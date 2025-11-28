@@ -85,10 +85,11 @@ GEM
       mutex_m
       securerandom (>= 0.3)
       tzinfo (~> 2.0)
-    addressable (2.8.7)
-      public_suffix (>= 2.0.2, < 7.0)
+    addressable (2.8.8)
+      public_suffix (>= 2.0.2, < 8.0)
     anyway_config (2.7.2)
       ruby-next-core (~> 1.0)
+    ast (2.4.3)
     awesome_print (1.9.2)
     base32 (0.3.4)
     base64 (0.3.0)
@@ -98,6 +99,8 @@ GEM
       msgpack (~> 1.2)
     builder (3.3.0)
     byebug (12.0.0)
+    bzip2-ffi (1.1.1)
+      ffi (~> 1.0)
     case_transform (0.2)
       activesupport
     cgi (0.5.0)
@@ -106,7 +109,7 @@ GEM
     config (5.6.1)
       deep_merge (~> 1.2, >= 1.2.1)
       ostruct
-    connection_pool (2.5.4)
+    connection_pool (2.5.5)
     coveralls (0.8.23)
       json (>= 1.8, < 3)
       simplecov (~> 0.16.1)
@@ -125,15 +128,14 @@ GEM
     dry-initializer (3.2.0)
     erb (6.0.0)
     erubi (1.13.1)
-    ethon (0.18.0)
+    ethon (0.15.0)
       ffi (>= 1.15.0)
-      logger
-    factory_bot (6.2.1)
-      activesupport (>= 5.0.0)
-    factory_bot_rails (6.2.0)
-      factory_bot (~> 6.2.0)
-      railties (>= 5.0.0)
-    fakefs (1.9.0)
+    factory_bot (6.5.6)
+      activesupport (>= 6.1.0)
+    factory_bot_rails (6.5.1)
+      factory_bot (~> 6.5)
+      railties (>= 6.1.0)
+    fakefs (3.0.4)
     fast_gettext (4.1.1)
       prime
       racc
@@ -244,6 +246,8 @@ GEM
     ostruct (0.6.3)
     parallel (1.27.0)
     parser (3.3.10.0)
+      ast (~> 2.4.1)
+      racc
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
@@ -258,21 +262,22 @@ GEM
     psych (5.2.6)
       date
       stringio
-    public_suffix (6.0.2)
+    public_suffix (7.0.0)
     puma (7.1.0)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (2.2.21)
-    rack-protection (3.2.0)
+    rack (3.2.4)
+    rack-protection (4.2.1)
       base64 (>= 0.1.0)
-      rack (~> 2.2, >= 2.2.4)
-    rack-session (1.0.2)
-      rack (< 3)
+      logger (>= 1.6.0)
+      rack (>= 3.0.0, < 4)
+    rack-session (2.1.1)
+      base64 (>= 0.1.0)
+      rack (>= 3.0.0)
     rack-test (2.2.0)
       rack (>= 1.3)
-    rackup (1.0.1)
-      rack (< 3)
-      webrick
+    rackup (2.2.1)
+      rack (>= 3)
     rails (7.1.6)
       actioncable (= 7.1.6)
       actionmailbox (= 7.1.6)
@@ -309,7 +314,7 @@ GEM
     rb-fsevent (0.11.2)
     rb-inotify (0.11.1)
       ffi (~> 1.0)
-    rdoc (6.15.1)
+    rdoc (6.16.1)
       erb
       psych (>= 4.0.0)
       tsort
@@ -322,9 +327,14 @@ GEM
     regexp_parser (2.11.3)
     reline (0.6.3)
       io-console (~> 0.5)
-    responders (3.1.1)
-      actionpack (>= 5.2)
-      railties (>= 5.2)
+    repomd_parser (1.2.0)
+      bzip2-ffi (~> 1.1.1)
+      nokogiri (~> 1.8)
+      ruby-xz (~> 1.0, >= 1.0.3)
+      zstd-ruby (~> 1.3, >= 1.3.5.0)
+    responders (3.2.0)
+      actionpack (>= 7.0)
+      railties (>= 7.0)
     resque (2.7.0)
       mono_logger (~> 1)
       multi_json (~> 1.0)
@@ -350,14 +360,14 @@ GEM
     rspec-mocks (3.13.7)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-rails (5.1.2)
-      actionpack (>= 5.2)
-      activesupport (>= 5.2)
-      railties (>= 5.2)
-      rspec-core (~> 3.10)
-      rspec-expectations (~> 3.10)
-      rspec-mocks (~> 3.10)
-      rspec-support (~> 3.10)
+    rspec-rails (7.1.1)
+      actionpack (>= 7.0)
+      activesupport (>= 7.0)
+      railties (>= 7.0)
+      rspec-core (~> 3.13)
+      rspec-expectations (~> 3.13)
+      rspec-mocks (~> 3.13)
+      rspec-support (~> 3.13)
     rspec-support (3.13.6)
     rubocop (1.25.0)
       parallel (~> 1.10)
@@ -400,17 +410,19 @@ GEM
     securerandom (0.4.1)
     sexp_processor (4.17.4)
     shellany (0.0.1)
-    shoulda-matchers (6.5.0)
-      activesupport (>= 5.2.0)
+    shoulda-matchers (7.0.1)
+      activesupport (>= 7.1)
     simplecov (0.16.1)
       docile (~> 1.1)
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
-    sinatra (3.2.0)
+    sinatra (4.2.1)
+      logger (>= 1.6.0)
       mustermann (~> 3.0)
-      rack (~> 2.2, >= 2.2.4)
-      rack-protection (= 3.2.0)
+      rack (>= 3.0.0, < 4)
+      rack-protection (= 4.2.1)
+      rack-session (>= 2.0.0, < 3)
       tilt (~> 2.0)
     singleton (0.3.0)
     spring (4.4.0)
@@ -421,8 +433,8 @@ GEM
       spring (>= 4)
     sqlite3 (2.8.0-x86_64-linux-gnu)
     stringio (3.1.8)
-    strong_migrations (2.1.0)
-      activerecord (>= 6.1)
+    strong_migrations (2.5.1)
+      activerecord (>= 7.1)
     sync (0.5.0)
     term-ansicolor (1.11.3)
       tins (~> 1)
@@ -438,8 +450,8 @@ GEM
       mize (~> 0.6)
       sync
     tsort (0.2.0)
-    typhoeus (1.4.1)
-      ethon (>= 0.9.0)
+    typhoeus (1.5.0)
+      ethon (>= 0.9.0, < 0.16.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.6.0)
@@ -453,7 +465,7 @@ GEM
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
-    webrick (1.9.1)
+    webrick (1.9.2)
     websocket-driver (0.8.0)
       base64
       websocket-extensions (>= 0.1.0)
@@ -477,9 +489,10 @@ GEM
       yabeda (~> 0.8)
     yard (0.9.37)
     zeitwerk (2.7.3)
+    zstd-ruby (1.5.7.1)
 
 PLATFORMS
-  x86_64-linux-gnu
+  x86_64-linux
 
 DEPENDENCIES
   active_model_serializers
@@ -489,8 +502,8 @@ DEPENDENCIES
   byebug
   config
   coveralls (~> 0.8.21)
-  factory_bot_rails (~> 6.2.0)
-  fakefs (~> 1.4)
+  factory_bot_rails
+  fakefs
   fast_gettext
   ffaker
   fiddle (~> 1.1.8)
@@ -508,12 +521,14 @@ DEPENDENCIES
   nronn (~> 0.11.1)
   public_suffix
   puma
+  rackup
   rails (~> 7.1.0)
+  repomd_parser (~> 1.2)
   responders
   resque
   rspec-command (= 1.0.3)
   rspec-its
-  rspec-rails (~> 5.0)
+  rspec-rails (> 5.0)
   rubocop (<= 1.25.0)
   rubocop-ast (<= 1.17.0)
   ruby-xz (~> 1.0)
@@ -530,7 +545,7 @@ DEPENDENCIES
   thor (>= 1.4)
   timecop
   typhoeus
-  vcr (~> 6.0)
+  vcr
   versionist
   webmock
   webrick
