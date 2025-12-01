@@ -124,10 +124,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
         expect(
           system.profiles.each_with_object({}) do |profile, hash|
-            hash[profile.profile_type] = {
-              identifier: profile.identifier,
-              data: profile.data
-            }
+            hash.merge!(profile.as_payload)
           end.symbolize_keys
         ).to match(profiles_expected)
       end
@@ -154,10 +151,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
         expect(
           system.profiles.each_with_object({}) do |profile, hash|
-            hash[profile.profile_type] = {
-              identifier: profile.identifier,
-              data: profile.data
-            }
+            hash.merge!(profile.as_payload)
           end.symbolize_keys
         ).to match(profiles_expected)
       end
@@ -184,10 +178,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
         expect(
           system.profiles.each_with_object({}) do |profile, hash|
-            hash[profile.profile_type] = {
-              identifier: profile.identifier,
-              data: profile.data
-            }
+            hash.merge!(profile.as_payload)
           end.symbolize_keys
         ).to match(profiles_expected)
       end
@@ -214,10 +205,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
         expect(
           system.profiles.each_with_object({}) do |profile, hash|
-            hash[profile.profile_type] = {
-              identifier: profile.identifier,
-              data: profile.data
-            }
+            hash.merge!(profile.as_payload)
           end.symbolize_keys
         ).to match(profiles_expected)
       end
@@ -245,10 +233,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
         expect(
           system.profiles.each_with_object({}) do |profile, hash|
-            hash[profile.profile_type] = {
-              identifier: profile.identifier,
-              data: profile.data
-            }
+            hash.merge!(profile.as_payload)
           end.symbolize_keys
         ).to match(profiles_expected)
       end
@@ -276,10 +261,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
         expect(
           system.profiles.each_with_object({}) do |profile, hash|
-            hash[profile.profile_type] = {
-              identifier: profile.identifier,
-              data: profile.data
-            }
+            hash.merge!(profile.as_payload)
           end.symbolize_keys
         ).to match(profiles_expected)
       end
@@ -307,10 +289,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
         expect(
           system.profiles.each_with_object({}) do |profile, hash|
-            hash[profile.profile_type] = {
-              identifier: profile.identifier,
-              data: profile.data
-            }
+            hash.merge!(profile.as_payload)
           end.symbolize_keys
         ).to match(profiles_expected)
       end
@@ -337,10 +316,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
         expect(
           system.profiles.each_with_object({}) do |profile, hash|
-            hash[profile.profile_type] = {
-              identifier: profile.identifier,
-              data: profile.data
-            }
+            hash.merge!(profile.as_payload)
           end.symbolize_keys
         ).to match(profiles_expected)
       end
@@ -368,10 +344,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
         expect(
           system.profiles.each_with_object({}) do |profile, hash|
-            hash[profile.profile_type] = {
-              identifier: profile.identifier,
-              data: profile.data
-            }
+            hash.merge!(profile.as_payload)
           end.symbolize_keys
         ).to match(profiles_expected)
       end
@@ -399,10 +372,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
 
         expect(
           system.profiles.each_with_object({}) do |profile, hash|
-            hash[profile.profile_type] = {
-              identifier: profile.identifier,
-              data: profile.data
-            }
+            hash.merge!(profile.as_payload)
           end.symbolize_keys
         ).to match(profiles_expected)
       end
