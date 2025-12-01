@@ -57,10 +57,7 @@ class Profile < ApplicationRecord
 
     # Return the hash representation of the known profiles
     known_profiles.each_with_object({}) do |profile, hash|
-      hash[profile.profile_type] = {
-        identifier: profile.identifier,
-        data: profile.data
-      }
+      hash.merge!(profile.as_payload)
     end.symbolize_keys
   end
 
@@ -93,5 +90,12 @@ class Profile < ApplicationRecord
     profile = profile_query.lock('LOCK IN SHARE MODE').first!
     logger.debug("ensure_profile_exists: found(rescue) profile - #{profile.profile_type}/#{profile.identifier}")
     profile
+  end
+
+  def as_payload(include_data: true)
+    fields = { identifier: identifier }
+
+    fields[:data] = data if include_data
+    { profile_type => fields }
   end
 end
