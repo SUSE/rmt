@@ -468,12 +468,16 @@ module SccProxy
             params['system_token'] = @system.system_token.presence || params.fetch('system_token', '')
             Rails.logger.info 'No system token' if params['system_token'].blank?
 
-            # TODO: Should this announce_system request include the system's
-            # profiles data?
-            # If so would need to retrieve them from the DB and add their
-            # representation as a :system_profiles entry in a copy of params
-            # before calling announce_system_scc() with that copy of params.
-            scc_response, _headers = SccProxy.announce_system_scc("Token token=#{params[:token]}", params, params['system_token'])
+            # create a copy of params with system profiles included
+            announce_params = params.to_unsafe_h
+            announce_params['systems_profiles'] = @system.profiles.each_with_object({}) do |profile, hash|
+              hash.merge!(profile.as_payload)
+            end
+            scc_response, _headers = SccProxy.announce_system_scc(
+              "Token token=#{announce_params[:token]}",
+              announce_params,
+              announce_params['system_token']
+            )
             scc_response
           end
         end

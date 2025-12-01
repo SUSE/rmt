@@ -93,21 +93,23 @@ class SUSE::Connect::SystemSerializer < ActiveModel::Serializer
 
   def system_profiles
     object.profiles.each_with_object({}) do |profile, hash|
-      hash[profile.profile_type] = {
-        identifier: profile.identifier
-      }.merge(include_profile_data(profile))
+      hash.merge!(
+        profile.as_payload(
+          include_data: include_profile_data?(profile)
+        )
+      )
     end
   end
 
-  def include_profile_data(profile)
+  def include_profile_data?(profile)
     # Check if this profile has previously been included in the
-    # serialized payload, and if not, return a hash including
-    # the data field to be merged with the required identifier.
+    # serialized payload, and return a boolean indicating whether
+    # to include the data field or not.
     if @serialized_profiles.include?(profile.id)
-      {}
+      false
     else
       @serialized_profiles.add(profile.id)
-      { data: profile.data }
+      true
     end
   end
 
