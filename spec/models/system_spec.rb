@@ -55,16 +55,9 @@ RSpec.describe System, type: :model do
       orig_kept_link_id = SystemProfile.find_by(system: system, profile: profile_to_keep).id
 
       # assign the new set of profiles to system, and reload it
-      system.complete_profiles = {
-        profile_to_keep.profile_type => {
-          identifier: profile_to_keep.identifier,
-          data: profile_to_keep.data
-        },
-        profile_to_add.profile_type => {
-          identifier: profile_to_add.identifier,
-          data: profile_to_add.data
-        }
-      }
+      system.complete_profiles = profile_to_keep.as_payload.merge(
+        profile_to_add.as_payload
+      )
       system.reload
 
       # verify that the set of associations have been updated correctly,

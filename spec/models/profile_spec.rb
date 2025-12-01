@@ -11,6 +11,19 @@ RSpec.describe Profile, type: :model do
   it { is_expected.to have_db_column(:identifier).of_type(:string).with_options(null: false) }
   it { is_expected.to have_db_column(:data).of_type(:text).with_options(null: false) }
 
+  context 'as_payload' do
+    let(:expected) { profile_set_b }
+    let(:expected_no_data) { profile_set_b_no_data }
+    let(:ptype) { expected.keys.first }
+    let(:pinfo) { expected[ptype] }
+    let!(:profile) { create(:profile, profile_type: ptype, identifier: pinfo[:identifier], data: pinfo[:data]) }
+
+    it 'returns expected format' do
+      expect(profile.as_payload.symbolize_keys).to match(expected)
+      expect(profile.as_payload(include_data: false).symbolize_keys).to match(expected_no_data)
+    end
+  end
+
   context 'filter_profiles' do
     let(:profiles) { profile_set_mixed }
 
@@ -65,14 +78,7 @@ RSpec.describe Profile, type: :model do
 
       expect(described_class.count).to eq(1)
       expect(profile).to be_an_instance_of(described_class)
-      expect(
-        {
-          profile.profile_type => {
-            identifier: profile.identifier,
-            data: profile.data
-          }
-        }.symbolize_keys
-      ).to match(expected)
+      expect(profile.as_payload.symbolize_keys).to match(expected)
     end
   end
 
@@ -88,14 +94,7 @@ RSpec.describe Profile, type: :model do
       expect(described_class.count).to eq(1)
       expect(profile).to be_an_instance_of(described_class)
       expect(profile).to eq(existing_profile)
-      expect(
-        {
-          profile.profile_type => {
-            identifier: profile.identifier,
-            data: profile.data
-          }
-        }.symbolize_keys
-      ).to match(expected)
+      expect(profile.as_payload.symbolize_keys).to match(expected)
     end
   end
 
@@ -131,14 +130,7 @@ RSpec.describe Profile, type: :model do
       expect(described_class.count).to eq(1)
       expect(profile).to be_an_instance_of(described_class)
       expect(profile).to eq(existing_profile)
-      expect(
-        {
-          profile.profile_type => {
-            identifier: profile.identifier,
-            data: profile.data
-          }
-        }.symbolize_keys
-      ).to match(expected)
+      expect(profile.as_payload.symbolize_keys).to match(expected)
     end
   end
 end
