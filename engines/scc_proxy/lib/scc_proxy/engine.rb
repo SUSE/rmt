@@ -322,7 +322,7 @@ module SccProxy
           message = 'Could not register system'
           message += " with regcode #{auth_header} to SCC" unless has_no_regcode?(auth_header)
           logger.error("#{message}: #{e.message}")
-          render json: { type: 'error', error: e.message }, status: :unprocessable_entity, location: nil
+          render json: { type: 'error', error: e.message }, status: :unprocessable_content, location: nil
         end
 
         protected
@@ -386,7 +386,7 @@ module SccProxy
           render json: { type: 'error', error: e.message }, status: status_code(e.message), location: nil
         rescue InstanceVerification::Exception => e
           logger.error("Could not activate product for system to SCC: #{e.message}")
-          render json: { type: 'error', error: e.message }, status: :unprocessable_entity, location: nil
+          render json: { type: 'error', error: e.message }, status: :unprocessable_content, location: nil
         end
 
         def update_pubcloud_reg_code(encoded_reg_code)
