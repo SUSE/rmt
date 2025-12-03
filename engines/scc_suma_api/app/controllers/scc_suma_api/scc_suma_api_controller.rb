@@ -56,7 +56,7 @@ module SccSumaApi
     rescue InstanceVerification::Exception => e
       logger.error "Could not check if instance metadata '#{instance_data}' is valid: #{e.message}"
       error = ActionController::TranslatedError.new(N_(e.message))
-      error.status = :unprocessable_entity
+      error.status = :unprocessable_content
       raise error
     end
 
