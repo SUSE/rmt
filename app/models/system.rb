@@ -5,16 +5,17 @@ class System < ApplicationRecord
   # PAYG (pay as you go),
   # BYOS (bring your own subscription) or
   # a mix of both (hybrid).
-  enum proxy_byos_mode: { not_applicable: 0, payg: 1, byos: 2, hybrid: 3 }
-  attribute :proxy_byos_mode, :integer
   after_initialize :init
-
+  
   has_many :activations, dependent: :delete_all # this is set this way because of performance reasons
   has_many :services, through: :activations
   has_many :repositories, -> { distinct }, through: :services
   has_many :products, -> { distinct }, through: :services
   has_many :system_uptimes, dependent: :destroy
-
+  
+  enum proxy_byos_mode: { not_applicable: 0, payg: 1, byos: 2, hybrid: 3 }
+  attribute :proxy_byos_mode, :integer
+  
   validates :system_token, uniqueness: { scope: %i[login password], case_sensitive: false }
 
   alias_attribute :scc_synced_at, :scc_registered_at
