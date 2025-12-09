@@ -5,81 +5,89 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-02 00:12+0000\n"
-"Last-Translator: Taras Panchenko <top39@ukr.net>\n"
+"PO-Revision-Date: 2025-12-09 18:04+0000\n"
+"Last-Translator: Eugene Krater <lachend@gmail.com>\n"
 "Language-Team: Ukrainian <https://l10n.opensuse.org/projects/rmt/i18n/uk/>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4"
-" && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.9.1\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 5.14.3\n"
 
 msgid "%s is not yet activated on the system."
-msgstr ""
+msgstr "Продукт %s ще не активовано в системі."
 
 msgid "%{count} file"
 msgid_plural "%{count} files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%{count} файл"
+msgstr[1] "%{count} файли"
+msgstr[2] "%{count} файлів"
 
 msgid "%{db_entries} database entry"
 msgid_plural "%{db_entries} database entries"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%{db_entries} елемент бази даних"
+msgstr[1] "%{db_entries} елементи бази даних"
+msgstr[2] "%{db_entries} елементів бази даних"
 
 msgid "%{file} - File does not exist"
-msgstr ""
+msgstr "%{file} - файл не існує"
 
 msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
 msgstr ""
+"%{file} - запит не вдався з кодом стану HTTP %{code}, код виводу "
+"'%{return_code}'"
 
 msgid "%{file} does not exist."
-msgstr ""
+msgstr "Файл %{file} не існує."
 
 msgid "%{path} is not a directory."
-msgstr ""
+msgstr "%{path} не є текою."
 
 msgid "%{path} is not writable by user %{username}."
-msgstr ""
+msgstr "Тека %{path} недоступна для запису користувачем %{username}."
 
 msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
-msgstr ""
+msgstr "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 
 msgid "A repository by the ID %{id} already exists."
-msgstr ""
+msgstr "Репозиторій з ідентифікатором %{id} вже існує."
 
 msgid "A repository by the URL %{url} already exists (ID %{id})."
-msgstr ""
+msgstr "Репозиторій за URL-адресою %{url} вже існує (ID %{id})."
 
 msgid "Added association between %{repo} and product %{product}"
-msgstr ""
+msgstr "Додано зв'язок між %{repo} і продуктом %{product}"
 
 msgid "Adding/Updating product %{product}"
-msgstr ""
+msgstr "Додавання/оновлення продукту %{product}"
 
 msgid "All repositories have already been disabled."
-msgstr ""
+msgstr "Всі репозиторії вже вимкнені."
 
 msgid "All repositories have already been enabled."
-msgstr ""
+msgstr "Всі репозиторії вже увімкнені."
 
 msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
 msgstr ""
+"Інший екземпляр цієї команди вже виконується. Завершіть роботу іншого "
+"екземпляра або дочекайтеся його завершення."
 
 #. i18n: architecture
 msgid "Arch"
-msgstr ""
+msgstr "Архітектура"
 
 msgid "Architecture"
-msgstr ""
+msgstr "Архітектура"
 
 msgid "Ask for confirmation or do not ask for confirmation and require no user interaction"
 msgstr ""
+"Запитати підтвердження або не запитувати підтвердження і не вимагати "
+"взаємодії з користувачем"
 
 msgid "Attach an existing custom repository to a product"
-msgstr ""
+msgstr "Приєднати існуюче власне сховище до продукту"
 
 msgid "Attached repository to product '%{product_name}'."
 msgstr ""
