@@ -39,7 +39,7 @@ class Profile < ApplicationRecord
     end
   end
 
-  def self.where_unique_keys(key_tuples)
+  def self.with_unique_type_and_identifier(key_tuples)
     # Generate an expanded where clause with one entry per key_tuple
     # and pass the flattened list of key tuples as arguments
     where_clause = key_tuples.map { '(profile_type = ? AND identifier = ?)' }.join(' OR ')
@@ -51,7 +51,7 @@ class Profile < ApplicationRecord
     return {} if profiles.empty?
 
     # Identify profiles that exist
-    known_profiles = Profile.where_unique_keys(
+    known_profiles = Profile.with_unique_type_and_identifier(
       profiles.map { |ptype, pinfo| [ptype, pinfo[:identifier]] }
     )
 
