@@ -13,7 +13,6 @@ Tue Jan 13 17:14:09 UTC 2026 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 Tue Nov 11 11:03:50 UTC 2025 - Natnael Getahun <natnael.getahun@suse.com>
 
 - Version 2.25
-  * Enable mirroring xz compressed repositories (bsc#1246976) 
   * Add support for processing, storing, and syncing system profiles (jsc#TEL-265)
 
 -------------------------------------------------------------------
