@@ -7,10 +7,7 @@ describe SUSE::Connect::SystemSerializer do
   let(:serializer_options) { { serialized_profiles: Set.new } }
   let(:profiles) do
     system.profiles.each_with_object({}) do |profile, hash|
-      hash[profile.profile_type] = {
-        identifier: profile.identifier,
-        data: profile.data
-      }
+      hash.merge!(profile.as_payload)
     end
   end
 
