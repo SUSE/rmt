@@ -130,3 +130,12 @@ container will behave as if you were working entirely locally.
 ## API documentation
 
 RMT partially implements the [SUSE Customer Center API](https://scc.suse.com/connect/v4/documentation). You can read the details of each endpoint to find out whether they are supported by RMT.
+
+## CI Builds
+
+CI images are built on [Open build service](https://build.opensuse.org). We have CI images in `ci/` directory. In build service, we have [systemsmanagement:SCC:containers/rmt-ci-container](https://build.opensuse.org/package/show/systemsmanagement:SCC:containers/rmt-ci-container) project. `_service` contains configuration for running the build jobs. It extracts `ci/Dockerfile` and packages the rest in `.tar.bz2` format. The docker file contains special annotations :
+```docker
+#!BuildTag: rmt-ci-container
+#!UseOBSRepositories
+```
+indicating the image tag and enforcing local-only build (running `zypper ar` will not work). There's also the special `_multibuild` config that allows multiple images targeting different build platforms for RMT. Currently, we build rmt images for ruby 2.5 and ruby 3.2 (experimental). The project is configured to use tumbleweed and sles/leap(15.5). In the future, we aim to use leap only for legacy (RMT 2.x) builds.
