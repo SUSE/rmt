@@ -14,7 +14,7 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.1, >= 1.2.0)
-    active_model_serializers (0.10.15)
+    active_model_serializers (0.10.16)
       actionpack (>= 4.1)
       activemodel (>= 4.1)
       case_transform (>= 0.2)
@@ -442,6 +442,7 @@ DEPENDENCIES
   yabeda-prometheus
   yabeda-puma-plugin
   yabeda-rails
+  zeitwerk (~> 2.6.18)
 
 BUNDLED WITH
    2.2.34

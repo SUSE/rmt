@@ -18,6 +18,7 @@ gem 'activemodel', '~> 6.1.7'
 gem 'activerecord', '~> 6.1.7'
 gem 'activejob', '~> 6.1.7'
 gem 'railties', '~> 6.1.7'
+gem 'zeitwerk', '~> 2.6.18' # Locked because of Ruby >= 2.6 dependency
 gem 'repomd_parser', '~> 1.2.0'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
