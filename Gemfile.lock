@@ -375,7 +375,7 @@ GEM
       railties
       yabeda (~> 0.8)
     yard (0.9.35)
-    zeitwerk (2.7.3)
+    zeitwerk (2.6.18)
     zstd-ruby (1.5.7.1)
 
 PLATFORMS
@@ -442,6 +442,7 @@ DEPENDENCIES
   yabeda-prometheus
   yabeda-puma-plugin
   yabeda-rails
+  zeitwerk (~> 2.6.18)
 
 BUNDLED WITH
    2.2.34
