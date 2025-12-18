@@ -50,7 +50,10 @@ module SccSumaApi
             end
 
             its(:code) { is_expected.to eq '301' }
-            its(:body) { is_expected.to include 'http://www.example.com/api/scc/unscoped-products' }
+
+            its(:headers) do
+              expect(headers['location']).to include 'http://www.example.com/api/scc/unscoped-products'
+            end
           end
 
           context 'endpoints return unscoped products for PAYG systems' do
@@ -127,7 +130,10 @@ module SccSumaApi
         before { get '/connect/organizations/repositories' }
 
         its(:code) { is_expected.to eq '301' }
-        its(:body) { is_expected.to include 'http://www.example.com/api/scc/repos' }
+
+        its(:headers) do
+          expect(headers['location']).to eq 'http://www.example.com/api/scc/repos'
+        end
       end
 
       context 'get repos' do
@@ -157,7 +163,12 @@ module SccSumaApi
           end
 
           its(:code) { is_expected.to eq '301' }
-          its(:body) { is_expected.to include 'http://www.example.com/api/scc/product-tree' }
+
+          its(:headers) do
+            expect(headers['location']).to eq 'http://www.example.com/api/scc/product-tree'
+          end
+
+          # its(:body) { is_expected.to include 'http://www.example.com/api/scc/product-tree' }
         end
 
         context 'endpoint returns product tree json output' do

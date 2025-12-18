@@ -49,7 +49,7 @@ module RegistrationSharing
       let(:url) { '/api/regsharing/center/regsvc?command=shareregistration' }
 
       context 'with system XML' do
-        subject(:system) { create(:system, login: login) }
+        subject(:system) { System.find_by(login: login) }
 
         let(:xml) do
           "<?xml version='1.0' encoding='UTF-8'?>
@@ -66,7 +66,6 @@ module RegistrationSharing
         end
 
         it 'creates a system' do
-          # byebug
           expect(system).not_to eq(nil)
         end
 
@@ -77,7 +76,7 @@ module RegistrationSharing
       end
 
       context 'with activation XML' do
-        subject(:activation) { create(:activation, service_id: product.service.id, system_id: system.id) }
+        subject(:activation) { Activation.find_by(service_id: product.service.id, system_id: system.id) }
 
         let(:xml) do
           "<?xml version='1.0' encoding='UTF-8'?>
