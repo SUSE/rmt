@@ -167,8 +167,6 @@ module SccSumaApi
           its(:headers) do
             expect(headers['location']).to eq 'http://www.example.com/api/scc/product-tree'
           end
-
-          # its(:body) { is_expected.to include 'http://www.example.com/api/scc/product-tree' }
         end
 
         context 'endpoint returns product tree json output' do
