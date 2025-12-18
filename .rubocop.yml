@@ -81,3 +81,4 @@ RSpec/SubjectStub:
 Layout/LineLength:
   Exclude:
     - config/initializers/new_framework_defaults_7_0.rb
+    - engines/instance_verification/spec/requests/api/connect/v3/systems/products_controller_spec.rb
