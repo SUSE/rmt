@@ -6,7 +6,7 @@ module ActionController
     def initialize(error = 'Error occurred', *params)
       @message           = error % params
       @localized_message = _(error) % params
-      @status            = :unprocessable_entity
+      @status            = :unprocessable_content
     end
 
   end

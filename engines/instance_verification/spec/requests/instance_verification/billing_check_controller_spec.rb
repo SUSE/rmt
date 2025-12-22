@@ -61,7 +61,7 @@ module InstanceVerification
           allow(plugin_double).to receive(:parse_instance_data).and_raise(InstanceVerification::Exception, 'Malformed instance data')
           get '/api/instance/check', params: { metadata: billing_info.to_s, identifier: 'SLES' }
           expect(JSON.parse(response.body)['flavor']).to eq('BYOS')
-          expect(response.message).to eq('Unprocessable Entity')
+          expect(response.message).to eq('Unprocessable Content')
           expect(response.code).to eq('422')
         end
       end

@@ -119,7 +119,7 @@ class RMT::Downloader
   def try_copying_from_cache(files, ignore_errors: false)
     # We need to verify if the cached copy is still relevant
     # Create a HTTP/HTTPS HEAD request if possible, return nil if not
-    cache_requests = files.map { |file| [file, cache_head_request(file)] }.to_h
+    cache_requests = files.index_with { |file| cache_head_request(file) }
     available_in_cache = cache_requests.compact.values
 
     # Download everything if the cache is empty

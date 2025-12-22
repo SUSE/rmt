@@ -11,7 +11,7 @@ module RegistrationSharing
         return
       end
 
-      xml = Nokogiri::XML(request.body.read)
+      xml = Nokogiri::XML(request.body.string)
 
       if params[:command] == 'shareregistration'
         return smt_share_registration(xml)

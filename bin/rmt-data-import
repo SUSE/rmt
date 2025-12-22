@@ -1,17 +1,18 @@
 #!/usr/bin/env ruby
 
-RMT_PATH = File.expand_path('..', __dir__)
+rmt_path = File.expand_path('..', __dir__)
 
 
 # Load initial configuration for rmt
-require_relative "#{RMT_PATH}/config/boot"
+require_relative "#{rmt_path}/config/boot"
 
 # Add rmt_path to library load path
-$LOAD_PATH.unshift File.join(RMT_PATH, 'lib')
+$LOAD_PATH.unshift File.join(rmt_path, 'lib')
 
 require 'optparse'
 require 'ostruct'
 require 'active_support'
+require 'zeitwerk'
 require 'active_record'
 require 'erb'
 require 'yaml'
@@ -25,12 +26,28 @@ require_relative '../config/initializers_cli/rmt_fast_gettext_cli_locale'
 no_systems = false
 data_dir = nil
 
-# Initialize the database
-relative_load_paths = %w[lib lib/rmt app/models app/validators app/services].map { |dir| File.join(RMT_PATH, dir) }
-db_config = RMT::Config.db_config
+loader = Zeitwerk::Loader.for_gem(warn_on_extra_files: false)
 
-ActiveSupport::Dependencies.autoload_paths += relative_load_paths
+relative_load_paths = %w[app/models app/services app/validators].map do|dir|
+  loader.push_dir(dir)
+  File.join(rmt_path, dir)
+end
+loader.ignore("#{__dir__}/compose-init.rb")
+loader.inflector.inflect("app" => "") # preserve rails loader
+loader.inflector.inflect("rmt" => "RMT")
+loader.inflector.inflect("scc" => "SCC")
+loader.inflector.inflect("cli" => "CLI")
+loader.inflector.inflect("gpg" => "GPG")
+loader.inflector.inflect("smt_importer" => "SMTImporter")
+loader.push_dir('lib/rmt', namespace: RMT)
+loader.collapse("lib/")
+
+# Initialize the database
+db_config = RMT::Config.db_config
 ActiveRecord::Base.establish_connection(db_config)
+
+loader.setup
+loader.eager_load
 
 begin
   Time.zone ||= 'UTC'

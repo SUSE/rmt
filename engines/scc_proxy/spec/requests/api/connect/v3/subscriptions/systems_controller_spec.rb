@@ -61,7 +61,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
             allow(plugin_double).to receive(:instance_identifier).and_raise(InstanceVerification::Exception, 'Malformed instance data')
             post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=' }
             expect(JSON.parse(response.body)['error']).to eq('Malformed instance data')
-            expect(response.message).to eq('Unprocessable Entity')
+            expect(response.message).to eq('Unprocessable Content')
             expect(response.code).to eq('422')
           end
         end
