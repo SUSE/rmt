@@ -7,7 +7,7 @@ RSpec.describe SystemProfile, type: :model do
   it { is_expected.to have_db_column(:system_id).of_type(:integer).with_options(null: false) }
   it { is_expected.to have_db_column(:profile_id).of_type(:integer).with_options(null: false) }
 
-  describe 'cascaded destroy of profiles records' do
+  describe 'cascaded destroy of profile records' do
     context 'when destroying the last system_profile referencing a profile' do
       let!(:last_profile_link) { create(:system_profile) }
 
@@ -37,6 +37,23 @@ RSpec.describe SystemProfile, type: :model do
       it 'does not affect other references to shared profile' do
         system_profile_a.destroy
         expect(described_class.find(system_profile_b.id)).to eq(system_profile_b)
+      end
+    end
+
+    context 'when racing destroy handlers detect orhpaned profile already deleted' do
+      let!(:system_profile) { create(:system_profile) }
+      let!(:target_profile) { system_profile.profile }
+
+      it 'logs a debug message when ActiveRecord::RecordNotFound is raised' do
+        # ensure that the profile exists
+        expect(system_profile.profile).to be_present
+
+        # stub 'with_lock' on the target_profile to raise the desired exception
+        allow(target_profile).to receive(:with_lock).and_raise(ActiveRecord::RecordNotFound)
+
+        expect(Rails.logger).to receive(:debug).with('orphaned profile already deleted by another racing destroy handler')
+
+        expect { system_profile.destroy_orphaned_profile }.not_to raise_error
       end
     end
   end
