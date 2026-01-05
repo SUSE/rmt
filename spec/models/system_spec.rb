@@ -50,7 +50,7 @@ RSpec.describe System, type: :model do
       system.profiles << profile_to_remove
     end
 
-    it 'updates profile associations with recreating existing associations' do
+    it 'updates profile associations without recreating existing associations' do
       # lookup the current kept link
       orig_kept_link_id = SystemProfile.find_by(system: system, profile: profile_to_keep).id
 
