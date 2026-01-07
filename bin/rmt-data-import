@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 
-rmt_path = File.expand_path('..', __dir__)
-
+rmt_path = File.expand_path('../..', __dir__)
 
 # Load initial configuration for rmt
-require_relative "#{rmt_path}/config/boot"
+require_relative "../config/boot"
 
 # Add rmt_path to library load path
 $LOAD_PATH.unshift File.join(rmt_path, 'lib')
 
 require 'optparse'
+require 'etc'
 require 'ostruct'
-require 'active_support'
+require 'active_support/all'
 require 'zeitwerk'
 require 'active_record'
 require 'erb'
@@ -23,10 +23,17 @@ require_relative '../config/initializers_cli/disable_deprecation_warnings'
 require_relative '../config/initializers_cli/rmt_fast_gettext'
 require_relative '../config/initializers_cli/rmt_fast_gettext_cli_locale'
 
+require_relative '../engines/registration_sharing/lib/registration_sharing' if Settings[:regsharing]
+require_relative '../app/models/application_record'
+
 no_systems = false
 data_dir = nil
 
+puts "RMT_PATH: #{rmt_path}"
+
 loader = Zeitwerk::Loader.for_gem(warn_on_extra_files: false)
+
+puts "RMT_PATH: #{rmt_path}"
 
 relative_load_paths = %w[app/models app/services app/validators].map do|dir|
   loader.push_dir(dir)
