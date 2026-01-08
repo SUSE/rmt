@@ -80,6 +80,17 @@ class System < ApplicationRecord
     update!(instance_data: instance_data)
   end
 
+  # Leverage a Rails ActiveRecord attribute setter method for a
+  # synthesized virtual attribute, complete_profiles, to simplify
+  # code changes in the system controller announce_system and update
+  # handlers.
+  # This approach allows us to add the complete_profiles attribute
+  # as an argument to a create() or update() for a System record
+  # that then calls this setter method to handle the corresponding
+  # assignment allowing us to process the provided complete profile
+  # hashes to ensure that corresponding Profile records exist and
+  # then assign those Profile records as being indirectly associated
+  # with a System record via appropriate SystemProfile linking records.
   def complete_profiles=(profiles_hash)
     # NOTE: All provided profiles in profiles_hash must be complete
     logger.debug("assigning complete profiles: #{profiles_hash.keys}")
