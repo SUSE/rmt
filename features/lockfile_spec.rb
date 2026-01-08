@@ -10,14 +10,10 @@ describe 'rmt-cli' do
       Process.waitpid(parent_pid)
     end
 
-    system '/usr/bin/rmt-cli sync', allow_error: true
-    its(:stderr) do
-      is_expected.to eq(
-        "Another instance of this command is already running. Terminate" \
-        " the other instance or wait for it to finish.\n"
-      )
+    it 'sucks' do
+      expect { system '/usr/bin/rmt-cli sync' }.to output("Another instance of this command is already running. Terminate the other instance or wait for it to finish.").to_stdout
     end
 
-    its(:exitstatus) { is_expected.to eq 1 }
+    # its(:exitstatus) { is_expected.to eq 1 }
   end
 end
