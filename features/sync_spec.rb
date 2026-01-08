@@ -1,8 +1,6 @@
-require File.expand_path('../support/command_rspec_helper', __FILE__)
-
 describe 'rmt-cli' do
   describe 'sync' do
-    command '/usr/bin/rmt-cli sync'
+    system '/usr/bin/rmt-cli sync'
     its(:exitstatus) { is_expected.to eq 0 }
 
     it do

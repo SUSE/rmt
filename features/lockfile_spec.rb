@@ -1,5 +1,3 @@
-require File.expand_path('../support/command_rspec_helper', __FILE__)
-
 describe 'rmt-cli' do
   describe 'lockfile' do
 
@@ -12,7 +10,7 @@ describe 'rmt-cli' do
       Process.waitpid(parent_pid)
     end
 
-    command '/usr/bin/rmt-cli sync', allow_error: true
+    system '/usr/bin/rmt-cli sync', allow_error: true
     its(:stderr) do
       is_expected.to eq(
         "Another instance of this command is already running. Terminate" \
