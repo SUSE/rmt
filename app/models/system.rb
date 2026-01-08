@@ -85,28 +85,7 @@ class System < ApplicationRecord
     logger.debug("assigning complete profiles: #{profiles_hash.keys}")
 
     # Lookup or create Profile records for the provided profiles
-    provided_profiles = Profile.ensure_complete_profiles_exist(profiles_hash)
-
-    # Determine the set of Profile record ids for the provided profiles
-    # and determine which ids are new, and which can be dropped, using
-    # the Rails provided profile_ids reader to retrieve the current set
-    # of associated ids.
-    provided_ids = provided_profiles.map(&:id)
-    new_ids = provided_ids - profile_ids
-    dropped_ids = profile_ids - provided_ids
-
-    # Remove any associations for dropped profile records
-    if dropped_ids.any?
-      profiles.delete(Profile.where(id: dropped_ids))
-    end
-
-    # Add new associations for any Profile records identified as
-    # being new in the set of provided profiles
-    if new_ids.any?
-      profiles << provided_profiles.select do |prof|
-        new_ids.include?(prof.id)
-      end
-    end
+    self.profiles = Profile.ensure_complete_profiles_exist(profiles_hash)
   end
 
   before_update do |system|
