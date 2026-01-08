@@ -6,6 +6,8 @@ class SystemProfile < ApplicationRecord
   # callbacks
   after_commit :destroy_orphaned_profile, on: :destroy
 
+  # Minimise database bloat by aggressively removing orphaned Profile
+  # records when the last referenced to them is removed.
   # NOTE: Without locking, racing destroy handlers may detect each
   # others profile entry references via the system_profiles table
   # and thus decide to skip deleting the associated profile entry.
