@@ -11,7 +11,7 @@ describe 'rmt-cli' do
     end
 
     it 'sucks' do
-      expect { system '/usr/bin/rmt-cli sync' }.to output("Another instance of this command is already running. Terminate the other instance or wait for it to finish.").to_stdout
+      expect { system '/usr/bin/rmt-cli sync' }.to output("Another instance of this command is already running. Terminate the other instance or wait for it to finish.").to_stderr
     end
 
     # its(:exitstatus) { is_expected.to eq 1 }
