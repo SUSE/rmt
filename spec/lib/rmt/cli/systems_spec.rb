@@ -68,7 +68,8 @@ RSpec.describe RMT::CLI::Systems do
         let(:expected_output) do
           Terminal::Table.new(
             headings: headings,
-            rows: expected_rows
+            rows: expected_rows,
+            style: { width: 117 }
           ).to_s + "\n"
         end
 
