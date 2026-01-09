@@ -1,3 +1,5 @@
+require 'mixlib/shellout'
+
 describe 'rmt-cli' do
   describe 'lockfile' do
 
@@ -10,10 +12,12 @@ describe 'rmt-cli' do
       Process.waitpid(parent_pid)
     end
 
-    it 'sucks' do
-      expect { system '/usr/bin/rmt-cli sync' }.to output("Another instance of this command is already running. Terminate the other instance or wait for it to finish.").to_stderr
-    end
+    it do
+      command = Mixlib::ShellOut.new("/usr/bin/rmt-cli sync")
+      command.run_command
 
-    # its(:exitstatus) { is_expected.to eq 1 }
+      expect(command.stderr).to match(/already running. Terminate the other instance/)
+      expect(command.exitstatus).to eq(1)
+    end
   end
 end
