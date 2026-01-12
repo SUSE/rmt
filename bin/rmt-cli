@@ -19,7 +19,7 @@ require_relative '../app/models/application_record'
 
 loader = Zeitwerk::Loader.for_gem(warn_on_extra_files: false)
 
-relative_load_paths = %w[app/models app/services app/validators].map do|dir| 
+relative_load_paths = %w[app/models app/services app/validators].map do|dir|
   loader.push_dir(dir)
   File.join(rmt_path, dir)
 end
@@ -33,7 +33,6 @@ loader.inflector.inflect("smt_importer" => "SMTImporter")
 loader.push_dir('lib/rmt', namespace: RMT)
 loader.collapse("lib/")
 
-# loader.logger = Logger.new($stdout)
 
 # Before moving into the default user/group, let's try to fetch the login
 # information for this host.
@@ -58,7 +57,6 @@ if RMT::CLI::Base.process_user_name == 'root'
   Process::Sys.seteuid(Etc.getpwnam(RMT::DEFAULT_USER).uid)
 end
 
-
 if File.exist?(RMT::DEFAULT_MIRROR_DIR) && !File.writable?(RMT::DEFAULT_MIRROR_DIR)
   warn "Mirroring base directory (#{RMT::DEFAULT_MIRROR_DIR}) is not writable by user '#{RMT::CLI::Base.process_user_name}'"
   warn 'Run as root or adjust the permissions.'
@@ -75,7 +73,6 @@ unless Settings['database']
   warn 'Please make sure that /etc/rmt.conf is readable by the rmt process and has your database configured.'
   exit RMT::CLI::Error::ERROR_OTHER
 end
-
 
 begin
   RMT::CLI::Main.start(ARGV)

@@ -1,5 +1,3 @@
-# Warning[:deprecated] = false if RUBY_VERSION >= '2.7.0'
-
 require 'simplecov'
 
 require 'webmock/rspec'
