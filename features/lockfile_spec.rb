@@ -5,7 +5,7 @@ describe 'rmt-cli' do
 
     around do |example|
       parent_pid = fork do
-        exec "/usr/bin/rmt-cli sync > /dev/null"
+        system "/usr/bin/rmt-cli sync > /dev/null"
       end
       example.run
       # wait for the parent process to finish, so the lock is released
