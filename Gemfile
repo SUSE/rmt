@@ -102,6 +102,6 @@ gem 'resque'
 
 gem 'fiddle', '~> 1.1.8'
 
-gem 'nronn', '~> 0.11.1'
+gem 'ronn-ng'
 
 gem 'repomd_parser', '~> 1.2'
