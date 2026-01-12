@@ -1,5 +1,3 @@
-require File.expand_path('support/command_rspec_helper', __dir__)
-
 describe 'mirror' do
   let(:path) { '/var/lib/rmt/public/repo/SUSE/Products/SLE-Product-SLES/15-SP5/x86_64' }
 

@@ -61,10 +61,10 @@ group :development do
 end
 
 group :test do
-  gem 'rspec-command', '1.0.3'
   gem 'rspec-rails', '> 5.0'
   gem 'factory_bot_rails'
   gem 'ffaker'
+  gem 'mixlib-shellout'
   gem 'rspec-its'
   gem 'fakefs', require: 'fakefs/safe'
   gem 'shoulda-matchers'
