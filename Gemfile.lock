@@ -312,6 +312,10 @@ GEM
     shellany (0.0.1)
     shoulda-matchers (4.5.1)
       activesupport (>= 4.2.0)
+    sidekiq (6.5.5)
+      connection_pool (>= 2.2.2)
+      rack (~> 2.0)
+      redis (>= 4.5.0)
     simplecov (0.16.1)
       docile (~> 1.1)
       json (>= 1.8, < 3)
@@ -425,6 +429,7 @@ DEPENDENCIES
   ruby_parser (< 3.20)
   scc-codestyle (<= 0.5.0)
   shoulda-matchers (~> 4.5.1)
+  sidekiq (~> 6.5)
   simplecov
   spring
   spring-commands-rspec
