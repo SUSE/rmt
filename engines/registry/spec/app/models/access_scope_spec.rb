@@ -1,5 +1,5 @@
 require 'yaml'
-require 'spec_helper'
+require 'rails_helper'
 
 RSpec.describe AccessScope, type: :model do
   subject { build(:registry_access_scope) }

@@ -1,3 +1,5 @@
+require 'rails_helper'
+
 describe Api::Connect::V3::Systems::SystemsController, type: :request do
   include_context 'auth header', :system, :login, :password
   include_context 'version header', 3
@@ -73,8 +75,8 @@ describe Api::Connect::V3::Systems::SystemsController, type: :request do
             headers: {}
           )
         allow(Rails.logger).to receive(:info)
-        allow(File).to receive(:join).and_return('foo')
-        allow(File).to receive(:unlink)
+        # allow(File).to receive(:join).and_return('foo')
+        # allow(File).to receive(:unlink)
         delete url, params: payload, headers: headers
       end
 
