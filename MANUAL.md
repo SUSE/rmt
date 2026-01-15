@@ -267,6 +267,8 @@ The `mirroring` section lets you adjust mirroring behavior.
   * `mirroring.dedup_method`:
     Whether to deduplicate files by a hardlink or copy. Possible values are:
     `hardlink`, `copy`
+  * `mirroring.redirect_repo_hosts`:
+    List of hostnames from which repos will not get mirrored, but clients get redirected there.
 
 **HTTP client settings**
 

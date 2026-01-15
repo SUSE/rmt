@@ -272,4 +272,27 @@ RSpec.describe RMT::Config do
       expect(method_call).to be_empty
     end
   end
+
+  describe '#redirect_repo_hosts mirror_src' do
+    context 'defaults' do
+      [nil, '', []].each do |config_provided|
+        before { Settings['mirroring'].redirect_repo_hosts = config_provided }
+        it("defaults when supplied #{config_provided}") { expect(described_class.redirect_repo_hosts).to be_nil }
+      end
+    end
+
+    context 'host list' do
+      [['nvidia.com', 'ibm.com']].each do |config_provided|
+        before { Settings['mirroring'].redirect_repo_hosts = config_provided }
+        it("enables when supplied #{config_provided}") { expect(described_class.redirect_repo_hosts).to eq(['nvidia.com', 'ibm.com']) }
+      end
+    end
+
+    context 'invalid' do
+      [false, 'false', [nil, ''], [1]].each do |config_provided|
+        before { Settings['mirroring'].redirect_repo_hosts = config_provided }
+        it("defaults when supplied #{config_provided}") { expect(described_class.redirect_repo_hosts).to be_nil }
+      end
+    end
+  end
 end
