@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jan 15 20:21:13 UTC 2026 - Thomas Schmidt <tschmidt@suse.com>
+
+- Version 2.25
+  * Support for new redirect_repo_hosts config, to exclude some repo hosts
+    from mirroring, and send clients directly there (jsc#SCC-452)
+
+-------------------------------------------------------------------
 Tue Nov 11 11:03:50 UTC 2025 - Natnael Getahun <natnael.getahun@suse.com>
 
 - Version 2.24

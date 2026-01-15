@@ -33,6 +33,7 @@ mirroring:
   mirror_src: false
   revalidate_repodata: true
   dedup_method: hardlink
+  redirect_repo_hosts:
 
 http_client:
   verbose: false

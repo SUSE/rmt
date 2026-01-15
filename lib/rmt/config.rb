@@ -51,6 +51,11 @@ module RMT::Config
       mirror_drpm_files.nil? ? true : mirror_drpm_files
     end
 
+    def redirect_repo_hosts
+      hosts = Settings&.mirroring&.redirect_repo_hosts
+      hosts.is_a?(Array) && hosts.present? && hosts.all?(String) ? hosts : nil
+    end
+
     WebServerConfig = Struct.new(
       'WebServerConfig',
       :max_threads, :min_threads, :workers,
