@@ -64,4 +64,10 @@ class Repository < ApplicationRecord
     scc_id.nil?
   end
 
+  def redirect?
+    return false unless RMT::Config.redirect_repo_hosts
+
+    RMT::Config.redirect_repo_hosts.any? { |host| external_url.include?(host) }
+  end
+
 end

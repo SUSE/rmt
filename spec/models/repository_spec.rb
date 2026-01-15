@@ -235,4 +235,31 @@ RSpec.describe Repository, type: :model do
       it { is_expected.to be_truthy }
     end
   end
+
+  describe '#redirect?' do
+    context 'when no redirection is configured' do
+      subject { repository.redirect? }
+
+      let!(:repository) { create :repository }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context 'when redirection is configured' do
+      before { Settings['mirroring']['redirect_repo_hosts'] = ['ibm.com', 'nvidia.com'] }
+
+      after { Settings['mirroring']['redirect_repo_hosts'] = nil }
+
+      let(:repository_suse) { create :repository }
+      let(:repository_nvidia) { create :repository, external_url: 'https://download.nvidia.com/suse/sle16' }
+
+      it 'does not redirect non matching repos' do
+        expect(repository_suse.redirect?).to be_falsey
+      end
+
+      it 'redirects matching repos' do
+        expect(repository_nvidia.redirect?).to be_truthy
+      end
+    end
+  end
 end
