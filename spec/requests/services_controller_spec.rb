@@ -37,6 +37,19 @@ RSpec.describe ServicesController do
 
       its(:length) { is_expected.to eq(service.repositories.length - 1) }
       it { is_expected.to eq(model_urls) }
+
+      describe 'with redirected repositories' do
+        before do
+          Settings['mirroring']['redirect_repo_hosts'] = ['ibm.com', 'nvidia.com']
+          service.repositories.first.update(external_url: 'https://download.nvidia.com/suse/sle16')
+          get "/services/#{service.id}"
+        end
+        after { Settings['mirroring']['redirect_repo_hosts'] = nil }
+
+        it 'redirects matching repos' do
+          expect(xml_urls.any? { |url| url.include?('download.nvidia.com') }).to be_truthy
+        end
+      end
     end
   end
 

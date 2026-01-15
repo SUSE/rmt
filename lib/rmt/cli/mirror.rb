@@ -162,6 +162,11 @@ class RMT::CLI::Mirror < RMT::CLI::Base
         errors << (_('Mirroring of repository with ID %{repo_id} is not enabled') % { repo_id: repo.friendly_id })
         next
       end
+      if repo.redirect?
+        logger.info(_('Skipping mirroring of redirected repository: %{repo_name}') % { repo_name: repo.name })
+        next
+      end
+
 
       configuration = {
         repository: repo,
