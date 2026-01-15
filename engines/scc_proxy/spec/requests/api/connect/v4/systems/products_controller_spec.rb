@@ -1,3 +1,5 @@
+require 'rails_helper'
+
 describe Api::Connect::V4::Systems::ProductsController, type: :request do
   let(:url) { connect_systems_products_url }
   let(:headers) { auth_header.merge(version_header) }
