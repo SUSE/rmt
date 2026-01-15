@@ -13,6 +13,8 @@ services:
     volumes:
       - .:/srv/www/rmt
       - ./config/rmt.yml:/etc/rmt.conf
+    extra_hosts:
+      - "localscc=host-gateway"
     depends_on:
       - db
     pre_stop:
