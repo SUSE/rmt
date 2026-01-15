@@ -229,6 +229,19 @@ RSpec.describe RMT::CLI::Mirror do
       end
     end
 
+    context 'when a repository host matches redirect_repo_hosts config' do
+      let!(:repository) { create :repository, :with_products, mirroring_enabled: true, external_url: 'https://download.nvidia.com/suse/sle16' }
+      let(:argv) { ['repository', repository.friendly_id] }
+
+      before do
+        allow(RMT::Config).to receive(:redirect_repo_hosts).and_return(['nvidia.com'])
+      end
+
+      it 'raises an error' do
+        expect { command }.to output(/Skipping mirroring of redirected repository/).to_stdout
+      end
+    end
+
     context 'when no repository IDs given' do
       let(:argv) { ['repository'] }
 
