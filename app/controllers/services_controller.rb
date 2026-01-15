@@ -35,8 +35,14 @@ class ServicesController < ApplicationController
       service_name = defined?(StrictAuthentication::Engine) ? service.name : nil
 
       repos.each do |repo|
+        url = if repo.redirect?
+                repo.external_url
+              else
+                make_repo_url(request.base_url, repo.local_path, service_name)
+              end
+
         attributes = {
-          url: make_repo_url(request.base_url, repo.local_path, service_name),
+          url: url,
           alias: repo.name,
           name: repo.name,
           autorefresh: repo.autorefresh,
@@ -59,12 +65,14 @@ class ServicesController < ApplicationController
     builder = Builder::XmlMarkup.new
     service_xml = builder.repoindex do
       repos.each do |repo|
+        url = if repo.redirect?
+                repo.external_url
+              else
+                make_repo_url(request.base_url, repo.local_path,
+                              RMT::Misc.make_smt_service_name(request.base_url))
+              end
         attributes = {
-          url: make_repo_url(
-            request.base_url,
-            repo.local_path,
-            RMT::Misc.make_smt_service_name(request.base_url)
-          ),
+          url: url,
           alias: repo.name,
           name: repo.name,
           autorefresh: repo.autorefresh,
