@@ -213,15 +213,17 @@ RSpec.describe SUSE::Connect::Api do
         }
       end
 
+      let(:serialized_profiles) { Set.new }
+      let(:serializer_options) { { serialized_profiles: serialized_profiles } }
+
       let(:expected_body) do
-        { systems: systems.map { |s| SUSE::Connect::SystemSerializer.new(s) } }
+        { systems: systems.map { |s| SUSE::Connect::SystemSerializer.new(s, serializer_options) } }
       end
 
+      let(:response_system_keys) { %i[id login password last_seen_at] }
       let(:expected_response) do
-        keys = %i[id login password last_seen_at]
-
         system_hashes = systems.collect do |s|
-          s.slice(*keys).symbolize_keys.transform_values!(&:to_s)
+          s.slice(*response_system_keys).symbolize_keys.transform_values!(&:to_s)
         end
         { systems: system_hashes }
       end
@@ -247,6 +249,15 @@ RSpec.describe SUSE::Connect::Api do
         it 'yields results' do
           expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
         end
+
+        it 'serialized the expected profiles' do
+          api_client.send_bulk_system_update(relation)
+          profile_ids = systems.each_with_object(Set.new) do |system, profile_ids_set|
+            system.reload
+            profile_ids_set.merge(system.profile_ids)
+          end
+          expect(serialized_profiles).to eq(profile_ids)
+        end
       end
 
       context 'when sending in bulk' do
@@ -254,6 +265,15 @@ RSpec.describe SUSE::Connect::Api do
 
         it 'yields successful results' do
           expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
+        end
+
+        it 'serialized the expected profiles' do
+          api_client.send_bulk_system_update(relation)
+          profile_ids = systems.each_with_object(Set.new) do |system, profile_ids_set|
+            system.reload
+            profile_ids_set.merge(system.profile_ids)
+          end
+          expect(serialized_profiles).to eq(profile_ids)
         end
       end
 
@@ -265,6 +285,85 @@ RSpec.describe SUSE::Connect::Api do
         it 'yields successful results' do
           expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
         end
+
+        it 'serialized the expected profiles' do
+          api_client.send_bulk_system_update(relation)
+          profile_ids = systems.each_with_object(Set.new) do |system, profile_ids_set|
+            system.reload
+            profile_ids_set.merge(system.profile_ids)
+          end
+          expect(serialized_profiles).to eq(profile_ids)
+        end
+      end
+
+      context 'when sending in bulk with and without profiles' do
+        let(:systems_with_profiles) { create_list :system, 2, :full }
+        let(:systems_without_profiles) { create_list :system, 2, :full_no_profiles }
+        let(:systems) { systems_with_profiles + systems_without_profiles }
+
+        it 'yields successful results' do
+          expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
+        end
+
+        it 'serialized the expected profiles' do
+          api_client.send_bulk_system_update(relation)
+          profile_ids = systems.each_with_object(Set.new) do |system, profile_ids_set|
+            system.reload
+            profile_ids_set.merge(system.profile_ids)
+          end
+          expect(serialized_profiles).to eq(profile_ids)
+        end
+      end
+
+      context 'when sending in bulk with repeated profiles' do
+        let(:system1) { create :system, :full }
+        let(:system2) { create :system, :full_no_profiles, profiles: system1.profiles }
+        let(:system3) { create :system, :full_no_profiles, profiles: system1.profiles }
+        let(:systems) { [system1, system2, system3] }
+
+        it 'yields successful results' do
+          expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
+        end
+
+        it 'serialized the expected profiles' do
+          api_client.send_bulk_system_update(relation)
+          profile_ids = systems.each_with_object(Set.new) do |system, profile_ids_set|
+            system.reload
+            profile_ids_set.merge(system.profile_ids)
+          end
+          expect(serialized_profiles).to eq(profile_ids)
+        end
+      end
+
+      context 'when sending in bulk with repeated profiles and a limit of 1' do
+        let(:system1) { create :system, :full }
+        let(:system2) { create :system, :full_no_profiles, profiles: system1.profiles }
+        let(:systems) { [system1, system2] }
+
+        let!(:stubbed) do
+          # Limiting batch size to 1 requires each system to be serialized
+          # independently without scope for optimization.
+          systems.map do |system|
+            systems_payload = [SUSE::Connect::SystemSerializer.new(system)] # no options provided
+            systems_response = [system.slice(*response_system_keys).symbolize_keys.transform_values!(&:to_s)]
+
+            stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
+              .with(
+                headers: expected_request_headers,
+                body: { systems: systems_payload }.to_json
+              )
+              .to_return(
+                status: 201,
+                body: { systems: systems_response }.to_json
+              )
+          end
+        end
+
+        it 'yields successful results' do
+          expect(api_client.send_bulk_system_update(relation, 1)).to eq(expected_response)
+
+          expect(stubbed).to all(have_been_requested)
+        end
       end
 
       context 'when sending in bulk and encounter 413 http error code' do
@@ -272,25 +371,35 @@ RSpec.describe SUSE::Connect::Api do
         # When we get a 413, the logic will restart and send each system
         # one by one since the limit is set to 1
         let!(:stubbed) do
-          expected_body[:systems].each_with_index.map do |payload, i|
+          # Limiting batch size to 1 requires each system to be serialized
+          # independently without scope for optimization.
+          systems.map do |system|
+            systems_payload = [SUSE::Connect::SystemSerializer.new(system)] # no options provided
+            systems_response = [system.slice(*response_system_keys).symbolize_keys.transform_values!(&:to_s)]
+
             stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
               .with(
                 headers: expected_request_headers,
-                body: { systems: [payload] }.to_json
+                body: { systems: systems_payload }.to_json
               )
               .to_return(
                 status: 201,
-                body: { systems: [expected_response[:systems][i]] }.to_json
+                body: { systems: systems_response }.to_json
               )
           end
         end
 
         before do
+          # Avoid profile serialization optimization related side effects by
+          # generating initial request body independently of expected_body
+          initreq_options = { serialized_profiles: Set.new }
+          initreq_body = { systems: systems.map { |s| SUSE::Connect::SystemSerializer.new(s, initreq_options) } }
+
           # Stub the initial request and return 413
           stub_request(:put, 'https://scc.suse.com/connect/organizations/systems')
             .with(
               headers: expected_request_headers,
-              body: expected_body.to_json
+              body: initreq_body.to_json
             )
             .to_return(
               status: 413,
@@ -314,6 +423,15 @@ RSpec.describe SUSE::Connect::Api do
 
         it 'yields successful results' do
           expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
+        end
+
+        it 'serialized the expected profiles' do
+          api_client.send_bulk_system_update(relation)
+          profile_ids = systems.each_with_object(Set.new) do |system, profile_ids_set|
+            system.reload
+            profile_ids_set.merge(system.profile_ids)
+          end
+          expect(serialized_profiles).to eq(profile_ids)
         end
       end
     end

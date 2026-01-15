@@ -448,7 +448,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         context 'when system is connected to SCC' do
           let(:system_payg) do
-            FactoryBot.create(:system, :payg, :with_system_information, :with_activated_base_product, instance_data: instance_data,
+            FactoryBot.create(:system, :payg, :with_system_information, :with_activated_base_product, :with_profiles, instance_data: instance_data,
               system_token: new_system_token)
           end
           let(:product) do
