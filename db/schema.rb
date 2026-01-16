@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_11_13_142033) do
+ActiveRecord::Schema.define(version: 2026_01_08_092033) do
 
   create_table "activations", charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
     t.bigint "service_id", null: false
@@ -174,6 +174,7 @@ ActiveRecord::Schema.define(version: 2025_11_13_142033) do
     t.text "instance_data"
     t.integer "proxy_byos_mode", default: 0
     t.string "pubcloud_reg_code"
+    t.index ["hostname"], name: "index_systems_on_hostname"
     t.index ["login", "password", "system_token"], name: "index_systems_on_login_and_password_and_system_token", unique: true
     t.index ["login", "password"], name: "index_systems_on_login_and_password"
     t.index ["system_token"], name: "index_systems_on_system_token"

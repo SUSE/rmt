@@ -43,7 +43,7 @@ class RMT::CLI::Decorators::CustomRepositoryDecorator < RMT::CLI::Decorators::Ba
       _('Mandatory?'),
       _('Mirror?'),
       _('Last Mirrored')
-    ])
+    ], {})
   end
 
 end

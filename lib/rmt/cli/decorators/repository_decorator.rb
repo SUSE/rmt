@@ -41,7 +41,7 @@ class RMT::CLI::Decorators::RepositoryDecorator < RMT::CLI::Decorators::Base
       _('Mandatory?'),
       _('Mirror?'),
       _('Last mirrored')
-    ])
+    ], {})
   end
 
   def to_tty
