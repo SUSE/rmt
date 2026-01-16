@@ -1,3 +1,5 @@
+require 'rails_helper'
+
 # rubocop:disable Metrics/ModuleLength
 module Registry
   describe RegistryController, type: :request do

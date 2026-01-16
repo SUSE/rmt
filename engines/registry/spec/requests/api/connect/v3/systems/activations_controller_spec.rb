@@ -1,3 +1,5 @@
+require 'rails_helper'
+
 # rubocop:disable RSpec/NestedGroups
 describe Api::Connect::V3::Systems::ActivationsController, type: :request do
   include_context 'auth header', :system, :login, :password
