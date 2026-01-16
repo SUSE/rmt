@@ -54,6 +54,7 @@ BuildRequires:  libffi-devel
 BuildRequires:  libmysqlclient-devel
 BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
+BuildRequires:  libyaml-devel
 BuildRequires:  sqlite-devel
 BuildRequires:  pkgconfig(systemd)
 Requires:       gpg2
