@@ -44,4 +44,6 @@ Rails.application.configure do
 
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
+
+  config.active_support.executor_around_test_case = true
 end
