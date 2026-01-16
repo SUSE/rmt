@@ -27,7 +27,6 @@ class RMT::SCC
     repositories_data = scc_api_client.list_repositories
     update_repositories(repositories_data)
 
-    Repository.remove_suse_repos_without_tokens!
     remove_obsolete_repositories(repositories_data)
 
     update_subscriptions(scc_api_client.list_subscriptions)
@@ -87,8 +86,6 @@ class RMT::SCC
     data.each { |item| migration_paths(item) }
 
     update_repositories(JSON.parse(File.read(File.join(path, 'organizations_repositories.json')), symbolize_names: true))
-
-    Repository.remove_suse_repos_without_tokens!
 
     update_subscriptions(JSON.parse(File.read(File.join(path, 'organizations_subscriptions.json')), symbolize_names: true))
   end

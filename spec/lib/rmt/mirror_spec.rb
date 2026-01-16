@@ -100,6 +100,26 @@ RSpec.describe RMT::Mirror do
         expect(mirror.repository_type).to be_nil
       end
     end
+
+    context 'HTTP errors' do
+      it 'raises if repository authentication failed' do
+        stub_request(:head, repomd_url).to_return(status: 403, body: '', headers: {})
+
+        expect { mirror.repository_type }.to raise_error(RMT::Mirror::Exception, /Access denied, please check your subscriptions/)
+      end
+
+      it 'raises on connection error' do
+        stub_request(:head, repomd_url).to_return(status: 0, body: '', headers: {})
+
+        expect { mirror.repository_type }.to raise_error(RMT::Mirror::Exception, /Failed to connect/)
+      end
+
+      it 'raises on timeout' do
+        stub_request(:head, repomd_url).to_timeout
+
+        expect { mirror.repository_type }.to raise_error(RMT::Mirror::Exception, /Request timed out/)
+      end
+    end
   end
 
   describe '#mirror_now' do
