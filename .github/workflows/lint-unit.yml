@@ -31,9 +31,6 @@ jobs:
         # we need to test the Ruby versions of the products we release RMT for,
         # those are: SLE15 (2.5.8, 2.5.9)
         ruby-version: ['3.2.9']
-        # skipping Ruby3 tests for now, because RMT isn't Ruby3 compatible yet, and the failing 
-        # tests confuse the team.
-        # ruby-version: ['2.5.8', '2.5.9', '3.0.3']
 
     services:
       mysql:
@@ -89,7 +86,7 @@ jobs:
         run: |
           sed -i 's/adapter: mysql2/adapter: sqlite3/' config/rmt.yml
           bundle exec rake test:core
-          
+
       - name: Run PubCloud engines tests
         run: |
           bundle exec rake test:engines

@@ -78,10 +78,6 @@ build-tarball: clean man
 	@mkdir $(NAME)-$(VERSION)/support
 	@cp support/rmt $(NAME)-$(VERSION)/support/rmt
 
-	# bundler hacks for ruby2.5
-	sed -i '/source .*rubygems\.org/d' $(NAME)-$(VERSION)/Gemfile
-	sed -i '/remote: .*rubygems\.org/d' $(NAME)-$(VERSION)/Gemfile.lock
-
 	find $(NAME)-$(VERSION) -name \*~ -exec rm {} \;
 	tar cfvj package/obs/$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)/
 	rm -rf $(NAME)-$(VERSION)/

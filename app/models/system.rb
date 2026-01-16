@@ -5,8 +5,8 @@ class System < ApplicationRecord
   # PAYG (pay as you go),
   # BYOS (bring your own subscription) or
   # a mix of both (hybrid).
+  attribute :proxy_byos_mode, :integer
   enum proxy_byos_mode: { not_applicable: 0, payg: 1, byos: 2, hybrid: 3 }
-
   after_initialize :init
 
   has_many :activations, dependent: :delete_all # this is set this way because of performance reasons
