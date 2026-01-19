@@ -74,10 +74,6 @@ module RMT
 
     config.active_support.remove_deprecated_time_with_zone_name = true
 
-    config.active_record.automatic_scope_inversing = true
-
-    # config.action_controller.raise_on_open_redirects = true
-
     # Rails initialization process requires a secret key base present in either:
     # - SECRET_KEY_BASE env
     # - credentials.secret_key_base
