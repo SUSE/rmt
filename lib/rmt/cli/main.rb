@@ -14,6 +14,11 @@ class RMT::CLI::Main < RMT::CLI::Base
   desc 'products', _('List and modify products')
   subcommand 'products', RMT::CLI::Products
 
+  desc 'setup', _('Configure RMT')
+  def setup
+    RMT::CLI::Setup.start
+  end
+
   desc 'repos', _('List and modify repositories')
   subcommand 'repos', RMT::CLI::Repos
 
