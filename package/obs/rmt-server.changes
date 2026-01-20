@@ -5,7 +5,7 @@ Thu Feb 12 19:28:43 UTC 2026 - Adnilson Delgado <adnilson.delgado@suse.com>
   * Update Ruby to version 3.4.8 and Rails to version 7.1.6
 
 -------------------------------------------------------------------
-Tue Jan 16 11:03:50 UTC 2025 - Thomas Schmidt <tschmidt@suse.com>
+Tue Jan 16 11:03:50 UTC 2026 - Thomas Schmidt <tschmidt@suse.com>
 
 - Version 2.25
   * Fix mirroring of SLE16 NVIDIA-GPU-Compute-Toolkit-CUDA repo (bsc#1256826)
