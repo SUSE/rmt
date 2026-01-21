@@ -98,10 +98,8 @@ module SccProxy
       http.use_ssl = true
       scc_request = prepare_scc_announce_request(uri.path, auth, params, system_token)
       response = http.request(scc_request)
-      unless response.code_type == Net::HTTPCreated
-        error = JSON.parse(response.body)
-        raise ActionController::TranslatedError.new(error['error'])
-      end
+      response.error! unless response.code_type == Net::HTTPCreated
+
       JSON.parse(response.body)
     end
 
@@ -322,8 +320,14 @@ module SccProxy
         rescue *NET_HTTP_ERRORS => e
           message = 'Could not announce system'
           message += " with regcode #{auth_header} to SCC" unless has_no_regcode?(auth_header)
-          logger.error("#{message}: #{e.message}")
-          render json: { type: 'error', error: e.message }, status: status_code(e.message), location: nil
+          error = e.message
+          if e.response&.body.present?
+            error = JSON.parse(e.response.body)
+            error = error['error'] if error.key?('error')
+          end
+          message = "#{message}: #{error}"
+          logger.error(message)
+          render json: { type: 'error', error: message }, status: status_code(e.message), location: nil
         rescue InstanceVerification::Exception => e
           message = 'Could not register system'
           message += " with regcode #{auth_header} to SCC" unless has_no_regcode?(auth_header)
@@ -385,11 +389,14 @@ module SccProxy
           end
           update_pubcloud_reg_code(Base64.strict_encode64(params[:token])) if params[:token].present?
         rescue *NET_HTTP_ERRORS => e
-          logger.error(
-            "Could not activate product for system with regcode #{params[:token]}" \
-              "to SCC: #{e.message}"
-            )
-          render json: { type: 'error', error: e.message }, status: status_code(e.message), location: nil
+          error = e.message
+          if e.response&.body.present?
+            error = JSON.parse(e.response.body)
+            error = error['error'] if error.key?('error')
+          end
+          message = "Could not activate product for system with regcode #{params[:token]} to SCC: #{error}"
+          logger.error(message)
+          render json: { type: 'error', error: message }, status: status_code(e.message), location: nil
         rescue InstanceVerification::Exception => e
           logger.error("Could not activate product for system to SCC: #{e.message}")
           render json: { type: 'error', error: e.message }, status: :unprocessable_entity, location: nil

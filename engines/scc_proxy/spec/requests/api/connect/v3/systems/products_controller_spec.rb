@@ -541,14 +541,15 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               stub_request(:post, scc_register_systems_url)
                 .to_return(
                   status: [422, 'Bad Request'],
-                  body: { error: 'Oh oh, something went wrong' }.to_json,
+                  body: { type: 'error', error: 'Oh oh, something went wrong' }.to_json,
                   headers: {}
               )
             end
 
             it 'renders the error' do
               post url, params: payload, headers: headers
-              expect(response.body).to include('went wrong')
+              data = JSON.parse(response.body)
+              expect(data['error']).to include('went wrong')
             end
           end
         end
