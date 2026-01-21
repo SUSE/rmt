@@ -74,7 +74,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           stub_request(:post, scc_register_system_url)
             .to_return(
               status: [401, 'Unauthorized'],
-              body: "{\"type\":\"error\",\"error\":\"Invalid credentials\"}",
+              body: { type: 'error', error: 'Invalid credentials' }.to_json,
               headers: {}
             )
         end
@@ -93,7 +93,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           stub_request(:post, scc_register_system_url)
             .to_return(
               status: 408,
-              body: "{\"type\":\"error\",\"error\":\"Request timed out\"}",
+              body: { type: 'error', error: 'Request timed out' }.to_json,
               headers: {}
             )
         end
@@ -162,7 +162,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           stub_request(:post, scc_register_system_url)
             .to_return(
               status: [401, 'Unauthorized'],
-              body: "{\"type\":\"error\",\"error\":\"Invalid credentials\"}",
+              body: { type: 'error', error: 'Invalid credentials' }.to_json,
               headers: {}
             )
         end
@@ -181,7 +181,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           stub_request(:post, scc_register_system_url)
             .to_return(
               status: 408,
-              body: "{\"type\":\"error\",\"error\":\"Request timed out\"}",
+              body: { type: 'error', error: 'Request timed out' }.to_json,
               headers: {}
             )
         end
