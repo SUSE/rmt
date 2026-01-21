@@ -35,7 +35,7 @@ class RMT::CLI::Decorators::CustomRepositoryProductsDecorator < RMT::CLI::Decora
       _('Product Name'),
       _('Product Version'),
       _('Product Architecture')
-    ])
+    ], {})
   end
 
 end
