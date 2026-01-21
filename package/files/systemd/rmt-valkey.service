@@ -1,0 +1,33 @@
+[Unit]
+Description=Valkey Key-Value Store (Port 6379)
+After=network.target
+
+[Service]
+Type=notify
+User=valkey
+Group=valkey
+ExecStart=/usr/bin/valkey-server /etc/valkey/6379.conf
+TimeoutStartSec=infinity
+TimeoutStopSec=default
+CapabilityBoundingSet=CAP_SETGID CAP_SETUID CAP_SYS_RESOURCE
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+PrivateDevices=true
+ProtectHostname=true
+ProtectClock=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictRealtime=true
+MemoryDenyWriteExecute=true
+SystemCallFilter=@system-service
+RuntimeDirectory=valkey-6379
+RuntimeDirectoryMode=0755
+LimitNOFILE=65535
+NoNewPrivileges=true
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
