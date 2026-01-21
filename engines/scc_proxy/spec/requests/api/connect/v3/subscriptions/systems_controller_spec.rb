@@ -74,7 +74,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           stub_request(:post, scc_register_system_url)
             .to_return(
               status: [401, 'Unauthorized'],
-              body: '{}',
+              body: "{\"type\":\"error\",\"error\":\"Invalid credentials\"}",
               headers: {}
             )
         end
@@ -82,9 +82,9 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         it 'returns error' do
           post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
           data = JSON.parse(response.body)
-          expect(response.code).to eq('401')
+          expect(response.code).to eq('422')
           expect(data['type']).to eq('error')
-          expect(data['error']).to include('Unauthorized')
+          expect(data['error']).to include('Invalid credentials')
         end
       end
 
@@ -93,7 +93,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           stub_request(:post, scc_register_system_url)
             .to_return(
               status: 408,
-              body: scc_register_response.to_s,
+              body: "{\"type\":\"error\",\"error\":\"Request timed out\"}",
               headers: {}
             )
         end
@@ -102,7 +102,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
           data = JSON.parse(response.body)
           expect(data['type']).to eq('error')
-          expect(data['error']).to eq('408 ""')
+          expect(data['error']).to eq('Request timed out')
         end
       end
     end
@@ -162,7 +162,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           stub_request(:post, scc_register_system_url)
             .to_return(
               status: [401, 'Unauthorized'],
-              body: '{}',
+              body: "{\"type\":\"error\",\"error\":\"Invalid credentials\"}",
               headers: {}
             )
         end
@@ -170,9 +170,9 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         it 'returns error' do
           post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
           data = JSON.parse(response.body)
-          expect(response.code).to eq('401')
+          expect(response.code).to eq('422')
           expect(data['type']).to eq('error')
-          expect(data['error']).to include('Unauthorized')
+          expect(data['error']).to include('Invalid credentials')
         end
       end
 
@@ -181,7 +181,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           stub_request(:post, scc_register_system_url)
             .to_return(
               status: 408,
-              body: scc_register_response.to_s,
+              body: "{\"type\":\"error\",\"error\":\"Request timed out\"}",
               headers: {}
             )
         end
@@ -190,7 +190,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
           data = JSON.parse(response.body)
           expect(data['type']).to eq('error')
-          expect(data['error']).to eq('408 ""')
+          expect(data['error']).to include('timed out')
         end
       end
     end
