@@ -548,7 +548,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
             it 'renders the error' do
               post url, params: payload, headers: headers
-              expect(response.body).to include('Bad Request')
+              expect(response.body).to include('went wrong')
             end
           end
         end

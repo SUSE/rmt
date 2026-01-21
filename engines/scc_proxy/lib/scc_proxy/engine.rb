@@ -98,8 +98,10 @@ module SccProxy
       http.use_ssl = true
       scc_request = prepare_scc_announce_request(uri.path, auth, params, system_token)
       response = http.request(scc_request)
-      response.error! unless response.code_type == Net::HTTPCreated
-
+      unless response.code_type == Net::HTTPCreated
+        error = JSON.parse(response.body)
+        raise ActionController::TranslatedError.new(error['error'])
+      end
       JSON.parse(response.body)
     end
 
@@ -318,7 +320,7 @@ module SccProxy
           logger.info("System '#{@system.hostname}' announced")
           respond_with(@system, serializer: ::V3::SystemSerializer, location: nil)
         rescue *NET_HTTP_ERRORS => e
-          message = 'Could not register system'
+          message = 'Could not announce system'
           message += " with regcode #{auth_header} to SCC" unless has_no_regcode?(auth_header)
           logger.error("#{message}: #{e.message}")
           render json: { type: 'error', error: e.message }, status: status_code(e.message), location: nil
