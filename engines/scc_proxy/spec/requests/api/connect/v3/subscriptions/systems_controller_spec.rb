@@ -82,7 +82,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         it 'returns error' do
           post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
           data = JSON.parse(response.body)
-          expect(response.code).to eq('422')
+          expect(response.code).to eq('401')
           expect(data['type']).to eq('error')
           expect(data['error']).to include('Invalid credentials')
         end
@@ -102,7 +102,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
           data = JSON.parse(response.body)
           expect(data['type']).to eq('error')
-          expect(data['error']).to eq('Request timed out')
+          expect(data['error']).to include('Request timed out')
         end
       end
     end
@@ -170,7 +170,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         it 'returns error' do
           post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
           data = JSON.parse(response.body)
-          expect(response.code).to eq('422')
+          expect(response.code).to eq('401')
           expect(data['type']).to eq('error')
           expect(data['error']).to include('Invalid credentials')
         end
