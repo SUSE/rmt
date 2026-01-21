@@ -14,7 +14,7 @@ class System < ApplicationRecord
   has_many :repositories, -> { distinct }, through: :services
   has_many :products, -> { distinct }, through: :services
   has_many :system_uptimes, dependent: :destroy
-  has_many :system_profiles, dependent: :destroy # TODO: can we used :destroy_async?
+  has_many :system_profiles, dependent: :destroy
   has_many :profiles, -> { distinct }, through: :system_profiles
 
   validates :system_token, uniqueness: { scope: %i[login password], case_sensitive: false }
