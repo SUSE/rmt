@@ -4,6 +4,8 @@ class SystemProfile < ApplicationRecord
   belongs_to :profile
 
   # callbacks
+  # run orphaned profile detection/cleanup outside of transactions, after commit, to
+  # minimise performance impact of collisions and avoid potential deadlocks.
   after_commit :destroy_orphaned_profile, on: :destroy
 
   # Minimise database bloat by aggressively removing orphaned Profile
