@@ -537,19 +537,38 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           context 'with a not valid registration code' do
             let(:scc_register_systems_url) { 'https://scc.suse.com/connect/subscriptions/systems' }
 
-            before do
-              stub_request(:post, scc_register_systems_url)
-                .to_return(
+            context 'with JSON in the response' do
+              before do
+                stub_request(:post, scc_register_systems_url)
+                  .to_return(
                   status: [422, 'Bad Request'],
                   body: { type: 'error', error: 'Oh oh, something went wrong' }.to_json,
                   headers: {}
-              )
+                  )
+              end
+
+              it 'renders the error' do
+                post url, params: payload, headers: headers
+                data = JSON.parse(response.body)
+                expect(data['error']).to include('went wrong')
+              end
             end
 
-            it 'renders the error' do
-              post url, params: payload, headers: headers
-              data = JSON.parse(response.body)
-              expect(data['error']).to include('went wrong')
+            context 'no JSON in the repsonse' do
+              before do
+                stub_request(:post, scc_register_systems_url)
+                  .to_return(
+                  status: [422, 'Bad Request'],
+                  body: 'not a json',
+                  headers: {}
+                  )
+              end
+
+              it 'renders the error' do
+                post url, params: payload, headers: headers
+                data = JSON.parse(response.body)
+                expect(data['error']).to include('Bad Request')
+              end
             end
           end
         end

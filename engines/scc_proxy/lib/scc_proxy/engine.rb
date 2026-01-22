@@ -325,13 +325,12 @@ module SccProxy
             begin
               error = JSON.parse(e.response.body)
               error = error['error'] if error.key?('error')
-              message = "#{message}: #{error}"
-              logger.error(message)
             rescue JSON::ParserError => _parser_error
-              message = "#{message}: #{error}"
-              logger.error(message)
+              nil
             end
           end
+          message = "#{message}: #{error}"
+          logger.error(message)
           render json: { type: 'error', error: message }, status: status_code(e.message), location: nil
         rescue InstanceVerification::Exception => e
           message = 'Could not register system'
@@ -396,8 +395,12 @@ module SccProxy
         rescue *NET_HTTP_ERRORS => e
           error = e.message
           if e.response&.body.present?
-            error = JSON.parse(e.response.body)
-            error = error['error'] if error.key?('error')
+            begin
+              error = JSON.parse(e.response.body)
+              error = error['error'] if error.key?('error')
+            rescue JSON::ParserError => _parser_error
+              nil
+            end
           end
           message = "Could not activate product for system with regcode #{params[:token]} to SCC: #{error}"
           logger.error(message)
