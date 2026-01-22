@@ -45,7 +45,7 @@ class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
     products = system.activations.map do |a|
       product_name = a.service.product.product_string
 
-      a.subscription ? "#{product_name.ljust(width)}\n(Regcode: #{a.subscription.regcode.ljust(width)})" : product_name.ljust(width)
+      a.subscription ? "#{product_name.ljust(width)}\n" + "(Regcode: #{a.subscription.regcode})".ljust(width) : product_name.ljust(width)
     end
 
     join_new_line ? products.join("\n") : products.join(' ')
