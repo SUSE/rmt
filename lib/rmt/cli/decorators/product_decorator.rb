@@ -48,7 +48,7 @@ class RMT::CLI::Decorators::ProductDecorator < RMT::CLI::Decorators::Base
       _('Arch'),
       _('Mirror?'),
       _('Last mirrored')
-    ])
+    ], {})
   end
 
 end

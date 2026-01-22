@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jan 13 17:14:09 UTC 2026 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Version 2.25
+  * fix rmt-cli list and purge commands for large data (bsc#1253146 and bsc#1253147)
+  * Fix mirroring of SLE16 NVIDIA-GPU-Compute-Toolkit-CUDA repo (bsc#1256826)
+
+-------------------------------------------------------------------
 Tue Nov 11 11:03:50 UTC 2025 - Natnael Getahun <natnael.getahun@suse.com>
 
 - Version 2.24
