@@ -104,7 +104,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
 
   def print_rows(systems)
     column_widths = max_column_widths
-    style = { width: column_widths.sum + (2 * column_widths.length) + (column_widths.length + 1) }
+    style = {}
     systems_first = systems.first
     systems_last = systems.last
     systems.each_slice(BATCH_SIZE) do |sliced_systems_ids|
@@ -115,7 +115,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
       first_row = sliced_systems_ids.first == systems_first
       style[:border_bottom] = border_bottom
       style[:border_top] = first_row
-      puts decorator_systems.to_table(add_headers: first_row, style: style)
+      puts decorator_systems.to_table(add_headers: first_row, style: style, width: column_widths)
     end
   end
 
@@ -124,7 +124,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
     # split the width for each cell equally
     # this makes the rendered table to add extra spaces for some columns
     # while it is not ideal, we have not found a better way
-    date_length = Time.now.utc.strftime('%d/%m/%Y %H:%M:%s %z').length
+    date_length = Time.now.utc.to_s.length
     max_hostname = ActiveRecord::Base.connection.execute('SELECT max(length(hostname)) FROM systems').to_a.flatten.first
     max_login = ActiveRecord::Base.connection.execute('SELECT max(length(login)) FROM systems').to_a.flatten.first
     max_identifier = ActiveRecord::Base.connection.execute('SELECT max(length(identifier)) FROM products').to_a.flatten.first
