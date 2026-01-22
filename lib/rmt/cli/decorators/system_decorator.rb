@@ -47,6 +47,7 @@ class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
 
       a.subscription ? "#{product_name.ljust(width)}\n" + "(Regcode: #{a.subscription.regcode})".ljust(width) : product_name.ljust(width)
     end
+    return ''.ljust(width) if products.empty?
 
     join_new_line ? products.join("\n") : products.join(' ')
   end
