@@ -7,6 +7,7 @@ $LOAD_PATH.unshift File.join(rmt_path, 'lib')
 require 'etc'
 require 'active_support/all'
 require 'active_record'
+require 'rails'
 require 'erb'
 require 'yaml'
 require 'zeitwerk'
@@ -20,8 +21,9 @@ require_relative '../app/models/application_record'
 loader = Zeitwerk::Loader.for_gem(warn_on_extra_files: false)
 
 relative_load_paths = %w[app/models app/services app/validators].map do|dir|
-  loader.push_dir(dir)
-  File.join(rmt_path, dir)
+  full_load_path = Rails.root.join(dir)
+  loader.push_dir(full_load_path)
+  full_load_path
 end
 loader.ignore("#{__dir__}/compose-init.rb")
 loader.inflector.inflect("app" => "") # preserve rails loader
@@ -37,6 +39,12 @@ loader.collapse("lib/")
 # Before moving into the default user/group, let's try to fetch the login
 # information for this host.
 RMT::Config.set_host_system!
+
+unless Settings['database']
+  warn "Error loading database config."
+  warn 'Please make sure that /etc/rmt.conf is readable by the rmt process and has your database configured.'
+  exit RMT::CLI::Error::ERROR_OTHER
+end
 
 db_config = RMT::Config.db_config
 ActiveRecord::Base.establish_connection(db_config)
@@ -60,17 +68,6 @@ end
 if File.exist?(RMT::DEFAULT_MIRROR_DIR) && !File.writable?(RMT::DEFAULT_MIRROR_DIR)
   warn "Mirroring base directory (#{RMT::DEFAULT_MIRROR_DIR}) is not writable by user '#{RMT::CLI::Base.process_user_name}'"
   warn 'Run as root or adjust the permissions.'
-  exit RMT::CLI::Error::ERROR_OTHER
-end
-
-if Settings.try(:host_system).blank? && File.exist?(RMT::CREDENTIALS_FILE_LOCATION) && !File.readable?(RMT::CREDENTIALS_FILE_LOCATION)
-  warn "Credentials file (#{RMT::CREDENTIALS_FILE_LOCATION}) is not readable by user '#{RMT::CLI::Base.process_user_name}'"
-  warn "Run as root or adjust the permissions."
-end
-
-unless Settings['database']
-  warn "Error loading database config."
-  warn 'Please make sure that /etc/rmt.conf is readable by the rmt process and has your database configured.'
   exit RMT::CLI::Error::ERROR_OTHER
 end
 

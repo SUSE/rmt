@@ -2,6 +2,11 @@
 require 'config'
 require_relative '../rmt'
 
+unless RMT::Config.is_valid?
+  warn "Credentials file (#{RMT::CREDENTIALS_FILE_LOCATION}) is not readable by user '#{RMT::CLI::Base.process_user_name}'"
+  warn 'Run as root or adjust the permissions.'
+end
+
 Config.setup do |config|
   config.merge_nil_values = false
 end
@@ -12,6 +17,7 @@ Config.load_and_set_settings(
   File.join(__dir__, '../../config/rmt.yml'),
   File.join(__dir__, '../../config/rmt.local.yml')
 )
+
 
 module RMT::Config
   class << self
@@ -67,6 +73,12 @@ module RMT::Config
 
     def set_host_system!
       Settings[:host_system] = host_system
+    end
+
+    def is_valid?
+      # TODO: Add rmt.conf file validation
+      return false if !File.exist?(RMT::CREDENTIALS_FILE_LOCATION) ||
+                   !File.readable?(RMT::CREDENTIALS_FILE_LOCATION)
     end
 
     private
