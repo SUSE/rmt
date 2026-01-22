@@ -322,11 +322,16 @@ module SccProxy
           message += " with regcode #{auth_header} to SCC" unless has_no_regcode?(auth_header)
           error = e.message
           if e.response&.body.present?
-            error = JSON.parse(e.response.body)
-            error = error['error'] if error.key?('error')
+            begin
+              error = JSON.parse(e.response.body)
+              error = error['error'] if error.key?('error')
+              message = "#{message}: #{error}"
+              logger.error(message)
+            rescue JSON::ParserError => _parser_error
+              message = "#{message}: #{error}"
+              logger.error(message)
+            end
           end
-          message = "#{message}: #{error}"
-          logger.error(message)
           render json: { type: 'error', error: message }, status: status_code(e.message), location: nil
         rescue InstanceVerification::Exception => e
           message = 'Could not register system'
