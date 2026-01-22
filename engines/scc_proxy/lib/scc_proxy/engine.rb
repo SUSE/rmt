@@ -358,6 +358,8 @@ module SccProxy
 
         protected
 
+        # rubocop:disable Metrics/CyclomaticComplexity
+        # rubocop:disable Metrics/PerceivedComplexity
         def scc_activate_product
           product_hash = @product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
           unless InstanceVerification.provider.new(logger, request, product_hash, @system.instance_data).allowed_extension?
@@ -409,6 +411,8 @@ module SccProxy
           logger.error("Could not activate product for system to SCC: #{e.message}")
           render json: { type: 'error', error: e.message }, status: :unprocessable_entity, location: nil
         end
+        # rubocop:enable Metrics/CyclomaticComplexity
+        # rubocop:enable Metrics/PerceivedComplexity
 
         def update_pubcloud_reg_code(encoded_reg_code)
           return if encoded_reg_code.blank?

@@ -541,9 +541,9 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               before do
                 stub_request(:post, scc_register_systems_url)
                   .to_return(
-                  status: [422, 'Bad Request'],
-                  body: { type: 'error', error: 'Oh oh, something went wrong' }.to_json,
-                  headers: {}
+                    status: [422, 'Bad Request'],
+                    body: { type: 'error', error: 'Oh oh, something went wrong' }.to_json,
+                    headers: {}
                   )
               end
 
@@ -554,13 +554,13 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               end
             end
 
-            context 'no JSON in the repsonse' do
+            context 'no JSON in the response' do
               before do
                 stub_request(:post, scc_register_systems_url)
                   .to_return(
-                  status: [422, 'Bad Request'],
-                  body: 'not a json',
-                  headers: {}
+                    status: [422, 'Bad Request'],
+                    body: 'not a json',
+                    headers: {}
                   )
               end
 
