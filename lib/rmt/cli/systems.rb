@@ -19,7 +19,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
   def list
     systems = System.all
     systems = systems.where(proxy_byos_mode: :byos) if options.proxy_byos_mode
-    systems = systems.limit(options.limit) unless options.all
+    systems = systems.limit(options.limit).order(id: :desc) unless options.all
 
     if System.count == 0
       warn _('There are no systems registered to this RMT instance.')
