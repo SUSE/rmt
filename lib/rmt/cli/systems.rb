@@ -29,17 +29,16 @@ class RMT::CLI::Systems < RMT::CLI::Base
         decorator = RMT::CLI::Decorators::SystemDecorator.new(relation)
         puts decorator.to_csv(batch: true)
       end
-    elsif options.all
-      print_rows(systems.pluck(:id).reverse)
     else
-      rows = []
-      systems.in_batches(of: BATCH_SIZE, order: :desc, load: true) { |relation| rows += relation }
-      decorator = RMT::CLI::Decorators::SystemDecorator.new(rows)
-      puts decorator.to_table
+      systems_ids = systems.pluck(:id)
+      systems_ids = systems_ids.reverse if options.all
 
-      puts _("Showing last %{limit} registrations. Use the '--all' option to see all registered systems.") % {
-        limit: options.limit
-      }
+      print_rows(systems_ids)
+      unless options.all
+        puts _("Showing last %{limit} registrations. Use the '--all' option to see all registered systems.") % {
+          limit: options.limit
+        }
+      end
     end
   end
   map 'ls' => :list
