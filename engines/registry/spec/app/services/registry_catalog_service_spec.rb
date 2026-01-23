@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe RegistryCatalogService do
   subject(:registry) { described_class.new }
