@@ -318,10 +318,20 @@ module SccProxy
           logger.info("System '#{@system.hostname}' announced")
           respond_with(@system, serializer: ::V3::SystemSerializer, location: nil)
         rescue *NET_HTTP_ERRORS => e
-          message = 'Could not register system'
+          message = 'Could not announce system'
           message += " with regcode #{auth_header} to SCC" unless has_no_regcode?(auth_header)
-          logger.error("#{message}: #{e.message}")
-          render json: { type: 'error', error: e.message }, status: status_code(e.message), location: nil
+          error = e.message
+          if e.response&.body.present?
+            begin
+              error = JSON.parse(e.response.body)
+              error = error['error'] if error.key?('error')
+            rescue StandardError => _parser_error
+              nil
+            end
+          end
+          message = "#{message}: #{error}"
+          logger.error(message)
+          render json: { type: 'error', error: message }, status: status_code(e.message), location: nil
         rescue InstanceVerification::Exception => e
           message = 'Could not register system'
           message += " with regcode #{auth_header} to SCC" unless has_no_regcode?(auth_header)
@@ -348,6 +358,8 @@ module SccProxy
 
         protected
 
+        # rubocop:disable Metrics/CyclomaticComplexity
+        # rubocop:disable Metrics/PerceivedComplexity
         def scc_activate_product
           product_hash = @product.attributes.symbolize_keys.slice(:identifier, :version, :arch)
           unless InstanceVerification.provider.new(logger, request, product_hash, @system.instance_data).allowed_extension?
@@ -383,15 +395,24 @@ module SccProxy
           end
           update_pubcloud_reg_code(Base64.strict_encode64(params[:token])) if params[:token].present?
         rescue *NET_HTTP_ERRORS => e
-          logger.error(
-            "Could not activate product for system with regcode #{params[:token]}" \
-              "to SCC: #{e.message}"
-            )
-          render json: { type: 'error', error: e.message }, status: status_code(e.message), location: nil
+          error = e.message
+          if e.response&.body.present?
+            begin
+              error = JSON.parse(e.response.body)
+              error = error['error'] if error.key?('error')
+            rescue StandardError => _parser_error
+              nil
+            end
+          end
+          message = "Could not activate product for system with regcode #{params[:token]} to SCC: #{error}"
+          logger.error(message)
+          render json: { type: 'error', error: message }, status: status_code(e.message), location: nil
         rescue InstanceVerification::Exception => e
           logger.error("Could not activate product for system to SCC: #{e.message}")
           render json: { type: 'error', error: e.message }, status: :unprocessable_entity, location: nil
         end
+        # rubocop:enable Metrics/CyclomaticComplexity
+        # rubocop:enable Metrics/PerceivedComplexity
 
         def update_pubcloud_reg_code(encoded_reg_code)
           return if encoded_reg_code.blank?
