@@ -325,7 +325,7 @@ module SccProxy
             begin
               error = JSON.parse(e.response.body)
               error = error['error'] if error.key?('error')
-            rescue JSON::ParserError => _parser_error
+            rescue StandardError => _parser_error
               nil
             end
           end
@@ -400,7 +400,7 @@ module SccProxy
             begin
               error = JSON.parse(e.response.body)
               error = error['error'] if error.key?('error')
-            rescue JSON::ParserError => _parser_error
+            rescue StandardError => _parser_error
               nil
             end
           end
