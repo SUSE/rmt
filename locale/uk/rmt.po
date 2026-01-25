@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-01-19 23:04+0000\n"
+"PO-Revision-Date: 2026-01-25 17:04+0000\n"
 "Last-Translator: Eugene Krater <lachend@gmail.com>\n"
 "Language-Team: Ukrainian <https://l10n.opensuse.org/projects/rmt/i18n/uk/>\n"
 "Language: uk\n"
@@ -90,34 +90,44 @@ msgid "Attach an existing custom repository to a product"
 msgstr "Приєднати існуюче власне сховище до продукту"
 
 msgid "Attached repository to product '%{product_name}'."
-msgstr ""
+msgstr "Репозиторій прикріплено до продукту '%{product_name}'."
 
 msgid "By default, inactive systems are those that have not contacted RMT in any way in the past 3 months. You can override this with the '-b / --before' flag."
 msgstr ""
+"За замовчуванням неактивними системами вважаються ті, які протягом останніх "
+"3 місяців жодним чином не зв'язувалися з RMT. Ви можете змінити це за "
+"допомогою прапора «-b / --before»."
 
 msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr ""
+"Неможливо підключитися до сервера бази даних. Переконайтеся, що його "
+"облікові дані правильно налаштовані в '%{path}', або налаштуйте RMT за "
+"допомогою YaST ('%{command}')."
 
 msgid "Cannot connect to database server. Make sure it is running and its credentials are configured in '%{path}'."
 msgstr ""
+"Неможливо підключитися до сервера бази даних. Переконайтеся, що він працює і "
+"його облікові дані налаштовані в '%{path}'."
 
 msgid "Cannot deactivate the product \"%s\". Other activated products depend upon it."
 msgstr ""
+"Неможливо деактивувати продукт «%s». Від нього залежать інші активовані "
+"продукти."
 
 msgid "Cannot find product by ID %{id}."
-msgstr ""
+msgstr "Не вдається знайти продукт з ідентифікатором %{id}."
 
 msgid "Check out %{url}"
-msgstr ""
+msgstr "Перевірте URL-адресу %{url}"
 
 msgid "Checksum doesn't match"
-msgstr ""
+msgstr "Контрольна сума не збігається"
 
 msgid "Clean cancelled."
-msgstr ""
+msgstr "Очищення скасовано."
 
 msgid "Clean dangling files and their database entries"
-msgstr ""
+msgstr "Очищення завислих файлів та їх записів у базі даних"
 
 msgid ""
 "Clean dangling package files based on current repository metadata.\n"
@@ -128,135 +138,171 @@ msgid ""
 "\n"
 "Then, it removes all dangling files from disk along with any associated database entries.\n"
 msgstr ""
+"Очищення завислих файлів пакетів на основі поточних метаданих репозиторію.\n"
+"\n"
+"Ця команда сканує дзеркальний каталог на наявність файлів «repomd.xml», "
+"аналізує\n"
+"метадані файлів і порівнює їхній вміст із файлами на диску. Файли, які не\n"
+"вказані в метаданих і мають вік не менше 2 днів, вважаються завислими.\n"
+"\n"
+"Потім вона видаляє всі завислі файли з диска разом із пов'язаними записами в "
+"базі даних.\n"
 
 msgid "Clean dangling package files, based on current repository data."
-msgstr ""
+msgstr "Очистити непрацюючі файли пакетів на основі поточних даних репозиторію."
 
 msgid "Clean finished. An estimated %{total_file_size} was removed."
-msgstr ""
+msgstr "Очищення завершено. Було видалено приблизно %{total_file_size}."
 
 msgid "Cleaned %{file_count_text} (%{total_size}), %{db_entries}."
-msgstr ""
+msgstr "Очищено %{file_count_text} (%{total_size}), %{db_entries}."
 
 msgid "Cleaned '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}."
-msgstr ""
+msgstr "Очищено '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}."
 
 msgid "Commands:"
-msgstr ""
+msgstr "Команди:"
 
 msgid "Could not create a temporary directory: %{error}"
-msgstr ""
+msgstr "Не вдалося створити тимчасовий каталог: %{error}"
 
 msgid "Could not create deduplication hardlink: %{error}."
-msgstr ""
+msgstr "Не вдалося створити жорстке посилання для дедуплікації: %{error}."
 
 msgid "Could not create local directory %{dir} with error: %{error}"
-msgstr ""
+msgstr "Не вдалося створити локальний каталог %{dir}, помилка: %{error}"
 
 msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
 msgstr ""
+"Не вдалося знайти систему з іменем користувача \\\"%{login}\\\" і паролем \\"
+"\"%{password}\\\""
 
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
 msgstr ""
+"Не вдалося віддзеркалити дерево продуктів SUSE Manager через помилку: %"
+"{error}"
 
 msgid "Could not read '%{file}': %{error}"
-msgstr ""
+msgstr "Не вдалося прочитати '%{file}': %{error}"
 
 msgid "Couldn't add custom repository."
-msgstr ""
+msgstr "Не вдалося додати власний репозиторій."
 
 msgid "Couldn't sync %{count} systems."
-msgstr ""
+msgstr "Не вдалося синхронізувати %{count} систем."
 
 msgid "Creates a custom repository."
-msgstr ""
+msgstr "Створення власного репозиторію."
 
 msgid "Deleting locally mirrored files from repository '%{repo}'..."
-msgstr ""
+msgstr "Видалення локально дзеркальних файлів із сховища '%{repo}'..."
 
 msgid "Description"
-msgstr ""
+msgstr "Опмс"
 
 msgid "Description: %{description}"
-msgstr ""
+msgstr "Опис: %{description}"
 
 msgid "Detach an existing custom repository from a product"
-msgstr ""
+msgstr "Від'єднати наявний власний репозиторій від продукту"
 
 msgid "Detached repository from product '%{product_name}'."
-msgstr ""
+msgstr "Репозиторій від'єднано від продукту '%{product_name}'."
 
 msgid "Directory: %{dir}"
-msgstr ""
+msgstr "Каталог: %{dir}"
 
 msgid "Disable mirroring of custom repositories by a list of IDs"
 msgstr ""
+"Вимкнути дзеркальне відображення власних репозиторіїв за списком "
+"ідентифікаторів"
 
 msgid "Disable mirroring of custom repository by a list of IDs"
 msgstr ""
+"Вимкнути дзеркальне відображення власного сховища за списком ідентифікаторів"
 
 msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
 msgstr ""
+"Вимкнути дзеркальне відображення репозиторіїв продуктів за списком "
+"ідентифікаторів або рядків продуктів."
 
 msgid "Disable mirroring of repositories by a list of repository IDs"
 msgstr ""
+"Вимкнути дзеркальне відображення репозиторіїв за списком їх ідентифікаторів"
 
 msgid "Disabled repository %{repository}."
-msgstr ""
+msgstr "Вимкнено репозиторій %{repository}."
 
 msgid "Disabling %{product}:"
-msgstr ""
+msgstr "Вимкнення продукту %{product}:"
 
 msgid "Displays product with all its repositories and their attributes."
-msgstr ""
+msgstr "Відображає продукт з усіма його репозиторіями та їхніми атрибутами."
 
 msgid "Do not ask anything; use default answers automatically. Default: false"
 msgstr ""
+"Не запитувати нічого; автоматично використовувати типові відповіді. Типове "
+"значення: false"
 
 msgid "Do not fail the command if product is in alpha or beta stage"
 msgstr ""
+"Не виконувати команду, якщо продукт знаходиться на стадії альфа- або бета-"
+"тестування"
 
 msgid "Do not import system hardware info from MachineData table"
 msgstr ""
+"Не імпортувати інформацію про апаратне забезпечення системи з таблиці "
+"MachineData"
 
 msgid "Do not import the systems that were registered to the SMT"
-msgstr ""
+msgstr "Не імпортувати системи, які були зареєстровані в SMT"
 
 msgid "Do you have any suggestions for improvement? We would love to hear from you!"
 msgstr ""
+"Чи є у вас пропозиції щодо поліпшення? Ми будемо раді почути вашу думку!"
 
 msgid "Do you want to delete these systems?"
-msgstr ""
+msgstr "Бажаєте видалити ці системи?"
 
 msgid "Don't Mirror"
-msgstr ""
+msgstr "Не виконувати дзеркальне відображення"
 
 msgid "Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
 msgstr ""
+"Завантаження %{file_reference} не вдалося через %{message}. Повторна спроба "
+"буде зроблена ще %{retries} раз\\ів через %{seconds} секунд\\и"
 
 msgid "Downloading data from SCC"
-msgstr ""
+msgstr "Виконується завантаження даних з SCC"
 
 msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
 msgstr ""
+"Завантаження підпису/ключа репозиторію не вдалося з помилкою: %{message}, "
+"код HTTP %{http_code}"
 
 msgid "Duplicate entry for system %{system}, skipping"
-msgstr ""
+msgstr "Дублювання запису для системи %{system}, пропускаємо"
 
 msgid "Enable debug output"
-msgstr ""
+msgstr "Дозволити вивід даних налагодження"
 
 msgid "Enable mirroring of custom repositories by a list of IDs"
 msgstr ""
+"Увімкнути дзеркальне відображення власних репозиторіїв за списком "
+"ідентифікаторів"
 
 msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
 msgstr ""
+"Увімкнути дзеркальне відображення репозиторіїв продуктів за списком "
+"ідентифікаторів продуктів або рядків продуктів."
 
 msgid "Enable mirroring of repositories by a list of repository IDs"
 msgstr ""
+"Увімкнути дзеркальне відображення репозиторіїв за списком ідентифікаторів "
+"репозиторіїв"
 
 msgid "Enabled mirroring for repository %{repo}"
-msgstr ""
+msgstr "Увімкнено дзеркалювання для репозиторію %{repo}"
 
 msgid "Enabled repository %{repository}."
 msgstr ""
