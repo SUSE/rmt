@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-01-25 17:04+0000\n"
+"PO-Revision-Date: 2026-01-25 20:04+0000\n"
 "Last-Translator: Eugene Krater <lachend@gmail.com>\n"
 "Language-Team: Ukrainian <https://l10n.opensuse.org/projects/rmt/i18n/uk/>\n"
 "Language: uk\n"
@@ -305,76 +305,76 @@ msgid "Enabled mirroring for repository %{repo}"
 msgstr "Увімкнено дзеркалювання для репозиторію %{repo}"
 
 msgid "Enabled repository %{repository}."
-msgstr ""
+msgstr "Репозиторій %{repository} увімкнено."
 
 msgid "Enables all free modules for a product"
-msgstr ""
+msgstr "Вмикає всі безкоштовні модулі для продукту"
 
 msgid "Enabling %{product}:"
-msgstr ""
+msgstr "Увімкнення продукту %{product}:"
 
 msgid "Enter a value:"
-msgstr ""
+msgstr "Введіть значення:"
 
 msgid "Error while mirroring license files: %{error}"
-msgstr ""
+msgstr "Помилка під час дзеркального відображення файлів ліцензії: %{error}"
 
 msgid "Error while mirroring metadata: %{error}"
-msgstr ""
+msgstr "Помилка під час дзеркального відображення метаданих: %{error}"
 
 msgid "Error while mirroring packages: %{error}"
-msgstr ""
+msgstr "Помилка під час дзеркального відображення пакетів: %{error}"
 
 msgid "Error while mirroring repository: %{error}"
-msgstr ""
+msgstr "Помилка під час дзеркального відображення сховища: %{error}"
 
 msgid "Error while moving files %{glob} to %{dest}: %{error}"
-msgstr ""
+msgstr "Помилка під час переміщення файлів %{glob} до %{dest}: %{error}"
 
 msgid "Examples"
-msgstr ""
+msgstr "Приклади"
 
 msgid "Examples:"
-msgstr ""
+msgstr "Приклади:"
 
 msgid "Export commands for Offline Sync"
-msgstr ""
+msgstr "Експорт команд для автономної синхронізації"
 
 msgid "Exporting data from SCC to %{path}"
-msgstr ""
+msgstr "Виконується експорт даних із SCC в %{path}"
 
 msgid "Exporting orders"
-msgstr ""
+msgstr "Виконується експорт замовлень"
 
 msgid "Exporting products"
-msgstr ""
+msgstr "Виконується експорт продуктів"
 
 msgid "Exporting repositories"
-msgstr ""
+msgstr "Виконується експорт репозиторіїв"
 
 msgid "Exporting subscriptions"
-msgstr ""
+msgstr "Виконується експорт підписок"
 
 msgid "Failed to download %{failed_count} files"
-msgstr ""
+msgstr "Не вдалося завантажити %{failed_count} файлів"
 
 msgid "Failed to export the SUSE Manager product tree: %{error_message}"
-msgstr ""
+msgstr "Не вдалося експортувати дерево продуктів SUSE Manager: %{error_message}"
 
 msgid "Failed to import system %{system}"
-msgstr ""
+msgstr "Не вдалося імпортувати систему %{system}"
 
 msgid "Failed to import the suma product tree: %{error_message}"
-msgstr ""
+msgstr "Не вдалося імпортувати сумарне дерево продуктів: %{error_message}"
 
 msgid "Failed to sync systems: %{error}"
-msgstr ""
+msgstr "Не вдалося синхронізувати системи: %{error}"
 
 msgid "Filter BYOS systems using RMT as a proxy"
-msgstr ""
+msgstr "Фільтрувати системи BYOS, використовуючи RMT як проксі"
 
 msgid "Forward registered systems data to SCC"
-msgstr ""
+msgstr "Передача зареєстрованих даних систем до SCC"
 
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
@@ -383,13 +383,13 @@ msgstr[1] "Знайдено продукти за цільовим значен�
 msgstr[2] "Знайдено продуктів за цільовим значенням %{target}: %{products}."
 
 msgid "GPG key import failed"
-msgstr ""
+msgstr "Імпорт ключа GPG не вдався"
 
 msgid "GPG signature verification failed"
-msgstr ""
+msgstr "Перевірка підпису GPG не вдалася"
 
 msgid "Hardware information stored for system %{system}"
-msgstr ""
+msgstr "Для системи %{system} збережена інформація про обладнання"
 
 msgid "Hostname"
 msgstr ""
