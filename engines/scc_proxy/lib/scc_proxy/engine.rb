@@ -281,7 +281,7 @@ module SccProxy
     end
   end
 
-  class Engine < ::Rails::Engine
+  class Engine < ::Rails::Engine # rubocop:disable Metrics/ClassLength
     isolate_namespace SccProxy
     config.generators.api_only = true
 
@@ -320,15 +320,7 @@ module SccProxy
                 proxy_byos: true
               }
             )
-            # Handle any X-System-Profiles-Action header in response
-            # appropriately, factoring in that scc_response_headers
-            # will have lowercased header names, with an array of
-            # values
-            spa_header = 'X-System-Profiles-Action'
-            if scc_response_headers[spa_header.downcase].present?
-              logger.debug('SCC detected problematic system profiles')
-              response.headers[spa_header] = scc_response_headers[spa_header.downcase].first
-            end
+            profile_response_header_handling(scc_response_headers)
           end
           @system = System.create!(system_values)
           logger.info("System '#{@system.hostname}' announced")
@@ -365,6 +357,18 @@ module SccProxy
           auth_header ||= '='
           auth_header = auth_header[(auth_header.index('=') + 1)..-1]
           auth_header.empty?
+        end
+
+        def profile_response_header_handling(scc_response_headers)
+          # Handle any X-System-Profiles-Action header in response
+          # appropriately, factoring in that scc_response_headers
+          # will have lowercased header names, with an array of
+          # values
+          spa_header = 'X-System-Profiles-Action'
+          if scc_response_headers[spa_header.downcase].present?
+            logger.debug('SCC detected problematic system profiles')
+            response.headers[spa_header] = scc_response_headers[spa_header.downcase].first
+          end
         end
       end
 
