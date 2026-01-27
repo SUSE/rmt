@@ -3,6 +3,7 @@
 require 'optparse'
 require 'ostruct'
 require 'logger'
+require_relative 'zeitwerk_loader_helper'
 
 options = {}
 parser = OptionParser.new do |opts|
@@ -73,10 +74,7 @@ ENV['BUNDLE_GEMFILE'] ||= File.expand_path('./Gemfile', RMT_PATH)
 require 'bundler/setup'
 require 'active_support'
 
-load_paths = %w[lib lib/rmt app/models app/services app/validators engines/instance_verification/lib].map do |dir|
-  File.join(RMT_PATH, dir)
-end
-ActiveSupport::Dependencies.autoload_paths += load_paths
+load_relative_paths(%w[lib lib/rmt app/models app/services app/validators engines/instance_verification/lib])
 
 module InstanceVerification
   class << self

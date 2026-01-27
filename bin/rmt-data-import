@@ -21,32 +21,26 @@ require 'json'
 require_relative '../config/initializers_cli/disable_deprecation_warnings'
 require_relative '../config/initializers_cli/rmt_fast_gettext'
 require_relative '../config/initializers_cli/rmt_fast_gettext_cli_locale'
+require_relative 'zeitwerk_loader_helper'
 
 no_systems = false
 data_dir = nil
 
-loader = Zeitwerk::Loader.for_gem(warn_on_extra_files: false)
+load_relative_paths(%w[app/models app/services app/validators]) do |loader|
+  loader.ignore("#{__dir__}/compose-init.rb")
+  loader.inflector.inflect("app" => "") # preserve rails loader
+  loader.inflector.inflect("rmt" => "RMT")
+  loader.inflector.inflect("scc" => "SCC")
+  loader.inflector.inflect("cli" => "CLI")
+  loader.inflector.inflect("gpg" => "GPG")
+  loader.inflector.inflect("smt_importer" => "SMTImporter")
+  loader.push_dir('lib/rmt', namespace: RMT)
+  loader.collapse("lib/")
 
-relative_load_paths = %w[app/models app/services app/validators].map do|dir|
-  loader.push_dir(dir)
-  File.join(rmt_path, dir)
+  # Initialize the database
+  db_config = RMT::Config.db_config
+  ActiveRecord::Base.establish_connection(db_config)
 end
-loader.ignore("#{__dir__}/compose-init.rb")
-loader.inflector.inflect("app" => "") # preserve rails loader
-loader.inflector.inflect("rmt" => "RMT")
-loader.inflector.inflect("scc" => "SCC")
-loader.inflector.inflect("cli" => "CLI")
-loader.inflector.inflect("gpg" => "GPG")
-loader.inflector.inflect("smt_importer" => "SMTImporter")
-loader.push_dir('lib/rmt', namespace: RMT)
-loader.collapse("lib/")
-
-# Initialize the database
-db_config = RMT::Config.db_config
-ActiveRecord::Base.establish_connection(db_config)
-
-loader.setup
-loader.eager_load
 
 begin
   Time.zone ||= 'UTC'

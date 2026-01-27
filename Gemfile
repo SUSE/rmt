@@ -105,6 +105,3 @@ gem 'fiddle', '~> 1.1.8'
 gem 'ronn-ng'
 
 gem 'repomd_parser', '~> 1.2'
-
-gem "dry-initializer", "~> 3.2"
-gem "dry-schema", "~> 1.15"
