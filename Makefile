@@ -27,6 +27,7 @@ build-tarball: clean man
 	@cp -r bin/rmt-data-import $(NAME)-$(VERSION)/bin
 	@cp -r bin/rmt-test-regsharing $(NAME)-$(VERSION)/bin
 	@cp -r bin/rmt-manual-instance-verify $(NAME)-$(VERSION)/bin
+	@cp -r bin/zeitwerk_loader_helper.rb $(NAME)-$(VERSION)/bin
 	@cp -r config $(NAME)-$(VERSION)/
 	@cp -r config.ru $(NAME)-$(VERSION)/
 	@cp -r db $(NAME)-$(VERSION)/
