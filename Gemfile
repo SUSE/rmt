@@ -104,4 +104,4 @@ gem 'base32'
 gem 'ruby-xz', '~> 1.0'
 
 # Use Sidekiq for ActiveJob
-gem "sidekiq", "~> 6.5"
+gem 'sidekiq', '~> 6.5'

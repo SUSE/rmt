@@ -4,7 +4,7 @@ require 'rails'
 
 # Pick the frameworks you want:
 require 'active_model/railtie'
-# require "active_job/railtie"
+require 'active_job/railtie'
 require 'active_record/railtie'
 # require "active_storage/engine"
 require 'action_controller/railtie'
@@ -57,6 +57,10 @@ module RMT
 
     config.eager_load_paths << Rails.root.join('lib')
     config.eager_load_paths << Rails.root.join('app', 'validators')
+
+    # Use a real queuing backend for Active Job (and separate queues per environment).
+    config.active_job.queue_adapter = :sidekiq
+    config.active_job.queue_name_prefix = Rails.env
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
