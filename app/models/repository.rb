@@ -64,4 +64,18 @@ class Repository < ApplicationRecord
     scc_id.nil?
   end
 
+  def redirect?
+    hosts = RMT::Config.redirect_repo_hosts
+
+    return false unless hosts
+
+    uri_host = URI.parse(external_url).host&.downcase
+
+    return false unless uri_host
+
+    hosts.any? do |host|
+      host = host.downcase
+      uri_host == host || uri_host.end_with?(".#{host}")
+    end
+  end
 end

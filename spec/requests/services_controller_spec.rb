@@ -37,6 +37,18 @@ RSpec.describe ServicesController do
 
       its(:length) { is_expected.to eq(service.repositories.length - 1) }
       it { is_expected.to eq(model_urls) }
+
+      describe 'with redirected repositories' do
+        before do
+          allow(RMT::Config).to receive(:redirect_repo_hosts).and_return(['ibm.com', 'nvidia.com'])
+          service.repositories.first.update(external_url: 'https://download.nvidia.com/suse/sle16')
+          get "/services/#{service.id}"
+        end
+
+        it 'redirects matching repos' do
+          expect(xml_urls.any? { |url| url.include?('download.nvidia.com') }).to be_truthy
+        end
+      end
     end
   end
 
@@ -91,6 +103,18 @@ RSpec.describe ServicesController do
 
       it 'has mirrored repos of multiple products in the XML' do
         expect(xml_urls).to eq(expected_repos)
+      end
+
+      describe 'with redirected repositories' do
+        before do
+          allow(RMT::Config).to receive(:redirect_repo_hosts).and_return(['ibm.com', 'nvidia.com'])
+          system.services.first.repositories.first.update(external_url: 'https://download.nvidia.com/suse/sle16')
+          get '/repo/repoindex.xml', headers: auth_header
+        end
+
+        it 'redirects matching repos' do
+          expect(xml_urls.any? { |url| url.include?('download.nvidia.com') }).to be_truthy
+        end
       end
     end
   end
