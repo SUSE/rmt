@@ -5,6 +5,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
   include_context 'version header', 3
   include_context 'user-agent header'
   include_context 'zypp user-agent header'
+  include_context 'profile sets'
 
   let(:system) { FactoryBot.create(:system, hostname: 'initial') }
   let(:url) { '/connect/systems' }
@@ -105,6 +106,289 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
       it do
         update_action
         expect(system.reload.hostname).to be_nil
+      end
+    end
+
+    context 'when profiles are provided' do
+      # init with profile set all
+      let(:profiles) { profile_set_all }
+      let(:profiles_expected) { profiles }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles } }
+
+      it 'they are expected to match set a1' do
+        update_action
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:no_content)
+        expect(response.headers['X-System-Profiles-Action']).not_to be_present
+
+        expect(
+          system.profiles.each_with_object({}) do |profile, hash|
+            hash.merge!(profile.as_payload)
+          end.symbolize_keys
+        ).to match(profiles_expected)
+      end
+    end
+
+    context 'when profiles are updated' do
+      # update from set a1 to set a2
+      let(:profiles_pre_update) { profile_set_a1 }
+      let(:profiles) { profile_set_a2 }
+      let(:profiles_expected) { profiles }
+      let(:payload_pre_update) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles_pre_update } }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles } }
+
+      before do
+        put url, params: payload_pre_update, headers: headers
+      end
+
+      it 'from set a1 to set a2' do
+        update_action
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:no_content)
+        expect(response.headers['X-System-Profiles-Action']).not_to be_present
+
+        expect(
+          system.profiles.each_with_object({}) do |profile, hash|
+            hash.merge!(profile.as_payload)
+          end.symbolize_keys
+        ).to match(profiles_expected)
+      end
+    end
+
+    context 'when profiles are replaced' do
+      # replace set b with set c
+      let(:profiles_pre_update) { profile_set_b }
+      let(:profiles) { profile_set_c }
+      let(:profiles_expected) { profiles }
+      let(:payload_pre_update) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles_pre_update } }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles } }
+
+      before do
+        put url, params: payload_pre_update, headers: headers
+      end
+
+      it 'changing from set b to set c' do
+        update_action
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:no_content)
+        expect(response.headers['X-System-Profiles-Action']).not_to be_present
+
+        expect(
+          system.profiles.each_with_object({}) do |profile, hash|
+            hash.merge!(profile.as_payload)
+          end.symbolize_keys
+        ).to match(profiles_expected)
+      end
+    end
+
+    context 'when profiles are extended' do
+      # replace set b with set c
+      let(:profiles_pre_update) { profile_set_b }
+      let(:profiles) { profile_set_b.merge(profile_set_c) }
+      let(:profiles_expected) { profiles }
+      let(:payload_pre_update) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles_pre_update } }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles } }
+
+      before do
+        put url, params: payload_pre_update, headers: headers
+      end
+
+      it 'adding set c to set b' do
+        update_action
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:no_content)
+        expect(response.headers['X-System-Profiles-Action']).not_to be_present
+
+        expect(
+          system.profiles.each_with_object({}) do |profile, hash|
+            hash.merge!(profile.as_payload)
+          end.symbolize_keys
+        ).to match(profiles_expected)
+      end
+    end
+
+    context 'when profiles are invalid' do
+      # update with invalid set a1
+      let(:profiles_pre_update) { {} }
+      let(:profiles) { profile_set_a1_no_ident }
+      let(:profiles_expected) { profiles_pre_update }
+      let(:payload_pre_update) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles_pre_update } }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles } }
+
+      before do
+        put url, params: payload_pre_update, headers: headers
+      end
+
+      it 'existing profile is matched' do
+        update_action
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:no_content)
+        expect(response.headers['X-System-Profiles-Action']).to be_present
+        expect(response.headers['X-System-Profiles-Action']).to eq('clear-cache')
+
+        expect(
+          system.profiles.each_with_object({}) do |profile, hash|
+            hash.merge!(profile.as_payload)
+          end.symbolize_keys
+        ).to match(profiles_expected)
+      end
+    end
+
+    context 'when profiles are incomplete and not previously reported and no profiles were previously reported' do
+      # update with incomplete set a1 that doesn't already exist
+      let(:profiles_pre_update) { {} }
+      let(:profiles) { profile_set_a1_no_data }
+      let(:profiles_expected) { profiles_pre_update }
+      let(:payload_pre_update) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles_pre_update } }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles } }
+
+      before do
+        put url, params: payload_pre_update, headers: headers
+      end
+
+      it 'existing profile is matched' do
+        update_action
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:no_content)
+        expect(response.headers['X-System-Profiles-Action']).to be_present
+        expect(response.headers['X-System-Profiles-Action']).to eq('clear-cache')
+
+        expect(
+          system.profiles.each_with_object({}) do |profile, hash|
+            hash.merge!(profile.as_payload)
+          end.symbolize_keys
+        ).to match(profiles_expected)
+      end
+    end
+
+    context 'when profiles are incomplete and not previously reported and profiles were previously reported' do
+      # update with incomplete set a1 that doesn't already exist
+      let(:profiles_pre_update) { profile_set_b }
+      let(:profiles) { profile_set_a1_no_data }
+      let(:profiles_expected) { profiles_pre_update }
+      let(:payload_pre_update) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles_pre_update } }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles } }
+
+      before do
+        put url, params: payload_pre_update, headers: headers
+      end
+
+      it 'existing profile is matched' do
+        update_action
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:no_content)
+        expect(response.headers['X-System-Profiles-Action']).to be_present
+        expect(response.headers['X-System-Profiles-Action']).to eq('clear-cache')
+
+        expect(
+          system.profiles.each_with_object({}) do |profile, hash|
+            hash.merge!(profile.as_payload)
+          end.symbolize_keys
+        ).to match(profiles_expected)
+      end
+    end
+
+    context 'when profiles are incomplete but previously reported' do
+      # update with incomplete set a1 that already exists
+      let(:profiles_pre_update) { profile_set_a1 }
+      let(:profiles) { profile_set_a1_no_data }
+      let(:profiles_expected) { profiles_pre_update }
+      let(:payload_pre_update) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles_pre_update } }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles } }
+
+      before do
+        put url, params: payload_pre_update, headers: headers
+      end
+
+      it 'existing profile is matched' do
+        update_action
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:no_content)
+        expect(response.headers['X-System-Profiles-Action']).not_to be_present
+
+        expect(
+          system.profiles.each_with_object({}) do |profile, hash|
+            hash.merge!(profile.as_payload)
+          end.symbolize_keys
+        ).to match(profiles_expected)
+      end
+    end
+
+    context 'when profiles are mixed and none previously exist' do
+      # update with incomplete set a1 that already exists
+      let(:profiles_pre_update) { {} }
+      let(:profiles) { profile_set_mixed }
+      let(:profiles_expected) { profile_set_mixed_complete }
+      let(:payload_pre_update) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles_pre_update } }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles } }
+
+      before do
+        put url, params: payload_pre_update, headers: headers
+      end
+
+      it 'only complete profiles stored and clear-cache header set' do
+        update_action
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:no_content)
+        expect(response.headers['X-System-Profiles-Action']).to be_present
+        expect(response.headers['X-System-Profiles-Action']).to eq('clear-cache')
+
+        expect(
+          system.profiles.each_with_object({}) do |profile, hash|
+            hash.merge!(profile.as_payload)
+          end.symbolize_keys
+        ).to match(profiles_expected)
+      end
+    end
+
+    context 'when profiles are mixed and incompletes previously exist' do
+      # update with incomplete set a1 that already exists
+      let(:profiles_pre_update) { profile_set_mixed_incomplete_full }
+      let(:profiles) { profile_set_mixed }
+      let(:profiles_expected) { profile_set_mixed_valid }
+      let(:payload_pre_update) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles_pre_update } }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles } }
+
+      before do
+        put url, params: payload_pre_update, headers: headers
+      end
+
+      it 'only valid profiles stored and clear-cache header set' do
+        update_action
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:no_content)
+        expect(response.headers['X-System-Profiles-Action']).to be_present
+        expect(response.headers['X-System-Profiles-Action']).to eq('clear-cache')
+
+        expect(
+          system.profiles.each_with_object({}) do |profile, hash|
+            hash.merge!(profile.as_payload)
+          end.symbolize_keys
+        ).to match(profiles_expected)
+      end
+    end
+
+    context 'when profiles are not provided' do
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo } }
+
+      it 'no profiles are associated with system' do
+        update_action
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:no_content)
+        expect(response.headers['X-System-Profiles-Action']).not_to be_present
+
+        expect(system.profiles.count).to eq(0)
       end
     end
 

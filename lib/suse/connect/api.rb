@@ -69,10 +69,17 @@ module SUSE
         updated_systems = { systems: [] }
 
         systems.in_batches(of: system_limit) do |batched_systems|
+          # Serialize the batch of systems using a shared set to
+          # track which profiles have been previously serialized.
+          serializer_options = { serialized_profiles: Set.new }
+          payload_systems = batched_systems.map do |s|
+            SUSE::Connect::SystemSerializer.new(s, serializer_options)
+          end
+
           response = make_single_request(
             :put,
             "#{connect_api}/organizations/systems",
-            { body: { systems: batched_systems.map { |s| SUSE::Connect::SystemSerializer.new(s) } }.to_json }
+            { body: { systems: payload_systems }.to_json }
           )
           updated_systems[:systems] = updated_systems[:systems].concat(response[:systems])
         end

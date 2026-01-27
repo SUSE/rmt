@@ -63,6 +63,10 @@ module SccProxy
         scc_req_body[:login] = params['scc_login']
         scc_req_body[:password] = params['scc_password']
       end
+      # Check if system_profiles were provided
+      if params.key?('system_profiles')
+        scc_req_body[:system_profiles] = params['system_profiles']
+      end
       scc_request.body = scc_req_body.to_json
       scc_request
     end
@@ -100,7 +104,7 @@ module SccProxy
       response = http.request(scc_request)
       response.error! unless response.code_type == Net::HTTPCreated
 
-      JSON.parse(response.body)
+      [JSON.parse(response.body), response.to_hash]
     end
 
     def scc_activate_product(system, product, auth, params, mode)
@@ -277,7 +281,7 @@ module SccProxy
     end
   end
 
-  class Engine < ::Rails::Engine
+  class Engine < ::Rails::Engine # rubocop:disable Metrics/ClassLength
     isolate_namespace SccProxy
     config.generators.api_only = true
 
@@ -286,7 +290,7 @@ module SccProxy
       Api::Connect::V3::Subscriptions::SystemsController.class_eval do
         def announce_system
           auth_header = request.headers.fetch('HTTP_AUTHORIZATION', nil)
-          system_information = hwinfo_params[:hwinfo].to_json
+          system_information = info_params(:hwinfo)[:hwinfo].to_json
           instance_data = params.fetch(:instance_data, nil)
           instance_identifier = InstanceVerification.provider.new(nil, nil, nil, params['instance_data']).instance_identifier
           system_values = {
@@ -302,17 +306,21 @@ module SccProxy
             # NON BYOS case
             # no token sent to check with SCC
             system_values[:proxy_byos_mode] = :payg
+
+            # Check if any profiles have been provided
+            process_system_profiles(system_values)
           else
             request.request_parameters['proxy_byos_mode'] = 'byos'
-            response = SccProxy.announce_system_scc(auth_header, request.request_parameters, instance_identifier)
+            scc_response, scc_response_headers = SccProxy.announce_system_scc(auth_header, request.request_parameters, instance_identifier)
             system_values.merge!(
               {
-                scc_system_id: response['id'],
-                password: response['password'],
+                scc_system_id: scc_response['id'],
+                password: scc_response['password'],
                 proxy_byos_mode: :byos,
                 proxy_byos: true
               }
             )
+            profile_response_header_handling(scc_response_headers)
           end
           @system = System.create!(system_values)
           logger.info("System '#{@system.hostname}' announced")
@@ -349,6 +357,18 @@ module SccProxy
           auth_header ||= '='
           auth_header = auth_header[(auth_header.index('=') + 1)..-1]
           auth_header.empty?
+        end
+
+        def profile_response_header_handling(scc_response_headers)
+          # Handle any X-System-Profiles-Action header in response
+          # appropriately, factoring in that scc_response_headers
+          # will have lowercased header names, with an array of
+          # values
+          spa_header = 'X-System-Profiles-Action'
+          if scc_response_headers[spa_header.downcase].present?
+            logger.debug('SCC detected problematic system profiles')
+            response.headers[spa_header] = scc_response_headers[spa_header.downcase].first
+          end
         end
       end
 
@@ -452,7 +472,17 @@ module SccProxy
             params['system_token'] = @system.system_token.presence || params.fetch('system_token', '')
             Rails.logger.info 'No system token' if params['system_token'].blank?
 
-            SccProxy.announce_system_scc("Token token=#{params[:token]}", params, params['system_token'])
+            # create a copy of params with system profiles included
+            announce_params = params.to_unsafe_h
+            announce_params['systems_profiles'] = @system.profiles.each_with_object({}) do |profile, hash|
+              hash.merge!(profile.as_payload)
+            end
+            scc_response, _headers = SccProxy.announce_system_scc(
+              "Token token=#{announce_params[:token]}",
+              announce_params,
+              announce_params['system_token']
+            )
+            scc_response
           end
         end
 

@@ -94,6 +94,16 @@ ActiveRecord::Schema.define(version: 2026_01_08_092033) do
     t.index ["root_product_id"], name: "fk_rails_7d0e68d364"
   end
 
+  create_table "profiles", charset: "utf8mb4", collation: "utf8mb4_unicode_520_ci", force: :cascade do |t|
+    t.string "profile_type", null: false
+    t.string "identifier", null: false
+    t.text "data", null: false
+    t.timestamp "last_synced_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["profile_type", "identifier"], name: "index_profiles_on_profile_type_and_identifier", unique: true
+  end
+
   create_table "repositories", charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
     t.bigint "scc_id", unsigned: true
     t.string "name", null: false
@@ -149,6 +159,16 @@ ActiveRecord::Schema.define(version: 2026_01_08_092033) do
     t.index ["regcode"], name: "index_subscriptions_on_regcode"
   end
 
+  create_table "system_profiles", charset: "utf8mb4", collation: "utf8mb4_unicode_520_ci", force: :cascade do |t|
+    t.bigint "system_id", null: false
+    t.bigint "profile_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["profile_id"], name: "index_system_profiles_on_profile_id"
+    t.index ["system_id", "profile_id"], name: "index_system_profiles_on_system_id_and_profile_id", unique: true
+    t.index ["system_id"], name: "index_system_profiles_on_system_id"
+  end
+
   create_table "system_uptimes", charset: "utf8mb4", collation: "utf8mb4_unicode_520_ci", force: :cascade do |t|
     t.bigint "system_id", null: false
     t.date "online_at_day", null: false
@@ -193,5 +213,7 @@ ActiveRecord::Schema.define(version: 2026_01_08_092033) do
   add_foreign_key "repositories_services", "services", on_delete: :cascade
   add_foreign_key "services", "products"
   add_foreign_key "subscription_product_classes", "subscriptions", on_delete: :cascade
+  add_foreign_key "system_profiles", "profiles"
+  add_foreign_key "system_profiles", "systems"
   add_foreign_key "system_uptimes", "systems"
 end
