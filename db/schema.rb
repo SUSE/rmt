@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_11_13_142033) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_19_155325) do
   create_table "activations", charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
     t.bigint "service_id", null: false
     t.bigint "system_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "subscription_id"
     t.index ["service_id"], name: "fk_rails_5ad14bc754"
     t.index ["subscription_id"], name: "fk_rails_296466bd8d"
@@ -25,8 +25,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_13_142033) do
 
   create_table "deregistered_systems", charset: "utf8mb4", collation: "utf8mb4_unicode_520_ci", force: :cascade do |t|
     t.bigint "scc_system_id", null: false, comment: "SCC IDs of deregistered systems; used for forwarding to SCC"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["scc_system_id"], name: "index_deregistered_systems_on_scc_system_id", unique: true
   end
 
@@ -46,8 +46,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_13_142033) do
     t.string "arch"
     t.integer "system_id"
     t.string "uuid"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.text "instance_data", comment: "Additional client information, e.g. instance identity document"
     t.string "cloud_provider"
     t.index ["hypervisor"], name: "index_hw_infos_on_hypervisor"
@@ -104,7 +104,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_13_142033) do
     t.boolean "installer_updates", default: false, null: false
     t.boolean "mirroring_enabled", default: false, null: false
     t.string "local_path", limit: 512, null: false
-    t.datetime "last_mirrored_at"
+    t.datetime "last_mirrored_at", precision: nil
     t.string "friendly_id"
     t.index ["external_url"], name: "index_repositories_on_external_url", unique: true
     t.index ["friendly_id"], name: "index_repositories_on_friendly_id", unique: true
@@ -121,8 +121,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_13_142033) do
 
   create_table "services", charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
     t.bigint "product_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["product_id"], name: "index_services_on_product_id", unique: true
   end
 
@@ -138,13 +138,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_13_142033) do
     t.string "name", null: false
     t.string "kind", null: false
     t.string "status", null: false
-    t.datetime "starts_at"
-    t.datetime "expires_at"
+    t.datetime "starts_at", precision: nil
+    t.datetime "expires_at", precision: nil
     t.integer "system_limit", null: false
     t.integer "systems_count", null: false
     t.integer "virtual_count"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["regcode"], name: "index_subscriptions_on_regcode"
   end
 
@@ -161,11 +161,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_13_142033) do
     t.string "login"
     t.string "password"
     t.string "hostname"
-    t.datetime "registered_at"
-    t.datetime "last_seen_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.datetime "scc_registered_at"
+    t.datetime "registered_at", precision: nil
+    t.datetime "last_seen_at", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "scc_registered_at", precision: nil
     t.bigint "scc_system_id", comment: "System ID in SCC (if the system registration was forwarded; needed for forwarding de-registrations)"
     t.boolean "proxy_byos", default: false
     t.string "system_token"
