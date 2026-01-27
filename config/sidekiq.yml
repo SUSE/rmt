@@ -5,9 +5,14 @@
 :concurrency: 1
 
 # Sidekiq will only listen to the production-prefixed queue for the exporter.
-# This matches the Rails config: config.active_job.queue_name_prefix = "rmt_production"
-:queues:
-  - rmt_production_default
+# This matches the Rails config: config.active_job.queue_name_prefix = Rails.env
+production:
+  :queues:
+    - production_default
+
+development:
+  :queues:
+    - development_default
 
 # Strict queue ordering ensures we don't pick up jobs from other queues
 # unless the primary is empty.

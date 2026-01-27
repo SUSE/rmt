@@ -108,3 +108,5 @@ gem 'fiddle'
 gem 'ronn-ng'
 
 gem 'repomd_parser'
+
+gem 'redis-namespace'

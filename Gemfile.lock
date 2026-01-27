@@ -545,6 +545,7 @@ DEPENDENCIES
   puma
   rackup
   rails (~> 8.1.0)
+  redis-namespace
   repomd_parser
   responders
   resque
