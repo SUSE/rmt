@@ -568,7 +568,7 @@ module SccProxy
                 begin
                   iid = InstanceVerification.provider.new(nil, nil, nil, system.instance_data).instance_identifier
                 rescue InstanceVerification::Exception => e
-                  logger.error("Could not find system (login #{system.login} instance identifier: #{e.message}")
+                  logger.error("Could not find system (login #{system.login} instance identifier: #{e.message})")
                   next
                 end
                 found_iid = true
