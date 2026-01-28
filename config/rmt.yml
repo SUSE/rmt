@@ -53,3 +53,6 @@ web_server:
 
 connect_api:
   disable_system_tokens: false
+
+redis:
+  url: <%= ENV.fetch('REDIS_URL', nil) %>
