@@ -4,10 +4,12 @@ describe 'rmt-cli' do
   describe 'lockfile' do
 
     around do |example|
-      parent_pid = spawn('/usr/bin/rmt-cli sync > /dev/null')
+      parent_pid = fork do
+        system "/usr/bin/rmt-cli sync > /dev/null"
+      end
       example.run
       # wait for the parent process to finish, so the lock is released
-      Process.waitpid(parent_pid)
+      Process.wait(parent_pid)
     end
 
     it do
