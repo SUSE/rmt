@@ -74,7 +74,17 @@ ENV['BUNDLE_GEMFILE'] ||= File.expand_path('./Gemfile', RMT_PATH)
 require 'bundler/setup'
 require 'active_support'
 
-load_relative_paths(%w[lib lib/rmt app/models app/services app/validators engines/instance_verification/lib])
+load_relative_paths(%w[app/models app/services app/validators engines/instance_verification/lib]) do |loader|
+  loader.ignore("#{__dir__}/compose-init.rb")
+  loader.inflector.inflect("app" => "") # preserve rails loader
+  loader.inflector.inflect("rmt" => "RMT")
+  loader.inflector.inflect("scc" => "SCC")
+  loader.inflector.inflect("cli" => "CLI")
+  loader.inflector.inflect("gpg" => "GPG")
+  loader.inflector.inflect("smt_importer" => "SMTImporter")
+  loader.push_dir(File.join(rmt_path, 'lib/rmt'), namespace: RMT)
+  loader.collapse(File.join(rmt_path, 'lib'))
+end
 
 module InstanceVerification
   class << self

@@ -34,8 +34,8 @@ load_relative_paths(%w[app/models app/services app/validators]) do |loader|
   loader.inflector.inflect("cli" => "CLI")
   loader.inflector.inflect("gpg" => "GPG")
   loader.inflector.inflect("smt_importer" => "SMTImporter")
-  loader.push_dir('lib/rmt', namespace: RMT)
-  loader.collapse("lib/")
+  loader.push_dir(File.join(rmt_path, 'lib/rmt'), namespace: RMT)
+  loader.collapse(File.join(rmt_path, 'lib'))
 
   # Initialize the database
   db_config = RMT::Config.db_config

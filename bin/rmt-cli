@@ -26,28 +26,28 @@ load_relative_paths(%w[app/models app/services app/validators]) do |loader|
   loader.inflector.inflect("cli" => "CLI")
   loader.inflector.inflect("gpg" => "GPG")
   loader.inflector.inflect("smt_importer" => "SMTImporter")
-  loader.push_dir('lib/rmt', namespace: RMT)
-  loader.collapse("lib/")
-  
+  loader.push_dir(File.join(rmt_path, 'lib/rmt'), namespace: RMT)
+  loader.collapse(File.join(rmt_path, 'lib'))
+
   # Before moving into the default user/group, let's try to fetch the login
   # information for this host.
   RMT::Config.set_host_system!
-  
+
   unless Settings['database']
     warn "Error loading database config."
     warn 'Please make sure that /etc/rmt.conf is readable by the rmt process and has your database configured.'
     exit RMT::CLI::Error::ERROR_OTHER
   end
-  
+
   if File.exist?(RMT::DEFAULT_MIRROR_DIR) && !File.writable?(RMT::DEFAULT_MIRROR_DIR)
     warn "Mirroring base directory (#{RMT::DEFAULT_MIRROR_DIR}) is not writable by user '#{RMT::CLI::Base.process_user_name}'"
     warn 'Run as root or adjust the permissions.'
     exit RMT::CLI::Error::ERROR_OTHER
   end
-  
+
   db_config = RMT::Config.db_config
   ActiveRecord::Base.establish_connection(db_config)
-  
+
   if ActiveRecord::Base.connection.adapter_name != "Mysql2"
     warn "Running with experimental support for #{ActiveRecord::Base.connection.adapter_name}."
     warn 'RMT is running without locking operations, make sure not to run it in multipe processes.'
