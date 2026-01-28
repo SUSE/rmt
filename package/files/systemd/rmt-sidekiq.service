@@ -1,7 +1,7 @@
 [Unit]
 Description=RMT Sidekiq Background Worker
-Requires=rmt-server.service redis.service
-After=rmt-server.service redis.service
+Requires=rmt-server.service rmt-valkey.service
+After=rmt-server.service rmt-valkey.service
 
 [Service]
 ProtectSystem=full
