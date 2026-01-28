@@ -97,6 +97,11 @@ module ZypperAuth
           DataExport.handler.new(@system, request, params, logger).export_rmt_data if DataExport.handler.presence && instance_verified
 
           instance_verified
+        rescue StandardError => e
+          logger.error('Unexpected data export error has occurred:')
+          logger.error(e.message)
+          logger.error("System login: #{@system.login}, IP: #{request.remote_ip}")
+          false
         end
       end
     end
