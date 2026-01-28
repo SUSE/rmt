@@ -6,15 +6,21 @@ Config.setup do |config|
   config.merge_nil_values = false
 end
 
-# In specs, configuration will only be loaded from 'config/rmt.yml'
-Config.load_and_set_settings(
-  ('/etc/rmt.conf' if File.readable?('/etc/rmt.conf')),
-  File.join(__dir__, '../../config/rmt.yml'),
-  File.join(__dir__, '../../config/rmt.local.yml')
-)
-
 module RMT::Config
+
+  # In specs, configuration will only be loaded from 'config/rmt.yml'
+  CONFIG_FILES = [
+    '/etc/rmt.conf',
+    File.expand_path('../../config/rmt.yml', __dir__),
+    File.expand_path('../../config/rmt.local.yml', __dir__)
+  ].freeze
+
   class << self
+    def load
+      sources = CONFIG_FILES.select { |f| File.readable?(f) }
+      Config.load_and_set_settings(*sources)
+    end
+
     def db_config(key = 'database')
       {
         'username' => Settings[key].username,

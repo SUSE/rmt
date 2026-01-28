@@ -1,0 +1,28 @@
+[Unit]
+Description=RMT Sidekiq Background Worker
+Requires=rmt-server.service rmt-valkey.service
+After=rmt-server.service rmt-valkey.service
+
+[Service]
+ProtectSystem=full
+ProtectHome=true
+PrivateDevices=true
+ProtectHostname=true
+ProtectClock=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictRealtime=true
+Type=simple
+User=_rmt
+StandardOutput=journal
+StandardError=journal
+TimeoutStopSec=30
+WorkingDirectory=/usr/share/rmt
+ExecStart=/usr/share/rmt/bin/bundle exec sidekiq -e production -C /usr/share/rmt/config/sidekiq.yml
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
