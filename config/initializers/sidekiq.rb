@@ -11,6 +11,7 @@ redis_config = {
   namespace: 'rmt_sidekiq'
 }
 
+# :nocov:
 Sidekiq.configure_server do |config|
   config.redis = redis_config
 
@@ -18,6 +19,7 @@ Sidekiq.configure_server do |config|
   # This helps when viewing logs via journalctl -u rmt-sidekiq
   config.logger.level = Logger::INFO
 end
+# :nocov:
 
 Sidekiq.configure_client do |config|
   config.redis = redis_config

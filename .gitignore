@@ -35,6 +35,7 @@ coverage/
 .idea/
 .mise.toml
 integration/prophet/options-local.yml
+repo/
 
 # Ignore encrypted secrets key file.
 config/secrets.yml.key
