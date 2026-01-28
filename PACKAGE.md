@@ -4,6 +4,7 @@
 
 Note: The Build Team has a [detailed documentation](https://confluence.suse.com/spaces/projectmanagement/pages/1506410865/Where+do+I+submit+my+code) about the new version of SLE.
 
+
 **Important**: Install git-lfs and git-osc (to add the tarball to LFS)
 
 ```
@@ -26,17 +27,17 @@ zypper in git-lfs git-osc
 
     https://src.opensuse.org/pool/rmt-server
 
-4. git clone gitea@src.suse.de:your_username/rmt-server
+4. git clone gitea@src.suse.de:<your_username>/rmt-server
 
-5. Enter your_username/rmt-server
+5. Enter rmt-server/
 
-6. git checkout slfo-1.2
+6. git checkout slfo-1.2 (refer this [table](https://src.suse.de/pool#suse-package-sources) for the branch you should select)
 
-7. Copy the files from <path-to-rmt>/package/obs to here
+7. Copy the files inside <path-to-rmt>/package/obs to here
 
 8. the usual editing, git commit, git push
 
-9. Create a pull request
+9. Create a pull request against the gitea instance you forked from
 
     => staging setup (aka test build) and pull request to the target project are
     handled automatically by the bots.
