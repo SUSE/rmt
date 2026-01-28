@@ -12,6 +12,9 @@ require 'erb'
 require 'yaml'
 require 'rmt/config'
 require_relative 'zeitwerk_loader_helper'
+
+RMT::Config.load
+
 require_relative '../config/initializers_cli/disable_deprecation_warnings'
 require_relative '../config/initializers_cli/rmt_fast_gettext'
 require_relative '../config/initializers_cli/rmt_fast_gettext_cli_locale'
