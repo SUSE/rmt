@@ -1,5 +1,52 @@
 ## rmt-server Packaging
 
+### For SLE16+
+
+Note: The Build Team has a [detailed documentation](https://confluence.suse.com/spaces/projectmanagement/pages/1506410865/Where+do+I+submit+my+code) about the new version of SLE.
+
+
+**Important**: Install git-lfs and git-osc (to add the tarball to LFS)
+
+```
+zypper in git-lfs git-osc
+```
+
+1. Update the version of RMT in the following files:
+
+    `lib/rmt.rb`
+
+    `package/obs/rmt-server.spec`
+
+2. In the root of the repository run `make build-tarball`
+
+3. Create your fork on the right gitea instance at
+
+    https://src.suse.de/pool/rmt-server
+
+    or
+
+    https://src.opensuse.org/pool/rmt-server
+
+4. git clone gitea@src.suse.de:<your_username>/rmt-server
+
+5. Enter rmt-server/
+
+6. git checkout slfo-1.2 (refer this [table](https://src.suse.de/pool#suse-package-sources) for the branch you should select)
+
+7. Copy the files inside <path-to-rmt>/package/obs to here
+
+8. the usual editing, git commit, git push
+
+9. Create a pull request against the gitea instance you forked from
+
+    => staging setup (aka test build) and pull request to the target project are
+    handled automatically by the bots.
+
+===============================================================================================================
+
+### SLE15 SP7
+
+
 Note: Never push changes to the internal build service `ibs://Devel:SCC:RMT`!
           The repository links to `systemsmanagement:SCC:RMT` and gets updated
           automatically.
@@ -7,7 +54,7 @@ Note: Never push changes to the internal build service `ibs://Devel:SCC:RMT`!
 Note: Look below for direction on publishing to registry.
 
 
-* The package is built in OBS at: https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT/rmt-server
+* The package is built in OBS at: https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT/rmt-server-3
 * To update the version of RMT, you will have to change the following files:
   * `lib/rmt.rb`
   * `package/obs/rmt-server.spec`
@@ -100,8 +147,8 @@ After your requests have been accepted, they still have to pass maintenance test
 
 ## Container image and publishing to SUSE registry
 
-SUSE registry houses the rmt-server docker image. The image is built automatically on OBS/IBS, and can be found [here](https://build.opensuse.org/package/show/devel:BCI:SLE-15-SP7/rmt-server-image). 
-The BCI build process generates it from [here](https://github.com/SUSE/BCI-dockerfile-generator/tree/main/src/bci_build/package/rmt-server). 
+SUSE registry houses the rmt-server docker image. The image is built automatically on OBS/IBS, and can be found [here](https://build.opensuse.org/package/show/devel:BCI:SLE-15-SP7/rmt-server-image).
+The BCI build process generates it from [here](https://github.com/SUSE/BCI-dockerfile-generator/tree/main/src/bci_build/package/rmt-server).
 It is getting published here: `registry.suse.com/suse/rmt-server` and is available in the registry catalogue at  [registry.suse.com/repositories/rmt](https://registry.suse.com/repositories/rmt).
 
 
