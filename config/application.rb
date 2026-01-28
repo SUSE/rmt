@@ -52,6 +52,8 @@ module RMT
 
   class Application < Rails::Application
 
+    RMT::Config.load
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
 
