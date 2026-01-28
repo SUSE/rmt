@@ -2,11 +2,10 @@
 
 # Sidekiq configuration for RMT.
 #
-# We use the REDIS_URL environment variable for connection details.
-# In RMT, this is typically configured via systemd environment files
-# or /etc/rmt.conf in production environments.
+# We use the REDIS url from the RMT config, which reads from
+# REDIS_URL ENV by default, with fallback to 127.0.0.1:6379
 redis_config = {
-  url: ENV.fetch('REDIS_URL', 'redis://127.0.0.1:6379/0'),
+  url: Settings.try(:redis).try(:url) || 'redis://127.0.0.1:6379/0',
   connect_timeout: 10,
   reconnect_attempts: 3,
   namespace: 'rmt_sidekiq'
