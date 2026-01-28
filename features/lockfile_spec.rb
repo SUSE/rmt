@@ -1,25 +1,23 @@
-require File.expand_path('../support/command_rspec_helper', __FILE__)
+require 'mixlib/shellout'
 
 describe 'rmt-cli' do
   describe 'lockfile' do
 
     around do |example|
       parent_pid = fork do
-        exec "/usr/bin/rmt-cli sync > /dev/null"
+        system "/usr/bin/rmt-cli sync > /dev/null"
       end
       example.run
       # wait for the parent process to finish, so the lock is released
-      Process.waitpid(parent_pid)
+      Process.wait(parent_pid)
     end
 
-    command '/usr/bin/rmt-cli sync', allow_error: true
-    its(:stderr) do
-      is_expected.to eq(
-        "Another instance of this command is already running. Terminate" \
-        " the other instance or wait for it to finish.\n"
-      )
-    end
+    it do
+      command = Mixlib::ShellOut.new("/usr/bin/rmt-cli sync")
+      command.run_command
 
-    its(:exitstatus) { is_expected.to eq 1 }
+      expect(command.stderr).to match(/already running. Terminate the other instance/)
+      expect(command.exitstatus).to eq(1)
+    end
   end
 end

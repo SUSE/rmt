@@ -5,10 +5,10 @@ def add_downloaded_file(checksum_type, checksum, path)
                             size: File.size(path))
 end
 
-def create_and_track_file(file_reference, fixture_path)
-  if fixture_path
+def create_and_track_file(file_reference, fixture_paths)
+  if fixture_paths
     FileUtils.mkdir_p(File.dirname(file_reference.local_path))
-    FileUtils.cp(fixture_path, file_reference.local_path)
+    FileUtils.cp(fixture_paths, file_reference.local_path)
   end
 
   DownloadedFile.track_file(checksum: file_reference.checksum,

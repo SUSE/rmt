@@ -44,13 +44,13 @@ describe Api::Connect::V3::Systems::SystemsController, type: :request do
               headers: {}
             )
           allow(Rails.logger).to receive(:info)
-          allow(File).to receive(:join).and_return('foo')
-          allow(File).to receive(:unlink)
+          allow(InstanceVerification).to receive(:remove_entry_from_cache)
           delete url, params: payload, headers: headers
         end
 
         it 'returns a service JSON and successfully deactivate the product' do
           expect(Rails.logger).to have_received(:info).with('System successfully deregistered from SCC').once
+          expect(InstanceVerification).to have_received(:remove_entry_from_cache)
         end
       end
     end

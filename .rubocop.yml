@@ -77,3 +77,7 @@ RSpec/MessageChain:
 # Count: 107 offenses
 RSpec/SubjectStub:
   Enabled: false
+
+Layout/LineLength:
+  Exclude:
+    - engines/instance_verification/spec/requests/api/connect/v3/systems/products_controller_spec.rb

@@ -183,27 +183,39 @@ RSpec.describe SUSE::Connect::Api do
     end
 
     describe '#list_products' do
-      subject { api_client.list_products }
+      it 'returns the correct endoint' do
+        logger = instance_double('RMT::Logger').as_null_object
+        allow(RMT::Logger).to receive(:new).and_return(logger)
 
-      it { is_expected.to eq([ { endpoint: 'organizations/products' } ]) }
+        expect(api_client.list_products).to eq([ { endpoint: 'organizations/products' } ])
+      end
     end
 
     describe '#list_products_unscoped' do
-      subject { api_client.list_products_unscoped }
+      it 'returns the correct endoint' do
+        logger = instance_double('RMT::Logger').as_null_object
+        allow(RMT::Logger).to receive(:new).and_return(logger)
 
-      it { is_expected.to eq([ { endpoint: 'organizations/products/unscoped' } ]) }
+        expect(api_client.list_products_unscoped).to eq([ { endpoint: 'organizations/products/unscoped' } ])
+      end
     end
 
     describe '#list_repositories' do
-      subject { api_client.list_repositories }
+      it 'returns the correct endoint' do
+        logger = instance_double('RMT::Logger').as_null_object
+        allow(RMT::Logger).to receive(:new).and_return(logger)
 
-      it { is_expected.to eq([ { endpoint: 'organizations/repositories' } ]) }
+        expect(api_client.list_repositories).to eq([ { endpoint: 'organizations/repositories' } ])
+      end
     end
 
     describe '#list_subscriptions' do
-      subject { api_client.list_subscriptions }
+      it 'returns the correct endoint' do
+        logger = instance_double('RMT::Logger').as_null_object
+        allow(RMT::Logger).to receive(:new).and_return(logger)
 
-      it { is_expected.to eq([ { endpoint: 'organizations/subscriptions' } ]) }
+        expect(api_client.list_subscriptions).to eq([ { endpoint: 'organizations/subscriptions' } ])
+      end
     end
 
     describe '#send_bulk_system_update' do
@@ -301,6 +313,8 @@ RSpec.describe SUSE::Connect::Api do
               headers: { 'X-Payload-Entities-Max-Limit': 1 },
               body: [].to_json
             )
+          logger = instance_double('RMT::Logger').as_null_object
+          allow(RMT::Logger).to receive(:new).and_return(logger)
         end
 
 

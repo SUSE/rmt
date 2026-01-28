@@ -528,7 +528,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                 allow(plugin_double).to receive(:allowed_extension?).and_raise(InstanceVerification::Exception, 'Malformed instance data')
                 post url, params: payload, headers: headers
                 expect(JSON.parse(response.body)['error']).to eq('Malformed instance data')
-                expect(response.message).to eq('Unprocessable Entity')
+                expect(response.message).to eq('Unprocessable Content')
                 expect(response.code).to eq('422')
               end
             end

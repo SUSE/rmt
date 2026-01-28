@@ -37,7 +37,7 @@ module SUSE
       def initialize(username, password)
         @username = username
         @password = password
-        @logger = RMT::Logger.new(STDOUT)
+        @logger = RMT::Logger.new($stdout)
       end
 
       def list_orders

@@ -53,10 +53,13 @@ module RMT
   class Application < Rails::Application
 
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.0
+    config.load_defaults 7.1
 
+    config.autoload_lib(ignore: %w[tasks assets])
     config.eager_load_paths << Rails.root.join('lib')
     config.eager_load_paths << Rails.root.join('app', 'validators')
+
+    config.active_record.sqlite3_adapter_strict_strings_by_default = false
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
@@ -71,6 +74,8 @@ module RMT
     config.generators do |g|
       g.test_framework :rspec
     end
+
+    config.active_support.remove_deprecated_time_with_zone_name = true
 
     # Rails initialization process requires a secret key base present in either:
     # - SECRET_KEY_BASE env

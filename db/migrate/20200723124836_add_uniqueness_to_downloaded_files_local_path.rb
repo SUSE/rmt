@@ -1,6 +1,6 @@
 class AddUniquenessToDownloadedFilesLocalPath < ActiveRecord::Migration[5.2]
   def change
-    logger = RMT::Logger.new(STDOUT)
+    logger = RMT::Logger.new($stdout)
 
     logger.info('Adding index to `downloaded_files.local_path` before querying duplicates...')
     add_index :downloaded_files, :local_path, unique: false

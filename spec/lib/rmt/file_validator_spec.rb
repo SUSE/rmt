@@ -37,11 +37,11 @@ RSpec.describe RMT::FileValidator do
 
     shared_context 'file on disk' do
       before do
-        fixture_path = file_fixture(file_relative_remote_path).to_s
+        fixture_paths = file_fixture(file_relative_remote_path).to_s
 
         file.local_path.tap do |file|
           FileUtils.mkdir_p(File.dirname(file))
-          FileUtils.cp(fixture_path, file)
+          FileUtils.cp(fixture_paths, file)
         end
       end
     end
@@ -240,7 +240,7 @@ RSpec.describe RMT::FileValidator do
 
   describe '#find_valid_files_by_checksum' do
     let(:valid_file) do
-      fixture_path = file_fixture('dummy_product/product/apples-0.1-0.x86_64.rpm').to_s
+      fixture_paths = file_fixture('dummy_product/product/apples-0.1-0.x86_64.rpm').to_s
       file = instance_double(
         '::RMT::FileReference',
         local_path: File.join(tmp_dir, 'dummy_product/product/apples-0.1-0.x86_64.rpm'),
@@ -252,12 +252,12 @@ RSpec.describe RMT::FileValidator do
       {
         description: 'the file is valid on both database and disk',
         file: file,
-        source_path: fixture_path
+        source_path: fixture_paths
       }
     end
 
     let(:invalid_size_file) do
-      fixture_path = file_fixture('dummy_product/product/oranges-0.1-0.x86_64.rpm').to_s
+      fixture_paths = file_fixture('dummy_product/product/oranges-0.1-0.x86_64.rpm').to_s
       file = instance_double(
         '::RMT::FileReference',
         local_path: File.join(tmp_dir, 'dummy_product/product/oranges-0.1-0.x86_64.rpm'),
@@ -269,12 +269,12 @@ RSpec.describe RMT::FileValidator do
       {
         description: 'the file is valid on database with invalid size on disk',
         file: file,
-        source_path: fixture_path
+        source_path: fixture_paths
       }
     end
 
     let(:invalid_checksum_file) do
-      fixture_path = file_fixture('dummy_product/product/oranges-0.1-0.x86_64.rpm').to_s
+      fixture_paths = file_fixture('dummy_product/product/oranges-0.1-0.x86_64.rpm').to_s
       file = instance_double(
         '::RMT::FileReference',
         local_path: File.join(tmp_dir, 'dummy_product/product/lemons-0.1-0.x86_64.rpm'),
@@ -286,7 +286,7 @@ RSpec.describe RMT::FileValidator do
       {
         description: 'the file is valid on database with invalid checksum on disk',
         file: file,
-        source_path: fixture_path
+        source_path: fixture_paths
       }
     end
 

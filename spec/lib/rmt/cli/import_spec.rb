@@ -45,6 +45,7 @@ describe RMT::CLI::Import, :with_fakefs do
       allow(File).to receive(:writable?).and_return(true)
 
       allow(File).to receive(:exist?).with(repo_json).and_return(true)
+      allow(File).to receive(:exist?).with('<STDOUT>').and_call_original
       allow(File).to receive(:read).with(repo_json).and_return(repo_settings.to_json.to_s)
 
       allow(RMT::Mirror::SumaProductTree).to receive(:new).and_return(suma_product_tree_double)

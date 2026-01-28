@@ -7,7 +7,7 @@ class RMT::SCC
   class DataFilesError < RuntimeError; end
 
   def initialize(options = {})
-    @logger = RMT::Logger.new(STDOUT)
+    @logger = RMT::Logger.new($stdout)
     debug = options[:debug] || Settings&.log_level&.cli == 'debug'
     @logger.level = debug ? Logger::DEBUG : Logger::INFO
   end
