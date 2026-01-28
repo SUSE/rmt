@@ -89,6 +89,33 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         end
       end
 
+      context 'with instance_data headers and instance data is invalid in the DB' do
+        let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': Base64.strict_encode64('test') }) }
+        let(:data_export_double) { instance_double('DataExport::Handlers::Example') }
+        let(:wrong_iid) { '<repoformat>plugin:susecloud</repoformat>\n' }
+
+
+        before do
+          allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
+          Rails.cache.clear
+          expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
+          allow(DataExport::Handlers::Example).to receive(:new).and_return(data_export_double)
+          allow(File).to receive(:directory?)
+          allow(Dir).to receive(:mkdir)
+          allow(FileUtils).to receive(:touch)
+          expect(data_export_double).to receive(:export_rmt_data).and_raise(InstanceVerification::Exception, "Malformed instance data #{wrong_iid}")
+          allow(Rails.logger).to receive(:error)
+          expect(Rails.logger).to receive(:error).with('Unexpected data export error has occurred:')
+          expect(Rails.logger).to receive(:error).with('Malformed instance data <repoformat>plugin:susecloud</repoformat>\n')
+          expect(Rails.logger).to receive(:error).with("System login: #{system.login}, IP: 127.0.0.1")
+          get '/api/auth/check', headers: headers
+        end
+
+        it do
+          is_expected.to have_http_status(403)
+        end
+      end
+
       context 'when system is BYOS proxy' do
         let(:local_path) { system_byos.activations.first.product.repositories.first.local_path }
         let(:paid_local_path) do
