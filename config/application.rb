@@ -75,8 +75,6 @@ module RMT
       g.test_framework :rspec
     end
 
-    config.active_support.remove_deprecated_time_with_zone_name = true
-
     # Rails initialization process requires a secret key base present in either:
     # - SECRET_KEY_BASE env
     # - credentials.secret_key_base
