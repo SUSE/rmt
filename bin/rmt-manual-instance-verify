@@ -78,6 +78,8 @@ load_paths = %w[lib lib/rmt app/models app/services app/validators engines/insta
 end
 ActiveSupport::Dependencies.autoload_paths += load_paths
 
+RMT::Config.load
+
 module InstanceVerification
   class << self
     attr_accessor :provider
