@@ -16,5 +16,4 @@ def load_relative_paths(paths, &block)
   yield loader if block_given?
 
   loader.setup
-  loader.eager_load
 end

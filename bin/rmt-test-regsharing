@@ -26,9 +26,6 @@ load_relative_paths(%w[app/models app/services]) do |loader|
   loader.inflector.inflect("smt_importer" => "SMTImporter")
   loader.push_dir(File.join(rmt_path, 'lib/rmt'), namespace: RMT)
   loader.collapse(File.join(rmt_path, 'lib'))
-
-  db_config = RMT::Config.db_config
-  ActiveRecord::Base.establish_connection(db_config)
 end
 
 if RMT::CLI::Base.process_user_name == 'root'
@@ -36,6 +33,9 @@ if RMT::CLI::Base.process_user_name == 'root'
   Process::Sys.setegid(Etc.getgrnam(RMT::DEFAULT_GROUP).gid)
   Process::Sys.seteuid(Etc.getpwnam(RMT::DEFAULT_USER).uid)
 end
+
+db_config = RMT::Config.db_config
+ActiveRecord::Base.establish_connection(db_config)
 
 #####
 
