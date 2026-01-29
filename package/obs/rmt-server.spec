@@ -337,9 +337,11 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
 
 # Valkey + Sidekiq files
+%attr(-,root,valkey) /var/lib/valkey/6379
 %dir /var/lib/valkey
 %dir /var/lib/valkey/6379
 %dir %{_sysconfdir}/valkey
+%attr(-,root,valkey) %{_sysconfdir}/valkey/6379.conf
 %config(noreplace) %{_sysconfdir}/valkey/6379.conf
 %{_unitdir}/rmt-sidekiq.service
 %{_unitdir}/rmt-valkey.service
