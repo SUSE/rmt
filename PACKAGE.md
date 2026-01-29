@@ -21,11 +21,11 @@ zypper in git-lfs git-osc
 
 3. Create your fork on the right gitea instance at
 
-    https://src.suse.de/pool/rmt-server
+    https://src.suse.de/pool/rmt-server (for SLE builds)
 
     or
 
-    https://src.opensuse.org/pool/rmt-server
+    https://src.opensuse.org/pool/rmt-server (for opensuse + factory builds)
 
 4. git clone gitea@src.suse.de:<your_username>/rmt-server
 
