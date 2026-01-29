@@ -135,7 +135,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
             allow(Dir).to receive(:mkdir)
             allow(FileUtils).to receive(:touch)
             expect(data_export_double).to receive(:export_rmt_data).and_raise(
-              StandardError, "API BORKED"
+              StandardError, 'API BORKED'
             )
             allow(Rails.logger).to receive(:error)
             expect(Rails.logger).to receive(:error).with(
