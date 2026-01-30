@@ -1,6 +1,4 @@
-
 require 'zeitwerk'
-
 
 def load_relative_paths(paths, &block)
   loader = Zeitwerk::Loader.for_gem(warn_on_extra_files: false)
