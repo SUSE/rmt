@@ -5,19 +5,30 @@ require_relative '../config/boot'
 
 $LOAD_PATH.unshift File.join(rmt_path, 'lib')
 require 'etc'
-require 'active_support'
-require 'active_support/core_ext/string'
+require 'active_support/all'
 require 'active_record'
+require 'rails'
 require 'erb'
 require 'yaml'
 require 'rmt/config'
+require_relative 'zeitwerk_loader_helper'
 require_relative '../config/initializers_cli/disable_deprecation_warnings'
 require_relative '../config/initializers_cli/rmt_fast_gettext'
 require_relative '../config/initializers_cli/rmt_fast_gettext_cli_locale'
 require_relative '../engines/registration_sharing/lib/registration_sharing' if Settings[:regsharing]
+require_relative '../app/models/application_record'
 
-relative_load_paths = %w[lib lib/rmt app/models app/services app/validators].map { |dir| File.join(rmt_path, dir) }
-ActiveSupport::Dependencies.autoload_paths += relative_load_paths
+load_relative_paths(%w[app/models app/services app/validators]) do |loader|
+  loader.ignore("#{__dir__}/compose-init.rb")
+  loader.inflector.inflect("app" => "") # preserve rails loader
+  loader.inflector.inflect("rmt" => "RMT")
+  loader.inflector.inflect("scc" => "SCC")
+  loader.inflector.inflect("cli" => "CLI")
+  loader.inflector.inflect("gpg" => "GPG")
+  loader.inflector.inflect("smt_importer" => "SMTImporter")
+  loader.push_dir(File.join(rmt_path, 'lib/rmt'), namespace: RMT)
+  loader.collapse(File.join(rmt_path, 'lib'))
+end
 
 # Before moving into the default user/group, let's try to fetch the login
 # information for this host.

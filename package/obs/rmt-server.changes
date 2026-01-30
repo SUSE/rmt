@@ -1,8 +1,14 @@
 -------------------------------------------------------------------
+Mon Jan 12 14:43:22 UTC 2026 - Adnilson Delgado <adnilson.delgado@suse.com>
+
+- Version 3.0
+  * Update Ruby to version > 3 and Rails to version 7
+
+-------------------------------------------------------------------
 Tue Nov 11 11:03:50 UTC 2025 - Natnael Getahun <natnael.getahun@suse.com>
 
 - Version 2.25
-  * Enable mirroring xz compressed repositories (bsc#1246976) 
+  * Enable mirroring xz compressed repositories (bsc#1246976)
 
 -------------------------------------------------------------------
 Thu Aug 28 10:16:11 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>

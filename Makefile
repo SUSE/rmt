@@ -27,6 +27,7 @@ build-tarball: clean man
 	@cp -r bin/rmt-data-import $(NAME)-$(VERSION)/bin
 	@cp -r bin/rmt-test-regsharing $(NAME)-$(VERSION)/bin
 	@cp -r bin/rmt-manual-instance-verify $(NAME)-$(VERSION)/bin
+	@cp -r bin/zeitwerk_loader_helper.rb $(NAME)-$(VERSION)/bin
 	@cp -r config $(NAME)-$(VERSION)/
 	@cp -r config.ru $(NAME)-$(VERSION)/
 	@cp -r db $(NAME)-$(VERSION)/
@@ -77,10 +78,6 @@ build-tarball: clean man
 
 	@mkdir $(NAME)-$(VERSION)/support
 	@cp support/rmt $(NAME)-$(VERSION)/support/rmt
-
-	# bundler hacks for ruby2.5
-	sed -i '/source .*rubygems\.org/d' $(NAME)-$(VERSION)/Gemfile
-	sed -i '/remote: .*rubygems\.org/d' $(NAME)-$(VERSION)/Gemfile.lock
 
 	find $(NAME)-$(VERSION) -name \*~ -exec rm {} \;
 	tar cfvj package/obs/$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)/

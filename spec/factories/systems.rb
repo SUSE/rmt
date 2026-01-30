@@ -16,7 +16,9 @@ FactoryBot.define do
 
     trait :hybrid do
       pubcloud_reg_code { 'regitration_code' }
-      proxy_byos_mode { :hybrid }
+      after :create do |system, _|
+        system.update!(proxy_byos_mode: :hybrid)
+      end
     end
 
     trait :synced do
