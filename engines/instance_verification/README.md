@@ -65,11 +65,14 @@ Depending on the CSP the metadata can look more or less like this
 }
 ```
 or
-```
+```json
 {
   "instance_creation_timestamp"=>1234,
   "instance_id"=>"1234",
   "instance_name"=>"foo",
+  "license_id": [ # optional field
+    "1234567891011121314151"
+  ],
   "project_id"=>"some_name",
   "project_number"=>1234,
   "zone"=>"zone_name"
