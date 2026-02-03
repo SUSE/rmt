@@ -265,7 +265,6 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %attr(0755,root,root) %{app_dir}/public/tools
 %exclude %{app_dir}/engines/
 %exclude %{app_dir}/package/
-%exclude %{app_dir}/tmp
 %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
 %attr(-,%{rmt_user},%{rmt_group}) %{conf_dir}
 %dir %{_libexecdir}/supportconfig
