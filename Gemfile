@@ -102,4 +102,7 @@ gem 'base32'
 
 # Needed to parse Debian's Packages.xz
 gem 'ruby-xz', '~> 1.0'
-gem 'resque'
+
+# Use Sidekiq for ActiveJob
+gem 'sidekiq', '~> 6.5'
+gem 'redis-namespace'

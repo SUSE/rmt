@@ -16,6 +16,8 @@ require_relative '../config/initializers_cli/disable_deprecation_warnings'
 relative_load_paths = %w[lib lib/rmt app/models app/services].map { |dir| File.join(rmt_path, dir) }
 ActiveSupport::Dependencies.autoload_paths += relative_load_paths
 
+RMT::Config.load
+
 if RMT::CLI::Base.process_user_name == 'root'
   # set group and then user, otherwise user cannot change group
   Process::Sys.setegid(Etc.getgrnam(RMT::DEFAULT_GROUP).gid)
