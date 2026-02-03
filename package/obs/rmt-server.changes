@@ -8,6 +8,7 @@ Tue Jan 13 17:14:09 UTC 2026 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
     from mirroring, and send clients directly there (jsc#SCC-452)
   * rmt-server-pubcloud
     * Clearer error message (bsc#1256883)
+    * Handle zypper response when data exporter raises an error (bsc#1257133)
 
 -------------------------------------------------------------------
 Tue Nov 11 11:03:50 UTC 2025 - Natnael Getahun <natnael.getahun@suse.com>
