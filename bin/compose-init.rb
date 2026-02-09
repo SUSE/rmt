@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 begin
   ::RMT::Db.setup!
 rescue ::RMT::Db::TimeoutReachedError
