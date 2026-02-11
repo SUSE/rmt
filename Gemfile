@@ -1,13 +1,13 @@
-source 'https://rubygems.org'
+git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
-git_source(:github) do |repo_name|
-  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
-  "https://github.com/#{repo_name}.git"
-end
+source 'https://rubygems.org'
+ruby '~> 3.4'
 
 gem 'rails', '~> 7.1.0'
 
 gem 'bootsnap', require: false
+
+gem 'csv'
 
 gem 'puma'
 gem 'mysql2', '~> 0.5.7'

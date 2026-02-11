@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # :nocov: (only used in docker-compose setup)
 
 module RMT

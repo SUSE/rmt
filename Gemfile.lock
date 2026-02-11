@@ -122,6 +122,7 @@ GEM
       bigdecimal
       rexml
     crass (1.0.6)
+    csv (3.3.5)
     date (3.5.0)
     deep_merge (1.2.2)
     diff-lcs (1.6.2)
@@ -501,6 +502,7 @@ DEPENDENCIES
   byebug
   config
   coveralls (~> 0.8.21)
+  csv
   factory_bot_rails
   fakefs
   fast_gettext
@@ -552,6 +554,9 @@ DEPENDENCIES
   yabeda-prometheus
   yabeda-puma-plugin
   yabeda-rails
+
+RUBY VERSION
+   ruby 3.4.8p72
 
 BUNDLED WITH
    2.6.3

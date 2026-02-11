@@ -1,5 +1,4 @@
 # :nocov:
-# frozen_string_literal: true
 
 return unless Settings.dig(:scc, :metrics, :enabled)
 

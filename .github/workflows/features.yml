@@ -36,11 +36,11 @@ jobs:
       run:
         working-directory: /usr/src/rmt-server
     container:
-      image: registry.opensuse.org/systemsmanagement/scc/containers/opensuse_tumbleweed/rmt-ci-container-ruby3.2:latest
+      image: registry.opensuse.org/systemsmanagement/scc/containers/opensuse_tumbleweed/rmt-ci-container-ruby3.4:latest
       options: --user root
     services:
       mysql:
-        image: registry.opensuse.org/opensuse/mariadb:11.8
+        image: registry.suse.com/suse/mariadb:11.8
         env:
           MYSQL_DATABASE: rmt_features
           MYSQL_USER: rmt
