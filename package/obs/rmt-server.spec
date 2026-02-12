@@ -143,6 +143,7 @@ cp -ar . %{buildroot}%{app_dir}
 ln -s %{data_dir}/tmp %{buildroot}%{app_dir}/tmp
 mkdir -p %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-cli %{buildroot}%{_bindir}
+ln -s %{app_dir}/bin/sidekiq %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-data-import %{buildroot}%{_bindir}/rmt-data-import
 ln -s %{app_dir}/bin/rmt-test-regsharing %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-manual-instance-verify %{buildroot}%{_bindir}
@@ -285,6 +286,7 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %{_mandir}/man8/rmt-cli.8%{?ext_man}
 %{_bindir}/rmt-cli
 %{_bindir}/rmt-data-import
+%{_bindir}/sidekiq
 %{_sbindir}/rcrmt-server
 %{_sbindir}/rcrmt-server-migration
 %{_sbindir}/rcrmt-server-sync
