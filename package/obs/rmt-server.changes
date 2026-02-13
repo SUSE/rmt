@@ -1,8 +1,8 @@
 -------------------------------------------------------------------
-Mon Jan 12 14:43:22 UTC 2026 - Adnilson Delgado <adnilson.delgado@suse.com>
+Thu Feb 12 19:28:43 UTC 2026 - Adnilson Delgado <adnilson.delgado@suse.com>
 
-- Version 3.0
-  * Update Ruby to version > 3 and Rails to version 7
+- Version 3.0.alpha
+  * Update Ruby to version 3.4.8 and Rails to version 7.1.6
 
 -------------------------------------------------------------------
 Tue Nov 11 11:03:50 UTC 2025 - Natnael Getahun <natnael.getahun@suse.com>
