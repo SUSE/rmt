@@ -21,7 +21,7 @@ StandardError=journal
 TimeoutStopSec=30
 Environment="RAILS_ENV=production"
 WorkingDirectory=/usr/share/rmt
-ExecStart=/usr/share/rmt/bin/sidekiq -e production -C /usr/share/rmt/config/sidekiq.yml
+ExecStart=/usr/share/rmt/bin/sidekiq -C /usr/share/rmt/config/sidekiq.yml
 Restart=always
 RestartSec=5
 
