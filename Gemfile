@@ -3,7 +3,7 @@ git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 source 'https://rubygems.org'
 ruby '~> 3.4'
 
-gem 'rails', '~> 7.1.0'
+gem 'rails', '~> 8.1.0'
 
 gem 'bootsnap', require: false
 
