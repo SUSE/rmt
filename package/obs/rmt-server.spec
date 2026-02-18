@@ -192,8 +192,8 @@ mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
 # valkey 
-mkdir -p %{buildroot}/var/lib/valkey/6379
-install -D -m 644 package/files/valkey-6379.conf %{buildroot}%{_sysconfdir}/valkey/6379.conf
+mkdir -p %{buildroot}/var/lib/valkey/6380
+install -D -m 644 package/files/valkey-6380.conf %{buildroot}%{_sysconfdir}/valkey/6380.conf
 
 # nginx
 install -D -m 644 package/files/nginx/nginx-http.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
@@ -339,11 +339,11 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 
 # Valkey + Sidekiq files
 %dir /var/lib/valkey
-%dir /var/lib/valkey/6379
-%attr(-,valkey,root) /var/lib/valkey/6379
+%dir /var/lib/valkey/6380
+%attr(-,valkey,root) /var/lib/valkey/6380
 %dir %{_sysconfdir}/valkey
-%attr(-,root,valkey) %{_sysconfdir}/valkey/6379.conf
-%config(noreplace) %{_sysconfdir}/valkey/6379.conf
+%attr(-,root,valkey) %{_sysconfdir}/valkey/6380.conf
+%config(noreplace) %{_sysconfdir}/valkey/6380.conf
 %{_unitdir}/rmt-sidekiq.service
 %{_unitdir}/rmt-valkey.service
 %{_sbindir}/rcrmt-valkey
