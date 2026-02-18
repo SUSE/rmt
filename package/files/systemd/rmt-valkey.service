@@ -1,12 +1,12 @@
 [Unit]
-Description=Valkey Key-Value Store (Port 6379)
+Description=Valkey Key-Value Store (Port 6380)
 After=network.target
 
 [Service]
 Type=notify
 User=valkey
 Group=valkey
-ExecStart=/usr/bin/valkey-server /etc/valkey/6379.conf
+ExecStart=/usr/bin/valkey-server /etc/valkey/6380.conf
 TimeoutStartSec=infinity
 TimeoutStopSec=default
 CapabilityBoundingSet=CAP_SETGID CAP_SETUID CAP_SYS_RESOURCE
@@ -23,7 +23,7 @@ ProtectControlGroups=true
 RestrictRealtime=true
 MemoryDenyWriteExecute=true
 SystemCallFilter=@system-service
-RuntimeDirectory=valkey-6379
+RuntimeDirectory=valkey-6380
 RuntimeDirectoryMode=0755
 LimitNOFILE=65535
 NoNewPrivileges=true
