@@ -1,26 +1,20 @@
-FROM opensuse/leap:15.6
+FROM registry.opensuse.org/opensuse/leap:16.0
 
-RUN zypper --non-interactive install --no-recommends \
-        timezone wget gcc-c++ libffi-devel git-core zlib-devel \
-        libxml2-devel libxslt-devel cron libmariadb-devel mariadb-client sqlite3-devel \
-        vim ruby2.5 ruby2.5-devel ruby2.5-rubygem-bundler SUSEConnect jq bzip2 gzip && \
-    zypper --non-interactive install -t pattern devel_basis && \
-    update-alternatives --install /usr/bin/bundle bundle /usr/bin/bundle.ruby2.5 5 && \
-    update-alternatives --install /usr/bin/bundler bundler /usr/bin/bundler.ruby2.5 5
+RUN zypper --non-interactive install --no-recommends ruby3.4 ruby3.4-devel
+
+RUN zypper --non-interactive install libffi-devel libmysqlclient-devel libxml2-devel \
+                        libxslt-devel rpmbuild systemd gzip tar bzip2 nodejs sqlite-devel \
+                        make chrpath fdupes gcc libcurl-devel libyaml-devel
 
 WORKDIR /srv/www/rmt/
 
 COPY Gemfile* /srv/www/rmt/
 
-RUN bundle.ruby2.5 config build.nokogiri --use-system-libraries && \
-    bundle install
+RUN bundle install
 
 COPY . /srv/www/rmt/
 
-RUN mkdir /srv/www/rmt/public/repo 
-
-RUN sed -i 's/#!\/usr\/bin\/env ruby/#!\/usr\/bin\/ruby.ruby2.5/g' /srv/www/rmt/bin/rmt-cli && \
-    ln -s /srv/www/rmt/bin/rmt-cli /usr/bin && \
+RUN ln -s /srv/www/rmt/bin/rmt-cli /usr/bin && \
     mkdir /var/lib/rmt/ && \
     groupadd -r nginx && \
     useradd -g nginx -s /bin/false -r -c "user for RMT" _rmt && \
