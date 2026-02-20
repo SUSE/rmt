@@ -8,7 +8,7 @@ RUN zypper --non-interactive install libffi-devel libmysqlclient-devel libxml2-d
 
 WORKDIR /srv/www/rmt/
 
-COPY Gemfile* /srv/www/rmt/
+COPY Gemfile Gemfile.lock /srv/www/rmt/
 
 RUN bundle install
 
