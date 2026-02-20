@@ -1,5 +1,6 @@
 require 'json'
 require 'net/http'
+require 'benchmark'
 
 CATALOG_API_URL = 'http://127.0.0.1:5000/v2/_catalog'.freeze
 AUTH_URL = 'api/registry/authorize'.freeze

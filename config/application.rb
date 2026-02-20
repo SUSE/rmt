@@ -53,7 +53,7 @@ module RMT
   class Application < Rails::Application
 
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.1
+    config.load_defaults 8.1
 
     config.autoload_lib(ignore: %w[tasks assets])
     config.eager_load_paths << Rails.root.join('lib')

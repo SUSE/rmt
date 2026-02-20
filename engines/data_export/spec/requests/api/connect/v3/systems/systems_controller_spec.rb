@@ -88,7 +88,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
       let(:check_system) { System.all.first }
 
       it 'raises an error' do
-        expect(columns).to eq(expected_columns)
+        expect(columns.sort).to eq(expected_columns.sort)
         expect(JSON.parse(check_system.system_information)['cpus']).to eq(2)
         expect(JSON.parse(check_system.system_information)['arch']).to eq('x86_64')
         expect(JSON.parse(check_system.system_information)['mem_total']).to eq(64)
