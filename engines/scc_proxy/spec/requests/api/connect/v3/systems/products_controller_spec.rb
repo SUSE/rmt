@@ -137,7 +137,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             it 'renders service JSON' do
               system_byos.update!(system_token: nil)
               post url, params: payload_byos, headers: headers
-              expect(response.body).to eq(serialized_service_json)
+              # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
+              expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
             end
           end
 
@@ -190,7 +191,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             end
 
             it 'renders service JSON' do
-              expect(response.body).to eq(serialized_service_json)
+              # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
+              expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
             end
           end
 
@@ -225,7 +227,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             end
 
             it 'renders service JSON' do
-              expect(response.body).to eq(serialized_service_json)
+              # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
+              expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
             end
           end
         end
@@ -517,7 +520,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                 .to_return(status: 201, body: { ok: 'OK' }.to_json, headers: {})
 
               post url, params: payload, headers: headers
-              expect(response.body).to eq(serialized_service_json)
+              # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
+              expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
             end
 
             context 'instance verification error' do

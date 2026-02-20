@@ -519,7 +519,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
           context 'when regcode is provided' do
             it 'returns service JSON' do
-              expect(response.body).to eq(serialized_service_json)
+              # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
+              expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
             end
           end
         end
@@ -559,7 +560,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           it 'returns service JSON' do
-            expect(response.body).to eq(serialized_service_json)
+            # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
+            expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
           end
         end
 
@@ -612,7 +614,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           it 'allow the extension' do
-            expect(response.body).to eq(serialized_service_json)
+            # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
+            expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
             data = JSON.parse(response.body)
             expect(data['name']).to include('Live_Patch')
             expect(data['product']['product_class']).to eq('SLE-LP')
