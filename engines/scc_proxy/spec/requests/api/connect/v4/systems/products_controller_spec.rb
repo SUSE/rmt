@@ -49,7 +49,8 @@ product_type: 'module')
                 "Product '#{product.friendly_name}' successfully deactivated from SCC"
                 ).once
               )
-            expect(response.body).to eq(serialized_service_json)
+            # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
+            expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
           end
         end
 
@@ -153,7 +154,8 @@ product_type: 'module')
                 "Product '#{product.friendly_name}' successfully deactivated from SCC"
                 ).once
               )
-            expect(response.body).to eq(serialized_service_json)
+            # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
+            expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
           end
         end
 
