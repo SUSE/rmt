@@ -2,10 +2,10 @@ require 'rails_helper'
 
 RSpec.describe RMT::Mirror::FileReference do
   subject(:file_reference) do
-    described_class.new(relative_path: relative_path,
-                        base_dir: base_dir,
-                        base_url: base_url,
-                        cache_dir: cache_dir)
+    described_class.new(relative_path:,
+                        base_dir:,
+                        base_url:,
+                        cache_dir:)
   end
 
   around do |example|
@@ -30,9 +30,9 @@ RSpec.describe RMT::Mirror::FileReference do
 
     context 'when instantiated without a cache dir path' do
       subject(:file_reference) do
-        described_class.new(relative_path: relative_path,
-                            base_dir: base_dir,
-                            base_url: base_url)
+        described_class.new(relative_path:,
+                            base_dir:,
+                            base_url:)
       end
 
       it 'returns nil' do
@@ -67,9 +67,9 @@ RSpec.describe RMT::Mirror::FileReference do
 
     context 'when instantiated without a cache dir path' do
       subject(:file_reference) do
-        described_class.new(relative_path: relative_path,
-                            base_dir: base_dir,
-                            base_url: base_url)
+        described_class.new(relative_path:,
+                            base_dir:,
+                            base_url:)
       end
 
       it 'returns nil' do
@@ -113,9 +113,9 @@ RSpec.describe RMT::Mirror::FileReference do
   describe 'build_from_metadata' do
     subject(:file_reference) do
       described_class.build_from_metadata(metadata_reference,
-                                          base_dir: base_dir,
-                                          base_url: base_url,
-                                          cache_dir: cache_dir)
+                                          base_dir:,
+                                          base_url:,
+                                          cache_dir:)
     end
 
     let(:metadata_reference) do

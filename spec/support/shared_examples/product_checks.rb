@@ -1,7 +1,7 @@
 require 'set'
 
 shared_examples 'products controller action' do
-  before { send(verb, url, headers: headers, params: payload) }
+  before { send(verb, url, headers:, params: payload) }
   subject { response }
 
   context 'when no credentials are provided' do
@@ -46,7 +46,7 @@ shared_examples 'products controller action' do
 end
 
 shared_examples 'product must have mirrored repositories' do
-  before { send(verb, url, headers: headers, params: payload) }
+  before { send(verb, url, headers:, params: payload) }
   subject { response }
 
   context 'but the product has no repos' do

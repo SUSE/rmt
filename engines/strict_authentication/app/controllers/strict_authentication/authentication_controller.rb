@@ -78,7 +78,7 @@ module StrictAuthentication
         if @system.byos?
           instance_data = Base64.decode64(headers['X-Instance-Data'].to_s)
           cache_params = {}
-          cache_params = { token: Base64.decode64(@system.pubcloud_reg_code.split(',')[0]), instance_data: instance_data } if @system.pubcloud_reg_code.presence
+          cache_params = { token: Base64.decode64(@system.pubcloud_reg_code.split(',')[0]), instance_data: } if @system.pubcloud_reg_code.presence
           result = SccProxy.scc_check_subscription_expiration(
             request.headers, @system, request.remote_ip, false, cache_params, base_product
           )

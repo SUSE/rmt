@@ -160,7 +160,7 @@ WARNING
     end
 
     systems.each do |login, info|
-      system = System.find_by(login: login)
+      system = System.find_by(login:)
 
       unless system
         warn _('System %{system} not found') % { system: login }

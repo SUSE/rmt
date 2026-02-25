@@ -12,8 +12,8 @@ RSpec.describe RMT::Mirror::SumaProductTree do
         [
           have_attributes(
             relative_path: 'product_tree.json',
-            base_url: base_url,
-            base_dir: base_dir
+            base_url:,
+            base_dir:
           )
         ]
       )

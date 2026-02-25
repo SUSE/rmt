@@ -80,7 +80,7 @@ module SccSumaApi
       }
       @product_tree_file = RMT::Mirror::FileReference.new(relative_path: 'product_tree.json', **downloading_paths)
 
-      downloader = RMT::Downloader.new(logger: logger, track_files: false)
+      downloader = RMT::Downloader.new(logger:, track_files: false)
       logger.info _('Downloading SUSE Manager product tree to %{dir}') % { dir: tmp_dir }
       downloader.download_multi([@product_tree_file])
     end

@@ -15,7 +15,7 @@ describe RegistrationSharing::Client do
   end
 
   before do
-    allow(Settings).to receive(:[]).with(:regsharing).and_return({ api_secret: api_secret })
+    allow(Settings).to receive(:[]).with(:regsharing).and_return({ api_secret: })
   end
 
   describe '#peer_register_system' do
@@ -24,7 +24,7 @@ describe RegistrationSharing::Client do
       FactoryBot.create(:system,
                         :with_activated_product,
                         :with_system_information,
-                        instance_data: instance_data)
+                        instance_data:)
     end
     let(:instance_data) { '<document>test</document>' }
     let(:expected_payload) do

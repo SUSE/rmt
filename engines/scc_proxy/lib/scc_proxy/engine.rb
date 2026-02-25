@@ -18,7 +18,7 @@ NET_HTTP_ERRORS = [
   Net::HTTPHeaderSyntaxError,
   Net::ProtocolError,
   Net::OpenTimeout,
-  Net::HTTPServerException,
+  Net::HTTPClientException,
   Net::HTTPFatalError,
   OpenSSL::SSL::SSLError,
   Errno::EHOSTUNREACH,
@@ -189,7 +189,7 @@ module SccProxy
                 elsif expired_products_classes.include?(product_class)
                   'Subscription expired.'
                 end
-      { is_active: false, message: message }
+      { is_active: false, message: }
     end
 
     # rubocop:disable Metrics/CyclomaticComplexity
@@ -250,7 +250,7 @@ module SccProxy
         if found_cache_entry.include?('-inactive')
           return { is_active: false, message: 'Subscription expired.' }
         elsif found_cache_entry.include?('-active')
-          InstanceVerification.update_cache(cache_key, system.proxy_byos_mode, registry: registry)
+          InstanceVerification.update_cache(cache_key, system.proxy_byos_mode, registry:)
           return { is_active: true }
         end
       end
@@ -287,8 +287,8 @@ module SccProxy
           instance_identifier = InstanceVerification.provider.new(nil, nil, nil, params['instance_data']).instance_identifier
           system_values = {
             hostname: params[:hostname],
-            system_information: system_information,
-            instance_data: instance_data,
+            system_information:,
+            instance_data:,
             system_token: instance_identifier,
             # using instance identifier instead of 'SCC_FOO' as login
             # it is a unique value per instance across all CSPs
@@ -333,7 +333,7 @@ module SccProxy
 
         def has_no_regcode?(auth_header)
           auth_header ||= '='
-          auth_header = auth_header[(auth_header.index('=') + 1)..-1]
+          auth_header = auth_header[(auth_header.index('=') + 1)..]
           auth_header.empty?
         end
       end

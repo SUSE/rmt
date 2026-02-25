@@ -98,14 +98,14 @@ module StrictAuthentication
               )
             end
 
-            let(:system) { FactoryBot.create(:system, :payg, :with_activated_product, product: product) }
+            let(:system) { FactoryBot.create(:system, :payg, :with_activated_product, product:) }
             let(:requested_uri) { '/repo/$path/*with/.funky/(characters)/repodata/repomd.xml' }
 
             its(:code) { is_expected.to eq '200' }
           end
 
           context 'when accessing SLES12SP1 repos and SLES 11 is activated' do
-            let(:system) { FactoryBot.create(:system, :with_activated_product, product: product) }
+            let(:system) { FactoryBot.create(:system, :with_activated_product, product:) }
             let(:product) do
               FactoryBot.create(
                 :product, :with_mirrored_repositories,
@@ -144,7 +144,7 @@ module StrictAuthentication
           end
 
           context 'when accessing SLES12SP1 repos and SLES 11 is not activated' do
-            let(:system) { FactoryBot.create(:system, :with_activated_product, product: product) }
+            let(:system) { FactoryBot.create(:system, :with_activated_product, product:) }
             let(:product) do
               FactoryBot.create(
                 :product, :with_mirrored_repositories,

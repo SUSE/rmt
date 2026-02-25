@@ -20,7 +20,7 @@ module RMT::FileValidator
 
   def find_valid_files_by_checksum(checksum, checksum_type)
     files = DownloadedFile
-      .where(checksum: checksum, checksum_type: checksum_type).to_a
+      .where(checksum:, checksum_type:).to_a
 
     files.delete_if do |file|
       next false if valid_on_disk?(file)

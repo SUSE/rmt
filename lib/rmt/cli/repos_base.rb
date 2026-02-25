@@ -11,7 +11,7 @@ class RMT::CLI::ReposBase < RMT::CLI::Base
 
     failed_repos = []
     ids.each do |id|
-      change_repo(id, set_enabled, custom: custom)
+      change_repo(id, set_enabled, custom:)
     rescue RepoNotFoundException => e
       warn e.message
       failed_repos << id
@@ -32,7 +32,7 @@ class RMT::CLI::ReposBase < RMT::CLI::Base
   end
 
   def change_repo(id, set_enabled, custom: false)
-    repository = find_repository!(id, custom: custom)
+    repository = find_repository!(id, custom:)
     repository.change_mirroring!(set_enabled)
 
     puts set_enabled ? _('Repository by ID %{id} successfully enabled.') % { id: id } : _('Repository by ID %{id} successfully disabled.') % { id: id }
@@ -47,7 +47,7 @@ class RMT::CLI::ReposBase < RMT::CLI::Base
   def find_repository!(id, custom: false)
     # allow fallback for old IDs when dealing with custom repos
     if is_numeric_id?(id) && custom
-      repository = Repository.find_by(id: id)
+      repository = Repository.find_by(id:)
     end
 
     repository ||= Repository.find_by(friendly_id: id)

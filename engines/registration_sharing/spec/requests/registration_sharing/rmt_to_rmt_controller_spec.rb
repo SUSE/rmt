@@ -18,32 +18,32 @@ module RegistrationSharing
 
     before do
       expect(RegistrationSharing).not_to receive(:save_for_sharing)
-      allow(Settings).to receive(:[]).with(:regsharing).and_return({ api_secret: api_secret })
+      allow(Settings).to receive(:[]).with(:regsharing).and_return({ api_secret: })
     end
 
     describe '#create byos' do
       before do
         allow(System).to receive(:find_or_create_by).with(
-          login: login_byos, password: password, system_token: nil
+          login: login_byos, password:, system_token: nil
         ).and_call_original
 
         post(
           '/api/regsharing',
           params: {
             login: login_byos,
-            password: password,
-            created_at: created_at,
-            registered_at: registered_at,
-            last_seen_at: last_seen_at,
+            password:,
+            created_at:,
+            registered_at:,
+            last_seen_at:,
             proxy_byos: true,
-            pubcloud_reg_code: pubcloud_reg_code,
+            pubcloud_reg_code:,
             activations: [
               {
                 product_id: product.id,
-                created_at: created_at
+                created_at:
               }
             ],
-            instance_data: instance_data
+            instance_data:
           },
           headers: { 'Authorization' => "Bearer #{request_token}" }
         )
@@ -95,19 +95,19 @@ module RegistrationSharing
           '/api/regsharing',
           params: {
             login: login_payg,
-            password: password,
-            created_at: created_at,
-            registered_at: registered_at,
-            last_seen_at: last_seen_at,
+            password:,
+            created_at:,
+            registered_at:,
+            last_seen_at:,
             proxy_byos: false,
-            pubcloud_reg_code: pubcloud_reg_code,
+            pubcloud_reg_code:,
             activations: [
               {
                 product_id: product.id,
-                created_at: created_at
+                created_at:
               }
             ],
-            instance_data: instance_data
+            instance_data:
           },
           headers: { 'Authorization' => "Bearer #{request_token}" }
         )
@@ -136,19 +136,19 @@ module RegistrationSharing
           '/api/regsharing',
           params: {
             login: login_payg,
-            password: password,
-            created_at: created_at,
-            registered_at: registered_at,
-            last_seen_at: last_seen_at,
+            password:,
+            created_at:,
+            registered_at:,
+            last_seen_at:,
             proxy_byos_mode: :hybrid,
-            pubcloud_reg_code: pubcloud_reg_code,
+            pubcloud_reg_code:,
             activations: [
               {
                 product_id: product.id,
-                created_at: created_at
+                created_at:
               }
             ],
-            instance_data: instance_data
+            instance_data:
           },
           headers: { 'Authorization' => "Bearer #{request_token}" }
         )

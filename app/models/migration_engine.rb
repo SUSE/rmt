@@ -51,7 +51,7 @@ class MigrationEngine
       )
     end
 
-    migrations = migration_targets(migration_kind: migration_kind)
+    migrations = migration_targets(migration_kind:)
     migrations = add_python2_module(migrations)
     migrations = yield(migrations) if block_given?
     # NB: It's possible to migrate to any product that's available on RMT, entitlement checks not needed.

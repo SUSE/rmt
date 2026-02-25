@@ -6,7 +6,7 @@ class V3::ProductSerializer < ApplicationSerializer
 
   def repositories
     object.repositories.map do |repository|
-      V3::RepositorySerializer.new(repository, base_url: base_url)
+      V3::RepositorySerializer.new(repository, base_url:)
     end
   end
 
@@ -16,7 +16,7 @@ class V3::ProductSerializer < ApplicationSerializer
 
   def extensions
     object.extensions.for_root_product(root_product).map do |extension|
-      ::V3::ProductSerializer.new(extension, base_url: base_url, root_product: root_product).attributes
+      ::V3::ProductSerializer.new(extension, base_url:, root_product:).attributes
     end
   end
 

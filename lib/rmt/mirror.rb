@@ -13,11 +13,11 @@ class RMT::Mirror
   end
 
   def mirror_now
-    configuration = { repository: repository,
-                      logger: logger,
-                      mirroring_base_dir: mirroring_base_dir,
-                      mirror_sources: mirror_sources,
-                      is_airgapped: is_airgapped }
+    configuration = { repository:,
+                      logger:,
+                      mirroring_base_dir:,
+                      mirror_sources:,
+                      is_airgapped: }
 
     instance = repository_mirror_class.new(**configuration)
     instance.mirror

@@ -119,7 +119,7 @@ describe MigrationEngine do
       let(:sleha12) do
         create(
           :product, :with_mirrored_repositories, :activated,
-          system: system, base_products: [sle12], name: 'sleha12', product_type: 'extension'
+          system:, base_products: [sle12], name: 'sleha12', product_type: 'extension'
         )
       end
       let!(:sleha12sp1) do
@@ -218,7 +218,7 @@ describe MigrationEngine do
 
       context 'when only the extension can get upgraded' do
         let!(:cloud7) do
-          create(:product, :with_mirrored_repositories, :activated, system: system, name: 'Cloud 7', version: '7',
+          create(:product, :with_mirrored_repositories, :activated, system:, name: 'Cloud 7', version: '7',
             base_products: [sle12], product_type: 'extension')
         end
         let!(:cloud8) do
@@ -245,7 +245,7 @@ describe MigrationEngine do
         let!(:docker_module) do
           create(
             :product, :with_mirrored_repositories, :activated,
-            system: system, name: 'docker', base_products: [sle12, sle12sp1, sle12sp2], product_type: 'extension'
+            system:, name: 'docker', base_products: [sle12, sle12sp1, sle12sp2], product_type: 'extension'
           )
         end
         let!(:machinery_module) do
@@ -265,7 +265,7 @@ describe MigrationEngine do
         let!(:docker_module) do
           create(
             :product, :with_mirrored_repositories, :activated,
-            system: system, name: 'docker', base_products: [sle12, sle12sp1, sle12sp2], product_type: 'extension'
+            system:, name: 'docker', base_products: [sle12, sle12sp1, sle12sp2], product_type: 'extension'
           )
         end
         let(:installed_products) { [sle12, docker_module, sdk12] }
@@ -434,7 +434,7 @@ describe MigrationEngine do
                     extension: mod,
                     root_product: target_base_product
                   )
-                  system.activations << create(:activation, system: system, service: mod.service)
+                  system.activations << create(:activation, system:, service: mod.service)
                 end
               end
               let(:installed_products) { [product_c, installed_module] }
@@ -477,7 +477,7 @@ describe MigrationEngine do
 
             let!(:additional_module) do
               create(:product, :module, :with_mirrored_repositories, base_products: [product_b]).tap do |mod|
-                system.activations << create(:activation, system: system, service: mod.service)
+                system.activations << create(:activation, system:, service: mod.service)
               end
             end
 

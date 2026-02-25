@@ -9,7 +9,7 @@ class RMT::CLI::Repos < RMT::CLI::ReposBase
 
   def list
     scope = options[:all] ? :all : :enabled
-    list_repositories(scope: scope)
+    list_repositories(scope:)
   end
   map 'ls' => :list
 

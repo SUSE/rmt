@@ -22,7 +22,7 @@ class AccessScope
     type, name, actions = scope.split(':')
     _, type, klass = /(\w+)\(?(\w+)?\)?/.match(type).to_a
     actions = actions.split(',')
-    new(type: type, klass: klass, name: name, actions: actions)
+    new(type:, klass:, name:, actions:)
   end
 
   def initialize(type:, name:, actions:, klass: nil)

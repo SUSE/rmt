@@ -120,8 +120,8 @@ RSpec.describe AccessScope, type: :model do
     let(:system) do
       system = FactoryBot.create(:system)
       system.activations << [
-        FactoryBot.create(:activation, system: system, service: product1.service),
-        FactoryBot.create(:activation, system: system, service: product2.service)
+        FactoryBot.create(:activation, system:, service: product1.service),
+        FactoryBot.create(:activation, system:, service: product2.service)
       ]
       system
     end
@@ -137,7 +137,7 @@ RSpec.describe AccessScope, type: :model do
       subject(:access_scope) { described_class.new(type: 'a', name: 'b', actions: 'c') }
 
       it 'returns default auth actions' do
-        possible_access = access_scope.granted('127.0.0.1', client: client)
+        possible_access = access_scope.granted('127.0.0.1', client:)
 
         expect(possible_access).to eq({ 'type' => 'a', 'actions' => ['pull'], 'class' => nil, 'name' => 'b' })
       end
@@ -162,7 +162,7 @@ RSpec.describe AccessScope, type: :model do
           File.write('engines/registry/spec/data/access_policy_yaml.yml', YAML.dump(data))
           allow_any_instance_of(RegistryCatalogService).to receive(:repos).and_return(['suse/sles/super_repo'])
           allow(File).to receive(:read).and_return(File.read('engines/registry/spec/data/access_policy_yaml.yml'))
-          possible_access = access_scope.granted('127.0.0.1', client: client)
+          possible_access = access_scope.granted('127.0.0.1', client:)
 
           expect(possible_access).to eq(
             {
@@ -197,8 +197,8 @@ RSpec.describe AccessScope, type: :model do
           system.pubcloud_reg_code = 'pubcloud_reg_code'
           system.instance_data = 'dummy_instance_data'
           system.activations << [
-            FactoryBot.create(:activation, system: system, service: product1.service),
-            FactoryBot.create(:activation, system: system, service: product2.service)
+            FactoryBot.create(:activation, system:, service: product1.service),
+            FactoryBot.create(:activation, system:, service: product2.service)
           ]
           system.save!
           system
@@ -255,7 +255,7 @@ RSpec.describe AccessScope, type: :model do
             File.write('engines/registry/spec/data/access_policy_yaml.yml', YAML.dump(data))
             allow_any_instance_of(RegistryCatalogService).to receive(:repos).and_return(['suse/ltss/ltss_repo'])
             allow(File).to receive(:read).and_return(File.read('engines/registry/spec/data/access_policy_yaml.yml'))
-            possible_access = access_scope.granted('127.0.0.1', client: client)
+            possible_access = access_scope.granted('127.0.0.1', client:)
 
             expect(possible_access).to eq(
               {
@@ -282,7 +282,7 @@ RSpec.describe AccessScope, type: :model do
         it 'returns empty auth actions' do
           allow_any_instance_of(RegistryCatalogService).to receive(:repos).and_return(['suse/sles/super_repo'])
           allow(File).to receive(:read).and_return(access_policy_content)
-          possible_access = access_scope.granted('127.0.0.1', client: client)
+          possible_access = access_scope.granted('127.0.0.1', client:)
 
           expect(possible_access).to eq(
             {
@@ -307,7 +307,7 @@ RSpec.describe AccessScope, type: :model do
         it 'returns empty auth actions' do
           allow_any_instance_of(RegistryCatalogService).to receive(:repos).and_return(['suse/sles/super_repo'])
           allow(File).to receive(:read).and_return(access_policy_content)
-          possible_access = access_scope.granted('127.0.0.1', client: client)
+          possible_access = access_scope.granted('127.0.0.1', client:)
 
           expect(possible_access).to eq(
             {

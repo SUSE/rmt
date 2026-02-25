@@ -139,7 +139,7 @@ RSpec.describe RMT::CLI::Mirror do
 
         before do
           allow(RMT::Mirror).to receive(:new).with(
-            repository: repository,
+            repository:,
             logger: anything,
             mirroring_base_dir: anything,
             mirror_sources: anything,

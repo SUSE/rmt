@@ -42,7 +42,7 @@ class RepositoryService
     auth_token = uri.query
 
     Repository.find_by!(scc_id: repo_data[:id]).update!(
-      auth_token: auth_token,
+      auth_token:,
       enabled: repo_data[:enabled],
       autorefresh: repo_data[:autorefresh],
       external_url: "#{uri.scheme}://#{uri.host}#{uri.path}",

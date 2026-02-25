@@ -8,10 +8,10 @@ describe RMT::GPG do
 
   let(:verifier) do
     described_class.new(
-      metadata_file: metadata_file,
-      key_file: key_file,
-      signature_file: signature_file,
-      logger: logger
+      metadata_file:,
+      key_file:,
+      signature_file:,
+      logger:
     )
   end
 

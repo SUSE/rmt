@@ -1,6 +1,6 @@
 def add_downloaded_file(checksum_type, checksum, path)
-  DownloadedFile.track_file(checksum: checksum,
-                            checksum_type: checksum_type,
+  DownloadedFile.track_file(checksum:,
+                            checksum_type:,
                             local_path: path,
                             size: File.size(path))
 end

@@ -56,7 +56,7 @@ module ZypperAuth
             serializer: ::V3::ServiceSerializer,
             base_url: request.base_url,
             obsoleted_service_name: @obsoleted_service_name,
-            status: status
+            status:
           )
         end
       end

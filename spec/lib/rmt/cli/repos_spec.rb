@@ -341,7 +341,7 @@ Repository by ID #{repository.friendly_id} successfully disabled.
           let(:expected_output) do
             Terminal::Table.new(
               headings: ['ID', 'Product', 'Mandatory?', 'Mirror?', 'Last mirrored'],
-              rows: rows
+              rows:
             ).to_s + "\n" + 'Only enabled repositories are shown by default. Use the \'--all\' option to see all repositories.' + "\n"
           end
 
@@ -395,7 +395,7 @@ Repository by ID #{repository.friendly_id} successfully disabled.
             ]
             Terminal::Table.new(
               headings: ['ID', 'Product', 'Mandatory?', 'Mirror?', 'Last mirrored'],
-              rows: rows
+              rows:
             ).to_s + "\n"
           end
 

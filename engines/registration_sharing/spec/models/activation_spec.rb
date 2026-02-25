@@ -3,7 +3,7 @@ require 'rails_helper'
 describe Activation, type: :model do
   context 'when the model is created' do
     let(:system) { FactoryBot.build(:system) }
-    let(:activation) { FactoryBot.build(:activation, system: system) }
+    let(:activation) { FactoryBot.build(:activation, system:) }
 
     it 'triggers after_commit callback' do
       expect(system).to receive(:share_registration)
@@ -21,7 +21,7 @@ describe Activation, type: :model do
 
   context 'when the model is updated' do
     let(:system) { FactoryBot.create(:system) }
-    let(:activation) { FactoryBot.create(:activation, system: system) }
+    let(:activation) { FactoryBot.create(:activation, system:) }
 
     it 'activation does not trigger after_commit callback' do
       expect(activation).not_to receive(:share_registration)
@@ -38,7 +38,7 @@ describe Activation, type: :model do
 
   context 'when the model is destroyed' do
     let(:system) { FactoryBot.create(:system) }
-    let(:activation) { FactoryBot.create(:activation, system: system) }
+    let(:activation) { FactoryBot.create(:activation, system:) }
 
     it 'activation triggers after_commit callback' do
       expect(activation).to receive(:share_registration)

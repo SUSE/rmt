@@ -35,7 +35,7 @@ FactoryBot.define do
 
     trait :with_activated_base_product do
       after :create do |system, _|
-        create(:activation, system: system, service: create(:service)) if system.services.blank?
+        create(:activation, system:, service: create(:service)) if system.services.blank?
       end
     end
 
@@ -56,7 +56,7 @@ FactoryBot.define do
       end
 
       after :create do |system, evaluator|
-        create(:activation, system: system, service: evaluator.product.service, subscription: evaluator.subscription)
+        create(:activation, system:, service: evaluator.product.service, subscription: evaluator.subscription)
       end
     end
 
@@ -69,9 +69,9 @@ FactoryBot.define do
       end
 
       after :create do |system, evaluator|
-        create(:activation, system: system, service: evaluator.product_base.service, subscription: evaluator.subscription)
-        create(:activation, system: system, service: evaluator.paid_product.service, subscription: evaluator.subscription)
-        create(:activation, system: system, service: evaluator.free_product.service, subscription: evaluator.subscription)
+        create(:activation, system:, service: evaluator.product_base.service, subscription: evaluator.subscription)
+        create(:activation, system:, service: evaluator.paid_product.service, subscription: evaluator.subscription)
+        create(:activation, system:, service: evaluator.free_product.service, subscription: evaluator.subscription)
       end
     end
 
@@ -82,7 +82,7 @@ FactoryBot.define do
       end
 
       after :create do |system, evaluator|
-        create(:activation, system: system, service: evaluator.product.service, subscription: evaluator.subscription)
+        create(:activation, system:, service: evaluator.product.service, subscription: evaluator.subscription)
       end
     end
 
@@ -106,7 +106,7 @@ FactoryBot.define do
 
     trait :with_system_uptimes do
       after :create do |system, _|
-        create(:system_uptime, system: system)
+        create(:system_uptime, system:)
       end
     end
   end

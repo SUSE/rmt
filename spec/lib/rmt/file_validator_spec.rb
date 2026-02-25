@@ -251,7 +251,7 @@ RSpec.describe RMT::FileValidator do
 
       {
         description: 'the file is valid on both database and disk',
-        file: file,
+        file:,
         source_path: fixture_paths
       }
     end
@@ -268,7 +268,7 @@ RSpec.describe RMT::FileValidator do
 
       {
         description: 'the file is valid on database with invalid size on disk',
-        file: file,
+        file:,
         source_path: fixture_paths
       }
     end
@@ -285,7 +285,7 @@ RSpec.describe RMT::FileValidator do
 
       {
         description: 'the file is valid on database with invalid checksum on disk',
-        file: file,
+        file:,
         source_path: fixture_paths
       }
     end
@@ -301,7 +301,7 @@ RSpec.describe RMT::FileValidator do
 
       {
         description: 'the file is valid on database but missing on disk',
-        file: file,
+        file:,
         source_path: nil
       }
     end
@@ -332,14 +332,14 @@ RSpec.describe RMT::FileValidator do
 
     shared_examples 'invalid files on disk' do
       it 'removes invalid files from the disk' do
-        previous_state = invalid_files.map { |f| [f[:file].local_path, true] }.to_h
-        expected_state = invalid_files.map { |f| [f[:file].local_path, false] }.to_h
+        previous_state = invalid_files.to_h { |f| [f[:file].local_path, true] }
+        expected_state = invalid_files.to_h { |f| [f[:file].local_path, false] }
 
         expect { find_valid_files_by_checksum }
           .to change {
-            invalid_files.map do |f|
+            invalid_files.to_h do |f|
               [f[:file].local_path, File.exist?(f[:file].local_path)]
-            end.to_h
+            end
           }.from(previous_state).to(expected_state)
       end
     end

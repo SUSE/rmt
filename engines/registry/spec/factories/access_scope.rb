@@ -5,6 +5,6 @@ FactoryBot.define do
     image { 'sles:15.4' }
     actions { ['pull'] }
 
-    initialize_with { new(type: type, name: "#{namespace}/#{image}", actions: actions) }
+    initialize_with { new(type:, name: "#{namespace}/#{image}", actions:) }
   end
 end

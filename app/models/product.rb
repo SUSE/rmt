@@ -57,7 +57,7 @@ class Product < ApplicationRecord
 
   scope :with_release_stage, lambda { |release_stage|
     if release_stage
-      where(release_stage: release_stage)
+      where(release_stage:)
     else
       all
     end
@@ -81,7 +81,7 @@ class Product < ApplicationRecord
   }
 
   scope :with_arch_filter, lambda { |arch|
-    where(arch: arch) if arch.present?
+    where(arch:) if arch.present?
   }
 
   def has_extension?
@@ -125,13 +125,13 @@ class Product < ApplicationRecord
   def change_repositories_mirroring!(conditions, mirroring_enabled)
     repos = repositories.where(conditions).or(repositories.where(installer_updates: true, mirroring_enabled: !mirroring_enabled))
     repo_names = repos.pluck(:name)
-    repos.update_all(mirroring_enabled: mirroring_enabled)
+    repos.update_all(mirroring_enabled:)
 
     repo_names.sort
   end
 
   def recommended_for?(root_product)
-    product_extensions_associations.where(recommended: true).where(root_product: root_product).present?
+    product_extensions_associations.where(recommended: true).where(root_product:).present?
   end
 
   def available_for?(product)
@@ -157,12 +157,12 @@ class Product < ApplicationRecord
     service = Service.find_by(product_id: id)
     return service if service
 
-    service ||= if Service.find_by(id: id)
+    service ||= if Service.find_by(id:)
                   # for backward-compatibility: create a service with autoincrement ID, if product.id is already occupied
                   Service.create!(product_id: id)
                 else
                   # create a service with service.id = product.id for keeping consistent service URLs across RMT instances
-                  Service.create!(id: id, product_id: id)
+                  Service.create!(id:, product_id: id)
                 end
 
     service
@@ -177,7 +177,7 @@ class Product < ApplicationRecord
       products << product unless product.nil?
     else
       identifier, version, arch = target.split('/')
-      conditions = { identifier: identifier, version: version }
+      conditions = { identifier:, version: }
       conditions[:arch] = arch if arch
       products = where(conditions).to_a
     end

@@ -9,7 +9,7 @@ RSpec.describe RMT::Downloader do
   let(:track_files) { false }
   let(:downloader) do
     described_class.new(logger: RMT::Logger.new('/dev/null'),
-                        track_files: track_files)
+                        track_files:)
   end
 
   let(:expected_checksum) { nil }
@@ -19,7 +19,7 @@ RSpec.describe RMT::Downloader do
       relative_path: 'repomd.xml',
       base_url: repository_url,
       base_dir: repository_dir,
-      cache_dir: cache_dir
+      cache_dir:
     ).tap do |file|
       file.checksum = expected_checksum
       file.checksum_type = expected_checksum_type
@@ -38,7 +38,7 @@ RSpec.describe RMT::Downloader do
       before do
         allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP request/)
         stub_request(:get, 'http://example.com/repomd.xml')
-          .with(headers: headers)
+          .with(headers:)
           .to_return(status: 404, body: '', headers: {})
       end
 
@@ -88,7 +88,7 @@ RSpec.describe RMT::Downloader do
 
       before do
         stub_request(:get, 'http://example.com/repomd.xml')
-          .with(headers: headers)
+          .with(headers:)
           .to_return(status: 200, body: content, headers: {})
       end
 
@@ -147,11 +147,11 @@ RSpec.describe RMT::Downloader do
 
         before do
           stub_request(:get, 'http://example.com/package.rpm')
-            .with(headers: headers)
+            .with(headers:)
             .to_return(status: 200, body: rpm_package_content, headers: {})
 
           stub_request(:get, 'http://example.com/package.drpm')
-            .with(headers: headers)
+            .with(headers:)
             .to_return(status: 200, body: drpm_package_content, headers: {})
         end
 
@@ -187,7 +187,7 @@ RSpec.describe RMT::Downloader do
 
       before do
         stub_request(:get, 'http://example.com/repomd.xml?repo_auth_token')
-          .with(headers: headers)
+          .with(headers:)
           .to_return(status: 200, body: content, headers: {})
         downloader.download_multi([repomd_xml_file])
       end
@@ -223,7 +223,7 @@ RSpec.describe RMT::Downloader do
           File.write(repomd_xml_file.cache_path, cached_content)
           File.utime(time, time, repomd_xml_file.cache_path)
           stub_request(:head, 'http://example.com/repomd.xml')
-            .with(headers: headers)
+            .with(headers:)
             .to_return(status: 200, headers: { 'Last-Modified': last_modified_header })
         end
 
@@ -237,10 +237,10 @@ RSpec.describe RMT::Downloader do
           File.write(repomd_xml_file.cache_path, cached_content)
           File.utime(time, time, repomd_xml_file.cache_path)
           stub_request(:head, 'http://example.com/repomd.xml')
-            .with(headers: headers)
+            .with(headers:)
             .to_return(status: 200, headers: { 'Last-Modified': last_modified_header })
           stub_request(:get, 'http://example.com/repomd.xml')
-            .with(headers: headers)
+            .with(headers:)
             .to_return(status: 200, body: fresh_content, headers: {})
         end
 
@@ -254,10 +254,10 @@ RSpec.describe RMT::Downloader do
           File.write(repomd_xml_file.cache_path, cached_content)
           File.utime(time, time, repomd_xml_file.cache_path)
           stub_request(:head, 'http://example.com/repomd.xml')
-            .with(headers: headers)
+            .with(headers:)
             .to_return(status: 200, headers: { 'Last-Modified': last_modified_header })
           stub_request(:get, 'http://example.com/repomd.xml')
-            .with(headers: headers)
+            .with(headers:)
             .to_return(status: 200, body: fresh_content, headers: {})
         end
 
@@ -272,7 +272,7 @@ RSpec.describe RMT::Downloader do
           File.utime(time, time, repomd_xml_file.cache_path)
           allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP HEAD/)
           stub_request(:head, 'http://example.com/repomd.xml')
-            .with(headers: headers)
+            .with(headers:)
             .to_return(status: 404)
         end
 
@@ -306,7 +306,7 @@ RSpec.describe RMT::Downloader do
 
         before do
           stub_request(:get, 'http://example.com/another_file.xml')
-            .with(headers: headers)
+            .with(headers:)
             .to_return(status: 200, body: fresh_content, headers: {})
         end
 
@@ -364,7 +364,7 @@ RSpec.describe RMT::Downloader do
           relative_path: file,
           base_url: repository_url,
           base_dir: repository_dir,
-          cache_dir: cache_dir
+          cache_dir:
         ).tap do |file_ref|
           file_ref.checksum = Digest.const_get(checksum_type).hexdigest(file)
           file_ref.checksum_type = checksum_type
@@ -377,7 +377,7 @@ RSpec.describe RMT::Downloader do
       before do
         allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP request/)
         files.each do |file|
-          stub_request(:get, "http://example.com/#{file}").with(headers: headers)
+          stub_request(:get, "http://example.com/#{file}").with(headers:)
             .to_return(status: 404, body: file, headers: {})
         end
       end
@@ -390,7 +390,7 @@ RSpec.describe RMT::Downloader do
 
         files.each do |file|
           expect(WebMock).to(
-            have_requested(:get, "http://example.com/#{file}").with(headers: headers)
+            have_requested(:get, "http://example.com/#{file}").with(headers:)
           )
         end
       end
@@ -410,7 +410,7 @@ RSpec.describe RMT::Downloader do
     context 'when download exceptions occur when ignore_errors is false' do
       before do
         files.each do |file|
-          stub_request(:get, "http://example.com/#{file}").with(headers: headers)
+          stub_request(:get, "http://example.com/#{file}").with(headers:)
             .to_return(
               status: 404,
               body: lambda do |_|
@@ -453,7 +453,7 @@ RSpec.describe RMT::Downloader do
           allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP HEAD/)
           queue.each do |file|
             FileUtils.touch(file.cache_path)
-            stub_request(:head, file.remote_path.to_s).with(headers: headers)
+            stub_request(:head, file.remote_path.to_s).with(headers:)
               .to_return(status: 404, body: 'Not Found', headers: {})
           end
         end
@@ -475,7 +475,7 @@ RSpec.describe RMT::Downloader do
           allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP HEAD/)
           queue.each do |file|
             FileUtils.touch(file.cache_path)
-            stub_request(:head, file.remote_path.to_s).with(headers: headers)
+            stub_request(:head, file.remote_path.to_s).with(headers:)
               .to_return(status: 404, body: 'Not Found', headers: {})
           end
         end

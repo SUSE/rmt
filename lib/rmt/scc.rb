@@ -171,7 +171,7 @@ class RMT::SCC
   end
 
   def get_product(id)
-    Product.find_or_create_by(id: id)
+    Product.find_or_create_by(id:)
   end
 
   def create_product(item, root_product_id = nil, base_product = nil, recommended = false, migration_extra = false)
@@ -188,13 +188,13 @@ class RMT::SCC
         ProductsExtensionsAssociation.create(
           product_id: base_product,
           extension_id: product.id,
-          root_product_id: root_product_id,
-          recommended: recommended,
-          migration_extra: migration_extra
+          root_product_id:,
+          recommended:,
+          migration_extra:
         )
       else
         root_product_id = product.id
-        ProductsExtensionsAssociation.where(root_product_id: root_product_id).destroy_all
+        ProductsExtensionsAssociation.where(root_product_id:).destroy_all
       end
 
       item[:extensions].each do |ext_item|
@@ -233,7 +233,7 @@ class RMT::SCC
 
   def create_migration_path(product, predecessors, kind)
     predecessors.each do |predecessor_id|
-      ProductPredecessorAssociation.create(product_id: product.id, predecessor_id: predecessor_id, kind: kind) unless Product.find_by(id: predecessor_id).nil?
+      ProductPredecessorAssociation.create(product_id: product.id, predecessor_id:, kind:) unless Product.find_by(id: predecessor_id).nil?
     end
   end
 

@@ -58,8 +58,8 @@ RSpec.describe ServicesController do
     let(:system) do
       system = FactoryBot.create(:system)
       system.activations << [
-        FactoryBot.create(:activation, system: system, service: product1.service),
-        FactoryBot.create(:activation, system: system, service: product2.service)
+        FactoryBot.create(:activation, system:, service: product1.service),
+        FactoryBot.create(:activation, system:, service: product2.service)
       ]
       system
     end

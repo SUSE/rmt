@@ -140,8 +140,8 @@ class RMT::CLI::Clean < RMT::CLI::Base
 
       db_entries = DownloadedFile.where(local_path: file)
 
-      CleanedFile.new(path: file, file_size: file_size, db_entries: db_entries,
-                      db_entries_count: db_entries.count, hardlink: hardlink)
+      CleanedFile.new(path: file, file_size:, db_entries:,
+                      db_entries_count: db_entries.count, hardlink:)
     end.compact
   end
 

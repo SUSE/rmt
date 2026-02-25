@@ -3,9 +3,9 @@ class RMT::Mirror::FileReference
     def build_from_metadata(metadata, base_dir:, base_url:, cache_dir: nil)
       new(
         relative_path: metadata.location,
-        base_dir: base_dir,
-        base_url: base_url,
-        cache_dir: cache_dir
+        base_dir:,
+        base_url:,
+        cache_dir:
       ).tap do |file|
         file.arch = metadata.arch
         file.checksum = metadata.checksum

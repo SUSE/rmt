@@ -39,9 +39,9 @@ RSpec.describe RMT::Deduplicator do
       instance_double(
         '::RMT::FileReference',
         local_path: dest_path,
-        checksum: checksum,
-        checksum_type: checksum_type,
-        size: size
+        checksum:,
+        checksum_type:,
+        size:
       )
     end
     let(:file_basename) { File.basename(file.local_path) }

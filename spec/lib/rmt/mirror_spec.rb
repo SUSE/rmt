@@ -6,8 +6,8 @@ RSpec.describe RMT::Mirror do
   let(:repository) { create :repository, external_url: url }
 
   let(:mirror) do
-    described_class.new(repository: repository,
-                        mirroring_base_dir: mirroring_base_dir,
+    described_class.new(repository:,
+                        mirroring_base_dir:,
                         logger: nil,
                         mirror_sources: false,
                         is_airgapped: false)

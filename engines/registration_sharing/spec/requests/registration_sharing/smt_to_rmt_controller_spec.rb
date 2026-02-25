@@ -49,7 +49,7 @@ module RegistrationSharing
       let(:url) { '/api/regsharing/center/regsvc?command=shareregistration' }
 
       context 'with system XML' do
-        subject(:system) { System.find_by(login: login) }
+        subject(:system) { System.find_by(login:) }
 
         let(:xml) do
           "<?xml version='1.0' encoding='UTF-8'?>
@@ -89,7 +89,7 @@ module RegistrationSharing
         </registrationData>"
         end
 
-        let(:system) { System.find_by(login: login) }
+        let(:system) { System.find_by(login:) }
 
         it 'succeeds' do
           expect(response).to have_http_status(204)

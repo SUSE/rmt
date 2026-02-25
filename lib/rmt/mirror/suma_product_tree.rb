@@ -40,6 +40,6 @@ class RMT::Mirror::SumaProductTree
   end
 
   def downloader
-    @downloader ||= RMT::Downloader.new(logger: logger, track_files: false)
+    @downloader ||= RMT::Downloader.new(logger:, track_files: false)
   end
 end

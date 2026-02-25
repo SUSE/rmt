@@ -2,9 +2,9 @@ class Registry::AuthenticatedClient
   include RegistryClient
 
   def initialize(login, password, remote_ip)
-    raise Registry::Exceptions::InvalidCredentials.new(message: 'expired credentials', login: login) unless cache_file_exist?(remote_ip, login)
+    raise Registry::Exceptions::InvalidCredentials.new(message: 'expired credentials', login:) unless cache_file_exist?(remote_ip, login)
 
-    raise Registry::Exceptions::InvalidCredentials.new(login: login) unless authenticate_by_system_credentials(login, password)
+    raise Registry::Exceptions::InvalidCredentials.new(login:) unless authenticate_by_system_credentials(login, password)
 
     Rails.logger.info("Authenticated '#{self}'")
   end

@@ -5,7 +5,7 @@ describe Api::Connect::V3::Systems::SystemsController, type: :request do
   let(:url) { '/connect/systems' }
   let(:headers) { auth_header.merge(version_header) }
   let(:instance_data) { 'dummy_instance_data' }
-  let(:system) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
+  let(:system) { FactoryBot.create(:system, :byos, :with_system_information, instance_data:) }
 
   describe '#deactivate' do
     let(:scc_systems_url) { 'https://scc.suse.com/connect/systems' }
@@ -14,7 +14,7 @@ describe Api::Connect::V3::Systems::SystemsController, type: :request do
     context 'a system' do
       context 'with right credentials' do
         let(:product) do
-          FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system, product_type: 'module')
+          FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system:, product_type: 'module')
         end
         let(:payload) do
           {
@@ -56,7 +56,7 @@ describe Api::Connect::V3::Systems::SystemsController, type: :request do
     end
 
     context 'a system with error from SCC API' do
-      let(:product) { FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system: system) }
+      let(:product) { FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions, :activated, system:) }
       let(:payload) do
         {
           identifier: product.identifier,

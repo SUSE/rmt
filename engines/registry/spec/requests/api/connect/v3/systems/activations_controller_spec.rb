@@ -16,7 +16,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
       context 'without valid repository cache' do
         context 'without X-Instance-Data headers or hw_info' do
           it 'does not update InstanceVerification cache' do
-            get '/connect/systems/activations', headers: headers
+            get '/connect/systems/activations', headers:
             data = JSON.parse(response.body)
             expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
             expect(InstanceVerification).not_to receive(:update_cache)
@@ -80,7 +80,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
             'registry',
             registry: true
           )
-          get '/connect/systems/activations', headers: headers
+          get '/connect/systems/activations', headers:
           data = JSON.parse(response.body)
           expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
         end
@@ -140,7 +140,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
               'registry',
               registry: true
             )
-            get '/connect/systems/activations', headers: headers
+            get '/connect/systems/activations', headers:
             FileUtils.rm_rf('repo/payg/cache')
             data = JSON.parse(response.body)
             expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
@@ -157,7 +157,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
               'registry',
               registry: true
             )
-            get '/connect/systems/activations', headers: headers
+            get '/connect/systems/activations', headers:
             FileUtils.rm_rf('repo/payg/cache')
             data = JSON.parse(response.body)
             expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
@@ -295,7 +295,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
               registry: false
             )
             allow_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_identifier).and_return('foo')
-            get '/connect/systems/activations', headers: headers
+            get '/connect/systems/activations', headers:
 
             data = JSON.parse(response.body)
             expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})

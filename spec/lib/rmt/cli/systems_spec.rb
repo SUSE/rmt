@@ -42,7 +42,7 @@ RSpec.describe RMT::CLI::Systems do
 
         let(:expected_output) do
           Terminal::Table.new(
-            headings: headings,
+            headings:,
             rows: expected_rows
           ).to_s + "\n" + "Showing last 2 registrations. Use the '--all' option to see all registered systems.\n"
         end
@@ -67,7 +67,7 @@ RSpec.describe RMT::CLI::Systems do
 
         let(:expected_output) do
           Terminal::Table.new(
-            headings: headings,
+            headings:,
             rows: expected_rows
           ).to_s + "\n"
         end

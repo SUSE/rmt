@@ -12,11 +12,11 @@ describe RMT::CLI::ReposCustom do
 
     it 'adds the repository to the database' do
       expect { described_class.start(argv) }.to output("Successfully added custom repository.\n").to_stdout.and output('').to_stderr
-      expect(Repository.find_by(external_url: external_url)).not_to be_nil
+      expect(Repository.find_by(external_url:)).not_to be_nil
     end
 
     context '--id parameter' do
-      subject(:custom_repo) { Repository.find_by(external_url: external_url) }
+      subject(:custom_repo) { Repository.find_by(external_url:) }
 
       let(:argv) { ['add', external_url, 'bar', '--id', 'foo'] }
 
@@ -41,7 +41,7 @@ describe RMT::CLI::ReposCustom do
         expect { described_class.start(argv) }
             .to output("\e[31mPlease provide a non-numeric ID for your custom repository.\e[0m\nCouldn't add custom repository.\n").to_stderr
             .and output('').to_stdout
-        expect(Repository.find_by(external_url: external_url)).to be_nil
+        expect(Repository.find_by(external_url:)).to be_nil
       end
     end
 
@@ -53,7 +53,7 @@ describe RMT::CLI::ReposCustom do
         expect { described_class.start(argv) }
             .to output("\e[31mPlease provide a non-numeric ID for your custom repository.\e[0m\nCouldn't add custom repository.\n").to_stderr
             .and output('').to_stdout
-        expect(Repository.find_by(external_url: external_url)).to be_nil
+        expect(Repository.find_by(external_url:)).to be_nil
       end
     end
 
@@ -66,7 +66,7 @@ describe RMT::CLI::ReposCustom do
     end
 
     context 'duplicate name' do
-      subject(:custom_repo) { Repository.find_by(external_url: external_url) }
+      subject(:custom_repo) { Repository.find_by(external_url:) }
 
       let(:argv) { ['add', external_url, 'foo'] }
 
@@ -85,7 +85,7 @@ describe RMT::CLI::ReposCustom do
     end
 
     context 'duplicate id' do
-      subject(:custom_repo) { Repository.find_by(external_url: external_url) }
+      subject(:custom_repo) { Repository.find_by(external_url:) }
 
       let(:argv) { ['add', external_url, 'bar', '--id', 'foo'] }
 
@@ -95,7 +95,7 @@ describe RMT::CLI::ReposCustom do
           create :repository, external_url: 'http://foo.bar', name: 'foobar', friendly_id: 'foo'
           described_class.start(argv)
         end.to output("\e[31mA repository by the ID foo already exists.\e[0m\nCouldn't add custom repository.\n").to_stderr.and output('').to_stdout
-        expect(Repository.find_by(external_url: external_url)).to be_nil
+        expect(Repository.find_by(external_url:)).to be_nil
       end
     end
 
@@ -110,7 +110,7 @@ describe RMT::CLI::ReposCustom do
         end.to output("\e[31mA repository by the URL #{external_url} already exists (ID #{existing_repo.friendly_id}).\e[0m\nCouldn't add custom repository.\n")
                    .to_stderr
                    .and output('').to_stdout
-        expect(Repository.find_by(external_url: external_url).name).to eq('foobar')
+        expect(Repository.find_by(external_url:).name).to eq('foobar')
       end
 
       it 'handles trailing slashes' do
@@ -136,7 +136,7 @@ describe RMT::CLI::ReposCustom do
         end.to output("\e[31mA repository by the URL #{external_url} already exists (ID #{existing_repo.friendly_id}).\e[0m\nCouldn't add custom repository.\n")
                    .to_stderr
                    .and output('').to_stdout
-        expect(Repository.find_by(external_url: external_url).name).to eq('foobar')
+        expect(Repository.find_by(external_url:).name).to eq('foobar')
       end
     end
 
@@ -405,7 +405,7 @@ Repository by ID #{repository.friendly_id} successfully disabled.
         end
 
         it 'deletes custom repository' do
-          expect(Repository.find_by(friendly_id: friendly_id)).to be_nil
+          expect(Repository.find_by(friendly_id:)).to be_nil
         end
       end
     end
@@ -583,7 +583,7 @@ Repository by ID #{repository.friendly_id} successfully disabled.
       let(:expected_output) do
         Terminal::Table.new(
           headings: ['Product ID', 'Product Name', 'Product Version', 'Product Architecture'],
-          rows: rows
+          rows:
         ).to_s + "\n"
       end
 

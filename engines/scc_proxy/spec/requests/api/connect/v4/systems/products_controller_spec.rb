@@ -8,7 +8,7 @@ describe Api::Connect::V4::Systems::ProductsController, type: :request do
       include_context 'auth header', :system_byos, :login, :password
       include_context 'version header', 4
       let(:scc_systems_products_url) { 'https://scc.suse.com/connect/systems/products' }
-      let(:system_byos) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
+      let(:system_byos) { FactoryBot.create(:system, :byos, :with_system_information, instance_data:) }
       let(:scc_systems_activations_url) { 'https://scc.suse.com/connect/systems/activations' }
 
       # rubocop:disable RSpec/NestedGroups
@@ -115,7 +115,7 @@ product_type: 'module')
       include_context 'auth header', :system_hybrid, :login, :password
       include_context 'version header', 4
       let(:scc_systems_products_url) { 'https://scc.suse.com/connect/systems/products' }
-      let(:system_hybrid) { FactoryBot.create(:system, :hybrid, :with_system_information, instance_data: instance_data) }
+      let(:system_hybrid) { FactoryBot.create(:system, :hybrid, :with_system_information, instance_data:) }
 
       context 'an activated non base module' do
         context 'with right credentials' do
@@ -179,7 +179,7 @@ product_type: 'module')
           let(:scc_systems_activations_url) { 'https://scc.suse.com/connect/systems/activations' }
 
           before do
-            stub_request(:get, scc_systems_activations_url).to_return(status: 401, body: "{\"error\": \"Error\'\"}", headers: headers)
+            stub_request(:get, scc_systems_activations_url).to_return(status: 401, body: "{\"error\": \"Error\'\"}", headers:)
             allow(SccProxy).to receive(:headers)
             delete url, params: payload, headers: headers
           end

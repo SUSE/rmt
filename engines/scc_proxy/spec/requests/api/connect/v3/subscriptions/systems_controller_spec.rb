@@ -47,7 +47,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         it 'saves the data' do
           allow(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
           allow(plugin_double).to receive(:instance_identifier).and_return('i-12345-payg')
-          post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
+          post '/connect/subscriptions/systems', params:, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
 
           system = System.find_by(login: 'i-12345-payg')
           expect(system.instance_data).to eq(instance_data)
@@ -78,7 +78,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         end
 
         it 'returns error' do
-          post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
+          post '/connect/subscriptions/systems', params:, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
           data = JSON.parse(response.body)
           expect(response.code).to eq('401')
           expect(data['type']).to eq('error')
@@ -97,7 +97,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         end
 
         it 'returns error' do
-          post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
+          post '/connect/subscriptions/systems', params:, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
           data = JSON.parse(response.body)
           expect(data['type']).to eq('error')
           expect(data['error']).to eq('408 ""')
@@ -149,7 +149,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         it 'saves the data' do
           allow(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
           allow(plugin_double).to receive(:instance_identifier).and_return('i-12345-payg')
-          post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
+          post '/connect/subscriptions/systems', params:, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
           system = System.find_by(login: 'i-12345-payg')
           expect(system.instance_data).to eq(instance_data)
         end
@@ -166,7 +166,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         end
 
         it 'returns error' do
-          post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
+          post '/connect/subscriptions/systems', params:, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
           data = JSON.parse(response.body)
           expect(response.code).to eq('401')
           expect(data['type']).to eq('error')
@@ -185,7 +185,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         end
 
         it 'returns error' do
-          post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
+          post '/connect/subscriptions/systems', params:, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
           data = JSON.parse(response.body)
           expect(data['type']).to eq('error')
           expect(data['error']).to eq('408 ""')

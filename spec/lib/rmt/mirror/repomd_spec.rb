@@ -266,10 +266,10 @@ RSpec.describe RMT::Mirror::Repomd do
 
     before do
       allow(RMT::Mirror::License).to receive(:new)
-        .with(repository: repository, logger: logger, mirroring_base_dir: base_dir)
+        .with(repository:, logger:, mirroring_base_dir: base_dir)
         .and_return(license_mirror)
       allow(RMT::Downloader).to receive(:new)
-        .with(logger: logger, track_files: true)
+        .with(logger:, track_files: true)
         .and_return(downloader)
       allow(RMT::GPG).to receive(:new).and_return(gpg_verifier)
 

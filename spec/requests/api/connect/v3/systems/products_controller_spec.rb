@@ -57,7 +57,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       end
 
       before do
-        create(:activation, system: system, service: extension.service)
+        create(:activation, system:, service: extension.service)
         post url, headers: headers, params: payload
       end
       its(:code) { is_expected.to eq('422') }
@@ -189,7 +189,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
 
         its(:code) { is_expected.to eq(201) }
         it 'creates activations with subscriptions associated' do
-          activation = Activation.find_by(subscription: subscription)
+          activation = Activation.find_by(subscription:)
           expect(activation.product).to eq(product)
         end
       end
@@ -406,7 +406,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
     end
 
     context 'with activated previous product' do
-      let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system) }
+      let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system:) }
       let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories, predecessors: [old_product]) }
       let(:serialized_json) do
         V3::ServiceSerializer.new(
@@ -443,7 +443,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
 
     context 'with paid activated previous product' do
       let(:subscription) { create :subscription }
-      let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, subscription: subscription) }
+      let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system:, subscription:) }
       let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories, predecessors: [old_product]) }
       let(:serialized_json) do
         V3::ServiceSerializer.new(
@@ -528,8 +528,8 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       end
 
       context 'with multiple base products in installed_products' do
-        let(:first_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'base') }
-        let(:second_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'base') }
+        let(:first_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system:, product_type: 'base') }
+        let(:second_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system:, product_type: 'base') }
         let(:payload) do
           {
             'installed_products': [
@@ -562,14 +562,14 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       end
 
       context 'with a proper set of products in installed_products' do
-        let(:first_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'base') }
+        let(:first_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system:, product_type: 'base') }
         let(:second_product) do
           FactoryBot.create(
             :product,
             :with_mirrored_repositories,
             product_type: 'base',
             predecessors: [first_product],
-            migration_kind: migration_kind
+            migration_kind:
           )
         end
         let(:payload) do
@@ -661,15 +661,15 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
         end
 
         context 'when not all extensions are upgradeable' do
-          let(:first_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'base') }
-          let(:module_without_successor) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'module') }
+          let(:first_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system:, product_type: 'base') }
+          let(:module_without_successor) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system:, product_type: 'module') }
           let(:second_product) do
             FactoryBot.create(
               :product,
               :with_mirrored_repositories,
               product_type: 'base',
               predecessors: [first_product],
-              migration_kind: migration_kind
+              migration_kind:
             )
           end
           let(:payload) do
@@ -704,14 +704,14 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       end
 
       context 'with "-0" version suffix' do
-        let(:first_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, product_type: 'base') }
+        let(:first_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system:, product_type: 'base') }
         let(:second_product) do
           FactoryBot.create(
             :product,
             :with_mirrored_repositories,
             product_type: 'base',
             predecessors: [first_product],
-            migration_kind: migration_kind
+            migration_kind:
           )
         end
         let(:payload) do

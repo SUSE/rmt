@@ -149,7 +149,7 @@ FactoryBot.define do
     trait :with_repositories do
       after :create do |product, _evaluator|
         unless Service.find_by(product_id: product.id)
-          FactoryBot.create(:service, :with_repositories, product: product)
+          FactoryBot.create(:service, :with_repositories, product:)
         end
       end
     end
@@ -190,7 +190,7 @@ FactoryBot.define do
     trait :with_mirrored_repositories do
       after :create do |product, _evaluator|
         unless Service.find_by(product_id: product.id)
-          FactoryBot.create(:service, :with_repositories, product: product, mirroring_enabled: true)
+          FactoryBot.create(:service, :with_repositories, product:, mirroring_enabled: true)
         end
       end
     end
@@ -198,7 +198,7 @@ FactoryBot.define do
     trait :with_disabled_mirrored_repositories do
       after :create do |product, _evaluator|
         unless Service.find_by(product_id: product.id)
-          FactoryBot.create(:service, :with_disabled_repositories, product: product, mirroring_enabled: true)
+          FactoryBot.create(:service, :with_disabled_repositories, product:, mirroring_enabled: true)
         end
       end
     end
@@ -206,7 +206,7 @@ FactoryBot.define do
     trait :with_disabled_not_mirrored_repositories do
       after :create do |product, _evaluator|
         unless Service.find_by(product_id: product.id)
-          FactoryBot.create(:service, :with_disabled_repositories, product: product, mirroring_enabled: false)
+          FactoryBot.create(:service, :with_disabled_repositories, product:, mirroring_enabled: false)
         end
       end
     end
@@ -214,7 +214,7 @@ FactoryBot.define do
     trait :with_not_mirrored_repositories do
       after :create do |product, evaluator|
         unless Service.find_by(product_id: product.id)
-          FactoryBot.create(:service, :with_repositories, product: product, mirroring_enabled: false, installer_updates: evaluator.installer_updates)
+          FactoryBot.create(:service, :with_repositories, product:, mirroring_enabled: false, installer_updates: evaluator.installer_updates)
         end
       end
     end

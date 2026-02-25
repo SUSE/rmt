@@ -29,7 +29,7 @@ class RMT::CLI::Export < RMT::CLI::Base
   REPOS
   def repos(path)
     path = needs_path(path, writable: true)
-    suma_product_tree = RMT::Mirror::SumaProductTree.new(mirroring_base_dir: path, logger: logger)
+    suma_product_tree = RMT::Mirror::SumaProductTree.new(mirroring_base_dir: path, logger:)
 
     begin
       suma_product_tree.mirror
@@ -47,7 +47,7 @@ class RMT::CLI::Export < RMT::CLI::Base
       begin
         configuration = {
           repository: repo,
-          logger: logger,
+          logger:,
           mirroring_base_dir: path,
           mirror_sources: RMT::Config.mirror_src_files?,
           is_airgapped: true

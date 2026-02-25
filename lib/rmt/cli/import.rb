@@ -21,7 +21,7 @@ class RMT::CLI::Import < RMT::CLI::Base
 
         RMT::Mirror::SumaProductTree.new(
           mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR,
-          logger: logger,
+          logger:,
           url: suma_repo_url
         ).mirror
       rescue RMT::Mirror::Exception => e
@@ -48,7 +48,7 @@ class RMT::CLI::Import < RMT::CLI::Base
 
           configuration = {
             repository: repo,
-            logger: logger,
+            logger:,
             mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR,
             mirror_sources: RMT::Config.mirror_src_files?,
             is_airgapped: true

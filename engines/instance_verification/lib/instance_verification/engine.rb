@@ -74,7 +74,7 @@ module InstanceVerification
   def self.set_cache_active(cache_key, mode, registry = false) # rubocop:disable Style/OptionalBooleanParameter
     cache_key = [cache_key, 'active'].join('-') if ['byos', 'hybrid'].include?(mode)
 
-    InstanceVerification.update_cache(cache_key, mode, registry: registry)
+    InstanceVerification.update_cache(cache_key, mode, registry:)
   end
 
   def self.set_cache_inactive(cache_key, mode)
@@ -208,7 +208,7 @@ module InstanceVerification
           # even if there are more subscriptions that match
           Subscription.joins(:product_classes).find_by(
             subscription_product_classes: {
-              product_class: product_class
+              product_class:
             }
           )
         end

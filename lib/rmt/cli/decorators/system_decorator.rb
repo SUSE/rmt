@@ -14,7 +14,7 @@ class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
 
   def to_csv(batch: false)
     systems = systems_to_arrays
-    array_to_csv(systems, HEADERS, batch: batch)
+    array_to_csv(systems, HEADERS, batch:)
   end
 
   def to_table
@@ -33,7 +33,7 @@ class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
         system.hostname,
         system.registered_at,
         system.last_seen_at,
-        products_and_subscriptions(system, join_new_line: join_new_line)
+        products_and_subscriptions(system, join_new_line:)
       ]
     end
   end

@@ -44,7 +44,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       context 'when system has hw_info' do
         let(:instance_data) { '<document>{"instanceId": "dummy_instance_data"}</document>' }
         let(:new_system_token) { 'BBBBBBBB-BBBB-4BBB-9BBB-BBBBBBBBBBBB' }
-        let(:system_byos) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
+        let(:system_byos) { FactoryBot.create(:system, :byos, :with_system_information, instance_data:) }
         let(:serialized_service_json) do
           V3::ServiceSerializer.new(
             product.service,
@@ -61,7 +61,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         context 'when system is connected to SCC' do
           let(:system_byos) do
-            FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data,
+            FactoryBot.create(:system, :byos, :with_system_information, instance_data:,
               system_token: new_system_token)
           end
           let(:subscription_response) do
@@ -166,7 +166,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
           context 'with different system_tokens' do
             let(:system_byos2) do
-              FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data,
+              FactoryBot.create(:system, :byos, :with_system_information, instance_data:,
                 system_token: 'foo')
             end
 
@@ -198,7 +198,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
           context 'with duplicated system_tokens' do
             let(:system_byos3) do
-              FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data,
+              FactoryBot.create(:system, :byos, :with_system_information, instance_data:,
                 system_token: 'foo')
             end
 
@@ -239,7 +239,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       let(:instance_data) { 'dummy_instance_data' }
       let(:system_byos) do
         FactoryBot.create(
-          :system, :byos, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data
+          :system, :byos, :with_system_information, :with_activated_product, product: base_product, instance_data:
         )
       end
       let(:serialized_service_json) do
@@ -274,7 +274,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         allow(InstanceVerification::Providers::Example).to receive(:new)
           .with(nil, nil, nil, 'dummy_instance_data').and_return(plugin_double)
         allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
-        FactoryBot.create(:subscription, product_classes: product_classes)
+        FactoryBot.create(:subscription, product_classes:)
         stub_request(:post, scc_activate_url)
           .to_return(
             status: 401,
@@ -294,7 +294,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       include_context 'auth header', :system_payg, :login, :password
       include_context 'version header', 3
       let(:headers) { auth_header.merge(version_header) }
-      let(:system_payg) { FactoryBot.create(:system, :payg, :with_system_information, :with_activated_base_product, instance_data: instance_data) }
+      let(:system_payg) { FactoryBot.create(:system, :payg, :with_system_information, :with_activated_base_product, instance_data:) }
       let(:product) do
         FactoryBot.create(
           :product, :product_sles, :extension, :with_mirrored_repositories, :with_mirrored_extensions,
@@ -342,7 +342,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         context 'when system is connected to SCC' do
           let(:system_payg) do
-            FactoryBot.create(:system, :payg, :with_system_information, :with_activated_base_product, instance_data: instance_data,
+            FactoryBot.create(:system, :payg, :with_system_information, :with_activated_base_product, instance_data:,
               system_token: new_system_token)
           end
           let(:product) do
@@ -423,7 +423,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                 stub_request(:post, scc_register_system_url)
                   .to_return(status: 403, body: { ok: 'OK' }.to_json, headers: {})
 
-                post url, params: payload, headers: headers
+                post url, params: payload, headers:
                 data = JSON.parse(response.body)
                 expect(data['error']).to include('Product not supported for this instance')
               end
@@ -451,7 +451,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
         context 'when system is connected to SCC' do
           let(:system_payg) do
-            FactoryBot.create(:system, :payg, :with_system_information, :with_activated_base_product, instance_data: instance_data,
+            FactoryBot.create(:system, :payg, :with_system_information, :with_activated_base_product, instance_data:,
               system_token: new_system_token)
           end
           let(:product) do

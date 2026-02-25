@@ -39,10 +39,10 @@ describe RMT::SCC do
 
         [product_data, extension].each do |product|
           product[:online_predecessor_ids].each do |id|
-            expect(find_predecessor_association(product[:id], :online, id)).to be_persisted unless Product.find_by(id: id).nil?
+            expect(find_predecessor_association(product[:id], :online, id)).to be_persisted unless Product.find_by(id:).nil?
           end
           product[:offline_predecessor_ids].each do |id|
-            expect(find_predecessor_association(product[:id], :offline, id)).to be_persisted unless Product.find_by(id: id).nil?
+            expect(find_predecessor_association(product[:id], :offline, id)).to be_persisted unless Product.find_by(id:).nil?
           end
         end
       end
@@ -397,7 +397,7 @@ describe RMT::SCC do
   describe '#disassociate_repositories' do
     let(:logger) { instance_double('RMT::Logger').as_null_object }
     let(:product) { create(:product) }
-    let(:service) { create(:service, product: product) }
+    let(:service) { create(:service, product:) }
 
     before do
       allow(RMT::Logger).to receive(:new).and_return(logger)
@@ -420,7 +420,7 @@ describe RMT::SCC do
         [repo_one, repo_two, repo_three].each do |repo|
           create(:repositories_services_association,
                  repository: repo,
-                 service: service)
+                 service:)
         end
       end
 
@@ -639,6 +639,6 @@ describe RMT::SCC do
   end
 
   def find_predecessor_association(product_id, kind, predecessor_id)
-    ProductPredecessorAssociation.find_by(product_id: product_id, kind: kind, predecessor_id: predecessor_id)
+    ProductPredecessorAssociation.find_by(product_id:, kind:, predecessor_id:)
   end
 end

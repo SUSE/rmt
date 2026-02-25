@@ -10,7 +10,7 @@ describe RegistrationSharing::SyncJob do
   let(:system_file) { File.join(peer_dir, system_login) }
 
   before do
-    allow(Settings).to receive(:[]).with(:regsharing).and_return({ peers: [ peer ], data_dir: data_dir })
+    allow(Settings).to receive(:[]).with(:regsharing).and_return({ peers: [ peer ], data_dir: })
     Dir.mkdir(peer_dir)
     File.write(system_file, 'test')
   end

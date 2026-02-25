@@ -60,7 +60,7 @@ class System < ApplicationRecord
   end
 
   def self.get_by_credentials(login, password)
-    where(login: login, password: password).order(:id)
+    where(login:, password:).order(:id)
   end
 
   def update_system_uptime(day: nil, hours: nil)
@@ -73,7 +73,7 @@ class System < ApplicationRecord
   end
 
   def update_instance_data(instance_data)
-    update!(instance_data: instance_data)
+    update!(instance_data:)
   end
 
   before_update do |system|

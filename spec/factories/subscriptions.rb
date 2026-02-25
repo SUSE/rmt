@@ -20,7 +20,7 @@ FactoryBot.define do
     after :create do |subscription, evaluator|
       if evaluator.product_classes
         evaluator.product_classes.each do |product_class|
-          FactoryBot.create(:subscription_product_class, product_class: product_class, subscription_id: subscription.id)
+          FactoryBot.create(:subscription_product_class, product_class:, subscription_id: subscription.id)
         end
       end
     end

@@ -11,7 +11,7 @@ describe RegistryCatalogService do
   let(:repositories_returned) do
     %w[repo repo.v2 level1/repo.v2 level1/level2 level1/level2/repo level1/level2/level.3 level1/level2/level.3/repo]
   end
-  let(:registry_conf) { { root_url: root_url } }
+  let(:registry_conf) { { root_url: } }
 
   before do
     stub_request(:get, "#{auth_url}?#{params}").with(

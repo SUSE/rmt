@@ -29,7 +29,7 @@ RSpec.describe Service, type: :model do
 
   describe '#name' do
     shared_examples 'service name' do |product_attributes, expected|
-      subject { create(:service, product: product).name }
+      subject { create(:service, product:).name }
 
       let(:product) { create(:product, name: product_attributes[:name], release_type: product_attributes[:release_type], arch: product_attributes[:arch]) }
 

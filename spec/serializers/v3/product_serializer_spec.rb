@@ -12,7 +12,7 @@ describe V3::ProductSerializer do
   let(:base_url) { 'http://example.com' }
 
   describe '#eula_url' do
-    subject { described_class.new(product, base_url: base_url).eula_url }
+    subject { described_class.new(product, base_url:).eula_url }
 
     let(:product) { create :product, eula_url: eula_url }
 
@@ -55,7 +55,7 @@ describe V3::ProductSerializer do
   end
 
   describe 'SLES extension tree' do
-    subject(:serializer) { described_class.new(sles15, root_product: sles15, base_url: base_url) }
+    subject(:serializer) { described_class.new(sles15, root_product: sles15, base_url:) }
 
     let(:top_extension) { serializer.as_json[:extensions].first }
     let(:nested_extension) { top_extension[:extensions].first }
@@ -78,7 +78,7 @@ describe V3::ProductSerializer do
   end
 
   describe 'SLED extension tree' do
-    subject(:serializer) { described_class.new(sled15, root_product: sled15, base_url: base_url) }
+    subject(:serializer) { described_class.new(sled15, root_product: sled15, base_url:) }
 
     let(:top_extension) { serializer.as_json[:extensions].first }
     let(:nested_extension) { top_extension[:extensions].first }

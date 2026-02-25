@@ -168,7 +168,7 @@ describe RMT::Mirror::Base do
       it 'succeeds' do
         expect(downloader).to receive(:download_multi).with(match_array([key_file, signature_file]))
         expect_any_instance_of(RMT::GPG).to receive(:verify_signature)
-        base.check_signature(key_file: key_file, signature_file: signature_file, metadata_file: metadata)
+        base.check_signature(key_file:, signature_file:, metadata_file: metadata)
       end
     end
 
@@ -176,7 +176,7 @@ describe RMT::Mirror::Base do
       it 'raises exception' do
         expect(downloader).to receive(:download_multi).and_raise(RMT::Downloader::Exception, 'foo')
         expect do
-          base.check_signature(key_file: key_file, signature_file: signature_file, metadata_file: metadata)
+          base.check_signature(key_file:, signature_file:, metadata_file: metadata)
         end.to raise_error(/foo/)
       end
     end
@@ -185,9 +185,9 @@ describe RMT::Mirror::Base do
       let(:response) { Typhoeus::Response.new(code: 404, body: {}) }
 
       it 'creates a log entry' do
-        allow(downloader).to receive(:download_multi).and_raise(RMT::Downloader::Exception.new('missing file', response: response))
+        allow(downloader).to receive(:download_multi).and_raise(RMT::Downloader::Exception.new('missing file', response:))
         expect(logger).to receive(:info).with(/metadata signatures are missing/)
-        base.check_signature(key_file: key_file, signature_file: signature_file, metadata_file: metadata)
+        base.check_signature(key_file:, signature_file:, metadata_file: metadata)
       end
     end
   end

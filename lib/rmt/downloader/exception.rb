@@ -21,7 +21,7 @@ class RMT::Downloader::Exception < RuntimeError
     message = _("%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'") %
       { file: remote_file, code: response.code, return_code: response.return_code }
 
-    raise RMT::Downloader::Exception.new(message, response: response)
+    raise RMT::Downloader::Exception.new(message, response:)
   end
 
   def self.flatten_string(str)

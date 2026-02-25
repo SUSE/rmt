@@ -100,7 +100,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
     end
 
     context 'when hostname is not provided' do
-      let(:payload) { { hwinfo: hwinfo } }
+      let(:payload) { { hwinfo: } }
 
       it do
         update_action

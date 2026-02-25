@@ -14,7 +14,7 @@ module Registry
     # with the current login access and prepare the token to be sent back to the client
     def authorize
       token = AccessToken.new(@client&.account, params['service'], @requested_scopes.map { |s| s.granted(request.remote_ip, client: @client) }).token
-      render json: { token: token }, status: :ok
+      render json: { token: }, status: :ok
     rescue StandardError => e
       Rails.logger.error "Could not authorize: #{e.message}"
       render json: { error: e.message }, status: :unauthorized
@@ -112,7 +112,7 @@ module Registry
 
       headers['WWW-Authenticate'] = www_authenticate.join(',')
 
-      render json: { errors: [ code: 'UNAUTHORIZED', details: nil, message: message] }, status: :unauthorized
+      render json: { errors: [ code: 'UNAUTHORIZED', details: nil, message:] }, status: :unauthorized
     end
   end
 end

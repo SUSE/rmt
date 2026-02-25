@@ -80,7 +80,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
       context 'when system has hw_info' do
         let(:instance_data) { 'dummy_instance_data' }
-        let(:system) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
+        let(:system) { FactoryBot.create(:system, :byos, :with_system_information, instance_data:) }
         let(:serialized_service_json) do
           V3::ServiceSerializer.new(
             product.service,
@@ -168,7 +168,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
       context 'when system has hw_info' do
         let(:instance_data) { 'dummy_instance_data' }
-        let(:system) { FactoryBot.create(:system, :payg, :with_system_information, instance_data: instance_data) }
+        let(:system) { FactoryBot.create(:system, :payg, :with_system_information, instance_data:) }
         let(:serialized_service_json) do
           V3::ServiceSerializer.new(
             product.service,
@@ -241,7 +241,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         let(:instance_data) { 'dummy_instance_data' }
         let(:system) do
           FactoryBot.create(
-            :system, :payg, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data
+            :system, :payg, :with_system_information, :with_activated_product, product: base_product, instance_data:
           )
         end
         let(:serialized_service_json) do
@@ -286,7 +286,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           allow(plugin_double).to receive(:allowed_extension?).and_return(true)
           allow(plugin_double).to receive(:add_on).and_return(nil)
 
-          FactoryBot.create(:subscription, product_classes: product_classes)
+          FactoryBot.create(:subscription, product_classes:)
           stub_request(:post, scc_activate_url)
             .to_return(
               status: 401,
@@ -324,7 +324,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         let(:instance_data) { 'dummy_instance_data' }
         let(:system) do
           FactoryBot.create(
-            :system, :payg, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data
+            :system, :payg, :with_system_information, :with_activated_product, product: base_product, instance_data:
           )
         end
         let(:serialized_service_json) do
@@ -369,7 +369,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           allow(plugin_double).to receive(:allowed_extension?).and_return(true)
           allow(plugin_double).to receive(:add_on).and_raise(InstanceVerification::Exception, 'FOO')
 
-          FactoryBot.create(:subscription, product_classes: product_classes)
+          FactoryBot.create(:subscription, product_classes:)
           stub_request(:post, scc_activate_url)
             .to_return(
               status: 401,
@@ -413,7 +413,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             :with_system_information,
             :with_activated_product,
             product: base_product,
-            instance_data: instance_data,
+            instance_data:,
             pubcloud_reg_code: Base64.strict_encode64('super_token_different')
           )
         end
@@ -498,7 +498,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             allow(InstanceVerification).to receive(:get_cache_entries).and_return(
               [File.join(Rails.application.config.repo_hybrid_cache_dir, cache_entry)]
             )
-            FactoryBot.create(:subscription, product_classes: product_classes)
+            FactoryBot.create(:subscription, product_classes:)
             stub_request(:post, scc_activate_url)
               .to_return(
                 status: 201,
@@ -542,7 +542,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             allow(plugin_double).to receive(:allowed_extension?).and_return(true)
 
             allow(InstanceVerification).to receive(:update_cache).with("127.0.0.1-#{system.login}-#{product.id}", 'foo')
-            FactoryBot.create(:subscription, product_classes: product_classes)
+            FactoryBot.create(:subscription, product_classes:)
             stub_request(:post, scc_activate_url)
               .to_return(
                 status: 201,
@@ -644,7 +644,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
       context 'when system has hw_info' do
         let(:instance_data) { 'dummy_instance_data' }
-        let(:system) { FactoryBot.create(:system, :hybrid, :with_system_information, instance_data: instance_data) }
+        let(:system) { FactoryBot.create(:system, :hybrid, :with_system_information, instance_data:) }
         let(:serialized_service_json) do
           V3::ServiceSerializer.new(
             product.service,
@@ -700,7 +700,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
       let(:instance_data) { 'dummy_instance_data' }
       let(:system) do
         FactoryBot.create(
-          :system, :hybrid, :with_system_information, :with_activated_product, product: base_product, instance_data: instance_data
+          :system, :hybrid, :with_system_information, :with_activated_product, product: base_product, instance_data:
           )
       end
       let(:serialized_service_json) do
@@ -748,7 +748,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         allow(plugin_double).to receive(:allowed_extension?).and_return(true)
         allow(plugin_double).to receive(:add_on).and_return(nil)
 
-        FactoryBot.create(:subscription, product_classes: product_classes)
+        FactoryBot.create(:subscription, product_classes:)
         stub_request(:post, scc_activate_url)
           .to_return(
             status: 401,
@@ -799,10 +799,10 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         FactoryBot.create(
           :system, :byos, :with_system_information,
           pubcloud_reg_code: Base64.strict_encode64('super_token'),
-          instance_data: instance_data
+          instance_data:
         )
       end
-      let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system) }
+      let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system:) }
       let(:payload) do
         {
           identifier: new_product.identifier,
@@ -931,8 +931,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
     end
 
     context 'when system is payg' do
-      let(:system) { FactoryBot.create(:system, :payg, :with_system_information, instance_data: instance_data) }
-      let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system) }
+      let(:system) { FactoryBot.create(:system, :payg, :with_system_information, instance_data:) }
+      let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system:) }
       let(:payload) do
         {
           identifier: new_product.identifier,

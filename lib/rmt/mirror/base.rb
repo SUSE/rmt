@@ -13,7 +13,7 @@ class RMT::Mirror::Base
     @deep_verify = false
 
     # don't save files for deduplication when in offline mode
-    @downloader = RMT::Downloader.new(logger: logger, track_files: !is_airgapped)
+    @downloader = RMT::Downloader.new(logger:, track_files: !is_airgapped)
     @downloader.auth_token = @repository.auth_token if @repository.auth_token.present?
 
     @temp_dirs = {}
@@ -48,7 +48,7 @@ class RMT::Mirror::Base
   end
 
   def download_cached!(relative, to:)
-    ref = file_reference(relative, to: to)
+    ref = file_reference(relative, to:)
     downloader.download_multi([ref])
     ref
   end
@@ -64,7 +64,7 @@ class RMT::Mirror::Base
       metadata_file: metadata_file.local_path,
       key_file: key_file.local_path,
       signature_file: signature_file.local_path,
-      logger: logger
+      logger:
     )
     gpg_checker.verify_signature
   rescue RMT::Downloader::Exception => e

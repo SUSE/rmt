@@ -33,10 +33,10 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       end
 
       finish_execution(
-        start_time: start_time,
+        start_time:,
         repo_count: mirrored_repo_ids.count,
-        downloaded_files_count: downloaded_files_count,
-        downloaded_files_size: downloaded_files_size
+        downloaded_files_count:,
+        downloaded_files_size:
       )
     end
   end
@@ -62,10 +62,10 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       downloaded_files_count, downloaded_files_size = mirror_repositories!(repos)
 
       finish_execution(
-        start_time: start_time,
+        start_time:,
         repo_count: repos.count,
-        downloaded_files_count: downloaded_files_count,
-        downloaded_files_size: downloaded_files_size
+        downloaded_files_count:,
+        downloaded_files_size:
       )
     end
   end
@@ -98,10 +98,10 @@ class RMT::CLI::Mirror < RMT::CLI::Base
       downloaded_files_count, downloaded_files_size = mirror_repositories!(repos)
 
       finish_execution(
-        start_time: start_time,
+        start_time:,
         repo_count: repos.count,
-        downloaded_files_count: downloaded_files_count,
-        downloaded_files_size: downloaded_files_size
+        downloaded_files_count:,
+        downloaded_files_size:
       )
     end
   end
@@ -109,7 +109,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
   private
 
   def suma_product_tree
-    RMT::Mirror::SumaProductTree.new(logger: logger, mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR)
+    RMT::Mirror::SumaProductTree.new(logger:, mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR)
   end
 
   def errors
@@ -165,7 +165,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
       configuration = {
         repository: repo,
-        logger: logger,
+        logger:,
         mirroring_base_dir: RMT::DEFAULT_MIRROR_DIR,
         mirror_sources: RMT::Config.mirror_src_files?,
         is_airgapped: false

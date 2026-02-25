@@ -7,7 +7,7 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
     create_temp_dir(:metadata)
 
     if repository_url.ends_with?('product/')
-      licenses = RMT::Mirror::License.new(repository: repository, logger: logger, mirroring_base_dir: mirroring_base_dir)
+      licenses = RMT::Mirror::License.new(repository:, logger:, mirroring_base_dir:)
       licenses.mirror
     end
 
@@ -25,7 +25,7 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
     repomd_xml = download_cached!('repodata/repomd.xml', to: temp(:metadata))
     signature_file = file_reference('repodata/repomd.xml.asc', to: temp(:metadata))
     key_file = file_reference('repodata/repomd.xml.key', to: temp(:metadata))
-    check_signature(key_file: key_file, signature_file: signature_file, metadata_file: repomd_xml)
+    check_signature(key_file:, signature_file:, metadata_file: repomd_xml)
 
     updated_metadata_files = RepomdParser::RepomdXmlParser.new.parse_file(repomd_xml.local_path)
       .map do |reference|

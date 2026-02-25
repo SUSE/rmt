@@ -147,7 +147,7 @@ $ rmt-cli repos custom disable e133a7b26a7701b1d65a61683e50512b 7726fb7f1954d786
   private
 
   def find_product!(id)
-    Product.find_by!(id: id)
+    Product.find_by!(id:)
   rescue ActiveRecord::RecordNotFound
     raise RMT::CLI::Error.new(_('Cannot find product by ID %{id}.') % { id: id })
   end

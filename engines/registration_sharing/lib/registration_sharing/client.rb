@@ -40,7 +40,7 @@ class RegistrationSharing::Client
   def make_request(method, params)
     request = RMT::HttpRequest.new(
       "https://#{@peer}/api/regsharing",
-      method: method,
+      method:,
       headers: {
         'Content-Type' => 'application/json',
         'Authorization' => "Bearer #{RegistrationSharing.config_api_secret}",

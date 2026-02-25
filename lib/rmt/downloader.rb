@@ -31,7 +31,7 @@ class RMT::Downloader
   # otherwise raises RMT::Downloader::Exception if any file fails to download
   def download_multi(files, ignore_errors: false)
     downloads_needed, failed_cache =
-      try_copying_from_cache(files, ignore_errors: ignore_errors)
+      try_copying_from_cache(files, ignore_errors:)
     return failed_cache if downloads_needed.empty?
 
     @queue = downloads_needed
@@ -82,7 +82,7 @@ class RMT::Downloader
           })
           sleep(RETRY_DELAY_SECONDS)
           # re-enqueuing with retries -= 1
-          request = create_fiber_request(file_reference, failed_downloads: failed_downloads, retries: (retries - 1))
+          request = create_fiber_request(file_reference, failed_downloads:, retries: (retries - 1))
           @hydra.queue(request) if request
         end
       ensure
@@ -97,7 +97,7 @@ class RMT::Downloader
     queue_item = @queue.shift
     return unless queue_item
 
-    request = create_fiber_request(queue_item, failed_downloads: failed_downloads)
+    request = create_fiber_request(queue_item, failed_downloads:)
     @hydra.queue(request) if request
   end
 
@@ -107,7 +107,7 @@ class RMT::Downloader
     request = RMT::FiberRequest.new(
       request_uri(file).to_s,
       download_path: downloaded_file,
-      request_fiber: request_fiber,
+      request_fiber:,
       followlocation: true
     )
     @logger.debug("HTTP request for: #{file.remote_path}")

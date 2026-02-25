@@ -99,7 +99,7 @@ describe RMT::CLI::SMTImporter, :skip_sqlite do
           Added association between #{repo_name} and product #{product.id}
         OUTPUT
 
-        repo = Repository.find_by(external_url: repo_url, local_path: local_path)
+        repo = Repository.find_by(external_url: repo_url, local_path:)
         expect(repo).not_to be_nil
         expect(repo.services.find_by(id: product.service)).not_to be_nil
       end
@@ -113,7 +113,7 @@ describe RMT::CLI::SMTImporter, :skip_sqlite do
           expect { importer.import_custom_repositories }.to output(<<-OUTPUT.strip_heredoc).to_stdout
             Added association between #{repo_name} and product #{product.id}
           OUTPUT
-          repo = Repository.find_by(external_url: repo_url + '/', local_path: local_path)
+          repo = Repository.find_by(external_url: repo_url + '/', local_path:)
           expect(repo).not_to be_nil
           expect(repo.services.find_by(id: product.service)).not_to be_nil
         end

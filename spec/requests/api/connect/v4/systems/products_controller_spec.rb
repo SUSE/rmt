@@ -45,12 +45,12 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
 
     context 'when the product is an activated extension' do
       let(:system) { FactoryBot.create(:system) }
-      let(:product) { FactoryBot.create(:product, :extension, :with_mirrored_repositories, :activated, system: system) }
+      let(:product) { FactoryBot.create(:product, :extension, :with_mirrored_repositories, :activated, system:) }
       let(:serialized_json) do
         V3::ServiceSerializer.new(
           product.service,
           base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s,
-          status: status
+          status:
         ).to_json
       end
 
@@ -60,8 +60,8 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
 
     context 'when the product is an activated extension with no dependencies' do
       let(:product) do
-        product = FactoryBot.create(:product, :extension, :with_mirrored_repositories, :activated, system: system)
-        FactoryBot.create(:product, :extension, :with_mirrored_repositories, :activated, system: system, base_products: [product])
+        product = FactoryBot.create(:product, :extension, :with_mirrored_repositories, :activated, system:)
+        FactoryBot.create(:product, :extension, :with_mirrored_repositories, :activated, system:, base_products: [product])
         product
       end
 
@@ -76,7 +76,7 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
   end
 
   describe '#synchronize' do
-    let!(:additional_activation) { FactoryBot.create(:activation, system: system) }
+    let!(:additional_activation) { FactoryBot.create(:activation, system:) }
     let(:path) { '/connect/systems/products/synchronize' }
 
     # context 'without products param' do
@@ -146,7 +146,7 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
     let(:headers) { auth_header.merge(version_header).merge('System-Token' => 'existing_token') }
 
     context 'token refresh for destroy action' do
-      let(:product) { FactoryBot.create(:product, :extension, :with_mirrored_repositories, :activated, system: system) }
+      let(:product) { FactoryBot.create(:product, :extension, :with_mirrored_repositories, :activated, system:) }
       let(:payload) { { identifier: product.identifier, version: product.version, arch: product.arch } }
 
       it 'refreshes system token when System-Token header is present' do

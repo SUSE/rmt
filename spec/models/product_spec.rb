@@ -154,36 +154,36 @@ RSpec.describe Product, type: :model do
       ProductsExtensionsAssociation.create(
         product: root_product,
         extension: recommended_module,
-        root_product: root_product,
+        root_product:,
         recommended: true
       )
       ProductsExtensionsAssociation.create(
         product: root_product,
         extension: autoselected_module,
-        root_product: root_product,
+        root_product:,
         migration_extra: true
       )
       ProductsExtensionsAssociation.create(
         product: root_product,
         extension: recommended_extension,
-        root_product: root_product,
+        root_product:,
         recommended: true
       )
       ProductsExtensionsAssociation.create(
         product: root_product,
         extension: autoselected_extension,
-        root_product: root_product,
+        root_product:,
         migration_extra: true
       )
       ProductsExtensionsAssociation.create(
         product: root_product,
         extension: not_autoselected_module,
-        root_product: root_product
+        root_product:
       )
       ProductsExtensionsAssociation.create(
         product: root_product,
         extension: not_autoselected_extension,
-        root_product: root_product
+        root_product:
       )
     end
 
@@ -194,7 +194,7 @@ RSpec.describe Product, type: :model do
     subject { extension.recommended_for?(queried_base) }
 
     let(:base) { create :product }
-    let(:extension) { create(:product, :extension, base_products: [base], recommended: recommended) }
+    let(:extension) { create(:product, :extension, base_products: [base], recommended:) }
 
     context 'when the extension is recommended for its base' do
       let(:recommended) { true }
