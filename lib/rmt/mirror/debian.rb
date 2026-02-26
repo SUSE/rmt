@@ -5,8 +5,8 @@ class RMT::Mirror::Debian < RMT::Mirror::Base
   SIGNATURE_FILE_NAME = 'Release.gpg'.freeze
   KEY_FILE_NAME = 'Release.key'.freeze
   INRELEASE_FILE_NAME = 'InRelease'.freeze
-  NESTED_REPOSITORY_REGEX = %r{/dists/.*/$}.freeze
-  PACKAGE_INDEX_FILE_NAME = /Packages\.(gz|xz)/.freeze
+  NESTED_REPOSITORY_REGEX = %r{/dists/.*/$}
+  PACKAGE_INDEX_FILE_NAME = /Packages\.(gz|xz)/
 
 
   def mirror_implementation
