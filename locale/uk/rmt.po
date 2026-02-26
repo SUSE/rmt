@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-01-25 20:04+0000\n"
+"PO-Revision-Date: 2026-02-26 20:04+0000\n"
 "Last-Translator: Eugene Krater <lachend@gmail.com>\n"
 "Language-Team: Ukrainian <https://l10n.opensuse.org/projects/rmt/i18n/uk/>\n"
 "Language: uk\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.15.2\n"
+"X-Generator: Weblate 5.16.1\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "Продукт %s ще не активовано в системі."
@@ -392,88 +392,92 @@ msgid "Hardware information stored for system %{system}"
 msgstr "Для системи %{system} збережена інформація про обладнання"
 
 msgid "Hostname"
-msgstr ""
+msgstr "Назва хоста"
 
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 msgid "Import commands for Offline Sync"
-msgstr ""
+msgstr "Імпорт команд для автономної синхронізації"
 
 msgid "Importing SCC data from %{path}"
-msgstr ""
+msgstr "Виконується імпорт даних SCC з %{path}"
 
 msgid "Invalid system credentials"
-msgstr ""
+msgstr "Недійсні системні облікові дані"
 
 msgid "Last Mirrored"
-msgstr ""
+msgstr "Останнє дзеркальне відображення"
 
 msgid "Last mirrored"
-msgstr ""
+msgstr "Востаннє дзеркальовано"
 
 msgid "Last seen"
-msgstr ""
+msgstr "Востаннє бачили"
 
 msgid "List all custom repositories"
-msgstr ""
+msgstr "Вивести список всіх користувацьких репозиторіїв"
 
 msgid "List all products, including ones which are not marked to be mirrored"
 msgstr ""
+"Вивести список всіх продуктів, включаючи ті, що не позначені для "
+"дзеркального відображення"
 
 msgid "List all registered systems"
-msgstr ""
+msgstr "Вивести список всіх зареєстрованих систем"
 
 msgid "List all repositories, including ones which are not marked to be mirrored"
 msgstr ""
+"Вивести список всіх репозиторіїв, включаючи ті, що не позначені для "
+"дзеркального відображення"
 
 msgid "List and manipulate registered systems"
-msgstr ""
+msgstr "Перелік та управління зареєстрованими системами"
 
 msgid "List and modify custom repositories"
-msgstr ""
+msgstr "Перелік та модифікація власних репозиторіїв"
 
 msgid "List and modify products"
-msgstr ""
+msgstr "Перелік та зміна продуктів"
 
 msgid "List and modify repositories"
-msgstr ""
+msgstr "Перелік та зміна репозиторіїв"
 
 msgid "List files during the cleaning process."
-msgstr ""
+msgstr "Вивести список файлів під час процесу очищення."
 
 msgid "List products which are marked to be mirrored."
-msgstr ""
+msgstr "Вивести список продуктів, які позначені для дзеркального відображення."
 
 msgid "List registered systems."
-msgstr ""
+msgstr "Перелік зареєстрованих систем."
 
 msgid "List repositories which are marked to be mirrored"
-msgstr ""
+msgstr "Вивести список репозиторіїв, позначених для дзеркального відображення"
 
 msgid "Loading product data from SCC"
-msgstr ""
+msgstr "Завантаження даних про продукт з SCC"
 
 msgid "Loading repository data from SCC"
-msgstr ""
+msgstr "Завантаження даних репозиторію з SCC"
 
 msgid "Loading subscription data from SCC"
-msgstr ""
+msgstr "Завантаження даних про передплату з SCC"
 
 msgid "Login"
-msgstr ""
+msgstr "Логін"
 
 msgid "Mandatory"
-msgstr ""
+msgstr "Обов'язкове"
 
 msgid "Mandatory?"
-msgstr ""
+msgstr "Обов'язково?"
 
 msgid "Mirror"
-msgstr ""
+msgstr "Дзеркало"
 
 msgid "Mirror all enabled repositories"
-msgstr ""
+msgstr "Дзеркалювати всі увімкнені репозиторії"
 
 msgid "Mirror enabled repositories for a product with given product IDs"
 msgstr ""
