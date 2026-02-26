@@ -89,71 +89,6 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         end
       end
 
-      context 'system with instance_data headers instance data is invalid in the DB' do
-        context 'InstanceVerification error' do
-          let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': Base64.strict_encode64('test') }) }
-          let(:data_export_double) { instance_double('DataExport::Handlers::Example') }
-          let(:wrong_iid) { '<repoformat>plugin:susecloud</repoformat>\n' }
-
-
-          before do
-            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
-            Rails.cache.clear
-            expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
-            allow(DataExport::Handlers::Example).to receive(:new).and_return(data_export_double)
-            allow(File).to receive(:directory?)
-            allow(Dir).to receive(:mkdir)
-            allow(FileUtils).to receive(:touch)
-            expect(data_export_double).to receive(:export_rmt_data).and_raise(InstanceVerification::Exception, "Malformed instance data #{wrong_iid}")
-            allow(Rails.logger).to receive(:error)
-            allow(Rails.logger).to receive(:info)
-            expect(Rails.logger).to receive(:error).with(
-              'Could not parse the instance data: Malformed instance data <repoformat>plugin:susecloud</repoformat>\n'
-            )
-            expect(Rails.logger).to receive(:info)
-            get '/api/auth/check', headers: headers
-          end
-
-          it do
-            is_expected.to have_http_status(200)
-          end
-        end
-
-        context 'StandardError' do
-          let(:system_byos) { FactoryBot.create(:system, :byos_reg_code, :with_activated_product) }
-          let(:headers) { auth_header.merge({ 'X-Original-URI': requested_uri, 'X-Instance-Data': Base64.strict_encode64('test') }) }
-          let(:data_export_double) { instance_double('DataExport::Handlers::Example') }
-          let(:wrong_iid) { '<repoformat>plugin:susecloud</repoformat>\n' }
-
-
-          before do
-            allow(InstanceVerification).to receive(:reg_code_in_cache?).and_return(nil)
-            Rails.cache.clear
-            expect_any_instance_of(InstanceVerification::Providers::Example).to receive(:instance_valid?).and_return(true)
-            allow(DataExport::Handlers::Example).to receive(:new).and_return(data_export_double)
-            allow(File).to receive(:directory?)
-            allow(Dir).to receive(:mkdir)
-            allow(FileUtils).to receive(:touch)
-            expect(data_export_double).to receive(:export_rmt_data).and_raise(
-              StandardError, 'API BORKED'
-            )
-            allow(Rails.logger).to receive(:error)
-            expect(Rails.logger).to receive(:error).with(
-              'Unexpected data export error has occurred: API BORKED'
-            )
-            expect(Rails.logger).to receive(:error).with('Data not exported')
-            expect(Rails.logger).to receive(:error).with(
-              "System login: #{system.login}, IP: 127.0.0.1"
-            )
-            get '/api/auth/check', headers: headers
-          end
-
-          it do
-            is_expected.to have_http_status(200)
-          end
-        end
-      end
-
       context 'when system is BYOS proxy' do
         let(:local_path) { system_byos.activations.first.product.repositories.first.local_path }
         let(:paid_local_path) do
@@ -399,7 +334,6 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           allow(File).to receive(:directory?)
           allow(Dir).to receive(:mkdir)
           allow(FileUtils).to receive(:touch)
-          expect(data_export_double).to receive(:export_rmt_data)
           get '/api/auth/check', headers: headers
         end
 
@@ -645,7 +579,6 @@ describe StrictAuthentication::AuthenticationController, type: :request do
             before do
               allow(InstanceVerification).to receive(:verify_instance).and_return(true)
               allow(DataExport::Handlers::Example).to receive(:new).and_return(data_export_double)
-              expect(data_export_double).to receive(:export_rmt_data)
               get '/api/auth/check', headers: headers
             end
 
