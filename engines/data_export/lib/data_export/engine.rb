@@ -3,10 +3,11 @@ module DataExport
     isolate_namespace DataExport
     config.after_initialize do
       Api::Connect::V3::Systems::SystemsController.class_eval do
-        # if registered_at and last_seen_at are the same, it is a registration
+        # if the difference between registered_at and last_seen_at
+        # is shorter than 10 seconds, it is a registration
         after_action :export_rmt_data, only: %i[update], if: lambda {
           DataExport.handler.presence && response.successful? && !@system.byos? &&
-          @system.products.present? && @system.registered_at != @system.last_seen_at
+          @system.products.present? && (@system.last_seen_at - @system.registered_at) > 10.seconds
         }
 
         def export_rmt_data
