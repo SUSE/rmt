@@ -1,6 +1,6 @@
 services:
   db:
-    image: registry.suse.com/suse/mariadb:10.11
+    image: registry.suse.com/suse/mariadb:11.8
     restart: unless-stopped
     volumes:
       - mariadb:/var/lib/mysql
@@ -19,7 +19,7 @@ services:
     command: bundle exec rails runner /srv/www/rmt/bin/compose-init.rb
 
   nginx:
-    image: nginx:1.14
+    image: nginx:1.27.2
     volumes:
       - ./public:/var/www/
       - ./nginx/default.conf:/tmp/default.template

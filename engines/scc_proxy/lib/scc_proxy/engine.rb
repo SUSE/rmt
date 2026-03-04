@@ -18,7 +18,7 @@ NET_HTTP_ERRORS = [
   Net::HTTPHeaderSyntaxError,
   Net::ProtocolError,
   Net::OpenTimeout,
-  Net::HTTPServerException,
+  Net::HTTPClientException,
   Net::HTTPFatalError,
   OpenSSL::SSL::SSLError,
   Errno::EHOSTUNREACH,
@@ -333,7 +333,7 @@ module SccProxy
 
         def has_no_regcode?(auth_header)
           auth_header ||= '='
-          auth_header = auth_header[(auth_header.index('=') + 1)..-1]
+          auth_header = auth_header[(auth_header.index('=') + 1)..]
           auth_header.empty?
         end
       end

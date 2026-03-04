@@ -332,14 +332,14 @@ RSpec.describe RMT::FileValidator do
 
     shared_examples 'invalid files on disk' do
       it 'removes invalid files from the disk' do
-        previous_state = invalid_files.map { |f| [f[:file].local_path, true] }.to_h
-        expected_state = invalid_files.map { |f| [f[:file].local_path, false] }.to_h
+        previous_state = invalid_files.to_h { |f| [f[:file].local_path, true] }
+        expected_state = invalid_files.to_h { |f| [f[:file].local_path, false] }
 
         expect { find_valid_files_by_checksum }
           .to change {
-            invalid_files.map do |f|
+            invalid_files.to_h do |f|
               [f[:file].local_path, File.exist?(f[:file].local_path)]
-            end.to_h
+            end
           }.from(previous_state).to(expected_state)
       end
     end
