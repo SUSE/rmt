@@ -1,5 +1,5 @@
 -------------------------------------------------------------------
-Wed Jan 07 16:56:50 UTC 2026 - Fergal Mc Carthy <fmccarthy@suse.com>
+Thu Mar 05 20:26:48 UTC 2026 - Fergal Mc Carthy <fmccarthy@suse.com>
 
 - Version 2.26
   * Add support for processing, storing, and syncing system profiles (jsc#TEL-265)
