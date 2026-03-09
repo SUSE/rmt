@@ -23,7 +23,7 @@ RUN ln -s /srv/www/rmt/bin/rmt-cli /usr/bin && \
     chown _rmt /srv/www/rmt/public/repo && \
     chown _rmt /srv/www/rmt/public/suma
 
-RUN uuidgen > /var/lib/rmt/system_uuid
+RUN uuidgen > /usr/share/rmt/system_uuid
 
 EXPOSE 4224
 
