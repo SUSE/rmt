@@ -14,10 +14,14 @@ class System < ApplicationRecord
   has_many :repositories, -> { distinct }, through: :services
   has_many :products, -> { distinct }, through: :services
   has_many :system_uptimes, dependent: :destroy
+  has_many :system_profiles, dependent: :destroy
+  has_many :profiles, -> { distinct }, through: :system_profiles
 
   validates :system_token, uniqueness: { scope: %i[login password], case_sensitive: false }
 
   alias_attribute :scc_synced_at, :scc_registered_at
+
+  accepts_nested_attributes_for :profiles
 
   def init
     self.login ||= System.generate_secure_login
@@ -74,6 +78,25 @@ class System < ApplicationRecord
 
   def update_instance_data(instance_data)
     update!(instance_data: instance_data)
+  end
+
+  # Leverage a Rails ActiveRecord attribute setter method for a
+  # synthesized virtual attribute, complete_profiles, to simplify
+  # code changes in the system controller announce_system and update
+  # handlers.
+  # This approach allows us to add the complete_profiles attribute
+  # as an argument to a create() or update() for a System record
+  # that then calls this setter method to handle the corresponding
+  # assignment allowing us to process the provided complete profile
+  # hashes to ensure that corresponding Profile records exist and
+  # then assign those Profile records as being indirectly associated
+  # with a System record via appropriate SystemProfile linking records.
+  def complete_profiles=(profiles_hash)
+    # NOTE: All provided profiles in profiles_hash must be complete
+    logger.debug("assigning complete profiles: #{profiles_hash.keys}")
+
+    # Lookup or create Profile records for the provided profiles
+    self.profiles = Profile.ensure_complete_profiles_exist(profiles_hash)
   end
 
   before_update do |system|
