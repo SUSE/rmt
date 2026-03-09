@@ -28,8 +28,6 @@ jobs:
       # Only use 2 workers, gh actions seems to kill jobs when we use more
       max-parallel: 2
       matrix:
-        # we need to test the Ruby versions of the products we release RMT for,
-        # those are: SLE15 (2.5.8, 2.5.9)
         ruby-version: ['3.4.8']
 
     services:
@@ -76,7 +74,7 @@ jobs:
 
       - name: Prepare database
         run: |
-          bundle exec rails db:drop db:create db:migrate
+          bundle exec rails db:drop db:create db:schema:load
 
       - name: Run core tests
         run: |

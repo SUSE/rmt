@@ -9,7 +9,7 @@ inherit_mode:
     - Exclude
 
 AllCops:
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 3.1
   SuggestExtensions: false
   NewCops: enable
   Exclude:
@@ -21,7 +21,10 @@ AllCops:
     - tmp/**/*
     - lib/locale/*
     - package/**/*
+    - ci/Dockerfile
 
+Style/HashSyntax:
+  EnforcedShorthandSyntax: never
 
 Style/TrailingUnderscoreVariable:
   Enabled: false
