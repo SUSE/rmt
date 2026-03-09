@@ -45,10 +45,10 @@
 7. Copy the file `config/rmt.yml` to `config/rmt.local.yml`. With this file, override the following default settings:
     * Add your organization credentials to `scc` section.
     * Ensure that the `database` section is correct.
-8. Create the directory `/var/lib/rmt` and ensure that your current user owns it.
+8. Create the directory `/usr/share/rmt` and ensure that your current user owns it.
     ```
-    sudo mkdir /var/lib/rmt
-    sudo chown -R $(id -u):$(id -g) /var/lib/rmt
+    sudo mkdir /usr/share/rmt
+    sudo chown -R $(id -u):$(id -g) /usr/share/rmt
     ```
 9. Create the development database:
     ```

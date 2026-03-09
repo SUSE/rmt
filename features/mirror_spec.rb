@@ -1,5 +1,5 @@
 describe 'mirror' do
-  let(:path) { '/var/lib/rmt/public/repo/SUSE/Products/SLE-Product-SLES/15-SP5/x86_64' }
+  let(:path) { '/usr/share/rmt/public/repo/SUSE/Products/SLE-Product-SLES/15-SP5/x86_64' }
 
   before do
     `/usr/bin/rmt-cli repos enable 5664`
@@ -37,7 +37,7 @@ describe 'mirror' do
 end
 
 describe 'mirror multiple times' do
-  let(:path) { '/var/lib/rmt/public/repo/SUSE/Products/SLE-Product-SLES/15-SP5/x86_64/product' }
+  let(:path) { '/usr/share/rmt/public/repo/SUSE/Products/SLE-Product-SLES/15-SP5/x86_64/product' }
 
   before do
     `/usr/bin/rmt-cli repos enable 5664`

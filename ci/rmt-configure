@@ -36,9 +36,9 @@ if [ "$SCC_PASSWORD" = "" ] || [ "$SCC_USERNAME" = "" ]; then
 fi
 
 group "setup system uuid"
-  echo "saving uuid to /var/lib/rmt/system_uuid"
-  mkdir -p /var/lib/rmt/
-  echo "$SYSTEM_UUID" > /var/lib/rmt/system_uuid
+  echo "saving uuid to /usr/share/rmt/system_uuid"
+  mkdir -p /usr/share/rmt/
+  echo "$SYSTEM_UUID" > /usr/share/rmt/system_uuid
 groupend
 
 group "install rmt-server rpms"

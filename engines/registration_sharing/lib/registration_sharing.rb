@@ -3,7 +3,7 @@ $LOAD_PATH.push File.expand_path(__dir__, '..')
 require 'registration_sharing/engine'
 
 module RegistrationSharing
-  RMT_REGSHARING_DEFAULT_DATA_DIR = '/var/lib/rmt/regsharing'.freeze
+  RMT_REGSHARING_DEFAULT_DATA_DIR = '/usr/share/rmt/regsharing'.freeze
 
   class << self
     # creates a file on the disk to mark systems with changed registration data

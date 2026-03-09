@@ -21,13 +21,13 @@ RUN mkdir /srv/www/rmt/public/repo
 
 RUN sed -i 's/#!\/usr\/bin\/env ruby/#!\/usr\/bin\/ruby.ruby2.5/g' /srv/www/rmt/bin/rmt-cli && \
     ln -s /srv/www/rmt/bin/rmt-cli /usr/bin && \
-    mkdir /var/lib/rmt/ && \
+    mkdir /usr/share/rmt/ && \
     groupadd -r nginx && \
     useradd -g nginx -s /bin/false -r -c "user for RMT" _rmt && \
     chown _rmt /srv/www/rmt/public/repo && \
     chown _rmt /srv/www/rmt/public/suma
 
-RUN uuidgen > /var/lib/rmt/system_uuid
+RUN uuidgen > /usr/share/rmt/system_uuid
 
 EXPOSE 4224
 
