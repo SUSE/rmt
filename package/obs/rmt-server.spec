@@ -118,7 +118,7 @@ sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
 # Set the version of bundler available within the build environment instead
 # of expect a hardcoded version. This ensures we bundle with the available version of bundler no matter which version available
 # NOTE: This relies on the fact that the lock file format does not change between bundler versions (which is not yet the case)
-sed -i "s/2\.2\.34/$(bundle.%{ruby_version} --version | grep -oE '([0-9]+\.?){3}')/g" Gemfile.lock
+sed -i "s/BUNDLED WITH/BUNDLED WITH/g; /BUNDLED WITH/{n; s/[0-9.]\+/$(bundle.%{ruby_version} --version | grep -oE '([0-9]+\.?){3}')/}" Gemfile.lock
 
 %build
 bundle.%{ruby_version} config build.nio4r --with-cflags='%{optflags} -Wno-return-type'
@@ -127,16 +127,15 @@ bundle.%{ruby_version} config set without 'test development'
 bundle.%{ruby_version} install %{?jobs:--jobs %{jobs}}
 
 %install
-mkdir -p %{buildroot}%{data_dir}
 mkdir -p %{buildroot}%{lib_dir}
 mkdir -p %{buildroot}%{app_dir}
 mkdir -p %{buildroot}%{conf_dir}/ssl
-mkdir -p %{buildroot}%{data_dir}/regsharing
+mkdir -p %{buildroot}%{app_dir}/regsharing
 
-mv tmp %{buildroot}%{data_dir}
-mkdir -p %{buildroot}%{data_dir}/public
-mv public/repo %{buildroot}%{data_dir}/public/
-mv public/suma %{buildroot}%{data_dir}/public/
+mv tmp %{buildroot}%{app_dir}
+mkdir -p %{buildroot}%{app_dir}/public
+mv public/repo %{buildroot}%{app_dir}/public/
+mv public/suma %{buildroot}%{app_dir}/public/
 mv vendor %{buildroot}%{lib_dir}
 
 cp -ar . %{buildroot}%{app_dir}
@@ -234,7 +233,6 @@ sed -i 's|warnings << "Nokogiri was built|# warnings << "Nokogiri was built|' %{
 # cleanup unneeded files
 find %{buildroot}%{lib_dir} "(" -name "*.c" -o -name "*.h" -o -name .keep ")" -delete
 find %{buildroot}%{app_dir} -name .keep -delete
-find %{buildroot}%{data_dir} -name .keep -delete
 rm -r  %{buildroot}%{lib_dir}/vendor/bundle/ruby/[23].*.0/cache
 rm -rf %{buildroot}%{lib_dir}/vendor/cache
 rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/doc
@@ -261,16 +259,19 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %attr(0755,root,root) %{app_dir}/public/tools
 %exclude %{app_dir}/engines/
 %exclude %{app_dir}/package/
-%exclude %{app_dir}/rmt/tmp
+%exclude %{app_dir}/tmp
 %ghost %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
+%attr(-,%{rmt_user},%{rmt_group}) %{app_dir}/public/repo
+%attr(-,%{rmt_user},%{rmt_group}) %{app_dir}/public/suma
 %attr(-,%{rmt_user},%{rmt_group}) %{conf_dir}
 %dir %{_libexecdir}/supportconfig
 %dir %{_libexecdir}/supportconfig/plugins
 %dir %{script_dir}
 %ghost %dir /var/lib/rmt
+%dir %{_datadir}/rmt
 %{_tmpfilesdir}/rmt.conf
-%{_datadir}/rmt/public/repo
-%{_datadir}/rmt/public/suma
+%{app_dir}/public/repo
+%{app_dir}/public/suma
 
 # The secrets file is created by running the initial rake tasks in the `post` section
 %ghost %attr(0640,root,%{rmt_group}) %{app_dir}/config/secrets.yml.key
@@ -324,7 +325,7 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %{_bindir}/rmt-manual-instance-verify
 %attr(-,root,root) %{app_dir}/engines/
 %dir %{_sysconfdir}/nginx/rmt-auth.d/
-%ghost %dir %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}/regsharing
+%ghost %dir %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}/regsharing
 %exclude %{app_dir}/engines/registration_sharing/package/
 %dir %{_sysconfdir}/nginx
 %dir %{_sysconfdir}/nginx/vhosts.d

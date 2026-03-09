@@ -29,7 +29,7 @@ module SUSE
         uri_string.freeze
       end
 
-      UUID_FILE_LOCATION = '/var/lib/rmt/system_uuid'.freeze
+      UUID_FILE_LOCATION = '/usr/share/rmt/system_uuid'.freeze
 
       # Amount of systems per update request
       BULK_SYSTEM_REQUEST_LIMIT = 50
