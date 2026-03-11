@@ -22,6 +22,9 @@ You can install and run this wizard like this:
 
 ## USAGE
 
+  * `rmt-cli setup`:
+    This command is responsibile for creating and updating the user configurations for RMT. If the user has defined configurations previously and wishes to update them, it interactively suggests these previously set values for user to review before updating them.
+
   * `rmt-cli sync`:
     RMT comes with a preconfigured systemd timer to automatically get the latest product and repository data from the SUSE Customer Center over night.
     This command triggers the same synchronization instantly.
