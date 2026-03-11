@@ -102,8 +102,9 @@ GEM
       dry-initializer (~> 3.0)
       dry-schema (~> 1.5, >= 1.5.2)
     erubi (1.13.1)
-    ethon (0.16.0)
+    ethon (0.18.0)
       ffi (>= 1.15.0)
+      logger
     factory_bot (6.2.0)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.2.0)
@@ -113,7 +114,7 @@ GEM
     fast_gettext (2.4.0)
       prime
     ffaker (2.21.0)
-    ffi (1.16.3)
+    ffi (1.17.3)
     formatador (0.2.5)
     forwardable (1.3.3)
     fuubar (2.5.1)
@@ -156,6 +157,7 @@ GEM
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
     locale (2.1.4)
+    logger (1.7.0)
     loofah (2.24.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -329,8 +331,8 @@ GEM
     timecop (0.9.10)
     tins (1.26.0)
       sync
-    typhoeus (1.4.1)
-      ethon (>= 0.9.0)
+    typhoeus (1.6.0)
+      ethon (>= 0.18.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.3.0)
