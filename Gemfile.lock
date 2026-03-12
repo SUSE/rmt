@@ -520,6 +520,7 @@ DEPENDENCIES
   mixlib-shellout
   mysql2 (~> 0.5.7)
   nokogiri (>= 1.18)
+  ostruct
   public_suffix
   puma
   rackup

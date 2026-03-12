@@ -5,6 +5,8 @@ ruby '~> 3.4'
 
 gem 'rails', '~> 8.1.0'
 
+gem 'ostruct'
+
 gem 'bootsnap', require: false
 
 gem 'csv'
