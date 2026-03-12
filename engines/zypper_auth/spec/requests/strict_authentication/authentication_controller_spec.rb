@@ -67,7 +67,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           get '/api/auth/check', headers: headers
         end
 
-        it { is_expected.to have_http_status(403) }
+        it { is_expected.to have_http_status(:forbidden) }
       end
 
       context 'with instance_data headers and instance data is invalid' do
@@ -85,7 +85,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
         end
 
         it do
-          is_expected.to have_http_status(403)
+          is_expected.to have_http_status(:forbidden)
         end
       end
 
@@ -220,7 +220,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
             get '/api/auth/check', headers: headers
           end
 
-          it { is_expected.to have_http_status(200) }
+          it { is_expected.to have_http_status(:ok) }
 
           context 'and repo is not free' do
             before do
@@ -229,7 +229,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               get '/api/auth/check', headers: paid_headers
             end
 
-            it { is_expected.to have_http_status(200) }
+            it { is_expected.to have_http_status(:ok) }
           end
         end
 
@@ -241,7 +241,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
             get '/api/auth/check', headers: headers
           end
 
-          it { is_expected.to have_http_status(403) }
+          it { is_expected.to have_http_status(:forbidden) }
 
           context 'and repo is not free' do
             before do
@@ -249,7 +249,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               get '/api/auth/check', headers: paid_headers
             end
 
-            it { is_expected.to have_http_status(403) }
+            it { is_expected.to have_http_status(:forbidden) }
           end
         end
 
@@ -261,7 +261,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
             get '/api/auth/check', headers: headers
           end
 
-          it { is_expected.to have_http_status(403) }
+          it { is_expected.to have_http_status(:forbidden) }
 
           context 'and repo is not free' do
             before do
@@ -270,7 +270,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               get '/api/auth/check', headers: paid_headers
             end
 
-            it { is_expected.to have_http_status(403) }
+            it { is_expected.to have_http_status(:forbidden) }
           end
         end
 
@@ -285,7 +285,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
             get '/api/auth/check', headers: headers
           end
 
-          it { is_expected.to have_http_status(403) }
+          it { is_expected.to have_http_status(:forbidden) }
 
           context 'and repo is not free' do
             before do
@@ -293,7 +293,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               get '/api/auth/check', headers: paid_headers
             end
 
-            it { is_expected.to have_http_status(403) }
+            it { is_expected.to have_http_status(:forbidden) }
           end
         end
 
@@ -308,7 +308,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
             get '/api/auth/check', headers: headers
           end
 
-          it { is_expected.to have_http_status(403) }
+          it { is_expected.to have_http_status(:forbidden) }
 
           context 'and repo is not free' do
             before do
@@ -316,7 +316,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               get '/api/auth/check', headers: paid_headers
             end
 
-            it { is_expected.to have_http_status(403) }
+            it { is_expected.to have_http_status(:forbidden) }
           end
         end
       end
@@ -338,7 +338,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
           get '/api/auth/check', headers: headers
         end
 
-        it { is_expected.to have_http_status(200) }
+        it { is_expected.to have_http_status(:ok) }
       end
 
       context 'system is hybrid' do
@@ -584,7 +584,7 @@ describe StrictAuthentication::AuthenticationController, type: :request do
               get '/api/auth/check', headers: headers
             end
 
-            it { is_expected.to have_http_status(200) }
+            it { is_expected.to have_http_status(:ok) }
           end
         end
       end

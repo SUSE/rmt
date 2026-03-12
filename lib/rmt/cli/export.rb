@@ -54,7 +54,7 @@ class RMT::CLI::Export < RMT::CLI::Base
         }
         RMT::Mirror.new(**configuration).mirror_now
       rescue RMT::Mirror::Exception => e
-        warn e.to_s
+        warn e
       end
     end
   end

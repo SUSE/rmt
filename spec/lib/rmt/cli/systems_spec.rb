@@ -6,9 +6,9 @@ RSpec.describe RMT::CLI::Systems do
     subject(:command) { described_class.start(argv) }
 
     context 'with systems in database' do
-      let(:system1) { create :system, :with_activated_product, hostname: 'host1', last_seen_at: Time.now.utc - 3 }
-      let(:system2) { create :system, :with_activated_product, hostname: 'host2', last_seen_at: Time.now.utc - 2 }
-      let(:system3) { create :system, :with_activated_product, hostname: 'host3', last_seen_at: Time.now.utc - 1 }
+      let(:system1) { create(:system, :with_activated_product, hostname: 'host1', last_seen_at: Time.now.utc - 3) }
+      let(:system2) { create(:system, :with_activated_product, hostname: 'host2', last_seen_at: Time.now.utc - 2) }
+      let(:system3) { create(:system, :with_activated_product, hostname: 'host3', last_seen_at: Time.now.utc - 1) }
       let(:headings) { [ 'Login', 'Hostname', 'Registration time', 'Last seen', 'Products' ] }
       let(:expected_rows) do
         expected_systems.map do |system|
@@ -120,9 +120,9 @@ RSpec.describe RMT::CLI::Systems do
       end
 
       context 'system with associated subscription' do
-        let(:subscription) { create :subscription, :with_products }
+        let(:subscription) { create(:subscription, :with_products) }
         let(:product) { subscription.products.first }
-        let(:system3) { create :system, :with_activated_product, product: product, subscription: subscription }
+        let(:system3) { create(:system, :with_activated_product, product: product, subscription: subscription) }
 
         let(:argv) { ['list'] }
 
@@ -153,7 +153,7 @@ RSpec.describe RMT::CLI::Systems do
 
   describe '#remove' do
     describe 'success' do
-      let(:system) { create :system, :with_activated_product, hostname: 'host1', last_seen_at: Time.now.utc - 3, scc_system_id: '123123' }
+      let(:system) { create(:system, :with_activated_product, hostname: 'host1', last_seen_at: Time.now.utc - 3, scc_system_id: '123123') }
       let(:argv) { ['remove', system.login] }
       let(:expected_output) { "Successfully removed system with login #{system.login}.\n" }
 
@@ -195,7 +195,7 @@ RSpec.describe RMT::CLI::Systems do
       context 'when the record can\'t be destroyed' do
         let(:argv) { ['remove', system.login] }
         let(:expected_output) { "System with login #{system.login} cannot be removed.\n" }
-        let(:system) { create :system, :with_activated_product }
+        let(:system) { create(:system, :with_activated_product) }
 
         it 'raises ActiveRecord::RecordNotDestroyed' do
           expect_any_instance_of(System).to receive(:destroy!).and_raise(ActiveRecord::RecordNotDestroyed)
@@ -221,7 +221,7 @@ RSpec.describe RMT::CLI::Systems do
       let(:argv) { ['purge'] }
 
       before do
-        create :system, :with_activated_product, last_seen_at: 1.month.ago
+        create(:system, :with_activated_product, last_seen_at: 1.month.ago)
       end
 
       it 'shows a warning if there are no systems matching the query' do
@@ -233,8 +233,8 @@ RSpec.describe RMT::CLI::Systems do
     end
 
     context 'there are systems to be purged' do
-      let!(:s1) { create :system, :with_activated_product, last_seen_at: 2.months.ago }
-      let!(:s2) { create :system, :with_activated_product, last_seen_at: 4.months.ago }
+      let!(:s1) { create(:system, :with_activated_product, last_seen_at: 2.months.ago) }
+      let!(:s2) { create(:system, :with_activated_product, last_seen_at: 4.months.ago) }
 
       it 'removes systems by following the default definition of inactive' do
         expect(System.count).to eq 2
@@ -258,8 +258,8 @@ RSpec.describe RMT::CLI::Systems do
     end
 
     context 'purge confirmations' do
-      let!(:s1) { create :system, :with_activated_product, last_seen_at: 2.months.ago }
-      let!(:s2) { create :system, :with_activated_product, last_seen_at: 4.months.ago }
+      let!(:s1) { create(:system, :with_activated_product, last_seen_at: 2.months.ago) }
+      let!(:s2) { create(:system, :with_activated_product, last_seen_at: 4.months.ago) }
 
       it 'asks for confirmation' do
         expect(System.count).to eq 2

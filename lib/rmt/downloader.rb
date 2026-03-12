@@ -1,7 +1,6 @@
 require 'typhoeus'
 require 'tempfile'
 require 'fileutils'
-require 'fiber'
 require 'rmt'
 require 'rmt/config'
 require 'rmt/fiber_request'
@@ -226,7 +225,7 @@ class RMT::Downloader
   end
 
   def handle_checksum_verification!(checksum_type, checksum_value, download_path)
-    return unless (checksum_type && checksum_value)
+    return unless checksum_type && checksum_value
 
     unless RMT::ChecksumVerifier.match_checksum?(checksum_type, checksum_value, download_path)
       raise RMT::Downloader::Exception.new(_("Checksum doesn't match"))
@@ -239,7 +238,7 @@ class RMT::Downloader
 
   def request_uri(file)
     uri = URI.join(file.remote_path)
-    uri.query = @auth_token if (@auth_token && uri.scheme != 'file')
+    uri.query = @auth_token if @auth_token && uri.scheme != 'file'
 
     if URI(uri).scheme == 'file' && !File.exist?(CGI.unescape(uri.path))
       e = RMT::Downloader::Exception.new(_('%{file} - File does not exist') % { file: file.remote_path })

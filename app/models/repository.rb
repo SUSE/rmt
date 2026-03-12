@@ -48,7 +48,7 @@ class Repository < ApplicationRecord
       max = potential_conflicts.map do |conflict|
         match = conflict.match(regexp)
         sql = sanitize_sql_array(['SELECT ? = ?', sanitized_input, match[1].to_s])
-        connection.execute(sql).first[0] == 1 ? match[2].to_i : 0
+        (connection.execute(sql).first[0] == 1) ? match[2].to_i : 0
       end.max
       max ||= 0
 

@@ -3,7 +3,7 @@ require 'rails_helper'
 describe SUSE::Connect::SystemSerializer do
   subject(:serializer) { described_class.new(system).to_h }
 
-  let(:system) { create :system, :full }
+  let(:system) { create(:system, :full) }
 
   context 'not synchronized system' do
     let(:hwinfo_parameters) { JSON.parse(system.system_information).symbolize_keys }
@@ -34,7 +34,7 @@ describe SUSE::Connect::SystemSerializer do
   end
 
   context 'synchronized system' do
-    let(:system) { create :system, :full, :synced }
+    let(:system) { create(:system, :full, :synced) }
     let(:expected) do
       {
         login: system.login,
@@ -48,7 +48,7 @@ describe SUSE::Connect::SystemSerializer do
   end
 
   context 'system with system_token' do
-    let(:system) { create :system, :full, :synced, :with_system_token }
+    let(:system) { create(:system, :full, :synced, :with_system_token) }
     let(:expected) do
       {
         login: system.login,
@@ -63,8 +63,8 @@ describe SUSE::Connect::SystemSerializer do
   end
 
   context 'system with activation and subscriptions' do
-    let(:subscription) { create :subscription }
-    let(:system) { create :system, :full, subscription: subscription }
+    let(:subscription) { create(:subscription) }
+    let(:system) { create(:system, :full, subscription: subscription) }
 
     it 'does add the subscriptions regcode if associated' do
       expect(serializer[:products][0][:regcode]).to eq(subscription.regcode)
@@ -72,7 +72,7 @@ describe SUSE::Connect::SystemSerializer do
   end
 
   context 'system without hardware info' do
-    let(:system) { create :system, :synced }
+    let(:system) { create(:system, :synced) }
 
     it 'does not add the hwinfo attribute' do
       expect(serializer.key? :hwinfo).to eq(false)
@@ -80,7 +80,7 @@ describe SUSE::Connect::SystemSerializer do
   end
 
   context 'system without system_token' do
-    let(:system) { create :system, :synced, system_token: nil }
+    let(:system) { create(:system, :synced, system_token: nil) }
 
     it 'does not add the system_token attribute' do
       expect(serializer.key? :system_token).to eq(false)
@@ -88,11 +88,11 @@ describe SUSE::Connect::SystemSerializer do
   end
 
   context 'system with systemuptime' do
-    let(:system) { create :system, :with_system_uptimes }
+    let(:system) { create(:system, :with_system_uptimes) }
 
     it 'match systemuptime data' do
-      expect((serializer[:online_at][0][:online_at_day]).to_date).to eq(Time.zone.now.to_date)
-      expect((serializer[:online_at][0][:online_at_hours]).to_s).to eq('111111111111111111111111')
+      expect(serializer[:online_at][0][:online_at_day].to_date).to eq(Time.zone.now.to_date)
+      expect(serializer[:online_at][0][:online_at_hours].to_s).to eq('111111111111111111111111')
     end
   end
 end

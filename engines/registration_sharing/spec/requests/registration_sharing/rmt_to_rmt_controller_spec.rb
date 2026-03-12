@@ -53,13 +53,13 @@ module RegistrationSharing
         let(:request_token) { 'wr0ngt0k3n' }
 
         it 'returns an error' do
-          expect(response).to have_http_status(401)
+          expect(response).to have_http_status(:unauthorized)
         end
       end
 
       context 'with correct credentials' do
         it 'performs HTTP request successfully' do
-          expect(response).to have_http_status(204)
+          expect(response).to have_http_status(:no_content)
         end
 
         context 'system' do
@@ -115,7 +115,7 @@ module RegistrationSharing
 
       context 'with correct credentials' do
         it 'performs HTTP request successfully' do
-          expect(response).to have_http_status(204)
+          expect(response).to have_http_status(:no_content)
         end
 
         context 'system' do
@@ -156,7 +156,7 @@ module RegistrationSharing
 
       context 'with correct credentials' do
         it 'performs HTTP request successfully' do
-          expect(response).to have_http_status(204)
+          expect(response).to have_http_status(:no_content)
         end
 
         context 'system' do
@@ -187,13 +187,13 @@ module RegistrationSharing
         let(:request_token) { 'wr0ngt0k3n' }
 
         it 'returns an error' do
-          expect(response).to have_http_status(401)
+          expect(response).to have_http_status(:unauthorized)
         end
       end
 
       context 'with correct credentials' do
         it 'performs HTTP request successfully' do
-          expect(response).to have_http_status(204)
+          expect(response).to have_http_status(:no_content)
         end
 
         it 'removes the system' do

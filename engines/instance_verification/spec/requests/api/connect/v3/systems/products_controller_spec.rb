@@ -398,7 +398,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             it 'de-registers system from SCC and reports an error' do
               data = JSON.parse(response.body)
               expect(data['error']).to eq('Unexpected instance verification error has occurred')
-              expect(response).to have_http_status(422)
+              expect(response).to have_http_status(:unprocessable_content)
             end
           end
         end
@@ -839,7 +839,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           it 'HTTP response code is 422' do
-            expect(response).to have_http_status(422)
+            expect(response).to have_http_status(:unprocessable_content)
           end
 
           it 'renders an error' do
@@ -868,7 +868,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           it 'HTTP response code is 201' do
-            expect(response).to have_http_status(201)
+            expect(response).to have_http_status(:created)
           end
 
           it "doesn't render an error" do
@@ -895,7 +895,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           before { request }
 
           it 'HTTP response code is 422' do
-            expect(response).to have_http_status(422)
+            expect(response).to have_http_status(:unprocessable_content)
           end
 
           it 'renders an error' do
@@ -919,7 +919,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           it 'HTTP response code is 422' do
-            expect(response).to have_http_status(422)
+            expect(response).to have_http_status(:unprocessable_content)
           end
 
           it 'renders an error' do
@@ -947,7 +947,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         before { request }
 
         it 'HTTP response code is 422' do
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_content)
         end
 
         it 'renders an error' do
@@ -967,7 +967,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         before { request }
 
         it 'HTTP response code is 422' do
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_content)
         end
 
         it 'renders an error' do
@@ -992,7 +992,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
 
         it 'HTTP response code is 201' do
-          expect(response).to have_http_status(201)
+          expect(response).to have_http_status(:created)
         end
 
         it "doesn't render an error" do

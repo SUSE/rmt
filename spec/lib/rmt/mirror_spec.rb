@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe RMT::Mirror do
   let(:url) { 'http://some.test.us/path/directory/' }
   let(:mirroring_base_dir) { '/non/existing/' }
-  let(:repository) { create :repository, external_url: url }
+  let(:repository) { create(:repository, external_url: url) }
 
   let(:mirror) do
     described_class.new(repository: repository,

@@ -302,20 +302,20 @@ RSpec.describe RMT::CLI::Clean do
       end
       let(:expected_result_output) do
         <<~OUTPUT.chomp
-        \e[1mDirectory: #{dummy_repo[:dir]}\e[0m
-          Cleaned 'blueberry-0.1-0.x86_64.drpm' (#{file_human_size(0)}, hardlink), 1 database entry.
-          Cleaned 'blueberry-0.2-0.x86_64.rpm' (#{file_human_size(0)}, hardlink), 1 database entry.
-        Cleaned 2 files (#{file_human_size(0)}), 2 database entries.
+          \e[1mDirectory: #{dummy_repo[:dir]}\e[0m
+            Cleaned 'blueberry-0.1-0.x86_64.drpm' (#{file_human_size(0)}, hardlink), 1 database entry.
+            Cleaned 'blueberry-0.2-0.x86_64.rpm' (#{file_human_size(0)}, hardlink), 1 database entry.
+          Cleaned 2 files (#{file_human_size(0)}), 2 database entries.
 
-        \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
-          Cleaned 'src/lemon-0.0.1-lp151.1.1.src.rpm' (#{file_human_size(0)}, hardlink), 0 database entries.
-          Cleaned 'src/lemon-0.0.2-lp151.2.1.src.rpm' (#{file_human_size(0)}, hardlink), 1 database entry.
-          Cleaned 'x86_64/lemon-0.0.1_0.0.2-lp151.2.1.x86_64.drpm' (#{file_human_size(0)}, hardlink), 0 database entries.
-          Cleaned 'x86_64/lemon-0.0.2-lp151.2.1.x86_64.rpm' (#{file_human_size(0)}, hardlink), 1 database entry.
-        Cleaned 4 files (#{file_human_size(0)}), 2 database entries.
+          \e[1mDirectory: #{dummy_repo_with_src[:dir]}\e[0m
+            Cleaned 'src/lemon-0.0.1-lp151.1.1.src.rpm' (#{file_human_size(0)}, hardlink), 0 database entries.
+            Cleaned 'src/lemon-0.0.2-lp151.2.1.src.rpm' (#{file_human_size(0)}, hardlink), 1 database entry.
+            Cleaned 'x86_64/lemon-0.0.1_0.0.2-lp151.2.1.x86_64.drpm' (#{file_human_size(0)}, hardlink), 0 database entries.
+            Cleaned 'x86_64/lemon-0.0.2-lp151.2.1.x86_64.rpm' (#{file_human_size(0)}, hardlink), 1 database entry.
+          Cleaned 4 files (#{file_human_size(0)}), 2 database entries.
 
-        #{'-' * 80}
-        \e[32;1mTotal: cleaned 6 files (#{file_human_size(0)}), 4 database entries.\e[0m
+          #{'-' * 80}
+          \e[32;1mTotal: cleaned 6 files (#{file_human_size(0)}), 4 database entries.\e[0m
         OUTPUT
       end
 

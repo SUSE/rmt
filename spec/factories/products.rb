@@ -165,7 +165,7 @@ FactoryBot.define do
     trait :with_modules do
       after :create do |product, _evaluator|
         5.times do
-          mod = create :module
+          mod = create(:module)
           product.extensions << mod
         end
       end
@@ -222,7 +222,7 @@ FactoryBot.define do
     trait :with_packages do
       with_repositories
       after :create do |product, _evaluator|
-        5.times { create :package, patch: nil, repository: product.repositories.first }
+        5.times { create(:package, patch: nil, repository: product.repositories.first) }
       end
     end
 

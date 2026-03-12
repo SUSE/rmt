@@ -6,12 +6,12 @@ describe RMT::CLI::Export, :with_fakefs do
   describe 'settings' do
     include_examples 'handles non-existing path'
     include_examples 'handles non-writable path'
-    let(:repository) { create :repository, mirroring_enabled: true, id: 123 }
+    let(:repository) { create(:repository, mirroring_enabled: true, id: 123) }
     let(:command) { described_class.start(['settings', path]) }
 
     before do
       repository
-      create :repository, mirroring_enabled: false
+      create(:repository, mirroring_enabled: false)
     end
 
     it 'writes ids of enabled repos to file' do
@@ -68,8 +68,8 @@ describe RMT::CLI::Export, :with_fakefs do
     let(:mirror_double) { instance_double('RMT::Mirror') }
     let(:suma_product_tree_double) { instance_double('RMT::Mirror::SumaProductTree') }
     let(:repo_json) { "#{path}/repos.json" }
-    let(:repository1) { create :repository, mirroring_enabled: true, auth_token: 'foobar' }
-    let(:repository2) { create :repository, mirroring_enabled: true }
+    let(:repository1) { create(:repository, mirroring_enabled: true, auth_token: 'foobar') }
+    let(:repository2) { create(:repository, mirroring_enabled: true) }
     let(:repo_settings) do
       [
         { url: repository1.external_url, auth_token: repository1.auth_token },
@@ -85,7 +85,7 @@ describe RMT::CLI::Export, :with_fakefs do
 
       allow(File).to receive(:exist?).with(repo_json).and_return(true)
       allow(File).to receive(:exist?).with('<STDOUT>').and_call_original
-      allow(File).to receive(:read).with(repo_json).and_return(repo_settings.to_json.to_s)
+      allow(File).to receive(:read).with(repo_json).and_return(repo_settings.to_json)
 
       allow(RMT::Mirror::SumaProductTree).to receive(:new).and_return(suma_product_tree_double)
       allow(suma_product_tree_double).to receive(:mirror)

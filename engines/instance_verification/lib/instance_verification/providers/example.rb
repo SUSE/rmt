@@ -7,8 +7,8 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
   def instance_valid?
     # Extract the instance identifier from the instance data sent by the client
     instance_product_id = validate_instance_data(@instance_data)
-    return true if (@product_hash[:identifier].casecmp('sles').zero? && instance_product_id == SLES_PRODUCT_IDENTIFIER)
-    return true if (@product_hash[:identifier].casecmp('sles_sap').zero? && instance_product_id == SLES4SAP_PRODUCT_IDENTIFIER)
+    return true if @product_hash[:identifier].casecmp('sles').zero? && instance_product_id == SLES_PRODUCT_IDENTIFIER
+    return true if @product_hash[:identifier].casecmp('sles_sap').zero? && instance_product_id == SLES4SAP_PRODUCT_IDENTIFIER
 
     raise InstanceVerification::Exception, 'Product/instance type mismatch'
   end
@@ -23,7 +23,7 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
 
     return '1234_SUSE_SLES' if @product_hash[:identifier].casecmp('sles').zero?
 
-    return '6789_SUSE_SAP' if @product_hash[:identifier].casecmp('sles_sap').zero?
+    '6789_SUSE_SAP' if @product_hash[:identifier].casecmp('sles_sap').zero?
   end
 
   def parse_instance_data
@@ -52,8 +52,9 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
       billing_product: iid['billingProducts']&.first,
       marketplace_code: iid['marketplaceProductCodes']&.first
     }
-    return true if (identifier.casecmp('sles').zero? && instance_billing_info[:billing_product] == SLES_PRODUCT_IDENTIFIER)
-    return true if (identifier.casecmp('sles_sap').zero? && SLES4SAP_PRODUCT_IDENTIFIER.include?(instance_billing_info[:marketplace_code]))
+    return true if identifier.casecmp('sles').zero? && instance_billing_info[:billing_product] == SLES_PRODUCT_IDENTIFIER
+
+    true if identifier.casecmp('sles_sap').zero? && SLES4SAP_PRODUCT_IDENTIFIER.include?(instance_billing_info[:marketplace_code])
   end
 
   def instance_identifier

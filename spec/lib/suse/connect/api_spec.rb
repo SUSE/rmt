@@ -258,7 +258,7 @@ RSpec.describe SUSE::Connect::Api do
       end
 
       context 'when a single system is bulk updated' do
-        let(:systems) { create_list :system, 1, :full }
+        let(:systems) { create_list(:system, 1, :full) }
 
         it 'yields results' do
           expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
@@ -266,7 +266,7 @@ RSpec.describe SUSE::Connect::Api do
       end
 
       context 'when sending in bulk' do
-        let(:systems) { create_list :system, 3, :full, scc_synced_at: nil }
+        let(:systems) { create_list(:system, 3, :full, scc_synced_at: nil) }
 
         it 'yields successful results' do
           expect(api_client.send_bulk_system_update(relation)).to eq(expected_response)
@@ -274,8 +274,8 @@ RSpec.describe SUSE::Connect::Api do
       end
 
       context 'when sending in bulk with and without system_token' do
-        let!(:system1) { create :system, :full, :with_system_token }
-        let!(:system2) { create :system, :full }
+        let!(:system1) { create(:system, :full, :with_system_token) }
+        let!(:system2) { create(:system, :full) }
         let(:systems) { [system1, system2] }
 
         it 'yields successful results' do
@@ -326,8 +326,8 @@ RSpec.describe SUSE::Connect::Api do
       end
 
       context 'when sending in bulk and a system which only sends last_seen_at' do
-        let(:system_set) { create :system, :full, :synced }
-        let(:systems_unset) { create_list :system, 2, :full }
+        let(:system_set) { create(:system, :full, :synced) }
+        let(:systems_unset) { create_list(:system, 2, :full) }
         let(:systems) { [system_set] + systems_unset }
 
         it 'yields successful results' do

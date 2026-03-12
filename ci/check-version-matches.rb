@@ -28,7 +28,7 @@ def success
 end
 
 def warning(msg)
-  puts msg.to_s
+  puts msg
 end
 
 def check

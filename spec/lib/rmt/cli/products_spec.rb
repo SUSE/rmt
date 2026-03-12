@@ -47,9 +47,9 @@ RSpec.describe RMT::CLI::Products do
     end
 
     context 'with products in database' do
-      let!(:disabled_product) { create :product }
-      let!(:enabled_product) { create :product, :with_mirrored_repositories }
-      let!(:beta_product) { create :product, release_stage: 'beta' }
+      let!(:disabled_product) { create(:product) }
+      let!(:enabled_product) { create(:product, :with_mirrored_repositories) }
+      let!(:beta_product) { create(:product, release_stage: 'beta') }
 
       let(:expected_output) do
         Terminal::Table.new(
@@ -367,7 +367,7 @@ RSpec.describe RMT::CLI::Products do
   end
 
   describe '#enable' do
-    let(:product) { create :product, :with_not_mirrored_repositories }
+    let(:product) { create(:product, :with_not_mirrored_repositories) }
     let(:repos) { product.repositories.where(enabled: true) }
     let(:extensions) { [] }
     let(:target) { '' }
@@ -387,7 +387,7 @@ RSpec.describe RMT::CLI::Products do
 
     context 'with repositories already enabled' do
       let(:target) { product.id.to_s }
-      let(:product) { create :product, :with_mirrored_repositories }
+      let(:product) { create(:product, :with_mirrored_repositories) }
       let(:expected_output) do
         output = "Found product by target #{target}: #{product.friendly_name}.\n"
         output += "Enabling #{product.friendly_name}:\n"
@@ -405,9 +405,9 @@ RSpec.describe RMT::CLI::Products do
     end
 
     context 'with multiple ids' do
-      let(:product_1) { create :product, :with_not_mirrored_repositories }
-      let(:product_2) { create :product, :with_not_mirrored_repositories }
-      let(:product_3) { create :product, :with_not_mirrored_repositories }
+      let(:product_1) { create(:product, :with_not_mirrored_repositories) }
+      let(:product_2) { create(:product, :with_not_mirrored_repositories) }
+      let(:product_3) { create(:product, :with_not_mirrored_repositories) }
       let(:products_to_enable) { [product_1, product_2, product_3] }
       let(:repos) { products_to_enable.flat_map { |product| product.repositories.where(enabled: true) } }
       let(:expected_output) do
@@ -479,7 +479,7 @@ RSpec.describe RMT::CLI::Products do
       end
 
       context 'with recommended extensions' do
-        let(:product) { create :product, :with_not_mirrored_repositories }
+        let(:product) { create(:product, :with_not_mirrored_repositories) }
         let(:extensions) do
           [
             create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: true),
@@ -505,7 +505,7 @@ RSpec.describe RMT::CLI::Products do
 
       context 'with option --all-modules' do
         let(:argv) { ['enable', target, '--all-modules'] }
-        let(:product) { create :product, :with_not_mirrored_repositories }
+        let(:product) { create(:product, :with_not_mirrored_repositories) }
         let(:extensions) do
           [
             create(:product, :extension, :with_not_mirrored_repositories, base_products: [product], recommended: true),
@@ -593,7 +593,7 @@ RSpec.describe RMT::CLI::Products do
   end
 
   describe '#disable' do
-    let(:product) { create :product, :with_mirrored_repositories }
+    let(:product) { create(:product, :with_mirrored_repositories) }
     let(:repos) { product.repositories }
     let(:target) { '' }
     let(:argv) { ['disable', target] }
@@ -608,7 +608,7 @@ RSpec.describe RMT::CLI::Products do
 
     context 'already disabled repositories' do
       let(:target) { product.id.to_s }
-      let(:product) { create :product, :with_not_mirrored_repositories, installer_updates: true }
+      let(:product) { create(:product, :with_not_mirrored_repositories, installer_updates: true) }
 
       let(:expected_output) do
         output = "Found product by target #{target}: #{product.friendly_name}.\n"
@@ -638,7 +638,7 @@ RSpec.describe RMT::CLI::Products do
       end
 
       context 'with recommended extensions' do
-        let(:product) { create :product, :with_mirrored_repositories }
+        let(:product) { create(:product, :with_mirrored_repositories) }
         let(:extensions) do
           [
             create(:product, :extension, :with_mirrored_repositories, base_products: [product], recommended: true),
@@ -694,7 +694,7 @@ RSpec.describe RMT::CLI::Products do
   end
 
   describe '#show' do
-    let(:product) { create :product, :with_disabled_not_mirrored_repositories }
+    let(:product) { create(:product, :with_disabled_not_mirrored_repositories) }
     let(:repos) { product.repositories }
     let(:target) { product.id.to_s }
     let(:argv) { ['show', target] }
@@ -721,7 +721,7 @@ RSpec.describe RMT::CLI::Products do
       end
 
       context 'with disabled and mirrored repos' do
-        let(:product) { create :product, :with_disabled_mirrored_repositories }
+        let(:product) { create(:product, :with_disabled_mirrored_repositories) }
 
         it 'shows details of a product and its repos' do
           expect { described_class.start(argv) }
@@ -731,7 +731,7 @@ RSpec.describe RMT::CLI::Products do
       end
 
       context 'with enabled and not mirrored repos' do
-        let(:product) { create :product, :with_not_mirrored_repositories }
+        let(:product) { create(:product, :with_not_mirrored_repositories) }
 
         it 'shows details of a product and its repos' do
           expect { described_class.start(argv) }
@@ -741,7 +741,7 @@ RSpec.describe RMT::CLI::Products do
       end
 
       context 'with enabled and mirrored repositories' do
-        let(:product) { create :product, :with_mirrored_repositories }
+        let(:product) { create(:product, :with_mirrored_repositories) }
 
         it 'shows details of a product and its repos' do
           expect { described_class.start(argv) }
@@ -751,7 +751,7 @@ RSpec.describe RMT::CLI::Products do
       end
 
       context 'without the repos' do
-        let(:product) { create :product }
+        let(:product) { create(:product) }
         let(:expected_output) do
           output = "Product: #{product.friendly_name} (ID: #{target})\n"
           output += "Description: #{product.description}\n"

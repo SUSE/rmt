@@ -52,10 +52,10 @@ RSpec.describe RMT::Config do
     let(:config_path) { File.join(tmp_dir, 'rmt.yml') }
     let(:config_yaml) do
       <<~CONFIG.chomp
-      mirroring:
-        mirror_drpm: #{mirror_drpm_value}
-        mirror_src: false
-        dedup_method: hardlink
+        mirroring:
+          mirror_drpm: #{mirror_drpm_value}
+          mirror_src: false
+          dedup_method: hardlink
       CONFIG
     end
 
@@ -94,9 +94,9 @@ RSpec.describe RMT::Config do
     context "when config YAML 'mirroring/mirror_drpm' key is absent" do
       let(:config_yaml) do
         <<~CONFIG.chomp
-        mirroring:
-          mirror_src: false
-          dedup_method: hardlink
+          mirroring:
+            mirror_src: false
+            dedup_method: hardlink
         CONFIG
       end
 

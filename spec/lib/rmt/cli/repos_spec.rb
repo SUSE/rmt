@@ -2,9 +2,9 @@ require 'rails_helper'
 
 RSpec.describe RMT::CLI::Repos do
   describe '#clean' do
-    let(:repository_1) { create :repository, mirroring_enabled: false }
-    let(:repository_2) { create :repository, mirroring_enabled: false }
-    let(:repository_3) { create :repository, mirroring_enabled: true }
+    let(:repository_1) { create(:repository, mirroring_enabled: false) }
+    let(:repository_2) { create(:repository, mirroring_enabled: false) }
+    let(:repository_3) { create(:repository, mirroring_enabled: true) }
 
     let(:argv) { ['clean'] }
     let(:input) { 'yes' }
@@ -24,20 +24,20 @@ RSpec.describe RMT::CLI::Repos do
     end
 
     let(:expected_output) do
-      <<-OUTPUT
-RMT found locally mirrored files from the following repositories which are not marked to be mirrored:
+      <<~OUTPUT
+        RMT found locally mirrored files from the following repositories which are not marked to be mirrored:
 
-\e[31m#{repository_1.description}
-#{repository_2.description}
+        \e[31m#{repository_1.description}
+        #{repository_2.description}
 
-\e[0m\e[1mWould you like to continue and remove the locally mirrored files of these repositories?
-\e[22m\s\sOnly 'yes' will be accepted.
+        \e[0m\e[1mWould you like to continue and remove the locally mirrored files of these repositories?
+        \e[22m\s\sOnly 'yes' will be accepted.
 
-  \e[1mEnter a value:\e[22m\s\s
-Deleting locally mirrored files from repository '#{repository_1.description}'...
-Deleting locally mirrored files from repository '#{repository_2.description}'...
+          \e[1mEnter a value:\e[22m\s\s
+        Deleting locally mirrored files from repository '#{repository_1.description}'...
+        Deleting locally mirrored files from repository '#{repository_2.description}'...
 
-\e[32mClean finished. An estimated #{ActiveSupport::NumberHelper.number_to_human_size(total_removed_file_size)} was removed.\e[0m
+        \e[32mClean finished. An estimated #{ActiveSupport::NumberHelper.number_to_human_size(total_removed_file_size)} was removed.\e[0m
       OUTPUT
     end
 
@@ -77,17 +77,17 @@ Deleting locally mirrored files from repository '#{repository_2.description}'...
     context 'cancelled task' do
       let(:input) { 'no' }
       let(:expected_output) do
-        <<-OUTPUT
-RMT found locally mirrored files from the following repositories which are not marked to be mirrored:
+        <<~OUTPUT
+          RMT found locally mirrored files from the following repositories which are not marked to be mirrored:
 
-\e[31m#{repository_1.description}
-#{repository_2.description}
+          \e[31m#{repository_1.description}
+          #{repository_2.description}
 
-\e[0m\e[1mWould you like to continue and remove the locally mirrored files of these repositories?
-\e[22m\s\sOnly 'yes' will be accepted.
+          \e[0m\e[1mWould you like to continue and remove the locally mirrored files of these repositories?
+          \e[22m\s\sOnly 'yes' will be accepted.
 
-\s\s\e[1mEnter a value:\e[22m\s\s
-Clean cancelled.
+          \s\s\e[1mEnter a value:\e[22m\s\s
+          Clean cancelled.
         OUTPUT
       end
 
@@ -109,12 +109,12 @@ Clean cancelled.
     end
 
     context 'all repositories are mirrored' do
-      let(:repository_1) { create :repository, mirroring_enabled: true }
-      let(:repository_2) { create :repository, mirroring_enabled: true }
-      let(:repository_3) { create :repository, mirroring_enabled: true }
+      let(:repository_1) { create(:repository, mirroring_enabled: true) }
+      let(:repository_2) { create(:repository, mirroring_enabled: true) }
+      let(:repository_3) { create(:repository, mirroring_enabled: true) }
       let(:expected_output) do
-        <<-OUTPUT
-RMT only found locally mirrored files of repositories that are marked to be mirrored.
+        <<~OUTPUT
+          RMT only found locally mirrored files of repositories that are marked to be mirrored.
         OUTPUT
       end
 
@@ -149,7 +149,7 @@ RMT only found locally mirrored files of repositories that are marked to be mirr
   end
 
   describe '#enable' do
-    subject(:repository) { create :repository, :with_products }
+    subject(:repository) { create(:repository, :with_products) }
 
     let(:command) do
       repository
@@ -158,14 +158,14 @@ RMT only found locally mirrored files of repositories that are marked to be mirr
     end
 
     context 'with multiple ids' do
-      let(:repository_2) { create :repository, :with_products }
-      let(:repository_3) { create :repository, :with_products }
+      let(:repository_2) { create(:repository, :with_products) }
+      let(:repository_3) { create(:repository, :with_products) }
       let(:argv) { ['enable', repository.friendly_id, repository_2.friendly_id, repository_3.friendly_id] }
       let(:expected_output) do
-        <<-OUTPUT
-Repository by ID #{repository.friendly_id} successfully enabled.
-Repository by ID #{repository_2.friendly_id} successfully enabled.
-Repository by ID #{repository_3.friendly_id} successfully enabled.
+        <<~OUTPUT
+          Repository by ID #{repository.friendly_id} successfully enabled.
+          Repository by ID #{repository_2.friendly_id} successfully enabled.
+          Repository by ID #{repository_3.friendly_id} successfully enabled.
         OUTPUT
       end
 
@@ -220,7 +220,7 @@ Repository by ID #{repository_3.friendly_id} successfully enabled.
   end
 
   describe '#disable' do
-    subject(:repository) { create :repository, :with_products, mirroring_enabled: true }
+    subject(:repository) { create(:repository, :with_products, mirroring_enabled: true) }
 
     let(:command) do
       repository
@@ -229,16 +229,16 @@ Repository by ID #{repository_3.friendly_id} successfully enabled.
     end
 
     context 'with multiple ids' do
-      let(:repository_2) { create :repository, :with_products, mirroring_enabled: true  }
-      let(:repository_3) { create :repository, :with_products, mirroring_enabled: true  }
+      let(:repository_2) { create(:repository, :with_products, mirroring_enabled: true)  }
+      let(:repository_3) { create(:repository, :with_products, mirroring_enabled: true)  }
       let(:argv) { ['disable', repository.friendly_id, repository_2.friendly_id, repository_3.friendly_id] }
       let(:expected_output) do
-        <<-OUTPUT
-Repository by ID #{repository.friendly_id} successfully disabled.
-Repository by ID #{repository_2.friendly_id} successfully disabled.
-Repository by ID #{repository_3.friendly_id} successfully disabled.
+        <<~OUTPUT
+          Repository by ID #{repository.friendly_id} successfully disabled.
+          Repository by ID #{repository_2.friendly_id} successfully disabled.
+          Repository by ID #{repository_3.friendly_id} successfully disabled.
 
-\e[1mTo clean up downloaded files, please run 'rmt-cli repos clean'\e[22m
+          \e[1mTo clean up downloaded files, please run 'rmt-cli repos clean'\e[22m
         OUTPUT
       end
 
@@ -288,10 +288,10 @@ Repository by ID #{repository_3.friendly_id} successfully disabled.
     context 'by repo id' do
       let(:argv) { ['disable', repository.friendly_id] }
       let(:expected_output) do
-        <<-OUTPUT
-Repository by ID #{repository.friendly_id} successfully disabled.
+        <<~OUTPUT
+          Repository by ID #{repository.friendly_id} successfully disabled.
 
-\e[1mTo clean up downloaded files, please run 'rmt-cli repos clean'\e[22m
+          \e[1mTo clean up downloaded files, please run 'rmt-cli repos clean'\e[22m
         OUTPUT
       end
 
@@ -324,8 +324,8 @@ Repository by ID #{repository.friendly_id} successfully disabled.
       end
 
       context 'with enabled repositories' do
-        let!(:repository_one) { FactoryBot.create :repository, :with_products, mirroring_enabled: true }
-        let!(:repository_two) { FactoryBot.create :repository, :with_products, mirroring_enabled: false }
+        let!(:repository_one) { FactoryBot.create(:repository, :with_products, mirroring_enabled: true) }
+        let!(:repository_two) { FactoryBot.create(:repository, :with_products, mirroring_enabled: false) }
         let(:rows) do
           [[
             repository_one.friendly_id,

@@ -3,7 +3,7 @@ require 'rails_helper'
 describe RMT::CLI::ReposCustom do
   subject(:command) { described_class.start(argv) }
 
-  let(:product) { create :product, :with_service }
+  let(:product) { create(:product, :with_service) }
   let(:external_url) { 'http://example.com/repos/' }
   let(:repository_service) { RepositoryService.new }
 
@@ -71,7 +71,7 @@ describe RMT::CLI::ReposCustom do
       let(:argv) { ['add', external_url, 'foo'] }
 
       before do
-        create :repository, external_url: 'http://foo.bar', name: 'foobar', friendly_id: 'foo'
+        create(:repository, external_url: 'http://foo.bar', name: 'foobar', friendly_id: 'foo')
         expect { described_class.start(argv) }.to output("Successfully added custom repository.\n").to_stdout.and output('').to_stderr
       end
 
@@ -92,7 +92,7 @@ describe RMT::CLI::ReposCustom do
       it 'does not create a repository by the same id' do
         expect(described_class).to receive(:exit)
         expect do
-          create :repository, external_url: 'http://foo.bar', name: 'foobar', friendly_id: 'foo'
+          create(:repository, external_url: 'http://foo.bar', name: 'foobar', friendly_id: 'foo')
           described_class.start(argv)
         end.to output("\e[31mA repository by the ID foo already exists.\e[0m\nCouldn't add custom repository.\n").to_stderr.and output('').to_stdout
         expect(Repository.find_by(external_url: external_url)).to be_nil
@@ -104,7 +104,7 @@ describe RMT::CLI::ReposCustom do
 
       it 'does not update previous repository if non-custom' do
         expect(described_class).to receive(:exit)
-        existing_repo = create :repository, external_url: external_url, name: 'foobar'
+        existing_repo = create(:repository, external_url: external_url, name: 'foobar')
         expect do
           described_class.start(argv)
         end.to output("\e[31mA repository by the URL #{external_url} already exists (ID #{existing_repo.friendly_id}).\e[0m\nCouldn't add custom repository.\n")
@@ -130,7 +130,7 @@ describe RMT::CLI::ReposCustom do
 
       it 'does not update previous repository if custom' do
         expect(described_class).to receive(:exit)
-        existing_repo = create :repository, :custom, external_url: external_url, name: 'foobar'
+        existing_repo = create(:repository, :custom, external_url: external_url, name: 'foobar')
         expect do
           described_class.start(argv)
         end.to output("\e[31mA repository by the URL #{external_url} already exists (ID #{existing_repo.friendly_id}).\e[0m\nCouldn't add custom repository.\n")
@@ -174,7 +174,7 @@ describe RMT::CLI::ReposCustom do
       end
 
       context 'products --csv' do
-        let(:custom_repository) { create :repository, :custom, name: 'custom foo' }
+        let(:custom_repository) { create(:repository, :custom, name: 'custom foo') }
         let(:argv) { [command, '--csv'] }
         let(:rows) do
           [[
@@ -196,7 +196,7 @@ describe RMT::CLI::ReposCustom do
       end
 
       context 'with custom repository' do
-        let(:custom_repository) { create :repository, :custom, name: 'custom foo' }
+        let(:custom_repository) { create(:repository, :custom, name: 'custom foo') }
         let(:expected_output) do
           Terminal::Table.new(
             headings: ['ID', 'Name', 'URL', 'Mandatory?', 'Mirror?', 'Last Mirrored'],
@@ -222,7 +222,7 @@ describe RMT::CLI::ReposCustom do
   end
 
   describe '#enable' do
-    subject(:repository) { create :repository, :custom, :with_products }
+    subject(:repository) { create(:repository, :custom, :with_products) }
 
     let(:command) do
       repository
@@ -273,7 +273,7 @@ describe RMT::CLI::ReposCustom do
   end
 
   describe '#disable' do
-    subject(:repository) { create :repository, :custom, :with_products, mirroring_enabled: true }
+    subject(:repository) { create(:repository, :custom, :with_products, mirroring_enabled: true) }
 
     let(:command) do
       repository
@@ -307,10 +307,10 @@ describe RMT::CLI::ReposCustom do
     context 'by repo id' do
       let(:argv) { ['disable', repository.id] }
       let(:expected_output) do
-        <<-OUTPUT
-Repository by ID #{repository.id} successfully disabled.
+        <<~OUTPUT
+          Repository by ID #{repository.id} successfully disabled.
 
-\e[1mTo clean up downloaded files, please run 'rmt-cli repos clean'\e[22m
+          \e[1mTo clean up downloaded files, please run 'rmt-cli repos clean'\e[22m
         OUTPUT
       end
 
@@ -322,10 +322,10 @@ Repository by ID #{repository.id} successfully disabled.
     context 'by repo friendly_id' do
       let(:argv) { ['disable', repository.friendly_id] }
       let(:expected_output) do
-        <<-OUTPUT
-Repository by ID #{repository.friendly_id} successfully disabled.
+        <<~OUTPUT
+          Repository by ID #{repository.friendly_id} successfully disabled.
 
-\e[1mTo clean up downloaded files, please run 'rmt-cli repos clean'\e[22m
+          \e[1mTo clean up downloaded files, please run 'rmt-cli repos clean'\e[22m
         OUTPUT
       end
 
@@ -337,8 +337,8 @@ Repository by ID #{repository.friendly_id} successfully disabled.
 
   describe '#remove' do
     shared_context 'rmt-cli custom repos remove' do |command|
-      let(:suse_repository) { create :repository, name: 'awesome-rmt-repo' }
-      let(:custom_repository) { create :repository, :custom, name: 'custom foo' }
+      let(:suse_repository) { create(:repository, name: 'awesome-rmt-repo') }
+      let(:custom_repository) { create(:repository, :custom, name: 'custom foo') }
 
       context 'not found' do
         let(:argv) { [command, 'totally_wrong'] }
@@ -396,7 +396,7 @@ Repository by ID #{repository.friendly_id} successfully disabled.
 
       context 'custom repository with id starting with numbers' do
         let(:friendly_id) { "#{suse_repository.id}-repo-name" }
-        let(:custom) { create :repository, :custom, friendly_id: friendly_id }
+        let(:custom) { create(:repository, :custom, friendly_id: friendly_id) }
 
         let(:argv) { [command, custom.friendly_id] }
 
@@ -425,7 +425,7 @@ Repository by ID #{repository.friendly_id} successfully disabled.
     end
 
     context 'repository is from scc' do
-      let(:repository) { create :repository }
+      let(:repository) { create(:repository) }
       let(:argv) { ['attach', repository.friendly_id, product.id] }
 
       it('does not have an attached product') { expect(repository.products.count).to eq(0) }
@@ -438,7 +438,7 @@ Repository by ID #{repository.friendly_id} successfully disabled.
     end
 
     context 'product does not exist' do
-      let(:repository) { create :repository, :custom }
+      let(:repository) { create(:repository, :custom) }
       let(:argv) { ['attach', repository.friendly_id, 'foo'] }
 
       it('does not have an attached product') { expect(repository.products.count).to eq(0) }
@@ -451,7 +451,7 @@ Repository by ID #{repository.friendly_id} successfully disabled.
     end
 
     context 'product and repo exist by id' do
-      let(:repository) { create :repository, :custom }
+      let(:repository) { create(:repository, :custom) }
       let(:argv) { ['attach', repository.id, product.id] }
 
       it('does not have an attached product') { expect(repository.products.count).to eq(0) }
@@ -463,7 +463,7 @@ Repository by ID #{repository.friendly_id} successfully disabled.
     end
 
     context 'product and repo exist by friendly_id' do
-      let(:repository) { create :repository, :custom }
+      let(:repository) { create(:repository, :custom) }
       let(:argv) { ['attach', repository.friendly_id, product.id] }
 
       it('does not have an attached product') { expect(repository.products.count).to eq(0) }
@@ -486,7 +486,7 @@ Repository by ID #{repository.friendly_id} successfully disabled.
     end
 
     context 'repository is from scc' do
-      let(:repository) { create :repository }
+      let(:repository) { create(:repository) }
       let(:argv) { ['detach', 'foo', repository.friendly_id] }
 
       before do
@@ -503,7 +503,7 @@ Repository by ID #{repository.friendly_id} successfully disabled.
     end
 
     context 'product does not exist' do
-      let(:repository) { create :repository, :custom }
+      let(:repository) { create(:repository, :custom) }
       let(:argv) { ['detach', repository.friendly_id, 'foo'] }
 
       before do
@@ -520,7 +520,7 @@ Repository by ID #{repository.friendly_id} successfully disabled.
     end
 
     context 'product and repo exist by id' do
-      let(:repository) { create :repository, :custom }
+      let(:repository) { create(:repository, :custom) }
       let(:argv) { ['detach', repository.id, product.id] }
 
       before do
@@ -536,7 +536,7 @@ Repository by ID #{repository.friendly_id} successfully disabled.
     end
 
     context 'product and repo exist by friendly_id' do
-      let(:repository) { create :repository, :custom }
+      let(:repository) { create(:repository, :custom) }
       let(:argv) { ['detach', repository.friendly_id, product.id] }
 
       before do
@@ -554,7 +554,7 @@ Repository by ID #{repository.friendly_id} successfully disabled.
 
   describe '#products' do
     context 'scc repository' do
-      let(:repository) { create :repository }
+      let(:repository) { create(:repository) }
       let(:argv) { ['product', repository.friendly_id] }
 
       before do
@@ -570,7 +570,7 @@ Repository by ID #{repository.friendly_id} successfully disabled.
     end
 
     context 'custom repository with products' do
-      let(:repository) { create :repository, :custom }
+      let(:repository) { create(:repository, :custom) }
       let(:argv) { ['products', repository.friendly_id] }
       let(:rows) do
         [[
@@ -610,7 +610,7 @@ Repository by ID #{repository.friendly_id} successfully disabled.
     end
 
     context 'custom repository without products' do
-      let(:repository) { create :repository, :custom }
+      let(:repository) { create(:repository, :custom) }
       let(:argv) { ['products', repository.friendly_id] }
 
       it('does not have an attached product') { expect(repository.products.count).to eq(0) }

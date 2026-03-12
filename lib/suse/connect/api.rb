@@ -120,7 +120,7 @@ module SUSE
         response = RMT::HttpRequest.new(url, options).run
         @logger.info('Response: ' + response.body) if Settings&.http_client&.verbose == true
         raise InvalidCredentialsError if (response.code == 401)
-        raise RequestError.new(response) unless (response.code >= 200 && response.code < 300)
+        raise RequestError.new(response) unless response.code >= 200 && response.code < 300
 
         response
       end

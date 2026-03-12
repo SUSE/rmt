@@ -77,7 +77,7 @@ product_type: 'module')
             stub_request(:delete, scc_systems_products_url)
               .to_return(
                 status: 422,
-                body: "{\"error\": \"Could not de-activate product \'#{product.friendly_name}\'\"}",
+                body: "{\"error\": \"Could not de-activate product '#{product.friendly_name}'\"}",
                 headers: {}
             )
             delete url, params: payload, headers: headers
@@ -179,7 +179,7 @@ product_type: 'module')
           let(:scc_systems_activations_url) { 'https://scc.suse.com/connect/systems/activations' }
 
           before do
-            stub_request(:get, scc_systems_activations_url).to_return(status: 401, body: "{\"error\": \"Error\'\"}", headers: headers)
+            stub_request(:get, scc_systems_activations_url).to_return(status: 401, body: "{\"error\": \"Error'\"}", headers: headers)
             allow(SccProxy).to receive(:headers)
             delete url, params: payload, headers: headers
           end
@@ -215,7 +215,7 @@ product_type: 'module')
             stub_request(:delete, scc_systems_products_url)
               .to_return(
                 status: 200,
-                body: "{\"error\": \"Could not de-activate product \'#{product.friendly_name}\'\"}",
+                body: "{\"error\": \"Could not de-activate product '#{product.friendly_name}'\"}",
                 headers: {}
               )
             stub_request(:get, scc_systems_activations_url).to_return(status: 200, body: body_active, headers: {})

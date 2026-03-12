@@ -78,7 +78,7 @@ module ZypperAuth
         before_action :verify_instance
         def verify_instance
           unless InstanceVerification.verify_instance(request, logger, @system)
-            render(xml: { error: 'Instance verification failed' }, status: 403)
+            render(xml: { error: 'Instance verification failed' }, status: :forbidden)
           end
         end
       end

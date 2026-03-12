@@ -5,9 +5,9 @@ describe RMT::Mirror::License do
 
 
   let(:repository) do
-    create :repository,
+    create(:repository,
            name: 'HYPE product 15.3',
-           external_url: 'https://updates.suse.com/sample/repository/15.3/product/'
+           external_url: 'https://updates.suse.com/sample/repository/15.3/product/')
   end
 
   let(:base_dir) { '/test/repository/base/path/' }

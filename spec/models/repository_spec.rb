@@ -20,9 +20,9 @@ RSpec.describe Repository, type: :model do
     describe '.only_mirroring_enabled' do
       subject { described_class.only_mirroring_enabled }
 
-      let!(:mirrored) { create :repository, mirroring_enabled: true }
+      let!(:mirrored) { create(:repository, mirroring_enabled: true) }
 
-      before { create :repository, mirroring_enabled: false }
+      before { create(:repository, mirroring_enabled: false) }
 
       it { is_expected.to contain_exactly(mirrored) }
     end
@@ -30,9 +30,9 @@ RSpec.describe Repository, type: :model do
     describe '.only_fully_mirrored' do
       subject { described_class.only_fully_mirrored }
 
-      let!(:mirrored) { create :repository, mirroring_enabled: true, last_mirrored_at: Time.zone.now }
+      let!(:mirrored) { create(:repository, mirroring_enabled: true, last_mirrored_at: Time.zone.now) }
 
-      before { create :repository, mirroring_enabled: true }
+      before { create(:repository, mirroring_enabled: true) }
 
       it { is_expected.to contain_exactly(mirrored) }
     end
@@ -40,9 +40,9 @@ RSpec.describe Repository, type: :model do
     describe '.only_enabled' do
       subject { described_class.only_enabled }
 
-      let!(:enabled) { create :repository, enabled: true }
+      let!(:enabled) { create(:repository, enabled: true) }
 
-      before { create :repository, enabled: false }
+      before { create(:repository, enabled: false) }
 
       it { is_expected.to contain_exactly(enabled) }
     end
@@ -50,9 +50,9 @@ RSpec.describe Repository, type: :model do
     describe '.only_installer_updates' do
       subject { described_class.only_installer_updates }
 
-      let!(:installer_updates) { create :repository, installer_updates: true }
+      let!(:installer_updates) { create(:repository, installer_updates: true) }
 
-      before { create :repository, installer_updates: false }
+      before { create(:repository, installer_updates: false) }
 
       it { is_expected.to contain_exactly(installer_updates) }
     end
@@ -60,9 +60,9 @@ RSpec.describe Repository, type: :model do
     describe '.only_scc' do
       subject { described_class.only_scc }
 
-      let!(:official) { create :repository, scc_id: 1 }
+      let!(:official) { create(:repository, scc_id: 1) }
 
-      before { create :repository, scc_id: nil }
+      before { create(:repository, scc_id: nil) }
 
       it { is_expected.to contain_exactly(official) }
     end
@@ -70,9 +70,9 @@ RSpec.describe Repository, type: :model do
     describe '.only_custom' do
       subject { described_class.only_custom }
 
-      let!(:custom) { create :repository, scc_id: nil }
+      let!(:custom) { create(:repository, scc_id: nil) }
 
-      before { create :repository, scc_id: 1 }
+      before { create(:repository, scc_id: 1) }
 
       it { is_expected.to contain_exactly(custom) }
     end
@@ -127,17 +127,17 @@ RSpec.describe Repository, type: :model do
       expect(friendly_id).to eq('my-repo')
     end
 
-    it 'will take the requested friendly_id if it can' do
+    it 'takes the requested friendly_id if it can' do
       create(:repository, friendly_id: 'my-repo-1')
       expect(friendly_id).to eq('my-repo')
     end
 
-    it 'will append to the requested friendly_id if taken' do
+    it 'appends to the requested friendly_id if taken' do
       create(:repository, friendly_id: 'my-repo')
       expect(friendly_id).to eq('my-repo-1')
     end
 
-    it 'will append to the requested friendly_id if taken with complexity' do
+    it 'appends to the requested friendly_id if taken with complexity' do
       create(:repository, friendly_id: 'my-repo')
       create(:repository, friendly_id: 'my-repo-1')
       create(:repository, friendly_id: 'my-repo-1-1')
@@ -198,7 +198,7 @@ RSpec.describe Repository, type: :model do
         expect(friendly_id).to eq('モルモット')
       end
 
-      it 'will append to non-english friendly_ids' do
+      it 'appends to non-english friendly_ids' do
         create(:repository, friendly_id: 'モルモット')
         expect(friendly_id).to eq('モルモット-1')
       end
@@ -230,7 +230,7 @@ RSpec.describe Repository, type: :model do
     context 'when it is a custom repository' do
       subject { repository.destroy }
 
-      let!(:repository) { create :repository, :custom }
+      let!(:repository) { create(:repository, :custom) }
 
       it { is_expected.to be_truthy }
     end

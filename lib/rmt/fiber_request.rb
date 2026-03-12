@@ -28,7 +28,7 @@ class RMT::FiberRequest < RMT::HttpRequest
   def receive_body
     response = read_body
 
-    if (response.return_code && response.return_code != :ok)
+    if response.return_code && response.return_code != :ok
       raise 'Error while processing the response.'
     end
 

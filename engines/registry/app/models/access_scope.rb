@@ -59,7 +59,7 @@ class AccessScope
 
   def authorized_actions(client, remote_ip)
     if @namespace.nil?
-      @image == 'catalog' ? @actions : AUTHORIZED_ACTION
+      (@image == 'catalog') ? @actions : AUTHORIZED_ACTION
     else
       @allowed_paths = []
       allowed_paths(client.systems.first, remote_ip) if client.present?
@@ -83,9 +83,7 @@ class AccessScope
 
   def allowed_paths(system, remote_ip)
     repo_list = RegistryCatalogService.new.repos(system, reload: false)
-    access_policies_yml = YAML.safe_load(
-      File.read(Rails.application.config.access_policies)
-    )
+    access_policies_yml = YAML.safe_load_file(Rails.application.config.access_policies)
     active_product_classes = system.activations.includes(:product).pluck(:product_class)
     allowed_product_classes = (active_product_classes & access_policies_yml.keys)
     if system && system.hybrid?

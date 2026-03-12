@@ -2,16 +2,16 @@ class RMT::CLI::ReposCustom < RMT::CLI::ReposBase
 
   desc 'add URL NAME', _('Creates a custom repository.')
   option :id, type: :string, desc: _('Provide a custom ID instead of allowing RMT to generate one.')
-  long_desc <<-REPOS
-#{_('Creates a custom repository.')}
+  long_desc <<~REPOS
+    #{_('Creates a custom repository.')}
 
-#{_('Examples:')}
+    #{_('Examples:')}
 
-$ rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers
+    $ rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers
 
-$ rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers --id containers_sle_12_sp3`
+    $ rmt-cli repos custom add https://download.opensuse.org/repositories/Virtualization:/containers/SLE_12_SP3/ Virtualization:Containers --id containers_sle_12_sp3`
 
-$ rmt-cli repos custom add https://download.example.com?some_auth_token
+    $ rmt-cli repos custom add https://download.example.com?some_auth_token
   REPOS
   def add(url, name)
     url, query = url.split('?')
@@ -64,28 +64,28 @@ $ rmt-cli repos custom add https://download.example.com?some_auth_token
   map 'ls' => :list
 
   desc 'enable ID', _('Enable mirroring of custom repositories by a list of IDs')
-  long_desc <<-REPOS
-#{_('Enable mirroring of custom repositories by a list of IDs')}
+  long_desc <<~REPOS
+    #{_('Enable mirroring of custom repositories by a list of IDs')}
 
-#{_('Examples:')}
+    #{_('Examples:')}
 
-$ rmt-cli repos custom enable e133a7b26a7701b1d65a61683e50512b
+    $ rmt-cli repos custom enable e133a7b26a7701b1d65a61683e50512b
 
-$ rmt-cli repos custom enable e133a7b26a7701b1d65a61683e50512b 7726fb7f1954d786860426b47748856c
+    $ rmt-cli repos custom enable e133a7b26a7701b1d65a61683e50512b 7726fb7f1954d786860426b47748856c
   REPOS
   def enable(*ids)
     change_repos(ids, true, custom: true)
   end
 
   desc 'disable ID', _('Disable mirroring of custom repository by a list of IDs')
-  long_desc <<-REPOS
-#{_('Disable mirroring of custom repositories by a list of IDs')}
+  long_desc <<~REPOS
+    #{_('Disable mirroring of custom repositories by a list of IDs')}
 
-#{_('Examples:')}
+    #{_('Examples:')}
 
-$ rmt-cli repos custom disable e133a7b26a7701b1d65a61683e50512b
+    $ rmt-cli repos custom disable e133a7b26a7701b1d65a61683e50512b
 
-$ rmt-cli repos custom disable e133a7b26a7701b1d65a61683e50512b 7726fb7f1954d786860426b47748856c
+    $ rmt-cli repos custom disable e133a7b26a7701b1d65a61683e50512b 7726fb7f1954d786860426b47748856c
   REPOS
   def disable(*ids)
     change_repos(ids, false, custom: true)

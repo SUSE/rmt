@@ -8,15 +8,15 @@ class MakeSccIdUnique < ActiveRecord::Migration[6.0]
     logger.info('Removing duplicated records on `repositories.scc_id`...')
     ActiveRecord::Base.connection.execute(
       <<~SQL
-      UPDATE repositories as r1
-        JOIN(
-          SELECT scc_id FROM repositories
-          GROUP BY repositories.scc_id
-          HAVING (count(*) > 1)
-        ) AS r2
-        ON r1.scc_id = r2.scc_id
-      SET r1.scc_id = NULL
-      WHERE r1.scc_id = r2.scc_id;
+        UPDATE repositories as r1
+          JOIN(
+            SELECT scc_id FROM repositories
+            GROUP BY repositories.scc_id
+            HAVING (count(*) > 1)
+          ) AS r2
+          ON r1.scc_id = r2.scc_id
+        SET r1.scc_id = NULL
+        WHERE r1.scc_id = r2.scc_id;
       SQL
     )
 

@@ -83,6 +83,6 @@ class RMT::Mirror::Repomd < RMT::Mirror::Base
   def need_to_download?(ref)
     return false if !RMT::Config.mirror_drpm_files? && ref.local_path.match?(/\.drpm$/)
 
-    super(ref)
+    super
   end
 end

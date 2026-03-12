@@ -135,7 +135,7 @@ RSpec.describe Api::Connect::V4::Systems::ProductsController, type: :request do
         post path, params: { products: [params] }, headers: headers
 
         expect(response.status).to eq 200
-        expect(json_response.map { |p| p[:id] }).to match_array([product.id])
+        expect(json_response.map { |p| p[:id] }).to contain_exactly(product.id)
         expect(system.activations.reload).not_to include(additional_activation)
       end
     end

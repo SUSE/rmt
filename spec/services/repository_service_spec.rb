@@ -3,7 +3,7 @@ require 'rails_helper'
 describe RepositoryService do
   subject(:service) { described_class.new }
 
-  let(:product) { create :product, :with_service }
+  let(:product) { create(:product, :with_service) }
 
   describe '#create_repository' do
     subject(:repository) { service.update_or_create_repository!(product, url, attributes, custom: custom).reload }
@@ -101,7 +101,7 @@ describe RepositoryService do
   end
 
   describe '#add_product' do
-    let(:repository) { create :repository }
+    let(:repository) { create(:repository) }
 
     it('initially has no products') { expect(repository.products.count).to eq(0) }
 
@@ -112,7 +112,7 @@ describe RepositoryService do
   end
 
   describe '#remove_product!' do
-    let(:repository) { create :repository }
+    let(:repository) { create(:repository) }
 
     before do
       service.attach_product!(product, repository)

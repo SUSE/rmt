@@ -89,14 +89,14 @@ RSpec.describe System, type: :model do
     context 'when there are no systems with the given credentials' do
       let(:system) { nil }
 
-      it { is_expected.to be_kind_of(ActiveRecord::Relation) }
+      it { is_expected.to be_a(ActiveRecord::Relation) }
       it { is_expected.to be_empty }
     end
 
     context 'when there are only one system with the given credentials' do
       before { create(:system, login: login, password: password) }
 
-      it { is_expected.to be_kind_of(ActiveRecord::Relation) }
+      it { is_expected.to be_a(ActiveRecord::Relation) }
       it { is_expected.to have_attributes(count: 1) }
       it { is_expected.to all(have_attributes(class: described_class, login: login, password: password)) }
     end
@@ -104,7 +104,7 @@ RSpec.describe System, type: :model do
     context 'when there are more than one system with the given credentials' do
       before { create_list(:system, 5, :with_system_token, login: login, password: password) }
 
-      it { is_expected.to be_kind_of(ActiveRecord::Relation) }
+      it { is_expected.to be_a(ActiveRecord::Relation) }
       it { is_expected.to have_attributes(count: 5) }
       it { is_expected.to all(have_attributes(class: described_class, login: login, password: password)) }
     end

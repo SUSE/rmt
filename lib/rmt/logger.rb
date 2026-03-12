@@ -21,7 +21,7 @@ class RMT::Logger < ActiveSupport::Logger
   }.freeze
 
   def initialize(dest)
-    super(dest)
+    super
 
     # LOG_TO_JOURNALD is set by the systemd timers in order to remove duplicate timestamps in the logs
     if ENV['LOG_TO_JOURNALD'].present?

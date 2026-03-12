@@ -44,7 +44,7 @@ describe ServicesController do
         end
 
         it 'request succeeds' do
-          expect(response).to have_http_status(200)
+          expect(response).to have_http_status(:ok)
         end
 
         it 'XML has all product repos' do
@@ -67,7 +67,7 @@ describe ServicesController do
         end
 
         it 'request fails with 403' do
-          expect(response).to have_http_status(403)
+          expect(response).to have_http_status(:forbidden)
         end
 
         it 'reports an error' do
