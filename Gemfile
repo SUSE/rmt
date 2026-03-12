@@ -7,14 +7,15 @@ gem 'rails', '~> 8.1.0'
 
 gem 'bootsnap', require: false
 
+gem 'ostruct'
 gem 'csv'
 
 gem 'puma'
-gem 'mysql2', '~> 0.5.7'
-gem 'sqlite3', '>= 2.0'
+gem 'mysql2'
+gem 'sqlite3'
 
-gem 'nokogiri', '>= 1.18' # Locked because of Ruby >= 2.6 dependency
-gem 'thor', '>= 1.4' # Locked because of Ruby >= 2.6 dependency
+gem 'nokogiri'
+gem 'thor'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
@@ -41,9 +42,11 @@ gem 'strong_migrations'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  # These 3 gems below will be updated after we discuss about the next lint configuration
   gem 'scc-codestyle', '~> 0.5.0'
   gem 'rubocop', '<= 1.25.0'
   gem 'rubocop-ast', '<= 1.17.0'
+
   gem 'gettext', require: false # needed for gettext_i18n_rails tasks
   gem 'ruby_parser', require: false # needed for gettext_i18n_rails tasks, Locked because of Ruby >= 2.6 dependency
   gem 'gettext_test_log'
@@ -61,7 +64,7 @@ group :development do
 end
 
 group :test do
-  gem 'rspec-rails', '> 5.0'
+  gem 'rspec-rails'
   gem 'factory_bot_rails'
   gem 'ffaker'
   gem 'mixlib-shellout'
@@ -72,7 +75,7 @@ group :test do
   gem 'fuubar'
   gem 'timecop'
   gem 'vcr'
-  gem 'coveralls', '~> 0.8.21', require: false # coveralls_reborn is the newer gem as this one was archived
+  gem 'coveralls_reborn'
   gem 'minitest'
   gem 'public_suffix'
   gem 'webrick'
@@ -97,11 +100,11 @@ gem 'jwt', '~> 2.1'
 gem 'base32'
 
 # Needed to parse Debian's Packages.xz
-gem 'ruby-xz', '~> 1.0'
+gem 'ruby-xz'
 gem 'resque'
 
-gem 'fiddle', '~> 1.1.8'
+gem 'fiddle'
 
 gem 'ronn-ng'
 
-gem 'repomd_parser', '~> 1.2'
+gem 'repomd_parser'
