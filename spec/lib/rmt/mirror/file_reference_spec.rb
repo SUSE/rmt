@@ -94,7 +94,7 @@ RSpec.describe RMT::Mirror::FileReference do
 
   describe '#remote_path' do
     it 'returns a URI::Generic instance' do
-      expect(file_reference.remote_path).to be_kind_of(URI::Generic)
+      expect(file_reference.remote_path).to be_a(URI::Generic)
     end
 
     it 'returns the absolute remote path' do

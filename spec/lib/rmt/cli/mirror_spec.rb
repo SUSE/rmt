@@ -5,7 +5,7 @@ RSpec.describe RMT::CLI::Mirror do
 
   let(:argv) { [] }
 
-  let!(:repository) { create :repository, :with_products, mirroring_enabled: default_repository_enabled }
+  let!(:repository) { create(:repository, :with_products, mirroring_enabled: default_repository_enabled) }
   let(:default_repository_enabled) { true }
 
   let(:exit_with_error_message) { "The command exited with errors.\n" }
@@ -82,7 +82,7 @@ RSpec.describe RMT::CLI::Mirror do
       let(:argv) { ['all', '--do-not-raise-unpublished'] }
       let(:default_repository_enabled) { false }
 
-      let(:product) { create :beta }
+      let(:product) { create(:beta) }
       let(:mirrored) { create(:product, :module, :with_mirrored_repositories, base_products: [product], root_product: product, recommended: true) }
       let(:repositories) { mirrored.repositories }
 
@@ -107,7 +107,7 @@ RSpec.describe RMT::CLI::Mirror do
     end
 
     context 'with repositories changing during mirroring' do
-      let!(:additional_repository) { create :repository, :with_products, mirroring_enabled: false }
+      let!(:additional_repository) { create(:repository, :with_products, mirroring_enabled: false) }
 
       it 'mirrors additional repositories' do
         expect(mirror).to receive(:mirror_now) do
@@ -217,7 +217,7 @@ RSpec.describe RMT::CLI::Mirror do
     end
 
     context 'when repository mirroring is disabled' do
-      let!(:repository) { create :repository, :with_products, mirroring_enabled: false }
+      let!(:repository) { create(:repository, :with_products, mirroring_enabled: false) }
       let(:argv) { ['repository', repository.friendly_id] }
       let(:error_messages) { "Mirroring of repository with ID #{repository.friendly_id} is not enabled." }
 
@@ -265,7 +265,7 @@ RSpec.describe RMT::CLI::Mirror do
 
 
     context 'when given an ID and product has enabled repos' do
-      let(:product) { create :product, :with_mirrored_repositories }
+      let(:product) { create(:product, :with_mirrored_repositories) }
       let(:argv) { ['product', product.id] }
 
       it 'mirrors repos' do
@@ -275,7 +275,7 @@ RSpec.describe RMT::CLI::Mirror do
     end
 
     context 'when given a triplet and product has enabled repos' do
-      let(:product) { create :product, :with_mirrored_repositories }
+      let(:product) { create(:product, :with_mirrored_repositories) }
       let(:argv) { ['product', [product.identifier, product.version, product.arch].join('/')] }
 
       it 'mirrors repos' do
@@ -296,7 +296,7 @@ RSpec.describe RMT::CLI::Mirror do
     end
 
     context 'when an exception is raised during mirroring' do
-      let(:product) { create :product, :with_mirrored_repositories }
+      let(:product) { create(:product, :with_mirrored_repositories) }
       let(:argv) { ['product', [product.identifier, product.version, product.arch].join('/')] }
       let(:mirroring_error) { 'mirroring failed' }
       let(:error_messages) do
@@ -316,7 +316,7 @@ RSpec.describe RMT::CLI::Mirror do
     end
 
     context 'when product has no mirrored repos' do
-      let(:product) { create :product, :with_not_mirrored_repositories }
+      let(:product) { create(:product, :with_not_mirrored_repositories) }
       let(:argv) { ['product', product.id] }
       let(:error_messages) { "Product #{product.id} has no repositories enabled." }
 

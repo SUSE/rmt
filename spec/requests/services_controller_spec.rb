@@ -9,12 +9,12 @@ RSpec.describe ServicesController do
 
       context 'when service doesn\'t exist' do
         before { get '/services/0' }
-        it { is_expected.to have_http_status(404) }
+        it { is_expected.to have_http_status(:not_found) }
       end
 
       context 'when service exists' do
         before { get "/services/#{service.id}" }
-        it { is_expected.to have_http_status(200) }
+        it { is_expected.to have_http_status(:ok) }
       end
     end
 
@@ -75,7 +75,7 @@ RSpec.describe ServicesController do
     context 'without authentication headers' do
       before { get '/repo/repoindex.xml' }
 
-      it { is_expected.to have_http_status(401) }
+      it { is_expected.to have_http_status(:unauthorized) }
     end
 
     context 'with auth headers' do
@@ -87,7 +87,7 @@ RSpec.describe ServicesController do
         repo_items.map { |r| r.attr(:url) }
       end
 
-      it { is_expected.to have_http_status(200) }
+      it { is_expected.to have_http_status(:ok) }
 
       it 'has mirrored repos of multiple products in the XML' do
         expect(xml_urls).to eq(expected_repos)

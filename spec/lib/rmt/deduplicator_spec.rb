@@ -150,13 +150,13 @@ RSpec.describe RMT::Deduplicator do
         before do
           deduplication_method(:hardlink)
           add_downloaded_file(file.checksum_type, file.checksum, source_path)
-          allow(::FileUtils).to receive(:ln).and_raise(StandardError)
+          allow(FileUtils).to receive(:ln).and_raise(StandardError)
         end
 
         it('throws hardlink exception') do
           expect_any_instance_of(RMT::Logger).not_to receive(:info)
 
-          expect { deduplicate }.to raise_error(::RMT::Deduplicator::HardlinkException)
+          expect { deduplicate }.to raise_error(RMT::Deduplicator::HardlinkException)
         end
       end
 

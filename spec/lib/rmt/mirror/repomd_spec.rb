@@ -8,9 +8,9 @@ RSpec.describe RMT::Mirror::Repomd do
   # Remember that RMT forces a trailing slash on all repository URLS!
   let(:repository_url) { 'https://updates.suse.com/sample/repository/15.4/product/' }
   let(:repository) do
-    create :repository,
+    create(:repository,
            name: 'SUSE Linux Enterprise Server 15 SP4',
-           external_url: repository_url
+           external_url: repository_url)
   end
 
   # Configuration for repomd mirroring instance
@@ -284,10 +284,7 @@ RSpec.describe RMT::Mirror::Repomd do
 
       # Download metadata signature/key files
       allow(downloader).to receive(:download_multi).once
-        .with(match_array([
-          have_attributes(relative_path: 'repodata/repomd.xml.asc'),
-          have_attributes(relative_path: 'repodata/repomd.xml.key')
-        ]))
+        .with(contain_exactly(have_attributes(relative_path: 'repodata/repomd.xml.asc'), have_attributes(relative_path: 'repodata/repomd.xml.key')))
 
       # Verify metadata signature
       allow(gpg_verifier).to receive(:verify_signature).once

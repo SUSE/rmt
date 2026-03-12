@@ -9,7 +9,7 @@ RSpec.describe Product, type: :model do
   describe '#has_extension?' do
     subject { product.has_extension? }
 
-    let(:product) { create :product }
+    let(:product) { create(:product) }
 
 
     context 'when has no extensions' do
@@ -26,31 +26,31 @@ RSpec.describe Product, type: :model do
     subject { product.mirror? }
 
     context 'without any repositories' do
-      let(:product) { create :product }
+      let(:product) { create(:product) }
 
       it { is_expected.to be false }
     end
 
     context 'with disabled mirrored repositories' do
-      let(:product) { create :product, :with_disabled_mirrored_repositories }
+      let(:product) { create(:product, :with_disabled_mirrored_repositories) }
 
       it { is_expected.to be true }
     end
 
     context 'with disabled not mirrored repositories' do
-      let(:product) { create :product, :with_disabled_not_mirrored_repositories }
+      let(:product) { create(:product, :with_disabled_not_mirrored_repositories) }
 
       it { is_expected.to be false }
     end
 
     context 'with_not_mirrored_repositories' do
-      let(:product) { create :product, :with_not_mirrored_repositories }
+      let(:product) { create(:product, :with_not_mirrored_repositories) }
 
       it { is_expected.to be false }
     end
 
     context 'with_mirrored_repositories' do
-      let(:product) { create :product, :with_mirrored_repositories }
+      let(:product) { create(:product, :with_mirrored_repositories) }
 
       it { is_expected.to be true }
     end
@@ -142,13 +142,13 @@ RSpec.describe Product, type: :model do
   describe '.modules_for_migration' do
     subject { described_class.modules_for_migration([root_product]) }
 
-    let(:root_product) { create :product }
+    let(:root_product) { create(:product) }
     let(:recommended_module) { create(:product, :module) }
     let(:autoselected_module) { create(:product, :module) }
-    let(:not_autoselected_module) { create :product, :module }
+    let(:not_autoselected_module) { create(:product, :module) }
     let(:recommended_extension) { create(:product, :extension) }
     let(:autoselected_extension) { create(:product, :extension) }
-    let(:not_autoselected_extension) { create :product, :extension }
+    let(:not_autoselected_extension) { create(:product, :extension) }
 
     before do
       ProductsExtensionsAssociation.create(
@@ -193,7 +193,7 @@ RSpec.describe Product, type: :model do
   describe '#recommended_for?' do
     subject { extension.recommended_for?(queried_base) }
 
-    let(:base) { create :product }
+    let(:base) { create(:product) }
     let(:extension) { create(:product, :extension, base_products: [base], recommended: recommended) }
 
     context 'when the extension is recommended for its base' do
@@ -220,8 +220,8 @@ RSpec.describe Product, type: :model do
 
   describe '#find_or_create_service!' do
     context 'when service already exists' do
-      let!(:product) { create :product }
-      let!(:service) { create :service, product_id: product.id }
+      let!(:product) { create(:product) }
+      let!(:service) { create(:service, product_id: product.id) }
 
       it 'returns the existing service' do
         expect(product.find_or_create_service!).to eq(service)
@@ -229,9 +229,9 @@ RSpec.describe Product, type: :model do
     end
 
     context 'when the matching service ID is already taken' do
-      let!(:product) { create :product }
-      let!(:other_product) { create :product }
-      let!(:other_service) { create :service, id: product.id, product_id: other_product.id }
+      let!(:product) { create(:product) }
+      let!(:other_product) { create(:product) }
+      let!(:other_service) { create(:service, id: product.id, product_id: other_product.id) }
 
       it 'creates a service with a random ID' do
         expect(product.find_or_create_service!.id).not_to eq(other_service.id)
@@ -239,7 +239,7 @@ RSpec.describe Product, type: :model do
     end
 
     context 'when the matching service ID is free' do
-      let!(:product) { create :product }
+      let!(:product) { create(:product) }
 
       it 'creates a service with a matching ID' do
         expect(product.find_or_create_service!.id).to eq(product.id)

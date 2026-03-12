@@ -165,7 +165,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
 
       context 'subscription does not include product' do
         include_context 'with subscriptions'
-        let(:subscription) { create :subscription }
+        let(:subscription) { create(:subscription) }
         let(:regcode) { subscription.regcode }
 
         its(:body) { is_expected.to include(error: /The subscription with the provided Registration Code does not include the requested product/) }
@@ -174,7 +174,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
 
       context 'expired subscription' do
         include_context 'with subscriptions'
-        let(:subscription) { create :subscription, :expired }
+        let(:subscription) { create(:subscription, :expired) }
         let(:regcode) { subscription.regcode }
 
         its(:body) { is_expected.to include(error: /The subscription with the provided Registration Code is expired/) }
@@ -183,7 +183,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
 
       context 'subscription with associated product' do
         include_context 'with subscriptions'
-        let(:subscription) { create :subscription, :with_products }
+        let(:subscription) { create(:subscription, :with_products) }
         let(:product) { subscription.products.first }
         let(:regcode) { subscription.regcode }
 
@@ -195,7 +195,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       end
 
       context 'token update after activation is success' do
-        let(:subscription) { create :subscription, :with_products }
+        let(:subscription) { create(:subscription, :with_products) }
         let(:product) { subscription.products.first }
         let(:regcode) { subscription.regcode }
 
@@ -442,7 +442,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
     end
 
     context 'with paid activated previous product' do
-      let(:subscription) { create :subscription }
+      let(:subscription) { create(:subscription) }
       let!(:old_product) { FactoryBot.create(:product, :with_mirrored_repositories, :activated, system: system, subscription: subscription) }
       let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories, predecessors: [old_product]) }
       let(:serialized_json) do
@@ -590,7 +590,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
           }
         end
         let(:expected_response) do
-          [[::V3::UpgradePathItemSerializer.new(second_product)]].to_json
+          [[V3::UpgradePathItemSerializer.new(second_product)]].to_json
         end
 
         its(:code) { is_expected.to eq('200') }
@@ -617,9 +617,9 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
           let!(:expected_response) do
             case migration_kind
             when :online
-              [[::V3::UpgradePathItemSerializer.new(second_product)]].to_json
+              [[V3::UpgradePathItemSerializer.new(second_product)]].to_json
             when :offline
-              [[::V3::UpgradePathItemSerializer.new(second_product), ::V3::UpgradePathItemSerializer.new(recommended_module)]].to_json
+              [[V3::UpgradePathItemSerializer.new(second_product), V3::UpgradePathItemSerializer.new(recommended_module)]].to_json
             end
           end
 
@@ -648,9 +648,9 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
           let!(:expected_response) do
             case migration_kind
             when :online
-              [[::V3::UpgradePathItemSerializer.new(second_product)]].to_json
+              [[V3::UpgradePathItemSerializer.new(second_product)]].to_json
             when :offline
-              [[::V3::UpgradePathItemSerializer.new(second_product), ::V3::UpgradePathItemSerializer.new(migration_extra_module)]].to_json
+              [[V3::UpgradePathItemSerializer.new(second_product), V3::UpgradePathItemSerializer.new(migration_extra_module)]].to_json
             end
           end
 
@@ -732,7 +732,7 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
           }
         end
         let(:expected_response) do
-          [[::V3::UpgradePathItemSerializer.new(second_product)]].to_json
+          [[V3::UpgradePathItemSerializer.new(second_product)]].to_json
         end
 
         its(:code) { is_expected.to eq('200') }

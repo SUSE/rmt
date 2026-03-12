@@ -36,7 +36,7 @@ RSpec.describe Api::Connect::V4::Subscriptions::ProductsController, type: :reque
       let(:serialized_response) do
         ActiveModel::Serializer::CollectionSerializer.new(
           subscription.products.where(condition),
-          serializer: ::V3::ProductSerializer,
+          serializer: V3::ProductSerializer,
           base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host })
         ).to_json
       end

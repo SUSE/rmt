@@ -46,7 +46,7 @@ describe RMT::CLI::Import, :with_fakefs do
 
       allow(File).to receive(:exist?).with(repo_json).and_return(true)
       allow(File).to receive(:exist?).with('<STDOUT>').and_call_original
-      allow(File).to receive(:read).with(repo_json).and_return(repo_settings.to_json.to_s)
+      allow(File).to receive(:read).with(repo_json).and_return(repo_settings.to_json)
 
       allow(RMT::Mirror::SumaProductTree).to receive(:new).and_return(suma_product_tree_double)
       allow(suma_product_tree_double).to receive(:mirror)
@@ -56,8 +56,8 @@ describe RMT::CLI::Import, :with_fakefs do
 
     subject(:command) { described_class.start(['repos', path]) }
 
-    let(:repository1) { create :repository, mirroring_enabled: true, auth_token: 'foobar' }
-    let(:repository2) { create :repository, mirroring_enabled: true }
+    let(:repository1) { create(:repository, mirroring_enabled: true, auth_token: 'foobar') }
+    let(:repository2) { create(:repository, mirroring_enabled: true) }
 
     let(:mirror_double) { instance_double('RMT::Mirror') }
     let(:suma_product_tree_double) { instance_double('RMT::Mirror::SumaProductTree') }

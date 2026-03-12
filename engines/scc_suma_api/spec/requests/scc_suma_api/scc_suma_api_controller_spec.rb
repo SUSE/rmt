@@ -62,7 +62,7 @@ module SccSumaApi
             end
 
             its(:code) { is_expected.to eq '200' }
-            its(:body) { is_expected.to eq products.to_json.to_s }
+            its(:body) { is_expected.to eq products.to_json }
           end
 
           context 'endpoints return unscoped products for BYOS systems' do
@@ -80,7 +80,7 @@ module SccSumaApi
             end
 
             its(:code) { is_expected.to eq '200' }
-            its(:body) { is_expected.to eq products.to_json.to_s }
+            its(:body) { is_expected.to eq products.to_json }
           end
         end
 
@@ -99,7 +99,7 @@ module SccSumaApi
           end
 
           its(:code) { is_expected.to eq '200' }
-          its(:body) { is_expected.to eq products.to_json.to_s }
+          its(:body) { is_expected.to eq products.to_json }
         end
 
         context 'metadata is not valid' do
@@ -175,7 +175,7 @@ module SccSumaApi
           end
 
           its(:code) { is_expected.to eq '200' }
-          its(:body) { is_expected.to eq products.to_json.to_s }
+          its(:body) { is_expected.to eq products.to_json }
         end
       end
     end

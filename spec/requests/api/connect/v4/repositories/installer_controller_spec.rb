@@ -75,7 +75,7 @@ RSpec.describe Api::Connect::V4::Repositories::InstallerController do
       let(:serialized_response) do
         ActiveModel::Serializer::CollectionSerializer.new(
           product.repositories.where(installer_updates: true),
-          serializer: ::V3::RepositorySerializer,
+          serializer: V3::RepositorySerializer,
           base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host })
         ).to_json
       end

@@ -10,10 +10,10 @@ class CatalogClient
   end
 
   def authorized_for_catalog?
-    (@access.any? &&
+    @access.any? &&
      @access.first.fetch('type', '') == 'registry' && # TODO: better not only check the first 'access'
      @access.first.fetch('name', '') == 'catalog' &&
-     @access.first.fetch('actions', []) == ['*'])
+     @access.first.fetch('actions', []) == ['*']
   end
 
   private

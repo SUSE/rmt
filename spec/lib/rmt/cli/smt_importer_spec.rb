@@ -30,8 +30,8 @@ describe RMT::CLI::SMTImporter, :skip_sqlite do
       allow(importer).to receive(:read_csv).with('enabled_repos').and_return enabled_repos
     end
 
-    let(:repo_1) { create :repository }
-    let(:repo_2) { create :repository }
+    let(:repo_1) { create(:repository) }
+    let(:repo_2) { create(:repository) }
 
     context 'when repository exists' do
       let(:enabled_repos) { [repo_1.friendly_id, repo_2.friendly_id] }
@@ -63,9 +63,9 @@ describe RMT::CLI::SMTImporter, :skip_sqlite do
     end
 
     context 'already created repository' do
-      let(:repo) { create :repository, :custom, external_url: 'https://something.org/repos/sles15/' }
-      let(:product_1) { create :product, :with_service }
-      let(:product_2) { create :product, :with_service }
+      let(:repo) { create(:repository, :custom, external_url: 'https://something.org/repos/sles15/') }
+      let(:product_1) { create(:product, :with_service) }
+      let(:product_2) { create(:product, :with_service) }
 
       let(:enabled_custom_repos) do
         [
@@ -85,7 +85,7 @@ describe RMT::CLI::SMTImporter, :skip_sqlite do
     end
 
     context 'repository not created yet' do
-      let(:product) { create :product, :with_service }
+      let(:product) { create(:product, :with_service) }
       let(:repo_name) { 'SAMPLE_REPO' }
       let(:repo_url) { 'https://SAMPLE_REPO_URL/repo/' }
       let(:local_path) { '/srv/repos/repo/' }
@@ -121,7 +121,7 @@ describe RMT::CLI::SMTImporter, :skip_sqlite do
     end
 
     context 'without a valid product' do
-      let(:repo) { create :repository, :custom }
+      let(:repo) { create(:repository, :custom) }
 
       let(:enabled_custom_repos) { [[0, repo.name, repo.external_url]] }
 
@@ -162,12 +162,12 @@ describe RMT::CLI::SMTImporter, :skip_sqlite do
       allow(importer).to receive(:read_csv).with('activations').and_return activations
     end
 
-    let(:product) { create :product, :with_service }
+    let(:product) { create(:product, :with_service) }
 
     context 'with systems' do
-      let(:system_1) { create :system }
-      let(:system_2) { create :system }
-      let(:system_3) { create :system }
+      let(:system_1) { create(:system) }
+      let(:system_2) { create(:system) }
+      let(:system_3) { create(:system) }
 
       let(:activations) do
         [
@@ -200,7 +200,7 @@ describe RMT::CLI::SMTImporter, :skip_sqlite do
     end
 
     context 'when a product does not exist' do
-      let(:system) { create :system }
+      let(:system) { create(:system) }
       let(:activations) { [[system.login, 0]] }
 
       it 'does not create an activation' do
@@ -225,8 +225,8 @@ describe RMT::CLI::SMTImporter, :skip_sqlite do
 
     it 'reads all hardware info and creates or updates the info accordingly' do
       # The systems has to be created before attaching hw_info to it
-      create :system, login: 'SCC_620a989bc9fb44cc95e7f96390bd979e'
-      create :system, login: 'SCC_82660967a72c4c6f9567cd2382b232b9'
+      create(:system, login: 'SCC_620a989bc9fb44cc95e7f96390bd979e')
+      create(:system, login: 'SCC_82660967a72c4c6f9567cd2382b232b9')
 
       expect { importer.import_hardware_info }.to output(<<-OUTPUT.strip_heredoc).to_stdout
         Hardware information stored for system SCC_620a989bc9fb44cc95e7f96390bd979e
@@ -302,7 +302,7 @@ describe RMT::CLI::SMTImporter, :skip_sqlite do
     end
 
     it 'checks if at least one product exists' do
-      create :product, :with_service
+      create(:product, :with_service)
       expect { importer.check_products_exist }.not_to raise_error
     end
   end

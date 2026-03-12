@@ -92,7 +92,7 @@ module RegistrationSharing
         let(:system) { System.find_by(login: login) }
 
         it 'succeeds' do
-          expect(response).to have_http_status(204)
+          expect(response).to have_http_status(:no_content)
         end
 
         it 'creates a system' do

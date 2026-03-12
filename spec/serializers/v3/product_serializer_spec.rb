@@ -14,7 +14,7 @@ describe V3::ProductSerializer do
   describe '#eula_url' do
     subject { described_class.new(product, base_url: base_url).eula_url }
 
-    let(:product) { create :product, eula_url: eula_url }
+    let(:product) { create(:product, eula_url: eula_url) }
 
     context "when the product's eula_url is an empty string" do
       let(:eula_url) { '' }
@@ -39,7 +39,7 @@ describe V3::ProductSerializer do
     subject { described_class.new(product).as_json[:friendly_name] }
 
     let(:release_stage) { 'foo' }
-    let(:product) { create :product, release_stage: release_stage }
+    let(:product) { create(:product, release_stage: release_stage) }
 
     it { is_expected.not_to include(release_stage) }
   end
@@ -47,7 +47,7 @@ describe V3::ProductSerializer do
   describe 'release_stage' do
     subject(:serializer) { described_class.new(product) }
 
-    let(:product) { create :product }
+    let(:product) { create(:product) }
 
     it 'has a release_stage attribute' do
       expect(serializer.as_json[:release_stage]).to eq(product.release_stage)

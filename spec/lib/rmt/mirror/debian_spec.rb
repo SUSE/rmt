@@ -4,9 +4,9 @@ describe RMT::Mirror::Debian do
   subject(:debian) { described_class.new(**debian_mirror_configuration) }
 
   let(:repository) do
-    create :repository,
+    create(:repository,
            name: 'HYPE product repository debian 15.3',
-           external_url: 'https://updates.suse.com/sample/repository/15.3/'
+           external_url: 'https://updates.suse.com/sample/repository/15.3/')
   end
 
   # Configuration for Debian mirroring instance
@@ -217,9 +217,9 @@ describe RMT::Mirror::Debian do
     context 'nested repository structure' do
       let(:fixture) { 'nested/Packages.gz' }
       let(:repository) do
-        create :repository,
+        create(:repository,
                name: 'HYPE product repository debian 15.3',
-               external_url: 'https://ppa.launchpadcontent.net/ondrej/nginx/ubuntu/dists/focal/'
+               external_url: 'https://ppa.launchpadcontent.net/ondrej/nginx/ubuntu/dists/focal/')
       end
 
       it 'removes dists/ from mirroring path and external URL' do

@@ -9,13 +9,13 @@ class RMT::Downloader::Exception < RuntimeError
 
   def self.raise_request_error(remote_file, response, logger)
     logger.debug <<~DEBUG.chomp
-    #{_('Request error:')}
-      #{_('Request URL')}: #{response.effective_url}
-      #{_('Response HTTP status code')}: #{response.code}
-      #{_('Response body')}: #{response.body.presence || "''"}
-      #{_('Response headers')}: #{flatten_string(response.response_headers.presence)}
-      #{_('curl return code')}: #{response.return_code.presence || "''"}
-      #{_('curl return message')}: #{response.return_message.presence || "''"}
+      #{_('Request error:')}
+        #{_('Request URL')}: #{response.effective_url}
+        #{_('Response HTTP status code')}: #{response.code}
+        #{_('Response body')}: #{response.body.presence || "''"}
+        #{_('Response headers')}: #{flatten_string(response.response_headers.presence)}
+        #{_('curl return code')}: #{response.return_code.presence || "''"}
+        #{_('curl return message')}: #{response.return_message.presence || "''"}
     DEBUG
 
     message = _("%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'") %

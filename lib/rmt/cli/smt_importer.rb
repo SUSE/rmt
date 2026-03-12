@@ -25,7 +25,7 @@ class RMT::CLI::SMTImporter
   def read_csv(file)
     # set the quote char to something not used to make sure the csv parser is not interfering with the
     # JSON quoting.
-    CSV.open(File.join(data_dir, file + '.csv'), 'r', **{ col_sep: "\t", quote_char: "\x00" })
+    CSV.open(File.join(data_dir, file + '.csv'), 'r', col_sep: "\t", quote_char: "\x00")
   end
 
   def import_repositories
@@ -62,12 +62,12 @@ class RMT::CLI::SMTImporter
           puts _('Added association between %{repo} and product %{product}') % { repo: repo.name, product: product.id }
         end
       else
-        warn _(<<-WARNING
-Product %{product} not found!
-Tried to attach custom repository %{repo} to product %{product},
-but that product was not found. Attach it to a different product
-by running '%{command}'
-WARNING
+        warn _(<<~WARNING
+          Product %{product} not found!
+          Tried to attach custom repository %{repo} to product %{product},
+          but that product was not found. Attach it to a different product
+          by running '%{command}'
+        WARNING
 ) % { repo: repo.name, product: product_id, command: 'rmt-cli repos custom attach' }
       end
     end
@@ -87,7 +87,7 @@ WARNING
     read_csv('systems').each do |row|
       login, password, hostname, registered_at = row
 
-      if (@systems[login])
+      if @systems[login]
         warn _('Duplicate entry for system %{system}, skipping') % { system: login }
         next
       end

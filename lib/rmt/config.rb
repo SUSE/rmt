@@ -8,7 +8,7 @@ end
 
 # In specs, configuration will only be loaded from 'config/rmt.yml'
 Config.load_and_set_settings(
-  ('/etc/rmt.conf' if File.readable?('/etc/rmt.conf')),
+  '/etc/rmt.conf' if File.readable?('/etc/rmt.conf'),
   File.join(__dir__, '../../config/rmt.yml'),
   File.join(__dir__, '../../config/rmt.local.yml')
 )
@@ -48,7 +48,7 @@ module RMT::Config
 
     def mirror_drpm_files?
       mirror_drpm_files = ActiveModel::Type::Boolean.new.cast(Settings.try(:mirroring).try(:mirror_drpm))
-      mirror_drpm_files.nil? ? true : mirror_drpm_files
+      mirror_drpm_files.nil? || mirror_drpm_files
     end
 
     WebServerConfig = Struct.new(

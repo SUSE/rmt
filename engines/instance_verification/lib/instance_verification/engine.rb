@@ -158,7 +158,7 @@ module InstanceVerification
 
         # store IID for later product activation checks
         def save_instance_data
-          return true unless (@system && params[:instance_data])
+          return true unless @system && params[:instance_data]
           @system.instance_data = params[:instance_data]
           @system.save!
         end

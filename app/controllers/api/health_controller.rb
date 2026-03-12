@@ -1,7 +1,7 @@
 class Api::HealthController < ApplicationController
 
   def status
-    render status: 200, json: { state: 'online' }
+    render status: :ok, json: { state: 'online' }
   end
 
 end

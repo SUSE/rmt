@@ -14,9 +14,9 @@ describe RMT::Mirror::Base do
   let(:enable_source_mirroring) { false }
 
   let(:repository) do
-    create :repository,
+    create(:repository,
            name: 'HYPE product repository debian 15.3',
-           external_url: 'https://updates.suse.com/update/hype/15.3/product/'
+           external_url: 'https://updates.suse.com/update/hype/15.3/product/')
   end
 
   let(:downloader) { instance_double('downloader') }
@@ -49,7 +49,7 @@ describe RMT::Mirror::Base do
   end
 
   describe '#mirror_implementation' do
-    it 'will implement the main mirroring logic' do
+    it 'implements the main mirroring logic' do
       expect { base.mirror_implementation }.to raise_error('Not implemented!')
     end
   end
@@ -166,7 +166,7 @@ describe RMT::Mirror::Base do
 
     context 'has valid signature' do
       it 'succeeds' do
-        expect(downloader).to receive(:download_multi).with(match_array([key_file, signature_file]))
+        expect(downloader).to receive(:download_multi).with(contain_exactly(key_file, signature_file))
         expect_any_instance_of(RMT::GPG).to receive(:verify_signature)
         base.check_signature(key_file: key_file, signature_file: signature_file, metadata_file: metadata)
       end

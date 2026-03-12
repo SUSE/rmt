@@ -50,7 +50,7 @@ class ServicesController < ApplicationController
     render xml: service_xml
   rescue ActiveRecord::RecordNotFound
     untranslated = N_('Requested service not found')
-    render(xml: { error: untranslated, localized_error: _(untranslated) }, status: 404) and return
+    render(xml: { error: untranslated, localized_error: _(untranslated) }, status: :not_found) and return
   end
 
   def legacy_service
