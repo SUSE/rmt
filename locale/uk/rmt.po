@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-02-27 23:04+0000\n"
+"PO-Revision-Date: 2026-03-14 21:04+0000\n"
 "Last-Translator: Eugene Krater <lachend@gmail.com>\n"
 "Language-Team: Ukrainian <https://l10n.opensuse.org/projects/rmt/i18n/uk/>\n"
 "Language: uk\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.16.1\n"
+"X-Generator: Weblate 5.16.2\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "Продукт %s ще не активовано в системі."
@@ -537,40 +537,40 @@ msgid "No custom repositories found."
 msgstr "Користувацькі репозиторії не знайдені."
 
 msgid "No dangling packages have been found!"
-msgstr ""
+msgstr "Не знайдено жодних підвішених пакетів!"
 
 msgid "No matching products found in the database."
-msgstr ""
+msgstr "У базі даних не знайдено відповідних продуктів."
 
 msgid "No product IDs supplied"
-msgstr ""
+msgstr "Не вказано ідентифікатори продуктів"
 
 msgid "No product found"
 msgstr "Продукт не знайдено"
 
 msgid "No product found for target %{target}."
-msgstr ""
+msgstr "Не знайдено продуктів для цільового параметра %{target}."
 
 msgid "No product found on RMT for: %s"
-msgstr ""
+msgstr "У RMT не знайдено продукт для %s"
 
 msgid "No products attached to repository."
-msgstr ""
+msgstr "У репозиторії немає продуктів."
 
 msgid "No repositories enabled."
-msgstr ""
+msgstr "Репозиторії не активовано."
 
 msgid "No repositories found for product: %s"
 msgstr "Не знайдено сховищ для продукту: %s"
 
 msgid "No repository IDs supplied"
-msgstr ""
+msgstr "Ідентифікатори репозиторіїв не вказано"
 
 msgid "No subscription found with this registration code"
-msgstr ""
+msgstr "За цим реєстраційним кодом не знайдено жодної передплати"
 
 msgid "Not Mandatory"
-msgstr ""
+msgstr "Не обов'язково"
 
 msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
 msgstr ""
@@ -583,42 +583,50 @@ msgstr "Код реєстрації ще не активовано. Відвід
 
 msgid "Now, it will parse all repomd.xml files, search for dangling packages on disk and clean them."
 msgstr ""
+"Тепер програма проаналізує всі файли repomd.xml, знайде на диску пакети, що "
+"залишилися без підтримки, та видалить їх."
 
 msgid "Number of systems to display"
-msgstr ""
+msgstr "Кількість систем для відображення"
 
 msgid "Only '%{input}' will be accepted."
-msgstr ""
+msgstr "Прийматиметься лише '%{input}'."
 
 msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
 msgstr ""
+"За замовчуванням відображаються лише активовані продукти. Щоб переглянути "
+"всі продукти, скористайтеся параметром %{command}."
 
 msgid "Only enabled repositories are shown by default. Use the '%{option}' option to see all repositories."
 msgstr ""
+"За замовчуванням показані лише увімкнені репозиторії. Щоб переглянути всі "
+"репозиторії, скористайтеся параметром '%{option}'."
 
 msgid "Output data in CSV format"
-msgstr ""
+msgstr "Вивести дані у форматі CSV"
 
 msgid "Path to unpacked SMT data tarball"
-msgstr ""
+msgstr "Шлях до архіву SMT із непакованими даними"
 
 msgid "Please answer"
-msgstr ""
+msgstr "Будь ласка, дайте відповідь"
 
 msgid "Please provide a non-numeric ID for your custom repository."
-msgstr ""
+msgstr "Вкажіть нечисловий ідентифікатор для вашого власного репозиторію."
 
 msgid "Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
 msgstr ""
+"Помилка під час обробки %{file_reference} з помилкою %{message}. Буде "
+"зроблено ще %{retries} спроб через %{seconds} секунд"
 
 msgid "Product"
-msgstr ""
+msgstr "Продукт"
 
 msgid "Product %{products} could not be found and was not disabled."
 msgid_plural "Products %{products} could not be found and were not disabled."
 msgstr[0] "Не вдалося знайти і вимкнути продукт %{products}."
-msgstr[1] "Не вдалося знайти і вимкнути %{products} продукти"
-msgstr[2] "Не вдалося знайти і вимкнути %{products} продуктів"
+msgstr[1] "Не вдалося знайти і вимкнути %{products} продукти."
+msgstr[2] "Не вдалося знайти і вимкнути %{products} продуктів."
 
 msgid "Product %{products} could not be found and was not enabled."
 msgid_plural "Products %{products} could not be found and were not enabled."
@@ -627,7 +635,7 @@ msgstr[1] "Не вдалося знайти та увімкнути %{products} 
 msgstr[2] "Не вдалося знайти та увімкнути %{products} продуктів."
 
 msgid "Product %{product} not found"
-msgstr ""
+msgstr "Продукт %{product} не знайдено"
 
 msgid ""
 "Product %{product} not found!\n"
@@ -635,69 +643,86 @@ msgid ""
 "but that product was not found. Attach it to a different product\n"
 "by running '%{command}'\n"
 msgstr ""
+"Не вдалося знайти продукт %{product}!\n"
+"Було зроблено спробу підключити користувацький репозиторій %{repo} до "
+"продукту %{product},\n"
+"проте знайти вказаний продукт не вдалося. Щоб приєднати репозиторій до "
+"іншого продукту,\n"
+"скористайтеся командою %{command}.\n"
 
 msgid "Product %{target} has no repositories enabled"
-msgstr ""
+msgstr "Для продукту %{target} не активовано жодного репозиторію"
 
 msgid "Product Architecture"
-msgstr ""
+msgstr "Архітектура продукту"
 
 msgid "Product ID"
-msgstr ""
+msgstr "Ідентифікатор продукту"
 
 msgid "Product Name"
-msgstr ""
+msgstr "Назва продукту"
 
 msgid "Product String"
-msgstr ""
+msgstr "Ряд продуктів"
 
 msgid "Product Version"
-msgstr ""
+msgstr "Версія продукту"
 
 msgid "Product architecture (e.g., x86_64, aarch64)"
-msgstr ""
+msgstr "Архітектура продукту (наприклад, x86_64, aarch64)"
 
 msgid "Product by ID %{id} not found."
-msgstr ""
+msgstr "Продукт з ідентифікатором %{id} не знайдено."
 
 msgid "Product for target %{target} not found"
-msgstr ""
+msgstr "Продукт за запитом %{target} не знайдено"
 
 msgid "Product name (e.g., Basesystem, SLES)"
-msgstr ""
+msgstr "Назва продукту (наприклад, Basesystem, SLES)"
 
 msgid "Product version (e.g., 15, 15.1, '12 SP4')"
-msgstr ""
+msgstr "Версія продукту (наприклад, 15, 15.1, «12 SP4»)"
 
 msgid "Product with ID %{target} not found"
-msgstr ""
+msgstr "Продукт з ідентифікатором %{target} не знайдено"
 
 msgid "Product: %{name} (ID: %{id})"
-msgstr ""
+msgstr "Продукт: %{name} (ID: %{id})"
 
 msgid "Products"
-msgstr ""
+msgstr "Продукти"
 
 msgid "Provide a custom ID instead of allowing RMT to generate one."
 msgstr ""
+"Вкажіть власний ідентифікатор замість того, щоб дозволити RMT згенерувати "
+"його."
 
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr ""
+"RMT виявив локальні дзеркальні копії файлів із таких репозиторіїв, які не "
+"позначені як такі, що підлягають дзеркальному копіюванню:"
 
 msgid "RMT found no repomd.xml files. Check if RMT is properly configured."
 msgstr ""
+"RMT не знайшов файлів repomd.xml. Перевірте, чи правильно налаштовано RMT."
 
 msgid "RMT found repomd.xml files: %{repomd_count}."
-msgstr ""
+msgstr "RMT виявив %{repomd_count} файлів repomd.xml."
 
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr ""
+"RMT ще не синхронізовано з SCC. Будь ласка, спочатку виконайте команду '%"
+"{command}'"
 
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
 msgstr ""
+"RMT знайшов лише локальні дзеркальні копії файлів репозиторіїв, які "
+"позначені для дзеркального копіювання."
 
 msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
 msgstr ""
+"RMT скопіює вказані репозиторії з %{file} у PATH, зазвичай на портативний "
+"носій."
 
 msgid "Read SCC data from given path"
 msgstr ""
