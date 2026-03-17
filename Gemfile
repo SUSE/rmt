@@ -42,10 +42,10 @@ gem 'strong_migrations'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
-  # These 3 gems below will be updated after we discuss about the next lint configuration
-  gem 'scc-codestyle', '~> 0.5.0'
-  gem 'rubocop', '<= 1.25.0'
-  gem 'rubocop-ast', '<= 1.17.0'
+  # These 3 gems are in sync with glue we will discuss the next lint configuration
+  gem 'scc-codestyle', '~> 0.7.0'
+  gem 'rubocop', '<= 1.75.3'
+  gem 'rubocop-ast', '<= 1.44.1'
 
   gem 'gettext', require: false # needed for gettext_i18n_rails tasks
   gem 'ruby_parser', require: false # needed for gettext_i18n_rails tasks, Locked because of Ruby >= 2.6 dependency
