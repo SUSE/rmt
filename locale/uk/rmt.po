@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-03-14 21:04+0000\n"
+"PO-Revision-Date: 2026-03-19 22:04+0000\n"
 "Last-Translator: Eugene Krater <lachend@gmail.com>\n"
 "Language-Team: Ukrainian <https://l10n.opensuse.org/projects/rmt/i18n/uk/>\n"
 "Language: uk\n"
@@ -725,34 +725,36 @@ msgstr ""
 "носій."
 
 msgid "Read SCC data from given path"
-msgstr ""
+msgstr "Прочитати дані SCC за вказаним шляхом"
 
 msgid "Registration time"
-msgstr ""
+msgstr "Час реєстрації"
 
 msgid "Release Stage"
-msgstr ""
+msgstr "Етап випуску"
 
 msgid "Remove a custom repository"
-msgstr ""
+msgstr "Видалити власний репозиторій"
 
 msgid "Remove systems before the given date (format: \"<year>-<month>-<day>\")"
-msgstr ""
+msgstr "Видалити системи до вказаної дати (формат: «<рік>-<місяць>-<день>»)"
 
 msgid "Removed custom repository by ID %{id}."
-msgstr ""
+msgstr "Видалено користувацький репозиторій за ідентифікатором %{id}."
 
 msgid "Removes a system and its activations from RMT"
-msgstr ""
+msgstr "Видаляє систему та її активації з RMT"
 
 msgid "Removes a system and its activations from RMT."
-msgstr ""
+msgstr "Видаляє систему та її активації з RMT."
 
 msgid "Removes inactive systems"
-msgstr ""
+msgstr "Видаляє неактивні системи"
 
 msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
 msgstr ""
+"Видаляє локальні дзеркальні копії файлів репозиторіїв, які не позначені для "
+"дзеркального копіювання"
 
 msgid "Removes old systems and their activations if they are inactive."
 msgstr ""
