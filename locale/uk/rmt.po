@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-03-19 22:04+0000\n"
+"PO-Revision-Date: 2026-03-20 23:04+0000\n"
 "Last-Translator: Eugene Krater <lachend@gmail.com>\n"
 "Language-Team: Ukrainian <https://l10n.opensuse.org/projects/rmt/i18n/uk/>\n"
 "Language: uk\n"
@@ -757,31 +757,33 @@ msgstr ""
 "дзеркального копіювання"
 
 msgid "Removes old systems and their activations if they are inactive."
-msgstr ""
+msgstr "Видаляє старі системи та їхні активації, якщо вони неактивні."
 
 msgid "Removing obsolete repositories"
-msgstr ""
+msgstr "Видалення застарілих репозиторіїв"
 
 msgid "Repositories are not available for this product."
-msgstr ""
+msgstr "Для цього продукту репозиторії недоступні."
 
 msgid "Repositories:"
-msgstr ""
+msgstr "Репозиторії:"
 
 msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
 msgstr ""
+"Не вдалося знайти репозиторій %{repo} у базі даних RMT. Можливо, для нього "
+"немає чинної передплати."
 
 msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
-msgstr ""
+msgstr "Репозиторій '%{repo_name}' (%{repo_id}): %{error_message}"
 
 msgid "Repository by ID %{id} not found."
-msgstr ""
+msgstr "Репозиторій з ідентифікатором %{id} не знайдено."
 
 msgid "Repository by ID %{id} successfully disabled."
-msgstr ""
+msgstr "Репозиторій з ідентифікатором %{id} успішно відключено."
 
 msgid "Repository by ID %{id} successfully enabled."
-msgstr ""
+msgstr "Репозиторій з ідентифікатором %{id} успішно активовано."
 
 msgid "Repository by ID %{repos} could not be found and was not disabled."
 msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
@@ -796,7 +798,7 @@ msgstr[1] "Репозиторії за ідентифікаторами %{repos}
 msgstr[2] "Репозиторії за ідентифікаторами %{repos} не знайдено і не увімкнено."
 
 msgid "Repository metadata signatures are missing"
-msgstr ""
+msgstr "Відсутні підписи метаданих репозиторію"
 
 msgid "Repository with ID %{repo_id} not found"
 msgstr ""
