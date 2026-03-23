@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-03-20 23:04+0000\n"
+"PO-Revision-Date: 2026-03-23 21:04+0000\n"
 "Last-Translator: Eugene Krater <lachend@gmail.com>\n"
 "Language-Team: Ukrainian <https://l10n.opensuse.org/projects/rmt/i18n/uk/>\n"
 "Language: uk\n"
@@ -801,40 +801,44 @@ msgid "Repository metadata signatures are missing"
 msgstr "Відсутні підписи метаданих репозиторію"
 
 msgid "Repository with ID %{repo_id} not found"
-msgstr ""
+msgstr "Не знайдено репозиторій з ідентифікатором %{repo_id}"
 
 msgid "Request URL"
-msgstr ""
+msgstr "URL-адреса запиту"
 
 msgid "Request error:"
-msgstr ""
+msgstr "Помилка запиту:"
 
 msgid "Requested service not found"
-msgstr ""
+msgstr "Запитану службу не знайдено"
 
 msgid "Required parameters are missing or empty: %s"
 msgstr "Необхідні параметри відсутні або порожні: %s"
 
 msgid "Response HTTP status code"
-msgstr ""
+msgstr "Код статусу HTTP-відповіді"
 
 msgid "Response body"
-msgstr ""
+msgstr "Тіло відповіді"
 
 msgid "Response headers"
-msgstr ""
+msgstr "Заголовки відповіді"
 
 msgid "Run '%{command}' for more information on a command and its subcommands."
 msgstr ""
+"Щоб отримати додаткову інформацію про команду та її вкладені команди, "
+"виконайте команду %{command}."
 
 msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first."
 msgstr ""
+"Спочатку запустіть команду «%{command}», щоб синхронізувати дані з Вашим "
+"обліковим записом у SUSE Customer Center."
 
 msgid "Run the clean process without actually removing files."
-msgstr ""
+msgstr "Запустіть процес очищення, не видаляючи файли."
 
 msgid "Run this command on an online RMT."
-msgstr ""
+msgstr "Виконайте цю команду в онлайн-RMT."
 
 msgid ""
 "SCC API request failed. Error details:\n"
@@ -844,60 +848,70 @@ msgid ""
 "Response body:\n"
 "%{body}"
 msgstr ""
+"Помилка під час обробки запиту до API SCC. Деталі помилки:\n"
+"URL запиту: %{url}\n"
+"Код відповіді: %{code}\n"
+"Код відгуку: %{return_code}\n"
+"Тіло відповіді:\n"
+"%{body}"
 
 msgid "SCC credentials not set."
-msgstr ""
+msgstr "Повноваження SCC не встановлено."
 
 msgid "Scanning the mirror directory for 'repomd.xml' files..."
-msgstr ""
+msgstr "Виконується пошук файлів «repomd.xml» у дзеркальному каталозі..."
 
 msgid "Settings saved at %{file}."
-msgstr ""
+msgstr "Налаштування збережено у файлі %{file}."
 
 msgid "Show RMT version"
-msgstr ""
+msgstr "Показати версію RMT"
 
 msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
 msgstr ""
+"Показано останні %{limit} реєстрацій. Щоб переглянути всі зареєстровані "
+"системи, скористайтеся опцією «--all»."
 
 msgid "Shows products attached to a custom repository"
-msgstr ""
+msgstr "Перегляд продуктів, підключених до репозиторію користувача"
 
 msgid "Store SCC data in files at given path"
-msgstr ""
+msgstr "Зберегти дані SCC у файлах за вказаним шляхом"
 
 msgid "Store repository settings at given path"
-msgstr ""
+msgstr "Зберегти налаштування репозиторію за вказаним шляхом"
 
 msgid "Successfully added custom repository."
-msgstr ""
+msgstr "Спеціальний репозиторій успішно додано."
 
 msgid "Successfully removed system with login %{login}."
-msgstr ""
+msgstr "Система з логіном %{login} успішно видалена."
 
 msgid "Sync database with SUSE Customer Center"
-msgstr ""
+msgstr "Синхронізувати базу даних із SUSE Customer Center"
 
 msgid "Syncing %{count} updated system(s) to SCC"
-msgstr ""
+msgstr "Синхронізація %{count} оновлених систем із SCC"
 
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
-msgstr ""
+msgstr "Синхронізація вилученої з реєстру системи %{scc_system_id} із SCC"
 
 msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
-msgstr ""
+msgstr "Синхронізація систем із SCC вимкнена у файлі конфігурації, виходжу."
 
 msgid "System %{system} not found"
-msgstr ""
+msgstr "Система %{system} не знайдена"
 
 msgid "System with login %{login} cannot be removed."
-msgstr ""
+msgstr "Систему з логіном %{login} неможливо видалити."
 
 msgid "System with login %{login} not found."
-msgstr ""
+msgstr "Систему з логіном %{login} не знайдено."
 
 msgid "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated from ID %{base_id} due to token mismatch"
 msgstr ""
+"Система з логіном \\\"%{login}\\\" (ID %{new_id}) пройшла аутентифікацію та "
+"була дубльована з ID %{base_id} через невідповідність токенів"
 
 msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
 msgstr ""
