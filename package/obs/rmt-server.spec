@@ -24,10 +24,12 @@
 %define rmt_user     _rmt
 %define rmt_group    nginx
 
-# Only build for the distribution default Ruby version
-%define rb_build_versions     %{rb_default_ruby}
-%define rb_build_ruby_abis    %{rb_default_ruby_abi}
-%define ruby_version          %{rb_default_ruby_suffix}
+# SLE 15 SP7 and newer (including 16.0/Factory) support Ruby 3.4
+%if 0%{?sle_version} && 0%{?sle_version} >= 150700
+%define rb_build_versions     ruby34
+%define rb_build_ruby_abis    ruby:3.4.0
+%define ruby_version          ruby3.4
+%endif
 
 # disabling dwz for now, as it is not available in SLE15
 # related bugzilla https://bugzilla.suse.com/show_bug.cgi?id=1180984
@@ -47,6 +49,9 @@ Source3:        rmt-cli.8.gz
 Source4:        rmt-tmpfiles.conf
 BuildRequires:  %{ruby_version}
 BuildRequires:  %{ruby_version}-devel
+%if 0%{?sle_version} && 0%{?sle_version} < 150700
+BuildRequires:  %{ruby_version}-rubygem-bundler
+%endif
 BuildRequires:  chrpath
 BuildRequires:  fdupes
 BuildRequires:  gcc
@@ -115,6 +120,7 @@ cp -p %{SOURCE2} .
 
 %setup -q
 sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
+
 # Set the version of bundler available within the build environment instead
 # of expect a hardcoded version. This ensures we bundle with the available version of bundler no matter which version available
 # NOTE: This relies on the fact that the lock file format does not change between bundler versions (which is not yet the case)
@@ -124,7 +130,7 @@ sed -i "s/BUNDLED WITH/BUNDLED WITH/g; /BUNDLED WITH/{n; s/[0-9.]\+/$(bundle.%{r
 bundle.%{ruby_version} config build.nio4r --with-cflags='%{optflags} -Wno-return-type'
 bundle.%{ruby_version} config set deployment 'true'
 bundle.%{ruby_version} config set without 'test development'
-bundle.%{ruby_version} install %{?jobs:--jobs %{jobs}}
+bundle.%{ruby_version} install --local %{?jobs:--jobs %{jobs}}
 
 %install
 mkdir -p %{buildroot}%{lib_dir}
@@ -221,10 +227,8 @@ grep -rl '\/usr\/bin\/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xarg
     -e 's@\/usr\/bin\/env ruby@\/usr\/bin\/ruby\.%{ruby_version}@g'
 grep -rl '\/usr\/bin\/env bash' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
     sed -i -e 's@\/usr\/bin\/env bash@\/bin\/bash@g'
-
-# Drop 'BUNDLED WITH' line from Gemfile.lock. It causes trouble when the Gemfile.lock
-# was created with a different major version than the distribution's bundler.
-sed -i '/BUNDLED WITH/{N;d;}' %{buildroot}%{app_dir}/Gemfile.lock
+# Patch minitest shebang specifically for its non-standard env usage
+sed -i 's@/usr/bin/env -S ruby@/usr/bin/ruby.%{ruby_version}@g' %{buildroot}%{lib_dir}/vendor/bundle/ruby/3.4.0/gems/minitest-6.0.2/lib/minitest/complete.rb
 
 # Drop warning "Nokogiri was built against libxml version x, but has dynamically y"
 # Because we cannot control which libxml version is installed on the system
