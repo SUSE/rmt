@@ -72,11 +72,11 @@ After this in order for the client machines to consume data from RMT, it would b
 
 ## Moving the mirrored repositories from SMT to RMT
 
-1. Copy data from `/var/www/htdocs/repo` to `/var/lib/rmt/public/repo`:
+1. Copy data from `/var/www/htdocs/repo` to `/usr/share/rmt/public/repo`:
     ```
-    cp -r /var/www/htdocs/repo/* /var/lib/rmt/public/repo
+    cp -r /var/www/htdocs/repo/* /usr/share/rmt/public/repo
     ```
 2. Adjust owner/group of the files to `_rmt:nginx`:
     ```
-    chown -R _rmt:nginx /var/lib/rmt/public/repo
+    chown -R _rmt:nginx /usr/share/rmt/public/repo
     ```

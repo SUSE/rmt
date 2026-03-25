@@ -24,10 +24,12 @@
 %define rmt_user     _rmt
 %define rmt_group    nginx
 
-# Only build for the distribution default Ruby version
-%define rb_build_versions     %{rb_default_ruby}
-%define rb_build_ruby_abis    %{rb_default_ruby_abi}
-%define ruby_version          %{rb_default_ruby_suffix}
+# SLE 15 SP7 and newer (including 16.0/Factory) support Ruby 3.4
+%if 0%{?sle_version} && 0%{?sle_version} >= 150700
+%define rb_build_versions     ruby34
+%define rb_build_ruby_abis    ruby:3.4.0
+%define ruby_version          ruby3.4
+%endif
 
 # disabling dwz for now, as it is not available in SLE15
 # related bugzilla https://bugzilla.suse.com/show_bug.cgi?id=1180984
@@ -44,8 +46,12 @@ Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-server-rpmlintrc
 Source2:        rmt.conf
 Source3:        rmt-cli.8.gz
+Source4:        rmt-tmpfiles.conf
 BuildRequires:  %{ruby_version}
 BuildRequires:  %{ruby_version}-devel
+%if 0%{?sle_version} && 0%{?sle_version} < 150700
+BuildRequires:  %{ruby_version}-rubygem-bundler
+%endif
 BuildRequires:  chrpath
 BuildRequires:  fdupes
 BuildRequires:  gcc
@@ -114,31 +120,33 @@ cp -p %{SOURCE2} .
 
 %setup -q
 sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
+
 # Set the version of bundler available within the build environment instead
 # of expect a hardcoded version. This ensures we bundle with the available version of bundler no matter which version available
 # NOTE: This relies on the fact that the lock file format does not change between bundler versions (which is not yet the case)
-sed -i "s/2\.2\.34/$(bundle.%{ruby_version} --version | grep -oE '([0-9]+\.?){3}')/g" Gemfile.lock
+sed -i "s/BUNDLED WITH/BUNDLED WITH/g; /BUNDLED WITH/{n; s/[0-9.]\+/$(bundle.%{ruby_version} --version | grep -oE '([0-9]+\.?){3}')/}" Gemfile.lock
 
 %build
 bundle.%{ruby_version} config build.nio4r --with-cflags='%{optflags} -Wno-return-type'
 bundle.%{ruby_version} config set deployment 'true'
 bundle.%{ruby_version} config set without 'test development'
-bundle.%{ruby_version} install %{?jobs:--jobs %{jobs}}
+bundle.%{ruby_version} install --local %{?jobs:--jobs %{jobs}}
 
 %install
-mkdir -p %{buildroot}%{data_dir}
 mkdir -p %{buildroot}%{lib_dir}
 mkdir -p %{buildroot}%{app_dir}
 mkdir -p %{buildroot}%{conf_dir}/ssl
-mkdir -p %{buildroot}%{data_dir}/regsharing
+mkdir -p %{buildroot}%{app_dir}/regsharing
 
-mv tmp %{buildroot}%{data_dir}
-mkdir %{buildroot}%{data_dir}/public
-mv public/repo %{buildroot}%{data_dir}/public/
-mv public/suma %{buildroot}%{data_dir}/public/
+mv tmp %{buildroot}%{app_dir}
+mkdir -p %{buildroot}%{app_dir}/public
+mv public/repo %{buildroot}%{app_dir}/public/
+mv public/suma %{buildroot}%{app_dir}/public/
 mv vendor %{buildroot}%{lib_dir}
 
 cp -ar . %{buildroot}%{app_dir}
+ln -s %{data_dir}/public/repo %{buildroot}%{app_dir}/public/repo
+ln -s %{data_dir}/public/suma %{buildroot}%{app_dir}/public/suma
 ln -s %{data_dir}/tmp %{buildroot}%{app_dir}/tmp
 mkdir -p %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-cli %{buildroot}%{_bindir}
@@ -211,16 +219,16 @@ install -D -m 644 package/files/rmt-cli_bash-completion.sh %{buildroot}%{_datadi
 
 install -D -m 644 package/files/rmt-server.reg %{buildroot}%{_sysconfdir}/slp.reg.d/rmt-server.reg
 
+install -D -m 644 %{SOURCE4} %{buildroot}%{_tmpfilesdir}/rmt.conf
+
 # cleanup of /usr/bin/env commands
 grep -rl '\/usr\/bin\/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
     sed -i -e 's@\/usr\/bin\/env ruby.%{ruby_version}@\/usr\/bin\/ruby\.%{ruby_version}@g' \
     -e 's@\/usr\/bin\/env ruby@\/usr\/bin\/ruby\.%{ruby_version}@g'
 grep -rl '\/usr\/bin\/env bash' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
     sed -i -e 's@\/usr\/bin\/env bash@\/bin\/bash@g'
-
-# Drop 'BUNDLED WITH' line from Gemfile.lock. It causes trouble when the Gemfile.lock
-# was created with a different major version than the distribution's bundler.
-sed -i '/BUNDLED WITH/{N;d;}' %{buildroot}%{app_dir}/Gemfile.lock
+# Patch minitest shebang specifically for its non-standard env usage
+sed -i 's@/usr/bin/env -S ruby@/usr/bin/ruby.%{ruby_version}@g' %{buildroot}%{lib_dir}/vendor/bundle/ruby/3.4.0/gems/minitest-6.0.2/lib/minitest/complete.rb
 
 # Drop warning "Nokogiri was built against libxml version x, but has dynamically y"
 # Because we cannot control which libxml version is installed on the system
@@ -229,7 +237,6 @@ sed -i 's|warnings << "Nokogiri was built|# warnings << "Nokogiri was built|' %{
 # cleanup unneeded files
 find %{buildroot}%{lib_dir} "(" -name "*.c" -o -name "*.h" -o -name .keep ")" -delete
 find %{buildroot}%{app_dir} -name .keep -delete
-find %{buildroot}%{data_dir} -name .keep -delete
 rm -r  %{buildroot}%{lib_dir}/vendor/bundle/ruby/[23].*.0/cache
 rm -rf %{buildroot}%{lib_dir}/vendor/cache
 rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/doc
@@ -256,15 +263,19 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %attr(0755,root,root) %{app_dir}/public/tools
 %exclude %{app_dir}/engines/
 %exclude %{app_dir}/package/
-%exclude %{app_dir}/rmt/tmp
-%attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
+%exclude %{app_dir}/tmp
+%ghost %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
+%attr(-,%{rmt_user},%{rmt_group}) %{app_dir}/public/repo
+%attr(-,%{rmt_user},%{rmt_group}) %{app_dir}/public/suma
 %attr(-,%{rmt_user},%{rmt_group}) %{conf_dir}
 %dir %{_libexecdir}/supportconfig
 %dir %{_libexecdir}/supportconfig/plugins
 %dir %{script_dir}
-%dir /var/lib/rmt
-%ghost %{_datadir}/rmt/public/repo
-%ghost %{_datadir}/rmt/public/suma
+%ghost %dir /var/lib/rmt
+%dir %{_datadir}/rmt
+%{_tmpfilesdir}/rmt.conf
+%{app_dir}/public/repo
+%{app_dir}/public/suma
 
 # The secrets file is created by running the initial rake tasks in the `post` section
 %ghost %attr(0640,root,%{rmt_group}) %{app_dir}/config/secrets.yml.key
@@ -318,7 +329,7 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %{_bindir}/rmt-manual-instance-verify
 %attr(-,root,root) %{app_dir}/engines/
 %dir %{_sysconfdir}/nginx/rmt-auth.d/
-%dir %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}/regsharing
+%ghost %dir %attr(-,%{rmt_user},%{rmt_group}) %{app_dir}/regsharing
 %exclude %{app_dir}/engines/registration_sharing/package/
 %dir %{_sysconfdir}/nginx
 %dir %{_sysconfdir}/nginx/vhosts.d
@@ -345,6 +356,7 @@ getent passwd %{rmt_user} >/dev/null || \
 
 %post
 %service_add_post rmt-server.target rmt-server.service rmt-server-migration.service rmt-server-mirror.service rmt-server-sync.service rmt-server-systems-scc-sync.service rmt-uptime-cleanup.service
+%tmpfiles_create rmt.conf
 
 # Run only on install
 if [ $1 -eq 1 ]; then
@@ -357,23 +369,12 @@ if [ $1 -eq 2 ]; then
     mv %{app_dir}/ssl/* %{conf_dir}/ssl
     echo "RMT SSL configuration has been moved to a new location: %{conf_dir}/ssl"
   fi
-  if [ -f %{app_dir}/config/system_uuid ]; then
-    mv %{app_dir}/config/system_uuid /var/lib/rmt/system_uuid
-  fi
   bash %{script_dir}/update_rmt_app_dir_permissions.sh %{app_dir}
 
   echo "RMT database migration in progress. This could take some time."
   echo ""
   echo "To check current migration status:"
   echo "  systemctl status rmt-server-migration.service"
-fi
-
-if [ ! -e %{_datadir}/rmt/public/repo ]; then
- ln -ns %{_sharedstatedir}/rmt/public/repo %{_datadir}/rmt/public/repo
-fi
-
-if [ ! -e %{_datadir}/rmt/public/suma ]; then
- ln -ns %{_sharedstatedir}/rmt/public/suma %{_datadir}/rmt/public/suma
 fi
 
 %preun

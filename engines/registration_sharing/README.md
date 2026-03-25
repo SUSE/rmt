@@ -21,7 +21,7 @@ regsharing:
 * `peers` -- list of hostnames/IP addresses, to which registration data will be shared;
 * `api_secret` -- shared API secret;
 * `smt_allowed_ips` -- list of IPs from which regsharing requests are accepted that use legacy SMT regsharing API;
-* `data_dir` (optional) -- directory for persisting shared data state, `/var/lib/rmt/regsharing` is used if not set;
+* `data_dir` (optional) -- directory for persisting shared data state, `/usr/share/rmt/regsharing` is used if not set;
 * `ca_path` (optional) -- path to CA trust store (for peer certificates that aren't trusted by CAs in the system-wide trust store). 
 
 ## Rake tasks

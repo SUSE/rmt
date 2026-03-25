@@ -5,10 +5,10 @@ rescue ::RMT::Db::TimeoutReachedError
   exit 1
 end
 
-# Create the `/var/lib/rmt/system_uuid` file if it does not exist already. This
+# Create the `/usr/share/rmt/system_uuid` file if it does not exist already. This
 # will ease up the first run of `rmt-cli` inside of this container.
-unless File.exist?('/var/lib/rmt/system_uuid')
-  system('dmidecode -s system-uuid > /var/lib/rmt/system_uuid')
+unless File.exist?('/usr/share/rmt/system_uuid')
+  system('dmidecode -s system-uuid > /usr/share/rmt/system_uuid')
 end
 
 # bundle if we have updates ready
