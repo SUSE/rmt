@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-03-23 21:04+0000\n"
+"PO-Revision-Date: 2026-03-26 22:04+0000\n"
 "Last-Translator: Eugene Krater <lachend@gmail.com>\n"
 "Language-Team: Ukrainian <https://l10n.opensuse.org/projects/rmt/i18n/uk/>\n"
 "Language: uk\n"
@@ -915,48 +915,67 @@ msgstr ""
 
 msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
 msgstr ""
+"Система з логіном \\\"%{login}\\\" авторизована з токеном \\\"%{system_token}"
+"\\\""
 
 msgid "System with login \\\"%{login}\\\" authenticated without token header"
-msgstr ""
+msgstr "Система з логіном \\\"%{login}\\\" авторизована без заголовка токена"
 
 msgid "The RMT database has not yet been initialized. Run '%{command}' to set up the database."
 msgstr ""
+"База даних RMT ще не ініціалізована. Виконайте команду '%{command}', щоб "
+"налаштувати базу даних."
 
 msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
 msgstr ""
+"У “%{path}” неправильно налаштовано облікові дані SCC. Їх можна отримати за "
+"адресою %{url}"
 
 msgid "The command will list the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
 msgstr ""
+"Команда відобразить список об'єктів, які можна видалити, і запросить "
+"підтвердження. Ви можете вказати цій підкоманді виконати дію без запиту на "
+"підтвердження за допомогою прапорця «--no-confirmation»."
 
 msgid "The following errors occurred while mirroring:"
-msgstr ""
+msgstr "Під час дзеркального копіювання сталися такі помилки:"
 
 msgid "The given date does not follow the proper format. Ensure it follows this format '<year>-<month>-<day>'."
 msgstr ""
+"Вказана дата не відповідає належному формату. Переконайтеся, що вона "
+"відповідає такому формату: «<рік>-<місяць>-<день>»."
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
-msgstr ""
+msgstr "Продукт \"%s\" є базовим і не може бути деактивований"
 
 msgid "The product you are attempting to activate (%{product}) is not available on your system's base product (%{system_base}). %{product} is available on %{required_bases}."
 msgstr ""
+"Продукт, який Ви намагаєтеся активувати (%{product}), недоступний у базовій "
+"версії Вашої системи (%{system_base}). %{product} доступний у версіях %"
+"{required_bases}."
 
 msgid "The product you are attempting to activate (%{product}) requires one of these products to be activated first: %{required_bases}"
 msgstr ""
+"Для активації продукту, який Ви намагаєтеся активувати (%{product}), "
+"спочатку потрібно активувати один із таких продуктів: %{required_bases}"
 
 msgid "The requested product '%s' is not activated on this system."
 msgstr "Запитуваний продукт '%s' не активований у цій системі."
 
 msgid "The requested products '%s' are not activated on the system."
-msgstr ""
+msgstr "Запитані продукти «%s» не активовані в системі."
 
 msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
 msgstr ""
+"Вказаний шлях PATH повинен містити файл %{file}. Автоматичний процес RMT в "
+"автономному режимі може створити цей файл за допомогою команди '%{command}'."
 
 msgid "The subscription with the provided Registration Code does not include the requested product '%s'"
 msgstr ""
+"Підписка з вказаним реєстраційним кодом не включає запитуваний продукт '%s'"
 
 msgid "The subscription with the provided Registration Code is expired"
-msgstr ""
+msgstr "Термін дії передплати з вказаним реєстраційним кодом закінчився"
 
 msgid ""
 "There are activated extensions/modules on this system that cannot be migrated. \n"
@@ -965,60 +984,69 @@ msgid ""
 "You can deactivate them with \n"
 "%s"
 msgstr ""
+"У цій системі є активовані розширення/модулі, які неможливо перенести. \n"
+"Спочатку деактивуйте їх, а потім спробуйте виконати перенесення ще раз. \n"
+"Це такі продукти: '%s'. \n"
+"Ви можете деактивувати їх за допомогою \n"
+"%s"
 
 msgid "There are no repositories marked for mirroring."
-msgstr ""
+msgstr "Відсутні репозиторії, позначені для дзеркального відображення."
 
 msgid "There are no systems registered to this RMT instance."
-msgstr ""
+msgstr "До цього екземпляра RMT не зареєстровано жодної системи."
 
 msgid "This can take several minutes. Would you like to continue and clean dangling packages?"
 msgstr ""
+"Це може зайняти кілька хвилин. Чи бажаєте ви продовжити та очистити "
+"невикористані пакети?"
 
 msgid "To clean up downloaded files, please run '%{command}'"
-msgstr ""
+msgstr "Щоб очистити завантажені файли, запустіть команду '%{command}'"
 
 msgid "To clean up downloaded files, run '%{command}'"
-msgstr ""
+msgstr "Щоб очистити завантажені файли, запустіть команду '%{command}'"
 
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr ""
+"Для вибору системи для видалення скористайтеся командою «%{command}», щоб "
+"отримати список систем із відповідними іменами користувачів."
 
 msgid "Total Mirror Time: %{time}"
-msgstr ""
+msgstr "Загальний час дзеркального копіювання: %{time}"
 
 msgid "Total mirrored repositories: %{repo_count}"
-msgstr ""
+msgstr "Загальна кількість дзеркальних репозиторіїв: %{repo_count}"
 
 msgid "Total transferred file size: %{files_size}"
-msgstr ""
+msgstr "Загальний розмір переданих файлів: %{files_size}"
 
 msgid "Total transferred files: %{files_count}"
-msgstr ""
+msgstr "Всього передано файлів: %{files_count}"
 
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
-msgstr ""
+msgstr "Всього: очищено %{total_count} (%{total_size}), %{total_db_entries}."
 
 msgid "Try to access non existing temporary directory %{name}"
-msgstr ""
+msgstr "Спроба отримати доступ до неіснуючого тимчасового каталогу %{name}"
 
 msgid "URL"
-msgstr ""
+msgstr "URL-адреса"
 
 msgid "Unknown Registration Code."
 msgstr "Невідомий код реєстрації."
 
 msgid "Unknown hash function %{checksum_type}"
-msgstr ""
+msgstr "Невідома хеш-функція %{checksum_type}"
 
 msgid "Updated system information for host '%s'"
-msgstr ""
+msgstr "Системна інформація для сервера '%s' оновлена"
 
 msgid "Updating products"
-msgstr ""
+msgstr "Відбувається оновлення продуктів"
 
 msgid "Updating repositories"
-msgstr ""
+msgstr "Виконуємо оновлення репозиторіїв"
 
 msgid "Updating subscriptions"
 msgstr ""
