@@ -29,6 +29,10 @@
 %define rb_build_versions     ruby34
 %define rb_build_ruby_abis    ruby:3.4.0
 %define ruby_version          ruby3.4
+%else
+%define rb_build_versions     %{rb_default_ruby}
+%define rb_build_ruby_abis    %{rb_default_ruby_abi}
+%define ruby_version          %{rb_default_ruby_suffix}
 %endif
 
 # disabling dwz for now, as it is not available in SLE15
