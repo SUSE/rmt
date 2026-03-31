@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-03-26 22:04+0000\n"
+"PO-Revision-Date: 2026-03-31 22:04+0000\n"
 "Last-Translator: Eugene Krater <lachend@gmail.com>\n"
 "Language-Team: Ukrainian <https://l10n.opensuse.org/projects/rmt/i18n/uk/>\n"
 "Language: uk\n"
@@ -1049,55 +1049,57 @@ msgid "Updating repositories"
 msgstr "Виконуємо оновлення репозиторіїв"
 
 msgid "Updating subscriptions"
-msgstr ""
+msgstr "Здійснюється оновлення підписок"
 
 msgid "Uptime data is malformed '%s'"
-msgstr ""
+msgstr "Дані про час безвідмовної роботи мають неправильний формат '%s'"
 
 msgid "Version"
-msgstr ""
+msgstr "Версія"
 
 msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
 msgstr ""
+"Чи бажаєте Ви продовжити та видалити локальні копії файлів із цих "
+"репозиторіїв?"
 
 msgid "curl return code"
-msgstr ""
+msgstr "код відповіді curl"
 
 msgid "curl return message"
-msgstr ""
+msgstr "повідомлення відповіді curl"
 
 msgid "enabled"
-msgstr ""
+msgstr "активовано"
 
 msgid "hardlink"
-msgstr ""
+msgstr "жорстке посилання"
 
 msgid "importing data from SMT."
-msgstr ""
+msgstr "здійснюється імпорт даних із SMT."
 
 msgid "mandatory"
-msgstr ""
+msgstr "обов'язкове"
 
 msgid "mirrored at %{time}"
-msgstr ""
+msgstr "дзеркально відображено о %{time}"
 
 msgid "n"
-msgstr ""
+msgstr "n"
 
 msgid "non-mandatory"
-msgstr ""
+msgstr "не обов'язково"
 
 msgid "not enabled"
-msgstr ""
+msgstr "не активовано"
 
 msgid "not mirrored"
-msgstr ""
+msgstr "не скопійовано у дзеркало"
 
 msgid "repository by URL %{url} does not exist in database"
-msgstr ""
+msgstr "репозиторій з URL-адресою %{url} не існує в базі даних"
 
 msgid "y"
-msgstr ""
+msgstr "y"
 
 msgid "yes"
-msgstr ""
+msgstr "так"
