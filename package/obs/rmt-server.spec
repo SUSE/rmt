@@ -53,9 +53,6 @@ Source3:        rmt-cli.8.gz
 Source4:        rmt-tmpfiles.conf
 BuildRequires:  %{ruby_version}
 BuildRequires:  %{ruby_version}-devel
-%if 0%{?sle_version} && 0%{?sle_version} < 150700
-BuildRequires:  %{ruby_version}-rubygem-bundler
-%endif
 BuildRequires:  chrpath
 BuildRequires:  fdupes
 BuildRequires:  gcc
