@@ -29,6 +29,9 @@ Style/HashSyntax:
 Style/TrailingUnderscoreVariable:
   Enabled: false
 
+Style/NumericPredicate:
+  Enabled: false
+
 RSpec/ExampleLength:
   Exclude:
     - spec/lib/rmt/cli/mirror_spec.rb

@@ -5,6 +5,12 @@ Thu Feb 12 19:28:43 UTC 2026 - Adnilson Delgado <adnilson.delgado@suse.com>
   * Update Ruby to version 3.4.8 and Rails to version 7.1.6
 
 -------------------------------------------------------------------
+Tue Jan 16 11:03:50 UTC 2026 - Thomas Schmidt <tschmidt@suse.com>
+
+- Version 2.25
+  * Fix mirroring of SLE16 NVIDIA-GPU-Compute-Toolkit-CUDA repo (bsc#1256826)
+
+-------------------------------------------------------------------
 Tue Nov 11 11:03:50 UTC 2025 - Natnael Getahun <natnael.getahun@suse.com>
 
 - Version 2.25
@@ -14,8 +20,16 @@ Tue Nov 11 11:03:50 UTC 2025 - Natnael Getahun <natnael.getahun@suse.com>
 Thu Aug 28 10:16:11 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
 - Version 2.24
+  * Enable mirroring xz compressed repositories (bsc#1246976)
+  * Rack 2.2.20 security update (bsc#1253953, bsc#1251937)
+  * Drop some de-published products from RMT
   * rmt-server-pubcloud:
     * Do not decode instance data coming from the system (bsc#1248510)
+    * Include Live-Patching for SLES 15.X (jsc#PCT-630)
+    * Handle only one data exporter (bsc#1248869)
+    * Do not decode instance data from db to access registry (bsc#1248510)
+    * Handle instance verification exceptions
+
 
 -------------------------------------------------------------------
 Fri Jul 7 11:38:57 UTC 2025 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
