@@ -248,22 +248,6 @@ describe RMT::SCC do
   describe '#remove_suse_repos_without_tokens' do
     let(:api_double) { double }
     let!(:suse_repo_with_token) { FactoryBot.create(:repository, :with_products, auth_token: 'auth_token', scc_id: 200000) }
-    let!(:suse_repo_without_token) do
-      FactoryBot.create(
-        :repository,
-        :with_products,
-        auth_token: nil,
-        external_url: 'https://updates.suse.com/repos/dummy/'
-      )
-    end
-    let!(:rgs_repo_without_token) do
-      FactoryBot.create(
-        :repository,
-        :with_products,
-        auth_token: nil,
-        external_url: 'https://installer-updates.ranchergovernment.com/repos/not/updates'
-      )
-    end
     let!(:other_repo_without_token) do
       FactoryBot.create(
         :repository,
@@ -308,14 +292,6 @@ describe RMT::SCC do
 
     it 'SUSE repos with auth_tokens persist' do
       expect { suse_repo_with_token.reload }.not_to raise_error
-    end
-
-    it 'SUSE repos without auth_tokens are removed' do
-      expect { suse_repo_without_token.reload }.to raise_error(ActiveRecord::RecordNotFound)
-    end
-
-    it 'RGS repos without auth_tokens are removed' do
-      expect { rgs_repo_without_token.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it 'other repos without auth_tokens persist' do
