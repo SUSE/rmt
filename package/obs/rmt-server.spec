@@ -34,7 +34,7 @@
 %undefine _find_debuginfo_dwz_opts
 
 Name:           rmt-server
-Version:        2.26
+Version:        2.27
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -191,7 +191,7 @@ ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-trim-cache
 mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
-# valkey 
+# valkey
 mkdir -p %{buildroot}/var/lib/valkey/6380
 install -D -m 644 package/files/valkey-6380.conf %{buildroot}%{_sysconfdir}/valkey/6380.conf
 
