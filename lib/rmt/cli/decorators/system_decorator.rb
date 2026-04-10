@@ -17,9 +17,10 @@ class RMT::CLI::Decorators::SystemDecorator < RMT::CLI::Decorators::Base
     array_to_csv(systems, HEADERS, batch: batch)
   end
 
-  def to_table
+  def to_table(add_headers: true, style: {})
     systems = systems_to_arrays(join_new_line: true)
-    array_to_table(systems, HEADERS)
+    headers = add_headers ? HEADERS : []
+    array_to_table(systems, headers, style)
   end
 
   private
