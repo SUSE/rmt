@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Fri Apr 10 11:26:01 UTC 2026 - Adnilson Delgado <adnilson.delgado@suse.com>
+
+- Version 2.27
+  * Update rack, fix CVE-2026-34763, CVE-2026-34230, CVE-2026-26961, CVE-2026-34786, CVE-2026-34831,
+    CVE-2026-34826, CVE-2026-34830, CVE-2026-34785, CVE-2026-34829 (bsc#1261388, bsc# 1261398, bsc# 1261406,
+    bsc# 1261417, bsc# 1261426, bsc# 1261436, bsc# 1261447, bsc# 1261458, bsc# 1261466, bsc# 1261471)
+  * fixes ReDoS vulnerability in Addressable
+  * fixes Out-of-bounds Read vulnerability in rdiscount
+
+-------------------------------------------------------------------
 Thu Mar 05 20:26:48 UTC 2026 - Fergal Mc Carthy <fmccarthy@suse.com>
 
 - Version 2.26
@@ -21,7 +31,7 @@ Tue Jan 13 17:14:09 UTC 2026 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 Tue Nov 11 11:03:50 UTC 2025 - Natnael Getahun <natnael.getahun@suse.com>
 
 - Version 2.24
-  * Enable mirroring xz compressed repositories (bsc#1246976) 
+  * Enable mirroring xz compressed repositories (bsc#1246976)
   * Rack 2.2.20 security update (bsc#1253953, bsc#1251937)
   * Drop some de-published products from RMT
   * rmt-server-pubcloud:
