@@ -18,8 +18,8 @@ class RMT::CLI::Decorators::Base
     CSV.generate { |csv| array.each { |row| csv << row } }
   end
 
-  def array_to_table(data, headers)
-    Terminal::Table.new headings: headers, rows: data
+  def array_to_table(data, headers, style)
+    Terminal::Table.new headings: headers, rows: data, style: style
   end
 
 end
