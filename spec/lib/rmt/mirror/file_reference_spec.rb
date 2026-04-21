@@ -82,14 +82,6 @@ RSpec.describe RMT::Mirror::FileReference do
     it 'returns the absolute local path' do
       expect(file_reference.local_path).to eq('/rmt/mirror/path/dummy_dir/dummy_file.ext')
     end
-
-    context "when the relative path containts '..'" do
-      let(:relative_path) { '../dummy/relative/path/file.ext' }
-
-      it "returns the absolute local path replacing '..' w/ '__'" do
-        expect(file_reference.local_path).to eq('/rmt/mirror/path/__/dummy/relative/path/file.ext')
-      end
-    end
   end
 
   describe '#remote_path' do

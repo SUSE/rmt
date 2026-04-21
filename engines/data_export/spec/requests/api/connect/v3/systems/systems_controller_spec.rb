@@ -27,7 +27,10 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
     subject(:update_action) { put url, params: payload, headers: headers }
 
     context 'when update success' do
-      before { allow(DataExport::Handlers::Example).to receive(:new).and_return(plugin_double) }
+      before do
+        system.update(last_seen_at: system.registered_at + 1.day)
+        allow(DataExport::Handlers::Example).to receive(:new).and_return(plugin_double)
+      end
 
       context 'when data export success' do
         before { allow(plugin_double).to receive(:export_rmt_data) }

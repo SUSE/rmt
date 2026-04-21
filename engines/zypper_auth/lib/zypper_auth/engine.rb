@@ -93,33 +93,7 @@ module ZypperAuth
 
           return true if @system.byos?
 
-          instance_verified = InstanceVerification.verify_instance(request, logger, @system)
-          DataExport.handler.new(@system, request, params, logger).export_rmt_data if DataExport.handler.presence && instance_verified
-          instance_verified
-        rescue InstanceVerification::Exception => e
-          # if we are here that means the instance data in the database is not right
-          # but the instance data coming from the hypervisor in the client is OK
-          logger.error("Could not parse the instance data: #{e.message}")
-          decoded_instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
-          cache_params = {}
-          if @system.pubcloud_reg_code.present?
-            cache_params = { token: Base64.decode64(@system.pubcloud_reg_code.split(',')[0]), instance_data: decoded_instance_data }
-          end
-          cache_key = InstanceVerification.build_cache_entry(
-            request.remote_ip,
-            @system.login,
-            cache_params,
-            @system.proxy_byos_mode,
-            @system.products.find_by(product_type: 'base')
-          )
-          logger.info("Removing entry #{cache_key} from the cache, if present")
-          InstanceVerification.remove_entry_from_cache(cache_key, @system.proxy_byos_mode)
-          instance_verified
-        rescue StandardError => e
-          logger.error("Unexpected data export error has occurred: #{e.message}")
-          logger.error('Data not exported')
-          logger.error("System login: #{@system.login}, IP: #{request.remote_ip}")
-          instance_verified
+          InstanceVerification.verify_instance(request, logger, @system)
         end
       end
     end

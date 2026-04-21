@@ -142,6 +142,7 @@ cp -ar . %{buildroot}%{app_dir}
 ln -s %{data_dir}/tmp %{buildroot}%{app_dir}/tmp
 mkdir -p %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-cli %{buildroot}%{_bindir}
+ln -s %{app_dir}/bin/sidekiq %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-data-import %{buildroot}%{_bindir}/rmt-data-import
 ln -s %{app_dir}/bin/rmt-test-regsharing %{buildroot}%{_bindir}
 ln -s %{app_dir}/bin/rmt-manual-instance-verify %{buildroot}%{_bindir}
@@ -162,6 +163,8 @@ install -m 444 package/files/systemd/rmt-server.service %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server.target %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-server-migration.service %{buildroot}%{_unitdir}
 install -m 444 package/files/systemd/rmt-uptime-cleanup.service %{buildroot}%{_unitdir}
+install -m 444 package/files/systemd/rmt-sidekiq.service %{buildroot}%{_unitdir}
+install -m 444 package/files/systemd/rmt-valkey.service %{buildroot}%{_unitdir}
 
 install -m 444 engines/registration_sharing/package/rmt-server-regsharing.service %{buildroot}%{_unitdir}
 install -m 444 engines/registration_sharing/package/rmt-server-regsharing.timer %{buildroot}%{_unitdir}
@@ -178,12 +181,18 @@ ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-uptime-cleanup
 
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-regsharing
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-trim-cache
+ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-valkey
+ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-sidekiq
 
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-regsharing
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-trim-cache
 
 mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
+
+# valkey 
+mkdir -p %{buildroot}/var/lib/valkey/6380
+install -D -m 644 package/files/valkey-6380.conf %{buildroot}%{_sysconfdir}/valkey/6380.conf
 
 # nginx
 install -D -m 644 package/files/nginx/nginx-http.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
@@ -256,7 +265,6 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %attr(0755,root,root) %{app_dir}/public/tools
 %exclude %{app_dir}/engines/
 %exclude %{app_dir}/package/
-%exclude %{app_dir}/rmt/tmp
 %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
 %attr(-,%{rmt_user},%{rmt_group}) %{conf_dir}
 %dir %{_libexecdir}/supportconfig
@@ -277,6 +285,7 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %{_mandir}/man8/rmt-cli.8%{?ext_man}
 %{_bindir}/rmt-cli
 %{_bindir}/rmt-data-import
+%{_bindir}/sidekiq
 %{_sbindir}/rcrmt-server
 %{_sbindir}/rcrmt-server-migration
 %{_sbindir}/rcrmt-server-sync
@@ -326,6 +335,18 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %config(noreplace) %{_sysconfdir}/nginx/vhosts.d/rmt-server-pubcloud-https.conf
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
+
+# Valkey + Sidekiq files
+%dir /var/lib/valkey
+%dir /var/lib/valkey/6380
+%attr(-,valkey,root) /var/lib/valkey/6380
+%dir %{_sysconfdir}/valkey
+%attr(-,root,valkey) %{_sysconfdir}/valkey/6380.conf
+%config(noreplace) %{_sysconfdir}/valkey/6380.conf
+%{_unitdir}/rmt-sidekiq.service
+%{_unitdir}/rmt-valkey.service
+%{_sbindir}/rcrmt-valkey
+%{_sbindir}/rcrmt-sidekiq
 
 %{_sbindir}/rcrmt-server-regsharing
 %{_sbindir}/rcrmt-server-trim-cache
@@ -387,16 +408,17 @@ fi
 /usr/bin/systemctl try-reload-or-restart nginx.service || true
 
 %pre pubcloud
-%service_add_pre rmt-server-regsharing.service rmt-server-trim-cache.service
+%service_add_pre rmt-server-regsharing.service rmt-server-trim-cache.service rmt-valkey.service rmt-sidekiq.service
 
 %post pubcloud
-%service_add_post rmt-server-regsharing.service rmt-server-trim-cache.service
+%service_add_post rmt-server-regsharing.service rmt-server-trim-cache.service rmt-valkey.service rmt-sidekiq.service
+
 
 %preun pubcloud
-%service_del_preun rmt-server-regsharing.service rmt-server-trim-cache.service
+%service_del_preun rmt-server-regsharing.service rmt-server-trim-cache.service rmt-valkey.service rmt-sidekiq.service
 
 %postun pubcloud
-%service_del_postun rmt-server-regsharing.service rmt-server-trim-cache.service
+%service_del_postun rmt-server-regsharing.service rmt-server-trim-cache.service rmt-valkey.service rmt-sidekiq.service
 
 %posttrans pubcloud
 /usr/bin/systemctl try-restart rmt-server.service
