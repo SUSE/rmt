@@ -27,6 +27,48 @@ RSpec.describe System, type: :model do
     it { is_expected.to validate_uniqueness_of(:system_token).scoped_to(:login, :password).case_insensitive }
   end
 
+  describe 'system_profiles' do
+    let(:system) { create(:system, :with_profiles) }
+
+    it { is_expected.to have_many(:profiles).through(:system_profiles) }
+
+    it 'links through system_profiles to profiles' do
+      expect(system.system_profiles.count).to eq(system.profiles.count)
+      expect(SystemProfile.first.system_id).to eq(system.id)
+      expect(SystemProfile.first.profile_id).to eq(Profile.first.id)
+    end
+  end
+
+  describe '#complete_profiles=' do
+    let(:profile_to_keep) { create(:profile, identifier: 'keep_this_one') }
+    let(:profile_to_remove) { create(:profile, identifier: 'drop_this_one') }
+    let(:profile_to_add) { create(:profile, identifier: 'add_this_one') }
+
+    before do
+      # setup the initial system <=> profile associations
+      system.profiles << profile_to_keep
+      system.profiles << profile_to_remove
+    end
+
+    it 'updates profile associations without recreating existing associations' do
+      # lookup the current kept link
+      orig_kept_link_id = SystemProfile.find_by(system: system, profile: profile_to_keep).id
+
+      # assign the new set of profiles to system, and reload it
+      system.complete_profiles = profile_to_keep.as_payload.merge(
+        profile_to_add.as_payload
+      )
+      system.reload
+
+      # verify that the set of associations have been updated correctly,
+      # and that the kept profile association hasn't been recreated
+      expect(system.profiles).to include(profile_to_keep, profile_to_add)
+      expect(system.profiles).not_to include(profile_to_remove)
+      curr_kept_link_id = SystemProfile.find_by(system: system, profile: profile_to_keep).id
+      expect(curr_kept_link_id).to eq(orig_kept_link_id)
+    end
+  end
+
   context 'when system is deleted' do
     context 'activation' do
       let(:activation) do

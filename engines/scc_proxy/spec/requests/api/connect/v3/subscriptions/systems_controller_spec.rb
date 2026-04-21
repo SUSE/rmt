@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
+  include_context 'profile sets'
+
   describe '#announce_system' do
     let(:instance_data) { '<instance_data/>' }
 
@@ -19,6 +21,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           hostname: 'test',
           proxy_byos_mode: :byos,
           instance_data: instance_data,
+          system_profiles: profile_set_mixed,
           hwinfo:
             {
               hostname: 'test',
@@ -124,6 +127,28 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           expect(data['error']).to include('Request timed out')
         end
       end
+
+      context 'sending problematic system profiles' do
+        before do
+          stub_request(:post, scc_register_system_url)
+            .to_return(
+              status: 201,
+              body: scc_register_response.to_s,
+              headers: {
+                'X-System-Profiles-Action': 'clear-cache'
+              }
+            )
+        end
+
+        it 'response has X-System-Profiles-Action header' do
+          post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
+
+          expect(response).to be_successful
+          expect(response).to have_http_status(:created)
+          expect(response.headers['X-System-Profiles-Action']).to be_present
+          expect(response.headers['X-System-Profiles-Action']).to eq('clear-cache')
+        end
+      end
     end
     # rubocop:enable RSpec/NestedGroups
 
@@ -142,6 +167,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           hostname: 'test',
           proxy_byos_mode: :payg,
           instance_data: instance_data,
+          system_profiles: profile_set_mixed,
           hwinfo:
             {
               hostname: 'test',
@@ -210,6 +236,28 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
           data = JSON.parse(response.body)
           expect(data['type']).to eq('error')
           expect(data['error']).to include('timed out')
+        end
+      end
+
+      context 'sending problematic system profiles' do
+        before do
+          stub_request(:post, scc_register_system_url)
+            .to_return(
+              status: 201,
+              body: scc_register_response.to_s,
+              headers: {
+                'X-System-Profiles-Action': 'clear-cache'
+              }
+            )
+        end
+
+        it 'response has X-System-Profiles-Action header' do
+          post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
+
+          expect(response).to be_successful
+          expect(response).to have_http_status(:created)
+          expect(response.headers['X-System-Profiles-Action']).to be_present
+          expect(response.headers['X-System-Profiles-Action']).to eq('clear-cache')
         end
       end
     end
