@@ -23,7 +23,7 @@ build-tarball: clean man
 
 	@cp -r app $(NAME)-$(VERSION)/
 	@mkdir $(NAME)-$(VERSION)/bin
-	@cp -r bin/rails bin/rmt-cli $(NAME)-$(VERSION)/bin
+	@cp -r bin/rails bin/rmt-cli bin/sidekiq $(NAME)-$(VERSION)/bin
 	@cp -r bin/rmt-data-import $(NAME)-$(VERSION)/bin
 	@cp -r bin/rmt-test-regsharing $(NAME)-$(VERSION)/bin
 	@cp -r bin/rmt-manual-instance-verify $(NAME)-$(VERSION)/bin

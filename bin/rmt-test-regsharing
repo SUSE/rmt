@@ -28,6 +28,8 @@ load_relative_paths(%w[app/models app/services]) do |loader|
   loader.collapse(File.join(rmt_path, 'lib'))
 end
 
+RMT::Config.load
+
 if RMT::CLI::Base.process_user_name == 'root'
   # set group and then user, otherwise user cannot change group
   Process::Sys.setegid(Etc.getgrnam(RMT::DEFAULT_GROUP).gid)

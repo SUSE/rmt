@@ -105,7 +105,7 @@ GEM
     config (5.6.1)
       deep_merge (~> 1.2, >= 1.2.1)
       ostruct
-    connection_pool (3.0.2)
+    connection_pool (2.5.5)
     coveralls_reborn (0.29.0)
       simplecov (~> 0.22.0)
       term-ansicolor (~> 1.7)
@@ -215,12 +215,8 @@ GEM
     mixlib-shellout (3.4.10)
       chef-utils
     mize (0.6.1)
-    mono_logger (1.1.2)
     msgpack (1.8.0)
-    multi_json (1.17.0)
     mustache (1.1.1)
-    mustermann (3.0.4)
-      ruby2_keywords (~> 0.0.1)
     mysql2 (0.5.7)
       bigdecimal
     nenv (0.3.0)
@@ -265,10 +261,6 @@ GEM
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.5)
-    rack-protection (4.2.1)
-      base64 (>= 0.1.0)
-      logger (>= 1.6.0)
-      rack (>= 3.0.0, < 4)
     rack-session (2.1.1)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
@@ -319,7 +311,7 @@ GEM
       reline
     redis (5.4.1)
       redis-client (>= 0.22.0)
-    redis-client (0.26.1)
+    redis-client (0.28.0)
       connection_pool
     redis-namespace (1.11.0)
       redis (>= 4)
@@ -334,11 +326,6 @@ GEM
     responders (3.2.0)
       actionpack (>= 7.0)
       railties (>= 7.0)
-    resque (2.7.0)
-      mono_logger (~> 1)
-      multi_json (~> 1.0)
-      redis-namespace (~> 1.6)
-      sinatra (>= 0.9.2)
     rexml (3.4.4)
     ronn-ng (0.10.1)
       kramdown (~> 2, >= 2.1)
@@ -410,7 +397,6 @@ GEM
     ruby-next-core (1.1.2)
     ruby-progressbar (1.13.0)
     ruby-xz (1.0.3)
-    ruby2_keywords (0.0.5)
     ruby_parser (3.22.0)
       racc (~> 1.5)
       sexp_processor (~> 4.16)
@@ -429,19 +415,18 @@ GEM
     shellany (0.0.1)
     shoulda-matchers (7.0.1)
       activesupport (>= 7.1)
+    sidekiq (7.3.10)
+      base64
+      connection_pool (>= 2.3.0, < 3)
+      logger
+      rack (>= 2.2.4, < 3.3)
+      redis-client (>= 0.23.0, < 1)
     simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.13.2)
     simplecov_json_formatter (0.1.4)
-    sinatra (4.2.1)
-      logger (>= 1.6.0)
-      mustermann (~> 3.0)
-      rack (>= 3.0.0, < 4)
-      rack-protection (= 4.2.1)
-      rack-session (>= 2.0.0, < 3)
-      tilt (~> 2.0)
     singleton (0.3.0)
     spring (4.4.2)
     spring-commands-rspec (1.0.4)
@@ -460,7 +445,6 @@ GEM
       unicode-display_width (>= 1.1.1, < 4)
     text (1.3.1)
     thor (1.5.0)
-    tilt (2.6.1)
     timecop (0.9.10)
     timeout (0.4.4)
     tins (1.51.1)
@@ -545,9 +529,9 @@ DEPENDENCIES
   puma
   rackup
   rails (~> 8.1.0)
+  redis-namespace
   repomd_parser
   responders
-  resque
   ronn-ng
   rspec-its
   rspec-rails
@@ -557,6 +541,7 @@ DEPENDENCIES
   ruby_parser
   scc-codestyle (~> 0.7.0)
   shoulda-matchers
+  sidekiq
   simplecov
   spring
   spring-commands-rspec

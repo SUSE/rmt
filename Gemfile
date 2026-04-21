@@ -101,10 +101,13 @@ gem 'base32'
 
 # Needed to parse Debian's Packages.xz
 gem 'ruby-xz'
-gem 'resque'
 
 gem 'fiddle'
 
 gem 'ronn-ng'
 
 gem 'repomd_parser'
+
+# Use Sidekiq for ActiveJob
+gem 'sidekiq'
+gem 'redis-namespace'

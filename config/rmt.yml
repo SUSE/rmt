@@ -33,6 +33,7 @@ mirroring:
   mirror_src: false
   revalidate_repodata: true
   dedup_method: hardlink
+  redirect_repo_hosts:
 
 http_client:
   verbose: false
@@ -52,3 +53,6 @@ web_server:
 
 connect_api:
   disable_system_tokens: false
+
+redis:
+  url: <%= ENV.fetch('REDIS_URL', nil) %>

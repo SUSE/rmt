@@ -86,6 +86,8 @@ load_relative_paths(%w[app/models app/services app/validators engines/instance_v
   loader.collapse(File.join(rmt_path, 'lib'))
 end
 
+RMT::Config.load
+
 module InstanceVerification
   class << self
     attr_accessor :provider

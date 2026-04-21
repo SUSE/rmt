@@ -93,10 +93,7 @@ module ZypperAuth
 
           return true if @system.byos?
 
-          instance_verified = InstanceVerification.verify_instance(request, logger, @system)
-          DataExport.handler.new(@system, request, params, logger).export_rmt_data if DataExport.handler.presence && instance_verified
-
-          instance_verified
+          InstanceVerification.verify_instance(request, logger, @system)
         end
       end
     end

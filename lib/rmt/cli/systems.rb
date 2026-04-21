@@ -19,7 +19,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
   def list
     systems = System.all
     systems = systems.where(proxy_byos_mode: :byos) if options.proxy_byos_mode
-    systems = systems.limit(options.limit) unless options.all
+    systems = systems.limit(options.limit).order(id: :desc) unless options.all
 
     if System.count == 0
       warn _('There are no systems registered to this RMT instance.')
@@ -29,17 +29,16 @@ class RMT::CLI::Systems < RMT::CLI::Base
         decorator = RMT::CLI::Decorators::SystemDecorator.new(relation)
         puts decorator.to_csv(batch: true)
       end
-    elsif options.all
-      print_rows(systems.pluck(:id).reverse)
     else
-      rows = []
-      systems.in_batches(of: BATCH_SIZE, order: :desc, load: true) { |relation| rows += relation }
-      decorator = RMT::CLI::Decorators::SystemDecorator.new(rows)
-      puts decorator.to_table
+      systems_ids = systems.pluck(:id)
+      systems_ids = systems_ids.reverse if options.all
 
-      puts _("Showing last %{limit} registrations. Use the '--all' option to see all registered systems.") % {
-        limit: options.limit
-      }
+      print_rows(systems_ids)
+      unless options.all
+        puts _("Showing last %{limit} registrations. Use the '--all' option to see all registered systems.") % {
+          limit: options.limit
+        }
+      end
     end
   end
   map 'ls' => :list
@@ -104,7 +103,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
 
   def print_rows(systems)
     column_widths = max_column_widths
-    style = { width: column_widths.sum + (2 * column_widths.length) + (column_widths.length + 1) }
+    style = {}
     systems_first = systems.first
     systems_last = systems.last
     systems.each_slice(BATCH_SIZE) do |sliced_systems_ids|
@@ -115,7 +114,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
       first_row = sliced_systems_ids.first == systems_first
       style[:border_bottom] = border_bottom
       style[:border_top] = first_row
-      puts decorator_systems.to_table(add_headers: first_row, style: style)
+      puts decorator_systems.to_table(add_headers: first_row, style: style, width: column_widths)
     end
   end
 
@@ -124,7 +123,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
     # split the width for each cell equally
     # this makes the rendered table to add extra spaces for some columns
     # while it is not ideal, we have not found a better way
-    date_length = Time.now.utc.strftime('%d/%m/%Y %H:%M:%s %z').length
+    date_length = Time.now.utc.to_s.length
     max_hostname = ActiveRecord::Base.connection.execute('SELECT max(length(hostname)) FROM systems').to_a.flatten.first
     max_login = ActiveRecord::Base.connection.execute('SELECT max(length(login)) FROM systems').to_a.flatten.first
     max_identifier = ActiveRecord::Base.connection.execute('SELECT max(length(identifier)) FROM products').to_a.flatten.first
