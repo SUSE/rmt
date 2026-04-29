@@ -25,7 +25,7 @@
 %define rmt_group    nginx
 
 # SLE 15 SP7 and newer (including 16.0/Factory) support Ruby 3.4
-%if 0%{?sle_version} && 0%{?sle_version} >= 150700
+%if 0%{?sle_version} && 0%{?sle_version} == 150700
 %define rb_build_versions     ruby34
 %define rb_build_ruby_abis    ruby:3.4.0
 %define ruby_version          ruby3.4
