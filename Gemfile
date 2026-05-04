@@ -119,4 +119,3 @@ gem 'repomd_parser'
 
 # Use Sidekiq for ActiveJob
 gem 'sidekiq'
-gem 'redis-namespace'
