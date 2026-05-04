@@ -83,7 +83,7 @@ class AccessScope
 
   def allowed_paths(system, remote_ip)
     repo_list = RegistryCatalogService.new.repos(system, reload: false)
-    access_policies_yml = YAML.safe_load(
+    access_policies_yml = YAML.unsafe_load(
       File.read(Rails.application.config.access_policies)
     )
     active_product_classes = system.activations.includes(:product).pluck(:product_class)
