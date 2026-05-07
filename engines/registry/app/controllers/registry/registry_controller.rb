@@ -2,7 +2,6 @@ module Registry
   class RegistryAuthError < ArgumentError; end
 
   class RegistryController < Registry::ApplicationController
-    REGISTRY_SERVICE = 'SUSE Linux OCI Registry'.freeze
     REGISTRY_API_VERSION = 'registry/2.0'.freeze
 
     before_action :set_requested_scopes, except: [ :catalog ]
@@ -69,7 +68,8 @@ module Registry
       # skip authentication if this is not a login request
       return unless request.authorization
 
-      authenticate_or_request_with_http_basic('SUSE Registry Authentication') do |login, password|
+      realm = Settings.try[:registry].try(:realm) rescue ''
+      authenticate_or_request_with_http_basic(realm) do |login, password|
         begin
           @client = Registry::AuthenticatedClient.new(login, password, request.remote_ip)
         rescue StandardError
@@ -102,9 +102,10 @@ module Registry
 
     # is called by authenticate_or_request_with_http_token when client provides no token
     def request_http_token_authentication(realm = authorize_url, message = 'authentication required')
+      service = Settings.try[:registry].try(:service) rescue ''
       www_authenticate = [
         %(Bearer realm="#{realm.delete('"')}"),
-        %(service="#{REGISTRY_SERVICE.delete('"')}"),
+        %(service="#{service.delete('"')}"),
         %(scope="registry:catalog:*")
       ]
 

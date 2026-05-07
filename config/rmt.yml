@@ -56,3 +56,6 @@ connect_api:
 
 redis:
   url: <%= ENV.fetch('REDIS_URL', nil) %>
+registry:
+  service:
+  realm:

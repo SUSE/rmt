@@ -14,15 +14,18 @@ describe RegistryCatalogService do
   let(:registry_conf) { { root_url: root_url } }
 
   before do
+    allow(Settings).to receive_message_chain(:registry, :service).and_return(
+      'SUSE Linux OCI Registry'
+    )
     stub_request(:get, "#{auth_url}?#{params}").with(
       headers: {
         'Accept' => '*/*',
         'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
         'User-Agent' => 'Ruby'
       }
-).to_return(
-  status: 200, body: JSON.dump({ token: 'foo_token' }), headers: {}
-      )
+    ).to_return(
+      status: 200, body: JSON.dump({ token: 'foo_token' }), headers: {}
+    )
 
     stub_request(:get, "#{registry.catalog_api_url}?n=1000")
       .to_return(body: JSON.dump(response), status: 200, headers: { 'Content-type' => 'application/json' })

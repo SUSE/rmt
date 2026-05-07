@@ -69,6 +69,7 @@ module Registry
       end
       let(:authorize_url) { 'api/registry/authorize' }
       let(:root_url) { 'smt-ec2.susecloud.net' }
+      let(:registry_service) { 'SUSE Linux OCI Registry' }
       let(:access_policy_content) { File.read('engines/registry/spec/data/access_policy_yaml.yml') }
       let(:registry_conf) { { root_url: root_url } }
 
@@ -98,11 +99,12 @@ module Registry
             allow_any_instance_of(AuthenticatedClient).to receive(:cache_file_exist?).and_return(true)
             get(
               '/api/registry/authorize',
-              params: { service: 'SUSE Linux OCI Registry', scope: 'registry:catalog:*' },
+              params: { service: registry_service, scope: 'registry:catalog:*' },
               headers: auth_headers
               )
 
             auth_headers_token['Authorization'] = format("Bearer #{json_response[:token]}")
+            allow(Settings).to receive_message_chain(:registry, :service).and_return(registry_service)
             get('/api/registry/catalog', headers: auth_headers_token)
 
             expect(response).to have_http_status(:ok)
@@ -113,7 +115,7 @@ module Registry
           it 'denies the access' do
             get(
               '/api/registry/authorize',
-              params: { service: 'SUSE Linux OCI Registry', scope: 'registry:catalog:*' },
+              params: { service: registry_service, scope: 'registry:catalog:*' },
               headers: auth_headers
               )
 
