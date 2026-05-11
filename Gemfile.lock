@@ -471,7 +471,7 @@ DEPENDENCIES
   ruby_parser
   scc-codestyle (~> 0.7.0)
   shoulda-matchers
-  sidekiq
+  sidekiq (>= 7.0)
   simplecov
   spring
   spring-commands-rspec
