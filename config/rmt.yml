@@ -56,6 +56,8 @@ connect_api:
 
 redis:
   url: <%= ENV.fetch('REDIS_URL', nil) %>
-registry:
-  service:
-  realm:
+
+# Optional registry setup. If used the values cannot be empty
+# registry:
+#   service:
+#   realm:
