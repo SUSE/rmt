@@ -3,7 +3,15 @@ git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 source 'https://rubygems.org'
 ruby '~> 3.4'
 
-gem 'rails', '~> 8.1.0'
+# Individual Rails components (instead of meta-gem)
+# This excludes actionmailer/actionmailbox to avoid CVE-2026-42256 (bsc#1265369)
+gem 'railties', '~> 8.1.0'
+gem 'activesupport', '~> 8.1.0'
+gem 'activemodel', '~> 8.1.0'
+gem 'activerecord', '~> 8.1.0'
+gem 'activejob', '~> 8.1.0'
+gem 'actionpack', '~> 8.1.0'
+gem 'actionview', '~> 8.1.0'
 
 gem 'bootsnap', require: false
 
