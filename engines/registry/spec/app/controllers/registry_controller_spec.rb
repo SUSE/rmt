@@ -94,6 +94,10 @@ module Registry
         end
 
         context 'with a valid token' do
+          let(:settings_registry) do
+            { service: 'foo', realm: 'bar' }
+          end
+
           it 'has catalog access' do
             allow(File).to receive(:read).and_return(access_policy_content)
             allow_any_instance_of(AuthenticatedClient).to receive(:cache_file_exist?).and_return(true)
@@ -104,7 +108,8 @@ module Registry
               )
 
             auth_headers_token['Authorization'] = format("Bearer #{json_response[:token]}")
-            allow(Settings).to receive_message_chain(:registry, :service).and_return(registry_service)
+            allow(Settings).to receive(:try).with(:registry).and_return(settings_registry)
+            allow(settings_registry).to receive(:try).with(:service).and_return(registry_service)
             get('/api/registry/catalog', headers: auth_headers_token)
 
             expect(response).to have_http_status(:ok)

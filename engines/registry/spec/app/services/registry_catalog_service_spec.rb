@@ -12,9 +12,13 @@ describe RegistryCatalogService do
     %w[repo repo.v2 level1/repo.v2 level1/level2 level1/level2/repo level1/level2/level.3 level1/level2/level.3/repo]
   end
   let(:registry_conf) { { root_url: root_url } }
+  let(:settings_registry) do
+    { service: 'foo', realm: 'bar' }
+  end
 
   before do
-    allow(Settings).to receive_message_chain(:registry, :service).and_return(
+    allow(Settings).to receive(:try).with(:registry).and_return(settings_registry)
+    allow(settings_registry).to receive(:try).with(:service).and_return(
       'SUSE Linux OCI Registry'
     )
     stub_request(:get, "#{auth_url}?#{params}").with(
