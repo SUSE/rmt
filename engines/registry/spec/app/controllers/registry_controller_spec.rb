@@ -50,6 +50,18 @@ module Registry
           expect(response).to have_http_status(:unauthorized)
         end
       end
+
+      context 'login request with misconfigured registry' do
+        let(:system) { create(:system) }
+        let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
+
+        it 'raise an error with a clear message' do
+          allow(Settings).to receive(:try).with(:registry).and_return({})
+          # allow(settings_registry).to receive(:try).with(:realm).and_return(registry_realm)
+          allow_any_instance_of(AuthenticatedClient).to receive(:cache_file_exist?).and_return(true)
+          expect { get('/api/registry/authorize', headers: auth_headers) }.to raise_error(RegistryAuthError, 'registry not configured properly in /etc/rmt.conf')
+        end
+      end
     end
 
     describe '#catalog without access token' do
@@ -74,6 +86,16 @@ module Registry
         get('/api/registry/catalog', headers: auth_headers)
 
         expect(response.header['WWW-Authenticate']).to include('error="insufficient_scope"')
+      end
+    end
+
+    describe '#catalog with misconfigured registry' do
+      let(:system) { create(:system) }
+      let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
+
+      it 'raise an error with a clear message' do
+        allow(Settings).to receive(:try).with(:registry).and_return({})
+        expect { get('/api/registry/catalog') }.to raise_error(RegistryAuthError, 'registry not configured properly in /etc/rmt.conf')
       end
     end
 
