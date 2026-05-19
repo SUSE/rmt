@@ -59,7 +59,9 @@ module Registry
           allow(Settings).to receive(:try).with(:registry).and_return({})
           # allow(settings_registry).to receive(:try).with(:realm).and_return(registry_realm)
           allow_any_instance_of(AuthenticatedClient).to receive(:cache_file_exist?).and_return(true)
-          expect { get('/api/registry/authorize', headers: auth_headers) }.to raise_error(RegistryAuthError, 'registry not configured properly in /etc/rmt.conf')
+          expect { get('/api/registry/authorize', headers: auth_headers) }.to raise_error(
+            RegistryAuthError, 'registry not configured properly in /etc/rmt.conf'
+          )
         end
       end
     end
