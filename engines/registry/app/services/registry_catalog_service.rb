@@ -39,6 +39,8 @@ class RegistryCatalogService
     framework = InstanceVerification.provider.name.rpartition('::')[2].downcase
     uri = URI.parse(URI.join("https://registry-#{framework}.susecloud.net", AUTH_URL).to_s)
     service = Settings.try(:registry).try(:service) rescue ''
+    raise StandardError, 'registry not configured properly in /etc/rmt.conf' if service.blank?
+
     catalog_token_params = {
       service: service,
       account: system.login,

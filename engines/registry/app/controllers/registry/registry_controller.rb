@@ -68,7 +68,9 @@ module Registry
       # skip authentication if this is not a login request
       return unless request.authorization
 
-      realm = Settings.try[:registry].try(:realm) rescue ''
+      realm = Settings.try(:registry).try(:realm)
+      raise RegistryAuthError, 'registry not configured properly in /etc/rmt.conf' if realm.blank?
+
       authenticate_or_request_with_http_basic(realm) do |login, password|
         begin
           @client = Registry::AuthenticatedClient.new(login, password, request.remote_ip)
@@ -102,7 +104,9 @@ module Registry
 
     # is called by authenticate_or_request_with_http_token when client provides no token
     def request_http_token_authentication(realm = authorize_url, message = 'authentication required')
-      service = Settings.try[:registry].try(:service) rescue ''
+      service = Settings.try(:registry).try(:service)
+      raise RegistryAuthError, 'registry not configured properly in /etc/rmt.conf' if service.blank?
+
       www_authenticate = [
         %(Bearer realm="#{realm.delete('"')}"),
         %(service="#{service.delete('"')}"),

@@ -3,11 +3,19 @@ require 'rails_helper'
 # rubocop:disable Metrics/ModuleLength
 module Registry
   describe RegistryController, type: :request do
+    let(:settings_registry) do
+      { service: 'foo', realm: 'bar' }
+    end
+    let(:registry_service) { 'SUSE Linux OCI Registry' }
+    let(:registry_realm) { 'SUSE Registry Authentication' }
+
     describe '#authenticate' do
       context 'login request with invalid credentials' do
         let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials('login', 'password') } }
 
         it 'succeeds with login + password from secrets' do
+          allow(Settings).to receive(:try).with(:registry).and_return(settings_registry)
+          allow(settings_registry).to receive(:try).with(:realm).and_return(registry_realm)
           get('/api/registry/authorize', headers: auth_headers)
 
           expect(response).to have_http_status(:unauthorized)
@@ -19,6 +27,8 @@ module Registry
         let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
 
         it 'succeeds with login + password from secrets' do
+          allow(Settings).to receive(:try).with(:registry).and_return(settings_registry)
+          allow(settings_registry).to receive(:try).with(:realm).and_return(registry_realm)
           allow_any_instance_of(AuthenticatedClient).to receive(:cache_file_exist?).and_return(true)
           get('/api/registry/authorize', headers: auth_headers)
 
@@ -31,6 +41,8 @@ module Registry
         let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
 
         it 'raises exception and returns unauth' do
+          allow(Settings).to receive(:try).with(:registry).and_return(settings_registry)
+          allow(settings_registry).to receive(:try).with(:realm).and_return(registry_realm)
           allow_any_instance_of(AuthenticatedClient).to receive(:cache_file_exist?).and_return(true)
           allow(Base32).to receive(:encode).and_raise('FOO')
           get('/api/registry/authorize', headers: auth_headers)
@@ -45,12 +57,17 @@ module Registry
       let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
 
       it 'returns 401' do
+        allow(Settings).to receive(:try).with(:registry).and_return(settings_registry)
+        allow(settings_registry).to receive(:try).with(:service).and_return(registry_service)
         get('/api/registry/catalog')
         expect(response).to have_http_status(:unauthorized)
         expect(response.header['WWW-Authenticate']).not_to include('error="insufficient_scope"')
       end
 
       it 'with a token that has no access to catalog' do
+        allow(Settings).to receive(:try).with(:registry).and_return(settings_registry)
+        allow(settings_registry).to receive(:try).with(:realm).and_return(registry_realm)
+        allow(settings_registry).to receive(:try).with(:service).and_return(registry_service)
         get('/api/registry/authorize', params: { scope: '' }, headers: auth_headers)
 
         request.headers.merge({ 'HTTP_AUTHORIZATION' => "Bearer #{json_response[:token]}" })
@@ -69,7 +86,6 @@ module Registry
       end
       let(:authorize_url) { 'api/registry/authorize' }
       let(:root_url) { 'smt-ec2.susecloud.net' }
-      let(:registry_service) { 'SUSE Linux OCI Registry' }
       let(:access_policy_content) { File.read('engines/registry/spec/data/access_policy_yaml.yml') }
       let(:registry_conf) { { root_url: root_url } }
 
@@ -94,11 +110,9 @@ module Registry
         end
 
         context 'with a valid token' do
-          let(:settings_registry) do
-            { service: 'foo', realm: 'bar' }
-          end
-
           it 'has catalog access' do
+            allow(Settings).to receive(:try).with(:registry).and_return(settings_registry)
+            allow(settings_registry).to receive(:try).with(:realm).and_return(registry_realm)
             allow(File).to receive(:read).and_return(access_policy_content)
             allow_any_instance_of(AuthenticatedClient).to receive(:cache_file_exist?).and_return(true)
             get(
@@ -118,6 +132,8 @@ module Registry
 
         context 'when token is invalid' do
           it 'denies the access' do
+            allow(Settings).to receive(:try).with(:registry).and_return(settings_registry)
+            allow(settings_registry).to receive(:try).with(:realm).and_return(registry_realm)
             get(
               '/api/registry/authorize',
               params: { service: registry_service, scope: 'registry:catalog:*' },
@@ -134,6 +150,8 @@ module Registry
 
         context 'when an error happens' do
           it 'denies the access' do
+            allow(Settings).to receive(:try).with(:registry).and_return(settings_registry)
+            allow(settings_registry).to receive(:try).with(:realm).and_return(registry_realm)
             allow_any_instance_of(AccessScope).to receive(:allowed_paths).and_raise(RegistryAuthError, 'Foo')
             allow(File).to receive(:read).and_return(access_policy_content)
             allow_any_instance_of(AuthenticatedClient).to receive(:cache_file_exist?).and_return(true)
@@ -191,6 +209,8 @@ module Registry
 
         context 'with a valid token' do
           it 'can not find system' do
+            allow(Settings).to receive(:try).with(:registry).and_return(settings_registry)
+            allow(settings_registry).to receive(:try).with(:realm).and_return(registry_realm)
             allow(File).to receive(:read).and_return(access_policy_content)
             allow_any_instance_of(AuthenticatedClient).to receive(:cache_file_exist?).and_return(true)
             get(
