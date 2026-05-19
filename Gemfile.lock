@@ -88,6 +88,7 @@ GEM
     awesome_print (1.9.2)
     base32 (0.3.4)
     base64 (0.3.0)
+    benchmark (0.4.0)
     bigdecimal (4.0.1)
     bootsnap (1.19.0)
       msgpack (~> 1.2)
@@ -502,6 +503,7 @@ DEPENDENCIES
   active_model_serializers
   awesome_print
   base32
+  benchmark
   bootsnap
   byebug
   config
