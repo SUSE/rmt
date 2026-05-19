@@ -24,17 +24,24 @@
 %define rmt_user     _rmt
 %define rmt_group    nginx
 
+# SLE 15 SP7 and newer (including 16.0/Factory) support Ruby 3.4
+%if 0%{?sle_version} && 0%{?sle_version} == 150700
+%define rb_build_versions     ruby34
+%define rb_build_ruby_abis    ruby:3.4.0
+%define ruby_version          ruby3.4
+%else
 # Only build for the distribution default Ruby version
 %define rb_build_versions     %{rb_default_ruby}
 %define rb_build_ruby_abis    %{rb_default_ruby_abi}
 %define ruby_version          %{rb_default_ruby_suffix}
+%endif
 
 # disabling dwz for now, as it is not available in SLE15
 # related bugzilla https://bugzilla.suse.com/show_bug.cgi?id=1180984
 %undefine _find_debuginfo_dwz_opts
 
 Name:           rmt-server
-Version:        3.0.alpha
+Version:        3.0
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -190,7 +197,7 @@ ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-trim-cache
 mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
-# valkey 
+# valkey
 mkdir -p %{buildroot}/var/lib/valkey/6380
 install -D -m 644 package/files/valkey-6380.conf %{buildroot}%{_sysconfdir}/valkey/6380.conf
 
