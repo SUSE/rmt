@@ -1,0 +1,14 @@
+---
+skip_list:
+  - yaml[line-length]
+  - name[casing]
+  - fqcn[action-core]
+
+warn_list:
+  - experimental
+  - role-name
+
+exclude_paths:
+  - .cache/
+  - .git/
+  - molecule/

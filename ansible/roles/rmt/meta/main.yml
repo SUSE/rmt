@@ -1,0 +1,24 @@
+---
+galaxy_info:
+  author: SUSE RMT Team
+  description: Ansible role to install and configure SUSE RMT (Repository Mirroring Tool) server
+  company: SUSE
+  license: MIT
+  min_ansible_version: "2.9"
+
+  platforms:
+    - name: openSUSE
+      versions:
+        - Leap16
+    - name: SLES
+      versions:
+        - 16
+
+  galaxy_tags:
+    - suse
+    - rmt
+    - repository
+    - mirroring
+    - scc
+
+dependencies: []

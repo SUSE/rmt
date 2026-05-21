@@ -1,0 +1,41 @@
+database:
+  host: {{ rmt_db_host }}
+  database: {{ rmt_db_name }}
+  username: {{ rmt_db_username }}
+  password: {{ rmt_db_password }}
+  adapter: {{ rmt_db_adapter }}
+  encoding: {{ rmt_db_encoding }}
+  timeout: {{ rmt_db_timeout }}
+  pool: {{ rmt_db_pool }}
+
+scc:
+  username: {{ rmt.RMT_ORGANIZATION_USERNAME }}
+  password: {{ rmt.RMT_ORGANIZATION_PASSWORD }}
+  sync_systems: {{ rmt_sync_systems | default(true) | lower }}
+  metrics:
+    enabled: {{ rmt_metrics_enabled | default(false) | lower }}
+    job_name: {{ rmt_metrics_job_name | default('rmt') }}
+
+mirroring:
+  mirror_drpm: {{ rmt_mirror_drpm | default(true) | lower }}
+  mirror_src: {{ rmt_mirror_src | lower }}
+  revalidate_repodata: {{ rmt_revalidate_repodata | default(true) | lower }}
+  dedup_method: {{ rmt_dedup_method }}
+
+http_client:
+  verbose: {{ rmt_http_client_verbose | lower }}
+  proxy: {{ rmt_http_proxy }}
+  proxy_auth: {{ rmt_http_proxy_auth }}
+  proxy_user: {{ rmt_http_proxy_user }}
+  proxy_password: {{ rmt_http_proxy_password }}
+  low_speed_limit: {{ rmt_low_speed_limit | default(512) }}
+  low_speed_time: {{ rmt_low_speed_time | default(120) }}
+
+log_level:
+  rails: {{ rmt_log_level_rails | default('info') }}
+  cli: {{ rmt_log_level_cli | default('info') }}
+
+web_server:
+  min_threads: {{ rmt_web_server_min_threads | default(5) }}
+  max_threads: {{ rmt_web_server_max_threads | default(5) }}
+  workers: {{ rmt_web_server_workers | default(2) }}

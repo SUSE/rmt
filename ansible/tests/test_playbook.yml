@@ -1,0 +1,140 @@
+---
+- name: Test RMT playbook
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  become: false
+
+  vars:
+    rmt:
+      RMT_ORGANIZATION_USERNAME: "test-user"
+      RMT_ORGANIZATION_PASSWORD: "test-pass"
+
+  tasks:
+    - name: Verify Ansible version
+      ansible.builtin.assert:
+        that:
+          - ansible_version.full is version('2.9', '>=')
+        fail_msg: "Ansible version must be 2.9 or higher"
+        success_msg: "Ansible version check passed"
+
+    - name: Check if community.mysql collection is installed
+      ansible.builtin.command: ansible-galaxy collection list community.mysql
+      register: mysql_collection
+      changed_when: false
+      failed_when: false
+
+    - name: Check if community.crypto collection is installed
+      ansible.builtin.command: ansible-galaxy collection list community.crypto
+      register: crypto_collection
+      changed_when: false
+      failed_when: false
+
+    - name: Check if ansible.posix collection is installed
+      ansible.builtin.command: ansible-galaxy collection list ansible.posix
+      register: posix_collection
+      changed_when: false
+      failed_when: false
+
+    - name: Check if community.general collection is installed
+      ansible.builtin.command: ansible-galaxy collection list community.general
+      register: general_collection
+      changed_when: false
+      failed_when: false
+
+    - name: Display collection check results
+      ansible.builtin.debug:
+        msg:
+          - "community.mysql: {{ 'INSTALLED' if mysql_collection.rc == 0 else 'MISSING' }}"
+          - "community.crypto: {{ 'INSTALLED' if crypto_collection.rc == 0 else 'MISSING' }}"
+          - "ansible.posix: {{ 'INSTALLED' if posix_collection.rc == 0 else 'MISSING' }}"
+          - "community.general: {{ 'INSTALLED' if general_collection.rc == 0 else 'MISSING' }}"
+
+    - name: Verify all required collections are installed
+      ansible.builtin.assert:
+        that:
+          - mysql_collection.rc == 0
+          - crypto_collection.rc == 0
+          - posix_collection.rc == 0
+          - general_collection.rc == 0
+        fail_msg: "Missing required collections. Install with: ansible-galaxy collection install -r requirements.yml"
+        success_msg: "All required collections are installed"
+
+    - name: Verify RMT role directory structure
+      ansible.builtin.stat:
+        path: "{{ playbook_dir }}/../{{ item }}"
+      register: role_structure
+      loop:
+        - roles/rmt
+        - roles/rmt/tasks
+        - roles/rmt/handlers
+        - roles/rmt/templates
+        - roles/rmt/files
+        - roles/rmt/defaults
+        - roles/rmt/vars
+        - roles/rmt/meta
+
+    - name: Check role structure results
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.isdir
+        fail_msg: "Missing role directory: {{ item.item }}"
+      loop: "{{ role_structure.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Verify key role files exist
+      ansible.builtin.stat:
+        path: "{{ playbook_dir }}/../{{ item }}"
+      register: role_files
+      loop:
+        - roles/rmt/tasks/main.yml
+        - roles/rmt/handlers/main.yml
+        - roles/rmt/defaults/main.yml
+        - roles/rmt/vars/main.yml
+        - roles/rmt/meta/main.yml
+        - roles/rmt/templates/rmt.conf.j2
+
+    - name: Check role files exist
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.isreg
+        fail_msg: "Missing role file: {{ item.item }}"
+      loop: "{{ role_files.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Verify configuration files exist
+      ansible.builtin.stat:
+        path: "{{ playbook_dir }}/../{{ item }}"
+      register: config_files
+      loop:
+        - group_vars/all.yml
+        - site.yml
+        - ansible.cfg
+        - requirements.yml
+
+    - name: Check configuration files exist
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.isreg
+        fail_msg: "Missing configuration file: {{ item.item }}"
+      loop: "{{ config_files.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Test summary
+      ansible.builtin.debug:
+        msg:
+          - "=========================================="
+          - "All tests passed successfully!"
+          - "=========================================="
+          - "✓ Ansible version check"
+          - "✓ Required collections installed"
+          - "✓ Role directory structure verified"
+          - "✓ Role files verified"
+          - "✓ Configuration files verified"
+          - "=========================================="

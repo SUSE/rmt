@@ -1,0 +1,55 @@
+---
+# Example configuration for RMT server
+# Copy this file to all.yml and customize
+
+rmt:
+  RMT_ORGANIZATION_USERNAME: "your-scc-organization-username"
+  RMT_ORGANIZATION_PASSWORD: "your-scc-organization-password"
+
+# Optional: Override default configuration
+
+# Repository settings
+# rmt_repo_url: https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/SLE_15_SP7/
+# rmt_repo_name: rmt
+
+# Database settings
+# rmt_db_password: "secure-database-password"
+# rmt_db_host: localhost
+# rmt_db_name: rmt
+# rmt_db_username: rmt
+
+# SCC settings
+# rmt_sync_systems: true
+# rmt_metrics_enabled: false
+# rmt_metrics_job_name: rmt
+
+# Mirroring settings
+# rmt_mirror_drpm: true        # Mirror delta RPMs
+# rmt_mirror_src: false         # Mirror source RPMs
+# rmt_revalidate_repodata: true
+# rmt_dedup_method: hardlink
+
+# HTTP client settings
+# rmt_http_client_verbose: false
+# rmt_http_proxy: ""
+# rmt_http_proxy_user: ""
+# rmt_http_proxy_password: ""
+# rmt_low_speed_limit: 512
+# rmt_low_speed_time: 120
+
+# Logging
+# rmt_log_level_rails: info
+# rmt_log_level_cli: info
+
+# Web server
+# rmt_web_server_min_threads: 5
+# rmt_web_server_max_threads: 5
+# rmt_web_server_workers: 2
+
+# SSL certificate configuration
+# rmt_ssl_cert_validity_days: 3650  # 10 years
+# rmt_ssl_key_size: 4096
+
+# Service configuration
+# rmt_enable_http: true
+# rmt_enable_https: true

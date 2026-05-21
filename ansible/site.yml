@@ -1,0 +1,39 @@
+---
+- name: Configure RMT server on localhost
+  hosts: localhost
+  connection: local
+  become: true
+  gather_facts: true
+
+  pre_tasks:
+    - name: Validate required variables
+      ansible.builtin.assert:
+        that:
+          - rmt is defined
+          - rmt.RMT_ORGANIZATION_USERNAME is defined
+          - rmt.RMT_ORGANIZATION_PASSWORD is defined
+        fail_msg: "RMT credentials must be defined. Set rmt.RMT_ORGANIZATION_USERNAME and rmt.RMT_ORGANIZATION_PASSWORD in group_vars/all.yml"
+        quiet: true
+
+  roles:
+    - rmt
+
+  post_tasks:
+    - name: Display post-installation instructions
+      ansible.builtin.debug:
+        msg: |
+          RMT server installation complete!
+
+          SSL certificates generated at: /etc/rmt/ssl/
+          - Server cert: /etc/rmt/ssl/rmt-server.crt
+          - Server key: /etc/rmt/ssl/rmt-server.key
+          - CA cert: /etc/rmt/ssl/rmt-ca.crt
+
+          Next steps:
+          1. Sync products: sudo rmt-cli sync
+          2. Enable products: sudo rmt-cli products enable <product_id>
+          3. Mirror repositories: sudo rmt-cli mirror
+
+          Access the RMT web interface at:
+          - HTTP: http://{{ ansible_fqdn }}
+          - HTTPS: https://{{ ansible_fqdn }} (self-signed certificate)
