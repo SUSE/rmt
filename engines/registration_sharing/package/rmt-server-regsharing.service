@@ -18,7 +18,7 @@ Type=simple
 Restart=no
 Environment=RAILS_ENV=production
 WorkingDirectory=/usr/share/rmt
-ExecStart=/usr/bin/bundle.ruby2.5 exec rake regsharing:sync
+ExecStart=/usr/bin/bundle.ruby3.4 exec rake regsharing:sync
 
 [Install]
 WantedBy=multi-user.target
