@@ -1,24 +1,89 @@
 NAME          = rmt-server
 VERSION       = $(shell ruby -e 'require "./lib/rmt.rb"; print RMT::VERSION')
 
-.PHONY: clean man dist build-tarball database-up server shell console public_repo public_perm
+# =============================================================================
+# Phony Targets
+# =============================================================================
+
+.PHONY: all help clean test lint
+.PHONY: install install-ansible
+.PHONY: build build-tarball dist man
+.PHONY: deploy deploy-ansible check-ansible
+.PHONY: database-up server shell console public_repo
+
+# =============================================================================
+# Default Target
+# =============================================================================
 
 all:
 	@:
 
-clean:
-	rm -f rmt-cli.8*
-	rm -rf package/obs/*.tar.bz2
-	rm -rf $(NAME)-$(VERSION)/
+# =============================================================================
+# Help
+# =============================================================================
 
-man:
-	ronn --roff --pipe --manual RMT MANUAL.md > rmt-cli.8 && gzip -f rmt-cli.8
-	mv rmt-cli.8.gz package/obs
+help: ## Show this help message
+	@echo 'RMT Makefile'
+	@echo ''
+	@echo 'Usage: make [target]'
+	@echo ''
+	@echo 'Common Targets:'
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-z-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "^  (help|install|test|lint|clean|build|deploy|check-ansible) "
+	@echo ''
+	@echo 'Development Targets:'
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-z-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "^  (server|shell|console|database-up) "
+	@echo ''
+	@echo 'Build & Package Targets:'
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-z-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "^  (dist|build-tarball|man|public_repo) "
+	@echo ''
 
-dist:
-	docker compose run -it -v $(PWD):/srv/www/rmt --rm rmt make build-tarball
+# =============================================================================
+# Installation
+# =============================================================================
 
-build-tarball: clean man
+install: install-ansible ## Install all dependencies (Ansible)
+
+install-ansible: ## Install Ansible dependencies and collections
+	cd ansible && pip install ansible ansible-lint
+	cd ansible && ansible-galaxy collection install -r requirements.yml
+
+# =============================================================================
+# Testing & Validation
+# =============================================================================
+
+test: ## Run all tests (Ansible playbook tests)
+	@echo "==> Running Ansible playbook tests..."
+	cd ansible && ansible-playbook tests/test_playbook.yml
+	@echo "==> All tests passed!"
+
+lint: ## Validate and lint all code (Ansible playbooks)
+	@echo "==> Checking Ansible playbook syntax..."
+	cd ansible && ansible-playbook site.yml --syntax-check
+	@echo "==> Linting Ansible playbooks and roles..."
+	cd ansible && ansible-lint site.yml
+	cd ansible && ansible-lint roles/rmt/
+	@echo "==> All checks passed!"
+
+# =============================================================================
+# Deployment
+# =============================================================================
+
+deploy: deploy-ansible ## Deploy RMT (using Ansible)
+
+deploy-ansible: ## Deploy RMT on localhost using Ansible
+	cd ansible && ansible-playbook site.yml
+
+check-ansible: ## Dry run Ansible deployment (check mode)
+	cd ansible && ansible-playbook site.yml --check
+
+# =============================================================================
+# Build & Package
+# =============================================================================
+
+build: Dockerfile Gemfile public_repo ## Build RMT Docker image
+	docker compose build rmt
+
+build-tarball: clean man ## Build RMT distribution tarball
 	@mkdir -p $(NAME)-$(VERSION)/
 
 	@cp -r app $(NAME)-$(VERSION)/
@@ -35,6 +100,7 @@ build-tarball: clean man
 	@cp -r Gemfile.lock $(NAME)-$(VERSION)/
 	@cp -r lib $(NAME)-$(VERSION)/
 	@cp -r engines $(NAME)-$(VERSION)/
+	@cp -r ansible $(NAME)-$(VERSION)/
 	@mkdir $(NAME)-$(VERSION)/package
 	@cp -r package/files $(NAME)-$(VERSION)/package
 
@@ -74,6 +140,9 @@ build-tarball: clean man
 	# don't package example data export handler
 	@rm -rf $(NAME)-$(VERSION)/engines/data_export/lib/data_export/handlers/example.rb
 
+	# don't package ansible tests
+	@rm -rf $(NAME)-$(VERSION)/ansible/tests
+
 	@mv $(NAME)-$(VERSION)/.bundle/config_packaging $(NAME)-$(VERSION)/.bundle/config
 	cd $(NAME)-$(VERSION) && bundle package --all
 	rm -rf $(NAME)-$(VERSION)/vendor/bundle/
@@ -85,22 +154,45 @@ build-tarball: clean man
 	tar cfvj package/obs/$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)/
 	rm -rf $(NAME)-$(VERSION)/
 
-database-up:
-	 docker compose up db -d
+dist: ## Build RMT distribution tarball (using Docker)
+	docker compose run -it -v $(PWD):/srv/www/rmt --rm rmt make build-tarball
 
-build: Dockerfile Gemfile public_repo
-	 docker compose build rmt
+man: ## Build RMT manual pages
+	ronn --roff --pipe --manual RMT MANUAL.md > rmt-cli.8 && gzip -f rmt-cli.8
+	mv rmt-cli.8.gz package/obs
 
-server: build database-up
-	 docker compose up
-
-shell: build database-up
-	 docker compose run --rm -ti rmt /bin/bash
-
-console: build database-up
-	 docker compose run --rm -ti rmt bundle exec rails c
-
-public_repo:
+public_repo: ## Ensure public/repo directory exists
 	@echo ensure public/repo exists
 	@mkdir -p public/repo
 	@chmod -f 0777 public/repo || true
+
+# =============================================================================
+# Development
+# =============================================================================
+
+database-up: ## Start RMT database container
+	docker compose up db -d
+
+server: build database-up ## Start RMT development server
+	docker compose up
+
+shell: build database-up ## Open shell in RMT container
+	docker compose run --rm -ti rmt /bin/bash
+
+console: build database-up ## Open Rails console in RMT container
+	docker compose run --rm -ti rmt bundle exec rails c
+
+# =============================================================================
+# Cleanup
+# =============================================================================
+
+clean: ## Clean all build artifacts and temporary files
+	@echo "==> Cleaning RMT build artifacts..."
+	rm -f rmt-cli.8*
+	rm -rf package/obs/*.tar.bz2
+	rm -rf $(NAME)-$(VERSION)/
+	@echo "==> Cleaning Ansible artifacts..."
+	cd ansible && find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	cd ansible && find . -name "*.pyc" -delete 2>/dev/null || true
+	cd ansible && rm -rf /tmp/ansible_facts
+	@echo "==> Cleanup complete!"
