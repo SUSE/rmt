@@ -243,12 +243,8 @@ GEM
       tsort
     readline (0.0.4)
       reline
-    redis (5.4.1)
-      redis-client (>= 0.22.0)
     redis-client (0.28.0)
       connection_pool
-    redis-namespace (1.11.0)
-      redis (>= 4)
     regexp_parser (2.11.3)
     reline (0.6.3)
       io-console (~> 0.5)
@@ -466,7 +462,6 @@ DEPENDENCIES
   puma
   rackup
   railties (~> 8.1.0)
-  redis-namespace
   repomd_parser
   responders
   ronn-ng
@@ -478,7 +473,7 @@ DEPENDENCIES
   ruby_parser
   scc-codestyle (~> 0.7.0)
   shoulda-matchers
-  sidekiq
+  sidekiq (>= 7.0)
   simplecov
   spring
   spring-commands-rspec
