@@ -117,5 +117,7 @@ gem 'ronn-ng'
 
 gem 'repomd_parser'
 
+gem 'benchmark'
+
 # Use Sidekiq for ActiveJob
 gem 'sidekiq', '>= 7.0'
