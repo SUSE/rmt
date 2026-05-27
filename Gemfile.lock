@@ -52,6 +52,7 @@ GEM
     awesome_print (1.9.2)
     base32 (0.3.4)
     base64 (0.3.0)
+    benchmark (0.4.0)
     bigdecimal (4.0.1)
     bootsnap (1.19.0)
       msgpack (~> 1.2)
@@ -242,12 +243,8 @@ GEM
       tsort
     readline (0.0.4)
       reline
-    redis (5.4.1)
-      redis-client (>= 0.22.0)
     redis-client (0.28.0)
       connection_pool
-    redis-namespace (1.11.0)
-      redis (>= 4)
     regexp_parser (2.11.3)
     reline (0.6.3)
       io-console (~> 0.5)
@@ -437,6 +434,7 @@ DEPENDENCIES
   activesupport (~> 8.1.0)
   awesome_print
   base32
+  benchmark
   bootsnap
   byebug
   config
@@ -464,7 +462,6 @@ DEPENDENCIES
   puma
   rackup
   railties (~> 8.1.0)
-  redis-namespace
   repomd_parser
   responders
   ronn-ng
@@ -476,7 +473,7 @@ DEPENDENCIES
   ruby_parser
   scc-codestyle (~> 0.7.0)
   shoulda-matchers
-  sidekiq
+  sidekiq (>= 7.0)
   simplecov
   spring
   spring-commands-rspec

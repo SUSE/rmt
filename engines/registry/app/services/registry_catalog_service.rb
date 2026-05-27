@@ -5,7 +5,6 @@ require 'benchmark'
 CATALOG_API_URL = 'http://127.0.0.1:5000/v2/_catalog'.freeze
 AUTH_URL = 'api/registry/authorize'.freeze
 CATALOG_SCOPE = 'registry:catalog:*'.freeze
-SERVICE = 'SUSE Linux OCI Registry'.freeze
 
 class RegistryCatalogService
   attr_accessor :catalog_api_url
@@ -39,8 +38,11 @@ class RegistryCatalogService
   def catalog_token(system)
     framework = InstanceVerification.provider.name.rpartition('::')[2].downcase
     uri = URI.parse(URI.join("https://registry-#{framework}.susecloud.net", AUTH_URL).to_s)
+    service = Settings.try(:registry).try(:service)
+    raise StandardError, 'registry not configured properly in /etc/rmt.conf' if service.blank?
+
     catalog_token_params = {
-      service: SERVICE,
+      service: service,
       account: system.login,
       scope: CATALOG_SCOPE
     }
