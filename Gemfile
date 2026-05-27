@@ -117,6 +117,7 @@ gem 'ronn-ng'
 
 gem 'repomd_parser'
 
+gem 'benchmark'
+
 # Use Sidekiq for ActiveJob
-gem 'sidekiq'
-gem 'redis-namespace'
+gem 'sidekiq', '>= 7.0'
