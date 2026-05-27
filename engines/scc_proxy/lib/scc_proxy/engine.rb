@@ -338,7 +338,7 @@ module SccProxy
             end
           end
           @system, error = create_system(system_values, logger)
-          if @system.presence
+          if @system.present?
             logger.info("System '#{@system.hostname}' announced")
             respond_with(@system, serializer: ::V3::SystemSerializer, location: nil)
           else
