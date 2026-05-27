@@ -298,6 +298,9 @@ module SccProxy
     config.after_initialize do
       # replaces RMT registration for SCC registration
       Api::Connect::V3::Subscriptions::SystemsController.class_eval do
+        # rubocop:disable Metrics/CyclomaticComplexity
+        # rubocop:disable Metrics/PerceivedComplexity
+        # rubocop:disable Metrics/MethodLength
         def announce_system
           auth_header = request.headers.fetch('HTTP_AUTHORIZATION', nil)
           system_information = info_params(:hwinfo)[:hwinfo].to_json
@@ -362,6 +365,9 @@ module SccProxy
           logger.error("#{message}: #{e.message}")
           render json: { type: 'error', error: e.message }, status: :unprocessable_content, location: nil
         end
+        # rubocop:enable Metrics/CyclomaticComplexity
+        # rubocop:enable Metrics/PerceivedComplexity
+        # rubocop:enable Metrics/MethodLength
 
         protected
 
