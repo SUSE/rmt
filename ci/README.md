@@ -29,7 +29,7 @@ To run feature tests locally, you need:
 
 ```
 # Fetch the CI container
-$ export IMAGE="registry.opensuse.org/systemsmanagement/scc/containers/15.5/rmt-ci-container:latest"
+$ export IMAGE="registry.opensuse.org/systemsmanagement/scc/containers/opensuse_tumbleweed/rmt-ci-container-ruby3.4:latest"
 
 # Build RMT rpms with the CI container the resulting rpms are in tmp/artifacts/
 $ docker run --rm -it -v $(pwd):/usr/src/rmt-server $IMAGE 'ci/rmt-build-rpm'
