@@ -22,7 +22,7 @@ This reference documents the release lifecycle of **rmt-server**, visualizing th
     *   Find the local workspace (e.g., `~/obs/rmt-server` or specified path).
     *   Verify the API URL: `osc -A https://api.opensuse.org ls`.
 2.  **Sync & Cleanup:**
-    *   **Action:** Manually delete the old versioned tarball (e.g., `rm rmt-server-2.26.tar.bz2`).
+    *   **Action:** Manually delete any old versioned tarballs (e.g., `rm rmt-server-*.tar.bz2`).
     *   **Action:** Copy contents from the RMT repository's `package/obs/` to the OBS workspace.
     *   **Action:** Review status: `osc status` and `osc diff`.
 3.  **Local Verification Build:**

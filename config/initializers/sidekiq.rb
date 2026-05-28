@@ -8,7 +8,7 @@ redis_config = {
   url: Settings.try(:redis).try(:url) || 'redis://127.0.0.1:6380/0',
   connect_timeout: 10,
   reconnect_attempts: 3,
-  namespace: 'rmt_sidekiq'
+  db: 1
 }
 
 # :nocov:

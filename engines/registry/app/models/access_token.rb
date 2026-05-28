@@ -5,7 +5,7 @@ require 'base32'
 class AccessToken
   def initialize(account, service, granted_scopes)
     @account = account
-    @service = service # "SUSE Linux OCI Registry"
+    @service = service
     @granted_scopes = granted_scopes
   end
 
