@@ -382,7 +382,7 @@ module SccProxy
             # retry to allow that regsharing info update this update infrastructure server
             message = "System could not be created with the following values #{system_values}: #{e.message}"
             if attempts < 3
-              logger.info "#{message}\nRetrying in 10 seconds"
+              logger.info "#{message}. Attempt #{attempts} of 3\nRetrying in 10 seconds"
               sleep 10
               retry
             else
