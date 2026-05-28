@@ -377,9 +377,9 @@ module SccProxy
             attempts += 1
             [System.create!(system_values), nil]
           rescue ActiveRecord::RecordInvalid => e
-            # if the system is also in this DB
-            # means that it is possible that the regsharing has not caught up to this sibling yet
-            # retry to allow that regsharing info update this update infrastructure server
+            # The to-be-announced system is already in the database
+            # This could mean it got de-registered on another update infrastructure server a short time ago
+            # Let's wait 3*10 seconds (max regsharing time) for regsharing to catch up
             message = "System could not be created with the following values #{system_values}: #{e.message}"
             if attempts < 3
               logger.info "#{message}. Attempt #{attempts} of 3\nRetrying in 10 seconds"
