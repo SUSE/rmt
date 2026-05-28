@@ -8,7 +8,11 @@ This reference documents the release lifecycle of **rmt-server**, visualizing th
 1.  **Update Version Strings:**
     *   Modify `lib/rmt.rb` to reflect the new version.
     *   Modify `package/obs/rmt-server.spec` to match.
-2.  **Generate Distribution Tarball:**
+2.  **Update Changelog:**
+    *   **Action:** Change to `package/obs/` directory.
+    *   **Action:** Run `osc vc` to edit the `.changes` file with version notes.
+    *   **Note:** This must be done before generating the tarball as the `.changes` file is included in the distribution.
+3.  **Generate Distribution Tarball:**
     *   **Pre-flight Check:** Ensure `public/repo` exists: `mkdir -p public/repo`.
     *   **Environment:** Must use Ruby 2.5.9 (via Docker).
     *   **Action:** Run `make dist`.

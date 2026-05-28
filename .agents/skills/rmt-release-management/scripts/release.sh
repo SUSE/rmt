@@ -109,8 +109,24 @@ else
 fi
 
 for STREAM in $MAINTAINED_STREAMS; do
-  echo "Submitting MR for stream: $STREAM"
-  run_cmd osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server "$STREAM"
+  echo "Submitting request for stream: $STREAM"
+
+  # Try maintenance request first, fall back to submit request if it fails
+  if [ "$DRY_RUN" = true ]; then
+    echo "[DRY-RUN] Executing: osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server $STREAM"
+  else
+    echo "Attempting maintenance request (mr) for $STREAM..."
+    if osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server "$STREAM" 2>&1; then
+      echo "✓ Maintenance request submitted successfully for $STREAM"
+    else
+      echo "⚠ Maintenance request failed for $STREAM, retrying with submit request (sr)..."
+      if osc -A https://api.suse.de sr Devel:SCC:RMT rmt-server "$STREAM" 2>&1; then
+        echo "✓ Submit request submitted successfully for $STREAM"
+      else
+        echo "✗ Both mr and sr failed for $STREAM. Please submit manually."
+      fi
+    fi
+  fi
 done
 
 # Phase 5: Helm Chart (Manual Steps Summary)

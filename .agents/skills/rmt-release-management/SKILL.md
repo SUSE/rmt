@@ -20,7 +20,7 @@ The release process follows a 5-phase lifecycle. See [release-workflow.md](refer
 
 ### Configuration (Project Memory)
 To streamline the process, ensure the following path is saved in the project memory:
-- **`OBS_WORKSPACE`**: The local path to your OBS checkouts (e.g., `/home/ngetahun/Documents/obs_workspace`). Use `save_memory` to persist this.
+- **`OBS_WORKSPACE`**: The local path to your OBS checkouts (e.g., `/path/to/obs_workspace`). Use `save_memory` to persist this.
 
 ### RMT 2.x Release Constraints
 - **Target Streams:** For RMT 2.x (master branch) releases, only submit Maintenance Requests (MRs) for **SLE 15 SP6** and **SLE 15 SP7**.

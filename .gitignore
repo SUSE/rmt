@@ -51,13 +51,11 @@ locale/*/*.edit.po
 
 # Ansible
 ansible/*.retry
-ansible/.molecule/
-ansible/.cache/
-ansible/__pycache__/
-ansible/*.pyc
-ansible/.pytest_cache/
-ansible/.vagrant/
-ansible/*.log
-ansible/tmp/
-ansible/*.swp
+# ... (rest of ansible ignores)
 ansible/*~
+
+# Agent/AI related files
+.agents/
+.gemini/
+.claude/
+GEMINI.md
