@@ -112,7 +112,7 @@ module SccProxy
 
       # if the system is in SCC it means it was created by a sibling
       error = response_body['localized_error'] || response_body['error'] || ''
-      return [nil, nil] if error.include? 'system login, password and token is already taken'
+      return [nil, nil] if error.include? 'already taken'
 
       response.error!
     end
