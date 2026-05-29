@@ -42,6 +42,21 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
       its(:body) { is_expected.to eq(error_json) }
     end
 
+    context 'when product is Rancher based (No repositories)' do
+      subject(:json_data) { JSON.parse(response.body, symbolize_names: true) }
+
+      let(:product) { create(:product, :product_rancher, :with_service) }
+
+      before do
+        post url, headers: headers, params: payload
+      end
+
+      it 'creates a system and associates it with the rancher product' do
+        expect(response).to have_http_status(:created)
+        expect(json_data[:product][:id]).to eq(product.id)
+      end
+    end
+
     context 'when product has unmet root dependencies' do
       subject { response }
 

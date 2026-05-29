@@ -12,24 +12,44 @@ describe RegistryCatalogService do
     %w[repo repo.v2 level1/repo.v2 level1/level2 level1/level2/repo level1/level2/level.3 level1/level2/level.3/repo]
   end
   let(:registry_conf) { { root_url: root_url } }
-
-  before do
-    stub_request(:get, "#{auth_url}?#{params}").with(
-      headers: {
-        'Accept' => '*/*',
-        'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-        'User-Agent' => 'Ruby'
-      }
-).to_return(
-  status: 200, body: JSON.dump({ token: 'foo_token' }), headers: {}
-      )
-
-    stub_request(:get, "#{registry.catalog_api_url}?n=1000")
-      .to_return(body: JSON.dump(response), status: 200, headers: { 'Content-type' => 'application/json' })
+  let(:settings_registry) do
+    { service: 'foo', realm: 'bar' }
   end
 
-  it 'lists all repos' do
-    allow(System).to receive(:where).and_return([system])
-    expect(registry.repos(system).length).to eq repositories_returned.size
+  context 'registry configured properly' do
+    before do
+      allow(Settings).to receive(:try).with(:registry).and_return(settings_registry)
+      allow(settings_registry).to receive(:try).with(:service).and_return(
+        'SUSE Linux OCI Registry'
+      )
+      stub_request(:get, "#{auth_url}?#{params}").with(
+        headers: {
+          'Accept' => '*/*',
+          'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+          'User-Agent' => 'Ruby'
+        }
+      ).to_return(
+        status: 200, body: JSON.dump({ token: 'foo_token' }), headers: {}
+      )
+
+      stub_request(:get, "#{registry.catalog_api_url}?n=1000")
+        .to_return(body: JSON.dump(response), status: 200, headers: { 'Content-type' => 'application/json' })
+    end
+
+    it 'lists all repos' do
+      allow(System).to receive(:where).and_return([system])
+      expect(registry.repos(system).length).to eq repositories_returned.size
+    end
+  end
+
+  context 'registry misconfigured' do
+    before do
+      allow(Settings).to receive(:try).with(:registry).and_return({})
+    end
+
+    it 'raise an error with a clear message' do
+      allow(System).to receive(:where).and_return([system])
+      expect { registry.repos(system) }.to raise_error(StandardError, 'registry not configured properly in /etc/rmt.conf')
+    end
   end
 end
