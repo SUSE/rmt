@@ -229,10 +229,6 @@ install -D -m 644 package/files/nginx-pubcloud/auth-location.conf %{buildroot}%{
 %if (0%{?sle_version} >= 160000) || (0%{?is_opensuse} && 0%{?suse_version} >= 1600)
 mkdir -p %{buildroot}%{_datadir}/ansible/rmt
 cp -r ansible/* %{buildroot}%{_datadir}/ansible/rmt/
-# Remove build artifacts (tests already excluded from tarball)
-find %{buildroot}%{_datadir}/ansible/rmt -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-find %{buildroot}%{_datadir}/ansible/rmt -name "*.pyc" -delete 2>/dev/null || true
-find %{buildroot}%{_datadir}/ansible/rmt -name "*.retry" -delete 2>/dev/null || true
 %endif
 
 sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"' \

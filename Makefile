@@ -140,8 +140,11 @@ build-tarball: clean man ## Build RMT distribution tarball
 	# don't package example data export handler
 	@rm -rf $(NAME)-$(VERSION)/engines/data_export/lib/data_export/handlers/example.rb
 
-	# don't package ansible tests
+	# don't package ansible tests and Python artifacts
 	@rm -rf $(NAME)-$(VERSION)/ansible/tests
+	@find $(NAME)-$(VERSION)/ansible -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	@find $(NAME)-$(VERSION)/ansible -name "*.pyc" -delete 2>/dev/null || true
+	@find $(NAME)-$(VERSION)/ansible -name "*.retry" -delete 2>/dev/null || true
 
 	@mv $(NAME)-$(VERSION)/.bundle/config_packaging $(NAME)-$(VERSION)/.bundle/config
 	cd $(NAME)-$(VERSION) && bundle package --all

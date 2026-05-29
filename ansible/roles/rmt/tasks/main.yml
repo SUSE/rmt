@@ -114,9 +114,3 @@
     #priv: 'rmt.*:ALL'
     #state: present
   #no_log: true
-
-# Restart RMT
-- name: Restart rmt-server service
-  service:
-    name: rmt-server.service
-    state: restarted
