@@ -24,13 +24,13 @@ This reference documents the release lifecycle of **rmt-server**, visualizing th
 2.  **Sync & Cleanup:**
     *   **Action:** Manually delete any old versioned tarballs (e.g., `rm rmt-server-*.tar.bz2`).
     *   **Action:** Copy contents from the RMT repository's `package/obs/` to the OBS workspace.
-    *   **Action:** Review status: `osc status` and `osc diff`.
+    *   **Action:** Manually review status of changed files with `osc status` and, if correct, run `osc addremove` to update staged file set.
 3.  **Local Verification Build:**
     *   Identify targets: `osc repos`.
     *   Run build: `osc build <target> <arch> --no-verify` (e.g., `osc build 15.6 x86_64 --no-verify`).
 4.  **Submit to OBS:**
     *   **Note:** Only perform after Git merge.
-    *   Execute `osc ci`.
+    *   Execute `osc ci` to upload staged file set.
 
 ### Phase 3: GitHub Release
 1.  **Tagging:**
