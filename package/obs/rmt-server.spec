@@ -118,17 +118,18 @@ required for public cloud environments.
 
 # Ansible subpackage only for SLES/Leap 16+
 %if (0%{?sle_version} >= 160000) || (0%{?is_opensuse} && 0%{?suse_version} >= 1600)
-%package -n ansible-rmt-server
-Summary:        Ansible playbook for RMT deployment
-Group:          Development/Tools/Other
-BuildArch:      noarch
-Requires:       ansible-core >= 2.9
-Recommends:     rmt-server = %version
-
-%description -n ansible-rmt-server
-Ansible playbook and roles for automated deployment and configuration
-of RMT server on localhost. Includes SSL certificate generation,
-database setup, and nginx configuration.
+# Ansible package commented out - will be added in PR #1470
+# %package -n ansible-rmt-server
+# Summary:        Ansible playbook for RMT deployment
+# Group:          Development/Tools/Other
+# BuildArch:      noarch
+# Requires:       ansible-core >= 2.9
+# Recommends:     rmt-server = %version
+#
+# %description -n ansible-rmt-server
+# Ansible playbook and roles for automated deployment and configuration
+# of RMT server on localhost. Includes SSL certificate generation,
+# database setup, and nginx configuration.
 %endif
 
 %prep
@@ -226,14 +227,15 @@ install -D -m 644 package/files/nginx-pubcloud/auth-handler.conf %{buildroot}%{_
 install -D -m 644 package/files/nginx-pubcloud/auth-location.conf %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
 
 # ansible playbook (SLES/Leap 16+ only)
-%if (0%{?sle_version} >= 160000) || (0%{?is_opensuse} && 0%{?suse_version} >= 1600)
-mkdir -p %{buildroot}%{_datadir}/ansible/rmt
-cp -r ansible/* %{buildroot}%{_datadir}/ansible/rmt/
-# Remove build artifacts (tests already excluded from tarball)
-find %{buildroot}%{_datadir}/ansible/rmt -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-find %{buildroot}%{_datadir}/ansible/rmt -name "*.pyc" -delete 2>/dev/null || true
-find %{buildroot}%{_datadir}/ansible/rmt -name "*.retry" -delete 2>/dev/null || true
-%endif
+# Commented out - ansible package will be added in PR #1470
+# %if (0%{?sle_version} >= 160000) || (0%{?is_opensuse} && 0%{?suse_version} >= 1600)
+# mkdir -p %{buildroot}%{_datadir}/ansible/rmt
+# cp -r ansible/* %{buildroot}%{_datadir}/ansible/rmt/
+# # Remove build artifacts (tests already excluded from tarball)
+# find %{buildroot}%{_datadir}/ansible/rmt -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+# find %{buildroot}%{_datadir}/ansible/rmt -name "*.pyc" -delete 2>/dev/null || true
+# find %{buildroot}%{_datadir}/ansible/rmt -name "*.retry" -delete 2>/dev/null || true
+# %endif
 
 sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"' \
     -e 's/^BUNDLE_JOBS: .*/BUNDLE_JOBS: "1"/' \
@@ -391,10 +393,11 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %config(noreplace) %{_unitdir}/rmt-server-trim-cache.timer
 
 %if (0%{?sle_version} >= 160000) || (0%{?is_opensuse} && 0%{?suse_version} >= 1600)
-%files -n ansible-rmt-server
-%dir %{_datadir}/ansible
-%{_datadir}/ansible/rmt
-%config(noreplace) %{_datadir}/ansible/rmt/group_vars/all.yml
+# Ansible files commented out - will be added in PR #1470
+# %files -n ansible-rmt-server
+# %dir %{_datadir}/ansible
+# %{_datadir}/ansible/rmt
+# %config(noreplace) %{_datadir}/ansible/rmt/group_vars/all.yml
 %endif
 
 %pre
