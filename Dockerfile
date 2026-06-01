@@ -14,7 +14,7 @@ RUN bundle install
 
 COPY . /srv/www/rmt/
 
-RUN mkdir /srv/www/rmt/public/repo
+RUN mkdir -p /srv/www/rmt/public/repo
 
 RUN ln -s /srv/www/rmt/bin/rmt-cli /usr/bin && \
     mkdir /var/lib/rmt/ && \
