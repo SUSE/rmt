@@ -181,26 +181,79 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
         }
       end
 
+      # rubocop:disable RSpec/NestedGroups
       context 'valid credentials' do
         let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
 
-        before do
-          stub_request(:post, scc_register_system_url)
-            .to_return(
-              status: 201,
-              body: scc_register_response.to_s,
-              headers: {}
-            )
+        context 'system not in the db' do
+          before do
+            stub_request(:post, scc_register_system_url)
+              .to_return(
+                status: 201,
+                body: scc_register_response.to_s,
+                headers: {}
+              )
+          end
+
+          it 'saves the data' do
+            allow(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
+            allow(plugin_double).to receive(:instance_identifier).and_return('i-12345-payg')
+            post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
+            system = System.find_by(login: 'i-12345-payg')
+            expect(system.instance_data).to eq(instance_data)
+          end
         end
 
-        it 'saves the data' do
-          allow(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
-          allow(plugin_double).to receive(:instance_identifier).and_return('i-12345-payg')
-          post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
-          system = System.find_by(login: 'i-12345-payg')
-          expect(system.instance_data).to eq(instance_data)
+        context 'system not in SCC but in the db' do
+          before do
+            stub_request(:post, scc_register_system_url)
+              .to_return(
+                status: 201,
+                body: scc_register_response.to_s,
+                headers: {}
+              )
+          end
+
+          it 'does not save the data' do
+            allow_any_instance_of(System).to receive(:save!).and_raise(ActiveRecord::RecordInvalid)
+            allow(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
+            allow(plugin_double).to receive(:instance_identifier).and_return('i-12345-payg')
+            post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
+            expect(response.message).to eq('Unprocessable Content')
+            expect(JSON.parse(response.body)).to eq({ 'type' => 'error', 'error' => 'System could not be created: Record invalid' })
+            expect(response.code).to eq('422')
+          end
+        end
+
+        context 'system in SCC and not in the db' do
+          let(:system) { create(:system, login: 'i-12345-payg') }
+
+          before do
+            stub_request(:post, scc_register_system_url)
+            .to_return(
+              status: 422,
+              body: {
+                type: 'error',
+                error:
+                  'System token This combination of system login, password and token is already taken'
+
+              }.to_json,
+              headers: {}
+            )
+          end
+
+          it 'saves the data' do
+            allow_any_instance_of(described_class).to receive(:create_system).and_return(system)
+            allow(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
+            allow(plugin_double).to receive(:instance_identifier).and_return('i-12345-payg')
+            post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
+            expect(response.message).to eq('Created')
+            expect(response.code).to eq('201')
+            expect(JSON.parse(response.body)['login']).to eq('i-12345-payg')
+          end
         end
       end
+      # rubocop:enable RSpec/NestedGroups
 
       context 'credentials not found' do
         before do
