@@ -123,6 +123,23 @@ FactoryBot.define do
       friendly_version { 'Live Patching' }
     end
 
+    trait :product_rancher do
+      identifier { 'rancher' }
+      name { 'Rancher Subscription' }
+      description { 'A Rancher Manager subscription...' }
+      shortname { 'Rancher' }
+      former_identifier { 'rancher' }
+      product_type { :base }
+      product_class { 'RANCHER-X86' }
+      release_type { nil }
+      release_stage { 'released' }
+      version { '2.13.6' }
+      arch { 'unknown' }
+      free { false }
+      cpe { 'cpe:/o:suse:rancher:2.13.6' }
+      friendly_version { '2.13.6' }
+    end
+
     trait :extension do
       product_type { 'extension' }
     end
