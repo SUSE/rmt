@@ -157,7 +157,7 @@ RSpec.describe AccessScope, type: :model do
 
         it 'returns default auth actions (no free repos included)' do
           yaml_string = access_policy_content
-          data = YAML.safe_load yaml_string
+          data = YAML.unsafe_load yaml_string
           data[product1.product_class] = 'suse/sles/**'
           File.write('engines/registry/spec/data/access_policy_yaml.yml', YAML.dump(data))
           allow_any_instance_of(RegistryCatalogService).to receive(:repos).and_return(['suse/sles/super_repo'])
@@ -250,7 +250,7 @@ RSpec.describe AccessScope, type: :model do
               product1
             )
             yaml_string = access_policy_content
-            data = YAML.safe_load yaml_string
+            data = YAML.unsafe_load yaml_string
             data[product1.product_class] = 'suse/ltss/**'
             File.write('engines/registry/spec/data/access_policy_yaml.yml', YAML.dump(data))
             allow_any_instance_of(RegistryCatalogService).to receive(:repos).and_return(['suse/ltss/ltss_repo'])
