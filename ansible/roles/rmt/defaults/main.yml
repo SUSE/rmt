@@ -44,14 +44,3 @@ rmt_log_level_cli: info
 rmt_web_server_min_threads: 5
 rmt_web_server_max_threads: 5
 rmt_web_server_workers: 2
-
-# SSL configuration
-rmt_ssl_cert_path: /etc/rmt/ssl/rmt-server.crt
-rmt_ssl_key_path: /etc/rmt/ssl/rmt-server.key
-rmt_ca_cert_path: /etc/rmt/ssl/rmt-ca.crt
-rmt_ssl_cert_validity_days: 3650  # 10 years
-rmt_ssl_key_size: 4096
-
-# Service configuration
-rmt_enable_http: true
-rmt_enable_https: true

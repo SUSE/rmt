@@ -6,7 +6,6 @@ VERSION       = $(shell ruby -e 'require "./lib/rmt.rb"; print RMT::VERSION')
 # =============================================================================
 
 .PHONY: all help clean ansible-test ansible-lint
-.PHONY: ansible-install
 .PHONY: build build-tarball dist man
 .PHONY: ansible-deploy ansible-check
 .PHONY: database-up server shell console public_repo
@@ -28,7 +27,7 @@ help: ## Show this help message
 	@echo 'Usage: make [target]'
 	@echo ''
 	@echo 'Common Targets:'
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-z-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "^  (help|ansible-install|ansible-test|ansible-lint|clean|build|ansible-deploy|ansible-check) "
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-z-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "^  (help|ansible-test|ansible-lint|clean|build|ansible-deploy|ansible-check) "
 	@echo ''
 	@echo 'Development Targets:'
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-z-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "^  (server|shell|console|database-up) "
@@ -36,14 +35,6 @@ help: ## Show this help message
 	@echo 'Build & Package Targets:'
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-z-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "^  (dist|build-tarball|man|public_repo) "
 	@echo ''
-
-# =============================================================================
-# Installation
-# =============================================================================
-
-ansible-install: ## Install Ansible dependencies and collections
-	cd ansible && pip install ansible ansible-lint
-	cd ansible && ansible-galaxy collection install -r requirements.yml --clear-response-cache
 
 # =============================================================================
 # Testing & Validation
@@ -54,7 +45,7 @@ ansible-test: ## Run all tests (Ansible playbook tests)
 	cd ansible && ansible-playbook tests/test_playbook.yml
 	@echo "==> All tests passed!"
 
-ansible-lint: ansible-install ## Lint Ansible playbooks and roles
+ansible-lint: ## Lint Ansible playbooks and roles
 	@echo "==> Checking Ansible playbook syntax..."
 	cd ansible && ansible-playbook site.yml --syntax-check
 	@echo "==> Linting Ansible playbooks and roles..."

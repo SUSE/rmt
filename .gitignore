@@ -61,3 +61,4 @@ ansible/*.log
 ansible/tmp/
 ansible/*.swp
 ansible/*~
+.ansible

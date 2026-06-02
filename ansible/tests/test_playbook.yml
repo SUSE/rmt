@@ -14,12 +14,12 @@
     - name: Verify Ansible version
       ansible.builtin.assert:
         that:
-          - ansible_version.full is version('2.9', '>=')
-        fail_msg: "Ansible version must be 2.9 or higher"
+          - ansible_version.full is version('2.18', '>=')
+        fail_msg: "Ansible version must be 2.18 or higher"
         success_msg: "Ansible version check passed"
 
-    - name: Check if community.mysql collection is installed
-      ansible.builtin.command: ansible-galaxy collection list community.mysql
+    - name: Check if ansible.mysql collection is installed
+      ansible.builtin.command: ansible-galaxy collection list ansible.mysql
       register: mysql_collection
       changed_when: false
       failed_when: false
@@ -45,7 +45,7 @@
     - name: Display collection check results
       ansible.builtin.debug:
         msg:
-          - "community.mysql: {{ 'INSTALLED' if mysql_collection.rc == 0 else 'MISSING' }}"
+          - "ansible.mysql: {{ 'INSTALLED' if mysql_collection.rc == 0 else 'MISSING' }}"
           - "community.crypto: {{ 'INSTALLED' if crypto_collection.rc == 0 else 'MISSING' }}"
           - "ansible.posix: {{ 'INSTALLED' if posix_collection.rc == 0 else 'MISSING' }}"
           - "community.general: {{ 'INSTALLED' if general_collection.rc == 0 else 'MISSING' }}"
@@ -57,7 +57,7 @@
           - crypto_collection.rc == 0
           - posix_collection.rc == 0
           - general_collection.rc == 0
-        fail_msg: "Missing required collections. Install with: ansible-galaxy collection install -r requirements.yml"
+        fail_msg: "Missing required collections. These are bundled with Ansible >= 11 in SLE 16.x"
         success_msg: "All required collections are installed"
 
     - name: Verify RMT role directory structure

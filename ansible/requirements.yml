@@ -1,13 +1,13 @@
 ---
 # External Ansible roles and collections required for RMT deployment
-collections:
-  - name: ansible.posix
-    version: ">=1.5.0"
-  - name: community.general
-    version: ">=7.0.0"
-  - name: community.mysql
-    version: ">=3.5.0"
-  - name: community.crypto
-    version: ">=2.0.0"
+# collections:
+#   - name: ansible.posix
+#     version: ">=1.5.0"
+#   - name: community.general
+#     version: ">=7.0.0"
+#   - name: community.mysql
+#     version: ">=3.5.0"
+#   - name: community.crypto
+#     version: ">=2.0.0"
 
 roles: []

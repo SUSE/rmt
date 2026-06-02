@@ -14,19 +14,8 @@
       - rmt-server
       - mariadb
       - nginx
+      - python3-PyMySQL
     state: latest
-
-- name: Install Python 3.11 pip
-  community.general.zypper:
-    name: python311-pip
-    state: present
-    disable_recommends: false
-
-# PyMySQL is required by Ansible's community.mysql modules to connect to MariaDB/MySQL
-- name: Ensure PyMySQL is installed for Python 3.11
-  ansible.builtin.pip:
-    name: PyMySQL
-    executable: /usr/bin/pip3.11
 
 - name: Ensure MariaDB service is started and enabled
   ansible.builtin.systemd:
