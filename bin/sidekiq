@@ -9,6 +9,8 @@
 #
 
 require "pathname"
+require_relative "../config/environment"
+
 ENV["BUNDLE_GEMFILE"] ||= File.expand_path("../../Gemfile",
   Pathname.new(__FILE__).realpath)
 
@@ -19,5 +21,4 @@ require "sidekiq/cli"
 # Parse Sidekiq CLI arguments first (including -e)
 Sidekiq::CLI.instance.parse
 
-require_relative "../config/environment"
 Sidekiq::CLI.instance.run
