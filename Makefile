@@ -5,10 +5,10 @@ VERSION       = $(shell ruby -e 'require "./lib/rmt.rb"; print RMT::VERSION')
 # Phony Targets
 # =============================================================================
 
-.PHONY: all help clean test lint
-.PHONY: install install-ansible
+.PHONY: all help clean ansible-test ansible-lint
+.PHONY: ansible-install
 .PHONY: build build-tarball dist man
-.PHONY: deploy deploy-ansible check-ansible
+.PHONY: ansible-deploy ansible-check
 .PHONY: database-up server shell console public_repo
 
 # =============================================================================
@@ -28,7 +28,7 @@ help: ## Show this help message
 	@echo 'Usage: make [target]'
 	@echo ''
 	@echo 'Common Targets:'
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-z-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "^  (help|install|test|lint|clean|build|deploy|check-ansible) "
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-z-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "^  (help|ansible-install|ansible-test|ansible-lint|clean|build|ansible-deploy|ansible-check) "
 	@echo ''
 	@echo 'Development Targets:'
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-z-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "^  (server|shell|console|database-up) "
@@ -41,22 +41,20 @@ help: ## Show this help message
 # Installation
 # =============================================================================
 
-install: install-ansible ## Install all dependencies (Ansible)
-
-install-ansible: ## Install Ansible dependencies and collections
+ansible-install: ## Install Ansible dependencies and collections
 	cd ansible && pip install ansible ansible-lint
-	cd ansible && ansible-galaxy collection install -r requirements.yml
+	cd ansible && ansible-galaxy collection install -r requirements.yml --clear-response-cache
 
 # =============================================================================
 # Testing & Validation
 # =============================================================================
 
-test: ## Run all tests (Ansible playbook tests)
+ansible-test: ## Run all tests (Ansible playbook tests)
 	@echo "==> Running Ansible playbook tests..."
 	cd ansible && ansible-playbook tests/test_playbook.yml
 	@echo "==> All tests passed!"
 
-lint: ## Validate and lint all code (Ansible playbooks)
+ansible-lint: ansible-install ## Lint Ansible playbooks and roles
 	@echo "==> Checking Ansible playbook syntax..."
 	cd ansible && ansible-playbook site.yml --syntax-check
 	@echo "==> Linting Ansible playbooks and roles..."
@@ -68,12 +66,10 @@ lint: ## Validate and lint all code (Ansible playbooks)
 # Deployment
 # =============================================================================
 
-deploy: deploy-ansible ## Deploy RMT (using Ansible)
-
-deploy-ansible: ## Deploy RMT on localhost using Ansible
+ansible-deploy: ## Deploy RMT on localhost using Ansible
 	cd ansible && ansible-playbook site.yml
 
-check-ansible: ## Dry run Ansible deployment (check mode)
+ansible-check: ## Dry run Ansible deployment (check mode)
 	cd ansible && ansible-playbook site.yml --check
 
 # =============================================================================

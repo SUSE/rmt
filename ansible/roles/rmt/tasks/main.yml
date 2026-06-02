@@ -3,44 +3,92 @@
 # mirroring products.
 
 - name: Add RMT repo
-  zypper_repository:
+  community.general.zypper_repository:
     repo: "{{ rmt_repo_url }}"
     name: "{{ rmt_repo_name }}"
-    auto_import_keys: yes
+    auto_import_keys: true
+
+- name: Install rmt & dependencies
+  community.general.zypper:
+    name:
+      - rmt-server
+      - mariadb
+      - nginx
+    state: latest
+
+- name: Install Python 3.11 pip
+  community.general.zypper:
+    name: python311-pip
+    state: present
+    disable_recommends: false
+
+# PyMySQL is required by Ansible's community.mysql modules to connect to MariaDB/MySQL
+- name: Ensure PyMySQL is installed for Python 3.11
+  ansible.builtin.pip:
+    name: PyMySQL
+    executable: /usr/bin/pip3.11
+
+- name: Ensure MariaDB service is started and enabled
+  ansible.builtin.systemd:
+    name: mariadb
+    state: started
+    enabled: true
+
+- name: Create RMT database
+  ansible.mysql.mysql_db:
+    name: "{{ rmt_db_name }}"
+    state: present
+    encoding: "{{ rmt_db_encoding }}"
+    login_unix_socket: /run/mysql/mysql.sock
+
+- name: Create RMT database user
+  ansible.mysql.mysql_user:
+    name: "{{ rmt_db_username }}"
+    password: "{{ rmt_db_password | default('rmt', true) }}"
+    priv: "{{ rmt_db_name }}.*:ALL"
+    state: present
+    login_unix_socket: /run/mysql/mysql.sock
+  no_log: true
+
+- name: Enable and run rmt-migration service
+  ansible.builtin.systemd:
+    name: rmt-migration
+    state: started
+    enabled: true
 
 # Configure rmt
 - name: Modify rmt.conf
-  template:
+  ansible.builtin.template:
     src: rmt.conf.j2
     dest: /etc/rmt.conf
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   notify: Restart rmt
 
 - name: Provision HTTP (Plain Text) nginx config
-  template:
+  ansible.builtin.template:
     src: rmt_host_plain_text.conf.j2
     dest: /etc/nginx/vhosts.d/rmt-server-http.conf
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   notify: Reload nginx
 
 - name: Provision RMT Upstream section
-  template:
+  ansible.builtin.template:
     src: rmt_upstreams.conf
     dest: /etc/nginx/vhosts.d/rmt_upstreams.conf
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   notify: Reload nginx
 
 - name: Create SSL directory
-  file:
+  ansible.builtin.file:
     path: /etc/rmt/ssl
     state: directory
-    mode: 0755
+    mode: "0755"
     owner: root
     group: root
 
@@ -48,7 +96,7 @@
   community.crypto.openssl_privatekey:
     path: /etc/rmt/ssl/rmt-server.key
     size: 4096
-    mode: 0600
+    mode: "0600"
     owner: root
     group: root
 
@@ -58,7 +106,7 @@
     privatekey_path: /etc/rmt/ssl/rmt-server.key
     provider: selfsigned
     selfsigned_not_after: "+3650d"
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
 
@@ -66,7 +114,7 @@
   community.crypto.openssl_privatekey:
     path: /etc/rmt/ssl/rmt-ca.key
     size: 4096
-    mode: 0600
+    mode: "0600"
     owner: root
     group: root
 
@@ -76,41 +124,15 @@
     privatekey_path: /etc/rmt/ssl/rmt-ca.key
     provider: selfsigned
     selfsigned_not_after: "+3650d"
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
 
 - name: Provision HTTPS (SSL) nginx config
-  template:
+  ansible.builtin.template:
     src: rmt_host_http_ssl.conf.j2
     dest: /etc/nginx/vhosts.d/rmt-server-https.conf
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   notify: Reload nginx
-
-- name: Install rmt & dependencies
-  zypper:
-    name:
-      - rmt-server
-      - mariadb
-      - nginx
-    state: latest
-
-- name: Ensure PyMySQL is installed for Python 3.11
-  ansible.builtin.pip:
-    name: PyMySQL
-    executable: /usr/bin/pip3.11
-# Uncomment this when creating fresh setup with empty database
-#- name: Create a new database with name 'rmt'
-  #community.mysql.mysql_db:
-    #name: rmt
-    #state: present
-
-#- name: Create database user 'rmt'
-  #community.mysql.mysql_user:
-    #name: rmt
-    #password: rmt
-    #priv: 'rmt.*:ALL'
-    #state: present
-  #no_log: true
