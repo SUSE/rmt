@@ -40,12 +40,13 @@ help: ## Show this help message
 # Testing & Validation
 # =============================================================================
 
-ansible-test: build ## Run Ansible tests in SLE 16.x container
-	@echo "==> Running Ansible playbook tests in SLE 16.x container..."
+ansible-test: build ## Run Ansible tests in container (installs collections via ansible-galaxy)
+	@echo "==> Running Ansible playbook tests in openSUSE Leap 16.0 container..."
+	@echo "==> Note: Collections installed via ansible-galaxy (not pre-packaged in Leap)"
 	docker compose run --rm rmt bash -c "cd /srv/www/rmt/ansible && ansible-playbook tests/test_playbook.yml"
 	@echo "==> All tests passed!"
 
-ansible-lint: ## Lint Ansible playbooks and roles
+ansible-lint: ## Lint Ansible playbooks and roles (requires local ansible installation)
 	@echo "==> Checking Ansible playbook syntax..."
 	cd ansible && ansible-playbook site.yml --syntax-check
 	@echo "==> Linting Ansible playbooks and roles..."
@@ -57,7 +58,10 @@ ansible-lint: ## Lint Ansible playbooks and roles
 # Deployment
 # =============================================================================
 
-ansible-deploy: ## Deploy RMT on localhost using Ansible
+ansible-deploy: ## Deploy RMT on localhost (SLES 16.x has collections pre-installed)
+	@echo "==> Deploying RMT via Ansible..."
+	@echo "==> Note: On SLES 16.x systems, collections are pre-installed"
+	@echo "==> On other systems, run: ansible-galaxy collection install -r ansible/requirements.yml"
 	cd ansible && ansible-playbook site.yml
 
 ansible-check: ## Dry run Ansible deployment (check mode)
@@ -127,8 +131,7 @@ build-tarball: clean man ## Build RMT distribution tarball
 	# don't package example data export handler
 	@rm -rf $(NAME)-$(VERSION)/engines/data_export/lib/data_export/handlers/example.rb
 
-	# don't package ansible tests and Python artifacts
-	@rm -rf $(NAME)-$(VERSION)/ansible/tests
+	# Clean up ansible Python artifacts (keep tests for %check validation)
 	@find $(NAME)-$(VERSION)/ansible -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 	@find $(NAME)-$(VERSION)/ansible -name "*.pyc" -delete 2>/dev/null || true
 	@find $(NAME)-$(VERSION)/ansible -name "*.retry" -delete 2>/dev/null || true

@@ -1,13 +1,23 @@
 ---
 # External Ansible roles and collections required for RMT deployment
-# collections:
-#   - name: ansible.posix
-#     version: ">=1.5.0"
-#   - name: community.general
-#     version: ">=7.0.0"
-#   - name: community.mysql
-#     version: ">=3.5.0"
-#   - name: community.crypto
-#     version: ">=2.0.0"
+#
+# NOTE: On SLES 16.x systems, these collections are pre-installed with the
+# ansible package and do not need to be installed manually.
+#
+# This file is primarily used for:
+# - Development/testing environments (e.g., openSUSE Leap 16.0 containers)
+# - CI/CD pipelines
+# - Non-SLES systems that need to run these playbooks
+#
+# To install collections: ansible-galaxy collection install -r requirements.yml
+collections:
+  - name: ansible.posix
+    version: ">=1.5.0"
+  - name: community.general
+    version: ">=7.0.0"
+  - name: community.mysql
+    version: ">=3.5.0"
+  - name: community.crypto
+    version: ">=2.0.0"
 
 roles: []

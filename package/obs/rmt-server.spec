@@ -127,11 +127,18 @@ BuildRequires:  python3-PyMySQL
 Requires:       ansible-core >= 11
 Requires:       python3-PyMySQL
 Recommends:     rmt-server = %version
+# Note: Required Ansible collections (ansible.posix, community.general,
+# ansible.mysql, community.crypto) are bundled with ansible package on
+# SLES 16.x and do not need explicit Requires directives
 
 %description -n ansible-rmt-server
 Ansible playbook and roles for automated deployment and configuration
 of RMT server on localhost. Includes SSL certificate generation,
 database setup, and nginx configuration.
+
+Required Ansible collections are pre-installed with the ansible package
+on SLES 16.x systems. For non-SLES environments, install collections with:
+ansible-galaxy collection install -r /usr/share/ansible/rmt/requirements.yml
 %endif
 
 %prep
@@ -290,6 +297,15 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 # drop custom rpath from native gems
 chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/mysql2-*/lib/mysql2/mysql2.so
 chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/mysql2/mysql2.so
+
+%check
+%if (0%{?sle_version} >= 160000) || (0%{?is_opensuse} && 0%{?suse_version} >= 1600)
+# Verify that required Ansible collections are available in the build environment
+# This validates that SLES 16.x ansible package includes the necessary collections
+# and that they meet minimum version requirements
+cd ansible
+ansible-playbook tests/test_playbook.yml
+%endif
 
 %files
 %attr(0755,root,root) %{app_dir}

@@ -15,6 +15,10 @@ RUN bundle install
 
 COPY . /srv/www/rmt/
 
+# Install Ansible collections for testing
+# Note: On SLES 16.x these are pre-installed, but openSUSE Leap 16.0 requires manual installation
+RUN ansible-galaxy collection install -r /srv/www/rmt/ansible/requirements.yml
+
 RUN mkdir -p /srv/www/rmt/public/repo
 
 RUN ln -s /srv/www/rmt/bin/rmt-cli /usr/bin && \
