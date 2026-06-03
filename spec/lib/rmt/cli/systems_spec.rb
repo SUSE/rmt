@@ -217,7 +217,7 @@ RSpec.describe RMT::CLI::Systems do
       end
     end
 
-    context 'no systems to be purged' do
+    context 'no systems to be purged no verbose' do
       let(:argv) { ['purge'] }
 
       before do
@@ -226,21 +226,41 @@ RSpec.describe RMT::CLI::Systems do
 
       it 'shows a warning if there are no systems matching the query' do
         bf = RMT::CLI::Systems::INACTIVE.ago.strftime('%F')
-
-        expect { described_class.start(argv) }.to output('').to_stdout.and \
+        expect($stdin).to receive(:gets).and_return('y')
+        expect { described_class.start(argv) }.to(
+          output('Do you want to delete all the matching systems? (y/n) ').to_stdout.and \
           output("No systems to be purged on this RMT instance. All systems have contacted RMT after #{bf}.\n").to_stderr
+        )
       end
     end
 
-    context 'there are systems to be purged' do
+    context 'no systems to be purged verbose' do
+      let(:argv) { ['purge', '--verbose'] }
+
+      before do
+        create :system, :with_activated_product, last_seen_at: 1.month.ago
+      end
+
+      it 'shows a warning if there are no systems matching the query' do
+        bf = RMT::CLI::Systems::INACTIVE.ago.strftime('%F')
+        expect { described_class.start(argv) }.to(
+          output("No systems to be purged on this RMT instance. All systems have contacted RMT after #{bf}.\n").to_stderr
+        )
+      end
+    end
+
+    context 'there are systems to be purged no verbose' do
       let!(:s1) { create :system, :with_activated_product, last_seen_at: 2.months.ago }
       let!(:s2) { create :system, :with_activated_product, last_seen_at: 4.months.ago }
+      let(:relation_double) { instance_double(ActiveRecord::Relation) }
 
       it 'removes systems by following the default definition of inactive' do
         expect(System.count).to eq 2
 
         expect { described_class.start(['purge', '--no-confirmation']) }
-          .to output(/#{s2.login}/).to_stdout
+          .to output(
+            /1 systems destroyed.Purged all systems that have not contacted this RMT since #{Time.zone.today - 3.months}./m
+        ).to_stdout
 
         expect(System.count).to eq 1
         expect(System.first.id).to eq s1.id
@@ -251,22 +271,160 @@ RSpec.describe RMT::CLI::Systems do
 
         argv = ['purge', '--no-confirmation', '--before', Time.zone.now.strftime('%F')]
         expect { described_class.start(argv) }
-          .to output(/#{s1.login}/).to_stdout
+          .to output(/2 systems destroyed.Purged all systems that have not contacted this RMT since #{Time.zone.today}./m).to_stdout
 
         expect(System.count).to eq 0
+      end
+
+      it 'retry to remove systems if there is an error' do
+        expect(System.count).to eq 2
+
+        allow(System).to receive(:where).and_return(relation_double)
+        allow(relation_double).to receive(:in_batches).and_raise('FOO')
+        argv = ['purge', '--no-confirmation', '--before', Time.zone.now.strftime('%F')]
+        expect { described_class.start(argv) }
+          .to output(<<~TEXT).to_stdout
+            Error while purging systems: FOO. Retrying in 5 seconds (1/3)
+            Error while purging systems: FOO. Retrying in 5 seconds (2/3)
+            Could not delete all systems last seen before #{Time.zone.today}: FOO
+            Purged some systems that have not contacted this RMT since #{Time.zone.today}.
+            Systems that have not contacted this RMT since #{Time.zone.today} may still be in this RMT
+          TEXT
+
+        expect(System.count).to eq 2
+      end
+    end
+
+    context 'there are systems to be purged verbose' do
+      let!(:product_a) { create :product, :with_mirrored_repositories, name: 'product-foo' }
+      let!(:product_b) { create :product, :with_mirrored_repositories, name: 'product-bar' }
+      let!(:s1) { create :system, :with_activated_product, hostname: "foo-bars", last_seen_at: 2.months.ago, product: product_a }
+      let!(:s2) { create :system, :with_activated_product, hostname: "Hostname", last_seen_at: 4.months.ago, product: product_b }
+      let!(:single_row) do
+        if s2.activations.first.product.product_string.length < 23
+          <<~TEXT
+          +---------+----------+-------------------------+-------------------------+------------------------+
+          | Login   | Hostname | Registration time       | Last seen               | Products               |
+          +---------+----------+-------------------------+-------------------------+------------------------+
+          | #{s2.login} | #{s2.hostname} | #{s2.registered_at} | #{s2.last_seen_at} | #{s2.activations.first.product.product_string} |
+          +---------+----------+-------------------------+-------------------------+------------------------+
+        TEXT
+        elsif s2.activations.first.product.product_string.length == 23
+          <<~TEXT
+          +---------+----------+-------------------------+-------------------------+-------------------------+
+          | Login   | Hostname | Registration time       | Last seen               | Products                |
+          +---------+----------+-------------------------+-------------------------+-------------------------+
+          | #{s2.login} | #{s2.hostname} | #{s2.registered_at} | #{s2.last_seen_at} | #{s2.activations.first.product.product_string} |
+          +---------+----------+-------------------------+-------------------------+-------------------------+
+          TEXT
+        end
+      end
+      let!(:multiple_rows) do
+        if s2.activations.first.product.product_string.length < 23
+          <<~TEXT
+          +---------+----------+-------------------------+-------------------------+------------------------+
+          | Login   | Hostname | Registration time       | Last seen               | Products               |
+          +---------+----------+-------------------------+-------------------------+------------------------+
+          | #{s2.login} | #{s2.hostname} | #{s2.registered_at} | #{s2.last_seen_at} | #{s2.activations.first.product.product_string} |
+          | #{s1.login} | #{s1.hostname} | #{s1.registered_at} | #{s1.last_seen_at} | #{s1.activations.first.product.product_string} |
+          +---------+----------+-------------------------+-------------------------+------------------------+
+        TEXT
+        elsif s2.activations.first.product.product_string.length == 23
+          <<~TEXT
+          +---------+----------+-------------------------+-------------------------+-------------------------+
+          | Login   | Hostname | Registration time       | Last seen               | Products                |
+          +---------+----------+-------------------------+-------------------------+-------------------------+
+          | #{s2.login} | #{s2.hostname} | #{s2.registered_at} | #{s2.last_seen_at} | #{s2.activations.first.product.product_string} |
+          | #{s1.login} | #{s1.hostname} | #{s1.registered_at} | #{s1.last_seen_at} | #{s1.activations.first.product.product_string} |
+          +---------+----------+-------------------------+-------------------------+-------------------------+
+          TEXT
+        end
+      end
+      let(:query_relation_double) { instance_double(ActiveRecord::Relation) }
+      let(:mock_batch)    { instance_double(ActiveRecord::Batches::BatchEnumerator) }
+
+      it 'removes systems by following the default definition of inactive' do
+        expect(System.count).to eq 2
+
+        expect { described_class.start(['purge', '--no-confirmation', '--verbose']) }
+           .to output(<<~TEXT).to_stdout
+             1 systems last seen before #{Time.zone.today - 3.months}
+             #{single_row}1 systems to be deleted
+             Purged all systems that have not contacted this RMT since #{Time.zone.today - 3.months}.
+           TEXT
+
+        expect(System.count).to eq 1
+        expect(System.first.id).to eq s1.id
+      end
+
+      it 'removes systems by the given date' do
+        expect(System.count).to eq 2
+
+        argv = ['purge', '--no-confirmation', '--before', Time.zone.now.strftime('%F'), '--verbose']
+        expect { described_class.start(argv) }
+          .to output(<<~TEXT).to_stdout
+            2 systems last seen before #{Time.zone.today}
+            #{multiple_rows}2 systems to be deleted
+            Purged all systems that have not contacted this RMT since #{Time.zone.today}.
+          TEXT
+        expect(System.count).to eq 0
+      end
+
+      it 'handle a DB error' do
+        expect(System.count).to eq 2
+
+        allow(System).to receive(:where).and_return(query_relation_double)
+        allow(query_relation_double).to receive(:in_batches).and_raise('FOO')
+        argv = ['purge', '--no-confirmation', '--before', Time.zone.now.strftime('%F'), '--verbose']
+        expect { described_class.start(argv) }
+          .to output(<<~TEXT).to_stdout
+            Could not get all systems last seen before #{Time.zone.today}: FOO
+          TEXT
+
+        expect(System.count).to eq 2
+      end
+
+      it 'retry to remove systems if there is an error' do
+        expect(System.count).to eq 2
+
+        allow(System).to receive(:where) do |*args|
+          if args.first.is_a?(Hash) && args.first.key?(:id)
+            query_relation_double
+          else
+            System.method(:where).super_method.call(*args)
+          end
+        end
+        allow(query_relation_double).to receive(:in_batches).with(of: 500).and_return(mock_batch)
+        allow(mock_batch).to receive(:destroy_all).and_raise('BAR')
+        argv = ['purge', '--no-confirmation', '--before', Time.zone.now.strftime('%F'), '--verbose']
+        expect { described_class.start(argv) }
+          .to output(<<~TEXT).to_stdout
+            2 systems last seen before #{Time.zone.today}
+            #{multiple_rows}Error while purging systems: BAR. Attempt 1/3, retrying in 5 seconds
+            Error while purging systems: BAR. Attempt 2/3, retrying in 5 seconds
+            Error while purging the systems: BAR, 2 systems could not be removed
+            Purged some systems that have not contacted this RMT since #{Time.zone.today}.
+          TEXT
+
+        expect(System.count).to eq 2
       end
     end
 
     context 'purge confirmations' do
       let!(:s1) { create :system, :with_activated_product, last_seen_at: 2.months.ago }
       let!(:s2) { create :system, :with_activated_product, last_seen_at: 4.months.ago }
+      let(:confirmation) { 'Do you want to delete all the matching systems? (y/n) ' }
+      let(:purge) { "Purged all systems that have not contacted this RMT since #{Time.zone.today - 3.months}." }
 
       it 'asks for confirmation' do
         expect(System.count).to eq 2
         expect($stdin).to receive(:gets).and_return('y')
 
         expect { described_class.start(['purge']) }
-          .to output(/#{s2.login}/).to_stdout
+          .to output(<<~TEXT).to_stdout
+            #{confirmation}1 systems destroyed
+            Purged all systems that have not contacted this RMT since #{Time.zone.today - 3.months}.
+          TEXT
 
         expect(System.count).to eq 1
         expect(System.first.id).to eq s1.id
@@ -277,7 +435,7 @@ RSpec.describe RMT::CLI::Systems do
         expect($stdin).to receive(:gets).and_return('n')
 
         expect { described_class.start(['purge']) }
-          .to output(/#{s2.login}/).to_stdout
+          .to output('Do you want to delete all the matching systems? (y/n) ').to_stdout
 
         expect(System.count).to eq 2
       end
@@ -289,7 +447,7 @@ RSpec.describe RMT::CLI::Systems do
 
         expect { described_class.start(['purge']) }
           .to output(/Please answer/).to_stderr.and \
-            output(/#{s2.login}/).to_stdout
+            output("Do you want to delete all the matching systems? (y/n) Do you want to delete all the matching systems? (y/n) ").to_stdout
 
         expect(System.count).to eq 2
       end
