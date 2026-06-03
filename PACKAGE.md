@@ -159,3 +159,28 @@ RMT helm chart is defined [here](https://github.com/SUSE/helm-charts.git) and pu
 Edit `rmt-helm/Chart.yaml` to update the chart version (`version`) and rmt-version (`appVersion`). The `BuildTag` version needs to be updated. Look at this example [pull-request](https://github.com/SUSE/helm-charts/pull/5) bumping the version.
 
 Reach out to the BCI team (Dirk Mueller or `#proj-bci` slack channel) to trigger the release of the helm-chart.
+
+## Ansible Playbook Packaging
+
+### ansible-rmt-server subpackage
+
+* Package: `ansible-rmt-server` (noarch, SLES/Leap 16+ only)
+* Install path: `/usr/share/ansible/rmt/`
+* Automatically included in tarball via `make dist`
+
+Version conditionals in spec:
+```spec
+%if (0%{?sle_version} >= 160000) || (0%{?is_opensuse} && 0%{?suse_version} >= 1600)
+```
+
+Installation:
+```bash
+zypper install ansible-rmt-server
+cd /usr/share/ansible/rmt
+ansible-galaxy collection install -r requirements.yml
+
+# Edit group_vars/all.yml to configure SCC credentials
+# Optionally override rmt_repo_url for different RMT package repository
+
+ansible-playbook site.yml
+```

@@ -32,6 +32,16 @@ Before you submit a pull request, it's recommended to submit an issue first to g
 | `WIP` | This is a work in progress and should not be merged. |
 | `depfu` | Automated pull requests by depfu to upgrade RMT's dependencies. |
 
+## Ansible Playbook Contributions
+
+For changes to `ansible/`:
+
+* Follow Ansible best practices (YAML, idempotent tasks, meaningful names)
+* Test before submitting: `make lint && make test && make check-ansible`
+* Add tests for new features in `tests/test_playbook.yml`
+
+---
+
 Thanks,
 
 The RMT Team
