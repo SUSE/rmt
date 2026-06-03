@@ -5,6 +5,7 @@ galaxy_info:
   company: SUSE
   license: MIT
   # Requires ansible-core 2.18 (provided by Ansible >= 11 in SLE 16.x)
+  # Note: Keep this in sync with min_ansible_version in tests/test_playbook.yml
   min_ansible_version: "2.18"
 
   platforms:

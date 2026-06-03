@@ -9,14 +9,17 @@
     rmt:
       RMT_ORGANIZATION_USERNAME: "test-user"
       RMT_ORGANIZATION_PASSWORD: "test-pass"
+    # Minimum required versions
+    min_ansible_version: "2.18"
+    min_ansible_package_version: "11"
 
   tasks:
     - name: Verify Ansible version
       ansible.builtin.assert:
         that:
           # Requires ansible-core 2.18+ (Ansible 11+ in SLE 16.0/16.1)
-          - ansible_version.full is version('2.18', '>=')
-        fail_msg: "Ansible version must be 2.18 or higher (Ansible >= 11 in SLE 16.x)"
+          - ansible_version.full is version(min_ansible_version, '>=')
+        fail_msg: "Ansible version must be {{ min_ansible_version }} or higher (Ansible >= {{ min_ansible_package_version }} in SLE 16.x)"
         success_msg: "Ansible version check passed"
 
     - name: Check if community.mysql collection is installed
