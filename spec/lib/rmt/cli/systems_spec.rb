@@ -229,7 +229,7 @@ RSpec.describe RMT::CLI::Systems do
         expect($stdin).to receive(:gets).and_return('y')
         expect { described_class.start(argv) }.to(
           output('Do you want to delete all the matching systems? (y/n) ').to_stdout.and \
-          output("No systems to be purged on this RMT instance. All systems have contacted RMT after #{bf}.\n").to_stderr
+            output("No systems to be purged on this RMT instance. All systems have contacted RMT after #{bf}.\n").to_stderr
         )
       end
     end
@@ -251,7 +251,7 @@ RSpec.describe RMT::CLI::Systems do
 
     context 'there are systems to be purged no verbose' do
       let!(:s1) { create :system, :with_activated_product, last_seen_at: 2.months.ago }
-      let!(:s2) { create :system, :with_activated_product, last_seen_at: 4.months.ago }
+      let!(:s2) { create :system, :with_activated_product, last_seen_at: 4.months.ago } # rubocop:disable RSpec/LetSetup
       let(:relation_double) { instance_double(ActiveRecord::Relation) }
 
       it 'removes systems by following the default definition of inactive' do
@@ -298,45 +298,45 @@ RSpec.describe RMT::CLI::Systems do
     context 'there are systems to be purged verbose' do
       let!(:product_a) { create :product, :with_mirrored_repositories, name: 'product-foo' }
       let!(:product_b) { create :product, :with_mirrored_repositories, name: 'product-bar' }
-      let!(:s1) { create :system, :with_activated_product, hostname: "foo-bars", last_seen_at: 2.months.ago, product: product_a }
-      let!(:s2) { create :system, :with_activated_product, hostname: "Hostname", last_seen_at: 4.months.ago, product: product_b }
+      let!(:s1) { create :system, :with_activated_product, hostname: 'foo-bars', last_seen_at: 2.months.ago, product: product_a }
+      let!(:s2) { create :system, :with_activated_product, hostname: 'Hostname', last_seen_at: 4.months.ago, product: product_b }
       let!(:single_row) do
         if s2.activations.first.product.product_string.length < 23
           <<~TEXT
-          +---------+----------+-------------------------+-------------------------+------------------------+
-          | Login   | Hostname | Registration time       | Last seen               | Products               |
-          +---------+----------+-------------------------+-------------------------+------------------------+
-          | #{s2.login} | #{s2.hostname} | #{s2.registered_at} | #{s2.last_seen_at} | #{s2.activations.first.product.product_string} |
-          +---------+----------+-------------------------+-------------------------+------------------------+
-        TEXT
+            +---------+----------+-------------------------+-------------------------+------------------------+
+            | Login   | Hostname | Registration time       | Last seen               | Products               |
+            +---------+----------+-------------------------+-------------------------+------------------------+
+            | #{s2.login} | #{s2.hostname} | #{s2.registered_at} | #{s2.last_seen_at} | #{s2.activations.first.product.product_string} |
+            +---------+----------+-------------------------+-------------------------+------------------------+
+          TEXT
         elsif s2.activations.first.product.product_string.length == 23
           <<~TEXT
-          +---------+----------+-------------------------+-------------------------+-------------------------+
-          | Login   | Hostname | Registration time       | Last seen               | Products                |
-          +---------+----------+-------------------------+-------------------------+-------------------------+
-          | #{s2.login} | #{s2.hostname} | #{s2.registered_at} | #{s2.last_seen_at} | #{s2.activations.first.product.product_string} |
-          +---------+----------+-------------------------+-------------------------+-------------------------+
+            +---------+----------+-------------------------+-------------------------+-------------------------+
+            | Login   | Hostname | Registration time       | Last seen               | Products                |
+            +---------+----------+-------------------------+-------------------------+-------------------------+
+            | #{s2.login} | #{s2.hostname} | #{s2.registered_at} | #{s2.last_seen_at} | #{s2.activations.first.product.product_string} |
+            +---------+----------+-------------------------+-------------------------+-------------------------+
           TEXT
         end
       end
       let!(:multiple_rows) do
         if s2.activations.first.product.product_string.length < 23
           <<~TEXT
-          +---------+----------+-------------------------+-------------------------+------------------------+
-          | Login   | Hostname | Registration time       | Last seen               | Products               |
-          +---------+----------+-------------------------+-------------------------+------------------------+
-          | #{s2.login} | #{s2.hostname} | #{s2.registered_at} | #{s2.last_seen_at} | #{s2.activations.first.product.product_string} |
-          | #{s1.login} | #{s1.hostname} | #{s1.registered_at} | #{s1.last_seen_at} | #{s1.activations.first.product.product_string} |
-          +---------+----------+-------------------------+-------------------------+------------------------+
-        TEXT
+            +---------+----------+-------------------------+-------------------------+------------------------+
+            | Login   | Hostname | Registration time       | Last seen               | Products               |
+            +---------+----------+-------------------------+-------------------------+------------------------+
+            | #{s2.login} | #{s2.hostname} | #{s2.registered_at} | #{s2.last_seen_at} | #{s2.activations.first.product.product_string} |
+            | #{s1.login} | #{s1.hostname} | #{s1.registered_at} | #{s1.last_seen_at} | #{s1.activations.first.product.product_string} |
+            +---------+----------+-------------------------+-------------------------+------------------------+
+          TEXT
         elsif s2.activations.first.product.product_string.length == 23
           <<~TEXT
-          +---------+----------+-------------------------+-------------------------+-------------------------+
-          | Login   | Hostname | Registration time       | Last seen               | Products                |
-          +---------+----------+-------------------------+-------------------------+-------------------------+
-          | #{s2.login} | #{s2.hostname} | #{s2.registered_at} | #{s2.last_seen_at} | #{s2.activations.first.product.product_string} |
-          | #{s1.login} | #{s1.hostname} | #{s1.registered_at} | #{s1.last_seen_at} | #{s1.activations.first.product.product_string} |
-          +---------+----------+-------------------------+-------------------------+-------------------------+
+            +---------+----------+-------------------------+-------------------------+-------------------------+
+            | Login   | Hostname | Registration time       | Last seen               | Products                |
+            +---------+----------+-------------------------+-------------------------+-------------------------+
+            | #{s2.login} | #{s2.hostname} | #{s2.registered_at} | #{s2.last_seen_at} | #{s2.activations.first.product.product_string} |
+            | #{s1.login} | #{s1.hostname} | #{s1.registered_at} | #{s1.last_seen_at} | #{s1.activations.first.product.product_string} |
+            +---------+----------+-------------------------+-------------------------+-------------------------+
           TEXT
         end
       end
@@ -412,7 +412,7 @@ RSpec.describe RMT::CLI::Systems do
 
     context 'purge confirmations' do
       let!(:s1) { create :system, :with_activated_product, last_seen_at: 2.months.ago }
-      let!(:s2) { create :system, :with_activated_product, last_seen_at: 4.months.ago }
+      let!(:s2) { create :system, :with_activated_product, last_seen_at: 4.months.ago } # rubocop:disable RSpec/LetSetup
       let(:confirmation) { 'Do you want to delete all the matching systems? (y/n) ' }
       let(:purge) { "Purged all systems that have not contacted this RMT since #{Time.zone.today - 3.months}." }
 
@@ -447,7 +447,7 @@ RSpec.describe RMT::CLI::Systems do
 
         expect { described_class.start(['purge']) }
           .to output(/Please answer/).to_stderr.and \
-            output("Do you want to delete all the matching systems? (y/n) Do you want to delete all the matching systems? (y/n) ").to_stdout
+            output('Do you want to delete all the matching systems? (y/n) Do you want to delete all the matching systems? (y/n) ').to_stdout
 
         expect(System.count).to eq 2
       end

@@ -117,13 +117,11 @@ class RMT::CLI::Systems < RMT::CLI::Base
       attempts += 1
       System.where('last_seen_at < ?', before).in_batches(of: DELETE_BATCH_SIZE) do |batch|
         n_systems_destroyed += batch.length
-        # pp batch.class
         batch.destroy_all
         puts "#{n_systems_destroyed} systems destroyed"
       end
       n_systems_destroyed
     rescue StandardError => e
-      # pp 'aaa'
       if attempts < 3
         puts "Error while purging systems: #{e.message}. Retrying in 5 seconds (#{attempts}/3)"
         sleep 5
