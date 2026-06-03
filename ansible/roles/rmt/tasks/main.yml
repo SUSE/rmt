@@ -65,7 +65,7 @@
   notify: Reload nginx
 
 - name: Provision RMT Upstream section
-  ansible.builtin.template:
+  ansible.builtin.copy:
     src: rmt_upstreams.conf
     dest: /etc/nginx/vhosts.d/rmt_upstreams.conf
     mode: "0644"

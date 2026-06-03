@@ -4,7 +4,8 @@ RUN zypper --non-interactive install --no-recommends ruby3.4 ruby3.4-devel
 
 RUN zypper --non-interactive install libffi-devel libmysqlclient-devel libxml2-devel \
                         libxslt-devel rpmbuild systemd gzip tar bzip2 nodejs sqlite-devel \
-                        make chrpath fdupes gcc libcurl-devel libyaml-devel
+                        make chrpath fdupes gcc libcurl-devel libyaml-devel \
+                        ansible-core python3-PyMySQL
 
 WORKDIR /srv/www/rmt/
 

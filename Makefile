@@ -40,9 +40,9 @@ help: ## Show this help message
 # Testing & Validation
 # =============================================================================
 
-ansible-test: ## Run all tests (Ansible playbook tests)
-	@echo "==> Running Ansible playbook tests..."
-	cd ansible && ansible-playbook tests/test_playbook.yml
+ansible-test: build ## Run Ansible tests in SLE 16.x container
+	@echo "==> Running Ansible playbook tests in SLE 16.x container..."
+	docker compose run --rm rmt bash -c "cd /srv/www/rmt/ansible && ansible-playbook tests/test_playbook.yml"
 	@echo "==> All tests passed!"
 
 ansible-lint: ## Lint Ansible playbooks and roles

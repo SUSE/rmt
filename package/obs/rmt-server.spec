@@ -122,6 +122,8 @@ required for public cloud environments.
 Summary:        Ansible playbook for RMT deployment
 Group:          Development/Tools/Other
 BuildArch:      noarch
+BuildRequires:  ansible-core >= 11
+BuildRequires:  python3-PyMySQL
 Requires:       ansible-core >= 11
 Requires:       python3-PyMySQL
 Recommends:     rmt-server = %version

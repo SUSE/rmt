@@ -4,6 +4,7 @@ galaxy_info:
   description: Ansible role to install and configure SUSE RMT (Repository Mirroring Tool) server
   company: SUSE
   license: MIT
+  # Requires ansible-core 2.18 (provided by Ansible >= 11 in SLE 16.x)
   min_ansible_version: "2.18"
 
   platforms:

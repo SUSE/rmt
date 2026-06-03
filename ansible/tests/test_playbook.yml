@@ -14,8 +14,9 @@
     - name: Verify Ansible version
       ansible.builtin.assert:
         that:
+          # Requires ansible-core 2.18+ (Ansible 11+ in SLE 16.0/16.1)
           - ansible_version.full is version('2.18', '>=')
-        fail_msg: "Ansible version must be 2.18 or higher"
+        fail_msg: "Ansible version must be 2.18 or higher (Ansible >= 11 in SLE 16.x)"
         success_msg: "Ansible version check passed"
 
     - name: Check if ansible.mysql collection is installed
