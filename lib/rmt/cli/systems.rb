@@ -88,27 +88,34 @@ class RMT::CLI::Systems < RMT::CLI::Base
   PURGE
   def purge
     ask, before, verbose = purge_options
+    systems, fetch_ok = verbose ? get_all_matches(before) : [[], true]
+
     if verbose
-      systems, fetch_ok = get_all_matches(before)
-      if systems.empty?
-        warn _("No systems to be purged on this RMT instance. All systems have contacted RMT after #{before}.") if fetch_ok
-        return
-      end
+      return handle_empty_systems(before, fetch_ok) if systems.empty?
+
       print_rows(systems)
     end
     return if ask && !yesno(_('Do you want to delete all the matching systems?'))
 
-    delete_ok = verbose ? delete_systems(systems) : delete_all_matching_systems(before)
-    if delete_ok.present? && delete_ok.zero?
-      warn _("No systems to be purged on this RMT instance. All systems have contacted RMT after #{before}.")
-      return
-    end
-    message = delete_ok ? 'all' : 'some'
-    puts "Purged #{message} systems that have not contacted this RMT since #{before}."
-    puts "Systems that have not contacted this RMT since #{before} may still be in this RMT" unless fetch_ok.presence || delete_ok.presence
+    delete_systems(systems, before, verbose, fetch_ok)
   end
 
   protected
+
+  def handle_empty_systems(before, fetch_ok)
+    return unless fetch_ok
+
+    warn _("No systems to be purged on this RMT instance. All systems have contacted RMT after #{before}.")
+  end
+
+  def delete_systems(systems, before, verbose, fetch_ok)
+    n_deleted, all = verbose ? delete_systems_by_id(systems) : delete_all_matching_systems(before)
+    return handle_empty_systems(before, true) if n_deleted.zero?
+
+    status = all ? 'all' : 'some'
+    puts "Purged #{status} systems that have not contacted this RMT since #{before}."
+    puts "Systems that have not contacted this RMT since #{before} may still be in this RMT" unless fetch_ok || all
+  end
 
   def delete_all_matching_systems(before)
     n_systems_destroyed = 0
@@ -120,7 +127,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
         batch.destroy_all
         puts "#{n_systems_destroyed} systems destroyed"
       end
-      n_systems_destroyed
+      [n_systems_destroyed, true]
     rescue StandardError => e
       if attempts < 3
         puts "Error while purging systems: #{e.message}. Retrying in 5 seconds (#{attempts}/3)"
@@ -128,6 +135,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
         retry
       end
       puts "Could not delete all systems last seen before #{before}: #{e.message}"
+      [n_systems_destroyed, false]
     end
   end
 
@@ -143,7 +151,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
     [systems_matched, false]
   end
 
-  def delete_systems(systems)
+  def delete_systems_by_id(systems)
     attempts = 0
     deleted_systems = []
     begin
@@ -154,7 +162,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
         n_deleted = (systems.length - deleted_systems.length > 0) ? (systems - deleted_systems).length : systems.length
         puts "#{n_deleted} systems to be deleted"
       end
-      deleted_systems.length
+      [deleted_systems.length, true]
     rescue StandardError => e
       systems -= deleted_systems
       if attempts < 3
@@ -162,8 +170,10 @@ class RMT::CLI::Systems < RMT::CLI::Base
         sleep 5
         retry
       else
-        puts "Error while purging the systems: #{e.message}, #{systems.length} systems could not be removed"
+        n_deleted = systems.length - deleted_systems.length
+        puts "Error while purging the systems: #{e.message}, all #{systems.length} systems could not be removed, #{n_deleted} systems still in the database"
       end
+      [n_deleted, false]
     end
   end
 

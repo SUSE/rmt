@@ -283,13 +283,13 @@ RSpec.describe RMT::CLI::Systems do
         allow(relation_double).to receive(:in_batches).and_raise('FOO')
         argv = ['purge', '--no-confirmation', '--before', Time.zone.now.strftime('%F')]
         expect { described_class.start(argv) }
-          .to output(<<~TEXT).to_stdout
+          .to output(<<~STDOUT).to_stdout.and output(<<~STDERR).to_stderr
             Error while purging systems: FOO. Retrying in 5 seconds (1/3)
             Error while purging systems: FOO. Retrying in 5 seconds (2/3)
             Could not delete all systems last seen before #{Time.zone.today}: FOO
-            Purged some systems that have not contacted this RMT since #{Time.zone.today}.
-            Systems that have not contacted this RMT since #{Time.zone.today} may still be in this RMT
-          TEXT
+          STDOUT
+            No systems to be purged on this RMT instance. All systems have contacted RMT after 2026-06-04.
+          STDERR
 
         expect(System.count).to eq 2
       end
@@ -384,6 +384,7 @@ RSpec.describe RMT::CLI::Systems do
         expect(System.count).to eq 2
       end
 
+      # rubocop:disable RSPEC/ExampleLength
       it 'retry to remove systems if there is an error' do
         expect(System.count).to eq 2
 
@@ -402,12 +403,13 @@ RSpec.describe RMT::CLI::Systems do
             2 systems last seen before #{Time.zone.today}
             #{multiple_rows}Error while purging systems: BAR. Attempt 1/3, retrying in 5 seconds
             Error while purging systems: BAR. Attempt 2/3, retrying in 5 seconds
-            Error while purging the systems: BAR, 2 systems could not be removed
+            Error while purging the systems: BAR, all 2 systems could not be removed, 2 systems still in the database
             Purged some systems that have not contacted this RMT since #{Time.zone.today}.
           TEXT
 
         expect(System.count).to eq 2
       end
+      # rubocop:enable RSPEC/ExampleLength
     end
 
     context 'purge confirmations' do
