@@ -40,9 +40,8 @@ help: ## Show this help message
 # Testing & Validation
 # =============================================================================
 
-ansible-test: build ## Run Ansible tests in container (installs collections via ansible-galaxy)
+ansible-test: build ## Run Ansible tests in container
 	@echo "==> Running Ansible playbook tests in openSUSE Leap 16.0 container..."
-	@echo "==> Note: Collections installed via ansible-galaxy (not pre-packaged in Leap)"
 	docker compose run --rm rmt bash -c "cd /srv/www/rmt/ansible && ansible-playbook tests/test_playbook.yml"
 	@echo "==> All tests passed!"
 
@@ -58,10 +57,8 @@ ansible-lint: ## Lint Ansible playbooks and roles (requires local ansible instal
 # Deployment
 # =============================================================================
 
-ansible-deploy: ## Deploy RMT on localhost (SLES 16.x has collections pre-installed)
+ansible-deploy: ## Deploy RMT on localhost
 	@echo "==> Deploying RMT via Ansible..."
-	@echo "==> Note: On SLES 16.x systems, collections are pre-installed"
-	@echo "==> On other systems, run: ansible-galaxy collection install -r ansible/requirements.yml"
 	cd ansible && ansible-playbook site.yml
 
 ansible-check: ## Dry run Ansible deployment (check mode)

@@ -5,7 +5,7 @@ RUN zypper --non-interactive install --no-recommends ruby3.4 ruby3.4-devel
 RUN zypper --non-interactive install libffi-devel libmysqlclient-devel libxml2-devel \
                         libxslt-devel rpmbuild systemd gzip tar bzip2 nodejs sqlite-devel \
                         make chrpath fdupes gcc libcurl-devel libyaml-devel \
-                        ansible-core python3-PyMySQL
+                        ansible python3-PyMySQL
 
 WORKDIR /srv/www/rmt/
 
@@ -14,10 +14,6 @@ COPY Gemfile Gemfile.lock /srv/www/rmt/
 RUN bundle install
 
 COPY . /srv/www/rmt/
-
-# Install Ansible collections for testing
-# Note: On SLES 16.x these are pre-installed, but openSUSE Leap 16.0 requires manual installation
-RUN ansible-galaxy collection install -r /srv/www/rmt/ansible/requirements.yml
 
 RUN mkdir -p /srv/www/rmt/public/repo
 

@@ -9,9 +9,15 @@
     rmt:
       RMT_ORGANIZATION_USERNAME: "test-user"
       RMT_ORGANIZATION_PASSWORD: "test-pass"
-    # Minimum required versions
+    # Minimum version requirements for ansible-core and ansible
     min_ansible_version: "2.18"
     min_ansible_package_version: "11"
+    # Minimum version requirements for dependent collections
+    required_collections:
+      "ansible.posix": "1.5.0"
+      "community.crypto": "2.0.0"
+      "community.general": "7.0.0"
+      "community.mysql": "3.5.0"
 
   tasks:
     - name: Verify Ansible version
@@ -19,50 +25,77 @@
         that:
           # Requires ansible-core 2.18+ (Ansible 11+ in SLE 16.0/16.1)
           - ansible_version.full is version(min_ansible_version, '>=')
-        fail_msg: "Ansible version must be {{ min_ansible_version }} or higher (Ansible >= {{ min_ansible_package_version }} in SLE 16.x)"
+        fail_msg: >-
+          Ansible version must be {{ min_ansible_version }} or higher
+          (Ansible >= {{ min_ansible_package_version }} in SLE 16.x)
         success_msg: "Ansible version check passed"
 
-    - name: Check if community.mysql collection is installed
-      ansible.builtin.command: ansible-galaxy collection list community.mysql
-      register: mysql_collection
+    - name: Retrieve current collection list
+      ansible.builtin.command: >-
+        ansible-galaxy collection list --format=json
+      register: collection_list_result
       changed_when: false
-      failed_when: false
 
-    - name: Check if community.crypto collection is installed
-      ansible.builtin.command: ansible-galaxy collection list community.crypto
-      register: crypto_collection
-      changed_when: false
-      failed_when: false
+      # The collection list output is a dict of dicts of dicts; top-level
+      # entries are for each directory in the collections search path,
+      # with an entry for each collection in that directory that tracks
+      # the version of that collection, e.g.
+      # {
+      #   "/path/to/collections": {
+      #     "some.collection": {
+      #       "version": "1.0.0"
+      #     },
+      #     "another.collection": {
+      #       "version": "2.0.0"
+      #     },
+      #     ...
+      #   },
+      #   "/path/to/more/collections": {
+      #     ...
+      #     "yet.another.collection": {
+      #       "version": "3.0.0"
+      #     }
+      #   }
+      # }
+    - name: Extract found collection index from collection list output
+      ansible.builtin.set_fact:
+        # To create a dict mapping each collection to the first index
+        # entry found for it, first we extract the set of collections
+        # in each directory's entry as a list, and join the resulting
+        # lists together.
+        # Next we reverse the order of the joined list so that the first
+        # occurrence becomes the last, at which point we use the combine
+        # filter to merge the reversed list into a single dictionary,
+        # where the last occurrence's entry is merged over any previous
+        # occurrence.
+        # This matches the search algorithm that Ansible uses to find
+        # collections, and is reliable for Ansible running on Python
+        # 3.6 or later, where dictionary insertion order is preserved.
+        collection_index: >-
+          {{ _imported_index.values() | list | reverse | combine }}
+      vars:
+        # Import the JSON representation of the collection list output
+        # as a dict of dict of dicts.
+        _imported_index: "{{ collection_list_result.stdout | from_json }}"
 
-    - name: Check if ansible.posix collection is installed
-      ansible.builtin.command: ansible-galaxy collection list ansible.posix
-      register: posix_collection
-      changed_when: false
-      failed_when: false
-
-    - name: Check if community.general collection is installed
-      ansible.builtin.command: ansible-galaxy collection list community.general
-      register: general_collection
-      changed_when: false
-      failed_when: false
-
-    - name: Display collection check results
-      ansible.builtin.debug:
-        msg:
-          - "community.mysql: {{ 'INSTALLED' if mysql_collection.rc == 0 and mysql_collection.stdout != '' else 'MISSING' }}"
-          - "community.crypto: {{ 'INSTALLED' if crypto_collection.rc == 0 and crypto_collection.stdout != '' else 'MISSING' }}"
-          - "ansible.posix: {{ 'INSTALLED' if posix_collection.rc == 0 and posix_collection.stdout != '' else 'MISSING' }}"
-          - "community.general: {{ 'INSTALLED' if general_collection.rc == 0 and general_collection.stdout != '' else 'MISSING' }}"
-
-    - name: Verify all required collections are installed
+    - name: Ensure required collections are available with viable versions
       ansible.builtin.assert:
         that:
-          - mysql_collection.rc == 0 and mysql_collection.stdout != ''
-          - crypto_collection.rc == 0 and crypto_collection.stdout != ''
-          - posix_collection.rc == 0 and posix_collection.stdout != ''
-          - general_collection.rc == 0 and general_collection.stdout != ''
-        fail_msg: "Missing required collections. Install with: ansible-galaxy collection install -r requirements.yml"
-        success_msg: "All required collections are installed"
+          - item.key in collection_index
+          - collection_index[item.key].version is version(item.value, '>=')
+        fail_msg: >-
+          Required collection {{ item.key }} needs to be version >=
+          {{ item.value }}, found to be {{ _found_entry.version }}
+        success_msg: >-
+          Required collection {{ item.key }} found with version
+          {{ _found_entry.version }} >= {{ item.value }}
+      loop: "{{ required_collections | dict2items }}"
+      loop_control:
+        label: "{{ item.key }}"
+      vars:
+        # retrieve index entry with useful default if not found
+        _found_entry: >-
+          {{ collection_index.get(item.key, {'version': 'NOT FOUND'}) }}
 
     - name: Verify RMT role directory structure
       ansible.builtin.stat:
