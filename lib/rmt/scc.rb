@@ -6,6 +6,8 @@ class RMT::SCC
   class CredentialsError < RuntimeError; end
   class DataFilesError < RuntimeError; end
 
+  IS_RANCHER_NEEDLE = /RANCHER/.freeze
+
   def initialize(options = {})
     @logger = RMT::Logger.new(STDOUT)
     debug = options[:debug] || Settings&.log_level&.cli == 'debug'
@@ -177,6 +179,16 @@ class RMT::SCC
 
       product = get_product(item[:id])
       product.attributes = item.select { |k, _| product.attributes.keys.member?(k.to_s) }
+
+      # NOTE: Rancher registers using the triplet: rancher/2.13.1/unknown
+      # The API returns null for architecture 'unknown' which is set for all rancher products.
+      # The API can not simply change, MLM depends on it. That is why it needs to be specially
+      # handled in RMT to circumvent the API short coming.
+      if product.product_class.present? && product.product_class.match(IS_RANCHER_NEEDLE)
+        @logger.debug _('Setting architecture for %{product} to `unknown`') % { product: product.product_string }
+        product.arch = :unknown
+      end
+
       product.save!
 
       create_service(item, product)
@@ -239,5 +251,4 @@ class RMT::SCC
   def repository_service
     @repository_service ||= RepositoryService.new
   end
-
 end
