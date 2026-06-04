@@ -384,7 +384,6 @@ RSpec.describe RMT::CLI::Systems do
         expect(System.count).to eq 2
       end
 
-      # rubocop:disable RSPEC/ExampleLength
       it 'retry to remove systems if there is an error' do
         expect(System.count).to eq 2
 
@@ -409,7 +408,6 @@ RSpec.describe RMT::CLI::Systems do
 
         expect(System.count).to eq 2
       end
-      # rubocop:enable RSPEC/ExampleLength
     end
 
     context 'purge confirmations' do
