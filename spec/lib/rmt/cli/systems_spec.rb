@@ -445,7 +445,10 @@ RSpec.describe RMT::CLI::Systems do
 
         expect { described_class.start(['purge', '-q']) }
           .to output(/Please answer/).to_stderr.and \
-            output("Do you want to delete all the matching systems that contacted this RMT before #{Time.zone.today - 3.months}? (y/n) Do you want to delete all the matching systems that contacted this RMT before #{Time.zone.today - 3.months}? (y/n) ").to_stdout
+            output(
+              "Do you want to delete all the matching systems that contacted this RMT before #{Time.zone.today - 3.months}? (y/n) " \
+                "Do you want to delete all the matching systems that contacted this RMT before #{Time.zone.today - 3.months}? (y/n) "
+            ).to_stdout
 
         expect(System.count).to eq 2
       end
