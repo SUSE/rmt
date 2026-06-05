@@ -74,7 +74,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
   desc 'purge', _('Removes inactive systems')
   option :before, aliases: '-b', type: :string, desc: _('Remove systems before the given date (format: "<year>-<month>-<day>")')
   option :confirmation, type: :boolean, default: true, desc: _('Ask for confirmation or do not ask for confirmation and require no user interaction')
-  option :quiet, aliases: '-q', type: :boolean, default: false, desc: _('do not show system details before deletion')
+  option :quiet, aliases: '-q', type: :boolean, default: false, desc: _('Do not show system details before deletion')
   long_desc <<~PURGE
     #{_('Removes old systems and their activations if they are inactive.')}
 
