@@ -24,8 +24,9 @@
 %define rmt_user     _rmt
 %define rmt_group    nginx
 
-# SLE 15 SP7 and newer (including 16.0/Factory) support Ruby 3.4
-%if 0%{?sle_version} && 0%{?sle_version} == 150700
+# SLE 15 SP7 and newer, SLES/Leap 16+, and Factory/Tumbleweed support Ruby 3.4
+# (Factory/Tumbleweed get ruby3.4 from devel:languages:ruby repository)
+%if (0%{?sle_version} >= 150700) || (0%{?suse_version} >= 1600) || (0%{?suse_version} == 1699)
 %define rb_build_versions     ruby34
 %define rb_build_ruby_abis    ruby:3.4.0
 %define ruby_version          ruby3.4
@@ -117,13 +118,17 @@ This package extends the basic RMT functionality with capabilities
 required for public cloud environments.
 
 # Ansible subpackage only for SLES/Leap 16+
-%if (0%{?sle_version} >= 160000) || (0%{?is_opensuse} && 0%{?suse_version} >= 1600)
+%if 0%{?suse_version} >= 1600
 %package -n ansible-rmt-server
 Summary:        Ansible playbook for RMT deployment
 Group:          Development/Tools/Other
 BuildArch:      noarch
+# Depend upon ansible rather than ansible-core to ensure that standard
+# ansible collections are installed.
 Requires:       ansible >= 11
-Requires:       python3-PyMySQL
+# Install the Python3 PyMySQL module to support using community.mysql or
+# ansible.mysql collections in Ansible playbooks.
+Requires:       python3dist(pymysql)
 Recommends:     rmt-server = %version
 
 %description -n ansible-rmt-server
@@ -227,7 +232,7 @@ install -D -m 644 package/files/nginx-pubcloud/auth-handler.conf %{buildroot}%{_
 install -D -m 644 package/files/nginx-pubcloud/auth-location.conf %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
 
 # ansible playbook (SLES/Leap 16+ only)
-%if (0%{?sle_version} >= 160000) || (0%{?is_opensuse} && 0%{?suse_version} >= 1600)
+%if 0%{?suse_version} >= 1600
 mkdir -p %{buildroot}%{_datadir}/ansible/rmt
 cp -r ansible/* %{buildroot}%{_datadir}/ansible/rmt/
 %endif
@@ -290,7 +295,7 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/mysql2-*/lib/mysql2/
 chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/mysql2/mysql2.so
 
 %check
-%if (0%{?sle_version} >= 160000) || (0%{?is_opensuse} && 0%{?suse_version} >= 1600)
+%if 0%{?suse_version} >= 1600
 if command -v ansible-playbook >/dev/null 2>&1; then
   cd ansible
   ansible-playbook tests/test_playbook.yml
@@ -397,7 +402,7 @@ fi
 %config(noreplace) %{_unitdir}/rmt-server-regsharing.timer
 %config(noreplace) %{_unitdir}/rmt-server-trim-cache.timer
 
-%if (0%{?sle_version} >= 160000) || (0%{?is_opensuse} && 0%{?suse_version} >= 1600)
+%if 0%{?suse_version} >= 1600
 %files -n ansible-rmt-server
 %dir %{_datadir}/ansible
 %{_datadir}/ansible/rmt
