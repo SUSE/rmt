@@ -345,11 +345,12 @@ RSpec.describe RMT::CLI::Systems do
       it 'removes systems by following the default definition of inactive' do
         expect(System.count).to eq 2
 
+        stub_const('RMT::CLI::Systems::DELETE_BATCH_SIZE', 1)
+
         expect { described_class.start(['purge', '--no-confirmation']) }
            .to output(<<~TEXT).to_stdout
              1 systems last seen before #{Time.zone.today - 3.months}
-             #{single_row}1 systems to be deleted
-             Purged all systems that have not contacted this RMT since #{Time.zone.today - 3.months}.
+             #{single_row}Purged all systems that have not contacted this RMT since #{Time.zone.today - 3.months}.
            TEXT
 
         expect(System.count).to eq 1
@@ -359,11 +360,13 @@ RSpec.describe RMT::CLI::Systems do
       it 'removes systems by the given date' do
         expect(System.count).to eq 2
 
+        stub_const('RMT::CLI::Systems::DELETE_BATCH_SIZE', 1)
         argv = ['purge', '--no-confirmation', '--before', Time.zone.now.strftime('%F')]
         expect { described_class.start(argv) }
           .to output(<<~TEXT).to_stdout
+            1 systems last seen before #{Time.zone.today}
             2 systems last seen before #{Time.zone.today}
-            #{multiple_rows}2 systems to be deleted
+            #{multiple_rows}1 systems to be deleted
             Purged all systems that have not contacted this RMT since #{Time.zone.today}.
           TEXT
         expect(System.count).to eq 0

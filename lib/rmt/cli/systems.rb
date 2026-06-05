@@ -161,8 +161,8 @@ class RMT::CLI::Systems < RMT::CLI::Base
       system_ids.each_slice(DELETE_BATCH_SIZE) do |sliced_systems_ids|
         System.where(id: sliced_systems_ids).in_batches(of: DELETE_BATCH_SIZE).destroy_all
         deleted_systems += sliced_systems_ids.length
-        n_deleted = (system_ids.length - deleted_systems > 0) ? (system_ids.length - deleted_systems) : system_ids.length
-        puts _("#{n_deleted} systems to be deleted")
+        n_deleted = system_ids.length - deleted_systems
+        puts _("#{n_deleted} systems to be deleted") unless n_deleted.zero?
       end
       [deleted_systems, true]
     rescue StandardError => e
