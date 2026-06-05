@@ -103,7 +103,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
   protected
 
   def handle_no_matching_systems(before, fetch_ok)
-    warn _("No systems to be purged on this RMT instance. All systems have contacted RMT after #{before}.") if fetch_ok
+    warn _('No systems to be purged on this RMT instance. All systems have contacted RMT after %{before}.') % { before: before } if fetch_ok
   end
 
   def delete_systems(system_ids, before, fetch_ok)
@@ -111,8 +111,8 @@ class RMT::CLI::Systems < RMT::CLI::Base
     return handle_no_matching_systems(before, true) if n_deleted.zero? && all
 
     status = all ? 'all' : 'some'
-    puts _("Purged #{status} systems that have not contacted this RMT since #{before}.") unless n_deleted.zero?
-    puts _("Systems that have not contacted this RMT since #{before} may still be in this RMT") unless fetch_ok || all
+    puts _('Purged %{status} systems that have not contacted this RMT since %{before}.') % { status: status, before: before } unless n_deleted.zero?
+    puts _('Systems that have not contacted this RMT since %{before} may still be in this RMT') % { before: before } unless fetch_ok || all
   end
 
   def delete_inactive_systems(before)
@@ -127,16 +127,18 @@ class RMT::CLI::Systems < RMT::CLI::Base
       # many systems before running the deletion
       System.where('last_seen_at < ?', before).in_batches(of: DELETE_BATCH_SIZE) do |batch|
         n_systems_destroyed += batch.destroy_all.length
-        puts _("#{n_systems_destroyed} systems destroyed")
+        puts _('%{n_systems_destroyed} systems destroyed') % { n_systems_destroyed: n_systems_destroyed }
       end
       [n_systems_destroyed, true]
     rescue StandardError => e
       if attempts < 3
-        puts _("Error while purging systems: #{e.class} #{e.message}. Retrying in 5 seconds (#{attempts}/3)")
+        puts _('Error while purging systems: %{error_class} %{e_message}. Retrying in 5 seconds (%{attempts}/3)') % {
+          error_class: e.class, e_message: e.message, attempts: attempts
+        }
         sleep 5
         retry
       end
-      puts _("Could not delete all systems last seen before #{before}: #{e.message}")
+      puts _('Could not delete all systems last seen before %{before}: %{message}') % { before: before, message: e.message }
       [n_systems_destroyed, false]
     end
   end
@@ -145,11 +147,11 @@ class RMT::CLI::Systems < RMT::CLI::Base
     system_ids_matched = []
     System.where('last_seen_at < ?', before).in_batches(of: DELETE_BATCH_SIZE, order: :desc) do |batch|
       system_ids_matched += batch.pluck(:id)
-      puts _("#{system_ids_matched.length} systems last seen before #{before}")
+      puts _('%{matched} systems last seen before %{before}') % { matched: system_ids_matched.length, before: before }
     end
     [system_ids_matched, true]
   rescue StandardError => e
-    puts _("Could not get all systems last seen before #{before}: #{e.class} #{e.message}")
+    puts _('Could not get all systems last seen before %{before}: %{error_class} %{message}') % { before: before, error_class: e.class, message: e.message }
     [system_ids_matched, false]
   end
 
@@ -162,18 +164,21 @@ class RMT::CLI::Systems < RMT::CLI::Base
         System.where(id: sliced_systems_ids).destroy_all
         deleted_systems += sliced_systems_ids.length
         remaining_systems = system_ids.length - deleted_systems
-        puts _("#{remaining_systems} systems to be deleted") unless remaining_systems.zero?
+        puts _('%{remaining_systems} systems to be deleted') % { remaining_systems: remaining_systems } unless remaining_systems.zero?
       end
       [deleted_systems, true]
     rescue StandardError => e
       if attempts < 3
-        puts _("Error while purging systems: #{e.class} #{e.message}. Attempt #{attempts}/3, retrying in 5 seconds")
+        puts _('Error while purging systems: %{error_class} %{message}. Attempt %{attempts}/3, retrying in 5 seconds') % {
+          error_class: e.class, message: e.message, attempts: attempts
+        }
         sleep 5
         retry
       else
         remaining_systems = system_ids.length - deleted_systems
-        puts _("Error while purging the systems: #{e.class} #{e.message}, " \
-          "all #{system_ids.length} systems could not be removed, #{remaining_systems} systems still in the database")
+        puts _(
+          'Error while purging the systems: %{error_class} %{message}, all %{all} systems could not be removed, %{remaining} systems still in the database'
+        ) % { error_class: e.class, message: e.message, all: system_ids.length, remaining: remaining_systems }
       end
       [deleted_systems, false]
     end
