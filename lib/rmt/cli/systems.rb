@@ -136,6 +136,9 @@ class RMT::CLI::Systems < RMT::CLI::Base
           error_class: e.class, e_message: e.message, attempts: attempts
         }
         sleep 5
+        # the reason to have a retry mechanism if because of
+        # the large amount of systems that may match the criteria
+        # which may cause a time out error in the database
         retry
       end
       puts _('Could not delete all systems last seen before %{before}: %{message}') % { before: before, message: e.message }
