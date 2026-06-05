@@ -74,7 +74,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
   desc 'purge', _('Removes inactive systems')
   option :before, aliases: '-b', type: :string, desc: _('Remove systems before the given date (format: "<year>-<month>-<day>")')
   option :confirmation, type: :boolean, default: true, desc: _('Ask for confirmation or do not ask for confirmation and require no user interaction')
-  option :verbose, aliases: '-v', type: :boolean, default: false, desc: _('Show system details')
+  option :quiet, aliases: '-q', type: :boolean, default: false, desc: _('do not show system details before deletion')
   long_desc <<~PURGE
     #{_('Removes old systems and their activations if they are inactive.')}
 
@@ -87,102 +87,104 @@ class RMT::CLI::Systems < RMT::CLI::Base
     $ rmt-cli systems purge --no-confirmation --before 2022-02-28
   PURGE
   def purge
-    ask, before, verbose = purge_options
-    systems, fetch_ok = verbose ? get_all_matches(before) : [[], true]
+    ask, before, quiet = purge_options
+    system_ids, fetch_ok = get_all_matches(before) unless quiet
 
-    if verbose
-      return handle_empty_systems(before, fetch_ok) if systems.empty?
+    unless quiet
+      return handle_no_matching_systems(before, fetch_ok) if system_ids.empty?
 
-      print_rows(systems)
+      print_rows(system_ids)
     end
-    return if ask && !yesno(_('Do you want to delete all the matching systems?'))
+    return if ask && !yesno(_("Do you want to delete all the matching systems that contacted this RMT before #{before}?"))
 
-    delete_systems(systems, before, verbose, fetch_ok)
+    delete_systems(system_ids, before, fetch_ok)
   end
 
   protected
 
-  def handle_empty_systems(before, fetch_ok)
-    return unless fetch_ok
-
-    warn _("No systems to be purged on this RMT instance. All systems have contacted RMT after #{before}.")
+  def handle_no_matching_systems(before, fetch_ok)
+    warn _("No systems to be purged on this RMT instance. All systems have contacted RMT after #{before}.") if fetch_ok
   end
 
-  def delete_systems(systems, before, verbose, fetch_ok)
-    n_deleted, all = verbose ? delete_systems_by_id(systems) : delete_all_matching_systems(before)
-    return handle_empty_systems(before, true) if n_deleted.zero?
+  def delete_systems(system_ids, before, fetch_ok)
+    n_deleted, all = system_ids.blank? ? delete_inactive_systems(before) : delete_systems_by_id(system_ids)
+    return handle_no_matching_systems(before, true) if n_deleted.zero? && all
 
     status = all ? 'all' : 'some'
-    puts "Purged #{status} systems that have not contacted this RMT since #{before}."
-    puts "Systems that have not contacted this RMT since #{before} may still be in this RMT" unless fetch_ok || all
+    puts _("Purged #{status} systems that have not contacted this RMT since #{before}.") unless n_deleted.zero?
+    puts _("Systems that have not contacted this RMT since #{before} may still be in this RMT") unless fetch_ok || all
   end
 
-  def delete_all_matching_systems(before)
+  def delete_inactive_systems(before)
     n_systems_destroyed = 0
     attempts = 0
     begin
       attempts += 1
+      # instead of getting all the systems to be shown
+      # before deletion, where we would know
+      # how many systems are going to be deleted
+      # query systems directly, thus we do not know how
+      # many systems before running the deletion
       System.where('last_seen_at < ?', before).in_batches(of: DELETE_BATCH_SIZE) do |batch|
-        n_systems_destroyed += batch.length
-        batch.destroy_all
-        puts "#{n_systems_destroyed} systems destroyed"
+        n_systems_destroyed += batch.destroy_all.length
+        puts _("#{n_systems_destroyed} systems destroyed")
       end
       [n_systems_destroyed, true]
     rescue StandardError => e
       if attempts < 3
-        puts "Error while purging systems: #{e.message}. Retrying in 5 seconds (#{attempts}/3)"
+        puts _("Error while purging systems: #{e.class} #{e.message}. Retrying in 5 seconds (#{attempts}/3)")
         sleep 5
         retry
       end
-      puts "Could not delete all systems last seen before #{before}: #{e.message}"
+      puts _("Could not delete all systems last seen before #{before}: #{e.message}")
       [n_systems_destroyed, false]
     end
   end
 
   def get_all_matches(before)
-    systems_matched = []
+    system_ids_matched = []
     System.where('last_seen_at < ?', before).in_batches(of: DELETE_BATCH_SIZE, order: :desc) do |batch|
-      systems_matched += batch.pluck(:id)
-      puts "#{systems_matched.length} systems last seen before #{before}"
+      system_ids_matched += batch.pluck(:id)
+      puts _("#{system_ids_matched.length} systems last seen before #{before}")
     end
-    [systems_matched, true]
+    [system_ids_matched, true]
   rescue StandardError => e
-    puts "Could not get all systems last seen before #{before}: #{e.message}"
-    [systems_matched, false]
+    puts _("Could not get all systems last seen before #{before}: #{e.class} #{e.message}")
+    [system_ids_matched, false]
   end
 
-  def delete_systems_by_id(systems)
+  def delete_systems_by_id(system_ids)
     attempts = 0
-    deleted_systems = []
+    deleted_systems = 0
     begin
       attempts += 1
-      systems.each_slice(DELETE_BATCH_SIZE) do |sliced_systems_ids|
+      system_ids.each_slice(DELETE_BATCH_SIZE) do |sliced_systems_ids|
         System.where(id: sliced_systems_ids).in_batches(of: DELETE_BATCH_SIZE).destroy_all
-        deleted_systems += sliced_systems_ids
-        n_deleted = (systems.length - deleted_systems.length > 0) ? (systems - deleted_systems).length : systems.length
-        puts "#{n_deleted} systems to be deleted"
+        deleted_systems += sliced_systems_ids.length
+        n_deleted = (system_ids.length - deleted_systems > 0) ? (system_ids.length - deleted_systems) : system_ids.length
+        puts _("#{n_deleted} systems to be deleted")
       end
-      [deleted_systems.length, true]
+      [deleted_systems, true]
     rescue StandardError => e
-      systems -= deleted_systems
       if attempts < 3
-        puts "Error while purging systems: #{e.message}. Attempt #{attempts}/3, retrying in 5 seconds"
+        puts _("Error while purging systems: #{e.class} #{e.message}. Attempt #{attempts}/3, retrying in 5 seconds")
         sleep 5
         retry
       else
-        n_deleted = systems.length - deleted_systems.length
-        puts "Error while purging the systems: #{e.message}, all #{systems.length} systems could not be removed, #{n_deleted} systems still in the database"
+        remaining_systems = system_ids.length - deleted_systems
+        puts _("Error while purging the systems: #{e.class} #{e.message}, " \
+          "all #{system_ids.length} systems could not be removed, #{remaining_systems} systems still in the database")
       end
-      [n_deleted, false]
+      [deleted_systems, false]
     end
   end
 
-  def print_rows(systems)
+  def print_rows(system_ids)
     column_widths = max_column_widths
     style = {}
-    systems_first = systems.first
-    systems_last = systems.last
-    systems.each_slice(VERBOSE_BATCH_SIZE) do |sliced_systems_ids|
+    systems_first = system_ids.first
+    systems_last = system_ids.last
+    system_ids.each_slice(VERBOSE_BATCH_SIZE) do |sliced_systems_ids|
       # avoid N + 1 queries when decorator gets the product from the activation
       sliced_systems = System.includes(:activations).where(id: sliced_systems_ids).order(id: :desc)
       decorator_systems = RMT::CLI::Decorators::SystemDecorator.new(sliced_systems)
@@ -227,7 +229,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
   def purge_options
     dt = options.before.to_s.to_datetime || INACTIVE.ago
 
-    [options.confirmation, dt.strftime('%F'), options.verbose]
+    [options.confirmation, dt.strftime('%F'), options.quiet]
   rescue ArgumentError
     raise RMT::CLI::Error.new(_("The given date does not follow the proper format. Ensure it follows this format '<year>-<month>-<day>'."))
   end

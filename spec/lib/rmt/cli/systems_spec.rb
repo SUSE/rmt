@@ -217,8 +217,8 @@ RSpec.describe RMT::CLI::Systems do
       end
     end
 
-    context 'no systems to be purged no verbose' do
-      let(:argv) { ['purge'] }
+    context 'no systems to be purged quiet' do
+      let(:argv) { ['purge', '-q'] }
 
       before do
         create :system, :with_activated_product, last_seen_at: 1.month.ago
@@ -228,14 +228,14 @@ RSpec.describe RMT::CLI::Systems do
         bf = RMT::CLI::Systems::INACTIVE.ago.strftime('%F')
         expect($stdin).to receive(:gets).and_return('y')
         expect { described_class.start(argv) }.to(
-          output('Do you want to delete all the matching systems? (y/n) ').to_stdout.and \
+          output("Do you want to delete all the matching systems that contacted this RMT before #{bf}? (y/n) ").to_stdout.and \
             output("No systems to be purged on this RMT instance. All systems have contacted RMT after #{bf}.\n").to_stderr
         )
       end
     end
 
-    context 'no systems to be purged verbose' do
-      let(:argv) { ['purge', '--verbose'] }
+    context 'no systems to be purged' do
+      let(:argv) { ['purge'] }
 
       before do
         create :system, :with_activated_product, last_seen_at: 1.month.ago
@@ -249,7 +249,7 @@ RSpec.describe RMT::CLI::Systems do
       end
     end
 
-    context 'there are systems to be purged no verbose' do
+    context 'there are systems to be purged quiet' do
       let!(:s1) { create :system, :with_activated_product, last_seen_at: 2.months.ago }
       let!(:s2) { create :system, :with_activated_product, last_seen_at: 4.months.ago } # rubocop:disable RSpec/LetSetup
       let(:relation_double) { instance_double(ActiveRecord::Relation) }
@@ -257,7 +257,7 @@ RSpec.describe RMT::CLI::Systems do
       it 'removes systems by following the default definition of inactive' do
         expect(System.count).to eq 2
 
-        expect { described_class.start(['purge', '--no-confirmation']) }
+        expect { described_class.start(['purge', '--no-confirmation', '-q']) }
           .to output(
             /1 systems destroyed.Purged all systems that have not contacted this RMT since #{Time.zone.today - 3.months}./m
         ).to_stdout
@@ -269,7 +269,7 @@ RSpec.describe RMT::CLI::Systems do
       it 'removes systems by the given date' do
         expect(System.count).to eq 2
 
-        argv = ['purge', '--no-confirmation', '--before', Time.zone.now.strftime('%F')]
+        argv = ['purge', '--no-confirmation', '-q', '--before', Time.zone.now.strftime('%F')]
         expect { described_class.start(argv) }
           .to output(/2 systems destroyed.Purged all systems that have not contacted this RMT since #{Time.zone.today}./m).to_stdout
 
@@ -281,21 +281,20 @@ RSpec.describe RMT::CLI::Systems do
 
         allow(System).to receive(:where).and_return(relation_double)
         allow(relation_double).to receive(:in_batches).and_raise('FOO')
-        argv = ['purge', '--no-confirmation', '--before', Time.zone.now.strftime('%F')]
+        argv = ['purge', '--no-confirmation', '-q', '--before', Time.zone.now.strftime('%F')]
         expect { described_class.start(argv) }
-          .to output(<<~STDOUT).to_stdout.and output(<<~STDERR).to_stderr
-            Error while purging systems: FOO. Retrying in 5 seconds (1/3)
-            Error while purging systems: FOO. Retrying in 5 seconds (2/3)
+          .to output(<<~STDOUT).to_stdout
+            Error while purging systems: RuntimeError FOO. Retrying in 5 seconds (1/3)
+            Error while purging systems: RuntimeError FOO. Retrying in 5 seconds (2/3)
             Could not delete all systems last seen before #{Time.zone.today}: FOO
+            Systems that have not contacted this RMT since #{Time.zone.today} may still be in this RMT
           STDOUT
-            No systems to be purged on this RMT instance. All systems have contacted RMT after 2026-06-04.
-          STDERR
 
         expect(System.count).to eq 2
       end
     end
 
-    context 'there are systems to be purged verbose' do
+    context 'there are systems to be purged' do
       let!(:product_a) { create :product, :with_mirrored_repositories, name: 'product-foo' }
       let!(:product_b) { create :product, :with_mirrored_repositories, name: 'product-bar' }
       let!(:s1) { create :system, :with_activated_product, hostname: 'foo-bars', last_seen_at: 2.months.ago, product: product_a }
@@ -346,7 +345,7 @@ RSpec.describe RMT::CLI::Systems do
       it 'removes systems by following the default definition of inactive' do
         expect(System.count).to eq 2
 
-        expect { described_class.start(['purge', '--no-confirmation', '--verbose']) }
+        expect { described_class.start(['purge', '--no-confirmation']) }
            .to output(<<~TEXT).to_stdout
              1 systems last seen before #{Time.zone.today - 3.months}
              #{single_row}1 systems to be deleted
@@ -360,7 +359,7 @@ RSpec.describe RMT::CLI::Systems do
       it 'removes systems by the given date' do
         expect(System.count).to eq 2
 
-        argv = ['purge', '--no-confirmation', '--before', Time.zone.now.strftime('%F'), '--verbose']
+        argv = ['purge', '--no-confirmation', '--before', Time.zone.now.strftime('%F')]
         expect { described_class.start(argv) }
           .to output(<<~TEXT).to_stdout
             2 systems last seen before #{Time.zone.today}
@@ -375,10 +374,10 @@ RSpec.describe RMT::CLI::Systems do
 
         allow(System).to receive(:where).and_return(query_relation_double)
         allow(query_relation_double).to receive(:in_batches).and_raise('FOO')
-        argv = ['purge', '--no-confirmation', '--before', Time.zone.now.strftime('%F'), '--verbose']
+        argv = ['purge', '--no-confirmation', '--before', Time.zone.now.strftime('%F')]
         expect { described_class.start(argv) }
           .to output(<<~TEXT).to_stdout
-            Could not get all systems last seen before #{Time.zone.today}: FOO
+            Could not get all systems last seen before #{Time.zone.today}: RuntimeError FOO
           TEXT
 
         expect(System.count).to eq 2
@@ -396,14 +395,13 @@ RSpec.describe RMT::CLI::Systems do
         end
         allow(query_relation_double).to receive(:in_batches).with(of: 500).and_return(mock_batch)
         allow(mock_batch).to receive(:destroy_all).and_raise('BAR')
-        argv = ['purge', '--no-confirmation', '--before', Time.zone.now.strftime('%F'), '--verbose']
+        argv = ['purge', '--no-confirmation', '--before', Time.zone.now.strftime('%F')]
         expect { described_class.start(argv) }
           .to output(<<~TEXT).to_stdout
             2 systems last seen before #{Time.zone.today}
-            #{multiple_rows}Error while purging systems: BAR. Attempt 1/3, retrying in 5 seconds
-            Error while purging systems: BAR. Attempt 2/3, retrying in 5 seconds
-            Error while purging the systems: BAR, all 2 systems could not be removed, 2 systems still in the database
-            Purged some systems that have not contacted this RMT since #{Time.zone.today}.
+            #{multiple_rows}Error while purging systems: RuntimeError BAR. Attempt 1/3, retrying in 5 seconds
+            Error while purging systems: RuntimeError BAR. Attempt 2/3, retrying in 5 seconds
+            Error while purging the systems: RuntimeError BAR, all 2 systems could not be removed, 2 systems still in the database
           TEXT
 
         expect(System.count).to eq 2
@@ -413,14 +411,14 @@ RSpec.describe RMT::CLI::Systems do
     context 'purge confirmations' do
       let!(:s1) { create :system, :with_activated_product, last_seen_at: 2.months.ago }
       let!(:s2) { create :system, :with_activated_product, last_seen_at: 4.months.ago } # rubocop:disable RSpec/LetSetup
-      let(:confirmation) { 'Do you want to delete all the matching systems? (y/n) ' }
+      let(:confirmation) { "Do you want to delete all the matching systems that contacted this RMT before #{Time.zone.today - 3.months}? (y/n) " }
       let(:purge) { "Purged all systems that have not contacted this RMT since #{Time.zone.today - 3.months}." }
 
       it 'asks for confirmation' do
         expect(System.count).to eq 2
         expect($stdin).to receive(:gets).and_return('y')
 
-        expect { described_class.start(['purge']) }
+        expect { described_class.start(['purge', '-q']) }
           .to output(<<~TEXT).to_stdout
             #{confirmation}1 systems destroyed
             Purged all systems that have not contacted this RMT since #{Time.zone.today - 3.months}.
@@ -434,8 +432,8 @@ RSpec.describe RMT::CLI::Systems do
         expect(System.count).to eq 2
         expect($stdin).to receive(:gets).and_return('n')
 
-        expect { described_class.start(['purge']) }
-          .to output('Do you want to delete all the matching systems? (y/n) ').to_stdout
+        expect { described_class.start(['purge', '-q']) }
+          .to output("Do you want to delete all the matching systems that contacted this RMT before #{Time.zone.today - 3.months}? (y/n) ").to_stdout
 
         expect(System.count).to eq 2
       end
@@ -445,9 +443,9 @@ RSpec.describe RMT::CLI::Systems do
         expect($stdin).to receive(:gets).and_return('e')
         expect($stdin).to receive(:gets).and_return('n')
 
-        expect { described_class.start(['purge']) }
+        expect { described_class.start(['purge', '-q']) }
           .to output(/Please answer/).to_stderr.and \
-            output('Do you want to delete all the matching systems? (y/n) Do you want to delete all the matching systems? (y/n) ').to_stdout
+            output("Do you want to delete all the matching systems that contacted this RMT before #{Time.zone.today - 3.months}? (y/n) Do you want to delete all the matching systems that contacted this RMT before #{Time.zone.today - 3.months}? (y/n) ").to_stdout
 
         expect(System.count).to eq 2
       end
