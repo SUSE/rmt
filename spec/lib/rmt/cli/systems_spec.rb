@@ -396,8 +396,7 @@ RSpec.describe RMT::CLI::Systems do
             System.method(:where).super_method.call(*args)
           end
         end
-        allow(query_relation_double).to receive(:in_batches).with(of: 500).and_return(mock_batch)
-        allow(mock_batch).to receive(:destroy_all).and_raise('BAR')
+        allow(query_relation_double).to receive(:destroy_all).and_raise('BAR')
         argv = ['purge', '--no-confirmation', '--before', Time.zone.now.strftime('%F')]
         expect { described_class.start(argv) }
           .to output(<<~TEXT).to_stdout
