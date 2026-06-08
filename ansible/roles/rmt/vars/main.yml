@@ -1,9 +1,8 @@
 ---
-# RMT role variables (not meant to be overridden)
-# rmt_public_dir: /var/lib/rmt/public
-# rmt_config_path: /etc/rmt.conf
-# rmt_nginx_vhost_dir: /etc/nginx/vhosts.d
-# rmt_systemd_dir: /etc/systemd/system
 
-rmt_repo_url: https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/SLE_15_SP7/
-rmt_repo_name: rmt_3
+rmt_db_username: rmt
+rmt_db_password: ""
+
+rmt:
+  RMT_ORGANIZATION_USERNAME: "your-scc-organization-username"
+  RMT_ORGANIZATION_PASSWORD: "your-scc-organization-password"

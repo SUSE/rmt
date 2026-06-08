@@ -1,11 +1,6 @@
 ---
 # RMT role default variables
 
-# RMT repository configuration
-# Override this to use a different repository for RMT packages
-rmt_repo_url: https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/SLE_15_SP7/
-rmt_repo_name: rmt_3
-
 # Database configuration
 rmt_db_host: localhost
 rmt_db_name: rmt

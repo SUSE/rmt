@@ -2,12 +2,6 @@
 # To do so, ssh into the host and run the appropriate "rmt-cli" commands for
 # mirroring products.
 
-- name: Add RMT repo
-  community.general.zypper_repository:
-    repo: "{{ rmt_repo_url }}"
-    name: "{{ rmt_repo_name }}"
-    auto_import_keys: true
-
 - name: Install rmt & dependencies
   community.general.zypper:
     name:
@@ -23,29 +17,45 @@
     state: started
     enabled: true
 
-- name: Create RMT database
-  community.mysql.mysql_db:
-    name: "{{ rmt_db_name }}"
-    state: present
-    encoding: "{{ rmt_db_encoding }}"
+# Check if RMT database exists to determine if we need to set it up
+- name: Check if RMT database exists
+  community.mysql.mysql_info:
+    filter: databases
     login_unix_socket: /run/mysql/mysql.sock
+  register: db_info
+  ignore_errors: true
 
-- name: Create RMT database user
-  community.mysql.mysql_user:
-    name: "{{ rmt_db_username }}"
-    password: "{{ rmt_db_password | default('rmt', true) }}"
-    priv: "{{ rmt_db_name }}.*:ALL"
-    state: present
-    login_unix_socket: /run/mysql/mysql.sock
-  no_log: true
+- name: Set fact for database existence
+  ansible.builtin.set_fact:
+    rmt_db_exists: "{{ rmt_db_name in db_info.databases.keys() | default([]) }}"
+  when: db_info is succeeded
 
-- name: Enable and run rmt-migration service
+- name: Provision database
+  ansible.builtin.include_tasks: db_setup.yml
+  when: not (rmt_db_exists | default(false))
+
+- name: Provision SSL certificates and nginx configuration
+  ansible.builtin.include_tasks: ssl_setup.yml
+
+- name: Run database migrations
   ansible.builtin.systemd:
-    name: rmt-migration
+    name: rmt-server-migration.service
+    state: started
+  when: not (rmt_db_exists | default(false))
+
+- name: Ensure nginx service is started and enabled
+  ansible.builtin.systemd:
+    name: nginx
     state: started
     enabled: true
 
-# Configure rmt
+- name: Ensure rmt-server service is started and enabled
+  ansible.builtin.systemd:
+    name: rmt-server
+    state: started
+    enabled: true
+
+# Configure rmt - done after service is started so restart handler works
 - name: Modify rmt.conf
   ansible.builtin.template:
     src: rmt.conf.j2
@@ -55,73 +65,3 @@
     group: root
   notify: Restart rmt
 
-- name: Provision HTTP (Plain Text) nginx config
-  ansible.builtin.template:
-    src: rmt_host_plain_text.conf.j2
-    dest: /etc/nginx/vhosts.d/rmt-server-http.conf
-    mode: "0644"
-    owner: root
-    group: root
-  notify: Reload nginx
-
-- name: Provision RMT Upstream section
-  ansible.builtin.copy:
-    src: rmt_upstreams.conf
-    dest: /etc/nginx/vhosts.d/rmt_upstreams.conf
-    mode: "0644"
-    owner: root
-    group: root
-  notify: Reload nginx
-
-- name: Create SSL directory
-  ansible.builtin.file:
-    path: /etc/rmt/ssl
-    state: directory
-    mode: "0755"
-    owner: root
-    group: root
-
-- name: Generate RMT server private key
-  community.crypto.openssl_privatekey:
-    path: /etc/rmt/ssl/rmt-server.key
-    size: 4096
-    mode: "0600"
-    owner: root
-    group: root
-
-- name: Generate RMT server certificate
-  community.crypto.x509_certificate:
-    path: /etc/rmt/ssl/rmt-server.crt
-    privatekey_path: /etc/rmt/ssl/rmt-server.key
-    provider: selfsigned
-    selfsigned_not_after: "+3650d"
-    mode: "0644"
-    owner: root
-    group: root
-
-- name: Generate RMT CA private key
-  community.crypto.openssl_privatekey:
-    path: /etc/rmt/ssl/rmt-ca.key
-    size: 4096
-    mode: "0600"
-    owner: root
-    group: root
-
-- name: Generate RMT CA certificate
-  community.crypto.x509_certificate:
-    path: /etc/rmt/ssl/rmt-ca.crt
-    privatekey_path: /etc/rmt/ssl/rmt-ca.key
-    provider: selfsigned
-    selfsigned_not_after: "+3650d"
-    mode: "0644"
-    owner: root
-    group: root
-
-- name: Provision HTTPS (SSL) nginx config
-  ansible.builtin.template:
-    src: rmt_host_http_ssl.conf.j2
-    dest: /etc/nginx/vhosts.d/rmt-server-https.conf
-    mode: "0644"
-    owner: root
-    group: root
-  notify: Reload nginx

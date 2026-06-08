@@ -129,7 +129,7 @@ Requires:       ansible >= 11
 # Install the Python3 PyMySQL module to support using community.mysql or
 # ansible.mysql collections in Ansible playbooks.
 Requires:       python3dist(pymysql)
-Recommends:     rmt-server = %version
+Requires:       rmt-server = %version
 
 %description -n ansible-rmt-server
 Ansible playbook and roles for automated deployment and configuration

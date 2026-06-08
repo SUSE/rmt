@@ -1,0 +1,69 @@
+---
+- name: Create SSL directory
+  ansible.builtin.file:
+    path: /etc/rmt/ssl
+    state: directory
+    mode: "0755"
+    owner: root
+    group: root
+
+- name: Generate RMT server private key
+  community.crypto.openssl_privatekey:
+    path: /etc/rmt/ssl/rmt-server.key
+    size: 4096
+    mode: "0600"
+    owner: root
+    group: root
+
+- name: Generate RMT server certificate
+  community.crypto.x509_certificate:
+    path: /etc/rmt/ssl/rmt-server.crt
+    privatekey_path: /etc/rmt/ssl/rmt-server.key
+    provider: selfsigned
+    selfsigned_not_after: "+3650d"
+    mode: "0644"
+    owner: root
+    group: root
+
+- name: Generate RMT CA private key
+  community.crypto.openssl_privatekey:
+    path: /etc/rmt/ssl/rmt-ca.key
+    size: 4096
+    mode: "0600"
+    owner: root
+    group: root
+
+- name: Generate RMT CA certificate
+  community.crypto.x509_certificate:
+    path: /etc/rmt/ssl/rmt-ca.crt
+    privatekey_path: /etc/rmt/ssl/rmt-ca.key
+    provider: selfsigned
+    selfsigned_not_after: "+3650d"
+    mode: "0644"
+    owner: root
+    group: root
+
+- name: Provision HTTPS (SSL) nginx config
+  ansible.builtin.template:
+    src: rmt_host_http_ssl.conf.j2
+    dest: /etc/nginx/vhosts.d/rmt-server-https.conf
+    mode: "0644"
+    owner: root
+    group: root
+
+- name: Provision HTTP (Plain Text) nginx config
+  ansible.builtin.template:
+    src: rmt_host_plain_text.conf.j2
+    dest: /etc/nginx/vhosts.d/rmt-server-http.conf
+    mode: "0644"
+    owner: root
+    group: root
+
+- name: Provision RMT Upstream section
+  ansible.builtin.copy:
+    src: rmt_upstreams.conf
+    dest: /etc/nginx/vhosts.d/rmt_upstreams.conf
+    mode: "0644"
+    owner: root
+    group: root
+  notify: Reload nginx
