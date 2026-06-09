@@ -7,19 +7,5 @@ rmt:
   RMT_ORGANIZATION_USERNAME: "your-scc-organization-username"
   RMT_ORGANIZATION_PASSWORD: "your-scc-organization-password"
 
-# Override default RMT configuration if needed
-# See group_vars/all.yml.example for all available options
-
-# Database
-# rmt_db_password: "custom-database-password"
-
-# Mirroring
-# rmt_mirror_drpm: true
-# rmt_mirror_src: false
-# rmt_revalidate_repodata: true
-# rmt_dedup_method: hardlink
-
-# HTTP proxy (if needed)
-# rmt_http_proxy: "http://proxy.example.com:8080"
-# rmt_http_proxy_user: "proxy_user"
-# rmt_http_proxy_password: "proxy_pass"
+rmt_db_username: rmt
+rmt_db_password: ""

@@ -123,18 +123,21 @@ required for public cloud environments.
 Summary:        Ansible playbook for RMT deployment
 Group:          Development/Tools/Other
 BuildArch:      noarch
-# Depend upon ansible rather than ansible-core to ensure that standard
-# ansible collections are installed.
+License:        GPL-2.0-or-later
+URL:            https://github.com/SUSE/rmt
+
+BuildRequires:  ansible-core >= 2.16
+BuildRequires:  ansible >= 11
+
+Requires:       ansible-core >= 2.16
 Requires:       ansible >= 11
-# Install the Python3 PyMySQL module to support using community.mysql or
-# ansible.mysql collections in Ansible playbooks.
 Requires:       python3dist(pymysql)
 Requires:       rmt-server = %version
 
 %description -n ansible-rmt-server
 Ansible playbook and roles for automated deployment and configuration
-of RMT server on localhost. Includes SSL certificate generation,
-database setup, and nginx configuration.
+of RMT server. Includes SSL certificate generation, database setup,
+and nginx configuration.
 %endif
 
 %prep
@@ -299,12 +302,10 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 
 %check
 %if 0%{?suse_version} >= 1600
-if command -v ansible-playbook >/dev/null 2>&1; then
-  cd ansible
-  ansible-playbook tests/test_playbook.yml
-else
-  echo "Skipping ansible tests: ansible-playbook not available in build environment"
-fi
+# Test ansible playbook syntax
+cd ansible
+ansible-playbook --syntax-check tests/test_playbook.yml
+ansible-playbook tests/test_playbook.yml
 %endif
 
 %files
@@ -408,8 +409,27 @@ fi
 %if 0%{?suse_version} >= 1600
 %files -n ansible-rmt-server
 %dir %{_datadir}/ansible
-%{_datadir}/ansible/rmt
+%dir %{_datadir}/ansible/rmt
+%dir %{_datadir}/ansible/rmt/group_vars
+%dir %{_datadir}/ansible/rmt/roles
+%dir %{_datadir}/ansible/rmt/roles/rmt
+%dir %{_datadir}/ansible/rmt/roles/rmt/tasks
+%dir %{_datadir}/ansible/rmt/roles/rmt/templates
+%dir %{_datadir}/ansible/rmt/roles/rmt/files
+%dir %{_datadir}/ansible/rmt/roles/rmt/handlers
+%dir %{_datadir}/ansible/rmt/roles/rmt/defaults
+%dir %{_datadir}/ansible/rmt/tests
+%{_datadir}/ansible/rmt/site.yml
+%{_datadir}/ansible/rmt/ansible.cfg
+%{_datadir}/ansible/rmt/requirements.yml
+%{_datadir}/ansible/rmt/roles/rmt/tasks/*.yml
+%{_datadir}/ansible/rmt/roles/rmt/templates/*
+%{_datadir}/ansible/rmt/roles/rmt/files/*
+%{_datadir}/ansible/rmt/roles/rmt/handlers/*.yml
+%{_datadir}/ansible/rmt/roles/rmt/defaults/*.yml
+%{_datadir}/ansible/rmt/tests/*.yml
 %config(noreplace) %{_datadir}/ansible/rmt/group_vars/all.yml
+%{_datadir}/ansible/rmt/group_vars/all.yml.example
 %endif
 
 %pre
