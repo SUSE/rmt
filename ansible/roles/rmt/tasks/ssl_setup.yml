@@ -44,16 +44,16 @@
     group: root
 
 - name: Provision HTTPS (SSL) nginx config
-  ansible.builtin.template:
-    src: rmt_host_http_ssl.conf.j2
+  ansible.builtin.copy:
+    src: rmt_host_http_ssl.conf
     dest: /etc/nginx/vhosts.d/rmt-server-https.conf
     mode: "0644"
     owner: root
     group: root
 
 - name: Provision HTTP (Plain Text) nginx config
-  ansible.builtin.template:
-    src: rmt_host_plain_text.conf.j2
+  ansible.builtin.copy:
+    src: rmt_host_plain_text.conf
     dest: /etc/nginx/vhosts.d/rmt-server-http.conf
     mode: "0644"
     owner: root
