@@ -22,13 +22,13 @@
   community.mysql.mysql_info:
     filter: databases
     login_unix_socket: /run/mysql/mysql.sock
-  register: db_info
+  register: rmt_db_info
   ignore_errors: true
 
 - name: Set fact for database existence
   ansible.builtin.set_fact:
-    rmt_db_exists: "{{ rmt_db_name in db_info.databases.keys() | default([]) }}"
-  when: db_info is succeeded
+    rmt_db_exists: "{{ rmt_db_name in rmt_db_info.databases.keys() | default([]) }}"
+  when: rmt_db_info is succeeded
 
 - name: Provision database
   ansible.builtin.include_tasks: db_setup.yml
@@ -64,4 +64,3 @@
     owner: root
     group: root
   notify: Restart rmt
-

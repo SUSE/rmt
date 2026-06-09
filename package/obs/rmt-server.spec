@@ -418,6 +418,7 @@ ansible-playbook tests/test_playbook.yml
 %dir %{_datadir}/ansible/rmt/roles/rmt/files
 %dir %{_datadir}/ansible/rmt/roles/rmt/handlers
 %dir %{_datadir}/ansible/rmt/roles/rmt/defaults
+%dir %{_datadir}/ansible/rmt/roles/rmt/meta
 %dir %{_datadir}/ansible/rmt/tests
 %{_datadir}/ansible/rmt/site.yml
 %{_datadir}/ansible/rmt/ansible.cfg
@@ -427,6 +428,7 @@ ansible-playbook tests/test_playbook.yml
 %{_datadir}/ansible/rmt/roles/rmt/files/*
 %{_datadir}/ansible/rmt/roles/rmt/handlers/*.yml
 %{_datadir}/ansible/rmt/roles/rmt/defaults/*.yml
+%{_datadir}/ansible/rmt/roles/rmt/meta/*.yml
 %{_datadir}/ansible/rmt/tests/*.yml
 %config(noreplace) %{_datadir}/ansible/rmt/group_vars/all.yml
 %{_datadir}/ansible/rmt/group_vars/all.yml.example

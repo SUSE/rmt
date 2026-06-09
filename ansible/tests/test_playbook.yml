@@ -108,7 +108,6 @@
         - roles/rmt/templates
         - roles/rmt/files
         - roles/rmt/defaults
-        - roles/rmt/vars
         - roles/rmt/meta
 
     - name: Check role structure results
@@ -129,7 +128,6 @@
         - roles/rmt/tasks/main.yml
         - roles/rmt/handlers/main.yml
         - roles/rmt/defaults/main.yml
-        - roles/rmt/vars/main.yml
         - roles/rmt/meta/main.yml
         - roles/rmt/templates/rmt.conf.j2
 
