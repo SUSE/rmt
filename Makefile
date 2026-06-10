@@ -57,12 +57,13 @@ ansible-lint: ## Lint Ansible playbooks and roles (requires local ansible instal
 # Deployment
 # =============================================================================
 
-ansible-deploy: ## Deploy RMT on localhost
-	@echo "==> Deploying RMT via Ansible..."
-	cd ansible && ansible-playbook site.yml
+ansible-deploy: ## Deploy RMT on localhost (requires sudo)
+	@echo "==> Deploying RMT via Ansible (requires sudo access)..."
+	cd ansible && ansible-playbook site.yml --ask-become-pass
 
-ansible-check: ## Dry run Ansible deployment (check mode)
-	cd ansible && ansible-playbook site.yml --check
+ansible-check: ## Dry run Ansible deployment (check mode - requires sudo)
+	@echo "==> Running Ansible playbook in check mode (requires sudo access)..."
+	cd ansible && ansible-playbook site.yml --check --ask-become-pass
 
 # =============================================================================
 # Build & Package

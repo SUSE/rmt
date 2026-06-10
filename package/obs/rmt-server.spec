@@ -65,6 +65,12 @@ BuildRequires:  libxslt-devel
 BuildRequires:  libyaml-devel
 BuildRequires:  sqlite-devel
 BuildRequires:  pkgconfig(systemd)
+# Only require ansible build dependencies when building ansible subpackage (SLES/Leap 16+ only, not Tumbleweed)
+# Note: suse_version >= 1600 excludes Tumbleweed which has suse_version == 1699
+%if 0%{?suse_version} >= 1600 && 0%{?suse_version} != 1699
+BuildRequires:  ansible-core >= 2.16
+BuildRequires:  ansible >= 11
+%endif
 Requires:       gpg2
 Recommends:     mariadb
 Recommends:     nginx
@@ -125,9 +131,6 @@ Group:          Development/Tools/Other
 BuildArch:      noarch
 License:        GPL-2.0-or-later
 URL:            https://github.com/SUSE/rmt
-
-BuildRequires:  ansible-core >= 2.16
-BuildRequires:  ansible >= 11
 
 Requires:       ansible-core >= 2.16
 Requires:       ansible >= 11
@@ -301,8 +304,8 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/mysql2-*/lib/mysql2/
 chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/mysql2/mysql2.so
 
 %check
-%if 0%{?suse_version} >= 1600
-# Test ansible playbook syntax
+%if 0%{?suse_version} >= 1600 && 0%{?suse_version} != 1699
+# Test ansible playbook syntax (only on SLES/Leap 16+, not Tumbleweed)
 cd ansible
 ansible-playbook --syntax-check tests/test_playbook.yml
 ansible-playbook tests/test_playbook.yml

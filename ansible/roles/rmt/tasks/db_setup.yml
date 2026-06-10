@@ -1,9 +1,3 @@
-- name: Ensure MariaDB service is started and enabled
-  ansible.builtin.systemd:
-    name: mariadb
-    state: started
-    enabled: true
-
 - name: Create RMT database
   community.mysql.mysql_db:
     name: "{{ rmt_db_name }}"

@@ -30,12 +30,35 @@
     rmt_db_exists: "{{ rmt_db_name in rmt_db_info.databases.keys() | default([]) }}"
   when: rmt_db_info is succeeded
 
+- name: Generate random database password if not set
+  ansible.builtin.set_fact:
+    rmt_db_password: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=32) }}"
+  when: rmt_db_password == "" and not (rmt_db_exists | default(false))
+  no_log: true
+
+- name: Validate database password is set when database exists
+  ansible.builtin.assert:
+    that:
+      - rmt_db_password != ""
+    fail_msg: "Database password must be set in group_vars/all.yml when database already exists"
+    quiet: true
+  when: rmt_db_exists | default(false)
+
 - name: Provision database
   ansible.builtin.include_tasks: db_setup.yml
   when: not (rmt_db_exists | default(false))
 
 - name: Provision SSL certificates and nginx configuration
   ansible.builtin.include_tasks: ssl_setup.yml
+
+# Configure rmt BEFORE migrations - the migration service needs this config to connect to DB
+- name: Configure rmt.conf
+  ansible.builtin.template:
+    src: rmt.conf.j2
+    dest: /etc/rmt.conf
+    mode: "0644"
+    owner: root
+    group: root
 
 - name: Run database migrations
   ansible.builtin.systemd:
@@ -54,13 +77,3 @@
     name: rmt-server
     state: started
     enabled: true
-
-# Configure rmt - done after service is started so restart handler works
-- name: Modify rmt.conf
-  ansible.builtin.template:
-    src: rmt.conf.j2
-    dest: /etc/rmt.conf
-    mode: "0644"
-    owner: root
-    group: root
-  notify: Restart rmt
