@@ -61,7 +61,12 @@ ansible-deploy: ## Deploy RMT on localhost (requires sudo)
 	@echo "==> Deploying RMT via Ansible (requires sudo access)..."
 	cd ansible && ansible-playbook site.yml --ask-become-pass
 
-ansible-check: ## Dry run Ansible deployment (check mode - requires sudo)
+ansible-check: ## Dry run Ansible deployment in Docker container
+	@echo "==> Running Ansible playbook check in Docker..."
+	docker compose run --rm rmt bash -c "cd /srv/www/rmt/ansible && ansible-playbook site.yml --syntax-check"
+	@echo "==> Syntax check passed!"
+
+ansible-check-local: ## Dry run Ansible deployment locally (requires sudo)
 	@echo "==> Running Ansible playbook in check mode (requires sudo access)..."
 	cd ansible && ansible-playbook site.yml --check --ask-become-pass
 

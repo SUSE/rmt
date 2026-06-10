@@ -14,6 +14,7 @@
     mode: "0600"
     owner: root
     group: root
+  when: not ansible_check_mode
 
 - name: Generate RMT server certificate
   community.crypto.x509_certificate:
@@ -24,6 +25,7 @@
     mode: "0644"
     owner: root
     group: root
+  when: not ansible_check_mode
 
 - name: Generate RMT CA private key
   community.crypto.openssl_privatekey:
@@ -32,6 +34,7 @@
     mode: "0600"
     owner: root
     group: root
+  when: not ansible_check_mode
 
 - name: Generate RMT CA certificate
   community.crypto.x509_certificate:
@@ -42,6 +45,7 @@
     mode: "0644"
     owner: root
     group: root
+  when: not ansible_check_mode
 
 - name: Provision HTTPS (SSL) nginx config
   ansible.builtin.copy:

@@ -17,36 +17,37 @@
     state: started
     enabled: true
 
-# Check if RMT database exists to determine if we need to set it up
-- name: Check if RMT database exists
-  community.mysql.mysql_info:
-    filter: databases
+# Check if RMT database and user already exist
+- name: Check if RMT database user exists
+  community.mysql.mysql_query:
     login_unix_socket: /run/mysql/mysql.sock
-  register: rmt_db_info
+    query: "SELECT User FROM mysql.user WHERE User = '{{ rmt_db_username }}' AND Host = 'localhost'"
+  register: rmt_user_check
   ignore_errors: true
+  changed_when: false
+  when: not ansible_check_mode
 
-- name: Set fact for database existence
+- name: Set fact for database setup requirement
   ansible.builtin.set_fact:
-    rmt_db_exists: "{{ rmt_db_name in rmt_db_info.databases.keys() | default([]) }}"
-  when: rmt_db_info is succeeded
+    rmt_needs_db_setup: "{{ (ansible_check_mode) or (rmt_user_check.failed | default(true)) or ((rmt_user_check.rowcount[0] | default(0)) == 0) }}"
 
 - name: Generate random database password if not set
   ansible.builtin.set_fact:
     rmt_db_password: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=32) }}"
-  when: rmt_db_password == "" and not (rmt_db_exists | default(false))
+  when: rmt_db_password == "" and rmt_needs_db_setup | default(false)
   no_log: true
 
-- name: Validate database password is set when database exists
+- name: Validate database password is set when user already exists
   ansible.builtin.assert:
     that:
       - rmt_db_password != ""
-    fail_msg: "Database password must be set in group_vars/all.yml when database already exists"
+    fail_msg: "Database password must be set in group_vars/all.yml when RMT database user already exists"
     quiet: true
-  when: rmt_db_exists | default(false)
+  when: not (rmt_needs_db_setup | default(false))
 
 - name: Provision database
   ansible.builtin.include_tasks: db_setup.yml
-  when: not (rmt_db_exists | default(false))
+  when: rmt_needs_db_setup | default(false)
 
 - name: Provision SSL certificates and nginx configuration
   ansible.builtin.include_tasks: ssl_setup.yml
@@ -64,7 +65,7 @@
   ansible.builtin.systemd:
     name: rmt-server-migration.service
     state: started
-  when: not (rmt_db_exists | default(false))
+  when: rmt_needs_db_setup | default(false)
 
 - name: Ensure nginx service is started and enabled
   ansible.builtin.systemd:

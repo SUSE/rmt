@@ -4,6 +4,7 @@
     state: present
     encoding: "{{ rmt_db_encoding }}"
     login_unix_socket: /run/mysql/mysql.sock
+  when: not ansible_check_mode
 
 - name: Create RMT database user
   community.mysql.mysql_user:
@@ -13,3 +14,4 @@
     state: present
     login_unix_socket: /run/mysql/mysql.sock
   no_log: true
+  when: not ansible_check_mode
