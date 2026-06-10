@@ -1,5 +1,3 @@
-require File.expand_path('../support/command_rspec_helper', __FILE__)
-
 describe 'Ansible deployment' do
   before(:all) do
     # Ensure ansible is available
