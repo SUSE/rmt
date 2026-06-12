@@ -65,6 +65,7 @@ BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
 BuildRequires:  libyaml-devel
 BuildRequires:  sqlite-devel
+BuildRequires:  valkey
 BuildRequires:  pkgconfig(systemd)
 # Only require ansible build dependencies when building ansible subpackage (SLES/Leap 16+ only, not Tumbleweed)
 # Note: suse_version >= 1600 excludes Tumbleweed which has suse_version == 1699
@@ -390,7 +391,6 @@ ansible-playbook tests/test_playbook.yml
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
 
 # Valkey + Sidekiq files
-%dir %{_sysconfdir}/valkey
 %config(noreplace) %{_sysconfdir}/valkey/6380.conf
 %{_tmpfilesdir}/rmt-valkey.conf
 %{_unitdir}/rmt-sidekiq.service
