@@ -1,0 +1,74 @@
+#!/bin/bash
+# Validate RPM packaging for directory ownership conflicts
+# This prevents conflicts with system packages and ensures transactional-update compatibility
+
+set -e
+
+SOURCE="${SOURCE:-/usr/src/rmt-server}"
+ARTIFACTS_DIR="$SOURCE/tmp/artifacts"
+
+echo "==> Validating RPM packaging..."
+echo ""
+
+# Find all rmt-server RPMs (excluding source and debuginfo)
+RPMS=$(find "$ARTIFACTS_DIR" -name "rmt-server*.rpm" -o -name "ansible-rmt-server*.rpm" 2>/dev/null | \
+       grep -v '\.src\.rpm$' | \
+       grep -v 'debuginfo' | \
+       grep -v 'debugsource' | \
+       sort)
+
+if [ -z "$RPMS" ]; then
+  echo "ERROR: No rmt-server RPMs found in $ARTIFACTS_DIR"
+  exit 1
+fi
+
+echo "Found RPMs to validate:"
+echo "$RPMS" | while read rpm; do echo "  - $(basename $rpm)"; done
+echo ""
+
+# Check for forbidden top-level directory claims
+# These directories should be owned by the filesystem package, not by application packages
+FORBIDDEN_DIRS=(
+  "/etc$"
+  "/var/lib$"
+)
+
+TOTAL_ERRORS=0
+
+# Validate each RPM
+echo "$RPMS" | while read RPM; do
+  PACKAGE_NAME=$(basename "$RPM")
+  echo "==> Checking: $PACKAGE_NAME"
+
+  ERRORS=0
+
+  # Check for forbidden directory ownership
+  for dir_pattern in "${FORBIDDEN_DIRS[@]}"; do
+    if rpm -qplv "$RPM" 2>/dev/null | grep -E "^d.*${dir_pattern}"; then
+      echo "  ✗ ERROR: Package claims ownership of ${dir_pattern}"
+      echo "    Top-level directories should be owned by filesystem package"
+      ((ERRORS++))
+      ((TOTAL_ERRORS++))
+    fi
+  done
+
+  if [ $ERRORS -eq 0 ]; then
+    echo "  ✓ PASS: No forbidden directory claims"
+  fi
+
+  echo ""
+done
+
+# Final result
+if [ $TOTAL_ERRORS -gt 0 ]; then
+  echo "FAIL: Found $TOTAL_ERRORS packaging issue(s) across all RPMs"
+  echo ""
+  echo "These issues must be fixed to prevent:"
+  echo "  - File conflicts during package installation"
+  echo "  - Permission/ownership mismatches with system packages"
+  echo "  - Compatibility issues with transactional-update systems"
+  exit 1
+fi
+
+echo "✓ PASS: All RPM packages validated successfully"
+exit 0

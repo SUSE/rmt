@@ -52,6 +52,7 @@ Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-server-rpmlintrc
 Source2:        rmt.conf
 Source3:        rmt-cli.8.gz
+Source4:        rmt-valkey.tmpfiles
 BuildRequires:  %{ruby_version}
 BuildRequires:  %{ruby_version}-devel
 BuildRequires:  chrpath
@@ -225,8 +226,8 @@ mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
 # valkey
-mkdir -p %{buildroot}/var/lib/valkey/6380
 install -D -m 644 package/files/valkey-6380.conf %{buildroot}%{_sysconfdir}/valkey/6380.conf
+install -D -m 644 %{SOURCE4} %{buildroot}%{_tmpfilesdir}/rmt-valkey.conf
 
 # nginx
 install -D -m 644 package/files/nginx/nginx-http.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
@@ -389,12 +390,9 @@ ansible-playbook tests/test_playbook.yml
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
 
 # Valkey + Sidekiq files
-%dir /var/lib/valkey
-%dir /var/lib/valkey/6380
-%attr(-,valkey,root) /var/lib/valkey/6380
 %dir %{_sysconfdir}/valkey
-%attr(-,root,valkey) %{_sysconfdir}/valkey/6380.conf
 %config(noreplace) %{_sysconfdir}/valkey/6380.conf
+%{_tmpfilesdir}/rmt-valkey.conf
 %{_unitdir}/rmt-sidekiq.service
 %{_unitdir}/rmt-valkey.service
 %{_sbindir}/rcrmt-valkey
@@ -449,7 +447,12 @@ getent passwd %{rmt_user} >/dev/null || \
 
 # Run only on install
 if [ $1 -eq 1 ]; then
-  echo "Please run the YaST RMT module (or 'yast2 rmt' from the command line) to complete the configuration of your RMT" >> /dev/stdout
+%if 0%{?suse_version} >= 1600
+  echo "To complete the RMT configuration, install 'ansible-rmt-server' package and run:"
+  echo "  cd /usr/share/ansible/rmt && ansible-playbook site.yml"
+%else
+  echo "Please run the YaST RMT module (or 'yast2 rmt' from the command line) to complete the configuration of your RMT"
+%endif
 fi
 
 # Run only on upgrade
@@ -492,6 +495,7 @@ fi
 
 %post pubcloud
 %service_add_post rmt-server-regsharing.service rmt-server-trim-cache.service rmt-valkey.service rmt-sidekiq.service
+%tmpfiles_create %{_tmpfilesdir}/rmt-valkey.conf
 
 
 %preun pubcloud
