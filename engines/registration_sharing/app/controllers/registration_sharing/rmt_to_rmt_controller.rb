@@ -21,7 +21,7 @@ module RegistrationSharing
           )
         end
         system.lock!
-        system.update(system_params)
+        system.assign_attributes(system_params)
 
         # TODO: remove this block when proxy_byos column gets dropped
         if !params.key?(:proxy_byos_mode) && system.attribute_names.include?('proxy_byos_mode')
@@ -41,7 +41,6 @@ module RegistrationSharing
           )
         end
 
-        system.instance_data = params[:instance_data]
         system.save!
       end
     end
