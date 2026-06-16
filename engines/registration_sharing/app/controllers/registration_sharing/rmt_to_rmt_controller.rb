@@ -7,11 +7,20 @@ module RegistrationSharing
 
     def create
       System.transaction do
-        system = System.find_or_create_by(
-          login: params[:login],
-          password: params[:password],
-          system_token: params[:system_token]
-        )
+        begin
+          system = System.find_or_create_by(
+            login: params[:login],
+            password: params[:password],
+            system_token: params[:system_token]
+            )
+        rescue ActiveRecord::RecordNotUnique
+          system = System.find_by!(
+            login: params[:login],
+            password: params[:password],
+            system_token: params[:system_token]
+          )
+        end
+        system.lock!
         system.update(system_params)
 
         # TODO: remove this block when proxy_byos column gets dropped
