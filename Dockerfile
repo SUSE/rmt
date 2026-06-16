@@ -1,4 +1,4 @@
-FROM opensuse/leap:15.6
+FROM registry.suse.com/bci/bci-base:15.7
 
 RUN zypper --non-interactive install --no-recommends \
         timezone wget gcc-c++ libffi-devel git-core zlib-devel \
