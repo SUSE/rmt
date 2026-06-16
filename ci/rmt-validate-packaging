@@ -23,7 +23,9 @@ if [ -z "$RPMS" ]; then
 fi
 
 echo "Found RPMs to validate:"
-echo "$RPMS" | while read rpm; do echo "  - $(basename $rpm)"; done
+while IFS= read -r rpm; do
+  echo "  - $(basename "$rpm")"
+done <<< "$RPMS"
 echo ""
 
 # Check for forbidden top-level directory claims
@@ -36,7 +38,7 @@ FORBIDDEN_DIRS=(
 TOTAL_ERRORS=0
 
 # Validate each RPM
-echo "$RPMS" | while read RPM; do
+while IFS= read -r RPM; do
   PACKAGE_NAME=$(basename "$RPM")
   echo "==> Checking: $PACKAGE_NAME"
 
@@ -52,15 +54,15 @@ echo "$RPMS" | while read RPM; do
     fi
   done
 
-  if [ $ERRORS -eq 0 ]; then
+  if [ "$ERRORS" -eq 0 ]; then
     echo "  ✓ PASS: No forbidden directory claims"
   fi
 
   echo ""
-done
+done <<< "$RPMS"
 
 # Final result
-if [ $TOTAL_ERRORS -gt 0 ]; then
+if [ "$TOTAL_ERRORS" -gt 0 ]; then
   echo "FAIL: Found $TOTAL_ERRORS packaging issue(s) across all RPMs"
   echo ""
   echo "These issues must be fixed to prevent:"
