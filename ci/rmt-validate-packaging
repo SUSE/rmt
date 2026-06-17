@@ -11,21 +11,21 @@ echo "==> Validating RPM packaging..."
 echo ""
 
 # Find all rmt-server RPMs (excluding source and debuginfo)
-mapfile -t RPMS < <(find "$ARTIFACTS_DIR" \( -name "rmt-server*.rpm" -o -name "ansible-rmt-server*.rpm" \) 2>/dev/null | \
-                    grep -v '\.src\.rpm$' | \
-                    grep -v 'debuginfo' | \
-                    grep -v 'debugsource' | \
-                    sort)
+RPMS=$(find "$ARTIFACTS_DIR" -name "rmt-server*.rpm" -o -name "ansible-rmt-server*.rpm" 2>/dev/null | \
+       grep -v '\.src\.rpm$' | \
+       grep -v 'debuginfo' | \
+       grep -v 'debugsource' | \
+       sort)
 
-if (( ${#RPMS[@]} == 0 )); then
+if [ -z "$RPMS" ]; then
   echo "ERROR: No rmt-server RPMs found in $ARTIFACTS_DIR"
   exit 1
 fi
 
 echo "Found RPMs to validate:"
-for rpm in "${RPMS[@]}"; do
+while IFS= read -r rpm; do
   echo "  - $(basename "$rpm")"
-done
+done <<< "$RPMS"
 echo ""
 
 # Check for forbidden top-level directory claims
@@ -38,7 +38,7 @@ FORBIDDEN_DIRS=(
 TOTAL_ERRORS=0
 
 # Validate each RPM
-for RPM in "${RPMS[@]}"; do
+while IFS= read -r RPM; do
   PACKAGE_NAME=$(basename "$RPM")
   echo "==> Checking: $PACKAGE_NAME"
 
@@ -54,15 +54,15 @@ for RPM in "${RPMS[@]}"; do
     fi
   done
 
-  if (( ERRORS == 0 )); then
+  if [ "$ERRORS" -eq 0 ]; then
     echo "  ✓ PASS: No forbidden directory claims"
   fi
 
   echo ""
-done
+done <<< "$RPMS"
 
 # Final result
-if (( TOTAL_ERRORS > 0 )); then
+if [ "$TOTAL_ERRORS" -gt 0 ]; then
   echo "FAIL: Found $TOTAL_ERRORS packaging issue(s) across all RPMs"
   echo ""
   echo "These issues must be fixed to prevent:"
