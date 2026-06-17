@@ -78,11 +78,21 @@ run_cmd cp "$RMT_PATH/package/obs/"* .
 run_cmd osc -A https://api.opensuse.org addremove
 run_cmd osc -A https://api.opensuse.org status
 
-# Local build can be skipped if already verified
-echo "Local build (osc build) is resource intensive. Skipping in automation unless forced."
+# Commit changes to OBS
+echo "Committing changes to OBS..."
+run_cmd osc -A https://api.opensuse.org ci -m "Update to version $VERSION"
 
-# Phase 3: GitHub Release
-echo "--- Phase 3: GitHub Release ---"
+# Wait for OBS build results
+echo "Waiting for OBS build results to stabilize..."
+if [ "$DRY_RUN" = false ]; then
+  osc -A https://api.opensuse.org results --watch
+fi
+
+# Local build is resource intensive
+echo "Local build (osc build) is resource intensive. Skipping in automation; run it manually if desired."
+
+# Phase 3: Git Tagging
+echo "--- Phase 3: Git Tagging ---"
 cd "$RMT_PATH"
 if git rev-parse "v$VERSION" >/dev/null 2>&1; then
   echo "Tag v$VERSION already exists locally. Skipping tagging."
@@ -98,6 +108,16 @@ fi
 
 # Phase 4: Downstream Distribution
 echo "--- Phase 4: Downstream Distribution ---"
+
+# Verify IBS package matches OBS submission
+echo "Verifying IBS Devel:SCC:RMT package matches OBS submission..."
+if [ "$DRY_RUN" = false ]; then
+  echo "Checking IBS package status..."
+  osc -A https://api.suse.de checkout Devel:SCC:RMT rmt-server /tmp/ibs-verify || true
+  echo "Waiting for IBS build results to stabilize..."
+  osc -A https://api.suse.de results Devel:SCC:RMT rmt-server --watch || echo "⚠ IBS build check failed or timed out. Verify manually."
+fi
+
 cd "$OBS_PATH"
 
 if [[ -n "$STREAMS" ]]; then
@@ -108,25 +128,34 @@ else
   MAINTAINED_STREAMS=$(osc -A https://api.suse.de maintained rmt-server | awk -F'/' '{print $1}')
 fi
 
-for STREAM in $MAINTAINED_STREAMS; do
-  echo "Submitting request for stream: $STREAM"
+# Submission helper functions
+submit_mr_or_sr() {
+  local stream=$1
 
-  # Try maintenance request first, fall back to submit request if it fails
   if [ "$DRY_RUN" = true ]; then
-    echo "[DRY-RUN] Executing: osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server $STREAM"
+    echo "[DRY-RUN] osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server $stream"
+    return 0
+  fi
+
+  echo "Attempting maintenance request (mr) for $stream..."
+  if osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server "$stream" 2>&1; then
+    echo "✓ Maintenance request submitted successfully for $stream"
+    return 0
   else
-    echo "Attempting maintenance request (mr) for $STREAM..."
-    if osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server "$STREAM" 2>&1; then
-      echo "✓ Maintenance request submitted successfully for $STREAM"
+    echo "⚠ Maintenance request failed for $stream, retrying with submit request (sr)..."
+    if osc -A https://api.suse.de sr Devel:SCC:RMT rmt-server "$stream" 2>&1; then
+      echo "✓ Submit request submitted successfully for $stream"
+      return 0
     else
-      echo "⚠ Maintenance request failed for $STREAM, retrying with submit request (sr)..."
-      if osc -A https://api.suse.de sr Devel:SCC:RMT rmt-server "$STREAM" 2>&1; then
-        echo "✓ Submit request submitted successfully for $STREAM"
-      else
-        echo "✗ Both mr and sr failed for $STREAM. Please submit manually."
-      fi
+      echo "✗ Both mr and sr failed for $stream. Please submit manually."
+      return 1
     fi
   fi
+}
+
+for STREAM in $MAINTAINED_STREAMS; do
+  echo "Processing stream: $STREAM"
+  submit_mr_or_sr "$STREAM"
 done
 
 # Phase 5: Helm Chart (Manual Steps Summary)

@@ -23,8 +23,8 @@ To streamline the process, ensure the following path is saved in the project mem
 - **`OBS_WORKSPACE`**: The local path to your OBS checkouts (e.g., `/path/to/obs_workspace`). Use `save_memory` to persist this.
 
 ### RMT 2.x Release Constraints
-- **Target Streams:** For RMT 2.x (master branch) releases, only submit Maintenance Requests (MRs) for **SLE 15 SP6** and **SLE 15 SP7**.
-  - Example streams: `SUSE:SLE-15-SP6:Update`, `SUSE:SLE-15-SP7:Update`.
+- **Target Streams:** For RMT 2.x (master branch) releases, submit Maintenance Requests (MRs) for **SLE 15 SP4** (LTSS until EOL 2026), **SLE 15 SP5** (LTSS until EOL 2027), **SLE 15 SP6**, and **SLE 15 SP7**.
+  - Example streams: `SUSE:SLE-15-SP4:Update`, `SUSE:SLE-15-SP5:Update`, `SUSE:SLE-15-SP6:Update`, `SUSE:SLE-15-SP7:Update`.
 
 ### Access & Accounts
 - **OBS**: Account with permissions for `systemsmanagement:SCC:RMT`.
@@ -134,4 +134,4 @@ If `osc maintained rmt-server` does not show a requested codestream (e.g., a spe
 - **Coordination:** After the PR is merged, notify the BCI team in the `#proj-bci` Slack channel to trigger the release.
 
 ## Formatting Requirements
-When submitting maintenance requests (SLES), ensure changelog entries reference relevant bugzilla or fate entries (e.g., `bsc#123456`).
+When submitting maintenance requests (SLES), ensure changelog entries reference relevant bugzilla, jira or fate entries (e.g., `bsc#123456` or `jsc#XXX-123456`).

@@ -30,4 +30,4 @@ The Repository Mirroring Tool (RMT) allows mirroring SUSE RPM repositories and c
 - **Testing:** Run `bin/rspec` for unit tests and `bin/ci rmt-run-feature-tests` for feature tests.
 
 ## Release Process
-RMT 2.x releases are submitted to SLE 15 SP6 and SP7. Use the `rmt-release-management` skill for guidance on version updates, OBS syncing, and maintenance requests.
+RMT 2.x releases are submitted to SLE 15 SP4 (LTSS until EOL 2026), SP5 (LTSS until EOL 2027), SP6, and SP7. Use the `rmt-release-management` skill for guidance on version updates, OBS syncing, and maintenance requests.
