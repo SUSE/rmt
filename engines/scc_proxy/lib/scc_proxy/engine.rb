@@ -316,8 +316,7 @@ module SccProxy
               {
                 scc_system_id: scc_response['id'],
                 password: scc_response['password'],
-                proxy_byos_mode: :byos,
-                proxy_byos: true
+                proxy_byos_mode: :byos
               }
             )
             profile_response_header_handling(scc_response_headers)
