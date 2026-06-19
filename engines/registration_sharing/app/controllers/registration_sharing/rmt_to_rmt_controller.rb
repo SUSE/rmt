@@ -14,13 +14,6 @@ module RegistrationSharing
         )
         system.update(system_params)
 
-        # TODO: remove this block when proxy_byos column gets dropped
-        if !params.key?(:proxy_byos_mode) && system.attribute_names.include?('proxy_byos_mode')
-          # the info comes from a sibling that does not have proxy_byos_mode
-          # to a sibling does have proxy_byos_mode
-          system.proxy_byos_mode = system.proxy_byos ? :byos : :payg
-        end
-        # end todo
         system.activations = []
         params[:activations].each do |activation|
           product = Product.find_by(id: activation[:product_id])
@@ -46,10 +39,10 @@ module RegistrationSharing
 
     def system_params
       params.permit(
-        :login, :password, :hostname, :proxy_byos, :proxy_byos_mode,
+        :login, :password, :hostname, :proxy_byos_mode,
         :system_token, :registered_at, :created_at, :last_seen_at,
         :instance_data, :pubcloud_reg_code
-)
+      )
     end
 
     def authenticate
