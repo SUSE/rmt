@@ -208,6 +208,6 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
 
   def handle_invalid_foreign_key
     error = { errors: _('The system is not valid or no longer exists') }
-    render json: error, status: :unprocessable_content
+    render json: error, status: :unprocessable_entity
   end
 end
