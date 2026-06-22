@@ -52,6 +52,7 @@ Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-server-rpmlintrc
 Source2:        rmt.conf
 Source3:        rmt-cli.8.gz
+Source4:        rmt-valkey.tmpfiles
 BuildRequires:  %{ruby_version}
 BuildRequires:  %{ruby_version}-devel
 BuildRequires:  chrpath
@@ -64,6 +65,7 @@ BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
 BuildRequires:  libyaml-devel
 BuildRequires:  sqlite-devel
+BuildRequires:  valkey
 BuildRequires:  pkgconfig(systemd)
 # Only require ansible build dependencies when building ansible subpackage (SLES/Leap 16+ only, not Tumbleweed)
 # Note: suse_version >= 1600 excludes Tumbleweed which has suse_version == 1699
@@ -151,7 +153,7 @@ sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
 # Set the version of bundler available within the build environment instead
 # of expect a hardcoded version. This ensures we bundle with the available version of bundler no matter which version available
 # NOTE: This relies on the fact that the lock file format does not change between bundler versions (which is not yet the case)
-sed -i "s/2\.2\.34/$(bundle.%{ruby_version} --version | grep -oE '([0-9]+\.?){3}')/g" Gemfile.lock
+sed -i "s/2\.6\.7/$(bundle.%{ruby_version} --version | grep -oE '([0-9]+\.?){3}')/g" Gemfile.lock
 
 %build
 bundle.%{ruby_version} config build.nio4r --with-cflags='%{optflags} -Wno-return-type'
@@ -225,8 +227,8 @@ mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
 # valkey
-mkdir -p %{buildroot}/var/lib/valkey/6380
 install -D -m 644 package/files/valkey-6380.conf %{buildroot}%{_sysconfdir}/valkey/6380.conf
+install -D -m 644 %{SOURCE4} %{buildroot}%{_tmpfilesdir}/rmt-valkey.conf
 
 # nginx
 install -D -m 644 package/files/nginx/nginx-http.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
@@ -389,12 +391,8 @@ ansible-playbook tests/test_playbook.yml
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
 
 # Valkey + Sidekiq files
-%dir /var/lib/valkey
-%dir /var/lib/valkey/6380
-%attr(-,valkey,root) /var/lib/valkey/6380
-%dir %{_sysconfdir}/valkey
-%attr(-,root,valkey) %{_sysconfdir}/valkey/6380.conf
 %config(noreplace) %{_sysconfdir}/valkey/6380.conf
+%{_tmpfilesdir}/rmt-valkey.conf
 %{_unitdir}/rmt-sidekiq.service
 %{_unitdir}/rmt-valkey.service
 %{_sbindir}/rcrmt-valkey
@@ -449,7 +447,12 @@ getent passwd %{rmt_user} >/dev/null || \
 
 # Run only on install
 if [ $1 -eq 1 ]; then
-  echo "Please run the YaST RMT module (or 'yast2 rmt' from the command line) to complete the configuration of your RMT" >> /dev/stdout
+%if 0%{?suse_version} >= 1600
+  echo "To complete the RMT configuration, install 'ansible-rmt-server' package and run:"
+  echo "  cd /usr/share/ansible/rmt && ansible-playbook site.yml"
+%else
+  echo "Please run the YaST RMT module (or 'yast2 rmt' from the command line) to complete the configuration of your RMT"
+%endif
 fi
 
 # Run only on upgrade
@@ -492,6 +495,7 @@ fi
 
 %post pubcloud
 %service_add_post rmt-server-regsharing.service rmt-server-trim-cache.service rmt-valkey.service rmt-sidekiq.service
+%tmpfiles_create %{_tmpfilesdir}/rmt-valkey.conf
 
 
 %preun pubcloud
