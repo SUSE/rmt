@@ -15,6 +15,7 @@ module RegistrationSharing
     let(:request_token) { api_secret }
     let(:instance_data) { '<document>test</document>' }
     let(:pubcloud_reg_code) { 'INTERNAL-FOO' }
+    let(:system_payg) { FactoryBot.create(:system, login: login_payg, password: password, proxy_byos_mode: :payg) }
 
     before do
       expect(RegistrationSharing).not_to receive(:save_for_sharing)
@@ -91,11 +92,12 @@ module RegistrationSharing
 
     describe '#create payg' do
       before do
+        allow(System).to receive(:find_or_create_by).and_raise(ActiveRecord::RecordNotUnique)
         post(
           '/api/regsharing',
           params: {
-            login: login_payg,
-            password: password,
+            login: system_payg.login,
+            password: system_payg.password,
             created_at: created_at,
             registered_at: registered_at,
             last_seen_at: last_seen_at,
