@@ -6,6 +6,9 @@ Fri Jun  5 16:15:34 UTC 2026 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
   * Fix purge for large amount of systems (bsc#1262706)
   * Change data type to MEDIUMTEXT in profiles table
   * Remove proxy_byos column
+  * Fix race condition when no system matches (bsc#1268301)
+  * Fix race condition for PAYG (bsc#1268149)
+  * Fix race condition to update a system (bsc#1268303)
 
 -------------------------------------------------------------------
 Fri Apr 10 11:26:01 UTC 2026 - Adnilson Delgado <adnilson.delgado@suse.com>
