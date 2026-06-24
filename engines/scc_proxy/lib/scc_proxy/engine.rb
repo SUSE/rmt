@@ -316,8 +316,7 @@ module SccProxy
               {
                 scc_system_id: scc_response['id'],
                 password: scc_response['password'],
-                proxy_byos_mode: :byos,
-                proxy_byos: true
+                proxy_byos_mode: :byos
               }
             )
             profile_response_header_handling(scc_response_headers)
@@ -559,7 +558,7 @@ module SccProxy
         # as BYOS in the cloud does not use SYSTEM_TOKEN headers
         def authenticate_system(skip_on_duplicated: false)
           authenticate_or_request_with_http_basic('RMT API') do |login, password|
-            @systems = System.get_by_credentials(login, password)
+            fetch_systems_from_db(login, password)
             if @systems.present?
               # Return now if we just detected duplicates and we were told to skip on
               # this situation.
@@ -579,6 +578,22 @@ module SccProxy
               error = ActionController::TranslatedError.new(N_('Invalid system credentials'))
               error.status = :unauthorized
               raise error
+            end
+          end
+        end
+
+        def fetch_systems_from_db(login, password)
+          attempts = 0
+          begin
+            attempts += 1
+            @systems = System.get_by_credentials(login, password)
+            raise ActionController::TranslatedError.new(N_('No systems found')) if Settings.dig(:regsharing, :peers) && @systems.blank?
+          rescue StandardError
+            if attempts < 5
+              # handle a possible race condition
+              # if there are peers/siblings
+              sleep 6
+              retry
             end
           end
         end

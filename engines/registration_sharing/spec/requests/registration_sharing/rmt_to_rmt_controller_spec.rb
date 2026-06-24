@@ -15,6 +15,7 @@ module RegistrationSharing
     let(:request_token) { api_secret }
     let(:instance_data) { '<document>test</document>' }
     let(:pubcloud_reg_code) { 'INTERNAL-FOO' }
+    let(:system_payg) { FactoryBot.create(:system, login: login_payg, password: password, proxy_byos_mode: :payg) }
 
     before do
       expect(RegistrationSharing).not_to receive(:save_for_sharing)
@@ -35,7 +36,7 @@ module RegistrationSharing
             created_at: created_at,
             registered_at: registered_at,
             last_seen_at: last_seen_at,
-            proxy_byos: true,
+            proxy_byos_mode: :byos,
             pubcloud_reg_code: pubcloud_reg_code,
             activations: [
               {
@@ -91,15 +92,16 @@ module RegistrationSharing
 
     describe '#create payg' do
       before do
+        allow(System).to receive(:find_or_create_by).and_raise(ActiveRecord::RecordNotUnique)
         post(
           '/api/regsharing',
           params: {
-            login: login_payg,
-            password: password,
+            login: system_payg.login,
+            password: system_payg.password,
             created_at: created_at,
             registered_at: registered_at,
             last_seen_at: last_seen_at,
-            proxy_byos: false,
+            proxy_byos_mode: :payg,
             pubcloud_reg_code: pubcloud_reg_code,
             activations: [
               {
@@ -164,7 +166,6 @@ module RegistrationSharing
 
           it { is_expected.not_to eq(nil) }
           its(:proxy_byos_mode) { is_expected.to eq('hybrid') }
-          its(:proxy_byos) { is_expected.to eq(false) }
           it 'saves instance data' do
             expect(system.instance_data).to eq(instance_data)
           end
