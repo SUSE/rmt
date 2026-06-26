@@ -150,7 +150,7 @@ GEM
       concurrent-ruby (~> 1.0)
     json (2.7.6)
     jsonapi-renderer (0.2.2)
-    jwt (2.10.2)
+    jwt (3.2.0)
       base64
     listen (3.6.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -389,7 +389,7 @@ DEPENDENCIES
   gettext_i18n_rails
   gettext_test_log
   guard-rspec
-  jwt (~> 2.1)
+  jwt (~> 3.2)
   listen (>= 3.0.5, <= 3.6.0)
   memory_profiler (~> 1.0.2)
   minitest (~> 5.15.0)

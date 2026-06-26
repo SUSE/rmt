@@ -97,7 +97,7 @@ gem 'config', '~> 3.0', '>= 2.2.1'
 gem 'terminal-table', '~> 3.0'
 
 # needed by rmt-server-pubcloud
-gem 'jwt', '~> 2.1'
+gem 'jwt', '~> 3.2'
 gem 'base32'
 
 # Needed to parse Debian's Packages.xz
