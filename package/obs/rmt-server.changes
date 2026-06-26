@@ -2,6 +2,7 @@
 Mon May 18 16:07:59 UTC 2026 - Natnael Getahun <natnael.getahun@suse.com>
 
 - Version 3.0
+  * Set version to 3.0.0
   * Security fix: Remove unused ActionMailer/ActionMailbox components to
     eliminate CVE-2026-42256 (bsc#1265369)
   * Split Rails meta-gem into individual components for better security control
