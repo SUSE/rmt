@@ -328,7 +328,6 @@ module SccProxy
               auth_header, request.request_parameters, instance_identifier, logger
             )
             system_values[:proxy_byos_mode] = :byos
-            system_values[:proxy_byos] = true
             if scc_response.present?
               system_values[:scc_system_id] = scc_response['id']
               system_values[:password] = scc_response['password']
