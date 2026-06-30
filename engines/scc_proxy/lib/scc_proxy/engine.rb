@@ -631,7 +631,7 @@ module SccProxy
           begin
             attempts += 1
             @systems = System.get_by_credentials(login, password)
-            raise ActionController::TranslatedError.new(N_('No systems found')) if @systems.blank?
+            raise ActionController::TranslatedError.new(N_('No systems found')) if Settings.dig(:regsharing, :peers) && @systems.blank?
           rescue StandardError
             if attempts < 5
               # handle a possible race condition
