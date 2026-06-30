@@ -171,6 +171,53 @@ module RegistrationSharing
       end
     end
 
+    describe 'duplicate race condition' do
+      before do
+        System.create!(
+          login: login_payg,
+          password: password
+        )
+        allow(System).to receive(:find_or_create_by).and_raise(ActiveRecord::RecordNotUnique)
+        allow(System).to receive(:find_by!).and_call_original
+        post(
+          '/api/regsharing',
+          params: {
+            login: login_payg,
+            password: password,
+            created_at: created_at,
+            registered_at: registered_at,
+            last_seen_at: last_seen_at,
+            proxy_byos_mode: :hybrid,
+            pubcloud_reg_code: pubcloud_reg_code,
+            activations: [
+              {
+                product_id: product.id,
+                created_at: created_at
+              }
+            ],
+            instance_data: instance_data
+          },
+          headers: { 'Authorization' => "Bearer #{request_token}" }
+          )
+      end
+
+      context 'with correct credentials' do
+        it 'performs HTTP request successfully' do
+          expect(response).to have_http_status(204)
+        end
+
+        context 'system' do
+          subject(:system) { System.find_by(login: login_payg) }
+
+          it { is_expected.not_to eq(nil) }
+          its(:proxy_byos_mode) { is_expected.to eq('hybrid') }
+          it 'saves instance data' do
+            expect(system.instance_data).to eq(instance_data)
+          end
+        end
+      end
+    end
+
     describe '#destroy' do
       let!(:system) { FactoryBot.create(:system) }
 
