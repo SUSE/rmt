@@ -7,12 +7,9 @@ module RegistrationSharing
 
     def create
       System.transaction do
-        system = System.find_or_create_by(
-          login: params[:login],
-          password: params[:password],
-          system_token: params[:system_token]
-        )
-        system.update(system_params)
+        system = fetch_system
+        system.lock!
+        system.assign_attributes(system_params)
 
         system.activations = []
         product_ids = params[:activations].map { |a| a[:product_id].to_i }.uniq
@@ -31,7 +28,6 @@ module RegistrationSharing
           )
         end
 
-        system.instance_data = params[:instance_data]
         system.save!
       end
     end
@@ -42,6 +38,20 @@ module RegistrationSharing
     end
 
     protected
+
+    def fetch_system
+      System.find_or_create_by(
+        login: params[:login],
+        password: params[:password],
+        system_token: params[:system_token]
+        )
+    rescue ActiveRecord::RecordNotUnique
+      System.find_by!(
+        login: params.expect(:login),
+        password: params.expect(:password),
+        system_token: params.expect(:system_token)
+      )
+    end
 
     def system_params
       params.permit(
