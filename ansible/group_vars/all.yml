@@ -1,0 +1,11 @@
+---
+# Configuration for RMT server on localhost
+
+# SCC credentials - REQUIRED
+# Set your SUSE Customer Center organization credentials
+rmt:
+  RMT_ORGANIZATION_USERNAME: "your-scc-organization-username"
+  RMT_ORGANIZATION_PASSWORD: "your-scc-organization-password"
+
+rmt_db_username: rmt
+rmt_db_password: ""

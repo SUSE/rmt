@@ -1,0 +1,5 @@
+# tmpfiles.d configuration for RMT Valkey instance
+# This ensures the data directory exists with correct permissions on transactional-update systems
+# Note: /var/lib/valkey is owned by the valkey package, we only create our subdirectory
+
+d /var/lib/valkey/6380 0750 valkey valkey -

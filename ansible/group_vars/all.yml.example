@@ -1,0 +1,11 @@
+---
+# Example configuration for RMT server
+# Copy this file to all.yml and customize
+
+rmt_db_username: rmt
+rmt_db_password: ""
+
+rmt:
+  RMT_ORGANIZATION_USERNAME: "your-scc-organization-username"
+  RMT_ORGANIZATION_PASSWORD: "your-scc-organization-password"
+

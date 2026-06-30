@@ -24,8 +24,9 @@
 %define rmt_user     _rmt
 %define rmt_group    nginx
 
-# SLE 15 SP7 and newer (including 16.0/Factory) support Ruby 3.4
-%if 0%{?sle_version} && 0%{?sle_version} == 150700
+# SLE 15 SP7 and newer, SLES/Leap 16+, and Factory/Tumbleweed support Ruby 3.4
+# (Factory/Tumbleweed get ruby3.4 from devel:languages:ruby repository)
+%if (0%{?sle_version} >= 150700) || (0%{?suse_version} >= 1600) || (0%{?suse_version} == 1699)
 %define rb_build_versions     ruby34
 %define rb_build_ruby_abis    ruby:3.4.0
 %define ruby_version          ruby3.4
@@ -41,7 +42,7 @@
 %undefine _find_debuginfo_dwz_opts
 
 Name:           rmt-server
-Version:        3.0
+Version:        3.0.0
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -51,6 +52,7 @@ Source0:        %{name}-%{version}.tar.bz2
 Source1:        rmt-server-rpmlintrc
 Source2:        rmt.conf
 Source3:        rmt-cli.8.gz
+Source4:        rmt-valkey.tmpfiles
 BuildRequires:  %{ruby_version}
 BuildRequires:  %{ruby_version}-devel
 BuildRequires:  chrpath
@@ -63,7 +65,14 @@ BuildRequires:  libxml2-devel
 BuildRequires:  libxslt-devel
 BuildRequires:  libyaml-devel
 BuildRequires:  sqlite-devel
+BuildRequires:  valkey
 BuildRequires:  pkgconfig(systemd)
+# Only require ansible build dependencies when building ansible subpackage (SLES/Leap 16+ only, not Tumbleweed)
+# Note: suse_version >= 1600 excludes Tumbleweed which has suse_version == 1699
+%if 0%{?suse_version} >= 1600 && 0%{?suse_version} != 1699
+BuildRequires:  ansible-core >= 2.16
+BuildRequires:  ansible >= 11
+%endif
 Requires:       gpg2
 Recommends:     mariadb
 Recommends:     nginx
@@ -116,6 +125,26 @@ Conflicts:      rmt-server-configuration
 This package extends the basic RMT functionality with capabilities
 required for public cloud environments.
 
+# Ansible subpackage only for SLES/Leap 16+
+%if 0%{?suse_version} >= 1600
+%package -n ansible-rmt-server
+Summary:        Ansible playbook for RMT deployment
+Group:          Development/Tools/Other
+BuildArch:      noarch
+License:        GPL-2.0-or-later
+URL:            https://github.com/SUSE/rmt
+
+Requires:       ansible-core >= 2.16
+Requires:       ansible >= 11
+Requires:       python3dist(pymysql)
+Requires:       rmt-server = %version
+
+%description -n ansible-rmt-server
+Ansible playbook and roles for automated deployment and configuration
+of RMT server. Includes SSL certificate generation, database setup,
+and nginx configuration.
+%endif
+
 %prep
 cp -p %{SOURCE2} .
 
@@ -124,7 +153,7 @@ sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
 # Set the version of bundler available within the build environment instead
 # of expect a hardcoded version. This ensures we bundle with the available version of bundler no matter which version available
 # NOTE: This relies on the fact that the lock file format does not change between bundler versions (which is not yet the case)
-sed -i "s/2\.2\.34/$(bundle.%{ruby_version} --version | grep -oE '([0-9]+\.?){3}')/g" Gemfile.lock
+sed -i "s/2\.6\.7/$(bundle.%{ruby_version} --version | grep -oE '([0-9]+\.?){3}')/g" Gemfile.lock
 
 %build
 bundle.%{ruby_version} config build.nio4r --with-cflags='%{optflags} -Wno-return-type'
@@ -198,8 +227,8 @@ mkdir -p %{buildroot}%{_sysconfdir}
 mv %{_builddir}/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
 # valkey
-mkdir -p %{buildroot}/var/lib/valkey/6380
 install -D -m 644 package/files/valkey-6380.conf %{buildroot}%{_sysconfdir}/valkey/6380.conf
+install -D -m 644 %{SOURCE4} %{buildroot}%{_tmpfilesdir}/rmt-valkey.conf
 
 # nginx
 install -D -m 644 package/files/nginx/nginx-http.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
@@ -209,6 +238,12 @@ install -D -m 644 package/files/nginx-pubcloud/nginx-http.conf %{buildroot}%{_sy
 install -D -m 644 package/files/nginx-pubcloud/nginx-https.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-pubcloud-https.conf
 install -D -m 644 package/files/nginx-pubcloud/auth-handler.conf %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
 install -D -m 644 package/files/nginx-pubcloud/auth-location.conf %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
+
+# ansible playbook (SLES/Leap 16+ only)
+%if 0%{?suse_version} >= 1600
+mkdir -p %{buildroot}%{_datadir}/ansible/rmt
+cp -r ansible/* %{buildroot}%{_datadir}/ansible/rmt/
+%endif
 
 sed -i -e '/BUNDLE_PATH: .*/cBUNDLE_PATH: "\/usr\/lib64\/rmt\/vendor\/bundle\/"' \
     -e 's/^BUNDLE_JOBS: .*/BUNDLE_JOBS: "1"/' \
@@ -231,6 +266,8 @@ install -D -m 644 package/files/rmt-server.reg %{buildroot}%{_sysconfdir}/slp.re
 grep -rl '\/usr\/bin\/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
     sed -i -e 's@\/usr\/bin\/env ruby.%{ruby_version}@\/usr\/bin\/ruby\.%{ruby_version}@g' \
     -e 's@\/usr\/bin\/env ruby@\/usr\/bin\/ruby\.%{ruby_version}@g'
+grep -rl '\/usr\/bin\/env -S ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
+    sed -i -e 's@\/usr\/bin\/env -S ruby@\/usr\/bin\/ruby\.%{ruby_version}@g'
 grep -rl '\/usr\/bin\/env bash' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
     sed -i -e 's@\/usr\/bin\/env bash@\/bin\/bash@g'
 
@@ -260,6 +297,7 @@ rm -f %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/.gitignore
 rm -f %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/*/gem_make.out
 rm -f %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/*/mkmf.log
 find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod 644 -- {} +
+find %{buildroot} -perm -0002 "(" -type f -o -type d ")" -exec chmod o-w {} +
 
 %fdupes %{buildroot}/%{lib_dir}
 
@@ -267,9 +305,18 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/mysql2-*/lib/mysql2/mysql2.so
 chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/mysql2/mysql2.so
 
+%check
+%if 0%{?suse_version} >= 1600 && 0%{?suse_version} != 1699
+# Test ansible playbook syntax (only on SLES/Leap 16+, not Tumbleweed)
+cd ansible
+ansible-playbook --syntax-check tests/test_playbook.yml
+ansible-playbook tests/test_playbook.yml
+%endif
+
 %files
 %attr(0755,root,root) %{app_dir}
 %attr(0755,root,root) %{app_dir}/public/tools
+%exclude %{app_dir}/ansible/
 %exclude %{app_dir}/engines/
 %exclude %{app_dir}/package/
 %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
@@ -344,12 +391,8 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %config(noreplace) %{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
 
 # Valkey + Sidekiq files
-%dir /var/lib/valkey
-%dir /var/lib/valkey/6380
-%attr(-,valkey,root) /var/lib/valkey/6380
-%dir %{_sysconfdir}/valkey
-%attr(-,root,valkey) %{_sysconfdir}/valkey/6380.conf
 %config(noreplace) %{_sysconfdir}/valkey/6380.conf
+%{_tmpfilesdir}/rmt-valkey.conf
 %{_unitdir}/rmt-sidekiq.service
 %{_unitdir}/rmt-valkey.service
 %{_sbindir}/rcrmt-valkey
@@ -364,6 +407,34 @@ chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/m
 %config(noreplace) %{_unitdir}/rmt-server-regsharing.timer
 %config(noreplace) %{_unitdir}/rmt-server-trim-cache.timer
 
+%if 0%{?suse_version} >= 1600
+%files -n ansible-rmt-server
+%dir %{_datadir}/ansible
+%dir %{_datadir}/ansible/rmt
+%dir %{_datadir}/ansible/rmt/group_vars
+%dir %{_datadir}/ansible/rmt/roles
+%dir %{_datadir}/ansible/rmt/roles/rmt
+%dir %{_datadir}/ansible/rmt/roles/rmt/tasks
+%dir %{_datadir}/ansible/rmt/roles/rmt/templates
+%dir %{_datadir}/ansible/rmt/roles/rmt/files
+%dir %{_datadir}/ansible/rmt/roles/rmt/handlers
+%dir %{_datadir}/ansible/rmt/roles/rmt/defaults
+%dir %{_datadir}/ansible/rmt/roles/rmt/meta
+%dir %{_datadir}/ansible/rmt/tests
+%{_datadir}/ansible/rmt/site.yml
+%{_datadir}/ansible/rmt/ansible.cfg
+%{_datadir}/ansible/rmt/requirements.yml
+%{_datadir}/ansible/rmt/roles/rmt/tasks/*.yml
+%{_datadir}/ansible/rmt/roles/rmt/templates/*
+%{_datadir}/ansible/rmt/roles/rmt/files/*
+%{_datadir}/ansible/rmt/roles/rmt/handlers/*.yml
+%{_datadir}/ansible/rmt/roles/rmt/defaults/*.yml
+%{_datadir}/ansible/rmt/roles/rmt/meta/*.yml
+%{_datadir}/ansible/rmt/tests/*.yml
+%config(noreplace) %{_datadir}/ansible/rmt/group_vars/all.yml
+%{_datadir}/ansible/rmt/group_vars/all.yml.example
+%endif
+
 %pre
 getent group %{rmt_group} >/dev/null || %{_sbindir}/groupadd -r %{rmt_group}
 getent passwd %{rmt_user} >/dev/null || \
@@ -376,7 +447,12 @@ getent passwd %{rmt_user} >/dev/null || \
 
 # Run only on install
 if [ $1 -eq 1 ]; then
-  echo "Please run the YaST RMT module (or 'yast2 rmt' from the command line) to complete the configuration of your RMT" >> /dev/stdout
+%if 0%{?suse_version} >= 1600
+  echo "To complete the RMT configuration, install 'ansible-rmt-server' package and run:"
+  echo "  cd /usr/share/ansible/rmt && ansible-playbook site.yml"
+%else
+  echo "Please run the YaST RMT module (or 'yast2 rmt' from the command line) to complete the configuration of your RMT"
+%endif
 fi
 
 # Run only on upgrade
@@ -419,6 +495,7 @@ fi
 
 %post pubcloud
 %service_add_post rmt-server-regsharing.service rmt-server-trim-cache.service rmt-valkey.service rmt-sidekiq.service
+%tmpfiles_create %{_tmpfilesdir}/rmt-valkey.conf
 
 
 %preun pubcloud
