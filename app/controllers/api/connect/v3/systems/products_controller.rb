@@ -5,6 +5,7 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
   before_action :check_product_service_and_repositories, only: %i[show activate]
   before_action :load_subscription, only: %i[activate upgrade]
   before_action :check_base_product_dependencies, only: %i[activate upgrade show]
+  rescue_from ActiveRecord::InvalidForeignKey, with: :handle_invalid_foreign_key
   after_action :refresh_system_token, only: %i[activate upgrade], if: -> { request.headers.key?(SYSTEM_TOKEN_HEADER) }
 
   def activate
@@ -205,4 +206,8 @@ class Api::Connect::V3::Systems::ProductsController < Api::Connect::BaseControll
     Product.find_by(product_search_params(product_hash))
   end
 
+  def handle_invalid_foreign_key
+    error = { errors: _('The system is not valid or no longer exists') }
+    render json: error, status: :unprocessable_content
+  end
 end

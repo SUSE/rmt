@@ -483,6 +483,43 @@ RSpec.describe Api::Connect::V3::Systems::ProductsController do
     end
   end
 
+  describe 'with a race condition' do
+    subject { response }
+
+    let(:request) { put url, headers: headers, params: payload }
+    let(:new_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
+    let(:payload) do
+      {
+        identifier: new_product.identifier,
+        version: new_product.version,
+        arch: new_product.arch
+      }
+    end
+    let(:serialized_json) do
+      V3::ServiceSerializer.new(
+        new_product.service,
+        base_url: URI::HTTP.build({ scheme: response.request.scheme, host: response.request.host }).to_s
+      ).to_json
+    end
+
+    before do
+      allow_any_instance_of(ActiveRecord::Associations::CollectionProxy)
+        .to receive(:where).and_wrap_original do |original_method, *args|
+        # silently update the system record in the background
+        system.update(id: 9999)
+        # continue with the original ActiveRecord call which will now fail
+        # because the foreign key (system_id) no longer points to a valid system.
+        original_method.call(*args)
+      end
+    end
+
+    it 'return an error' do
+      request
+      expect(response.code).to eq('422')
+      expect(response.body).to include('system is not valid')
+    end
+  end
+
   describe 'online/offline migrations' do
     shared_examples 'migration return values' do
       before { post url, headers: headers, params: payload }
