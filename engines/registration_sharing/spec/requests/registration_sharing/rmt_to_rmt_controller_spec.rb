@@ -175,7 +175,8 @@ module RegistrationSharing
       before do
         System.create!(
           login: login_payg,
-          password: password
+          password: password,
+          system_token: login_payg
         )
         allow(System).to receive(:find_or_create_by).and_raise(ActiveRecord::RecordNotUnique)
         allow(System).to receive(:find_by!).and_call_original
@@ -184,6 +185,7 @@ module RegistrationSharing
           params: {
             login: login_payg,
             password: password,
+            system_token: login_payg,
             created_at: created_at,
             registered_at: registered_at,
             last_seen_at: last_seen_at,
