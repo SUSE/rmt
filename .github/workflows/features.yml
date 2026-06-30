@@ -71,6 +71,10 @@ jobs:
         run: |
           bash ci/rmt-build-rpm
 
+      - name: validate RPM packaging
+        run: |
+          bash ci/rmt-validate-packaging
+
       - name: gather RPM build artifacts
         uses: actions/upload-artifact@v4
         with:
