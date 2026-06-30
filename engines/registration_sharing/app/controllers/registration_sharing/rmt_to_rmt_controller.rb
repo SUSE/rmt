@@ -12,8 +12,14 @@ module RegistrationSharing
         system.assign_attributes(system_params)
 
         system.activations = []
+        product_ids = params[:activations].map { |a| a[:product_id].to_i }.uniq
+        # batch load all products and services
+        # prevent a second hidden (N+1) query when the loop calls product.service on every iteration
+        # it eager-loads the services alongside the products
+        products_by_id = Product.includes(:service).where(id: product_ids).index_by(&:id)
+
         params[:activations].each do |activation|
-          product = Product.find_by(id: activation[:product_id])
+          product = products_by_id[activation[:product_id].to_i]
           raise "Product #{product_id} not found" unless product
 
           system.activations << Activation.new(
