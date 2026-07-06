@@ -61,10 +61,10 @@ More information can be found [here](https://documentation.suse.com/sles/15-SP4/
 
 ## Manual installation and configuration
 
-RMT currently gets built [in OBS](https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT/rmt-server) for these distributions: `SLE_15`, `SLE_15_SP1`, `openSUSE_Leap_15.0`, `openSUSE_Leap_15.1`, `openSUSE_Tumbleweed`.
+RMT currently gets built [in OBS](https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT2/rmt-server) for these distributions: `SLE_15`, `SLE_15_SP1`, `openSUSE_Leap_15.0`, `openSUSE_Leap_15.1`, `openSUSE_Tumbleweed`.
 To add the repository, call: (replace `<dist>` with your distribution)
 
-`zypper ar -f https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/<dist>/systemsmanagement:SCC:RMT.repo`
+`zypper ar -f https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/<dist>/systemsmanagement:SCC:RMT2.repo`
 
 To install RMT, run: `zypper in rmt-server`
 

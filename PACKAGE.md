@@ -1,13 +1,13 @@
 ## rmt-server Packaging
 
-Note: Never push changes to the internal build service `ibs://Devel:SCC:RMT`!
-          The repository links to `systemsmanagement:SCC:RMT` and gets updated
+Note: Never push changes to the internal build service `ibs://Devel:SCC:RMT2`!
+          The repository links to `systemsmanagement:SCC:RMT2` and gets updated
           automatically.
 
 Note: Look below for direction on publishing to registry.
 
 
-* The package is built in OBS at: https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT/rmt-server
+* The package is built in OBS at: https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT2/rmt-server
 * To update the version of RMT, you will have to change the following files:
   * `lib/rmt.rb`
   * `package/obs/rmt-server.spec`
@@ -17,11 +17,11 @@ Note: Look below for direction on publishing to registry.
           ```
           mkdir ~/obs
           cd ~/obs
-          osc co systemsmanagement:SCC:RMT rmt-server
+          osc co systemsmanagement:SCC:RMT2 rmt-server
           ```
       * Alternatively, if an OBS working copy is already checked out, update the working copy by running `osc up`
 2. Run `make dist` in your RMT working directory to build a tarball.
-3. Copy the files from the `package/obs` directory to the OBS working directory `systemsmanagement:SCC:RMT/rmt-server`.
+3. Copy the files from the `package/obs` directory to the OBS working directory `systemsmanagement:SCC:RMT2/rmt-server`.
 4. Examine the changes by running `osc status` and `osc diff`.
 5. Stage the changes by running `osc addremove`.
 6. Build the package with osc:
@@ -57,7 +57,7 @@ Note: If you want to disable automatic changes made by osc (e.g. License string)
 To submit a request to openSUSE Factory, issue this commands in the console:
 
 ```bash
-osc sr systemsmanagement:SCC:RMT rmt-server openSUSE:Factory
+osc sr systemsmanagement:SCC:RMT2 rmt-server openSUSE:Factory
 ```
 
 ##### Submit maintenance updates for SLES to the Internal Build Service
@@ -71,7 +71,7 @@ To check out which codestreams RMT is currently maintained, see https://smelt.su
 For each maintained codestream you need to create a new maintenance request:
 
 ```bash
-osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server SUSE:SLE-15:Update
+osc -A https://api.suse.de mr Devel:SCC:RMT2 rmt-server SUSE:SLE-15:Update
 ```
 
 Note: In case the `mr` (maintenance request) command is not working properly,
@@ -84,7 +84,7 @@ Example:
 $ osc -A https://api.suse.de maintained rmt-server
 SUSE:SLE-15:Update/rmt-server
 
-$ osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server SUSE:SLE-15:Update
+$ osc -A https://api.suse.de mr Devel:SCC:RMT2 rmt-server SUSE:SLE-15:Update
 Using target project 'SUSE:Maintenance'
 17362323
 ```
@@ -93,7 +93,7 @@ Using target project 'SUSE:Maintenance'
 
 * When asked whether or not to supersede a request, the answer is usually "no". Saying "yes" would overwrite the previous request made, cancelling the release process for its codestream.
 
-You can check the status of your requests [here](https://build.opensuse.org/package/requests/systemsmanagement:SCC:RMT/rmt-server) and [here](https://build.suse.de/package/requests/Devel:SCC:RMT/rmt-server).
+You can check the status of your requests [here](https://build.opensuse.org/package/requests/systemsmanagement:SCC:RMT2/rmt-server) and [here](https://build.suse.de/package/requests/Devel:SCC:RMT2/rmt-server).
 
 After your requests have been accepted, they still have to pass maintenance testing before they are released to customers. You can check their progress at [maintenance.suse.de](https://maintenance.suse.de/search/?q=rmt-server). If you still need help, the maintenance team can be reached at [maint-coord@suse.de](maint-coord@suse.de) or #maintenance on irc.suse.de.
 
