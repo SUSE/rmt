@@ -91,7 +91,7 @@ fi
 # Local build is resource intensive
 echo "Local build (osc build) is resource intensive. Skipping in automation; run it manually if desired."
 
-# Phase 3: Git Tagging
+# Phase 3: Git Tagging (GitHub Release requires manual UI step after this)
 echo "--- Phase 3: Git Tagging ---"
 cd "$RMT_PATH"
 if git rev-parse "v$VERSION" >/dev/null 2>&1; then

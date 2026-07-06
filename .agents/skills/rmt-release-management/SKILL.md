@@ -173,7 +173,7 @@ osc -A https://api.suse.de co Devel:SCC:RMT rmt-server
 - Commit only after Git merge: `osc ci`.
 
 ### 4. Advanced IBS Discovery (SLES)
-If `osc maintained rmt-server` does not show a requested codestream (e.g., a specific Service Pack):
+If `osc -A https://api.suse.de maintained rmt-server` does not show a requested codestream (e.g., a specific Service Pack):
 - **Search:** Use `osc -A https://api.suse.de search rmt-server | grep Update` to find all available update projects.
 - **Verify:** Use `osc -A https://api.suse.de ls <PROJECT> rmt-server` to confirm the package exists before submitting an MR.
 
