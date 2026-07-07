@@ -1,5 +1,5 @@
 -------------------------------------------------------------------
-Mon May 18 16:07:59 UTC 2026 - Natnael Getahun <natnael.getahun@suse.com>
+Mon Jun  8 16:07:59 UTC 2026 - Natnael Getahun <natnael.getahun@suse.com>
 
 - Version 3.0
   * Set version to 3.0.0
@@ -8,7 +8,7 @@ Mon May 18 16:07:59 UTC 2026 - Natnael Getahun <natnael.getahun@suse.com>
   * Split Rails meta-gem into individual components for better security control
 
 -------------------------------------------------------------------
-Wed Apr 29 10:13:52 UTC 2026 - Adnilson Delgado <adnilson.delgado@suse.com>
+Mon Jun  8 10:13:52 UTC 2026 - Adnilson Delgado <adnilson.delgado@suse.com>
 
 - Version 3.0.alpha
   * Update Ruby to version 3.4.8 and Rails to version 7.1.6
