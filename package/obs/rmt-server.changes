@@ -14,6 +14,28 @@ Wed Apr 29 10:13:52 UTC 2026 - Adnilson Delgado <adnilson.delgado@suse.com>
   * Update Ruby to version 3.4.8 and Rails to version 7.1.6
 
 -------------------------------------------------------------------
+Fri Jun  5 16:15:34 UTC 2026 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
+
+- Version 2.28
+  * Set arch to unknown for Rancher based products (jsc#SCC-759)
+  * Fix purge for large amount of systems (bsc#1262706)
+  * Change data type to MEDIUMTEXT in profiles table (bsc#1268305)
+  * Remove proxy_byos column
+  * Fix race condition when no system matches (bsc#1268301)
+  * Fix race condition for PAYG (bsc#1268149)
+  * Fix race condition to update a system (bsc#1268303)
+
+-------------------------------------------------------------------
+Fri Apr 10 11:26:01 UTC 2026 - Adnilson Delgado <adnilson.delgado@suse.com>
+
+- Version 2.27
+  * Update rack, fix CVE-2026-34763, CVE-2026-34230, CVE-2026-26961, CVE-2026-34786, CVE-2026-34831,
+    CVE-2026-34826, CVE-2026-34830, CVE-2026-34785, CVE-2026-34829, CVE-2026-26962 (bsc#1261388, bsc#1261398,
+    bsc#1261406, bsc#1261417, bsc#1261426, bsc#1261436, bsc#1261447, bsc#1261458, bsc#1261466, bsc#1261471)
+  * fixes ReDoS vulnerability in Addressable
+  * fixes Out-of-bounds Read vulnerability in rdiscount
+
+-------------------------------------------------------------------
 Thu Mar 05 20:26:48 UTC 2026 - Fergal Mc Carthy <fmccarthy@suse.com>
 
 - Version 2.26
@@ -29,8 +51,8 @@ Tue Jan 13 17:14:09 UTC 2026 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
     from mirroring, and send clients directly there (jsc#SCC-452)
   * rmt-server-pubcloud
     * Clearer error message (bsc#1256883)
-    * Handle zypper response when data exporter raises an error (bsc#1257133)
     * Add Valkey + Sidekiq for async processing
+    * Handle zypper response when data exporter raises an error (bsc#1257133)
 
 -------------------------------------------------------------------
 Tue Nov 11 11:03:50 UTC 2025 - Natnael Getahun <natnael.getahun@suse.com>
