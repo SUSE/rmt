@@ -1,0 +1,17 @@
+---
+# Skip FQCN canonical warnings for community.mysql modules
+# Reason: SLES 16.0 only has community.mysql, not ansible.mysql
+skip_list:
+  - yaml[line-length]
+  - name[casing]
+  - fqcn[action-core]
+  - fqcn[canonical]
+
+warn_list:
+  - experimental
+  - role-name
+
+exclude_paths:
+  - .cache/
+  - .git/
+  - molecule/

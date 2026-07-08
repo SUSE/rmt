@@ -7,23 +7,19 @@ module RegistrationSharing
 
     def create
       System.transaction do
-        system = System.find_or_create_by(
-          login: params[:login],
-          password: params[:password],
-          system_token: params[:system_token]
-        )
-        system.update(system_params)
+        system = fetch_system
+        system.lock!
+        system.assign_attributes(system_params)
 
-        # TODO: remove this block when proxy_byos column gets dropped
-        if !params.key?(:proxy_byos_mode) && system.attribute_names.include?('proxy_byos_mode')
-          # the info comes from a sibling that does not have proxy_byos_mode
-          # to a sibling does have proxy_byos_mode
-          system.proxy_byos_mode = system.proxy_byos ? :byos : :payg
-        end
-        # end todo
         system.activations = []
+        product_ids = params[:activations].map { |a| a[:product_id].to_i }.uniq
+        # batch load all products and services
+        # prevent a second hidden (N+1) query when the loop calls product.service on every iteration
+        # it eager-loads the services alongside the products
+        products_by_id = Product.includes(:service).where(id: product_ids).index_by(&:id)
+
         params[:activations].each do |activation|
-          product = Product.find_by(id: activation[:product_id])
+          product = products_by_id[activation[:product_id].to_i]
           raise "Product #{product_id} not found" unless product
 
           system.activations << Activation.new(
@@ -32,7 +28,6 @@ module RegistrationSharing
           )
         end
 
-        system.instance_data = params[:instance_data]
         system.save!
       end
     end
@@ -44,9 +39,23 @@ module RegistrationSharing
 
     protected
 
+    def fetch_system
+      System.find_or_create_by(
+        login: params[:login],
+        password: params[:password],
+        system_token: params[:system_token]
+        )
+    rescue ActiveRecord::RecordNotUnique
+      System.find_by!(
+        login: params.expect(:login),
+        password: params.expect(:password),
+        system_token: params.expect(:system_token)
+      )
+    end
+
     def system_params
       params.permit(
-        :login, :password, :hostname, :proxy_byos, :proxy_byos_mode,
+        :login, :password, :hostname, :proxy_byos_mode,
         :system_token, :registered_at, :created_at, :last_seen_at,
         :instance_data, :pubcloud_reg_code
 )

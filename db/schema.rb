@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_08_092033) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_26_153653) do
   create_table "activations", charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "service_id", null: false
@@ -184,7 +184,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_08_092033) do
     t.datetime "last_seen_at"
     t.string "login"
     t.string "password"
-    t.boolean "proxy_byos", default: false
     t.integer "proxy_byos_mode", default: 0
     t.string "pubcloud_reg_code"
     t.datetime "registered_at"

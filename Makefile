@@ -5,8 +5,9 @@ VERSION       = $(shell ruby -e 'require "./lib/rmt.rb"; print RMT::VERSION')
 # Phony Targets
 # =============================================================================
 
-.PHONY: all help clean
+.PHONY: all help clean ansible-test ansible-lint
 .PHONY: build build-tarball dist man
+.PHONY: ansible-deploy ansible-check
 .PHONY: database-up server shell console public_repo
 
 # =============================================================================
@@ -26,7 +27,7 @@ help: ## Show this help message
 	@echo 'Usage: make [target]'
 	@echo ''
 	@echo 'Common Targets:'
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-z-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "^  (help|clean|build) "
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-z-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "^  (help|ansible-test|ansible-lint|clean|build|ansible-deploy|ansible-check) "
 	@echo ''
 	@echo 'Development Targets:'
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-z-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "^  (server|shell|console|database-up) "
@@ -34,6 +35,40 @@ help: ## Show this help message
 	@echo 'Build & Package Targets:'
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-z-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "^  (dist|build-tarball|man|public_repo) "
 	@echo ''
+
+# =============================================================================
+# Testing & Validation
+# =============================================================================
+
+ansible-test: build ## Run Ansible tests in container
+	@echo "==> Running Ansible playbook tests in openSUSE Leap 16.0 container..."
+	docker compose run --rm rmt bash -c "cd /srv/www/rmt/ansible && ansible-playbook tests/test_playbook.yml"
+	@echo "==> All tests passed!"
+
+ansible-lint: ## Lint Ansible playbooks and roles (requires local ansible installation)
+	@echo "==> Checking Ansible playbook syntax..."
+	cd ansible && ansible-playbook site.yml --syntax-check
+	@echo "==> Linting Ansible playbooks and roles..."
+	cd ansible && ansible-lint site.yml
+	cd ansible && ansible-lint roles/rmt/
+	@echo "==> All checks passed!"
+
+# =============================================================================
+# Deployment
+# =============================================================================
+
+ansible-deploy: ## Deploy RMT on localhost (requires sudo)
+	@echo "==> Deploying RMT via Ansible (requires sudo access)..."
+	cd ansible && ansible-playbook site.yml --ask-become-pass
+
+ansible-check: ## Dry run Ansible deployment in Docker container
+	@echo "==> Running Ansible playbook check in Docker..."
+	docker compose run --rm rmt bash -c "cd /srv/www/rmt/ansible && ansible-playbook site.yml --syntax-check"
+	@echo "==> Syntax check passed!"
+
+ansible-check-local: ## Dry run Ansible deployment locally (requires sudo)
+	@echo "==> Running Ansible playbook in check mode (requires sudo access)..."
+	cd ansible && ansible-playbook site.yml --check --ask-become-pass
 
 # =============================================================================
 # Build & Package
@@ -59,6 +94,7 @@ build-tarball: clean man ## Build RMT distribution tarball
 	@cp -r Gemfile.lock $(NAME)-$(VERSION)/
 	@cp -r lib $(NAME)-$(VERSION)/
 	@cp -r engines $(NAME)-$(VERSION)/
+	@cp -r ansible $(NAME)-$(VERSION)/
 	@mkdir $(NAME)-$(VERSION)/package
 	@cp -r package/files $(NAME)-$(VERSION)/package
 
@@ -103,6 +139,10 @@ build-tarball: clean man ## Build RMT distribution tarball
 	@rm -rf $(NAME)-$(VERSION)/.gemini
 	@rm -rf $(NAME)-$(VERSION)/.claude
 	@rm -rf $(NAME)-$(VERSION)/GEMINI.md
+	# Clean up ansible Python artifacts (keep tests for %check validation)
+	@find $(NAME)-$(VERSION)/ansible -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	@find $(NAME)-$(VERSION)/ansible -name "*.pyc" -delete 2>/dev/null || true
+	@find $(NAME)-$(VERSION)/ansible -name "*.retry" -delete 2>/dev/null || true
 
 	@mv $(NAME)-$(VERSION)/.bundle/config_packaging $(NAME)-$(VERSION)/.bundle/config
 	cd $(NAME)-$(VERSION) && bundle package --all
@@ -152,4 +192,8 @@ clean: ## Clean all build artifacts and temporary files
 	rm -f rmt-cli.8*
 	rm -rf package/obs/*.tar.bz2
 	rm -rf $(NAME)-$(VERSION)/
+	@echo "==> Cleaning Ansible artifacts..."
+	cd ansible && find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	cd ansible && find . -name "*.pyc" -delete 2>/dev/null || true
+	cd ansible && rm -rf /tmp/ansible_facts
 	@echo "==> Cleanup complete!"

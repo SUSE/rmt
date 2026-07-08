@@ -1,0 +1,11 @@
+---
+
+- name: Restart rmt
+  systemd:
+    name: rmt-server
+    state: restarted
+
+- name: Reload nginx
+  systemd:
+    name: nginx
+    state: reloaded

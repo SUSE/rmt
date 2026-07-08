@@ -80,7 +80,6 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
           'updated_at',
           'scc_registered_at',
           'scc_system_id',
-          'proxy_byos',
           'system_token',
           'system_information',
           'instance_data',

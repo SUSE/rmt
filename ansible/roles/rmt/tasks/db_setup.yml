@@ -1,0 +1,17 @@
+- name: Create RMT database
+  community.mysql.mysql_db:
+    name: "{{ rmt_db_name }}"
+    state: present
+    encoding: "{{ rmt_db_encoding }}"
+    login_unix_socket: /run/mysql/mysql.sock
+  when: not ansible_check_mode
+
+- name: Create RMT database user
+  community.mysql.mysql_user:
+    name: "{{ rmt_db_username }}"
+    password: "{{ rmt_db_password }}"
+    priv: "{{ rmt_db_name }}.*:ALL"
+    state: present
+    login_unix_socket: /run/mysql/mysql.sock
+  no_log: true
+  when: not ansible_check_mode

@@ -39,5 +39,6 @@ pushd "$BUILD_DIR"
   rpmbuild -ba --define '_srcdefattr (-,root,root)' --nosignature --undefine _enable_debug_packages SOURCES/rmt-server.spec
   cp -r "RPMS/x86_64/rmt-server-$VERSION"*.rpm "$ARTIFACT_DIR/"
   cp -r "RPMS/x86_64/rmt-server-config-$VERSION"*.rpm "$ARTIFACT_DIR/"
+  cp -r "RPMS/x86_64/rmt-server-pubcloud-$VERSION"*.rpm "$ARTIFACT_DIR/"
 popd
 groupend

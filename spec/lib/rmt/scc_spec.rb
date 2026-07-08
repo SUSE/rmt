@@ -160,6 +160,46 @@ describe RMT::SCC do
       end
     end
 
+    context 'with Rancher based products' do
+      let(:ranchers) { JSON.parse(file_fixture('products/rancher.json').read, symbolize_names: true) }
+      let(:sles15) { JSON.parse(file_fixture('products/sle15_tree.json').read, symbolize_names: true) }
+
+      let(:products) { sles15 + ranchers }
+
+      let(:subscriptions) { [] }
+      let(:all_repositories) { [] }
+
+      before do
+        allow(RMT::Logger).to receive(:new).and_return(logger)
+        allow(Settings).to receive(:scc).and_return OpenStruct.new(username: 'foo', password: 'bar')
+      end
+
+      it 'saves Rancher products with arch set to :unknown' do
+        archs = Product.where(id: ranchers.pluck(:id)).pluck(:arch)
+
+        described_class.new.sync
+        expect(archs).to all(eq('unknown'))
+      end
+
+      it 'is not setting arch for none Rancher products' do
+        archs = Product.where(id: sles15.pluck(:id)).pluck(:arch)
+
+        described_class.new.sync
+        expect(archs).not_to include('unknown')
+      end
+
+      context 'when updating products' do
+        let!(:product) { create :product, id: ranchers.first[:id], arch: nil }
+
+        it 'updates the architecture' do
+          expect(product.arch).to be_nil
+
+          described_class.new.sync
+          expect(product.reload.arch).to eq('unknown')
+        end
+      end
+    end
+
     context "with extensions that don't have base products available" do
       let(:extra_repo) do
         {
@@ -368,7 +408,6 @@ describe RMT::SCC do
       end
     end
   end
-
 
   describe '#disassociate_repositories' do
     let(:logger) { instance_double('RMT::Logger').as_null_object }
