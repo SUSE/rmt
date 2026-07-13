@@ -96,7 +96,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_26_153653) do
   create_table "profiles", charset: "utf8mb4", collation: "utf8mb4_unicode_520_ci", force: :cascade do |t|
     t.string "profile_type", null: false
     t.string "identifier", null: false
-    t.text "data", null: false
+    t.text "data", size: :long, null: false
     t.timestamp "last_synced_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
