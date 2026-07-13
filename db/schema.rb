@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_08_092033) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_26_153653) do
   create_table "activations", charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "service_id", null: false
@@ -94,12 +94,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_08_092033) do
   end
 
   create_table "profiles", charset: "utf8mb4", collation: "utf8mb4_unicode_520_ci", force: :cascade do |t|
-    t.string "profile_type", null: false
+    t.datetime "created_at", null: false
+    t.text "data", size: :long, null: false
     t.string "identifier", null: false
-    t.text "data", null: false
     t.timestamp "last_synced_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.string "profile_type", null: false
+    t.datetime "updated_at", null: false
     t.index ["profile_type", "identifier"], name: "index_profiles_on_profile_type_and_identifier", unique: true
   end
 
@@ -159,10 +159,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_08_092033) do
   end
 
   create_table "system_profiles", charset: "utf8mb4", collation: "utf8mb4_unicode_520_ci", force: :cascade do |t|
-    t.bigint "system_id", null: false
+    t.datetime "created_at", null: false
     t.bigint "profile_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "system_id", null: false
+    t.datetime "updated_at", null: false
     t.index ["profile_id"], name: "index_system_profiles_on_profile_id"
     t.index ["system_id", "profile_id"], name: "index_system_profiles_on_system_id_and_profile_id", unique: true
     t.index ["system_id"], name: "index_system_profiles_on_system_id"
@@ -184,7 +184,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_08_092033) do
     t.datetime "last_seen_at"
     t.string "login"
     t.string "password"
-    t.boolean "proxy_byos", default: false
     t.integer "proxy_byos_mode", default: 0
     t.string "pubcloud_reg_code"
     t.datetime "registered_at"
