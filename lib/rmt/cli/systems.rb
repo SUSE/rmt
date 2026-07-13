@@ -117,9 +117,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
 
   def delete_inactive_systems(before)
     n_systems_destroyed = 0
-    attempts = 0
-    begin
-      attempts += 1
+    with_retries do
       # instead of getting all the systems to be shown
       # before deletion, where we would know
       # how many systems are going to be deleted
@@ -129,24 +127,17 @@ class RMT::CLI::Systems < RMT::CLI::Base
         n_systems_destroyed += batch.destroy_all.length
         puts _('%{n_systems_destroyed} systems destroyed') % { n_systems_destroyed: n_systems_destroyed }
       end
-      [n_systems_destroyed, true]
-    rescue StandardError => e
-      if attempts < 3
-        puts _('Error while purging systems: %{error_class} %{e_message}. Retrying in 5 seconds (%{attempts}/3)') % {
-          error_class: e.class, e_message: e.message, attempts: attempts
-        }
-        sleep 5
-        retry
-      end
-      puts _('Could not delete all systems last seen before %{before}: %{message}') % { before: before, message: e.message }
-      [n_systems_destroyed, false]
     end
+    [n_systems_destroyed, true]
+  rescue StandardError => e
+    puts _('Could not delete all systems last seen before %{before}: %{message}') % { before: before, message: e.message }
+    [n_systems_destroyed, false]
   end
 
   def get_all_matches(before)
     system_ids_matched = []
     System.where('last_seen_at < ?', before).in_batches(of: DELETE_BATCH_SIZE, order: :desc) do |batch|
-      system_ids_matched += batch.pluck(:id)
+      system_ids_matched.concat(batch.pluck(:id))
       puts _('%{matched} systems last seen before %{before}') % { matched: system_ids_matched.length, before: before }
     end
     [system_ids_matched, true]
@@ -156,31 +147,37 @@ class RMT::CLI::Systems < RMT::CLI::Base
   end
 
   def delete_systems_by_id(system_ids)
-    attempts = 0
     deleted_systems = 0
-    begin
-      attempts += 1
+    with_retries do
       system_ids.each_slice(DELETE_BATCH_SIZE) do |sliced_systems_ids|
-        System.where(id: sliced_systems_ids).destroy_all
-        deleted_systems += sliced_systems_ids.length
+        deleted_systems += System.where(id: sliced_systems_ids).destroy_all.length
         remaining_systems = system_ids.length - deleted_systems
         puts _('%{remaining_systems} systems to be deleted') % { remaining_systems: remaining_systems } unless remaining_systems.zero?
       end
-      [deleted_systems, true]
+    end
+    [deleted_systems, true]
+  rescue StandardError => e
+    remaining_systems = system_ids.length - deleted_systems
+    puts _(
+      'Error while purging the systems: %{error_class} %{message}, all %{all} systems could not be removed, %{remaining} systems still in the database'
+      ) % { error_class: e.class, message: e.message, all: system_ids.length, remaining: remaining_systems }
+    [deleted_systems, false]
+  end
+
+  def with_retries(max_attempts: 3, delay: 5)
+    attempts = 0
+    begin
+      attempts += 1
+      yield attempts
     rescue StandardError => e
-      if attempts < 3
-        puts _('Error while purging systems: %{error_class} %{message}. Attempt %{attempts}/3, retrying in 5 seconds') % {
-          error_class: e.class, message: e.message, attempts: attempts
-        }
-        sleep 5
-        retry
-      else
-        remaining_systems = system_ids.length - deleted_systems
+      if attempts < max_attempts
         puts _(
-          'Error while purging the systems: %{error_class} %{message}, all %{all} systems could not be removed, %{remaining} systems still in the database'
-        ) % { error_class: e.class, message: e.message, all: system_ids.length, remaining: remaining_systems }
+          'Error while purging systems: %{error_class} %{message}. Attempt %{attempts}/%{max}, retrying in %{delay} seconds'
+        ) % { error_class: e.class, message: e.message, attempts: attempts, max: max_attempts, delay: delay }
+        sleep delay
+        retry
       end
-      [deleted_systems, false]
+      raise
     end
   end
 

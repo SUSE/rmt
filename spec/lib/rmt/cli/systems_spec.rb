@@ -284,8 +284,8 @@ RSpec.describe RMT::CLI::Systems do
         argv = ['purge', '--no-confirmation', '-q', '--before', Time.zone.now.strftime('%F')]
         expect { described_class.start(argv) }
           .to output(<<~STDOUT).to_stdout
-            Error while purging systems: RuntimeError FOO. Retrying in 5 seconds (1/3)
-            Error while purging systems: RuntimeError FOO. Retrying in 5 seconds (2/3)
+            Error while purging systems: RuntimeError FOO. Attempt 1/3, retrying in 5 seconds
+            Error while purging systems: RuntimeError FOO. Attempt 2/3, retrying in 5 seconds
             Could not delete all systems last seen before #{Time.zone.today}: FOO
             Systems that have not contacted this RMT since #{Time.zone.today} may still be in this RMT
           STDOUT
