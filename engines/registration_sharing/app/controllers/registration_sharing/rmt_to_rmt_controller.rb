@@ -7,12 +7,21 @@ module RegistrationSharing
 
     def create
       System.transaction do
-        system = System.find_or_create_by(
-          login: params[:login],
-          password: params[:password],
-          system_token: params[:system_token]
-        )
-        system.update(system_params)
+        begin
+          system = System.find_or_create_by(
+            login: params[:login],
+            password: params[:password],
+            system_token: params[:system_token]
+          )
+        rescue ActiveRecord::RecordNotUnique
+          system = System.find_by!(
+            login: params[:login],
+            password: params[:password],
+            system_token: params[:system_token]
+          )
+        end
+        system.lock!
+        system.assign_attributes(system_params)
 
         system.activations = []
         params[:activations].each do |activation|
@@ -25,7 +34,6 @@ module RegistrationSharing
           )
         end
 
-        system.instance_data = params[:instance_data]
         system.save!
       end
     end
