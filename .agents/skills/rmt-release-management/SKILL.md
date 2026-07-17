@@ -139,6 +139,10 @@ make dist
 
 **Commit:** `osc ci` to upload to IBS
 
+**Build Verification:**
+- Wait for builds to complete: `osc -A https://api.suse.de results --watch`
+- Verify build success for maintained streams before proceeding to release tagging and IBS submissions
+
 #### RMT 3.x - Git-Based Workflow (rmt_3 branch)
 **Git-first approach.** Changes go to git repositories first, then sync to OBS.
 
@@ -165,24 +169,28 @@ osc -A https://api.suse.de co Devel:SCC:RMT rmt-server
 
 **Commit:** Only after git PR is merged: `osc ci`
 
-**Local Verification:**
-- Identify valid build targets: `osc repos`.
-- Build locally for verification: `osc build <repo> <arch> --no-verify` (e.g., `osc build 15.6 x86_64 --no-verify`).
-
-**Commit:**
-- Commit only after Git merge: `osc ci`.
+**Build Verification:**
+- For OBS (Factory/Tumbleweed/Leap): `osc -A https://api.opensuse.org results --watch`
+- For IBS (SLE): Verify IBS Devel:SCC:RMT package matches OBS submission and builds successfully:
+  ```bash
+  osc -A https://api.suse.de checkout Devel:SCC:RMT rmt-server /tmp/ibs-verify
+  osc -A https://api.suse.de results Devel:SCC:RMT rmt-server --watch
+  ```
+- Wait for builds to stabilize before proceeding to release tagging and stream submissions
 
 ### 4. Advanced IBS Discovery (SLES)
 If `osc -A https://api.suse.de maintained rmt-server` does not show a requested codestream (e.g., a specific Service Pack):
 - **Search:** Use `osc -A https://api.suse.de search rmt-server | grep Update` to find all available update projects.
 - **Verify:** Use `osc -A https://api.suse.de ls <PROJECT> rmt-server` to confirm the package exists before submitting an MR.
 
-### 5. GitHub Release
+### 5. Git Tagging and GitHub Release
+
+#### Git Tagging (Automated)
 **Pre-tagging Checks:**
 - Verify the remote `origin` points to the authoritative repository: `git remote -v`.
 - Check if the tag already exists locally or remotely: `git ls-remote --tags origin v<version>`.
 
-**Tagging & Pushing:**
+**Create and Push Tag:**
 - **Annotated Tag:** Always use an annotated tag for formal releases to include metadata (tagger, date, message).
   ```bash
   git tag -a v<version> -m "Release v<version>"
@@ -192,10 +200,104 @@ If `osc -A https://api.suse.de maintained rmt-server` does not show a requested 
   git push origin v<version>
   ```
 
-**UI Finalization:**
-- Navigate to the GitHub "Releases" page and create a formal release from the pushed tag, attaching the changelog.
+#### GitHub Release Creation (Manual UI Step)
+After the git tag is pushed, create a GitHub Release via the web UI:
+- Navigate to the GitHub "Releases" page
+- Click "Draft a new release"
+- Select the pushed tag (e.g., `v<version>`)
+- Add release notes and changelog
+- Publish the release
 
-### 6. Container Image & Helm Chart Updates
+**Note:** Git tagging and GitHub Releases are distinct operations. The tag is a git object; a GitHub Release is a UI feature that combines a tag with release notes and optional artifacts.
+
+### 6. Factory Submission (RMT 3.x)
+
+For RMT 3.x releases, submit to openSUSE Factory to make the package available in Tumbleweed/Leap.
+
+**Prerequisites:**
+- OBS workspace configured with `systemsmanagement:SCC:RMT/rmt-server` checked out
+- Package already committed and built in the source project
+
+**Submission Process:**
+
+1. **Check for existing submit requests:**
+   ```bash
+   osc -A https://api.opensuse.org request list systemsmanagement:SCC:RMT rmt-server openSUSE:Factory
+   ```
+
+2. **Create submit request:**
+   ```bash
+   osc -A https://api.opensuse.org sr systemsmanagement:SCC:RMT rmt-server openSUSE:Factory \
+     -m "Submit rmt-server <version> to Factory
+   
+   Update rmt-server to version <version>.
+   
+   Key changes:
+   - Updated to Ruby X.Y.Z and Rails A.B.C
+   - Security: [CVE fixes with bsc# references]
+   
+   Bug fixes:
+   - bsc#XXXXXX: [Description]
+   - bsc#YYYYYY: [Description]
+   "
+   ```
+
+3. **Monitor the request:**
+   ```bash
+   osc -A https://api.opensuse.org request show <request-id>
+   ```
+   
+   Automated reviewers will check:
+   - **factory-auto**: Automated validation (changelog order, spec file syntax, etc.)
+   - **licensedigger**: License compliance check
+   - **factory-staging**: Manual review and staging
+
+**If Request is Rejected:**
+
+1. **Check the rejection reason:**
+   ```bash
+   osc -A https://api.opensuse.org request show <request-id>
+   ```
+   Look for the rejection message under the failed reviewer.
+
+2. **Fix the issue in the git repository:**
+   ```bash
+   # Edit the problematic file(s)
+   vim package/obs/rmt-server.changes  # or .spec, etc.
+   
+   # Commit the fix
+   git add package/obs/rmt-server.changes
+   git commit -m "Fix: <description of issue>"
+   ```
+
+3. **Update the OBS package:**
+   ```bash
+   # Copy fixed file(s) to OBS workspace
+   cp package/obs/rmt-server.changes <OBS-workspace>/systemsmanagement:SCC:RMT/rmt-server/
+   
+   # Commit to OBS
+   cd <OBS-workspace>/systemsmanagement:SCC:RMT/rmt-server
+   osc -A https://api.opensuse.org ci -m "Fix: <description>"
+   ```
+
+4. **Create new submit request superseding the rejected one:**
+   ```bash
+   osc -A https://api.opensuse.org sr systemsmanagement:SCC:RMT rmt-server openSUSE:Factory \
+     --supersede <rejected-request-id> \
+     -m "Submit rmt-server <version> to Factory (fixed <issue>)
+   
+   [Same description as before]
+   
+   Fixed: <description of what was corrected>"
+   ```
+
+**Common Issues:**
+
+- **Changelog not in sequence**: Entries must be in reverse chronological order (newest date first)
+- **Missing dependencies**: Add required BuildRequires to `.spec` file
+- **License issues**: Verify License field uses correct SPDX format
+
+### 7. Container Image & Helm Chart Updates
 **Container Image:**
 - The image build is automated via BCI pipelines but should be monitored at [devel:BCI:SLE-15-SP7/rmt-server-image](https://build.opensuse.org/package/show/devel:BCI:SLE-15-SP7/rmt-server-image).
 - Verification: Check `registry.suse.com/suse/rmt-server` for the new tag once the RPM is published.

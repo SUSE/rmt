@@ -84,16 +84,22 @@ This reference documents the release lifecycle of **rmt-server**, visualizing th
     *   **Note:** Only perform after Git PR merge.
     *   Execute `osc ci` to upload staged file set.
 
-### Phase 3: GitHub Release
+### Phase 3: Git Tagging and GitHub Release
 
 **Applies to both RMT 2.x and RMT 3.x:**
 
-1.  **Tagging:**
+1.  **Git Tagging (Automated):**
     *   **Pre-check:** Ensure the remote is correct (`git remote -v`) and the tag doesn't already exist (`git ls-remote --tags`).
-    *   **Action:** Create a signed/annotated tag: `git tag -a v<version> -m "Release v<version>"`.
-    *   **Action:** Push tag to GitHub: `git push origin v<version>`.
-2.  **Publish Release:**
-    *   Navigate to GitHub and create a formal release from the pushed tag.
+    *   **Action:** Create an annotated tag: `git tag -a v<version> -m "Release v<version>"`.
+    *   **Action:** Push tag to remote: `git push origin v<version>`.
+2.  **GitHub Release Creation (Manual UI Step):**
+    *   **Action:** Navigate to the GitHub "Releases" page.
+    *   **Action:** Click "Draft a new release".
+    *   **Action:** Select the pushed tag (e.g., `v<version>`).
+    *   **Action:** Add release notes and changelog.
+    *   **Action:** Publish the release.
+    
+    **Note:** Git tagging and GitHub Releases are distinct operations. The tag is a git object; a GitHub Release is a UI feature that combines a tag with release notes and optional artifacts.
 
 ### Phase 4: Submissions (Factory & SLES)
 
@@ -112,14 +118,40 @@ This reference documents the release lifecycle of **rmt-server**, visualizing th
     *   **Note:** Ensure changelog entries include references (e.g., `bsc#123456`, `jsc#XXX-123456`).
 
 #### RMT 3.x - Factory + SLES
-1.  **openSUSE Factory (OBS):**
-    *   **Action:** Submit the update: `osc sr systemsmanagement:SCC:RMT rmt-server openSUSE:Factory`.
-    *   **Note:** Uses `api.opensuse.org` for Tumbleweed/Leap.
-2.  **SLES Maintenance Update (IBS):**
-    *   **Network Requirement:** Must be on VPN for `api.suse.de`.
-    *   **Action:** Identify maintained codestreams: `osc -A https://api.suse.de maintained rmt-server`.
-    *   **Action:** For each codestream, submit a maintenance request: `osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server <TARGET_CODESTREAM>`.
-    *   **Note:** Ensure changelog entries include references (e.g., `bsc#123456`, `jsc#XXX-123456`).
+
+**1. openSUSE Factory Submission (OBS):**
+
+*   **Pre-check:** Check for existing submit requests:
+    ```bash
+    osc -A https://api.opensuse.org request list systemsmanagement:SCC:RMT rmt-server openSUSE:Factory
+    ```
+
+*   **Submit:** Create submit request:
+    ```bash
+    osc -A https://api.opensuse.org sr systemsmanagement:SCC:RMT rmt-server openSUSE:Factory \
+      -m "Submit rmt-server <version> to Factory
+    
+    Key changes and bug fixes with bsc# references"
+    ```
+
+*   **Monitor:** Check request status:
+    ```bash
+    osc -A https://api.opensuse.org request show <request-id>
+    ```
+
+*   **If Rejected:** 
+    1. Check rejection reason in request details
+    2. Fix issue in git repo and commit
+    3. Copy fixed files to OBS workspace: `cp package/obs/* <OBS-workspace>/systemsmanagement:SCC:RMT/rmt-server/`
+    4. Commit to OBS: `osc -A https://api.opensuse.org ci -m "Fix: <issue>"`
+    5. Resubmit with `--supersede <old-request-id>`
+
+**2. SLES Maintenance Update (IBS):**
+
+*   **Network Requirement:** Must be on VPN for `api.suse.de`.
+*   **Action:** Identify maintained codestreams: `osc -A https://api.suse.de maintained rmt-server`.
+*   **Action:** For each codestream, submit a maintenance request: `osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server <TARGET_CODESTREAM>`.
+*   **Note:** Ensure changelog entries include references (e.g., `bsc#123456`, `jsc#XXX-123456`).
 
 ### Phase 5: Container & Helm Chart Updates
 1.  **Container Image:**
