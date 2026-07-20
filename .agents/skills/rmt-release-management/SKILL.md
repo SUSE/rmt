@@ -11,19 +11,28 @@ This skill guides you through the process of releasing a new version of `rmt-ser
 
 The release process differs between RMT 2 and RMT 3:
 
+> **Project split (as of 2026):** RMT v2 and v3 now live in **separate** packaging projects on both build services. RMT v2 has its own `...:RMT2` project; the original `...:RMT` project is now **v3-only**.
+>
+> | Version | OBS (`api.opensuse.org`) | IBS (`api.suse.de`) | Git branch |
+> |---|---|---|---|
+> | **v2** | `systemsmanagement:SCC:RMT2` | `Devel:SCC:RMT2` | `master` |
+> | **v3** | `systemsmanagement:SCC:RMT` | `Devel:SCC:RMT` | `rmt_3` |
+
 ### RMT 2.x (master branch) - Traditional OBS Workflow
 - **Branch:** `master`
-- **Workflow:** OBS-only (no git-based package management)
+- **Workflow:** OBS-only (no git-based package management) — unchanged; only the project names moved to the `...:RMT2` suffix
+- **Projects:** OBS `systemsmanagement:SCC:RMT2` (openSUSE builds) and IBS `Devel:SCC:RMT2` (SLE maintenance)
 - **Build Targets:** SLE 15 SP4, SP5, SP6, SP7
-- **Process:** Direct OBS package updates via `osc` commands
+- **Process:** Direct OBS/IBS package updates via `osc` commands
 
 ### RMT 3.x (rmt_3 branch) - Git-Based Workflow
 - **Branch:** `rmt_3`
 - **Workflow:** Git-first with OBS integration
+- **Projects:** OBS `systemsmanagement:SCC:RMT` (the main project, now v3-only) and IBS `Devel:SCC:RMT`
 - **Repositories:**
   - `src.opensuse.org` - openSUSE Factory, Tumbleweed, Leap builds
   - `src.suse.de` - SLE-based builds (requires VPN/internal network)
-- **Process:** Git commits → OBS sync → builds
+- **Process:** Git commits → OBS sync → builds. SLE maintenance is handled via the git-based flow (`src.suse.de`), not IBS `mr`.
 - See [git-workflow.md](references/git-workflow.md) for details
 
 **Detailed Action Plans:** See [release-workflow.md](references/release-workflow.md) for phase-by-phase instructions.
@@ -43,10 +52,10 @@ To streamline the process, ensure the following path is saved in the project mem
 ### Version-Specific Constraints
 
 #### RMT 2.x (master branch)
-- **Workflow:** Traditional OBS-only (no git package management)
-- **Target Streams:** Submit Maintenance Requests (MRs) for **SLE 15 SP4** (LTSS until EOL 2026), **SLE 15 SP5** (LTSS until EOL 2027), **SLE 15 SP6**, and **SLE 15 SP7**
+- **Workflow:** Traditional OBS/IBS (no git package management)
+- **Devel Projects:** OBS `systemsmanagement:SCC:RMT2` (`api.opensuse.org`) and IBS `Devel:SCC:RMT2` (`api.suse.de`)
+- **Target Streams:** Submit Maintenance Requests (MRs) from `Devel:SCC:RMT2` for **SLE 15 SP4** (LTSS until EOL 2026), **SLE 15 SP5** (LTSS until EOL 2027), **SLE 15 SP6**, and **SLE 15 SP7**
 - **Example streams:** `SUSE:SLE-15-SP4:Update`, `SUSE:SLE-15-SP5:Update`, `SUSE:SLE-15-SP6:Update`, `SUSE:SLE-15-SP7:Update`
-- **Build Service:** IBS only (`api.suse.de`)
 
 #### RMT 3.x (rmt_3 branch)
 - **Workflow:** Git-first with OBS integration
@@ -63,11 +72,12 @@ To streamline the process, ensure the following path is saved in the project mem
 - **SMELT**: Access to `https://smelt.suse.de` for codestream identification
 
 #### RMT 2.x Specific
-- **IBS**: Account with permissions for `Devel:SCC:RMT` at `https://api.suse.de`
+- **OBS (openSUSE)**: Account with permissions for `systemsmanagement:SCC:RMT2` at `https://api.opensuse.org`
+- **IBS**: Account with permissions for `Devel:SCC:RMT2` at `https://api.suse.de`
 - **Network**: SUSE internal network or VPN for IBS access
 
 #### RMT 3.x Specific
-- **OBS (openSUSE)**: Account with permissions for `systemsmanagement:SCC:RMT` at `https://api.opensuse.org`
+- **OBS (openSUSE)**: Account with permissions for `systemsmanagement:SCC:RMT` (the main, v3-only project) at `https://api.opensuse.org`
 - **Gitea (.org)**: SSH key configured at `src.opensuse.org` for Factory/Tumbleweed/Leap
 - **Gitea (.de)**: SSH key configured at `src.suse.de` for SLE builds (requires VPN)
 - **Network**: VPN required for `src.suse.de` and SLE-related operations
@@ -129,8 +139,8 @@ make dist
 **No git package management.** Work directly with OBS:
 
 **Working Copy Setup:**
-- Use IBS API: `-A https://api.suse.de`
-- Checkout package: `osc -A https://api.suse.de co Devel:SCC:RMT rmt-server`
+- openSUSE builds: `osc -A https://api.opensuse.org co systemsmanagement:SCC:RMT2 rmt-server`
+- SLE maintenance (VPN): `osc -A https://api.suse.de co Devel:SCC:RMT2 rmt-server`
 
 **Sync & Stage:**
 - Copy files from the RMT repository's `package/obs/` to the OBS working directory

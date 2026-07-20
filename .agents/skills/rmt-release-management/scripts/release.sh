@@ -64,6 +64,8 @@ run_cmd docker compose build rmt
 run_cmd make dist
 
 # Phase 2: OBS Integration
+# NOTE: For RMT v2, --obs-path must point to a checkout of systemsmanagement:SCC:RMT2
+#       (openSUSE) and/or Devel:SCC:RMT2 (IBS/SLE). The main ...:RMT project is v3-only.
 echo "--- Phase 2: OBS Integration ---"
 cd "$OBS_PATH"
 # Find and remove old tarballs (only if they aren't the target version)
@@ -109,13 +111,13 @@ fi
 # Phase 4: Downstream Distribution
 echo "--- Phase 4: Downstream Distribution ---"
 
-# Verify IBS package matches OBS submission
-echo "Verifying IBS Devel:SCC:RMT package matches OBS submission..."
+# Verify IBS package matches OBS submission (RMT v2 project: Devel:SCC:RMT2)
+echo "Verifying IBS Devel:SCC:RMT2 package matches OBS submission..."
 if [ "$DRY_RUN" = false ]; then
   echo "Checking IBS package status..."
-  osc -A https://api.suse.de checkout Devel:SCC:RMT rmt-server /tmp/ibs-verify || true
+  osc -A https://api.suse.de checkout Devel:SCC:RMT2 rmt-server /tmp/ibs-verify || true
   echo "Waiting for IBS build results to stabilize..."
-  osc -A https://api.suse.de results Devel:SCC:RMT rmt-server --watch || echo "⚠ IBS build check failed or timed out. Verify manually."
+  osc -A https://api.suse.de results Devel:SCC:RMT2 rmt-server --watch || echo "⚠ IBS build check failed or timed out. Verify manually."
 fi
 
 cd "$OBS_PATH"
@@ -133,17 +135,17 @@ submit_mr_or_sr() {
   local stream=$1
 
   if [ "$DRY_RUN" = true ]; then
-    echo "[DRY-RUN] osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server $stream"
+    echo "[DRY-RUN] osc -A https://api.suse.de mr Devel:SCC:RMT2 rmt-server $stream"
     return 0
   fi
 
   echo "Attempting maintenance request (mr) for $stream..."
-  if osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server "$stream" 2>&1; then
+  if osc -A https://api.suse.de mr Devel:SCC:RMT2 rmt-server "$stream" 2>&1; then
     echo "✓ Maintenance request submitted successfully for $stream"
     return 0
   else
     echo "⚠ Maintenance request failed for $stream, retrying with submit request (sr)..."
-    if osc -A https://api.suse.de sr Devel:SCC:RMT rmt-server "$stream" 2>&1; then
+    if osc -A https://api.suse.de sr Devel:SCC:RMT2 rmt-server "$stream" 2>&1; then
       echo "✓ Submit request submitted successfully for $stream"
       return 0
     else

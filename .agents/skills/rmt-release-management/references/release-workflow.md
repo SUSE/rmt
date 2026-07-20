@@ -54,10 +54,11 @@ This reference documents the release lifecycle of **rmt-server**, visualizing th
 
 ### Phase 2: Open Build Service (OBS) Update
 
-#### RMT 2.x - IBS Only
+#### RMT 2.x - OBS + IBS (`...:RMT2` projects)
 1.  **Working Copy Setup:**
-    *   Checkout from IBS: `osc -A https://api.suse.de co Devel:SCC:RMT rmt-server`
-    *   Navigate to workspace: `cd Devel:SCC:RMT/rmt-server`
+    *   openSUSE builds: `osc -A https://api.opensuse.org co systemsmanagement:SCC:RMT2 rmt-server`
+    *   SLE maintenance (VPN): `osc -A https://api.suse.de co Devel:SCC:RMT2 rmt-server`
+    *   Navigate to workspace: `cd <project>/rmt-server`
 2.  **Sync & Cleanup:**
     *   **Action:** Manually delete any old versioned tarballs (e.g., `rm rmt-server-*.tar.bz2`).
     *   **Action:** Copy contents from the RMT repository's `package/obs/` to the OBS workspace.
@@ -103,17 +104,17 @@ This reference documents the release lifecycle of **rmt-server**, visualizing th
 
 ### Phase 4: Submissions (Factory & SLES)
 
-#### RMT 2.x - SLES Only (IBS)
+#### RMT 2.x - SLES (IBS, from `Devel:SCC:RMT2`)
 1.  **SLES Maintenance Update:**
     *   **Network Requirement:** Must be on the internal SUSE network or VPN (`api.suse.de`).
     *   **Action:** Identify maintained codestreams: `osc -A https://api.suse.de maintained rmt-server`.
     *   **Target Streams:** SLE 15 SP4, SP5, SP6, SP7
-    *   **Action:** For each codestream, submit a maintenance request:
+    *   **Action:** For each codestream, submit a maintenance request from the v2 project `Devel:SCC:RMT2`:
         ```bash
-        osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server SUSE:SLE-15-SP4:Update
-        osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server SUSE:SLE-15-SP5:Update
-        osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server SUSE:SLE-15-SP6:Update
-        osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server SUSE:SLE-15-SP7:Update
+        osc -A https://api.suse.de mr Devel:SCC:RMT2 rmt-server SUSE:SLE-15-SP4:Update
+        osc -A https://api.suse.de mr Devel:SCC:RMT2 rmt-server SUSE:SLE-15-SP5:Update
+        osc -A https://api.suse.de mr Devel:SCC:RMT2 rmt-server SUSE:SLE-15-SP6:Update
+        osc -A https://api.suse.de mr Devel:SCC:RMT2 rmt-server SUSE:SLE-15-SP7:Update
         ```
     *   **Note:** Ensure changelog entries include references (e.g., `bsc#123456`, `jsc#XXX-123456`).
 
@@ -146,11 +147,10 @@ This reference documents the release lifecycle of **rmt-server**, visualizing th
     4. Commit to OBS: `osc -A https://api.opensuse.org ci -m "Fix: <issue>"`
     5. Resubmit with `--supersede <old-request-id>`
 
-**2. SLES Maintenance Update (IBS):**
+**2. SLES Maintenance Update (git-based flow):**
 
-*   **Network Requirement:** Must be on VPN for `api.suse.de`.
-*   **Action:** Identify maintained codestreams: `osc -A https://api.suse.de maintained rmt-server`.
-*   **Action:** For each codestream, submit a maintenance request: `osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server <TARGET_CODESTREAM>`.
+*   **Network Requirement:** Must be on VPN for `src.suse.de`.
+*   **Approach:** For v3, SLE maintenance is handled through the git-based flow on `src.suse.de` (product branches + agit PRs), **not** IBS `mr` from `Devel:SCC:RMT`. See [git-workflow.md](git-workflow.md) for branch mapping and agit PR format.
 *   **Note:** Ensure changelog entries include references (e.g., `bsc#123456`, `jsc#XXX-123456`).
 
 ### Phase 5: Container & Helm Chart Updates
