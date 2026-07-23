@@ -146,7 +146,7 @@ GEM
       reline (>= 0.4.2)
     json (2.19.1)
     jsonapi-renderer (0.2.2)
-    jwt (2.10.2)
+    jwt (2.10.3)
       base64
     kramdown (2.5.1)
       rexml (>= 3.3.9)
