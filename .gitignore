@@ -51,6 +51,12 @@ locale/*/*.edit.po
 
 # Ansible
 ansible/*.retry
+
+# Agent/AI related files
+.agents/
+.gemini/
+.claude/
+
 ansible/.molecule/
 ansible/.cache/
 ansible/__pycache__/

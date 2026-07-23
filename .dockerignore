@@ -11,3 +11,7 @@ Jenkinsfile
 public/repo/*
 config/rmt.local.yml
 vendor
+.agents
+.gemini
+.claude
+GEMINI.md
