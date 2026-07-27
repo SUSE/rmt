@@ -1,10 +1,12 @@
 ## rmt-server Packaging
 
+Note: These instructions are specific to the SLE 15 codestream and the RMT v2.x releases.
+
 Note: Never push changes to the internal build service `ibs://Devel:SCC:RMT2`!
           The repository links to `systemsmanagement:SCC:RMT2` and gets updated
           automatically.
 
-Note: Look below for direction on publishing to registry.
+Note: Look below for directions on publishing to registry.
 
 
 * The package is built in OBS at: https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT2/rmt-server
@@ -41,7 +43,7 @@ Note: Look below for direction on publishing to registry.
     ```
 2. On github, submit a release for the tag. See https://help.github.com/en/articles/creating-releases for assistance.
 
-#### Submit Requests to openSUSE Factory and SLES
+#### Requirements for submissions to SLES and openSUSE Factory
 
 To get a maintenance request accepted, each changelog entry needs to have at
 least one reference to a bug or feature request like `bsc#123` or `fate#123`.
@@ -52,42 +54,40 @@ Note: If you want to disable automatic changes made by osc (e.g. License string)
       use the `--no-cleanup` switch. Can be used with commands like `osc mr`, `osc sr`
       and `osc ci`.
 
-##### Factory First
+##### Factory First (no longer possible)
 
-To submit a request to openSUSE Factory, issue this commands in the console:
-
-```bash
-osc sr systemsmanagement:SCC:RMT2 rmt-server openSUSE:Factory
-```
+Normally rmt-server updates should be submitted to openSUSE:Factory
+before submitting them to the SLES codestreams. However, this is no
+longer possible for the RMT v2.x release submissions, as Factory no
+longer provides a Ruby v2.x based application ecosystem.
 
 ##### Submit maintenance updates for SLES to the Internal Build Service
 
 ###### Get target codestreams where to submit
 
-To check out which codestreams RMT is currently maintained, see https://smelt.suse.de/maintained/?q=rmt-server.
+To check out which codestreams RMT is currently maintained for, see https://smelt.suse.de/maintained/?q=rmt-server.
+
+Alterntaively you can use the `osc maintained` command, filtering for active code streams:
+
+```bash
+$ osc -A https://api.suse.de maintained rmt-server | grep -e 'SUSE:SLE-15-SP[4-7]'
+SUSE:SLE-15-SP4:Update/rmt-server
+SUSE:SLE-15-SP5:Update/rmt-server
+SUSE:SLE-15-SP7:Update/rmt-server
+```
 
 ###### Submit updates
 
-For each maintained codestream you need to create a new maintenance request:
+For each maintained codestream identified you need to create a new maintenance request:
 
 ```bash
-osc -A https://api.suse.de mr Devel:SCC:RMT2 rmt-server SUSE:SLE-15:Update
+osc -A https://api.suse.de mr Devel:SCC:RMT2 rmt-server SUSE:SLE-15-SP7:Update
+Using target project 'SUSE:Maintenance'
+17362323
 ```
 
 Note: In case the `mr` (maintenance request) command is not working properly,
       try `sr` (submit request) command.
-
-
-Example:
-
-```bash
-$ osc -A https://api.suse.de maintained rmt-server
-SUSE:SLE-15:Update/rmt-server
-
-$ osc -A https://api.suse.de mr Devel:SCC:RMT2 rmt-server SUSE:SLE-15:Update
-Using target project 'SUSE:Maintenance'
-17362323
-```
 
 **Note:**
 
