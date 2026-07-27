@@ -134,6 +134,11 @@ build-tarball: clean man ## Build RMT distribution tarball
 	# don't package example data export handler
 	@rm -rf $(NAME)-$(VERSION)/engines/data_export/lib/data_export/handlers/example.rb
 
+	# don't package agent/AI related files
+	@rm -rf $(NAME)-$(VERSION)/.agents
+	@rm -rf $(NAME)-$(VERSION)/.gemini
+	@rm -rf $(NAME)-$(VERSION)/.claude
+	@rm -rf $(NAME)-$(VERSION)/GEMINI.md
 	# Clean up ansible Python artifacts (keep tests for %check validation)
 	@find $(NAME)-$(VERSION)/ansible -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 	@find $(NAME)-$(VERSION)/ansible -name "*.pyc" -delete 2>/dev/null || true
