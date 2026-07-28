@@ -142,5 +142,36 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
         ).to match(profile_set_mixed_complete)
       end
     end
+
+    context 'with system_profiles parameters and a profile creation error' do
+      before do
+        allow(Profile).to receive(:ensure_profile_exists).and_raise(StandardError.new('DB Error'))
+      end
+
+      it 'retries system creation without profiles on error' do
+        post url, params: { system_profiles: profile_set_all, hostname: 'testhost' }.to_json, headers: headers
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:created)
+        expect(response.headers['X-System-Profiles-Action']).to eq('clear-cache')
+
+        system = System.find_by(login: json_response[:login])
+
+        expect(system.profiles.count).to eq(0)
+      end
+    end
+
+    context 'with system_profiles parameters and a profile creation error on retry' do
+      before do
+        allow(Profile).to receive(:ensure_profile_exists).and_raise(StandardError.new('DB Error'))
+        allow(System).to receive(:create!).and_raise(StandardError.new('Another DB Error'))
+      end
+
+      it 're-raises when retry also fails after profiles are stripped' do
+        expect do
+          post url, params: { system_profiles: profile_set_all, hostname: 'testhost' }.to_json, headers: headers
+        end.to raise_error(StandardError, 'Another DB Error')
+      end
+    end
   end
 end

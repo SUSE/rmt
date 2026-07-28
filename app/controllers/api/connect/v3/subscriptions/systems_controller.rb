@@ -10,7 +10,22 @@ class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseCon
     # Check if any profiles have been provided
     process_system_profiles(create_params)
 
-    @system = System.create!(**create_params)
+    # Retry system creation without profiles if initial attempt fails
+    begin
+      @system = System.create!(**create_params)
+    rescue StandardError => e
+      # Only retry if profiles were present or haven't already been stripped;
+      # prevents infinite retry loops for errors not related to profiles.
+      # In the event of a retry set the response header telling the client
+      # to send full profiles next time.
+      if create_params[:complete_profiles]
+        logger.warn("System creation failed with profiles, retrying without: #{e.message}")
+        create_params.delete(:complete_profiles)
+        response.headers['X-System-Profiles-Action'] = 'clear-cache'
+        retry
+      end
+      raise
+    end
 
     logger.info("System '#{@system.hostname}' announced")
     respond_with(@system, serializer: ::V3::SystemSerializer, location: nil)
