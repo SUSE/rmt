@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Sep 30 15:20:26 UTC 2026 - Fergal Mc Carthy <fmccarthy@suse.com>
+
+  * Avoid profiles related registration and keepalive failures (jsc#SCC-822)
+
+-------------------------------------------------------------------
 Tue Sep 29 23:58:23 UTC 2026 - Fergal Mc Carthy <fmccarthy@suse.com>
 
   * update rmt-server to build for openSUSE Factory (jsc#SCC-848)
