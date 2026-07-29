@@ -19,7 +19,8 @@ module RMT
       :missing
     rescue Mysql2::Error
       :down
-    rescue StandardError
+    rescue StandardError => e
+      Rails.logger.error "Unexpected error: #{e.message}"
       :unknown
     end
 
@@ -29,7 +30,7 @@ module RMT
       ActiveRecord::Base.connection
       return unless ActiveRecord::Base.connection.table_exists? 'schema_migrations'
 
-      !ActiveRecord::Base.connection.migration_context.needs_migration?
+      !ActiveRecord::Base.connection_pool.migration_context.needs_migration?
     end
 
     def self.setup!
@@ -37,6 +38,9 @@ module RMT
 
       loop do
         case ::RMT::Db.ping
+        when :unknown
+          Rails.logger.error 'Unknown error accessing db. Exiting...'
+          raise StandardError.new 'Unknown error accessing db. Exiting...'
         when :down
           Rails.logger.info 'Database not ready yet. Waiting...'
           sleep WAIT_INTERVAL
