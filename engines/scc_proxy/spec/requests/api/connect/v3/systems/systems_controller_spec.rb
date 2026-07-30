@@ -8,9 +8,9 @@ describe Api::Connect::V3::Systems::SystemsController, type: :request do
   let(:headers) { auth_header.merge(version_header) }
   let(:instance_data) { 'dummy_instance_data' }
   let(:system) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
+  let(:scc_systems_url) { 'https://scc.suse.com/connect/systems' }
 
   describe '#deactivate' do
-    let(:scc_systems_url) { 'https://scc.suse.com/connect/systems' }
     let(:scc_systems_products_url) { 'https://scc.suse.com/connect/systems/products' }
 
     context 'a system' do
@@ -86,6 +86,52 @@ describe Api::Connect::V3::Systems::SystemsController, type: :request do
         )
         data = JSON.parse(response.body)
         expect(data['error']).to eq('Oh oh, something went wrong')
+      end
+    end
+  end
+
+  describe '#update' do
+    subject(:update_action) { put url, params: payload, headers: headers }
+
+    let(:payload) do
+      {
+        hostname: 'hostname',
+        hwinfo: { arch: 'x86_64', cpus: 1, sockets: 1, hypervisor: '', uuid: '', name: '', cloud_provider: 'google' }
+      }
+    end
+
+    before { allow(Rails.logger).to receive(:info) }
+
+    context 'a system' do
+      context 'with right credentials' do
+        before do
+          stub_request(:put, scc_systems_url)
+           .to_return(status: 204, body: '', headers: headers)
+          update_action
+        end
+
+        it 'returns a service JSON and successfully update the system' do
+          expect(Rails.logger).to have_received(:info).with(
+            "System (login: #{system.login}) updated to SCC"
+          )
+        end
+      end
+    end
+
+    context 'a system with error from SCC API' do
+      let(:system) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
+
+      before do
+        allow(Rails.logger).to receive(:info)
+        stub_request(:put, scc_systems_url)
+          .to_return(status: 422, body: { error: 'well, something wrong happened' }.to_json, headers: headers)
+        update_action
+      end
+
+      it 'reports an error' do
+        expect(Rails.logger).to have_received(:info)
+          .with('Could not update system on SCC, error: (422) well, something wrong happened').once
+        expect(response).to have_http_status(:no_content)
       end
     end
   end
