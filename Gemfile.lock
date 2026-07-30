@@ -172,7 +172,7 @@ GEM
     mixlib-shellout (3.4.10)
       chef-utils
     mize (0.6.1)
-    msgpack (1.8.0)
+    msgpack (1.8.4)
     mustache (1.1.1)
     mysql2 (0.5.7)
       bigdecimal
