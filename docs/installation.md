@@ -49,7 +49,7 @@ More information can be found [here](https://documentation.suse.com/sles/15-SP7/
 ## Installation on SLE 15
 
 1. If your server isn't activated yet, activate it with the command `SUSEConnect -r <regcode>`.
-2. Activate the Server Applications Module for your version of SLE 15 is not already activated:
+2. Activate the Server Applications Module for your version of SLE 15 if not already activated:
     * SLE 15 SP7 - `SUSEConnect -p sle-module-server-applications/15.7/x86_64`
     * SLE 15 SP6 - `SUSEConnect -p sle-module-server-applications/15.6/x86_64`
     * SLE 15 SP5 - `SUSEConnect -p sle-module-server-applications/15.5/x86_64`
