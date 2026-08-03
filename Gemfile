@@ -6,13 +6,13 @@ ruby '~> 3.4'
 # Individual Rails components (instead of meta-gem)
 # This excludes actionmailer/actionmailbox to avoid CVE-2026-42256 (bsc#1265369)
 # as well as other unused Rails dependencies (actioncable, actiontext, activestorage)
-gem 'railties', '~> 8.1.0'
-gem 'activesupport', '~> 8.1.0'
-gem 'activemodel', '~> 8.1.0'
-gem 'activerecord', '~> 8.1.0'
-gem 'activejob', '~> 8.1.0'
-gem 'actionpack', '~> 8.1.0'
-gem 'actionview', '~> 8.1.0'
+gem 'railties', '~> 8.1.3.1'
+gem 'activesupport', '~> 8.1.3.1'
+gem 'activemodel', '~> 8.1.3.1'
+gem 'activerecord', '~> 8.1.3.1'
+gem 'activejob', '~> 8.1.3.1'
+gem 'actionpack', '~> 8.1.3.1'
+gem 'actionview', '~> 8.1.3.1'
 
 gem 'bootsnap', require: false
 
