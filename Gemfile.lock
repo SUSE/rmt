@@ -66,7 +66,7 @@ GEM
     chef-utils (19.1.164)
       concurrent-ruby
     coderay (1.1.3)
-    concurrent-ruby (1.3.6)
+    concurrent-ruby (1.3.7)
     config (5.6.1)
       deep_merge (~> 1.2, >= 1.2.1)
       ostruct
@@ -79,7 +79,7 @@ GEM
     crack (1.0.1)
       bigdecimal
       rexml
-    crass (1.0.6)
+    crass (1.0.7)
     csv (3.3.5)
     date (3.5.1)
     deep_merge (1.2.2)
@@ -144,9 +144,9 @@ GEM
       prism (>= 1.3.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    json (2.19.1)
+    json (2.19.9)
     jsonapi-renderer (0.2.2)
-    jwt (2.10.2)
+    jwt (2.10.3)
       base64
     kramdown (2.5.1)
       rexml (>= 3.3.9)
@@ -160,7 +160,7 @@ GEM
       rb-inotify (~> 0.9, >= 0.9.10)
     locale (2.1.4)
     logger (1.7.0)
-    loofah (2.25.0)
+    loofah (2.25.2)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
     lumberjack (1.4.2)
@@ -172,13 +172,13 @@ GEM
     mixlib-shellout (3.4.10)
       chef-utils
     mize (0.6.1)
-    msgpack (1.8.0)
+    msgpack (1.8.4)
     mustache (1.1.1)
     mysql2 (0.5.7)
       bigdecimal
     nenv (0.3.0)
     nio4r (2.7.5)
-    nokogiri (1.19.1-x86_64-linux-gnu)
+    nokogiri (1.19.4-x86_64-linux-gnu)
       racc (~> 1.4)
     notiffany (0.1.3)
       nenv (~> 0.1)
@@ -364,7 +364,7 @@ GEM
     spring-watcher-listen (2.1.0)
       listen (>= 2.7, < 4.0)
       spring (>= 4)
-    sqlite3 (2.9.1-x86_64-linux-gnu)
+    sqlite3 (2.9.5-x86_64-linux-gnu)
     stringio (3.2.0)
     strong_migrations (2.5.1)
       activerecord (>= 7.1)
@@ -417,7 +417,7 @@ GEM
       anyway_config (>= 1.3, < 3)
       railties
       yabeda (~> 0.8)
-    yard (0.9.37)
+    yard (0.9.44)
     zeitwerk (2.7.4)
     zstd-ruby (1.5.7.1)
 
