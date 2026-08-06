@@ -16,7 +16,7 @@ ProtectControlGroups=true
 RestrictRealtime=true
 Type=simple
 Restart=no
-Environment="LOG_TO_JOURNALD=1" "LANG=en"
+Environment="LOG_TO_JOURNALD=1" "LANG=en" "HOME=/var/lib/rmt" "BUNDLE_USER_HOME=/var/lib/rmt/.bundle"
 ExecStart=/usr/share/rmt/bin/rmt-cli systems scc-sync
 
 [Install]
