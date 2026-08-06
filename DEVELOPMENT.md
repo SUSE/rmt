@@ -1,4 +1,93 @@
-## Development Setup
+### Development Setup - docker-compose
+
+In order to run the application locally using docker-compose:
+
+1. Clone the RMT repository:
+    ```
+    git clone git@github.com:SUSE/rmt.git
+    ```
+2. Copy the `.env.example` file to `.env`.
+3. Add your organization credentials to `.env` file. Mirroring credentials can
+   be obtained from the [SUSE Customer
+   Center](https://scc.suse.com/organization). At this point you might also want
+   to tweak the `EXTERNAL_PORT` environment variable from this file if you want
+   to expose the main service with a port different than from the default one.
+4. Build the image (can be also used to update gems)
+    ```
+    make build
+    ```
+   Note that this will change the permissions on the `public` folder so anyone
+   can access it (i.e. `chmod -R 0777 public`). This is needed so the docker
+   container can write into this specific directory which is protected by default
+   by the `rmt-cli` tool.
+5. Run the server (Ctrl-C to terminate)
+    ```
+    make server
+    ```
+   The server will be started in the foreground and must be terminated to get
+   back to the user's shell session.
+   NOTE: If you want to interact with the RMT server, leave this running.
+6. Shell access (Ctrl-D or `exit` to terminate)
+    ```
+    make shell
+    ```
+   This will start an interactive shell session within the `rmt` container that
+   must be exited to return to the user's shell session.
+   NOTE: You will need to run this in a separate user shell session (window) if
+   you want to leave the RMT instance started by `make server` up and running.
+
+After doing all this, there will be `http://localhost:${EXTERNAL_PORT}` exposed
+to the network of the host, and you will be able to register clients by using
+this url. At this point, though, notice that there are two ways to run clients
+in a dockerized fashion as well.
+
+First of all, you can run a client from a custom container (e.g. generated from
+the `SUSE/connect` repository). With this in mind, be aware that you need to be
+on the same network namespace as the host (or the `docker-compose` setup). You
+can manage this with the `--network` flag of the `docker run` command. One easy
+way to achieve this is to set the network as the one from the host: `docker run
+--network=host <...>`. Moreover, notice that `dmidecode`, which is run by
+`SUSEConnect`, will try to access some privileged devices (e.g. `/dev/mem`). By
+default this will also fail, which is why some users simply pass the
+`--privileged` flag to workaround this. This is certainly a solution, but it's
+cleaner to simply add the needed capabilities and the needed devices. In
+conclusion, for a clean run of a client, you could run the following command:
+
+``` sh
+$ docker run --rm --network=host --cap-add=sys_rawio --device /dev/mem:/dev/mem -ti <your-docker-image> /bin/bash
+> SUSEConnect -r <regcode> --url http://localhost:${EXTERNAL_PORT}
+```
+
+Another option is to simply attach a new session into the running `rmt` service,
+which already has the needed devices and capabilities. Thus, you could do
+something like this:
+
+``` sh
+$ docker-compose exec rmt /bin/bash
+> SUSEConnect -r <regcode> --url http://localhost:${EXTERNAL_PORT}
+```
+
+All in all, the code you might be working on sits as a volume inside of the
+Docker container. Thus, you will be able to code as usual and the Docker
+container will behave as if you were working entirely locally.
+
+## API documentation
+
+RMT partially implements the [SUSE Customer Center API](https://scc.suse.com/connect/v4/documentation). You can read the details of each endpoint to find out whether they are supported by RMT.
+
+## CI Builds
+
+CI images are built on [Open build service](https://build.opensuse.org). We have CI images in `ci/` directory. In build service, we have [systemsmanagement:SCC:containers/rmt-ci-container](https://build.opensuse.org/package/show/systemsmanagement:SCC:containers/rmt-ci-container) project. `_service` contains configuration for running the build jobs. It extracts `ci/Dockerfile` and packages the rest in `.tar.bz2` format. The docker file contains special annotations :
+```docker
+#!BuildTag: rmt-ci-container
+#!UseOBSRepositories
+```
+indicating the image tag and enforcing local-only build (running `zypper ar` will not work). There's also the special `_multibuild` config that allows multiple images targeting different build platforms for RMT. Currently, we build rmt images for ruby 2.5 and ruby 3.2 (experimental). The project is configured to use tumbleweed and sles/leap(15.5). In the future, we aim to use leap only for legacy (RMT 2.x) builds.
+
+
+## Development Setup - non containerized</summary>
+<details>
+<summary>Development Setup without Docker</summary>
 
 1. Install the system dependencies:
     ```
@@ -58,84 +147,4 @@
     * Run the command `bin/rails server -b 0.0.0.0` to start the web server.
     * Run the command `bin/rmt-cli sync` to sync RMT with SCC.
 
-### Development Setup - docker-compose
-
-In order to run the application locally using docker-compose:
-
-1. Copy the `.env.example` file to `.env`.
-2. Add your organization credentials to `.env` file. Mirroring credentials can
-   be obtained from the [SUSE Customer
-   Center](https://scc.suse.com/organization). At this point you might also want
-   to tweak the `EXTERNAL_PORT` environment variable from this file if you want
-   to expose the main service with a port different than from the default one.
-3. Build the image (can be also used to update gems)
-    ```
-    make build
-    ```
-   Note that this will change the permissions on the `public` folder so anyone
-   can access it (i.e. `chmod -R 0777 public`). This is needed so the docker
-   container can write into this specific directory which is protected by default
-   by the `rmt-cli` tool.
-4. Run the server (Ctrl-C to terminate)
-    ```
-    make server
-    ```
-   The server will be started in the foreground and must be terminated to get
-   back to the user's shell session.
-   NOTE: If you want to interact with the RMT server, leave this running.
-5. Shell access (Ctrl-D or `exit` to terminate)
-    ```
-    make shell
-    ```
-   This will start an interactive shell session within the `rmt` container that
-   must be exited to return to the user's shell session.
-   NOTE: You will need to run this in a separate user shell session (window) if
-   you want to leave the RMT instance started by `make server` up and running.
-
-After doing all this, there will be `http://localhost:${EXTERNAL_PORT}` exposed
-to the network of the host, and you will be able to register clients by using
-this url. At this point, though, notice that there are two ways to run clients
-in a dockerized fashion as well.
-
-First of all, you can run a client from a custom container (e.g. generated from
-the `SUSE/connect` repository). With this in mind, be aware that you need to be
-on the same network namespace as the host (or the `docker-compose` setup). You
-can manage this with the `--network` flag of the `docker run` command. One easy
-way to achieve this is to set the network as the one from the host: `docker run
---network=host <...>`. Moreover, notice that `dmidecode`, which is run by
-`SUSEConnect`, will try to access some privileged devices (e.g. `/dev/mem`). By
-default this will also fail, which is why some users simply pass the
-`--privileged` flag to workaround this. This is certainly a solution, but it's
-cleaner to simply add the needed capabilities and the needed devices. In
-conclusion, for a clean run of a client, you could run the following command:
-
-``` sh
-$ docker run --rm --network=host --cap-add=sys_rawio --device /dev/mem:/dev/mem -ti <your-docker-image> /bin/bash
-> SUSEConnect -r <regcode> --url http://localhost:${EXTERNAL_PORT}
-```
-
-Another option is to simply attach a new session into the running `rmt` service,
-which already has the needed devices and capabilities. Thus, you could do
-something like this:
-
-``` sh
-$ docker-compose exec rmt /bin/bash
-> SUSEConnect -r <regcode> --url http://localhost:${EXTERNAL_PORT}
-```
-
-All in all, the code you might be working on sits as a volume inside of the
-Docker container. Thus, you will be able to code as usual and the Docker
-container will behave as if you were working entirely locally.
-
-## API documentation
-
-RMT partially implements the [SUSE Customer Center API](https://scc.suse.com/connect/v4/documentation). You can read the details of each endpoint to find out whether they are supported by RMT.
-
-## CI Builds
-
-CI images are built on [Open build service](https://build.opensuse.org). We have CI images in `ci/` directory. In build service, we have [systemsmanagement:SCC:containers/rmt-ci-container](https://build.opensuse.org/package/show/systemsmanagement:SCC:containers/rmt-ci-container) project. `_service` contains configuration for running the build jobs. It extracts `ci/Dockerfile` and packages the rest in `.tar.bz2` format. The docker file contains special annotations :
-```docker
-#!BuildTag: rmt-ci-container
-#!UseOBSRepositories
-```
-indicating the image tag and enforcing local-only build (running `zypper ar` will not work). There's also the special `_multibuild` config that allows multiple images targeting different build platforms for RMT. Currently, we build rmt images for ruby 2.5 and ruby 3.2 (experimental). The project is configured to use tumbleweed and sles/leap(15.5). In the future, we aim to use leap only for legacy (RMT 2.x) builds.
+</details>
