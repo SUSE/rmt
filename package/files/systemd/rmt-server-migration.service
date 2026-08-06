@@ -17,7 +17,7 @@ ProtectControlGroups=true
 RestrictRealtime=true
 Type=oneshot
 User=_rmt
-Environment="LOG_TO_JOURNALD=1" "LANG=en"
+Environment="LOG_TO_JOURNALD=1" "LANG=en" "HOME=/var/lib/rmt" "BUNDLE_USER_HOME=/var/lib/rmt/.bundle"
 WorkingDirectory=/usr/share/rmt
 ExecStart=/usr/share/rmt/bin/rails db:create db:migrate RAILS_ENV=production
 
