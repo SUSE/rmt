@@ -3,6 +3,9 @@ begin
 rescue ::RMT::Db::TimeoutReachedError
   Rails.logger.error "Database connection timed out!"
   exit 1
+rescue ::RMT::Db::MigrationsCompleted
+  Rails.logger.info "Migrations completed successfully - restart service to detect updated migration state correctly"
+  exit 0
 end
 
 # Create the `/var/lib/rmt/system_uuid` file if it does not exist already. This
