@@ -50,6 +50,7 @@ module RMT
           unless system('bundle exec rake db:migrate')
             raise StandardError, 'Migration failed'
           end
+
           raise MigrationsCompleted
         when :missing
           Rails.logger.info 'Database missing: creating...'
