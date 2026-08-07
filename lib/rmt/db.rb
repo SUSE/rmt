@@ -47,10 +47,15 @@ module RMT
           count += 5
         when :empty
           Rails.logger.info 'Database empty: migrating...'
-          system('bundle exec rake db:migrate')
+          unless system('bundle exec rake db:migrate')
+            raise StandardError, 'Migration failed'
+          end
+          raise MigrationsCompleted
         when :missing
           Rails.logger.info 'Database missing: creating...'
-          system('bundle exec rake db:create')
+          unless system('bundle exec rake db:create')
+            raise StandardError, 'Database creation failed'
+          end
         when :ready
           Rails.logger.info 'Database ready!'
           break
@@ -62,6 +67,12 @@ module RMT
 
     # Raised if any timeout reached
     class TimeoutReachedError < RuntimeError; end
+
+    # Raised after migrations have been completed, signaling that a
+    # restart is needed to pick to correctly detect that migrations
+    # have completed using the ActiveRecord::Base.connection_pool's
+    # migration_context which appears to cache stale state.
+    class MigrationsCompleted < RuntimeError; end
   end
 end
 # :nocov:
