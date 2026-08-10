@@ -366,6 +366,7 @@ ansible-playbook tests/test_playbook.yml
 %dir %{_datadir}/bash-completion/completions/
 %{_datadir}/bash-completion/completions/rmt-cli
 
+%exclude %{_libdir}/rmt/vendor/bundle/ruby/3.4.0/gems/rbs-4.1.2/stdlib/etc
 %{_libdir}/rmt
 %{_libexecdir}/supportconfig/plugins/rmt
 %{script_dir}/update_rmt_app_dir_permissions.sh
