@@ -4,7 +4,7 @@ require 'net/http'
 ANNOUNCE_URL = 'https://scc.suse.com/connect/subscriptions/systems'.freeze
 SYSTEM_PRODUCTS_URL = 'https://scc.suse.com/connect/systems/products'.freeze
 SYSTEMS_ACTIVATIONS_URL = 'https://scc.suse.com/connect/systems/activations'.freeze
-DEREGISTER_SYSTEM_URL = 'https://scc.suse.com/connect/systems'.freeze
+SYSTEMS_URL = 'https://scc.suse.com/connect/systems'.freeze
 DEREGISTER_PRODUCT_URL = 'https://scc.suse.com/connect/systems/products'.freeze
 NET_HTTP_ERRORS = [
   Errno::EINVAL,
@@ -117,6 +117,21 @@ module SccProxy
       response.error!
     end
 
+    def update_system_scc(auth, params, system_token, logger)
+      uri = URI.parse(SYSTEMS_URL)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      # PUT /connect/systems
+      scc_request = Net::HTTP::Put.new(uri.path, headers(auth, system_token))
+      scc_request.body = params.to_json
+      response = http.request(scc_request)
+      unless response.is_a?(Net::HTTPSuccess)
+        error = JSON.parse(response.body) rescue {}
+        logger.info "Could not update system on SCC, error: (#{response.code}) #{error['error'] || response.message}"
+        response.error!
+      end
+    end
+
     def scc_activate_product(system, product, auth, params, mode)
       uri = URI.parse(SYSTEM_PRODUCTS_URL)
       http = Net::HTTP.new(uri.host, uri.port)
@@ -162,7 +177,7 @@ module SccProxy
     end
 
     def deregister_system_scc(auth, system)
-      uri = URI.parse(DEREGISTER_SYSTEM_URL)
+      uri = URI.parse(SYSTEMS_URL)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
       scc_request = Net::HTTP::Delete.new(uri.path, headers(auth, system.system_token))
@@ -585,9 +600,23 @@ module SccProxy
       end
 
       Api::Connect::V3::Systems::SystemsController.class_eval do
+        before_action :scc_update_system, only: %i[update], if: -> { (@system.byos? || @system.hybrid?) && request.headers.key?('HTTP_AUTHORIZATION') }
         before_action :scc_deregistration, only: %i[deregister]
 
         protected
+
+        def scc_update_system
+          params[:byos_mode] = @system.proxy_byos_mode
+          SccProxy.update_system_scc(
+            request.headers.fetch('HTTP_AUTHORIZATION'),
+            params,
+            @system.system_token,
+            logger
+            )
+          logger.info("System (login: #{@system.login}) updated to SCC")
+        rescue *NET_HTTP_ERRORS
+          logger.error("Could not update system (login: #{@system.login}) on SCC")
+        end
 
         def scc_deregistration
           if @system.byos? || @system.hybrid?
