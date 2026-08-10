@@ -19,7 +19,7 @@ User=_rmt
 StandardOutput=journal
 StandardError=journal
 TimeoutStopSec=30
-Environment="RAILS_ENV=production" "HOME=/var/lib/rmt" "BUNDLE_USER_HOME=/var/lib/rmt/.bundle"
+Environment="RAILS_ENV=production" "HOME=/var/lib/rmt"
 WorkingDirectory=/usr/share/rmt
 ExecStart=/usr/share/rmt/bin/sidekiq -C /usr/share/rmt/config/sidekiq.yml
 Restart=always
