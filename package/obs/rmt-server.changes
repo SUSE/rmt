@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
 Tue Aug 11 08:35:19 UTC 2026 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
-- Version 3.1
+- Version 3.1 (bsc#1274715)
   * Set RMT version to 3.1
   * Remove all errors and warnigs due to new Ruby and Ruby on Rails versions
 
