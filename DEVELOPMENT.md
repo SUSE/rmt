@@ -14,6 +14,7 @@
    mise settings add idiomatic_version_file_enable_tools ruby
    ```
    see [here](https://mise.jdx.dev/lang/ruby.html#ruby-version-and-gemfile-support)
+
 3. Install and setup the database:
 
    **Default: MariaDB or MySQL server**
