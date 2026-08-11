@@ -5,6 +5,11 @@
     sudo zypper in libxml2-devel libxslt-devel libmariadb-devel sqlite3-devel gcc libyaml-devel libffi-devel
     ```
 2. Install the ruby version specified in the `.ruby-version` [file](.ruby-version).
+   2.1 if you are using mise, you can run
+   ```
+   mise settings add idiomatic_version_file_enable_tools ruby
+   ```
+   see [here](https://mise.jdx.dev/lang/ruby.html#ruby-version-and-gemfile-support)
 3. Install and setup the database:
 
    **Default: MariaDB or MySQL server**
