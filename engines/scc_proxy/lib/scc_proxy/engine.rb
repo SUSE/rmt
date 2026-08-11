@@ -373,7 +373,7 @@ module SccProxy
           attempts = 0
           begin
             attempts += 1
-            [System.create!(system_values), nil]
+            [create_system_retry_if_profiles_provided(system_values), nil]
           rescue ActiveRecord::RecordInvalid => e
             # The to-be-announced system is already in the database
             # This could mean it got de-registered on another update infrastructure server a short time ago
