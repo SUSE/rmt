@@ -173,5 +173,17 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
         end.to raise_error(StandardError, 'Another DB Error')
       end
     end
+
+    context 'with system_profiles parameters and a creation error when no profiles are present' do
+      before do
+        allow(System).to receive(:create!).and_raise(StandardError.new('Unique constraint violation'))
+      end
+
+      it 're-raises the error when no profiles were present' do
+        expect do
+          post url, params: { hostname: 'testhost' }.to_json, headers: headers
+        end.to raise_error(StandardError, 'Unique constraint violation')
+      end
+    end
   end
 end
