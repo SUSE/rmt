@@ -19,7 +19,7 @@ gem 'bootsnap', require: false
 gem 'ostruct'
 gem 'csv'
 
-gem 'puma'
+gem 'puma', '~> 8'
 gem 'mysql2'
 gem 'sqlite3'
 
