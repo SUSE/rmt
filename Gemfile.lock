@@ -455,8 +455,8 @@ DEPENDENCIES
   memory_profiler
   minitest
   mixlib-shellout
-  mysql2
-  nokogiri
+  mysql2 (~> 0.5)
+  nokogiri (~> 1)
   ostruct
   public_suffix
   puma (~> 8)
