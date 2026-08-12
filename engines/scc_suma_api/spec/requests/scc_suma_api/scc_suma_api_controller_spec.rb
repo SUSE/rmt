@@ -121,7 +121,7 @@ module SccSumaApi
 
           it 'raise an exception' do
             expect(response.code).to eq '422'
-            expect(JSON.parse(response.body)['error']).to eq 'Missing signature'
+            expect(response.parsed_body['error']).to eq 'Missing signature'
           end
         end
       end

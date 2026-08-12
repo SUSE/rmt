@@ -15,7 +15,7 @@ module InstanceVerification
 
         it 'returns PAYG' do
           get '/api/instance/check', params: { metadata: billing_info.to_s, identifier: 'SLES' }
-          expect(JSON.parse(response.body)['flavor']).to eq('PAYG')
+          expect(response.parsed_body['flavor']).to eq('PAYG')
         end
       end
 
@@ -29,7 +29,7 @@ module InstanceVerification
 
         it 'returns PAYG' do
           get '/api/instance/check', params: { metadata: billing_info.to_s, identifier: 'SLES_SAP' }
-          expect(JSON.parse(response.body)['flavor']).to eq('PAYG')
+          expect(response.parsed_body['flavor']).to eq('PAYG')
         end
       end
 
@@ -43,7 +43,7 @@ module InstanceVerification
 
         it 'returns BYOS' do
           get '/api/instance/check', params: { metadata: billing_info.to_s, identifier: 'SLES' }
-          expect(JSON.parse(response.body)['flavor']).to eq('BYOS')
+          expect(response.parsed_body['flavor']).to eq('BYOS')
         end
       end
 
@@ -60,7 +60,7 @@ module InstanceVerification
           expect(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
           allow(plugin_double).to receive(:parse_instance_data).and_raise(InstanceVerification::Exception, 'Malformed instance data')
           get '/api/instance/check', params: { metadata: billing_info.to_s, identifier: 'SLES' }
-          expect(JSON.parse(response.body)['flavor']).to eq('BYOS')
+          expect(response.parsed_body['flavor']).to eq('BYOS')
           expect(response.message).to eq('Unprocessable Content')
           expect(response.code).to eq('422')
         end
