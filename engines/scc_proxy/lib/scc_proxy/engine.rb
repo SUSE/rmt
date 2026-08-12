@@ -314,13 +314,14 @@ module SccProxy
             # it is a unique value per instance across all CSPs
             login: instance_identifier
           }
+          profile_params = {}
           if has_no_regcode?(auth_header)
             # NON BYOS case
             # no token sent to check with SCC
             system_values[:proxy_byos_mode] = :payg
 
             # Check if any profiles have been provided
-            process_system_profiles(system_values)
+            extract_complete_profiles(profile_params)
           else
             request.request_parameters['proxy_byos_mode'] = 'byos'
             scc_response, scc_response_headers = SccProxy.announce_system_scc(
@@ -337,6 +338,7 @@ module SccProxy
           end
           @system, error = create_system(system_values, logger)
           if @system.present?
+            update_system_profiles(profile_params)
             logger.info("System '#{@system.hostname}' announced")
             respond_with(@system, serializer: ::V3::SystemSerializer, location: nil)
           else
@@ -373,7 +375,7 @@ module SccProxy
           attempts = 0
           begin
             attempts += 1
-            [create_system_retry_if_profiles_provided(system_values), nil]
+            [System.create!(system_values), nil]
           rescue ActiveRecord::RecordInvalid => e
             # The to-be-announced system is already in the database
             # This could mean it got de-registered on another update infrastructure server a short time ago
