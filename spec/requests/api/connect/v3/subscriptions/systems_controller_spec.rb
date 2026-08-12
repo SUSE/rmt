@@ -148,7 +148,7 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
         allow(Profile).to receive(:ensure_profile_exists).and_raise(StandardError.new('DB Error'))
       end
 
-      it 'retries system creation without profiles on error' do
+      it 'creates system but fails profile update, setting header to clear-cache' do
         post url, params: { system_profiles: profile_set_all, hostname: 'testhost' }.to_json, headers: headers
 
         expect(response).to be_successful
@@ -167,7 +167,7 @@ RSpec.describe Api::Connect::V3::Subscriptions::SystemsController do
         allow(System).to receive(:create!).and_raise(StandardError.new('Another DB Error'))
       end
 
-      it 're-raises when retry also fails after profiles are stripped' do
+      it 're-raises when system creation fails' do
         expect do
           post url, params: { system_profiles: profile_set_all, hostname: 'testhost' }.to_json, headers: headers
         end.to raise_error(StandardError, 'Another DB Error')
