@@ -68,3 +68,8 @@ ansible/tmp/
 ansible/*.swp
 ansible/*~
 .ansible
+
+# migration-test scratch (git worktrees of old releases)
+.migtest/
+ci/migration-tests/artifacts/*
+!ci/migration-tests/artifacts/.keep

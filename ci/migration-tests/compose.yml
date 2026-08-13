@@ -1,0 +1,117 @@
+# Isolated stack for RMT migration testing.
+#
+# Deliberately separate from the repo-root docker-compose.yml so that running
+# these tests never touches the developer's `rmt_mariadb` volume or dev DB.
+# Always drive it through run.sh, which sets COMPOSE_PROJECT_NAME=rmt-migtest.
+
+services:
+  # MariaDB version shipped alongside RMT 2.x (see release-2.28 docker-compose.yml)
+  db-old:
+    image: registry.suse.com/suse/mariadb:10.11
+    environment:
+      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_USER: rmt
+      MYSQL_PASSWORD: rmt
+      MYSQL_DATABASE: rmt
+    tmpfs:
+      - /var/lib/mysql:exec,mode=1777
+    healthcheck:
+      test: ['CMD-SHELL', 'mariadb-admin ping -h 127.0.0.1 -uroot -ptoor || mysqladmin ping -h 127.0.0.1 -uroot -ptoor']
+      interval: 3s
+      timeout: 5s
+      retries: 40
+
+  # MariaDB version shipped alongside RMT 3.x
+  db-new:
+    image: registry.suse.com/suse/mariadb:11.8
+    environment:
+      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_USER: rmt
+      MYSQL_PASSWORD: rmt
+      MYSQL_DATABASE: rmt
+    tmpfs:
+      - /var/lib/mysql:exec,mode=1777
+    healthcheck:
+      test: ['CMD-SHELL', 'mariadb-admin ping -h 127.0.0.1 -uroot -ptoor || mysqladmin ping -h 127.0.0.1 -uroot -ptoor']
+      interval: 3s
+      timeout: 5s
+      retries: 40
+
+  # RMT 2.x from source (git worktree created by lib/baseline.sh).
+  # Opt-in via BASELINE_SOURCE=worktree; the default baseline comes from the
+  # published 2.x RPM in rpm-old, which is both more reliable and closer to
+  # what customers actually upgrade from.
+  rmt-old-src:
+    build:
+      context: ${BASELINE_CONTEXT:-./dockerfiles}
+      dockerfile: ${BASELINE_DOCKERFILE:-Dockerfile}
+    environment:
+      MYSQL_HOST: db-old
+      MYSQL_DATABASE: rmt
+      MYSQL_USER: rmt
+      MYSQL_PASSWORD: rmt
+      RAILS_ENV: production
+      SECRET_KEY_BASE: 8ea53ad3bc6c03923e376c8bdd85059c1885524947a7efe53d5e9c9d4e39861106ffd6a2ece82b803072ed701e6c960bade91644979e679416c5f255007237ae
+    depends_on:
+      db-old:
+        condition: service_healthy
+    entrypoint: ['sleep', 'infinity']
+
+  # RMT 3.x — built from this checkout.
+  rmt-new:
+    build:
+      context: ../..
+    environment:
+      MYSQL_HOST: db-new
+      MYSQL_DATABASE: rmt
+      MYSQL_USER: rmt
+      MYSQL_PASSWORD: rmt
+      RAILS_ENV: production
+      # bin/rails prefers the spring binstub, which refuses to boot with
+      # reloading disabled (i.e. in production).
+      DISABLE_SPRING: '1'
+      SECRET_KEY_BASE: 8ea53ad3bc6c03923e376c8bdd85059c1885524947a7efe53d5e9c9d4e39861106ffd6a2ece82b803072ed701e6c960bade91644979e679416c5f255007237ae
+    volumes:
+      - ./fixtures:/fixtures:ro
+      - ./artifacts:/artifacts
+    depends_on:
+      db-new:
+        condition: service_healthy
+    entrypoint: ['sleep', 'infinity']
+
+  # ---- suite 02: RPM-installed RMT -----------------------------------------
+
+  # RMT 2.x from its published RPM on Leap 15.6.
+  rpm-old:
+    build:
+      context: .
+      dockerfile: dockerfiles/rpm-old.Dockerfile
+      args:
+        RMT_OLD_REPO: ${RMT_OLD_REPO:-https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/15.6/}
+        RMT_OLD_VERSION: ${RMT_OLD_VERSION:-}
+    volumes:
+      - ./fixtures:/fixtures:ro
+      - ./artifacts:/artifacts
+    depends_on:
+      db-old:
+        condition: service_healthy
+    entrypoint: ['sleep', 'infinity']
+
+  # RMT 3.x target distro, pre-seeded with the previous 3.x release.
+  rpm-new:
+    build:
+      context: .
+      dockerfile: dockerfiles/rpm-new.Dockerfile
+      args:
+        RMT_NEW_REPO: ${RMT_NEW_REPO:-https://download.opensuse.org/repositories/systemsmanagement:/SCC:/RMT/16.0/}
+        RMT_PREV_VERSION: ${RMT_PREV_VERSION:-3.0.0}
+    volumes:
+      - ./fixtures:/fixtures:ro
+      - ./artifacts:/artifacts
+      # Point RMT_RPM_DIR at locally built RPMs to gate a release on them
+      # instead of on whatever OBS has published.
+      - ${RMT_RPM_DIR:-./fixtures/no-local-rpms}:/local-rpms:ro
+    depends_on:
+      db-new:
+        condition: service_healthy
+    entrypoint: ['sleep', 'infinity']
