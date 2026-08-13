@@ -124,7 +124,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
     # many systems before running the deletion
     System.where('last_seen_at < ?', before).in_batches(of: DELETE_BATCH_SIZE) do |batch|
       begin
-        with_retries { n_systems_destroyed += batch.destroy_all.length }
+        with_retries { n_systems_destroyed += destroy_batch(batch) }
       rescue StandardError => e
         puts _('Could not delete all systems last seen before %{before}: %{message}') % { before: before, message: e.message }
         [n_systems_destroyed, false]
@@ -152,7 +152,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
 
     system_ids.each_slice(DELETE_BATCH_SIZE) do |sliced_systems_ids|
       begin
-        with_retries { deleted_systems += System.where(id: sliced_systems_ids).destroy_all.length }
+        with_retries { deleted_systems += destroy_batch(System.where(id: sliced_systems_ids)) }
       rescue StandardError => e
         remaining_systems = system_ids.length - deleted_systems
         puts _(
@@ -165,6 +165,13 @@ class RMT::CLI::Systems < RMT::CLI::Base
       puts _('%{remaining_systems} systems to be deleted') % { remaining_systems: remaining_systems } unless remaining_systems.zero?
     end
     [deleted_systems, all]
+  end
+
+  def destroy_batch(relation)
+    System.transaction do # one commit per batch not per system
+      # pre-load the relations to avoid extra queries per batch
+      relation.includes(:system_uptimes, :system_profiles).destroy_all.length
+    end
   end
 
   def with_retries(max_attempts: 3, delay: 5)
