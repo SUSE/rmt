@@ -395,6 +395,8 @@ osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server SUSE:SLE-15-SP7:Update
 ```
 When asked whether to supersede an existing request, the answer is normally **no** — superseding cancels the release process for that codestream.
 
+> **CONSTRAINT — always submit against `SUSE:SLE-15-SP7:Update`, never against a `SUSE:Maintenance:<N>` incident.** This holds for corrections too: once a submission is accepted it becomes an incident, but the follow-up request still targets `SUSE:SLE-15-SP7:Update`, with no `--incident` flag. The maintenance team merges it into the open incident themselves. See [release-workflow.md](references/release-workflow.md) for the full correction procedure.
+
 **Both paths are gated** on the changelog tracker reference — see [Release Gates / Preconditions](#release-gates--preconditions).
 
 ### 7. Container Image & Helm Chart Updates

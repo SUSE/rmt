@@ -175,15 +175,15 @@ This reference documents the release lifecycle of **rmt-server**, visualizing th
 
 **2a. Correcting an SP7 submission after the fact:**
 
-Once the `mr` is accepted it becomes a `SUSE:Maintenance:<N>` incident, and the maintenance team files their own `maintenance_release` request from that incident. At that point the submission is no longer yours to supersede:
+> **RULE — always submit against `SUSE:SLE-15-SP7:Update`. Never submit against a `SUSE:Maintenance:<N>` incident.** Once the `mr` is accepted an incident is created and the maintenance team files their own `maintenance_release` request from it. Corrections go to the codestream exactly the way the original submission did, and **the maintenance team takes care of merging them into the open incident.** (Maintenance team guidance, 2026-08-13.)
 
-*   `osc mr ... --supersede <release-request>` fails with `HTTP Error 403: You have no role in request <N>`. Note that `osc mr` **still creates the new request** before the supersede call fails — check for a stray duplicate and revoke it with `osc -A https://api.suse.de request revoke <id> -m "..."`.
-*   The only way in is a new request against the existing incident:
+*   Submit the correction the same way as the original request — no incident-specific flags:
     ```bash
-    osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server SUSE:SLE-15-SP7:Update \
-      --incident <N> -m "..."
+    osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server SUSE:SLE-15-SP7:Update -m "..."
     ```
-*   This leaves the team's release request pointing at the previous `srcmd5`; it has to be revoked and re-created by maintenance, which resets the QAM review clock. Comment on the release request so they know, and weigh the delay against how substantive the correction is — a changelog reword is rarely worth disrupting an already-approved release.
+*   **Do not pass `--incident <N>`.** Targeting the incident directly is what the maintenance team has asked us not to do; it is their queue to manage.
+*   **Do not try to supersede their release request.** `osc mr ... --supersede <release-request>` fails with `HTTP Error 403: You have no role in request <N>` — a release request belongs to maintenance, not to us. Note that `osc mr` **still creates the new request** before the supersede call fails, so check for a stray duplicate and revoke it with `osc -A https://api.suse.de request revoke <id> -m "..."`.
+*   Comment on the incident so maintenance know a correction is on its way.
 
 **3. openSUSE Factory Submission (OBS):**
 
