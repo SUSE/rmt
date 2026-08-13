@@ -21,6 +21,10 @@
 # Env:
 #   VM=<domain>     resolve the ssh target from libvirt instead of passing one
 #   SKIP_FETCH=1    reuse the RPMs already in .rpms/ instead of re-downloading
+#   SKIP_REFRESH=1  skip the guest's `zypper refresh` preflight. That refresh
+#                   covers every repository a registered SLES has (~40) and can
+#                   dominate the runtime; skip it when re-running against a
+#                   guest you already refreshed once.
 #   KEEP=1          leave the copied files in /root on the guest
 
 set -uo pipefail
@@ -76,9 +80,16 @@ fetch_stream() { # <obs-project> <local-subdir>
 
 if [[ -z "$TARGET" && -n "$VM" ]]; then
   log "looking up an address for domain '$VM'"
-  ip="$(virsh -c qemu:///system domifaddr "$VM" 2>/dev/null \
-        | awk '/ipv4/ {split($4, a, "/"); print a[1]; exit}')"
-  [[ -n "$ip" ]] || die "could not determine an IP for '$VM' -- is it running? (virsh -c qemu:///system domifaddr $VM)"
+  # The default source only reports addresses libvirt itself handed out, and
+  # returns nothing for a guest on a network it does not run DHCP for. Fall back
+  # to the lease file and then the guest agent before giving up.
+  ip=''
+  for src in '' lease agent arp; do
+    ip="$(virsh -c qemu:///system domifaddr "$VM" ${src:+--source "$src"} 2>/dev/null \
+          | awk '$1 != "lo" && /ipv4/ {split($NF, a, "/"); print a[1]; exit}')"
+    [[ -n "$ip" ]] && break
+  done
+  [[ -n "$ip" ]] || die "could not determine an IP for '$VM' -- is it running? (virsh -c qemu:///system domifaddr $VM --source lease)"
   TARGET="root@$ip"
   log "resolved $VM -> $TARGET"
 fi
@@ -129,7 +140,7 @@ log "running the migration test inside the VM (full log: $LOG)"
 echo
 # -tt so systemctl/journalctl output is not buffered until the end.
 ssh "${SSH_OPTS[@]}" -tt "$TARGET" \
-  'chmod +x /root/guest-migration-test.sh && BASELINE=/root/baseline-2.28.sql RPM_DIR=/root/rmt-rpms /root/guest-migration-test.sh' \
+  "chmod +x /root/guest-migration-test.sh && BASELINE=/root/baseline-2.28.sql RPM_DIR=/root/rmt-rpms SKIP_REFRESH=${SKIP_REFRESH:-0} /root/guest-migration-test.sh" \
   2>&1 | tee "$LOG"
 rc=${PIPESTATUS[0]}
 
