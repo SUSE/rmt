@@ -164,7 +164,7 @@ class RMT::CLI::Systems < RMT::CLI::Base
   def destroy_batch(relation)
     System.transaction do # one commit per batch not per system
       # pre-load the relations to avoid extra queries per batch
-      relation.includes(:system_uptimes, :system_profiles).destroy_all.length
+      relation.includes(:system_profiles).destroy_all.length
     end
   end
 

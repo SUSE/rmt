@@ -13,7 +13,7 @@ class System < ApplicationRecord
   has_many :services, through: :activations
   has_many :repositories, -> { distinct }, through: :services
   has_many :products, -> { distinct }, through: :services
-  has_many :system_uptimes, dependent: :destroy
+  has_many :system_uptimes, dependent: :delete_all # this is set because of performance reasons and SystemUptime does not have any destroy callbacks
   has_many :system_profiles, dependent: :destroy
   has_many :profiles, -> { distinct }, through: :system_profiles
 
