@@ -2,8 +2,8 @@
 # Host-side driver: copy the migration test into a VM and run it over ssh.
 #
 #   ci/vm-migration-poc/run.sh <ssh-target>
-#   ci/vm-migration-poc/run.sh root@192.168.122.123
-#   VM=sle15sp7 ci/vm-migration-poc/run.sh              # resolve the IP via virsh
+#   ci/vm-migration-poc/run.sh root@<ip>
+#   VM=<domain> ci/vm-migration-poc/run.sh              # resolve the IP via virsh
 #
 # Deliberately does NOT manage VM lifecycle -- it does not define, start, or
 # stop anything. Bring a VM up however you normally do, then point this at it.

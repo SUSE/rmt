@@ -4,8 +4,8 @@ A single 2.x → 3.x upgrade test that runs in a **virtual machine** instead of 
 container, so it can exercise the parts of an upgrade a container cannot reach.
 
 ```bash
-VM=sle15sp7 ci/vm-migration-poc/run.sh          # resolve the address via virsh
-ci/vm-migration-poc/run.sh root@192.168.122.123 # or point it at a host directly
+VM=<domain> ci/vm-migration-poc/run.sh     # resolve the address via virsh
+ci/vm-migration-poc/run.sh root@<ip>       # or point it at a host directly
 ```
 
 It deliberately does **not** manage VM lifecycle — it never defines, starts or
@@ -78,7 +78,7 @@ running.
 A useful re-run, once the RPMs are cached and the guest is refreshed:
 
 ```bash
-SKIP_FETCH=1 SKIP_REFRESH=1 VM=sle15sp7 ci/vm-migration-poc/run.sh
+SKIP_FETCH=1 SKIP_REFRESH=1 VM=<domain> ci/vm-migration-poc/run.sh
 ```
 
 ## Result classes
