@@ -1,3 +1,0 @@
-SMT_sys1	machinedata	{"hwinfo":{"cpus":"2","sockets":"1","hypervisor":"Xen","arch":"x86_64","hostname":"smt-client-one"}}
-SMT_sys1	other	ignored
-SMT_sys2	machinedata	{"hwinfo":{"cpus":"16","sockets":"2","arch":"aarch64","hostname":"smt-wk"}}

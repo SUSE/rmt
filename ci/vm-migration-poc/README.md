@@ -14,9 +14,9 @@ this at it.
 
 ## Why a VM
 
-[`ci/migration-tests`](../migration-tests/README.md) restores a 2.x dump into a
-3.x tree and runs `rails db:migrate` as root. That covers the migrations, but
-skips everything that distinguishes an *upgrade* from a schema change:
+Testing this in a container means restoring a 2.x dump into a 3.x tree and
+running `rails db:migrate` as root. That covers the migrations, but skips
+everything that distinguishes an *upgrade* from a schema change:
 
 - the real RPM transaction, `%pre`/`%post` and the SUSE service macros, going
   from `rmt-server-2.28` to `rmt-server-3.1.0`
