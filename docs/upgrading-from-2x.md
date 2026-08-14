@@ -88,29 +88,22 @@ To see how many rows are affected before changing anything:
 SELECT COUNT(*) FROM systems WHERE registered_at IS NULL OR hostname IS NULL;
 ```
 
-### Notes on the permanent fixes
+### Notes
 
 Neither defect is fixed in the shipped packages, so the backfill above is
 currently the only remedy.
 
-The `Time.zone` half is straightforward to correct: set `Time.zone` explicitly
-in the CLI entry points, from a constant shared with the web application's
-`config.time_zone` so the two cannot drift apart. That change is being tracked
-separately and is not part of this tree.
-
-Two things such a fix would still **not** address, and which the workaround
-above avoids entirely:
+Two further points, both of which the backfill avoids entirely:
 
 *   The `NULL` hostname crash is a separate defect in the decorator and needs
     its own guard.
 *   `System#init` mutates records loaded from the database, not just new ones.
-    With a valid `Time.zone`, reading a row with a `NULL` `registered_at`
-    assigns the *current* time in memory and marks the attribute dirty. The
-    listing then shows today's date as that system's registration time — a
-    fabricated value rather than an error — and any later `save` on the record
-    would persist it. Guarding `init` with `if new_record?` would be the more
-    correct fix. Backfilling from `created_at`, as above, records the truthful
-    value instead.
+    Wherever `Time.zone` is set — in the web application, for instance —
+    reading a row with a `NULL` `registered_at` assigns the *current* time in
+    memory and marks the attribute dirty, so any later `save` on that record
+    persists a fabricated registration time. Guarding `init` with
+    `if new_record?` would be the more correct behaviour. Backfilling from
+    `created_at`, as above, records the truthful value instead.
 
 Verified against `rmt-server-3.1.0-150700.7.1` on SLE 15 SP7, upgraded from the
 distribution's `rmt-server` 2.28.
