@@ -90,13 +90,16 @@ SELECT COUNT(*) FROM systems WHERE registered_at IS NULL OR hostname IS NULL;
 
 ### Notes on the permanent fixes
 
-The `Time.zone` half is addressed by setting `Time.zone` explicitly in the CLI
-entry points (`config/initializers_cli/time_zone.rb`, sourced from
-`RMT::DEFAULT_TIME_ZONE` so it cannot drift from the web application's
-`config.time_zone`).
+Neither defect is fixed in the shipped packages, so the backfill above is
+currently the only remedy.
 
-Two things that fix does **not** address, and which the workaround above avoids
-entirely:
+The `Time.zone` half is straightforward to correct: set `Time.zone` explicitly
+in the CLI entry points, from a constant shared with the web application's
+`config.time_zone` so the two cannot drift apart. That change is being tracked
+separately and is not part of this tree.
+
+Two things such a fix would still **not** address, and which the workaround
+above avoids entirely:
 
 *   The `NULL` hostname crash is a separate defect in the decorator and needs
     its own guard.
