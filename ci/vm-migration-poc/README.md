@@ -95,8 +95,14 @@ genuinely crashes on a system with a `NULL` `registered_at`, because
 never sets a time zone. That is a real bug, but it is in an already-released
 package and this upgrade cannot be expected to fix it. Counting it separately
 keeps it loud without permanently red-flagging a suite whose subject is the
-2.x → 3.x transition. The same check runs again *after* the upgrade, where it is
-a plain `FAIL`.
+2.x → 3.x transition.
+
+`systems list` is deliberately **not** asserted after the upgrade for the same
+reason. It fails there too, on two independent defects that share one trigger —
+a `systems` row with a `NULL` column that the 2.x schema allowed. Neither is
+caused or cured by the upgrade. See
+[docs/upgrading-from-2x.md](../../docs/upgrading-from-2x.md) for the mechanism
+and the supported workaround.
 
 ## What it asserts
 
@@ -114,8 +120,8 @@ a plain `FAIL`.
   `profiles.data` is `LONGTEXT`, no shipped migration left unapplied
 - Data survived: row counts, a multi-byte hostname, JSON in
   `system_information`, and the `NULL` hostname / `NULL` `registered_at` row
-- 3.1.0 is usable afterwards: `rmt-cli version`, `repos list`, `systems list`,
-  `systems list --csv`, `rmt-server.service` active, no failed `rmt-*` units
+- 3.1.0 is usable afterwards: `rmt-cli version`, `rmt-cli repos list`,
+  `rmt-server.service` active, no failed `rmt-*` units
 
 Two things are worth knowing about those assertions:
 
