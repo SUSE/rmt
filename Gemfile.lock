@@ -357,7 +357,7 @@ GEM
       logger (>= 1.7.0)
       rack (>= 3.2.0)
       redis-client (>= 0.29.0)
-    simplecov (1.1.0)
+    simplecov (1.1.1)
     singleton (0.3.0)
     spring (4.7.0)
     spring-commands-rspec (1.0.4)
