@@ -3,13 +3,12 @@ module InstanceVerification
     def check
       # return a string indicating if the instance metadata
       # belongs to a PAYG or BYOS instance
-      verification_provider = InstanceVerification.provider.new(
+      is_payg = InstanceVerification.provider.new(
         logger,
         request,
         { identifier: params[:identifier] },
         params[:metadata]
-      )
-      is_payg = verification_provider.payg_billing_code?
+      ).payg_billing_code?
 
       render status: :ok, json: { flavor: is_payg ? 'PAYG' : 'BYOS' }
     rescue InstanceVerification::Exception => e
