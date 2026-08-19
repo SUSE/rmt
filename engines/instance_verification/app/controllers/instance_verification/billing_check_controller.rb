@@ -6,12 +6,10 @@ module InstanceVerification
       verification_provider = InstanceVerification.provider.new(
         logger,
         request,
-        nil,
+        { identifier: params[:identifier] },
         params[:metadata]
       )
-
-      iid = verification_provider.parse_instance_data
-      is_payg = verification_provider.payg_billing_code?(iid, params[:identifier])
+      is_payg = verification_provider.payg_billing_code?
 
       render status: :ok, json: { flavor: is_payg ? 'PAYG' : 'BYOS' }
     rescue InstanceVerification::Exception => e
