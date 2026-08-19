@@ -14,10 +14,7 @@ module StrictAuthentication
       end
 
       context 'with invalid credentials' do
-        before do
-          allow(Settings).to receive(:dig).and_return(['foo'])
-          get '/api/auth/check', headers: basic_auth_header('invalid', 'invalid')
-        end
+        before { get '/api/auth/check', headers: basic_auth_header('invalid', 'invalid') }
         its(:code) { is_expected.to eq '401' }
       end
 
