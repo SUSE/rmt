@@ -292,8 +292,11 @@ module RegistrationSharing
           end
 
           it 'logs the retry' do
-            expect(Rails.logger).to have_received(:warn)
-                                      .with(/#{error_class}.*attempt 1\/#{described_class::DEADLOCK_RETRIES}/)
+            expect(Rails.logger).to(
+              have_received(:warn).with(
+                %r{#{error_class}.*attempt 1/#{described_class::DEADLOCK_RETRIES}}
+              )
+            )
           end
         end
       end
