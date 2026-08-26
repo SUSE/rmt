@@ -41,9 +41,9 @@ module RegistrationSharing
         password: params[:password],
         system_token: params[:system_token]
       }
-      System.find_or_create_by(credentials)
+      System.find_or_create_by(**credentials)
     rescue ActiveRecord::RecordNotUnique
-      System.find_by!(credentials)
+      System.find_by!(**credentials)
     end
 
     def create_or_update_system
