@@ -1,10 +1,6 @@
 require 'json'
 require 'net/http'
 
-ANNOUNCE_URL = 'https://scc.suse.com/connect/subscriptions/systems'.freeze
-SYSTEMS_PRODUCTS_URL = 'https://scc.suse.com/connect/systems/products'.freeze
-SYSTEMS_ACTIVATIONS_URL = 'https://scc.suse.com/connect/systems/activations'.freeze
-DEREGISTER_SYSTEM_URL = 'https://scc.suse.com/connect/systems'.freeze
 NET_HTTP_ERRORS = [
   Errno::EINVAL,
   Errno::ECONNRESET,
@@ -95,10 +91,35 @@ module SccProxy
       scc_request
     end
 
-    def announce_system_scc(auth, params, system_token, logger)
-      uri = URI.parse(ANNOUNCE_URL)
+    def scc_host_base_url
+      (ENV['SCC_HOST']&.strip || 'https://scc.suse.com/connect').freeze
+    end
+
+    def announce_url
+      "#{scc_host_base_url}/subscriptions/systems".freeze
+    end
+
+    def systems_products_url
+      "#{scc_host_base_url}/systems/products".freeze
+    end
+
+    def systems_activations_url
+      "#{scc_host_base_url}/systems/activations".freeze
+    end
+
+    def deregister_system_url
+      "#{scc_host_base_url}/systems".freeze
+    end
+
+    def parse_url(url)
+      uri = URI.parse(url)
       http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
+      http.use_ssl = uri.scheme == 'https'
+      [uri, http]
+    end
+
+    def announce_system_scc(auth, params, system_token, logger)
+      uri, http = parse_url(announce_url)
       scc_request = prepare_scc_announce_request(uri.path, auth, params, system_token)
       response = http.request(scc_request)
       begin
@@ -117,9 +138,7 @@ module SccProxy
     end
 
     def scc_activate_product(system, product, auth, params, mode)
-      uri = URI.parse(SYSTEMS_PRODUCTS_URL)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
+      uri, http = parse_url(systems_products_url)
       scc_request = prepare_scc_request(uri.path, product, auth, params, mode)
       response = http.request(scc_request)
       unless response.code_type == Net::HTTPCreated
@@ -140,9 +159,7 @@ module SccProxy
     end
 
     def deactivate_product_scc(auth, product, params, logger)
-      uri = URI.parse(SYSTEMS_PRODUCTS_URL)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
+      uri, http = parse_url(systems_products_url)
       scc_request = Net::HTTP::Delete.new(uri.path, headers(auth, params))
       scc_request.body = {
         identifier: product.identifier,
@@ -161,9 +178,7 @@ module SccProxy
     end
 
     def deregister_system_scc(auth, system)
-      uri = URI.parse(DEREGISTER_SYSTEM_URL)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
+      uri, http = parse_url(deregister_system_url)
       scc_request = Net::HTTP::Delete.new(uri.path, headers(auth, system.system_token))
       response = http.request(scc_request)
       unless response.code_type == Net::HTTPNoContent
@@ -183,9 +198,7 @@ module SccProxy
     end
 
     def get_scc_activations(auth, system)
-      uri = URI.parse(SYSTEMS_ACTIVATIONS_URL)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
+      uri, http = parse_url(systems_activations_url)
       uri.query = URI.encode_www_form({ byos_mode: system.proxy_byos_mode })
       scc_request = Net::HTTP::Get.new(uri.path, headers(auth, system.system_token))
       response = http.request(scc_request)
@@ -276,9 +289,7 @@ module SccProxy
     end
 
     def scc_upgrade(auth, product, system, logger)
-      uri = URI.parse(SYSTEMS_PRODUCTS_URL)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
+      uri, http = parse_url(systems_products_url)
       scc_request = prepare_scc_upgrade_request(uri.path, product, auth, system.system_token, system.proxy_byos_mode)
       response = http.request(scc_request)
       unless response.code_type == Net::HTTPCreated
