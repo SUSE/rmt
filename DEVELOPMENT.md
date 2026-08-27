@@ -1,72 +1,11 @@
 ## Development Setup
 
-1. Install the system dependencies:
-    ```
-    sudo zypper in libxml2-devel libxslt-devel libmariadb-devel sqlite3-devel gcc libyaml-devel libffi-devel
-    ```
-2. Install the ruby version specified in the `.ruby-version` [file](.ruby-version).
+The following development environment setup modes are possible:
+* [docker compose based setup](development-setup---docker-compose)
+* [local system services based setup](development-Setup---local-system-services)
 
-   2.1 Mise
-
-   if you are using mise and you want mise to use the same version of .ruby-version,
-   point mise to read that file with the following command:
-   ```
-   mise settings add idiomatic_version_file_enable_tools ruby
-   ```
-   see [here](https://mise.jdx.dev/lang/ruby.html#ruby-version-and-gemfile-support)
-
-3. Install and setup the database:
-
-   **Default: MariaDB or MySQL server**
-    ```
-    sudo zypper in mariadb
-    sudo systemctl enable mariadb
-    sudo systemctl start mariadb
-    ```
-    Log into the MariaDB or MySQL server as root and create the RMT database user:
-    ```
-    mysql -u root -p <<EOFF
-    GRANT ALL PRIVILEGES ON \`rmt%\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
-    FLUSH PRIVILEGES;
-    EOFF
-    ```
-
-    **Experimental: SQLite**
-
-    For development purposes it can be easier to run with SQLite, to avoid extra dependencies.
-    To run RMT with SQLite, switch the database adapter in `config/rmt.yml` to `sqlite3`.
-
-4. **Background jobs:** If you plan on implementing background jobs (via [Active Job](https://guides.rubyonrails.org/v6.1/active_job_basics.html)), you will need to install or utilize a service compatible with the Redis API. We recommend [Valkey](https://valkey.io/), a BSD-licensed server, which is packaged for (open)SUSE distributions:
-
-    ```
-    sudo zypper in valkey
-    sudo systemctl enable --now valkey
-    ```
-
-5. Clone the RMT repository:
-    ```
-    git clone git@github.com:SUSE/rmt.git
-    ```
-6. Install the ruby dependencies:
-    ```
-    cd rmt
-    bundle install
-    ```
-7. Copy the file `config/rmt.yml` to `config/rmt.local.yml`. With this file, override the following default settings:
-    * Add your organization credentials to `scc` section.
-    * Ensure that the `database` section is correct.
-8. Create the directory `/var/lib/rmt` and ensure that your current user owns it.
-    ```
-    sudo mkdir /var/lib/rmt
-    sudo chown -R $(id -u):$(id -g) /var/lib/rmt
-    ```
-9. Create the development database:
-    ```
-    bin/rails db:create db:migrate
-    ```
-10. Verify that RMT works:
-    * Run the command `bin/rails server -b 0.0.0.0` to start the web server.
-    * Run the command `bin/rmt-cli sync` to sync RMT with SCC.
+NOTE: See [PubCloud RMT Development](#pubcloud-rmt-development) for additional
+information about developing for PubCloud RMT deployments.
 
 ### Development Setup - docker-compose
 
@@ -136,6 +75,96 @@ $ docker-compose exec rmt /bin/bash
 All in all, the code you might be working on sits as a volume inside of the
 Docker container. Thus, you will be able to code as usual and the Docker
 container will behave as if you were working entirely locally.
+
+### Development Setup - local system services
+
+1. Install the system dependencies:
+    ```
+    sudo zypper in libxml2-devel libxslt-devel libmariadb-devel sqlite3-devel gcc libyaml-devel libffi-devel
+    ```
+2. Install the ruby version specified in the `.ruby-version` [file](.ruby-version).
+
+   2.1 Mise
+
+   if you are using mise and you want mise to use the same version of .ruby-version,
+   point mise to read that file with the following command:
+   ```
+   mise settings add idiomatic_version_file_enable_tools ruby
+   ```
+   see [here](https://mise.jdx.dev/lang/ruby.html#ruby-version-and-gemfile-support)
+
+3. Install and setup the database:
+
+   **Default: MariaDB or MySQL server**
+    ```
+    sudo zypper in mariadb
+    sudo systemctl enable mariadb
+    sudo systemctl start mariadb
+    ```
+    Log into the MariaDB or MySQL server as root and create the RMT database user:
+    ```
+    mysql -u root -p <<EOFF
+    GRANT ALL PRIVILEGES ON \`rmt%\`.* TO rmt@localhost IDENTIFIED BY 'rmt';
+    FLUSH PRIVILEGES;
+    EOFF
+    ```
+
+    **Experimental: SQLite**
+
+    For development purposes it can be easier to run with SQLite, to avoid extra dependencies.
+    To run RMT with SQLite, switch the database adapter in `config/rmt.yml` to `sqlite3`.
+
+4. **Background jobs:** If you plan on implementing background jobs (via [Active Job](https://guides.rubyonrails.org/v6.1/active_job_basics.html)), you will need to install or utilize a service compatible with the Redis API. We recommend [Valkey](https://valkey.io/), a BSD-licensed server, which is packaged for (open)SUSE distributions:
+
+    ```
+    sudo zypper in valkey
+    sudo systemctl enable --now valkey
+    ```
+
+5. Clone the RMT repository:
+    ```
+    git clone git@github.com:SUSE/rmt.git
+    ```
+6. Install the ruby dependencies:
+    ```
+    cd rmt
+    bundle install
+    ```
+7. Copy the file `config/rmt.yml` to `config/rmt.local.yml`. With this file, override the following default settings:
+    * Add your organization credentials to `scc` section.
+    * Ensure that the `database` section is correct.
+8. Create the directory `/var/lib/rmt` and ensure that your current user owns it.
+    ```
+    sudo mkdir /var/lib/rmt
+    sudo chown -R $(id -u):$(id -g) /var/lib/rmt
+    ```
+9. Create the development database:
+    ```
+    bin/rails db:create db:migrate
+    ```
+10. Verify that RMT works:
+    * Run the command `bin/rails server -b 0.0.0.0` to start the web server.
+    * Run the command `bin/rmt-cli sync` to sync RMT with SCC.
+
+## PubCloud RMT Development
+
+To enable the PubCloud engines to be loaded when the RMT server starts
+up, ensure that `RMT_LOAD_ENGINES=1` is set in the environment. See
+[.env.example](.env.example) for an example.
+
+NOTE: For basic PAYG and BYOS lifecycle testing the
+[SUSE/connect-ng/cmd/public-api-demo] tool can be used to simulate
+client instances.
+
+See also the engine specific documentation for more details on how to test:
+* [scc_proxy README.md](engines/scc_proxy/README.md)
+* [strict_authentication README.md](engines/strict_authentication/README.md)
+* [scc_suma_api README.md](engines/scc_suma_api/README.md)
+* [data_export README.md](engines/data_export/README.md)
+* [registration_sharing README.md](engines/registration_sharing/README.md)
+* [instance_verification README.md](engines/instance_verification/README.md) and [TESTING.md](engines/instance_verification/TESTING.md)
+* [registry README.md](engines/registry/README.md)
+* [zypper_auth README.md](engines/zypper_auth/README.md)
 
 ## API documentation
 
