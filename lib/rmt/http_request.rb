@@ -23,7 +23,12 @@ class RMT::HttpRequest < Typhoeus::Request
     options[:low_speed_limit] = Settings.try(:http_client).try(:low_speed_limit) || 512
     options[:low_speed_time] = Settings.try(:http_client).try(:low_speed_time) || 120
     options[:accept_encoding] = 'gzip'
-    options[:http_version]    = :httpv1_1
+    # HTTP/2 multiplexes several streams into one curl_multi_perform frame, so
+    # libcurl can fire callbacks for multiple easy handles while its own frames
+    # are live, RMT::FiberRequest resumes fibers from those callbacks, which
+    # corrupts the heap
+    # Set the HTTP version to 1.1 until that is fixed, see bsc#1276939
+    options[:http_version] = (Settings.try(:http_client).try(:http_version) || 'httpv1_1').to_sym
   end
 
 end
