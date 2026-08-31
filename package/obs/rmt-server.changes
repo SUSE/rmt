@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Aug  31 10:52:13 UTC 2026 - Zuzana Petrova <zpetrova@suse.com>
+
+  * add --product switch to rmt-client-setup-res, so customer could register 
+    to different supported minor releases not only latest one.
+
+-------------------------------------------------------------------
 Fri Jun  5 16:15:34 UTC 2026 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
 - Version 2.28
