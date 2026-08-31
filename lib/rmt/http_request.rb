@@ -23,6 +23,7 @@ class RMT::HttpRequest < Typhoeus::Request
     options[:low_speed_limit] = Settings.try(:http_client).try(:low_speed_limit) || 512
     options[:low_speed_time] = Settings.try(:http_client).try(:low_speed_time) || 120
     options[:accept_encoding] = 'gzip'
+    options[:http_version]    = :httpv1_1
   end
 
 end
