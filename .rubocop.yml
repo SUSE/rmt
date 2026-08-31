@@ -62,6 +62,13 @@ Naming/MethodParameterName:
   - to
   - id
 
+Naming/VariableNumber:
+  inherit_mode:
+    merge:
+      - AllowedIdentifiers
+  AllowedIdentifiers:
+    - httpv1_1
+
 RSpec/NestedGroups:
   Max: 4
 

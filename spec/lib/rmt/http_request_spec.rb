@@ -31,6 +31,10 @@ RSpec.describe RMT::HttpRequest do
 
     its([:low_speed_limit]) { is_expected.to eq(1337) }
     its([:low_speed_time]) { is_expected.to eq(42) }
+
+    it 'uses HTTP/1.1' do
+      expect(request.options[:http_version]).to eq(:httpv1_1)
+    end
   end
 
   describe 'when request is too slow' do
