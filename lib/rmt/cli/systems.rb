@@ -207,11 +207,21 @@ class RMT::CLI::Systems < RMT::CLI::Base
     # split the width for each cell equally
     # this makes the rendered table to add extra spaces for some columns
     # while it is not ideal, we have not found a better way
+    # use COALESCE(...) to ensure max length queries return a valid integer
+    # length, defaulting to zero if no records are found.
     date_length = Time.now.utc.to_s.length
-    max_hostname = ActiveRecord::Base.connection.execute('SELECT max(length(hostname)) FROM systems').to_a.flatten.first
-    max_login = ActiveRecord::Base.connection.execute('SELECT max(length(login)) FROM systems').to_a.flatten.first
-    max_identifier = ActiveRecord::Base.connection.execute('SELECT max(length(identifier)) FROM products').to_a.flatten.first
-    max_arch = ActiveRecord::Base.connection.execute('SELECT max(length(arch)) FROM products').to_a.flatten.first
+    max_hostname = ActiveRecord::Base.connection.execute(
+      'SELECT COALESCE(max(length(hostname)), 0) FROM systems'
+    ).to_a.flatten.first
+    max_login = ActiveRecord::Base.connection.execute(
+      'SELECT COALESCE(max(length(login)), 0) FROM systems'
+    ).to_a.flatten.first
+    max_identifier = ActiveRecord::Base.connection.execute(
+      'SELECT COALESCE(max(length(identifier)), 0) FROM products'
+    ).to_a.flatten.first
+    max_arch = ActiveRecord::Base.connection.execute(
+      'SELECT COALESCE(max(length(arch)), 0) FROM products'
+    ).to_a.flatten.first
     # max product width is the length of max identifier/ max version/ max arch
     product = max_identifier + 4 + max_arch + 2
     [max_login, max_hostname, date_length, date_length, product]
