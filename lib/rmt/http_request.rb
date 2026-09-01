@@ -28,7 +28,7 @@ class RMT::HttpRequest < Typhoeus::Request
     # are live, RMT::FiberRequest resumes fibers from those callbacks, which
     # corrupts the heap
     # Set the HTTP version to 1.1 until that is fixed, see bsc#1276939
-    options[:http_version] = (Settings.try(:http_client).try(:http_version) || 'httpv1_1').to_sym
+    options[:http_version] = :httpv1_1
   end
 
 end
