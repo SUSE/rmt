@@ -1,4 +1,4 @@
-# :nocov:
+# simplecov:disable
 
 return unless Settings.dig(:scc, :metrics, :enabled)
 
@@ -34,4 +34,4 @@ ActiveSupport::Notifications.subscribe 'start_processing.action_controller' do |
     metric.increment(labels, by: 1)
   end
 end
-# :nocov:
+# simplecov:enable
