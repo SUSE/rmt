@@ -303,7 +303,7 @@ module RegistrationSharing
           it 'logs the retry' do
             expect(Rails.logger).to(
               have_received(:warn).with(
-                /#{Regexp.escape(error_class.name)}.*attempt 1\/#{described_class::DEADLOCK_RETRIES}/
+                %r{#{Regexp.escape(error_class.name)}.*attempt 1/#{described_class::DEADLOCK_RETRIES}}
               )
             )
           end
