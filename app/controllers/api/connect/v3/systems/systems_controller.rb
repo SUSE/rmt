@@ -4,6 +4,40 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
   after_action :refresh_system_token, only: [:update], if: -> { request.headers.key?(SYSTEM_TOKEN_HEADER) }
 
   def update
+    System.transaction do
+      # SELECT ... FOR UPDATE: blocks a concurrent deregistration until this
+      # request commits, and raises RecordNotFound if it already committed
+      # Locked by id rather than `@system.lock!`: `lock!` rejects a record with
+      # unpersisted changes, and `after_initialize :init` dirties any system
+      # with a NULL registered_at
+      begin
+        System.lock.find(@system.id)
+      rescue ActiveRecord::RecordNotFound
+        raise system_deregistered_error
+      end
+
+      perform_update
+    end
+
+    respond_with(@system, serializer: ::V3::SystemSerializer)
+  rescue ActiveRecord::InvalidForeignKey
+    raise system_deregistered_error
+  end
+
+  def deregister
+    respond_with(@system.destroy, serializer: ::V3::SystemSerializer)
+  end
+
+  private
+
+  def system_deregistered_error
+    logger.info(N_("System '%s' was deregistered while its update was in flight") % @system.login)
+    error = ActionController::TranslatedError.new(N_('Invalid system credentials'))
+    error.status = :unauthorized
+    error
+  end
+
+  def perform_update
     if params[:online_at].present?
       params[:online_at].each do |online_at|
         dthours = online_at.split(':')
@@ -63,15 +97,7 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
     if @system.save
       logger.info(N_("Updated system information for host '%s'") % @system.hostname)
     end
-
-    respond_with(@system, serializer: ::V3::SystemSerializer)
   end
-
-  def deregister
-    respond_with(@system.destroy, serializer: ::V3::SystemSerializer)
-  end
-
-  private
 
   def info_params(key)
     # Allow all attributes without validating the key structure
