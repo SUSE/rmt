@@ -4,10 +4,9 @@ require 'securerandom'
 # rubocop:disable Metrics/ModuleLength
 module RegistrationSharing
   RSpec.describe RmtToRmtController, type: :request do
-    # the controller opens its transaction with an explicit isolation level, and
-    # ActiveRecord refuses that inside the transaction that wraps each example
-    # ("cannot set transaction isolation in a nested transaction"), so this file
-    # cleans up after itself instead
+    # an exception escaping the controller's System.transaction marks the
+    # surrounding transaction for rollback, which breaks the wrapper transaction
+    # RSpec puts around each example, so this file cleans up after itself
     self.use_transactional_tests = false
 
     after do
@@ -214,12 +213,20 @@ module RegistrationSharing
             instance_data: instance_data
           },
           headers: { 'Authorization' => "Bearer #{request_token}" }
-          )
+        )
       end
 
       context 'with correct credentials' do
         it 'performs HTTP request successfully' do
           expect(response).to have_http_status(204)
+        end
+
+        it 'falls back to find_by!' do
+          expect(System).to have_received(:find_by!)
+        end
+
+        it 'does not retry a uniqueness violation' do
+          expect(System).to have_received(:find_or_create_by).once
         end
 
         context 'system' do
@@ -248,24 +255,21 @@ module RegistrationSharing
         }
       end
 
-      before do
-        # the backoff has nothing to wait for in a test
-        allow_any_instance_of(described_class).to receive(:sleep)
-        allow(Rails.logger).to receive(:warn)
-      end
+      # the backoff has nothing to wait for in a test
+      before { stub_const("#{described_class}::DEADLOCK_BACKOFF", 0) }
 
       def post_regsharing
         post('/api/regsharing', params: params, headers: { 'Authorization' => "Bearer #{request_token}" })
       end
 
-      # raises on the first 'failures' calls, then behaves normally
-      def fail_first(error, failures)
+      # raises on the first 'failures' calls to target.method, then behaves normally
+      def fail_first(target, method, error, failures)
         calls = 0
-        allow(System).to receive(:find_or_create_by).and_wrap_original do |original, *args|
+        allow(target).to receive(method).and_wrap_original do |original, *args, **kwargs, &block|
           calls += 1
           raise error if calls <= failures
 
-          original.call(*args)
+          original.call(*args, **kwargs, &block)
         end
       end
 
@@ -275,7 +279,8 @@ module RegistrationSharing
       }.each do |description, error_class|
         context "when #{description} clears on the second attempt" do
           before do
-            fail_first(error_class.new('contention'), 1)
+            allow(Rails.logger).to receive(:warn).and_call_original
+            fail_first(System, :find_or_create_by, error_class.new('contention'), 1)
             post_regsharing
           end
 
@@ -283,8 +288,12 @@ module RegistrationSharing
             expect(response).to have_http_status(204)
           end
 
-          it 'creates the system' do
-            expect(System.find_by(login: login_payg)).not_to eq(nil)
+          it 'retried exactly once' do
+            expect(System).to have_received(:find_or_create_by).twice
+          end
+
+          it 'creates exactly one system' do
+            expect(System.where(login: login_payg).count).to eq(1)
           end
 
           it 'creates the activation' do
@@ -294,15 +303,40 @@ module RegistrationSharing
           it 'logs the retry' do
             expect(Rails.logger).to(
               have_received(:warn).with(
-                %r{#{error_class}.*attempt 1/#{described_class::DEADLOCK_RETRIES}}
+                /#{Regexp.escape(error_class.name)}.*attempt 1\/#{described_class::DEADLOCK_RETRIES}/
               )
             )
           end
         end
       end
 
+      context 'when contention hits after the system row is created' do
+        before do
+          fail_first(Product, :includes, ActiveRecord::Deadlocked.new('contention'), 1)
+          post_regsharing
+        end
+
+        it 'performs HTTP request successfully' do
+          expect(response).to have_http_status(204)
+        end
+
+        it 'rolls the first attempt back rather than duplicating the system' do
+          expect(System.where(login: login_payg).count).to eq(1)
+        end
+
+        it 'creates the activation exactly once' do
+          expect(System.find_by(login: login_payg).activations.count).to eq(1)
+        end
+      end
+
       context 'when the contention does not clear' do
-        before { fail_first(ActiveRecord::Deadlocked.new('contention'), described_class::DEADLOCK_RETRIES) }
+        before do
+          fail_first(
+            System, :find_or_create_by,
+            ActiveRecord::Deadlocked.new('contention'),
+            described_class::DEADLOCK_RETRIES
+          )
+        end
 
         it 'lets the error through' do
           expect { post_regsharing }.to raise_error(ActiveRecord::Deadlocked)
@@ -320,7 +354,7 @@ module RegistrationSharing
       end
 
       context 'when the error is not contention' do
-        before { fail_first(ActiveRecord::RecordNotFound.new('missing'), 1) }
+        before { fail_first(System, :find_or_create_by, ActiveRecord::RecordNotFound.new('missing'), 1) }
 
         it 'does not retry' do
           expect { post_regsharing }.to raise_error(ActiveRecord::RecordNotFound)
@@ -328,7 +362,6 @@ module RegistrationSharing
         end
       end
     end
-
 
     describe '#destroy' do
       let!(:system) { FactoryBot.create(:system) }
