@@ -117,16 +117,14 @@ class RMT::CLI::Systems < RMT::CLI::Base
 
   def delete_inactive_systems(before)
     n_systems_destroyed = 0
-    with_retries do
-      # instead of getting all the systems to be shown
-      # before deletion, where we would know
-      # how many systems are going to be deleted
-      # query systems directly, thus we do not know how
-      # many systems before running the deletion
-      System.where('last_seen_at < ?', before).in_batches(of: DELETE_BATCH_SIZE) do |batch|
-        n_systems_destroyed += batch.destroy_all.length
-        puts _('%{n_systems_destroyed} systems destroyed') % { n_systems_destroyed: n_systems_destroyed }
-      end
+    # instead of getting all the systems to be shown
+    # before deletion, where we would know
+    # how many systems are going to be deleted
+    # query systems directly, thus we do not know how
+    # many systems before running the deletion
+    System.where('last_seen_at < ?', before).in_batches(of: DELETE_BATCH_SIZE) do |batch|
+      with_retries { n_systems_destroyed += destroy_batch(batch) }
+      puts _('%{n_systems_destroyed} systems destroyed') % { n_systems_destroyed: n_systems_destroyed }
     end
     [n_systems_destroyed, true]
   rescue StandardError => e
@@ -148,12 +146,11 @@ class RMT::CLI::Systems < RMT::CLI::Base
 
   def delete_systems_by_id(system_ids)
     deleted_systems = 0
-    with_retries do
-      system_ids.each_slice(DELETE_BATCH_SIZE) do |sliced_systems_ids|
-        deleted_systems += System.where(id: sliced_systems_ids).destroy_all.length
-        remaining_systems = system_ids.length - deleted_systems
-        puts _('%{remaining_systems} systems to be deleted') % { remaining_systems: remaining_systems } unless remaining_systems.zero?
-      end
+
+    system_ids.each_slice(DELETE_BATCH_SIZE) do |sliced_systems_ids|
+      with_retries { deleted_systems += destroy_batch(System.where(id: sliced_systems_ids)) }
+      remaining_systems = system_ids.length - deleted_systems
+      puts _('%{remaining_systems} systems to be deleted') % { remaining_systems: remaining_systems } unless remaining_systems.zero?
     end
     [deleted_systems, true]
   rescue StandardError => e
@@ -162,6 +159,13 @@ class RMT::CLI::Systems < RMT::CLI::Base
       'Error while purging the systems: %{error_class} %{message}, all %{all} systems could not be removed, %{remaining} systems still in the database'
       ) % { error_class: e.class, message: e.message, all: system_ids.length, remaining: remaining_systems }
     [deleted_systems, false]
+  end
+
+  def destroy_batch(relation)
+    System.transaction do # one commit per batch not per system
+      # pre-load the relations to avoid extra queries per batch
+      relation.includes(:system_profiles).destroy_all.length
+    end
   end
 
   def with_retries(max_attempts: 3, delay: 5)
