@@ -273,6 +273,35 @@ module RegistrationSharing
         end
       end
 
+      def record_changed_message
+        "Record has changed since last read in table 'activations'"
+      end
+
+      # the controller recognises the error by number through whatever the
+      # adapter wrapped, so the stand-in only has to answer error_number. Naming
+      # a concrete driver class here would tie the spec to one adapter
+      def driver_error(error_number)
+        StandardError.new(record_changed_message).tap do |error|
+          error.define_singleton_method(:error_number) { error_number }
+        end
+      end
+
+      # the adapter wraps the driver error instead of raising it, and the wrapper
+      # only carries a `cause` when it is raised from inside the rescue. That
+      # cause is the only thing identifying ER_CHECKREAD, so the fake has to be
+      # built the same way rather than instantiated directly
+      def checkread_error
+        raise driver_error(described_class::ER_CHECKREAD)
+      rescue StandardError
+        wrap_current_error
+      end
+
+      def wrap_current_error
+        raise ActiveRecord::StatementInvalid, record_changed_message
+      rescue ActiveRecord::StatementInvalid => e
+        e
+      end
+
       {
         'a deadlock' => ActiveRecord::Deadlocked,
         'a lock wait timeout' => ActiveRecord::LockWaitTimeout
@@ -307,6 +336,38 @@ module RegistrationSharing
               )
             )
           end
+        end
+      end
+
+      context 'when a read committed record change clears on the second attempt' do
+        before do
+          fail_first(System, :find_or_create_by, checkread_error, 1)
+          post_regsharing
+        end
+
+        it 'performs HTTP request successfully' do
+          expect(response).to have_http_status(204)
+        end
+
+        it 'retried exactly once' do
+          expect(System).to have_received(:find_or_create_by).twice
+        end
+
+        it 'creates exactly one system' do
+          expect(System.where(login: login_payg).count).to eq(1)
+        end
+
+        it 'creates the activation' do
+          expect(System.find_by(login: login_payg).activations.count).to eq(1)
+        end
+      end
+
+      context 'when a StatementInvalid is not contention' do
+        before { fail_first(System, :find_or_create_by, ActiveRecord::StatementInvalid.new('syntax error'), 1) }
+
+        it 'does not retry' do
+          expect { post_regsharing }.to raise_error(ActiveRecord::StatementInvalid)
+          expect(System).to have_received(:find_or_create_by).once
         end
       end
 
