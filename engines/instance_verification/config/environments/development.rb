@@ -1,4 +1,4 @@
-# :nocov:
+# simplecov:disable
 module InstanceVerification
   class Application < Rails::Application
     config.cache_config_file = Rails.root.join('engines/registry/spec/data/rmt-cache-trim.sh')
@@ -9,4 +9,4 @@ module InstanceVerification
     config.registry_cache_dir = Rails.root.join('tmp/cache/registry')
   end
 end
-# :nocov:
+# simplecov:enable

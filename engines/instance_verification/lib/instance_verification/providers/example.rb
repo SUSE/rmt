@@ -27,15 +27,15 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
   end
 
   def parse_instance_data
-    # :nocov:
+    # simplecov:disable
     if @product_hash && @product_hash[:identifier] == 'Raise error'
       raise InstanceVerification::Exception, 'Missing signature'
     end
     if @instance_data.include? '<instance_data/>'
-      return { 'instance_data' => 'parsed_instance_data', 'example_id' => '1234' } # :nocov:
+      return { 'instance_data' => 'parsed_instance_data', 'example_id' => '1234' }
     end
 
-    # :nocov:
+    # simplecov:enable
 
     if @instance_data.include?('SUSE')
       if @instance_data.include?('SAP')
