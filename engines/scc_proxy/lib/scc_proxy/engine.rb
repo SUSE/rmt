@@ -23,6 +23,13 @@ NET_HTTP_ERRORS = [
 # rubocop:disable Metrics/ModuleLength
 module SccProxy
   class << self
+    SCC_BASE_URL            = ENV.fetch('SCC_BASE_URL', 'https://scc.suse.com/connect').freeze
+
+    ANNOUNCE_URL            = "#{SCC_BASE_URL}/subscriptions/systems".freeze
+    SYSTEMS_PRODUCTS_URL    = "#{SCC_BASE_URL}/systems/products".freeze
+    SYSTEMS_ACTIVATIONS_URL = "#{SCC_BASE_URL}/systems/activations".freeze
+    DEREGISTER_SYSTEM_URL   = "#{SCC_BASE_URL}/systems".freeze
+
     def headers(auth, system_token)
       {
         'accept' => 'application/json,application/vnd.scc.suse.com.v4+json',
@@ -89,26 +96,6 @@ module SccProxy
         byos_mode: mode
       }.to_json
       scc_request
-    end
-
-    def scc_host_base_url
-      (ENV['SCC_HOST']&.strip || 'https://scc.suse.com/connect').freeze
-    end
-
-    def announce_url
-      "#{scc_host_base_url}/subscriptions/systems".freeze
-    end
-
-    def systems_products_url
-      "#{scc_host_base_url}/systems/products".freeze
-    end
-
-    def systems_activations_url
-      "#{scc_host_base_url}/systems/activations".freeze
-    end
-
-    def deregister_system_url
-      "#{scc_host_base_url}/systems".freeze
     end
 
     def parse_url(url)
