@@ -8,6 +8,14 @@ module RegistrationSharing
     # reaches us the locks are already released and there is nothing left to
     # rescue from within
     DEADLOCK_RETRIES = 3
+    DEADLOCK_BACKOFF = 0.1
+
+    # MariaDB error 1020, raised when a locking statement under READ COMMITTED
+    # waits for a row and finds it changed by the time the lock is granted. It
+    # means the same thing as a deadlock, start the transaction over, but
+    # ActiveRecord has no class for it, so it surfaces as a bare StatementInvalid
+    # and has to be recognised by the driver's error number
+    ER_CHECKREAD = 1020
 
     before_action :authenticate
 
@@ -16,14 +24,20 @@ module RegistrationSharing
       begin
         attempts += 1
         create_or_update_system
-      rescue ActiveRecord::Deadlocked, ActiveRecord::LockWaitTimeout => e
+      rescue ActiveRecord::StatementInvalid => e
+        # StatementInvalid rather than the two contention classes by name: it is
+        # their common ancestor, so Deadlocked and LockWaitTimeout are still caught
+        # here, and ER_CHECKREAD - which has no class of its own
+        # contention? re-raises everything else untouched
+
+        raise unless contention?(e)
         raise if attempts >= DEADLOCK_RETRIES
 
         Rails.logger.warn(
           "regsharing: #{e.class} for login #{params[:login]}, attempt #{attempts}/#{DEADLOCK_RETRIES}, retrying"
         )
         # jittered so two transactions that just collided do not line up again
-        sleep(rand(0.02..0.1) * attempts)
+        sleep(rand * DEADLOCK_BACKOFF * attempts)
         retry
       end
     end
@@ -34,6 +48,15 @@ module RegistrationSharing
     end
 
     protected
+
+    # deadlocks and lock wait timeouts get their own ActiveRecord classes;
+    # ER_CHECKREAD does not, so it is identified through the wrapped driver error
+    def contention?(error)
+      return true if error.is_a?(ActiveRecord::Deadlocked) || error.is_a?(ActiveRecord::LockWaitTimeout)
+
+      cause = error.cause
+      cause.respond_to?(:error_number) && cause.error_number == ER_CHECKREAD
+    end
 
     def fetch_system
       credentials = {
