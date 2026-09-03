@@ -106,7 +106,7 @@ module SccProxy
     end
 
     def announce_system_scc(auth, params, system_token, logger)
-      uri, http = parse_url(announce_url)
+      uri, http = parse_url(ANNOUNCE_URL)
       scc_request = prepare_scc_announce_request(uri.path, auth, params, system_token)
       response = http.request(scc_request)
       begin
@@ -125,7 +125,7 @@ module SccProxy
     end
 
     def scc_activate_product(system, product, auth, params, mode)
-      uri, http = parse_url(systems_products_url)
+      uri, http = parse_url(SYSTEMS_PRODUCTS_URL)
       scc_request = prepare_scc_request(uri.path, product, auth, params, mode)
       response = http.request(scc_request)
       unless response.code_type == Net::HTTPCreated
@@ -146,7 +146,7 @@ module SccProxy
     end
 
     def deactivate_product_scc(auth, product, params, logger)
-      uri, http = parse_url(systems_products_url)
+      uri, http = parse_url(SYSTEMS_PRODUCTS_URL)
       scc_request = Net::HTTP::Delete.new(uri.path, headers(auth, params))
       scc_request.body = {
         identifier: product.identifier,
@@ -165,7 +165,7 @@ module SccProxy
     end
 
     def deregister_system_scc(auth, system)
-      uri, http = parse_url(deregister_system_url)
+      uri, http = parse_url(DEREGISTER_SYSTEM_URL)
       scc_request = Net::HTTP::Delete.new(uri.path, headers(auth, system.system_token))
       response = http.request(scc_request)
       unless response.code_type == Net::HTTPNoContent
@@ -185,7 +185,7 @@ module SccProxy
     end
 
     def get_scc_activations(auth, system)
-      uri, http = parse_url(systems_activations_url)
+      uri, http = parse_url(SYSTEMS_ACTIVATIONS_URL)
       uri.query = URI.encode_www_form({ byos_mode: system.proxy_byos_mode })
       scc_request = Net::HTTP::Get.new(uri.path, headers(auth, system.system_token))
       response = http.request(scc_request)
@@ -276,7 +276,7 @@ module SccProxy
     end
 
     def scc_upgrade(auth, product, system, logger)
-      uri, http = parse_url(systems_products_url)
+      uri, http = parse_url(SYSTEMS_PRODUCTS_URL)
       scc_request = prepare_scc_upgrade_request(uri.path, product, auth, system.system_token, system.proxy_byos_mode)
       response = http.request(scc_request)
       unless response.code_type == Net::HTTPCreated
