@@ -55,8 +55,9 @@ class RMT::Downloader
 
     request_fiber = Fiber.new do
       begin
-        # make_request will call Fiber.yield on this fiber (request_fiber), returning the request object
-        # this fiber will be resumed by on_body callback once the request is executed
+        # make_request calls Fiber.yield on this fiber (request_fiber).
+        # The yield gives the request object to create_fiber_request.
+        # The on_complete callback then resumes this fiber with the response.
 
         response = make_request(file_reference, request_fiber)
         finalize_download(response.request, file_reference)
@@ -112,7 +113,6 @@ class RMT::Downloader
     )
     @logger.debug("HTTP request for: #{file.remote_path}")
 
-    request.receive_headers
     request.receive_body
   end
 

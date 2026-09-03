@@ -61,7 +61,6 @@ RSpec.describe RMT::Downloader do
         expect_any_instance_of(RMT::Logger).to receive(:debug)
           .with(debug_request_error_regex).exactly(5).times
 
-        allow_any_instance_of(RMT::FiberRequest).to receive(:receive_headers)
         allow_any_instance_of(RMT::FiberRequest).to receive(:read_body) do |instance|
           response = instance_double(Typhoeus::Response, code: 200, body: 'Ok',
                                      effective_url: 'http://example.com/repomd.xml',

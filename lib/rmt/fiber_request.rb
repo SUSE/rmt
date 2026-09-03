@@ -10,19 +10,15 @@ class RMT::FiberRequest < RMT::HttpRequest
 
     super(base_url, options)
 
-    on_headers { |response| @request_fiber.resume(response) }
     on_body do |chunk|
       next :abort if @download_path.closed?
       @download_path.write(chunk)
     end
-    on_complete do |response|
-      @request_fiber.resume(response) unless response.return_code == :ok # otherwise skips on_headers resume when the request has failed
-      @request_fiber.resume(response) if @request_fiber.alive?
-    end
-  end
-
-  def receive_headers
-    Fiber.yield(self)
+    # Resume the fiber from on_complete only. Ethon calls on_complete from
+    # Multi#check, after curl_multi_perform returns. No libcurl frame is live then.
+    # An on_headers resume runs inside the libcurl write callback and corrupts
+    # the heap. See bsc#1276939.
+    on_complete { |response| @request_fiber.resume(response) if @request_fiber.alive? }
   end
 
   def receive_body
@@ -43,7 +39,9 @@ class RMT::FiberRequest < RMT::HttpRequest
 
   # helper method for specs
   def read_body
-    Fiber.yield
+    # The first yield gives this request to RMT::Downloader#create_fiber_request.
+    # The on_complete resume makes the yield return the response.
+    Fiber.yield(self)
   end
 
 end
