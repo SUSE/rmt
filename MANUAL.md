@@ -312,6 +312,34 @@ The `web_server` section lets you tune the performance of your RMT server.
 The `scc` section contains your organization credentials for mirroring SUSE repositories from SUSE Customer Center.
 Your organization credentials can be obtained from the [SUSE Customer Center](https://scc.suse.com/).
 
+**Settings for declarative product / repository configuration**
+
+Instead of managing enabled products and custom repositories using the command line (the default behavior), it's possible to define them in the configuration file instead. This is useful for configuration management. If used (the settings mentioned below are defined in the configuration file, and they are not empty), `rmt-server` will make sure the enabled products / custom repositories match the ones defined in the configuration upon startup. Be aware that this means changes on the command line will be lost upon restarting `rmt-server`!
+
+  * `products` setting:
+     List of product strings to enforce.
+     Unlike on the command line, dependent products must be listed here as well.
+
+     Example:
+     ```
+     products:
+       - Leap/16.0/x86_64
+       - SLES/15.7/x86_64
+       - sle-module-basesystem/15.7/x86_64
+       - sle-module-python3/15.7/x86_64
+       - sle-module-server-applications/15.7/x86_64
+       - sle-module-systems-management/15.7/x86_64
+    ```
+
+  * `custom_repositories` setting:
+    Mapping of repository names to URLs to enforce.
+
+    Example:
+    ```
+    custom_repositories:
+      opensuse_tumbleweed_oss: https://cdn.opensuse.org/tumbleweed/repo/oss/
+    ```
+
 
 ## FEEDBACK
 
