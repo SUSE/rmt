@@ -56,8 +56,7 @@ module RegistrationSharing
     def contention?(error)
       return true if error.is_a?(ActiveRecord::Deadlocked) || error.is_a?(ActiveRecord::LockWaitTimeout)
 
-      cause = error.cause
-      cause.respond_to?(:error_number) && cause.error_number == ER_CHECKREAD
+      error.cause.try(:error_number).eql?(ER_CHECKREAD)
     end
 
     def fetch_system
