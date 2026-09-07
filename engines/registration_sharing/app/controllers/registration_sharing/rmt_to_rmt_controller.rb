@@ -8,7 +8,9 @@ module RegistrationSharing
     # reaches us the locks are already released and there is nothing left to
     # rescue from within
     DEADLOCK_RETRIES = 3
-    DEADLOCK_BACKOFF = 0.1
+    # a range rather than a ceiling: the lower bound is what actually separates
+    # two transactions that just collided, so a retry must never be immediate
+    DEADLOCK_BACKOFF = (0.02..0.1)
 
     # MariaDB error 1020, raised when a locking statement under READ COMMITTED
     # waits for a row and finds it changed by the time the lock is granted. It
@@ -37,7 +39,7 @@ module RegistrationSharing
           "regsharing: #{e.class} for login #{params[:login]}, attempt #{attempts}/#{DEADLOCK_RETRIES}, retrying"
         )
         # jittered so two transactions that just collided do not line up again
-        sleep(rand * DEADLOCK_BACKOFF * attempts)
+        sleep(rand(DEADLOCK_BACKOFF) * attempts)
         retry
       end
     end
