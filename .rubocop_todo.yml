@@ -77,7 +77,6 @@ Layout/EmptyLineAfterGuardClause:
     - 'lib/rmt/cli/products.rb'
     - 'lib/rmt/cli/repos_custom.rb'
     - 'lib/rmt/cli/smt_importer.rb'
-    - 'lib/rmt/fiber_request.rb'
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
@@ -940,7 +939,6 @@ Style/RedundantParentheses:
     - 'engines/strict_authentication/app/controllers/strict_authentication/authentication_controller.rb'
     - 'lib/rmt/cli/smt_importer.rb'
     - 'lib/rmt/downloader.rb'
-    - 'lib/rmt/fiber_request.rb'
     - 'lib/suse/connect/api.rb'
     - 'spec/lib/suse/connect/system_serializer_spec.rb'
 
