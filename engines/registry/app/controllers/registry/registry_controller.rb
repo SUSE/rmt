@@ -8,6 +8,17 @@ module Registry
     before_action :basic_auth, except: [ :catalog ]
     before_action :catalog_token_auth, only: [ :catalog ]
 
+    # Raised from before_action callbacks, which run outside the action body, so
+    # a rescue clause on an action structurally cannot see them, i.e.
+    # a missing registry section reached the client as a 500 with a stack trace and
+    # nothing they can do about it
+    rescue_from RegistryAuthError do |error|
+      # only the log gets the detail: it names a server-side path, and it is read
+      # on the same host that needs the fix
+      logger.error("Registry authentication failed: #{error.message}")
+      render json: { code: :unauthorized, error: 'Registry authentication failed' }, status: :unauthorized
+    end
+
     # AuthZ handler
     # AuthZ will validate which of the requested scope policies are fulfilled
     # with the current login access and prepare the token to be sent back to the client
@@ -69,7 +80,7 @@ module Registry
       return unless request.authorization
 
       realm = Settings.try(:registry).try(:realm)
-      raise RegistryAuthError, 'registry not configured properly in /etc/rmt.conf' if realm.blank?
+      raise RegistryAuthError, 'registry realm not configured properly in /etc/rmt.conf' if realm.blank?
 
       authenticate_or_request_with_http_basic(realm) do |login, password|
         begin
@@ -104,7 +115,7 @@ module Registry
     # is called by authenticate_or_request_with_http_token when client provides no token
     def request_http_token_authentication(realm = authorize_url, message = 'authentication required')
       service = Settings.try(:registry).try(:service)
-      raise RegistryAuthError, 'registry not configured properly in /etc/rmt.conf' if service.blank?
+      raise RegistryAuthError, 'registry service not configured properly in /etc/rmt.conf' if service.blank?
 
       www_authenticate = [
         %(Bearer realm="#{realm.delete('"')}"),
