@@ -262,6 +262,49 @@ module Registry
             expect(response).to have_http_status(:unauthorized)
           end
         end
+
+        context 'when the registry backend is unreachable' do
+          before do
+            allow(Settings).to receive(:try).with(:registry).and_return(settings_registry)
+            allow(settings_registry).to receive(:try).with(:realm).and_return(registry_realm)
+            allow(settings_registry).to receive(:try).with(:service).and_return(registry_service)
+            allow_any_instance_of(AuthenticatedClient).to receive(:cache_file_exist?).and_return(true)
+            allow(Rails.logger).to receive(:error)
+          end
+
+          it 'denies the access when the registry refuses the connection' do
+            stub_request(:get, "#{RegistryCatalogService.new.catalog_api_url}?n=1000").to_raise(Errno::ECONNREFUSED)
+
+            get(
+              '/api/registry/authorize',
+              params: { service: registry_service, scope: 'registry:catalog:*' },
+              headers: auth_headers
+              )
+
+            auth_headers_token['Authorization'] = format("Bearer #{json_response[:token]}")
+            get('/api/registry/catalog', headers: auth_headers_token)
+
+            expect(response).to have_http_status(:unauthorized)
+            expect(Rails.logger).to have_received(:error).with(/could not read the registry catalog: Errno::ECONNREFUSED/)
+          end
+
+          it 'denies the access when the registry answers with something that is not JSON' do
+            stub_request(:get, "#{RegistryCatalogService.new.catalog_api_url}?n=1000")
+              .to_return(body: '<html>502 Bad Gateway</html>', status: 200, headers: { 'Content-type' => 'text/html' })
+
+            get(
+              '/api/registry/authorize',
+              params: { service: registry_service, scope: 'registry:catalog:*' },
+              headers: auth_headers
+              )
+
+            auth_headers_token['Authorization'] = format("Bearer #{json_response[:token]}")
+            get('/api/registry/catalog', headers: auth_headers_token)
+
+            expect(response).to have_http_status(:unauthorized)
+            expect(Rails.logger).to have_received(:error).with(/could not read the registry catalog: JSON::ParserError/)
+          end
+        end
       end
 
       context 'with invalid credentials' do
