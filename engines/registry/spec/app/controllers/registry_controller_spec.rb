@@ -55,13 +55,15 @@ module Registry
         let(:system) { create(:system) }
         let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
 
-        it 'raise an error with a clear message' do
+        it 'refuses the request instead of raising' do
           allow(Settings).to receive(:try).with(:registry).and_return({})
-          # allow(settings_registry).to receive(:try).with(:realm).and_return(registry_realm)
           allow_any_instance_of(AuthenticatedClient).to receive(:cache_file_exist?).and_return(true)
-          expect { get('/api/registry/authorize', headers: auth_headers) }.to raise_error(
-            RegistryAuthError, 'registry not configured properly in /etc/rmt.conf'
-          )
+          allow(Rails.logger).to receive(:error)
+          get('/api/registry/authorize', headers: auth_headers)
+          expect(response).to have_http_status(:unauthorized)
+          # the detail is what the operator needs and the client must not see
+          expect(Rails.logger).to have_received(:error).with(%r{registry realm not configured properly in /etc/rmt\.conf})
+          expect(response.body).not_to include('/etc/rmt.conf')
         end
       end
     end
@@ -95,9 +97,13 @@ module Registry
       let(:system) { create(:system) }
       let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
 
-      it 'raise an error with a clear message' do
+      it 'refue the request instead of raising' do
         allow(Settings).to receive(:try).with(:registry).and_return({})
-        expect { get('/api/registry/catalog') }.to raise_error(RegistryAuthError, 'registry not configured properly in /etc/rmt.conf')
+        allow(Rails.logger).to receive(:error)
+        get('/api/registry/catalog')
+        expect(response).to have_http_status(:unauthorized)
+        expect(Rails.logger).to have_received(:error).with(%r{registry service not configured properly in /etc/rmt\.conf})
+        expect(response.body).not_to include('/etc/rmt.conf')
       end
     end
 
