@@ -99,6 +99,24 @@ module Registry
         it 'never reaches the controller with invalid UTF-8' do                                          expect { get('/api/registry/authorize?scope=repository%3Aname%3A%FFpull') }                      .to raise_error(ActionController::BadRequest)
         end
       end
+
+      context 'when the registry signing key was never installed' do
+        let(:system) { create(:system) }
+        let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
+
+        it 'reports the missing key rather than a NoMethodError on String' do
+          allow(Settings).to receive(:try).with(:registry).and_return(settings_registry)
+          allow(settings_registry).to receive(:try).with(:realm).and_return(registry_realm)
+          allow_any_instance_of(AuthenticatedClient).to receive(:cache_file_exist?).and_return(true)
+          allow(Rails.application.config).to receive(:registry_private_key).and_return('')
+          allow(Rails.logger).to receive(:error)
+
+          get('/api/registry/authorize', headers: auth_headers)
+
+          expect(response).to have_http_status(:unauthorized)
+          expect(Rails.logger).to have_received(:error).with(/registry signing key is missing/)
+        end
+      end
     end
 
     describe '#catalog without access token' do
@@ -137,6 +155,20 @@ module Registry
         expect(response).to have_http_status(:unauthorized)
         expect(Rails.logger).to have_received(:error).with(%r{registry service not configured properly in /etc/rmt\.conf})
         expect(response.body).not_to include('/etc/rmt.conf')
+      end
+    end
+
+    describe '#catalog when the registry signing key was never installed' do
+      it 'refuses the request instead of raising' do
+        allow(Settings).to receive(:try).with(:registry).and_return(settings_registry)
+        allow(settings_registry).to receive(:try).with(:service).and_return(registry_service)
+        allow(Rails.application.config).to receive(:registry_private_key).and_return('')
+        allow(Rails.logger).to receive(:error)
+
+        get('/api/registry/catalog', headers: { 'Authorization' => 'Bearer irrelevant' })
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(Rails.logger).to have_received(:error).with(/registry signing key is missing/)
       end
     end
 
