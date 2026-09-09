@@ -305,6 +305,47 @@ module Registry
             expect(Rails.logger).to have_received(:error).with(/could not read the registry catalog: JSON::ParserError/)
           end
         end
+
+        context 'when the access policy file cannot be read' do
+          before do
+            allow(Settings).to receive(:try).with(:registry).and_return(settings_registry)
+            allow(settings_registry).to receive(:try).with(:realm).and_return(registry_realm)
+            allow(settings_registry).to receive(:try).with(:service).and_return(registry_service)
+            allow_any_instance_of(AuthenticatedClient).to receive(:cache_file_exist?).and_return(true)
+            allow(Rails.logger).to receive(:error)
+          end
+
+          it 'denies the access when the file is not valid YAML' do
+            get(
+              '/api/registry/authorize',
+              params: { service: registry_service, scope: 'registry:catalog:*' },
+              headers: auth_headers
+              )
+
+            auth_headers_token['Authorization'] = format("Bearer #{json_response[:token]}")
+            # a tab cannot be used for indentation in YAML
+            allow(File).to receive(:read).and_return("policies:\n\t- unindentable")
+            get('/api/registry/catalog', headers: auth_headers_token)
+
+            expect(response).to have_http_status(:unauthorized)
+            expect(Rails.logger).to have_received(:error).with(/could not read .*: Psych::SyntaxError/)
+          end
+
+          it 'denies the access when the file is not a mapping of product classes to paths' do
+            get(
+              '/api/registry/authorize',
+              params: { service: registry_service, scope: 'registry:catalog:*' },
+              headers: auth_headers
+              )
+
+            auth_headers_token['Authorization'] = format("Bearer #{json_response[:token]}")
+            allow(File).to receive(:read).and_return("- one\n- two\n")
+            get('/api/registry/catalog', headers: auth_headers_token)
+
+            expect(response).to have_http_status(:unauthorized)
+            expect(Rails.logger).to have_received(:error).with(/is not a mapping of product classes to paths/)
+          end
+        end
       end
 
       context 'with invalid credentials' do
