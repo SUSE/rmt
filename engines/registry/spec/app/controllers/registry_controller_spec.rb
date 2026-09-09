@@ -66,6 +66,39 @@ module Registry
           expect(response.body).not_to include('/etc/rmt.conf')
         end
       end
+
+      context 'login request with a malformed scope' do
+        it 'rejects a scope that is not colon separated' do
+          get('/api/registry/authorize', params: { scope: 'foo' })
+
+          expect(response).to have_http_status(:bad_request)
+          expect(json_response[:error]).to eq('Invalid scope format')
+        end
+
+        it 'rejects a scope with too few parts' do
+          get('/api/registry/authorize', params: { scope: 'repository:name' })
+
+          expect(response).to have_http_status(:bad_request)
+          expect(json_response[:error]).to eq('Invalid scope format')
+        end
+
+        it 'rejects a scope with too many parts' do
+          get('/api/registry/authorize', params: { scope: 'a:b:c:d' })
+
+          expect(response).to have_http_status(:bad_request)
+          expect(json_response[:error]).to eq('Invalid scope format')
+        end
+
+        it 'rejects a scope with a character outside the allowed set' do
+          get('/api/registry/authorize', params: { scope: 'repository:name:pull;drop' })
+
+          expect(response).to have_http_status(:bad_request)
+          expect(json_response[:error]).to eq('Invalid scope format')
+        end
+
+        it 'never reaches the controller with invalid UTF-8' do                                          expect { get('/api/registry/authorize?scope=repository%3Aname%3A%FFpull') }                      .to raise_error(ActionController::BadRequest)
+        end
+      end
     end
 
     describe '#catalog without access token' do
