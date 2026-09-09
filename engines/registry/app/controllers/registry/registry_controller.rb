@@ -19,6 +19,13 @@ module Registry
       render json: { code: :unauthorized, error: 'Registry authentication failed' }, status: :unauthorized
     end
 
+    # the scope comes straight off the query string, so a malformed one is the
+    # client's mistake to correct and the message is safe to hand back
+    rescue_from Registry::Exceptions::InvalidScope do |error|
+      logger.info("Rejected registry scope: #{error.message}")
+      render json: { code: :bad_request, error: error.message }, status: error.status
+    end
+
     # AuthZ handler
     # AuthZ will validate which of the requested scope policies are fulfilled
     # with the current login access and prepare the token to be sent back to the client
