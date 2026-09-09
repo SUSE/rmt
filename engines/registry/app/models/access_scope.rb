@@ -82,10 +82,10 @@ class AccessScope
   end
 
   def allowed_paths(system, remote_ip)
+    return @allowed_paths = [] if system.nil?
+
     repo_list = RegistryCatalogService.new.repos(system, reload: false)
-    access_policies_yml = YAML.unsafe_load(
-      File.read(Rails.application.config.access_policies)
-    )
+    access_policies_yml = access_policies
     active_product_classes = system.activations.includes(:product).pluck(:product_class)
     allowed_product_classes = (active_product_classes & access_policies_yml.keys)
     if system && system.hybrid?
@@ -118,6 +118,16 @@ class AccessScope
     end
     allowed_glob_paths = access_policies_yml.values_at(*allowed_product_classes).flatten
     @allowed_paths = parse_repos(repo_list, allowed_glob_paths)
+  end
+
+  def access_policies
+    policies_path = Rails.application.config.access_policies
+    access_policies_yml = YAML.unsafe_load(File.read(policies_path))
+    raise Registry::Exceptions::RegistryUnavailable.new("#{policies_path} is not a mapping of product classes to paths") unless access_policies_yml.is_a?(Hash)
+
+    access_policies_yml
+  rescue SystemCallError, IOError, Psych::Exception => e
+    raise Registry::Exceptions::RegistryUnavailable.new("could not read #{policies_path}: #{e.class}: #{e.message}")
   end
 
   def parse_repos(repos, allowed_paths)
