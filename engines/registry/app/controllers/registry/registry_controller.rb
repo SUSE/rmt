@@ -26,6 +26,11 @@ module Registry
       render json: { code: :bad_request, error: error.message }, status: error.status
     end
 
+    rescue_from Registry::Exceptions::RegistryUnavailable do |error|
+      logger.error("Registry is unavailable: #{error.message}")
+      render json: { code: :unauthorized, error: 'Registry is unavailable' }, status: error.status
+    end
+
     # AuthZ handler
     # AuthZ will validate which of the requested scope policies are fulfilled
     # with the current login access and prepare the token to be sent back to the client
