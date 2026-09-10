@@ -96,7 +96,8 @@ module Registry
           expect(json_response[:error]).to eq('Invalid scope format')
         end
 
-        it 'never reaches the controller with invalid UTF-8' do                                          expect { get('/api/registry/authorize?scope=repository%3Aname%3A%FFpull') }                      .to raise_error(ActionController::BadRequest)
+        it 'never reaches the controller with invalid UTF-8' do
+          expect { get('/api/registry/authorize?scope=repository%3Aname%3A%FFpull') }.to raise_error(ActionController::BadRequest)
         end
       end
 
