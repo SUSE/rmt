@@ -228,7 +228,7 @@ class RMT::Downloader
     request.retries ||= RETRIES
     if request.retries > 0
       @logger.warn(_('Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds') % {
-        file_reference: URI(response.effective_url).path, message: "#{response.return_code} (#{response.code})",
+        file_reference: URI(request.base_url).path, message: "#{response.return_code} (#{response.code})",
         retries: request.retries, seconds: RETRY_DELAY_SECONDS
       })
       sleep(RETRY_DELAY_SECONDS)
