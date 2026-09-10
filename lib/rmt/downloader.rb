@@ -37,7 +37,7 @@ class RMT::Downloader
     @hydra = Typhoeus::Hydra.new(max_concurrency: @concurrency)
     @failed_downloads = ignore_errors ? failed_cache : nil
 
-    @concurrency.times { process_queue }
+    @concurrency.times { enqueue_next }
 
     @hydra.run
 
@@ -75,7 +75,7 @@ class RMT::Downloader
     handle_failure(file, retries, e)
   end
 
-  def process_queue
+  def enqueue_next
     queue_item = @queue.shift
     return unless queue_item
 
@@ -85,11 +85,8 @@ class RMT::Downloader
   def handle_response(response, downloaded_file, file, retries)
     if invalid_response?(response)
       downloaded_file.close!
-      begin
-        raise_request_error(file.remote_path, response)
-      rescue RMT::Downloader::Exception => e
-        handle_failure(file, retries, e)
-      end
+      error = RMT::Downloader::Exception.create_request_error(file.remote_path, response, @logger)
+      handle_failure(file, retries, error)
     else
       downloaded_file.close
       begin
@@ -97,20 +94,20 @@ class RMT::Downloader
       rescue RMT::Downloader::Exception, RMT::ChecksumVerifier::Exception => e
         return handle_failure(file, retries, e)
       end
-      process_queue
+      enqueue_next
     end
   end
 
   # retries the file, or records/raises the failure, depending on 'ignore_errors'
   def handle_failure(file, retries, error)
     if retries.zero? || error.try(:http_code) == 404
-      if @failed_downloads
-        @logger.warn("× #{File.basename(file.local_path)} - #{error.message}")
-        @failed_downloads << file
-        process_queue
-      else
+      if @failed_downloads.nil?
         abort_queue
         raise error
+      else
+        @logger.warn("× #{File.basename(file.local_path)} - #{error.message}")
+        @failed_downloads << file
+        enqueue_next
       end
     else
       @logger.warn(_('Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds') % {
@@ -128,12 +125,7 @@ class RMT::Downloader
   end
 
   def raise_request_error(remote_file, response)
-    if response.nil?
-      message = _('%{file} - request failed') % { file: remote_file }
-      raise RMT::Downloader::Exception.new(message)
-    end
-
-    RMT::Downloader::Exception.raise_request_error(remote_file, response, @logger)
+    raise RMT::Downloader::Exception.create_request_error(remote_file, response, @logger)
   end
 
   def finalize_download(response, downloaded_file, file)
@@ -176,7 +168,8 @@ class RMT::Downloader
   end
 
   def invalid_response?(response)
-    return true if response.nil?
+    # Handle case where Typhoeus returns code 0 with return_code :ok for local
+    # file:// requests, e.g. when downloading a file that already exists in cache.
     return false if response.code == 0 && response.return_code == :ok
 
     response.code != 200 || (response.return_code && response.return_code != :ok)

@@ -875,12 +875,6 @@ RSpec.describe RMT::Downloader do
   end
 
   describe '#invalid_response?' do
-    context 'with nil response' do
-      it 'returns true' do
-        expect(downloader.send(:invalid_response?, nil)).to be true
-      end
-    end
-
     context 'with code 0 and :ok return_code' do
       it 'returns false' do
         response = instance_double(Typhoeus::Response, code: 0, return_code: :ok)
@@ -890,13 +884,6 @@ RSpec.describe RMT::Downloader do
   end
 
   describe '#raise_request_error' do
-    context 'with nil response' do
-      it 'raises with generic message' do
-        expect { downloader.send(:raise_request_error, 'http://example.com/test.rpm', nil) }
-          .to raise_error(RMT::Downloader::Exception, /test\.rpm - request failed/)
-      end
-    end
-
     context 'with valid response' do
       let(:response) do
         instance_double(Typhoeus::Response,
