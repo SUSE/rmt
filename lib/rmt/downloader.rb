@@ -49,10 +49,10 @@ class RMT::Downloader
   def queue_download(file, retries: RETRIES)
     make_file_dir(file.local_path)
 
-    downloaded_file = Tempfile.new('rmt', Dir.tmpdir, mode: File::BINARY, encoding: 'ascii-8bit')
     request_uri = request_uri(file).to_s
     @logger.debug("HTTP request for: #{file.remote_path}")
 
+    downloaded_file = Tempfile.new('rmt', Dir.tmpdir, mode: File::BINARY, encoding: 'ascii-8bit')
     request = RMT::HttpRequest.new(request_uri, followlocation: true)
 
     request.on_body do |chunk|
@@ -64,12 +64,15 @@ class RMT::Downloader
     request.on_complete do |response|
       handle_response(response, downloaded_file, file, retries)
     rescue StandardError => e
-      downloaded_file.unlink
-      @hydra.multi.easy_handles.each { |h| @hydra.multi.delete(h) }
+      downloaded_file.close!
+      abort_queue
       raise e
     end
 
     @hydra.queue(request)
+  rescue RMT::Downloader::Exception => e
+    # e.g. a missing 'file://' source: treat it like a failed request
+    handle_failure(file, retries, e)
   end
 
   def process_queue
@@ -81,29 +84,47 @@ class RMT::Downloader
 
   def handle_response(response, downloaded_file, file, retries)
     if invalid_response?(response)
-      downloaded_file.unlink
-      if retries.zero? || response.code == 404
-        if @failed_downloads
-          @logger.warn("× #{File.basename(file.local_path)} - #{response.code} (#{response.return_code})")
-          @failed_downloads << file
-        else
-          @hydra.multi.easy_handles.each { |h| @hydra.multi.delete(h) }
-          raise_request_error(file.remote_path, response)
-        end
-        process_queue
-      else
-        @logger.warn(_('Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds') % {
-          file_reference: file.remote_path, message: "#{response.code} (#{response.return_code})",
-          retries: retries, seconds: RETRY_DELAY_SECONDS
-        })
-        sleep(RETRY_DELAY_SECONDS)
-        queue_download(file, retries: (retries - 1))
+      downloaded_file.close!
+      begin
+        raise_request_error(file.remote_path, response)
+      rescue RMT::Downloader::Exception => e
+        handle_failure(file, retries, e)
       end
     else
       downloaded_file.close
-      finalize_download(response, downloaded_file, file)
+      begin
+        finalize_download(response, downloaded_file, file)
+      rescue RMT::Downloader::Exception, RMT::ChecksumVerifier::Exception => e
+        return handle_failure(file, retries, e)
+      end
       process_queue
     end
+  end
+
+  # retries the file, or records/raises the failure, depending on 'ignore_errors'
+  def handle_failure(file, retries, error)
+    if retries.zero? || error.try(:http_code) == 404
+      if @failed_downloads
+        @logger.warn("× #{File.basename(file.local_path)} - #{error.message}")
+        @failed_downloads << file
+        process_queue
+      else
+        abort_queue
+        raise error
+      end
+    else
+      @logger.warn(_('Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds') % {
+        file_reference: file.remote_path, message: error.message,
+        retries: retries, seconds: RETRY_DELAY_SECONDS
+      })
+      sleep(RETRY_DELAY_SECONDS)
+      queue_download(file, retries: (retries - 1))
+    end
+  end
+
+  def abort_queue
+    @queue = []
+    @hydra.multi.easy_handles.dup.each { |h| @hydra.multi.delete(h) }
   end
 
   def raise_request_error(remote_file, response)

@@ -66,8 +66,9 @@ RSpec.describe RMT::Downloader do
       end
 
       it 'raises an exception' do
+        # the request error is logged for the initial attempt and for each of the 4 retries
         expect_any_instance_of(RMT::Logger).to receive(:debug)
-          .with(debug_request_error_regex).once
+          .with(debug_request_error_regex).exactly(5).times
 
         allow(downloader).to receive(:invalid_response?).and_return(true)
 
@@ -376,6 +377,10 @@ RSpec.describe RMT::Downloader do
                 expect(error.message).to match(%r{/repodata/repomd.xml - File does not exist})
                 expect(error.http_code).to eq(404)
               }
+      end
+
+      it 'returns the file in failed_downloads when ignore_errors is true' do
+        expect(downloader.download_multi([repomd_xml_file], ignore_errors: true)).to eq([repomd_xml_file])
       end
     end
   end
@@ -695,12 +700,40 @@ RSpec.describe RMT::Downloader do
         end
       end
 
+      let(:good_file) do
+        RMT::Mirror::FileReference.new(
+          relative_path: 'good.rpm',
+          base_url: repository_url,
+          base_dir: repository_dir,
+          cache_dir: nil
+        ).tap do |f|
+          f.checksum = Digest::SHA256.hexdigest('good content')
+          f.checksum_type = 'SHA256'
+        end
+      end
+
       it 'cleans up temp file' do
         stub_request(:get, 'http://example.com/test.rpm')
           .with(headers: headers)
           .to_return(status: 200, body: 'dummy content', headers: {})
 
         expect { downloader.download_multi([file]) }.to raise_error(RMT::Downloader::Exception)
+      end
+
+
+      it 'adds the file to failed_downloads and downloads the rest when ignore_errors is true' do
+        stub_const('RMT::Downloader::RETRY_DELAY_SECONDS', 0)
+        stub_logger(:warn, :info, :debug)
+
+        stub_request(:get, 'http://example.com/test.rpm')
+          .with(headers: headers)
+          .to_return(status: 200, body: 'dummy content', headers: {})
+        stub_request(:get, 'http://example.com/good.rpm')
+          .with(headers: headers)
+          .to_return(status: 200, body: 'good content', headers: {})
+
+        expect(downloader.download_multi([file, good_file], ignore_errors: true)).to eq([file])
+        expect(File.read(good_file.local_path)).to eq('good content')
       end
     end
   end
