@@ -53,9 +53,12 @@ locale/*/*.edit.po
 ansible/*.retry
 
 # Agent/AI related files
-.agents/
+# .agents/ holds the shared skill sources; .claude/skills/ symlinks into it, so
+# both are tracked. Only the local settings files stay ignored -- they hold
+# machine-specific paths and credentials.
+.claude/settings.json
+.claude/settings.local.json
 .gemini/
-.claude/
 
 ansible/.molecule/
 ansible/.cache/

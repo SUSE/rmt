@@ -24,6 +24,10 @@ This reference documents the release lifecycle of **rmt-server**, visualizing th
     *   **Action:** Change to `package/obs/` directory.
     *   **Action:** Run `osc vc` to edit the `.changes` file with version notes.
     *   **Format:** Include references (e.g., `bsc#123456`, `jsc#XXX-123456`)
+    *   **BLOCKING GATE (precondition for every later submission):** the entry for this version **must** contain at least one tracker reference — `bsc#NNNNNNN`, `jsc#XXX-NNN` or `fate#NNNNNN`. An entry without one blocks Factory/SLE/IBS submission. Verify:
+        ```bash
+        head -20 package/obs/rmt-server.changes | grep -Eq 'bsc#[0-9]{6,7}|jsc#[A-Z]+-[0-9]+|fate#[0-9]+' && echo OK || echo "BLOCKER: no tracker reference"
+        ```
     *   **Note:** This must be done before generating the tarball as the `.changes` file is included in the distribution.
 3.  **Generate Distribution Tarball:**
     *   **Pre-flight Check:** Ensure `public/repo` exists: `mkdir -p public/repo`.
@@ -31,26 +35,36 @@ This reference documents the release lifecycle of **rmt-server**, visualizing th
     *   **Action:** Run `make dist`.
 
 #### RMT 3.x (rmt_3 branch) - Git-Based
-1.  **Clone/Update Git Repository:**
-    *   **For Factory/Tumbleweed/Leap:** `git clone gitea@src.opensuse.org:systemsmanagement/rmt-server`
-    *   **For SLE builds (VPN required):** `git clone gitea@src.suse.de:systemsmanagement/rmt-server`
-    *   **Note:** Use SSH with `gitea@` for write access
-2.  **Update Version Strings:**
+
+**Two repositories are involved — don't conflate them:**
+
+*   **Source:** `github.com/SUSE/rmt`, branch `rmt_3` — where `lib/rmt.rb`, `package/obs/rmt-server.spec` and `package/obs/rmt-server.changes` are edited and reviewed. Steps 2–4 below happen here.
+*   **Packaging:** `pool/rmt-server` on `src.suse.de` / `src.opensuse.org` — receives the built artifacts (tarball, man page, spec, changes) per product branch. Step 5 and Phase 4 happen here.
+
+1.  **Clone/Update the packaging repository** (needed later, in Phase 4):
+    *   **SLFO/SLE (VPN required):** `git clone gitea@src.suse.de:pool/rmt-server` — or your fork, with `pool/rmt-server` added as `upstream`
+    *   **Public mirror:** `git clone gitea@src.opensuse.org:pool/rmt-server`
+    *   **Note:** Use SSH with `gitea@` for write access, and have `git-lfs` installed
+2.  **Update Version Strings** (in the source repo, on `rmt_3`):
     *   Modify `lib/rmt.rb` to reflect the new version.
     *   Modify `package/obs/rmt-server.spec` to match.
 3.  **Update Changelog:**
     *   **Action:** Change to `package/obs/` directory.
     *   **Action:** Run `osc vc` to edit the `.changes` file with version notes.
     *   **Format:** Include references (e.g., `bsc#123456`, `jsc#XXX-123456`)
-    *   **Note:** This must be done before generating the tarball as the `.changes` file is included in the distribution.
+    *   **BLOCKING GATE (precondition for every later submission):** the entry for this version **must** contain at least one tracker reference — `bsc#NNNNNNN`, `jsc#XXX-NNN` or `fate#NNNNNN`. An entry without one blocks the Factory submit request and any agit PR to a product branch. Verify:
+        ```bash
+        head -20 package/obs/rmt-server.changes | grep -Eq 'bsc#[0-9]{6,7}|jsc#[A-Z]+-[0-9]+|fate#[0-9]+' && echo OK || echo "BLOCKER: no tracker reference"
+        ```
+    *   **Note:** Update the changelog before generating the tarball, so the packaging artifacts and the git state describe the same release.
 4.  **Generate Distribution Tarball:**
     *   **Pre-flight Check:** Ensure `public/repo` exists: `mkdir -p public/repo`.
-    *   **Environment:** Use appropriate Ruby version for RMT 3.x.
+    *   **Environment:** Built in the Docker container; use `docker compose run --rm -v "$PWD":/srv/www/rmt rmt make build-tarball` when there is no TTY for `make dist`.
     *   **Action:** Run `make dist`.
-5.  **Commit to Git:**
-    *   **Action:** `git add lib/rmt.rb package/obs/rmt-server.spec package/obs/rmt-server.changes`
-    *   **Action:** `git commit -m "Release version X.Y.Z"`
-    *   **Push/PR:** Push directly or create PR depending on permissions (see [git-workflow.md](git-workflow.md))
+    *   **Caution:** `build-tarball` runs `clean`, which deletes `package/obs/*.tar.bz2` — back up the existing tarball if it is the only copy.
+5.  **Merge the release branch on GitHub:**
+    *   The version bump, spec change and changelog entry go through a normal PR against `rmt_3`.
+    *   Everything downstream (OBS, `pool/rmt-server`, the tag) is built from the merged commit, so rebuild the tarball if further commits land on `rmt_3` after the first build.
 
 ### Phase 2: Open Build Service (OBS) Update
 
@@ -104,8 +118,15 @@ This reference documents the release lifecycle of **rmt-server**, visualizing th
 
 ### Phase 4: Submissions (Factory & SLES)
 
+> **BLOCKING GATE — run before any submission below.** `package/obs/rmt-server.changes` must have an entry for the release version carrying at least one tracker reference (`bsc#NNNNNNN`, `jsc#XXX-NNN` or `fate#NNNNNN`). SUSE maintenance/QA tooling rejects submissions with no trackable reference. If this check fails, stop and add the reference first.
+>
+> ```bash
+> head -20 package/obs/rmt-server.changes | grep -Eq 'bsc#[0-9]{6,7}|jsc#[A-Z]+-[0-9]+|fate#[0-9]+' && echo OK || echo "BLOCKER: no tracker reference"
+> ```
+
 #### RMT 2.x - SLES (IBS, from `Devel:SCC:RMT2`)
 1.  **SLES Maintenance Update:**
+    *   **Pre-check (blocking):** Run the tracker-reference check above — `osc mr` must not be run until it prints `OK`.
     *   **Network Requirement:** Must be on the internal SUSE network or VPN (`api.suse.de`).
     *   **Action:** Identify maintained codestreams: `osc -A https://api.suse.de maintained rmt-server`.
     *   **Target Streams:** SLE 15 SP4, SP5, SP6, SP7
@@ -118,9 +139,56 @@ This reference documents the release lifecycle of **rmt-server**, visualizing th
         ```
     *   **Note:** Ensure changelog entries include references (e.g., `bsc#123456`, `jsc#XXX-123456`).
 
-#### RMT 3.x - Factory + SLES
+#### RMT 3.x - SLFO + SLE 15 SP7 (+ Factory)
 
-**1. openSUSE Factory Submission (OBS):**
+**1. SLFO / SLES 16 (fork PR against `pool/rmt-server`):**
+
+*   **Pre-check (blocking):** Run the tracker-reference check above — no PR may be opened until it prints `OK`.
+*   **Network Requirement:** Must be on VPN for `src.suse.de`.
+*   **Access:** Non-maintainers cannot agit-push to `pool/rmt-server` (`not authorized to write to pool/rmt-server`). Work from a fork; `origin` = `<you>/rmt-server`, `upstream` = `pool/rmt-server`.
+*   **Prepare:** Branch off `upstream/slfo-main`, replace the packaging files from `package/obs/` (delete the previous tarball first), commit. `git-lfs` must be installed.
+*   **Submit:** `slfo-main` (→ 16.1) and `slfo-1.2` (→ 16.0) each need a PR, and **each PR needs its own source branch** — see below.
+    ```bash
+    git branch release-<version>-slfo-1.2 release-<version>-slfo-main
+    git push origin release-<version>-slfo-main release-<version>-slfo-1.2
+
+    for t in slfo-main slfo-1.2; do
+      git-obs pr create --source <you>/rmt-server:release-<version>-$t \
+                        --target pool/rmt-server:$t \
+                        --title "Update to rmt-server <version>" \
+                        --description "Version <version> (bsc#NNNNNNN)"
+    done
+    ```
+*   **Do not share one source branch between the two PRs.** `autogits_workflow_pr_bot` auto-closes the older PR when a second one reuses its branch. This happened during the 3.1.0 release (PR #7 closed when #8 reused `release-3.1.0`).
+*   **Verify after creating:** the bot fires a minute or two later and `git-obs pr create` reports success regardless. `git-obs pr get pool/rmt-server#<N>` must show `State: open`; a healthy PR then attracts `autogits_obs_staging_bot` (build-results link) and `autobuild-review` (group review, approved by an `@autobuild-review: approve` comment).
+*   Staging builds and forwarding to `SUSE:SLFO:Main` / `SUSE:SLFO:1.2` are handled by the bots.
+
+**2. SLE 15 SP7 Maintenance Update (IBS):**
+
+*   **Pre-check (blocking):** Run the tracker-reference check above — `osc mr` must not be run until it prints `OK`.
+*   **Pre-check:** The OBS devel project must hold the final version and have built successfully; `Devel:SCC:RMT` follows it automatically through its `_link`.
+    ```bash
+    osc -A https://api.suse.de cat Devel:SCC:RMT rmt-server rmt-server.changes | head -8
+    osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server SUSE:SLE-15-SP7:Update
+    ```
+*   **Note:** When asked whether to supersede an existing request, answer **no** — superseding cancels the release process for that codestream.
+
+**2a. Correcting an SP7 submission after the fact:**
+
+> **RULE — always submit against `SUSE:SLE-15-SP7:Update`. Never submit against a `SUSE:Maintenance:<N>` incident.** Once the `mr` is accepted an incident is created and the maintenance team files their own `maintenance_release` request from it. Corrections go to the codestream exactly the way the original submission did, and **the maintenance team takes care of merging them into the open incident.** (Maintenance team guidance, 2026-08-13.)
+
+*   Submit the correction the same way as the original request — no incident-specific flags:
+    ```bash
+    osc -A https://api.suse.de mr Devel:SCC:RMT rmt-server SUSE:SLE-15-SP7:Update -m "..."
+    ```
+*   **Do not pass `--incident <N>`.** Targeting the incident directly is what the maintenance team has asked us not to do; it is their queue to manage.
+*   **Do not try to supersede their release request.** `osc mr ... --supersede <release-request>` fails with `HTTP Error 403: You have no role in request <N>` — a release request belongs to maintenance, not to us. Note that `osc mr` **still creates the new request** before the supersede call fails, so check for a stray duplicate and revoke it with `osc -A https://api.suse.de request revoke <id> -m "..."`.
+*   Comment on the incident so maintenance know a correction is on its way.
+
+**3. openSUSE Factory Submission (OBS):**
+
+*   **Reality check:** `openSUSE:Factory` currently has **no** `rmt-server` package and the `factory`/`leap-16.x` branches are stale at 2.18 — this is a new-package submission, not a routine release step. Confirm with `osc -A https://api.opensuse.org ls openSUSE:Factory rmt-server` before starting.
+*   **Pre-check (blocking):** Run the tracker-reference check above — `osc sr` must not be run until it prints `OK`.
 
 *   **Pre-check:** Check for existing submit requests:
     ```bash
@@ -147,11 +215,7 @@ This reference documents the release lifecycle of **rmt-server**, visualizing th
     4. Commit to OBS: `osc -A https://api.opensuse.org ci -m "Fix: <issue>"`
     5. Resubmit with `--supersede <old-request-id>`
 
-**2. SLES Maintenance Update (git-based flow):**
-
-*   **Network Requirement:** Must be on VPN for `src.suse.de`.
-*   **Approach:** For v3, SLE maintenance is handled through the git-based flow on `src.suse.de` (product branches + agit PRs), **not** IBS `mr` from `Devel:SCC:RMT`. See [git-workflow.md](git-workflow.md) for branch mapping and agit PR format.
-*   **Note:** Ensure changelog entries include references (e.g., `bsc#123456`, `jsc#XXX-123456`).
+See [git-workflow.md](git-workflow.md) for the branch mapping, the fork PR mechanics, and the PR bots.
 
 ### Phase 5: Container & Helm Chart Updates
 1.  **Container Image:**
@@ -191,11 +255,14 @@ graph TD
     end
 
     subgraph Phase4 [Phase 4: Downstream Distribution]
-        Art2 --> D1[osc sr to Factory]
-        D1 --> Art4(openSUSE Factory Package)
-        
-        Art2 --> D2[osc mr to IBS]
-        D2 --> Art5(SLES Maintenance Update)
+        Art1 --> D0[fork PRs to pool/rmt-server<br/>slfo-main + slfo-1.2<br/>one branch each]
+        D0 --> Art8(SUSE:SLFO:Main / :1.2 via scmsync)
+
+        Art2 --> D2[osc mr Devel:SCC:RMT<br/>-> SUSE:SLE-15-SP7:Update]
+        D2 --> Art5(SLES 15 SP7 Maintenance Update)
+
+        Art2 -.new package, not routine.-> D1[osc sr to Factory]
+        D1 -.-> Art4(openSUSE Factory Package)
     end
 
     subgraph Phase5 [Phase 5: Containers & Helm]
