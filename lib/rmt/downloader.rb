@@ -77,7 +77,7 @@ class RMT::Downloader
 
   def enqueue_next
     queue_item = @queue.shift
-    return unless queue_item
+    return if queue_item.blank?
 
     queue_download(queue_item)
   end
@@ -101,6 +101,7 @@ class RMT::Downloader
   # retries the file, or records/raises the failure, depending on 'ignore_errors'
   def handle_failure(file, retries, error)
     if retries.zero? || error.try(:http_code) == 404
+      # @failed_downloads is nil if running in ignore_errors==false mode
       if @failed_downloads.nil?
         abort_queue
         raise error
