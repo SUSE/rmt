@@ -7,7 +7,7 @@ class RMT::Downloader::Exception < RuntimeError
     super(message)
   end
 
-  def self.raise_request_error(remote_file, response, logger)
+  def self.create_request_error(remote_file, response, logger)
     logger.debug <<~DEBUG.chomp
     #{_('Request error:')}
       #{_('Request URL')}: #{response.effective_url}
@@ -21,7 +21,7 @@ class RMT::Downloader::Exception < RuntimeError
     message = _("%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'") %
       { file: remote_file, code: response.code, return_code: response.return_code }
 
-    raise RMT::Downloader::Exception.new(message, response: response)
+    RMT::Downloader::Exception.new(message, response: response)
   end
 
   def self.flatten_string(str)
