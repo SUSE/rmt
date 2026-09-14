@@ -27,6 +27,7 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
   end
 
   def parse_instance_data
+    return nil unless @instance_data
     # :nocov:
     if @product_hash && @product_hash[:identifier] == 'Raise error'
       raise InstanceVerification::Exception, 'Missing signature'
@@ -57,7 +58,7 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
   end
 
   def instance_identifier
-    nil
+    parse_instance_data&.[]('example_id')
   end
 
   def allowed_extension?
