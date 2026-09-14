@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Thu Sep 10 18:21:54 UTC 2026 - Fergal Mc Carthy <fmccarthy@suse.com>
+
+  * re-implement RMT::Downloader to eliminate use of fibers (bsc#1276939)
+
+-------------------------------------------------------------------
 Thu Sep  3 11:32:13 UTC 2026 - Zuzana Petrova <zpetrova@suse.com>
 
   * add --product switch to rmt-client-setup-res, so customer could register 
