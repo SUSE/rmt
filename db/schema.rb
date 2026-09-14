@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_26_153653) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_02_112523) do
   create_table "activations", charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "service_id", null: false
@@ -193,6 +193,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_26_153653) do
     t.string "system_token"
     t.datetime "updated_at", null: false
     t.index ["hostname"], name: "index_systems_on_hostname"
+    t.index ["last_seen_at"], name: "index_systems_on_last_seen_at"
     t.index ["login", "password", "system_token"], name: "index_systems_on_login_and_password_and_system_token", unique: true
     t.index ["login", "password"], name: "index_systems_on_login_and_password"
     t.index ["system_token"], name: "index_systems_on_system_token"
