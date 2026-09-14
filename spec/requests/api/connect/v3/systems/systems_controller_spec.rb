@@ -428,6 +428,25 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
         expect(response.headers).not_to include('System-Token')
       end
     end
+
+    context 'with profiles and a profile creation error' do
+      let(:profiles) { profile_set_all }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles } }
+
+      before do
+        allow(Profile).to receive(:ensure_profile_exists).and_raise(StandardError.new('DB Error'))
+      end
+
+      it 'continues request processing without profiles on error' do
+        update_action
+
+        expect(response).to be_successful
+        expect(response).to have_http_status(:no_content)
+        expect(response.headers['X-System-Profiles-Action']).to eq('clear-cache')
+
+        expect(system.profiles.count).to eq(0)
+      end
+    end
   end
 
   describe '#deregister' do
