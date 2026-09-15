@@ -149,7 +149,7 @@ module Registry
       let(:system) { create(:system) }
       let(:auth_headers) { { 'Authorization' => ActionController::HttpAuthentication::Basic.encode_credentials(system.login, system.password) } }
 
-      it 'refue the request instead of raising' do
+      it 'refuse the request instead of raising' do
         allow(Settings).to receive(:try).with(:registry).and_return({})
         allow(Rails.logger).to receive(:error)
         get('/api/registry/catalog')
