@@ -30,16 +30,22 @@ class RegistryCatalogService
   def fetch_registry_repos(system)
     Rails.logger.info('Fetch registry repos')
     response = catalog_token(system)
-    catalog_auth_token = JSON.parse(response.body).fetch('token', '')
+    catalog_auth_token = JSON.parse(response.body.to_s).fetch('token', '')
     response = all_repos(catalog_auth_token)
-    JSON.parse(response.body).fetch('repositories', [])
+    JSON.parse(response.body.to_s).fetch('repositories', [])
+  rescue JSON::ParserError, SystemCallError, SocketError, OpenSSL::SSL::SSLError, Net::OpenTimeout, Net::ReadTimeout => e
+    # the registry not answering, or answering with something that is not the JSON we expect,
+    # is an outage and not a bug in the caller
+    # Both of these calls cross the network,
+    # so it is the ordinary failure mode rather than something exceptional
+    raise Registry::Exceptions::RegistryUnavailable.new("could not read the registry catalog: #{e.class}: #{e.message}")
   end
 
   def catalog_token(system)
     framework = InstanceVerification.provider.name.rpartition('::')[2].downcase
     uri = URI.parse(URI.join("https://registry-#{framework}.susecloud.net", AUTH_URL).to_s)
     service = Settings.try(:registry).try(:service)
-    raise StandardError, 'registry not configured properly in /etc/rmt.conf' if service.blank?
+    raise Registry::Exceptions::RegistryUnavailable.new('registry service not configured properly in /etc/rmt.conf') if service.blank?
 
     catalog_token_params = {
       service: service,
