@@ -42,7 +42,7 @@
 %undefine _find_debuginfo_dwz_opts
 
 Name:           rmt-server
-Version:        3.0.0
+Version:        3.1.0
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
@@ -366,6 +366,7 @@ ansible-playbook tests/test_playbook.yml
 %dir %{_datadir}/bash-completion/completions/
 %{_datadir}/bash-completion/completions/rmt-cli
 
+%exclude %{_libdir}/rmt/vendor/bundle/ruby/3.4.0/gems/rbs-4.1.2/stdlib/etc
 %{_libdir}/rmt
 %{_libexecdir}/supportconfig/plugins/rmt
 %{script_dir}/update_rmt_app_dir_permissions.sh

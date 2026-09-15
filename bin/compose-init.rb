@@ -3,6 +3,9 @@ begin
 rescue ::RMT::Db::TimeoutReachedError
   Rails.logger.error "Database connection timed out!"
   exit 1
+rescue StandardError => e
+  Rails.logger.error "Database setup failed: #{e.message}"
+  exit 1
 end
 
 # Create the `/var/lib/rmt/system_uuid` file if it does not exist already. This

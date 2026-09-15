@@ -94,3 +94,19 @@ jobs:
           echo "::group::Version verification checks"
           ruby ci/check-version-matches.rb
           echo "::endgroup::"
+
+      - name: Check service files for missing HOME with ProtectHome
+        run: |
+          failed=0
+          for service in package/files/systemd/*.service engines/*/package/*.service; do
+            if grep -q "ProtectHome=true" "$service"; then
+              if grep -qE "ExecStart=.*(ruby|bundle|rails|rmt-cli|sidekiq|rake)" "$service"; then
+                if ! grep -q "HOME=" "$service"; then
+                  echo "FAIL: $service has ProtectHome=true with Ruby invocation but missing HOME="
+                  failed=1
+                fi
+              fi
+            fi
+          done
+          exit $failed
+

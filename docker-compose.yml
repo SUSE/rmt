@@ -18,6 +18,8 @@ services:
     depends_on:
       - db
     privileged: true
+    pre_stop:
+      - command: rm -f /srv/www/rmt/tmp/pids/server.pid
     command: bundle exec rails runner /srv/www/rmt/bin/compose-init.rb
 
   nginx:

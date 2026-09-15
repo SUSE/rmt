@@ -52,7 +52,7 @@ product_type: 'module')
                 ).once
               )
             # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
-            expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
+            expect(response.parsed_body).to eq(JSON.parse(serialized_service_json))
           end
         end
 
@@ -86,7 +86,7 @@ product_type: 'module')
           end
 
           it 'reports an error' do
-            data = JSON.parse(response.body)
+            data = response.parsed_body
             expect(data['error']).to eq('Could not de-activate product \'SUSE Linux Enterprise Server 15 SP3 x86_64\'')
           end
         end
@@ -106,7 +106,7 @@ product_type: 'module')
         before { delete url, params: payload, headers: headers }
 
         it 'reports an error' do
-          data = JSON.parse(response.body)
+          data = response.parsed_body
           expect(data['error']).to eq("The product \"#{product.name}\" is a base product and cannot be deactivated")
         end
       end
@@ -157,7 +157,7 @@ product_type: 'module')
                 ).once
               )
             # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
-            expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
+            expect(response.parsed_body).to eq(JSON.parse(serialized_service_json))
           end
         end
 
@@ -187,7 +187,7 @@ product_type: 'module')
           end
 
           it 'reports an error' do
-            data = JSON.parse(response.body)
+            data = response.parsed_body
             expect(data['error']).to eq("{\"error\": \"Error'\"}")
             expect(SccProxy).to have_received(:headers).with(headers['HTTP_AUTHORIZATION'], nil)
           end
@@ -273,7 +273,7 @@ product_type: 'module')
                     "Could not de-activate system #{system_hybrid.login}, error: Oh oh, something went wrong 422"
                     ).once
                   )
-                data = JSON.parse(response.body)
+                data = response.parsed_body
                 expect(data['error']).to eq('Oh oh, something went wrong')
               end
             end
@@ -344,7 +344,7 @@ product_type: 'module')
         before { delete url, params: payload, headers: headers }
 
         it 'reports an error' do
-          data = JSON.parse(response.body)
+          data = response.parsed_body
           expect(data['error']).to eq("The product \"#{product.name}\" is a base product and cannot be deactivated")
         end
       end

@@ -18,7 +18,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
 
     context 'without X-Instance-Data headers or hw_info' do
       it 'has service URLs with HTTP scheme' do
-        data = JSON.parse(response.body)
+        data = response.parsed_body
         expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
         expect(plugin_double).not_to receive(:instance_valid?)
         expect(InstanceVerification).not_to receive(:update_cache)
@@ -29,7 +29,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
       let(:system) { FactoryBot.create(:system, :with_activated_product, :with_system_information, instance_data: '<repoformat>plugin:susecloud</repoformat>') }
 
       it 'has service URLs with HTTP scheme' do
-        data = JSON.parse(response.body)
+        data = response.parsed_body
         expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
         expect(plugin_double).not_to receive(:instance_valid?)
         expect(InstanceVerification).not_to receive(:update_cache)
@@ -40,7 +40,7 @@ describe Api::Connect::V3::Systems::ActivationsController, type: :request do
       let(:headers) { auth_header.merge(version_header).merge({ 'X-Instance-Data' => Base64.strict_encode64('instance_data') }) }
 
       it 'has service URLs with HTTP scheme' do
-        data = JSON.parse(response.body)
+        data = response.parsed_body
         expect(data[0]['service']['url']).to match(%r{^plugin:/susecloud})
         expect(plugin_double).not_to receive(:instance_identifier) # system is PAYG, no need for IID
       end

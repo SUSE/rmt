@@ -84,7 +84,7 @@ describe Api::Connect::V3::Systems::SystemsController, type: :request do
             "Could not de-activate system #{system.login}, error: Oh oh, something went wrong 422"
 ).once
         )
-        data = JSON.parse(response.body)
+        data = response.parsed_body
         expect(data['error']).to eq('Oh oh, something went wrong')
       end
     end

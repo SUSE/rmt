@@ -1,5 +1,10 @@
 require 'active_model_serializers'
 
+module SUSE
+  module Connect
+  end
+end
+
 # Serializes a system to be consumed by the SCC Api
 class SUSE::Connect::SystemSerializer < ActiveModel::Serializer
   # RMT has two modes of sending system information to SCC

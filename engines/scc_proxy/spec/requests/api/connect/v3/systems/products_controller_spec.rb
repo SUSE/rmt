@@ -138,7 +138,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
               system_byos.update!(system_token: nil)
               post url, params: payload_byos, headers: headers
               # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
-              expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
+              expect(response.parsed_body).to eq(JSON.parse(serialized_service_json))
             end
           end
 
@@ -158,7 +158,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             end
 
             it 'renders an error with exception details' do
-              data = JSON.parse(response.body)
+              data = response.parsed_body
               expect(data['error']).to include('No product found on SCC')
               expect(data['error']).not_to include('json api')
             end
@@ -192,7 +192,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
             it 'renders service JSON' do
               # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
-              expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
+              expect(response.parsed_body).to eq(JSON.parse(serialized_service_json))
             end
           end
 
@@ -228,7 +228,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
             it 'renders service JSON' do
               # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
-              expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
+              expect(response.parsed_body).to eq(JSON.parse(serialized_service_json))
             end
           end
         end
@@ -424,7 +424,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                   .to_return(status: 403, body: { ok: 'OK' }.to_json, headers: {})
 
                 post url, params: payload, headers: headers
-                data = JSON.parse(response.body)
+                data = response.parsed_body
                 expect(data['error']).to include('Product not supported for this instance')
               end
             end
@@ -521,7 +521,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
               post url, params: payload, headers: headers
               # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
-              expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
+              expect(response.parsed_body).to eq(JSON.parse(serialized_service_json))
             end
 
             context 'instance verification error' do
@@ -531,7 +531,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
                 expect(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
                 allow(plugin_double).to receive(:allowed_extension?).and_raise(InstanceVerification::Exception, 'Malformed instance data')
                 post url, params: payload, headers: headers
-                expect(JSON.parse(response.body)['error']).to eq('Malformed instance data')
+                expect(response.parsed_body['error']).to eq('Malformed instance data')
                 expect(response.message).to eq('Unprocessable Content')
                 expect(response.code).to eq('422')
               end
@@ -553,7 +553,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
               it 'renders the error' do
                 post url, params: payload, headers: headers
-                data = JSON.parse(response.body)
+                data = response.parsed_body
                 expect(data['error']).to include('went wrong')
               end
             end
@@ -570,7 +570,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
               it 'renders the error' do
                 post url, params: payload, headers: headers
-                data = JSON.parse(response.body)
+                data = response.parsed_body
                 expect(data['error']).to include('Bad Request')
               end
             end

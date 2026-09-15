@@ -47,10 +47,17 @@ module RMT
           count += 5
         when :empty
           Rails.logger.info 'Database empty: migrating...'
-          system('bundle exec rake db:migrate')
+          raise StandardError, 'Migration failed' unless system('bundle exec rake db:migrate')
+
+          # `rake db:migrate` runs in a child process, so it never dirties this
+          # process' query cache -- and `rails runner` (see docker-compose.yml)
+          # wraps us in the Rails executor, which enables that cache for the
+          # whole script. Without this, the cached `schema_migrations` read in
+          # `migrations?` stays pre-migration and we'd migrate forever.
+          ActiveRecord::Base.connection_pool.clear_query_cache
         when :missing
           Rails.logger.info 'Database missing: creating...'
-          system('bundle exec rake db:create')
+          raise StandardError, 'Database creation failed' unless system('bundle exec rake db:create')
         when :ready
           Rails.logger.info 'Database ready!'
           break

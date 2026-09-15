@@ -23,7 +23,7 @@ class ServicesController < ApplicationController
   ZYPPER_SERVICE_TTL = 86400
 
   def show
-    service = Service.find(params[:id])
+    service = Service.find(params.expect(:id))
     repos = service.repositories.exclude_installer_updates
 
     builder = Builder::XmlMarkup.new

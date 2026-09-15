@@ -7,6 +7,8 @@ describe 'rmt-cli' do
       parent_pid = fork do
         system "/usr/bin/rmt-cli sync > /dev/null"
       end
+      # Give the forked process time to start and acquire the lock
+      sleep 1
       example.run
       # wait for the parent process to finish, so the lock is released
       Process.wait(parent_pid)

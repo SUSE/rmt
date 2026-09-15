@@ -2,6 +2,7 @@ require 'rmt'
 require 'rmt/http_request'
 require 'rmt/logger'
 require 'json'
+require 'suse/connect/system_serializer'
 
 module SUSE
   module Connect
