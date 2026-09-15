@@ -8,15 +8,16 @@ module Registry
     before_action :basic_auth, except: [ :catalog ]
     before_action :catalog_token_auth, only: [ :catalog ]
 
+    # default rescue handler if a more specific one below doesn't match
     rescue_from StandardError do |error|
       logger.error("Registry request failed: #{error.class}: #{error.message}")
       logger.error(error.backtrace.join("\n")) if error.backtrace
-      render json: { code: :unauthorized, error: 'Registry authentication failed' }, status: :unauthorized
+      render json: { code: :unauthorized, error: 'Registry request failed' }, status: :unauthorized
     end
 
     rescue_from Registry::Exceptions::RegistryUnavailable do |error|
       logger.error("Registry is unavailable: #{error.message}")
-      render json: { code: :unauthorized, error: 'Registry is unavailable' }, status: error.status
+      render json: { code: :not_found, error: 'Registry is unavailable' }, status: error.status
     end
 
     # the scope comes straight off the query string, so a malformed one is the
