@@ -1,9 +1,14 @@
 class RMT::CLI::Mirror < RMT::CLI::Base
   class_option :do_not_raise_unpublished, desc: _('Do not fail the command if product is in alpha or beta stage'), type: :boolean, required: false
 
+  # mirroring shares the rmt-cli lock with sync, which writes the same repositories rows
+  # Both run off timers with a nine hour randomised delay, so they overlap routinely,
+  # wait for the (shorter) sync to finish rather than drop a whole night of mirroring
+  LOCK_TIMEOUT = 1800
+
   desc 'all', _('Mirror all enabled repositories')
   def all
-    RMT::Lockfile.lock('mirror') do
+    RMT::Lockfile.lock(timeout: LOCK_TIMEOUT) do
       downloaded_files_count = 0
       downloaded_files_size = 0
       start_time = Time.current
@@ -46,7 +51,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
   desc 'repository IDS', _('Mirror enabled repositories with given repository IDs')
   def repository(*ids)
-    RMT::Lockfile.lock('mirror') do
+    RMT::Lockfile.lock(timeout: LOCK_TIMEOUT) do
       start_time = Time.current
 
       ids = clean_target_input(ids)
@@ -72,7 +77,7 @@ class RMT::CLI::Mirror < RMT::CLI::Base
 
   desc 'product IDS', _('Mirror enabled repositories for a product with given product IDs')
   def product(*targets)
-    RMT::Lockfile.lock('mirror') do
+    RMT::Lockfile.lock(timeout: LOCK_TIMEOUT) do
       start_time = Time.current
 
       targets = clean_target_input(targets)

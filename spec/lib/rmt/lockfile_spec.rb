@@ -42,6 +42,28 @@ RSpec.describe RMT::Lockfile do
       end
     end
 
+    context 'with an explicit timeout' do
+      it 'waits that long for the lock' do
+        expect_any_instance_of(ActiveRecord::ConnectionAdapters::Mysql2Adapter).to receive(:execute)
+            .exactly(1).with("SELECT GET_LOCK('rmt-cli', 1800)").times.and_call_original
+        expect_any_instance_of(ActiveRecord::ConnectionAdapters::Mysql2Adapter).to receive(:execute)
+            .exactly(1).with("SELECT RELEASE_LOCK('rmt-cli')").times.and_call_original
+        described_class.lock(timeout: 1800) { nil }
+      end
+    end
+
+    context 'when the block raises' do
+      # the lock outlives the block otherwise, and a long-lived process would
+      # never get it back
+      it 'still releases the lock' do
+        expect_any_instance_of(ActiveRecord::ConnectionAdapters::Mysql2Adapter).to receive(:execute)
+            .exactly(1).with("SELECT GET_LOCK('rmt-cli', 1)").times.and_call_original
+        expect_any_instance_of(ActiveRecord::ConnectionAdapters::Mysql2Adapter).to receive(:execute)
+            .exactly(1).with("SELECT RELEASE_LOCK('rmt-cli')").times.and_call_original
+        expect { described_class.lock { raise 'boom' } }.to raise_error('boom')
+      end
+    end
+
     context 'with locked file' do
       it 'raises exception' do
         expect(described_class).to receive(:obtain_lock).exactly(1).times.and_return(false)
