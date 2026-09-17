@@ -1,7 +1,7 @@
 git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
 source 'https://rubygems.org'
-ruby '~> 3.4'
+ruby '>= 3.4', '< 4.1'
 
 # Individual Rails components (instead of meta-gem)
 # This excludes actionmailer/actionmailbox to avoid CVE-2026-42256 (bsc#1265369)

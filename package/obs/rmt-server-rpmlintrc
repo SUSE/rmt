@@ -1,9 +1,24 @@
-addFilter("non-standard-uid")
+# General filters that apply to Leap/SLE 16.x and Factory/Tumbleweed
 addFilter("script-without-shebang")
-addFilter("hidden-file-or-dir /usr/share/rmt/.bundle")
-addFilter("hidden-file-or-dir /usr/lib64/rmt/vendor/bundle/*")
-addFilter("unexpanded-macro /usr/lib64/rmt/vendor/bundle/*")
-addFilter("zero-length /usr/lib64/rmt/vendor/bundle/*")
-addFilter("file-not-in-%lang /usr/lib64/rmt/vendor/bundle/*")
-addFilter("no-soname /usr/lib64/rmt/vendor/bundle/*")
-addFilter("non-executable-script /usr/lib64/rmt/vendor/bundle/*")
+addFilter("hidden-file-or-dir /usr/share/rmt/\.bundle")
+addFilter("hidden-file-or-dir /usr/lib64/rmt/vendor/bundle/.*")
+addFilter("unexpanded-macro /usr/lib64/rmt/vendor/bundle/.*")
+addFilter("zero-length /usr/lib64/rmt/vendor/bundle/.*")
+addFilter("file-not-in-%lang /usr/lib64/rmt/vendor/bundle/.*")
+addFilter("no-soname /usr/lib64/rmt/vendor/bundle/.*")
+addFilter("non-executable-script /usr/lib64/rmt/vendor/bundle/.*")
+
+# quiet rmt-client-setup script complaints
+addFilter("potential-bashisms /usr/share/rmt/public/tools/rmt-client-setup")
+addFilter("bin-sh-syntax-error /usr/share/rmt/public/tools/rmt-client-setup")
+
+# rmt-server-config and rmt-server-pubcloud packages are built with arch
+# rather that noarch but contain no binaries.
+addFilter("rmt-server-config\.[^/]*: E: no-binary")
+addFilter("rmt-server-pubcloud\.[^/]*: E: no-binary")
+
+# ansible-rmt-server marks group_vars/all.yml as a conffile
+addFilter("non-etc-or-var-file-marked-as-conffile /usr/share/ansible/rmt/group_vars/all.yml")
+
+# rmt data stored under /var/lib/rmt hierarchy
+addFilter("dir-or-file-outside-snapshot /var/lib/rmt")

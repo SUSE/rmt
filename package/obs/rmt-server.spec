@@ -18,15 +18,15 @@
 
 %define app_dir      %{_datadir}/rmt
 %define lib_dir      %{_libdir}/rmt
-%define data_dir     %{_localstatedir}/lib/rmt
+%define data_dir     %{_sharedstatedir}/rmt
 %define conf_dir     %{_sysconfdir}/rmt
 %define script_dir   %{_libexecdir}/rmt
 %define rmt_user     _rmt
 %define rmt_group    nginx
 
-# SLE 15 SP7 and newer, SLES/Leap 16+, and Factory/Tumbleweed support Ruby 3.4
-# (Factory/Tumbleweed get ruby3.4 from devel:languages:ruby repository)
-%if (0%{?sle_version} >= 150700) || (0%{?suse_version} >= 1600) || (0%{?suse_version} == 1699)
+# SLE 15 SP7 and newer, and SLES/Leap 16+ support Ruby 3.4
+# Factory/Tumbleweed support Ruby 4.0
+%if (0%{?sle_version} >= 150700) || ((0%{?suse_version} >= 1600) && (0%{?suse_version} != 1699))
 %define rb_build_versions     ruby34
 %define rb_build_ruby_abis    ruby:3.4.0
 %define ruby_version          ruby3.4
@@ -49,10 +49,14 @@ License:        GPL-2.0-or-later
 Group:          Productivity/Networking/Web/Proxy
 URL:            https://software.opensuse.org/package/rmt-server
 Source0:        %{name}-%{version}.tar.bz2
-Source1:        rmt-server-rpmlintrc
+Source1:        %{name}-rpmlintrc
 Source2:        rmt.conf
 Source3:        rmt-cli.8.gz
 Source4:        rmt-valkey.tmpfiles
+# extra rpmlintrc filters only applicable to SLE 15 SP7
+%if 0%{?suse_version} < 1600
+Source99:       %{name}-rpmlintrc.sle15sp7
+%endif
 BuildRequires:  %{ruby_version}
 BuildRequires:  %{ruby_version}-devel
 BuildRequires:  chrpath
@@ -67,9 +71,8 @@ BuildRequires:  libyaml-devel
 BuildRequires:  sqlite-devel
 BuildRequires:  valkey
 BuildRequires:  pkgconfig(systemd)
-# Only require ansible build dependencies when building ansible subpackage (SLES/Leap 16+ only, not Tumbleweed)
-# Note: suse_version >= 1600 excludes Tumbleweed which has suse_version == 1699
-%if 0%{?suse_version} >= 1600 && 0%{?suse_version} != 1699
+# Only require ansible build dependencies when building ansible subpackage (SLES/Leap 16+ and Tumbleweed)
+%if 0%{?suse_version} >= 1600
 BuildRequires:  ansible-core >= 2.16
 BuildRequires:  ansible >= 11
 %endif
@@ -84,7 +87,10 @@ Requires(post): timezone
 Requires(post): util-linux
 Conflicts:      yast2-rmt < 1.0.3
 Recommends:     rmt-server-config
+# yast dependencies only relevant for SLE 15 SP7 build
+%if 0%{?suse_version} < 1600
 Recommends:     yast2-rmt >= 1.3.0
+%endif
 Provides:       user(%{rmt_user})
 # Does not build for i586 and s390 and is not supported on those architectures
 ExcludeArch:    %{ix86} s390
@@ -125,7 +131,7 @@ Conflicts:      rmt-server-configuration
 This package extends the basic RMT functionality with capabilities
 required for public cloud environments.
 
-# Ansible subpackage only for SLES/Leap 16+
+# Ansible subpackage only for SLES/Leap 16+ and Tumbleweed
 %if 0%{?suse_version} >= 1600
 %package -n ansible-rmt-server
 Summary:        Ansible playbook for RMT deployment
@@ -147,6 +153,10 @@ and nginx configuration.
 
 %prep
 cp -p %{SOURCE2} .
+# append SLE 15 SP7 specific rpmlintrc filters
+%if 0%{?suse_version} < 1600
+cat %{SOURCE99} >> %{SOURCE1}
+%endif
 
 %setup -q
 sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
@@ -263,13 +273,13 @@ install -D -m 644 package/files/rmt-cli_bash-completion.sh %{buildroot}%{_datadi
 install -D -m 644 package/files/rmt-server.reg %{buildroot}%{_sysconfdir}/slp.reg.d/rmt-server.reg
 
 # cleanup of /usr/bin/env commands
-grep -rl '\/usr\/bin\/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
-    sed -i -e 's@\/usr\/bin\/env ruby.%{ruby_version}@\/usr\/bin\/ruby\.%{ruby_version}@g' \
-    -e 's@\/usr\/bin\/env ruby@\/usr\/bin\/ruby\.%{ruby_version}@g'
-grep -rl '\/usr\/bin\/env -S ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
-    sed -i -e 's@\/usr\/bin\/env -S ruby@\/usr\/bin\/ruby\.%{ruby_version}@g'
-grep -rl '\/usr\/bin\/env bash' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
-    sed -i -e 's@\/usr\/bin\/env bash@\/bin\/bash@g'
+grep -rl '/usr/bin/env ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
+    sed -i -e 's@/usr/bin/env ruby\.@/usr/bin/ruby.@g' \
+    -e 's@/usr/bin/env ruby@/usr/bin/ruby.%{ruby_version}@g'
+grep -rl '/usr/bin/env -S ruby' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
+    sed -i -e 's@/usr/bin/env -S ruby@/usr/bin/ruby.%{ruby_version}@g'
+grep -rl '/usr/bin/env bash' %{buildroot}%{lib_dir}/vendor/bundle/ruby | xargs \
+    sed -i -e 's@/usr/bin/env bash@/bin/bash@g'
 
 # Drop 'BUNDLED WITH' line from Gemfile.lock. It causes trouble when the Gemfile.lock
 # was created with a different major version than the distribution's bundler.
@@ -283,7 +293,7 @@ sed -i 's|warnings << "Nokogiri was built|# warnings << "Nokogiri was built|' %{
 find %{buildroot}%{lib_dir} "(" -name "*.c" -o -name "*.h" -o -name .keep ")" -delete
 find %{buildroot}%{app_dir} -name .keep -delete
 find %{buildroot}%{data_dir} -name .keep -delete
-rm -r  %{buildroot}%{lib_dir}/vendor/bundle/ruby/[23].*.0/cache
+rm -r  %{buildroot}%{lib_dir}/vendor/bundle/ruby/[234].*.0/cache
 rm -rf %{buildroot}%{lib_dir}/vendor/cache
 rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/doc
 rm -rf %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/*/examples
@@ -300,13 +310,14 @@ find %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/yard*/ -type f -exec chmod
 find %{buildroot} -perm -0002 "(" -type f -o -type d ")" -exec chmod o-w {} +
 
 %fdupes %{buildroot}/%{lib_dir}
+%fdupes %{buildroot}/%{app_dir}
 
 # drop custom rpath from native gems
 chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/gems/mysql2-*/lib/mysql2/mysql2.so
 chrpath -d %{buildroot}%{lib_dir}/vendor/bundle/ruby/*/extensions/*/*/mysql2-*/mysql2/mysql2.so
 
 %check
-%if 0%{?suse_version} >= 1600 && 0%{?suse_version} != 1699
+%if 0%{?suse_version} >= 1600
 # Test ansible playbook syntax (only on SLES/Leap 16+, not Tumbleweed)
 cd ansible
 ansible-playbook --syntax-check tests/test_playbook.yml
@@ -320,13 +331,13 @@ ansible-playbook tests/test_playbook.yml
 %exclude %{app_dir}/engines/
 %exclude %{app_dir}/package/
 %attr(-,%{rmt_user},%{rmt_group}) %{data_dir}
+%dir %{data_dir}
+%dir %{data_dir}/public/repo
+%dir %{data_dir}/public/suma
 %attr(-,%{rmt_user},%{rmt_group}) %{conf_dir}
 %dir %{_libexecdir}/supportconfig
 %dir %{_libexecdir}/supportconfig/plugins
 %dir %{script_dir}
-%dir /var/lib/rmt
-%ghost %{_datadir}/rmt/public/repo
-%ghost %{_datadir}/rmt/public/suma
 
 # The secrets file is created by running the initial rake tasks in the `post` section
 %ghost %attr(0640,root,%{rmt_group}) %{app_dir}/config/secrets.yml.key
@@ -357,17 +368,12 @@ ansible-playbook tests/test_playbook.yml
 %{_unitdir}/rmt-server-systems-scc-sync.timer
 %{_unitdir}/rmt-uptime-cleanup.service
 %{_unitdir}/rmt-uptime-cleanup.timer
-%config(noreplace) %{_unitdir}/rmt-server-mirror.timer
-%config(noreplace) %{_unitdir}/rmt-server-sync.timer
-%config(noreplace) %{_unitdir}/rmt-server-systems-scc-sync.timer
-%config(noreplace) %{_unitdir}/rmt-uptime-cleanup.timer
 
 %dir %{_datadir}/bash-completion/
 %dir %{_datadir}/bash-completion/completions/
 %{_datadir}/bash-completion/completions/rmt-cli
 
-%exclude %{_libdir}/rmt/vendor/bundle/ruby/3.4.0/gems/rbs-4.1.2/stdlib/etc
-%{_libdir}/rmt
+%{lib_dir}
 %{_libexecdir}/supportconfig/plugins/rmt
 %{script_dir}/update_rmt_app_dir_permissions.sh
 
@@ -394,6 +400,7 @@ ansible-playbook tests/test_playbook.yml
 # Valkey + Sidekiq files
 %config(noreplace) %{_sysconfdir}/valkey/6380.conf
 %{_tmpfilesdir}/rmt-valkey.conf
+%ghost %attr(0750,valkey,valkey) %{_sharedstatedir}/valkey/6380
 %{_unitdir}/rmt-sidekiq.service
 %{_unitdir}/rmt-valkey.service
 %{_sbindir}/rcrmt-valkey
@@ -405,8 +412,6 @@ ansible-playbook tests/test_playbook.yml
 %{_unitdir}/rmt-server-regsharing.timer
 %{_unitdir}/rmt-server-trim-cache.service
 %{_unitdir}/rmt-server-trim-cache.timer
-%config(noreplace) %{_unitdir}/rmt-server-regsharing.timer
-%config(noreplace) %{_unitdir}/rmt-server-trim-cache.timer
 
 %if 0%{?suse_version} >= 1600
 %files -n ansible-rmt-server
@@ -463,7 +468,7 @@ if [ $1 -eq 2 ]; then
     echo "RMT SSL configuration has been moved to a new location: %{conf_dir}/ssl"
   fi
   if [ -f %{app_dir}/config/system_uuid ]; then
-    mv %{app_dir}/config/system_uuid /var/lib/rmt/system_uuid
+    mv %{app_dir}/config/system_uuid %{data_dir}/system_uuid
   fi
   bash %{script_dir}/update_rmt_app_dir_permissions.sh %{app_dir}
 
@@ -473,12 +478,12 @@ if [ $1 -eq 2 ]; then
   echo "  systemctl status rmt-server-migration.service"
 fi
 
-if [ ! -e %{_datadir}/rmt/public/repo ]; then
- ln -ns %{_sharedstatedir}/rmt/public/repo %{_datadir}/rmt/public/repo
+if [ ! -e %{app_dir}/public/repo ]; then
+ ln -ns %{data_dir}/public/repo %{app_dir}/public/repo
 fi
 
-if [ ! -e %{_datadir}/rmt/public/suma ]; then
- ln -ns %{_sharedstatedir}/rmt/public/suma %{_datadir}/rmt/public/suma
+if [ ! -e %{app_dir}/public/suma ]; then
+ ln -ns %{data_dir}/public/suma %{app_dir}/public/suma
 fi
 
 %preun
