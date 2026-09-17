@@ -1,0 +1,4 @@
+# SLE 15 SP7 specific filters
+addFilter("non-standard-uid")
+addFilter("non-standard-gid")
+addFilter("shared-lib-calls-exit /usr/lib64/rmt/vendor/bundle/ruby/3.4.0/gems/rbs-*")
