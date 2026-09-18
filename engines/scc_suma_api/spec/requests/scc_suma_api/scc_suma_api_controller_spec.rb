@@ -146,7 +146,7 @@ module SccSumaApi
       context 'get repos' do
         let(:base_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
         let(:entitled_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
-        let(:unentitled_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
+        let!(:unentitled_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
         let(:add_on) { 'SMS' }
         let(:payload) do
           {
@@ -163,7 +163,6 @@ module SccSumaApi
           allow_any_instance_of(InstanceVerification::Providers::Example).to(
             receive(:add_on).and_return(add_on)
             )
-          unentitled_product
         end
 
         context 'with a subscription granting the add-on product class' do
@@ -176,6 +175,10 @@ module SccSumaApi
 
           it 'returns the repositories of every product class the subscription grants' do
             expect(response.parsed_body.pluck('id')).to match_array(entitled_product.repositories.map(&:scc_id))
+          end
+
+          it 'excludes the repositories of product classes the subscription does not grant' do
+            expect(response.parsed_body.pluck('id')).not_to include(*unentitled_product.repositories.map(&:scc_id))
           end
 
           it 'returns the SCC repository object' do
