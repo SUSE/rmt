@@ -153,7 +153,9 @@ module SccSumaApi
     end
 
     def base_product
-      @base_product ||= Product.find_by(
+      return @base_product if defined?(@base_product)
+
+      @base_product = Product.find_by(
         identifier: request.headers['X-INSTANCE-IDENTIFIER'],
         version: Product.clean_up_version(request.headers['X-INSTANCE-VERSION']),
         arch: request.headers['X-INSTANCE-ARCH']
