@@ -5,21 +5,8 @@ module SccSumaApi
   REPOSITORY_URL = 'https://scc.suse.com/suma/'.freeze
   CACHED_PRODUCT_TREE_JSON = '/usr/share/rmt/public/suma/product_tree.json'.freeze
 
-  # products included with an MLM subscription that no product class grants
-  # the MLM products themselves and the client tools MLM serves to its clients
-  # These are the only products resolved by identifier rather than by class
-  MLM_PRODUCT_IDENTIFIERS = %w[
-    SUSE-Manager-Server
-    SUSE-Manager-Proxy
-    SUSE-Manager-Retail-Branch-Server
-    SUSE-Multi-Linux-Manager-Server
-    SUSE-Multi-Linux-Manager-Proxy
-  ].freeze
-
-  CLIENT_TOOLS_PRODUCT_IDENTIFIERS = %w[
-    SLE-Manager-Tools
-    SUSE-Manager-Tools
-  ].freeze
+  # same pattern StrictAuthentication uses to allow access to those repositories
+  MLM_PRODUCT_IDENTIFIER_PATTERN = '%manager%'.freeze
 
   class SccSumaApiController < ::ApplicationController
     before_action :is_valid?, only: %w[unscoped_products repos]
@@ -109,7 +96,8 @@ module SccSumaApi
     def entitled_product_ids
       Product
         .where(product_class: entitled_product_classes)
-        .or(Product.where(identifier: MLM_PRODUCT_IDENTIFIERS + CLIENT_TOOLS_PRODUCT_IDENTIFIERS))
+        .or(Product.where('identifier LIKE ?', MLM_PRODUCT_IDENTIFIER_PATTERN))
+        .with_release_stage('released')
         .pluck(:id)
     end
 
