@@ -141,7 +141,7 @@ module SccSumaApi
 
     def caller_product_class
       # add_on, if present, is the real product class
-      # the MLM base product is # Micro (5.1 and older) or SLES 15 SP7 (5.2), and
+      # the MLM base product is Micro (5.1 and older) or SLES 15 SP7 (5.2), and
       # neither of those product classes carries the MLM entitlement
       add_on = verification_provider.add_on
       return add_on if add_on.present?
