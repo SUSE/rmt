@@ -214,6 +214,21 @@ module SccSumaApi
           end
         end
 
+        context 'with a product class that is not released' do
+          let!(:beta_product) do
+            FactoryBot.create(:beta, :with_mirrored_repositories, product_class: "#{entitled_product.product_class}-BETA")
+          end
+
+          before do
+            FactoryBot.create(:subscription, product_classes: [add_on, entitled_product.product_class, beta_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          it 'excludes the repositories of alpha and beta products' do
+            expect(response.parsed_body.pluck('id')).to match_array(entitled_product.repositories.map(&:scc_id))
+          end
+        end
+
         context 'with repositories that have never been mirrored' do
           let(:entitled_product) { FactoryBot.create(:product, :with_not_mirrored_repositories) }
 
