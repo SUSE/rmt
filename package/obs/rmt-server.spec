@@ -25,7 +25,7 @@
 %define rmt_group    nginx
 
 # SLE 15 SP7 and newer, and SLES/Leap 16+ support Ruby 3.4
-# Factory/Tumbleweed support Ruby 4.0
+# Factory/Tumbleweed uses default (currently Ruby 4.0)
 %if (0%{?sle_version} >= 150700) || ((0%{?suse_version} >= 1600) && (0%{?suse_version} != 1699))
 %define rb_build_versions     ruby34
 %define rb_build_ruby_abis    ruby:3.4.0
