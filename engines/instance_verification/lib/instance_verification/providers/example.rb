@@ -27,7 +27,7 @@ class InstanceVerification::Providers::Example < InstanceVerification::ProviderB
   end
 
   def parse_instance_data
-    return nil unless @instance_data
+    raise InstanceVerification::Exception, 'Missing instance_data' unless @instance_data
     # simplecov:disable
     if @product_hash && @product_hash[:identifier] == 'Raise error'
       raise InstanceVerification::Exception, 'Missing signature'
