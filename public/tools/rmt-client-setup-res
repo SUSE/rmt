@@ -6,6 +6,8 @@
 # installs SUSEConnect and its dependencies and downloads and calls rmt-client-setup script
 # (maintained by zpetrova@suse.com)
 
+SCRIPT_VERSION="1.1.2"
+
 SUSECONNECT=/usr/bin/SUSEConnect
 RPM=/usr/bin/rpm
 DNF=/usr/bin/dnf
@@ -31,10 +33,16 @@ usage() {
 
    $0 script installs SUSEConnect and its dependencies and calls rmt-client-setup script that registers to rmt
 
-  Usage: $0 <registration URL> [--regcert <url>] [--regdata <filename>] [--de-register] [--yes]
-  Usage: $0 --host <hostname of the RMT server> [--regcert <url>] [--regdata <filename>] [--de-register] [--yes]
-  Usage: $0 --host <hostname of the RMT server> [--fingerprint <fingerprint of server cert>] [--regdata <filename>] [--de-register] [--yes]
+  Version $SCRIPT_VERSION
+
+  Usage: $0 <registration URL> [--regcert <url>] [--regdata <filename>] [--de-register] [--yes] [--product <major.minor>]
+  Usage: $0 --host <hostname of the RMT server> [--regcert <url>] [--regdata <filename>] [--de-register] [--yes] [--product <major.minor>]
+  Usage: $0 --host <hostname of the RMT server> [--fingerprint <fingerprint of server cert>] [--regdata <filename>] [--de-register] [--yes] [--product <major.minor>]
          configures a SLE client to register against a different registration server
+
+  Options:
+    -v, --version     Show script version
+    -h, --help        Show this help message
 
   Example: $0 https://rmt.example.com/
   Example: $0 --host rmt.example.com --regcert http://rmt.example.com/certs/rmt.crt --yes
@@ -47,6 +55,7 @@ EOT
 # We need only REGURL and RMTNAME, all other parameters are just passed to rmt-client-setup script
 REGURL=""
 RMTNAME=""
+EMS_product="";
 
 while true; do
     case "$1" in
@@ -60,11 +69,21 @@ while true; do
              REGURL="http://${RMTNAME}"
              shift
              ;;
+        --product)
+             test -z "$2" && usage "Option $1 needs an argument"
+             PARAMS=$(echo "$PARAMS" | sed 's/--product[[:blank:]]*[[:digit:]]*.[[:digit:]]*//')
+             EMS_product="$2"
+             shift
+             ;;
         --de-register)
              DE_REGISTER="Y"
              ;;
         --yes)
              YES_PARAM="--yes"
+             ;;
+        -v|--version)
+             echo "$SCRIPT_VERSION"
+             exit 0
              ;;
         "")
              break
@@ -125,16 +144,19 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+SLL_version=$(grep "VERSION_ID" /etc/os-release | cut -d\" -f2 | cut -d\. -f1);
+
 if [ -x $UPDATE_CA_TRUST ]; then
-    $UPDATE_CA_TRUST enable
+    if [[ ${SLL_version} -lt 9 ]]; then
+    	$UPDATE_CA_TRUST enable
+    fi;
     $UPDATE_CA_TRUST extract
 fi
 
-SLL_version=$(grep "VERSION_ID" /etc/os-release | cut -d\" -f2 | cut -d\. -f1)
 SLL_name=$(grep "^ID=" /etc/os-release | cut -d\" -f2 | cut -d\. -f1)
 if [[ ${SLL_version} -gt 8 ]]; then
-   SLL_name="SLL"                                                                                                                
-   SLL_release_package="sll-release"                                                                                              
+   SLL_name="SLL"
+   SLL_release_package="sll-release"
 elif [[ ${SLL_version} -eq 7 ]]; then
    # if RES7 is present we always assume customer has bought LTSS, if he does not, script fails
    # so no LTSS customers have to edit the script manually
@@ -152,18 +174,30 @@ elif [[ ${SLL_version} -eq 7 ]]; then
         usage "HA product is not supported in RES7 LTSS, please remove the product"
    fi
 elif [[ ${SLL_version} -eq 8 ]]; then
-    SLL_name="RES"                      
+    SLL_name="RES"
     SLL_release_package="sles_es-release"
-else                                                                                                                                 
+else
    echo "Unsupported or unknown base version. Abort"
    exit 1
-fi                                                                                                                                   
+fi
 
-echo "Detected ${SLL_name} version: ${SLL_version}"                                                                                  
+if [[ -f /etc/os-release ]]; then
+    source /etc/os-release
+    if [[ -z "$EMS_product" ]]; then
+        echo "Detected ${SLL_name} version: ${SLL_version}"
+    elif [[ "$VERSION_ID" == "$EMS_product" ]]; then
+        echo "Detected ${SLL_name} version: ${EMS_product} EMS"
+    else
+        echo "Base version doesn't match EMS product version. Abort" >&2
+        exit 1
+    fi
+fi
 
 echo "Importing repomd.xml.key"
 if [[ ${SLL_version} -eq 7 ]]; then
   $CURL --silent --show-error --insecure "${REGURL}/repo/SUSE/Updates/${SLL_name%%-LTSS}/${SLL_version}-LTSS/x86_64/update/repodata/repomd.xml.key" --output repomd.xml.key
+elif [ "0${EMS_product}" != "0" ]; then
+  $CURL --silent --show-error --insecure "${REGURL}/repo/SUSE/Updates/${SLL_name}/${EMS_product}/x86_64/update/repodata/repomd.xml.key" --output repomd.xml.key
 else
   $CURL --silent --show-error --insecure "${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update/repodata/repomd.xml.key" --output repomd.xml.key
 fi
@@ -183,20 +217,32 @@ if [[ ${SLL_version} -gt 7 ]]; then
        rm -f /etc/dnf/protected.d/redhat-release.conf
     fi
 
-    $DNF config-manager --add-repo "${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update"
-    $DNF config-manager --add-repo "${REGURL}/repo/SUSE/Updates/${SLL_name}-AS/${SLL_version}/x86_64/update"
+    if [ "0${EMS_product}" != "0" ]; then
+       $DNF config-manager --add-repo "${REGURL}/repo/SUSE/Updates/${SLL_name}/${EMS_product}/x86_64/update"
+       $DNF config-manager --add-repo "${REGURL}/repo/SUSE/Updates/${SLL_name}-AS/${EMS_product}/x86_64/update"
+    else
+       $DNF config-manager --add-repo "${REGURL}/repo/SUSE/Updates/${SLL_name}/${SLL_version}/x86_64/update"
+       $DNF config-manager --add-repo "${REGURL}/repo/SUSE/Updates/${SLL_name}-AS/${SLL_version}/x86_64/update"
+    fi 
+    if [[ ${SLL_version} -ge 10 ]]; then
+	    $DNF install redhat-release
+    fi
     $DNF install -y --allowerasing ${SLL_release_package}
-
     # For RHEL8/CentOS8, remove all old signing keys and import SUSE keys installed with sles_es-release package
     if [[ ${SLL_version} -eq 8 ]]; then
         import_rpm_signing_keys
     fi
 
     echo "Downloading SUSEConnect"
-    $DNF install SUSEConnect librepo
+    $DNF install SUSEConnect librepo openssl
 
-    $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}_${SLL_version}_x86_64_update"
-    $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}-AS_${SLL_version}_x86_64_update"
+    if [ "0${EMS_product}" != "0" ]; then
+       $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}_${EMS_product}_x86_64_update"
+       $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}-AS_${EMS_product}_x86_64_update"
+    else
+       $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}_${SLL_version}_x86_64_update"
+       $DNF config-manager --set-disabled "${RMTNAME}_repo_SUSE_Updates_${SLL_name}-AS_${SLL_version}_x86_64_update"
+    fi
 
 elif [[ ${SLL_version} -eq 7 ]]; then
 
@@ -217,7 +263,7 @@ elif [[ ${SLL_version} -eq 7 ]]; then
 
     echo "Disabling all repositories"
     $YUM_CONFIG_MGR --disable \* > /dev/null
-	
+
     # on Centos /usr/share/redhat-release is a file, on RHEL and RES it is a directory
     # so this is CentOS only workaround (on some system it is a normal file, on some systems a symlink)
     if [ -f /usr/share/redhat-release ] || [ -h /usr/share/redhat-release ]; then
@@ -226,8 +272,8 @@ elif [[ ${SLL_version} -eq 7 ]]; then
 
     $YUM_CONFIG_MGR --add-repo "${REGURL}/repo/SUSE/Updates/${SLL_name%%-LTSS}/${SLL_version}-LTSS/x86_64/update"
     if [ ${SLL_name} = "RES-OL-LTSS" ]; then
-    	$YUM_CONFIG_MGR --add-repo "${REGURL}/repo/SUSE/Updates/RES-BASE/${SLL_version}/x86_64/update"
-    fi	
+        $YUM_CONFIG_MGR --add-repo "${REGURL}/repo/SUSE/Updates/RES-BASE/${SLL_version}/x86_64/update"
+    fi
     $YUM_CONFIG_MGR --enable *suse.* > /dev/null
 
     if [ ! -x $SUSECONNECT ]; then
@@ -240,21 +286,18 @@ elif [[ ${SLL_version} -eq 7 ]]; then
 
     $YUM update -y yum
     $YUM_CONFIG_MGR --disable \* > /dev/null
-elif [[ ${SLL_version} -eq 8 ]]; then
-    # For SLL8, the release package is already installed, just import the keys
-    import_rpm_signing_keys
 fi
 
 $CURL --silent --show-error --insecure "$REGURL/tools/rmt-client-setup" --output rmt-client-setup
 echo "Running rmt-client-setup $PARAMS"
 if [ -n "$YES_PARAM" ]; then
     PARAMS=$(echo "$PARAMS" | sed 's/--yes//')
-    yes | sh rmt-client-setup $PARAMS
+    yes | sh rmt-client-setup "$PARAMS"
 else
     sh rmt-client-setup $PARAMS
 fi
 
-if [[ ${SLL_version} -gt 8 ]]; then 
+if [[ ${SLL_version} -gt 8 ]]; then
     systemctl start suseconnect-keepalive.timer
     systemctl enable suseconnect-keepalive.timer
 fi

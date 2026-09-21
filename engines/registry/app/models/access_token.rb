@@ -44,6 +44,10 @@ class AccessToken
   end
 
   def private_key
+    missing_key = Rails.application.config.registry_private_key.blank? && @private_key.blank?
+
+    raise Registry::Exceptions::RegistryUnavailable.new('registry signing key is missing') if missing_key
+
     @private_key ||= Rails.application.config.registry_private_key
   end
 end
