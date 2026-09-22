@@ -1,3 +1,5 @@
+require 'json'
+
 describe 'Ansible deployment' do
   before(:all) do
     # Ensure ansible is available
@@ -81,6 +83,9 @@ describe 'Ansible deployment' do
 
   describe 'ansible playbook execution in check mode', :requires_root do
     before(:all) do
+      # Skip this test if systemd is not running
+      skip 'systemd is not managing services' unless Dir.exist?('/run/systemd/system')
+
       # Ensure MariaDB is running for the check
       system('systemctl start mariadb > /dev/null 2>&1')
     end

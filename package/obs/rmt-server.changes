@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Sep 14 13:26:49 UTC 2026 - Fergal Mc Carthy <fmccarthy@suse.com>
+
+  * update rmt-server to build for openSUSE Factory (jsc#SCC-848)
+
+-------------------------------------------------------------------
 Thu Sep 10 18:21:54 UTC 2026 - Fergal Mc Carthy <fmccarthy@suse.com>
 
   * re-implement RMT::Downloader to eliminate use of fibers (bsc#1276939)

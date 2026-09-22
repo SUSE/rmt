@@ -29,6 +29,8 @@ groupend
 
 group "prepare build environment (in $BUILD_DIR)"
 pushd "$BUILD_DIR"
+  # fmccarthy: Temporary workaround to allow feature-tests to run - jsc#SCC-1020
+  zypper --non-interactive install ansible
   mkdir -p {BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS,OTHERS}
   cp -r "$SOURCE/package/obs"/* SOURCES/
 popd
