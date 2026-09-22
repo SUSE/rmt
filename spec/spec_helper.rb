@@ -3,33 +3,28 @@ require 'simplecov'
 unless ENV['NO_COVERAGE']
 
   simplecov_cmd = ENV.fetch('SIMPLECOV_CMD', 'test:core')
-  if simplecov_cmd == 'test:core'
+  if %w[test:core test:engines].include?(simplecov_cmd)
     SimpleCov.minimum_coverage 100
     SimpleCov.start do
       SimpleCov.command_name simplecov_cmd
       skip '/spec/'
       skip '/tasks/'
 
-      # omit registration sharing (removing systems using rmt-cli)
-      skip('engines/registration_sharing/lib/registration_sharing.rb')
+      if simplecov_cmd == 'test:core'
+        # omit registration sharing (removing systems using rmt-cli)
+        skip('engines/registration_sharing/lib/registration_sharing.rb')
 
-      skip('lib/rmt/db.rb')
-      skip('lib/rmt.rb')
-      skip('config')
+        skip('lib/rmt/db.rb')
+        skip('lib/rmt.rb')
+        skip('config')
 
-      cover('app/**/*.rb')
-      cover('lib/**/*.rb')
-    end
-  end
-
-  if simplecov_cmd == 'test:engines'
-    SimpleCov.minimum_coverage 100
-    SimpleCov.start do
-      SimpleCov.command_name simplecov_cmd
-      skip '/spec/'
-      skip '/tasks/'
-
-      cover('engines/**/*.rb')
+        cover('app/**/*.rb')
+        cover('lib/**/*.rb')
+        # currently nothing uses application job
+        skip('app/jobs/application_job.rb')
+      else # test:engines
+        cover('engines/**/*.rb')
+      end
     end
   end
 end
