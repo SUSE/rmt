@@ -16,7 +16,7 @@ Bundler.require(*Rails.groups)
 
 
 # Engine loading mechanism
-# :nocov:
+# simplecov:disable
 if (Rails.env.production? || ENV['RMT_LOAD_ENGINES'])
   Dir.glob("#{__dir__}/../engines/*").select { |i| File.directory?(i) }.each do |dir|
     engine_name = File.basename(dir)
@@ -24,7 +24,7 @@ if (Rails.env.production? || ENV['RMT_LOAD_ENGINES'])
     require_relative(filename) if File.exist?(filename)
   end
 end
-# :nocov:
+# simplecov:enable
 
 module RMT
   class CustomConfiguration < Rails::Application::Configuration

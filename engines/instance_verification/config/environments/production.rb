@@ -1,4 +1,4 @@
-# :nocov:
+# simplecov:disable
 module InstanceVerification
   class Application < Rails::Application
     config.cache_config_file = '/var/lib/rmt/rmt-cache-trim.sh'
@@ -24,4 +24,4 @@ module InstanceVerification
     File.write(config.cache_config_file, cache_config_content)
   end
 end
-# :nocov:
+# simplecov:enable

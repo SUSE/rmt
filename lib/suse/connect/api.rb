@@ -85,14 +85,14 @@ module SUSE
           updated_systems[:systems] = updated_systems[:systems].concat(response[:systems])
         end
       rescue RequestError => e
-        # :nocov: TODO: https://github.com/SUSE/rmt/issues/911
+        # simplecov:disable TODO: https://github.com/SUSE/rmt/issues/911
         # change some params here and start the bulk update.
         if e.response.code == 413
           @logger.info("Hit payload limit with: #{system_limit}")
           system_limit = e.response.headers['X-Payload-Entities-Max-Limit'].to_i
           send_bulk_system_update(systems, system_limit)
         end
-      # :nocov:
+      # simplecov:enable
       else
         updated_systems
       end
