@@ -252,6 +252,46 @@ module SccSumaApi
           end
         end
 
+        context 'when the provider fails to determine the add-on' do
+          before do
+            allow_any_instance_of(InstanceVerification::Providers::Example).to(
+              receive(:add_on).and_raise(InstanceVerification::Exception, 'no add-on')
+            )
+            FactoryBot.create(:subscription, product_classes: [base_product.product_class, entitled_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          it 'falls back to the base product class' do
+            expect(response.parsed_body.pluck('id')).to(
+              match_array((base_product.repositories + entitled_product.repositories).map(&:scc_id))
+            )
+          end
+        end
+
+        context 'when the product class of the caller cannot be determined' do
+          let(:add_on) { nil }
+          let(:payload) { super().merge('X-INSTANCE-IDENTIFIER' => 'not-a-known-product') }
+
+          before do
+            FactoryBot.create(:subscription, product_classes: [base_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          its(:code) { is_expected.to eq '200' }
+          its(:body) { is_expected.to eq '[]' }
+        end
+
+        context 'when the repository lookup fails' do
+          before do
+            FactoryBot.create(:subscription, product_classes: [add_on, entitled_product.product_class])
+            allow(Repository).to receive(:only_scc).and_raise(ActiveRecord::StatementInvalid, 'connection lost')
+            get '/api/scc/repos', headers: payload
+          end
+
+          its(:code) { is_expected.to eq '200' }
+          its(:body) { is_expected.to eq '[]' }
+        end
+
         context 'metadata is not valid' do
           let(:payload) { super().merge('X-INSTANCE-IDENTIFIER' => 'Raise error') }
 
