@@ -1,53 +1,33 @@
 require 'rails_helper'
 
 describe SccProxy do
-  describe '.scc_host_base_url' do
-    context 'when SCC_HOST is not set' do
-      before { ENV.delete('SCC_HOST') }
-
-      it 'uses the default SUSE cloud URL' do
-        expect(described_class.scc_host_base_url).to eq('https://scc.suse.com/connect')
-      end
-    end
-
-    context 'when SCC_HOST is set' do
-      before { ENV['SCC_HOST'] = 'http://localhost:8080/connect' }
-
-      it 'uses the configured host' do
-        expect(described_class.scc_host_base_url).to eq('http://localhost:8080/connect')
-      end
+  describe 'SCC_BASE_URL' do
+    it 'uses the default SUSE cloud URL when SCC_HOST env var is not set' do
+      expect(SccProxy.singleton_class::SCC_BASE_URL).to eq('https://scc.suse.com/connect')
     end
   end
 
-  describe '.announce_url' do
-    before { ENV.delete('SCC_HOST') }
-
+  describe 'ANNOUNCE_URL' do
     it 'appends /subscriptions/systems to the base URL' do
-      expect(described_class.announce_url).to eq('https://scc.suse.com/connect/subscriptions/systems')
+      expect(SccProxy.singleton_class::ANNOUNCE_URL).to eq('https://scc.suse.com/connect/subscriptions/systems')
     end
   end
 
-  describe '.systems_products_url' do
-    before { ENV.delete('SCC_HOST') }
-
+  describe 'SYSTEMS_PRODUCTS_URL' do
     it 'appends /systems/products to the base URL' do
-      expect(described_class.systems_products_url).to eq('https://scc.suse.com/connect/systems/products')
+      expect(SccProxy.singleton_class::SYSTEMS_PRODUCTS_URL).to eq('https://scc.suse.com/connect/systems/products')
     end
   end
 
-  describe '.systems_activations_url' do
-    before { ENV.delete('SCC_HOST') }
-
+  describe 'SYSTEMS_ACTIVATIONS_URL' do
     it 'appends /systems/activations to the base URL' do
-      expect(described_class.systems_activations_url).to eq('https://scc.suse.com/connect/systems/activations')
+      expect(SccProxy.singleton_class::SYSTEMS_ACTIVATIONS_URL).to eq('https://scc.suse.com/connect/systems/activations')
     end
   end
 
-  describe '.deregister_system_url' do
-    before { ENV.delete('SCC_HOST') }
-
+  describe 'SYSTEMS_URL' do
     it 'appends /systems to the base URL' do
-      expect(described_class.deregister_system_url).to eq('https://scc.suse.com/connect/systems')
+      expect(SccProxy.singleton_class::SYSTEMS_URL).to eq('https://scc.suse.com/connect/systems')
     end
   end
 

@@ -22,13 +22,14 @@ NET_HTTP_ERRORS = [
 
 # rubocop:disable Metrics/ModuleLength
 module SccProxy
+
   class << self
-    SCC_BASE_URL            = ENV.fetch('SCC_BASE_URL', 'https://scc.suse.com/connect').freeze
+    SCC_BASE_URL            = ENV.fetch('SCC_HOST', 'https://scc.suse.com/connect').freeze
 
     ANNOUNCE_URL            = "#{SCC_BASE_URL}/subscriptions/systems".freeze
     SYSTEMS_PRODUCTS_URL    = "#{SCC_BASE_URL}/systems/products".freeze
     SYSTEMS_ACTIVATIONS_URL = "#{SCC_BASE_URL}/systems/activations".freeze
-    DEREGISTER_SYSTEM_URL   = "#{SCC_BASE_URL}/systems".freeze
+    SYSTEMS_URL             = "#{SCC_BASE_URL}/systems".freeze
 
     def headers(auth, system_token)
       {
@@ -180,7 +181,7 @@ module SccProxy
     end
 
     def deregister_system_scc(auth, system)
-      uri, http = parse_url(DEREGISTER_SYSTEM_URL)
+      uri, http = parse_url(SYSTEMS_URL)
       scc_request = Net::HTTP::Delete.new(uri.path, headers(auth, system.system_token))
       response = http.request(scc_request)
       unless response.code_type == Net::HTTPNoContent
