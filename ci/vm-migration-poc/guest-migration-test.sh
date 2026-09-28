@@ -165,10 +165,12 @@ rm -f /etc/rmt.conf
 # The 2.x baseline is the distribution's own rmt-server, not an OBS rebuild:
 # SLE-Module-Server-Applications15-SP7 ships rmt-server 2.28, which is exactly
 # what a customer upgrading from the supported RMT starts from. rpm keeps
-# rmt-server and rmt-server-config in lockstep via config(rmt-server) = <evr>,
-# so asking for both by name is enough.
+# rmt-server and rmt-server-config in lockstep via config(rmt-server) = <evr>.
+# The version pin is required: SLE-Module-Server-Applications15-SP7-Updates now
+# also carries rmt-server 3.x as a maintenance update, so an unpinned install
+# resolves to 3.x and there is nothing left to upgrade.
 log 'installing the distribution rmt-server 2.x as the upgrade baseline'
-zypper --non-interactive install --no-recommends rmt-server rmt-server-config \
+zypper --non-interactive install --no-recommends 'rmt-server<3' 'rmt-server-config<3' \
   || die 'could not install the distribution rmt-server'
 
 old_version="$(rmt_version)"
