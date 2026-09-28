@@ -1,4 +1,4 @@
-# :nocov:
+# simplecov:disable
 module Registry
   class Application < Rails::Application
     # registry config needed
@@ -18,4 +18,4 @@ module Registry
     config.access_policies = ACCESS_POLICIES_PATH
   end
 end
-# :nocov:
+# simplecov:enable
