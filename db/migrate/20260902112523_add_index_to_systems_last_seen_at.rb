@@ -10,10 +10,10 @@ class AddIndexToSystemsLastSeenAt < ActiveRecord::Migration[8.1]
     # on a table this size a silent fallback to a full table
     # copy would lock it for hours
     # this makes the ALTER fail immediately instead
-    add_index :systems, :last_seen_at, algorithm: :inplace
+    add_index :systems, :last_seen_at, algorithm: :inplace unless index_exists?(:systems, :last_seen_at)
   end
 
   def down
-    remove_index :systems, :last_seen_at
+    remove_index :systems, :last_seen_at if index_exists?(:systems, :last_seen_at)
   end
 end
