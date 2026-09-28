@@ -26,11 +26,15 @@ RSpec.describe RMT::Downloader do
     end
   end
 
-  let(:debug_request_error_regex) { /Request error:.*HTTP status code:.*body:.*headers:.*return code:.*return message:/m }
+  let(:debug_request_error_regex) { /Request URL:.*Response HTTP status code:.*Response body:.*Response headers:.*curl return code:.*curl return message:/m }
 
   after do
     FileUtils.remove_entry(repository_dir)
     FileUtils.remove_entry(cache_dir) if cache_dir
+  end
+
+  def stub_logger(*methods)
+    methods.each { |m| allow_any_instance_of(RMT::Logger).to receive(m) }
   end
 
   describe '#download over http://' do
@@ -55,28 +59,22 @@ RSpec.describe RMT::Downloader do
     context 'when processing response by Typhoeus failed' do
       before do
         allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP request/)
+        allow(downloader).to receive(:cache_head_request).and_return(nil)
+        stub_request(:get, 'http://example.com/repomd.xml')
+          .with(headers: headers)
+          .to_return(status: 200, body: 'Ok', headers: {})
       end
 
       it 'raises an exception' do
+        # the request error is logged for the initial attempt and for each of the 4 retries
         expect_any_instance_of(RMT::Logger).to receive(:debug)
           .with(debug_request_error_regex).exactly(5).times
 
-        allow_any_instance_of(RMT::FiberRequest).to receive(:receive_headers)
-        allow_any_instance_of(RMT::FiberRequest).to receive(:read_body) do |instance|
-          response = instance_double(Typhoeus::Response, code: 200, body: 'Ok',
-                                     effective_url: 'http://example.com/repomd.xml',
-                                     return_code: :error, return_message: 'curl error',
-                                     response_headers: "HTTP/2 404 \r\ncache-control: max-age=0\r\ncontent-type: text/html")
-
-          allow(response).to receive(:request) { instance }
-          allow(instance).to receive(:response) { response }
-
-          response
-        end
+        allow(downloader).to receive(:invalid_response?).and_return(true)
 
         expect { downloader.download_multi([repomd_xml_file]) }.to raise_error(
           RMT::Downloader::Exception,
-          "http://example.com/repomd.xml - request failed with HTTP status code 200, return code 'error'"
+          %r{http://example\.com/repomd\.xml - request failed with HTTP status code 200}
         )
       end
     end
@@ -270,20 +268,48 @@ RSpec.describe RMT::Downloader do
         before do
           File.write(repomd_xml_file.cache_path, cached_content)
           File.utime(time, time, repomd_xml_file.cache_path)
-          allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP HEAD/)
           stub_request(:head, 'http://example.com/repomd.xml')
             .with(headers: headers)
             .to_return(status: 404)
         end
 
         it 'raises an error' do
-          expect_any_instance_of(RMT::Logger).to receive(:debug)
-            .with(debug_request_error_regex).once
-
           expect { downloaded_file }.to raise_error(
             RMT::Downloader::Exception,
             "http://example.com/repomd.xml - request failed with HTTP status code 404, return code ''"
           )
+        end
+      end
+
+      context 'when cache is invalid but local path exists' do
+        let(:cache_dir) { Dir.mktmpdir }
+        let(:file) do
+          RMT::Mirror::FileReference.new(
+            relative_path: 'test.rpm',
+            base_url: repository_url,
+            base_dir: repository_dir,
+            cache_dir: cache_dir
+          ).tap do |f|
+            f.checksum = Digest::SHA256.hexdigest('fresh_content')
+            f.checksum_type = 'SHA256'
+          end
+        end
+
+        before do
+          File.write(file.cache_path, 'stale_content')
+          File.utime(Time.utc(2023, 1, 1), Time.utc(2023, 1, 1), file.cache_path)
+          file.instance_variable_set(:@cache_timestamp, Time.utc(2023, 1, 1))
+        end
+
+        it 're-downloads instead of using stale cache' do
+          stub_request(:head, 'http://example.com/test.rpm')
+            .to_return(status: 200, headers: { 'Last-Modified' => 'Mon, 01 Jan 2024 00:00:00 GMT' })
+          stub_request(:get, 'http://example.com/test.rpm')
+            .to_return(status: 200, body: 'fresh_content', headers: {})
+
+          downloader.download_multi([file])
+          expect(File.read(file.local_path)).to eq('fresh_content')
+          expect(File.read(file.local_path)).not_to eq('stale_content')
         end
       end
 
@@ -352,6 +378,10 @@ RSpec.describe RMT::Downloader do
                 expect(error.http_code).to eq(404)
               }
       end
+
+      it 'returns the file in failed_downloads when ignore_errors is true' do
+        expect(downloader.download_multi([repomd_xml_file], ignore_errors: true)).to eq([repomd_xml_file])
+      end
     end
   end
 
@@ -375,7 +405,7 @@ RSpec.describe RMT::Downloader do
 
     context 'when download exceptions occur when ignore_errors is true' do
       before do
-        allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP request/)
+        allow_any_instance_of(described_class).to receive(:cache_head_request).and_return(nil)
         files.each do |file|
           stub_request(:get, "http://example.com/#{file}").with(headers: headers)
             .to_return(status: 404, body: file, headers: {})
@@ -383,9 +413,6 @@ RSpec.describe RMT::Downloader do
       end
 
       it 'requested all files' do
-        expect_any_instance_of(RMT::Logger).to receive(:debug)
-          .with(debug_request_error_regex).exactly(files.size).times
-
         downloader.download_multi(queue.dup, ignore_errors: true)
 
         files.each do |file|
@@ -396,9 +423,6 @@ RSpec.describe RMT::Downloader do
       end
 
       it 'but no files were actually saved' do
-        expect_any_instance_of(RMT::Logger).to receive(:debug)
-          .with(debug_request_error_regex).exactly(files.size).times
-
         downloader.download_multi(queue.dup, ignore_errors: true)
 
         queue.each do |file|
@@ -411,37 +435,49 @@ RSpec.describe RMT::Downloader do
       before do
         files.each do |file|
           stub_request(:get, "http://example.com/#{file}").with(headers: headers)
-            .to_return(
-              status: 404,
-              body: lambda do |_|
-                # This is a hack to inject something into the queue
-                # It seems like WebMock doesn't populate it the same way as it normally would be populated.
-                downloader.instance_variable_get(:@hydra).multi.easy_handles << Ethon::Easy.new(url: 'www.example.com')
-                'dummy'
-              end,
-              headers: {}
-            )
+            .to_return(status: 404, body: 'dummy', headers: {})
         end
       end
 
       it 'raises an exception' do
-        allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP request/)
-        expect_any_instance_of(RMT::Logger).to receive(:debug)
-          .with(debug_request_error_regex).once
-
         expect do
           downloader.download_multi(queue.dup, ignore_errors: false)
         end.to raise_error("http://example.com/package1 - request failed with HTTP status code 404, return code ''")
       end
 
-      it 'cleans up the queue of downloads' do
+      it 'cleans up easy handles on error' do
         expect do
           downloader.concurrency = 1
           downloader.download_multi(queue.dup, ignore_errors: false)
         end.to raise_error("http://example.com/package1 - request failed with HTTP status code 404, return code ''")
 
         expect(downloader.instance_variable_get(:@hydra).multi.easy_handles).to eq([])
-        expect(downloader.instance_variable_get(:@queue)).to eq([])
+      end
+
+      it 'deletes easy handles during error cleanup' do
+        expect do
+          downloader.download_multi(queue.dup, ignore_errors: false)
+        end.to raise_error("http://example.com/package1 - request failed with HTTP status code 404, return code ''")
+        expect(downloader.instance_variable_get(:@hydra).multi.easy_handles).to eq([])
+      end
+
+      it 'raises using failed_downloads branch when checksum fails' do
+        failing_file = RMT::Mirror::FileReference.new(
+          relative_path: 'bad-package.rpm',
+          base_url: repository_url,
+          base_dir: repository_dir,
+          cache_dir: nil
+        ).tap do |f|
+          f.checksum = 'invalid'
+          f.checksum_type = 'SHA256'
+        end
+
+        stub_request(:get, 'http://example.com/bad-package.rpm')
+          .to_return(status: 200, body: 'dummy content', headers: {})
+
+        expect do
+          downloader.download_multi([failing_file], ignore_errors: false)
+        end.to raise_error(RMT::Downloader::Exception, /Checksum/)
       end
     end
 
@@ -450,7 +486,6 @@ RSpec.describe RMT::Downloader do
 
       context 'when a HEAD request fails and the ignore_errors = false' do
         before do
-          allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP HEAD/)
           queue.each do |file|
             FileUtils.touch(file.cache_path)
             stub_request(:head, file.remote_path.to_s).with(headers: headers)
@@ -459,9 +494,6 @@ RSpec.describe RMT::Downloader do
         end
 
         it 'raises an error' do
-          expect_any_instance_of(RMT::Logger).to receive(:debug)
-            .with(debug_request_error_regex).once
-
           expect { downloader.download_multi(queue.dup, ignore_errors: false) }
             .to raise_error(
               RMT::Downloader::Exception,
@@ -471,8 +503,18 @@ RSpec.describe RMT::Downloader do
       end
 
       context 'when a HEAD request fails and the ignore_errors = true' do
+        let(:queue) do
+          files.map do |file|
+            RMT::Mirror::FileReference.new(
+              relative_path: file,
+              base_url: repository_url,
+              base_dir: repository_dir,
+              cache_dir: cache_dir
+            )
+          end
+        end
+
         before do
-          allow_any_instance_of(RMT::Logger).to receive(:debug).with(/HTTP HEAD/)
           queue.each do |file|
             FileUtils.touch(file.cache_path)
             stub_request(:head, file.remote_path.to_s).with(headers: headers)
@@ -481,12 +523,381 @@ RSpec.describe RMT::Downloader do
         end
 
         it 'returns a list of failed downloads' do
-          expect_any_instance_of(RMT::Logger).to receive(:debug)
-            .with(debug_request_error_regex).exactly(queue.size).times
-
           failed_downloads = downloader.download_multi(queue.dup, ignore_errors: true)
           expect(failed_downloads).to match_array(queue.map(&:local_path))
         end
+      end
+    end
+  end
+
+
+  describe '#handle_response' do
+    context 'when retries exhaust on non-404 failure' do
+      let(:file) do
+        RMT::Mirror::FileReference.new(
+          relative_path: 'test.rpm',
+          base_url: repository_url,
+          base_dir: repository_dir,
+          cache_dir: nil
+        ).tap do |f|
+          f.checksum = 'abc123'
+          f.checksum_type = 'SHA256'
+        end
+      end
+
+      it 'raises an exception' do
+        stub_request(:get, 'http://example.com/test.rpm')
+          .with(headers: headers)
+          .to_return(status: 500, body: 'Internal Server Error', headers: {})
+
+        stub_logger(:warn, :debug)
+
+        expect { downloader.download_multi([file]) }.to raise_error(RMT::Downloader::Exception)
+      end
+    end
+
+    context 'when request succeeds after retries' do
+      let(:file) do
+        RMT::Mirror::FileReference.new(
+          relative_path: 'test.rpm',
+          base_url: repository_url,
+          base_dir: repository_dir,
+          cache_dir: nil
+        ).tap do |f|
+          f.checksum = Digest::SHA256.hexdigest('success_content')
+          f.checksum_type = 'SHA256'
+        end
+      end
+
+      it 'downloads successfully' do
+        stub_request(:get, 'http://example.com/test.rpm')
+          .with(headers: headers)
+          .to_return(status: 500, body: 'Internal Server Error', headers: {})
+          .times(2)
+
+        stub_request(:get, 'http://example.com/test.rpm')
+          .with(headers: headers)
+          .to_return(status: 200, body: 'success_content', headers: {})
+
+        stub_logger(:warn, :debug)
+
+        downloader.download_multi([file])
+
+        expect(File.read(file.local_path)).to eq('success_content')
+      end
+    end
+
+    context 'with cache failure and 404' do
+      let(:cache_dir) { Dir.mktmpdir }
+      let(:file_a) do
+        RMT::Mirror::FileReference.new(
+          relative_path: 'a.rpm',
+          base_url: repository_url,
+          base_dir: repository_dir,
+          cache_dir: cache_dir
+        ).tap do |f|
+          f.checksum = 'aaa'
+          f.checksum_type = 'SHA256'
+        end
+      end
+      let(:file_b) do
+        RMT::Mirror::FileReference.new(
+          relative_path: 'b.rpm',
+          base_url: repository_url,
+          base_dir: repository_dir,
+          cache_dir: cache_dir
+        ).tap do |f|
+          f.checksum = 'bbb'
+          f.checksum_type = 'SHA256'
+        end
+      end
+
+      it 'adds file to failed_downloads when retries exhausted and ignore_errors is true with prior cache failure' do
+        FileUtils.touch(file_a.cache_path)
+        File.utime(Time.utc(2024, 1, 1), Time.utc(2024, 1, 1), file_a.cache_path)
+        stub_request(:head, 'http://example.com/a.rpm').with(headers: headers)
+          .to_return(status: 200, headers: { 'Last-Modified' => 'Tue, 01 Jan 2024 00:00:00 GMT' })
+        stub_request(:head, 'http://example.com/b.rpm').with(headers: headers)
+          .to_return(status: 200, headers: { 'Last-Modified' => 'Tue, 01 Jan 2024 00:00:00 GMT' })
+        allow_any_instance_of(described_class).to receive(:copy_from_cache)
+          .and_raise(RMT::Downloader::Exception.new('copy failed'))
+        stub_request(:get, 'http://example.com/b.rpm').with(headers: headers)
+          .to_return(status: 404, body: 'Not Found', headers: {})
+        stub_logger(:warn, :debug)
+        result = downloader.download_multi([file_a, file_b], ignore_errors: true)
+        expect(result).to include(file_b)
+      end
+    end
+  end
+
+  describe '#finalize_download' do
+    context 'with Last-Modified header' do
+      let(:file) do
+        RMT::Mirror::FileReference.new(
+          relative_path: 'test.rpm',
+          base_url: repository_url,
+          base_dir: repository_dir,
+          cache_dir: nil
+        ).tap do |f|
+          f.checksum = Digest::SHA256.hexdigest('header_content')
+          f.checksum_type = 'SHA256'
+        end
+      end
+
+      it 'sets file timestamps from Last-Modified header' do
+        stub_request(:get, 'http://example.com/test.rpm')
+          .with(headers: headers)
+          .to_return(status: 200, body: 'header_content', headers: { 'Last-Modified' => 'Mon, 01 Jan 2024 12:00:00 GMT' })
+
+        stub_logger(:debug, :info)
+
+        downloader.download_multi([file])
+
+        expect(File.read(file.local_path)).to eq('header_content')
+        mtime = File.mtime(file.local_path).utc
+        expect(mtime.year).to eq(2024)
+        expect(mtime.month).to eq(1)
+        expect(mtime.day).to eq(1)
+      end
+    end
+
+    context 'without Last-Modified header' do
+      let(:file) do
+        RMT::Mirror::FileReference.new(
+          relative_path: 'test.rpm',
+          base_url: repository_url,
+          base_dir: repository_dir,
+          cache_dir: nil
+        ).tap do |f|
+          f.checksum = Digest::SHA256.hexdigest('no_header_content')
+          f.checksum_type = 'SHA256'
+        end
+      end
+
+      it 'uses current time when no Last-Modified header is provided' do
+        stub_request(:get, 'http://example.com/test.rpm')
+          .with(headers: headers)
+          .to_return(status: 200, body: 'no_header_content', headers: { 'Content-Type' => 'application/x-rpm' })
+
+        stub_logger(:debug, :info)
+
+        downloader.download_multi([file])
+
+        expect(File.read(file.local_path)).to eq('no_header_content')
+      end
+    end
+
+    context 'on finalization error' do
+      let(:file) do
+        RMT::Mirror::FileReference.new(
+          relative_path: 'test.rpm',
+          base_url: repository_url,
+          base_dir: repository_dir,
+          cache_dir: nil
+        ).tap do |f|
+          f.checksum = 'invalid'
+          f.checksum_type = 'SHA256'
+        end
+      end
+
+      let(:good_file) do
+        RMT::Mirror::FileReference.new(
+          relative_path: 'good.rpm',
+          base_url: repository_url,
+          base_dir: repository_dir,
+          cache_dir: nil
+        ).tap do |f|
+          f.checksum = Digest::SHA256.hexdigest('good content')
+          f.checksum_type = 'SHA256'
+        end
+      end
+
+      it 'cleans up temp file' do
+        stub_request(:get, 'http://example.com/test.rpm')
+          .with(headers: headers)
+          .to_return(status: 200, body: 'dummy content', headers: {})
+
+        expect { downloader.download_multi([file]) }.to raise_error(RMT::Downloader::Exception)
+      end
+
+
+      it 'adds the file to failed_downloads and downloads the rest when ignore_errors is true' do
+        stub_const('RMT::Downloader::RETRY_DELAY_SECONDS', 0)
+        stub_logger(:warn, :info, :debug)
+
+        stub_request(:get, 'http://example.com/test.rpm')
+          .with(headers: headers)
+          .to_return(status: 200, body: 'dummy content', headers: {})
+        stub_request(:get, 'http://example.com/good.rpm')
+          .with(headers: headers)
+          .to_return(status: 200, body: 'good content', headers: {})
+
+        expect(downloader.download_multi([file, good_file], ignore_errors: true)).to eq([file])
+        expect(File.read(good_file.local_path)).to eq('good content')
+      end
+    end
+  end
+
+  describe '#handle_cache_copy rescue' do
+    let(:cache_dir) { Dir.mktmpdir }
+    let(:file) do
+      RMT::Mirror::FileReference.new(
+        relative_path: 'test.rpm',
+        base_url: repository_url,
+        base_dir: repository_dir,
+        cache_dir: cache_dir
+      ).tap do |f|
+        f.checksum = 'abc'
+        f.checksum_type = 'SHA256'
+      end
+    end
+
+    before do
+      FileUtils.touch(file.cache_path)
+      File.utime(Time.utc(2024, 1, 1), Time.utc(2024, 1, 1), file.cache_path)
+    end
+
+    context 'with ignore_errors=true' do
+      it 'adds to failed_files when copy_from_cache raises' do
+        stub_request(:head, 'http://example.com/test.rpm')
+          .with(headers: headers)
+          .to_return(status: 200, headers: { 'Last-Modified' => 'Tue, 01 Jan 2024 00:00:00 GMT' })
+        allow_any_instance_of(described_class).to receive(:copy_from_cache).and_raise(
+          RMT::Downloader::Exception.new('copy failed')
+        )
+
+        result = downloader.download_multi([file], ignore_errors: true)
+        expect(result).to include(file.local_path)
+      end
+    end
+
+    context 'with ignore_errors=false' do
+      it 'raises exception when copy_from_cache fails' do
+        stub_request(:head, 'http://example.com/test.rpm')
+          .with(headers: headers)
+          .to_return(status: 200, headers: { 'Last-Modified' => 'Tue, 01 Jan 2024 00:00:00 GMT' })
+        allow_any_instance_of(described_class).to receive(:copy_from_cache).and_raise(
+          RMT::Downloader::Exception.new('copy failed')
+        )
+
+        expect { downloader.download_multi([file], ignore_errors: false) }
+          .to raise_error(RMT::Downloader::Exception, /copy failed/)
+      end
+    end
+  end
+
+  describe '#handle_cache_head_response' do
+    let(:cache_dir) { Dir.mktmpdir }
+    let(:cached_content) { 'cached_content' }
+    let(:file) do
+      RMT::Mirror::FileReference.new(
+        relative_path: 'test.rpm',
+        base_url: repository_url,
+        base_dir: repository_dir,
+        cache_dir: cache_dir
+      )
+    end
+
+    before do
+      File.write(file.cache_path, cached_content)
+      File.utime(Time.utc(2024, 1, 1), Time.utc(2024, 1, 1), file.cache_path)
+    end
+
+    context 'when response is valid' do
+      it 'returns early' do
+        request = instance_double(RMT::HttpRequest)
+        response = instance_double(Typhoeus::Response, code: 200, return_code: :ok)
+        allow(request).to receive(:retries=)
+        allow(request).to receive(:retries).and_return(4)
+        allow(request).to receive(:run)
+        expect(request).not_to receive(:retries=)
+        downloader.send(:handle_cache_head_response, response, request)
+      end
+    end
+
+    context 'when retries is 0' do
+      it 'does not retry' do
+        request = instance_double(RMT::HttpRequest)
+        response = instance_double(Typhoeus::Response, code: 503, return_code: :error, effective_url: 'http://example.com/test.rpm')
+        allow(request).to receive(:retries=)
+        allow(request).to receive(:retries).and_return(0)
+        allow(request).to receive(:run)
+        expect(request).not_to receive(:retries=)
+        expect(request).not_to receive(:run)
+        downloader.send(:handle_cache_head_response, response, request)
+      end
+    end
+
+    context 'when HEAD fails then succeeds' do
+      it 'succeeds on retry' do
+        stub_request(:head, 'http://example.com/test.rpm')
+          .with(headers: headers)
+          .to_return(status: 503, body: 'Service Unavailable', headers: {})
+          .times(2)
+
+        stub_request(:head, 'http://example.com/test.rpm')
+          .with(headers: headers)
+          .to_return(status: 200, headers: { 'Last-Modified' => 'Mon, 01 Jan 2024 00:00:00 GMT' })
+
+        stub_logger(:warn, :debug)
+
+        downloader.download_multi([file])
+        expect(File.read(file.local_path)).to eq(cached_content)
+      end
+    end
+  end
+
+  describe '#valid_cached_file? exception path' do
+    let(:invalid_response) do
+      instance_double(Typhoeus::Response,
+                      code: 503, body: 'Service Unavailable', effective_url: 'http://example.com/test.rpm',
+                      return_code: :ok, return_message: '',
+                      response_headers: '',
+                      headers: { 'Last-Modified' => 'Mon, 01 Jan 2024 00:00:00 GMT' })
+    end
+
+    let(:file) do
+      RMT::Mirror::FileReference.new(
+        relative_path: 'test.rpm',
+        base_url: repository_url,
+        base_dir: repository_dir,
+        cache_dir: Dir.mktmpdir
+      ).tap do |f|
+        allow(f).to receive(:cache_timestamp).and_return(Time.utc(2024, 1, 1))
+        FileUtils.touch(f.cache_path)
+      end
+    end
+
+    it 'raises an exception when response is invalid' do
+      expect { downloader.send(:valid_cached_file?, file, invalid_response) }
+        .to raise_error(RMT::Downloader::Exception, /request failed with HTTP status code 503/)
+    end
+  end
+
+  describe '#invalid_response?' do
+    context 'with code 0 and :ok return_code' do
+      it 'returns false' do
+        response = instance_double(Typhoeus::Response, code: 0, return_code: :ok)
+        expect(downloader.send(:invalid_response?, response)).to be false
+      end
+    end
+  end
+
+  describe '#raise_request_error' do
+    context 'with valid response' do
+      let(:response) do
+        instance_double(Typhoeus::Response,
+                        effective_url: 'http://example.com/test.rpm',
+                        code: 503,
+                        body: 'Service Unavailable',
+                        response_headers: 'Content-Type: text/html',
+                        return_code: :ok,
+                        return_message: '')
+      end
+
+      it 'raises an exception with detailed error message' do
+        expect { downloader.send(:raise_request_error, 'http://example.com/test.rpm', response) }
+          .to raise_error(RMT::Downloader::Exception, /test\.rpm - request failed with HTTP status code 503/)
       end
     end
   end

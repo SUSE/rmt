@@ -49,7 +49,7 @@ describe RegistryCatalogService do
 
     it 'raise an error with a clear message' do
       allow(System).to receive(:where).and_return([system])
-      expect { registry.repos(system) }.to raise_error(StandardError, 'registry not configured properly in /etc/rmt.conf')
+      expect { registry.repos(system) }.to raise_error(StandardError, 'registry service not configured properly in /etc/rmt.conf')
     end
   end
 end

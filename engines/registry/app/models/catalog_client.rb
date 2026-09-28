@@ -19,6 +19,9 @@ class CatalogClient
   private
 
   def public_key
-    Rails.application.config.registry_private_key.public_key
+    key = Rails.application.config.registry_private_key
+    raise Registry::Exceptions::RegistryUnavailable.new('registry signing key is missing') if key.blank?
+
+    key.public_key
   end
 end

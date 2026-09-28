@@ -4,7 +4,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
   include_context 'version header', 3
 
   describe '#activate' do
-    subject(:service_url) { JSON.parse(response.body)['url'] }
+    subject(:service_url) { response.parsed_body['url'] }
 
     let(:url) { connect_systems_products_url }
     let(:headers) { auth_header.merge(version_header) }

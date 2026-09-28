@@ -22,6 +22,7 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
   let(:payload) { { hostname: 'test', hwinfo: hwinfo } }
   let(:system_uptime) { system.system_uptimes.first }
   let(:plugin_double) { instance_double('DataExport::Handlers::Example') }
+  let(:scc_systems_url) { 'https://scc.suse.com/connect/systems' }
 
   describe '#update' do
     subject(:update_action) { put url, params: payload, headers: headers }
@@ -36,6 +37,13 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
         before { allow(plugin_double).to receive(:export_rmt_data) }
 
         it do
+          stub_request(:put, scc_systems_url)
+            .to_return(
+              status: 204,
+              body: '',
+              headers: headers
+          )
+
           expect(plugin_double).to receive(:export_rmt_data)
           expect { update_action }.to change { system.reload.hostname }.from('initial').to(payload[:hostname])
         end
@@ -48,6 +56,12 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
         end
 
         it do
+          stub_request(:put, scc_systems_url)
+            .to_return(
+              status: 204,
+              body: '',
+              headers: headers
+          )
           expect(plugin_double).to receive(:export_rmt_data)
           expect(Rails.logger).to receive(:error)
           update_action

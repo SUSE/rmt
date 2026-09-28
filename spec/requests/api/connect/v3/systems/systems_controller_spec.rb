@@ -428,6 +428,74 @@ RSpec.describe Api::Connect::V3::Systems::SystemsController do
         expect(response.headers).not_to include('System-Token')
       end
     end
+
+    context 'when the system is deregistered mid-request' do
+      let(:profiles) { profile_set_all }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles } }
+
+      before do
+        # authentication has already loaded @system; drop the row just as the
+        # action reaches for the lock
+        allow(System).to receive(:lock).and_wrap_original do |original, *args|
+          System.find(system.id).destroy
+          original.call(*args)
+        end
+      end
+
+      it 'answers 401 rather than 500' do
+        update_action
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(response.parsed_body['error']).to eq('Invalid system credentials')
+      end
+
+      it 'writes no orphaned profile links' do
+        expect { update_action }.not_to change(SystemProfile, :count)
+      end
+    end
+
+    context 'when a foreign key violation escapes the profile write' do
+      let(:profiles) { profile_set_all }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles } }
+
+      before do
+        allow(Profile).to receive(:ensure_complete_profiles_exist)
+                            .and_raise(ActiveRecord::InvalidForeignKey.new('fk_rails_4fc1eb8ffe'))
+      end
+
+      it 'answers 401 rather than 500' do
+        update_action
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context 'locking' do
+      let(:profiles) { profile_set_all }
+      let(:payload) { { hostname: 'test', hwinfo: hwinfo, system_profiles: profiles } }
+
+      def capture_sql
+        statements = []
+        subscriber = ActiveSupport::Notifications.subscribe('sql.active_record') do |*, payload|
+          statements << payload[:sql]
+        end
+        yield
+        statements
+      ensure
+        ActiveSupport::Notifications.unsubscribe(subscriber)
+      end
+
+      it 'locks the systems row before inserting system_profiles' do
+        statements = capture_sql { update_action }
+
+        lock_at = statements.index { |s| s.match?(/SELECT.+`systems`.+FOR UPDATE/mi) }
+        insert_at = statements.index { |s| s.match?(/INSERT INTO `system_profiles`/i) }
+
+        expect(lock_at).not_to be_nil, 'no SELECT ... FOR UPDATE on systems was issued'
+        expect(insert_at).not_to be_nil, 'the request never wrote a system_profiles row'
+        expect(lock_at).to be < insert_at
+      end
+    end
   end
 
   describe '#deregister' do

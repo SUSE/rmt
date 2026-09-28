@@ -64,7 +64,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
             expect(InstanceVerification::Providers::Example).to receive(:new).at_least(:once).and_return(plugin_double)
             allow(plugin_double).to receive(:instance_identifier).and_raise(InstanceVerification::Exception, 'Malformed instance data')
             post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=' }
-            expect(JSON.parse(response.body)['error']).to eq('Malformed instance data')
+            expect(response.parsed_body['error']).to eq('Malformed instance data')
             expect(response.message).to eq('Unprocessable Content')
             expect(response.code).to eq('422')
           end
@@ -83,7 +83,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
 
         it 'returns error' do
           post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
-          data = JSON.parse(response.body)
+          data = response.parsed_body
           expect(response.code).to eq('401')
           expect(data['type']).to eq('error')
           expect(data['error']).to include('Invalid credentials')
@@ -102,7 +102,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
 
         it 'returns error' do
           post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
-          data = JSON.parse(response.body)
+          data = response.parsed_body
           expect(response.code).to eq('401')
           expect(data['type']).to eq('error')
           expect(data['error']).to include('Unauthorized')
@@ -121,7 +121,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
 
         it 'returns error' do
           post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
-          data = JSON.parse(response.body)
+          data = response.parsed_body
           expect(data['type']).to eq('error')
           expect(data['error']).to include('Request timed out')
         end
@@ -219,7 +219,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
             allow(plugin_double).to receive(:instance_identifier).and_return('i-12345-payg')
             post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
             expect(response.message).to eq('Unprocessable Content')
-            expect(JSON.parse(response.body)).to eq({ 'type' => 'error', 'error' => 'System could not be created: Record invalid' })
+            expect(response.parsed_body).to eq({ 'type' => 'error', 'error' => 'System could not be created: Record invalid' })
             expect(response.code).to eq('422')
           end
         end
@@ -248,7 +248,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
             post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
             expect(response.message).to eq('Created')
             expect(response.code).to eq('201')
-            expect(JSON.parse(response.body)['login']).to eq('i-12345-payg')
+            expect(response.parsed_body['login']).to eq('i-12345-payg')
           end
         end
       end
@@ -266,7 +266,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
 
         it 'returns error' do
           post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
-          data = JSON.parse(response.body)
+          data = response.parsed_body
           expect(response.code).to eq('401')
           expect(data['type']).to eq('error')
           expect(data['error']).to include('Invalid credentials')
@@ -285,7 +285,7 @@ describe Api::Connect::V3::Subscriptions::SystemsController, type: :request do
 
         it 'returns error' do
           post '/connect/subscriptions/systems', params: params, headers: { HTTP_AUTHORIZATION: 'Token token=bar' }
-          data = JSON.parse(response.body)
+          data = response.parsed_body
           expect(data['type']).to eq('error')
           expect(data['error']).to include('timed out')
         end

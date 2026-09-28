@@ -46,7 +46,7 @@ while IFS= read -r RPM; do
 
   # Check for forbidden directory ownership
   for dir_pattern in "${FORBIDDEN_DIRS[@]}"; do
-    if rpm -qplv "$RPM" 2>/dev/null | grep -E "^d.*${dir_pattern}"; then
+    if rpm -qplv "$RPM" 2>/dev/null | grep -e "^d.*[[:space:]]${dir_pattern}"; then
       echo "  ✗ ERROR: Package claims ownership of ${dir_pattern}"
       echo "    Top-level directories should be owned by filesystem package"
       ((ERRORS++))

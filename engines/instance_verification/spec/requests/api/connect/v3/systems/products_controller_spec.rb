@@ -120,7 +120,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           it 'renders an error' do
-            data = JSON.parse(response.body)
+            data = response.parsed_body
             expect(data['error']).to eq('Unexpected instance verification error has occurred')
           end
         end
@@ -143,7 +143,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           it 'renders an error with exception details' do
-            data = JSON.parse(response.body)
+            data = response.parsed_body
             expect(data['error']).to eq('Unexpected instance verification error has occurred')
           end
         end
@@ -195,7 +195,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           it 'renders an error' do
-            data = JSON.parse(response.body)
+            data = response.parsed_body
             expect(data['error']).to eq('Unexpected instance verification error has occurred')
           end
         end
@@ -212,7 +212,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           it 'renders an error with exception details' do
-            data = JSON.parse(response.body)
+            data = response.parsed_body
             expect(data['error']).to eq('Unexpected instance verification error has occurred')
           end
         end
@@ -231,7 +231,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           it 'renders an error with exception details' do
-            data = JSON.parse(response.body)
+            data = response.parsed_body
             expect(data['error']).to eq('Instance verification failed: Custom plugin error')
           end
         end
@@ -313,7 +313,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             let(:product_classes) { [base_product.product_class] }
 
             it 'de-registers system from SCC and reports an error' do
-              data = JSON.parse(response.body)
+              data = response.parsed_body
               expect(data['error']).to eq('Instance verification failed: The product is not available for this instance')
             end
           end
@@ -396,7 +396,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
             let(:product_classes) { [base_product.product_class] }
 
             it 'de-registers system from SCC and reports an error' do
-              data = JSON.parse(response.body)
+              data = response.parsed_body
               expect(data['error']).to eq('Unexpected instance verification error has occurred')
               expect(response).to have_http_status(422)
             end
@@ -520,7 +520,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           context 'when regcode is provided' do
             it 'returns service JSON' do
               # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
-              expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
+              expect(response.parsed_body).to eq(JSON.parse(serialized_service_json))
             end
           end
         end
@@ -561,7 +561,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
           it 'returns service JSON' do
             # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
-            expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
+            expect(response.parsed_body).to eq(JSON.parse(serialized_service_json))
           end
         end
 
@@ -615,8 +615,8 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
           it 'allow the extension' do
             # Compare parsed JSON to avoid encoding issues (UTF-8 vs ASCII-8BIT)
-            expect(JSON.parse(response.body)).to eq(JSON.parse(serialized_service_json))
-            data = JSON.parse(response.body)
+            expect(response.parsed_body).to eq(JSON.parse(serialized_service_json))
+            data = response.parsed_body
             expect(data['name']).to include('Live_Patch')
             expect(data['product']['product_class']).to eq('SLE-LP')
           end
@@ -671,7 +671,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           it 'renders an error' do
-            data = JSON.parse(response.body)
+            data = response.parsed_body
             expect(data['error']).to eq('Unexpected instance verification error has occurred')
           end
         end
@@ -689,7 +689,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           it 'renders an error with exception details' do
-            data = JSON.parse(response.body)
+            data = response.parsed_body
             expect(data['error']).to eq('Unexpected instance verification error has occurred')
           end
         end
@@ -777,7 +777,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
 
           context 'when no regcode is provided' do
             it 'activates the product' do
-              data = JSON.parse(response.body)
+              data = response.parsed_body
               expect(data['product']['free']).to eq(false)
               expect(data['id']).to eq(product.id)
               expect(controller).not_to receive(:update_pubcloud_reg_code)
@@ -843,7 +843,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           it 'renders an error' do
-            data = JSON.parse(response.body)
+            data = response.parsed_body
             expect(data['error']).to eq('Migration target not allowed on this instance type')
           end
         end
@@ -872,7 +872,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           it "doesn't render an error" do
-            data = JSON.parse(response.body)
+            data = response.parsed_body
             expect(data).not_to have_key('error')
           end
         end
@@ -899,7 +899,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           it 'renders an error' do
-            data = JSON.parse(response.body)
+            data = response.parsed_body
             expect(data['error']).to eq('Migration target not allowed on this instance type')
           end
         end
@@ -923,7 +923,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
           end
 
           it 'renders an error' do
-            data = JSON.parse(response.body)
+            data = response.parsed_body
             expect(data).to have_key('error')
           end
         end
@@ -951,7 +951,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
 
         it 'renders an error' do
-          data = JSON.parse(response.body)
+          data = response.parsed_body
           expect(data['error']).to eq('Migration target not allowed on this instance type')
         end
       end
@@ -971,7 +971,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
 
         it 'renders an error' do
-          data = JSON.parse(response.body)
+          data = response.parsed_body
           expect(data['error']).to eq('Migration target not allowed on this instance type')
         end
       end
@@ -996,7 +996,7 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
 
         it "doesn't render an error" do
-          data = JSON.parse(response.body)
+          data = response.parsed_body
           expect(data).not_to have_key('error')
         end
       end

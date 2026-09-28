@@ -19,11 +19,11 @@ gem 'bootsnap', require: false
 gem 'ostruct'
 gem 'csv'
 
-gem 'puma'
-gem 'mysql2'
+gem 'puma', '~> 8'
+gem 'mysql2', '~> 0.5'
 gem 'sqlite3'
 
-gem 'nokogiri'
+gem 'nokogiri', '~> 1'
 gem 'thor'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
