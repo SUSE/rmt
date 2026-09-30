@@ -27,6 +27,10 @@ MYSQL_PORT=${MYSQL_PORT:-3306}
 # create a new proxy each time this is running!)
 SYSTEM_UUID=${SYSTEM_UUID:-$(uuidgen)}
 
+# Determine distro name and version values
+DISTRO_NAME="$(grep '^ID=".*"' /etc/os-release | cut -d= -f 2 | tr -d '"')"
+DISTRO_VERSION="$(grep '^VERSION_ID=".*"' /etc/os-release | cut -d= -f 2 | tr -d '"')"
+
 group() { echo "::group::$1"; }
 groupend() { echo "::groupend::"; }
 fail() { echo "::error::$1"; exit 1; }
@@ -35,6 +39,7 @@ if [ "$SCC_PASSWORD" = "" ] || [ "$SCC_USERNAME" = "" ]; then
   fail "To correctly configure RMT environment variables \$SCC_USERNAME and \$SCC_PASSWORD are required. Check your environment!"
 fi
 
+
 group "setup system uuid"
   echo "saving uuid to /var/lib/rmt/system_uuid"
   mkdir -p /var/lib/rmt/
@@ -42,8 +47,20 @@ group "setup system uuid"
 groupend
 
 group "install rmt-server rpms"
-pushd "$BUILD_DIR/RPMS/x86_64"
-  zypper --non-interactive --no-refresh install --allow-unsigned-rpm "rmt-server-config-${VERSION}"-*.x86_64.rpm "rmt-server-${VERSION}-"*.x86_64.rpm
+pushd "$BUILD_DIR/RPMS/"
+  pkg_list=(
+    "x86_64/rmt-server-config-${VERSION}"-*.x86_64.rpm
+    "x86_64/rmt-server-${VERSION}"-*.x86_64.rpm
+  )
+  case "${DISTRO_NAME}-${DISTRO_VERSION}" in
+    ("sles-15.7")
+      # Don't include ansible-rmt-server on SLE 15 SP7
+      ;;
+    (*)
+      pkg_list+=("noarch/ansible-rmt-server-${VERSION}"-*.noarch.rpm)
+      ;;
+  esac
+  zypper --non-interactive --no-refresh install --allow-unsigned-rpm "${pkg_list[@]}"
 popd
 groupend
 

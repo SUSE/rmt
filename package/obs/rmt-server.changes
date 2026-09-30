@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Sep 29 23:58:23 UTC 2026 - Fergal Mc Carthy <fmccarthy@suse.com>
+
+  * update rmt-server to build for openSUSE Factory (jsc#SCC-848)
+
+-------------------------------------------------------------------
 Thu Sep 17 16:33:16 UTC 2026 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
 
 - Version 3.2
