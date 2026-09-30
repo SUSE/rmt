@@ -19,6 +19,21 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
       perform_update
     end
 
+    # Perform profile processing after system updates so that any errors that
+    # don't need to be re-raised can be safely ignored, just logging a warning
+    # and setting the appropriate response header to tell clients to send full
+    # profiles next time.
+    if params.key?(:system_profiles)
+      begin
+        process_system_profiles(info_params(:system_profiles)[:system_profiles])
+      rescue StandardError => e
+        raise if e.is_a?(ActiveRecord::InvalidForeignKey)
+
+        logger.warn("System profiles updates failed, continuing without them: #{e.message}")
+        response.headers['X-System-Profiles-Action'] = 'clear-cache'
+      end
+    end
+
     respond_with(@system, serializer: ::V3::SystemSerializer)
   rescue ActiveRecord::InvalidForeignKey
     raise system_deregistered_error
@@ -53,24 +68,6 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
     end
 
     @system.hostname = params[:hostname]
-
-    # If a system_profiles param has been provided, process the provided
-    # profiles; if an ActiveRecord::InvalidForeignKey error occurs then
-    # re-raise it to be caught by update method, otherwise set response
-    # header to tell the client to send full profiles next time, and
-    # continue on with the request handling
-    if params.key?(:system_profiles)
-      begin
-        process_system_profiles(info_params(:system_profiles)[:system_profiles])
-      rescue StandardError => e
-        # re-raise ActiveRecord::InvalidForeignKey to be caught by update
-        # method's rescue handling
-        raise if e.is_a?(ActiveRecord::InvalidForeignKey)
-
-        logger.warn("System profiles updates failed, continuing without them: #{e.message}")
-        response.headers['X-System-Profiles-Action'] = 'clear-cache'
-      end
-    end
 
     # Since the payload is handled by rails all values are converted to string
     # e.g. cpus: 16 becomes cpus: "16". We save this as string for now and expect
