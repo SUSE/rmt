@@ -15,7 +15,7 @@ There is no special mechanism needed to run these steps locally. Check the workf
 
 ### CLI feature tests
 
-workflow definition: [.github/workflows/features.yml](.github/workflows/features.yml)
+workflow definition: [.github/workflows/features.yml](../.github/workflows/features.yml)
 
 This workflow runs our simple CLI feature tests und build the rpm beforehand to see the system working with an installed RMT rpm.
 
