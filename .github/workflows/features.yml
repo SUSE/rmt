@@ -9,7 +9,7 @@ name: feature tests
 # See: https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions
 #
 # An alternate would be to set, pull_request_target but this takes the CI code
-# from master removing the ability to change the code in a PR easily.
+# from main removing the ability to change the code in a PR easily.
 #
 # Aditionally, since 2021 pull requests from new contributors will not
 # trigger workflows automatically but will wait for approval from somebody
@@ -17,7 +17,7 @@ name: feature tests
 # See: https://docs.github.com/en/actions/managing-workflow-runs/approving-workflow-runs-from-public-forks
 on:
   pull_request:
-    branches: [rmt_3]
+    branches: [main]
 
 env:
   SOURCE: /usr/src/rmt-server
