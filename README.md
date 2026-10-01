@@ -1,5 +1,6 @@
 # Repository Mirroring Tool
-[![Integration tests](https://github.com/SUSE/rmt/actions/workflows/integrations.yml/badge.svg?branch=main)](https://github.com/SUSE/rmt/actions/workflows/integrations.yml)
+[![Coverage And Unit tests](https://github.com/SUSE/rmt/actions/workflows/lint-unit.yml/badge.svg?branch=main)](https://github.com/SUSE/rmt/actions/workflows/lint-unit.yml)
+[![Feature tests](https://github.com/SUSE/rmt/actions/workflows/features.yml/badge.svg?branch=main)](https://github.com/SUSE/rmt/actions/workflows/features.yml)
 [![Code Climate](https://codeclimate.com/github/SUSE/rmt.png)](https://codeclimate.com/github/SUSE/rmt)
 [![Coverage Status](https://coveralls.io/repos/SUSE/rmt/badge.svg?branch=main&service=github)](https://coveralls.io/github/SUSE/rmt?branch=main)
 
