@@ -45,7 +45,7 @@ From SUSE Linux Enterprise Server 15 onward, only RMT and SUMA are available.
 |Option to [deploy on Kubernetes](https://documentation.suse.com/sles/html/SLES-all/cha-rmt-installation.html#sec-rmt-deploy-kubernetes)|:x:|:heavy_check_mark:|:x:|
 |Easy development setup |:x:|:heavy_check_mark:|:heavy_check_mark:|
 |100% test [coverage](https://coveralls.io/github/SUSE/rmt?branch=main)|:x:|:heavy_check_mark:|:x:|
-|[Plugin functionality](docs/PLUGINS.md)|:x:|:heavy_check_mark:|:heavy_check_mark:|
+|[Plugin functionality](PLUGINS.md)|:x:|:heavy_check_mark:|:heavy_check_mark:|
 |Webserver|Apache2|Nginx|Apache2 and Tomcat|
 |Database|MariaDB|MariaDB|PostgreSQL|
 |Platform|Perl|Ruby|Java and Python|
