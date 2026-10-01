@@ -4,7 +4,7 @@ Our CI setup runs the following steps:
 
 ### Lint and unit tests
 
-workflow definition: [.github/workflows/lint-unit.yml](.github/workflows/lint-unit.yml)
+workflow definition: [.github/workflows/lint-unit.yml](../.github/workflows/lint-unit.yml)
 
 This workflow runs rubocop to check if the source is well formated and afterwards unit tests and engine unit tests. At last it checks
 if version in RMT and the rpm spec file matches.
