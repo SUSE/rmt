@@ -4,7 +4,7 @@ Our CI setup runs the following steps:
 
 ### Lint and unit tests
 
-workflow definition: [.github/workflows/lint-unit.yml](https://github.com/SUSE/rmt/blob/master/.github/workflows/lint-unit.yml)
+workflow definition: [.github/workflows/lint-unit.yml](.github/workflows/lint-unit.yml)
 
 This workflow runs rubocop to check if the source is well formated and afterwards unit tests and engine unit tests. At last it checks
 if version in RMT and the rpm spec file matches.
@@ -15,7 +15,7 @@ There is no special mechanism needed to run these steps locally. Check the workf
 
 ### CLI feature tests
 
-workflow definition: [.github/workflows/features.yml](https://github.com/SUSE/rmt/blob/master/.github/workflows/features.yml)
+workflow definition: [.github/workflows/features.yml](.github/workflows/features.yml)
 
 This workflow runs our simple CLI feature tests und build the rpm beforehand to see the system working with an installed RMT rpm.
 
@@ -43,4 +43,4 @@ $ docker run --rm -it -v $(pwd):/usr/src/rmt-server --network=host $IMAGE bash -
 
 Our CI container is built here: https://build.opensuse.org/package/show/systemsmanagement:SCC:containers/rmt-ci-container
 
-On push to Github master the rebuilt of the container is triggered
+On push to Github main the rebuild of the container is triggered

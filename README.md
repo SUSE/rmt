@@ -1,7 +1,7 @@
 # Repository Mirroring Tool
-[![Integration tests](https://github.com/SUSE/rmt/actions/workflows/integrations.yml/badge.svg?branch=master)](https://github.com/SUSE/rmt/actions/workflows/integrations.yml)
+[![Integration tests](https://github.com/SUSE/rmt/actions/workflows/integrations.yml/badge.svg?branch=main)](https://github.com/SUSE/rmt/actions/workflows/integrations.yml)
 [![Code Climate](https://codeclimate.com/github/SUSE/rmt.png)](https://codeclimate.com/github/SUSE/rmt)
-[![Coverage Status](https://coveralls.io/repos/SUSE/rmt/badge.svg?branch=master&service=github)](https://coveralls.io/github/SUSE/rmt?branch=master)
+[![Coverage Status](https://coveralls.io/repos/SUSE/rmt/badge.svg?branch=main&service=github)](https://coveralls.io/github/SUSE/rmt?branch=main)
 
 This tool allows you to mirror RPM repositories in your own private network.
 Organization (mirroring) credentials are required to mirror SUSE repositories.

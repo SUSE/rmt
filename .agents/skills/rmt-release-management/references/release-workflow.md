@@ -4,9 +4,9 @@ This reference documents the release lifecycle of **rmt-server**, visualizing th
 
 ## Version-Specific Workflows
 
-**RMT 2.x (master branch):** Traditional OBS-only workflow. No git-based package management.
+**RMT 2.x (rmt_2 branch):** Traditional OBS-only workflow. No git-based package management.
 
-**RMT 3.x (rmt_3 branch):** Git-first workflow with OBS integration. See [git-workflow.md](git-workflow.md) for git operations.
+**RMT 3.x (main branch):** Git-first workflow with OBS integration. See [git-workflow.md](git-workflow.md) for git operations.
 
 **Repository Usage:**
 - **src.opensuse.org** + **api.opensuse.org**: openSUSE Factory, Tumbleweed, Leap builds
@@ -16,7 +16,7 @@ This reference documents the release lifecycle of **rmt-server**, visualizing th
 
 ### Phase 1: Preparation & Local Version Update
 
-#### RMT 2.x (master branch) - Traditional OBS
+#### RMT 2.x (rmt_2 branch) - Traditional OBS
 1.  **Update Version Strings:**
     *   Modify `lib/rmt.rb` to reflect the new version.
     *   Modify `package/obs/rmt-server.spec` to match.
@@ -30,7 +30,7 @@ This reference documents the release lifecycle of **rmt-server**, visualizing th
     *   **Environment:** Must use Ruby 2.5.9 (via Docker for RMT 2.x).
     *   **Action:** Run `make dist`.
 
-#### RMT 3.x (rmt_3 branch) - Git-Based
+#### RMT 3.x (main branch) - Git-Based
 1.  **Clone/Update Git Repository:**
     *   **For Factory/Tumbleweed/Leap:** `git clone gitea@src.opensuse.org:systemsmanagement/rmt-server`
     *   **For SLE builds (VPN required):** `git clone gitea@src.suse.de:systemsmanagement/rmt-server`
