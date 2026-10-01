@@ -41,7 +41,7 @@ From SUSE Linux Enterprise Server 15 onward, only RMT and SUMA are available.
 |Custom TLS certificates for web-server|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Clean up data from repositories that are not used any longer|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |Bash completion|:x:|:heavy_check_mark:|:x:|
-|Available on [openSUSE Leap 15](../docs/installation.md#installation-on-opensuse-leap-15)|:x:|:heavy_check_mark:<sup>[2](#self-support)</sup>|:heavy_check_mark: (Uyuni, #self-support)|
+|Available on [openSUSE Leap 15](installation.md#installation-on-opensuse-leap-15)|:x:|:heavy_check_mark:<sup>[2](#self-support)</sup>|:heavy_check_mark: (Uyuni, #self-support)|
 |Option to [deploy on Kubernetes](https://documentation.suse.com/sles/html/SLES-all/cha-rmt-installation.html#sec-rmt-deploy-kubernetes)|:x:|:heavy_check_mark:|:x:|
 |Easy development setup |:x:|:heavy_check_mark:|:heavy_check_mark:|
 |100% test [coverage](https://coveralls.io/github/SUSE/rmt?branch=main)|:x:|:heavy_check_mark:|:x:|
