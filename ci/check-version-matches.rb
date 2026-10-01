@@ -1,8 +1,8 @@
 #! /usr/bin/env ruby
 
 def modified_files
-  `git fetch origin master`
-  `git diff --name-only origin/master`.strip.split "\n"
+  `git fetch origin rmt_2`
+  `git diff --name-only origin/rmt_2`.strip.split "\n"
 end
 
 def spec_version
