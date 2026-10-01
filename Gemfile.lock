@@ -54,7 +54,7 @@ GEM
     base64 (0.3.0)
     benchmark (0.5.0)
     bigdecimal (4.1.2)
-    bootsnap (1.25.0)
+    bootsnap (1.26.0)
       msgpack (~> 1.5)
     builder (3.3.0)
     byebug (13.0.0)
@@ -172,7 +172,7 @@ GEM
     mixlib-shellout (3.4.10)
       chef-utils
     mize (0.6.1)
-    msgpack (1.8.4)
+    msgpack (1.8.5)
     mustache (1.1.2)
     mysql2 (0.5.7)
       bigdecimal
