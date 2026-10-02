@@ -28,7 +28,6 @@ on:
   # which will enable it for all repo branches if set on the default branch.
   workflow_dispatch:
 
-
 env:
   RAILS_ENV: test
 
