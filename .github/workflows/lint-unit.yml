@@ -18,6 +18,11 @@ on:
   pull_request:
     branches: [rmt_2]
 
+  # Per https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule
+  # trigger a run weekly on a Monday at 1am
+  schedule:
+    - cron: '0 1 * * 1'
+
 env:
   RAILS_ENV: test
 
