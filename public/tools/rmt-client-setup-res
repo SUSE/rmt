@@ -71,7 +71,7 @@ while true; do
              ;;
         --product)
              test -z "$2" && usage "Option $1 needs an argument"
-             PARAMS=$(echo "$PARAMS" | sed 's/--product[[:blank:]]*[[:digit:]]*.[[:digit:]]*//')
+             PARAMS=$(echo "$PARAMS" | sed 's/--product[[:blank:]]*[[:digit:]]*\.[[:digit:]]*//')
              EMS_product="$2"
              shift
              ;;
