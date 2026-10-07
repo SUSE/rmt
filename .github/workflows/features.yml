@@ -24,6 +24,12 @@ on:
   schedule:
     - cron: '0 1 * * 1'
 
+  # Per https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow
+  # enable manual triggering of this workflow from https://github.com/SUSE/rmt/actions/workflows/features.yml
+  # which will enable it for all repo branches if set on the default branch.
+  # However, each branch must also have it set to allow it to be triggered.
+  workflow_dispatch:
+
 env:
   SOURCE: /usr/src/rmt-server
   SCC_USERNAME: ${{ secrets.SCC_USERNAME }}
