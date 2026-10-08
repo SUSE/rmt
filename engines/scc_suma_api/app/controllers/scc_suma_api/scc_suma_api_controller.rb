@@ -5,15 +5,21 @@ module SccSumaApi
   REPOSITORY_URL = 'https://scc.suse.com/suma/'.freeze
   CACHED_PRODUCT_TREE_JSON = '/usr/share/rmt/public/suma/product_tree.json'.freeze
 
+  # same pattern StrictAuthentication uses to allow access to those repositories
+  MLM_PRODUCT_IDENTIFIER_PATTERN = '%manager%'.freeze
 
   class SccSumaApiController < ::ApplicationController
-    before_action :is_valid?, only: %w[unscoped_products]
+    before_action :is_valid?, only: %w[unscoped_products repos]
 
     def unscoped_products
       update_cache unless cache_is_valid?
 
       unscoped_products_json = File.read(@unscoped_products_path)
       render status: :ok, json: JSON.parse(unscoped_products_json)
+    end
+
+    def repos
+      render status: :ok, json: entitled_repositories.map { |repository| repository_json(repository) }
     end
 
     def list
@@ -33,19 +39,28 @@ module SccSumaApi
       )
     end
 
-    def is_valid?
-      instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
-      product_hash = {
+    def instance_data
+      @instance_data ||= Base64.decode64(request.headers['X-Instance-Data'].to_s)
+    end
+
+    def product_hash
+      {
         identifier: request.headers['X-INSTANCE-IDENTIFIER'],
         version: request.headers['X-INSTANCE-VERSION'],
         arch: request.headers['X-INSTANCE-ARCH']
       }
-      verification_provider = InstanceVerification.provider.new(
+    end
+
+    def verification_provider
+      @verification_provider ||= InstanceVerification.provider.new(
         logger,
         request,
         product_hash,
         instance_data
         )
+    end
+
+    def is_valid?
       # check auth for registered BYOS systems
       iid = verification_provider.parse_instance_data
       # at this point, we do not know nor is available the login information of the system
@@ -58,6 +73,100 @@ module SccSumaApi
       error = ActionController::TranslatedError.new(N_(e.message))
       error.status = :unprocessable_content
       raise error
+    end
+
+    # repos this update server can actually serve for the caller's entitled products
+    # SCC-sourced (so scc_id is never null), flagged for mirroring, and mirrored at least once
+    def entitled_repositories
+      product_ids = entitled_product_ids
+      return [] if product_ids.empty?
+
+      Repository
+        .only_scc
+        .only_fully_mirrored
+        .joins(:services)
+        .where(services: { product_id: product_ids })
+        .distinct
+        .order(:scc_id)
+    rescue StandardError => e
+      logger.error("Could not resolve the entitled repositories: #{e.message}")
+      []
+    end
+
+    def entitled_product_ids
+      Product
+        .where(product_class: entitled_product_classes)
+        .or(Product.where('identifier LIKE ?', MLM_PRODUCT_IDENTIFIER_PATTERN))
+        .with_release_stage('released')
+        .pluck(:id)
+    end
+
+    # pivot through the caller's subscriptions
+    # the MLM product class grants a subscription, and
+    # that subscription grants every product class the caller is entitled to,
+    # including the versions covered by it, which cannot be
+    # expressed by matching product identifiers or versions
+    def entitled_product_classes
+      product_class = caller_product_class
+
+      if product_class.blank?
+        logger.error('Could not determine the product class of the caller, returning client tools only')
+        return []
+      end
+
+      subscription_ids = Subscription
+        .joins(:product_classes)
+        .where(subscription_product_classes: { product_class: product_class })
+        .pluck(:id)
+
+      if subscription_ids.empty?
+        logger.error("No subscription grants the product class '#{product_class}'")
+        return []
+      end
+
+      SubscriptionProductClass.where(subscription_id: subscription_ids).distinct.pluck(:product_class)
+    end
+
+    def caller_product_class
+      # add_on, if present, is the real product class
+      # the MLM base product is Micro (5.1 and older) or SLES 15 SP7 (5.2), and
+      # neither of those product classes carries the MLM entitlement
+      add_on = verification_provider.add_on
+      return add_on if add_on.present?
+
+      base_product&.product_class
+    rescue InstanceVerification::Exception => e
+      logger.error("Could not determine the add-on product class: #{e.message}")
+      base_product&.product_class
+    end
+
+    def base_product
+      return @base_product if defined?(@base_product)
+
+      @base_product = Product.find_by(
+        identifier: request.headers['X-INSTANCE-IDENTIFIER'],
+        version: Product.clean_up_version(request.headers['X-INSTANCE-VERSION']),
+        arch: request.headers['X-INSTANCE-ARCH']
+      )
+    end
+
+    def repository_json(repository)
+      {
+        id: repository.scc_id,
+        name: repository.name,
+        description: repository.description,
+        url: repository_url(repository),
+        enabled: repository.enabled,
+        autorefresh: repository.autorefresh,
+        installer_updates: repository.installer_updates
+      }
+    end
+
+    def repository_url(repository)
+      # built here instead of through RMT::Misc.make_repo_url: in the public cloud,
+      # zypper_auth monkey-patches that helper to return a plugin:/susecloud URL,
+      # which zypper understands and MLM does not
+      File.join(request.base_url, RMT::DEFAULT_MIRROR_URL_PREFIX, repository.local_path)
     end
 
     def product_tree_json
