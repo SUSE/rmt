@@ -73,8 +73,7 @@ module Registry
         begin
           @client = Registry::AuthenticatedClient.new(login, password, request.remote_ip)
         rescue StandardError
-          logger.info _('Could not find system with login \"%{login}\" and password \"%{password}\"') %
-            { login: login, password: password }
+          logger.info _('Could not find system with login \"%{login}\" and the given password') % { login: login }
           error = ActionController::TranslatedError.new(N_('Please, re-authenticate'))
           error.status = :unauthorized
           render json: { error: error.message }.to_json, status: :unauthorized
