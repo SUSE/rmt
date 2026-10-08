@@ -15,18 +15,18 @@ The release process differs between RMT 2 and RMT 3:
 >
 > | Version | OBS (`api.opensuse.org`) | IBS (`api.suse.de`) | Git branch |
 > |---|---|---|---|
-> | **v2** | `systemsmanagement:SCC:RMT2` | `Devel:SCC:RMT2` | `master` |
-> | **v3** | `systemsmanagement:SCC:RMT` | `Devel:SCC:RMT` | `rmt_3` |
+> | **v2** | `systemsmanagement:SCC:RMT2` | `Devel:SCC:RMT2` | `rmt_2` |
+> | **v3** | `systemsmanagement:SCC:RMT` | `Devel:SCC:RMT` | `main` |
 
-### RMT 2.x (master branch) - Traditional OBS Workflow
-- **Branch:** `master`
+### RMT 2.x (rmt_2 branch) - Traditional OBS Workflow
+- **Branch:** `rmt_2`
 - **Workflow:** OBS-only (no git-based package management) — unchanged; only the project names moved to the `...:RMT2` suffix
 - **Projects:** OBS `systemsmanagement:SCC:RMT2` (openSUSE builds) and IBS `Devel:SCC:RMT2` (SLE maintenance)
 - **Build Targets:** SLE 15 SP4, SP5, SP6, SP7
 - **Process:** Direct OBS/IBS package updates via `osc` commands
 
-### RMT 3.x (rmt_3 branch) - Git-Based Workflow
-- **Branch:** `rmt_3`
+### RMT 3.x (main branch) - Git-Based Workflow
+- **Branch:** `main`
 - **Workflow:** Git-first with OBS integration
 - **Projects:** OBS `systemsmanagement:SCC:RMT` (the main project, now v3-only) and IBS `Devel:SCC:RMT`
 - **Repositories:**
@@ -51,13 +51,13 @@ To streamline the process, ensure the following path is saved in the project mem
 
 ### Version-Specific Constraints
 
-#### RMT 2.x (master branch)
+#### RMT 2.x (rmt_2 branch)
 - **Workflow:** Traditional OBS/IBS (no git package management)
 - **Devel Projects:** OBS `systemsmanagement:SCC:RMT2` (`api.opensuse.org`) and IBS `Devel:SCC:RMT2` (`api.suse.de`)
 - **Target Streams:** Submit Maintenance Requests (MRs) from `Devel:SCC:RMT2` for **SLE 15 SP4** (LTSS until EOL 2026), **SLE 15 SP5** (LTSS until EOL 2027), **SLE 15 SP6**, and **SLE 15 SP7**
 - **Example streams:** `SUSE:SLE-15-SP4:Update`, `SUSE:SLE-15-SP5:Update`, `SUSE:SLE-15-SP6:Update`, `SUSE:SLE-15-SP7:Update`
 
-#### RMT 3.x (rmt_3 branch)
+#### RMT 3.x (main branch)
 - **Workflow:** Git-first with OBS integration
 - **Repository Locations:**
   - **src.opensuse.org:** openSUSE Factory, Tumbleweed, Leap
@@ -92,7 +92,7 @@ To streamline the process, ensure the following path is saved in the project mem
 ### RMT 2.x Only
 For RMT 2.x releases, use the bundled `release.sh` script. This script orchestrates Phases 1 through 5 for the traditional OBS workflow.
 
-**Note:** This script is for RMT 2.x (master branch) only. RMT 3.x requires git-based workflow integration.
+**Note:** This script is for RMT 2.x (rmt_2 branch) only. RMT 3.x requires git-based workflow integration.
 
 ### Usage
 ```bash
@@ -106,7 +106,7 @@ For RMT 2.x releases, use the bundled `release.sh` script. This script orchestra
 - `--streams`: (Optional) Space-separated list of specific IBS streams (e.g., `"SUSE:SLE-15-SP6:Update SUSE:SLE-15-SP7:Update"`). If omitted, defaults to all maintained streams.
 
 **Pre-flight Checks:**
-- Ensure you are on the `master` branch (RMT 2.x).
+- Ensure you are on the `rmt_2` branch (RMT 2.x).
 - Ensure you are in the RMT repository root.
 - Ensure `docker`, `osc`, and `git` are configured.
 
@@ -118,7 +118,7 @@ To update the version across the codebase:
 - **RPM:** Update `Version:` in `package/obs/rmt-server.spec`.
 
 ### 2. Build Source Tarball
-**Environment Requirement:** For RMT 2.x (master branch), the build **must** be executed within the Docker container to ensure Ruby 2.5.9 is used. Modern host environments (e.g., Ruby 3.4+) will fail to compile native extensions for locked gems.
+**Environment Requirement:** For RMT 2.x (rmt_2 branch), the build **must** be executed within the Docker container to ensure Ruby 2.5.9 is used. Modern host environments (e.g., Ruby 3.4+) will fail to compile native extensions for locked gems.
 
 **Pre-flight Checks:**
 - Ensure `public/repo` exists (create if missing: `mkdir -p public/repo`).
@@ -135,7 +135,7 @@ make dist
 
 ### 3. Open Build Service (OBS) Workflow
 
-#### RMT 2.x - Traditional OBS Workflow (master branch)
+#### RMT 2.x - Traditional OBS Workflow (rmt_2 branch)
 **No git package management.** Work directly with OBS:
 
 **Working Copy Setup:**
@@ -153,7 +153,7 @@ make dist
 - Wait for builds to complete: `osc -A https://api.suse.de results --watch`
 - Verify build success for maintained streams before proceeding to release tagging and IBS submissions
 
-#### RMT 3.x - Git-Based Workflow (rmt_3 branch)
+#### RMT 3.x - Git-Based Workflow (main branch)
 **Git-first approach.** Changes go to git repositories first, then sync to OBS.
 
 **Repository Selection:**

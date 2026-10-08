@@ -1,5 +1,34 @@
 require 'simplecov'
 
+unless ENV['NO_COVERAGE']
+
+  simplecov_cmd = ENV.fetch('SIMPLECOV_CMD', 'test:core')
+  if %w[test:core test:engines].include?(simplecov_cmd)
+    SimpleCov.minimum_coverage 100
+    SimpleCov.start do
+      SimpleCov.command_name simplecov_cmd
+      skip '/spec/'
+      skip '/tasks/'
+
+      if simplecov_cmd == 'test:core'
+        # omit registration sharing (removing systems using rmt-cli)
+        skip('engines/registration_sharing/lib/registration_sharing.rb')
+
+        skip('lib/rmt/db.rb')
+        skip('lib/rmt.rb')
+        skip('config')
+
+        cover('app/**/*.rb')
+        cover('lib/**/*.rb')
+        # currently nothing uses application job
+        skip('app/jobs/application_job.rb')
+      else # test:engines
+        cover('engines/**/*.rb')
+      end
+    end
+  end
+end
+
 require 'webmock/rspec'
 # WebMock doesn't allow local access with file:// by default
 WebMock.disable_net_connect!(allow: 'file')

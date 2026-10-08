@@ -96,12 +96,12 @@ WARNING
       result = last_id.execute
       system_id = result.first[0]
 
-      #:nocov:
+      # simplecov:disable
       if (system_id == 0)
         warn _('Failed to import system %{system}') % { system: login }
         next
       end
-      #:nocov:
+      # simplecov:enable
 
       @systems[login] = system_id
 
