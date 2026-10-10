@@ -24,6 +24,106 @@ RSpec.describe Profile, type: :model do
     end
   end
 
+  context 'data serialization' do
+    let(:ptype) { 'test_type' }
+    let(:identifier) { 'test_ident' }
+
+    it 'serializes hash data and returns a hash with symbolized keys' do
+      profile = described_class.create!(
+        profile_type: ptype,
+        identifier: identifier,
+        data: { cpus: 4, mem_total: 16384 }
+      )
+
+      profile.reload
+
+      expect(profile.data).to be_a(Hash)
+      expect(profile.data[:cpus]).to eq(4)
+      expect(profile.data[:mem_total]).to eq(16384)
+    end
+
+    it 'serializes nested hash data with symbolized keys at all levels' do
+      nested_data = {
+        system: {
+          cpu: { cores: 8, threads: 16 },
+          memory: { total: 32768, available: 16384 }
+        }
+      }
+      profile = described_class.create!(
+        profile_type: ptype,
+        identifier: identifier,
+        data: nested_data
+      )
+
+      profile.reload
+
+      expect(profile.data).to be_a(Hash)
+      expect(profile.data[:system][:cpu][:cores]).to eq(8)
+      expect(profile.data[:system][:memory][:total]).to eq(32768)
+    end
+
+    it 'serializes array data' do
+      profile = described_class.create!(
+        profile_type: ptype,
+        identifier: identifier,
+        data: [1, 2, 3]
+      )
+
+      profile.reload
+
+      expect(profile.data).to eq([1, 2, 3])
+    end
+
+    it 'serializes array of hashes with symbolized keys' do
+      array_data = [
+        { name: 'cpu', value: 4 },
+        { name: 'memory', value: 16384 },
+        { name: 'disk', value: 500 }
+      ]
+      profile = described_class.create!(
+        profile_type: ptype,
+        identifier: identifier,
+        data: array_data
+      )
+
+      profile.reload
+
+      expect(profile.data).to be_a(Array)
+      expect(profile.data[0][:name]).to eq('cpu')
+      expect(profile.data[0][:value]).to eq(4)
+      expect(profile.data[1][:name]).to eq('memory')
+      expect(profile.data[1][:value]).to eq(16384)
+    end
+
+    it 'serializes nested arrays with hashes' do
+      nested_array = { systems: [
+        { hostname: 'server1', cpus: 4 },
+        { hostname: 'server2', cpus: 8 }
+      ] }
+      profile = described_class.create!(
+        profile_type: ptype,
+        identifier: identifier,
+        data: nested_array
+      )
+      profile.reload
+
+      expect(profile.data[:systems][0][:hostname]).to eq('server1')
+      expect(profile.data[:systems][1][:cpus]).to eq(8)
+    end
+
+    it 'as_payload returns data as a hash, not a string' do
+      profile = described_class.create!(
+        profile_type: ptype,
+        identifier: identifier,
+        data: { cpus: 4, mem_total: 16384 }
+      )
+
+      payload = profile.as_payload
+      expect(payload.dig(ptype, :data)).to be_a(Hash)
+      expect(payload.dig(ptype, :data)[:cpus]).to eq(4)
+    end
+  end
+
   context 'filter_profiles' do
     let(:profiles) { profile_set_mixed }
 
