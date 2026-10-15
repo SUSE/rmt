@@ -578,6 +578,165 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
       end
     end
+
+    context 'when the first product activation fails' do
+      include_context 'version header', 3
+
+      let(:instance_data) { '<document>{"instanceId": "dummy_instance_data"}</document>' }
+      let(:product) { FactoryBot.create(:product, :product_sles, :with_mirrored_repositories, :with_mirrored_extensions) }
+      let(:activation_payload) do
+        {
+          identifier: product.identifier,
+          version: product.version,
+          arch: product.arch,
+          email: 'foo',
+          token: 'bar'
+        }
+      end
+
+      before do
+        allow(InstanceVerification).to receive(:write_cache_file)
+        allow(File).to receive(:directory?)
+        allow(FileUtils).to receive(:mkdir_p)
+        allow(FileUtils).to receive(:touch)
+      end
+
+      context 'when the system is byos' do
+        include_context 'auth header', :system_byos, :login, :password
+
+        let(:headers) { auth_header.merge(version_header) }
+        let(:system_byos) do
+          FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data, system_token: 'foo')
+        end
+
+        before do
+          stub_request(:post, scc_activate_url)
+            .to_return(
+              status: 401,
+              body: { error: 'No product found on SCC for: foo bar x86_64' }.to_json,
+              headers: {}
+            )
+        end
+
+        context 'when the system was not announced to SCC by this RMT' do
+          it 'removes the announced but unregistered system' do
+            system_byos
+            expect { post url, params: activation_payload, headers: headers }.to change(System, :count).by(-1)
+          end
+
+          it 'does not de-register the system from SCC' do
+            post url, params: activation_payload, headers: headers
+            expect(WebMock).not_to have_requested(:delete, scc_systems_url)
+          end
+
+          it 'renders an error with exception details' do
+            post url, params: activation_payload, headers: headers
+            expect(response.parsed_body['error']).to include('No product found on SCC')
+          end
+        end
+
+        context 'when the system was announced to SCC by this RMT' do
+          let(:system_byos) do
+            FactoryBot.create(
+              :system, :byos, :synced, :with_system_information, instance_data: instance_data, system_token: 'foo'
+            )
+          end
+
+          before do
+            stub_request(:delete, scc_systems_url).to_return(status: 204, body: '', headers: {})
+          end
+
+          it 'de-registers the system from SCC' do
+            post url, params: activation_payload, headers: headers
+            expect(WebMock).to have_requested(:delete, scc_systems_url)
+          end
+
+          it 'removes the announced but unregistered system' do
+            system_byos
+            expect { post url, params: activation_payload, headers: headers }.to change(System, :count).by(-1)
+          end
+        end
+
+        context 'when de-registering the system from SCC fails' do
+          let(:system_byos) do
+            FactoryBot.create(
+              :system, :byos, :synced, :with_system_information, instance_data: instance_data, system_token: 'foo'
+            )
+          end
+
+          before do
+            stub_request(:delete, scc_systems_url)
+              .to_return(status: 500, body: { error: 'Internal Server Error' }.to_json, headers: {})
+          end
+
+          it 'removes the system anyway' do
+            system_byos
+            expect { post url, params: activation_payload, headers: headers }.to change(System, :count).by(-1)
+          end
+
+          it 'reports the original activation error' do
+            post url, params: activation_payload, headers: headers
+            expect(response.parsed_body['error']).to include('No product found on SCC')
+          end
+        end
+
+        context 'when the system already has an activation' do
+          let(:system_byos) do
+            FactoryBot.create(
+              :system, :byos, :synced, :with_system_information, :with_activated_product,
+              instance_data: instance_data, system_token: 'foo'
+            )
+          end
+
+          it 'keeps the system' do
+            system_byos
+            expect { post url, params: activation_payload, headers: headers }.not_to change(System, :count)
+          end
+
+          it 'does not de-register the system from SCC' do
+            post url, params: activation_payload, headers: headers
+            expect(WebMock).not_to have_requested(:delete, scc_systems_url)
+          end
+        end
+      end
+
+      context 'when the product is not supported for the instance' do
+        before do
+          allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+          allow(plugin_double).to receive(:instance_valid?).and_return(true)
+          allow(plugin_double).to receive(:instance_identifier).and_return('foo')
+          allow(plugin_double).to receive(:allowed_extension?).and_return(false)
+        end
+
+        context 'when the system is byos' do
+          include_context 'auth header', :system_byos, :login, :password
+
+          let(:headers) { auth_header.merge(version_header) }
+          let(:system_byos) do
+            FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data, system_token: 'foo')
+          end
+
+          it 'removes the announced but unregistered system' do
+            system_byos
+            expect { post url, params: activation_payload, headers: headers }.to change(System, :count).by(-1)
+          end
+        end
+
+        context 'when the system is payg' do
+          include_context 'auth header', :system_payg, :login, :password
+
+          let(:headers) { auth_header.merge(version_header) }
+          let(:system_payg) do
+            FactoryBot.create(:system, :payg, :with_system_information, instance_data: instance_data)
+          end
+
+          it 'keeps the system, only byos announcements are dropped here' do
+            system_payg
+            expect { post url, params: activation_payload, headers: headers }.not_to change(System, :count)
+          end
+        end
+      end
+    end
   end
 end
 # rubocop:enable RSpec/NestedGroups
