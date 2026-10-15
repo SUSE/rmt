@@ -6,35 +6,39 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rmt 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2019-03-28 18:42+0000\n"
-"Last-Translator: Nikita Maynagashev <maynagashev@palex.ru>\n"
+"PO-Revision-Date: 2026-10-15 17:13+0000\n"
+"Last-Translator: Andrei Stepanov <adem4ik@gmail.com>\n"
 "Language-Team: Russian <https://l10n.opensuse.org/projects/rmt/i18n/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4"
-" && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 3.3\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 2026.10.1\n"
 
 msgid "%s is not yet activated on the system."
 msgstr "Продукт %s еще не активирован в системе."
 
 msgid "%{count} file"
 msgid_plural "%{count} files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%{count} файл"
+msgstr[1] "%{count} файла"
+msgstr[2] "%{count} файлов"
 
 msgid "%{db_entries} database entry"
 msgid_plural "%{db_entries} database entries"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%{db_entries} запись в базе данных"
+msgstr[1] "%{db_entries} записи в базе данных"
+msgstr[2] "%{db_entries} записей в базе данных"
 
 msgid "%{file} - File does not exist"
 msgstr "%{file} — файл не существует"
 
 msgid "%{file} - request failed with HTTP status code %{code}, return code '%{return_code}'"
 msgstr ""
+"%{file} — запрос завершился ошибкой с кодом состояния HTTP %{code}, код "
+"возврата «%{return_code}»"
 
 msgid "%{file} does not exist."
 msgstr "Файл %{file} не существует."
@@ -46,22 +50,19 @@ msgid "%{path} is not writable by user %{username}."
 msgstr "Каталог %{path} недоступен для записи пользователем %{username}."
 
 msgid "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
-msgstr ""
+msgstr "* %{name} (id: %{id}) (%{mandatory}, %{enabled}, %{mirrored_at})"
 
-#, fuzzy
 msgid "A repository by the ID %{id} already exists."
-msgstr "Репозиторий по ссылке URL %{url} уже существует."
+msgstr "Репозиторий с идентификатором %{id} уже существует."
 
-#, fuzzy
 msgid "A repository by the URL %{url} already exists (ID %{id})."
-msgstr "Репозиторий по ссылке URL %{url} уже существует."
+msgstr "Репозиторий по URL-адресу %{url} уже существует (идентификатор %{id})."
 
 msgid "Added association between %{repo} and product %{product}"
 msgstr "Добавлена связь между %{repo} и продуктом %{product}"
 
-#, fuzzy
 msgid "Adding/Updating product %{product}"
-msgstr "Добавление продукта %{product}"
+msgstr "Добавление/обновление продукта %{product}"
 
 msgid "All repositories have already been disabled."
 msgstr "Все репозитории уже отключены."
@@ -71,17 +72,20 @@ msgstr "Все репозитории уже включены."
 
 msgid "Another instance of this command is already running. Terminate the other instance or wait for it to finish."
 msgstr ""
+"Другой экземпляр этой команды уже запущен. Завершите другой экземпляр или "
+"дождитесь его завершения."
 
 #. i18n: architecture
 msgid "Arch"
 msgstr "Архив"
 
-#, fuzzy
 msgid "Architecture"
-msgstr "Архив"
+msgstr "Архитектура"
 
 msgid "Ask for confirmation or do not ask for confirmation and require no user interaction"
 msgstr ""
+"Запрашивать подтверждение или не запрашивать подтверждение и не требовать "
+"взаимодействия с пользователем"
 
 msgid "Attach an existing custom repository to a product"
 msgstr "Прикрепить существующий настраиваемый репозиторий к продукту"
@@ -91,6 +95,9 @@ msgstr "Репозиторий прикреплен к продукту %{produc
 
 msgid "By default, inactive systems are those that have not contacted RMT in any way in the past 3 months. You can override this with the '-b / --before' flag."
 msgstr ""
+"По умолчанию неактивными считаются системы, которые никак не связывались с "
+"RMT за последние 3 месяца. Вы можете переопределить это с помощью флага '-"
+"b / --before'."
 
 msgid "Cannot connect to database server. Ensure its credentials are correctly configured in '%{path}' or configure RMT with YaST ('%{command}')."
 msgstr "Не удается подключиться к серверу баз данных. Проверьте правильность учетных данных в файле %{path} или настройте YaST для RMT (%{command})."
@@ -111,10 +118,10 @@ msgid "Checksum doesn't match"
 msgstr "Не совпадает контрольная сумма"
 
 msgid "Clean cancelled."
-msgstr ""
+msgstr "Очистка отменена."
 
 msgid "Clean dangling files and their database entries"
-msgstr ""
+msgstr "Очистить потерянные файлы и их записи в базе данных"
 
 msgid ""
 "Clean dangling package files based on current repository metadata.\n"
@@ -125,18 +132,28 @@ msgid ""
 "\n"
 "Then, it removes all dangling files from disk along with any associated database entries.\n"
 msgstr ""
+"Очистить потерянные файлы пакетов на основе текущих метаданных репозитория.\n"
+"\n"
+"Эта команда сканирует каталог зеркала на наличие файлов 'repomd.xml', "
+"разбирает\n"
+"файлы метаданных и сравнивает их содержимое с файлами на диске. Файлы, не\n"
+"указанные в метаданных и имеющие возраст не менее 2 дней, считаются "
+"потерянными.\n"
+"\n"
+"Затем она удаляет все потерянные файлы с диска вместе со связанными\n"
+"записями в базе данных.\n"
 
 msgid "Clean dangling package files, based on current repository data."
-msgstr ""
+msgstr "Очистить потерянные файлы пакетов на основе текущих данных репозитория."
 
 msgid "Clean finished. An estimated %{total_file_size} was removed."
-msgstr ""
+msgstr "Очистка завершена. Примерно удалено %{total_file_size}."
 
 msgid "Cleaned %{file_count_text} (%{total_size}), %{db_entries}."
-msgstr ""
+msgstr "Очищено %{file_count_text} (%{total_size}), %{db_entries}."
 
 msgid "Cleaned '%{file_name}' (%{file_size}%{hardlink}), %{db_entries}."
-msgstr ""
+msgstr "Очищено «%{file_name}» (%{file_size}%{hardlink}), %{db_entries}."
 
 msgid "Commands:"
 msgstr "Команды:"
@@ -153,31 +170,31 @@ msgstr "Не удалось создать локальный каталог %{d
 msgid "Could not find system with login \\\"%{login}\\\" and password \\\"%{password}\\\""
 msgstr "Не удалось найти систему с именем пользователя %{login} и паролем %{password}"
 
-#, fuzzy
 msgid "Could not mirror SUSE Manager product tree with error: %{error}"
-msgstr "Не удалось создать зеркальное отображение дерева продукта suma, ошибка: %{error}"
+msgstr ""
+"Не удалось выполнить зеркальное отображение дерева продукта SUSE Manager, "
+"ошибка: %{error}"
 
 msgid "Could not read '%{file}': %{error}"
-msgstr ""
+msgstr "Не удалось прочитать «%{file}»: %{error}"
 
-#, fuzzy
 msgid "Couldn't add custom repository."
-msgstr "Создание пользовательского репозитория."
+msgstr "Не удалось добавить пользовательский репозиторий."
 
 msgid "Couldn't sync %{count} systems."
-msgstr ""
+msgstr "Не удалось синхронизировать систем: %{count}."
 
 msgid "Creates a custom repository."
 msgstr "Создание пользовательского репозитория."
 
 msgid "Deleting locally mirrored files from repository '%{repo}'..."
-msgstr ""
+msgstr "Удаление локально зеркалированных файлов из репозитория «%{repo}»…"
 
 msgid "Description"
-msgstr ""
+msgstr "Описание"
 
 msgid "Description: %{description}"
-msgstr ""
+msgstr "Описание: %{description}"
 
 msgid "Detach an existing custom repository from a product"
 msgstr "Отсоединить существующий пользовательский репозиторий от продукта"
@@ -186,15 +203,17 @@ msgid "Detached repository from product '%{product_name}'."
 msgstr "Репозиторий отсоединен от продукта %{product_name}."
 
 msgid "Directory: %{dir}"
-msgstr ""
+msgstr "Каталог: %{dir}"
 
-#, fuzzy
 msgid "Disable mirroring of custom repositories by a list of IDs"
-msgstr "Отключить зеркальное отображение пользовательского репозитория по идентификатору"
+msgstr ""
+"Отключить зеркальное отображение пользовательских репозиториев по списку "
+"идентификаторов"
 
-#, fuzzy
 msgid "Disable mirroring of custom repository by a list of IDs"
-msgstr "Отключить зеркальное отображение пользовательского репозитория по идентификатору"
+msgstr ""
+"Отключить зеркальное отображение пользовательского репозитория по списку "
+"идентификаторов"
 
 msgid "Disable mirroring of product repositories by a list of product IDs or product strings."
 msgstr "Отключить зеркальное отображение репозиториев продуктов по списку идентификаторов или строк продуктов."
@@ -209,16 +228,21 @@ msgid "Disabling %{product}:"
 msgstr "Отключение продукта %{product}:"
 
 msgid "Displays product with all its repositories and their attributes."
-msgstr ""
+msgstr "Отображает продукт со всеми его репозиториями и их атрибутами."
 
 msgid "Do not ask anything; use default answers automatically. Default: false"
 msgstr ""
+"Ничего не спрашивать; автоматически использовать ответы по умолчанию. По "
+"умолчанию: false"
 
 msgid "Do not fail the command if product is in alpha or beta stage"
 msgstr ""
+"Не завершать команду с ошибкой, если продукт находится в стадии alpha или "
+"beta"
 
 msgid "Do not import system hardware info from MachineData table"
 msgstr ""
+"Не импортировать информацию об оборудовании системы из таблицы MachineData"
 
 msgid "Do not import the systems that were registered to the SMT"
 msgstr "Не импортировать системы, зарегистрированные в SMT"
@@ -227,29 +251,34 @@ msgid "Do you have any suggestions for improvement? We would love to hear from y
 msgstr "Возможно, у вас есть пожелания или вы можете предложить улучшение? Мы будем рады об этом узнать!"
 
 msgid "Do you want to delete these systems?"
-msgstr ""
+msgstr "Вы хотите удалить эти системы?"
 
 msgid "Don't Mirror"
 msgstr "Не выполнять зеркальное отображение"
 
 msgid "Downloading %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
 msgstr ""
+"Загрузка %{file_reference} завершилась с ошибкой %{message}. Повторная "
+"попытка ещё %{retries} раз через %{seconds} секунд"
 
 msgid "Downloading data from SCC"
 msgstr "Выполняется загрузка данных из SCC"
 
 msgid "Downloading repo signature/key failed with: %{message}, HTTP code %{http_code}"
 msgstr ""
+"Загрузка подписи/ключа репозитория завершилась с ошибкой: %{message}, код "
+"HTTP %{http_code}"
 
 msgid "Duplicate entry for system %{system}, skipping"
-msgstr ""
+msgstr "Дублирующаяся запись для системы %{system}, пропуск"
 
 msgid "Enable debug output"
 msgstr "Разрешить вывод данных отладки"
 
-#, fuzzy
 msgid "Enable mirroring of custom repositories by a list of IDs"
-msgstr "Включить зеркальное отображение пользовательского репозитория по идентификатору"
+msgstr ""
+"Включить зеркальное отображение пользовательских репозиториев по списку "
+"идентификаторов"
 
 msgid "Enable mirroring of product repositories by a list of product IDs or product strings."
 msgstr "Включить зеркальное отображение пользовательских репозиториев по списку идентификаторов или строк продуктов."
@@ -270,32 +299,28 @@ msgid "Enabling %{product}:"
 msgstr "Включение продукта %{product}:"
 
 msgid "Enter a value:"
-msgstr ""
+msgstr "Введите значение:"
 
-#, fuzzy
 msgid "Error while mirroring license files: %{error}"
-msgstr "Ошибка при зеркальном отображении лицезнии: %{error}"
+msgstr "Ошибка при зеркальном отображении файлов лицензий: %{error}"
 
 msgid "Error while mirroring metadata: %{error}"
 msgstr "Ошибка при зеркальном отображении метаданных: %{error}"
 
-#, fuzzy
 msgid "Error while mirroring packages: %{error}"
-msgstr "Ошибка при зеркальном отображении лицезнии: %{error}"
+msgstr "Ошибка при зеркальном отображении пакетов: %{error}"
 
-#, fuzzy
 msgid "Error while mirroring repository: %{error}"
-msgstr "Ошибка при зеркальном отображении метаданных: %{error}"
+msgstr "Ошибка при зеркальном отображении репозитория: %{error}"
 
-#, fuzzy
 msgid "Error while moving files %{glob} to %{dest}: %{error}"
-msgstr "Ошибка при переносе каталога из %{src} в %{dest}: %{error}"
+msgstr "Ошибка при перемещении файлов %{glob} в %{dest}: %{error}"
 
 msgid "Examples"
-msgstr ""
+msgstr "Примеры"
 
 msgid "Examples:"
-msgstr ""
+msgstr "Примеры:"
 
 msgid "Export commands for Offline Sync"
 msgstr "Экспорт команд для автономной синхронизации"
@@ -316,25 +341,26 @@ msgid "Exporting subscriptions"
 msgstr "Выполняется экспорт подписок"
 
 msgid "Failed to download %{failed_count} files"
-msgstr ""
+msgstr "Не удалось загрузить файлов: %{failed_count}"
 
 msgid "Failed to export the SUSE Manager product tree: %{error_message}"
 msgstr ""
+"Не удалось экспортировать дерево продукта SUSE Manager: %{error_message}"
 
 msgid "Failed to import system %{system}"
-msgstr ""
+msgstr "Не удалось импортировать систему %{system}"
 
 msgid "Failed to import the suma product tree: %{error_message}"
-msgstr ""
+msgstr "Не удалось импортировать дерево продукта suma: %{error_message}"
 
 msgid "Failed to sync systems: %{error}"
-msgstr ""
+msgstr "Не удалось синхронизировать системы: %{error}"
 
 msgid "Filter BYOS systems using RMT as a proxy"
-msgstr ""
+msgstr "Фильтровать системы BYOS, использующие RMT как прокси"
 
 msgid "Forward registered systems data to SCC"
-msgstr ""
+msgstr "Пересылать данные зарегистрированных систем в SCC"
 
 msgid "Found product by target %{target}: %{products}."
 msgid_plural "Found products by target %{target}: %{products}."
@@ -343,16 +369,16 @@ msgstr[1] "Найдены продукты по целевому значени�
 msgstr[2] "Найдены продукты по целевому значению %{target}: %{products}."
 
 msgid "GPG key import failed"
-msgstr ""
+msgstr "Не удалось импортировать ключ GPG"
 
 msgid "GPG signature verification failed"
-msgstr ""
+msgstr "Не удалось проверить подпись GPG"
 
 msgid "Hardware information stored for system %{system}"
 msgstr "Для системы %{system} сохранена информация об оборудовании"
 
 msgid "Hostname"
-msgstr ""
+msgstr "Имя хоста"
 
 msgid "ID"
 msgstr "ИД"
@@ -373,7 +399,7 @@ msgid "Last mirrored"
 msgstr "Последнее зеркальное отображение"
 
 msgid "Last seen"
-msgstr ""
+msgstr "Последняя активность"
 
 msgid "List all custom repositories"
 msgstr "Вывести список всех пользовательских репозиториев"
@@ -382,13 +408,13 @@ msgid "List all products, including ones which are not marked to be mirrored"
 msgstr "Вывести список всех продуктов, включая те, что не помечены для зеркального отображения"
 
 msgid "List all registered systems"
-msgstr ""
+msgstr "Вывести список всех зарегистрированных систем"
 
 msgid "List all repositories, including ones which are not marked to be mirrored"
 msgstr "Вывести список всех репозиториев, включая те, что не помечены для зеркального отображения"
 
 msgid "List and manipulate registered systems"
-msgstr ""
+msgstr "Просматривать и изменять зарегистрированные системы"
 
 msgid "List and modify custom repositories"
 msgstr "Вывести список пользовательских репозиториев и изменить их"
@@ -400,28 +426,28 @@ msgid "List and modify repositories"
 msgstr "Вывести список репозиториев и изменить их"
 
 msgid "List files during the cleaning process."
-msgstr ""
+msgstr "Перечислять файлы в процессе очистки."
 
 msgid "List products which are marked to be mirrored."
 msgstr "Вывести список продуктов, помеченных для зеркального отображения."
 
 msgid "List registered systems."
-msgstr ""
+msgstr "Вывести список зарегистрированных систем."
 
 msgid "List repositories which are marked to be mirrored"
 msgstr "Вывести список репозиториев, помеченных для зеркального отображения"
 
 msgid "Loading product data from SCC"
-msgstr ""
+msgstr "Загрузка данных о продуктах из SCC"
 
 msgid "Loading repository data from SCC"
-msgstr ""
+msgstr "Загрузка данных о репозиториях из SCC"
 
 msgid "Loading subscription data from SCC"
-msgstr ""
+msgstr "Загрузка данных о подписках из SCC"
 
 msgid "Login"
-msgstr ""
+msgstr "Логин"
 
 msgid "Mandatory"
 msgstr "Обязательно"
@@ -432,17 +458,18 @@ msgstr "Обязательно?"
 msgid "Mirror"
 msgstr "Зеркальное отображение"
 
-#, fuzzy
 msgid "Mirror all enabled repositories"
-msgstr "Зеркальное отображение"
+msgstr "Зеркалировать все включённые репозитории"
 
-#, fuzzy
 msgid "Mirror enabled repositories for a product with given product IDs"
-msgstr "Зеркальное отображение"
+msgstr ""
+"Зеркалировать включённые репозитории для продукта с указанными "
+"идентификаторами продуктов"
 
-#, fuzzy
 msgid "Mirror enabled repositories with given repository IDs"
-msgstr "Зеркальное отображение"
+msgstr ""
+"Зеркалировать включённые репозитории с указанными идентификаторами "
+"репозиториев"
 
 msgid "Mirror repos at given path"
 msgstr "Зеркально отобразить репозитории по указанному пути"
@@ -456,24 +483,20 @@ msgstr "Зеркально отобразить репозитории"
 msgid "Mirror?"
 msgstr "Выполнить зеркальное отображение?"
 
-#, fuzzy
 msgid "Mirroring SUMA product tree failed: %{error_message}"
-msgstr "Зеркальное отображение"
+msgstr "Не удалось зеркалировать дерево продукта SUMA: %{error_message}"
 
 msgid "Mirroring SUSE Manager product tree to %{dir}"
 msgstr "Выполняется зеркальное отображение дерева продуктов SUSE Manager в каталог %{dir}"
 
-#, fuzzy
 msgid "Mirroring complete."
-msgstr "Зеркальное отображение"
+msgstr "Зеркалирование завершено."
 
-#, fuzzy
 msgid "Mirroring completed with errors."
-msgstr "Зеркальное отображение"
+msgstr "Зеркалирование завершено с ошибками."
 
-#, fuzzy
 msgid "Mirroring of repository with ID %{repo_id} is not enabled"
-msgstr "Зеркальное отображение"
+msgstr "Зеркалирование репозитория с идентификатором %{repo_id} не включено"
 
 msgid "Mirroring repository %{repo} to %{dir}"
 msgstr "Выполняется зеркальное отображение репозитория %{repo} в каталог %{dir}"
@@ -494,7 +517,7 @@ msgid "No custom repositories found."
 msgstr "Пользовательские репозитории не найдены."
 
 msgid "No dangling packages have been found!"
-msgstr ""
+msgstr "Потерянных пакетов не найдено!"
 
 msgid "No matching products found in the database."
 msgstr "В базе данных не найдено соответствующих продуктов."
@@ -520,31 +543,35 @@ msgstr "Нет включенных репозиториев."
 msgid "No repositories found for product: %s"
 msgstr "Не найдены репозитории для продукта %s"
 
-#, fuzzy
 msgid "No repository IDs supplied"
-msgstr "Не указаны идентификаторы репозиториев"
+msgstr "Идентификаторы репозиториев не указаны"
 
 msgid "No subscription found with this registration code"
-msgstr ""
+msgstr "Подписка с этим регистрационным кодом не найдена"
 
 msgid "Not Mandatory"
 msgstr "Необязательно"
 
-#, fuzzy
 msgid "Not all mandatory repositories are mirrored for product %s. Missing Repositories (by ids): %s. On the RMT server, the missing repositories can be enabled with: rmt-cli repos enable %s;  rmt-cli mirror"
-msgstr "Зеркальное отображение выполнено не для всех обязательных репозиториев продукта %s"
+msgstr ""
+"Не все обязательные репозитории зеркалированы для продукта %s. Отсутствующие "
+"репозитории (по идентификаторам): %s. На сервере RMT отсутствующие "
+"репозитории можно включить с помощью: rmt-cli repos enable %s;  rmt-cli "
+"mirror"
 
 msgid "Not yet activated Registration Code. Visit https://scc.suse.com to activate it."
 msgstr "Код регистрации еще не активирован. Чтобы активировать его, зайдите на страницу https://scc.suse.com."
 
 msgid "Now, it will parse all repomd.xml files, search for dangling packages on disk and clean them."
 msgstr ""
+"Теперь будут разобраны все файлы repomd.xml, выполнен поиск потерянных "
+"пакетов на диске и их очистка."
 
 msgid "Number of systems to display"
-msgstr ""
+msgstr "Количество отображаемых систем"
 
 msgid "Only '%{input}' will be accepted."
-msgstr ""
+msgstr "Будет принято только «%{input}»."
 
 msgid "Only enabled products are shown by default. Use the '%{command}' option to see all products."
 msgstr "По умолчанию отображаются только включенные продукты. Чтобы увидеть все продукты, воспользуйтесь параметром %{command}."
@@ -559,14 +586,16 @@ msgid "Path to unpacked SMT data tarball"
 msgstr "Путь к tarball незапакованных данных SMT"
 
 msgid "Please answer"
-msgstr ""
+msgstr "Пожалуйста, ответьте"
 
-#, fuzzy
 msgid "Please provide a non-numeric ID for your custom repository."
-msgstr "ИД"
+msgstr ""
+"Укажите нецифровой идентификатор для вашего пользовательского репозитория."
 
 msgid "Poking %{file_reference} failed with %{message}. Retrying %{retries} more times after %{seconds} seconds"
 msgstr ""
+"Проверка %{file_reference} завершилась с ошибкой %{message}. Повторная "
+"попытка ещё %{retries} раз через %{seconds} секунд"
 
 msgid "Product"
 msgstr "Продукт"
@@ -597,9 +626,8 @@ msgstr ""
 "однако найти указанный продукт не удалось. Чтобы прикрепить репозиторий к другому продукту,\n"
 "воспользуйтесь командой %{command}.\n"
 
-#, fuzzy
 msgid "Product %{target} has no repositories enabled"
-msgstr "Продукт"
+msgstr "У продукта %{target} нет включённых репозиториев"
 
 msgid "Product Architecture"
 msgstr "Архитектура продукта"
@@ -610,117 +638,118 @@ msgstr "Идентификатор продукта"
 msgid "Product Name"
 msgstr "Название продукта"
 
-#, fuzzy
 msgid "Product String"
-msgstr "Продукт"
+msgstr "Строка продукта"
 
 msgid "Product Version"
 msgstr "Версия продукта"
 
-#, fuzzy
 msgid "Product architecture (e.g., x86_64, aarch64)"
-msgstr "Продукт"
+msgstr "Архитектура продукта (например, x86_64, aarch64)"
 
 msgid "Product by ID %{id} not found."
 msgstr "Не удалось найти продукт с идентификатором %{id}."
 
-#, fuzzy
 msgid "Product for target %{target} not found"
-msgstr "Продукт"
+msgstr "Продукт для цели %{target} не найден"
 
-#, fuzzy
 msgid "Product name (e.g., Basesystem, SLES)"
-msgstr "Продукт"
+msgstr "Имя продукта (например, Basesystem, SLES)"
 
-#, fuzzy
 msgid "Product version (e.g., 15, 15.1, '12 SP4')"
-msgstr "Продукт"
+msgstr "Версия продукта (например, 15, 15.1, «12 SP4»)"
 
-#, fuzzy
 msgid "Product with ID %{target} not found"
-msgstr "Не удалось найти продукт с идентификатором %{id}."
+msgstr "Продукт с идентификатором %{target} не найден"
 
-#, fuzzy
 msgid "Product: %{name} (ID: %{id})"
-msgstr "Продукт"
+msgstr "Продукт: %{name} (ID: %{id})"
 
-#, fuzzy
 msgid "Products"
-msgstr "Продукт"
+msgstr "Продукты"
 
-#, fuzzy
 msgid "Provide a custom ID instead of allowing RMT to generate one."
-msgstr "ИД"
+msgstr ""
+"Укажите пользовательский идентификатор вместо того, чтобы позволить RMT "
+"сгенерировать его."
 
 msgid "RMT found locally mirrored files from the following repositories which are not marked to be mirrored:"
 msgstr ""
+"RMT обнаружил локально зеркалированные файлы из следующих репозиториев, "
+"которые не помечены как зеркалируемые:"
 
 msgid "RMT found no repomd.xml files. Check if RMT is properly configured."
 msgstr ""
+"RMT не обнаружил файлов repomd.xml. Проверьте, правильно ли настроен RMT."
 
 msgid "RMT found repomd.xml files: %{repomd_count}."
-msgstr ""
+msgstr "RMT обнаружил файлов repomd.xml: %{repomd_count}."
 
 msgid "RMT has not been synced to SCC yet. Please run '%{command}' before"
 msgstr "RMT еще не синхронизировано с SCC. Сначала выполните команду %{command}."
 
 msgid "RMT only found locally mirrored files of repositories that are marked to be mirrored."
 msgstr ""
+"RMT обнаружил только локально зеркалированные файлы репозиториев, помеченных "
+"как зеркалируемые."
 
 msgid "RMT will mirror the specified repositories in %{file} to PATH, usually a portable storage device."
 msgstr ""
+"RMT выполнит зеркалирование указанных репозиториев из %{file} в PATH, обычно "
+"на портативное запоминающее устройство."
 
 msgid "Read SCC data from given path"
 msgstr "Прочитать данные SCC по указанному пути"
 
 msgid "Registration time"
-msgstr ""
+msgstr "Время регистрации"
 
 msgid "Release Stage"
-msgstr ""
+msgstr "Стадия выпуска"
 
 msgid "Remove a custom repository"
 msgstr "Удалить пользовательский репозиторий"
 
 msgid "Remove systems before the given date (format: \"<year>-<month>-<day>\")"
-msgstr ""
+msgstr "Удалить системы до указанной даты (формат: «<год>-<месяц>-<день>»)"
 
 msgid "Removed custom repository by ID %{id}."
 msgstr "Пользовательский репозиторий с идентификатором %{id} удален."
 
 msgid "Removes a system and its activations from RMT"
-msgstr ""
+msgstr "Удаляет систему и её активации из RMT"
 
 msgid "Removes a system and its activations from RMT."
-msgstr ""
+msgstr "Удаляет систему и её активации из RMT."
 
 msgid "Removes inactive systems"
-msgstr ""
+msgstr "Удаляет неактивные системы"
 
 msgid "Removes locally mirrored files of repositories which are not marked to be mirrored"
 msgstr ""
+"Удаляет локально зеркалированные файлы репозиториев, которые не помечены как "
+"зеркалируемые"
 
 msgid "Removes old systems and their activations if they are inactive."
-msgstr ""
+msgstr "Удаляет старые системы и их активации, если они неактивны."
 
 msgid "Removing obsolete repositories"
-msgstr ""
+msgstr "Удаление устаревших репозиториев"
 
 msgid "Repositories are not available for this product."
-msgstr ""
+msgstr "Репозитории недоступны для этого продукта."
 
 msgid "Repositories:"
-msgstr ""
+msgstr "Репозитории:"
 
 msgid "Repository %{repo} was not found in RMT database, perhaps you no longer have a valid subscription for it"
 msgstr "Не удалось найти репозиторий%{repo} в базе данных RMT. Возможно, для него отсутствует действующая подписка."
 
 msgid "Repository '%{repo_name}' (%{repo_id}): %{error_message}"
-msgstr ""
+msgstr "Репозиторий «%{repo_name}» (%{repo_id}): %{error_message}"
 
-#, fuzzy
 msgid "Repository by ID %{id} not found."
-msgstr "Не удалось найти продукт с идентификатором %{id}."
+msgstr "Репозиторий с идентификатором %{id} не найден."
 
 msgid "Repository by ID %{id} successfully disabled."
 msgstr "Репозиторий с идентификатором %{id} успешно отключен."
@@ -728,33 +757,29 @@ msgstr "Репозиторий с идентификатором %{id} успе�
 msgid "Repository by ID %{id} successfully enabled."
 msgstr "Репозиторий с идентификатором %{id} успешно включен."
 
-#, fuzzy
 msgid "Repository by ID %{repos} could not be found and was not disabled."
 msgid_plural "Repositories by IDs %{repos} could not be found and were not disabled."
-msgstr[0] "Не удалось найти и отключить репозиторий %{repos}."
-msgstr[1] "Не удалось найти и отключить репозитории %{repos}."
-msgstr[2] "Не удалось найти и отключить репозитории %{repos}."
+msgstr[0] "Репозиторий с идентификатором %{repos} не найден и не был отключён."
+msgstr[1] "Репозитории с идентификаторами %{repos} не найдены и не были отключены."
+msgstr[2] "Репозитории с идентификаторами %{repos} не найдены и не были отключены."
 
-#, fuzzy
 msgid "Repository by ID %{repos} could not be found and was not enabled."
 msgid_plural "Repositories by IDs %{repos} could not be found and were not enabled."
-msgstr[0] "Не удалось найти и включить репозиторий %{repos}."
-msgstr[1] "Не удалось найти и включить репозитории %{repos}."
-msgstr[2] "Не удалось найти и включить репозитории %{repos}."
+msgstr[0] "Репозиторий с идентификатором %{repos} не найден и не был включён."
+msgstr[1] "Репозитории с идентификаторами %{repos} не найдены и не были включены."
+msgstr[2] "Репозитории с идентификаторами %{repos} не найдены и не были включены."
 
 msgid "Repository metadata signatures are missing"
 msgstr "Отсутствуют подписи метаданных репозитория"
 
-#, fuzzy
 msgid "Repository with ID %{repo_id} not found"
-msgstr "ИД"
+msgstr "Репозиторий с идентификатором %{repo_id} не найден"
 
-#, fuzzy
 msgid "Request URL"
-msgstr "URL-адрес"
+msgstr "URL-адрес запроса"
 
 msgid "Request error:"
-msgstr ""
+msgstr "Ошибка запроса:"
 
 msgid "Requested service not found"
 msgstr "Запрошенная служба не найдена"
@@ -763,13 +788,13 @@ msgid "Required parameters are missing or empty: %s"
 msgstr "Требуемые параметры отсутствуют или пустые: %s"
 
 msgid "Response HTTP status code"
-msgstr ""
+msgstr "Код состояния HTTP ответа"
 
 msgid "Response body"
-msgstr ""
+msgstr "Тело ответа"
 
 msgid "Response headers"
-msgstr ""
+msgstr "Заголовки ответа"
 
 msgid "Run '%{command}' for more information on a command and its subcommands."
 msgstr "Чтобы получить дополнительные сведения о команде и ее вложенных командах, выполните команду %{command}."
@@ -778,12 +803,11 @@ msgid "Run '%{command}' to synchronize with your SUSE Customer Center data first
 msgstr "Сначала выполните команду %{command}, чтобы синхронизировать данные центра SUSE Customer Center."
 
 msgid "Run the clean process without actually removing files."
-msgstr ""
+msgstr "Запустить процесс очистки без фактического удаления файлов."
 
 msgid "Run this command on an online RMT."
-msgstr ""
+msgstr "Выполните эту команду на подключённом к сети RMT."
 
-#, fuzzy
 msgid ""
 "SCC API request failed. Error details:\n"
 "Request URL: %{url}\n"
@@ -791,13 +815,19 @@ msgid ""
 "Return code: %{return_code}\n"
 "Response body:\n"
 "%{body}"
-msgstr "URL-адрес"
+msgstr ""
+"Запрос к API SCC завершился ошибкой. Подробности ошибки:\n"
+"URL-адрес запроса: %{url}\n"
+"Код ответа: %{code}\n"
+"Код возврата: %{return_code}\n"
+"Тело ответа:\n"
+"%{body}"
 
 msgid "SCC credentials not set."
-msgstr ""
+msgstr "Учётные данные SCC не заданы."
 
 msgid "Scanning the mirror directory for 'repomd.xml' files..."
-msgstr ""
+msgstr "Сканирование каталога зеркала на наличие файлов 'repomd.xml'…"
 
 msgid "Settings saved at %{file}."
 msgstr "Настройки сохранены в файле %{file}."
@@ -807,6 +837,8 @@ msgstr "Показать версию RMT"
 
 msgid "Showing last %{limit} registrations. Use the '--all' option to see all registered systems."
 msgstr ""
+"Показаны последние регистраций: %{limit}. Используйте параметр '--all', "
+"чтобы увидеть все зарегистрированные системы."
 
 msgid "Shows products attached to a custom repository"
 msgstr "Отображение продуктов, подключенных к пользовательскому репозиторию"
@@ -821,63 +853,78 @@ msgid "Successfully added custom repository."
 msgstr "Пользовательский репозиторий успешно добавлен."
 
 msgid "Successfully removed system with login %{login}."
-msgstr ""
+msgstr "Система с логином %{login} успешно удалена."
 
 msgid "Sync database with SUSE Customer Center"
 msgstr "Синхронизировать базу данных с центром SUSE Customer Center"
 
 msgid "Syncing %{count} updated system(s) to SCC"
-msgstr ""
+msgstr "Синхронизация обновлённых систем с SCC: %{count}"
 
 msgid "Syncing de-registered system %{scc_system_id} to SCC"
-msgstr ""
+msgstr "Синхронизация снятой с регистрации системы %{scc_system_id} с SCC"
 
 msgid "Syncing systems to SCC is disabled by the configuration file, exiting."
-msgstr ""
+msgstr "Синхронизация систем с SCC отключена в файле конфигурации, выход."
 
 msgid "System %{system} not found"
 msgstr "Система %{system} не найдена"
 
 msgid "System with login %{login} cannot be removed."
-msgstr ""
+msgstr "Система с логином %{login} не может быть удалена."
 
 msgid "System with login %{login} not found."
-msgstr ""
+msgstr "Система с логином %{login} не найдена."
 
-#, fuzzy
 msgid "System with login \\\"%{login}\\\" (ID %{new_id}) authenticated and duplicated from ID %{base_id} due to token mismatch"
-msgstr "ИД"
+msgstr ""
+"Система с логином \\\"%{login}\\\" (ID %{new_id}) аутентифицирована и "
+"продублирована из ID %{base_id} из-за несовпадения токенов"
 
 msgid "System with login \\\"%{login}\\\" authenticated with token \\\"%{system_token}\\\""
 msgstr ""
+"Система с логином \\\"%{login}\\\" аутентифицирована с токеном \\\"%"
+"{system_token}\\\""
 
 msgid "System with login \\\"%{login}\\\" authenticated without token header"
 msgstr ""
+"Система с логином \\\"%{login}\\\" аутентифицирована без заголовка токена"
 
-#, fuzzy
 msgid "The RMT database has not yet been initialized. Run '%{command}' to set up the database."
-msgstr "База данных RMT еще не инициализирована. Чтобы настроить ее, выполните команду %{command}."
+msgstr ""
+"База данных RMT ещё не инициализирована. Выполните «%{command}», чтобы "
+"настроить базу данных."
 
 msgid "The SCC credentials are not configured correctly in '%{path}'. You can obtain them from %{url}"
 msgstr "Учетные данные SCC не настроены должным образом по пути %{path}. Их можно получить по URL-адресу %{url}."
 
 msgid "The command will list the candidates for removal and will ask for confirmation. You can tell this subcommand to go ahead without asking with the '--no-confirmation' flag."
 msgstr ""
+"Команда выведет список кандидатов на удаление и запросит подтверждение. Вы "
+"можете указать этой подкоманде продолжить без запроса с помощью флага '--no-"
+"confirmation'."
 
 msgid "The following errors occurred while mirroring:"
-msgstr ""
+msgstr "Во время зеркалирования произошли следующие ошибки:"
 
 msgid "The given date does not follow the proper format. Ensure it follows this format '<year>-<month>-<day>'."
 msgstr ""
+"Указанная дата не соответствует требуемому формату. Убедитесь, что она "
+"соответствует формату «<год>-<месяц>-<день>»."
 
 msgid "The product \"%s\" is a base product and cannot be deactivated"
 msgstr "Продукт %s является базовым, и его нельзя деактивировать"
 
 msgid "The product you are attempting to activate (%{product}) is not available on your system's base product (%{system_base}). %{product} is available on %{required_bases}."
 msgstr ""
+"Продукт, который вы пытаетесь активировать (%{product}), недоступен для "
+"базового продукта вашей системы (%{system_base}). %{product} доступен для %"
+"{required_bases}."
 
 msgid "The product you are attempting to activate (%{product}) requires one of these products to be activated first: %{required_bases}"
 msgstr ""
+"Продукт, который вы пытаетесь активировать (%{product}), требует "
+"предварительной активации одного из следующих продуктов: %{required_bases}"
 
 msgid "The requested product '%s' is not activated on this system."
 msgstr "Запрошенный продукт %s не активирован в этой системе."
@@ -887,12 +934,16 @@ msgstr "Запрошенные продукты %s не активированы
 
 msgid "The specified PATH must contain a %{file} file. An offline RMT can create this file with the command '%{command}'."
 msgstr ""
+"Указанный PATH должен содержать файл %{file}. Автономный RMT может создать "
+"этот файл с помощью команды «%{command}»."
 
 msgid "The subscription with the provided Registration Code does not include the requested product '%s'"
 msgstr ""
+"Подписка с указанным регистрационным кодом не включает запрошенный продукт "
+"«%s»"
 
 msgid "The subscription with the provided Registration Code is expired"
-msgstr ""
+msgstr "Срок действия подписки с указанным регистрационным кодом истёк"
 
 msgid ""
 "There are activated extensions/modules on this system that cannot be migrated. \n"
@@ -901,43 +952,52 @@ msgid ""
 "You can deactivate them with \n"
 "%s"
 msgstr ""
+"В этой системе есть активированные расширения/модули, которые не могут быть "
+"перенесены. \n"
+"Сначала деактивируйте их, затем повторите попытку миграции. \n"
+"Это продукты «%s». \n"
+"Деактивировать их можно с помощью \n"
+"%s"
 
 msgid "There are no repositories marked for mirroring."
 msgstr "Отсутствуют репозитории, помеченные для зеркального отображения."
 
 msgid "There are no systems registered to this RMT instance."
-msgstr ""
+msgstr "К этому экземпляру RMT не зарегистрировано ни одной системы."
 
 msgid "This can take several minutes. Would you like to continue and clean dangling packages?"
 msgstr ""
+"Это может занять несколько минут. Хотите продолжить и очистить потерянные "
+"пакеты?"
 
 msgid "To clean up downloaded files, please run '%{command}'"
-msgstr ""
+msgstr "Чтобы очистить загруженные файлы, выполните «%{command}»"
 
 msgid "To clean up downloaded files, run '%{command}'"
-msgstr ""
+msgstr "Чтобы очистить загруженные файлы, выполните «%{command}»"
 
 msgid "To target a system for removal, use the command \"%{command}\" for a list of systems with their corresponding logins."
 msgstr ""
+"Чтобы выбрать систему для удаления, используйте команду «%{command}» для "
+"получения списка систем с соответствующими логинами."
 
-#, fuzzy
 msgid "Total Mirror Time: %{time}"
-msgstr "Зеркальное отображение"
+msgstr "Общее время зеркалирования: %{time}"
 
 msgid "Total mirrored repositories: %{repo_count}"
-msgstr ""
+msgstr "Всего зеркалированных репозиториев: %{repo_count}"
 
 msgid "Total transferred file size: %{files_size}"
-msgstr ""
+msgstr "Общий размер переданных файлов: %{files_size}"
 
 msgid "Total transferred files: %{files_count}"
-msgstr ""
+msgstr "Всего переданных файлов: %{files_count}"
 
 msgid "Total: cleaned %{total_count} (%{total_size}), %{total_db_entries}."
-msgstr ""
+msgstr "Всего: очищено %{total_count} (%{total_size}), %{total_db_entries}."
 
 msgid "Try to access non existing temporary directory %{name}"
-msgstr ""
+msgstr "Попытка доступа к несуществующему временному каталогу %{name}"
 
 msgid "URL"
 msgstr "URL-адрес"
@@ -961,55 +1021,53 @@ msgid "Updating subscriptions"
 msgstr "Выполняется обновление подписок"
 
 msgid "Uptime data is malformed '%s'"
-msgstr ""
+msgstr "Данные о времени работы имеют неверный формат «%s»"
 
 msgid "Version"
 msgstr "Версия"
 
 msgid "Would you like to continue and remove the locally mirrored files of these repositories?"
 msgstr ""
+"Хотите продолжить и удалить локально зеркалированные файлы этих репозиториев?"
 
 msgid "curl return code"
-msgstr ""
+msgstr "Код возврата curl"
 
 msgid "curl return message"
-msgstr ""
+msgstr "Сообщение возврата curl"
 
 msgid "enabled"
-msgstr ""
+msgstr "включён"
 
 msgid "hardlink"
-msgstr ""
+msgstr "жёсткая ссылка"
 
 msgid "importing data from SMT."
 msgstr "выполняется импорт данных из SMT."
 
-#, fuzzy
 msgid "mandatory"
-msgstr "Обязательно"
+msgstr "обязательный"
 
 msgid "mirrored at %{time}"
-msgstr ""
+msgstr "зеркалировано в %{time}"
 
 msgid "n"
-msgstr ""
+msgstr "н"
 
-#, fuzzy
 msgid "non-mandatory"
-msgstr "Необязательно"
+msgstr "необязательный"
 
 msgid "not enabled"
-msgstr ""
+msgstr "не включён"
 
-#, fuzzy
 msgid "not mirrored"
-msgstr "Последнее зеркальное отображение"
+msgstr "не зеркалировано"
 
 msgid "repository by URL %{url} does not exist in database"
 msgstr "репозиторий с URL-адресом %{url} не существует в базе данных"
 
 msgid "y"
-msgstr ""
+msgstr "д"
 
 msgid "yes"
-msgstr ""
+msgstr "да"
