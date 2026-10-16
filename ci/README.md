@@ -39,6 +39,51 @@ $ docker run --rm -it -v $(pwd):/usr/src/rmt-server $IMAGE 'ci/rmt-build-rpm'
 $ docker run --rm -it -v $(pwd):/usr/src/rmt-server --network=host $IMAGE bash -c 'ci/rmt-build-rpm && ci/rmt-configure && ci/rmt-run-feature-tests'
 ```
 
+### systemd based Feature Tests
+
+workflow definition: [.github/workflows/systemd-features.yml](../.github/workflows/systemd-features.yml)
+
+This workflow runs feature tests inside a systemd-enabled container.
+Two distro variants are tested via a matrix: openSUSE Tumbleweed (Ruby 4.0)
+and SLE 16.0 (Ruby 3.4).
+
+To facilitate this it builds the RMT rpms and then installs them, which
+should pull in any dependencies such as MariaDB. Further systemd is used,
+where possible, to manage the full service lifecycle (MariaDB → RMT
+migration → RMT server) allowing this test workflow to simulate a real
+production deployment path.
+
+**Running it locally via Makefile**
+
+```bash
+# ensure the .env file is setup appropriately
+$ if [[ ! -e .env ]]; then cp .env.example .env; ${EDITOR:-vi} .env; fi
+
+# Full pipeline (default: SLE 16.0)
+$ make ci-all
+
+# Full pipeline for openSUSE Tumbleweed
+$ make ci-all CI_DISTRO=tumbleweed
+
+# Step-by-step (for debugging, default SLE 16.0)
+$ make ci-env-check      # Confirms that CI required environment variables are set
+$ make ci-build          # Build the CI Docker image
+$ make ci-up             # Start the systemd container
+$ make ci-wait           # Wait for systemd to be fully initialized
+$ make ci-start-mariadb  # Initialize and start MariaDB (depends on ci-wait)
+$ make ci-setup-database # Create the RMT database user
+$ make ci-build-rpms     # Install Ruby deps, build RPMs, validate packaging
+$ make ci-install-rpms   # Install RPMs, create config, set up database
+$ make ci-tests          # Run feature tests
+$ make ci-down           # Stop and remove the container
+$ make ci-shell          # Open interactive shell in the container
+$ make ci-logs           # Follow container logs
+$ make ci-status         # Show container status
+
+# Step-by-step for openSUSE Tumbleweed
+$ make ci-all CI_DISTRO=tumbleweed
+```
+
 ### The CI container
 
 Our CI container is built here: https://build.opensuse.org/package/show/systemsmanagement:SCC:containers/rmt-ci-container
