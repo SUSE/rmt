@@ -58,10 +58,13 @@ jobs:
             --privileged \
             --cgroupns=host \
             -v /sys/fs/cgroup:/sys/fs/cgroup:rw \
-            -v $GITHUB_WORKSPACE:$SOURCE \
             -e SYSTEMD_REGENERATE_USER_UNITS=true \
             ${{ matrix.image }} \
             /usr/sbin/init
+
+      - name: copy source into container
+        run: |
+          docker cp $GITHUB_WORKSPACE/. ${{ matrix.container }}:$SOURCE
 
       - name: wait for systemd to be ready
         run: |
