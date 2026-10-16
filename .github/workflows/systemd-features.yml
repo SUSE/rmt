@@ -55,8 +55,8 @@ jobs:
 
       - name: Push to GHCR
         run: |
-          docker tag ${{ matrix.image }} ghcr.io/${{ github.repository }}/${{ matrix.image }}:${{ github.sha }}
-          docker push ghcr.io/${{ github.repository }}/${{ matrix.image }}:${{ github.sha }}
+          docker tag ${{ matrix.image }} ghcr.io/suse/rmt/${{ matrix.image }}:${{ github.sha }}
+          docker push ghcr.io/suse/rmt/${{ matrix.image }}:${{ github.sha }}
 
   feature-tests:
     needs: build-image
@@ -75,7 +75,7 @@ jobs:
       run:
         working-directory: ${{ env.SOURCE }}
     container:
-      image: ghcr.io/${{ github.repository }}/${{ matrix.image }}:${{ github.sha }}
+      image: ghcr.io/suse/rmt/${{ matrix.image }}:${{ github.sha }}
       options: --privileged
     steps:
       - uses: actions/checkout@v4
@@ -178,9 +178,9 @@ jobs:
       - name: Delete GHCR image
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          ghcr_image="ghcr.io/${{ github.repository }}/${{ matrix.image }}:${{ github.sha }}"
+          ghcr_image="ghcr.io/suse/rmt/${{ matrix.image }}:${{ github.sha }}"
           docker rmi $ghcr_image || true
           # Delete from GHCR using the API
           gh api --method DELETE \
-            /repos/${{ github.repository }}/packages/container/${{ matrix.image }}/versions/${{ github.sha }} \
+            /repos/suse/rmt/packages/container/${{ matrix.image }}/versions/${{ github.sha }} \
             -f accept=application/vnd.github+json || true
