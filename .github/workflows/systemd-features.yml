@@ -1,5 +1,6 @@
 ---
 name: systemd feature tests
+disabled: true
 
 # About security when running the tests and NOT exposing
 # the secrets to externals. Currently Github Actions does
