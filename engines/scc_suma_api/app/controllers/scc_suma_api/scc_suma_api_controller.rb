@@ -93,6 +93,10 @@ module SccSumaApi
       []
     end
 
+    # an MLM subscription grants alpha and beta product classes alongside the
+    # released ones (7261-BETA, SLE-M-T-ALPHA, OPENSUSE-ALPHA and so on), so the
+    # release stage has to be constrained explicitly: MLM must not be handed
+    # pre-release channels for its clients.
     def entitled_product_ids
       Product
         .where(product_class: entitled_product_classes)
@@ -127,27 +131,17 @@ module SccSumaApi
       SubscriptionProductClass.where(subscription_id: subscription_ids).distinct.pluck(:product_class)
     end
 
+    # add_on is the only product class that carries the MLM entitlement: the MLM
+    # base product is Micro (5.1 and older) or SLES 15 SP7 (5.2), and neither of
+    # those product classes carries it. There is deliberately no fallback to the
+    # base product class: it is listed by nearly every subscription, so pivoting
+    # on it would resolve to the whole entitled catalogue. When the add-on cannot
+    # be determined the caller gets client tools only.
     def caller_product_class
-      # add_on, if present, is the real product class
-      # the MLM base product is Micro (5.1 and older) or SLES 15 SP7 (5.2), and
-      # neither of those product classes carries the MLM entitlement
-      add_on = verification_provider.add_on
-      return add_on if add_on.present?
-
-      base_product&.product_class
+      verification_provider.add_on.presence
     rescue InstanceVerification::Exception => e
       logger.error("Could not determine the add-on product class: #{e.message}")
-      base_product&.product_class
-    end
-
-    def base_product
-      return @base_product if defined?(@base_product)
-
-      @base_product = Product.find_by(
-        identifier: request.headers['X-INSTANCE-IDENTIFIER'],
-        version: Product.clean_up_version(request.headers['X-INSTANCE-VERSION']),
-        arch: request.headers['X-INSTANCE-ARCH']
-      )
+      nil
     end
 
     def repository_json(repository)
