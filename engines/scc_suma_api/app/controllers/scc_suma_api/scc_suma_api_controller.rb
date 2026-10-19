@@ -114,7 +114,7 @@ module SccSumaApi
       product_class = caller_product_class
 
       if product_class.blank?
-        logger.error('Could not determine the product class of the caller, returning client tools only')
+        logger.error('Could not determine the product class of the caller, returning MLM products only')
         return []
       end
 
