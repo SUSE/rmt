@@ -193,10 +193,11 @@ console: build database-up ## Open Rails console in RMT container
 # =============================================================================
 # CI / Systemd Feature Tests
 # =============================================================================
-# Targets to replicate the .github/workflows/systemd-features.yml workflow
-# locally.  These build a systemd-enabled container (default SLE 16.0),
-# build and install RMT rpms, configure RMT (including MariaDB), and run
-# the feature tests.
+# Targets to replicate the CI features workflow locally by building
+# and launching a systemd-enabled container (default SLE 16.0) locally
+# that is then used to build the RMT rpms, install them, configure
+# and run the RMT and dependent MariaDB services, and finally run
+# the feature tests, before cleaning everything up.
 # Set CI_DISTRO=tumbleweed to use openSUSE Tumbleweed instead.
 
 CI_DISTRO     ?= sle16_0

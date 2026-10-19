@@ -1,0 +1,117 @@
+---
+name: distro feature tests
+
+# About security when running the tests and NOT exposing
+# the secrets to externals. Currently Github Actions does
+# NOT expose the secrets if the branch is coming from a forked
+# repository.
+# See: https://github.blog/2020-08-03-github-actions-improvements-for-fork-and-pull-request-workflows/
+# See: https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions
+#
+# An alternate would be to set, pull_request_target but this takes the CI code
+# from main removing the ability to change the code in a PR easily.
+#
+# Aditionally, since 2021 pull requests from new contributors will not
+# trigger workflows automatically but will wait for approval from somebody
+# with write access.
+# See: https://docs.github.com/en/actions/managing-workflow-runs/approving-workflow-runs-from-public-forks
+on:
+  pull_request:
+    branches: [main]
+
+  # Per https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule
+  # trigger a run daily at midnight
+  schedule:
+    - cron: '0 0 * * *'
+
+  # Per https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow
+  # enable manual triggering of this workflow from https://github.com/SUSE/rmt/actions/workflows/distros-features.yml
+  # which will enable it for all repo branches if set on the default branch.
+  workflow_dispatch:
+
+env:
+  SOURCE: /usr/src/rmt-server
+  SCC_USERNAME: ${{ secrets.SCC_USERNAME }}
+  SCC_PASSWORD: ${{ secrets.SCC_PASSWORD }}
+  SYSTEM_UUID: ${{ secrets.SYSTEM_UUID }}
+
+  # Within containers Github Actions does create a bridged network exposing
+  # the service named after its label
+  MYSQL_HOST: mysql
+
+jobs:
+  feature-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.SOURCE }}
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        distro: [sle16_0, tumbleweed]
+        include:
+          - distro: sle16_0
+            image: ghcr.io/suse/rmt/rmt-ci-systemd-sle16_0:latest
+            dockerfile: ci/Dockerfile.sle16_0
+          - distro: tumbleweed
+            image: ghcr.io/suse/rmt/rmt-ci-systemd-tumbleweed:latest
+            dockerfile: ci/Dockerfile.tumbleweed
+    container:
+      image: ${{ matrix.image }}
+      options: --user root
+    services:
+      mysql:
+        image: registry.suse.com/suse/mariadb:11.8
+        env:
+          MYSQL_DATABASE: rmt_features
+          MYSQL_USER: rmt
+          MYSQL_PASSWORD: rmt
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build CI image
+        run: |
+          docker build -t ${{ matrix.image }} -f ${{ matrix.dockerfile }} .
+
+      - name: move source to ${{ env.SOURCE }}
+        run: |
+          [ -d $SOURCE ] && rm -r $SOURCE
+          cp -r $GITHUB_WORKSPACE $SOURCE
+
+      # NOTE: Moved this up since nronn rubygems is not available for ruby3.2
+      - name: install test dependencies
+        run: |
+          bundle install
+
+      - name: build RPM package
+        run: |
+          bash ci/rmt-build-rpm
+
+      - name: validate RPM packaging
+        run: |
+          bash ci/rmt-validate-packaging
+
+      - name: gather RPM build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: rmt-server-rpms-${{ matrix.distro }}
+          path: ${{ env.SOURCE }}/tmp/artifacts/*.rpm
+
+      - name: configure RMT to run feature tests
+        run: |
+          bash ci/rmt-configure
+
+      - name: run feature tests
+        run: |
+          bash ci/rmt-run-feature-tests
