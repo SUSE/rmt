@@ -1,0 +1,187 @@
+---
+name: systemd feature tests
+disabled: true
+
+# About security when running the tests and NOT exposing
+# the secrets to externals. Currently Github Actions does
+# NOT expose the secrets if the branch is coming from a forked
+# repository.
+# See: https://github.blog/2020-08-03-github-actions-improvements-for-fork-and-pull-request-workflows/
+# See: https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions
+#
+# An alternate would be to set, pull_request_target but this takes the CI code
+# from main removing the ability to change the code in a PR easily.
+#
+# Aditionally, since 2021 pull requests from new contributors will not
+# trigger workflows automatically but will wait for approval from somebody
+# with write access.
+# See: https://docs.github.com/en/actions/managing-workflow-runs/approving-workflow-runs-from-public-forks
+on:
+  pull_request:
+    branches: [main]
+
+env:
+  SOURCE: /usr/src/rmt-server
+  SCC_USERNAME: ${{ secrets.SCC_USERNAME }}
+  SCC_PASSWORD: ${{ secrets.SCC_PASSWORD }}
+  SYSTEM_UUID: ${{ secrets.SYSTEM_UUID }}
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        distro: [sle16_0, tumbleweed]
+        include:
+          - distro: sle16_0
+            image: rmt-ci-systemd-sle16_0
+            dockerfile: ci/Dockerfile.sle16_0
+          - distro: tumbleweed
+            image: rmt-ci-systemd-tumbleweed
+            dockerfile: ci/Dockerfile.tumbleweed
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build CI image
+        run: |
+          docker build -t ${{ matrix.image }} -f ${{ matrix.dockerfile }} .
+
+      - name: Login to GHCR
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push to GHCR
+        run: |
+          docker tag ${{ matrix.image }} ghcr.io/suse/rmt/${{ matrix.image }}:${{ github.sha }}
+          docker push ghcr.io/suse/rmt/${{ matrix.image }}:${{ github.sha }}
+
+  feature-tests:
+    needs: build-image
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        distro: [sle16_0, tumbleweed]
+        include:
+          - distro: sle16_0
+            image: rmt-ci-systemd-sle16_0
+          - distro: tumbleweed
+            image: rmt-ci-systemd-tumbleweed
+    defaults:
+      run:
+        working-directory: ${{ env.SOURCE }}
+    container:
+      image: ghcr.io/suse/rmt/${{ matrix.image }}:${{ github.sha }}
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: move source to ${{ env.SOURCE }}
+        run: |
+          [ -d $SOURCE ] && rm -r $SOURCE
+          cp -r $GITHUB_WORKSPACE $SOURCE
+
+      - name: wait for systemd to be ready
+        run: |
+          for i in $(seq 1 60); do
+            if systemctl is-system-running 2>/dev/null | grep -q running; then
+              echo "systemd is ready"
+              exit 0
+            fi
+            echo "Waiting for systemd... (attempt $i/60)"
+            sleep 1
+          done
+          echo "systemd failed to start"
+          exit 1
+
+      - name: start MariaDB
+        run: |
+          set -e
+          if ! command -v mariadb-install-db >/dev/null 2>&1; then
+            echo "Installing MariaDB server..."
+            zypper --non-interactive install mariadb
+          fi
+          # Initialize MariaDB data directory if needed
+          if [ ! -d /var/lib/mysql ]; then
+            echo "Initializing MariaDB data directory..."
+            mariadb-install-db --user=mysql --datadir=/var/lib/mysql
+          fi
+          # Start MariaDB and wait for it to be ready
+          systemctl start mariadb
+          for i in $(seq 1 30); do
+            if mysqladmin ping --silent 2>/dev/null; then
+              echo "MariaDB is ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "ERROR: MariaDB failed to start"
+          exit 1
+
+      - name: create RMT database user
+        run: |
+          set -e
+          mysql -u root -e "CREATE USER IF NOT EXISTS 'rmt'@'127.0.0.1' IDENTIFIED BY 'rmt';"
+          mysql -u root -e "CREATE USER IF NOT EXISTS 'rmt'@'localhost' IDENTIFIED BY 'rmt';"
+          mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'rmt'@'127.0.0.1';"
+          mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'rmt'@'localhost';"
+          mysql -u root -e "FLUSH PRIVILEGES;"
+          echo "Database user created"
+
+      - name: install test dependencies
+        run: |
+          bundle install
+
+      - name: build RPM package
+        run: |
+          bash ci/rmt-build-rpm
+
+      - name: validate RPM packaging
+        run: |
+          bash ci/rmt-validate-packaging
+
+      - name: gather RPM build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: rmt-server-rpms-${{ matrix.distro }}
+          path: ${{ env.SOURCE }}/tmp/artifacts/*.rpm
+
+      - name: configure RMT to run feature tests
+        run: |
+          SCC_USERNAME=$SCC_USERNAME \
+          SCC_PASSWORD=$SCC_PASSWORD \
+          bash ci/rmt-configure
+
+      - name: run feature tests
+        run: |
+          bash ci/rmt-run-feature-tests
+
+  cleanup:
+    needs: [build-image, feature-tests]
+    if: always()
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        distro: [sle16_0, tumbleweed]
+        include:
+          - distro: sle16_0
+            image: rmt-ci-systemd-sle16_0
+          - distro: tumbleweed
+            image: rmt-ci-systemd-tumbleweed
+    steps:
+      - name: Delete GHCR image
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          ghcr_image="ghcr.io/suse/rmt/${{ matrix.image }}:${{ github.sha }}"
+          docker rmi $ghcr_image || true
+          # Delete from GHCR using the API
+          gh api --method DELETE \
+            /repos/suse/rmt/packages/container/${{ matrix.image }}/versions/${{ github.sha }} \
+            -f accept=application/vnd.github+json || true
