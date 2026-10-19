@@ -119,6 +119,8 @@ module SccSumaApi
       end
 
       subscription_ids = Subscription
+        .active
+        .not_expired
         .joins(:product_classes)
         .where(subscription_product_classes: { product_class: product_class })
         .pluck(:id)
