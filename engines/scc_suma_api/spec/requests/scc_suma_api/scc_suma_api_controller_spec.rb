@@ -192,6 +192,32 @@ module SccSumaApi
           end
         end
 
+        # the :expired trait only moves expires_at into the past, it leaves
+        # status as ACTIVE, which is what RMT holds between `rmt-cli sync` runs.
+        context 'with a subscription that is past its expiry date' do
+          before do
+            FactoryBot.create(:subscription, :expired, product_classes: [add_on, entitled_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          its(:code) { is_expected.to eq '200' }
+
+          it 'does not grant the product classes of the expired subscription' do
+            expect(response.parsed_body).to eq []
+          end
+        end
+
+        context 'with a subscription that SCC reported as not active' do
+          before do
+            FactoryBot.create(:subscription, status: 'EXPIRED', product_classes: [add_on, entitled_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          it 'does not grant the product classes of the inactive subscription' do
+            expect(response.parsed_body).to eq []
+          end
+        end
+
         context 'when the add-on product class is not granted by any subscription' do
           before { get '/api/scc/repos', headers: payload }
 
@@ -207,10 +233,12 @@ module SccSumaApi
             get '/api/scc/repos', headers: payload
           end
 
-          it 'falls back to the base product class' do
-            expect(response.parsed_body.pluck('id')).to(
-              match_array((base_product.repositories + entitled_product.repositories).map(&:scc_id))
-              )
+          its(:code) { is_expected.to eq '200' }
+
+          # the base product class is listed by nearly every subscription, so it
+          # must not be used as a pivot: the caller gets the MLM products only.
+          it 'does not fall back to the base product class' do
+            expect(response.parsed_body).to eq []
           end
         end
 
@@ -242,13 +270,13 @@ module SccSumaApi
 
         context 'with custom repositories' do
           before do
-            FactoryBot.create(:subscription, product_classes: [add_on, entitled_product.product_class])
+            FactoryBot.create(:subscription, product_classes: [add_on, base_product.product_class, entitled_product.product_class])
             entitled_product.repositories.update_all(scc_id: nil)
             get '/api/scc/repos', headers: payload
           end
 
-          it 'never returns a null id' do
-            expect(response.parsed_body.pluck('id')).not_to include(nil)
+          it 'excludes repositories that have no SCC id' do
+            expect(response.parsed_body.pluck('id')).to match_array(base_product.repositories.map(&:scc_id))
           end
         end
 
@@ -261,10 +289,10 @@ module SccSumaApi
             get '/api/scc/repos', headers: payload
           end
 
-          it 'falls back to the base product class' do
-            expect(response.parsed_body.pluck('id')).to(
-              match_array((base_product.repositories + entitled_product.repositories).map(&:scc_id))
-            )
+          its(:code) { is_expected.to eq '200' }
+
+          it 'does not fall back to the base product class' do
+            expect(response.parsed_body).to eq []
           end
         end
 
@@ -289,7 +317,12 @@ module SccSumaApi
           end
 
           its(:code) { is_expected.to eq '200' }
-          its(:body) { is_expected.to eq '[]' }
+
+          # check the lookup was reached
+          it 'rescues the failure and returns an empty list' do
+            expect(Repository).to have_received(:only_scc)
+            expect(response.body).to eq '[]'
+          end
         end
 
         context 'metadata is not valid' do
