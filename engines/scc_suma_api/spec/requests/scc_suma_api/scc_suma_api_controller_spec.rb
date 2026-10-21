@@ -309,6 +309,81 @@ module SccSumaApi
           its(:body) { is_expected.to eq '[]' }
         end
 
+        context 'when the caller is an MLM server' do
+          let!(:mlm_server) do
+            FactoryBot.create(
+              :product, :with_mirrored_repositories, identifier: 'Multi-Linux-Manager-Server', product_class: add_on
+            )
+          end
+          # Another MLM version, granted by no subscription and so unreachable
+          # through the pivot. This is what the identifier supplement is for.
+          let!(:mlm_proxy) do
+            FactoryBot.create(
+              :product, :with_mirrored_repositories, identifier: 'Multi-Linux-Manager-Proxy', product_class: 'SMP'
+            )
+          end
+
+          before do
+            FactoryBot.create(:subscription, product_classes: [add_on, entitled_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          its(:code) { is_expected.to eq '200' }
+
+          it 'returns the MLM repositories its own subscription does not enumerate' do
+            expect(response.parsed_body.pluck('id')).to include(*mlm_proxy.repositories.map(&:scc_id))
+          end
+
+          it 'still returns the subscribed repositories' do
+            expect(response.parsed_body.pluck('id')).to include(*entitled_product.repositories.map(&:scc_id))
+          end
+        end
+
+        context 'when the caller is not an MLM server' do
+          let(:add_on) { entitled_product.product_class }
+          let!(:mlm_server) do
+            FactoryBot.create(
+              :product, :with_mirrored_repositories, identifier: 'Multi-Linux-Manager-Server', product_class: 'SMS-X86'
+            )
+          end
+
+          before do
+            FactoryBot.create(:subscription, product_classes: [entitled_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          # The expansion is gated: only an MLM server gets the channels it
+          # redistributes, everyone else gets what their subscription grants.
+          it 'does not return the MLM repositories' do
+            expect(response.parsed_body.pluck('id')).not_to include(*mlm_server.repositories.map(&:scc_id))
+          end
+        end
+
+        context 'when the caller runs on Micro' do
+          let(:payload) { super().merge('X-INSTANCE-IDENTIFIER' => 'SUSE-MicroOS') }
+          let!(:free_module) do
+            FactoryBot.create(:product, :with_mirrored_repositories, identifier: 'sle-module-basesystem', free: true)
+          end
+          let!(:sap_module) do
+            FactoryBot.create(
+              :product, :with_mirrored_repositories, identifier: 'sle-module-sap-applications', free: true
+            )
+          end
+
+          before do
+            FactoryBot.create(:subscription, product_classes: [add_on, entitled_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          it 'returns the free SLES modules of the caller arch' do
+            expect(response.parsed_body.pluck('id')).to include(*free_module.repositories.map(&:scc_id))
+          end
+
+          it 'excludes the SAP modules' do
+            expect(response.parsed_body.pluck('id')).not_to include(*sap_module.repositories.map(&:scc_id))
+          end
+        end
+
         context 'when the repository lookup fails' do
           before do
             FactoryBot.create(:subscription, product_classes: [add_on, entitled_product.product_class])

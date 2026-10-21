@@ -6,6 +6,11 @@ module SccSumaApi
   CACHED_PRODUCT_TREE_JSON = '/usr/share/rmt/public/suma/product_tree.json'.freeze
 
   # same pattern StrictAuthentication uses to allow access to those repositories
+  # Manager Server, Proxy, Retail Branch Server and the client tools. Their
+  # product classes are granted by subscriptions, but only ever the caller's own
+  # version, so an MLM server cannot reach the other versions it redistributes
+  # through the pivot. Applied only to callers that are an MLM server, the same
+  # condition StrictAuthentication#all_allowed_paths gates its expansion on
   MLM_PRODUCT_IDENTIFIER_PATTERN = '%manager%'.freeze
 
   class SccSumaApiController < ::ApplicationController
@@ -75,8 +80,9 @@ module SccSumaApi
       raise error
     end
 
-    # repos this update server can actually serve for the caller's entitled products
-    # SCC-sourced (so scc_id is never null), flagged for mirroring, and mirrored at least once
+    # Repositories this update server can actually serve for the caller's
+    # entitled products: SCC-sourced (so scc_id is never null), flagged for
+    # mirroring, and mirrored at least once.
     def entitled_repositories
       product_ids = entitled_product_ids
       return [] if product_ids.empty?
@@ -96,26 +102,75 @@ module SccSumaApi
     # an MLM subscription grants alpha and beta product classes alongside the
     # released ones (7261-BETA, SLE-M-T-ALPHA, OPENSUSE-ALPHA and so on), so the
     # release stage has to be constrained explicitly: MLM must not be handed
-    # pre-release channels for its clients.
+    # pre-release channels for its clients
+    #
+    # mirrors StrictAuthentication#all_allowed_paths, which decides what an MLM
+    # server may download, so the advertised channels and the paths the auth layer
+    # permits stay in agreement. Expressed over the caller's entitled products
+    # instead of a registered system's activations
     def entitled_product_ids
+      ids = subscribed_product_ids
+      ids += free_module_product_ids if micro_caller?
+      ids += mlm_product_ids if mlm_caller?
+      ids.uniq
+    end
+
+    # The pivot already covers "any version included with an MLM subscription": a
+    # product class such as 7261 spans every SLES version, so no version expansion
+    # is needed here.
+    def subscribed_product_ids
       product_classes = entitled_product_classes
       return [] if product_classes.empty?
 
-      Product.where(product_class: product_classes)
+      Product
+        .where(product_class: product_classes)
         .with_release_stage('released')
         .pluck(:id)
     end
 
-    # pivot through the caller's subscriptions
+    # MLM 5.1 and older run on Micro, which is entitled to the free SLES modules of
+    # its own arch. Modules carry the generic MODULE product class that no
+    # subscription grants, so the pivot cannot reach them.
+    def free_module_product_ids
+      Product
+        .where("lower(identifier) LIKE 'sle-module%' OR lower(identifier) = 'packagehub'")
+        .where.not("lower(identifier) LIKE '%sap%'")
+        .where(arch: request.headers['X-INSTANCE-ARCH'], free: true)
+        .with_release_stage('released')
+        .pluck(:id)
+    end
+
+    def mlm_product_ids
+      Product
+        .where('identifier LIKE ?', MLM_PRODUCT_IDENTIFIER_PATTERN)
+        .with_release_stage('released')
+        .pluck(:id)
+    end
+
+    def micro_caller?
+      request.headers['X-INSTANCE-IDENTIFIER'].to_s.downcase.include?('micro')
+    end
+
+    # the caller's add-on class belongs to a Manager product, so the caller is an
+    # MLM server and the channels it redistributes are part of its entitlement
+    def mlm_caller?
+      return false if caller_product_class.blank?
+
+      Product
+        .where(product_class: caller_product_class)
+        .where('identifier LIKE ?', MLM_PRODUCT_IDENTIFIER_PATTERN)
+        .exists?
+    end
+
+    # pivot through the caller's subscriptions:
     # the MLM product class grants a subscription, and
     # that subscription grants every product class the caller is entitled to,
-    # including the versions covered by it, which cannot be
-    # expressed by matching product identifiers or versions
+    # including the versions covered by it, which cannot be expressed by matching product identifiers or versions
     def entitled_product_classes
       product_class = caller_product_class
 
       if product_class.blank?
-        logger.error('Could not determine the product class of the caller, returning an empty list')
+        logger.error('Could not determine the product class of the caller, no subscription pivot possible')
         return []
       end
 
@@ -141,10 +196,12 @@ module SccSumaApi
     # on it would resolve to the whole entitled catalogue. When the add-on cannot
     # be determined the caller gets an empty list
     def caller_product_class
-      verification_provider.add_on.presence
+      return @caller_product_class if defined?(@caller_product_class)
+
+      @caller_product_class = verification_provider.add_on.presence
     rescue InstanceVerification::Exception => e
       logger.error("Could not determine the add-on product class: #{e.message}")
-      nil
+      @caller_product_class = nil
     end
 
     def repository_json(repository)
@@ -160,9 +217,9 @@ module SccSumaApi
     end
 
     def repository_url(repository)
-      # built here instead of through RMT::Misc.make_repo_url: in the public cloud,
-      # zypper_auth monkey-patches that helper to return a plugin:/susecloud URL,
-      # which zypper understands and MLM does not
+      # Built here instead of through RMT::Misc.make_repo_url: in the public
+      # cloud, zypper_auth monkey-patches that helper to return a
+      # plugin:/susecloud URL, which zypper understands and MLM does not.
       File.join(request.base_url, RMT::DEFAULT_MIRROR_URL_PREFIX, repository.local_path)
     end
 
