@@ -158,8 +158,7 @@ module SccSumaApi
 
       Product
         .where(product_class: caller_product_class)
-        .where('identifier LIKE ?', MLM_PRODUCT_IDENTIFIER_PATTERN)
-        .exists?
+        .exists?(['identifier LIKE ?', MLM_PRODUCT_IDENTIFIER_PATTERN])
     end
 
     # pivot through the caller's subscriptions:

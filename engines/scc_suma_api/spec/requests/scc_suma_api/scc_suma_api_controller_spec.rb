@@ -331,7 +331,17 @@ module SccSumaApi
           its(:code) { is_expected.to eq '200' }
 
           it 'returns the MLM repositories its own subscription does not enumerate' do
-            expect(response.parsed_body.pluck('id')).to include(*mlm_proxy.repositories.map(&:scc_id))
+            returned = response.parsed_body.pluck('id')
+            diagnostic = {
+              mlm_server: mlm_server.repositories.map(&:scc_id),
+              mlm_proxy: mlm_proxy.repositories.map(&:scc_id),
+              entitled: entitled_product.repositories.map(&:scc_id),
+              unentitled: unentitled_product.repositories.map(&:scc_id),
+              mlm_server_class: mlm_server.product_class,
+              add_on: add_on,
+              returned: returned
+            }
+            expect(returned).to include(*mlm_proxy.repositories.map(&:scc_id)), diagnostic.inspect
           end
 
           it 'still returns the subscribed repositories' do
