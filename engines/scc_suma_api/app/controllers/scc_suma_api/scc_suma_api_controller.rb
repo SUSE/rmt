@@ -98,9 +98,10 @@ module SccSumaApi
     # release stage has to be constrained explicitly: MLM must not be handed
     # pre-release channels for its clients.
     def entitled_product_ids
-      Product
-        .where(product_class: entitled_product_classes)
-        .or(Product.where('identifier LIKE ?', MLM_PRODUCT_IDENTIFIER_PATTERN))
+      product_classes = entitled_product_classes
+      return [] if product_classes.empty?
+
+      Product.where(product_class: product_classes)
         .with_release_stage('released')
         .pluck(:id)
     end
