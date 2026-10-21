@@ -236,7 +236,7 @@ module SccSumaApi
           its(:code) { is_expected.to eq '200' }
 
           # the base product class is listed by nearly every subscription, so it
-          # must not be used as a pivot: the caller gets the MLM products only.
+          # must not be used as a pivot: the caller gets an empty list
           it 'does not fall back to the base product class' do
             expect(response.parsed_body).to eq []
           end

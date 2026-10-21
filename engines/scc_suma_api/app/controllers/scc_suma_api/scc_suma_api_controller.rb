@@ -115,7 +115,7 @@ module SccSumaApi
       product_class = caller_product_class
 
       if product_class.blank?
-        logger.error('Could not determine the product class of the caller, returning MLM products only')
+        logger.error('Could not determine the product class of the caller, returning an empty list')
         return []
       end
 
@@ -139,7 +139,7 @@ module SccSumaApi
     # those product classes carries it. There is deliberately no fallback to the
     # base product class: it is listed by nearly every subscription, so pivoting
     # on it would resolve to the whole entitled catalogue. When the add-on cannot
-    # be determined the caller gets client tools only.
+    # be determined the caller gets an empty list
     def caller_product_class
       verification_provider.add_on.presence
     rescue InstanceVerification::Exception => e
