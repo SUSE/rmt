@@ -1,16 +1,16 @@
 class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseController
 
   def announce_system
-    # Construct the system creation parameters
-    create_params = {
-      hostname: params[:hostname],
-      system_information: info_params(:hwinfo)[:hwinfo].to_json
-    }
+    @system = System.create!(hostname: params[:hostname], system_information: info_params(:hwinfo)[:hwinfo].to_json)
 
-    # Check if any profiles have been provided
-    process_system_profiles(create_params)
+    # Extract any complete profiles, setting the profile response header
+    # if invalid or incomplete profiles are detected.
+    profile_params = {}
+    extract_complete_profiles(profile_params)
 
-    @system = System.create!(**create_params)
+    # Update with any provided profiles, just setting the response header
+    # if and logging a message if any errors occur.
+    update_system_profiles(profile_params)
 
     logger.info("System '#{@system.hostname}' announced")
     respond_with(@system, serializer: ::V3::SystemSerializer, location: nil)
@@ -18,7 +18,19 @@ class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseCon
 
   private
 
-  def process_system_profiles(create_params)
+  def update_system_profiles(profile_params)
+    # do nothing if profile_params is empty
+    return unless profile_params.any?
+
+    @system.update!(**profile_params)
+  rescue StandardError => e
+    # If any errors occur while updating the profiles, log a warning
+    # and set the response header but do not fail the request.
+    logger.warn("System '#{@system.hostname}' profile update failed: #{e.message}")
+    response.headers['X-System-Profiles-Action'] = 'clear-cache'
+  end
+
+  def extract_complete_profiles(profile_params)
     if params.key?(:system_profiles)
       profiles = info_params(:system_profiles)[:system_profiles]
 
@@ -35,11 +47,11 @@ class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseCon
         response.headers['X-System-Profiles-Action'] = 'clear-cache'
       end
 
-      # Include the complete profiles in create_params only if
+      # Include the complete profiles in profile_params only if
       # complete profiles were actually provided
       if complete.any?
         logger.debug("valid complete profiles detected: #{complete.keys}")
-        create_params[:complete_profiles] = complete
+        profile_params[:complete_profiles] = complete
       end
     end
   end
