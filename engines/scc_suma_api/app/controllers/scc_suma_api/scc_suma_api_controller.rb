@@ -80,9 +80,9 @@ module SccSumaApi
       raise error
     end
 
-    # Repositories this update server can actually serve for the caller's
+    # repos this update server can actually serve for the caller's
     # entitled products: SCC-sourced (so scc_id is never null), flagged for
-    # mirroring, and mirrored at least once.
+    # mirroring, and mirrored at least once
     def entitled_repositories
       product_ids = entitled_product_ids
       return [] if product_ids.empty?
@@ -115,9 +115,11 @@ module SccSumaApi
       ids.uniq
     end
 
-    # The pivot already covers "any version included with an MLM subscription": a
-    # product class such as 7261 spans every SLES version, so no version expansion
-    # is needed here.
+    # a product class is version independent: SLES 15 SP5, SP6 and SP7 all carry
+    # product class 7261. Selecting products by class therefore already returns
+    # every version the subscription covers, without RMT hardcoding version
+    # numbers, so this needs no equivalent of the version expansion
+    # StrictAuthentication#all_allowed_paths does over a system's activations
     def subscribed_product_ids
       product_classes = entitled_product_classes
       return [] if product_classes.empty?
@@ -128,9 +130,12 @@ module SccSumaApi
         .pluck(:id)
     end
 
-    # MLM 5.1 and older run on Micro, which is entitled to the free SLES modules of
-    # its own arch. Modules carry the generic MODULE product class that no
-    # subscription grants, so the pivot cannot reach them.
+    # MLM 5.1 and older run on Micro, which is entitled to the free SLES modules
+    # of its own arch. Those modules all share the generic 'MODULE' product class,
+    # and no subscription lists that class, so resolving entitlement through the
+    # caller's subscriptions can never reach them and they have to be selected by
+    # identifier instead. SAP modules are excluded, they are not part of the free entitlement.
+    # Same case as the sle_micro branch of StrictAuthentication#all_allowed_paths
     def free_module_product_ids
       Product
         .where("lower(identifier) LIKE 'sle-module%' OR lower(identifier) = 'packagehub'")
@@ -161,18 +166,22 @@ module SccSumaApi
         .exists?(['identifier LIKE ?', MLM_PRODUCT_IDENTIFIER_PATTERN])
     end
 
-    # pivot through the caller's subscriptions:
-    # the MLM product class grants a subscription, and
-    # that subscription grants every product class the caller is entitled to,
-    # including the versions covered by it, which cannot be expressed by matching product identifiers or versions
+    # resolve the caller's entitlement from the synced subscription data: the
+    # add-on product class identifies which subscriptions grant it, and each of
+    # those subscriptions lists every product class it covers. Those classes are
+    # the entitlement. They are also the only record of which versions the
+    # subscription covers, so the same answer cannot be reconstructed by matching
+    # product identifiers or version numbers
     def entitled_product_classes
       product_class = caller_product_class
 
       if product_class.blank?
-        logger.error('Could not determine the product class of the caller, no subscription pivot possible')
+        logger.error('Could not determine the product class of the caller, no entitlement can be resolved')
         return []
       end
 
+      # the subscription table being queried
+      # has public cloud subscritions only
       subscription_ids = Subscription
         .active
         .not_expired
@@ -188,12 +197,12 @@ module SccSumaApi
       SubscriptionProductClass.where(subscription_id: subscription_ids).distinct.pluck(:product_class)
     end
 
-    # add_on is the only product class that carries the MLM entitlement: the MLM
+    # add_on is the only product class that carries the MLM entitlement. The MLM
     # base product is Micro (5.1 and older) or SLES 15 SP7 (5.2), and neither of
-    # those product classes carries it. There is deliberately no fallback to the
-    # base product class: it is listed by nearly every subscription, so pivoting
-    # on it would resolve to the whole entitled catalogue. When the add-on cannot
-    # be determined the caller gets an empty list
+    # those classes carries it, so there is deliberately no fallback to the base
+    # product class: nearly every subscription lists it, and resolving entitlement
+    # through it would hand back the organisation's whole catalogue
+    # A blank result means no subscription entitlement can be resolved for this caller
     def caller_product_class
       return @caller_product_class if defined?(@caller_product_class)
 
