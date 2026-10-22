@@ -99,15 +99,16 @@ module SccSumaApi
       []
     end
 
-    # an MLM subscription grants alpha and beta product classes alongside the
-    # released ones (7261-BETA, SLE-M-T-ALPHA, OPENSUSE-ALPHA and so on), so the
-    # release stage has to be constrained explicitly: MLM must not be handed
-    # pre-release channels for its clients
+    # the three sources a caller's entitlement can come from. Each one constrains
+    # the release stage itself, because (PC) subscriptions grant ALPHA and BETA product
+    # classes alongside the released ones (7261-BETA, SLE-M-T-ALPHA and so on) and
+    # MLM must never be handed pre-release channels for its clients
     #
-    # mirrors StrictAuthentication#all_allowed_paths, which decides what an MLM
-    # server may download, so the advertised channels and the paths the auth layer
-    # permits stay in agreement. Expressed over the caller's entitled products
-    # instead of a registered system's activations
+    # the result mirrors what StrictAuthentication#all_allowed_paths permits an
+    # MLM server to download, so the channels advertised here and the paths the
+    # auth layer allows stay in agreement. The difference is the starting point:
+    # this works from the caller's entitled products, all_allowed_paths works from
+    # a registered system's activations
     def entitled_product_ids
       ids = subscribed_product_ids
       ids += free_module_product_ids if micro_caller?
