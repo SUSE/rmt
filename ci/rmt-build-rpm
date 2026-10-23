@@ -13,6 +13,10 @@ ARTIFACT_DIR=${ARTIFACT_DIR:-$SOURCE/tmp/artifacts}
 # Current version we are working with
 VERSION=$(ruby -r "$SOURCE/lib/rmt" -e 'print RMT::VERSION')
 
+# Determine distro name and version values
+DISTRO_NAME="$(grep '^ID=".*"' /etc/os-release | cut -d= -f 2 | tr -d '"')"
+DISTRO_VERSION="$(grep '^VERSION_ID=".*"' /etc/os-release | cut -d= -f 2 | tr -d '"')"
+
 group() { echo "::group::$1"; }
 groupend() { echo "::groupend::"; }
 fail() { echo "::error::$1"; exit 1;}
@@ -29,8 +33,14 @@ groupend
 
 group "prepare build environment (in $BUILD_DIR)"
 pushd "$BUILD_DIR"
-  # fmccarthy: Temporary workaround to allow feature-tests to run - jsc#SCC-1020
-  zypper --non-interactive install ansible
+  case "${DISTRO_NAME}-${DISTRO_VERSION}" in
+    ("sles-15.7")
+      # Skip installing ansible on SLE 15 SP7
+      ;;
+    (*)
+      zypper --non-interactive install ansible
+      ;;
+  esac
   mkdir -p {BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS,OTHERS}
   cp -r "$SOURCE/package/obs"/* SOURCES/
 popd
