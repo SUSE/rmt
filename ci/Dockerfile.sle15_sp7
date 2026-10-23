@@ -1,0 +1,13 @@
+FROM registry.suse.com/bci/bci-base:15.7
+
+RUN zypper --non-interactive install libffi-devel libxml2-devel libmariadb-devel \
+                        libxslt-devel rpm-build systemd gzip tar bzip2 nodejs-default sqlite3-devel \
+                        make chrpath fdupes gcc libcurl-devel libyaml-devel valkey \
+                        mariadb mariadb-client
+
+# not found sqlite-devel nodejs libmysqlclient-devel
+
+RUN zypper --non-interactive install --no-recommends ruby3.4 ruby3.4-devel
+
+RUN mkdir /usr/src/rmt-server
+WORKDIR /usr/src/rmt-server
