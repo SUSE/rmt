@@ -37,13 +37,7 @@ end
 # information for this host.
 RMT::Config.set_host_system!
 
-if RMT::CLI::Base.process_user_name == 'root'
-  # set group and then user, otherwise user cannot change group
-  Process::Sys.setegid(Etc.getgrnam(RMT::DEFAULT_GROUP).gid)
-  # GPG needs ruid to be set
-  Process::Sys.setuid(Etc.getpwnam(RMT::DEFAULT_USER).uid)
-  Process::Sys.seteuid(Etc.getpwnam(RMT::DEFAULT_USER).uid)
-end
+RMT::CLI::Base.drop_privileges
 
 if File.exist?(RMT::DEFAULT_MIRROR_DIR) && !File.writable?(RMT::DEFAULT_MIRROR_DIR)
   warn "Mirroring base directory (#{RMT::DEFAULT_MIRROR_DIR}) is not writable by user '#{RMT::CLI::Base.process_user_name}'"

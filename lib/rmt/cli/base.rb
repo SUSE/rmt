@@ -106,6 +106,15 @@ class RMT::CLI::Base < Thor
       Etc.getpwuid(Process.euid).name
     end
 
+    def drop_privileges
+      return unless process_user_name == 'root'
+
+      rmt_gid = Etc.getgrnam(RMT::DEFAULT_GROUP).gid
+      Process::GID.change_privilege(rmt_gid)
+      Process::Sys.setuid(Etc.getpwnam(RMT::DEFAULT_USER).uid)
+      Process::Sys.seteuid(Etc.getpwnam(RMT::DEFAULT_USER).uid)
+    end
+
   end
 
   protected
