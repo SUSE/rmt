@@ -30,11 +30,7 @@ end
 
 RMT::Config.load
 
-if RMT::CLI::Base.process_user_name == 'root'
-  # set group and then user, otherwise user cannot change group
-  Process::Sys.setegid(Etc.getgrnam(RMT::DEFAULT_GROUP).gid)
-  Process::Sys.seteuid(Etc.getpwnam(RMT::DEFAULT_USER).uid)
-end
+RMT::CLI::Base.drop_privileges
 
 db_config = RMT::Config.db_config
 ActiveRecord::Base.establish_connection(db_config)
