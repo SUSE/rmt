@@ -2,8 +2,17 @@ require 'base64'
 require 'json'
 
 module SccSumaApi
-  REPOSITORY_URL = 'https://scc.suse.com/suma/'.freeze
   CACHED_PRODUCT_TREE_JSON = '/usr/share/rmt/public/suma/product_tree.json'.freeze
+
+  class << self
+    def suma_base_url
+      (ENV['SCC_HOST']&.strip&.delete_suffix('/connect') || 'https://scc.suse.com').freeze
+    end
+
+    def repository_url
+      "#{suma_base_url}/suma/".freeze
+    end
+  end
 
 
   class SccSumaApiController < ::ApplicationController
@@ -74,7 +83,7 @@ module SccSumaApi
     def download_file_from_scc
       tmp_dir = Rails.root.join('tmp')
       downloading_paths = {
-        base_url: URI.join(REPOSITORY_URL),
+        base_url: URI.join(SccSumaApi.repository_url),
         base_dir: tmp_dir,
         cache_dir: tmp_dir
       }
