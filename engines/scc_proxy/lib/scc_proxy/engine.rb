@@ -338,7 +338,7 @@ module SccProxy
             system_values[:proxy_byos_mode] = :payg
 
             # Check if any profiles have been provided
-            extract_complete_profiles(profile_params)
+            profile_params = extract_complete_profiles
           else
             request.request_parameters['proxy_byos_mode'] = 'byos'
             scc_response, scc_response_headers = SccProxy.announce_system_scc(
