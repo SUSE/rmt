@@ -1,16 +1,15 @@
 class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseController
 
   def announce_system
-    # Construct the system creation parameters
-    create_params = {
-      hostname: params[:hostname],
-      system_information: info_params(:hwinfo)[:hwinfo].to_json
-    }
+    @system = System.create!(hostname: params[:hostname], system_information: info_params(:hwinfo)[:hwinfo].to_json)
 
-    # Check if any profiles have been provided
-    process_system_profiles(create_params)
+    # Extract any complete profiles, setting the profile response header
+    # if invalid or incomplete profiles are detected.
+    profile_params = extract_complete_profiles
 
-    @system = System.create!(**create_params)
+    # Update with any provided profiles, just setting the response header
+    # if and logging a message if any errors occur.
+    update_system_profiles(profile_params)
 
     logger.info("System '#{@system.hostname}' announced")
     respond_with(@system, serializer: ::V3::SystemSerializer, location: nil)
@@ -18,29 +17,42 @@ class Api::Connect::V3::Subscriptions::SystemsController < Api::Connect::BaseCon
 
   private
 
-  def process_system_profiles(create_params)
-    if params.key?(:system_profiles)
-      profiles = info_params(:system_profiles)[:system_profiles]
+  def update_system_profiles(profile_params)
+    # do nothing if profile_params is empty
+    return unless profile_params.any?
 
-      # Partition profiles into three categories, namely complete,
-      # incomplete (missing the data field), and invalid (missing
-      # the identifier field)
-      complete, incomplete, invalid = Profile.filter_profiles(profiles.to_h)
+    @system.update!(**profile_params)
+  rescue StandardError => e
+    # If any errors occur while updating the profiles, log a warning
+    # and set the response header but do not fail the request.
+    logger.warn("System '#{@system.hostname}' profile update failed: #{e.message}")
+    response.headers['X-System-Profiles-Action'] = 'clear-cache'
+  end
 
-      # All profiles provided to announce_system should be complete; set
-      # response header if any invalid or incomplete profiles were provided.
-      if incomplete.any? || invalid.any?
-        logger.debug("problematic incomplete (missing data field) profiles detected: #{incomplete.keys}") if incomplete.any?
-        logger.debug("problematic invalid (missing identifier field) profiles detected: #{invalid.keys}") if invalid.any?
-        response.headers['X-System-Profiles-Action'] = 'clear-cache'
-      end
+  def extract_complete_profiles
+    return {} unless params.key?(:system_profiles)
 
-      # Include the complete profiles in create_params only if
-      # complete profiles were actually provided
-      if complete.any?
-        logger.debug("valid complete profiles detected: #{complete.keys}")
-        create_params[:complete_profiles] = complete
-      end
+    profiles = info_params(:system_profiles)[:system_profiles]
+
+    # Partition profiles into three categories, namely complete,
+    # incomplete (missing the data field), and invalid (missing
+    # the identifier field)
+    complete, incomplete, invalid = Profile.filter_profiles(profiles.to_h)
+
+    # All profiles provided to announce_system should be complete; set
+    # response header if any invalid or incomplete profiles were provided.
+    if incomplete.any? || invalid.any?
+      logger.debug("problematic incomplete (missing data field) profiles detected: #{incomplete.keys}") if incomplete.any?
+      logger.debug("problematic invalid (missing identifier field) profiles detected: #{invalid.keys}") if invalid.any?
+      response.headers['X-System-Profiles-Action'] = 'clear-cache'
+    end
+
+    # Return complete profiles only if any were actually provided
+    if complete.any?
+      logger.debug("valid complete profiles detected: #{complete.keys}")
+      { complete_profiles: complete }
+    else
+      {}
     end
   end
 
