@@ -22,13 +22,14 @@ class Api::Connect::V3::Systems::SystemsController < Api::Connect::BaseControlle
     # Perform profile processing after system updates so that any errors that
     # don't need to be re-raised can be safely ignored, just logging a warning
     # and setting the appropriate response header to tell clients to send full
-    # profiles next time.
+    # profiles next time. Catch and re-raise ActiveRecord::InvalidForeignKey
+    # so that it can be caught by the higher level rescue handling
     if params.key?(:system_profiles)
       begin
         process_system_profiles(info_params(:system_profiles)[:system_profiles])
+      rescue ActiveRecord::InvalidForeignKey
+        raise
       rescue StandardError => e
-        raise if e.is_a?(ActiveRecord::InvalidForeignKey)
-
         logger.warn("System profiles updates failed, continuing without them: #{e.message}")
         response.headers['X-System-Profiles-Action'] = 'clear-cache'
       end
