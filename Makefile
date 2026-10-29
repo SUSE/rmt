@@ -235,7 +235,7 @@ ci-up: ci-build ## Start the systemd-enabled CI container
 		$(CI_IMAGE) \
 		/usr/sbin/init
 
-ci-wait: ## Wait for the systemd container to be ready
+ci-wait: ci-up ## Wait for the systemd container to be ready
 	@echo "==> Waiting for systemd to be ready..."
 	@for i in $$(seq 1 60); do \
 		if docker exec $(CI_CONTAINER) systemctl is-system-running >/dev/null 2>&1; then \
@@ -283,7 +283,7 @@ ci-setup-database: ci-start-mariadb ## Create the RMT database user in MariaDB
 		echo "  Database user created" \
 	'
 
-ci-build-rpms: ## Install Ruby deps, build RPMs, and validate packaging
+ci-build-rpms: ci-setup-database ## Install Ruby deps, build RPMs, and validate packaging
 	@echo "==> Installing dependencies and building RPMs..."
 	docker exec $(CI_CONTAINER) bash -c '\
 		set -e; \
@@ -300,7 +300,7 @@ ci-env-check: ## Check required environment variables are setup
 		exit 1; \
 	fi
 
-ci-install-rpms: ci-env-check ## Install RPMs, create config, and set up database
+ci-install-rpms: ci-env-check ci-build-rpms ## Install RPMs, create config, and set up database
 	@echo "==> Configuring RMT..."
 	docker exec $(CI_CONTAINER) bash -c '\
 		set -e; \
@@ -313,7 +313,7 @@ ci-install-rpms: ci-env-check ## Install RPMs, create config, and set up databas
 		rm -f /tmp/.ci-creds \
 	'
 
-ci-tests: ## Run feature tests
+ci-tests: ci-install-rpms ## Run feature tests
 	@echo "==> Running feature tests..."
 	docker exec $(CI_CONTAINER) bash -c '\
 		set -e; \
