@@ -486,13 +486,43 @@ module SccProxy
           end
           message = "Could not activate product for system with regcode #{params[:token]} to SCC: #{error}"
           logger.error(message)
+          drop_announced_system
           render json: { type: 'error', error: message }, status: status_code(e.message), location: nil
         rescue InstanceVerification::Exception => e
           logger.error("Could not activate product for system to SCC: #{e.message}")
+          drop_announced_system
           render json: { type: 'error', error: e.message }, status: :unprocessable_content, location: nil
+        rescue ActionController::TranslatedError => e
+          drop_announced_system
+          render json: { type: 'error', error: e.message, localized_error: e.localized_message }, status: e.status, location: nil
         end
         # rubocop:enable Metrics/CyclomaticComplexity
         # rubocop:enable Metrics/PerceivedComplexity
+
+        def drop_announced_system
+          # the first product activation of a BYOS system failed, so the system has no activations:
+          # it was announced but never registered =>
+          # drop it instead of leaving it behind in the database
+          return unless @system.byos? && @product.base? && @system.activations.empty?
+
+          deregister_announced_system_from_scc
+          logger.info("Removing announced but unregistered system #{@system.login}")
+          # the system is still on SCC
+          # SCC has its own cadence to remove inactive systems
+          @system.destroy!
+        end
+
+        # only de-register systems this RMT announced to SCC
+        # when the announce hit the 'already taken' branch there is no scc_system_id and
+        # the system belongs to a sibling RMT, so it must not be removed from SCC here
+        def deregister_announced_system_from_scc
+          return if @system.scc_system_id.blank?
+
+          SccProxy.deregister_system_scc(request.headers['HTTP_AUTHORIZATION'], @system)
+        rescue StandardError => e
+          # the local clean up must happen even if SCC can not be reached
+          logger.error("Could not de-register announced (not registered) system #{@system.login} from SCC: #{e.message}")
+        end
 
         def update_pubcloud_reg_code(encoded_reg_code)
           return if encoded_reg_code.blank?
