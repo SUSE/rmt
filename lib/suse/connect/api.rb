@@ -77,10 +77,17 @@ module SUSE
             SUSE::Connect::SystemSerializer.new(s, serializer_options)
           end
 
+          # Convert serializer instances to hashes before JSON encoding.
+          # AMS defines as_json (returns a hash) but not to_json.
+          # If the JSON library encounters a serializer directly, it falls
+          # back to to_s which produces a string that gets JSON-encoded as a
+          # quoted string value, causing double-quoting of the system object.
+          serialized_systems = payload_systems.map(&:as_json)
+
           response = make_single_request(
             :put,
             "#{connect_api}/organizations/systems",
-            { body: { systems: payload_systems }.to_json }
+            { body: { systems: serialized_systems }.to_json }
           )
           updated_systems[:systems] = updated_systems[:systems].concat(response[:systems])
         end
