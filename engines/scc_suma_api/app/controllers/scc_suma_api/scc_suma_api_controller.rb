@@ -5,15 +5,26 @@ module SccSumaApi
   REPOSITORY_URL = 'https://scc.suse.com/suma/'.freeze
   CACHED_PRODUCT_TREE_JSON = '/usr/share/rmt/public/suma/product_tree.json'.freeze
 
+  # same pattern StrictAuthentication uses to allow access to those repositories
+  # Manager Server, Proxy, Retail Branch Server and the client tools. Their
+  # product classes are granted by subscriptions, but only ever the caller's own
+  # version, so an MLM server cannot reach the other versions it redistributes
+  # through the pivot. Applied only to callers that are an MLM server, the same
+  # condition StrictAuthentication#all_allowed_paths gates its expansion on
+  MLM_PRODUCT_IDENTIFIER_PATTERN = '%manager%'.freeze
 
   class SccSumaApiController < ::ApplicationController
-    before_action :is_valid?, only: %w[unscoped_products]
+    before_action :is_valid?, only: %w[unscoped_products repos]
 
     def unscoped_products
       update_cache unless cache_is_valid?
 
       unscoped_products_json = File.read(@unscoped_products_path)
       render status: :ok, json: JSON.parse(unscoped_products_json)
+    end
+
+    def repos
+      render status: :ok, json: entitled_repositories.map { |repository| repository_json(repository) }
     end
 
     def list
@@ -33,19 +44,28 @@ module SccSumaApi
       )
     end
 
-    def is_valid?
-      instance_data = Base64.decode64(request.headers['X-Instance-Data'].to_s)
-      product_hash = {
+    def instance_data
+      @instance_data ||= Base64.decode64(request.headers['X-Instance-Data'].to_s)
+    end
+
+    def product_hash
+      {
         identifier: request.headers['X-INSTANCE-IDENTIFIER'],
         version: request.headers['X-INSTANCE-VERSION'],
         arch: request.headers['X-INSTANCE-ARCH']
       }
-      verification_provider = InstanceVerification.provider.new(
+    end
+
+    def verification_provider
+      @verification_provider ||= InstanceVerification.provider.new(
         logger,
         request,
         product_hash,
         instance_data
         )
+    end
+
+    def is_valid?
       # check auth for registered BYOS systems
       iid = verification_provider.parse_instance_data
       # at this point, we do not know nor is available the login information of the system
@@ -58,6 +78,158 @@ module SccSumaApi
       error = ActionController::TranslatedError.new(N_(e.message))
       error.status = :unprocessable_content
       raise error
+    end
+
+    # repos this update server can actually serve for the caller's
+    # entitled products: SCC-sourced (so scc_id is never null), flagged for
+    # mirroring, and mirrored at least once
+    def entitled_repositories
+      product_ids = entitled_product_ids
+      return [] if product_ids.empty?
+
+      Repository
+        .only_scc
+        .only_fully_mirrored
+        .joins(:services)
+        .where(services: { product_id: product_ids })
+        .distinct
+        .order(:scc_id)
+    rescue StandardError => e
+      logger.error("Could not resolve the entitled repositories: #{e.message}")
+      []
+    end
+
+    # the three sources a caller's entitlement can come from. Each one constrains
+    # the release stage itself, because (PC) subscriptions grant ALPHA and BETA product
+    # classes alongside the released ones (7261-BETA, SLE-M-T-ALPHA and so on) and
+    # MLM must never be handed pre-release channels for its clients
+    #
+    # the result mirrors what StrictAuthentication#all_allowed_paths permits an
+    # MLM server to download, so the channels advertised here and the paths the
+    # auth layer allows stay in agreement. The difference is the starting point:
+    # this works from the caller's entitled products, all_allowed_paths works from
+    # a registered system's activations
+    def entitled_product_ids
+      ids = subscribed_product_ids
+      ids += free_module_product_ids if micro_caller?
+      ids += mlm_product_ids if mlm_caller?
+      ids.uniq
+    end
+
+    # a product class is version independent: SLES 15 SP5, SP6 and SP7 all carry
+    # product class 7261. Selecting products by class therefore already returns
+    # every version the subscription covers, without RMT hardcoding version
+    # numbers, so this needs no equivalent of the version expansion
+    # StrictAuthentication#all_allowed_paths does over a system's activations
+    def subscribed_product_ids
+      product_classes = entitled_product_classes
+      return [] if product_classes.empty?
+
+      Product
+        .where(product_class: product_classes)
+        .with_release_stage('released')
+        .pluck(:id)
+    end
+
+    # MLM 5.1 and older run on Micro, which is entitled to the free SLES modules
+    # of its own arch. Those modules all share the generic 'MODULE' product class,
+    # and no subscription lists that class, so resolving entitlement through the
+    # caller's subscriptions can never reach them and they have to be selected by
+    # identifier instead. SAP modules are excluded, they are not part of the free entitlement.
+    # Same case as the sle_micro branch of StrictAuthentication#all_allowed_paths
+    def free_module_product_ids
+      Product
+        .where("lower(identifier) LIKE 'sle-module%' OR lower(identifier) = 'packagehub'")
+        .where.not("lower(identifier) LIKE '%sap%'")
+        .where(arch: request.headers['X-INSTANCE-ARCH'], free: true)
+        .with_release_stage('released')
+        .pluck(:id)
+    end
+
+    def mlm_product_ids
+      Product
+        .where('identifier LIKE ?', MLM_PRODUCT_IDENTIFIER_PATTERN)
+        .with_release_stage('released')
+        .pluck(:id)
+    end
+
+    def micro_caller?
+      request.headers['X-INSTANCE-IDENTIFIER'].to_s.downcase.include?('micro')
+    end
+
+    # the caller's add-on class belongs to a Manager product, so the caller is an
+    # MLM server and the channels it redistributes are part of its entitlement
+    def mlm_caller?
+      return false if caller_product_class.blank?
+
+      Product
+        .where(product_class: caller_product_class)
+        .exists?(['identifier LIKE ?', MLM_PRODUCT_IDENTIFIER_PATTERN])
+    end
+
+    # resolve the caller's entitlement from the synced subscription data: the
+    # add-on product class identifies which subscriptions grant it, and each of
+    # those subscriptions lists every product class it covers. Those classes are
+    # the entitlement. They are also the only record of which versions the
+    # subscription covers, so the same answer cannot be reconstructed by matching
+    # product identifiers or version numbers
+    def entitled_product_classes
+      product_class = caller_product_class
+
+      if product_class.blank?
+        logger.error('Could not determine the product class of the caller, no entitlement can be resolved')
+        return []
+      end
+
+      # the subscription table being queried
+      # has public cloud subscritions only
+      subscription_ids = Subscription
+        .active
+        .not_expired
+        .joins(:product_classes)
+        .where(subscription_product_classes: { product_class: product_class })
+        .pluck(:id)
+
+      if subscription_ids.empty?
+        logger.error("No subscription grants the product class '#{product_class}'")
+        return []
+      end
+
+      SubscriptionProductClass.where(subscription_id: subscription_ids).distinct.pluck(:product_class)
+    end
+
+    # add_on is the only product class that carries the MLM entitlement. The MLM
+    # base product is Micro (5.1 and older) or SLES 15 SP7 (5.2), and neither of
+    # those classes carries it, so there is deliberately no fallback to the base
+    # product class: nearly every subscription lists it, and resolving entitlement
+    # through it would hand back the organisation's whole catalogue
+    # A blank result means no subscription entitlement can be resolved for this caller
+    def caller_product_class
+      return @caller_product_class if defined?(@caller_product_class)
+
+      @caller_product_class = verification_provider.add_on.presence
+    rescue InstanceVerification::Exception => e
+      logger.error("Could not determine the add-on product class: #{e.message}")
+      @caller_product_class = nil
+    end
+
+    def repository_json(repository)
+      {
+        id: repository.scc_id,
+        name: repository.name,
+        description: repository.description,
+        url: repository_url(repository),
+        enabled: repository.enabled,
+        autorefresh: repository.autorefresh,
+        installer_updates: repository.installer_updates
+      }
+    end
+
+    def repository_url(repository)
+      # Built here instead of through RMT::Misc.make_repo_url: in the public
+      # cloud, zypper_auth monkey-patches that helper to return a
+      # plugin:/susecloud URL, which zypper understands and MLM does not.
+      File.join(request.base_url, RMT::DEFAULT_MIRROR_URL_PREFIX, repository.local_path)
     end
 
     def product_tree_json
