@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
 
+rmt_path = File.expand_path('..', __dir__)
+require_relative '../config/boot'
+
 require 'optparse'
 require 'ostruct'
 require 'logger'
