@@ -233,7 +233,7 @@ RSpec.describe SUSE::Connect::Api do
       let(:serializer_options) { { serialized_profiles: serialized_profiles } }
 
       let(:expected_body) do
-        { systems: systems.map { |s| SUSE::Connect::SystemSerializer.new(s, serializer_options) } }
+        { systems: systems.map { |s| SUSE::Connect::SystemSerializer.new(s, serializer_options).as_json } }
       end
 
       let(:response_system_keys) { %i[id login password last_seen_at] }

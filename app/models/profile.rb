@@ -1,4 +1,36 @@
 class Profile < ApplicationRecord
+  class JsonCoder
+    def dump(obj)
+      JSON.generate(obj)
+    end
+
+    def load(str)
+      return nil unless str
+
+      symbolize_keys(JSON.parse(str))
+    end
+
+    def symbolize_keys(data)
+      if data.is_a?(Hash)
+        data.transform_keys(&:to_sym).transform_values do |value|
+          symbolize_keys(value)
+        end
+      elsif data.is_a?(Array)
+        data.map { |value| symbolize_keys(value) }
+      else
+        data
+      end
+    end
+  end
+
+  # The data column is TEXT. Without serialization Rails returns the
+  # stored JSON as a string on read. When that string is included in
+  # the SCC bulk request payload, the JSON serializer produces a quoted
+  # string value instead of a proper JSON object. The JsonCoder ensures
+  # data is returned as a hash with symbolized keys so it serializes
+  # correctly as a JSON object in the SCC request.
+  serialize :data, coder: JsonCoder.new
+
   # relationships
   # NOTE: for system_profiles we should only trigger cascaded deletes
   # of profiles if system references are removed, but we do not want

@@ -1,8 +1,8 @@
 shared_context 'profile sets' do
   # profile set a1 variants
   let(:profile_set_a1) do
-    { mod_list: { identifier: 'mod_a1_id', data: 'mod_a1_data' },
-      pci_data: { identifier: 'pci_a1_id', data: 'pci_a1_data' } }
+    { mod_list: { identifier: 'mod_a1_id', data: { value: 'mod_a1_data' } },
+      pci_data: { identifier: 'pci_a1_id', data: { value: 'pci_a1_data' } } }
   end
   let(:profile_set_a1_no_ident) do
     profile_set_a1.transform_values do |profile|
@@ -17,8 +17,8 @@ shared_context 'profile sets' do
 
   # profile set a2 variants
   let(:profile_set_a2) do
-    { mod_list: { identifier: 'mod_a2_id', data: 'mod_a2_data' },
-      pci_data: { identifier: 'pci_a2_id', data: 'pci_a2_data' } }
+    { mod_list: { identifier: 'mod_a2_id', data: { value: 'mod_a2_data' } },
+      pci_data: { identifier: 'pci_a2_id', data: { value: 'pci_a2_data' } } }
   end
   let(:profile_set_a2_no_ident) do
     profile_set_a2.transform_values do |profile|
@@ -28,7 +28,7 @@ shared_context 'profile sets' do
 
   # profile set b variants
   let(:profile_set_b) do
-    { pkg_list: { identifier: 'pkg_id', data: 'pkg_data' } }
+    { pkg_list: { identifier: 'pkg_id', data: { value: 'pkg_data' } } }
   end
   let(:profile_set_b_no_ident) do
     profile_set_b.transform_values do |profile|
@@ -43,7 +43,7 @@ shared_context 'profile sets' do
 
   # profile set c variants
   let(:profile_set_c) do
-    { tst_data: { identifier: 'tst_id', data: 'tst_data' } }
+    { tst_data: { identifier: 'tst_id', data: { value: 'tst_data' } } }
   end
   let(:profile_set_c_no_ident) do
     profile_set_c.transform_values do |profile|
@@ -58,7 +58,7 @@ shared_context 'profile sets' do
 
   # profile set empty
   let(:profile_set_empty) do
-    { empty: { identifier: '', data: '' } }
+    { empty: { identifier: '' } }
   end
 
   # profile set all valid and complete
