@@ -34,7 +34,8 @@ env:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # ubuntu-26.04 only ships the latest Ruby patch release (2.5.9), but we test 2.5.8 for SLE15
+    runs-on: ubuntu-24.04
     strategy:
       # Only use 2 workers, gh actions seems to kill jobs when we use more
       max-parallel: 2
