@@ -1,6 +1,9 @@
 NAME          = rmt-server
 VERSION       = $(shell ruby -e 'require "./lib/rmt.rb"; print RMT::VERSION')
 
+# Load environment variables from .env file (if present)
+-include .env
+
 # =============================================================================
 # Phony Targets
 # =============================================================================
@@ -9,6 +12,9 @@ VERSION       = $(shell ruby -e 'require "./lib/rmt.rb"; print RMT::VERSION')
 .PHONY: build build-tarball dist man
 .PHONY: ansible-deploy ansible-check
 .PHONY: database-up server shell console public_repo
+.PHONY: ci-env-check ci-build ci-up ci-wait ci-start-mariadb
+.PHONY: ci-build-rpms ci-install-rpms ci-tests ci-down ci-clean
+.PHONY: ci-all ci-status ci-logs ci-shell ci-build-flavours
 
 # =============================================================================
 # Default Target
@@ -34,6 +40,9 @@ help: ## Show this help message
 	@echo ''
 	@echo 'Build & Package Targets:'
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-z-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "^  (dist|build-tarball|man|public_repo) "
+	@echo ''
+	@echo 'CI / Systemd Feature Tests:'
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-z-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "^  ci-[a-z-]* "
 	@echo ''
 
 # =============================================================================
@@ -182,6 +191,155 @@ shell: build database-up ## Open shell in RMT container
 
 console: build database-up ## Open Rails console in RMT container
 	docker compose run --rm -ti rmt bundle exec rails c
+
+# =============================================================================
+# CI / Systemd Feature Tests
+# =============================================================================
+# Targets to replicate the systemd-based feature testing locally by building
+# and launching a systemd-enabled container (default SLE 16.0) locally
+# that is then used to build the RMT rpms, install them, configure
+# and run the RMT and dependent MariaDB services, and finally run
+# the feature tests, before cleaning everything up.
+# Set CI_DISTRO=<flavour> to build a different flavour.
+# Available flavours are:
+# * sle15_sp7
+# * sle16_0 (default)
+# * tumbleweed
+
+CI_DISTRO     ?= sle16_0
+CI_IMAGE      ?= rmt-ci-systemd-$(CI_DISTRO)
+CI_CONTAINER  ?= rmt-systemd-$(CI_DISTRO)
+CI_SOURCE     ?= /usr/src/rmt-server
+
+ci-build-flavours: ## List available build flavours for CI_DISTRO
+	@echo Available build flavours for CI_DISTRO are:
+	@ls -1 ci/Dockerfile.* | cut -d. -f2 | sed -e 's,^,- ,'
+
+ci-build: ## Build the systemd-enabled CI Docker image
+	@echo "==> Building CI image $(CI_IMAGE)..."
+	docker build -t $(CI_IMAGE) -f ci/Dockerfile.$(CI_DISTRO) .
+
+ci-up: ci-build ## Start the systemd-enabled CI container
+	@if docker ps -a --format '{{.Names}}' | grep -q "^$(CI_CONTAINER)$$"; then \
+		echo "==> Container $(CI_CONTAINER) already exists. Run 'make ci-down' first."; \
+		exit 1; \
+	fi
+	@echo "==> Starting systemd container $(CI_CONTAINER)..."
+	docker run -d \
+		--name $(CI_CONTAINER) \
+		--privileged \
+		--cgroupns=host \
+		-v /sys/fs/cgroup:/sys/fs/cgroup:rw \
+		-v $(CURDIR):$(CI_SOURCE) \
+		-e SYSTEMD_REGENERATE_USER_UNITS=true \
+		$(CI_IMAGE) \
+		/usr/sbin/init
+
+ci-wait: ci-up ## Wait for the systemd container to be ready
+	@echo "==> Waiting for systemd to be ready..."
+	@for i in $$(seq 1 60); do \
+		if docker exec $(CI_CONTAINER) systemctl is-system-running >/dev/null 2>&1; then \
+			echo "  systemd is ready"; \
+			exit 0; \
+		fi; \
+		sleep 1; \
+	done; \
+	echo "  ERROR: systemd did not start within 60 seconds"; \
+	exit 1
+
+ci-start-mariadb: ci-wait ## Install and start MariaDB inside the CI container
+	@echo "==> Starting MariaDB..."
+	docker exec $(CI_CONTAINER) bash -c '\
+		set -e; \
+		if ! command -v mariadb-install-db >/dev/null 2>&1; then \
+			echo "  Installing MariaDB server..."; \
+			zypper --non-interactive install mariadb; \
+		fi; \
+		if [ ! -d /var/lib/mysql ]; then \
+			echo "  Initializing MariaDB data directory..."; \
+			mariadb-install-db --user=mysql --datadir=/var/lib/mysql; \
+		fi; \
+		systemctl start mariadb; \
+		for i in $$(seq 1 30); do \
+			if mysqladmin ping --silent 2>/dev/null; then \
+				echo "  MariaDB is ready"; \
+				exit 0; \
+			fi; \
+			sleep 1; \
+		done; \
+		echo "  ERROR: MariaDB failed to start"; \
+		exit 1 \
+	'
+
+ci-setup-database: ci-start-mariadb ## Create the RMT database user in MariaDB
+	@echo "==> Creating RMT database user..."
+	docker exec $(CI_CONTAINER) bash -c '\
+		set -e; \
+		mysql -u root -e "CREATE USER IF NOT EXISTS '\''rmt'\''@'\''127.0.0.1'\'' IDENTIFIED BY '\''rmt'\'';"; \
+		mysql -u root -e "CREATE USER IF NOT EXISTS '\''rmt'\''@'\''localhost'\'' IDENTIFIED BY '\''rmt'\'';"; \
+		mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO '\''rmt'\''@'\''127.0.0.1'\'';"; \
+		mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO '\''rmt'\''@'\''localhost'\'';"; \
+		mysql -u root -e "FLUSH PRIVILEGES;"; \
+		echo "  Database user created" \
+	'
+
+ci-build-rpms: ci-setup-database ## Install Ruby deps, build RPMs, and validate packaging
+	@echo "==> Installing dependencies and building RPMs..."
+	docker exec $(CI_CONTAINER) bash -c '\
+		set -e; \
+		cd $(CI_SOURCE); \
+		bundle install; \
+		bash ci/rmt-build-rpm; \
+		bash ci/rmt-validate-packaging \
+	'
+
+ci-env-check: ## Check required environment variables are setup
+	@if [ -z "$(SCC_USERNAME)" ] || [ -z "$(SCC_PASSWORD)" ]; then \
+		echo "ERROR: SCC_USERNAME and SCC_PASSWORD not found in .env"; \
+		echo "       Copy .env.example to .env if needed and set your credentials."; \
+		exit 1; \
+	fi
+
+ci-install-rpms: ci-env-check ci-build-rpms ## Install RPMs, create config, and set up database
+	@echo "==> Configuring RMT..."
+	docker exec $(CI_CONTAINER) bash -c '\
+		set -e; \
+		echo "export SCC_USERNAME=$(SCC_USERNAME)" > /tmp/.ci-creds; \
+		echo "export SCC_PASSWORD=$(SCC_PASSWORD)" >> /tmp/.ci-creds; \
+		chmod 600 /tmp/.ci-creds; \
+		cd $(CI_SOURCE); \
+		source /tmp/.ci-creds; \
+		bash ci/rmt-configure; \
+		rm -f /tmp/.ci-creds \
+	'
+
+ci-tests: ci-install-rpms ## Run feature tests
+	@echo "==> Running feature tests..."
+	docker exec $(CI_CONTAINER) bash -c '\
+		set -e; \
+		cd $(CI_SOURCE); \
+		bash ci/rmt-run-feature-tests \
+	'
+
+ci-all: ci-env-check ci-build ci-up ci-start-mariadb ci-setup-database ci-build-rpms ci-install-rpms ci-tests ci-down ## Run the full CI pipeline locally
+
+ci-down: ## Stop and remove the CI container
+	@echo "==> Stopping container $(CI_CONTAINER)..."
+	docker stop $(CI_CONTAINER) || true
+	docker rm $(CI_CONTAINER) || true
+
+ci-clean: ci-down ## Remove CI image and container
+	@echo "==> Removing CI image $(CI_IMAGE)..."
+	docker rmi $(CI_IMAGE) || true
+
+ci-status: ## Show CI container status
+	@docker ps -a --filter "name=$(CI_CONTAINER)" --format "table {{.Names}}\t{{.Status}}\t{{.Image}}" || echo "Container not found"
+
+ci-logs: ## Show CI container logs (follow mode)
+	docker logs -f $(CI_CONTAINER)
+
+ci-shell: ci-up ## Open an interactive shell in the CI container
+	docker exec -it $(CI_CONTAINER) /bin/bash
 
 # =============================================================================
 # Cleanup
