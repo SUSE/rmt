@@ -70,10 +70,10 @@ To check out which codestreams RMT is currently maintained for, see https://smel
 Alterntaively you can use the `osc maintained` command, filtering for active code streams:
 
 ```bash
-$ osc -A https://api.suse.de maintained rmt-server | grep -e 'SUSE:SLE-15-SP[4-7]'
+$ osc -A https://api.suse.de maintained rmt-server | grep -e 'SUSE:SLE-15-SP[4-6]'
 SUSE:SLE-15-SP4:Update/rmt-server
 SUSE:SLE-15-SP5:Update/rmt-server
-SUSE:SLE-15-SP7:Update/rmt-server
+SUSE:SLE-15-SP6:Update/rmt-server
 ```
 
 ###### Submit updates
@@ -81,7 +81,7 @@ SUSE:SLE-15-SP7:Update/rmt-server
 For each maintained codestream identified you need to create a new maintenance request:
 
 ```bash
-osc -A https://api.suse.de mr Devel:SCC:RMT2 rmt-server SUSE:SLE-15-SP7:Update
+osc -A https://api.suse.de mr Devel:SCC:RMT2 rmt-server SUSE:SLE-15-SP6:Update
 Using target project 'SUSE:Maintenance'
 17362323
 ```
@@ -100,8 +100,8 @@ After your requests have been accepted, they still have to pass maintenance test
 
 ## Container image and publishing to SUSE registry
 
-SUSE registry houses the rmt-server docker image. The image is built automatically on OBS/IBS, and can be found [here](https://build.opensuse.org/package/show/devel:BCI:SLE-15-SP7/rmt-server-image). 
-The BCI build process generates it from [here](https://github.com/SUSE/BCI-dockerfile-generator/tree/main/src/bci_build/package/rmt-server). 
+SUSE registry houses the rmt-server docker image. The image is built automatically on OBS/IBS, and can be found [here](https://build.opensuse.org/package/show/devel:BCI:SLE-15-SP7/rmt-server-image).
+The BCI build process generates it from [here](https://github.com/SUSE/BCI-dockerfile-generator/tree/main/src/bci_build/package/rmt-server).
 It is getting published here: `registry.suse.com/suse/rmt-server` and is available in the registry catalogue at  [registry.suse.com/repositories/rmt](https://registry.suse.com/repositories/rmt).
 
 
