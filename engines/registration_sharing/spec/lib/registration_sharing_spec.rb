@@ -4,16 +4,15 @@ describe RegistrationSharing do
   describe '.save_for_sharing' do
     before do
       allow(Settings).to receive(:[]).with(:regsharing).and_return(config).at_least(:once)
-      Timecop.freeze(time)
+      travel_to(time)
       described_class.save_for_sharing(system)
     end
 
     after do
-      Timecop.return
       FileUtils.remove_entry_secure temp_dir
     end
 
-    let(:time) { Time.zone.now }
+    let(:time) { Time.zone.now.change(usec: 0) } # travel_to drops microseconds
     let(:system) { FactoryBot.create(:system) }
     let(:temp_dir) { Dir.mktmpdir }
     let(:peers) { [ 'example.org', 'example.com' ] }

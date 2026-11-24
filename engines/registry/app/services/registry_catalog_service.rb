@@ -1,6 +1,5 @@
 require 'json'
 require 'net/http'
-require 'benchmark'
 
 CATALOG_API_URL = 'http://127.0.0.1:5000/v2/_catalog'.freeze
 AUTH_URL = 'api/registry/authorize'.freeze
@@ -68,7 +67,7 @@ class RegistryCatalogService
     registry_request = Net::HTTP::Get.new(uri.to_s)
     registry_request['Authorization'] = format("Bearer #{auth_token}")
     response = nil
-    time = Benchmark.realtime do
+    time = ActiveSupport::Benchmark.realtime do
       response = http.request(registry_request)
     end
     Rails.logger.info("… took #{time}")

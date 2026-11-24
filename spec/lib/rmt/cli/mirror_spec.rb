@@ -56,7 +56,7 @@ RSpec.describe RMT::CLI::Mirror do
 
     context 'with repositories marked for mirroring' do
       it 'updates repository mirroring timestamp' do
-        Timecop.freeze(Time.utc(2018)) do
+        travel_to(Time.utc(2018)) do
           expect { command }
             .to change { repository.reload.last_mirrored_at }.to(Time.now.utc)
             .and output(/\e\[32mMirroring complete.\e\[0m/).to_stdout

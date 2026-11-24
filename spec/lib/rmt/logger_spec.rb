@@ -24,7 +24,7 @@ RSpec.describe RMT::Logger do
       end
 
       it do
-        Timecop.freeze(Time.local(2018, 4, 4, 11, 11, 0)) do # rubocop:disable Rails/TimeZone
+        travel_to(Time.local(2018, 4, 4, 11, 11, 0)) do # rubocop:disable Rails/TimeZone
           logger.info('42')
           log.rewind
           expect(log.read).to eq("I, [2018-04-04T11:11:00.000000 ##{Process.pid}]  INFO -- : 42\n")

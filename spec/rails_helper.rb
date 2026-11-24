@@ -31,6 +31,8 @@ RMT::Downloader.send(:remove_const, :RETRY_DELAY_SECONDS)
 RMT::Downloader.const_set(:RETRY_DELAY_SECONDS, 0.1)
 
 RSpec.configure do |config|
+  config.include ActiveSupport::Testing::TimeHelpers
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = ["#{::Rails.root}/spec/fixtures"]
 
