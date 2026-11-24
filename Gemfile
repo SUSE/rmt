@@ -1,123 +1,82 @@
-git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
-
 source 'https://rubygems.org'
 ruby '>= 3.4', '< 4.1'
 
-# Individual Rails components (instead of meta-gem)
-# This excludes actionmailer/actionmailbox to avoid CVE-2026-42256 (bsc#1265369)
-# as well as other unused Rails dependencies (actioncable, actiontext, activestorage)
-gem 'railties', '~> 8.1.4.1'
-gem 'activesupport', '~> 8.1.4.1'
-gem 'activemodel', '~> 8.1.4.1'
-gem 'activerecord', '~> 8.1.4.1'
-gem 'activejob', '~> 8.1.4.1'
-gem 'actionpack', '~> 8.1.4.1'
-gem 'actionview', '~> 8.1.4.1'
+# Rails components instead of the rails meta-gem. This leaves out actionmailer/actionmailbox
+# (CVE-2026-42256, bsc#1265369) and unused actioncable, actiontext, activestorage.
+rails_version = ['~> 8.1.4', '>= 8.1.4.1']
+gem 'railties', *rails_version
+gem 'activesupport', *rails_version
+gem 'activemodel', *rails_version
+gem 'activerecord', *rails_version
+gem 'activejob', *rails_version
+gem 'actionpack', *rails_version
+gem 'actionview', *rails_version
 
+# Server, database, jobs
 gem 'bootsnap', require: false
+gem 'puma'
+gem 'mysql2'
+gem 'strong_migrations'
+gem 'sidekiq'
 
-gem 'ostruct'
-gem 'csv'
+# API
+gem 'versionist'
+gem 'responders'
+gem 'active_model_serializers'
 
-gem 'puma', '~> 8'
-gem 'mysql2', '~> 0.5'
-gem 'sqlite3'
-
-gem 'nokogiri', '~> 1'
-gem 'thor'
-
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-# gem 'jbuilder', '~> 2.5'
-# Use Redis adapter to run Action Cable in production
-# gem 'redis', '~> 3.0'
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
-
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
-
-# Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
-# gem 'rack-cors'
-gem 'rackup'
-
-# Prometheus Exporter:
+# Metrics (Prometheus exporter)
 gem 'yabeda'
 gem 'yabeda-rails'
 gem 'yabeda-puma-plugin'
 gem 'yabeda-prometheus'
 
-gem 'strong_migrations'
+# Configuration and i18n
+gem 'config'
+gem 'fast_gettext'
+gem 'gettext_i18n_rails'
+
+# CLI (rmt-cli)
+gem 'thor'
+gem 'terminal-table'
+gem 'csv'
+
+# Repository mirroring
+gem 'typhoeus'
+gem 'nokogiri'
+gem 'repomd_parser'
+gem 'ruby-xz' # Debian Packages.xz
+gem 'fiddle' # required by ruby-xz, no longer a default gem since Ruby 3.5
+
+# Registry engine (container registry auth)
+gem 'jwt'
+gem 'base32'
 
 group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
-  # These 3 gems are in sync with glue we will discuss the next lint configuration
+  gem 'sqlite3' # experimental sqlite backend, CI only
+
+  # Keep these 3 in sync with glue
   gem 'scc-codestyle', '~> 0.7.0'
   gem 'rubocop', '<= 1.75.3'
   gem 'rubocop-ast', '<= 1.44.1'
 
-  gem 'gettext', require: false # needed for gettext_i18n_rails tasks
-  gem 'ruby_parser', require: false # needed for gettext_i18n_rails tasks, Locked because of Ruby >= 2.6 dependency
-  gem 'gettext_test_log'
-  gem 'memory_profiler'
-  gem 'awesome_print'
+  # gettext_i18n_rails rake tasks
+  gem 'gettext', require: false
+  gem 'ruby_parser', require: false
 end
 
 group :development do
-  gem 'listen'
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
-  gem 'spring-watcher-listen'
-  gem 'spring-commands-rspec'
-  gem 'guard-rspec', require: false
+  gem 'ronn-ng' # builds the rmt-cli man page (make man)
 end
 
 group :test do
   gem 'rspec-rails'
+  gem 'rspec-its'
+  gem 'shoulda-matchers'
   gem 'factory_bot_rails'
   gem 'ffaker'
-  gem 'mixlib-shellout'
-  gem 'rspec-its'
-  gem 'fakefs', require: 'fakefs/safe'
-  gem 'shoulda-matchers'
   gem 'webmock'
-  gem 'fuubar'
-  gem 'timecop'
-  gem 'vcr'
-  gem 'coveralls_reborn'
-  gem 'minitest'
-  gem 'public_suffix'
-  gem 'webrick'
+  gem 'fakefs', require: 'fakefs/safe'
+  gem 'webrick' # test HTTP server in http_request_spec
+  gem 'simplecov', require: false
 end
-
-gem 'simplecov', require: false, group: :test
-
-gem 'versionist'
-gem 'responders'
-gem 'typhoeus'
-gem 'active_model_serializers'
-
-# i18n
-gem 'fast_gettext'
-gem 'gettext_i18n_rails'
-
-gem 'config'
-gem 'terminal-table'
-
-# needed by rmt-server-pubcloud
-gem 'jwt', '~> 2.1'
-gem 'base32'
-
-# Needed to parse Debian's Packages.xz
-gem 'ruby-xz'
-
-gem 'fiddle'
-
-gem 'ronn-ng'
-
-gem 'repomd_parser'
-
-gem 'benchmark'
-
-# Use Sidekiq for ActiveJob
-gem 'sidekiq', '>= 7.0'
