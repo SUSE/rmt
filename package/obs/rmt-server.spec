@@ -73,7 +73,6 @@ BuildRequires:  valkey
 BuildRequires:  pkgconfig(systemd)
 # Only require ansible build dependencies when building ansible subpackage (SLES/Leap 16+ and Tumbleweed)
 %if 0%{?suse_version} >= 1600
-BuildRequires:  ansible-core >= 2.16
 BuildRequires:  ansible >= 11
 %endif
 Requires:       gpg2
@@ -140,7 +139,6 @@ BuildArch:      noarch
 License:        GPL-2.0-or-later
 URL:            https://github.com/SUSE/rmt
 
-Requires:       ansible-core >= 2.16
 Requires:       ansible >= 11
 Requires:       python3dist(pymysql)
 Requires:       rmt-server = %version
