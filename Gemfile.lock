@@ -87,7 +87,7 @@ GEM
     dry-initializer (3.2.0)
     erb (6.0.7)
     erubi (1.13.1)
-    ethon (0.18.0)
+    ethon (0.19.2)
       ffi (>= 1.15.0)
       logger
     factory_bot (6.6.0)
@@ -384,8 +384,8 @@ GEM
       readline
       sync
     tsort (0.2.0)
-    typhoeus (1.6.0)
-      ethon (>= 0.18.0)
+    typhoeus (1.8.0)
+      ethon (>= 0.19.2, < 0.20.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (3.2.0)
