@@ -166,9 +166,9 @@ GEM
     lumberjack (1.4.2)
     memory_profiler (1.1.0)
     method_source (1.1.0)
-    minitest (6.0.6)
+    minitest (6.1.0)
       drb (~> 2.0)
-      prism (~> 1.5)
+      prism (>= 1.5, < 3)
     mixlib-shellout (3.4.10)
       chef-utils
     mize (0.6.1)
