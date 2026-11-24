@@ -80,7 +80,7 @@ GEM
       bigdecimal
       rexml
     crass (1.0.8)
-    csv (3.3.6)
+    csv (3.3.7)
     deep_merge (1.2.2)
     diff-lcs (1.6.2)
     drb (2.2.3)
