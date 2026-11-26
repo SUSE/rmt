@@ -6,6 +6,7 @@ Fri Aug  31 10:52:13 UTC 2026 - Zuzana Petrova <zpetrova@suse.com>
     to different supported minor releases not only latest one.
   * Update to crass 1.0.8 (bsc#1288621)
   * Update loofah (bsc#1275180)
+  * Update concurrent-ruby to 1.3.8 (bsc#1277654)
 
 -------------------------------------------------------------------
 Fri Jun  5 16:15:34 UTC 2026 - Jesús Bermúdez Velázquez <jesus.bv@suse.com>
