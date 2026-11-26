@@ -257,18 +257,31 @@ module SccSumaApi
       downloader.download_multi([@product_tree_file])
     end
 
-    def cache_is_valid?
-      @unscoped_products_path = Rails.root.join('tmp/unscoped_products.json')
-
-      return false unless File.exist?(@unscoped_products_path)
-
-      File.new(@unscoped_products_path).ctime > 1.day.ago
+    def cache_is_valid?(file_path)
+      File.exist?(file_path) && File.new(file_path).ctime > 1.day.ago
     end
 
     def update_cache
       scc_client
       unscoped_products_json = @scc_api_client.list_products_unscoped.to_json
-      File.write(@unscoped_products_path, unscoped_products_json)
+      external_repositories = unscoped_products_json
+                                .flat_map { |p| p['repositories'] || [] }
+                                .reject { |repo| repo['url']&.include?('updates.suse.com') }
+      File.write(UNSCOPED_PRODUCTS_PATH, unscoped_products_json)
+      File.write(CACHED_EXTERNAL_PRODUCT_TREE_JSON, external_repositories)
     end
+
+    def parse_unscoped_products
+      update_cache unless cache_is_valid?(UNSCOPED_PRODUCTS_PATH)
+
+      JSON.parse(File.read(UNSCOPED_PRODUCTS_PATH))
+    end
+
+    def parse_external_products
+      update_cache unless cache_is_valid?(CACHED_EXTERNAL_PRODUCT_TREE_JSON)
+
+      JSON.parse(File.read(CACHED_EXTERNAL_PRODUCT_TREE_JSON))
+    end
+
   end
 end
