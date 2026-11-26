@@ -24,9 +24,11 @@ module SccSumaApi
     end
 
     def repos
-      entitled_and_external_repos = parse_external_products + entitled_repositories.map { |repository| repository_json(repository) }
+      entitled_mirrored_repos = entitled_repositories.map { |repository| repository_json(repository) }
+      mirrored_ids = entitled_mirrored_repos.map { |repo| repo[:id] }.to_set
+      external_repos = parse_external_products.reject { |repo| mirrored_ids.include?(repo['id']) }
 
-      render status: :ok, json: entitled_and_external_repos
+      render status: :ok, json: external_repos + entitled_mirrored_repos
     end
 
     def list
