@@ -24,9 +24,9 @@ module SccSumaApi
     end
 
     def repos
-      unscoped_products = parse_external_products
+      entitled_and_external_repos = parse_external_products + entitled_repositories.map { |repository| repository_json(repository) }
 
-      render status: :ok, json: entitled_repositories.map { |repository| repository_json(repository) }
+      render status: :ok, json: entitled_and_external_repos
     end
 
     def list
