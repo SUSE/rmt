@@ -259,7 +259,7 @@ module SccSumaApi
     end
 
     def cache_is_valid?(file_path)
-      File.exist?(file_path) && File.new(file_path).ctime > 1.day.ago
+      File.exist?(file_path) && File.ctime(file_path) > 1.day.ago
     end
 
     def update_cache
