@@ -48,9 +48,8 @@ More information can be found [here](https://documentation.suse.com/sles/15-SP7/
 
 ## Installation on SLE 15
 
-1. If your server isn't activated yet, activate it with the command `SUSEConnect -r <regcode>`.
-2. Activate the Server Applications Module for your version of SLE 15 if not already activated:
-    * SLE 15 SP7 - `SUSEConnect -p sle-module-server-applications/15.7/x86_64`
+1. If your server is not activated yet, activate it with the command `SUSEConnect -r <regcode>`.
+2. If the Server Applications Module is not activated yet, activate it for your version of SLE 15:
     * SLE 15 SP6 - `SUSEConnect -p sle-module-server-applications/15.6/x86_64`
     * SLE 15 SP5 - `SUSEConnect -p sle-module-server-applications/15.5/x86_64`
     * SLE 15 SP4 - `SUSEConnect -p sle-module-server-applications/15.4/x86_64`
@@ -59,7 +58,7 @@ More information can be found [here](https://documentation.suse.com/sles/15-SP7/
 
 ## Manual installation and configuration
 
-RMT currently gets built [in OBS](https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT2/rmt-server) for these active distributions: `SLE_15_SP4`, `SLE_15_SP5`, `SLE_15_SP6`, `SLE_15_SP7`.
+RMT currently gets built [in OBS](https://build.opensuse.org/package/show/systemsmanagement:SCC:RMT2/rmt-server) for these active distributions: `SLE_15_SP4`, `SLE_15_SP5`, `SLE_15_SP6`.
 To add an appropriate zypper repository, run: (replace `<dist>` with your distribution)
 
 ```bash
@@ -85,5 +84,5 @@ After installation configure your RMT instance:
   in the official RMT documentation for information about `/etc/rmt.conf`.
 * Start RMT by running `systemctl start rmt-server`. This will start the RMT server at http://localhost:4224.
 * By default, mirrored repositories are saved under `/usr/share/rmt/public`, which is a symlink that points to
-`/var/lib/rmt/public`. In order to change destination directory, recreate `/usr/share/rmt/public` symlink to point to the
+`/var/lib/rmt/public`. To change destination directory, recreate `/usr/share/rmt/public` symlink to point to the
 desired location.
