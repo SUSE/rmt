@@ -2,7 +2,7 @@
 
 ### For SLE16+
 
-Note: The Build Team has a [detailed documentation](https://confluence.suse.com/spaces/projectmanagement/pages/1506410865/Where+do+I+submit+my+code) about the new version of SLE.
+Note: The Build Team has [detailed documentation](https://confluence.suse.com/spaces/projectmanagement/pages/1506410865/Where+do+I+submit+my+code) about the new version of SLE.
 
 
 **Important**: Install git-lfs and git-osc (to add the tarball to LFS)
@@ -31,7 +31,7 @@ zypper in git-lfs git-osc
 
 5. Enter rmt-server/
 
-6. git checkout slfo-1.2 (refer this [table](https://src.suse.de/pool#suse-package-sources) for the branch you should select)
+6. git checkout slfo-1.2 (refer to this [table](https://src.suse.de/pool#suse-package-sources) for the branch you should select)
 
 7. Copy the files inside <path-to-rmt>/package/obs to here
 
@@ -42,7 +42,7 @@ zypper in git-lfs git-osc
     => staging setup (aka test build) and pull request to the target project are
     handled automatically by the bots.
 
-===============================================================================================================
+---
 
 ### SLE15 SP7
 
@@ -91,9 +91,9 @@ Note: Look below for direction on publishing to registry.
 #### Submit Requests to openSUSE Factory and SLES
 
 To get a maintenance request accepted, each changelog entry needs to have at
-least one reference to a bug or feature request like `bsc#123` or `fate#123`.
+least one reference to a bug or feature request like `bsc#123` or `jsc#123`.
 CVEs must be accompanied with the corresponding bsc#, even if it is not reported
-vs rmt-server.
+against rmt-server.
 
 Note: If you want to disable automatic changes made by osc (e.g. License string)
       use the `--no-cleanup` switch. Can be used with commands like `osc mr`, `osc sr`
@@ -101,7 +101,7 @@ Note: If you want to disable automatic changes made by osc (e.g. License string)
 
 ##### Factory First
 
-To submit a request to openSUSE Factory, issue this commands in the console:
+To submit a request to openSUSE Factory, issue this command in the console:
 
 ```bash
 osc sr systemsmanagement:SCC:RMT rmt-server openSUSE:Factory
@@ -111,7 +111,7 @@ osc sr systemsmanagement:SCC:RMT rmt-server openSUSE:Factory
 
 ###### Get target codestreams where to submit
 
-To check out which codestreams RMT is currently maintained, see https://smelt.suse.de/maintained/?q=rmt-server.
+To find out in which codestreams RMT is currently maintained, see https://smelt.suse.de/maintained/?q=rmt-server.
 
 ###### Submit updates
 
@@ -142,7 +142,7 @@ Using target project 'SUSE:Maintenance'
 
 You can check the status of your requests [here](https://build.opensuse.org/package/requests/systemsmanagement:SCC:RMT/rmt-server) and [here](https://build.suse.de/package/requests/Devel:SCC:RMT/rmt-server).
 
-After your requests have been accepted, they still have to pass maintenance testing before they are released to customers. You can check their progress at [maintenance.suse.de](https://maintenance.suse.de/search/?q=rmt-server). If you still need help, the maintenance team can be reached at [maint-coord@suse.de](maint-coord@suse.de) or #maintenance on irc.suse.de.
+After your requests have been accepted, they still have to pass maintenance testing before they are released to customers. You can check their progress at [maintenance.suse.de](https://maintenance.suse.de/search/?q=rmt-server). If you still need help, the maintenance team can be reached at [maint-coord@suse.de](mailto:maint-coord@suse.de) or in the `#discuss-maintenance` channel on suse.slack.com.
 
 
 ## Container image and publishing to SUSE registry
@@ -164,13 +164,13 @@ Reach out to the BCI team (Dirk Mueller or `#proj-bci` slack channel) to trigger
 
 ### ansible-rmt-server subpackage
 
-* Package: `ansible-rmt-server` (noarch, SLES/Leap 16+ only)
+* Package: `ansible-rmt-server` (noarch, SLES/Leap 16+ and Tumbleweed)
 * Install path: `/usr/share/ansible/rmt/`
 * Automatically included in tarball via `make dist`
 
 Version conditionals in spec:
 ```spec
-%if (0%{?sle_version} >= 160000) || (0%{?is_opensuse} && 0%{?suse_version} >= 1600)
+%if 0%{?suse_version} >= 1600
 ```
 
 Installation:
@@ -180,7 +180,6 @@ cd /usr/share/ansible/rmt
 ansible-galaxy collection install -r requirements.yml
 
 # Edit group_vars/all.yml to configure SCC credentials
-# Optionally override rmt_repo_url for different RMT package repository
 
 ansible-playbook site.yml
 ```
