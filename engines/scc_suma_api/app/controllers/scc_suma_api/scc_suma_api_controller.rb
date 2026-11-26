@@ -4,6 +4,8 @@ require 'json'
 module SccSumaApi
   REPOSITORY_URL = 'https://scc.suse.com/suma/'.freeze
   CACHED_PRODUCT_TREE_JSON = '/usr/share/rmt/public/suma/product_tree.json'.freeze
+  UNSCOPED_PRODUCTS_PATH = Rails.root.join('tmp/unscoped_products.json').freeze
+  CACHED_EXTERNAL_PRODUCT_TREE_JSON = Rails.root.join('tmp/external_product_tree.json'.freeze
 
   # same pattern StrictAuthentication uses to allow access to those repositories
   # Manager Server, Proxy, Retail Branch Server and the client tools. Their
