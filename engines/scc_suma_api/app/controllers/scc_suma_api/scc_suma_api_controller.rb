@@ -262,27 +262,30 @@ module SccSumaApi
       File.exist?(file_path) && File.ctime(file_path) > 1.day.ago
     end
 
-    def update_cache
-      scc_client
-      unscoped_products_json = @scc_api_client.list_products_unscoped.to_json
-      external_repositories = unscoped_products_json
-                                .flat_map { |p| p['repositories'] || [] }
-                                .reject { |repo| repo['url']&.include?('updates.suse.com') }
-      File.write(UNSCOPED_PRODUCTS_PATH, unscoped_products_json)
-      File.write(CACHED_EXTERNAL_PRODUCT_TREE_JSON, external_repositories)
-    end
-
     def parse_unscoped_products
-      update_cache unless cache_is_valid?(UNSCOPED_PRODUCTS_PATH)
+      refresh_unscoped_products unless cache_is_valid?(UNSCOPED_PRODUCTS_PATH)
 
       JSON.parse(File.read(UNSCOPED_PRODUCTS_PATH))
     end
 
     def parse_external_products
-      update_cache unless cache_is_valid?(CACHED_EXTERNAL_PRODUCT_TREE_JSON)
+      refresh_external_repositories unless cache_is_valid?(CACHED_EXTERNAL_PRODUCT_TREE_JSON)
 
       JSON.parse(File.read(CACHED_EXTERNAL_PRODUCT_TREE_JSON))
     end
 
+    def refresh_unscoped_products
+      scc_client
+      File.write(UNSCOPED_PRODUCTS_PATH, @scc_api_client.list_products_unscoped.to_json)
+      FileUtils.rm_f(CACHED_EXTERNAL_PRODUCT_TREE_JSON) # force the content to be sync'd with the unscoped products
+    end
+
+    def refresh_external_repositories
+      external_repositories = parse_unscoped_products
+                                .flat_map { |product| product['repositories'] || [] }
+                                .reject { |repo| repo['url']&.include?(SCC_HOST) }
+
+      File.write(CACHED_EXTERNAL_PRODUCT_TREE_JSON, external_repositories.to_json)
+    end
   end
 end
