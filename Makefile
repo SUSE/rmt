@@ -14,7 +14,7 @@ VERSION       = $(shell ruby -e 'require "./lib/rmt.rb"; print RMT::VERSION')
 .PHONY: database-up server shell console public_repo
 .PHONY: ci-env-check ci-build ci-up ci-wait ci-start-mariadb
 .PHONY: ci-build-rpms ci-install-rpms ci-tests ci-down ci-clean
-.PHONY: ci-all ci-status ci-logs ci-shell ci-build-flavours
+.PHONY: ci-all ci-status ci-logs ci-shell ci-build-flavours ci-ansible-test
 
 # =============================================================================
 # Default Target
@@ -320,6 +320,42 @@ ci-tests: ci-install-rpms ## Run feature tests
 		cd $(CI_SOURCE); \
 		bash ci/rmt-run-feature-tests \
 	'
+
+ci-ansible-test: ci-build-rpms ## Install RPMs, run the Ansible playbook twice and test the result
+	@echo "==> Removing the CI database user, so the playbook sets up the database itself..."
+	docker exec $(CI_CONTAINER) mysql -u root -e "DROP USER IF EXISTS 'rmt'@'localhost', 'rmt'@'127.0.0.1'; DROP DATABASE IF EXISTS rmt;"
+	@echo "==> Installing RPMs..."
+	docker exec $(CI_CONTAINER) bash -c '\
+		set -e; \
+		cd /usr/src/packages/RPMS; \
+		zypper --non-interactive install --allow-unsigned-rpm openssl curl \
+			x86_64/rmt-server-config-$(VERSION)-*.x86_64.rpm \
+			x86_64/rmt-server-$(VERSION)-*.x86_64.rpm \
+			noarch/ansible-rmt-server-$(VERSION)-*.noarch.rpm \
+	'
+	@echo "==> Running the playbook..."
+	docker exec $(CI_CONTAINER) bash -c '\
+		cd /usr/share/ansible/rmt && \
+		ansible-playbook site.yml -e @$(CI_SOURCE)/ci/ansible-test-vars.yml \
+	'
+	@echo "==> Running the playbook again, it must not change anything..."
+	docker exec $(CI_CONTAINER) bash -c '\
+		set -eo pipefail; \
+		cd /usr/share/ansible/rmt; \
+		ansible-playbook site.yml -e @$(CI_SOURCE)/ci/ansible-test-vars.yml | tee /tmp/ansible-second-run.log; \
+		grep -Eq "localhost +: ok=[0-9]+ +changed=0 +unreachable=0 +failed=0" /tmp/ansible-second-run.log || \
+			{ echo "  ERROR: the second playbook run changed something"; exit 1; } \
+	'
+	@echo "==> Testing services, certificates and nginx..."
+	docker exec $(CI_CONTAINER) bash -c '\
+		set -eo pipefail; \
+		systemctl is-active mariadb nginx rmt-server; \
+		openssl verify -CAfile /etc/rmt/ssl/rmt-ca.crt /etc/rmt/ssl/rmt-server.crt; \
+		openssl x509 -in /etc/rmt/ssl/rmt-server.crt -noout -ext subjectAltName; \
+		curl -fsS -o /dev/null http://localhost/tools/rmt-client-setup; \
+		curl -fsSk https://localhost/rmt.crt | cmp - /etc/rmt/ssl/rmt-ca.crt \
+	'
+	@echo "==> All Ansible end-to-end tests passed! Run 'make ci-down' to remove the container."
 
 ci-all: ci-env-check ci-build ci-up ci-start-mariadb ci-setup-database ci-build-rpms ci-install-rpms ci-tests ci-down ## Run the full CI pipeline locally
 

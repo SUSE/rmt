@@ -37,11 +37,25 @@
   when: rmt_db_password == "" and rmt_needs_db_setup | default(false)
   no_log: true
 
+# A previous run stored the generated password only in /etc/rmt.conf, reuse it on later runs
+- name: Read existing rmt.conf to reuse the database password
+  ansible.builtin.slurp:
+    src: /etc/rmt.conf
+  register: rmt_existing_conf
+  failed_when: false
+  when: rmt_db_password == "" and not (rmt_needs_db_setup | default(false))
+
+- name: Reuse database password from existing rmt.conf
+  ansible.builtin.set_fact:
+    rmt_db_password: "{{ ((rmt_existing_conf.content | b64decode | from_yaml).database.password | default('', true)) | string }}"
+  when: rmt_existing_conf.content is defined
+  no_log: true
+
 - name: Validate database password is set when user already exists
   ansible.builtin.assert:
     that:
       - rmt_db_password != ""
-    fail_msg: "Database password must be set in group_vars/all.yml when RMT database user already exists"
+    fail_msg: "The RMT database user already exists, but /etc/rmt.conf has no database password. Set rmt_db_password in group_vars/all.yml"
     quiet: true
   when: not (rmt_needs_db_setup | default(false))
 

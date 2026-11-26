@@ -1,0 +1,10 @@
+---
+# Extra variables for "make ci-ansible-test"
+
+# The playbook already runs as root in the CI container
+ansible_become: false
+
+# The playbook only writes these to /etc/rmt.conf, it does not contact SCC
+rmt:
+  RMT_ORGANIZATION_USERNAME: e2e-test-user
+  RMT_ORGANIZATION_PASSWORD: e2e-test-password

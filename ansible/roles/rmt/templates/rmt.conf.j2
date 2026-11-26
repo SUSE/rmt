@@ -1,16 +1,16 @@
 database:
   host: {{ rmt_db_host }}
   database: {{ rmt_db_name }}
-  username: {{ rmt_db_username }}
-  password: {{ rmt_db_password }}
+  username: {{ rmt_db_username | to_json }}
+  password: {{ rmt_db_password | string | to_json }}
   adapter: {{ rmt_db_adapter }}
   encoding: {{ rmt_db_encoding }}
   timeout: {{ rmt_db_timeout }}
   pool: {{ rmt_db_pool }}
 
 scc:
-  username: {{ rmt.RMT_ORGANIZATION_USERNAME }}
-  password: {{ rmt.RMT_ORGANIZATION_PASSWORD }}
+  username: {{ rmt.RMT_ORGANIZATION_USERNAME | string | to_json }}
+  password: {{ rmt.RMT_ORGANIZATION_PASSWORD | string | to_json }}
   sync_systems: {{ rmt_sync_systems | default(true) | lower }}
   metrics:
     enabled: {{ rmt_metrics_enabled | default(false) | lower }}
