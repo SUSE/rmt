@@ -1,3 +1,5 @@
+require 'fileutils'
+
 describe 'mirror' do
   let(:path) { '/var/lib/rmt/public/repo/SUSE/Products/SLE-Product-SLES/15-SP5/x86_64' }
 
