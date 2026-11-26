@@ -275,6 +275,9 @@ module SccSumaApi
       refresh_external_repositories unless cache_is_valid?(CACHED_EXTERNAL_PRODUCT_TREE_JSON)
 
       JSON.parse(File.read(CACHED_EXTERNAL_PRODUCT_TREE_JSON))
+    rescue StandardError => e
+      logger.error("Could not resolve the external repositories: #{e.message}")
+      []
     end
 
     def flattened_products(products)
