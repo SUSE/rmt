@@ -154,7 +154,7 @@ build-tarball: clean man ## Build RMT distribution tarball
 	@find $(NAME)-$(VERSION)/ansible -name "*.retry" -delete 2>/dev/null || true
 
 	@mv $(NAME)-$(VERSION)/.bundle/config_packaging $(NAME)-$(VERSION)/.bundle/config
-	cd $(NAME)-$(VERSION) && bundle package --all
+	cd $(NAME)-$(VERSION) && bundle package
 	rm -rf $(NAME)-$(VERSION)/vendor/bundle/
 
 	@mkdir $(NAME)-$(VERSION)/support
