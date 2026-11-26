@@ -1,6 +1,8 @@
 FROM registry.suse.com/bci/bci-base:15.7
 
-RUN zypper --non-interactive install --no-recommends \
+# --allow-downgrade --force-resolution: the base image ships a newer libncurses6
+# than the ncurses-devel in the frozen Leap 15.6 repos, which blocks readline-devel.
+RUN zypper --non-interactive install --no-recommends --allow-downgrade --force-resolution \
         timezone wget gcc-c++ libffi-devel git-core zlib-devel \
         libxml2-devel libxslt-devel cron libmariadb-devel mariadb-client sqlite3-devel \
         vim ruby2.5 ruby2.5-devel ruby2.5-rubygem-bundler SUSEConnect jq bzip2 gzip && \
