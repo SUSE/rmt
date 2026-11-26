@@ -275,6 +275,10 @@ module SccSumaApi
       JSON.parse(File.read(CACHED_EXTERNAL_PRODUCT_TREE_JSON))
     end
 
+    def flattened_products(products)
+      products.flat_map { |product| [product] + flattened_products(product['extensions'] || []) }
+    end
+
     def refresh_unscoped_products
       scc_client
       File.write(UNSCOPED_PRODUCTS_PATH, @scc_api_client.list_products_unscoped.to_json)
@@ -282,9 +286,10 @@ module SccSumaApi
     end
 
     def refresh_external_repositories
-      external_repositories = parse_unscoped_products
+      external_repositories = flattened_products(parse_unscoped_products)
                                 .flat_map { |product| product['repositories'] || [] }
                                 .reject { |repo| repo['url']&.include?(SCC_HOST) }
+                                .uniq { |repo| repo['id'] }
 
       File.write(CACHED_EXTERNAL_PRODUCT_TREE_JSON, external_repositories.to_json)
     end
