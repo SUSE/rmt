@@ -19,13 +19,12 @@ module SccSumaApi
     before_action :is_valid?, only: %w[unscoped_products repos]
 
     def unscoped_products
-      update_cache unless cache_is_valid?
-
-      unscoped_products_json = File.read(@unscoped_products_path)
-      render status: :ok, json: JSON.parse(unscoped_products_json)
+      render status: :ok, json: parse_unscoped_products
     end
 
     def repos
+      unscoped_products = parse_external_products
+
       render status: :ok, json: entitled_repositories.map { |repository| repository_json(repository) }
     end
 
