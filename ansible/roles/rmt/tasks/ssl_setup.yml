@@ -7,26 +7,6 @@
     owner: root
     group: root
 
-- name: Generate RMT server private key
-  community.crypto.openssl_privatekey:
-    path: /etc/rmt/ssl/rmt-server.key
-    size: 4096
-    mode: "0600"
-    owner: root
-    group: root
-  when: not ansible_check_mode
-
-- name: Generate RMT server certificate
-  community.crypto.x509_certificate:
-    path: /etc/rmt/ssl/rmt-server.crt
-    privatekey_path: /etc/rmt/ssl/rmt-server.key
-    provider: selfsigned
-    selfsigned_not_after: "+3650d"
-    mode: "0644"
-    owner: root
-    group: root
-  when: not ansible_check_mode
-
 - name: Generate RMT CA private key
   community.crypto.openssl_privatekey:
     path: /etc/rmt/ssl/rmt-ca.key
@@ -36,16 +16,68 @@
     group: root
   when: not ansible_check_mode
 
+- name: Generate RMT CA certificate signing request
+  community.crypto.openssl_csr:
+    path: /etc/rmt/ssl/rmt-ca.csr
+    privatekey_path: /etc/rmt/ssl/rmt-ca.key
+    common_name: "RMT Certificate Authority ({{ ansible_fqdn }})"
+    basic_constraints: ["CA:TRUE"]
+    basic_constraints_critical: true
+    key_usage: [keyCertSign, cRLSign]
+    key_usage_critical: true
+    mode: "0644"
+    owner: root
+    group: root
+  when: not ansible_check_mode
+
 - name: Generate RMT CA certificate
   community.crypto.x509_certificate:
     path: /etc/rmt/ssl/rmt-ca.crt
     privatekey_path: /etc/rmt/ssl/rmt-ca.key
+    csr_path: /etc/rmt/ssl/rmt-ca.csr
     provider: selfsigned
     selfsigned_not_after: "+3650d"
     mode: "0644"
     owner: root
     group: root
   when: not ansible_check_mode
+
+- name: Generate RMT server private key
+  community.crypto.openssl_privatekey:
+    path: /etc/rmt/ssl/rmt-server.key
+    size: 4096
+    mode: "0600"
+    owner: root
+    group: root
+  when: not ansible_check_mode
+
+- name: Generate RMT server certificate signing request
+  community.crypto.openssl_csr:
+    path: /etc/rmt/ssl/rmt-server.csr
+    privatekey_path: /etc/rmt/ssl/rmt-server.key
+    common_name: "{{ ansible_fqdn }}"
+    subject_alt_name: "{{ rmt_ssl_subject_alt_names }}"
+    basic_constraints: ["CA:FALSE"]
+    extended_key_usage: [serverAuth]
+    mode: "0644"
+    owner: root
+    group: root
+  when: not ansible_check_mode
+
+# Clients import rmt-ca.crt (served at /rmt.crt), so the server certificate must be signed by that CA
+- name: Generate RMT server certificate signed by the RMT CA
+  community.crypto.x509_certificate:
+    path: /etc/rmt/ssl/rmt-server.crt
+    csr_path: /etc/rmt/ssl/rmt-server.csr
+    provider: ownca
+    ownca_path: /etc/rmt/ssl/rmt-ca.crt
+    ownca_privatekey_path: /etc/rmt/ssl/rmt-ca.key
+    ownca_not_after: "+3650d"
+    mode: "0644"
+    owner: root
+    group: root
+  when: not ansible_check_mode
+  notify: Reload nginx
 
 - name: Provision HTTPS (SSL) nginx config
   ansible.builtin.copy:
@@ -54,6 +86,7 @@
     mode: "0644"
     owner: root
     group: root
+  notify: Reload nginx
 
 - name: Provision HTTP (Plain Text) nginx config
   ansible.builtin.copy:
@@ -62,6 +95,7 @@
     mode: "0644"
     owner: root
     group: root
+  notify: Reload nginx
 
 - name: Provision RMT Upstream section
   ansible.builtin.copy:

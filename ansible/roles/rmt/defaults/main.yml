@@ -39,3 +39,10 @@ rmt_log_level_cli: info
 rmt_web_server_min_threads: 5
 rmt_web_server_max_threads: 5
 rmt_web_server_workers: 2
+
+# SSL configuration
+# Names and addresses that clients can use to reach RMT over HTTPS
+rmt_ssl_subject_alt_names: >-
+  {{ (['DNS:' ~ ansible_fqdn, 'DNS:' ~ ansible_hostname]
+      + (['IP:' ~ ansible_default_ipv4.address] if ansible_default_ipv4.address is defined else []))
+     | unique }}
