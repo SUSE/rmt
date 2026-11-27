@@ -24,6 +24,32 @@ RSpec.describe Profile, type: :model do
     end
   end
 
+  context 'data serialization' do
+    def round_trip(data)
+      create(:profile, data: data).reload.data
+    end
+
+    it 'returns hash data with string keys at all levels' do
+      data = { system: { cpu: { cores: 8 } }, disks: [{ name: 'sda', size: 500 }] }
+
+      expect(round_trip(data)).to eq(data.deep_stringify_keys)
+    end
+
+    it 'returns array data as an array' do
+      expect(round_trip(%w[af_packet bridge])).to eq(%w[af_packet bridge])
+    end
+
+    it 'returns string data as a string' do
+      expect(round_trip('mod_data')).to eq('mod_data')
+    end
+
+    it 'renders data as JSON content, not a quoted string, in as_payload' do
+      profile = create(:profile, profile_type: 'test_type', data: %w[af_packet])
+
+      expect(profile.reload.as_payload.to_json).to eq('{"test_type":{"identifier":"%s","data":["af_packet"]}}' % profile.identifier)
+    end
+  end
+
   context 'filter_profiles' do
     let(:profiles) { profile_set_mixed }
 

@@ -1,4 +1,8 @@
 class Profile < ApplicationRecord
+  # TEXT column: serialize as JSON so SCC sync sends arrays/objects,
+  # not quoted strings.
+  serialize :data, coder: JSON
+
   # relationships
   # NOTE: for system_profiles we should only trigger cascaded deletes
   # of profiles if system references are removed, but we do not want
