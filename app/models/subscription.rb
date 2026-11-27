@@ -22,4 +22,10 @@ class Subscription < ApplicationRecord
   def expired?
     expires_at? && expires_at < Time.zone.now.beginning_of_day
   end
+
+  # query counterpart of #expired?. Deliberately not the negation of the
+  # `expired` scope the status enum generates: that one matches
+  # status = 'EXPIRED', which only changes when `rmt-cli sync` runs, whereas
+  # expires_at is evaluated against the current time on every request.
+  scope :not_expired, -> { where('expires_at IS NULL OR expires_at >= ?', Time.zone.now.beginning_of_day) }
 end

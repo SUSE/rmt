@@ -136,11 +136,290 @@ module SccSumaApi
         end
       end
 
-      context 'get repos' do
-        before { get '/api/scc/repos' }
+      context 'get subs and orders' do
+        before { get '/api/scc/subs' }
 
         its(:code) { is_expected.to eq '200' }
         its(:body) { is_expected.to eq '[]' }
+      end
+
+      context 'get repos' do
+        let(:base_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
+        let(:entitled_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
+        let!(:unentitled_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
+        let(:add_on) { 'SMS' }
+        let(:payload) do
+          {
+            'X-INSTANCE-IDENTIFIER' => base_product.identifier,
+            'X-INSTANCE-VERSION' => base_product.version,
+            'X-INSTANCE-ARCH' => base_product.arch
+          }
+        end
+
+        before do
+          allow_any_instance_of(InstanceVerification::Providers::Example).to(
+            receive(:instance_valid?).and_return(true)
+            )
+          allow_any_instance_of(InstanceVerification::Providers::Example).to(
+            receive(:add_on).and_return(add_on)
+            )
+        end
+
+        context 'with a subscription granting the add-on product class' do
+          before do
+            FactoryBot.create(:subscription, product_classes: [add_on, entitled_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          its(:code) { is_expected.to eq '200' }
+
+          it 'returns the repositories of every product class the subscription grants' do
+            expect(response.parsed_body.pluck('id')).to match_array(entitled_product.repositories.map(&:scc_id))
+          end
+
+          it 'excludes the repositories of product classes the subscription does not grant' do
+            expect(response.parsed_body.pluck('id')).not_to include(*unentitled_product.repositories.map(&:scc_id))
+          end
+
+          it 'returns the SCC repository object' do
+            expect(response.parsed_body.first.keys).to(
+              match_array(%w[id name description url enabled autorefresh installer_updates])
+              )
+          end
+
+          it 'returns URLs served by this update server' do
+            expect(response.parsed_body.pluck('url')).to all(start_with('http://www.example.com/repo/'))
+          end
+        end
+
+        # the :expired trait only moves expires_at into the past, it leaves
+        # status as ACTIVE, which is what RMT holds between `rmt-cli sync` runs.
+        context 'with a subscription that is past its expiry date' do
+          before do
+            FactoryBot.create(:subscription, :expired, product_classes: [add_on, entitled_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          its(:code) { is_expected.to eq '200' }
+
+          it 'does not grant the product classes of the expired subscription' do
+            expect(response.parsed_body).to eq []
+          end
+        end
+
+        context 'with a subscription that SCC reported as not active' do
+          before do
+            FactoryBot.create(:subscription, status: 'EXPIRED', product_classes: [add_on, entitled_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          it 'does not grant the product classes of the inactive subscription' do
+            expect(response.parsed_body).to eq []
+          end
+        end
+
+        context 'when the add-on product class is not granted by any subscription' do
+          before { get '/api/scc/repos', headers: payload }
+
+          its(:code) { is_expected.to eq '200' }
+          its(:body) { is_expected.to eq '[]' }
+        end
+
+        context 'when the provider reports no add-on' do
+          let(:add_on) { nil }
+
+          before do
+            FactoryBot.create(:subscription, product_classes: [base_product.product_class, entitled_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          its(:code) { is_expected.to eq '200' }
+
+          # the base product class is listed by nearly every subscription, so it
+          # must not be used as a pivot: the caller gets an empty list
+          it 'does not fall back to the base product class' do
+            expect(response.parsed_body).to eq []
+          end
+        end
+
+        context 'with a product class that is not released' do
+          let!(:beta_product) do
+            FactoryBot.create(:beta, :with_mirrored_repositories, product_class: "#{entitled_product.product_class}-BETA")
+          end
+
+          before do
+            FactoryBot.create(:subscription, product_classes: [add_on, entitled_product.product_class, beta_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          it 'excludes the repositories of alpha and beta products' do
+            expect(response.parsed_body.pluck('id')).to match_array(entitled_product.repositories.map(&:scc_id))
+          end
+        end
+
+        context 'with repositories that have never been mirrored' do
+          let(:entitled_product) { FactoryBot.create(:product, :with_not_mirrored_repositories) }
+
+          before do
+            FactoryBot.create(:subscription, product_classes: [add_on, entitled_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          its(:body) { is_expected.to eq '[]' }
+        end
+
+        context 'with custom repositories' do
+          before do
+            FactoryBot.create(:subscription, product_classes: [add_on, base_product.product_class, entitled_product.product_class])
+            entitled_product.repositories.update_all(scc_id: nil)
+            get '/api/scc/repos', headers: payload
+          end
+
+          it 'excludes repositories that have no SCC id' do
+            expect(response.parsed_body.pluck('id')).to match_array(base_product.repositories.map(&:scc_id))
+          end
+        end
+
+        context 'when the provider fails to determine the add-on' do
+          before do
+            allow_any_instance_of(InstanceVerification::Providers::Example).to(
+              receive(:add_on).and_raise(InstanceVerification::Exception, 'no add-on')
+            )
+            FactoryBot.create(:subscription, product_classes: [base_product.product_class, entitled_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          its(:code) { is_expected.to eq '200' }
+
+          it 'does not fall back to the base product class' do
+            expect(response.parsed_body).to eq []
+          end
+        end
+
+        context 'when the product class of the caller cannot be determined' do
+          let(:add_on) { nil }
+          let(:payload) { super().merge('X-INSTANCE-IDENTIFIER' => 'not-a-known-product') }
+
+          before do
+            FactoryBot.create(:subscription, product_classes: [base_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          its(:code) { is_expected.to eq '200' }
+          its(:body) { is_expected.to eq '[]' }
+        end
+
+        context 'when the caller is an MLM server' do
+          let!(:mlm_server) do
+            FactoryBot.create(
+              :product, :with_mirrored_repositories, identifier: 'Multi-Linux-Manager-Server', product_class: add_on
+            )
+          end
+          # Another MLM version, granted by no subscription and so unreachable
+          # through the pivot. This is what the identifier supplement is for.
+          let!(:mlm_proxy) do
+            FactoryBot.create(
+              :product, :with_mirrored_repositories, identifier: 'Multi-Linux-Manager-Proxy', product_class: 'SMP'
+            )
+          end
+
+          before do
+            FactoryBot.create(:subscription, product_classes: [add_on, entitled_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          its(:code) { is_expected.to eq '200' }
+
+          it 'returns the MLM repositories its own subscription does not enumerate' do
+            returned = response.parsed_body.pluck('id')
+            diagnostic = {
+              mlm_server: mlm_server.repositories.map(&:scc_id),
+              mlm_proxy: mlm_proxy.repositories.map(&:scc_id),
+              entitled: entitled_product.repositories.map(&:scc_id),
+              unentitled: unentitled_product.repositories.map(&:scc_id),
+              mlm_server_class: mlm_server.product_class,
+              add_on: add_on,
+              returned: returned
+            }
+            expect(returned).to include(*mlm_proxy.repositories.map(&:scc_id)), diagnostic.inspect
+          end
+
+          it 'still returns the subscribed repositories' do
+            expect(response.parsed_body.pluck('id')).to include(*entitled_product.repositories.map(&:scc_id))
+          end
+        end
+
+        context 'when the caller is not an MLM server' do
+          let(:add_on) { entitled_product.product_class }
+          let!(:mlm_server) do
+            FactoryBot.create(
+              :product, :with_mirrored_repositories, identifier: 'Multi-Linux-Manager-Server', product_class: 'SMS-X86'
+            )
+          end
+
+          before do
+            FactoryBot.create(:subscription, product_classes: [entitled_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          # The expansion is gated: only an MLM server gets the channels it
+          # redistributes, everyone else gets what their subscription grants.
+          it 'does not return the MLM repositories' do
+            expect(response.parsed_body.pluck('id')).not_to include(*mlm_server.repositories.map(&:scc_id))
+          end
+        end
+
+        context 'when the caller runs on Micro' do
+          let(:payload) { super().merge('X-INSTANCE-IDENTIFIER' => 'SUSE-MicroOS') }
+          let!(:free_module) do
+            FactoryBot.create(:product, :with_mirrored_repositories, identifier: 'sle-module-basesystem', free: true)
+          end
+          let!(:sap_module) do
+            FactoryBot.create(
+              :product, :with_mirrored_repositories, identifier: 'sle-module-sap-applications', free: true
+            )
+          end
+
+          before do
+            FactoryBot.create(:subscription, product_classes: [add_on, entitled_product.product_class])
+            get '/api/scc/repos', headers: payload
+          end
+
+          it 'returns the free SLES modules of the caller arch' do
+            expect(response.parsed_body.pluck('id')).to include(*free_module.repositories.map(&:scc_id))
+          end
+
+          it 'excludes the SAP modules' do
+            expect(response.parsed_body.pluck('id')).not_to include(*sap_module.repositories.map(&:scc_id))
+          end
+        end
+
+        context 'when the repository lookup fails' do
+          before do
+            FactoryBot.create(:subscription, product_classes: [add_on, entitled_product.product_class])
+            allow(Repository).to receive(:only_scc).and_raise(ActiveRecord::StatementInvalid, 'connection lost')
+            get '/api/scc/repos', headers: payload
+          end
+
+          its(:code) { is_expected.to eq '200' }
+
+          # check the lookup was reached
+          it 'rescues the failure and returns an empty list' do
+            expect(Repository).to have_received(:only_scc)
+            expect(response.body).to eq '[]'
+          end
+        end
+
+        context 'metadata is not valid' do
+          let(:payload) { super().merge('X-INSTANCE-IDENTIFIER' => 'Raise error') }
+
+          before { get '/api/scc/repos', headers: payload }
+
+          it 'raise an exception' do
+            expect(response.code).to eq '422'
+            expect(response.parsed_body['error']).to eq 'Missing signature'
+          end
+        end
       end
 
       context 'get product tree' do
