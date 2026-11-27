@@ -1,4 +1,4 @@
-FROM opensuse/leap:15.6
+FROM registry.suse.com/bci/bci-base:15.7
 
 # --allow-downgrade --force-resolution: the base image ships a newer libncurses6
 # than the ncurses-devel in the frozen Leap 15.6 repos, which blocks readline-devel.
