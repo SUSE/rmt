@@ -86,7 +86,7 @@ GEM
       factory_bot (~> 6.5)
       railties (>= 6.1.0)
     fakefs (3.2.1)
-    fast_gettext (4.2.0)
+    fast_gettext (4.3.0)
       prime
       racc
     ffaker (2.25.0)
