@@ -1,10 +1,10 @@
-require 'mixlib/shellout'
+require 'open3'
 
 describe 'rmt-cli' do
   describe 'sync' do
     it do
-      command = Mixlib::ShellOut.new("/usr/bin/rmt-cli sync").run_command
-      expect(command.exitstatus).to eq(0)
+      _stdout, _stderr, status = Open3.capture3('/usr/bin/rmt-cli sync')
+      expect(status.exitstatus).to eq(0)
     end
 
     it do

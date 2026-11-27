@@ -111,13 +111,14 @@ RSpec.describe RMT::CLI::Clean do
       RMT.send(:remove_const, 'DEFAULT_MIRROR_DIR')
       RMT.const_set('DEFAULT_MIRROR_DIR', mirror_dir)
       FileUtils.mkdir_p(mirror_dir)
-      Timecop.freeze(current_time) do
-        example.run
-      end
+      example.run
       FileUtils.rm_r(tmp_dir, secure: false)
     end
 
-    before { allow(RMT::Config).to receive(:mirror_drpm_files?).and_return(true) }
+    before do
+      travel_to(current_time)
+      allow(RMT::Config).to receive(:mirror_drpm_files?).and_return(true)
+    end
 
     context 'when no repomd files have been found' do
       let(:argv) { ['packages'] }

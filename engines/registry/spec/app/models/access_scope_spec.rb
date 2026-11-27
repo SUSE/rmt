@@ -159,9 +159,8 @@ RSpec.describe AccessScope, type: :model do
           yaml_string = access_policy_content
           data = YAML.unsafe_load yaml_string
           data[product1.product_class] = 'suse/sles/**'
-          File.write('engines/registry/spec/data/access_policy_yaml.yml', YAML.dump(data))
           allow_any_instance_of(RegistryCatalogService).to receive(:repos).and_return(['suse/sles/super_repo'])
-          allow(File).to receive(:read).and_return(File.read('engines/registry/spec/data/access_policy_yaml.yml'))
+          allow(File).to receive(:read).and_return(YAML.dump(data))
           possible_access = access_scope.granted('127.0.0.1', client: client)
 
           expect(possible_access).to eq(
@@ -252,9 +251,8 @@ RSpec.describe AccessScope, type: :model do
             yaml_string = access_policy_content
             data = YAML.unsafe_load yaml_string
             data[product1.product_class] = 'suse/ltss/**'
-            File.write('engines/registry/spec/data/access_policy_yaml.yml', YAML.dump(data))
             allow_any_instance_of(RegistryCatalogService).to receive(:repos).and_return(['suse/ltss/ltss_repo'])
-            allow(File).to receive(:read).and_return(File.read('engines/registry/spec/data/access_policy_yaml.yml'))
+            allow(File).to receive(:read).and_return(YAML.dump(data))
             possible_access = access_scope.granted('127.0.0.1', client: client)
 
             expect(possible_access).to eq(

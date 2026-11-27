@@ -1,4 +1,4 @@
-require 'mixlib/shellout'
+require 'open3'
 
 describe 'rmt-cli' do
   describe 'lockfile' do
@@ -15,11 +15,10 @@ describe 'rmt-cli' do
     end
 
     it do
-      command = Mixlib::ShellOut.new("/usr/bin/rmt-cli sync")
-      command.run_command
+      _stdout, stderr, status = Open3.capture3('/usr/bin/rmt-cli sync')
 
-      expect(command.stderr).to match(/already running. Terminate the other instance/)
-      expect(command.exitstatus).to eq(1)
+      expect(stderr).to match(/already running. Terminate the other instance/)
+      expect(status.exitstatus).to eq(1)
     end
   end
 end

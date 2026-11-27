@@ -108,7 +108,7 @@ RSpec.describe Api::Connect::BaseController, type: :controller do
       it 'updates last_seen_at' do
         time = Time.zone.now.round(0) # rounding to ms to match mysql precision
         system.update(last_seen_at: 1.hour.ago)
-        Timecop.freeze(time) do
+        travel_to(time) do
           get :service, params: { id: 1 }
 
           expect(system.reload.last_seen_at).to eq Time.zone.now
@@ -118,7 +118,7 @@ RSpec.describe Api::Connect::BaseController, type: :controller do
       it 'sets last_seen_at if not yet set' do
         time = Time.zone.now.round(0) # rounding to ms to match mysql precision
         system.update(last_seen_at: nil)
-        Timecop.freeze(time) do
+        travel_to(time) do
           get :service, params: { id: 1 }
 
           expect(system.reload.last_seen_at).to eq Time.zone.now
