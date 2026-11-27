@@ -786,6 +786,122 @@ describe Api::Connect::V3::Systems::ProductsController, type: :request do
         end
       end
     end
+
+    context 'when a base product fails instance verification' do
+      let(:instance_data) { 'dummy_instance_data' }
+      let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+      let(:payload) { expected_payload }
+
+      before do
+        allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+        allow(plugin_double).to receive(:instance_identifier).and_return('foo')
+        allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
+        allow(plugin_double).to receive(:allowed_extension?).and_return(true)
+        allow(plugin_double).to receive(:instance_valid?).and_raise(InstanceVerification::Exception, 'Custom plugin error')
+      end
+
+      context 'when the system is payg and has no activations' do
+        let!(:system) { FactoryBot.create(:system, :payg, :with_system_information, instance_data: instance_data) }
+
+        it 'removes the announced but unregistered system' do
+          expect { post url, params: payload, headers: headers }.to change(System, :count).by(-1)
+        end
+
+        it 'removes the system record itself' do
+          post url, params: payload, headers: headers
+          expect(System.find_by(id: system.id)).to be_nil
+        end
+
+        it 'renders an error with exception details' do
+          post url, params: payload, headers: headers
+          expect(response.parsed_body['error']).to eq('Instance verification failed: Custom plugin error')
+        end
+      end
+
+      context 'when the system is payg and already has an activation' do
+        let(:activated_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
+        let!(:system) do
+          FactoryBot.create(
+            :system, :payg, :with_system_information, :with_activated_product,
+            product: activated_product, instance_data: instance_data
+          )
+        end
+
+        it 'keeps the system' do
+          expect { post url, params: payload, headers: headers }.not_to change(System, :count)
+        end
+
+        it 'renders an error with exception details' do
+          post url, params: payload, headers: headers
+          expect(response.parsed_body['error']).to eq('Instance verification failed: Custom plugin error')
+        end
+      end
+
+      context 'when the system is byos and has no activations' do
+        let!(:system) { FactoryBot.create(:system, :byos, :with_system_information, instance_data: instance_data) }
+
+        before do
+          stub_request(:post, 'https://scc.suse.com/connect/systems/products')
+            .to_return(status: 201, body: { ok: 'ok' }.to_json, headers: {})
+        end
+
+        it 'keeps the system, byos is expected to fail instance verification' do
+          expect { post url, params: payload, headers: headers }.not_to change(System, :count)
+        end
+      end
+
+      context 'when the verification provider raises an unhandled exception' do
+        let!(:system) { FactoryBot.create(:system, :payg, :with_system_information, instance_data: instance_data) }
+
+        before do
+          allow(plugin_double).to receive(:instance_valid?).and_raise('Custom plugin error')
+        end
+
+        it 'keeps the system' do
+          expect { post url, params: payload, headers: headers }.not_to change(System, :count)
+        end
+
+        it 'renders an error with exception details' do
+          post url, params: payload, headers: headers
+          expect(response.parsed_body['error']).to eq('Unexpected instance verification error has occurred')
+        end
+      end
+    end
+
+    context 'when a paid extension fails instance verification' do
+      let(:instance_data) { 'dummy_instance_data' }
+      let(:plugin_double) { instance_double('InstanceVerification::Providers::Example') }
+      let(:base_product) { FactoryBot.create(:product, :with_mirrored_repositories) }
+      let(:product) do
+        FactoryBot.create(:product, :with_mirrored_repositories, :extension, free: false, base_products: [base_product])
+      end
+      let!(:system) do
+        FactoryBot.create(
+          :system, :payg, :with_system_information, :with_activated_product,
+          product: base_product, instance_data: instance_data
+        )
+      end
+      let(:payload) { { identifier: product.identifier, version: product.version, arch: product.arch } }
+
+      before do
+        allow(InstanceVerification::Providers::Example).to receive(:new).and_return(plugin_double)
+        allow(plugin_double).to receive(:instance_identifier).and_return('foo')
+        allow(plugin_double).to receive(:parse_instance_data).and_return({ InstanceId: 'foo' })
+        allow(plugin_double).to receive(:allowed_extension?).and_return(true)
+        allow(plugin_double).to receive(:add_on).and_return(nil)
+
+        FactoryBot.create(:subscription, product_classes: [base_product.product_class])
+      end
+
+      it 'keeps the system, the product being activated is not a base product' do
+        expect { post url, params: payload, headers: headers }.not_to change(System, :count)
+      end
+
+      it 'renders an error with exception details' do
+        post url, params: payload, headers: headers
+        expect(response.parsed_body['error']).to eq('Instance verification failed: The product is not available for this instance')
+      end
+    end
   end
 
   describe '#upgrade' do

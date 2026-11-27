@@ -238,6 +238,10 @@ module InstanceVerification
             # code, as such, instance verification engine checks for those BYOS
             # instances once instance verification has failed
             logger.error "Instance verification failed: #{e.message}"
+            # check the product being activated is the base product
+            # check the system has no activations => announced but not registered (plus it is a base product)
+            # no need to propagate the deletion through peers/regsharing
+            @system.destroy! if product.base? && @system.activations.empty?
             raise ActionController::TranslatedError.new('Instance verification failed: %{message}' % { message: e.message })
           end
         rescue StandardError => e
